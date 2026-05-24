@@ -88,54 +88,6 @@
                             </group>
                         </page>
 
-                        <!-- Booking Tab -->
-                        <page string="Booking" name="booking">
-                            <group>
-                                <group>
-                                    <field name="booking_status"/>
-                                    <field name="last_booking_date"/>
-                                </group>
-                                <group>
-                                    <field name="booking_within_30_days"/>
-                                    <field name="booking_lost_reason"
-                                           invisible="booking_status != 'cancelled'"/>
-                                </group>
-                            </group>
-                        </page>
-
-                        <!-- Follow-up Tab -->
-                        <page string="Follow-up" name="followup">
-                            <group>
-                                <group>
-                                    <field name="next_follow_up_date"/>
-                                    <field name="follow_up_notes" widget="text"/>
-                                </group>
-                                <group>
-                                    <field name="follow_up_count"/>
-                                    <field name="lead_followup_required"/>
-                                    <field name="health_contact_outcome"/>
-                                </group>
-                            </group>
-                        </page>
-
-                        <!-- Escalation Tab -->
-                        <page string="Escalation" name="escalation">
-                            <group>
-                                <group>
-                                    <field name="escalated_to"/>
-                                    <field name="escalation_datetime"/>
-                                    <field name="escalation_notes" widget="text"/>
-                                </group>
-                                <group>
-                                    <field name="referred_to_duty_doctor"/>
-                                    <field name="referral_datetime"
-                                           invisible="not referred_to_duty_doctor"/>
-                                    <field name="referral_notes" widget="text"
-                                           invisible="not referred_to_duty_doctor"/>
-                                </group>
-                            </group>
-                        </page>
-
                         <!-- Address Tab -->
                         <page string="Address" name="address">
                             <group>
@@ -188,6 +140,9 @@
                             </group>
                         </page>
                     </notebook>
+
+                    <!-- Contact History Timeline -->
+                    <widget name="contact_timeline"/>
                 </sheet>
             </form>
         </field>
@@ -248,37 +203,7 @@
     </record>
 
     <!-- ===== CRM Client List View (enhanced, matches Ops style) ===== -->
-    <record id="view_crm_client_list_enhanced" model="ir.ui.view">
-        <field name="name">res.partner.list.crm.clients</field>
-        <field name="model">res.partner</field>
-        <field name="priority">50</field>
-        <field name="arch" type="xml">
-            <list js_class="ops_client_list_view"
-                  default_order="name asc"
-                  class="ops-cl-list">
-                <field name="name" string="Client"/>
-                <field name="patient_code" string="Patient ID" optional="show"/>
-                <field name="mobile" string="Phone" optional="show"/>
-                <field name="email" string="Email" optional="hide"/>
-                <field name="primary_facility_id" string="Facility" optional="hide"/>
-                <field name="last_visit_date" string="Last Visit" optional="show"/>
-                <button name="action_create_fso" type="object"
-                        string="Book" icon="fa-plus"
-                        class="ops-cl-btn ops-cl-btn--book"/>
-                <button name="action_open_recurring_booking" type="object"
-                        string="Recurring" icon="fa-repeat"
-                        class="ops-cl-btn ops-cl-btn--recurring"/>
-                <button name="action_collect_cash" type="object"
-                        string="Collect" icon="fa-money"
-                        class="ops-cl-btn ops-cl-btn--collect"/>
-                <button name="action_register_client_payment" type="object"
-                        string="Payment" icon="fa-credit-card"
-                        class="ops-cl-btn ops-cl-btn--payment"/>
-            </list>
-        </field>
-    </record>
-
-    <!-- ===== Client List Action ===== -->
+    <!-- ===== Client List Action (reuses OPS client list view) ===== -->
     <record id="action_crm_client_list" model="ir.actions.act_window">
         <field name="name">Clients</field>
         <field name="res_model">res.partner</field>
@@ -287,7 +212,7 @@
         <field name="context">{'active_center': 'crm_center'}</field>
         <field name="search_view_id" ref="health_base.view_health_patient_search"/>
         <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_client_list_enhanced')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('health_fieldservice.view_health_client_list_ops')}),
             (0, 0, {'view_mode': 'form'})]"/>
     </record>
 

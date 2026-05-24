@@ -16,9 +16,6 @@
                t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
             <a t-attf-class="ops-nav-item #{isActive('invoices') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('invoices')"><i class="fa fa-file-text-o"/> Invoices</a>
-            <a t-attf-class="ops-nav-item #{isActive('packages') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('packages')"><i class="fa fa-cube"/> Service Packages</a>
-
             <div class="ops-nav-section-label">AR &amp; Payments</div>
             <a t-attf-class="ops-nav-item #{isActive('ar_dashboard') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('ar_dashboard')"><i class="fa fa-bar-chart"/> AR Dashboard</a>
@@ -35,10 +32,6 @@
             <a t-attf-class="ops-nav-item #{isActive('ar_transactions') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('ar_transactions')"><i class="fa fa-exchange"/> AR Transactions</a>
 
-            <div class="ops-nav-section-label">System</div>
-            <a t-attf-class="ops-nav-item #{isActive('settings') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('settings')"><i class="fa fa-cog"/> Settings</a>
-            <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
         </nav>
         <div class="ops-sidebar-user">
             <div class="ops-user-avatar" t-esc="currentUserInitials"/>

@@ -79,10 +79,7 @@ class CrmDashboard extends Component {
         this.charts = {};
         this.donutRef = useRef("donutCanvas");
         this.barRef = useRef("barCanvas");
-        this.sparkRefs = {};
-        for (const kpi of KPI_DEFS) {
-            this.sparkRefs[kpi.key] = useRef("spark_" + kpi.key);
-        }
+        this.rootRef = useRef("dashboardRoot");
 
         onWillStart(async () => {
             await loadBundle("web.chartjs_lib");
@@ -269,13 +266,17 @@ class CrmDashboard extends Component {
     }
 
     renderSparklines() {
+        const root = this.rootRef.el;
+        if (!root || !window.Chart) return;
         for (const kpi of KPI_DEFS) {
-            const ref = this.sparkRefs[kpi.key];
-            if (!ref || !ref.el || !window.Chart) continue;
+            const canvas = root.querySelector(`canvas[data-spark-key="${kpi.key}"]`);
+            if (!canvas) continue;
             const data = this.state.sparklines[kpi.key];
             if (!data || !data.length) continue;
 
-            this.charts["spark_" + kpi.key] = new Chart(ref.el.getContext("2d"), {
+            canvas.width = 60;
+            canvas.height = 28;
+            this.charts["spark_" + kpi.key] = new Chart(canvas.getContext("2d"), {
                 type: "line",
                 data: {
                     labels: data.map(() => ""),
@@ -290,8 +291,7 @@ class CrmDashboard extends Component {
                     }],
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: false,
                     plugins: { legend: { display: false }, tooltip: { enabled: false } },
                     scales: { x: { display: false }, y: { display: false } },
                     animation: { duration: 600 },

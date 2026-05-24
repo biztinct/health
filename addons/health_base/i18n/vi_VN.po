@@ -335,7 +335,7 @@ msgstr "Đánh giá Ngày"
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_provider_staffunavailable
 msgid "Assigned healthcare provider is unavailable"
-msgstr "Phân cônged Y tế nhà cung cấp là uncó sẵn"
+msgstr "Nhà cung cấp dịch vụ y tế được phân công không có sẵn"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__message_attachment_count
@@ -1073,7 +1073,7 @@ msgstr "Dao"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_system_dataerror
 msgid "Data entry error"
-msgstr "Data entry Lỗi"
+msgstr "Lỗi nhập dữ liệu"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__date
@@ -1318,12 +1318,12 @@ msgstr "Khẩn cấp Ưu tiên case"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_emergency
 msgid "Emergency situation"
-msgstr "Khẩn cấp situation"
+msgstr "Tình huống khẩn cấp"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_booking_cancellation_reason__reason_type__emergency
 msgid "Emergency/Force Majeure"
-msgstr "Khẩn cấp/Force Majeure"
+msgstr "Khẩn cấp/Bất khả kháng"
 
 #. module: health_base
 #: model:ir.model,name:health_base.model_hr_employee
@@ -1338,7 +1338,7 @@ msgstr "Thiết bị Bắt buộc"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_provider_equipment
 msgid "Equipment unavailable"
-msgstr "Thiết bị uncó sẵn"
+msgstr "Thiết bị không có sẵn"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__evidence_level
@@ -2753,7 +2753,7 @@ msgstr "Thiên tai"
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_emergency_disaster
 msgid "Natural disaster affecting service delivery"
-msgstr "Natural disaster affecting dịch vụ giao hàng"
+msgstr "Thiên tai ảnh hưởng đến việc cung cấp dịch vụ"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__neurological
@@ -3811,7 +3811,7 @@ msgstr "Dịch vụ Tên..."
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_nolongerneeded
 msgid "Service no longer needed"
-msgstr "Dịch vụ Không longer nhu cầued"
+msgstr "Dịch vụ không còn cần thiết"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -3925,7 +3925,7 @@ msgstr "Nhân viên Yêu cầus"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_provider_staffunavailable
 msgid "Staff unavailable"
-msgstr "Nhân viên uncó sẵn"
+msgstr "Nhân viên không có sẵn"
 
 #. module: health_base
 #: model:health.patient.category,description:health_base.patient_category_regular

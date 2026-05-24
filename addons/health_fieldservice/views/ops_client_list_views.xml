@@ -25,28 +25,46 @@
                 <field name="total_assignments" string="Bookings" optional="hide"/>
                 <button name="action_create_fso" type="object"
                         string="Book" icon="fa-plus"
+                        title="Create Booking"
                         class="ops-cl-btn ops-cl-btn--book"/>
                 <button name="action_open_recurring_booking" type="object"
                         string="Recurring" icon="fa-repeat"
+                        title="Recurring Booking"
                         class="ops-cl-btn ops-cl-btn--recurring"/>
                 <field name="has_pending_collection" column_invisible="True"/>
                 <field name="has_outstanding_invoice" column_invisible="True"/>
+                <field name="collection_status" column_invisible="True"/>
+                <field name="invoice_status" column_invisible="True"/>
                 <button name="action_collect_cash" type="object"
                         string="Collect" icon="fa-money"
-                        class="ops-cl-btn ops-cl-btn--collect"
-                        invisible="not has_pending_collection"/>
+                        title="Collect Cash — Pending"
+                        class="ops-cl-btn ops-cl-btn--danger"
+                        invisible="collection_status != 'pending'"/>
                 <button name="action_collect_cash" type="object"
                         string="Collect" icon="fa-money"
+                        title="Collect Cash — Collected"
+                        class="ops-cl-btn ops-cl-btn--success"
+                        invisible="collection_status != 'collected'"/>
+                <button name="action_collect_cash" type="object"
+                        string="Collect" icon="fa-money"
+                        title="Collect Cash"
                         class="ops-cl-btn ops-cl-btn--muted"
-                        invisible="has_pending_collection"/>
+                        invisible="collection_status != 'none'"/>
                 <button name="action_register_client_payment" type="object"
                         string="Payment" icon="fa-credit-card"
-                        class="ops-cl-btn ops-cl-btn--payment"
-                        invisible="not has_outstanding_invoice"/>
+                        title="Payment — Unpaid"
+                        class="ops-cl-btn ops-cl-btn--danger"
+                        invisible="invoice_status != 'unpaid'"/>
                 <button name="action_register_client_payment" type="object"
                         string="Payment" icon="fa-credit-card"
+                        title="Payment — Paid"
+                        class="ops-cl-btn ops-cl-btn--success"
+                        invisible="invoice_status != 'paid'"/>
+                <button name="action_register_client_payment" type="object"
+                        string="Payment" icon="fa-credit-card"
+                        title="Payment"
                         class="ops-cl-btn ops-cl-btn--muted"
-                        invisible="has_outstanding_invoice"/>
+                        invisible="invoice_status != 'none'"/>
             </list>
         </field>
     </record>

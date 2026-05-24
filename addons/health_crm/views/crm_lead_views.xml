@@ -189,13 +189,13 @@
                             icon="fa-envelope"
                             title="Send message to contact"/>
                     
-                    <!-- Log as Lead -->
+                    <!-- Log Activity (marks as Lead + opens activity wizard) -->
                     <button name="action_log_as_lead"
-                            string="Log Lead"
+                            string="Log Activity"
                             type="object"
                             class="btn-secondary"
-                            icon="fa-user-plus"
-                            title="Log this contact as a Lead for follow-up"
+                            icon="fa-clock-o"
+                            title="Mark as Lead and schedule a follow-up activity"
                             invisible="contact_status == 'lead'"/>
                     
                     <!-- Log Activity -->
@@ -436,7 +436,7 @@
                                             <field name="lead_reason_id" string="Lead Reason" options="{'no_create': True}"/>
                                         </group>
                                     </div>
-                                    
+
                                     <div class="vu-card">
                                         <div class="vu-card__title">
                                             <span class="vu-section__icon" data-icon="timeline"/>
@@ -452,7 +452,7 @@
                                 </div>
                             </div>
                         </page>
-                        
+
                         <!-- Analytics Tab -->
                         <page string="Analytics and Tracking" name="analytics" invisible="1">
                             <div class="vu-section">
@@ -473,7 +473,7 @@
                                 </div>
                             </div>
                         </page>
-                        
+
                         <!-- Notes Tab -->
                         <page string="Internal Notes" name="notes">
                             <div class="vu-card">
@@ -488,6 +488,9 @@
                             </div>
                         </page>
                     </notebook>
+
+                    <!-- Contact History Timeline -->
+                    <widget name="contact_timeline"/>
                 </sheet>
                 
                 <chatter reload_on_follower="True"/>

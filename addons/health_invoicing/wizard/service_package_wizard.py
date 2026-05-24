@@ -108,7 +108,7 @@ class ServicePackageWizard(models.TransientModel):
                 ),
                 'type': 'success',
                 'sticky': False,
-                'next': {'type': 'ir.actions.act_window_close'},
+                'next': {'type': 'ir.actions.client', 'tag': 'soft_reload'},
             }
         }
 
@@ -154,7 +154,7 @@ class ServicePackageWizard(models.TransientModel):
                 'message': _('All service packages removed from booking %s.') % self.fso_id.name,
                 'type': 'warning',
                 'sticky': False,
-                'next': {'type': 'ir.actions.act_window_close'},
+                'next': {'type': 'ir.actions.client', 'tag': 'soft_reload'},
             }
         }
 

@@ -24,9 +24,6 @@
                             <option t-att-value="fac.id" t-esc="fac.name"/>
                         </t>
                     </select>
-                    <button class="ops-header-btn btn-primary" t-on-click="openCreateBooking">
-                        <i class="fa fa-plus"/> Create Booking
-                    </button>
                     <button class="ops-header-btn btn-outline" t-on-click="onRefresh">
                         <i class="fa fa-refresh"/>
                     </button>

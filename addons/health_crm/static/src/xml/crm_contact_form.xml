@@ -56,8 +56,8 @@
                         <button class="crm-ph-action-btn primary" t-on-click="actionBook" title="Create Booking">
                             <i class="fa fa-calendar-plus-o"/> Book
                         </button>
-                        <button class="crm-ph-action-btn secondary" t-on-click="actionLogLead" title="Log as Lead">
-                            <i class="fa fa-bullseye"/> Log Lead
+                        <button class="crm-ph-action-btn secondary" t-on-click="actionLogLead" title="Log Activity">
+                            <i class="fa fa-clock-o"/> Log Activity
                         </button>
                         <button class="crm-ph-action-btn secondary" t-on-click="actionEscalate" title="Escalate">
                             <i class="fa fa-arrow-up"/> Escalate

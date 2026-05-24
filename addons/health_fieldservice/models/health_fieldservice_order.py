@@ -4574,9 +4574,10 @@ class HealthFieldServiceOrderUnified(models.Model):
         return preview
 
     @api.model
-    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes='', product_lines=None, staff_id=False, doctor_id=False, package_id=False, assigned_staff_ids=None):
+    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes='', product_lines=None, staff_id=False, doctor_id=False, package_id=False, assigned_staff_ids=None, draft_only=False):
         """Create recurring FSO bookings from the OWL wizard.
-        Creates bookings with quotes, confirms them, and assigns staff — all in one step."""
+        Creates bookings with quotes, confirms them, and assigns staff — all in one step.
+        If draft_only=True, creates bookings in draft state without confirming or assigning staff."""
         if not patient_id or not service_type or not facility_id:
             return {'success': False, 'error': 'Missing required fields.'}
 
@@ -4700,45 +4701,46 @@ class HealthFieldServiceOrderUnified(models.Model):
                     'total_all': first_quote.amount_total * len(created_ids),
                 }
 
-        # Confirm bookings, assign doctor/package/staff
-        for fso_rec in fso_records:
-            if package_id and hasattr(fso_rec, 'package_ids'):
+        if not draft_only:
+            # Confirm bookings, assign doctor/package/staff
+            for fso_rec in fso_records:
+                if package_id and hasattr(fso_rec, 'package_ids'):
+                    try:
+                        fso_rec.write({'package_ids': [(4, package_id)]})
+                    except Exception:
+                        pass
+                if doctor_id:
+                    try:
+                        fso_rec.write({'primary_doctor_id': doctor_id})
+                    except Exception:
+                        pass
+
                 try:
-                    fso_rec.write({'package_ids': [(4, package_id)]})
-                except Exception:
-                    pass
-            if doctor_id:
-                try:
-                    fso_rec.write({'primary_doctor_id': doctor_id})
+                    fso_rec.action_confirm_booking()
                 except Exception:
                     pass
 
-            try:
-                fso_rec.action_confirm_booking()
-            except Exception:
-                pass
-
-            # Create staff assignments
-            staff_to_assign = assigned_staff_ids or []
-            if staff_id and staff_id not in staff_to_assign:
-                staff_to_assign = [staff_id] + list(staff_to_assign)
-            for sid in staff_to_assign:
-                try:
-                    role = 'lead' if sid == staff_id else 'support'
-                    existing = self.env['health.staff.assignment'].search([
-                        ('fso_id', '=', fso_rec.id),
-                        ('staff_id', '=', sid),
-                        ('state', 'not in', ['cancelled', 'template']),
-                    ], limit=1)
-                    if not existing:
-                        self.env['health.staff.assignment'].create({
-                            'fso_id': fso_rec.id,
-                            'staff_id': sid,
-                            'assignment_role': role,
-                            'state': 'draft',
-                        })
-                except Exception:
-                    pass
+                # Create staff assignments
+                staff_to_assign = assigned_staff_ids or []
+                if staff_id and staff_id not in staff_to_assign:
+                    staff_to_assign = [staff_id] + list(staff_to_assign)
+                for sid in staff_to_assign:
+                    try:
+                        role = 'lead' if sid == staff_id else 'support'
+                        existing = self.env['health.staff.assignment'].search([
+                            ('fso_id', '=', fso_rec.id),
+                            ('staff_id', '=', sid),
+                            ('state', 'not in', ['cancelled', 'template']),
+                        ], limit=1)
+                        if not existing:
+                            self.env['health.staff.assignment'].create({
+                                'fso_id': fso_rec.id,
+                                'staff_id': sid,
+                                'assignment_role': role,
+                                'state': 'draft',
+                            })
+                    except Exception:
+                        pass
 
         return {
             'success': True,
@@ -4949,7 +4951,8 @@ class HealthFieldServiceOrderUnified(models.Model):
 
     @api.model
     def action_create_from_quick_booking_owl(self, vals):
-        """Create a single FSO booking from the quick booking OWL wizard."""
+        """Create a single FSO booking from the quick booking OWL wizard.
+        If vals.draft_only=True, creates booking in draft state without confirming."""
         import pytz
 
         patient_id = vals.get('patient_id')
@@ -4965,8 +4968,9 @@ class HealthFieldServiceOrderUnified(models.Model):
         package_id = vals.get('package_id') or False
         assigned_staff_ids = vals.get('assigned_staff_ids') or []
         lead_id = vals.get('lead_id') or False
+        draft_only = vals.get('draft_only', False)
 
-        if not patient_id or not facility_id or not date_str:
+        if not patient_id or not date_str:
             return {'success': False, 'error': 'Missing required fields (patient, facility, date).'}
 
         try:
@@ -5054,42 +5058,43 @@ class HealthFieldServiceOrderUnified(models.Model):
                     'total_all': so.amount_total,
                 }
 
-        if package_id and hasattr(fso, 'package_ids'):
+        if not draft_only:
+            if package_id and hasattr(fso, 'package_ids'):
+                try:
+                    fso.write({'package_ids': [(4, package_id)]})
+                except Exception:
+                    pass
+            if doctor_id:
+                try:
+                    fso.write({'primary_doctor_id': doctor_id})
+                except Exception:
+                    pass
+
             try:
-                fso.write({'package_ids': [(4, package_id)]})
-            except Exception:
-                pass
-        if doctor_id:
-            try:
-                fso.write({'primary_doctor_id': doctor_id})
+                fso.action_confirm_booking()
             except Exception:
                 pass
 
-        try:
-            fso.action_confirm_booking()
-        except Exception:
-            pass
-
-        all_staff = list(assigned_staff_ids)
-        if staff_id and staff_id not in all_staff:
-            all_staff = [staff_id] + all_staff
-        for sid in all_staff:
-            try:
-                role = 'lead' if sid == staff_id else 'support'
-                existing = self.env['health.staff.assignment'].search([
-                    ('fso_id', '=', fso.id),
-                    ('staff_id', '=', sid),
-                    ('state', 'not in', ['cancelled', 'template']),
-                ], limit=1)
-                if not existing:
-                    self.env['health.staff.assignment'].create({
-                        'fso_id': fso.id,
-                        'staff_id': sid,
-                        'assignment_role': role,
-                        'state': 'draft',
-                    })
-            except Exception:
-                pass
+            all_staff = list(assigned_staff_ids)
+            if staff_id and staff_id not in all_staff:
+                all_staff = [staff_id] + all_staff
+            for sid in all_staff:
+                try:
+                    role = 'lead' if sid == staff_id else 'support'
+                    existing = self.env['health.staff.assignment'].search([
+                        ('fso_id', '=', fso.id),
+                        ('staff_id', '=', sid),
+                        ('state', 'not in', ['cancelled', 'template']),
+                    ], limit=1)
+                    if not existing:
+                        self.env['health.staff.assignment'].create({
+                            'fso_id': fso.id,
+                            'staff_id': sid,
+                            'assignment_role': role,
+                            'state': 'draft',
+                        })
+                except Exception:
+                    pass
 
         service_type_dict = dict(self._fields['service_type'].selection)
         service_label = service_type_dict.get(service_type, service_type or '')

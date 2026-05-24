@@ -344,6 +344,11 @@
                         <!-- FOOTER -->
                         <div class="qb-wizard-footer">
                             <div class="qb-footer-spacer"/>
+                            <button class="qb-footer-btn qb-btn-save" t-on-click="saveBookingDraft"
+                                    t-att-disabled="state.isCreating">
+                                <t t-if="state.isSaving"><i class="fa fa-spinner fa-spin"/> Saving...</t>
+                                <t t-else=""><i class="fa fa-floppy-o"/> Save Booking</t>
+                            </button>
                             <button class="qb-footer-btn qb-btn-create" t-on-click="createBooking"
                                     t-att-disabled="state.isCreating">
                                 <t t-if="state.isCreating"><i class="fa fa-spinner fa-spin"/> Creating...</t>
@@ -359,8 +364,16 @@
                 <div class="qb-modal-overlay">
                     <div class="qb-modal-card">
                         <div class="qb-modal-header">
-                            <div class="qb-modal-icon"><i class="fa fa-check-circle"/></div>
-                            <div class="qb-modal-title">Booking Confirmed</div>
+                            <div class="qb-modal-icon">
+                                <i t-attf-class="fa #{state.isDraftSave ? 'fa-floppy-o' : 'fa-check-circle'}"/>
+                            </div>
+                            <div class="qb-modal-title">
+                                <t t-if="state.isDraftSave">Booking Saved</t>
+                                <t t-else="">Booking Confirmed</t>
+                            </div>
+                            <t t-if="state.isDraftSave">
+                                <div class="qb-modal-draft-note">Booking is saved in Draft state. Please confirm it when ready.</div>
+                            </t>
                             <div class="qb-modal-subtitle">
                                 <strong t-esc="state.creationResult.booking_name"/>
                                 <span> — </span>

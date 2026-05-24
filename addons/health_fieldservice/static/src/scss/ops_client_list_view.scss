@@ -162,6 +162,28 @@
         }
     }
 
+    &--danger {
+        background: rgba(#C62828, 0.08) !important;
+        color: #C62828 !important;
+        border-color: rgba(#C62828, 0.2) !important;
+
+        &:hover {
+            background: #C62828 !important;
+            color: #fff !important;
+        }
+    }
+
+    &--success {
+        background: rgba(#2E7D32, 0.08) !important;
+        color: #2E7D32 !important;
+        border-color: rgba(#2E7D32, 0.2) !important;
+
+        &:hover {
+            background: #2E7D32 !important;
+            color: #fff !important;
+        }
+    }
+
     &--muted {
         background: rgba(#9E9E9E, 0.06) !important;
         color: #BDBDBD !important;

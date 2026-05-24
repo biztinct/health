@@ -142,4 +142,5 @@
               action="action_staff_workload_dashboard"
               sequence="50"/>
 
+
 </odoo>

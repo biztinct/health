@@ -1,16 +1,37 @@
 // Health PWA - Vue.js 3 Main Application
 
+const APP_VI_FALLBACK_TRANSLATIONS = {
+  'Close': 'Đóng',
+  'Upcoming Bookings': 'Lịch hẹn sắp tới',
+  'No upcoming bookings scheduled': 'Chưa có lịch hẹn sắp tới',
+};
+
 // Lightweight translation helper: use PWAUtils.i18n for reactive language switching
 // This allows translations to update when user changes language preference
 const _t = (s) => {
+  const isVietnamese = window.healthPWAConfig?.user_lang?.startsWith('vi');
+
   // Use PWAUtils.i18n for reactive translations based on window.healthPWAConfig.user_lang
   if (window.PWAUtils && window.PWAUtils.i18n && typeof window.PWAUtils.i18n.t === 'function') {
-    return window.PWAUtils.i18n.t(s);
+    const translated = window.PWAUtils.i18n.t(s);
+    if (translated !== s) {
+      return translated;
+    }
+    if (isVietnamese && APP_VI_FALLBACK_TRANSLATIONS[s]) {
+      return APP_VI_FALLBACK_TRANSLATIONS[s];
+    }
   }
 
   // Fallback to Odoo translations if available
   if (window.odoo && typeof window.odoo._t === 'function') {
-    return window.odoo._t(s);
+    const translated = window.odoo._t(s);
+    if (translated !== s) {
+      return translated;
+    }
+  }
+
+  if (isVietnamese && APP_VI_FALLBACK_TRANSLATIONS[s]) {
+    return APP_VI_FALLBACK_TRANSLATIONS[s];
   }
 
   // Final fallback: return the key as-is
@@ -20,6 +41,36 @@ const _t = (s) => {
 const getPWALocale = () => (
   window.healthPWAConfig?.user_lang?.startsWith('vi') ? 'vi-VN' : 'en-US'
 );
+
+const cleanDisplayValue = (value, fallback = '') => {
+  if (window.PWAUtils?.i18n?.clean) {
+    return window.PWAUtils.i18n.clean(value, { fallback });
+  }
+  if (value === false || value === null || value === undefined) return fallback;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed || ['false', 'null', 'undefined'].includes(trimmed.toLowerCase())) {
+      return fallback;
+    }
+    return trimmed;
+  }
+  return value;
+};
+
+const displayDbValue = (value, fallback = '') => {
+  if (window.PWAUtils?.i18n?.display) {
+    return window.PWAUtils.i18n.display(value, { fallback });
+  }
+  const cleaned = cleanDisplayValue(value, fallback);
+  return cleaned ? _t(String(cleaned)) : fallback;
+};
+
+const displayError = (value) => {
+  if (window.PWAUtils?.i18n?.error) {
+    return window.PWAUtils.i18n.error(value);
+  }
+  return displayDbValue(value);
+};
 
 // Utility function to strip HTML tags from text
 const stripHtmlTags = (html) => {
@@ -1126,7 +1177,7 @@ window.healthPWA = {
                   patient_phone: order.phone,
                   patient_zalo: order.patient_zalo || null,
                   service_type: order.service_type,
-                  appointment_type: '',
+                  appointment_type: order.appointment_type || '',
                   scheduled_datetime: order.scheduled_datetime,
                   scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString(getPWALocale(), { hour: '2-digit', minute: '2-digit' }),
                   scheduled_duration: order.scheduled_duration || 60,
@@ -1215,7 +1266,7 @@ window.healthPWA = {
                   patient_phone: order.phone,
                   patient_zalo: order.patient_zalo || null,
                   service_type: order.service_type,
-                  appointment_type: '',
+                  appointment_type: order.appointment_type || '',
                   scheduled_datetime: order.scheduled_datetime,
                   scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString(getPWALocale(), { hour: '2-digit', minute: '2-digit' }),
                   scheduled_duration: order.scheduled_duration || 60,
@@ -1535,6 +1586,11 @@ window.healthPWA = {
             const result = await response.json();
 
             if (result.success && result.data) {
+              result.data.diagnosis = cleanDisplayValue(result.data.diagnosis);
+              result.data.referring_doctor_name = cleanDisplayValue(result.data.referring_doctor_name);
+              result.data.goal_of_care = cleanDisplayValue(result.data.goal_of_care);
+              result.data.required_equipment = cleanDisplayValue(result.data.required_equipment);
+              result.data.intake_notes = cleanDisplayValue(result.data.intake_notes);
               selectedBookingDetail.value = result.data;
               console.log('Loaded booking detail:', result.data);
             } else {
@@ -1871,7 +1927,7 @@ window.healthPWA = {
 
           // Validate that Verification Notes are filled if any line modifications exist
           if (hasLineModifications.value && (!quoteComments.value || !quoteComments.value.trim())) {
-            alert('Please add verification notes explaining the changes made to Qty or Discount.');
+              alert(_t('Please add verification notes explaining the changes made to Qty or Discount.'));
             return;
           }
 
@@ -1889,7 +1945,7 @@ window.healthPWA = {
                 if (qtyChanged || discountChanged) {
                   // Validate that discount reason is provided if discount is applied
                   if (line.discount > 0 && !line.discount_reason?.trim()) {
-                    alert(`Please provide a discount reason for: ${line.product_name}`);
+                    alert(_t('Please provide a discount reason for: ') + line.product_name);
                     return;
                   }
 
@@ -1932,11 +1988,11 @@ window.healthPWA = {
               quoteComments.value = '';
             } else {
               console.error('Error saving quote:', result.error);
-              alert('Error saving quote: ' + result.error);
+              alert(_t('Error saving quote: ') + displayError(result.error));
             }
           } catch (err) {
             console.error('Error saving quote:', err);
-            alert('Failed to save quote: ' + err.message);
+            alert(_t('Failed to save quote: ') + err.message);
           }
         };
 
@@ -1977,7 +2033,7 @@ window.healthPWA = {
         // Open payment wizard (only after quote verification)
         const openPaymentWizard = () => {
           if (!quoteVerified.value) {
-            alert('Please verify the invoice first and click Save Quote.');
+            alert(_t('Please verify the invoice first and click Save Quote.'));
             return;
           }
           showPaymentWizard.value = true;
@@ -2008,7 +2064,7 @@ window.healthPWA = {
             if (!response.ok) {
               const errorText = await response.text();
               console.error(`Server error (${response.status}): ${errorText}`);
-              alert(`Error: Server returned status ${response.status}. Please try again.`);
+              alert(_t('Error: Server returned status ') + response.status + _t('. Please try again.'));
               return;
             }
 
@@ -2018,7 +2074,7 @@ window.healthPWA = {
             } catch (jsonError) {
               const responseText = await response.text();
               console.error('Failed to parse JSON response:', responseText);
-              alert('Error: Invalid response from server. Details: ' + responseText.substring(0, 100));
+              alert(_t('Error: Invalid response from server. Details: ') + responseText.substring(0, 100));
               return;
             }
             if (result.success) {
@@ -2102,16 +2158,16 @@ window.healthPWA = {
               } else {
                 // Error checking next visit - just refresh
                 console.error('Error checking next visit:', statusData.error);
-                alert('Service completed successfully!');
+                alert(_t('Service completed successfully!'));
                 loadBookingsForDate(currentDate.value);
               }
             } else {
               console.error('Error completing payment:', result.error);
-              alert('Error completing payment: ' + result.error);
+              alert(_t('Error completing payment: ') + displayError(result.error));
             }
           } catch (err) {
             console.error('Error completing payment:', err);
-            alert('Failed to complete payment: ' + err.message);
+            alert(_t('Failed to complete payment: ') + err.message);
           }
         };
 
@@ -2119,7 +2175,8 @@ window.healthPWA = {
         const loadCancellationReasons = async () => {
           if (cancellationReasons.value.length > 0) return;
           try {
-            const response = await fetch('/health_pwa/api/cancellation_reasons');
+            const lang = window.healthPWAConfig?.user_lang || 'en_US';
+            const response = await fetch(`/health_pwa/api/cancellation_reasons?lang=${encodeURIComponent(lang)}`);
             const data = await response.json();
             if (data.success && data.data?.reasons) {
               cancellationReasons.value = data.data.reasons;
@@ -2141,7 +2198,7 @@ window.healthPWA = {
         // Submit cancellation
         const submitCancellation = async () => {
           if (!cancellationFormData.value.reason_id) {
-            window.healthPWA.showNotification('Please select a cancellation reason', 'error');
+            window.healthPWA.showNotification(_t('Please select a cancellation reason'), 'error');
             return;
           }
           cancellationSubmitting.value = true;
@@ -2156,17 +2213,17 @@ window.healthPWA = {
             });
             const result = await response.json();
             if (result.success) {
-              window.healthPWA.showNotification('Visit cancelled successfully', 'success');
+              window.healthPWA.showNotification(_t('Visit cancelled successfully'), 'success');
               showCancellationModal.value = false;
               selectedBookingId.value = null;
               selectedBookingDetail.value = null;
               await loadBookingsForDate(currentDate.value);
             } else {
-              window.healthPWA.showNotification(result.error || 'Failed to cancel visit', 'error');
+              window.healthPWA.showNotification(displayError(result.error) || _t('Failed to cancel visit'), 'error');
             }
           } catch (err) {
             console.error('Error cancelling visit:', err);
-            window.healthPWA.showNotification('Error cancelling visit: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error cancelling visit:') + ' ' + err.message, 'error');
           } finally {
             cancellationSubmitting.value = false;
           }
@@ -2201,11 +2258,11 @@ window.healthPWA = {
                 console.log('Service started for booking:', selectedBookingId.value);
               } else {
                 console.error('Error starting service:', result.error);
-                alert('Error: ' + result.error);
+                alert(_t('Error: ') + displayError(result.error));
               }
             } catch (err) {
               console.error('Error starting service:', err);
-              alert('Error starting service: ' + err.message);
+              alert(_t('Error starting service: ') + err.message);
             }
           } else {
             console.error('No booking selected');
@@ -2305,7 +2362,7 @@ window.healthPWA = {
             const hasPhoto = capturedPhoto.value !== null;
 
             if (!hasNotes && !hasPhoto) {
-              alert('Please provide clinical notes or take a photo before saving');
+              alert(_t('Please provide clinical notes or take a photo before saving'));
               return;
             }
 
@@ -2317,7 +2374,7 @@ window.healthPWA = {
             });
             const result = await response.json();
             if (!response.ok || !result.data) {
-              throw new Error(result.error || 'Failed to create clinical note');
+              throw new Error(result.error || _t('Failed to create clinical note'));
             }
             const noteId = result.data.note_id;
 
@@ -2339,19 +2396,19 @@ window.healthPWA = {
             // Step 3: Refresh booking detail to get updated notes list
             await fetchBookingDetail(selectedBookingId.value);
 
-            alert('Clinical note saved successfully');
+            alert(_t('Clinical note saved successfully'));
             showClinicalNoteForm.value = false;
             viewingClinicalNote.value = null;
           } catch (err) {
             console.error('Error saving clinical note:', err);
-            alert('Error saving clinical note: ' + err.message);
+            alert(_t('Error saving clinical note:') + ' ' + err.message);
           }
         };
 
         // Complete service without quote (for today-view)
         const completeServiceWithoutQuoteInTodayView = async () => {
           if (!selectedBookingId.value) {
-            alert('No booking selected');
+            alert(_t('No booking selected'));
             return;
           }
 
@@ -2445,27 +2502,27 @@ window.healthPWA = {
               } else {
                 // Error checking next visit - just refresh
                 console.error('Error checking next visit:', statusData.error);
-                alert('Service completed successfully!');
+                alert(_t('Service completed successfully!'));
                 loadBookingsForDate(currentDate.value);
               }
             } else {
-              alert('Failed to complete service: ' + (data.error || 'Unknown error'));
+              alert(_t('Failed to complete service: ') + displayError(data.error || _t('Unknown error')));
             }
           } catch (err) {
             console.error('Complete service without quote error:', err);
-            alert('Error completing service: ' + err.message);
+            alert(_t('Error completing service: ') + err.message);
           }
         };
 
         // Handle "No Future Visit" submission from Modal A
         const submitNoFutureVisit = async () => {
           if (!nextVisitFormData.value.no_future_visit_reason) {
-            alert('Please select a reason');
+            alert(_t('Please select a reason'));
             return;
           }
 
           if (nextVisitFormData.value.no_future_visit_reason === 'other' && !nextVisitFormData.value.other_reason_text) {
-            alert('Please enter explanation for "Other" reason');
+            alert(_t('Please enter explanation for "Other" reason'));
             return;
           }
 
@@ -2490,7 +2547,7 @@ window.healthPWA = {
             console.log('No future visit response:', data);
 
             if (data.success) {
-              alert('Noted: Patient does not need future visits');
+              alert(_t('Noted: Patient does not need future visits'));
               showNextVisitModalA.value = false;
               // Close modal and refresh to show today's bookings
               completedBookingId.value = null;
@@ -2501,11 +2558,11 @@ window.healthPWA = {
               // Refresh bookings list to reflect the change
               await loadBookingsForDate(currentDate.value);
             } else {
-              alert('Failed to submit: ' + (data.error || 'Unknown error'));
+              alert(_t('Failed to submit: ') + displayError(data.error || _t('Unknown error')));
             }
           } catch (err) {
             console.error('Submit no future visit error:', err);
-            alert('Error submitting: ' + err.message);
+            alert(_t('Error submitting: ') + err.message);
           }
         };
 
@@ -2538,17 +2595,17 @@ window.healthPWA = {
         const scheduleNextVisit = async () => {
           // Validation
           if (!nextVisitFormData.value.scheduled_date) {
-            alert('Please select a date');
+            alert(_t('Please select a date'));
             return;
           }
 
           if (!nextVisitFormData.value.scheduled_time) {
-            alert('Please select a time');
+            alert(_t('Please select a time'));
             return;
           }
 
           if (!nextVisitFormData.value.quote_items || nextVisitFormData.value.quote_items.length === 0) {
-            alert('Please add at least one service');
+            alert(_t('Please add at least one service'));
             return;
           }
 
@@ -2587,7 +2644,7 @@ window.healthPWA = {
             console.log('Schedule next visit response:', data);
 
             if (data.success) {
-              alert('Next visit scheduled successfully!');
+              alert(_t('Next visit scheduled successfully!'));
               showNextVisitModalB.value = false;
               showProductCatalogModal.value = false; // Close catalog modal if still open
               // Refresh bookings for the newly scheduled date - convert string to Date object
@@ -2615,11 +2672,11 @@ window.healthPWA = {
                 assignment_notes: ''
               };
             } else {
-              alert('Failed to schedule: ' + (data.error || 'Unknown error'));
+              alert(_t('Failed to schedule: ') + displayError(data.error || _t('Unknown error')));
             }
           } catch (err) {
             console.error('Schedule next visit error:', err);
-            alert('Error scheduling: ' + err.message);
+            alert(_t('Error scheduling: ') + err.message);
           }
         };
 
@@ -2628,10 +2685,10 @@ window.healthPWA = {
           currentClientData.value = {
             id: patientData.patient_id,
             name: patientData.patient_name,
-            phone: patientData.phone || 'N/A',
+            phone: patientData.phone || _t('N/A'),
             age: patientData.age,
-            gender: patientData.gender || 'N/A',
-            patient_code: patientData.patient_code || 'N/A'
+            gender: patientData.gender || _t('N/A'),
+            patient_code: patientData.patient_code || _t('N/A')
           };
           showClientDetailsView.value = true;
           showNextVisitModalA.value = false;
@@ -2661,7 +2718,7 @@ window.healthPWA = {
             showNextVisitModalA.value = true;
           } catch (err) {
             console.error('Error opening next booking:', err);
-            alert('Error: ' + err.message);
+            alert(_t('Error: ') + err.message);
           }
         };
 
@@ -2828,6 +2885,9 @@ window.healthPWA = {
           currentUser,
           // Timezone conversion helper
           convertLocalDateTimeToISO,
+          cleanDisplayValue,
+          displayDbValue,
+          displayError,
           // Translation helper
           _t
         };
@@ -2924,9 +2984,9 @@ window.healthPWA = {
                   <!-- Service type with action buttons inline -->
                   <div class="booking-service-row">
                     <p v-if="booking.service_type" class="booking-service-type">
-                      {{ booking.service_type }}
+                      {{ displayDbValue(booking.service_type) }}
                       <span v-if="booking.lead_staff_name" class="booking-lead-inline">
-                        ({{ booking.lead_staff_name }})
+                        ({{ displayDbValue(booking.lead_staff_name) }})
                       </span>
                     </p>
                     <div class="booking-action-icons">
@@ -2979,9 +3039,9 @@ window.healthPWA = {
                     <!-- Service type with action buttons inline -->
                     <div class="booking-service-row">
                     <p v-if="booking.service_type" class="booking-service-type">
-                      {{ booking.service_type }}
+                      {{ displayDbValue(booking.service_type) }}
                       <span v-if="booking.lead_staff_name" class="booking-lead-inline">
-                        ({{ booking.lead_staff_name }})
+                        ({{ displayDbValue(booking.lead_staff_name) }})
                       </span>
                     </p>
                       <div class="booking-action-icons">
@@ -3033,9 +3093,9 @@ window.healthPWA = {
                     <!-- Service type with action buttons inline -->
                     <div class="booking-service-row">
                     <p v-if="booking.service_type" class="booking-service-type">
-                      {{ booking.service_type }}
+                      {{ displayDbValue(booking.service_type) }}
                       <span v-if="booking.lead_staff_name" class="booking-lead-inline">
-                        ({{ booking.lead_staff_name }})
+                        ({{ displayDbValue(booking.lead_staff_name) }})
                       </span>
                     </p>
                       <div class="booking-action-icons">
@@ -3210,16 +3270,16 @@ window.healthPWA = {
                   style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: white; appearance: auto;">
                   <option :value="null" disabled>{{ _t('Select a reason...') }}</option>
                   <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'patient').length" :label="_t('Patient-initiated')">
-                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'patient')" :key="r.id" :value="r.id">{{ r.name }}</option>
+                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'patient')" :key="r.id" :value="r.id">{{ _t(r.name) }}</option>
                   </optgroup>
                   <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'provider').length" :label="_t('Provider-initiated')">
-                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'provider')" :key="r.id" :value="r.id">{{ r.name }}</option>
+                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'provider')" :key="r.id" :value="r.id">{{ _t(r.name) }}</option>
                   </optgroup>
                   <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'system').length" :label="_t('System/Technical')">
-                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'system')" :key="r.id" :value="r.id">{{ r.name }}</option>
+                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'system')" :key="r.id" :value="r.id">{{ _t(r.name) }}</option>
                   </optgroup>
                   <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'emergency').length" :label="_t('Emergency')">
-                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'emergency')" :key="r.id" :value="r.id">{{ r.name }}</option>
+                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'emergency')" :key="r.id" :value="r.id">{{ _t(r.name) }}</option>
                   </optgroup>
                 </select>
               </div>
@@ -3261,7 +3321,7 @@ window.healthPWA = {
                 <button @click="toggleIntakeSummaryModal" class="btn-modal-back">
                   <i class="material-icons">chevron_left</i>
                 </button>
-                <h3 class="modal-title">Intake Notes</h3>
+                <h3 class="modal-title">{{ _t('Intake Notes') }}</h3>
                 <div style="width: 40px;"></div>
               </div>
               <!-- Client Name Banner -->
@@ -3287,7 +3347,7 @@ window.healthPWA = {
                     <i class="material-icons">call</i>
                   </button>
                 </div>
-                <p class="intake-form-value">{{ selectedBookingDetail.referring_doctor_name || 'N/A' }}</p>
+                <p class="intake-form-value">{{ cleanDisplayValue(selectedBookingDetail.referring_doctor_name, _t('N/A')) }}</p>
               </div>
 
               <!-- Goal of Care -->
@@ -3517,7 +3577,7 @@ window.healthPWA = {
               <div class="invoice-lines">
                 <!-- Message to Save Quote if modifications detected -->
                 <div v-if="showSaveMessage" class="info-message-box">
-                  Save Quote to display updated Total
+                  {{ _t('Save Quote to display updated Total') }}
                 </div>
 
                 <!-- Invoice Items - Card Layout -->
@@ -3735,10 +3795,10 @@ window.healthPWA = {
             </div>
 
             <div class="modal-footer">
-              <button @click="showPaymentWizard = false" class="btn btn-secondary">Cancel</button>
+              <button @click="showPaymentWizard = false" class="btn btn-secondary">{{ _t('Cancel') }}</button>
               <button @click="completePayment" class="btn btn-success">
                 <i class="material-icons">check_circle</i>
-                <span>Complete Service</span>
+                <span>{{ _t('Complete Service') }}</span>
               </button>
             </div>
           </div>
@@ -3759,26 +3819,26 @@ window.healthPWA = {
 
             <div class="client-details-card">
               <div class="detail-item">
-                <label>Patient Code</label>
-                <span>{{ currentClientData.patient_code }}</span>
+                <label>{{ _t('Patient Code') }}</label>
+                <span>{{ _t(currentClientData.patient_code) }}</span>
               </div>
               <div class="detail-item">
                 <label>{{ _t('Phone') }}</label>
                 <span>{{ currentClientData.phone }}</span>
               </div>
               <div class="detail-item">
-                <label>Age</label>
-                <span>{{ currentClientData.age || 'N/A' }}</span>
+                <label>{{ _t('Age') }}</label>
+                <span>{{ currentClientData.age || _t('N/A') }}</span>
               </div>
               <div class="detail-item">
                 <label>{{ _t('Gender') }}</label>
-                <span>{{ currentClientData.gender }}</span>
+                <span>{{ _t(currentClientData.gender) }}</span>
               </div>
             </div>
 
             <button @click="openNextBookingFromClientDetails" class="btn btn-primary btn-lg next-booking-btn">
               <i class="material-icons">add_event</i>
-              Next Booking
+              {{ _t('Next Booking') }}
             </button>
           </div>
         </div>
@@ -3789,7 +3849,7 @@ window.healthPWA = {
             <div class="modal-header">
               <h3>
                 <i class="material-icons">calendar_today</i>
-                Schedule Next Appointment?
+                {{ _t('Schedule Next Appointment?') }}
               </h3>
               <button @click="showNextVisitModalA = false" class="modal-close">
                 <i class="material-icons">close</i>
@@ -3797,40 +3857,40 @@ window.healthPWA = {
             </div>
             <div class="modal-body">
               <p class="next-visit-message">
-                No future visits are currently scheduled for <strong>{{ nextVisitData.patient_name }}</strong>
+                {{ _t('No future visits are currently scheduled for') }} <strong>{{ nextVisitData.patient_name }}</strong>
               </p>
 
               <div class="next-visit-actions">
                 <!-- Button 1: Schedule Next Visit -->
                 <button @click="openNextVisitModal" class="btn btn-primary btn-lg">
                   <i class="material-icons">add_event</i>
-                  Schedule Next Visit
+                  {{ _t('Schedule Next Visit') }}
                 </button>
 
                 <!-- Button 2: Client does not need future visits -->
                 <button @click="showNoFutureVisitDropdown = !showNoFutureVisitDropdown" class="btn btn-secondary btn-lg">
                   <i class="material-icons">block</i>
-                  Client does not need or want a next visit
+                  {{ _t('Client does not need or want a next visit') }}
                 </button>
               </div>
 
               <!-- Dropdown for no future visit reasons -->
               <div v-if="showNoFutureVisitDropdown" class="no-future-visit-section">
-                <label class="form-label">Why is there no future visit?</label>
+                <label class="form-label">{{ _t('Why is there no future visit?') }}</label>
                 <select v-model="nextVisitFormData.no_future_visit_reason" class="form-control">
-                  <option value="">-- Select a reason --</option>
+                  <option value="">{{ _t('-- Select a reason --') }}</option>
                   <option v-for="reason in noFutureVisitReasons" :key="reason.value" :value="reason.value">
-                    {{ reason.label }}
+                    {{ _t(reason.label) }}
                   </option>
                 </select>
 
                 <!-- Text input for "Other" reason -->
                 <div v-if="nextVisitFormData.no_future_visit_reason === 'other'" class="other-reason-section">
-                  <label class="form-label">Please explain:</label>
+                  <label class="form-label">{{ _t('Please explain:') }}</label>
                   <textarea
                     v-model="nextVisitFormData.other_reason_text"
                     class="form-control"
-                    placeholder="Explain why there is no future visit..."
+                    :placeholder="_t('Explain why there is no future visit...')"
                     rows="3"></textarea>
                 </div>
 
@@ -3838,14 +3898,14 @@ window.healthPWA = {
                 <div style="margin-top: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0;">
                   <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0; font-size: 14px; font-weight: 500; color: #333;">
                     <input type="checkbox" v-model="nextVisitFormData.need_follow_up" style="width: 18px; height: 18px; accent-color: #1976d2; cursor: pointer;">
-                    Need to Follow up
+                    {{ _t('Need to Follow up') }}
                   </label>
                 </div>
 
                 <!-- Submit button for no future visit -->
                 <div class="form-actions">
-                  <button @click="showNoFutureVisitDropdown = false" class="btn btn-secondary">Cancel</button>
-                  <button @click="submitNoFutureVisit" class="btn btn-success">Submit</button>
+                  <button @click="showNoFutureVisitDropdown = false" class="btn btn-secondary">{{ _t('Cancel') }}</button>
+                  <button @click="submitNoFutureVisit" class="btn btn-success">{{ _t('Submit') }}</button>
                 </div>
               </div>
             </div>
@@ -3860,11 +3920,11 @@ window.healthPWA = {
                 <!-- Show "Next Appointment Details" when editing existing, otherwise "Schedule Next Appointment" -->
                 <h3 v-if="nextVisitData.has_next_visit">
                   <i class="material-icons">edit</i>
-                  Next Appointment Details
+                  {{ _t('Next Appointment Details') }}
                 </h3>
                 <h3 v-else>
                   <i class="material-icons">event</i>
-                  Schedule Next Appointment
+                  {{ _t('Schedule Next Appointment') }}
                 </h3>
               </div>
               <button @click="showNextVisitModalB = false" class="modal-close">
@@ -3876,17 +3936,17 @@ window.healthPWA = {
               <div class="check-schedule-section">
                 <button @click="toggleFutureBookings" class="btn btn-secondary btn-check-schedule">
                   <i class="material-icons">calendar_today</i>
-                  Check my schedule
+                  {{ _t('Check my schedule') }}
                 </button>
               </div>
 
               <!-- Date and Time Section -->
               <div class="form-section">
-                <h4>Appointment Date &amp; Time</h4>
+                <h4>{{ _t('Appointment Date & Time') }}</h4>
                 <div class="form-row date-time-row">
                   <div class="form-group date-time-group">
                     <div class="date-time-input">
-                      <label class="date-time-label">Date</label>
+                      <label class="date-time-label">{{ _t('Date') }}</label>
                       <input
                         type="date"
                         v-model="nextVisitFormData.scheduled_date"
@@ -3895,7 +3955,7 @@ window.healthPWA = {
                   </div>
                   <div class="form-group date-time-group">
                     <div class="date-time-input">
-                      <label class="date-time-label">Time</label>
+                      <label class="date-time-label">{{ _t('Time') }}</label>
                       <input
                         type="time"
                         v-model="nextVisitFormData.scheduled_time"
@@ -3907,28 +3967,28 @@ window.healthPWA = {
 
               <!-- Services Section -->
               <div class="form-section">
-                <h4>Services to be Provided</h4>
+                <h4>{{ _t('Services to be Provided') }}</h4>
                 <div v-if="nextVisitFormData.quote_items && nextVisitFormData.quote_items.length > 0" class="services-list">
                   <div v-for="(item, index) in nextVisitFormData.quote_items" :key="index" class="service-item">
                     <span class="service-name">{{ item.product_name || item.name }}</span>
-                    <span class="service-qty">Qty: {{ item.quantity }}</span>
+                    <span class="service-qty">{{ _t('Qty:') }} {{ item.quantity }}</span>
                     <button @click="nextVisitFormData.quote_items.splice(index, 1)" class="btn-remove">
                       <i class="material-icons">delete</i>
                     </button>
                   </div>
                 </div>
                 <div v-else class="no-services-message">
-                  No services selected yet
+                  {{ _t('No services selected yet') }}
                 </div>
                 <button @click="openProductCatalogModal" class="btn btn-secondary btn-sm">
                   <i class="material-icons">add</i>
-                  Add from Catalog
+                  {{ _t('Add from Catalog') }}
                 </button>
               </div>
 
               <!-- Assigned Healthcare Staff Section -->
               <div class="form-section">
-                <h4>Assigned Healthcare Staff</h4>
+                <h4>{{ _t('Assigned Healthcare Staff') }}</h4>
                 <div class="form-group">
                   <!-- Show all assigned staff when editing existing appointment -->
                   <div v-if="nextVisitData.has_next_visit && nextVisitData.assigned_staff && nextVisitData.assigned_staff.length > 0" class="assigned-staff-list">
@@ -3950,7 +4010,7 @@ window.healthPWA = {
                       <div class="staff-info">
                         <strong>{{ nextVisitFormData.assigned_nurse_name || currentUser.name }}</strong>
                         <small class="booking-credit-display" v-if="currentUser.booking_credit > 0">
-                          Booking credit: {{ currentUser.booking_credit }}
+                          {{ _t('Booking credit:') }} {{ currentUser.booking_credit }}
                         </small>
                       </div>
                     </div>
@@ -3959,8 +4019,8 @@ window.healthPWA = {
                   <!-- Show unassigned message -->
                   <div v-else class="unassigned-staff-box">
                     <i class="material-icons">person_outline</i>
-                    <strong>No staff assigned</strong>
-                    <small v-if="!nextVisitData.has_next_visit">Booking will be created in CONFIRMED state (unassigned)</small>
+                    <strong>{{ _t('No staff assigned') }}</strong>
+                    <small v-if="!nextVisitData.has_next_visit">{{ _t('Booking will be created in CONFIRMED state (unassigned)') }}</small>
                   </div>
 
                   <!-- Show clear assignment button only for new appointments -->
@@ -3970,7 +4030,7 @@ window.healthPWA = {
                       nextVisitFormData.assigned_nurse_id = null;
                     }" class="btn-clear-assignment">
                       <i class="material-icons">close</i>
-                      Assign different nurse
+                      {{ _t('Assign different nurse') }}
                     </button>
                   </div>
                 </div>
@@ -3979,24 +4039,24 @@ window.healthPWA = {
               <!-- Order Summary -->
               <div class="order-summary">
                 <div class="summary-item">
-                  <label>Services</label>
-                  <span>{{ nextVisitFormData.quote_items?.length || 0 }} item(s)</span>
+                  <label>{{ _t('Services') }}</label>
+                  <span>{{ nextVisitFormData.quote_items?.length || 0 }} {{ _t('item(s)') }}</span>
                 </div>
                 <div class="summary-item">
-                  <label>Scheduled For</label>
+                  <label>{{ _t('Scheduled For') }}</label>
                   <span v-if="nextVisitFormData.scheduled_date && nextVisitFormData.scheduled_time">
-                    {{ nextVisitFormData.scheduled_date }} at {{ nextVisitFormData.scheduled_time }}
+                    {{ nextVisitFormData.scheduled_date }} {{ _t('at') }} {{ nextVisitFormData.scheduled_time }}
                   </span>
-                  <span v-else>Not set</span>
+                  <span v-else>{{ _t('Not set') }}</span>
                 </div>
               </div>
             </div>
 
             <div class="modal-footer">
-              <button @click="showNextVisitModalB = false" class="btn btn-secondary">Cancel</button>
+              <button @click="showNextVisitModalB = false" class="btn btn-secondary">{{ _t('Cancel') }}</button>
               <button @click="scheduleNextVisit" class="btn btn-success">
                 <i class="material-icons">check_circle</i>
-                Schedule Visit
+                {{ _t('Schedule Visit') }}
               </button>
             </div>
           </div>
@@ -4008,7 +4068,7 @@ window.healthPWA = {
             <div class="modal-header">
               <h3>
                 <i class="material-icons">shopping_cart</i>
-                Select Services from Catalog
+                {{ _t('Select Services from Catalog') }}
               </h3>
               <button @click="showProductCatalogModal = false" class="modal-close">
                 <i class="material-icons">close</i>
@@ -4017,12 +4077,12 @@ window.healthPWA = {
             <div class="modal-body">
               <!-- Selected Products Summary - Show at Top -->
               <div v-if="nextVisitFormData.quote_items && nextVisitFormData.quote_items.length > 0" class="form-section selected-items-summary">
-                <h4>Selected Services</h4>
+                <h4>{{ _t('Selected Services') }}</h4>
                 <div class="selected-items-list">
                   <div v-for="(item, index) in nextVisitFormData.quote_items" :key="index" class="selected-item">
                     <div class="selected-item-info">
                       <span class="selected-item-name">{{ item.product_name }}</span>
-                      <span class="selected-item-qty">Qty: {{ item.quantity }}</span>
+                      <span class="selected-item-qty">{{ _t('Qty:') }} {{ item.quantity }}</span>
                     </div>
                     <button @click="nextVisitFormData.quote_items.splice(index, 1)" class="btn-remove-small">
                       <i class="material-icons">close</i>
@@ -4033,23 +4093,23 @@ window.healthPWA = {
 
               <!-- Search Section -->
               <div class="form-section search-section-compact">
-                <label class="search-label-centered">Search Products</label>
+                <label class="search-label-centered">{{ _t('Search Products') }}</label>
                 <input
                   type="text"
                   v-model="catalogSearchQuery"
-                  placeholder="Search by product name or code..."
+                  :placeholder="_t('Search by product name or code...')"
                   class="form-control search-control-clean"
                   @keyup="loadProductCatalog">
               </div>
 
               <!-- Loading State -->
               <div v-if="catalogLoading" class="loading-state">
-                <p>Loading products...</p>
+                <p>{{ _t('Loading products...') }}</p>
               </div>
 
               <!-- Error State -->
               <div v-else-if="catalogError" class="error-state">
-                <p style="color: #e74c3c;">Error: {{ catalogError }}</p>
+                <p style="color: #e74c3c;">{{ _t('Error:') }} {{ catalogError }}</p>
               </div>
 
               <!-- Products Grid -->
@@ -4057,7 +4117,7 @@ window.healthPWA = {
                 <div v-for="product in catalogProducts" :key="product.id" class="product-card">
                   <div class="product-info">
                     <h5 class="product-name">{{ product.name }}</h5>
-                    <p class="product-code" v-if="product.code">Code: {{ product.code }}</p>
+                    <p class="product-code" v-if="product.code">{{ _t('Code:') }} {{ product.code }}</p>
                     <p class="product-price">
                       {{ product.price.toLocaleString() }} {{ product.currency }}
                     </p>
@@ -4065,19 +4125,19 @@ window.healthPWA = {
                   </div>
                   <button @click="addProductToQuote(product)" class="btn btn-primary btn-sm">
                     <i class="material-icons">add_shopping_cart</i>
-                    Add
+                    {{ _t('Add') }}
                   </button>
                 </div>
               </div>
 
               <!-- Empty State -->
               <div v-else class="empty-state">
-                <p>No products found</p>
+                <p>{{ _t('No products found') }}</p>
               </div>
             </div>
 
             <div class="modal-footer">
-              <button @click="showProductCatalogModal = false" class="btn btn-secondary">Close</button>
+              <button @click="showProductCatalogModal = false" class="btn btn-secondary">{{ _t('Close') }}</button>
             </div>
           </div>
         </div>
@@ -4123,7 +4183,7 @@ window.healthPWA = {
               </button>
             </div>
 
-            <button @click="toggleCalendar" class="btn-close-calendar">Close</button>
+            <button @click="toggleCalendar" class="btn-close-calendar">{{ _t('Close') }}</button>
           </div>
         </div>
 
@@ -4132,12 +4192,12 @@ window.healthPWA = {
           <div class="calendar-modal future-bookings-modal">
             <div class="future-bookings-top-bar">
               <button @click="toggleFutureBookings" class="btn-close-modal">
-                <span>Close</span>
+                <span>{{ _t('Close') }}</span>
               </button>
             </div>
 
             <div class="future-bookings-header">
-              <h3>Upcoming Bookings</h3>
+              <h3>{{ _t('Upcoming Bookings') }}</h3>
             </div>
 
             <div class="future-bookings-content">
@@ -4148,7 +4208,7 @@ window.healthPWA = {
 
               <div v-else-if="Object.keys(futureBookingsByDate).length === 0" class="empty-state">
                 <i class="material-icons">calendar_today</i>
-                <p>No upcoming bookings scheduled</p>
+                <p>{{ _t('No upcoming bookings scheduled') }}</p>
               </div>
 
               <div v-else class="grouped-bookings-list">
@@ -4176,9 +4236,9 @@ window.healthPWA = {
                       <!-- Service type with action buttons inline -->
                       <div class="booking-service-row">
                     <p v-if="booking.service_type" class="booking-service-type">
-                      {{ booking.service_type }}
+                      {{ displayDbValue(booking.service_type) }}
                       <span v-if="booking.lead_staff_name" class="booking-lead-inline">
-                        ({{ booking.lead_staff_name }})
+                        ({{ displayDbValue(booking.lead_staff_name) }})
                       </span>
                     </p>
                         <div class="booking-action-icons">
@@ -4193,7 +4253,7 @@ window.healthPWA = {
 
                       <!-- Lead nurse name -->
                       <div v-if="booking.lead_staff_name" class="booking-lead-nurse">
-                        {{ booking.lead_staff_name }}
+                        {{ displayDbValue(booking.lead_staff_name) }}
                       </div>
                     </div>
                   </div>
@@ -4599,7 +4659,7 @@ window.healthPWA = {
                     class="order-item"
                     @click="$emit('navigate', 'order', {id: order.id})">
                     <div class="order-content">
-                      <h4>{{ order.service_type_name || _t('Service Order') }}</h4>
+                      <h4>{{ displayDbValue(order.service_type_name || _t('Service Order')) }}</h4>
                       <p>{{ formatDate(order.scheduled_datetime) }}</p>
                     </div>
                     <div class="order-status">
@@ -4735,6 +4795,7 @@ window.healthPWA = {
           isLoading,
           error,
           formatDateTime,
+          displayDbValue,
           getStatusBadgeClass,
           getStatusLabel,
           viewOrder
@@ -4745,7 +4806,7 @@ window.healthPWA = {
           <!-- View Toggle Header -->
           <div class="view-toggle-header" style="padding: 1rem; background: #FBE3E1; border: none; margin-bottom: 1rem; border-radius: 12px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <h3 style="margin: 0; color: #333; font-weight: 600;">Upcoming Bookings</h3>
+              <h3 style="margin: 0; color: #333; font-weight: 600;">{{ _t('Upcoming Bookings') }}</h3>
               <button @click="$emit('navigate', 'past-bookings')" class="btn btn-secondary btn-sm" style="background: #E53935; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px;">
                 View Past Bookings
               </button>
@@ -4790,7 +4851,7 @@ window.healthPWA = {
               </div>
               <div class="list-item-content">
                 <h4 class="list-item-title">
-                  {{ order.service_type_name || 'Service Order' }} - {{ order.patient_name || 'Unknown Patient' }} <span v-if="order.patient_code" style="font-weight: 400; font-size: 12px; color: #666;">{{ order.patient_code }}</span>
+                  {{ displayDbValue(order.service_type_name || _t('Service Order')) }} - {{ order.patient_name || _t('Unknown Patient') }} <span v-if="order.patient_code" style="font-weight: 400; font-size: 12px; color: #666;">{{ order.patient_code }}</span>
                 </h4>
                 <p class="list-item-subtitle">
                   Scheduled: {{ formatDateTime(order.scheduled_datetime) }}
@@ -4898,6 +4959,7 @@ window.healthPWA = {
           isLoading,
           error,
           formatDateTime,
+          displayDbValue,
           getStatusBadgeClass,
           getStatusLabel,
           viewOrder
@@ -4953,7 +5015,7 @@ window.healthPWA = {
               </div>
               <div class="list-item-content">
                 <h4 class="list-item-title">
-                  {{ order.service_type_name || 'Service Order' }} - {{ order.patient_name || 'Unknown Patient' }} <span v-if="order.patient_code" style="font-weight: 400; font-size: 12px; color: #666;">{{ order.patient_code }}</span>
+                  {{ displayDbValue(order.service_type_name || _t('Service Order')) }} - {{ order.patient_name || _t('Unknown Patient') }} <span v-if="order.patient_code" style="font-weight: 400; font-size: 12px; color: #666;">{{ order.patient_code }}</span>
                 </h4>
                 <p class="list-item-subtitle">
                   Scheduled: {{ formatDateTime(order.scheduled_datetime) }}
@@ -5087,6 +5149,10 @@ window.healthPWA = {
               console.log('Retrieved order data:', orderData);
 
               if (orderData) {
+                orderData.goal_of_care = cleanDisplayValue(orderData.goal_of_care);
+                orderData.required_equipment = cleanDisplayValue(orderData.required_equipment);
+                orderData.intake_notes = cleanDisplayValue(orderData.intake_notes);
+                orderData.diagnosis = cleanDisplayValue(orderData.diagnosis);
                 order.value = orderData;
                 console.log('Loaded order details:', orderData);
 
@@ -5158,7 +5224,7 @@ window.healthPWA = {
 
         const handleStartService = async () => {
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot start service while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot start service while offline'), 'error');
             return;
           }
 
@@ -5178,16 +5244,16 @@ window.healthPWA = {
               order.value.state = data.data.state;
               order.value.actual_start_datetime = data.data.actual_start_datetime;
               startTimer();
-              window.healthPWA.showNotification(data.data.message || 'Service started successfully!', 'success');
+              window.healthPWA.showNotification(_t(data.data.message || 'Service started successfully!'), 'success');
 
               // Reload order data
               await loadOrder();
             } else {
-              window.healthPWA.showNotification('Failed to start service: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to start service: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Start service error:', err);
-            window.healthPWA.showNotification('Error starting service: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error starting service: ') + err.message, 'error');
           }
         };
 
@@ -5203,7 +5269,7 @@ window.healthPWA = {
             console.log('❌ Clinical notes validation FAILED');
             console.log('clinical_notes is empty or whitespace:', !clinicalNotesData.value.clinical_notes || !clinicalNotesData.value.clinical_notes.trim());
             window.healthPWA.showNotification(
-              'Please fill in Clinical Notes before completing the service. Click "Clinical Notes" button to add them.',
+              _t('Please fill in Clinical Notes before completing the service. Click "Clinical Notes" button to add them.'),
               'warning',
               7000
             );
@@ -5224,14 +5290,14 @@ window.healthPWA = {
 
         const handleCompleteService = async () => {
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot complete service while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot complete service while offline'), 'error');
             return;
           }
 
           // Validate payment method selection when "Pay Now" is chosen
           if (paymentWizardData.value.payment_choice === 'pay_now') {
             if (!paymentWizardData.value.payment_method || paymentWizardData.value.payment_method.trim() === '') {
-              alert('Please select a Payment Method before collecting payment.');
+              alert(_t('Please select a Payment Method before collecting payment.'));
               return;
             }
           }
@@ -5262,7 +5328,7 @@ window.healthPWA = {
               showPaymentWizard.value = false;
 
               // Show success notification
-              window.healthPWA.showNotification(data.data.message || 'Service completed successfully!', 'success');
+              window.healthPWA.showNotification(_t(data.data.message || 'Service completed successfully!'), 'success');
 
               // Update local order state immediately for UI responsiveness
               order.value.state = data.data.state;
@@ -5285,11 +5351,11 @@ window.healthPWA = {
               // Reload full order data from server to get latest information
               await loadOrder();
             } else {
-              window.healthPWA.showNotification('Failed to complete service: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to complete service: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Complete service error:', err);
-            window.healthPWA.showNotification('Error completing service: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error completing service: ') + err.message, 'error');
           }
         };
 
@@ -5298,7 +5364,7 @@ window.healthPWA = {
           console.log('clinicalNotesData.value:', clinicalNotesData.value);
 
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot save clinical notes while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot save clinical notes while offline'), 'error');
             return;
           }
 
@@ -5317,7 +5383,7 @@ window.healthPWA = {
 
             if (data.success) {
               console.log('✅ Clinical notes saved successfully');
-              window.healthPWA.showNotification(data.data.message || 'Clinical notes saved successfully!', 'success');
+              window.healthPWA.showNotification(_t(data.data.message || 'Clinical notes saved successfully'), 'success');
               showClinicalNotes.value = false;
 
               // Update local clinicalNotesData state immediately
@@ -5363,18 +5429,18 @@ window.healthPWA = {
               }
             } else {
               console.log('❌ Clinical notes API returned success=false, error:', data.error);
-              window.healthPWA.showNotification('Failed to save clinical notes: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to save clinical notes: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Save clinical notes error:', err);
-            window.healthPWA.showNotification('Error saving clinical notes: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error saving clinical notes: ') + err.message, 'error');
           }
           console.log('=== saveClinicalNotes completed ===');
         };
 
         const completeServiceWithoutQuote = async () => {
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot complete service while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot complete service while offline'), 'error');
             return;
           }
 
@@ -5397,7 +5463,7 @@ window.healthPWA = {
               stopTimer();
 
               // Show success notification
-              window.healthPWA.showNotification(data.data.message || 'Service completed successfully!', 'success');
+              window.healthPWA.showNotification(_t(data.data.message || 'Service completed successfully!'), 'success');
 
               // Update local order state immediately for UI responsiveness
               order.value.state = data.data.state;
@@ -5423,18 +5489,18 @@ window.healthPWA = {
                 checkNextVisitAndShowModal();
               }, 500);
             } else {
-              window.healthPWA.showNotification('Failed to complete service: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to complete service: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Complete service without quote error:', err);
-            window.healthPWA.showNotification('Error completing service: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error completing service: ') + err.message, 'error');
           }
         };
 
         // API Functions for Next Visit Workflow
         const checkNextVisitAndShowModal = async () => {
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot check next visit while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot check next visit while offline'), 'error');
             return;
           }
 
@@ -5472,27 +5538,27 @@ window.healthPWA = {
                 showNextVisitModalA.value = true;
               }
             } else {
-              window.healthPWA.showNotification('Failed to check next visit status', 'error');
+              window.healthPWA.showNotification(_t('Failed to check next visit status'), 'error');
             }
           } catch (err) {
             console.error('Check next visit error:', err);
-            window.healthPWA.showNotification('Error checking next visit: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error checking next visit: ') + err.message, 'error');
           }
         };
 
         const submitNoFutureVisit = async () => {
           if (!nextVisitFormData.value.no_future_visit_reason) {
-            window.healthPWA.showNotification('Please select a reason', 'error');
+            window.healthPWA.showNotification(_t('Please select a reason'), 'error');
             return;
           }
 
           if (nextVisitFormData.value.no_future_visit_reason === 'other' && !nextVisitFormData.value.other_reason_text) {
-            window.healthPWA.showNotification('Please enter explanation for "Other" reason', 'error');
+            window.healthPWA.showNotification(_t('Please enter explanation for "Other" reason'), 'error');
             return;
           }
 
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot submit while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot submit while offline'), 'error');
             return;
           }
 
@@ -5517,7 +5583,7 @@ window.healthPWA = {
             console.log('No future visit response:', data);
 
             if (data.success) {
-              window.healthPWA.showNotification('Noted: Patient does not need future visits', 'success');
+              window.healthPWA.showNotification(_t('Noted: Patient does not need future visits'), 'success');
               showNextVisitModalA.value = false;
               // Reset form
               nextVisitFormData.value.no_future_visit_reason = '';
@@ -5526,38 +5592,38 @@ window.healthPWA = {
               // Close modal and navigate back to today's bookings
               emit('navigate', 'today');
             } else {
-              window.healthPWA.showNotification('Failed to submit: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to submit: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Submit no future visit error:', err);
-            window.healthPWA.showNotification('Error submitting: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error submitting: ') + err.message, 'error');
           }
         };
 
         const scheduleNextVisit = async () => {
           // Validation
           if (!nextVisitFormData.value.scheduled_date) {
-            window.healthPWA.showNotification('Please select a date', 'error');
+            window.healthPWA.showNotification(_t('Please select a date'), 'error');
             return;
           }
 
           if (!nextVisitFormData.value.scheduled_time) {
-            window.healthPWA.showNotification('Please select a time', 'error');
+            window.healthPWA.showNotification(_t('Please select a time'), 'error');
             return;
           }
 
           if (!nextVisitFormData.value.quote_items || nextVisitFormData.value.quote_items.length === 0) {
-            window.healthPWA.showNotification('Please add at least one service', 'error');
+            window.healthPWA.showNotification(_t('Please add at least one service'), 'error');
             return;
           }
 
           if (!nextVisitFormData.value.assigned_nurse_id) {
-            window.healthPWA.showNotification('Please assign a nurse', 'error');
+            window.healthPWA.showNotification(_t('Please assign a nurse'), 'error');
             return;
           }
 
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot schedule while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot schedule while offline'), 'error');
             return;
           }
 
@@ -5580,7 +5646,7 @@ window.healthPWA = {
             console.log('Schedule next visit response:', data);
 
             if (data.success) {
-              window.healthPWA.showNotification('Next visit scheduled successfully!', 'success');
+              window.healthPWA.showNotification(_t('Next visit scheduled successfully!'), 'success');
               showNextVisitModalB.value = false;
               // Reset form
               nextVisitFormData.value = {
@@ -5593,11 +5659,11 @@ window.healthPWA = {
                 need_follow_up: false
               };
             } else {
-              window.healthPWA.showNotification('Failed to schedule: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to schedule: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Schedule next visit error:', err);
-            window.healthPWA.showNotification('Error scheduling: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error scheduling: ') + err.message, 'error');
           }
         };
 
@@ -5612,7 +5678,7 @@ window.healthPWA = {
             if (!file) return;
 
             if (!props.isOnline) {
-              window.healthPWA.showNotification('Cannot upload images while offline', 'error');
+              window.healthPWA.showNotification(_t('Cannot upload images while offline'), 'error');
               return;
             }
 
@@ -5629,13 +5695,13 @@ window.healthPWA = {
 
               if (data.success) {
                 capturedImages.value.push(data.data);
-                window.healthPWA.showNotification('Image uploaded successfully!', 'success');
+                window.healthPWA.showNotification(_t('Image uploaded successfully!'), 'success');
               } else {
-                window.healthPWA.showNotification('Failed to upload image: ' + data.error, 'error');
+                window.healthPWA.showNotification(_t('Failed to upload image: ') + displayError(data.error), 'error');
               }
             } catch (err) {
               console.error('Image upload error:', err);
-              window.healthPWA.showNotification('Error uploading image: ' + err.message, 'error');
+              window.healthPWA.showNotification(_t('Error uploading image: ') + err.message, 'error');
             }
           };
 
@@ -5653,7 +5719,7 @@ window.healthPWA = {
 
           if (!props.isOnline) {
             console.log('❌ loadQuote: Not online');
-            window.healthPWA.showNotification('Cannot load invoice while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot load invoice while offline'), 'error');
             return;
           }
 
@@ -5677,13 +5743,13 @@ window.healthPWA = {
             } else {
               console.log('❌ Quote API returned success=false, error:', data.error);
               if (showModal) {
-                window.healthPWA.showNotification('No quote found for this order', 'warning');
+                window.healthPWA.showNotification(_t('No quote found for this order'), 'warning');
               }
             }
           } catch (err) {
             console.error('Load quote error:', err);
             if (showModal) {
-              window.healthPWA.showNotification('Error loading quote: ' + err.message, 'error');
+              window.healthPWA.showNotification(_t('Error loading quote: ') + err.message, 'error');
             }
           }
           console.log('=== loadQuote completed ===');
@@ -5693,7 +5759,7 @@ window.healthPWA = {
           console.log('=== saveQuoteWithComments called ===');
 
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot save quote while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot save quote while offline'), 'error');
             return;
           }
 
@@ -5718,21 +5784,21 @@ window.healthPWA = {
               quoteVerified.value = true;
               showInvoice.value = false;
               window.healthPWA.showNotification(
-                'Invoice verified and saved successfully!',
+                _t('Invoice verified and saved successfully!'),
                 'success',
                 3000
               );
             } else {
               console.log('❌ Quote save failed:', data.error);
               window.healthPWA.showNotification(
-                'Failed to save quote: ' + (data.error || 'Unknown error'),
+                _t('Failed to save quote: ') + displayError(data.error || 'Unknown error'),
                 'error'
               );
             }
           } catch (err) {
             console.error('Save quote error:', err);
             window.healthPWA.showNotification(
-              'Error saving quote: ' + err.message,
+              _t('Error saving quote: ') + err.message,
               'error'
             );
           }
@@ -5741,7 +5807,7 @@ window.healthPWA = {
 
         const loadProductCatalog = async () => {
           if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot load catalog while offline', 'error');
+            window.healthPWA.showNotification(_t('Cannot load catalog while offline'), 'error');
             return;
           }
 
@@ -5779,13 +5845,13 @@ window.healthPWA = {
             if (data.success && data.data.quote) {
               quoteData.value = data.data.quote;
               showProductCatalog.value = false;
-              window.healthPWA.showNotification('Product added successfully!', 'success');
+              window.healthPWA.showNotification(_t('Product added successfully!'), 'success');
             } else {
-              window.healthPWA.showNotification('Failed to add product: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to add product: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Add product error:', err);
-            window.healthPWA.showNotification('Error adding product: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error adding product: ') + err.message, 'error');
           }
         };
 
@@ -5811,13 +5877,13 @@ window.healthPWA = {
             if (data.success && data.data.quote) {
               quoteData.value = data.data.quote;
               editingLine.value = null;
-              window.healthPWA.showNotification('Line updated successfully!', 'success');
+              window.healthPWA.showNotification(_t('Line updated successfully!'), 'success');
             } else {
-              window.healthPWA.showNotification('Failed to update line: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to update line: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Update line error:', err);
-            window.healthPWA.showNotification('Error updating line: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error updating line: ') + err.message, 'error');
           }
         };
 
@@ -5842,19 +5908,19 @@ window.healthPWA = {
 
             if (data.success && data.data.quote) {
               quoteData.value = data.data.quote;
-              window.healthPWA.showNotification('Line removed successfully!', 'success');
+              window.healthPWA.showNotification(_t('Line removed successfully!'), 'success');
             } else {
-              window.healthPWA.showNotification('Failed to remove line: ' + (data.error || 'Unknown error'), 'error');
+              window.healthPWA.showNotification(_t('Failed to remove line: ') + displayError(data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Remove line error:', err);
-            window.healthPWA.showNotification('Error removing line: ' + err.message, 'error');
+            window.healthPWA.showNotification(_t('Error removing line: ') + err.message, 'error');
           }
         };
 
         const openMapLocation = () => {
           if (!order.value || !order.value.address) {
-            window.healthPWA.showNotification('No address available', 'warning');
+            window.healthPWA.showNotification(_t('No address available'), 'warning');
             return;
           }
 
@@ -5937,6 +6003,9 @@ window.healthPWA = {
           formatDateTime,
           getStatusLabel,
           getStatusBadgeClass,
+          cleanDisplayValue,
+          displayDbValue,
+          displayError,
           quoteVerified,
           quoteComments,
           saveQuoteWithComments,
@@ -5949,7 +6018,8 @@ window.healthPWA = {
           noFutureVisitReasons,
           checkNextVisitAndShowModal,
           submitNoFutureVisit,
-          scheduleNextVisit
+          scheduleNextVisit,
+          _t
         };
       },
       template: `
@@ -5959,7 +6029,7 @@ window.healthPWA = {
             <div class="loading-spinner">
               <div class="spinner"></div>
             </div>
-            <p>Loading order details...</p>
+            <p>{{ _t('Loading details...') }}</p>
           </div>
 
           <!-- Error State -->
@@ -5967,16 +6037,16 @@ window.healthPWA = {
             <div class="error-icon">
               <i class="material-icons">error</i>
             </div>
-            <h3>Error Loading Order</h3>
+            <h3>{{ _t('Error Loading Order') }}</h3>
             <p>{{ error }}</p>
-            <button @click="$emit('navigate', 'orders')" class="btn btn-primary">Back to Orders</button>
+            <button @click="$emit('navigate', 'orders')" class="btn btn-primary">{{ _t('Back to Orders') }}</button>
           </div>
 
           <!-- Order Details -->
           <div v-else-if="order" class="order-details">
             <!-- Client Header - Mobilesample clean design -->
             <div class="order-client-header">
-              <h2>{{ order.patient?.name || order.patient_name || 'Unknown Client' }} <span v-if="order.patient_code || order.patient?.patient_code" style="font-weight: 400; font-size: 14px; color: #666;">{{ order.patient_code || order.patient?.patient_code }}</span></h2>
+              <h2>{{ order.patient?.name || order.patient_name || _t('Unknown Client') }} <span v-if="order.patient_code || order.patient?.patient_code" style="font-weight: 400; font-size: 14px; color: #666;">{{ order.patient_code || order.patient?.patient_code }}</span></h2>
               <div class="order-client-meta">
                 <span v-if="order.name" class="order-number">
                   📋 {{ order.name }}
@@ -5995,10 +6065,10 @@ window.healthPWA = {
                    class="order-timer-card">
                 <!-- Timer Header: Label on left, Live indicator on right -->
                 <div class="timer-header">
-                  <span class="timer-label">Elapsed Time</span>
+                  <span class="timer-label">{{ _t('Elapsed Time') }}</span>
                   <div class="timer-status">
                     <div class="status-indicator"></div>
-                    <span>Live</span>
+                    <span>{{ _t('Live') }}</span>
                   </div>
                 </div>
 
@@ -6010,7 +6080,7 @@ window.healthPWA = {
                 <!-- Started Timestamp: Bottom with divider -->
                 <div v-if="order.actual_start_datetime" class="timer-started">
                   <div class="timer-started-dot"></div>
-                  <span class="timer-started-text">Started {{ formatDateTime(order.actual_start_datetime) }}</span>
+                  <span class="timer-started-text">{{ _t('Started') }} {{ formatDateTime(order.actual_start_datetime) }}</span>
                 </div>
               </div>
             </div>
@@ -6022,7 +6092,7 @@ window.healthPWA = {
                       class="btn btn-action btn-location"
                       :disabled="!order.address">
                 <i class="material-icons">location_on</i>
-                <span>Location Map</span>
+                <span>{{ _t('Location Map') }}</span>
               </button>
 
               <!-- Start Service Button (only for assigned state) -->
@@ -6031,7 +6101,7 @@ window.healthPWA = {
                       class="btn btn-action btn-start"
                       :disabled="!isOnline">
                 <i class="material-icons">play_arrow</i>
-                <span>Start Service</span>
+                <span>{{ _t('Start Service') }}</span>
               </button>
 
               <!-- Clinical Notes Button -->
@@ -6254,10 +6324,10 @@ window.healthPWA = {
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button @click="showClinicalNotes = false" class="btn btn-secondary">Cancel</button>
+                  <button @click="showClinicalNotes = false" class="btn btn-secondary">{{ _t('Cancel') }}</button>
                   <button @click="saveClinicalNotes" class="btn btn-primary" :disabled="!isOnline">
                     <i class="material-icons">save</i>
-                    Save Notes
+                    {{ _t('Save Notes') }}
                   </button>
                 </div>
               </div>
@@ -6269,7 +6339,7 @@ window.healthPWA = {
                 <div class="modal-header">
                   <h3>
                     <i class="material-icons">receipt</i>
-                    Invoice / Quote <span v-if="quoteData" style="font-weight: 400; font-size: 14px; color: #666; margin-left: 4px;">{{ quoteData.name }}</span>
+                    {{ _t('Invoice / Quote') }} <span v-if="quoteData" style="font-weight: 400; font-size: 14px; color: #666; margin-left: 4px;">{{ quoteData.name }}</span>
                   </h3>
                   <button @click="showInvoice = false" class="modal-close">
                     <i class="material-icons">close</i>
@@ -6290,7 +6360,7 @@ window.healthPWA = {
                     </div>
                     <button @click="showProductCatalog = true; loadProductCatalog()" class="btn btn-sm btn-primary">
                       <i class="material-icons">add_shopping_cart</i>
-                      Add Product
+                      {{ _t('Add Product') }}
                     </button>
                   </div>
 
@@ -6298,11 +6368,11 @@ window.healthPWA = {
                     <table class="invoice-table">
                       <thead>
                         <tr>
-                          <th>Product</th>
-                          <th>Qty</th>
-                          <th>Price</th>
-                          <th>Total</th>
-                          <th>Actions</th>
+                          <th>{{ _t('Product') }}</th>
+                          <th>{{ _t('Qty') }}</th>
+                          <th>{{ _t('Price') }}</th>
+                          <th>{{ _t('Total') }}</th>
+                          <th>{{ _t('Actions') }}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -6360,15 +6430,15 @@ window.healthPWA = {
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="4">Subtotal</td>
+                          <td colspan="4">{{ _t('Subtotal') }}</td>
                           <td>{{ quoteData.amount_untaxed.toLocaleString() }}</td>
                         </tr>
                         <tr>
-                          <td colspan="4">Tax</td>
+                          <td colspan="4">{{ _t('Tax') }}</td>
                           <td>{{ quoteData.amount_tax.toLocaleString() }}</td>
                         </tr>
                         <tr class="total-row">
-                          <td colspan="4"><strong>Total</strong></td>
+                          <td colspan="4"><strong>{{ _t('Total') }}</strong></td>
                           <td><strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong></td>
                         </tr>
                       </tfoot>
@@ -6403,7 +6473,7 @@ window.healthPWA = {
                 <div class="modal-header">
                   <h3>
                     <i class="material-icons">shopping_cart</i>
-                    Product Catalog
+                    {{ _t('Product Catalog') }}
                   </h3>
                   <button @click="showProductCatalog = false" class="modal-close">
                     <i class="material-icons">close</i>
@@ -6418,7 +6488,7 @@ window.healthPWA = {
                     <input
                       type="text"
                       class="search-input"
-                      placeholder="Search products..."
+                      :placeholder="_t('Search products...')"
                       v-model="productSearch"
                       @input="loadProductCatalog">
                   </div>
@@ -6431,7 +6501,7 @@ window.healthPWA = {
                          @click="addProductToQuote(product)">
                       <div class="product-info">
                         <h4>{{ product.name }}</h4>
-                        <p v-if="product.code">Code: {{ product.code }}</p>
+                        <p v-if="product.code">{{ _t('Code:') }} {{ product.code }}</p>
                         <p class="product-price">{{ product.price.toLocaleString() }} {{ product.currency }}</p>
                       </div>
                       <button class="btn btn-sm btn-primary">
@@ -6442,11 +6512,11 @@ window.healthPWA = {
 
                   <div v-if="productCatalog.length === 0" class="empty-state">
                     <i class="material-icons">inventory_2</i>
-                    <p>No products found</p>
+                    <p>{{ _t('No products found') }}</p>
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button @click="showProductCatalog = false" class="btn btn-secondary">Close</button>
+                  <button @click="showProductCatalog = false" class="btn btn-secondary">{{ _t('Close') }}</button>
                 </div>
               </div>
             </div>
@@ -6457,7 +6527,7 @@ window.healthPWA = {
                 <div class="modal-header">
                   <h3>
                     <i class="material-icons">map</i>
-                    Location Map
+                    {{ _t('Location Map') }}
                   </h3>
                   <button @click="showMap = false" class="modal-close">
                     <i class="material-icons">close</i>
@@ -6487,7 +6557,7 @@ window.healthPWA = {
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button @click="showMap = false" class="btn btn-secondary">Close</button>
+                  <button @click="showMap = false" class="btn btn-secondary">{{ _t('Close') }}</button>
                 </div>
               </div>
             </div>

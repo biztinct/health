@@ -136,6 +136,10 @@
             'health_crm/static/src/xml/crm_activity_list.xml',
             'health_crm/static/src/scss/crm_activity_list.scss',
             'health_crm/static/src/scss/crm_activity_view.scss',
+            # Contact Timeline widget
+            'health_crm/static/src/js/contact_timeline.js',
+            'health_crm/static/src/xml/contact_timeline.xml',
+            'health_crm/static/src/scss/contact_timeline.scss',
         ],
         'web.assets_backend_lazy': [
             'health_crm/static/src/js/crm_activity_view.js',

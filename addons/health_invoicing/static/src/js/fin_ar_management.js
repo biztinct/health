@@ -18,6 +18,7 @@ class FinARManagement extends Component {
             name: _t("Collect Payment"),
             res_model: "health.payment.collection.wizard",
             view_mode: "form",
+            views: [[false, "form"]],
             target: "new",
         });
     }

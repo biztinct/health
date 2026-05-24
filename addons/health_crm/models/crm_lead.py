@@ -1639,6 +1639,7 @@ class HealthLead(models.Model):
             'name': _('Log Activity for: %s') % self.name,
             'res_model': 'mail.activity.schedule',
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'new',
             'context': {
                 'active_model': 'crm.lead',
@@ -2084,6 +2085,123 @@ class HealthLead(models.Model):
                 'dialog_size': 'medium',
             },
         }
+
+    # =========================================================================
+    # CRM CENTER — CONTACT TIMELINE
+    # =========================================================================
+
+    def get_contact_timeline(self):
+        """Return a unified, sorted list of historical events for this contact."""
+        self.ensure_one()
+        events = []
+
+        if self.create_date:
+            channel = ''
+            if self.mode_of_contact:
+                channel = dict(self._fields['mode_of_contact'].selection or []).get(self.mode_of_contact, '')
+            events.append({
+                'type': 'created',
+                'date': self.create_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'title': 'Contact Created',
+                'detail': channel or 'New Contact',
+                'icon': 'fa-plus-circle',
+            })
+
+        status_field = self.env['ir.model.fields']._get('crm.lead', 'contact_status')
+        if status_field:
+            trackings = self.env['mail.tracking.value'].search([
+                ('field_id', '=', status_field.id),
+                ('mail_message_id.model', '=', 'crm.lead'),
+                ('mail_message_id.res_id', '=', self.id),
+            ], order='create_date asc')
+            for tv in trackings:
+                old_val = tv.old_value_char or ''
+                new_val = tv.new_value_char or ''
+                events.append({
+                    'type': 'status',
+                    'date': tv.create_date.strftime('%Y-%m-%d %H:%M:%S'),
+                    'title': new_val or 'Status Change',
+                    'detail': '%s → %s' % (old_val, new_val) if old_val else new_val,
+                    'icon': 'fa-exchange',
+                })
+
+        if self.escalation_datetime:
+            target = ''
+            if self.escalated_to:
+                target = dict(self._fields['escalated_to'].selection or []).get(self.escalated_to, '')
+            events.append({
+                'type': 'escalation',
+                'date': self.escalation_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                'title': 'Escalated',
+                'detail': 'To %s' % target if target else 'Escalated',
+                'icon': 'fa-arrow-up',
+            })
+
+        if self.referral_datetime and self.referred_to_duty_doctor:
+            events.append({
+                'type': 'escalation',
+                'date': self.referral_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                'title': 'Referred',
+                'detail': 'To Duty Doctor',
+                'icon': 'fa-user-md',
+            })
+
+        activities = self.env['mail.activity'].search([
+            ('res_model', '=', 'crm.lead'),
+            ('res_id', '=', self.id),
+        ], order='date_deadline asc')
+        for act in activities:
+            act_type_name = act.activity_type_id.name if act.activity_type_id else 'Activity'
+            icon_map = {'Call': 'fa-phone', 'Email': 'fa-envelope', 'Meeting': 'fa-users', 'To-Do': 'fa-check-square'}
+            events.append({
+                'type': 'activity',
+                'date': act.date_deadline.strftime('%Y-%m-%d 00:00:00') if act.date_deadline else '',
+                'title': act_type_name,
+                'detail': act.summary or act.note or '',
+                'icon': icon_map.get(act_type_name, 'fa-clock-o'),
+                'done': False,
+            })
+
+        done_msgs = self.env['mail.message'].search([
+            ('model', '=', 'crm.lead'),
+            ('res_id', '=', self.id),
+            ('subtype_id.name', 'ilike', 'Activity Done'),
+        ], order='date asc')
+        for msg in done_msgs:
+            events.append({
+                'type': 'activity',
+                'date': msg.date.strftime('%Y-%m-%d %H:%M:%S') if msg.date else '',
+                'title': 'Activity Done',
+                'detail': msg.body and msg.body[:80] or '',
+                'icon': 'fa-check',
+                'done': True,
+            })
+
+        fso_domain = [('state', 'not in', ['cancelled'])]
+        if self.patient_id:
+            fso_domain.append(('patient_id', '=', self.patient_id.id))
+        elif hasattr(self, 'crm_lead_id'):
+            fso_domain.append(('crm_lead_id', '=', self.id))
+        else:
+            fso_domain = [('id', '=', 0)]
+
+        bookings = self.env['health.fieldservice.order'].search(fso_domain, order='create_date asc')
+        state_labels = dict(self.env['health.fieldservice.order']._fields['state'].selection or [])
+        for bk in bookings:
+            stype = ''
+            if bk.service_type:
+                stype = dict(self.env['health.fieldservice.order']._fields['service_type'].selection or []).get(bk.service_type, '')
+            events.append({
+                'type': 'booking',
+                'date': bk.create_date.strftime('%Y-%m-%d %H:%M:%S') if bk.create_date else '',
+                'title': bk.name or 'Booking',
+                'detail': '%s — %s' % (stype, state_labels.get(bk.state, bk.state or '')) if stype else state_labels.get(bk.state, ''),
+                'icon': 'fa-calendar',
+                'booking_id': bk.id,
+            })
+
+        events.sort(key=lambda e: e.get('date', ''))
+        return events
 
     # =========================================================================
     # CRM CENTER — CONTACT HEADER

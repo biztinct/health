@@ -19,10 +19,10 @@ msgstr ""
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.service_worker_js
 msgid ""
-"// Health PWA Service Worker v1.0.73\n"
+"// Health PWA Service Worker v1.0.82\n"
 "// IMPORTANT: Increment version number when deploying updates!\n"
 "\n"
-"const CACHE_VERSION = '1.0.73';\n"
+"const CACHE_VERSION = '1.0.82';\n"
 "const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;\n"
 "const OFFLINE_URL = '/health_pwa/offline';\n"
 "const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;\n"
@@ -381,7 +381,7 @@ msgstr ""
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
-msgid "1.0.73"
+msgid "1.0.82"
 msgstr ""
 
 #. module: health_pwa

@@ -156,10 +156,25 @@
         sequence="10"/>
 
     <!-- Reports Menu -->
-    <menuitem 
+    <menuitem
         id="menu_health_invoicing_reports"
         name="Reports"
         parent="health_base.menu_healthcare_billing"
         sequence="50"/>
+
+    <!-- ===== Operations Center: Collections ===== -->
+    <record id="action_ops_cash_collections" model="ir.actions.act_window">
+        <field name="name">Cash Pending Delivery</field>
+        <field name="res_model">health.payment.transaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('status', '=', 'pending_delivery')]</field>
+        <field name="context">{'active_center': 'ops_center', 'search_default_pending_delivery': 1}</field>
+    </record>
+
+    <menuitem id="menu_ops_collections"
+              name="Collections"
+              parent="health_fieldservice.menu_ops_center_root"
+              action="action_ops_cash_collections"
+              sequence="45"/>
 
 </odoo>

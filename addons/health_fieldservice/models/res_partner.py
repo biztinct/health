@@ -43,23 +43,51 @@ class ResPartner(models.Model):
     has_outstanding_invoice = fields.Boolean(
         compute='_compute_collection_payment_flags', store=False,
     )
+    collection_status = fields.Selection([
+        ('none', 'None'), ('collected', 'Collected'), ('pending', 'Pending'),
+    ], compute='_compute_collection_payment_flags', store=False)
+    invoice_status = fields.Selection([
+        ('none', 'None'), ('paid', 'Paid'), ('unpaid', 'Unpaid'),
+    ], compute='_compute_collection_payment_flags', store=False)
 
     def _compute_collection_payment_flags(self):
         for partner in self:
-            if partner.is_patient:
-                partner.has_pending_collection = bool(self.env['health.payment.transaction'].search_count([
+            if not partner.is_patient:
+                partner.has_pending_collection = False
+                partner.has_outstanding_invoice = False
+                partner.collection_status = 'none'
+                partner.invoice_status = 'none'
+                continue
+
+            pending_count = self.env['health.payment.transaction'].search_count([
+                ('patient_id', '=', partner.id),
+                ('status', '=', 'pending_delivery'),
+            ], limit=1)
+            partner.has_pending_collection = bool(pending_count)
+            if pending_count:
+                partner.collection_status = 'pending'
+            else:
+                any_count = self.env['health.payment.transaction'].search_count([
                     ('patient_id', '=', partner.id),
-                    ('status', '=', 'pending_delivery'),
-                ], limit=1))
-                partner.has_outstanding_invoice = bool(self.env['account.move'].search_count([
+                ], limit=1)
+                partner.collection_status = 'collected' if any_count else 'none'
+
+            unpaid_count = self.env['account.move'].search_count([
+                ('partner_id', '=', partner.id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),
+                ('payment_state', 'in', ('not_paid', 'partial')),
+            ], limit=1)
+            partner.has_outstanding_invoice = bool(unpaid_count)
+            if unpaid_count:
+                partner.invoice_status = 'unpaid'
+            else:
+                any_inv = self.env['account.move'].search_count([
                     ('partner_id', '=', partner.id),
                     ('move_type', '=', 'out_invoice'),
                     ('state', '=', 'posted'),
-                    ('payment_state', 'in', ('not_paid', 'partial')),
-                ], limit=1))
-            else:
-                partner.has_pending_collection = False
-                partner.has_outstanding_invoice = False
+                ], limit=1)
+                partner.invoice_status = 'paid' if any_inv else 'none'
 
     # Client timeline
     timeline_html = fields.Html(
@@ -428,37 +456,56 @@ class ResPartner(models.Model):
     def action_collect_cash(self):
         if not self.is_patient:
             raise UserError(_('Only patients have payment transactions.'))
-        transactions = self.env['health.payment.transaction'].search([
+        pending = self.env['health.payment.transaction'].search_count([
             ('patient_id', '=', self.id),
             ('status', '=', 'pending_delivery'),
-        ])
-        if not transactions:
-            raise UserError(_('No cash pending delivery for this client.'))
+        ], limit=1)
+        if pending:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Cash Pending Delivery'),
+                'res_model': 'health.payment.transaction',
+                'view_mode': 'list,form',
+                'target': 'current',
+                'domain': [('patient_id', '=', self.id), ('status', '=', 'pending_delivery')],
+            }
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Cash Pending Delivery'),
+            'name': _('Collection Records'),
             'res_model': 'health.payment.transaction',
             'view_mode': 'list,form',
             'target': 'current',
-            'domain': [('patient_id', '=', self.id), ('status', '=', 'pending_delivery')],
+            'domain': [('patient_id', '=', self.id)],
         }
 
     def action_register_client_payment(self):
         if not self.is_patient:
             raise UserError(_('Only patients have invoices.'))
-        invoices = self.env['account.move'].search([
+        unpaid = self.env['account.move'].search([
             ('partner_id', '=', self.id),
             ('move_type', '=', 'out_invoice'),
             ('state', '=', 'posted'),
             ('payment_state', 'in', ('not_paid', 'partial')),
         ])
-        if not invoices:
-            raise UserError(_('No outstanding invoices for this client.'))
-        if len(invoices) == 1:
-            return invoices.action_register_payment()
+        if unpaid:
+            if len(unpaid) == 1:
+                return unpaid.action_register_payment()
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Outstanding Invoices'),
+                'res_model': 'account.move',
+                'view_mode': 'list,form',
+                'target': 'current',
+                'domain': [
+                    ('partner_id', '=', self.id),
+                    ('move_type', '=', 'out_invoice'),
+                    ('state', '=', 'posted'),
+                    ('payment_state', 'in', ('not_paid', 'partial')),
+                ],
+            }
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Outstanding Invoices'),
+            'name': _('Invoices'),
             'res_model': 'account.move',
             'view_mode': 'list,form',
             'target': 'current',
@@ -466,6 +513,5 @@ class ResPartner(models.Model):
                 ('partner_id', '=', self.id),
                 ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
-                ('payment_state', 'in', ('not_paid', 'partial')),
             ],
         }

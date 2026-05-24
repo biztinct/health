@@ -39,6 +39,7 @@ const NAV_ACTIONS = {
     staff: "health_fieldservice.action_ops_staff_roster",
     roster: "health_fieldservice.action_assignment_web_timeline_view",
     calendar: "health_fieldservice.action_health_fieldservice_order",
+    collections: "health_invoicing.action_ops_cash_collections",
     workload: "health_fieldservice.action_staff_workload_dashboard",
     analytics: "health_fieldservice.action_staff_workload_dashboard",
 };

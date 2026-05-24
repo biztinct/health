@@ -1,0 +1,194 @@
+// ============================================================================
+// Contact Timeline — Horizontal fishbone spine
+// ============================================================================
+
+.ct-timeline-wrapper {
+    margin-top: 16px;
+    padding: 0 24px 16px;
+}
+
+// ===== HEADER =====
+.ct-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    &__icon {
+        font-size: 15px;
+        color: #78909C;
+    }
+
+    &__title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a2233;
+        letter-spacing: 0.3px;
+    }
+
+    &__count {
+        font-size: 11px;
+        font-weight: 600;
+        color: #90a4ae;
+        background: #f1f5f9;
+        border-radius: 10px;
+        padding: 2px 8px;
+    }
+}
+
+// ===== LOADING / EMPTY =====
+.ct-loading,
+.ct-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px;
+    color: #90a4ae;
+    font-size: 13px;
+}
+
+.ct-empty__icon {
+    font-size: 18px;
+}
+
+// ===== SCROLL CONTAINER =====
+.ct-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: 8px;
+
+    &::-webkit-scrollbar {
+        height: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #cfd8dc;
+        border-radius: 4px;
+    }
+}
+
+// ===== SPINE =====
+.ct-spine {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    min-width: max-content;
+    padding: 0 12px;
+    gap: 0;
+
+    &__line {
+        position: absolute;
+        top: 14px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent 0%, #b0bec5 4%, #b0bec5 96%, transparent 100%);
+        z-index: 0;
+    }
+}
+
+// ===== NODE =====
+.ct-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    min-width: 120px;
+    max-width: 160px;
+    padding: 0 6px;
+
+    &--clickable {
+        cursor: pointer;
+
+        .ct-node__card {
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            }
+        }
+    }
+
+    // ---- Dot ----
+    &__dot {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 2;
+        border: 2px solid #fff;
+    }
+
+    &__dot-icon {
+        font-size: 11px;
+        color: #fff;
+    }
+
+    // ---- Connector from dot down to card ----
+    &__dot::after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1px;
+        height: 10px;
+        background: #cfd8dc;
+    }
+
+    // ---- Card ----
+    &__card {
+        margin-top: 10px;
+        background: #fff;
+        border-radius: 8px;
+        padding: 8px 10px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        width: 100%;
+        transition: transform 150ms, box-shadow 150ms;
+    }
+
+    &__title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1a2233;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__detail {
+        font-size: 11px;
+        color: #607d8b;
+        margin-top: 2px;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    &__date {
+        font-size: 10px;
+        color: #90a4ae;
+        margin-top: 4px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+}
+
+// ===== RESPONSIVE =====
+@media (max-width: 768px) {
+    .ct-timeline-wrapper {
+        padding: 0 12px 12px;
+    }
+    .ct-node {
+        min-width: 100px;
+        max-width: 130px;
+    }
+}

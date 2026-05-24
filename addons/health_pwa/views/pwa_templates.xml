@@ -6,7 +6,7 @@
             <t t-set="head_website">
                 <title>Viet Uc</title>
             </t>
-            <t t-set="pwa_asset_version">1.0.76</t>
+            <t t-set="pwa_asset_version">1.0.82</t>
             <t t-set="head">
                 <!-- PWA Meta Tags -->
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
@@ -240,7 +240,7 @@
                     apiBaseUrl: '/health_pwa/api',
                     syncUrl: '/health_pwa/sync',
                     websocketUrl: '/longpolling',
-                    version: '1.0.76',
+                    version: '1.0.82',
                     buildTime: '<t t-esc="datetime.datetime.now().isoformat()"/>',
                     showInstallOverlay: <t t-if="show_install_overlay">true</t><t t-else="">false</t>,
                 };
@@ -312,7 +312,7 @@
             <script src="https://unpkg.com/pouchdb@8.0.0/dist/pouchdb.min.js"></script>
             
             <!-- PWA Core Scripts -->
-            <script src="/health_pwa/static/src/js/utils/pwa-utils.js"></script>
+            <script t-attf-src="/health_pwa/static/src/js/utils/pwa-utils.js?v=#{pwa_asset_version}"></script>
             <script src="/health_pwa/static/src/js/utils/sync-manager.js"></script>
             <script src="/health_pwa/static/src/js/utils/storage-manager.js"></script>
             
@@ -359,7 +359,7 @@
             <script>
                 if ('serviceWorker' in navigator) {
                     let refreshing = false;
-                    const PWA_SW_VERSION = '1.0.76';
+                    const PWA_SW_VERSION = '1.0.82';
                     console.log('[PWA] registering service worker version', PWA_SW_VERSION);
 
                     // Detect when service worker updates and reload
@@ -845,10 +845,10 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.76
+// Health PWA Service Worker v1.0.82
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_VERSION = '1.0.76';
+const CACHE_VERSION = '1.0.82';
 const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;
 const OFFLINE_URL = '/health_pwa/offline';
 const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;
@@ -866,6 +866,7 @@ const STATIC_CACHE_URLS = [
     '/health_pwa/offline',
     `/health_pwa/static/src/css/app.css?v=${CACHE_VERSION}`,
     `/health_pwa/static/src/css/mobile.css?v=${CACHE_VERSION}`,
+    `/health_pwa/static/src/js/utils/pwa-utils.js?v=${CACHE_VERSION}`,
     `/health_pwa/static/src/js/app.js?v=${CACHE_VERSION}`,
     `/health_pwa/static/src/js/router.js?v=${CACHE_VERSION}`,
     '/health_pwa/static/icons/icon-192.png',

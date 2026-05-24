@@ -21,14 +21,14 @@
             <a t-attf-class="ops-nav-item #{isActive('staff') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
             <a t-attf-class="ops-nav-item #{isActive('roster') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('roster')"><i class="fa fa-th"/> Roster</a>
+               t-on-click="() => this.navigateTo('roster')"><i class="fa fa-th"/> Staff Assignment</a>
+            <a t-attf-class="ops-nav-item #{isActive('collections') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('collections')"><i class="fa fa-money"/> Collections</a>
             <div class="ops-nav-section-label">Reports</div>
             <a t-attf-class="ops-nav-item #{isActive('workload') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
             <a t-attf-class="ops-nav-item #{isActive('analytics') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
-            <div class="ops-nav-section-label">System</div>
-            <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
         </nav>
         <div class="ops-sidebar-user">
             <div class="ops-user-avatar" t-esc="currentUserInitials"/>

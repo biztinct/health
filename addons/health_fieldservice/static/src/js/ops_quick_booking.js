@@ -51,6 +51,7 @@ class OpsQuickBooking extends Component {
         this.state = useState({
             isLoading: true,
             isCreating: false,
+            isSaving: false,
 
             patient: {},
             serviceTypes: [],
@@ -87,6 +88,7 @@ class OpsQuickBooking extends Component {
             validationErrors: [],
             showConfirmation: false,
             creationResult: null,
+            isDraftSave: false,
         });
 
         onWillStart(async () => {
@@ -498,6 +500,7 @@ class OpsQuickBooking extends Component {
             );
 
             if (result.success) {
+                this.state.isDraftSave = false;
                 this.state.creationResult = result;
                 this.state.showConfirmation = true;
             } else {
@@ -508,6 +511,56 @@ class OpsQuickBooking extends Component {
             this.notification.add(_t("Could not create booking"), { type: "danger" });
         }
         this.state.isCreating = false;
+    }
+
+    async saveBookingDraft() {
+        if (this.state.isSaving) return;
+
+        const missing = [];
+        if (!this.state.selectedDate) missing.push('Date');
+        if (!this.state.selectedSlot) missing.push('Time slot');
+
+        if (missing.length > 0) {
+            this.state.validationErrors = missing;
+            return;
+        }
+        this.state.validationErrors = [];
+        this.state.isSaving = true;
+
+        try {
+            const result = await this.orm.call(
+                "health.fieldservice.order",
+                "action_create_from_quick_booking_owl",
+                [{
+                    patient_id: this.patientId || false,
+                    lead_id: this.leadId || false,
+                    service_type: this.state.serviceType,
+                    duration_hours: this.state.durationHours,
+                    time_hour: this.finetuneHourDecimal,
+                    date: this.state.selectedDate,
+                    facility_id: this.state.facilityId || false,
+                    notes: this.state.notes,
+                    product_lines: null,
+                    staff_id: false,
+                    doctor_id: false,
+                    package_id: false,
+                    assigned_staff_ids: [],
+                    draft_only: true,
+                }]
+            );
+
+            if (result.success) {
+                this.state.isDraftSave = true;
+                this.state.creationResult = result;
+                this.state.showConfirmation = true;
+            } else {
+                this.notification.add(result.error || _t("Failed to save booking"), { type: "danger" });
+            }
+        } catch (e) {
+            console.error('Save draft error:', e);
+            this.notification.add(_t("Could not save booking"), { type: "danger" });
+        }
+        this.state.isSaving = false;
     }
 
     // =========================================================================

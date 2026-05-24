@@ -20,15 +20,9 @@
                t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
             <a t-attf-class="ops-nav-item #{isActive('bookings') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('bookings')"><i class="fa fa-calendar-check-o"/> Bookings</a>
-            <a t-attf-class="ops-nav-item #{isActive('calendar') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Follow-up Calendar</a>
             <div class="ops-nav-section-label">Reports</div>
             <a t-attf-class="ops-nav-item #{isActive('activities') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('activities')"><i class="fa fa-tasks"/> Activities</a>
-            <div class="ops-nav-section-label">System</div>
-            <a t-attf-class="ops-nav-item #{isActive('settings') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('settings')"><i class="fa fa-cog"/> Settings</a>
-            <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
         </nav>
         <div class="ops-sidebar-user">
             <div class="ops-user-avatar" t-esc="currentUserInitials"/>

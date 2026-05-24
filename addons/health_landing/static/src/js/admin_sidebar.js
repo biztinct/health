@@ -12,8 +12,6 @@ const TAG_TO_PAGE = {
 
 const XMLID_TO_PAGE = {
     "health_landing.action_admin_users": "users",
-    "health_landing.action_admin_roles": "users",
-    "health_landing.action_admin_role_mgmt": "users",
     "health_landing.action_admin_facilities": "master_data",
     "health_landing.action_admin_catchments": "master_data",
     "health_landing.action_admin_service_types": "master_data",
@@ -96,14 +94,6 @@ export class AdminSidebar extends Component {
                 this.state.activePage = "audit";
                 return;
             }
-            if (model === "access.role") {
-                this.state.activePage = "users";
-                return;
-            }
-            if (model === "role.management") {
-                this.state.activePage = "users";
-                return;
-            }
         }
     }
 
@@ -128,8 +118,6 @@ sidebarRegistry.add("admin_center", {
     actionTags: new Set(Object.keys(TAG_TO_PAGE)),
     windowModels: new Set([
         "health.audit.log.view",
-        "access.role",
-        "role.management",
     ]),
     actionXmlIds: new Set(Object.keys(XMLID_TO_PAGE)),
     Component: AdminSidebar,

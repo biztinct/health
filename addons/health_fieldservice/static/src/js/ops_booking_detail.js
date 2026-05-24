@@ -12,13 +12,15 @@ class OpsBookingDetail extends Component {
         const context = this.props.action && this.props.action.context || {};
         const bookingId = context.active_id || context.default_booking_id || false;
         if (bookingId) {
+            const ctx = { form_view_ref: 'health_fieldservice.view_health_fso_form_ops' };
+            if (context.active_center) ctx.active_center = context.active_center;
             this.action.doAction({
                 type: 'ir.actions.act_window',
                 res_model: 'health.fieldservice.order',
                 res_id: bookingId,
                 views: [[false, 'form']],
                 target: 'current',
-                context: { form_view_ref: 'health_fieldservice.view_health_fso_form_ops' },
+                context: ctx,
             }, { clearBreadcrumbs: true });
         }
     }

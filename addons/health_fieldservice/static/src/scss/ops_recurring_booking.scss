@@ -558,6 +558,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     background: #F5F5F5;
 }
 
@@ -585,6 +586,13 @@
     color: #424242;
     border: 1px solid #E0E0E0;
     &:hover { border-color: #1565C0; color: #1565C0; }
+}
+
+.rb-btn-save {
+    background: #1565C0;
+    color: white;
+    &:hover { background: #0D47A1; box-shadow: 0 2px 8px rgba(33,33,33,.12); }
+    &:disabled { opacity: 0.7; cursor: not-allowed; }
 }
 
 .rb-btn-create {
@@ -713,6 +721,16 @@
     font-size: 13px;
     color: #757575;
     margin-top: 4px;
+}
+
+.rb-modal-draft-note {
+    font-size: 13px;
+    color: #E65100;
+    margin-top: 6px;
+    padding: 6px 12px;
+    background: #FFF3E0;
+    border-radius: 6px;
+    border: 1px solid #FFE0B2;
 }
 
 .rb-modal-body {

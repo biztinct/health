@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_crm.ContactTimeline">
+    <div class="ct-timeline-wrapper">
+        <!-- Section header -->
+        <div class="ct-header">
+            <span class="ct-header__icon fa fa-history"/>
+            <span class="ct-header__title">History</span>
+            <span class="ct-header__count" t-if="state.events.length">
+                <t t-esc="state.events.length"/> events
+            </span>
+        </div>
+
+        <!-- Loading skeleton -->
+        <div class="ct-loading" t-if="state.loading">
+            <span class="fa fa-spinner fa-spin"/> Loading timeline...
+        </div>
+
+        <!-- Empty state -->
+        <div class="ct-empty" t-elif="!state.events.length">
+            <span class="fa fa-clock-o ct-empty__icon"/>
+            <span>No history yet</span>
+        </div>
+
+        <!-- Horizontal timeline spine -->
+        <div class="ct-scroll" t-else="" t-ref="timeline-container">
+            <div class="ct-spine">
+                <!-- Horizontal line -->
+                <div class="ct-spine__line"/>
+
+                <!-- Event nodes -->
+                <t t-foreach="state.events" t-as="ev" t-key="ev_index">
+                    <div class="ct-node"
+                         t-att-class="ev.booking_id ? 'ct-node--clickable' : ''"
+                         t-att-data-booking-id="ev.booking_id || ''"
+                         t-att-data-title="ev.title"
+                         t-on-click="onCardClick">
+                        <!-- Dot on the spine -->
+                        <div class="ct-node__dot" t-att-style="getDotStyle(ev.type)">
+                            <span t-att-class="'fa ' + getIconClass(ev)" class="ct-node__dot-icon"/>
+                        </div>
+
+                        <!-- Card hanging below -->
+                        <div class="ct-node__card" t-att-style="getCardStyle(ev.type)">
+                            <div class="ct-node__title" t-esc="ev.title"/>
+                            <div class="ct-node__detail" t-if="ev.detail" t-esc="stripHtml(ev.detail)"/>
+                            <div class="ct-node__date" t-esc="formatDate(ev.date)"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

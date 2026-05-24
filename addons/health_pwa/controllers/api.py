@@ -3,7 +3,7 @@
 import json
 import logging
 from datetime import datetime, timedelta
-from odoo import http, fields
+from odoo import http, fields, _
 from odoo.http import request
 from odoo.exceptions import ValidationError, UserError
 
@@ -12,6 +12,15 @@ _logger = logging.getLogger(__name__)
 
 class HealthPWAAPIController(http.Controller):
     """RESTful API endpoints for PWA frontend"""
+
+    def _service_completion_state_error(self, state):
+        if state == 'draft':
+            return _('Cannot complete service in draft state')
+        if state == 'confirmed':
+            return _('Cannot complete service in confirmed state')
+        if state == 'assigned':
+            return _('Cannot complete service in assigned state')
+        return _('Cannot complete service in %s state') % state
     
     def _check_api_access(self):
         """Check if user has API access to health modules"""
@@ -467,7 +476,7 @@ class HealthPWAAPIController(http.Controller):
                 'address': order.service_address,
                 'phone': order.patient_phone,
                 'description': order.symptoms or order.patient_notes or '',
-                'patient_notes': order.patient_notes,
+                'patient_notes': order.patient_notes or '',
                 'patient_code': order.patient_code if hasattr(order, 'patient_code') else None,
                 'category_of_service': {
                     'id': order.category_of_service_id.id,
@@ -478,11 +487,11 @@ class HealthPWAAPIController(http.Controller):
                 'clinical_notes_list': self._serialize_clinical_notes(order),
                 # Intake notes fields
                 'referring_doctor_id': order.referring_doctor_id.id if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
-                'referring_doctor_name': order.referring_doctor_id.name if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
-                'referring_doctor_phone': order.referring_doctor_id.mobile or order.referring_doctor_id.phone if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
-                'goal_of_care': order.goal_of_care if hasattr(order, 'goal_of_care') else None,
-                'required_equipment': order.required_equipment if hasattr(order, 'required_equipment') else None,
-                'intake_notes': order.intake_notes if hasattr(order, 'intake_notes') else None,
+                'referring_doctor_name': order.referring_doctor_id.name if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else '',
+                'referring_doctor_phone': (order.referring_doctor_id.mobile or order.referring_doctor_id.phone or '') if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else '',
+                'goal_of_care': (order.goal_of_care or '') if hasattr(order, 'goal_of_care') else '',
+                'required_equipment': (order.required_equipment or '') if hasattr(order, 'required_equipment') else '',
+                'intake_notes': (order.intake_notes or '') if hasattr(order, 'intake_notes') else '',
                 'location': {
                     'lat': order.patient_id.partner_latitude if order.patient_id else None,
                     'lng': order.patient_id.partner_longitude if order.patient_id else None,
@@ -665,7 +674,11 @@ class HealthPWAAPIController(http.Controller):
 
             # Check if order is in assigned state
             if order.state not in ['assigned', 'confirmed']:
-                return self._prepare_json_response(error=f'Cannot start service in {order.state} state', status_code=400)
+                if order.state == 'draft':
+                    error = _('Service cannot be started because the booking is still in Draft status. Please confirm or assign the booking before starting service.')
+                else:
+                    error = _('Service cannot be started in the current booking status. Please check the booking before starting service.')
+                return self._prepare_json_response(error=error, status_code=400)
 
             # Start the service
             order.action_start_service()
@@ -686,7 +699,9 @@ class HealthPWAAPIController(http.Controller):
             return self._prepare_json_response(error='Access denied', status_code=403)
 
         try:
-            reasons = request.env['health.booking.cancellation.reason'].search(
+            lang = kwargs.get('lang') or request.env.context.get('lang') or request.env.user.lang or 'en_US'
+            Reason = request.env['health.booking.cancellation.reason'].with_context(lang=lang)
+            reasons = Reason.search(
                 [('active', '=', True)], order='sequence, name'
             )
             reasons_data = [{
@@ -765,7 +780,7 @@ class HealthPWAAPIController(http.Controller):
 
             # Check if order is in progress
             if order.state != 'in_progress':
-                return self._prepare_json_response(error=f'Cannot complete service in {order.state} state', status_code=400)
+                return self._prepare_json_response(error=self._service_completion_state_error(order.state), status_code=400)
 
             # Get payment option from request body
             import json as json_module
@@ -879,7 +894,7 @@ class HealthPWAAPIController(http.Controller):
 
             # Check if order is in progress
             if order.state != 'in_progress':
-                return self._prepare_json_response(error=f'Cannot complete service in {order.state} state', status_code=400)
+                return self._prepare_json_response(error=self._service_completion_state_error(order.state), status_code=400)
 
             # Get service notes from request body if provided
             import json as json_module

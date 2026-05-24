@@ -361,12 +361,14 @@
 
                         <!-- FOOTER -->
                         <div class="rb-wizard-footer">
-                            <button class="rb-footer-btn rb-btn-back" t-on-click="goBack">
-                                <i class="fa fa-arrow-left"/> Back
-                            </button>
                             <div class="rb-footer-info">
                                 <t t-esc="state.preview.length"/> bookings will be created
                             </div>
+                            <button class="rb-footer-btn rb-btn-save" t-on-click="saveBookingsDraft"
+                                    t-att-disabled="state.isCreating or state.preview.length === 0">
+                                <t t-if="state.isSaving"><i class="fa fa-spinner fa-spin"/> Saving...</t>
+                                <t t-else=""><i class="fa fa-floppy-o"/> Save Bookings</t>
+                            </button>
                             <button class="rb-footer-btn rb-btn-create" t-on-click="createBookings"
                                     t-att-disabled="state.isCreating or state.preview.length === 0">
                                 <t t-if="state.isCreating"><i class="fa fa-spinner fa-spin"/> Creating...</t>
@@ -383,11 +385,23 @@
                 <div class="rb-modal-overlay">
                     <div class="rb-modal-card">
                         <div class="rb-modal-header">
-                            <div class="rb-modal-icon"><i class="fa fa-check-circle"/></div>
-                            <div class="rb-modal-title">
-                                <t t-esc="state.creationResult.count"/> Bookings Confirmed
+                            <div class="rb-modal-icon">
+                                <i t-attf-class="fa #{state.isDraftSave ? 'fa-floppy-o' : 'fa-check-circle'}"/>
                             </div>
-                            <div class="rb-modal-subtitle">All bookings created with quotes and staff assigned</div>
+                            <div class="rb-modal-title">
+                                <t t-if="state.isDraftSave">
+                                    <t t-esc="state.creationResult.count"/> Bookings Saved
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="state.creationResult.count"/> Bookings Confirmed
+                                </t>
+                            </div>
+                            <t t-if="state.isDraftSave">
+                                <div class="rb-modal-draft-note">Bookings are saved in Draft state. Please confirm them when ready.</div>
+                            </t>
+                            <t t-else="">
+                                <div class="rb-modal-subtitle">All bookings created with quotes and staff assigned</div>
+                            </t>
                         </div>
 
                         <div class="rb-modal-body">
@@ -412,7 +426,7 @@
                             </div>
 
                             <!-- Quote Summary Table -->
-                            <t t-if="state.creationResult.quote_summary">
+                            <t t-if="state.creationResult.quote_summary and state.creationResult.quote_summary.lines">
                                 <div class="rb-modal-quote">
                                     <div class="rb-mq-title">Quote Summary</div>
                                     <div class="rb-mq-table">
