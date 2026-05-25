@@ -161,6 +161,7 @@ class Partner(models.Model):
             'res_model': 'health.service.package',
             'domain': [('patient_id', '=', self.id)],
             'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],
             'target': 'new',
             'context': {
                 'default_patient_id': self.id,
@@ -181,6 +182,7 @@ class Partner(models.Model):
             'res_model': 'health.payment.transaction',
             'domain': [('patient_id', '=', self.id)],
             'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],
             'target': 'new',
             'context': {
                 'default_patient_id': self.id,
@@ -206,7 +208,7 @@ class Partner(models.Model):
                 (self.env.ref('account.view_move_tree').id, 'list'),
                 (self.env.ref('account.view_move_form').id, 'form'),
             ],
-            'target': 'new',
+            'target': 'current',
         }
     
     def action_view_outstanding_invoices(self):
@@ -244,6 +246,7 @@ class Partner(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'health.prepaid.package.wizard',
             'view_mode': 'form',
+            'views': [(False, 'form')],
             'target': 'new',
             'context': {
                 'default_patient_id': self.id,
@@ -263,6 +266,7 @@ class Partner(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'account.move',
             'view_mode': 'form',
+            'views': [(False, 'form')],
             'target': 'current',
             'context': {
                 'default_partner_id': self.id,

@@ -30,15 +30,19 @@
                 <field name="user_id" string="Agent" widget="many2one_avatar_user" optional="show"/>
                 <button name="action_convert_to_booking" type="object"
                         string="Book" icon="fa-calendar-plus-o"
+                        title="Create Booking"
                         class="crm-cl-btn crm-cl-btn--book"/>
                 <button name="action_log_as_lead" type="object"
                         string="Log Activity" icon="fa-bullseye"
+                        title="Log Activity"
                         class="crm-cl-btn crm-cl-btn--lead"/>
                 <button name="action_escalate_contact" type="object"
                         string="Escalate" icon="fa-arrow-up"
+                        title="Escalate Contact"
                         class="crm-cl-btn crm-cl-btn--escalate"/>
                 <button name="action_mark_spam" type="object"
                         string="Spam" icon="fa-ban"
+                        title="Mark as Spam"
                         class="crm-cl-btn crm-cl-btn--spam"/>
             </list>
         </field>
@@ -514,14 +518,14 @@
 
     <record id="action_crm_bookings_calendar" model="ir.actions.act_window">
         <field name="name">Bookings</field>
-        <field name="res_model">crm.lead</field>
+        <field name="res_model">health.fieldservice.order</field>
         <field name="view_mode">calendar,list,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_crm_bookings_calendar')}),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_bookings_list')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
-        <field name="search_view_id" ref="view_crm_bookings_search"/>
-        <field name="domain">[('contact_status', '=', 'booking')]</field>
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('health_fieldservice.view_health_fieldservice_order_calendar')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('health_fieldservice.view_health_fso_list_ops')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('health_fieldservice.view_health_fso_form_ops')})]"/>
+        <field name="search_view_id" ref="health_fieldservice.view_health_fieldservice_order_search"/>
+        <field name="domain">[]</field>
         <field name="context">{'active_center': 'crm_center'}</field>
         <field name="target">current</field>
     </record>
