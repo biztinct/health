@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsRescheduleBooking">
+    <div class="rsb-wizard">
+
+        <!-- LOADING -->
+        <t t-if="state.loading">
+            <div class="rsb-loading">
+                <div class="spinner-border text-primary" role="status"/>
+                <span>Loading booking data...</span>
+            </div>
+        </t>
+
+        <!-- CONFIRMATION MODAL -->
+        <t t-elif="state.showConfirmation">
+            <div class="rsb-confirmation">
+                <div class="rsb-confirm-card">
+                    <div class="rsb-confirm-icon"><i class="fa fa-check-circle"/></div>
+                    <h2 class="rsb-confirm-title">Booking Rescheduled</h2>
+                    <div class="rsb-confirm-body">
+                        <div class="rsb-confirm-row">
+                            <span class="rsb-confirm-label">Booking</span>
+                            <span class="rsb-confirm-value" t-esc="state.result.booking_name"/>
+                        </div>
+                        <div class="rsb-confirm-row">
+                            <span class="rsb-confirm-label">Patient</span>
+                            <span class="rsb-confirm-value" t-esc="state.result.patient_name"/>
+                        </div>
+                        <div class="rsb-confirm-row">
+                            <span class="rsb-confirm-label">New Date</span>
+                            <span class="rsb-confirm-value" t-esc="state.result.new_date"/>
+                        </div>
+                        <div class="rsb-confirm-row">
+                            <span class="rsb-confirm-label">New Time</span>
+                            <span class="rsb-confirm-value" t-esc="state.result.new_time"/>
+                        </div>
+                        <div t-if="state.result.staff_changed" class="rsb-confirm-note">
+                            <i class="fa fa-info-circle"/> Staff assignment has been updated. Notifications sent.
+                        </div>
+                    </div>
+                    <div class="rsb-confirm-actions">
+                        <button class="rsb-btn rsb-btn--primary" t-on-click="viewBooking">
+                            <i class="fa fa-eye"/> View Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </t>
+
+        <!-- MAIN WIZARD -->
+        <t t-else="">
+            <!-- HEADER -->
+            <div class="rsb-header">
+                <button class="rsb-back-btn" t-on-click="goBack">
+                    <i class="fa fa-arrow-left"/> Back
+                </button>
+                <div class="rsb-header-info">
+                    <h1 class="rsb-title"><i class="fa fa-clock-o"/> Reschedule Booking</h1>
+                    <div class="rsb-subtitle">
+                        <span class="rsb-booking-ref" t-esc="state.booking.booking_name"/>
+                        <span class="rsb-sep">·</span>
+                        <span t-esc="state.booking.patient_name"/>
+                        <t t-if="state.booking.service_type">
+                            <span class="rsb-sep">·</span>
+                            <span t-esc="state.booking.service_type"/>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Validation errors -->
+            <div t-if="state.validationErrors.length > 0" class="rsb-errors">
+                <i class="fa fa-exclamation-triangle"/> Missing:
+                <t t-foreach="state.validationErrors" t-as="err" t-key="err">
+                    <span class="rsb-error-item" t-esc="err"/>
+                </t>
+            </div>
+
+            <div class="rsb-body">
+                <!-- LEFT: Date + Time -->
+                <div class="rsb-panel rsb-panel--date">
+                    <div class="rsb-section-title"><i class="fa fa-calendar"/> Select New Date</div>
+
+                    <!-- Mini Calendar -->
+                    <div class="rsb-mini-cal">
+                        <div class="rsb-cal-header">
+                            <button class="rsb-cal-nav" t-on-click="prevMonth"><i class="fa fa-chevron-left"/></button>
+                            <div class="rsb-cal-title" t-esc="calendarTitle"/>
+                            <button class="rsb-cal-nav" t-on-click="nextMonth"><i class="fa fa-chevron-right"/></button>
+                        </div>
+                        <div class="rsb-cal-grid">
+                            <t t-foreach="dayNames" t-as="dn" t-key="dn">
+                                <div class="rsb-cal-weekday" t-esc="dn"/>
+                            </t>
+                            <t t-foreach="calendarDays" t-as="day" t-key="day_index">
+                                <div t-if="day.empty" class="rsb-cal-day rsb-cal-day--empty"/>
+                                <div t-elif="day.disabled" class="rsb-cal-day rsb-cal-day--disabled" t-esc="day.num"/>
+                                <div t-else=""
+                                     t-attf-class="rsb-cal-day #{day.selected ? 'rsb-cal-day--selected' : ''} #{day.today ? 'rsb-cal-day--today' : ''}"
+                                     t-on-click="() => this.selectDate(day)"
+                                     t-esc="day.num"/>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Time of Day -->
+                    <div class="rsb-section-title" style="margin-top:20px"><i class="fa fa-clock-o"/> Select Time</div>
+                    <div class="rsb-tod-cards">
+                        <t t-foreach="timePeriods" t-as="tp" t-key="tp.key">
+                            <button t-attf-class="rsb-tod-card #{state.timeOfDay === tp.key ? 'rsb-tod-card--active' : ''}"
+                                    t-on-click="() => this.selectTimeOfDay(tp.key)">
+                                <i t-attf-class="fa #{tp.icon}"/>
+                                <div class="rsb-tod-label" t-esc="tp.label"/>
+                                <div class="rsb-tod-range" t-esc="tp.range"/>
+                            </button>
+                        </t>
+                    </div>
+
+                    <!-- Available Slots -->
+                    <div class="rsb-form-label" style="margin-top:14px">Available Slots</div>
+                    <t t-if="state.slotsLoading">
+                        <div class="rsb-slots-loading"><i class="fa fa-spinner fa-spin"/> Checking availability...</div>
+                    </t>
+                    <t t-elif="filteredSlots.length === 0">
+                        <div class="rsb-slots-empty">No slots for this period</div>
+                    </t>
+                    <t t-else="">
+                        <div class="rsb-slot-grid">
+                            <t t-foreach="filteredSlots" t-as="slot" t-key="slot.time">
+                                <button t-att-class="getSlotClass(slot)"
+                                        t-on-click="() => this.selectSlot(slot)"
+                                        t-att-disabled="slot.patient_conflict">
+                                    <span t-esc="slot.time"/>
+                                    <i t-if="slot.patient_conflict" class="fa fa-lock rsb-slot-icon"/>
+                                    <i t-elif="!slot.available" class="fa fa-exclamation-triangle rsb-slot-icon"/>
+                                </button>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- Fine-tune -->
+                    <t t-if="state.selectedSlot">
+                        <div class="rsb-time-finetune">
+                            <div class="rsb-tf-label"><i class="fa fa-clock-o"/> Fine-tune Time</div>
+                            <div class="rsb-tf-control">
+                                <div class="rsb-tf-spinner">
+                                    <button class="rsb-tf-btn" t-on-click="() => this.adjustHour(1)"><i class="fa fa-chevron-up"/></button>
+                                    <input class="rsb-tf-input" type="text" readonly="" t-att-value="finetuneHour"/>
+                                    <button class="rsb-tf-btn" t-on-click="() => this.adjustHour(-1)"><i class="fa fa-chevron-down"/></button>
+                                </div>
+                                <span class="rsb-tf-colon">:</span>
+                                <div class="rsb-tf-spinner">
+                                    <button class="rsb-tf-btn" t-on-click="() => this.adjustMinute(5)"><i class="fa fa-chevron-up"/></button>
+                                    <input class="rsb-tf-input" type="text" readonly="" t-att-value="finetuneMinute"/>
+                                    <button class="rsb-tf-btn" t-on-click="() => this.adjustMinute(-5)"><i class="fa fa-chevron-down"/></button>
+                                </div>
+                                <span class="rsb-tf-display" t-esc="finetuneDisplay"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- RIGHT: Staff + Duration + Actions -->
+                <div class="rsb-panel rsb-panel--staff">
+                    <!-- Duration -->
+                    <div class="rsb-section-title"><i class="fa fa-hourglass-half"/> Duration</div>
+                    <div class="rsb-duration-control">
+                        <button class="rsb-dur-btn" t-on-click="() => this.adjustDuration(-0.5)"><i class="fa fa-minus"/></button>
+                        <span class="rsb-dur-display" t-esc="durationDisplay"/>
+                        <button class="rsb-dur-btn" t-on-click="() => this.adjustDuration(0.5)"><i class="fa fa-plus"/></button>
+                    </div>
+
+                    <!-- Staff Assignment -->
+                    <div class="rsb-section-title" style="margin-top:20px"><i class="fa fa-user-md"/> Staff Assignment</div>
+                    <div class="rsb-form-label">Select staff for this booking</div>
+                    <div class="rsb-staff-chips">
+                        <t t-foreach="state.staffList" t-as="staff" t-key="staff.id">
+                            <button t-attf-class="rsb-staff-chip #{isStaffAssigned(staff.id) ? 'selected' : ''}"
+                                    t-on-click="() => this.toggleAssignedStaff(staff.id)">
+                                <span class="rsb-chip-initials" t-esc="staff.initials"/>
+                                <span t-esc="staff.name"/>
+                                <i t-if="isStaffAssigned(staff.id)" class="fa fa-check rsb-chip-check"/>
+                            </button>
+                        </t>
+                        <div t-if="state.staffList.length === 0" class="rsb-no-staff">No healthcare staff available</div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="rsb-summary" t-if="state.selectedDate">
+                        <div class="rsb-section-title"><i class="fa fa-list-ul"/> Reschedule Summary</div>
+                        <div class="rsb-summary-grid">
+                            <div class="rsb-summary-item">
+                                <div class="rsb-summary-label">Booking</div>
+                                <div class="rsb-summary-value" t-esc="state.booking.booking_name"/>
+                            </div>
+                            <div class="rsb-summary-item">
+                                <div class="rsb-summary-label">New Date</div>
+                                <div class="rsb-summary-value" t-esc="state.selectedDate"/>
+                            </div>
+                            <div class="rsb-summary-item">
+                                <div class="rsb-summary-label">New Time</div>
+                                <div class="rsb-summary-value" t-esc="finetuneDisplay"/>
+                            </div>
+                            <div class="rsb-summary-item">
+                                <div class="rsb-summary-label">Duration</div>
+                                <div class="rsb-summary-value" t-esc="durationDisplay"/>
+                            </div>
+                            <div class="rsb-summary-item" t-if="state.assignedStaffIds.length > 0">
+                                <div class="rsb-summary-label">Staff</div>
+                                <div class="rsb-summary-value">
+                                    <t t-foreach="state.staffList.filter(s => state.assignedStaffIds.includes(s.id))" t-as="s" t-key="s.id">
+                                        <span class="rsb-summary-staff" t-esc="s.name"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="rsb-wizard-footer">
+                        <button class="rsb-btn rsb-btn--secondary" t-on-click="goBack">
+                            Cancel
+                        </button>
+                        <button class="rsb-btn rsb-btn--primary" t-on-click="confirmReschedule"
+                                t-att-disabled="state.isSubmitting">
+                            <t t-if="state.isSubmitting">
+                                <i class="fa fa-spinner fa-spin"/> Rescheduling...
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-check"/> Confirm Reschedule
+                            </t>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </div>
+</t>
+
+</templates>

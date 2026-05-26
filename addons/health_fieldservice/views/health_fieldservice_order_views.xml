@@ -13,7 +13,7 @@
                      All action buttons moved to the right-column Action Panel.
                      ============================================================ -->
                 <header>
-                    <button name="action_open_reschedule_calendar" type="object"
+                    <button name="action_open_reschedule_wizard" type="object"
                             string="Reschedule" icon="fa-clock-o"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
                     <button name="action_cancel_booking" type="object"
@@ -708,7 +708,7 @@
                             </button>
 
                             <!-- Reschedule -->
-                            <button name="action_open_reschedule_calendar" type="object"
+                            <button name="action_open_reschedule_wizard" type="object"
                                     class="vu-action-item"
                                     invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')">
                                 <i class="fa fa-clock-o"/> Reschedule
@@ -940,7 +940,7 @@
                     <button name="action_open_duplicate_booking_wizard" type="object"
                             string="Duplicate" icon="fa-copy"
                             invisible="state in ('cancelled', 'closed')"/>
-                    <button name="action_open_reschedule_calendar" type="object"
+                    <button name="action_open_reschedule_wizard" type="object"
                             string="Reschedule" icon="fa-clock-o"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
                     <button name="action_cancel_booking" type="object"

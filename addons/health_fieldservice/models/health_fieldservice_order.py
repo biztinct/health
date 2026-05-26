@@ -2812,35 +2812,82 @@ class HealthFieldServiceOrderUnified(models.Model):
             'context': {'active_id': self.id},
         }
 
-    def action_open_reschedule_calendar(self):
-        """
-        Open calendar view to reschedule this booking.
-        Shows the booking in calendar to easily drag and reschedule.
-        """
+    def action_open_reschedule_wizard(self):
+        """Open the OWL reschedule wizard as a client action."""
         self.ensure_one()
-        
-        # Get the FSO calendar view
-        calendar_view = self.env.ref(
-            'health_fieldservice.view_health_fieldservice_order_calendar',
-            raise_if_not_found=False
-        )
-        
         return {
-            'type': 'ir.actions.act_window',
+            'type': 'ir.actions.client',
+            'tag': 'ops_reschedule_booking',
             'name': _('Reschedule Booking'),
-            'res_model': 'health.fieldservice.order',
-            'view_mode': 'calendar,list,form',
-            'domain': [('id', '=', self.id)],
-            'views': [
-                (calendar_view.id if calendar_view else False, 'calendar'),
-                (False, 'list'),
-                (False, 'form'),
-            ],
             'target': 'current',
             'context': {
-                'default_patient_id': self.patient_id.id,
-                'initial_date': self.scheduled_datetime or fields.Datetime.now(),
+                'active_id': self.id,
+                'active_center': self.env.context.get('active_center', 'ops_center'),
             },
+        }
+
+    def action_open_reschedule_calendar(self):
+        """Open calendar view to reschedule this booking (legacy fallback)."""
+        return self.action_open_reschedule_wizard()
+
+    def get_reschedule_data(self):
+        """Return booking data needed by the OWL reschedule wizard."""
+        self.ensure_one()
+        import pytz
+        tz_name = self.booking_timezone or 'Asia/Ho_Chi_Minh'
+        try:
+            local_tz = pytz.timezone(tz_name)
+        except Exception:
+            local_tz = pytz.timezone('Asia/Ho_Chi_Minh')
+
+        current_date = ''
+        current_hour = 7.0
+        if self.scheduled_datetime:
+            local_dt = pytz.utc.localize(self.scheduled_datetime).astimezone(local_tz)
+            current_date = local_dt.strftime('%Y-%m-%d')
+            current_hour = local_dt.hour + local_dt.minute / 60.0
+
+        assigned_staff = []
+        for assignment in self.assignment_ids.filtered(
+            lambda a: a.state not in ('cancelled', 'template')
+        ):
+            staff = assignment.staff_id
+            if staff:
+                assigned_staff.append({
+                    'id': staff.id,
+                    'name': staff.name,
+                    'job_title': staff.job_title or '',
+                    'initials': ''.join([p[0] for p in (staff.name or '').split() if p][:2]).upper(),
+                })
+
+        staff_list = []
+        employees = self.env['hr.employee'].search([
+            ('is_healthcare_staff', '=', True),
+            ('active', '=', True),
+        ], order='name')
+        for emp in employees:
+            staff_list.append({
+                'id': emp.id,
+                'name': emp.name,
+                'job_title': emp.job_title or '',
+                'initials': ''.join([p[0] for p in (emp.name or '').split() if p][:2]).upper(),
+            })
+
+        return {
+            'booking_id': self.id,
+            'booking_name': self.name or '',
+            'patient_name': self.patient_id.name if self.patient_id else '',
+            'patient_id': self.patient_id.id if self.patient_id else False,
+            'service_type': self.service_type_id.name if self.service_type_id else '',
+            'facility_name': self.facility_id.name if self.facility_id else '',
+            'facility_id': self.facility_id.id if self.facility_id else False,
+            'current_date': current_date,
+            'current_hour': current_hour,
+            'duration_hours': (self.scheduled_duration or 60) / 60.0,
+            'state': self.state,
+            'assigned_staff': assigned_staff,
+            'assigned_staff_ids': [s['id'] for s in assigned_staff],
+            'staff_list': staff_list,
         }
 
     def action_cancel_booking(self):
@@ -2900,6 +2947,102 @@ class HealthFieldServiceOrderUnified(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {'form_view_initial_mode': 'edit', 'force_detailed_view': True}
+        }
+
+    @api.model
+    def action_reschedule_from_wizard(self, booking_id, new_date, new_time_hour, new_staff_ids, duration_hours=None):
+        """Reschedule a booking from the OWL reschedule wizard.
+        Handles date/time change, staff reassignment, and notifications."""
+        fso = self.browse(booking_id)
+        if not fso.exists():
+            return {'success': False, 'error': _('Booking not found.')}
+
+        from datetime import timedelta
+        import pytz
+
+        tz_name = fso.booking_timezone or 'Asia/Ho_Chi_Minh'
+        try:
+            local_tz = pytz.timezone(tz_name)
+        except Exception:
+            local_tz = pytz.timezone('Asia/Ho_Chi_Minh')
+
+        old_datetime = fso.scheduled_datetime
+        old_staff_ids = set(fso.assignment_ids.filtered(
+            lambda a: a.state not in ('cancelled', 'template')
+        ).mapped('staff_id.id'))
+
+        hour = int(new_time_hour)
+        minute = int(round((new_time_hour - hour) * 60))
+        from datetime import datetime as dt_class
+        naive_local = dt_class.strptime(new_date, '%Y-%m-%d').replace(hour=hour, minute=minute)
+        local_dt = local_tz.localize(naive_local)
+        utc_dt = local_dt.astimezone(pytz.utc).replace(tzinfo=None)
+
+        write_vals = {'scheduled_datetime': utc_dt}
+        if duration_hours:
+            write_vals['scheduled_duration'] = int(duration_hours * 60)
+
+        fso.write(write_vals)
+
+        new_staff_set = set(new_staff_ids) if new_staff_ids else set()
+        staff_changed = new_staff_set != old_staff_ids
+
+        if staff_changed and new_staff_set:
+            removed_staff = old_staff_ids - new_staff_set
+            added_staff = new_staff_set - old_staff_ids
+
+            for assignment in fso.assignment_ids.filtered(
+                lambda a: a.state not in ('cancelled', 'template') and a.staff_id.id in removed_staff
+            ):
+                staff = assignment.staff_id
+                assignment.write({'state': 'cancelled'})
+                try:
+                    if staff.user_id:
+                        self.env['health.pwa.staff.notification'].sudo().create({
+                            'user_id': staff.user_id.id,
+                            'fso_id': fso.id,
+                            'notification_type': 'cancelled',
+                            'patient_name': fso.patient_id.name if fso.patient_id else '',
+                            'fso_name': fso.name,
+                            'message': _('You have been unassigned from booking %s', fso.name),
+                        })
+                except Exception:
+                    pass
+
+            for staff_id in added_staff:
+                staff = self.env['hr.employee'].browse(staff_id)
+                if not staff.exists():
+                    continue
+                duration_mins = fso.scheduled_duration or 60
+                end_dt = fso.scheduled_datetime + timedelta(minutes=duration_mins)
+                self.env['health.staff.assignment'].create({
+                    'fso_id': fso.id,
+                    'staff_id': staff_id,
+                    'assignment_date': fso.scheduled_datetime,
+                    'planned_start_time': fso.scheduled_datetime,
+                    'planned_end_time': end_dt,
+                    'state': 'assigned',
+                })
+                fso._send_staff_reschedule_notification(staff, old_datetime=old_datetime)
+
+            for assignment in fso.assignment_ids.filtered(
+                lambda a: a.state not in ('cancelled', 'template') and a.staff_id.id in (old_staff_ids & new_staff_set)
+            ):
+                pass
+
+        tz_str = local_tz
+        new_local = pytz.utc.localize(fso.scheduled_datetime).astimezone(local_tz)
+        formatted_date = new_local.strftime('%d/%m/%Y')
+        formatted_time = new_local.strftime('%H:%M')
+
+        return {
+            'success': True,
+            'booking_id': fso.id,
+            'booking_name': fso.name,
+            'patient_name': fso.patient_id.name if fso.patient_id else '',
+            'new_date': formatted_date,
+            'new_time': formatted_time,
+            'staff_changed': staff_changed,
         }
     
     def action_view_invoice(self):

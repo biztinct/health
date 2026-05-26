@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "health19",
+			"path": "."
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}

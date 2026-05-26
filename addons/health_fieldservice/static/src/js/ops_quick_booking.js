@@ -528,6 +528,11 @@ class OpsQuickBooking extends Component {
         this.state.isSaving = true;
 
         try {
+            const productLines = this.state.selectedProducts.map(p => ({
+                product_id: p.product_id,
+                qty: p.qty,
+            }));
+
             const result = await this.orm.call(
                 "health.fieldservice.order",
                 "action_create_from_quick_booking_owl",
@@ -540,11 +545,11 @@ class OpsQuickBooking extends Component {
                     date: this.state.selectedDate,
                     facility_id: this.state.facilityId || false,
                     notes: this.state.notes,
-                    product_lines: null,
-                    staff_id: false,
-                    doctor_id: false,
-                    package_id: false,
-                    assigned_staff_ids: [],
+                    product_lines: productLines.length > 0 ? productLines : null,
+                    staff_id: this.state.staffId || false,
+                    doctor_id: this.state.doctorId || false,
+                    package_id: this.state.packageId || false,
+                    assigned_staff_ids: this.state.assignedStaffIds.length > 0 ? this.state.assignedStaffIds : [],
                     draft_only: true,
                 }]
             );

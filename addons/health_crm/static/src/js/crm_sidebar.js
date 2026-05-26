@@ -88,7 +88,10 @@ export class CrmSidebar extends Component {
         const action = NAV_ACTIONS[page];
         if (action) {
             this.state.activePage = page;
-            this.actionService.doAction(action, { clearBreadcrumbs: true });
+            this.actionService.doAction(action, {
+                clearBreadcrumbs: true,
+                additionalContext: { active_center: 'crm_center' },
+            });
         }
     }
 
