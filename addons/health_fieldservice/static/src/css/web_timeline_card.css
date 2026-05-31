@@ -148,6 +148,28 @@
     max-width: 100%;
 }
 
+/* Month/Week: clip card content to prevent text bleeding into adjacent cards */
+.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .vis-item-overflow,
+.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .vis-item-overflow {
+    overflow: hidden !important;
+}
+
+.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .vis-item-content,
+.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .vis-item-content {
+    overflow: hidden !important;
+}
+
+.o_timeline_view[data-timeline-mode="month"] .hf-wt-card,
+.o_timeline_view[data-timeline-mode="week"] .hf-wt-card {
+    overflow: hidden !important;
+}
+
+.o_timeline_view[data-timeline-mode="month"] .hf-wt-title,
+.o_timeline_view[data-timeline-mode="week"] .hf-wt-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Day view: taller cards */
 .o_timeline_view[data-timeline-mode="day"] .hf-wt-card {
     padding: 12px 16px 12px 14px;
