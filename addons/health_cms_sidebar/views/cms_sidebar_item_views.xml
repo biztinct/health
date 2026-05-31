@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="cms_sidebar_item_view_tree" model="ir.ui.view">
+        <field name="name">cms.sidebar.item.tree</field>
+        <field name="model">cms.sidebar.item</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="section_id"/>
+                <field name="icon"/>
+                <field name="action_xmlid"/>
+                <field name="action_tag" optional="hide"/>
+                <field name="role_ids" widget="many2many_tags"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="cms_sidebar_item_view_form" model="ir.ui.view">
+        <field name="name">cms.sidebar.item.form</field>
+        <field name="model">cms.sidebar.item</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Basic">
+                            <field name="name"/>
+                            <field name="section_id"/>
+                            <field name="sequence"/>
+                            <field name="icon"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Action">
+                            <field name="action_xmlid"/>
+                            <field name="action_tag"/>
+                        </group>
+                    </group>
+                    <group string="Access Control">
+                        <field name="role_ids" widget="many2many_tags">
+                            <list>
+                                <field name="name"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Active Page Matching">
+                        <field name="match_action_tags"/>
+                        <field name="match_action_xmlids"/>
+                        <field name="match_models"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="cms_sidebar_item_view_search" model="ir.ui.view">
+        <field name="name">cms.sidebar.item.search</field>
+        <field name="model">cms.sidebar.item</field>
+        <field name="arch" type="xml">
+            <search string="Sidebar Items">
+                <field name="name"/>
+                <field name="section_id"/>
+                <field name="action_xmlid"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Section" name="group_section" context="{'group_by': 'section_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cms_sidebar_item" model="ir.actions.act_window">
+        <field name="name">Sidebar Menu Items</field>
+        <field name="res_model">cms.sidebar.item</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_section': 1}</field>
+    </record>
+
+</odoo>

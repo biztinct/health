@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_cms_sidebar.CmsSidebar">
+    <aside class="ops-global-sidebar cms-sidebar">
+        <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+            <div class="ops-logo-icon cms-logo-icon"><i class="fa fa-heartbeat"/></div>
+            <div>
+                <div class="ops-logo-text">VIET UC</div>
+                <div class="ops-logo-sub">CMS</div>
+            </div>
+        </div>
+
+        <nav class="ops-sidebar-nav" t-if="state.loaded">
+            <t t-foreach="state.sections" t-as="section" t-key="section.id">
+                <div class="cms-section-header"
+                     t-on-click="() => this.toggleSection(section.key)">
+                    <span class="cms-section-label" t-esc="section.name"/>
+                    <i t-attf-class="fa #{isSectionCollapsed(section.key) ? 'fa-chevron-right' : 'fa-chevron-down'} cms-chevron"/>
+                </div>
+
+                <t t-if="!isSectionCollapsed(section.key)">
+                    <t t-foreach="section.items" t-as="item" t-key="item.id">
+                        <a t-attf-class="ops-nav-item #{isActive(item.id) ? 'active' : ''}"
+                           t-on-click="() => this.navigateTo(item)">
+                            <i t-att-class="item.icon"/> <t t-esc="item.name"/>
+                        </a>
+                    </t>
+                </t>
+            </t>
+        </nav>
+
+        <div class="ops-sidebar-user">
+            <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+            <div class="ops-user-info">
+                <div class="ops-user-name" t-esc="currentUserName"/>
+                <div class="ops-user-role">Viet UC CMS</div>
+            </div>
+        </div>
+    </aside>
+</t>
+
+</templates>

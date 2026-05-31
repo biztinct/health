@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="item_ops_dashboard" model="cms.sidebar.item">
+        <field name="name">Dashboard</field>
+        <field name="section_id" ref="section_ops"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-th-large</field>
+        <field name="action_xmlid">health_fieldservice.action_ops_command_center</field>
+        <field name="action_tag">ops_command_center</field>
+        <field name="match_action_tags">ops_command_center</field>
+    </record>
+
+    <record id="item_ops_bookings" model="cms.sidebar.item">
+        <field name="name">Bookings</field>
+        <field name="section_id" ref="section_ops"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-calendar-check-o</field>
+        <field name="action_xmlid">health_fieldservice.action_ops_booking_list_native</field>
+        <field name="match_action_tags">ops_booking_queue,ops_booking_wizard,ops_booking_detail,ops_quick_booking,ops_reschedule_booking,ops_payment_collection,ops_service_in_progress,ops_staff_assignment</field>
+        <field name="match_action_xmlids">health_fieldservice.action_ops_booking_list_native,health_fieldservice.action_ops_booking_form</field>
+        <field name="match_models">health.fieldservice.order</field>
+    </record>
+
+    <record id="item_ops_clients" model="cms.sidebar.item">
+        <field name="name">Clients</field>
+        <field name="section_id" ref="section_ops"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-address-book-o</field>
+        <field name="action_xmlid">health_fieldservice.action_ops_client_list_native</field>
+        <field name="match_action_tags">ops_client_list,ops_client_profile</field>
+        <field name="match_action_xmlids">health_fieldservice.action_ops_client_list_native</field>
+    </record>
+
+    <record id="item_ops_staff" model="cms.sidebar.item">
+        <field name="name">Staff</field>
+        <field name="section_id" ref="section_ops"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-users</field>
+        <field name="action_xmlid">health_fieldservice.action_ops_staff_roster</field>
+        <field name="action_tag">ops_staff_roster</field>
+        <field name="match_action_tags">ops_staff_roster</field>
+    </record>
+
+    <record id="item_ops_roster" model="cms.sidebar.item">
+        <field name="name">Staff Assignment</field>
+        <field name="section_id" ref="section_ops"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-th</field>
+        <field name="action_xmlid">health_fieldservice.action_assignment_web_timeline_view</field>
+        <field name="match_action_tags">ops_roster_planning</field>
+        <field name="match_action_xmlids">health_fieldservice.action_assignment_web_timeline_view</field>
+        <field name="match_models">health.staff.assignment</field>
+    </record>
+
+    <record id="item_ops_collections" model="cms.sidebar.item">
+        <field name="name">Collections</field>
+        <field name="section_id" ref="section_ops"/>
+        <field name="sequence">60</field>
+        <field name="icon">fa fa-money</field>
+        <field name="action_xmlid">health_invoicing.action_ops_cash_collections</field>
+    </record>
+
+    <record id="item_ops_workload" model="cms.sidebar.item">
+        <field name="name">Workload</field>
+        <field name="section_id" ref="section_ops"/>
+        <field name="sequence">70</field>
+        <field name="icon">fa fa-bar-chart</field>
+        <field name="action_xmlid">health_fieldservice.action_staff_workload_dashboard</field>
+        <field name="action_tag">staff_workload_dashboard</field>
+        <field name="match_action_tags">staff_workload_dashboard</field>
+        <field name="match_action_xmlids">health_fieldservice.action_staff_workload_dashboard</field>
+    </record>
+
+
+</odoo>

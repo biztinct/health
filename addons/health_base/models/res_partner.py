@@ -751,12 +751,22 @@ class ResPartner(models.Model):
         if not self.is_patient:
             return False
 
+        list_view_id = self.env.ref(
+            'health_fieldservice.view_health_fso_list_ops', raise_if_not_found=False
+        )
+        form_view_id = self.env.ref(
+            'health_fieldservice.view_health_fso_form_ops', raise_if_not_found=False
+        )
         return {
             'type': 'ir.actions.act_window',
             'name': f'Service Bookings - {self.name}',
             'res_model': 'health.fieldservice.order',
             'view_mode': 'list,form,calendar',
-            'views': [[False, 'list'], [False, 'form'], [False, 'calendar']],
+            'views': [
+                [list_view_id and list_view_id.id or False, 'list'],
+                [form_view_id and form_view_id.id or False, 'form'],
+                [False, 'calendar'],
+            ],
             'target': 'new',
             'domain': [('patient_id', '=', self.id)],
             'context': {'default_patient_id': self.id},

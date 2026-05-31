@@ -119,7 +119,7 @@
                     <!-- Core Transaction Information -->
                     <group>
                         <group string="Transaction Details">
-                            <field name="name" readonly="1"/>
+                            <field name="name" readonly="1" required="0" force_save="1"/>
                             <field name="patient_id" options="{'no_create': True}"/>
                             <field name="transaction_date"/>
                             <field name="currency_id" invisible="1"/>
@@ -180,10 +180,9 @@
                     </group>
                     
                     <!-- Transaction Notes -->
-                    <group string="Notes &amp; Comments">
-                        <field name="transaction_notes" nolabel="1" 
-                               placeholder="Additional notes about this payment transaction..."/>
-                    </group>
+                    <separator string="Notes &amp; Comments"/>
+                    <field name="transaction_notes" nolabel="1"
+                           placeholder="Additional notes about this payment transaction..."/>
                     
                 </sheet>
             </form>

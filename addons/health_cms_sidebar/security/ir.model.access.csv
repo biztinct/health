@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cms_sidebar_section_user,cms.sidebar.section user,model_cms_sidebar_section,base.group_user,1,0,0,0
+access_cms_sidebar_section_admin,cms.sidebar.section admin,model_cms_sidebar_section,health_cms_sidebar.group_cms_sidebar_admin,1,1,1,1
+access_cms_sidebar_item_user,cms.sidebar.item user,model_cms_sidebar_item,base.group_user,1,0,0,0
+access_cms_sidebar_item_admin,cms.sidebar.item admin,model_cms_sidebar_item,health_cms_sidebar.group_cms_sidebar_admin,1,1,1,1

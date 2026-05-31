@@ -2,6 +2,19 @@
 <templates xml:space="preserve">
 
     <t t-name="health_fieldservice.OpsBookingListView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-set-slot='control-panel-create-button']" position="replace">
+            <t t-set-slot="control-panel-create-button">
+                <button t-if="activeActions.create and props.showButtons"
+                        type="button"
+                        class="btn btn-primary o_list_button_add"
+                        data-hotkey="c"
+                        t-on-click="onClickCreate"
+                        data-bounce-button="">
+                    <i class="fa fa-calendar-plus-o" style="margin-right:6px;"/>
+                    Create Booking
+                </button>
+            </t>
+        </xpath>
         <xpath expr="//t[@t-component='props.Renderer']" position="before">
             <!-- Status filter tabs -->
             <div class="ops-bq-tabs">

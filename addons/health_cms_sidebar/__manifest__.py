@@ -1,0 +1,37 @@
+{
+    'name': 'Health CMS Sidebar',
+    'version': '19.0.1.0.0',
+    'category': 'Healthcare',
+    'summary': 'Unified sidebar for all healthcare centers (CRM, Operations, Finance, Admin)',
+    'author': 'Biztinct',
+    'depends': [
+        'health_fieldservice',
+        'health_crm',
+        'health_invoicing',
+        'health_landing',
+        'access_roles',
+    ],
+    'data': [
+        'security/health_cms_sidebar_security.xml',
+        'security/ir.model.access.csv',
+        'data/cms_sidebar_sections.xml',
+        'data/cms_sidebar_items_crm.xml',
+        'data/cms_sidebar_items_ops.xml',
+        'data/cms_sidebar_items_fin.xml',
+        'data/cms_sidebar_items_admin.xml',
+        'views/cms_sidebar_section_views.xml',
+        'views/cms_sidebar_item_views.xml',
+        'views/cms_sidebar_menus.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'health_cms_sidebar/static/src/scss/cms_sidebar.scss',
+            'health_cms_sidebar/static/src/js/cms_sidebar.js',
+            'health_cms_sidebar/static/src/xml/cms_sidebar.xml',
+        ],
+    },
+    'installable': True,
+    'application': False,
+    'sequence': 140,
+    'license': 'LGPL-3',
+}

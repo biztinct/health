@@ -147,6 +147,30 @@ export class OpsBookingListController extends ListController {
         }
     }
 
+    _getPatientIdFromAction() {
+        const ctx = this.props.context || {};
+        if (ctx.default_patient_id) return ctx.default_patient_id;
+        const domain = this.props.domain || [];
+        for (const leaf of domain) {
+            if (Array.isArray(leaf) && leaf[0] === 'patient_id' && leaf[1] === '=' && leaf[2]) {
+                return leaf[2];
+            }
+        }
+        return false;
+    }
+
+    async onClickCreate() {
+        const patientId = this._getPatientIdFromAction();
+        this.actionService.doAction({
+            type: 'ir.actions.client',
+            tag: 'ops_quick_booking',
+            name: 'Create Booking',
+            target: 'current',
+            context: { default_patient_id: patientId },
+            params: { default_patient_id: patientId },
+        });
+    }
+
     openRecord(record) {
         this.actionService.doAction({
             type: "ir.actions.act_window",

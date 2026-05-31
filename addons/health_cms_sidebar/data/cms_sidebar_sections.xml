@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="section_crm" model="cms.sidebar.section">
+        <field name="name">CRM</field>
+        <field name="technical_key">crm</field>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-comments</field>
+    </record>
+
+    <record id="section_ops" model="cms.sidebar.section">
+        <field name="name">OPERATIONS MANAGER</field>
+        <field name="technical_key">ops</field>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-heartbeat</field>
+    </record>
+
+    <record id="section_finance" model="cms.sidebar.section">
+        <field name="name">FINANCE</field>
+        <field name="technical_key">finance</field>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-university</field>
+    </record>
+
+    <record id="section_admin" model="cms.sidebar.section">
+        <field name="name">ADMIN</field>
+        <field name="technical_key">admin</field>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-cogs</field>
+    </record>
+
+</odoo>

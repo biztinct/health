@@ -38,7 +38,8 @@ class OpsQuickBooking extends Component {
         this.dialogService = useService("dialog");
 
         const context = this.props.action && this.props.action.context || {};
-        this.patientId = context.active_id || context.default_patient_id || false;
+        const params = this.props.action && this.props.action.params || {};
+        this.patientId = context.active_id || context.default_patient_id || params.default_patient_id || false;
         this.leadId = context.default_lead_id || false;
         this.activeCenter = context.active_center || false;
 
@@ -89,11 +90,89 @@ class OpsQuickBooking extends Component {
             showConfirmation: false,
             creationResult: null,
             isDraftSave: false,
+
+            clientSearch: '',
+            clientResults: [],
+            showClientResults: false,
+            clientSearching: false,
+            currentPatientId: this.patientId,
         });
 
         onWillStart(async () => {
-            await this.loadOptions();
+            if (this.patientId) {
+                await this.loadOptions();
+            } else {
+                this.state.isLoading = false;
+            }
         });
+    }
+
+    // =========================================================================
+    // CLIENT SELECTOR (when no patient in context)
+    // =========================================================================
+
+    get needsClientSelector() {
+        return !this.state.currentPatientId;
+    }
+
+    onClientSearchKeydown(ev) {
+        if (ev.key === 'Enter') {
+            ev.preventDefault();
+            this.doClientSearch();
+        }
+    }
+
+    async doClientSearch() {
+        const query = this.state.clientSearch.trim();
+        if (query.length < 2) {
+            this.state.clientResults = [];
+            this.state.showClientResults = false;
+            return;
+        }
+        this.state.clientSearching = true;
+        try {
+            const results = await this.orm.call(
+                "res.partner",
+                "search_read",
+                [['&', ['is_patient', '=', true], '|', '|',
+                    ['name', 'ilike', query], ['mobile', 'ilike', query], ['patient_code', 'ilike', query]],
+                 ['id', 'name', 'mobile', 'patient_code']],
+                { limit: 10, order: 'name asc' }
+            );
+            this.state.clientResults = results;
+            this.state.showClientResults = results.length > 0;
+        } catch (e) {
+            console.error('Client search failed:', e);
+            this.state.clientResults = [];
+            this.state.showClientResults = false;
+        }
+        this.state.clientSearching = false;
+    }
+
+    onClientSearchBlur() {
+        setTimeout(() => { this.state.showClientResults = false; }, 300);
+    }
+
+    async selectClient(client) {
+        this.patientId = client.id;
+        this.state.currentPatientId = client.id;
+        this.state.clientSearch = client.name;
+        this.state.showClientResults = false;
+        this.state.clientResults = [];
+        await this.loadOptions();
+    }
+
+    clearClient() {
+        this.patientId = false;
+        this.state.currentPatientId = false;
+        this.state.clientSearch = '';
+        this.state.clientResults = [];
+        this.state.showClientResults = false;
+        this.state.patient = {};
+        this.state.packages = [];
+        this.state.packageId = false;
+        this.state.preferredStaffId = false;
+        this.state.selectedProducts = [];
     }
 
     async loadOptions() {
@@ -461,6 +540,7 @@ class OpsQuickBooking extends Component {
         if (this.state.isCreating) return;
 
         const missing = [];
+        if (!this.patientId) missing.push('Client');
         if (!this.state.facilityId) missing.push('Facility');
         if (!this.hasServiceOrPackage) missing.push('Services or Package (add via Quote section)');
         if (!this.state.selectedDate) missing.push('Date');
@@ -517,6 +597,7 @@ class OpsQuickBooking extends Component {
         if (this.state.isSaving) return;
 
         const missing = [];
+        if (!this.patientId) missing.push('Client');
         if (!this.state.selectedDate) missing.push('Date');
         if (!this.state.selectedSlot) missing.push('Time slot');
 

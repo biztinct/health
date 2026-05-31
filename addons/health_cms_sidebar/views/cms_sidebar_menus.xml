@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Unified CMS root menu in app switcher -->
+    <menuitem id="menu_cms_root"
+              name="Viet UC CMS"
+              action="health_fieldservice.action_ops_command_center"
+              web_icon="health_cms_sidebar,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Hide old individual center root menus -->
+    <record id="health_crm.menu_crm_center_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="health_fieldservice.menu_ops_center_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="health_invoicing.menu_fin_center_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="health_landing.menu_admin_center_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- CMS Sidebar config menus (under the unified root) -->
+    <menuitem id="menu_cms_sidebar_config"
+              name="CMS Sidebar"
+              parent="menu_cms_root"
+              sequence="85"/>
+
+    <menuitem id="menu_cms_sidebar_sections"
+              name="Sections"
+              parent="menu_cms_sidebar_config"
+              action="action_cms_sidebar_section"
+              sequence="10"/>
+
+    <menuitem id="menu_cms_sidebar_items"
+              name="Menu Items"
+              parent="menu_cms_sidebar_config"
+              action="action_cms_sidebar_item"
+              sequence="20"/>
+
+</odoo>

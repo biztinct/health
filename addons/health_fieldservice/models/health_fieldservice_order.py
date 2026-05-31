@@ -2848,7 +2848,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             current_hour = local_dt.hour + local_dt.minute / 60.0
 
         assigned_staff = []
-        for assignment in self.assignment_ids.filtered(
+        for assignment in self.sudo().assignment_ids.filtered(
             lambda a: a.state not in ('cancelled', 'template')
         ):
             staff = assignment.staff_id
@@ -2861,9 +2861,9 @@ class HealthFieldServiceOrderUnified(models.Model):
                 })
 
         staff_list = []
-        employees = self.env['hr.employee'].search([
+        employees = self.env['hr.employee'].sudo().search([
             ('is_healthcare_staff', '=', True),
-            ('active', '=', True),
+            ('employment_status', '=', 'active'),
         ], order='name')
         for emp in employees:
             staff_list.append({
@@ -2878,7 +2878,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'booking_name': self.name or '',
             'patient_name': self.patient_id.name if self.patient_id else '',
             'patient_id': self.patient_id.id if self.patient_id else False,
-            'service_type': self.service_type_id.name if self.service_type_id else '',
+            'service_type': dict(self._fields['service_type'].selection).get(self.service_type, self.service_type or ''),
             'facility_name': self.facility_id.name if self.facility_id else '',
             'facility_id': self.facility_id.id if self.facility_id else False,
             'current_date': current_date,
@@ -3010,7 +3010,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                     pass
 
             for staff_id in added_staff:
-                staff = self.env['hr.employee'].browse(staff_id)
+                staff = self.env['hr.employee'].sudo().browse(staff_id)
                 if not staff.exists():
                     continue
                 duration_mins = fso.scheduled_duration or 60
@@ -4522,7 +4522,7 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         staff_list = []
         try:
-            employees = self.env['hr.employee'].search([
+            employees = self.env['hr.employee'].sudo().search([
                 ('is_healthcare_staff', '=', True),
                 ('employment_status', '=', 'active'),
                 ('is_doctor_role', '=', False),
@@ -4567,7 +4567,7 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         doctor_list = []
         try:
-            doctors = self.env['hr.employee'].search([
+            doctors = self.env['hr.employee'].sudo().search([
                 ('is_healthcare_staff', '=', True),
                 ('is_doctor_role', '=', True),
                 ('employment_status', '=', 'active'),

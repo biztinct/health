@@ -1,0 +1,37 @@
+.cms-sidebar {
+    background: #0D356B !important;
+
+    .cms-logo-icon {
+        background: #E53935 !important;
+    }
+
+    .cms-section-header {
+        padding: 14px 16px 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        transition: opacity 0.15s;
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        .cms-section-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            opacity: 0.5;
+            font-weight: 600;
+            color: white;
+        }
+
+        .cms-chevron {
+            font-size: 9px;
+            opacity: 0.35;
+            transition: transform 0.2s;
+            color: white;
+        }
+    }
+}

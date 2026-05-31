@@ -10,9 +10,9 @@
                     <div class="cp-breadcrumb">
                         <a t-on-click="() => this.navigateTo('dashboard')">Dashboard</a>
                         <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
-                        <a t-on-click="goBack">Clients</a>
+                        <a t-on-click="goBack"><t t-if="patientId">Clients</t><t t-else="">Bookings</t></a>
                         <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
-                        <span class="cp-current">Quick Booking</span>
+                        <span class="cp-current"><t t-if="needsClientSelector">Create Booking</t><t t-else="">Quick Booking</t></span>
                     </div>
                 </div>
             </header>
@@ -31,10 +31,11 @@
                         <!-- HEADER -->
                         <div class="qb-wizard-header">
                             <div>
-                                <div class="qb-wizard-title"><i class="fa fa-calendar-plus-o"/> Quick Booking</div>
+                                <div class="qb-wizard-title"><i class="fa fa-calendar-plus-o"/> <t t-if="needsClientSelector">Create Booking</t><t t-else="">Quick Booking</t></div>
                                 <div class="qb-wizard-subtitle">
                                     Create a single service booking
                                     <t t-if="state.patient.name"> for <strong t-esc="state.patient.name"/></t>
+                                    <t t-elif="needsClientSelector"> — select a client below</t>
                                     <t t-if="state.patient.code"> — <span class="qb-patient-code" t-esc="state.patient.code"/></t>
                                 </div>
                             </div>
@@ -59,8 +60,52 @@
                         <!-- BODY -->
                         <div class="qb-wizard-body">
 
+                            <!-- CLIENT SELECTOR (when no patient in context) -->
+                            <t t-if="needsClientSelector">
+                                <div class="qb-section-title qb-section-first"><i class="fa fa-user"/> Select Client <span class="qb-req">*</span></div>
+                                <div class="qb-form-group qb-client-search-wrap">
+                                    <div class="qb-form-label">Search Client</div>
+                                    <div class="qb-client-search-row">
+                                        <input class="qb-form-input qb-client-input" type="text"
+                                               placeholder="Type name, phone, or client code..."
+                                               t-model="state.clientSearch"
+                                               t-on-keydown="onClientSearchKeydown"
+                                               t-on-blur="onClientSearchBlur"/>
+                                        <button class="qb-client-search-btn" t-on-click="doClientSearch"
+                                                t-att-disabled="state.clientSearching">
+                                            <i t-attf-class="fa #{state.clientSearching ? 'fa-spinner fa-spin' : 'fa-search'}"/>
+                                        </button>
+                                    </div>
+                                    <div t-attf-class="qb-client-results #{state.showClientResults ? 'show' : ''}">
+                                        <t t-foreach="state.clientResults" t-as="client" t-key="client.id">
+                                            <div class="qb-client-result"
+                                                 t-on-mousedown.prevent="() => this.selectClient(client)">
+                                                <div class="qb-cr-avatar"
+                                                     t-esc="(client.name || '?').split(' ').filter(p => p).map(p => p[0]).join('').substring(0,2).toUpperCase()"/>
+                                                <div class="qb-cr-info">
+                                                    <div class="qb-cr-name" t-esc="client.name"/>
+                                                    <div class="qb-cr-detail">
+                                                        <t t-if="client.mobile" t-esc="client.mobile"/>
+                                                        <t t-if="client.patient_code"> — <t t-esc="client.patient_code"/></t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                                <div t-if="state.patient.id" class="qb-selected-client">
+                                    <div class="qb-sc-avatar" t-esc="state.patient.initials"/>
+                                    <div class="qb-sc-info">
+                                        <div class="qb-sc-name" t-esc="state.patient.name"/>
+                                        <div class="qb-sc-detail" t-if="state.patient.code" t-esc="state.patient.code"/>
+                                    </div>
+                                    <div class="qb-sc-check"><i class="fa fa-check-circle"/> Selected</div>
+                                    <button class="qb-sc-clear" t-on-click="clearClient"><i class="fa fa-times"/></button>
+                                </div>
+                            </t>
+
                             <!-- SERVICE SECTION -->
-                            <div class="qb-section-title qb-section-first"><i class="fa fa-stethoscope"/> Service</div>
+                            <div t-attf-class="qb-section-title #{needsClientSelector ? '' : 'qb-section-first'}"><i class="fa fa-stethoscope"/> Service</div>
                             <div class="qb-form-row">
                                 <div class="qb-form-group">
                                     <div class="qb-form-label">Service Type <span class="qb-req">*</span></div>
@@ -306,6 +351,10 @@
 
                             <!-- SUMMARY -->
                             <div class="qb-summary-box">
+                                <div class="qb-summary-row" t-if="needsClientSelector and state.patient.name">
+                                    <span class="qb-sum-label">Client</span>
+                                    <span class="qb-sum-value" t-esc="state.patient.name"/>
+                                </div>
                                 <div class="qb-summary-row">
                                     <span class="qb-sum-label">Service</span>
                                     <span class="qb-sum-value"><t t-esc="serviceLabel"/> (<t t-esc="state.durationHours"/>h)</span>

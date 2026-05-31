@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_cms_sidebar_admin" model="res.groups">
+        <field name="name">Healthcare: CMS Sidebar Administrator</field>
+        <field name="implied_ids" eval="[(4, ref('health_base.group_healthcare_admin'))]"/>
+    </record>
+</odoo>

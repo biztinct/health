@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="item_fin_dashboard" model="cms.sidebar.item">
+        <field name="name">Dashboard</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-th-large</field>
+        <field name="action_xmlid">health_invoicing.action_fin_dashboard</field>
+        <field name="action_tag">fin_dashboard</field>
+        <field name="match_action_tags">fin_dashboard</field>
+    </record>
+
+    <record id="item_fin_invoices" model="cms.sidebar.item">
+        <field name="name">Invoices</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-file-text-o</field>
+        <field name="action_xmlid">health_invoicing.action_fin_invoice_list</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_invoice_list</field>
+        <field name="match_models">account.move</field>
+    </record>
+
+    <record id="item_fin_ar_dashboard" model="cms.sidebar.item">
+        <field name="name">AR Dashboard</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-bar-chart</field>
+        <field name="action_xmlid">health_invoicing.action_fin_ar_dashboard</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_ar_dashboard</field>
+        <field name="match_models">account.move.line</field>
+    </record>
+
+    <record id="item_fin_ar_management" model="cms.sidebar.item">
+        <field name="name">AR Management</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-credit-card</field>
+        <field name="action_xmlid">health_invoicing.action_fin_ar_management</field>
+        <field name="action_tag">fin_ar_management</field>
+        <field name="match_action_tags">fin_ar_management</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_cash_collections</field>
+    </record>
+
+    <record id="item_fin_payments" model="cms.sidebar.item">
+        <field name="name">Payments</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-money</field>
+        <field name="action_xmlid">health_invoicing.action_fin_payment_list</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_payment_list</field>
+        <field name="match_models">health.payment.transaction</field>
+    </record>
+
+    <record id="item_fin_overdue" model="cms.sidebar.item">
+        <field name="name">Overdue Clients</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">60</field>
+        <field name="icon">fa fa-exclamation-circle</field>
+        <field name="action_xmlid">health_invoicing.action_fin_overdue</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_overdue</field>
+    </record>
+
+    <record id="item_fin_vat_log" model="cms.sidebar.item">
+        <field name="name">VAT Log</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">70</field>
+        <field name="icon">fa fa-book</field>
+        <field name="action_xmlid">health_invoicing.action_fin_vat_log</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_vat_log</field>
+    </record>
+
+    <record id="item_fin_ar_transactions" model="cms.sidebar.item">
+        <field name="name">AR Transactions</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">80</field>
+        <field name="icon">fa fa-exchange</field>
+        <field name="action_xmlid">health_invoicing.action_fin_ar_transactions</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_ar_transactions</field>
+        <field name="match_models">health.ar.transaction.log</field>
+    </record>
+
+    <record id="item_fin_settings" model="cms.sidebar.item">
+        <field name="name">Settings</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="sequence">90</field>
+        <field name="icon">fa fa-sliders</field>
+        <field name="action_xmlid">health_invoicing.action_fin_settings</field>
+        <field name="action_tag">fin_settings</field>
+        <field name="match_action_tags">fin_settings</field>
+    </record>
+
+</odoo>

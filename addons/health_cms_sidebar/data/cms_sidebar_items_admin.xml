@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="item_admin_dashboard" model="cms.sidebar.item">
+        <field name="name">Dashboard</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-tachometer</field>
+        <field name="action_xmlid">health_landing.action_admin_dashboard</field>
+        <field name="action_tag">admin_dashboard</field>
+        <field name="match_action_tags">admin_dashboard</field>
+    </record>
+
+    <record id="item_admin_users" model="cms.sidebar.item">
+        <field name="name">Users &amp; Roles</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-users</field>
+        <field name="action_xmlid">health_landing.action_admin_users</field>
+        <field name="match_action_xmlids">health_landing.action_admin_users</field>
+    </record>
+
+    <record id="item_admin_master_data" model="cms.sidebar.item">
+        <field name="name">Master Data</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-database</field>
+        <field name="action_xmlid">health_landing.action_admin_facilities</field>
+        <field name="match_action_xmlids">health_landing.action_admin_facilities,health_landing.action_admin_catchments,health_landing.action_admin_service_types,health_landing.action_admin_symptoms,health_landing.action_admin_referral_sources,health_landing.action_admin_insurance,health_landing.action_admin_urgency,health_landing.action_admin_categories,health_landing.action_admin_specialties,health_landing.action_admin_districts</field>
+    </record>
+
+    <record id="item_admin_pricing" model="cms.sidebar.item">
+        <field name="name">Pricing</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-tags</field>
+        <field name="action_xmlid">health_landing.action_admin_pricelists</field>
+        <field name="match_action_xmlids">health_landing.action_admin_pricelists,health_landing.action_admin_pricing_rules,health_landing.action_admin_quick_edit_rules,health_landing.action_admin_packages</field>
+    </record>
+
+    <record id="item_admin_staff" model="cms.sidebar.item">
+        <field name="name">Healthcare Staff</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-user-md</field>
+        <field name="action_xmlid">health_landing.action_admin_staff</field>
+        <field name="match_action_xmlids">health_landing.action_admin_staff,health_landing.action_admin_skills,health_landing.action_admin_areas</field>
+    </record>
+
+    <record id="item_admin_equipment" model="cms.sidebar.item">
+        <field name="name">Equipment</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">60</field>
+        <field name="icon">fa fa-briefcase</field>
+        <field name="action_xmlid">health_landing.action_admin_equipment</field>
+        <field name="match_action_xmlids">health_landing.action_admin_equipment</field>
+    </record>
+
+    <record id="item_admin_holidays" model="cms.sidebar.item">
+        <field name="name">Public Holidays</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">70</field>
+        <field name="icon">fa fa-calendar-times-o</field>
+        <field name="action_xmlid">health_landing.action_admin_holidays</field>
+        <field name="match_action_xmlids">health_landing.action_admin_holidays</field>
+    </record>
+
+    <record id="item_admin_audit" model="cms.sidebar.item">
+        <field name="name">Audit Log</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">80</field>
+        <field name="icon">fa fa-history</field>
+        <field name="action_xmlid">health_landing.action_admin_audit</field>
+        <field name="match_action_xmlids">health_landing.action_admin_audit</field>
+        <field name="match_models">health.audit.log.view</field>
+    </record>
+
+    <record id="item_admin_field_req" model="cms.sidebar.item">
+        <field name="name">Field Requirements</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">90</field>
+        <field name="icon">fa fa-asterisk</field>
+        <field name="action_xmlid">health_landing.action_admin_field_req</field>
+        <field name="action_tag">field_requirements_dashboard</field>
+        <field name="match_action_tags">field_requirements_dashboard</field>
+    </record>
+
+    <record id="item_admin_settings" model="cms.sidebar.item">
+        <field name="name">Settings</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">100</field>
+        <field name="icon">fa fa-sliders</field>
+        <field name="action_xmlid">health_landing.action_admin_settings</field>
+        <field name="action_tag">admin_settings</field>
+        <field name="match_action_tags">admin_settings</field>
+    </record>
+
+    <record id="item_admin_cms_sidebar" model="cms.sidebar.item">
+        <field name="name">CMS Sidebar Config</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">95</field>
+        <field name="icon">fa fa-bars</field>
+        <field name="action_xmlid">health_cms_sidebar.action_cms_sidebar_item</field>
+        <field name="match_action_xmlids">health_cms_sidebar.action_cms_sidebar_item,health_cms_sidebar.action_cms_sidebar_section</field>
+        <field name="match_models">cms.sidebar.item,cms.sidebar.section</field>
+    </record>
+
+</odoo>
