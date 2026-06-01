@@ -32,6 +32,7 @@
                 <field name="assignment_date"/>
                 <field name="display_name"/>
                 <field name="patient_name"/>
+                <field name="patient_code"/>
                 <field name="planned_start_time"/>
                 <field name="planned_end_time"/>
                 <field name="predicted_duration"/>
@@ -44,9 +45,10 @@
 
         <div class="hf-wt-card">
             <div class="hf-wt-title"><t t-esc="record.patient_name or 'Client'"/></div>
+            <div class="hf-wt-code" t-if="record.patient_code"><t t-esc="record.patient_code"/></div>
             <div class="hf-wt-meta">
                 <t t-set="dur" t-value="record.fso_duration_minutes or 60"/>
-                <span>🕐 <t t-esc="record.formatted_time"/> · <t t-esc="dur"/> min</span>
+                <span><span class="hf-wt-clock"></span> <t t-esc="record.formatted_time"/> · <t t-esc="dur"/> min</span>
             </div>
         </div>
                     </t>

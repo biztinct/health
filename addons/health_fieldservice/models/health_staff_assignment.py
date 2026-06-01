@@ -45,6 +45,12 @@ class HealthStaffAssignment(models.Model):
         store=True,
         readonly=True
     )
+    patient_code = fields.Char(
+        related='fso_id.patient_id.patient_code',
+        string='Client Code',
+        store=True,
+        readonly=True
+    )
 
     active = fields.Boolean(
         default=True,

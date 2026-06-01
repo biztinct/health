@@ -36,6 +36,51 @@
     font-weight: 500;
 }
 
+/* Client code — own line, muted */
+.hf-wt-code {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: #94a3b8;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* CSS clock icon */
+.hf-wt-clock {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1.4px solid #94a3b8;
+    border-radius: 50%;
+    position: relative;
+    vertical-align: -2px;
+    flex-shrink: 0;
+}
+.hf-wt-clock::before {
+    content: '';
+    position: absolute;
+    top: 1.5px;
+    left: 4.5px;
+    width: 1.3px;
+    height: 4px;
+    background: #94a3b8;
+    border-radius: 1px;
+}
+.hf-wt-clock::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4.5px;
+    width: 3.5px;
+    height: 1.3px;
+    background: #94a3b8;
+    border-radius: 1px;
+    transform-origin: left center;
+    transform: rotate(30deg);
+}
+
 .hf-wt-meta span {
     display: inline-flex;
     align-items: center;
@@ -132,43 +177,35 @@
    VIEW MODES — Responsive density
    ============================================================================ */
 
-.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range.month-day-left {
-    width: 48% !important;
-    left: 1% !important;
-}
-
-.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range.month-day-right {
-    width: 48% !important;
-    left: 51% !important;
-}
-
-.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .hf-wt-card,
-.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .hf-wt-card {
-    white-space: normal;
-    max-width: 100%;
-}
-
-/* Month/Week: clip card content to prevent text bleeding into adjacent cards */
+/* Week/Month: cards fill their full-day column. Clip content so long names
+   never bleed into adjacent cards (safety net — columns are wide enough that
+   most text fits). Items span the full day and the month window is widened in
+   timeline_group_colors.esm.js so columns stay readable. */
 .o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .vis-item-overflow,
-.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .vis-item-overflow {
-    overflow: hidden !important;
-}
-
+.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .vis-item-overflow,
 .o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .vis-item-content,
-.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .vis-item-content {
-    overflow: hidden !important;
-}
-
+.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .vis-item-content,
 .o_timeline_view[data-timeline-mode="month"] .hf-wt-card,
 .o_timeline_view[data-timeline-mode="week"] .hf-wt-card {
     overflow: hidden !important;
 }
 
+.o_timeline_view[data-timeline-mode="month"] .hf-wt-card,
+.o_timeline_view[data-timeline-mode="week"] .hf-wt-card {
+    max-width: 100%;
+}
+
+/* Single-line + ellipsis for the text rows (no per-character wrapping) */
 .o_timeline_view[data-timeline-mode="month"] .hf-wt-title,
-.o_timeline_view[data-timeline-mode="week"] .hf-wt-title {
+.o_timeline_view[data-timeline-mode="week"] .hf-wt-title,
+.o_timeline_view[data-timeline-mode="month"] .hf-wt-code,
+.o_timeline_view[data-timeline-mode="week"] .hf-wt-code {
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    word-break: normal;
 }
+
 
 /* Day view: taller cards */
 .o_timeline_view[data-timeline-mode="day"] .hf-wt-card {

@@ -1,151 +1,139 @@
 /**
- * Extension for web_timeline to apply group colors as item borders
- * and handle week/month full-day width
+ * Extension for web_timeline:
+ *  - apply group colors as item left-borders (handled in CSS via the
+ *    data-timeline-mode hook set below)
+ *  - week/month: span items to the full day so cards fill the day column
+ *  - month: use a wide, horizontally-scrollable window so cards stay readable
+ *    instead of squeezing 30 days into the viewport (~50px/day, unreadable)
  */
 import {TimelineRenderer} from "@web_timeline/views/timeline/timeline_renderer.esm";
 import {patch} from "@web/core/utils/patch";
 
 const {DateTime} = luxon;
 
+// How many days are visible at once in month view. The full month is still
+// loaded; the rest is reached by horizontal scroll / drag. Fewer days here =>
+// wider, more readable cards.
+const MONTH_VISIBLE_DAYS = 10;
+
 patch(TimelineRenderer.prototype, {
     /**
-     * Override on_data_loaded to handle week/month width after timeline renders
+     * Override on_data_loaded to handle week/month width after timeline renders.
      */
     async on_data_loaded(records, adjust_window) {
         await super.on_data_loaded(records, adjust_window);
 
-        // Only handle week/month width adjustments
-        setTimeout(() => {
-            this._handleWeekMonthFullDayWidth();
-        }, 100);
+        setTimeout(() => this._handleWeekMonthFullDayWidth(), 100);
     },
 
     /**
-     * In week/month view, extend items to span full day for better visibility
+     * In week/month view, extend items to span the full day for better visibility.
      */
     _handleWeekMonthFullDayWidth() {
         if (!this.timeline || !this.mode.data) return;
-
-        // Only apply in week or month view
-        if (this.mode.data !== 'week' && this.mode.data !== 'month') return;
+        if (this.mode.data !== "week" && this.mode.data !== "month") return;
 
         const itemsData = this.timeline.itemsData;
         if (!itemsData) return;
 
-        const items = itemsData.get();
         const updatedItems = [];
+        for (const item of itemsData.get()) {
+            if (!item.start) continue;
+            const startDate = DateTime.fromJSDate(item.start);
+            updatedItems.push({
+                ...item,
+                start: startDate.startOf("day").toJSDate(),
+                end: startDate.endOf("day").toJSDate(),
+            });
+        }
 
-        items.forEach(item => {
-            if (item.start) {
-                const startDate = DateTime.fromJSDate(item.start);
-
-                // In week/month view: span entire day (start of day to end of day)
-                const startOfDay = startDate.startOf('day').toJSDate();
-                const endOfDay = startDate.endOf('day').toJSDate();
-
-                updatedItems.push({
-                    ...item,
-                    start: startOfDay,
-                    end: endOfDay
-                });
-            }
-        });
-
-        if (updatedItems.length > 0) {
-            // Update items to span full day
+        if (updatedItems.length) {
             itemsData.update(updatedItems);
+        }
 
-            // For month view, add left/right positioning classes
-            if (this.mode.data === 'month') {
-                setTimeout(() => this._applyMonthPositioning(), 50);
-            }
+        if (this.mode.data === "month") {
+            setTimeout(() => this._applyMonthWideWindow(), 50);
         }
     },
 
     /**
-     * Apply left/right positioning for month view (2-day cells)
+     * Month view: show a narrow slice of the month at a readable column width and
+     * let the user scroll/drag horizontally through the rest. Without this the
+     * whole month is squeezed into the viewport and cards become unreadable.
      */
-    _applyMonthPositioning() {
-        if (!this.timeline || this.mode.data !== 'month') return;
+    _applyMonthWideWindow() {
+        if (!this.timeline || this.mode.data !== "month") return;
 
-        const items = this.rootRef.el?.querySelectorAll('.vis-item.vis-range');
-        if (!items) return;
+        const win = this.timeline.getWindow();
+        const monthStart = DateTime.fromJSDate(win.start).startOf("month");
+        const now = DateTime.now();
 
-        const itemsData = this.timeline.itemsData;
+        // Land on "today" when the displayed month is the current one, otherwise
+        // start at the beginning of that month. The rest of the month is reached
+        // by horizontal scroll / drag.
+        let start = monthStart;
+        if (now >= monthStart && now < monthStart.plus({months: 1})) {
+            start = now.startOf("day");
+        }
+        const end = start.plus({days: MONTH_VISIBLE_DAYS});
 
-        items.forEach(item => {
-            const itemId = item.getAttribute('data-id');
-            if (!itemId) return;
-
-            const itemData = itemsData?.get(parseInt(itemId));
-            if (!itemData || !itemData.start) return;
-
-            const startDate = DateTime.fromJSDate(itemData.start);
-            const dayOfMonth = startDate.day;
-
-            // Remove existing classes
-            item.classList.remove('month-day-left', 'month-day-right');
-
-            // In month view, cells show 2 days each
-            // Position left for odd days, right for even days
-            if (dayOfMonth % 2 === 1) {
-                item.classList.add('month-day-left');
-            } else {
-                item.classList.add('month-day-right');
-            }
+        this.timeline.setOptions({
+            horizontalScroll: true,
+            zoomKey: "ctrlKey",
+            moveable: true,
         });
+        this.timeline.setWindow(start.toJSDate(), end.toJSDate(), {animation: false});
     },
 
     /**
-     * Override _computeMode to handle week/month full-day width
+     * Set the CSS hook attribute on the view root (.o_timeline_view) so the
+     * [data-timeline-mode] rules in web_timeline_card.css actually match. The
+     * renderer root is .oe_timeline_view (nested inside .o_timeline_view), hence
+     * the closest() lookup.
+     */
+    _setTimelineModeAttr(mode) {
+        const el = this.rootRef.el;
+        if (!el) return;
+        const target = el.closest(".o_timeline_view") || el;
+        target.setAttribute("data-timeline-mode", mode);
+    },
+
+    /**
+     * Override _computeMode to set the mode attribute and handle week/month width.
      */
     _computeMode() {
         super._computeMode();
 
-        // Add data attribute to root element for CSS targeting
-        if (this.rootRef.el && this.mode.data) {
-            this.rootRef.el.setAttribute('data-timeline-mode', this.mode.data);
+        if (this.mode.data) {
+            this._setTimelineModeAttr(this.mode.data);
         }
 
-        // Apply full-day width when switching modes
-        setTimeout(() => {
-            this._handleWeekMonthFullDayWidth();
-        }, 150);
+        setTimeout(() => this._handleWeekMonthFullDayWidth(), 150);
     },
 
-    /**
-     * Override mode change methods to update data attribute and handle width
-     */
     _onScaleDayClicked() {
         super._onScaleDayClicked();
-        if (this.rootRef.el) {
-            this.rootRef.el.setAttribute('data-timeline-mode', 'day');
-        }
+        this._setTimelineModeAttr("day");
+        this.timeline?.setOptions({horizontalScroll: false});
         // Restore original item durations in day view
         this._restoreOriginalDurations();
     },
 
     _onScaleWeekClicked() {
         super._onScaleWeekClicked();
-        if (this.rootRef.el) {
-            this.rootRef.el.setAttribute('data-timeline-mode', 'week');
-        }
+        this._setTimelineModeAttr("week");
+        this.timeline?.setOptions({horizontalScroll: false});
         setTimeout(() => this._handleWeekMonthFullDayWidth(), 150);
     },
 
     _onScaleMonthClicked() {
         super._onScaleMonthClicked();
-        if (this.rootRef.el) {
-            this.rootRef.el.setAttribute('data-timeline-mode', 'month');
-        }
-        setTimeout(() => {
-            this._handleWeekMonthFullDayWidth();
-            this._applyMonthPositioning();
-        }, 150);
+        this._setTimelineModeAttr("month");
+        setTimeout(() => this._handleWeekMonthFullDayWidth(), 150);
     },
 
     /**
-     * Restore original item durations (when switching back to day view)
+     * Restore original item durations (when switching back to day view).
      */
     _restoreOriginalDurations() {
         if (!this.timeline) return;
@@ -164,5 +152,5 @@ patch(TimelineRenderer.prototype, {
             itemsData.clear();
             itemsData.add(data);
         }
-    }
+    },
 });
