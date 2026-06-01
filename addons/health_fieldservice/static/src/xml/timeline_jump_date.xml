@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-inherit="web_timeline.TimelineRenderer" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('oe_timeline_buttons')]/div[hasclass('btn-group')]" position="after">
+            <button
+                class="oe_timeline_button_jump_date btn btn-default"
+                t-on-click="_onJumpDateClicked"
+                title="Jump to date"
+            >
+                <span class="hf-wt-ico hf-ico-calendar" />
+            </button>
+        </xpath>
+    </t>
+</templates>
