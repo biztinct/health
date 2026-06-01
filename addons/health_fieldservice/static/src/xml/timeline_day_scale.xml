@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-inherit="web_timeline.TimelineRenderer" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('oe_timeline_buttons')]/div[hasclass('btn-group')]" position="after">
+            <div t-if="mode.data === 'day'" class="oe_timeline_dayscale" role="group" aria-label="Time scale">
+                <button
+                    t-att-class="'oe_timeline_dayscale_btn ' + (dayScale.value === '15min' ? 'is-active' : '')"
+                    t-on-click="() => this._onDayScaleClicked('15min')"
+                    title="15-minute columns"
+                >
+                    <span class="hf-wt-ico hf-ico-density-fine" />
+                    <span class="oe_timeline_dayscale_lbl">15m</span>
+                </button>
+                <button
+                    t-att-class="'oe_timeline_dayscale_btn ' + (dayScale.value === '30min' ? 'is-active' : '')"
+                    t-on-click="() => this._onDayScaleClicked('30min')"
+                    title="30-minute columns"
+                >
+                    <span class="hf-wt-ico hf-ico-density-med" />
+                    <span class="oe_timeline_dayscale_lbl">30m</span>
+                </button>
+                <button
+                    t-att-class="'oe_timeline_dayscale_btn ' + (dayScale.value === '1hr' ? 'is-active' : '')"
+                    t-on-click="() => this._onDayScaleClicked('1hr')"
+                    title="1-hour columns"
+                >
+                    <span class="hf-wt-ico hf-ico-density-coarse" />
+                    <span class="oe_timeline_dayscale_lbl">1h</span>
+                </button>
+            </div>
+        </xpath>
+    </t>
+</templates>

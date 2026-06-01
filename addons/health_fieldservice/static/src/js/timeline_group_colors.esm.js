@@ -8,6 +8,7 @@
  */
 import {TimelineRenderer} from "@web_timeline/views/timeline/timeline_renderer.esm";
 import {patch} from "@web/core/utils/patch";
+import {useState} from "@odoo/owl";
 
 const {DateTime} = luxon;
 
@@ -16,16 +17,48 @@ const {DateTime} = luxon;
 // wider, more readable cards.
 const MONTH_VISIBLE_DAYS = 10;
 
-// How many hours are visible at once in day view. The full day is still loaded;
-// the rest is reached by horizontal scroll / drag. Fewer hours here => wider
-// hour columns, so even a 30-minute appointment is wide enough to show its card
-// content (proportional width is preserved — vis renders items as ranges).
-const DAY_VISIBLE_HOURS = 6;
+// Day-view time-scale options. The full day is always loaded; the rest is
+// reached by horizontal scroll / drag. `visibleHours` sets the window span, which
+// (against a fixed canvas width) determines the column width — and therefore the
+// appointment-card width, since vis renders items as proportional ranges. Fewer
+// visible hours => wider columns/cards. `timeAxis` sets the gridline granularity.
+// Each scale shows ~12 columns across the viewport.
+const DAY_SCALES = {
+    "15min": {visibleHours: 3, timeAxis: {scale: "minute", step: 15}},
+    "30min": {visibleHours: 6, timeAxis: {scale: "minute", step: 30}},
+    "1hr": {visibleHours: 12, timeAxis: {scale: "hour", step: 1}},
+};
+const DEFAULT_DAY_SCALE = "30min";
 // Where the visible window starts (24h clock) when the displayed day is not
 // today. On "today" we center on the current hour instead.
 const DAY_WINDOW_START_HOUR = 7;
 
 patch(TimelineRenderer.prototype, {
+    setup() {
+        super.setup();
+        // Reactive day-view time scale (15min / 30min / 1hr). Drives both the
+        // toolbar button highlighting and the window span in _applyDayWideWindow.
+        this.dayScale = useState({value: DEFAULT_DAY_SCALE});
+    },
+
+    /**
+     * After the base timeline is built, allow a single press-drag on a card to
+     * move it directly (no pre-click): itemsAlwaysDraggable.item makes an
+     * unselected item start dragging immediately (and vis stopPropagation then
+     * suppresses the range pan, so a press-drag on empty background still pans).
+     * editable.updateTime=false locks the time so a drag only reassigns staff
+     * (vertical / group), never reschedules. Set once here; the per-view
+     * setOptions calls below never touch editable / itemsAlwaysDraggable, so it
+     * persists across Day/Week/Month.
+     */
+    init_timeline() {
+        super.init_timeline();
+        this.timeline?.setOptions({
+            itemsAlwaysDraggable: {item: true, range: false},
+            editable: {updateTime: false},
+        });
+    },
+
     /**
      * Override on_data_loaded to handle day/week/month width after timeline renders.
      */
@@ -48,6 +81,7 @@ patch(TimelineRenderer.prototype, {
     _applyDayWideWindow() {
         if (!this.timeline || this.mode.data !== "day") return;
 
+        const cfg = DAY_SCALES[this.dayScale?.value || DEFAULT_DAY_SCALE];
         const win = this.timeline.getWindow();
         const dayStart = DateTime.fromJSDate(win.start).startOf("day");
         const now = DateTime.now();
@@ -58,14 +92,40 @@ patch(TimelineRenderer.prototype, {
         if (now >= dayStart && now < dayStart.plus({days: 1})) {
             start = now.minus({hours: 1}).startOf("hour");
         }
-        const end = start.plus({hours: DAY_VISIBLE_HOURS});
+        const end = start.plus({hours: cfg.visibleHours});
 
         this.timeline.setOptions({
             horizontalScroll: true,
             zoomKey: "ctrlKey",
             moveable: true,
+            timeAxis: cfg.timeAxis,
         });
         this.timeline.setWindow(start.toJSDate(), end.toJSDate(), {animation: false});
+    },
+
+    /**
+     * Day view: change the time-column scale (15min / 30min / 1hr). Re-windows in
+     * place, anchored on the current window start so the user's scroll position is
+     * preserved (unlike _applyDayWideWindow which re-anchors on the business hour).
+     */
+    _onDayScaleClicked(scale) {
+        if (!DAY_SCALES[scale]) return;
+        this.dayScale.value = scale;
+        if (this.mode.data !== "day" || !this.timeline) return;
+
+        const cfg = DAY_SCALES[scale];
+        const start = DateTime.fromJSDate(this.timeline.getWindow().start);
+        this.timeline.setOptions({
+            horizontalScroll: true,
+            zoomKey: "ctrlKey",
+            moveable: true,
+            timeAxis: cfg.timeAxis,
+        });
+        this.timeline.setWindow(
+            start.toJSDate(),
+            start.plus({hours: cfg.visibleHours}).toJSDate(),
+            {animation: false}
+        );
     },
 
     /**
@@ -168,14 +228,33 @@ patch(TimelineRenderer.prototype, {
     _onScaleWeekClicked() {
         super._onScaleWeekClicked();
         this._setTimelineModeAttr("week");
-        this.timeline?.setOptions({horizontalScroll: false});
+        // Drop the day-view minute gridlines (revert to vis auto-scaling).
+        this.timeline?.setOptions({
+            horizontalScroll: false,
+            timeAxis: {scale: undefined, step: undefined},
+        });
         setTimeout(() => this._handleWeekMonthFullDayWidth(), 150);
     },
 
     _onScaleMonthClicked() {
         super._onScaleMonthClicked();
         this._setTimelineModeAttr("month");
+        // Drop the day-view minute gridlines (revert to vis auto-scaling).
+        this.timeline?.setOptions({timeAxis: {scale: undefined, step: undefined}});
         setTimeout(() => this._handleWeekMonthFullDayWidth(), 150);
+    },
+
+    _onScaleYearClicked() {
+        super._onScaleYearClicked();
+        this._setTimelineModeAttr("year");
+        // Drop the day-view minute gridlines (revert to vis auto-scaling).
+        this.timeline?.setOptions({timeAxis: {scale: undefined, step: undefined}});
+    },
+
+    _onTodayClicked() {
+        super._onTodayClicked();
+        // "Today" leaves the day scale at a 24h window; drop the minute gridlines.
+        this.timeline?.setOptions({timeAxis: {scale: undefined, step: undefined}});
     },
 
     /**

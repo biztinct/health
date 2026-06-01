@@ -135,6 +135,7 @@
             'health_fieldservice/static/src/xml/assignment_dashboard.xml',
             'health_fieldservice/static/src/xml/assignment_timeline_view.xml',
             'health_fieldservice/static/src/xml/timeline_jump_date.xml',
+            'health_fieldservice/static/src/xml/timeline_day_scale.xml',
             'health_fieldservice/static/src/xml/staff_workload_dashboard.xml',
             'health_fieldservice/static/src/xml/service_timer.xml',
             'health_fieldservice/static/src/xml/fso_calendar_popover.xml',
