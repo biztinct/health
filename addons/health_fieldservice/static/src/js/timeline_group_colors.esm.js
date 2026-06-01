@@ -16,14 +16,56 @@ const {DateTime} = luxon;
 // wider, more readable cards.
 const MONTH_VISIBLE_DAYS = 10;
 
+// How many hours are visible at once in day view. The full day is still loaded;
+// the rest is reached by horizontal scroll / drag. Fewer hours here => wider
+// hour columns, so even a 30-minute appointment is wide enough to show its card
+// content (proportional width is preserved — vis renders items as ranges).
+const DAY_VISIBLE_HOURS = 6;
+// Where the visible window starts (24h clock) when the displayed day is not
+// today. On "today" we center on the current hour instead.
+const DAY_WINDOW_START_HOUR = 7;
+
 patch(TimelineRenderer.prototype, {
     /**
-     * Override on_data_loaded to handle week/month width after timeline renders.
+     * Override on_data_loaded to handle day/week/month width after timeline renders.
      */
     async on_data_loaded(records, adjust_window) {
         await super.on_data_loaded(records, adjust_window);
 
         setTimeout(() => this._handleWeekMonthFullDayWidth(), 100);
+        if (this.mode.data === "day") {
+            setTimeout(() => this._applyDayWideWindow(), 100);
+        }
+    },
+
+    /**
+     * Day view: show a narrow slice of the day at a wide hour-column scale and
+     * let the user scroll/drag horizontally through the rest of the day. Without
+     * this the whole 24h is squeezed into the viewport (~22px/hour) and short
+     * appointments collapse to a sliver too narrow to show their card content.
+     * Item durations are left untouched, so card width stays proportional.
+     */
+    _applyDayWideWindow() {
+        if (!this.timeline || this.mode.data !== "day") return;
+
+        const win = this.timeline.getWindow();
+        const dayStart = DateTime.fromJSDate(win.start).startOf("day");
+        const now = DateTime.now();
+
+        // Center on the current hour when viewing today, otherwise start at the
+        // business hour. The rest of the day is reached by horizontal scroll.
+        let start = dayStart.plus({hours: DAY_WINDOW_START_HOUR});
+        if (now >= dayStart && now < dayStart.plus({days: 1})) {
+            start = now.minus({hours: 1}).startOf("hour");
+        }
+        const end = start.plus({hours: DAY_VISIBLE_HOURS});
+
+        this.timeline.setOptions({
+            horizontalScroll: true,
+            zoomKey: "ctrlKey",
+            moveable: true,
+        });
+        this.timeline.setWindow(start.toJSDate(), end.toJSDate(), {animation: false});
     },
 
     /**
@@ -109,14 +151,18 @@ patch(TimelineRenderer.prototype, {
         }
 
         setTimeout(() => this._handleWeekMonthFullDayWidth(), 150);
+        if (this.mode.data === "day") {
+            setTimeout(() => this._applyDayWideWindow(), 150);
+        }
     },
 
     _onScaleDayClicked() {
         super._onScaleDayClicked();
         this._setTimelineModeAttr("day");
-        this.timeline?.setOptions({horizontalScroll: false});
-        // Restore original item durations in day view
+        // Restore original item durations, then widen the hour columns so short
+        // appointments stay readable (horizontal scroll covers the rest of the day).
         this._restoreOriginalDurations();
+        setTimeout(() => this._applyDayWideWindow(), 50);
     },
 
     _onScaleWeekClicked() {

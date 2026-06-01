@@ -476,6 +476,50 @@ class HealthStaffAssignment(models.Model):
             else:
                 record.planned_end_time = False
 
+    def _sync_planned_end_time(self):
+        """Force planned_end_time = planned_start_time + duration via direct SQL.
+
+        planned_end_time is a stored, readonly=False computed field, so an explicit
+        write (e.g. a timeline drag) overrides the computed value and sticks — the
+        compute won't re-run unless a dependency changes. For non-FSO assignments
+        there's no booking to re-enforce against, so a bad end time (seen historically
+        as spans of several days, or even ending before the start) would persist and
+        blow up the day-view card width. This keeps end pinned to start + duration.
+        """
+        for record in self:
+            start = record.planned_start_time
+            if not start:
+                continue
+            duration = record.fso_duration_minutes or 60
+            correct_end = start + timedelta(minutes=duration)
+            if record.planned_end_time != correct_end:
+                self.env.cr.execute(
+                    "UPDATE health_staff_assignment SET planned_end_time = %s WHERE id = %s",
+                    (correct_end, record.id),
+                )
+                record.invalidate_recordset(['planned_end_time'])
+                _logger.info(
+                    '🔒 Synced %s planned_end_time to start + %d min', record.name, duration
+                )
+
+    @api.constrains('planned_start_time', 'planned_end_time')
+    def _check_planned_times_ordered(self):
+        """Backstop: an end at or before the start is always corrupt data.
+
+        Normalization in create()/write() keeps end = start + duration, but this
+        guards any other ORM write path from persisting an inverted/zero-length span.
+        """
+        for record in self:
+            if (record.planned_start_time and record.planned_end_time
+                    and record.planned_end_time <= record.planned_start_time):
+                raise ValidationError(_(
+                    'Planned end time (%(end)s) must be after the planned start time '
+                    '(%(start)s) for assignment %(name)s.',
+                    end=record.planned_end_time,
+                    start=record.planned_start_time,
+                    name=record.name or _('New Assignment'),
+                ))
+
     @api.depends('staff_id', 'fso_id')
     def _compute_assignment_score(self):
         """Calculate comprehensive assignment quality score"""
@@ -739,6 +783,10 @@ class HealthStaffAssignment(models.Model):
                         '🔒 POST-CREATE: Forced assignment %s times to FSO %s datetime %s',
                         record.name, record.fso_id.name, correct_start
                     )
+            elif record.state != 'template':
+                # Non-FSO assignment: keep end = start + duration even when the
+                # timeline create passed a click-position end. See write() above.
+                record._sync_planned_end_time()
 
         # Send push notification for assignments created in 'assigned' state
         for record in records:
@@ -865,6 +913,14 @@ class HealthStaffAssignment(models.Model):
                             '🔒 POST-WRITE: Forced assignment %s times to FSO %s datetime %s',
                             record.name, record.fso_id.name, correct_start
                         )
+                else:
+                    # Non-FSO assignments have no booking to enforce against, so a
+                    # timeline drag — especially in week/month view where cards are
+                    # visually spanned to the full day — can write a bogus
+                    # planned_end_time (days off, or even before the start). Keep
+                    # end = start + duration so the card width always reflects the
+                    # real duration. See _sync_planned_end_time.
+                    record._sync_planned_end_time()
 
         # When assignment state changes to 'confirmed' (nurse accepted via PWA),
         # advance the parent FSO from 'confirmed' (Booked) to 'assigned' state.
