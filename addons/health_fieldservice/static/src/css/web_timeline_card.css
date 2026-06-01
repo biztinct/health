@@ -1,254 +1,210 @@
 /* ============================================================================
-   TIMELINE CARDS — Clean, performant assignment blocks
-   Design: Linear / Notion Calendar inspired — flat, high-contrast, no GPU hogs
+   TIMELINE CARDS — Staff Assignment (hybrid redesign)
+   White by default; only strong/terminal states tint (in-progress / completed /
+   cancelled / emergency). Icons are CSS mask-image (data-URI) — no <svg> in the
+   DOM (web_timeline XSS whitelist allows only b/div/span/small/img), no network,
+   no per-card JS.
    ============================================================================ */
 
-/* === Card inner content === */
-.hf-wt-card {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 8px 12px 8px 10px;
-    background: #fff;
-    border: none;
-    border-radius: 6px;
-    line-height: 1.3;
-    overflow: visible;
+.o_timeline_view{
+  /* neutrals */
+  --hf-text:#0f172a; --hf-text-2:#475569; --hf-muted:#64748b; --hf-faint:#94a3b8;
+  --hf-hair:rgba(15,23,42,.07);
+  --hf-shadow:0 1px 2px rgba(16,24,40,.05), 0 1px 3px rgba(16,24,40,.10);
+  --hf-shadow-hover:0 2px 4px rgba(16,24,40,.06), 0 4px 10px rgba(16,24,40,.12);
+  /* status palette */
+  --st-draft:#94a3b8; --st-assigned:#3b82f6; --st-confirmed:#0ea5e9;
+  --st-inprogress:#f59e0b; --st-completed:#10b981; --st-cancelled:#f43f5e;
+  --st-deferred:#8b5cf6; --st-emergency:#ef4444;
+  /* tints */
+  --t-inprogress:#fffaf0; --t-completed:#f5fefa; --t-cancelled:#fff5f6; --t-emergency:#fff5f5;
 }
 
-/* Client name */
-.hf-wt-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: #1e293b;
-    overflow: visible;
-    white-space: nowrap;
-    letter-spacing: -0.01em;
+/* === Card ===
+   Compact by default (every timeline mode renders cards ~110-150px wide). The
+   status word, type glyph and priority chip are revealed by a container query
+   further down, only when a card is genuinely wide enough. */
+.hf-wt-card{
+  position:relative;
+  display:flex; flex-direction:column; gap:4px;
+  padding:9px 11px 9px 13px;
+  background:transparent;
+  line-height:1.3;
+  font-variant-numeric:tabular-nums;
+  --hf-accent:var(--st-assigned);
+}
+/* inset rounded accent bar (state / emergency colored) */
+.hf-wt-card::before{
+  content:""; position:absolute; left:0; top:9px; bottom:9px; width:3px;
+  border-radius:0 3px 3px 0; background:var(--hf-accent);
 }
 
-/* Meta line — time + duration */
-.hf-wt-meta {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: #64748b;
-    font-weight: 500;
+.hf-wt-row{ display:flex; align-items:center; gap:7px; min-width:0; }
+
+.hf-wt-avatar{
+  flex:0 0 auto; width:20px; height:20px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700; color:#fff; letter-spacing:.02em;
+  background:#64748b;
 }
 
-/* Client code — own line, muted */
-.hf-wt-code {
-    font-size: 10.5px;
-    font-weight: 500;
-    color: #94a3b8;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.hf-wt-title{
+  font-size:12.5px; font-weight:600; letter-spacing:-.01em; color:var(--hf-text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1 1 auto; min-width:0;
 }
 
-/* CSS clock icon */
-.hf-wt-clock {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border: 1.4px solid #94a3b8;
-    border-radius: 50%;
-    position: relative;
-    vertical-align: -2px;
-    flex-shrink: 0;
+.hf-wt-end{ display:flex; align-items:center; gap:6px; flex:0 0 auto; }
+
+.hf-wt-status{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:10.5px; font-weight:600; color:var(--hf-accent); white-space:nowrap;
 }
-.hf-wt-clock::before {
-    content: '';
-    position: absolute;
-    top: 1.5px;
-    left: 4.5px;
-    width: 1.3px;
-    height: 4px;
-    background: #94a3b8;
-    border-radius: 1px;
+.hf-wt-dot{ width:6px; height:6px; border-radius:50%; background:var(--hf-accent); flex:0 0 auto; }
+
+.hf-wt-meta{
+  display:flex; align-items:center; gap:6px;
+  font-size:11px; font-weight:500; color:var(--hf-text-2);
 }
-.hf-wt-clock::after {
-    content: '';
-    position: absolute;
-    top: 4px;
-    left: 4.5px;
-    width: 3.5px;
-    height: 1.3px;
-    background: #94a3b8;
-    border-radius: 1px;
-    transform-origin: left center;
-    transform: rotate(30deg);
+.hf-wt-sep{ color:#cbd5e1; }
+.hf-wt-code{
+  font-size:10px; font-weight:600; color:var(--hf-muted);
+  letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
-.hf-wt-meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
+/* compact: hidden by default, revealed by the container query when wide */
+.hf-wt-status-label{ display:none; }
+.hf-wt-type{
+  display:none; align-items:center; gap:4px; margin-left:auto;
+  color:var(--hf-muted); font-size:10.5px; font-weight:500; white-space:nowrap;
 }
+.hf-wt-prio{
+  display:none; align-items:center; font-size:9px; font-weight:700;
+  letter-spacing:.04em; text-transform:uppercase; padding:1.5px 5px;
+  border-radius:5px; line-height:1.4;
+}
+.hf-prio-c-high{ color:#b45309; background:#fef3c7; }
+.hf-prio-c-urgent{ color:#c2410c; background:#ffedd5; }
+.hf-prio-c-emergency{ color:#fff; background:var(--st-emergency); }
 
-.hf-wt-left, .hf-wt-right { display: flex; align-items: center; gap: 6px; }
+/* === avatar palette (index from avatar_hue) === */
+.hf-av-0{background:#6366f1}.hf-av-1{background:#0ea5e9}.hf-av-2{background:#10b981}
+.hf-av-3{background:#f59e0b}.hf-av-4{background:#ec4899}.hf-av-5{background:#8b5cf6}
+.hf-av-6{background:#14b8a6}.hf-av-7{background:#ef4444}.hf-av-8{background:#3b82f6}
+
+/* === state accent + tint (hybrid: only strong/terminal states tint) === */
+.hf-wt-card.hf-state-draft{--hf-accent:var(--st-draft)}
+.hf-wt-card.hf-state-assigned{--hf-accent:var(--st-assigned)}
+.hf-wt-card.hf-state-confirmed{--hf-accent:var(--st-confirmed)}
+.hf-wt-card.hf-state-deferred{--hf-accent:var(--st-deferred)}
+.hf-wt-card.hf-state-in_progress{--hf-accent:var(--st-inprogress); background:var(--t-inprogress)}
+.hf-wt-card.hf-state-completed{--hf-accent:var(--st-completed); background:var(--t-completed)}
+.hf-wt-card.hf-state-completed .hf-wt-title{color:var(--hf-muted)}
+.hf-wt-card.hf-state-cancelled{--hf-accent:var(--st-cancelled); background:var(--t-cancelled)}
+.hf-wt-card.hf-state-cancelled .hf-wt-title{text-decoration:line-through; color:var(--hf-faint)}
+/* hollow dot for not-yet-actioned states */
+.hf-wt-card.hf-state-draft .hf-wt-dot,
+.hf-wt-card.hf-state-deferred .hf-wt-dot{ background:transparent; box-shadow:inset 0 0 0 1.5px var(--hf-accent); }
+/* emergency priority overrides accent + tint (placed last to win) */
+.hf-wt-card.hf-prio-emergency{--hf-accent:var(--st-emergency); background:var(--t-emergency)}
+
+/* === icons (CSS mask, data-URI — sharp, themeable via currentColor) === */
+.hf-wt-ico{
+  display:inline-block; width:13px; height:13px; flex:0 0 auto;
+  background-color:currentColor;
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center; mask-position:center;
+  -webkit-mask-size:contain; mask-size:contain;
+}
+.hf-ico-clock{ color:var(--hf-faint);
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Ccircle%20cx='8'%20cy='8'%20r='6'/%3E%3Cpath%20d='M8%204.6V8l2.4%201.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+          mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Ccircle%20cx='8'%20cy='8'%20r='6'/%3E%3Cpath%20d='M8%204.6V8l2.4%201.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.hf-ico-check{ color:var(--st-completed); width:11px; height:11px;
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='2'%3E%3Cpath%20d='M3.5%208.5%207%2012l5.5-7'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+          mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='2'%3E%3Cpath%20d='M3.5%208.5%207%2012l5.5-7'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E"); }
+
+.hf-wt-type-ico{ color:var(--hf-faint); }
+.hf-type-home_visit .hf-wt-type-ico{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Cpath%20d='M2.5%207.2%208%203l5.5%204.2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3Cpath%20d='M4%207v6h8V7'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+          mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Cpath%20d='M2.5%207.2%208%203l5.5%204.2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3Cpath%20d='M4%207v6h8V7'%20stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.hf-type-clinic_visit .hf-wt-type-ico{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Crect%20x='3'%20y='3'%20width='10'%20height='10'%20rx='1.5'/%3E%3Cpath%20d='M8%205.5v5M5.5%208h5'%20stroke-linecap='round'/%3E%3C/svg%3E");
+          mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Crect%20x='3'%20y='3'%20width='10'%20height='10'%20rx='1.5'/%3E%3Cpath%20d='M8%205.5v5M5.5%208h5'%20stroke-linecap='round'/%3E%3C/svg%3E"); }
+.hf-type-emergency .hf-wt-type-ico{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.8'%3E%3Cpath%20d='M8%203v10M3%208h10'%20stroke-linecap='round'/%3E%3C/svg%3E");
+          mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.8'%3E%3Cpath%20d='M8%203v10M3%208h10'%20stroke-linecap='round'/%3E%3C/svg%3E"); }
+.hf-type-follow_up .hf-wt-type-ico{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Cpath%20d='M3%208a5%205%200%200%201%208.5-3.5M13%208a5%205%200%200%201-8.5%203.5'%20stroke-linecap='round'/%3E%3Cpath%20d='M11.5%203v2h-2M4.5%2013v-2h2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+          mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Cpath%20d='M3%208a5%205%200%200%201%208.5-3.5M13%208a5%205%200%200%201-8.5%203.5'%20stroke-linecap='round'/%3E%3Cpath%20d='M11.5%203v2h-2M4.5%2013v-2h2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.hf-type-consultation .hf-wt-type-ico{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Cpath%20d='M3%204h10v6H7l-3%202.5V10H3z'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+          mask-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.5'%3E%3Cpath%20d='M3%204h10v6H7l-3%202.5V10H3z'%20stroke-linejoin='round'/%3E%3C/svg%3E"); }
 
 /* ============================================================================
-   TIMELINE ITEM — outer vis.js container
+   TIMELINE ITEM — outer vis.js container (surface: hairline + 2-layer shadow)
    ============================================================================ */
 
-.o_timeline_view .vis-item.vis-range {
-    border: none !important;
-    border-radius: 8px !important;
-    background: #fff !important;
-    border-left: 4px solid var(--hf-accent, #94a3b8) !important;
-    padding: 0 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
-    transition: box-shadow 0.2s ease !important;
-    cursor: grab;
+.o_timeline_view .vis-item.vis-range{
+  border:1px solid var(--hf-hair) !important;
+  border-radius:10px !important;
+  background:#fff !important;            /* neutralize the colors= inline pastel */
+  padding:0 !important;
+  box-shadow:var(--hf-shadow) !important;
+  transition:box-shadow .18s ease, border-color .18s ease !important;
+  cursor:grab; overflow:hidden !important;
 }
-
-/* Hover — deeper shadow, NO transform */
-.o_timeline_view .vis-item.vis-range:hover:not(.vis-dragging) {
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+.o_timeline_view .vis-item.vis-range:hover:not(.vis-dragging){
+  box-shadow:var(--hf-shadow-hover) !important; border-color:rgba(15,23,42,.12) !important;
 }
-
-/* Selected — indigo ring */
-.o_timeline_view .vis-item.vis-range.vis-selected {
-    box-shadow: 0 0 0 2px #6366f1, 0 2px 6px rgba(99, 102, 241, 0.15) !important;
+.o_timeline_view .vis-item.vis-range.vis-selected{
+  box-shadow:0 0 0 2px #6366f1, var(--hf-shadow) !important; border-color:#6366f1 !important;
 }
-
-/* === DRAG STATE — kill all transitions === */
-.o_timeline_view .vis-item.vis-range.vis-dragging {
-    transition: none !important;
-    will-change: left, top, width;
-    z-index: 999 !important;
-    cursor: grabbing !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18) !important;
-    opacity: 0.92;
+.o_timeline_view .vis-item.vis-range.vis-dragging{
+  transition:none !important; will-change:left, top, width; z-index:999 !important;
+  cursor:grabbing !important; box-shadow:0 8px 20px rgba(16,24,40,.18) !important; opacity:.95;
 }
-
-.o_timeline_view .vis-item.vis-range.vis-dragging .hf-wt-card {
-    transition: none !important;
-}
-
-/* State-based left border colors — darker accents from the timeline colors attr */
-.vis-item[style*="#cbd5e1"] { border-left-color: #94a3b8 !important; }
-.vis-item[style*="#93c5fd"] { border-left-color: #3b82f6 !important; }
-.vis-item[style*="#7dd3fc"] { border-left-color: #0ea5e9 !important; }
-.vis-item[style*="#86efac"] { border-left-color: #22c55e !important; }
-.vis-item[style*="#5eead4"] { border-left-color: #14b8a6 !important; }
-.vis-item[style*="#fca5a5"] { border-left-color: #ef4444 !important; }
-.vis-item[style*="#fcd34d"] { border-left-color: #f59e0b !important; }
-
-/* Remove connector lines */
-.o_timeline_view .vis-item.vis-line {
-    border-left: none !important;
-}
-
-.o_timeline_view .vis-item.vis-dot {
-    border: none !important;
-}
-
-.o_timeline_view .vis-item.vis-range .vis-item-overflow {
-    overflow: visible !important;
-}
-
-.o_timeline_view .vis-item.vis-range .vis-item-content {
-    width: 100%;
-    padding: 0;
-    overflow: visible !important;
-}
-
-.o_timeline_view .vis-item .hf-wt-card {
-    margin: 0;
-    overflow: visible !important;
-}
+.o_timeline_view .vis-item.vis-line{ border-left:none !important; }
+.o_timeline_view .vis-item.vis-dot{ border:none !important; }
+.o_timeline_view .vis-item.vis-range .vis-item-overflow{ overflow:hidden !important; }
+.o_timeline_view .vis-item.vis-range .vis-item-content{ width:100%; padding:0; overflow:hidden !important; container-type:inline-size; }
+.o_timeline_view .vis-item .hf-wt-card{ margin:0; }
 
 /* ============================================================================
    GROUP ROW LABELS — Left sidebar staff names
    ============================================================================ */
-
-.o_timeline_view .vis-label .vis-inner {
-    font-weight: 600;
-    font-size: 13px;
-    color: #334155;
-    letter-spacing: -0.01em;
-    padding: 8px 14px;
+.o_timeline_view .vis-label .vis-inner{
+  font-weight:600; font-size:13px; color:#334155; letter-spacing:-.01em; padding:8px 14px;
 }
 
 /* ============================================================================
-   VIEW MODES — Responsive density
+   DENSITY — progressive disclosure via container query
+   Cards are compact by default. When a card is genuinely wide (e.g. a full-day
+   event in day view, or a long multi-day block), reveal the status word, the
+   type glyph and the priority chip, and bump up spacing/type. If container
+   queries are unavailable, cards simply stay compact — a safe, readable default.
    ============================================================================ */
-
-/* Week/Month: cards fill their full-day column. Clip content so long names
-   never bleed into adjacent cards (safety net — columns are wide enough that
-   most text fits). Items span the full day and the month window is widened in
-   timeline_group_colors.esm.js so columns stay readable. */
-.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .vis-item-overflow,
-.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .vis-item-overflow,
-.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .vis-item-content,
-.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .vis-item-content,
-.o_timeline_view[data-timeline-mode="month"] .hf-wt-card,
-.o_timeline_view[data-timeline-mode="week"] .hf-wt-card {
-    overflow: hidden !important;
-}
-
-.o_timeline_view[data-timeline-mode="month"] .hf-wt-card,
-.o_timeline_view[data-timeline-mode="week"] .hf-wt-card {
-    max-width: 100%;
-}
-
-/* Single-line + ellipsis for the text rows (no per-character wrapping) */
-.o_timeline_view[data-timeline-mode="month"] .hf-wt-title,
-.o_timeline_view[data-timeline-mode="week"] .hf-wt-title,
-.o_timeline_view[data-timeline-mode="month"] .hf-wt-code,
-.o_timeline_view[data-timeline-mode="week"] .hf-wt-code {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: normal;
-}
-
-
-/* Day view: taller cards */
-.o_timeline_view[data-timeline-mode="day"] .hf-wt-card {
-    padding: 12px 16px 12px 14px;
-    gap: 6px;
-}
-
-.o_timeline_view[data-timeline-mode="day"] .hf-wt-title {
-    font-size: 14px;
+@container (min-width: 210px){
+  .hf-wt-card{ gap:6px; padding:11px 13px 11px 16px; }
+  .hf-wt-card::before{ top:11px; bottom:11px; }
+  .hf-wt-avatar{ width:22px; height:22px; font-size:9.5px; }
+  .hf-wt-title{ font-size:13px; }
+  .hf-wt-meta{ padding-left:29px; font-size:11.5px; }
+  .hf-wt-code{ padding-left:29px; font-size:10.5px; }
+  .hf-wt-status-label{ display:inline; }
+  .hf-wt-type{ display:inline-flex; }
+  .hf-wt-prio{ display:inline-flex; }
 }
 
 /* ============================================================================
    TIME AXIS
    ============================================================================ */
-
-.o_timeline_view .vis-time-axis .vis-text {
-    font-size: 11px;
-    font-weight: 600;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+.o_timeline_view .vis-time-axis .vis-text{
+  font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:.03em;
 }
-
-.o_timeline_view .vis-time-axis .vis-text.vis-major {
-    font-size: 12px;
-    color: #475569;
-    font-weight: 700;
-}
-
-/* Today marker */
-.o_timeline_view .vis-current-time {
-    background-color: #ef4444 !important;
-    width: 2px !important;
-}
+.o_timeline_view .vis-time-axis .vis-text.vis-major{ font-size:12px; color:#475569; font-weight:700; }
+.o_timeline_view .vis-current-time{ background-color:#ef4444 !important; width:2px !important; }
 
 /* ============================================================================
    GRID LINES
    ============================================================================ */
-
-.o_timeline_view .vis-grid.vis-minor {
-    border-color: rgba(226, 232, 240, 0.5) !important;
-}
-
-.o_timeline_view .vis-grid.vis-major {
-    border-color: rgba(203, 213, 225, 0.7) !important;
-}
+.o_timeline_view .vis-grid.vis-minor{ border-color:rgba(226,232,240,.5) !important; }
+.o_timeline_view .vis-grid.vis-major{ border-color:rgba(203,213,225,.7) !important; }

@@ -33,6 +33,11 @@
                 <field name="display_name"/>
                 <field name="patient_name"/>
                 <field name="patient_code"/>
+                <field name="patient_initials"/>
+                <field name="avatar_hue"/>
+                <field name="state_label"/>
+                <field name="type_label"/>
+                <field name="formatted_duration"/>
                 <field name="planned_start_time"/>
                 <field name="planned_end_time"/>
                 <field name="predicted_duration"/>
@@ -42,14 +47,42 @@
                 
                 <templates>
                     <t t-name="timeline-item">
-
-        <div class="hf-wt-card">
-            <div class="hf-wt-title"><t t-esc="record.patient_name or 'Client'"/></div>
-            <div class="hf-wt-code" t-if="record.patient_code"><t t-esc="record.patient_code"/></div>
-            <div class="hf-wt-meta">
-                <t t-set="dur" t-value="record.fso_duration_minutes or 60"/>
-                <span><span class="hf-wt-clock"></span> <t t-esc="record.formatted_time"/> · <t t-esc="dur"/> min</span>
+        <div t-attf-class="hf-wt-card hf-state-#{record.state} #{record.priority == '4' ? 'hf-prio-emergency' : ''}">
+            <div class="hf-wt-row">
+                <span t-attf-class="hf-wt-avatar hf-av-#{record.avatar_hue or '0'}"><t t-esc="record.patient_initials or '?'"/></span>
+                <span class="hf-wt-title"><t t-esc="record.patient_name or 'Client'"/></span>
+                <span class="hf-wt-end">
+                    <t t-if="record.priority == '4'">
+                        <span class="hf-wt-prio hf-prio-c-emergency">Emergency</span>
+                    </t>
+                    <t t-elif="record.priority == '3'">
+                        <span class="hf-wt-prio hf-prio-c-urgent">Urgent</span>
+                        <span class="hf-wt-status hf-wt-status-compact"><span class="hf-wt-dot"></span></span>
+                    </t>
+                    <t t-elif="record.priority == '2'">
+                        <span class="hf-wt-prio hf-prio-c-high">High</span>
+                        <span class="hf-wt-status hf-wt-status-compact"><span class="hf-wt-dot"></span></span>
+                    </t>
+                    <t t-else="">
+                        <span class="hf-wt-status">
+                            <t t-if="record.state == 'completed'"><span class="hf-wt-ico hf-ico-check"></span></t>
+                            <t t-else=""><span class="hf-wt-dot"></span></t>
+                            <span class="hf-wt-status-label"><t t-esc="record.state_label"/></span>
+                        </span>
+                    </t>
+                </span>
             </div>
+            <div class="hf-wt-meta">
+                <span class="hf-wt-ico hf-ico-clock"></span>
+                <span class="hf-wt-time"><t t-esc="record.formatted_time"/></span>
+                <span class="hf-wt-sep">·</span>
+                <span class="hf-wt-dur"><t t-esc="record.formatted_duration"/></span>
+                <span t-attf-class="hf-wt-type hf-type-#{record.assignment_type}">
+                    <span class="hf-wt-ico hf-wt-type-ico"></span>
+                    <span class="hf-wt-type-label"><t t-esc="record.type_label"/></span>
+                </span>
+            </div>
+            <div class="hf-wt-code" t-if="record.patient_code"><t t-esc="record.patient_code"/></div>
         </div>
                     </t>
                 </templates>

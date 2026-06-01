@@ -52,6 +52,19 @@ class HealthStaffAssignment(models.Model):
         readonly=True
     )
 
+    # --- Timeline card display helpers (avatar, labels, duration) ---
+    patient_initials = fields.Char(
+        'Client Initials', compute='_compute_card_avatar', store=True,
+        help='First letters of the client name, shown on the timeline card avatar')
+    avatar_hue = fields.Char(
+        'Avatar Hue', compute='_compute_card_avatar', store=True,
+        help='Palette index (0-8) used to color the timeline card avatar')
+    state_label = fields.Char('State Label', compute='_compute_card_labels')
+    type_label = fields.Char('Type Label', compute='_compute_card_labels')
+    formatted_duration = fields.Char(
+        'Formatted Duration', compute='_compute_formatted_duration',
+        help='Human-friendly duration for the timeline card, e.g. "2h" or "1h 30m"')
+
     active = fields.Boolean(
         default=True,
         help='If unchecked, the assignment is archived.'
@@ -388,6 +401,45 @@ class HealthStaffAssignment(models.Model):
                 record.fso_duration_minutes = record.fso_id.scheduled_duration
             else:
                 record.fso_duration_minutes = 60  # Default to 60 minutes if not set
+
+    @api.depends('patient_name')
+    def _compute_card_avatar(self):
+        """Initials + a stable palette index for the timeline card avatar."""
+        palette_size = 9
+        for record in self:
+            name = (record.patient_name or '').strip()
+            if name:
+                parts = name.split()
+                initials = parts[0][0] + (parts[1][0] if len(parts) > 1 else '')
+                # Cheap deterministic hash so the same client always gets the same color
+                h = 0
+                for ch in name:
+                    h = (h * 31 + ord(ch)) & 0xFFFFFFFF
+                record.patient_initials = initials.upper()
+                record.avatar_hue = str(h % palette_size)
+            else:
+                record.patient_initials = '?'
+                record.avatar_hue = '0'
+
+    @api.depends('state', 'assignment_type')
+    def _compute_card_labels(self):
+        """Translated selection labels for the timeline card."""
+        state_map = dict(self._fields['state']._description_selection(self.env))
+        type_map = dict(self._fields['assignment_type']._description_selection(self.env))
+        for record in self:
+            record.state_label = state_map.get(record.state, '')
+            record.type_label = type_map.get(record.assignment_type, '')
+
+    @api.depends('fso_duration_minutes')
+    def _compute_formatted_duration(self):
+        """Human-friendly duration, e.g. 120 -> '2h', 90 -> '1h 30m', 45 -> '45m'."""
+        for record in self:
+            minutes = record.fso_duration_minutes or 0
+            if minutes < 60:
+                record.formatted_duration = '%dm' % minutes
+            else:
+                hours, rem = divmod(minutes, 60)
+                record.formatted_duration = ('%dh %dm' % (hours, rem)) if rem else ('%dh' % hours)
 
     @api.depends('fso_id.scheduled_datetime')
     def _compute_assignment_date(self):
