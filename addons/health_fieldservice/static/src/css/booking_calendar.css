@@ -422,3 +422,99 @@
     border-color: #E53935 !important;
     opacity: 0.85;
 }
+
+/* ============================================================================
+   Rich Booking Event Cards (status-driven) — overrides the pastel base for FSO
+   ============================================================================ */
+.o_calendar_view .fc-event.o-bk-event{
+    position: relative;
+    background: #fff !important;
+    border: 1px solid rgba(15,23,42,.10) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08) !important;
+    color: #1e293b !important;
+    overflow: hidden;
+}
+.o_calendar_view .fc-event.o-bk-event:hover{
+    box-shadow: 0 2px 4px rgba(16,24,40,.08), 0 6px 16px rgba(16,24,40,.12) !important;
+}
+.o_calendar_view .fc-event.o-bk-event .fc-event-main{ padding: 0 !important; color: inherit !important; }
+/* status left accent */
+.o_calendar_view .fc-event.o-bk-event::before{
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; z-index: 1;
+    background: #cbd5e1;
+}
+.o_calendar_view .fc-event.o-bk-st-draft::before{ background: #94a3b8; }
+.o_calendar_view .fc-event.o-bk-st-confirmed::before{ background: #0ea5e9; }
+.o_calendar_view .fc-event.o-bk-st-assigned::before{ background: #3b82f6; }
+.o_calendar_view .fc-event.o-bk-st-in_progress::before{ background: #f59e0b; }
+.o_calendar_view .fc-event.o-bk-st-completed::before,
+.o_calendar_view .fc-event.o-bk-st-completed_pending_invoice::before{ background: #10b981; }
+.o_calendar_view .fc-event.o-bk-st-cancelled::before,
+.o_calendar_view .fc-event.o-bk-st-closed::before{ background: #f43f5e; }
+.o_calendar_view .fc-event.o-bk-unassigned{ border-style: dashed !important; border-color: #f59e0b !important; }
+
+/* card body */
+.o-bk-card{ display:flex; flex-direction:column; gap:2px; padding:6px 8px 6px 12px;
+    font-variant-numeric: tabular-nums; min-width:0; line-height:1.25; }
+.o-bk-timeline{ display:flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:#64748b; }
+.o-bk-dur{ color:#94a3b8; font-weight:600; }
+.o-bk-prio{ margin-left:auto; display:inline-flex; }
+.o-bk-prio-2{ color:#d97706; } .o-bk-prio-3{ color:#ea580c; } .o-bk-prio-4{ color:#dc2626; }
+.o-bk-name{ font-weight:700; font-size:12.5px; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.o-bk-code{ font-size:10.5px; font-weight:600; color:#94a3b8; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.o-bk-chips{ display:flex; flex-wrap:wrap; gap:4px; margin-top:1px; }
+.o-bk-chip{ display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:700;
+    padding:1px 7px; border-radius:999px; line-height:1.6; }
+.o-bk-chip-service{ background:#eef2f6; color:#475569; }
+.o-bk-cst-draft{ background:#f1f5f9; color:#475569; }
+.o-bk-cst-confirmed{ background:#e0f2fe; color:#0369a1; }
+.o-bk-cst-assigned{ background:#dbeafe; color:#1d4ed8; }
+.o-bk-cst-in_progress{ background:#fef3c7; color:#b45309; }
+.o-bk-cst-completed,.o-bk-cst-completed_pending_invoice{ background:#dcfce7; color:#15803d; }
+.o-bk-cst-cancelled,.o-bk-cst-closed{ background:#ffe4e6; color:#be123c; }
+.o-bk-staff{ display:flex; align-items:center; gap:5px; font-size:10.5px; font-weight:600; color:#475569; margin-top:1px; }
+.o-bk-staff-name{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.o-bk-av{ width:16px; height:16px; border-radius:50%; flex:0 0 auto; background:#6366f1; color:#fff;
+    font-size:8px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; }
+.o-bk-staff--none{ color:#d97706; }
+
+/* SVG mask icons (no emoji) */
+.o-bk-ico{ display:inline-block; width:12px; height:12px; flex:0 0 auto; background-color:currentColor;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; -webkit-mask-position:center; mask-position:center;
+    -webkit-mask-size:contain; mask-size:contain; vertical-align:-1px; }
+.o-bk-ico-clock{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='M12 8v4l3 2'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='M12 8v4l3 2'/%3E%3C/svg%3E"); }
+.o-bk-ico-user{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='3.5'/%3E%3Cpath d='M5 20c0-3.5 3-6 7-6s7 2.5 7 6'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='3.5'/%3E%3Cpath d='M5 20c0-3.5 3-6 7-6s7 2.5 7 6'/%3E%3C/svg%3E"); }
+.o-bk-ico-flag{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 21V4M5 4h11l-2 4 2 4H5'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 21V4M5 4h11l-2 4 2 4H5'/%3E%3C/svg%3E"); }
+.o-bk-ico-home_visit{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11l9-7 9 7'/%3E%3Cpath d='M5 10v9h14v-9'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11l9-7 9 7'/%3E%3Cpath d='M5 10v9h14v-9'/%3E%3C/svg%3E"); }
+.o-bk-ico-clinic_visit{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='4' width='16' height='16' rx='2'/%3E%3Cpath d='M12 8v8M8 12h8'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='4' width='16' height='16' rx='2'/%3E%3Cpath d='M12 8v8M8 12h8'/%3E%3C/svg%3E"); }
+.o-bk-ico-emergency{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E"); }
+.o-bk-ico-telemedicine{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='12' rx='2'/%3E%3Cpath d='M9 21h6'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='12' rx='2'/%3E%3Cpath d='M9 21h6'/%3E%3C/svg%3E"); }
+.o-bk-ico-follow_up{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12a8 8 0 1 1 2.3 5.6'/%3E%3Cpath d='M4 20v-4h4'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12a8 8 0 1 1 2.3 5.6'/%3E%3Cpath d='M4 20v-4h4'/%3E%3C/svg%3E"); }
+.o-bk-ico-vaccination{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 4l6 6M17 7l-9 9-3 1 1-3 9-9z'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 4l6 6M17 7l-9 9-3 1 1-3 9-9z'/%3E%3C/svg%3E"); }
+.o-bk-ico-diagnostic{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h4l2 6 4-14 2 8h6'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h4l2 6 4-14 2 8h6'/%3E%3C/svg%3E"); }
+.o-bk-ico-consultation{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H8l-4 3z'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H8l-4 3z'/%3E%3C/svg%3E"); }
+.o-bk-ico-default,.o-bk-ico-preventive,.o-bk-ico-rehabilitation{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E"); }
+
+/* ===== Month (daygrid): compact card with time · name · nurse ===== */
+/* Let the block grow past the default one-line height so name + nurse show */
+.o_calendar_view .fc-daygrid-event.o-bk-event{ height:auto !important; min-height:46px !important; align-items:stretch !important; white-space:normal; }
+.o_calendar_view .fc-daygrid-event.o-bk-event .fc-event-main{ display:flex !important; height:auto !important; min-height:46px !important; overflow:visible !important; }
+.o_calendar_view .fc-daygrid-event .o-bk-card{ flex:1 1 auto !important; height:auto !important; justify-content:center; padding:3px 7px 3px 10px; gap:1px; }
+/* drop the heavy bits in month, keep time + name + nurse */
+.o_calendar_view .fc-daygrid-event .o-bk-code,
+.o_calendar_view .fc-daygrid-event .o-bk-chips,
+.o_calendar_view .fc-daygrid-event .o-bk-dur,
+.o_calendar_view .fc-daygrid-event .o-bk-prio{ display:none; }
+.o_calendar_view .fc-daygrid-event .o-bk-timeline{ font-size:10px; opacity:.82; }
+.o_calendar_view .fc-daygrid-event .o-bk-name{ font-size:11.5px; line-height:1.25; }
+/* nurse row — compact avatar + truncated name */
+.o_calendar_view .fc-daygrid-event .o-bk-staff{ display:flex; align-items:center; gap:4px; font-size:9.5px; margin-top:0; }
+.o_calendar_view .fc-daygrid-event .o-bk-staff--none{ font-size:9.5px; }
+.o_calendar_view .fc-daygrid-event .o-bk-av{ width:14px; height:14px; font-size:7px; flex:0 0 auto; }
+.o_calendar_view .fc-daygrid-event .o-bk-staff-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* Truly tiny timegrid slivers still collapse to time + name only */
+.o_calendar_view .fc-event.o_event_oneliner .o-bk-code,
+.o_calendar_view .fc-event.o_event_oneliner .o-bk-chips,
+.o_calendar_view .fc-event.o_event_oneliner .o-bk-staff{ display:none; }

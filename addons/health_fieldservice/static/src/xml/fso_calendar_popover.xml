@@ -12,4 +12,35 @@
         </t>
     </t>
 
+    <!-- Rich booking event card (rendered inside each calendar event) -->
+    <t t-name="health_fieldservice.BookingEventCard">
+        <div class="o-bk-card">
+            <div class="o-bk-line o-bk-timeline">
+                <span class="o-bk-ico o-bk-ico-clock"/>
+                <span class="o-bk-time" t-esc="startTime"/>
+                <span t-if="durationText" class="o-bk-dur">· <t t-esc="durationText"/></span>
+                <span t-if="priorityKey" t-attf-class="o-bk-prio o-bk-prio-{{priorityKey}}" t-att-title="priorityLabel">
+                    <span class="o-bk-ico o-bk-ico-flag"/>
+                </span>
+            </div>
+            <div class="o-bk-name" t-esc="clientName"/>
+            <div t-if="clientCode" class="o-bk-code" t-esc="clientCode"/>
+            <div class="o-bk-chips">
+                <span t-if="serviceLabel" class="o-bk-chip o-bk-chip-service">
+                    <span t-attf-class="o-bk-ico o-bk-ico-{{serviceKey}}"/>
+                    <span t-esc="serviceLabel"/>
+                </span>
+                <span t-attf-class="o-bk-chip o-bk-chip-status o-bk-cst-{{statusKey}}" t-esc="statusLabel"/>
+            </div>
+            <div t-if="staffName" class="o-bk-staff">
+                <span class="o-bk-av" t-esc="staffInitials"/>
+                <span class="o-bk-staff-name" t-esc="staffName"/>
+            </div>
+            <div t-else="" class="o-bk-staff o-bk-staff--none">
+                <span class="o-bk-ico o-bk-ico-user"/>
+                <span>Unassigned</span>
+            </div>
+        </div>
+    </t>
+
 </templates>

@@ -869,6 +869,9 @@
                 <field name="catchment_province_id" string="Catchment Area" filters="1"/>
                 <field name="service_type"/>
                 <field name="state"/>
+                <field name="patient_code"/>
+                <field name="priority"/>
+                <field name="has_staff_assigned"/>
             </calendar>
         </field>
     </record>
