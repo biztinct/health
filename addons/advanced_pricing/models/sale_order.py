@@ -40,7 +40,8 @@ class SaleOrder(models.Model):
                                          compute='_compute_use_advanced_pricing')
     advanced_pricing_details = fields.Text('Pricing Calculation Details')
     pricing_breakdown_html = fields.Html('Pricing Breakdown', sanitize=False, readonly=True,
-                                         help='Shows applied pricing rules and calculations after Recalc Pricing')
+                                         compute='_compute_pricing_breakdown_html',
+                                         help='Shows applied pricing rules and calculations (auto-refreshes on line/qty/discount changes)')
     pre_service_amount = fields.Float('Pre-Service Amount', readonly=True,
                                       help='Quote total at time of advance payment, used to calculate post-service delta')
 
@@ -405,7 +406,7 @@ class SaleOrder(models.Model):
         _logger.info("=== END PRICING DEBUG ===")
         
         # Generate user-friendly pricing rule notes
-        self._update_pricing_notes()
+        self._compute_pricing_breakdown_html()
         
         # Force UI refresh to show updated prices immediately
         self.env.cr.commit()  # Commit changes to database
@@ -473,7 +474,7 @@ class SaleOrder(models.Model):
                 line._compute_advanced_price()
         
         # Update pricing breakdown
-        self._update_pricing_notes()
+        self._compute_pricing_breakdown_html()
         
         new_total = self.amount_total
         delta = new_total - original_total
@@ -578,13 +579,50 @@ class SaleOrder(models.Model):
         credit = self.env['account.move'].create(invoice_vals)
         return credit
 
-    def _update_pricing_notes(self):
-        """Build HTML pricing breakdown showing applied rules and calculations"""
+    # Inline SVG glyphs for the pricing breakdown (modern SVG icons, not emoji).
+    # Self-contained so they render in the backend form and any portal/report
+    # without depending on backend CSS; inherit text color via currentColor.
+    _FACTOR_ICON_PATHS = {
+        'home': '<path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/>',
+        'clinic': '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/>',
+        'pin': '<path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+        'moon': '<path d="M21 12.8A8 8 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8z"/>',
+        'calendar': '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9h17M8 3v4M16 3v4"/>',
+        'flag': '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+        'clipboard': '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 9h6M9 13h6M9 17h4"/>',
+    }
+
+    def _factor_icon(self, name, size=13):
+        """Return a self-contained inline SVG glyph (currentColor) for the breakdown."""
+        paths = self._FACTOR_ICON_PATHS.get(name, '')
+        return (
+            f'<svg viewBox="0 0 24 24" width="{size}" height="{size}" fill="none" '
+            f'stroke="currentColor" stroke-width="2" stroke-linecap="round" '
+            f'stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;">'
+            f'{paths}</svg>'
+        )
+
+    @api.depends('order_line', 'order_line.product_id', 'order_line.product_uom_qty',
+                 'order_line.price_unit', 'order_line.discount', 'use_advanced_pricing',
+                 'fso_distance', 'is_weekend', 'is_after_hours', 'is_holiday',
+                 'fso_service_location', 'injection_count', 'medication_count',
+                 'wound_count', 'iv_fluid_count')
+    def _compute_pricing_breakdown_html(self):
+        """Reactively rebuild the breakdown so it refreshes on catalog adds and
+        line/qty/discount edits (no manual Recalc click needed)."""
+        for record in self:
+            try:
+                record.pricing_breakdown_html = record._build_pricing_breakdown_html()
+            except Exception:  # never let a display build break the form/onchange
+                record.pricing_breakdown_html = False
+
+    def _build_pricing_breakdown_html(self):
+        """Build HTML pricing breakdown showing applied rules and calculations.
+        Returns the HTML string (or False) — assignment is done by the compute."""
         self.ensure_one()
 
         if not self.use_advanced_pricing or not self.order_line:
-            self.pricing_breakdown_html = False
-            return
+            return False
 
         def fmt(amount):
             """Format number as VND with thousand separators"""
@@ -601,7 +639,7 @@ class SaleOrder(models.Model):
 
         html = []
         html.append('<div style="margin-top:12px;">')
-        html.append('<h4 style="margin-bottom:8px;">📋 Pricing Breakdown</h4>')
+        html.append(f'<h4 style="margin-bottom:8px;">{self._factor_icon("clipboard", 16)} Pricing Breakdown</h4>')
 
         # Context factors summary
         factors = []
@@ -609,17 +647,17 @@ class SaleOrder(models.Model):
             fso = self.fso_id
             loc = self.fso_service_location
             if loc == 'home':
-                factors.append('🏠 Home Visit')
+                factors.append(f'{self._factor_icon("home")} Home Visit')
             elif loc == 'clinic':
-                factors.append('🏥 Clinic Visit')
+                factors.append(f'{self._factor_icon("clinic")} Clinic Visit')
             if self.fso_distance and self.fso_distance > 0:
-                factors.append(f'📍 Distance: {self.fso_distance:.1f} km')
+                factors.append(f'{self._factor_icon("pin")} Distance: {self.fso_distance:.1f} km')
             if self.is_after_hours:
-                factors.append('🌙 After Hours')
+                factors.append(f'{self._factor_icon("moon")} After Hours')
             if self.is_weekend:
-                factors.append('📅 Weekend')
+                factors.append(f'{self._factor_icon("calendar")} Weekend')
             if self.is_holiday:
-                factors.append(f'🎌 Holiday ({self.holiday_type or "Public"})')
+                factors.append(f'{self._factor_icon("flag")} Holiday ({self.holiday_type or "Public"})')
 
         if factors:
             html.append('<div style="background:#f0f4ff;padding:8px 12px;border-radius:6px;margin-bottom:10px;font-size:13px;">')
@@ -743,7 +781,7 @@ class SaleOrder(models.Model):
         html.append('</table>')
         html.append('</div>')
 
-        self.pricing_breakdown_html = ''.join(html)
+        return ''.join(html)
     
     def _get_action_add_from_catalog_extra_context(self):
         """Override to ensure catalog returns to Healthcare Quote form for FSO orders"""

@@ -500,19 +500,29 @@ class AdvancedPricingRule(models.Model):
                 _logger.info(f"    FAILED: Distance too high")
                 return False
         
-        # Appointment hour conditions (skip if 0 since 0 means "not set")
-        if self.appointment_hour_min and self.appointment_hour_min > 0:
+        # Appointment hour conditions (skip if both 0 since 0 means "not set").
+        # Supports overnight windows that wrap past midnight: when max < min
+        # (e.g. 20:00–06:00) the window is [min..24) ∪ [0..max], so match if
+        # hour >= min OR hour <= max. Otherwise it's a same-day range [min..max].
+        hmin = self.appointment_hour_min or 0
+        hmax = self.appointment_hour_max or 0
+        if hmin > 0 or hmax > 0:
             hour = context_data.get('appointment_hour', 0)
-            _logger.info(f"    Hour min check: {hour} >= {self.appointment_hour_min}")
-            if hour < self.appointment_hour_min:
-                _logger.info(f"    FAILED: Hour too low")
-                return False
-        if self.appointment_hour_max and self.appointment_hour_max > 0:
-            hour = context_data.get('appointment_hour', 0)
-            _logger.info(f"    Hour max check: {hour} <= {self.appointment_hour_max}")
-            if hour > self.appointment_hour_max:
-                _logger.info(f"    FAILED: Hour too high")
-                return False
+            if hmin > 0 and hmax > 0 and hmax < hmin:
+                # Wrap-around (overnight) window
+                in_window = hour >= hmin or hour <= hmax
+                _logger.info(f"    Hour overnight-window check: {hmin}..{hmax} hour={hour} -> {in_window}")
+                if not in_window:
+                    _logger.info(f"    FAILED: Hour outside overnight window")
+                    return False
+            else:
+                # Same-day range
+                if hmin > 0 and hour < hmin:
+                    _logger.info(f"    FAILED: Hour too low ({hour} < {hmin})")
+                    return False
+                if hmax > 0 and hour > hmax:
+                    _logger.info(f"    FAILED: Hour too high ({hour} > {hmax})")
+                    return False
         
         # Weekend condition
         if self.is_weekend_required:

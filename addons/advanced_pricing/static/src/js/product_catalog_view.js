@@ -27,6 +27,14 @@ patch(ProductCatalogKanbanController.prototype, {
         if (isHealthcareQuote) {
             const actionService = this.action || this.env.services.action;
             const ormService = this.orm || this.env.services.orm;
+            // Auto-recalculate advanced pricing now that products were added/changed,
+            // so the quote reopens with up-to-date prices and breakdown (no manual
+            // "Recalc Pricing" click). Failures must not block returning to the quote.
+            try {
+                await ormService.call("sale.order", "action_recalculate_advanced_prices", [this.orderId]);
+            } catch (e) {
+                console.warn("Auto-recalc after catalog failed:", e);
+            }
             // Get the correct healthcare quote view ID
             const viewResult = await ormService.call("sale.order", "get_healthcare_quote_view_id", [this.orderId]);
             

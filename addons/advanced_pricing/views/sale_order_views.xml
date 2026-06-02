@@ -11,16 +11,9 @@
                 <field name="advanced_pricing_details" readonly="1" invisible="not use_advanced_pricing"/>
             </xpath>
             
-            <!-- Add Advanced Pricing button to header -->
-            <xpath expr="//header//button[@name='action_confirm'][1]" position="before">
-                <button name="action_recalculate_advanced_prices" 
-                        string="Recalc Pricing" 
-                        type="object" 
-                        class="btn-secondary"
-                        invisible="not use_advanced_pricing"
-                        help="Recalculate prices using advanced pricing rules"/>
-            </xpath>
-            
+            <!-- "Recalc Pricing" header button removed: pricing auto-recalculates on
+                 catalog return and the breakdown is reactive to line/qty/discount edits. -->
+
             <!-- Add pricing info to order lines (informational) -->
             <xpath expr="//field[@name='order_line']//control//button[@name='action_add_from_catalog']" position="after">
                 <span invisible="not parent.use_advanced_pricing" 
@@ -119,12 +112,9 @@
                                 class="btn btn-primary me-2" icon="fa-list"
                                 context="{'order_id': id, 'child_field': 'order_line'}"
                                 help="Add products from catalog"/>
-                        <button name="action_recalculate_advanced_prices" 
-                                string="Recalc Pricing" 
-                                type="object" 
-                                class="btn btn-secondary me-2" icon="fa-refresh"
-                                help="Recalculate prices using advanced pricing rules"/>
-                        <button name="action_post_service_recalc" 
+                        <!-- "Recalc Pricing" removed: pricing auto-recalculates on catalog
+                             return and the breakdown is reactive to line/qty/discount edits. -->
+                        <button name="action_post_service_recalc"
                                 string="Post-Service Recalc" 
                                 type="object" 
                                 class="btn btn-warning" icon="fa-calculator"
