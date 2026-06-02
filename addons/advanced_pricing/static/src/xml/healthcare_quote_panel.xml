@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="advanced_pricing.HealthcareQuotePanel">
+        <div class="hfq-panel">
+            <!-- Context chips -->
+            <div class="hfq-chips" t-if="factors.length">
+                <t t-foreach="factors" t-as="f" t-key="f.key">
+                    <span t-att-class="'hfq-chip hfq-chip--' + f.key">
+                        <span t-att-class="iconClass(f.key)"/>
+                        <span t-esc="f.label"/>
+                    </span>
+                </t>
+            </div>
+
+            <!-- Service cards -->
+            <div class="hfq-cards">
+                <t t-foreach="lines" t-as="line" t-key="line.id">
+                    <div t-att-class="'hfq-card' + (hasAdjustment(line) ? ' hfq-card--adjusted' : '')">
+                        <div class="hfq-card__main">
+                            <div class="hfq-card__title">
+                                <span class="hfq-card__name" t-esc="productLabel(line)"/>
+                                <span class="hfq-card__code" t-if="productCode(line)" t-esc="productCode(line)"/>
+                            </div>
+
+                            <!-- price math: catalog -> rules -> final -->
+                            <div class="hfq-card__pricing">
+                                <span class="hfq-base">
+                                    <span class="hfq-base__label">Catalog</span>
+                                    <span t-esc="fmt(base(line))"/>
+                                </span>
+                                <t t-foreach="rules(line)" t-as="r" t-key="r_index">
+                                    <span class="hfq-rule">
+                                        <span class="hfq-rule__label" t-esc="r.label"/>
+                                        <span class="hfq-rule__desc" t-esc="r.desc"/>
+                                    </span>
+                                </t>
+                                <span class="hfq-final" t-if="hasAdjustment(line)">
+                                    <span class="hfq-arrow">=</span>
+                                    <span t-esc="fmt(final(line))"/>
+                                </span>
+                                <span class="hfq-noadj" t-if="!hasAdjustment(line)">No adjustments</span>
+                            </div>
+                        </div>
+
+                        <div class="hfq-card__controls">
+                            <!-- qty stepper -->
+                            <div class="hfq-qty">
+                                <button class="hfq-step" t-if="!readonly" t-on-click="() => this.decQty(line)" aria-label="Decrease">−</button>
+                                <input class="hfq-qty__input" type="number" min="0" step="1"
+                                       t-att-readonly="readonly ? 'readonly' : false"
+                                       t-att-value="qty(line)"
+                                       t-on-change="(ev) => this.onQtyInput(line, ev)"/>
+                                <button class="hfq-step" t-if="!readonly" t-on-click="() => this.incQty(line)" aria-label="Increase">+</button>
+                            </div>
+                            <div class="hfq-subtotal" t-esc="fmt(subtotal(line))"/>
+                            <button class="hfq-del" t-if="!readonly" t-on-click="() => this.removeLine(line)" title="Remove">
+                                <span class="hf-wt-ico hf-ico-trash"/>
+                            </button>
+                        </div>
+                    </div>
+                </t>
+                <div class="hfq-empty" t-if="!lines.length">No services yet — add one from the catalog.</div>
+            </div>
+
+            <!-- Footer: add + totals -->
+            <div class="hfq-footer">
+                <button class="hfq-add btn btn-primary" t-if="!readonly" t-on-click="() => this.addFromCatalog()">
+                    <span class="hf-wt-ico hf-ico-plus"/> Add from Catalog
+                </button>
+                <div class="hfq-totals">
+                    <div class="hfq-total-row"><span>Untaxed</span><span t-esc="amountUntaxed"/></div>
+                    <div class="hfq-total-row"><span>Taxes</span><span t-esc="amountTax"/></div>
+                    <div class="hfq-total-row hfq-total-row--grand"><span>Total</span><span t-esc="amountTotal"/></div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

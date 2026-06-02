@@ -80,14 +80,26 @@
                         string="Back to Quotation" data-hotkey="w" class="btn btn-primary"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
             </xpath>
-            
-            <!-- Add Catalog button after the order lines field -->
+
+            <!-- Render the order lines as the unified, interactive Quote Panel
+                 (cards: catalog -> rules -> final, qty/discount/delete, totals).
+                 The inner <list> still supplies which line fields are loaded. -->
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="widget">hf_quote_panel</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="after">
+                <field name="base_price" column_invisible="1"/>
+            </xpath>
+            <!-- The panel renders its own totals; hide the duplicate native footer. -->
+            <xpath expr="//group[@name='sale_total']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Add Service Procedures + buttons after the order lines field -->
             <xpath expr="//field[@name='order_line']" position="after">
-                <!-- Pricing breakdown (shown after Recalc Pricing) -->
-                <field name="pricing_breakdown_html" nolabel="1" 
-                       invisible="not pricing_breakdown_html"
-                       class="mt-2 mb-2"/>
-                
+                <!-- Structured breakdown consumed by the quote panel widget -->
+                <field name="pricing_breakdown_data" invisible="1"/>
+
                 <!-- Service Procedures section -->
                 <div class="mt-3 mb-2"
                      style="background: linear-gradient(135deg, #f0fdfa 0%, #e0f7f1 100%); border: 1px solid #b2dfdb; border-radius: 12px; padding: 16px 20px;">
@@ -106,14 +118,9 @@
                 
                 <div class="row mt-3">
                     <div class="col-12 text-center">
-                        <button name="action_add_from_catalog"
-                                string="Add from Catalog"
-                                type="object"
-                                class="btn btn-primary me-2" icon="fa-list"
-                                context="{'order_id': id, 'child_field': 'order_line'}"
-                                help="Add products from catalog"/>
-                        <!-- "Recalc Pricing" removed: pricing auto-recalculates on catalog
-                             return and the breakdown is reactive to line/qty/discount edits. -->
+                        <!-- "Add from Catalog" and "Recalc Pricing" removed: the quote panel
+                             widget provides Add-from-Catalog, and pricing auto-recalculates /
+                             the breakdown is reactive to line/qty/discount edits. -->
                         <button name="action_post_service_recalc"
                                 string="Post-Service Recalc" 
                                 type="object" 

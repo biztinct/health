@@ -42,6 +42,9 @@ class SaleOrder(models.Model):
     pricing_breakdown_html = fields.Html('Pricing Breakdown', sanitize=False, readonly=True,
                                          compute='_compute_pricing_breakdown_html',
                                          help='Shows applied pricing rules and calculations (auto-refreshes on line/qty/discount changes)')
+    pricing_breakdown_data = fields.Json('Pricing Breakdown Data', readonly=True,
+                                         compute='_compute_pricing_breakdown_data',
+                                         help='Structured per-line pricing breakdown consumed by the quote panel widget')
     pre_service_amount = fields.Float('Pre-Service Amount', readonly=True,
                                       help='Quote total at time of advance payment, used to calculate post-service delta')
 
@@ -782,7 +785,120 @@ class SaleOrder(models.Model):
         html.append('</div>')
 
         return ''.join(html)
-    
+
+    @api.depends('order_line', 'order_line.product_id', 'order_line.product_uom_qty',
+                 'order_line.price_unit', 'order_line.discount', 'use_advanced_pricing',
+                 'fso_distance', 'is_weekend', 'is_after_hours', 'is_holiday',
+                 'fso_service_location', 'injection_count', 'medication_count',
+                 'wound_count', 'iv_fluid_count')
+    def _compute_pricing_breakdown_data(self):
+        """Structured breakdown consumed by the hf_quote_panel OWL widget. Same
+        rule-evaluation as the HTML version, but returns JSON keyed by line id."""
+        for record in self:
+            try:
+                record.pricing_breakdown_data = record._build_pricing_breakdown_data()
+            except Exception:
+                record.pricing_breakdown_data = False
+
+    def _build_pricing_breakdown_data(self):
+        """Return a dict: {factors:[...], lines:{<line_id>:{...}}, currency} or False."""
+        self.ensure_one()
+        if not self.use_advanced_pricing or not self.order_line:
+            return False
+
+        # Context factors (active flags drive the highlighted chips in the panel)
+        factors = []
+        if self.fso_id:
+            loc = self.fso_service_location
+            if loc == 'home':
+                factors.append({'key': 'home', 'label': 'Home Visit'})
+            elif loc == 'clinic':
+                factors.append({'key': 'clinic', 'label': 'Clinic Visit'})
+            if self.fso_distance and self.fso_distance > 0:
+                factors.append({'key': 'pin', 'label': 'Distance: %.1f km' % self.fso_distance})
+            if self.is_after_hours:
+                factors.append({'key': 'moon', 'label': 'After Hours'})
+            if self.is_weekend:
+                factors.append({'key': 'calendar', 'label': 'Weekend'})
+            if self.is_holiday:
+                factors.append({'key': 'flag', 'label': 'Holiday (%s)' % (self.holiday_type or 'Public')})
+
+        engine = None
+        if self.pricelist_id.advanced_engine_id:
+            engine = self.pricelist_id.advanced_engine_id
+        else:
+            config = self.env['advanced.pricing.config'].get_config()
+            if config.default_engine_id:
+                engine = config.default_engine_id
+
+        lines = {}
+        for line in self.order_line:
+            if not line.product_id:
+                continue
+            base_price = line.base_price or line.product_id.list_price or 0
+            final_price = line.price_unit or 0
+            qty = line.product_uom_qty or 0
+            rules = []
+            if engine and engine.rule_ids:
+                ctx = {
+                    'distance': self.fso_distance or 0,
+                    'appointment_hour': self.appointment_hour or 0,
+                    'is_weekend': self.is_weekend,
+                    'is_holiday': self.is_holiday,
+                    'holiday_type': self.holiday_type,
+                    'is_after_hours': self.is_after_hours,
+                    'service_type': self.fso_service_type,
+                    'service_location': self.fso_service_location,
+                    'urgency': self.fso_urgency,
+                    'priority': self.fso_priority,
+                    'region': '',
+                    'injection_count': self.injection_count or 0,
+                    'medication_count': self.medication_count or 0,
+                    'wound_count': self.wound_count or 0,
+                    'iv_fluid_count': self.iv_fluid_count or 0,
+                }
+                code = line.product_id.default_code or ''
+                if '_tphcm' in code:
+                    ctx['region'] = 'HCMC'
+                elif '_hanoi' in code:
+                    ctx['region'] = 'Hanoi'
+                approved = engine.rule_ids.filtered(
+                    lambda r: r.active and r.approval_status == 'approved')
+                for rule in approved.sorted('sequence'):
+                    try:
+                        if rule.evaluate_condition(line.product_id.id, self.partner_id.id, qty, ctx):
+                            if rule.action_type == 'add':
+                                desc = '+%s đ' % ('{:,.0f}'.format(rule.action_value))
+                            elif rule.action_type == 'fixed':
+                                desc = '→ %s đ' % ('{:,.0f}'.format(rule.action_value))
+                            elif rule.action_type == 'multiply':
+                                desc = '×%s' % rule.action_value
+                            elif rule.action_type == 'discount':
+                                desc = '-%.0f%%' % (rule.action_value * 100)
+                            elif rule.action_type == 'per_unit':
+                                desc = '+%s đ/unit' % ('{:,.0f}'.format(rule.action_value))
+                            elif rule.action_type == 'percentage':
+                                desc = '+%s%%' % rule.action_value
+                            else:
+                                desc = ''
+                            short = rule.name
+                            parts = short.split(' - ')
+                            if len(parts) >= 2:
+                                short = parts[-1]
+                            rules.append({'label': short, 'desc': desc})
+                    except Exception:
+                        pass
+            lines[str(line.id)] = {
+                'code': line.product_id.default_code or '',
+                'name': line.product_id.name or '',
+                'base': base_price,
+                'final': final_price,
+                'qty': qty,
+                'subtotal': final_price * qty,
+                'rules': rules,
+            }
+        return {'factors': factors, 'lines': lines}
+
     def _get_action_add_from_catalog_extra_context(self):
         """Override to ensure catalog returns to Healthcare Quote form for FSO orders"""
         context = super()._get_action_add_from_catalog_extra_context()

@@ -60,8 +60,11 @@ Features:
             'advanced_pricing/static/src/js/visual_rule_builder_action.js',
             'advanced_pricing/static/src/js/product_catalog_controller.js',
             'advanced_pricing/static/src/js/product_catalog_view.js',
+            'advanced_pricing/static/src/js/healthcare_quote_panel.js',
+            'advanced_pricing/static/src/css/healthcare_quote_panel.css',
             'advanced_pricing/static/src/xml/pricing_templates.xml',
             'advanced_pricing/static/src/xml/visual_rule_builder.xml',
+            'advanced_pricing/static/src/xml/healthcare_quote_panel.xml',
         ],
     },
     'demo': [
