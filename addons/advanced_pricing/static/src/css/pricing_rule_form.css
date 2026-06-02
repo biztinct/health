@@ -1,0 +1,51 @@
+/* ============================================================================
+   Pricing Rule — guided form (SCOPE · WHEN · THEN) + live summary
+   Scoped under .o_form_view so it never leaks to other forms.
+   ============================================================================ */
+.o_form_view .apr-summary-wrap{ margin:6px 0 14px; }
+.o_form_view .apr-sum{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+  padding:12px 16px; border-radius:12px;
+  background:linear-gradient(135deg,#eef2ff 0%,#f5f3ff 100%);
+  border:1px solid #e0e7ff; color:#312e81; font-size:14px; line-height:1.4;
+}
+.o_form_view .apr-sum__seg{ display:inline-flex; align-items:center; gap:4px; }
+.o_form_view .apr-sum__seg b{ color:#4338ca; font-weight:700; margin-right:2px; }
+.o_form_view .apr-sum__arrow{ color:#a5b4fc; font-weight:800; }
+.o_form_view .apr-sum__hint{ color:#9333ea; font-style:italic; }
+
+/* --- section cards --- */
+.o_form_view .apr-section{
+  position:relative; background:#fff;
+  border:1px solid rgba(15,23,42,.08); border-radius:14px;
+  box-shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.08);
+  padding:14px 18px 6px 20px; margin:0 0 16px;
+}
+.o_form_view .apr-section::before{
+  content:""; position:absolute; left:0; top:16px; bottom:16px; width:4px;
+  border-radius:0 4px 4px 0; background:#cbd5e1;
+}
+.o_form_view .apr-section--scope::before{ background:#6366f1; }
+.o_form_view .apr-section--when::before{ background:#0d9488; }
+.o_form_view .apr-section--then::before{ background:#f59e0b; }
+
+.o_form_view .apr-section__head{ display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.o_form_view .apr-section__step{
+  flex:0 0 auto; width:28px; height:28px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:14px; color:#fff; background:#94a3b8;
+}
+.o_form_view .apr-section--scope .apr-section__step{ background:#6366f1; }
+.o_form_view .apr-section--when  .apr-section__step{ background:#0d9488; }
+.o_form_view .apr-section--then  .apr-section__step{ background:#f59e0b; }
+.o_form_view .apr-section__title{ font-weight:700; font-size:15px; color:#1e293b; }
+.o_form_view .apr-section__sub{ font-size:12px; color:#94a3b8; margin-top:1px; }
+
+/* tighten the native groups inside our cards */
+.o_form_view .apr-section .o_group{ margin-top:2px; }
+
+/* --- advanced toggle --- */
+.o_form_view .apr-advanced-toggle{
+  margin:6px 0 4px; padding-top:8px; border-top:1px dashed rgba(15,23,42,.10);
+}
+.o_form_view .apr-advanced-toggle .o_field_widget{ font-weight:600; color:#6366f1; }

@@ -15,6 +15,8 @@ export class FinInvoiceListController extends ListController {
         this.tabState = useState({
             activeTab: "all",
             dateFilter: "all_dates",
+            customFrom: "",
+            customTo: "",
         });
         this._tabFilterGroupId = null;
         this._dateFilterGroupId = null;
@@ -93,6 +95,12 @@ export class FinInvoiceListController extends ListController {
                     ["invoice_date", "<", fmt(monthEnd)],
                 ];
             }
+            case "custom": {
+                const out = [];
+                if (this.tabState.customFrom) out.push(["invoice_date", ">=", this.tabState.customFrom]);
+                if (this.tabState.customTo) out.push(["invoice_date", "<=", this.tabState.customTo]);
+                return out;
+            }
             default:
                 return [];
         }
@@ -117,21 +125,33 @@ export class FinInvoiceListController extends ListController {
     }
 
     async setDateFilter(dateId) {
-        if (this.tabState.dateFilter === dateId) return;
+        // 'custom' may be re-applied while already selected (when the dates change)
+        if (dateId !== "custom" && this.tabState.dateFilter === dateId) return;
         this.tabState.dateFilter = dateId;
+        this._applyDateFilter();
+    }
 
+    _applyDateFilter() {
         if (this._dateFilterGroupId !== null) {
             this.env.searchModel.deactivateGroup(this._dateFilterGroupId);
             this._dateFilterGroupId = null;
         }
+        const dateId = this.tabState.dateFilter;
+        if (dateId === "all_dates") return;
+        const domain = this._getDateDomain(dateId);
+        if (!domain.length) return; // e.g. custom with no dates entered yet
+        const label = dateId === "custom"
+            ? `Custom (${this.tabState.customFrom || "…"} → ${this.tabState.customTo || "…"})`
+            : (this.dateTabs.find((t) => t.id === dateId)?.label || dateId);
+        const preFilter = { description: label, domain };
+        this.env.searchModel.createNewFilters([preFilter]);
+        this._dateFilterGroupId = preFilter.groupId;
+    }
 
-        if (dateId !== "all_dates") {
-            const domain = this._getDateDomain(dateId);
-            const description = this.dateTabs.find((t) => t.id === dateId)?.label || dateId;
-            const preFilter = { description, domain };
-            this.env.searchModel.createNewFilters([preFilter]);
-            this._dateFilterGroupId = preFilter.groupId;
-        }
+    onCustomDate(which, ev) {
+        this.tabState[which === "from" ? "customFrom" : "customTo"] = ev.target.value;
+        this.tabState.dateFilter = "custom";
+        this._applyDateFilter();
     }
 
     openNewInvoice() {

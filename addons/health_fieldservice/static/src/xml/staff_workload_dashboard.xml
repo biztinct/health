@@ -1,210 +1,160 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templates>
+<templates xml:space="preserve">
     <t t-name="health_fieldservice.StaffWorkloadDashboardTemplate" owl="1">
-        <div class="o_staff_workload_dashboard">
-            <!-- Header Controls -->
-            <div class="o_dashboard_header">
-                <div class="o_header_left">
-                    <h2 class="o_dashboard_title">
-                        <i class="fa fa-users me-2"/>
-                        <t t-esc="this.t('Staff Workload Management')"/>
-                    </h2>
-                </div>
-                
-                <div class="o_header_center">
-                    <div class="o_time_range_selector">
-                        <select class="form-select" t-model="state.selectedTimeRange" t-on-change="onTimeRangeChange">
-                            <option value="today" t-esc="this.t('Today')"/>
-                            <option value="week" t-esc="this.t('This Week')"/>
-                            <option value="month" t-esc="this.t('This Month')"/>
-                            <option value="quarter" t-esc="this.t('This Quarter')"/>
-                        </select>
+        <div class="swl">
+            <!-- Header -->
+            <div class="swl-head">
+                <div class="swl-head__title">
+                    <span class="swl-head__icon"><i class="fa fa-users"/></span>
+                    <div>
+                        <h2>Staff Workload</h2>
+                        <div class="swl-head__sub">Current active assignments across healthcare staff</div>
                     </div>
                 </div>
-                
-                <div class="o_header_right">
-                    <button class="btn btn-outline-secondary" t-on-click="onRefresh">
-                        <i class="fa fa-refresh me-1"/>
-                        <t t-esc="this.t('Refresh')"/>
-                    </button>
-                </div>
+                <button class="swl-refresh" t-on-click="onRefresh">
+                    <i class="fa fa-refresh"/> Refresh
+                </button>
             </div>
 
-            <!-- Loading State -->
-            <div t-if="state.isLoading" class="o_loading_container">
-                <div class="text-center py-5">
-                    <i class="fa fa-spinner fa-spin fa-3x text-muted"/>
-                    <p class="text-muted mt-3" t-esc="this.t('Loading staff workload data...')"/>
-                </div>
+            <!-- Loading -->
+            <div t-if="state.isLoading" class="swl-loading">
+                <i class="fa fa-circle-o-notch fa-spin"/> Loading workload…
             </div>
 
-            <!-- Main Dashboard Content -->
-            <div t-else="" class="o_dashboard_content">
-                <!-- Workload Summary Bar -->
-                <div class="o_workload_summary">
-                    <div class="row">
-                        <div class="col-3">
-                            <div class="o_summary_card o_optimal">
-                                <div class="o_summary_icon">
-                                    <i class="fa fa-check-circle"/>
-                                </div>
-                                <div class="o_summary_content">
-                                    <div class="o_summary_number">
-                                        <t t-esc="state.staffMembers.length"/>
-                                    </div>
-                                    <div class="o_summary_label" t-esc="this.t('Available Staff')"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="o_summary_card o_warning">
-                                <div class="o_summary_icon">
-                                    <i class="fa fa-exclamation-triangle"/>
-                                </div>
-                                <div class="o_summary_content">
-                                    <div class="o_summary_number">
-                                        0
-                                    </div>
-                                    <div class="o_summary_label" t-esc="this.t('Busy Staff')"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="o_summary_card o_overload">
-                                <div class="o_summary_icon">
-                                    <i class="fa fa-warning"/>
-                                </div>
-                                <div class="o_summary_content">
-                                    <div class="o_summary_number">
-                                        0
-                                    </div>
-                                    <div class="o_summary_label" t-esc="this.t('Overloaded Staff')"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="o_summary_card o_total">
-                                <div class="o_summary_icon">
-                                    <i class="fa fa-tasks"/>
-                                </div>
-                                <div class="o_summary_content">
-                                    <div class="o_summary_number">
-                                        <t t-esc="state.assignments.length"/>
-                                    </div>
-                                    <div class="o_summary_label" t-esc="this.t('Total Assignments')"/>
-                                </div>
-                            </div>
-                        </div>
+            <t t-else="">
+                <!-- Filter bar (governs the KPIs and staff cards below) -->
+                <div class="swl-filters">
+                    <div class="swl-fgroup">
+                        <span class="swl-flbl">Status</span>
+                        <button t-attf-class="swl-fpill swl-fpill--assigned {{ isStatusOn('assigned') ? 'is-on' : '' }}"
+                                t-on-click="() => this.toggleStatus('assigned')">
+                            Assigned <span class="swl-fpill__n" t-esc="statusCount('assigned')"/>
+                        </button>
+                        <button t-attf-class="swl-fpill swl-fpill--confirmed {{ isStatusOn('confirmed') ? 'is-on' : '' }}"
+                                t-on-click="() => this.toggleStatus('confirmed')">
+                            Confirmed <span class="swl-fpill__n" t-esc="statusCount('confirmed')"/>
+                        </button>
+                        <button t-attf-class="swl-fpill swl-fpill--in_progress {{ isStatusOn('in_progress') ? 'is-on' : '' }}"
+                                t-on-click="() => this.toggleStatus('in_progress')">
+                            In Progress <span class="swl-fpill__n" t-esc="statusCount('in_progress')"/>
+                        </button>
                     </div>
-                </div>
-
-                <!-- Staff Columns -->
-                <div class="o_staff_columns_container">
-                    <div class="row">
-                        <div t-foreach="state.staffMembers" t-as="staff" t-key="staff.id" 
-                             class="col-lg-3 col-md-4 col-sm-6">
-                            <div class="o_staff_column" t-att-data-staff-id="staff.id">
-                                <!-- Professional Staff Header with Combined Info -->
-                                <div class="o_staff_header_professional" t-on-click="() => this.onStaffClick(staff.id)">
-                                    <div class="o_staff_primary_info">
-                                        <h3 class="o_staff_name_prominent">
-                                            <t t-esc="staff.name || this.t('Staff Member')"/>
-                                        </h3>
-                                        <div class="o_staff_assignment_summary">
-                                            <span class="o_assignment_count" t-esc="getStaffAssignments(staff.id).length"/>
-                                            <span class="o_assignment_label" t-esc="this.t('Current Assignments')"/>
-                                        </div>
-                                    </div>
-                                    <div class="o_staff_role_indicator">
-                                        <span class="o_role_badge">
-                                            <t t-esc="staff.access_role_display || this.t('Staff')"/>
-                                        </span>
-                                    </div>
+                    <div class="swl-fgroup">
+                        <span class="swl-flbl">Date</span>
+                        <button t-attf-class="swl-fpill {{ state.dateRange==='all' ? 'is-on' : '' }}" t-on-click="() => this.setDateRange('all')">All time</button>
+                        <button t-attf-class="swl-fpill {{ state.dateRange==='today' ? 'is-on' : '' }}" t-on-click="() => this.setDateRange('today')">Today</button>
+                        <button t-attf-class="swl-fpill {{ state.dateRange==='week' ? 'is-on' : '' }}" t-on-click="() => this.setDateRange('week')">This week</button>
+                        <button t-attf-class="swl-fpill {{ state.dateRange==='month' ? 'is-on' : '' }}" t-on-click="() => this.setDateRange('month')">This month</button>
+                        <button t-attf-class="swl-fpill {{ state.dateRange==='custom' ? 'is-on' : '' }}" t-on-click="() => this.setDateRange('custom')">Custom</button>
+                        <t t-if="state.dateRange==='custom'">
+                            <input type="date" class="swl-datein" t-model="state.customFrom" title="From"/>
+                            <span class="swl-dash">–</span>
+                            <input type="date" class="swl-datein" t-model="state.customTo" title="To"/>
+                        </t>
+                    </div>
+                    <div class="swl-fspacer"/>
+                    <div class="swl-ftools">
+                        <div class="swl-staffpick" t-ref="staffPicker">
+                            <button class="swl-staffpick__btn" t-on-click="toggleStaffPicker">
+                                <i class="fa fa-user-o"/>
+                                <span t-esc="staffPickerLabel"/>
+                                <i class="fa fa-caret-down"/>
+                            </button>
+                            <div class="swl-staffpick__panel" t-if="state.staffPickerOpen">
+                                <div class="swl-staffpick__search">
+                                    <i class="fa fa-search"/>
+                                    <input type="text" placeholder="Search staff…" t-model="state.search"/>
                                 </div>
-
-                                <!-- Assignment Cards -->
-                                <div class="o_assignments_container">
-                                    <div class="o_assignments_header">
-                                        <h6>
-                                            <i class="fa fa-tasks me-1"/>
-                                            <t t-esc="this.t('Current Assignments')"/>
-                                        </h6>
-                                    </div>
-                                    
-                                    <div class="o_assignments_list">
-                                        <t t-foreach="getStaffAssignments(staff.id)" 
-                                           t-as="assignment" t-key="assignment.id">
-                                            <div class="o_assignment_card" 
-                                                 t-att-data-assignment-id="assignment.id"
-                                                 t-on-click="() => this.onAssignmentClick(assignment.id)">
-                                                
-                                                <!-- Assignment Content -->
-                                                <div class="o_assignment_content">
-                                                    <div class="o_assignment_header">
-                                                        <h6 class="o_assignment_title" t-esc="assignment.name"/>
-                                                        <div class="o_assignment_meta">
-                                                            <span class="badge badge-info" t-esc="assignment.state"/>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="o_assignment_details">
-                                                        <div class="o_detail_row" t-if="assignment.fso_id">
-                                                            <i class="fa fa-stethoscope me-1"/>
-                                                            <span t-esc="assignment.fso_id[1]"/>
-                                                        </div>
-                                                        <div class="o_detail_row" t-if="assignment.assignment_role">
-                                                            <i class="fa fa-user me-1"/>
-                                                            <span t-esc="assignment.assignment_role"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </t>
-                                        
-                                        <!-- Empty State -->
-                                        <div t-if="!getStaffAssignments(staff.id).length" 
-                                             class="o_empty_assignments">
-                                            <div class="text-center text-muted py-3">
-                                                <i class="fa fa-inbox fa-2x mb-2"/>
-                                                <p t-esc="this.t('No assignments')"/>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="swl-staffpick__actions">
+                                    <button t-on-click="selectAllStaff">Select all</button>
+                                    <span class="swl-staffpick__sep">·</span>
+                                    <button t-on-click="clearStaff">Clear</button>
                                 </div>
-
-                                <!-- Drop Zone Indicator -->
-                                <div class="o_drop_zone_indicator">
-                                    <div class="o_drop_message">
-                                        <i class="fa fa-arrow-down"/>
-                                        <t t-esc="this.t('Drop assignment here')"/>
-                                    </div>
+                                <div class="swl-staffpick__list">
+                                    <t t-foreach="pickerStaff" t-as="s" t-key="s.id">
+                                        <label class="swl-staffpick__row">
+                                            <input type="checkbox" t-att-checked="isStaffSelected(s.id)" t-on-change="() => this.toggleStaff(s.id)"/>
+                                            <span t-attf-class="swl-av swl-av--sm swl-av-{{ avatarHue(s.name) }}" t-esc="initials(s.name)"/>
+                                            <span class="swl-staffpick__name" t-esc="s.name"/>
+                                        </label>
+                                    </t>
+                                    <div t-if="!pickerStaff.length" class="swl-staffpick__empty">No match</div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Empty State -->
-                <div t-if="!state.staffMembers.length" class="o_empty_state">
-                    <div class="text-center py-5">
-                        <i class="fa fa-users fa-4x text-muted mb-3"/>
-                        <h4 class="text-muted" t-esc="this.t('No Staff Members Found')"/>
-                        <p class="text-muted" t-esc="this.t('Add staff members to see workload management')"/>
-                        <button class="btn btn-primary">
-                            <i class="fa fa-plus me-1"/>
-                            <t t-esc="this.t('Add Staff Member')"/>
+                        <button t-attf-class="swl-ftoggle {{ state.sortByLoad ? 'is-on' : '' }}" t-on-click="toggleSort" title="Sort busiest first">
+                            <i class="fa fa-sort-amount-desc"/>
+                        </button>
+                        <button t-attf-class="swl-ftoggle {{ state.hideEmpty ? 'is-on' : '' }}" t-on-click="toggleHideEmpty" title="Hide staff with no assignments">
+                            <i class="fa fa-eye-slash"/>
                         </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Drag Preview -->
-            <div class="o_drag_preview" style="display: none;">
-                <div class="o_preview_content">
-                    <i class="fa fa-arrows-alt me-2"/>
-                    <span class="o_preview_text" t-esc="this.t('Moving assignment...')"/>
+                <!-- KPI row (click a card to focus that group; click "Active assignments" to clear) -->
+                <div class="swl-kpis">
+                    <div t-attf-class="swl-kpi swl-kpi--available {{ isLoadFilter('available') ? 'is-active' : '' }}"
+                         t-on-click="() => this.setLoadFilter('available')" title="Show only available staff">
+                        <div class="swl-kpi__val" t-esc="availableCount"/>
+                        <div class="swl-kpi__lbl">Available</div>
+                    </div>
+                    <div t-attf-class="swl-kpi swl-kpi--busy {{ isLoadFilter('busy') ? 'is-active' : '' }}"
+                         t-on-click="() => this.setLoadFilter('busy')" title="Show only busy staff">
+                        <div class="swl-kpi__val" t-esc="busyCount"/>
+                        <div class="swl-kpi__lbl">Busy</div>
+                    </div>
+                    <div t-attf-class="swl-kpi swl-kpi--over {{ isLoadFilter('overloaded') ? 'is-active' : '' }}"
+                         t-on-click="() => this.setLoadFilter('overloaded')" title="Show only overloaded staff">
+                        <div class="swl-kpi__val" t-esc="overloadedCount"/>
+                        <div class="swl-kpi__lbl">Overloaded</div>
+                    </div>
+                    <div t-attf-class="swl-kpi swl-kpi--total {{ !state.loadFilter ? 'is-active' : '' }}"
+                         t-on-click="() => this.setLoadFilter(null)" title="Show all staff">
+                        <div class="swl-kpi__val" t-esc="totalAssignments"/>
+                        <div class="swl-kpi__lbl">Active assignments</div>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Staff grid -->
+                <div class="swl-grid" t-if="visibleStaff.length">
+                    <t t-foreach="visibleStaff" t-as="staff" t-key="staff.id">
+                        <div t-attf-class="swl-card swl-card--{{ loadLevel(staffLoad(staff.id)) }}">
+                            <div class="swl-card__head" t-on-click="() => this.onStaffClick(staff.id)">
+                                <span t-attf-class="swl-av swl-av-{{ avatarHue(staff.name) }}" t-esc="initials(staff.name)"/>
+                                <div class="swl-card__id">
+                                    <div class="swl-card__name" t-esc="staff.name"/>
+                                    <div class="swl-card__role" t-esc="staff.access_role_display"/>
+                                </div>
+                                <span t-attf-class="swl-pill swl-pill--{{ loadLevel(staffLoad(staff.id)) }}"
+                                      t-attf-title="{{ staffLoad(staff.id) }} active assignments">
+                                    <t t-esc="staffLoad(staff.id)"/>
+                                </span>
+                            </div>
+
+                            <div class="swl-bar"><span t-attf-style="width:{{ loadPercent(staffLoad(staff.id)) }}%"/></div>
+
+                            <div class="swl-asg">
+                                <t t-if="getStaffAssignments(staff.id).length">
+                                    <t t-foreach="getStaffAssignments(staff.id)" t-as="a" t-key="a.id">
+                                        <div class="swl-asg__row" t-on-click="() => this.onAssignmentClick(a.id)">
+                                            <span class="swl-asg__name" t-esc="a.fso_id ? a.fso_id[1] : a.name"/>
+                                            <span t-attf-class="swl-asg__state swl-st-{{ a.state }}" t-esc="stateLabel(a.state)"/>
+                                        </div>
+                                    </t>
+                                </t>
+                                <div t-else="" class="swl-asg__empty">No current assignments</div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <div t-else="" class="swl-empty">
+                    <i class="fa fa-filter"/>
+                    <div t-if="state.staffMembers.length">No staff match the current filters</div>
+                    <div t-else="">No healthcare staff found</div>
+                    <button t-if="state.staffMembers.length" class="swl-refresh" t-on-click="clearFilters">Clear filters</button>
+                </div>
+            </t>
         </div>
     </t>
 </templates>

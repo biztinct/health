@@ -3,11 +3,13 @@
     <t t-inherit="web_timeline.TimelineRenderer" t-inherit-mode="extension">
         <xpath expr="//div[hasclass('oe_timeline_buttons')]/div[hasclass('btn-group')]" position="after">
             <button
-                class="oe_timeline_button_jump_date btn btn-default"
+                class="oe_timeline_button_jump_date btn"
                 t-on-click="_onJumpDateClicked"
-                title="Jump to date"
+                title="Jump to a specific date"
             >
                 <span class="hf-wt-ico hf-ico-calendar" />
+                <span class="oe_timeline_jump_date_label">Jump to date</span>
+                <span class="oe_timeline_jump_date_caret">▾</span>
             </button>
         </xpath>
     </t>

@@ -51,7 +51,15 @@ class AdvancedPricingRule(models.Model):
     
     # Visual builder fields
     is_visual_rule = fields.Boolean('Is Visual Rule', compute='_compute_is_visual_rule', store=True)
-    
+
+    # --- Guided form helpers (presentation only) ---
+    rule_summary_html = fields.Html(
+        'Rule Summary', compute='_compute_rule_summary_html', sanitize=False, readonly=True,
+        help='Live plain-language summary of this rule (FOR … WHEN … THEN …).')
+    show_advanced_conditions = fields.Boolean(
+        'Show advanced conditions', store=False,
+        help='UI-only toggle to reveal rarely-used condition fields.')
+
     condition_field = fields.Selection([
         ('order_total', 'Order Total'),
         ('quantity', 'Quantity'),
@@ -720,6 +728,120 @@ class AdvancedPricingRule(models.Model):
         """Compute if this is a visual rule"""
         for rule in self:
             rule.is_visual_rule = rule.rule_type == 'visual'
+
+    # ------------------------------------------------------------------
+    # Guided form: live plain-language rule summary
+    # ------------------------------------------------------------------
+    _SUMMARY_ICON_PATHS = {
+        'scope': "<path d='M3 7l9-4 9 4-9 4z'/><path d='M3 7v6l9 4 9-4V7'/>",
+        'when': "<circle cx='12' cy='12' r='8'/><path d='M12 8v4l3 2'/>",
+        'then': "<path d='M20 12l-8 8H6a2 2 0 0 1-2-2v-6l8-8 8 8z'/><circle cx='9' cy='9' r='1.2'/>",
+        'home': "<path d='M3 11l9-7 9 7'/><path d='M5 10v9h14v-9'/>",
+    }
+
+    def _summary_icon(self, name):
+        paths = self._SUMMARY_ICON_PATHS.get(name, '')
+        return (
+            "<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' "
+            "stroke-width='2' stroke-linecap='round' stroke-linejoin='round' "
+            "style='vertical-align:-2px;margin-right:5px;'>%s</svg>" % paths
+        )
+
+    @api.depends('applied_on', 'product_tmpl_id', 'product_id', 'categ_id', 'region',
+                 'distance_min', 'distance_max', 'appointment_hour_min', 'appointment_hour_max',
+                 'is_weekend_required', 'is_holiday_required', 'holiday_type',
+                 'is_after_hours_required', 'is_after_hours_or_weekend',
+                 'service_type', 'service_location', 'requires_home_service',
+                 'wound_count_min', 'wound_count_max', 'injection_count_min',
+                 'iv_fluid_count_min', 'medication_count_min',
+                 'action_type', 'action_value', 'per_unit_field')
+    def _compute_rule_summary_html(self):
+        """Build a live FOR … WHEN … THEN sentence. Never raise (display only)."""
+        type_labels = dict(self._fields['service_type']._description_selection(self.env))
+        loc_labels = dict(self._fields['service_location']._description_selection(self.env))
+        for rule in self:
+            try:
+                rule.rule_summary_html = rule._build_rule_summary(type_labels, loc_labels)
+            except Exception:
+                rule.rule_summary_html = False
+
+    def _build_rule_summary(self, type_labels, loc_labels):
+        self.ensure_one()
+        fmt = lambda v: '{:,.0f}'.format(v or 0)
+
+        # FOR (scope)
+        if self.applied_on == '1_product' and self.product_tmpl_id:
+            what = self.product_tmpl_id.display_name
+        elif self.applied_on == '0_product_variant' and self.product_id:
+            what = self.product_id.display_name
+        elif self.applied_on == '2_product_category' and self.categ_id:
+            what = self.categ_id.display_name
+        else:
+            what = 'all products'
+        if self.region:
+            what += ' · %s' % self.region
+
+        # WHEN (conditions)
+        conds = []
+        if self.requires_home_service or self.service_location == 'home':
+            conds.append("at the client's home")
+        elif self.service_location:
+            conds.append(loc_labels.get(self.service_location, self.service_location))
+        if self.service_type:
+            conds.append(type_labels.get(self.service_type, self.service_type))
+        if self.is_after_hours_or_weekend:
+            conds.append("after-hours or weekend")
+        if self.is_after_hours_required:
+            conds.append("after hours")
+        if self.is_weekend_required:
+            conds.append("weekends")
+        if self.is_holiday_required:
+            conds.append("holidays (%s)" % (self.holiday_type or 'public'))
+        if self.appointment_hour_min and self.appointment_hour_max:
+            conds.append("between %02dh and %02dh" % (self.appointment_hour_min, self.appointment_hour_max))
+        if self.distance_min and self.distance_max:
+            conds.append("distance %g–%g km" % (self.distance_min, self.distance_max))
+        elif self.distance_min:
+            conds.append("distance ≥ %g km" % self.distance_min)
+        elif self.distance_max:
+            conds.append("distance ≤ %g km" % self.distance_max)
+        if self.wound_count_min:
+            conds.append("≥ %d wounds" % self.wound_count_min)
+        if self.injection_count_min:
+            conds.append("≥ %d injections" % self.injection_count_min)
+        if self.iv_fluid_count_min:
+            conds.append("≥ %d IV bags" % self.iv_fluid_count_min)
+        if self.medication_count_min:
+            conds.append("≥ %d medications" % self.medication_count_min)
+        when = ", ".join(conds) if conds else "always"
+
+        # THEN (action)
+        at = self.action_type
+        v = self.action_value
+        if at == 'add':
+            then = "add %s đ" % fmt(v)
+        elif at == 'fixed':
+            then = "set the price to %s đ" % fmt(v)
+        elif at == 'multiply':
+            then = "multiply the price ×%g" % (v or 0)
+        elif at == 'percentage':
+            then = "increase the price by %g%%" % (v or 0)
+        elif at == 'discount':
+            then = "give a %g%% discount" % ((v or 0) * 100)
+        elif at == 'per_unit':
+            then = "add %s đ per %s" % (fmt(v), (self.per_unit_field or 'unit'))
+        else:
+            then = None
+
+        seg = lambda icon, label, body: (
+            "<span class='apr-sum__seg'>%s<b>%s</b> %s</span>"
+            % (self._summary_icon(icon), label, body))
+        parts = [seg('scope', 'For', what), seg('when', 'When', when)]
+        if then:
+            parts.append(seg('then', 'Then', then))
+        else:
+            parts.append("<span class='apr-sum__hint'>Pick a price action below to finish the rule.</span>")
+        return "<div class='apr-sum'>%s</div>" % "<span class='apr-sum__arrow'>→</span>".join(parts)
     
     def action_open_visual_builder(self):
         """Open the visual rule builder interface"""

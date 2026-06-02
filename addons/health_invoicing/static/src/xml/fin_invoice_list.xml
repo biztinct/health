@@ -25,6 +25,15 @@
                         <t t-esc="dt.label"/>
                     </button>
                 </t>
+                <button t-attf-class="fin-cl-date-btn #{tabState.dateFilter === 'custom' ? 'active' : ''}"
+                        t-on-click="() => this.setDateFilter('custom')">Custom</button>
+                <t t-if="tabState.dateFilter === 'custom'">
+                    <input type="date" class="fin-cl-date-input" t-att-value="tabState.customFrom"
+                           t-on-change="(ev) => this.onCustomDate('from', ev)" title="From"/>
+                    <span class="fin-cl-date-dash">–</span>
+                    <input type="date" class="fin-cl-date-input" t-att-value="tabState.customTo"
+                           t-on-change="(ev) => this.onCustomDate('to', ev)" title="To"/>
+                </t>
             </div>
         </xpath>
     </t>

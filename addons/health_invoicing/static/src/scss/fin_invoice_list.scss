@@ -87,3 +87,27 @@
         border-color: $fin-primary;
     }
 }
+
+.fin-cl-date-filters {
+    align-items: center;
+    flex-wrap: wrap;
+}
+.fin-cl-date-input {
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1px solid #E0E0E0;
+    background: #fff;
+    color: #37474F;
+    font-family: inherit;
+
+    &:focus {
+        outline: 0;
+        border-color: $fin-primary;
+        box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.12);
+    }
+}
+.fin-cl-date-dash {
+    color: #B0BEC5;
+    font-weight: 700;
+}
