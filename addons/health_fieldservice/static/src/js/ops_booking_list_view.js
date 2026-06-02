@@ -16,6 +16,8 @@ export class OpsBookingListController extends ListController {
         this.tabState = useState({
             activeTab: "all",
             dateFilter: "all_dates",
+            customFrom: "",
+            customTo: "",
             needsStaffCount: 0,
         });
         this._tabFilterGroupId = null;
@@ -52,6 +54,7 @@ export class OpsBookingListController extends ListController {
             { id: "today", label: "Today" },
             { id: "tomorrow", label: "Tomorrow" },
             { id: "this_week", label: "This Week" },
+            { id: "this_month", label: "This Month" },
             { id: "overdue", label: "Overdue" },
         ];
     }
@@ -103,6 +106,20 @@ export class OpsBookingListController extends ListController {
                     ['scheduled_datetime', '<', fmt(weekEnd)],
                 ];
             }
+            case "this_month": {
+                const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                return [
+                    ['scheduled_datetime', '>=', fmt(monthStart)],
+                    ['scheduled_datetime', '<', fmt(monthEnd)],
+                ];
+            }
+            case "custom": {
+                const out = [];
+                if (this.tabState.customFrom) out.push(['scheduled_datetime', '>=', this.tabState.customFrom + ' 00:00:00']);
+                if (this.tabState.customTo) out.push(['scheduled_datetime', '<=', this.tabState.customTo + ' 23:59:59']);
+                return out;
+            }
             case "overdue":
                 return [
                     ['scheduled_datetime', '<', fmt(now)],
@@ -130,21 +147,32 @@ export class OpsBookingListController extends ListController {
     }
 
     async setDateFilter(dateId) {
-        if (this.tabState.dateFilter === dateId) return;
+        if (dateId !== "custom" && this.tabState.dateFilter === dateId) return;
         this.tabState.dateFilter = dateId;
+        this._applyDateFilter();
+    }
 
+    _applyDateFilter() {
         if (this._dateFilterGroupId !== null) {
             this.env.searchModel.deactivateGroup(this._dateFilterGroupId);
             this._dateFilterGroupId = null;
         }
+        const dateId = this.tabState.dateFilter;
+        if (dateId === "all_dates") return;
+        const domain = this._getDateDomain(dateId);
+        if (!domain.length) return;
+        const label = dateId === "custom"
+            ? `Custom (${this.tabState.customFrom || "…"} → ${this.tabState.customTo || "…"})`
+            : (this.dateTabs.find(t => t.id === dateId)?.label || dateId);
+        const preFilter = { description: label, domain };
+        this.env.searchModel.createNewFilters([preFilter]);
+        this._dateFilterGroupId = preFilter.groupId;
+    }
 
-        if (dateId !== "all_dates") {
-            const domain = this._getDateDomain(dateId);
-            const description = this.dateTabs.find(t => t.id === dateId)?.label || dateId;
-            const preFilter = { description, domain };
-            this.env.searchModel.createNewFilters([preFilter]);
-            this._dateFilterGroupId = preFilter.groupId;
-        }
+    onCustomDate(which, ev) {
+        this.tabState[which === "from" ? "customFrom" : "customTo"] = ev.target.value;
+        this.tabState.dateFilter = "custom";
+        this._applyDateFilter();
     }
 
     _getPatientIdFromAction() {

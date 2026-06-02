@@ -6,7 +6,7 @@ class ResPartner(models.Model):
     """Extend res.partner with assignment-related patient data"""
     _inherit = 'res.partner'
 
-    last_visit_date = fields.Datetime('Last Visit', compute='_compute_last_visit_date')
+    last_visit_date = fields.Datetime('Last Visit', compute='_compute_last_visit_date', store=True)
 
     booking_ids = fields.One2many(
         'health.fieldservice.order', 'patient_id',
@@ -95,6 +95,7 @@ class ResPartner(models.Model):
         compute='_compute_timeline_html'
     )
 
+    @api.depends('is_patient', 'booking_ids.state', 'booking_ids.actual_end_datetime')
     def _compute_last_visit_date(self):
         for partner in self:
             if partner.is_patient:

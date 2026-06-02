@@ -15,9 +15,81 @@ export class FinPaymentListController extends ListController {
         this.tabState = useState({
             activeTab: "all",
             typeFilter: "all_types",
+            dateFilter: "all_dates",
+            customFrom: "",
+            customTo: "",
         });
         this._tabFilterGroupId = null;
         this._typeFilterGroupId = null;
+        this._dateFilterGroupId = null;
+    }
+
+    get dateTabs() {
+        return [
+            { id: "all_dates", label: "All Dates" },
+            { id: "today", label: "Today" },
+            { id: "this_week", label: "This Week" },
+            { id: "this_month", label: "This Month" },
+        ];
+    }
+
+    _getDateDomain(dateId) {
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const fmt = (d) => d.toISOString().replace("T", " ").substring(0, 19);
+        switch (dateId) {
+            case "today": {
+                const end = new Date(todayStart); end.setDate(end.getDate() + 1);
+                return [["transaction_date", ">=", fmt(todayStart)], ["transaction_date", "<", fmt(end)]];
+            }
+            case "this_week": {
+                const ws = new Date(todayStart); ws.setDate(ws.getDate() - ((ws.getDay() + 6) % 7));
+                const we = new Date(ws); we.setDate(we.getDate() + 7);
+                return [["transaction_date", ">=", fmt(ws)], ["transaction_date", "<", fmt(we)]];
+            }
+            case "this_month": {
+                const ms = new Date(now.getFullYear(), now.getMonth(), 1);
+                const me = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                return [["transaction_date", ">=", fmt(ms)], ["transaction_date", "<", fmt(me)]];
+            }
+            case "custom": {
+                const out = [];
+                if (this.tabState.customFrom) out.push(["transaction_date", ">=", this.tabState.customFrom + " 00:00:00"]);
+                if (this.tabState.customTo) out.push(["transaction_date", "<=", this.tabState.customTo + " 23:59:59"]);
+                return out;
+            }
+            default:
+                return [];
+        }
+    }
+
+    async setDateFilter(dateId) {
+        if (dateId !== "custom" && this.tabState.dateFilter === dateId) return;
+        this.tabState.dateFilter = dateId;
+        this._applyDateFilter();
+    }
+
+    _applyDateFilter() {
+        if (this._dateFilterGroupId !== null) {
+            this.env.searchModel.deactivateGroup(this._dateFilterGroupId);
+            this._dateFilterGroupId = null;
+        }
+        const dateId = this.tabState.dateFilter;
+        if (dateId === "all_dates") return;
+        const domain = this._getDateDomain(dateId);
+        if (!domain.length) return;
+        const label = dateId === "custom"
+            ? `Custom (${this.tabState.customFrom || "…"} → ${this.tabState.customTo || "…"})`
+            : (this.dateTabs.find((t) => t.id === dateId)?.label || dateId);
+        const preFilter = { description: label, domain };
+        this.env.searchModel.createNewFilters([preFilter]);
+        this._dateFilterGroupId = preFilter.groupId;
+    }
+
+    onCustomDate(which, ev) {
+        this.tabState[which === "from" ? "customFrom" : "customTo"] = ev.target.value;
+        this.tabState.dateFilter = "custom";
+        this._applyDateFilter();
     }
 
     get statusTabs() {
