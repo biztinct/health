@@ -8,11 +8,11 @@
             <list editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
-                <field name="section_id"/>
-                <field name="icon"/>
-                <field name="action_xmlid"/>
+                <field name="section_id" optional="hide"/>
+                <field name="icon" optional="hide"/>
+                <field name="action_xmlid" optional="hide"/>
                 <field name="action_tag" optional="hide"/>
-                <field name="role_ids" widget="many2many_tags"/>
+                <field name="role_ids" widget="many2many_tags" options="{'no_create': True, 'no_quick_create': True}"/>
                 <field name="active"/>
             </list>
         </field>

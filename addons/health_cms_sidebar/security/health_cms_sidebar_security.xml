@@ -2,6 +2,10 @@
 <odoo>
     <record id="group_cms_sidebar_admin" model="res.groups">
         <field name="name">Healthcare: CMS Sidebar Administrator</field>
-        <field name="implied_ids" eval="[(4, ref('health_base.group_healthcare_admin'))]"/>
+    </record>
+
+    <!-- Healthcare administrators can manage (read/write/create/unlink) the CMS sidebar -->
+    <record id="health_base.group_healthcare_admin" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('health_cms_sidebar.group_cms_sidebar_admin'))]"/>
     </record>
 </odoo>
