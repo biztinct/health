@@ -35,6 +35,7 @@ function _durationText(record) {
 patch(CalendarCommonPopover, {
     subTemplates: {
         ...CalendarCommonPopover.subTemplates,
+        popover: "health_fieldservice.FSO_CalendarPopover.popover",
         footer: "health_fieldservice.FSO_CalendarPopover.footer",
     },
 });
@@ -43,12 +44,51 @@ patch(CalendarCommonPopover.prototype, {
     setup() {
         super.setup();
         this.actionService = useService("action");
+        this.orm = useService("orm");
+    },
+
+    get isFsoPopover() {
+        return this.props.model.resModel === FSO_MODEL;
+    },
+
+    get bkInfo() {
+        const raw = this.props.record.rawRecord || {};
+        const prio = String(raw.priority || "0");
+        return {
+            clientName: (raw.patient_id && raw.patient_id[1]) || this.props.record.title || "",
+            clientCode: raw.patient_code || "",
+            serviceKey: raw.service_type || "default",
+            serviceLabel: SERVICE_LABELS[raw.service_type] || "",
+            statusKey: raw.state || "draft",
+            statusLabel: STATE_LABELS[raw.state] || raw.state || "",
+            priorityKey: PRIORITY_LABELS[prio] ? prio : "",
+            priorityLabel: PRIORITY_LABELS[prio] || "",
+            staffName: (raw.lead_staff_id && raw.lead_staff_id[1]) || "",
+            staffInitials: _initials(raw.lead_staff_id && raw.lead_staff_id[1]).toUpperCase(),
+            catchment: (raw.catchment_province_id && raw.catchment_province_id[1]) || "",
+            hasStaff: !!raw.has_staff_assigned,
+        };
     },
 
     get isBookingCancellable() {
         if (this.props.model.resModel !== FSO_MODEL) return false;
         const state = this.props.record.rawRecord?.state;
         return state && !NON_CANCELLABLE.includes(state);
+    },
+
+    get isBookingReschedulable() {
+        return this.isBookingCancellable;
+    },
+
+    async onRescheduleEvent() {
+        const recordId = this.props.record.id;
+        const action = await this.orm.call(
+            FSO_MODEL, "action_open_reschedule_wizard", [recordId]
+        );
+        if (action) {
+            this.actionService.doAction(action);
+        }
+        this.props.close();
     },
 
     onEditEvent() {

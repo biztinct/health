@@ -3,12 +3,99 @@
 
     <t t-name="health_fieldservice.FSO_CalendarPopover.footer">
         <t t-if="isEventEditable">
-            <a href="#" class="btn btn-primary o_cw_popover_edit" t-on-click="onEditEvent">Edit</a>
+            <a href="#" class="btn btn-primary o_cw_popover_edit" t-on-click="onEditEvent">
+                <i class="fa fa-external-link"/> Open
+            </a>
         </t>
         <t t-if="isBookingCancellable">
             <a href="#" class="btn btn-outline-danger o_cw_popover_cancel" t-on-click="onCancelEvent">
                 <i class="fa fa-times"/> Cancel Booking
             </a>
+        </t>
+        <t t-if="isBookingReschedulable">
+            <a href="#" class="btn btn-outline-secondary o_cw_popover_reschedule" t-on-click="onRescheduleEvent">
+                <i class="fa fa-clock-o"/> Reschedule
+            </a>
+        </t>
+    </t>
+
+    <!-- Rich, redesigned booking popover (FSO only; other calendars fall back) -->
+    <t t-name="health_fieldservice.FSO_CalendarPopover.popover">
+        <t t-if="isFsoPopover">
+            <div t-attf-class="o-bkp o-bkp-st-{{bkInfo.statusKey}}">
+                <!-- Header: status-tinted band with service icon, client + code, close -->
+                <div class="o-bkp-head">
+                    <span t-attf-class="o-bkp-svc o-bk-ico o-bk-ico-{{bkInfo.serviceKey}}"/>
+                    <div class="o-bkp-head-main">
+                        <div class="o-bkp-name" t-esc="bkInfo.clientName"/>
+                        <div t-if="bkInfo.clientCode" class="o-bkp-code" t-esc="bkInfo.clientCode"/>
+                    </div>
+                    <span class="o-bkp-close" t-on-click.stop="() => props.close()"><i class="fa fa-times"/></span>
+                </div>
+
+                <!-- Chips: status · service · priority -->
+                <div class="o-bkp-chips">
+                    <span t-attf-class="o-bkp-chip o-bk-cst-{{bkInfo.statusKey}}" t-esc="bkInfo.statusLabel"/>
+                    <span t-if="bkInfo.serviceLabel" class="o-bkp-chip o-bkp-chip-svc">
+                        <span t-attf-class="o-bk-ico o-bk-ico-{{bkInfo.serviceKey}}"/><t t-esc="bkInfo.serviceLabel"/>
+                    </span>
+                    <span t-if="bkInfo.priorityKey" t-attf-class="o-bkp-chip o-bkp-prio o-bk-prio-{{bkInfo.priorityKey}}">
+                        <span class="o-bk-ico o-bk-ico-flag"/><t t-esc="bkInfo.priorityLabel"/>
+                    </span>
+                </div>
+
+                <!-- When: date + time range -->
+                <div class="o-bkp-when">
+                    <div t-if="date" class="o-bkp-when-row">
+                        <span class="o-bk-ico o-bk-ico-calendar"/><span class="o-bkp-when-txt" t-esc="date"/>
+                    </div>
+                    <div t-if="time" class="o-bkp-when-row">
+                        <span class="o-bk-ico o-bk-ico-clock"/>
+                        <span class="o-bkp-when-txt" t-esc="time"/>
+                        <span t-if="timeDuration" class="o-bkp-dur">· <t t-esc="timeDuration"/></span>
+                    </div>
+                </div>
+
+                <!-- Lead staff -->
+                <div class="o-bkp-staff">
+                    <t t-if="bkInfo.staffName">
+                        <span class="o-bkp-av" t-esc="bkInfo.staffInitials"/>
+                        <div class="o-bkp-staff-main">
+                            <div class="o-bkp-staff-lbl">Lead Staff</div>
+                            <div class="o-bkp-staff-name" t-esc="bkInfo.staffName"/>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <span class="o-bkp-av o-bkp-av--none"><span class="o-bk-ico o-bk-ico-user"/></span>
+                        <div class="o-bkp-staff-main">
+                            <div class="o-bkp-staff-lbl">Lead Staff</div>
+                            <div class="o-bkp-staff-name o-bkp-unassigned">Unassigned</div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Detail rows -->
+                <div class="o-bkp-rows">
+                    <div t-if="bkInfo.catchment" class="o-bkp-row">
+                        <span class="o-bk-ico o-bk-ico-pin"/>
+                        <span class="o-bkp-row-lbl">Catchment</span>
+                        <span class="o-bkp-row-val" t-esc="bkInfo.catchment"/>
+                    </div>
+                    <div t-if="bkInfo.clientCode" class="o-bkp-row">
+                        <span class="o-bk-ico o-bk-ico-id"/>
+                        <span class="o-bkp-row-lbl">Patient ID</span>
+                        <span class="o-bkp-row-val" t-esc="bkInfo.clientCode"/>
+                    </div>
+                </div>
+
+                <!-- Footer actions -->
+                <div t-if="hasFooter" class="o-bkp-foot">
+                    <t t-call="{{ constructor.subTemplates.footer }}"/>
+                </div>
+            </div>
+        </t>
+        <t t-else="">
+            <t t-call="web.CalendarCommonPopover.popover"/>
         </t>
     </t>
 

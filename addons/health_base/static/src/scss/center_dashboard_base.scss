@@ -296,6 +296,22 @@
     max-height: 220px;
 }
 
+.cd-chart-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #B0BEC5;
+    font-size: 13px;
+    font-weight: 500;
+    pointer-events: none;
+
+    .fa { font-size: 26px; opacity: 0.5; }
+}
+
 // ==================== ZONE 3: MULTI-COLUMN ====================
 
 .cd-zone3 {

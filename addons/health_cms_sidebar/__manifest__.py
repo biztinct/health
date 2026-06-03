@@ -9,6 +9,7 @@
         'health_crm',
         'health_invoicing',
         'health_landing',
+        'health_flow',
         'access_roles',
     ],
     'data': [

@@ -118,6 +118,10 @@
                     </div>
                     <div class="cd-chart-body">
                         <canvas t-ref="donutCanvas" class="cd-chart-canvas"/>
+                        <div t-if="!hasPipelineData" class="cd-chart-empty">
+                            <i class="fa fa-pie-chart"/>
+                            <span>No contact data for this period</span>
+                        </div>
                     </div>
                 </div>
                 <div class="cd-chart-panel">
@@ -126,6 +130,10 @@
                     </div>
                     <div class="cd-chart-body">
                         <canvas t-ref="barCanvas" class="cd-chart-canvas"/>
+                        <div t-if="!hasChannelData" class="cd-chart-empty">
+                            <i class="fa fa-bar-chart"/>
+                            <span>No channel data yet</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -192,7 +200,7 @@
                             </div>
                         </t>
                         <t t-foreach="state.upcomingBookings" t-as="item" t-key="item.id">
-                            <div class="cd-feed-item" t-on-click="() => this.onFeedItemClick(item.id)">
+                            <div class="cd-feed-item" t-on-click="() => this.onBookingClick(item)">
                                 <div class="cd-feed-accent"/>
                                 <div class="cd-feed-dot" style="background: #2E7D32;"/>
                                 <div class="cd-feed-content">
@@ -201,7 +209,9 @@
                                         <t t-esc="item.name"/>
                                     </div>
                                     <div class="cd-feed-subtitle">
-                                        <t t-if="item.channel"><t t-esc="item.channel"/></t>
+                                        <t t-if="item.scheduled">
+                                            <i class="fa fa-calendar" style="margin-right:4px;opacity:0.7"/><t t-esc="item.scheduled"/>
+                                        </t>
                                         <t t-if="item.province"> · <t t-esc="item.province"/></t>
                                     </div>
                                 </div>

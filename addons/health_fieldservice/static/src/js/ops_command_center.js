@@ -55,7 +55,9 @@ class OpsCommandCenter extends Component {
         this.state = useState({
             isLoading: true,
             date: this.formatDateISO(today),
-            dateLabel: this.formatDateLabel(today),
+            period: 'today',
+            customFrom: '',
+            customTo: '',
             facilityId: false,
             facilities: [],
             kpis: {},
@@ -94,10 +96,11 @@ class OpsCommandCenter extends Component {
     async loadDashboardData() {
         this.state.isLoading = true;
         try {
+            const r = this._range();
             const data = await this.orm.call(
                 "health.fieldservice.order",
                 "get_ops_dashboard_data",
-                [this.state.date, this.state.facilityId || false]
+                [r.from, r.to, this.state.facilityId || false]
             );
             this.state.kpis = data.kpis || {};
             this.state.bookings = data.bookings || [];
@@ -113,7 +116,11 @@ class OpsCommandCenter extends Component {
     // ===== DATE NAVIGATION =====
 
     formatDateISO(date) {
-        return date.toISOString().split('T')[0];
+        // Build from local components (avoid UTC day-shift from toISOString)
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
     }
 
     formatDateLabel(date) {
@@ -122,31 +129,107 @@ class OpsCommandCenter extends Component {
         });
     }
 
-    prevDay() {
-        const d = new Date(this.state.date);
-        d.setDate(d.getDate() - 1);
-        this.state.date = this.formatDateISO(d);
-        this.state.dateLabel = this.formatDateLabel(d);
+    _anchorDate() {
+        return new Date(this.state.date + 'T00:00:00');
+    }
+
+    _fmtShort(iso) {
+        return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric',
+        });
+    }
+
+    // Resolve the current period into {from, to} ISO date strings (or false)
+    _range() {
+        const p = this.state.period;
+        if (p === 'all') return { from: false, to: false };
+        if (p === 'custom') {
+            return { from: this.state.customFrom || false, to: this.state.customTo || false };
+        }
+        const d = this._anchorDate();
+        if (p === 'week') {
+            const dow = (d.getDay() + 6) % 7; // Monday = 0
+            const start = new Date(d); start.setDate(d.getDate() - dow);
+            const end = new Date(start); end.setDate(start.getDate() + 6);
+            return { from: this.formatDateISO(start), to: this.formatDateISO(end) };
+        }
+        if (p === 'month') {
+            const start = new Date(d.getFullYear(), d.getMonth(), 1);
+            const end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+            return { from: this.formatDateISO(start), to: this.formatDateISO(end) };
+        }
+        // 'today' (single day)
+        const s = this.formatDateISO(d);
+        return { from: s, to: s };
+    }
+
+    get headerLabel() {
+        const p = this.state.period;
+        if (p === 'all') return 'All dates';
+        if (p === 'custom') {
+            if (this.state.customFrom && this.state.customTo) {
+                return `${this._fmtShort(this.state.customFrom)} – ${this._fmtShort(this.state.customTo)}`;
+            }
+            return 'Select a date range';
+        }
+        const d = this._anchorDate();
+        if (p === 'week') {
+            const r = this._range();
+            return `${this._fmtShort(r.from)} – ${this._fmtShort(r.to)}`;
+        }
+        if (p === 'month') {
+            return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        }
+        return this.formatDateLabel(d);
+    }
+
+    get showArrows() {
+        return ['today', 'week', 'month'].includes(this.state.period);
+    }
+
+    setPeriod(period) {
+        this.state.period = period;
+        // "Today" jumps the anchor back to today (replaces the old Today link)
+        if (period === 'today') {
+            this.state.date = this.formatDateISO(new Date());
+        }
+        if (period === 'custom' && !(this.state.customFrom && this.state.customTo)) {
+            return; // wait until both custom dates are picked
+        }
         this.loadDashboardData();
     }
 
-    nextDay() {
-        const d = new Date(this.state.date);
-        d.setDate(d.getDate() + 1);
+    onCustomDate(which, value) {
+        if (which === 'from') this.state.customFrom = value;
+        else this.state.customTo = value;
+        this.state.period = 'custom';
+        if (this.state.customFrom && this.state.customTo) {
+            this.loadDashboardData();
+        }
+    }
+
+    _shift(dir) {
+        const d = this._anchorDate();
+        const p = this.state.period;
+        if (p === 'today') d.setDate(d.getDate() + dir);
+        else if (p === 'week') d.setDate(d.getDate() + dir * 7);
+        else if (p === 'month') d.setMonth(d.getMonth() + dir);
+        else return;
         this.state.date = this.formatDateISO(d);
-        this.state.dateLabel = this.formatDateLabel(d);
         this.loadDashboardData();
     }
+
+    prevDay() { this._shift(-1); }
+    nextDay() { this._shift(1); }
 
     goToday() {
-        const today = new Date();
-        this.state.date = this.formatDateISO(today);
-        this.state.dateLabel = this.formatDateLabel(today);
+        this.state.period = 'today';
+        this.state.date = this.formatDateISO(new Date());
         this.loadDashboardData();
     }
 
-    onFacilityChange(ev) {
-        this.state.facilityId = ev.target.value ? parseInt(ev.target.value) : false;
+    setFacility(facilityId) {
+        this.state.facilityId = facilityId || false;
         this.loadDashboardData();
     }
 
@@ -277,14 +360,15 @@ class OpsCommandCenter extends Component {
     // ===== NAVIGATION =====
 
     openBooking(bookingId) {
+        // Open the rich booking detail (keeps the CMS left panel, unlike the
+        // native form which renders full-width without it).
         this.action.doAction({
-            type: 'ir.actions.act_window',
-            res_model: 'health.fieldservice.order',
-            res_id: bookingId,
-            views: [[false, 'form']],
-            target: 'fullscreen',
-            context: { form_view_ref: 'health_fieldservice.view_health_fso_form_ops' },
-        }, { clearBreadcrumbs: true });
+            type: 'ir.actions.client',
+            tag: 'ops_booking_detail',
+            name: _t('Booking'),
+            target: 'current',
+            context: { active_id: bookingId },
+        });
     }
 
     openAssignStaff(bookingId) {
@@ -341,12 +425,14 @@ class OpsCommandCenter extends Component {
     }
 
     openStaffProfile(staffId) {
+        // Open as an overlay so the Operations Center (and its left panel)
+        // stays in place — the native employee form has no CMS sidebar.
         this.action.doAction({
             type: 'ir.actions.act_window',
             res_model: 'hr.employee',
             res_id: staffId,
             views: [[false, 'form']],
-            target: 'current',
+            target: 'new',
         });
     }
 

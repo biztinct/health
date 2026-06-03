@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Unified CMS root menu in app switcher -->
+    <!-- Unified CMS root menu in app switcher — sequence 1 so it is the first
+         app and opens by default on login (when the user has access). -->
     <menuitem id="menu_cms_root"
               name="Viet UC CMS"
               action="health_fieldservice.action_ops_command_center"
               web_icon="health_cms_sidebar,static/description/icon.png"
-              sequence="10"/>
+              sequence="1"/>
 
     <!-- Hide old individual center root menus -->
     <record id="health_crm.menu_crm_center_root" model="ir.ui.menu">
@@ -19,6 +20,15 @@
         <field name="active" eval="False"/>
     </record>
     <record id="health_landing.menu_admin_center_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Hide superseded root menus: old "Home Page" (health_flow) and "Viet Uc"
+         (health_landing) — replaced by the unified Viet UC CMS app. -->
+    <record id="health_flow.menu_health_flow_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="health_landing.menu_health_viet_uc_root" model="ir.ui.menu">
         <field name="active" eval="False"/>
     </record>
 

@@ -2454,6 +2454,7 @@ class HealthLead(models.Model):
         upcoming = Lead.search([
             ('contact_status', '=', 'booking'),
         ], order='create_date desc', limit=5)
+        FSO = self.env['health.fieldservice.order']
         upcoming_bookings = []
         for lead in upcoming:
             time_diff = now - lead.create_date
@@ -2467,6 +2468,16 @@ class HealthLead(models.Model):
                     mins = time_diff.seconds // 60
                     time_ago = f"{max(mins, 1)}m ago"
 
+            # Linked booking record + its scheduled appointment date
+            booking = FSO.search(
+                [('crm_lead_id', '=', lead.id)],
+                order='scheduled_datetime desc', limit=1,
+            )
+            scheduled = ''
+            if booking and booking.scheduled_datetime:
+                scheduled = fields.Datetime.context_timestamp(
+                    self, booking.scheduled_datetime).strftime('%b %d, %I:%M %p')
+
             upcoming_bookings.append({
                 'id': lead.id,
                 'name': lead.name or '',
@@ -2475,6 +2486,8 @@ class HealthLead(models.Model):
                 'province': lead.catchment_province_id.name if lead.catchment_province_id else '',
                 'channel': dict(channel_selections).get(lead.vietnamese_channel, '') if lead.vietnamese_channel else '',
                 'time_ago': time_ago,
+                'booking_id': booking.id if booking else False,
+                'scheduled': scheduled,
             })
 
         # --- Monthly summary (always current month regardless of period) ---

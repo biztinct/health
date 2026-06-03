@@ -568,7 +568,8 @@
 .ops-header-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 12px 16px;
 }
 
 .ops-page-title {
@@ -623,6 +624,55 @@
 
     &:hover { background: $vu-deep-blue-lightest; }
 }
+
+// Period range pills + facility pills (mirrors the CRM dashboard filter style)
+.ops-period-toggle,
+.ops-facility-toggle {
+    display: inline-flex;
+    background: var(--vu-surface-muted);
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    padding: 3px;
+    gap: 2px;
+}
+
+.ops-period-btn,
+.ops-facility-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--vu-radius-sm);
+    cursor: pointer;
+    background: transparent;
+    color: $vu-text-secondary;
+    transition: all 120ms;
+    white-space: nowrap;
+    font-family: inherit;
+
+    &:hover { color: $vu-deep-blue; background: $vu-deep-blue-lightest; }
+    &.active { background: $vu-deep-blue; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+}
+
+.ops-custom-dates {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ops-date-input {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: var(--vu-radius-md);
+    border: 1px solid var(--vu-border-soft);
+    background: var(--vu-surface-card);
+    color: #37474f;
+    font-family: inherit;
+
+    &:focus { outline: none; border-color: $vu-deep-blue; }
+}
+
+.ops-date-dash { color: $vu-text-secondary; font-weight: 700; }
 
 .ops-header-right {
     display: flex;

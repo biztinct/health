@@ -3660,23 +3660,28 @@ class HealthFieldServiceOrderUnified(models.Model):
     # =========================================================================
 
     @api.model
-    def get_ops_dashboard_data(self, target_date, facility_id=False):
-        """Single RPC returning all ops dashboard data for the given date."""
+    def get_ops_dashboard_data(self, date_from=False, date_to=False, facility_id=False):
+        """Single RPC returning all ops dashboard data for the given date range.
+        date_from/date_to are ISO date strings (or False). When both are False,
+        no date bound is applied (All Dates). A single day = same from/to."""
         from datetime import datetime, timedelta
         import pytz
 
         tz = pytz.timezone(self.env.user.tz or 'Asia/Ho_Chi_Minh')
-        if isinstance(target_date, str):
-            target_date = fields.Date.from_string(target_date)
 
-        day_start = tz.localize(datetime.combine(target_date, datetime.min.time())).astimezone(pytz.utc).replace(tzinfo=None)
-        day_end = tz.localize(datetime.combine(target_date, datetime.max.time())).astimezone(pytz.utc).replace(tzinfo=None)
+        # day_start/day_end are always defined (used by the staff-roster section);
+        # they default to today when a range side is missing (All Dates).
+        today = fields.Date.context_today(self)
+        df = fields.Date.from_string(date_from) if date_from else today
+        dt2 = fields.Date.from_string(date_to) if date_to else today
+        day_start = tz.localize(datetime.combine(df, datetime.min.time())).astimezone(pytz.utc).replace(tzinfo=None)
+        day_end = tz.localize(datetime.combine(dt2, datetime.max.time())).astimezone(pytz.utc).replace(tzinfo=None)
 
-        base_domain = [
-            ('scheduled_datetime', '>=', day_start),
-            ('scheduled_datetime', '<=', day_end),
-            ('state', '!=', 'cancelled'),
-        ]
+        base_domain = [('state', '!=', 'cancelled')]
+        if date_from:
+            base_domain.append(('scheduled_datetime', '>=', day_start))
+        if date_to:
+            base_domain.append(('scheduled_datetime', '<=', day_end))
         if facility_id:
             base_domain.append(('facility_id', '=', facility_id))
 

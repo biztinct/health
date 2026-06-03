@@ -89,7 +89,7 @@ class CrmDashboard extends Component {
         });
 
         onMounted(() => {
-            this.renderAllCharts();
+            this._renderChartsWhenReady();
             this.animateCounters();
         });
 
@@ -100,6 +100,14 @@ class CrmDashboard extends Component {
 
     get kpiCards() {
         return KPI_DEFS;
+    }
+
+    get hasPipelineData() {
+        return (this.state.statusBreakdown || []).some((s) => s.count > 0);
+    }
+
+    get hasChannelData() {
+        return (this.state.channelBreakdown || []).length > 0;
     }
 
     // ===== DATA =====
@@ -131,6 +139,20 @@ class CrmDashboard extends Component {
     destroyAllCharts() {
         Object.values(this.charts).forEach((c) => c && c.destroy());
         this.charts = {};
+    }
+
+    _renderChartsWhenReady(attempt = 0) {
+        // On SPA navigation the dashboard can mount before its grid columns are
+        // measured (canvas clientWidth == 0); Chart.js (responsive) then draws at
+        // 0px and stays blank until a manual refresh. Wait for the canvas to have a
+        // real width AND Chart.js to be loaded before drawing, with a ~1s safety cap.
+        const el = this.donutRef.el || this.barRef.el;
+        const ready = el && el.clientWidth > 0 && window.Chart;
+        if (ready || attempt >= 60) {
+            this.renderAllCharts();
+            return;
+        }
+        requestAnimationFrame(() => this._renderChartsWhenReady(attempt + 1));
     }
 
     renderAllCharts() {
@@ -463,6 +485,21 @@ class CrmDashboard extends Component {
 
     openBookings() {
         this.action.doAction("health_crm.action_crm_bookings_calendar", { clearBreadcrumbs: true });
+    }
+
+    onBookingClick(item) {
+        // Open the actual booking record (not the contact hub) when linked.
+        if (item.booking_id) {
+            this.action.doAction({
+                type: "ir.actions.client",
+                tag: "ops_booking_detail",
+                name: "Booking",
+                target: "current",
+                context: { active_id: item.booking_id },
+            });
+            return;
+        }
+        this.onFeedItemClick(item.id);
     }
 }
 

@@ -11,19 +11,30 @@
                 <div class="ops-header-left">
                     <h1 class="ops-page-title">Operations Center</h1>
                     <div class="ops-date-nav">
-                        <button class="ops-date-nav-btn" t-on-click="prevDay"><i class="fa fa-chevron-left"/></button>
-                        <span class="ops-date-label" t-esc="state.dateLabel"/>
-                        <button class="ops-date-nav-btn" t-on-click="nextDay"><i class="fa fa-chevron-right"/></button>
+                        <button t-if="showArrows" class="ops-date-nav-btn" t-on-click="prevDay"><i class="fa fa-chevron-left"/></button>
+                        <span class="ops-date-label" t-esc="headerLabel"/>
+                        <button t-if="showArrows" class="ops-date-nav-btn" t-on-click="nextDay"><i class="fa fa-chevron-right"/></button>
                     </div>
-                    <button class="ops-date-today" t-on-click="goToday">Today</button>
+                    <div class="ops-period-toggle">
+                        <button t-attf-class="ops-period-btn #{state.period === 'today' ? 'active' : ''}" t-on-click="() => this.setPeriod('today')">Today</button>
+                        <button t-attf-class="ops-period-btn #{state.period === 'week' ? 'active' : ''}" t-on-click="() => this.setPeriod('week')">This Week</button>
+                        <button t-attf-class="ops-period-btn #{state.period === 'month' ? 'active' : ''}" t-on-click="() => this.setPeriod('month')">This Month</button>
+                        <button t-attf-class="ops-period-btn #{state.period === 'all' ? 'active' : ''}" t-on-click="() => this.setPeriod('all')">All Dates</button>
+                        <button t-attf-class="ops-period-btn #{state.period === 'custom' ? 'active' : ''}" t-on-click="() => this.setPeriod('custom')">Custom</button>
+                    </div>
+                    <div t-if="state.period === 'custom'" class="ops-custom-dates">
+                        <input type="date" class="ops-date-input" t-att-value="state.customFrom" t-on-change="(ev) => this.onCustomDate('from', ev.target.value)"/>
+                        <span class="ops-date-dash">–</span>
+                        <input type="date" class="ops-date-input" t-att-value="state.customTo" t-on-change="(ev) => this.onCustomDate('to', ev.target.value)"/>
+                    </div>
                 </div>
                 <div class="ops-header-right">
-                    <select class="ops-filter-select" t-on-change="onFacilityChange">
-                        <option value="">All Facilities</option>
+                    <div class="ops-facility-toggle">
+                        <button t-attf-class="ops-facility-btn #{!state.facilityId ? 'active' : ''}" t-on-click="() => this.setFacility(false)">All Facilities</button>
                         <t t-foreach="state.facilities" t-as="fac" t-key="fac.id">
-                            <option t-att-value="fac.id" t-esc="fac.name"/>
+                            <button t-attf-class="ops-facility-btn #{state.facilityId === fac.id ? 'active' : ''}" t-on-click="() => this.setFacility(fac.id)" t-esc="fac.name"/>
                         </t>
-                    </select>
+                    </div>
                     <button class="ops-header-btn btn-outline" t-on-click="onRefresh">
                         <i class="fa fa-refresh"/>
                     </button>
@@ -46,7 +57,7 @@
                         <div class="ops-kpi-icon"><i class="fa fa-calendar"/></div>
                     </div>
                     <div class="ops-kpi-value" t-esc="state.kpis.total_today || 0"/>
-                    <div class="ops-kpi-label">Total Today</div>
+                    <div class="ops-kpi-label">Total Bookings</div>
                 </div>
                 <div class="ops-kpi-card kpi-needs-staff">
                     <div class="ops-kpi-header">
@@ -71,14 +82,14 @@
                         <div class="ops-kpi-icon"><i class="fa fa-check-circle"/></div>
                     </div>
                     <div class="ops-kpi-value" t-esc="state.kpis.completed_today || 0"/>
-                    <div class="ops-kpi-label">Completed Today</div>
+                    <div class="ops-kpi-label">Completed</div>
                 </div>
                 <div class="ops-kpi-card kpi-revenue">
                     <div class="ops-kpi-header">
                         <div class="ops-kpi-icon"><i class="fa fa-money"/></div>
                     </div>
                     <div class="ops-kpi-value" t-esc="formatCurrency(state.kpis.revenue_today || 0)"/>
-                    <div class="ops-kpi-label">Revenue Today</div>
+                    <div class="ops-kpi-label">Revenue</div>
                 </div>
             </div>
 
