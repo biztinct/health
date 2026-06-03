@@ -3,6 +3,11 @@
 // OWL header (avatar, stats) + native Odoo form with ops styling
 // =============================================================================
 
+// Vibrant accent tokens (local defaults; won't override if already in scope)
+$crm-primary: #1A237E !default;
+$crm-accent:  #FF6F00 !default;
+$crm-danger:  #dc2626 !default;
+
 .ops-client-profile-form-page {
     .o-mail-Form-chatter,
     .o-mail-ChatterContainer {
@@ -130,37 +135,40 @@
         font-weight: 600;
     }
 
-    // ===== PROFILE HEADER (avatar + stats) =====
+    // ===== PROFILE HEADER (identity card) =====
     .ph-header {
-        border-radius: var(--vu-radius-lg, 12px);
-        overflow: hidden;
-        box-shadow: var(--vu-shadow-md, 0 4px 12px rgba(0,0,0,0.08));
         margin: 16px 24px 0;
     }
 
     .ph-identity {
         background: #fff;
-        padding: 20px 24px;
+        padding: 18px 22px;
         display: flex;
         align-items: center;
-        gap: 16px;
-        border-left: 4px solid $vu-deep-blue;
+        gap: 18px;
+        border: 1px solid var(--vu-border-soft, #e6e9f1);
+        border-left: 4px solid $crm-primary;
+        border-radius: var(--vu-radius-lg, 12px);
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+        flex-wrap: wrap;
     }
 
     .ph-avatar {
         width: 64px;
         height: 64px;
         border-radius: 50%;
-        background: $vu-deep-blue;
+        background: linear-gradient(135deg, $crm-primary, $vu-deep-blue);
         color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
+        font-size: 23px;
         font-weight: 800;
         font-family: $font-family-headings;
         flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3);
+        border: 3px solid #fff;
+        outline: 2px solid #e8ecfb;
+        box-shadow: 0 4px 12px rgba(21, 101, 192, 0.35);
     }
 
     .ph-details { flex: 1; min-width: 0; }
@@ -181,22 +189,13 @@
     }
 
     .ph-code {
+        font-family: ui-monospace, Menlo, Consolas, monospace;
         font-size: 12px;
-        color: $vu-text-secondary;
-        font-weight: 400;
-        opacity: 0.7;
-        position: relative;
-        padding-left: 10px;
-
-        &::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 2px;
-            bottom: 2px;
-            width: 1px;
-            background: var(--vu-border-soft, #E0E0E0);
-        }
+        font-weight: 700;
+        color: $crm-primary;
+        background: #eef0fb;
+        padding: 3px 9px;
+        border-radius: 6px;
     }
 
     .ph-tags {
@@ -269,51 +268,124 @@
             }
         }
         &.primary {
-            background: $vu-deep-blue;
+            background: $crm-accent;
             color: #fff;
+            box-shadow: 0 3px 10px rgba(255, 111, 0, 0.35);
             &:hover {
-                background: darken($vu-deep-blue, 10%);
-                box-shadow: 0 2px 8px rgba(21, 101, 192, 0.4);
+                background: darken($crm-accent, 6%);
+                transform: translateY(-1px);
             }
         }
     }
 
-    .ph-stats {
-        background: $vu-deep-blue-darkest;
-        display: flex;
-        border-top: none;
+    // ===== KPI STAT CARDS =====
+    .ph-kpis {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 14px;
+        margin: 16px 24px 0;
     }
 
-    .ph-stat {
-        flex: 1;
+    .ph-kpi {
+        position: relative;
+        background: #fff;
+        border: 1px solid var(--vu-border-soft, #e6e9f1);
+        border-radius: var(--vu-radius-lg, 12px);
         padding: 14px 16px;
-        text-align: center;
-        border-right: 1px solid rgba(#fff, 0.1);
-        transition: background 150ms;
-        cursor: default;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+        overflow: hidden;
+        transition: transform 150ms, box-shadow 150ms;
 
-        &:last-child { border-right: none; }
-        &:hover { background: rgba(#fff, 0.05); }
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+        }
+
+        // left accent bar (per-metric color via --c)
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: var(--c, #{$crm-primary});
+        }
     }
 
-    .ph-stat-value {
-        font-size: 26px;
-        font-weight: 900;
+    .ph-kpi__icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--cb, #{$vu-deep-blue-lightest});
+        color: var(--c, #{$crm-primary});
+        margin-bottom: 10px;
+
+        &::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: currentColor;
+            mask-repeat: no-repeat;
+            mask-position: center;
+            mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            -webkit-mask-size: contain;
+        }
+    }
+
+    .ph-kpi__icon[data-kpi="bookings"]::after {
+        mask-image: url('/health_base/static/src/img/lucide/calendar.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/calendar.svg');
+    }
+    .ph-kpi__icon[data-kpi="packages"]::after {
+        mask-image: url('/health_base/static/src/img/lucide/package.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/package.svg');
+    }
+    .ph-kpi__icon[data-kpi="spent"]::after {
+        mask-image: url('/health_base/static/src/img/lucide/credit-card.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/credit-card.svg');
+    }
+    .ph-kpi__icon[data-kpi="outstanding"]::after {
+        mask-image: url('/health_base/static/src/img/lucide/alert-triangle.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/alert-triangle.svg');
+    }
+    .ph-kpi__icon[data-kpi="satis"]::after {
+        mask-image: url('/health_base/static/src/img/lucide/activity.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/activity.svg');
+    }
+    .ph-kpi__icon[data-kpi="refer"]::after {
+        mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
+    }
+
+    // per-metric colors (vibrant)
+    .ph-kpi--bookings    { --c: #1565C0; --cb: #E3F2FD; }
+    .ph-kpi--packages    { --c: #7C3AED; --cb: #F3E8FF; }
+    .ph-kpi--spent       { --c: #2E7D32; --cb: #E7F5EA; }
+    .ph-kpi--outstanding { --c: #EA580C; --cb: #FFF1E6; }
+    .ph-kpi--satis       { --c: #{$crm-accent}; --cb: #FFF3E0; }
+    .ph-kpi--refer       { --c: #00897B; --cb: #E0F2F1; }
+
+    .ph-kpi__value {
+        font-size: 24px;
+        font-weight: 800;
         font-family: $font-family-headings;
-        color: #fff;
-        line-height: 1.2;
+        color: #0f172a;
+        line-height: 1.1;
 
-        &.positive { color: $vu-leaf-green-light; }
-        &.attention { color: $vu-hibiscus-orange-light; }
+        .o_field_widget { display: inline; font-size: inherit; font-weight: inherit; }
     }
 
-    .ph-stat-label {
+    .ph-kpi__label {
         font-size: 11px;
-        color: rgba(#fff, 0.85);
+        color: $vu-text-secondary;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 0.4px;
         font-weight: 700;
-        margin-top: 4px;
+        margin-top: 3px;
     }
 
     // ===== Title area =====
@@ -358,8 +430,8 @@
                 }
 
                 &.active {
-                    color: $vu-deep-blue;
-                    border-bottom-color: $vu-deep-blue;
+                    color: $crm-primary;
+                    border-bottom-color: $crm-accent;
                     background: transparent;
                 }
             }
@@ -406,16 +478,30 @@
         }
     }
 
-    // ===== Form field adjustments =====
-    .o_group {
-        .o_field_widget {
-            font-size: 13px;
-        }
-
+    // ===== Field rows (inside detail cards) =====
+    // Keep Odoo's NATIVE label-beside-value layout; only modernise the styling:
+    // tidy labels + rounded bordered value inputs with a focus ring.
+    .vu-detail-card {
+        // Labels: clean, beside the value (native grid), normal case
+        .o_form_label,
         label.o_form_label {
             font-size: 12px;
             font-weight: 600;
             color: $vu-text-secondary;
+            margin: 0;
+        }
+        // Required fields → red asterisk (Odoo tags the label o_fr_required_label)
+        .o_form_label.o_fr_required_label::after {
+            content: ' *';
+            color: $crm-danger;
+            font-weight: 700;
+        }
+
+        // Value inputs use the GLOBAL rounded-border treatment from
+        // health_theme (backend.scss / field_indicators.scss) — no per-form
+        // border rule needed here. Just keep the field text size consistent.
+        .o_field_widget {
+            font-size: 13.5px;
         }
     }
 
@@ -691,9 +777,10 @@
         transition: all 0.15s;
 
         &--primary {
-            background: #1565C0;
+            background: $crm-accent;
             color: #fff;
-            &:hover { background: #0d47a1; }
+            box-shadow: 0 3px 10px rgba(255, 111, 0, 0.30);
+            &:hover { background: darken($crm-accent, 6%); }
         }
     }
 
@@ -745,5 +832,67 @@
         height: 1px;
         background: #e2e8f0;
         margin: 6px 10px;
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// RESPONSIVE — reflow for laptop / tablet widths
+// ─────────────────────────────────────────────────────────────────────
+
+// Laptop: KPI cards from 6 → 3 columns
+@media (max-width: 1366px) {
+    .ops-client-profile-form-page .ph-kpis {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+// Narrow laptop: sidebar docks below the form as an action bar
+@media (max-width: 1180px) {
+    .ops-client-profile-form-page {
+        .ops-content-with-sidebar {
+            flex-direction: column;
+            overflow: visible;
+        }
+        .ops-cp-sidebar {
+            width: 100%;
+            flex: 1 1 auto;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: 8px;
+            border-left: none;
+            border-top: 1px solid #e2e8f0;
+        }
+        .ops-cp-sidebar__card { flex: 1 1 100%; margin-bottom: 0; }
+        .ops-cp-sidebar__section-title { display: none; }
+        .ops-cp-sidebar__separator { display: none; }
+        .ops-cp-sidebar__action {
+            width: auto;
+            flex: 1 1 calc(33.33% - 8px);
+            background: #fff;
+            border: 1px solid var(--vu-border-soft, #e6e9f1);
+        }
+    }
+}
+
+// Tablet: detail cards & field grid go single-column
+@media (max-width: 980px) {
+    .ops-client-profile-form-page {
+        .vu-section-grid { grid-template-columns: 1fr; }
+        .ops-cp-sidebar__action { flex: 1 1 calc(50% - 8px); }
+    }
+}
+
+// Small: KPI 2-col, fields 1-col, header wraps
+@media (max-width: 680px) {
+    .ops-client-profile-form-page {
+        .ph-kpis { grid-template-columns: repeat(2, 1fr); }
+        .ph-header { margin: 12px 14px 0; }
+        .ph-kpis { margin: 12px 14px 0; }
+        .o_form_sheet { padding: 12px 14px; }
+        .vu-detail-card .o_inner_group { grid-template-columns: 1fr; }
+        .ph-identity { flex-wrap: wrap; }
+        .ph-actions { width: 100%; justify-content: flex-end; }
+        .ops-cp-sidebar__action { flex: 1 1 100%; }
     }
 }

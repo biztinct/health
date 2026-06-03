@@ -105,11 +105,14 @@
     }
 }
 
-// Remove Odoo's default red left-border on required empty fields
-.o_form_view .o_field_widget.o_required_modifier .o_input,
-.o_form_view .o_field_widget.o_required_modifier input,
-.o_form_view .o_field_widget.o_required_modifier textarea {
-    border-left-color: var(--o-input-border-color, #dee2e6) !important;
+// Ensure required fields keep a full, visible left border at rest (Odoo zeroes
+// the left border colour on required inputs). Concrete soft colour so it never
+// depends on the transparent --o-input-border-color. Scoped to the resting
+// state so hover/focus colour all four sides uniformly (brand).
+.o_form_view .o_field_widget.o_required_modifier .o_input:not(:hover):not(:focus),
+.o_form_view .o_field_widget.o_required_modifier input:not(:hover):not(:focus),
+.o_form_view .o_field_widget.o_required_modifier textarea:not(:hover):not(:focus) {
+    border-left-color: var(--vu-border-soft, #E0E0E0) !important;
     border-left-width: 1px !important;
 }
 

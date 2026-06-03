@@ -805,11 +805,11 @@ a {
     }
 }
 
-// Remove harsh blue focus ring; rely on underline/brand color
+// Gentle focus ring on boxed inputs (brand border + soft halo)
 .o_form_view .o_field_widget input:focus,
 .o_form_view .o_field_widget textarea:focus,
 .o_form_view .o_field_widget select:focus {
-    box-shadow: none !important;
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12) !important;
     outline: none !important;
     border-color: var(--vu-brand-primary) !important;
 }
@@ -1252,13 +1252,38 @@ a {
 .o_form_view .o_field_widget textarea.o_input,
 .o_form_view .o_field_widget select.o_input {
     border-width: 1px;
-    padding: 4px 8px;
+    border-style: solid;
+    border-radius: var(--vu-radius-md, 8px);
+    background: var(--vu-surface-card, #fff);
+    padding: 6px 10px;
     font-size: inherit;
-    transition: border-color var(--vu-transition-fast), background var(--vu-transition-fast);
+    transition: border-color var(--vu-transition-fast), box-shadow var(--vu-transition-fast), background var(--vu-transition-fast);
 
     &:hover:not(:focus) {
         background: var(--vu-surface-panel);
     }
+}
+
+// Make the resting input border VISIBLE (Odoo sets --o-input-border-color to
+// transparent until hover/focus). !important beats Odoo's non-important rule
+// regardless of specificity, and the required-field rule reads the same var so
+// it lights up too.
+.o_form_view .o_field_widget .o_input:not(:hover):not(:focus) {
+    --o-input-border-color: var(--vu-border-soft, #E0E0E0) !important;
+}
+
+// Exception: keep inputs INSIDE embedded list/grid tables (invoice lines,
+// quote lines, any o2m/m2m list) flat — boxing every editable cell looks
+// cluttered and misaligns the table. Revert them to Odoo's borderless style.
+.o_form_view .o_list_renderer .o_field_widget .o_input,
+.o_form_view .o_list_table .o_field_widget .o_input {
+    border-radius: 0;
+    background: transparent;
+    padding: 2px 4px;
+}
+.o_form_view .o_list_renderer .o_field_widget .o_input:not(:hover):not(:focus),
+.o_form_view .o_list_table .o_field_widget .o_input:not(:hover):not(:focus) {
+    --o-input-border-color: transparent !important;
 }
 
 // Compact form labels — slightly smaller, tighter

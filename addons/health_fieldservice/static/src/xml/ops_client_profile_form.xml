@@ -26,7 +26,7 @@
             <!-- PROFILE HEADER (avatar + stats) -->
             <t t-if="profileState.isLoaded">
                 <div class="ph-header">
-                    <!-- Zone 1: White Identity -->
+                    <!-- White Identity -->
                     <div class="ph-identity">
                         <div class="ph-avatar" t-esc="profileState.profile.initials || '??'"/>
                         <div class="ph-details">
@@ -64,31 +64,50 @@
                             <button class="ph-action-btn secondary" title="Email" t-on-click="onEmailClient"><i class="fa fa-envelope"/></button>
                         </div>
                     </div>
-                    <!-- Zone 2: Navy Stats Strip -->
-                    <div class="ph-stats">
-                        <div class="ph-stat">
-                            <div class="ph-stat-value" t-esc="profileState.stats.total_visits || 0"/>
-                            <div class="ph-stat-label">Total Bookings</div>
+                </div>
+
+                <!-- KPI STAT CARDS -->
+                <div class="ph-kpis">
+                    <div class="ph-kpi ph-kpi--bookings">
+                        <span class="ph-kpi__icon" data-kpi="bookings"/>
+                        <div class="ph-kpi__body">
+                            <div class="ph-kpi__value" t-esc="profileState.stats.total_visits || 0"/>
+                            <div class="ph-kpi__label">Total Bookings</div>
                         </div>
-                        <div class="ph-stat">
-                            <div class="ph-stat-value" t-esc="profileState.stats.active_packages || 0"/>
-                            <div class="ph-stat-label">Active Packages</div>
+                    </div>
+                    <div class="ph-kpi ph-kpi--packages">
+                        <span class="ph-kpi__icon" data-kpi="packages"/>
+                        <div class="ph-kpi__body">
+                            <div class="ph-kpi__value" t-esc="profileState.stats.active_packages || 0"/>
+                            <div class="ph-kpi__label">Active Packages</div>
                         </div>
-                        <div class="ph-stat">
-                            <div class="ph-stat-value" t-esc="formatCurrency(profileState.stats.total_spent)"/>
-                            <div class="ph-stat-label">Total Spent</div>
+                    </div>
+                    <div class="ph-kpi ph-kpi--spent">
+                        <span class="ph-kpi__icon" data-kpi="spent"/>
+                        <div class="ph-kpi__body">
+                            <div class="ph-kpi__value" t-esc="formatCurrency(profileState.stats.total_spent)"/>
+                            <div class="ph-kpi__label">Total Spent</div>
                         </div>
-                        <div class="ph-stat">
-                            <div class="ph-stat-value attention" t-esc="formatCurrency(profileState.stats.outstanding)"/>
-                            <div class="ph-stat-label">Outstanding</div>
+                    </div>
+                    <div class="ph-kpi ph-kpi--outstanding">
+                        <span class="ph-kpi__icon" data-kpi="outstanding"/>
+                        <div class="ph-kpi__body">
+                            <div class="ph-kpi__value" t-esc="formatCurrency(profileState.stats.outstanding)"/>
+                            <div class="ph-kpi__label">Outstanding</div>
                         </div>
-                        <div class="ph-stat">
-                            <div class="ph-stat-value positive" t-esc="profileState.stats.satisfaction || '—'"/>
-                            <div class="ph-stat-label">Satisfaction</div>
+                    </div>
+                    <div class="ph-kpi ph-kpi--satis">
+                        <span class="ph-kpi__icon" data-kpi="satis"/>
+                        <div class="ph-kpi__body">
+                            <div class="ph-kpi__value" t-esc="profileState.stats.satisfaction || '—'"/>
+                            <div class="ph-kpi__label">Satisfaction</div>
                         </div>
-                        <div class="ph-stat">
-                            <div class="ph-stat-value" t-esc="profileState.stats.referrals || 0"/>
-                            <div class="ph-stat-label">Referrals Made</div>
+                    </div>
+                    <div class="ph-kpi ph-kpi--refer">
+                        <span class="ph-kpi__icon" data-kpi="refer"/>
+                        <div class="ph-kpi__body">
+                            <div class="ph-kpi__value" t-esc="profileState.stats.referrals || 0"/>
+                            <div class="ph-kpi__label">Referrals Made</div>
                         </div>
                     </div>
                 </div>
