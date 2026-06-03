@@ -104,8 +104,28 @@
                                 </div>
                             </t>
 
+                            <!-- CONTACT BANNER (booking from a New Contact, no client picked yet) -->
+                            <t t-if="showContactBanner">
+                                <div class="qb-section-title qb-section-first"><i class="fa fa-user"/> Client</div>
+                                <div class="qb-contact-banner">
+                                    <div class="qb-cb-avatar"
+                                         t-esc="(contactBannerName || '?').split(' ').filter(p => p).map(p => p[0]).join('').substring(0,2).toUpperCase()"/>
+                                    <div class="qb-cb-info">
+                                        <div class="qb-cb-name" t-esc="contactBannerName"/>
+                                        <div t-if="state.currentPatientId" class="qb-cb-hint qb-cb-ok">
+                                            <i class="fa fa-check-circle"/>
+                                            Booking against this existing client.
+                                        </div>
+                                        <div t-else="" class="qb-cb-hint">
+                                            <i class="fa fa-magic"/>
+                                            A new client will be created when you save this booking.
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+
                             <!-- SERVICE SECTION -->
-                            <div t-attf-class="qb-section-title #{needsClientSelector ? '' : 'qb-section-first'}"><i class="fa fa-stethoscope"/> Service</div>
+                            <div t-attf-class="qb-section-title #{(needsClientSelector or showContactBanner) ? '' : 'qb-section-first'}"><i class="fa fa-stethoscope"/> Service</div>
                             <div class="qb-form-row">
                                 <div class="qb-form-group">
                                     <div class="qb-form-label">Service Type <span class="qb-req">*</span></div>
@@ -154,15 +174,16 @@
                             <div t-if="state.serviceLocation === 'home'" class="qb-address-block">
                                 <div class="qb-address-head">
                                     <span class="qb-form-label"><i class="fa fa-home"/> Home Address</span>
-                                    <button t-if="state.patient.address" class="qb-addr-edit"
+                                    <button t-if="state.patient.address or clientAddressPreview" class="qb-addr-edit"
                                             t-on-click="editClientAddress" title="Edit client address">
                                         <i class="fa fa-pencil"/>
                                     </button>
                                 </div>
                                 <div t-if="state.patient.address" class="qb-address-text" t-esc="state.patient.address"/>
+                                <div t-elif="clientAddressPreview" class="qb-address-text" t-esc="clientAddressPreview"/>
                                 <div t-else="" class="qb-address-empty">
                                     <i class="fa fa-exclamation-triangle"/>
-                                    <span>No address on file for this client.</span>
+                                    <span>No address on file yet.</span>
                                     <button class="qb-addr-add" t-on-click="editClientAddress">
                                         <i class="fa fa-pencil"/> Add address
                                     </button>

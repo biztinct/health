@@ -1105,31 +1105,33 @@ class HealthLead(models.Model):
         self.ensure_one()
         return self.contact_outcome == 'service_booked' or self.health_contact_outcome == 'service_booked' or (self.stage_id and self.stage_id.is_won)
 
-    def _get_or_create_patient(self, patient_name=None, patient_vals=None):
-        """Create or get patient record. Transfers unique_contact_code as patient_code only when contact IS the client."""
+    def _get_or_create_patient(self, patient_name=None, patient_vals=None, force_create=False):
+        """Create or get patient record. Transfers unique_contact_code as patient_code only when contact IS the client.
+        force_create=True skips the dedup lookups and always creates a fresh client."""
         patient_vals = patient_vals or {}
         if not patient_name:
             patient_name = self.name
-            
-        # Check if patient already exists by unique_contact_code first (if available)
-        # Only do this lookup when the lead contact IS the client (not a representative)
-        if self.unique_contact_code and self.contact_relationship_type == 'client':
+
+        if not force_create:
+            # Check if patient already exists by unique_contact_code first (if available)
+            # Only do this lookup when the lead contact IS the client (not a representative)
+            if self.unique_contact_code and self.contact_relationship_type == 'client':
+                existing_patient = self.env['res.partner'].search([
+                    ('patient_code', '=', self.unique_contact_code),
+                    ('is_patient', '=', True)
+                ], limit=1)
+                if existing_patient:
+                    return existing_patient
+
+            # Check if patient already exists by name
             existing_patient = self.env['res.partner'].search([
-                ('patient_code', '=', self.unique_contact_code),
+                ('name', '=', patient_name),
                 ('is_patient', '=', True)
             ], limit=1)
+
             if existing_patient:
                 return existing_patient
-        
-        # Check if patient already exists by name
-        existing_patient = self.env['res.partner'].search([
-            ('name', '=', patient_name),
-            ('is_patient', '=', True)
-        ], limit=1)
-        
-        if existing_patient:
-            return existing_patient
-        
+
         # Create new patient
         # Get Regular Patient category
         regular_category = self.env.ref('health_base.patient_category_regular', raise_if_not_found=False)
@@ -1156,26 +1158,30 @@ class HealthLead(models.Model):
         if should_transfer_code and self.unique_contact_code:
             create_vals['patient_code'] = self.unique_contact_code
 
-        # Copy contact info from lead if contact is the client
+        # Always copy the home-visit address — it represents the CLIENT's home
+        # (captured on the contact for home visits), regardless of who the contact is.
+        create_vals.update({
+            'street': self.street,
+            'city': self.city,
+            'zip': self.zip,
+            'country_id': self.country_id.id if self.country_id else False,
+            'state_id': self.state_id.id if self.state_id else False,
+            'province_code': self.province_code.code if self.province_code else False,
+            'named_area': self.named_area,
+            'apartment_number': self.apartment_number,
+            'building_name': self.building_name,
+            'house_number': self.house_number,
+            'sub_alley_number': self.sub_alley_number,
+            'alley_number': self.alley_number,
+            'ward_commune': self.ward_commune,
+            # Note: vietnamese_address is computed automatically in res.partner
+        })
+        # Copy phone/email only when the contact IS the client (otherwise they
+        # belong to the representative/payer, not the client).
         if self.contact_relationship_type == 'client':
             create_vals.update({
                 'phone': self.phone,
                 'email': self.email_from,
-                'street': self.street,
-                'city': self.city,
-                'zip': self.zip,
-                'country_id': self.country_id.id if self.country_id else False,
-                'state_id': self.state_id.id if self.state_id else False,
-                # Vietnamese address fields
-                'province_code': self.province_code.code if self.province_code else False,
-                'named_area': self.named_area,
-                'apartment_number': self.apartment_number,
-                'building_name': self.building_name,
-                'house_number': self.house_number,
-                'sub_alley_number': self.sub_alley_number,
-                'alley_number': self.alley_number,
-                'ward_commune': self.ward_commune,
-                # Note: vietnamese_address is computed automatically in res.partner
             })
 
         # Wizard-supplied values must be part of the initial create so
@@ -1464,29 +1470,121 @@ class HealthLead(models.Model):
     )
 
     def action_convert_to_booking(self):
-        """BOOKING button - Opens OWL Quick Booking wizard.
-        Auto-creates patient record from lead data if none exists."""
+        """BOOKING button - Opens the OWL Quick Booking wizard for this contact.
+        The wizard resolves the client: it dedups against existing clients
+        (popup) or, if none, the client is auto-created when the booking is saved.
+        Only passes a client up-front when one is already linked."""
         self.ensure_one()
-        patient = self.patient_id
-        if not patient:
-            if self.contact_relationship_type not in ('client', False, '') and not self.client_name:
-                raise UserError(_('Please set the Client Name before creating a booking for a non-client contact.'))
-            self._process_contact_relationship()
-            patient = self.patient_id
-        if not patient:
-            raise UserError(_('Could not create a client record. Please check the contact details.'))
+        client = self._booking_client()
+        ctx = {
+            'default_lead_id': self.id,
+            'active_center': 'crm_center',
+        }
+        if client:
+            ctx['active_id'] = client.id
+            ctx['default_patient_id'] = client.id
         return {
             'type': 'ir.actions.client',
             'tag': 'ops_quick_booking',
             'name': _('Quick Booking'),
             'target': 'current',
-            'context': {
-                'active_id': patient.id,
-                'default_patient_id': patient.id,
-                'default_lead_id': self.id,
-                'active_center': 'crm_center',
-            },
+            'context': ctx,
         }
+
+    def _booking_client(self):
+        """The client (res.partner is_patient) already linked to this contact,
+        via patient_id or a selected partner_id. Empty recordset if none."""
+        self.ensure_one()
+        if self.patient_id:
+            return self.patient_id
+        if self.partner_id and self.partner_id.is_patient:
+            return self.partner_id
+        return self.env['res.partner']
+
+    def get_contact_booking_context(self):
+        """Identity data the quick-booking wizard needs to resolve the client."""
+        self.ensure_one()
+        client = self._booking_client()
+        addr_fields = ['house_number', 'alley_number', 'sub_alley_number', 'street',
+                       'ward_commune', 'named_area', 'building_name', 'apartment_number',
+                       'city', 'zip']
+        address = {f: self[f] for f in addr_fields if self._fields.get(f) and self[f]}
+        return {
+            'lead_id': self.id,
+            'client_name': self.client_name or self.name or '',
+            'phone': self.phone or '',
+            'email': self.email_from or '',
+            'patient_id': client.id if client else False,
+            'patient_name': client.name if client else '',
+            'address': address,
+        }
+
+    @api.model
+    def search_clients_for_contact(self, name=None, phone=None, email=None):
+        """Return existing client (is_patient) cards matching name/phone/email,
+        for the booking dedup popup."""
+        leaves = []
+        if name and len(name.strip()) >= 2:
+            leaves.append(('name', 'ilike', name.strip()))
+        if phone and len(str(phone).strip()) >= 4:
+            leaves.append(('phone', 'ilike', str(phone).strip()))
+            leaves.append(('mobile', 'ilike', str(phone).strip()))
+        if email and '@' in (email or ''):
+            leaves.append(('email', 'ilike', email.strip()))
+        if not leaves:
+            return []
+        domain = ['&', ('is_patient', '=', True)] + ['|'] * (len(leaves) - 1) + leaves
+        partners = self.env['res.partner'].search(domain, limit=15)
+        return [{
+            'id': p.id,
+            'name': p.name or '',
+            'patient_code': p.patient_code or '',
+            'phone': p.phone or p.mobile or '',
+            'email': p.email or '',
+            'address': (p.vietnamese_address or '').strip() if hasattr(p, 'vietnamese_address') else '',
+            'national_id': p.national_id or '' if hasattr(p, 'national_id') else '',
+        } for p in partners]
+
+    def _resolve_booking_client(self, force_new=False, address=None, facility_id=False):
+        """Find-or-create the client for a booking made from this contact, set
+        self.patient_id and return it. `address` (dict of Vietnamese fields) is
+        the home-visit address captured in the wizard — applied to the lead so it
+        seeds the client. `force_new` creates a fresh client (user chose 'create
+        new' past the dedup) bypassing the name lookup. `facility_id` is the
+        booking facility, used to seed the client's catchment province / facility
+        when the contact itself has none (patients require a catchment province
+        to generate a valid Patient ID)."""
+        self.ensure_one()
+        existing = self._booking_client()
+        if existing:
+            if not self.patient_id:
+                self.patient_id = existing.id
+            return existing
+        if address:
+            addr_fields = ['house_number', 'alley_number', 'sub_alley_number', 'street',
+                           'ward_commune', 'named_area', 'building_name', 'apartment_number',
+                           'city', 'zip']
+            vals = {k: address.get(k) for k in addr_fields if address.get(k)}
+            if vals:
+                self.write(vals)
+        # Patients require a catchment province; fall back to the booking
+        # facility's province/facility when the contact doesn't have one.
+        if facility_id and (not self.catchment_province_id or not self.facility_id):
+            facility = self.env['health.facility'].browse(facility_id)
+            if facility.exists():
+                seed = {}
+                if not self.catchment_province_id and facility.catchment_province_id:
+                    seed['catchment_province_id'] = facility.catchment_province_id.id
+                if not self.facility_id:
+                    seed['facility_id'] = facility.id
+                if seed:
+                    self.write(seed)
+        name = (self.client_name or self.name or '').strip()
+        if not name:
+            return self.env['res.partner']
+        patient = self._get_or_create_patient(name, force_create=force_new)
+        self.patient_id = patient.id
+        return patient
 
     def action_convert_to_client(self):
         """Convert lead to client without creating a booking"""
@@ -2532,6 +2630,12 @@ class HealthLead(models.Model):
             'contact_status': 'active',
             'type': 'opportunity',
         }
+        # Home-visit address captured in the wizard (Vietnamese fields)
+        for f in ('house_number', 'alley_number', 'sub_alley_number', 'street',
+                  'ward_commune', 'named_area', 'building_name', 'apartment_number',
+                  'city', 'zip'):
+            if vals.get(f):
+                lead_vals[f] = vals[f]
         if vals.get('contact_datetime'):
             lead_vals['contact_datetime'] = vals['contact_datetime']
         else:

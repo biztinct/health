@@ -5264,8 +5264,23 @@ class HealthFieldServiceOrderUnified(models.Model):
         lead_id = vals.get('lead_id') or False
         draft_only = vals.get('draft_only', False)
 
+        # Auto-create / resolve the client from the contact when none was selected
+        # (booking opened from a contact with only a client name).
+        if not patient_id and lead_id:
+            lead = self.env['crm.lead'].browse(lead_id)
+            if lead.exists():
+                try:
+                    client = lead._resolve_booking_client(
+                        force_new=bool(vals.get('create_new_client')),
+                        address=vals.get('client_address') or None,
+                        facility_id=facility_id,
+                    )
+                except (UserError, ValidationError) as e:
+                    return {'success': False, 'error': e.args[0] if e.args else str(e)}
+                patient_id = client.id if client else False
+
         if not patient_id or not date_str:
-            return {'success': False, 'error': 'Missing required fields (patient, facility, date).'}
+            return {'success': False, 'error': 'Missing required fields (client, date).'}
 
         try:
             from datetime import datetime as dt_cls

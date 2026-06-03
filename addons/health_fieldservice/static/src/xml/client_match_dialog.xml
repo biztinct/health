@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.ClientMatchDialog">
+    <Dialog title="'Matching clients found'" size="'md'">
+        <p class="text-muted">
+            Existing clients match this contact. Pick the right one to book against, or create a new client.
+        </p>
+        <div class="cmd-list">
+            <t t-foreach="props.clients" t-as="c" t-key="c.id">
+                <div class="cmd-card" t-on-click="() => this.pick(c)">
+                    <div class="cmd-card-main">
+                        <div class="cmd-card-name">
+                            <t t-esc="c.name"/>
+                            <span t-if="c.patient_code" class="cmd-code" t-esc="c.patient_code"/>
+                        </div>
+                        <div class="cmd-card-meta">
+                            <span t-if="c.phone"><i class="fa fa-phone"/> <t t-esc="c.phone"/></span>
+                            <span t-if="c.email"><i class="fa fa-envelope"/> <t t-esc="c.email"/></span>
+                            <span t-if="c.national_id"><i class="fa fa-id-card"/> <t t-esc="c.national_id"/></span>
+                        </div>
+                        <div t-if="c.address" class="cmd-card-addr"><i class="fa fa-map-marker"/> <t t-esc="c.address"/></div>
+                    </div>
+                    <i class="fa fa-chevron-right cmd-card-go"/>
+                </div>
+            </t>
+        </div>
+        <t t-set-slot="footer">
+            <button class="btn btn-primary" t-on-click="createNew">
+                <i class="fa fa-user-plus me-1"/> None of these — create new<t t-if="props.clientName"> "<t t-esc="props.clientName"/>"</t>
+            </button>
+            <button class="btn btn-secondary" t-on-click="() => props.close()">Cancel</button>
+        </t>
+    </Dialog>
+</t>
+
+</templates>

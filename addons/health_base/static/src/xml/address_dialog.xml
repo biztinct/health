@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_base.AddressDialog">
+    <Dialog title="dialogTitle" size="'md'">
+        <div class="o_address_dialog">
+            <div class="row g-2">
+                <div class="col-6"><label class="o_form_label">House No.</label>
+                    <input class="form-control" t-model="state.house_number"/></div>
+                <div class="col-6"><label class="o_form_label">Street</label>
+                    <input class="form-control" t-model="state.street"/></div>
+                <div class="col-6"><label class="o_form_label">Alley (Ngõ)</label>
+                    <input class="form-control" t-model="state.alley_number"/></div>
+                <div class="col-6"><label class="o_form_label">Sub-alley (Ngách)</label>
+                    <input class="form-control" t-model="state.sub_alley_number"/></div>
+                <div class="col-6"><label class="o_form_label">Ward / Commune</label>
+                    <input class="form-control" t-model="state.ward_commune"/></div>
+                <div class="col-6"><label class="o_form_label">Named Area</label>
+                    <input class="form-control" t-model="state.named_area"/></div>
+                <div class="col-6"><label class="o_form_label">Building</label>
+                    <input class="form-control" t-model="state.building_name"/></div>
+                <div class="col-6"><label class="o_form_label">Apartment</label>
+                    <input class="form-control" t-model="state.apartment_number"/></div>
+                <div class="col-6"><label class="o_form_label">District / City</label>
+                    <input class="form-control" t-model="state.city"/></div>
+                <div class="col-6"><label class="o_form_label">Postal Code</label>
+                    <input class="form-control" t-model="state.zip"/></div>
+            </div>
+            <div class="o_address_preview mt-3" t-if="preview">
+                <i class="fa fa-map-marker me-2"/><span t-esc="preview"/>
+            </div>
+        </div>
+        <t t-set-slot="footer">
+            <button class="btn btn-primary" t-on-click="save">Save Address</button>
+            <button class="btn btn-secondary" t-on-click="() => props.close()">Cancel</button>
+        </t>
+    </Dialog>
+</t>
+
+</templates>

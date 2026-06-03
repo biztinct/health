@@ -4,7 +4,9 @@ import { registry } from "@web/core/registry";
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
-import { session } from "@web/session";
+import { user } from "@web/core/user";
+import { AddressDialog } from "@health_base/js/address_dialog";
+import { RequiredFieldsDialog } from "@health_crm/js/required_fields_dialog";
 
 const MODE_OPTIONS = [
     { key: "phone", label: "Phone Call", icon: "fa-phone" },
@@ -70,6 +72,7 @@ class CrmNewContact extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
+        this.dialog = useService("dialog");
 
         this.modeOptions = MODE_OPTIONS;
         this.relationshipOptions = RELATIONSHIP_OPTIONS;
@@ -110,6 +113,7 @@ class CrmNewContact extends Component {
             clientName: "",
             selectedClientId: false,
             serviceInterest: "",
+            address: {},
             clinicalPriority: "routine",
             contactReasonId: false,
             contactReasons: [],
@@ -202,7 +206,7 @@ class CrmNewContact extends Component {
 
     async _loadDefaultProvince() {
         try {
-            const userId = session.uid;
+            const userId = user.userId;
             if (!userId) return;
             const result = await this.orm.read("res.users", [userId], ["catchment_province_id"]);
             if (result.length && result[0].catchment_province_id) {
@@ -356,6 +360,21 @@ class CrmNewContact extends Component {
         }
     }
 
+    // Dynamic, debounced search as the user types (>= 3 chars). Debounce +
+    // min-length + a server-side limit keep this cheap (one light query per
+    // ~350ms pause), so it won't hurt performance.
+    onNameInput(ev) {
+        this.state.name = ev.target.value;
+        const q = this.state.name.trim();
+        clearTimeout(this._nameTimer);
+        if (q.length < 3) {
+            this.state.showNameSearch = false;
+            this.state.nameSearchResults = null;
+            return;
+        }
+        this._nameTimer = setTimeout(() => this.searchByName(), 350);
+    }
+
     get nameSearchHasResults() {
         const r = this.state.nameSearchResults;
         if (!r) return false;
@@ -426,6 +445,21 @@ class CrmNewContact extends Component {
         }
     }
 
+    // Dynamic, debounced client search as the user types (>= 3 chars).
+    onClientNameInput(ev) {
+        this.state.clientName = ev.target.value;
+        // Editing the name detaches any previously linked client.
+        this.state.selectedClientId = false;
+        const q = this.state.clientName.trim();
+        clearTimeout(this._clientTimer);
+        if (q.length < 3) {
+            this.state.showClientSearch = false;
+            this.state.clientSearchResults = [];
+            return;
+        }
+        this._clientTimer = setTimeout(() => this.searchClientByName(), 350);
+    }
+
     selectClient(client) {
         this.state.selectedClientId = client.id;
         this.state.clientName = client.name;
@@ -458,6 +492,18 @@ class CrmNewContact extends Component {
         this.state.serviceInterest = key;
     }
 
+    get addressPreview() {
+        return (this.state.address && this.state.address.preview) || "";
+    }
+
+    openAddressDialog() {
+        this.dialog.add(AddressDialog, {
+            title: _t("Client Home Address"),
+            address: this.state.address || {},
+            onSave: (addr) => { this.state.address = addr; },
+        });
+    }
+
     setPriority(key) {
         this.state.clinicalPriority = key;
     }
@@ -470,18 +516,33 @@ class CrmNewContact extends Component {
     // NAVIGATION
     // =========================================================================
 
-    canGoNext() {
-        if (this.state.step === 1) {
-            return this.state.name.trim().length > 0;
+    // Mandatory fields for step 1: a name, and at least one way to reach the
+    // contact (phone or email).
+    _missingStep1Fields() {
+        const missing = [];
+        if (!this.state.name.trim()) missing.push(_t("Contact Name"));
+        if (!this.state.phone.trim() && !this.state.email.trim()) {
+            missing.push(_t("Phone Number or Email Address (enter at least one)"));
         }
-        return true;
+        return missing;
+    }
+
+    _showRequiredFieldsDialog(fields, message) {
+        this.dialog.add(RequiredFieldsDialog, {
+            title: _t("Missing required information"),
+            message: message || _t("Please fill in the following before continuing:"),
+            fields,
+        });
     }
 
     nextStep() {
-        if (!this.canGoNext()) return;
-        if (this.state.step < 2) {
-            this.state.step++;
+        if (this.state.step !== 1) return;
+        const missing = this._missingStep1Fields();
+        if (missing.length) {
+            this._showRequiredFieldsDialog(missing);
+            return;
         }
+        this.state.step++;
     }
 
     prevStep() {
@@ -526,8 +587,22 @@ class CrmNewContact extends Component {
 
     async submit() {
         if (this.state.isSubmitting) return;
-        if (!this.state.name.trim()) {
-            this.notification.add(_t("Contact name is required"), { type: "warning" });
+
+        // Validate mandatory fields and surface them in a clear popup rather
+        // than a cryptic top-right notification.
+        const missing = [];
+        if (!this.state.name.trim()) missing.push(_t("Contact Name"));
+        if (!this.state.phone.trim() && !this.state.email.trim()) {
+            missing.push(_t("Phone Number or Email Address (enter at least one)"));
+        }
+        // When the contact is NOT the client (Payer/Referrer/etc.), the client's
+        // name is required.
+        if (this.state.relationshipType !== 'client'
+            && !this.state.clientName.trim() && !this.state.selectedClientId) {
+            missing.push(_t("Client Name"));
+        }
+        if (missing.length) {
+            this._showRequiredFieldsDialog(missing);
             return;
         }
 
@@ -547,6 +622,13 @@ class CrmNewContact extends Component {
                 zalo_number: this.state.zaloNumber.trim() || false,
                 selected_client_id: this.state.selectedClientId || false,
             };
+            // Home-visit address (Vietnamese fields) captured via the address dialog
+            const addr = this.state.address || {};
+            for (const f of ["house_number", "alley_number", "sub_alley_number", "street",
+                             "ward_commune", "named_area", "building_name", "apartment_number",
+                             "city", "zip"]) {
+                if (addr[f]) vals[f] = addr[f];
+            }
 
             const result = await this.orm.call(
                 "crm.lead",
@@ -603,18 +685,14 @@ class CrmNewContact extends Component {
 
     async _actionBooking(leadId) {
         try {
-            const lead = await this.orm.read("crm.lead", [leadId], [
-                "name", "partner_id",
-            ]);
-            const l = lead[0];
-            const partnerId = l.partner_id ? l.partner_id[0] : false;
+            // Pass only the contact; the booking wizard resolves the client
+            // (dedup popup, or auto-create on save) from the lead.
             this.action.doAction({
                 type: "ir.actions.client",
                 tag: "ops_quick_booking",
                 name: _t("Quick Booking"),
                 target: "current",
                 context: {
-                    default_patient_id: partnerId,
                     default_lead_id: leadId,
                 },
             });

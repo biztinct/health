@@ -56,7 +56,7 @@
                         <div class="nc-input-group">
                             <input class="nc-input" type="text" placeholder="Full name"
                                    t-att-value="state.name"
-                                   t-on-input="(ev) => this.state.name = ev.target.value"
+                                   t-on-input="onNameInput"
                                    t-on-keydown="onNameKeydown"/>
                             <button class="nc-search-btn" t-on-click="searchByName"
                                     t-att-disabled="state.name.trim().length &lt; 2"
@@ -151,21 +151,22 @@
                         </div>
                     </t>
 
-                    <!-- Phone + Email row -->
+                    <!-- Phone + Email row (at least one is required) -->
                     <div class="nc-row">
                         <div class="nc-field">
-                            <label class="nc-label">Phone</label>
+                            <label class="nc-label">Primary Phone Number <span class="nc-required">*</span></label>
                             <input class="nc-input" type="tel" placeholder="Phone number"
                                    t-att-value="state.phone"
                                    t-on-input="onPhoneInput"/>
                         </div>
                         <div class="nc-field">
-                            <label class="nc-label">Email</label>
+                            <label class="nc-label">Email <span class="nc-required">*</span></label>
                             <input class="nc-input" type="email" placeholder="Email address"
                                    t-att-value="state.email"
                                    t-on-input="onEmailInput"/>
                         </div>
                     </div>
+                    <div class="nc-required-hint"><i class="fa fa-info-circle"/> Enter at least one of Phone or Email.</div>
 
                     <!-- Duplicate Results (search-results panel style) -->
                     <t t-if="state.showDuplicateResults">
@@ -271,11 +272,11 @@
 
                     <!-- Client Name (if not self) -->
                     <div t-if="state.relationshipType !== 'client'" class="nc-field">
-                        <label class="nc-label">Client Name</label>
+                        <label class="nc-label">Client Name <span class="nc-required">*</span></label>
                         <div class="nc-input-group">
                             <input class="nc-input" type="text" placeholder="Name of the client"
                                    t-att-value="state.clientName"
-                                   t-on-input="(ev) => this.state.clientName = ev.target.value"
+                                   t-on-input="onClientNameInput"
                                    t-on-keydown="onClientNameKeydown"/>
                             <button class="nc-search-btn" t-on-click="searchClientByName"
                                     t-att-disabled="state.clientName.trim().length &lt; 2"
@@ -331,6 +332,24 @@
                                         t-on-click="() => this.setService(svc.key)">
                                     <i t-attf-class="fa #{svc.icon}"/>
                                     <span t-esc="svc.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Home Visit: capture the client's home address -->
+                    <div t-if="state.serviceInterest === 'home_visit'" class="nc-field">
+                        <label class="nc-label">Home Address</label>
+                        <div class="nc-address-block">
+                            <t t-if="addressPreview">
+                                <div class="nc-address-text"><i class="fa fa-map-marker"/> <t t-esc="addressPreview"/></div>
+                                <button class="nc-address-edit" t-on-click="openAddressDialog" title="Edit address">
+                                    <i class="fa fa-pencil"/>
+                                </button>
+                            </t>
+                            <t t-else="">
+                                <button class="nc-address-add" t-on-click="openAddressDialog">
+                                    <i class="fa fa-plus-circle"/> Add address
                                 </button>
                             </t>
                         </div>
@@ -494,8 +513,7 @@
                     <button class="nc-btn nc-btn-ghost" t-on-click="closeWizard">Cancel</button>
                 </t>
                 <t t-if="state.step === 1">
-                    <button class="nc-btn nc-btn-primary" t-on-click="nextStep"
-                            t-att-disabled="!canGoNext()">
+                    <button class="nc-btn nc-btn-primary" t-on-click="nextStep">
                         Next <i class="fa fa-arrow-right"/>
                     </button>
                 </t>

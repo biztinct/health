@@ -327,6 +327,28 @@ select.qb-form-input { cursor: pointer; }
     border-radius: 8px;
     background: #FAFAFB;
 }
+.qb-contact-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #BBDEFB;
+    border-radius: 10px;
+    background: #F5F9FF;
+    margin-bottom: 6px;
+    .qb-cb-avatar {
+        width: 40px; height: 40px; flex: 0 0 40px;
+        border-radius: 50%;
+        background: #1565C0; color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 14px;
+    }
+    .qb-cb-info { min-width: 0; }
+    .qb-cb-name { font-weight: 700; color: #0f172a; }
+    .qb-cb-hint { font-size: 12px; color: #1565C0; margin-top: 2px;
+        .fa { margin-right: 4px; } }
+    .qb-cb-hint.qb-cb-ok { color: #2e7d32; }
+}
 .qb-address-head {
     display: flex;
     align-items: center;

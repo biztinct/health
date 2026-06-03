@@ -5,6 +5,8 @@ import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { ProductCatalogDialog } from "./product_catalog_dialog";
+import { ClientMatchDialog } from "./client_match_dialog";
+import { AddressDialog } from "@health_base/js/address_dialog";
 
 const SERVICE_LOCATION_MAP = {
     home_visit: { label: 'Patient Home', icon: 'fa-home', cls: 'home' },
@@ -57,8 +59,12 @@ class OpsQuickBooking extends Component {
 
         const context = this.props.action && this.props.action.context || {};
         const params = this.props.action && this.props.action.params || {};
-        this.patientId = context.active_id || context.default_patient_id || params.default_patient_id || false;
         this.leadId = context.default_lead_id || false;
+        // From a contact, only a client explicitly passed via default_patient_id is
+        // a real client — never treat active_id (the lead's id) as the patient.
+        this.patientId = this.leadId
+            ? (context.default_patient_id || params.default_patient_id || false)
+            : (context.active_id || context.default_patient_id || params.default_patient_id || false);
         this.activeCenter = context.active_center || false;
 
         this.timePeriods = TIME_PERIODS;
@@ -115,10 +121,24 @@ class OpsQuickBooking extends Component {
             showClientResults: false,
             clientSearching: false,
             currentPatientId: this.patientId,
+
+            // Contact-driven booking (opened from a New Contact / crm.lead)
+            fromContact: !!this.leadId,
+            contactClientName: '',
+            clientResolved: false,
+            createNewClient: false,
+            clientAddress: {},
         });
 
         onWillStart(async () => {
-            if (this.patientId) {
+            // Booking opened from a contact with no linked client yet: resolve the
+            // contact's identity, then surface matching existing clients (dedup).
+            if (!this.patientId && this.leadId) {
+                await this.resolveContactClient();
+            }
+            if (this.patientId || this.leadId) {
+                // A lead (contact flow) still needs service types / facilities even
+                // before a client is resolved, so load options either way.
                 await this.loadOptions();
             } else {
                 this.state.isLoading = false;
@@ -127,11 +147,80 @@ class OpsQuickBooking extends Component {
     }
 
     // =========================================================================
+    // CONTACT-DRIVEN BOOKING (opened from a New Contact)
+    // =========================================================================
+
+    async resolveContactClient() {
+        try {
+            const ctx = await this.orm.call(
+                "crm.lead", "get_contact_booking_context", [this.leadId]
+            );
+            if (!ctx) { return; }
+            // The lead already resolves to a client → just use it.
+            if (ctx.patient_id) {
+                this.patientId = ctx.patient_id;
+                this.state.currentPatientId = ctx.patient_id;
+                this.state.clientResolved = true;
+                this.state.contactClientName = ctx.patient_name || ctx.client_name || '';
+                this.state.clientSearch = ctx.patient_name || ctx.client_name || '';
+                return;
+            }
+            this.state.contactClientName = ctx.client_name || '';
+            // Carry over any home-visit address captured on the contact.
+            if (ctx.address && typeof ctx.address === 'object') {
+                this.state.clientAddress = ctx.address;
+            }
+            // Dedup: surface existing clients matching name / phone / email.
+            const matches = await this.orm.call(
+                "crm.lead", "search_clients_for_contact",
+                [ctx.client_name || '', ctx.phone || '', ctx.email || '']
+            );
+            if (matches && matches.length) {
+                this.dialogService.add(ClientMatchDialog, {
+                    clients: matches,
+                    clientName: ctx.client_name || '',
+                    onPick: (clientId) => this.pickContactClient(clientId),
+                    onCreateNew: () => { this.state.createNewClient = true; },
+                });
+            }
+        } catch (e) {
+            console.error('Failed to resolve contact client:', e);
+        }
+    }
+
+    async pickContactClient(clientId) {
+        this.patientId = clientId;
+        this.state.currentPatientId = clientId;
+        this.state.createNewClient = false;
+        this.state.clientResolved = true;
+        await this.loadOptions();
+        // Reflect the picked client's real name in the banner.
+        if (this.state.patient && this.state.patient.name) {
+            this.state.contactClientName = this.state.patient.name;
+        }
+    }
+
+    // =========================================================================
     // CLIENT SELECTOR (when no patient in context)
     // =========================================================================
 
     get needsClientSelector() {
-        return !this.state.currentPatientId;
+        // Hide the free client search when booking is driven by a contact.
+        return !this.state.currentPatientId && !this.state.fromContact;
+    }
+
+    get showContactBanner() {
+        // Contact flow: always show the client banner (it reflects either the
+        // name of the to-be-created client or the resolved/picked client).
+        return this.state.fromContact;
+    }
+
+    get contactBannerName() {
+        // Prefer the resolved/loaded client's real name; fall back to the
+        // contact's client name (when a client will be auto-created).
+        return (this.state.patient && this.state.patient.name)
+            || this.state.contactClientName
+            || 'New client';
     }
 
     onClientSearchKeydown(ev) {
@@ -499,8 +588,27 @@ class OpsQuickBooking extends Component {
         this.checkAvailability();
     }
 
+    get clientAddressPreview() {
+        const a = this.state.clientAddress || {};
+        const parts = [
+            a.building_name, a.apartment_number, a.house_number,
+            a.alley_number, a.sub_alley_number, a.street,
+            a.ward_commune, a.named_area, a.city, a.zip,
+        ].filter(Boolean);
+        return parts.join(', ');
+    }
+
     async editClientAddress() {
-        if (!this.patientId) return;
+        // No client record yet (contact flow): capture the address in-memory; it
+        // is applied to the client auto-created at booking time.
+        if (!this.patientId) {
+            this.dialogService.add(AddressDialog, {
+                title: _t('Client Address'),
+                address: this.state.clientAddress || {},
+                onSave: (addr) => { this.state.clientAddress = addr; },
+            });
+            return;
+        }
         await this.action.doAction({
             type: 'ir.actions.act_window',
             name: _t('Edit Address'),
@@ -652,7 +760,7 @@ class OpsQuickBooking extends Component {
         if (this.state.isCreating) return;
 
         const missing = [];
-        if (!this.patientId) missing.push('Client');
+        if (!this.patientId && !this.leadId) missing.push('Client');
         if (!this.state.facilityId) missing.push('Facility');
         if (!this.hasServiceOrPackage) missing.push('Services or Package (add via Quote section)');
         if (!this.state.selectedDate) missing.push('Date');
@@ -677,6 +785,8 @@ class OpsQuickBooking extends Component {
                 [{
                     patient_id: this.patientId || false,
                     lead_id: this.leadId || false,
+                    create_new_client: this.state.createNewClient || false,
+                    client_address: this.state.clientAddress || null,
                     service_type: this.state.serviceType,
                     duration_hours: this.state.durationHours,
                     time_hour: this.finetuneHourDecimal,
@@ -711,7 +821,7 @@ class OpsQuickBooking extends Component {
         if (this.state.isSaving) return;
 
         const missing = [];
-        if (!this.patientId) missing.push('Client');
+        if (!this.patientId && !this.leadId) missing.push('Client');
         if (!this.state.selectedDate) missing.push('Date');
         if (!this.state.selectedSlot) missing.push('Time slot');
 
@@ -734,6 +844,8 @@ class OpsQuickBooking extends Component {
                 [{
                     patient_id: this.patientId || false,
                     lead_id: this.leadId || false,
+                    create_new_client: this.state.createNewClient || false,
+                    client_address: this.state.clientAddress || null,
                     service_type: this.state.serviceType,
                     duration_hours: this.state.durationHours,
                     time_hour: this.finetuneHourDecimal,

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_crm.RequiredFieldsDialog">
+    <Dialog title="props.title || 'Missing required information'" size="'sm'">
+        <p class="rfd-message" t-esc="props.message || 'Please fill in the following required field(s) before continuing:'"/>
+        <ul class="rfd-list">
+            <t t-foreach="props.fields" t-as="f" t-key="f_index">
+                <li class="rfd-item">
+                    <i class="fa fa-exclamation-circle"/> <span t-esc="f"/>
+                </li>
+            </t>
+        </ul>
+        <t t-set-slot="footer">
+            <button class="btn btn-primary" t-on-click="() => props.close()">Got it</button>
+        </t>
+    </Dialog>
+</t>
+
+</templates>

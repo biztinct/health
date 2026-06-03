@@ -254,6 +254,37 @@
     color: $crm-danger;
 }
 
+.nc-required-hint {
+    font-size: 12px;
+    color: #64748b;
+    margin: -4px 0 8px;
+    .fa { color: #1565C0; margin-right: 4px; }
+}
+
+// Required-fields validation popup
+.rfd-message {
+    color: #334155;
+    margin-bottom: 10px;
+}
+.rfd-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.rfd-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border: 1px solid #fee2e2;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-weight: 600;
+    .fa { color: #ef4444; }
+}
+
 .nc-input,
 .nc-select {
     width: 100%;

@@ -128,6 +128,8 @@
             'health_crm/static/src/js/crm_contact_form.js',
             'health_crm/static/src/xml/crm_contact_form.xml',
             'health_crm/static/src/scss/crm_contact_form.scss',
+            'health_crm/static/src/js/required_fields_dialog.js',
+            'health_crm/static/src/xml/required_fields_dialog.xml',
             'health_crm/static/src/js/crm_new_contact.js',
             'health_crm/static/src/xml/crm_new_contact.xml',
             'health_crm/static/src/scss/crm_new_contact.scss',
