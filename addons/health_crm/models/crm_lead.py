@@ -675,15 +675,28 @@ class HealthLead(models.Model):
         ('walk_in', 'Walk-in'),
     ], string='Contact Source', help='From Excel: How the contact was initiated')
 
-    @api.constrains('contact_relationship_type', 'client_name')
+    @api.constrains('contact_relationship_type', 'client_name', 'patient_id')
     def _check_client_name_required(self):
-        """Validate that client_name is provided when contact is not the client"""
+        """Validate that the actual client is identified when the contact is not
+        the client themselves. Either a free-text Client Name OR a linked Client
+        (patient_id) satisfies this — the contact form now collects only the
+        Client relation and auto-derives client_name from it."""
         for record in self:
-            if record.contact_relationship_type != 'client' and not record.client_name:
+            if record.contact_relationship_type != 'client' \
+                    and not record.client_name and not record.patient_id:
                 raise ValidationError(_(
-                    'Client Name is required when you are not the client yourself. '
-                    'Please provide the name of the actual client/patient.'
+                    'A Client is required when you are not the client yourself. '
+                    'Please select (or create) the actual client/patient.'
                 ))
+
+    @api.onchange('patient_id')
+    def _onchange_patient_id_sync_client_name(self):
+        """Keep the (hidden) free-text client_name in sync with the linked Client
+        so backend patient-creation/search/booking flows that read client_name
+        keep working when the form only exposes the Client relation."""
+        for record in self:
+            if record.patient_id and not record.client_name:
+                record.client_name = record.patient_id.name
 
     @api.depends('create_date')
     def _compute_days_open(self):
@@ -2242,7 +2255,7 @@ class HealthLead(models.Model):
     # =========================================================================
 
     @api.model
-    def get_crm_dashboard_data(self, period='month'):
+    def get_crm_dashboard_data(self, period='month', date_from=None, date_to=None):
         from datetime import datetime as dt, timedelta, time as dt_time
 
         today = fields.Date.context_today(self)
@@ -2252,16 +2265,43 @@ class HealthLead(models.Model):
         week_start = today - timedelta(days=today.weekday())
         month_start = today.replace(day=1)
 
+        # Parse custom From/To (YYYY-MM-DD) when provided
+        custom_from = custom_to = None
+        if period == 'custom':
+            try:
+                custom_from = dt.strptime(date_from, '%Y-%m-%d').date() if date_from else None
+                custom_to = dt.strptime(date_to, '%Y-%m-%d').date() if date_to else None
+            except (ValueError, TypeError):
+                custom_from = custom_to = None
+
+        # Nominal period_start (used for trend comparison windows)
         if period == 'today':
             period_start = today
         elif period == 'week':
             period_start = week_start
-        else:
+        elif period == 'custom' and custom_from:
+            period_start = custom_from
+        else:  # 'month' and 'all'
             period_start = month_start
 
         period_start_dt = fields.Datetime.to_string(dt.combine(period_start, dt_time.min))
         today_start_dt = fields.Datetime.to_string(dt.combine(today, dt_time.min))
         week_start_dt = fields.Datetime.to_string(dt.combine(week_start, dt_time.min))
+
+        # Reusable create_date clause applied to period-scoped aggregates.
+        # 'all' => no date bound; 'custom' => between From/To; else >= period start.
+        if period == 'all':
+            period_clause = []
+        elif period == 'custom':
+            period_clause = []
+            if custom_from:
+                period_clause.append(('create_date', '>=',
+                    fields.Datetime.to_string(dt.combine(custom_from, dt_time.min))))
+            if custom_to:
+                period_clause.append(('create_date', '<',
+                    fields.Datetime.to_string(dt.combine(custom_to + timedelta(days=1), dt_time.min))))
+        else:
+            period_clause = [('create_date', '>=', period_start_dt)]
 
         # --- KPIs ---
         contacts_today = Lead.search_count([('create_date', '>=', today_start_dt)])
@@ -2276,15 +2316,11 @@ class HealthLead(models.Model):
             ('create_date', '>=', week_start_dt),
         ])
 
-        period_total = Lead.search_count([('create_date', '>=', period_start_dt)])
-        period_bookings = Lead.search_count([
-            ('contact_status', '=', 'booking'),
-            ('create_date', '>=', period_start_dt),
-        ])
-        period_spam = Lead.search_count([
-            ('contact_status', '=', 'spam'),
-            ('create_date', '>=', period_start_dt),
-        ])
+        period_total = Lead.search_count(period_clause)
+        period_bookings = Lead.search_count(
+            [('contact_status', '=', 'booking')] + period_clause)
+        period_spam = Lead.search_count(
+            [('contact_status', '=', 'spam')] + period_clause)
         conversion_rate = (period_bookings / period_total * 100) if period_total else 0
         spam_rate = (period_spam / period_total * 100) if period_total else 0
 
@@ -2321,14 +2357,18 @@ class HealthLead(models.Model):
                 return 100.0 if current else 0.0
             return round((current - previous) / previous * 100, 1)
 
-        trends = {
-            'contacts_today': trend_pct(contacts_today, prev_contacts // max(period_days, 1)),
-            'pending_followups': 0,
-            'active_leads': trend_pct(active_leads, prev_leads),
-            'bookings_this_week': trend_pct(bookings_this_week, prev_bookings),
-            'conversion_rate': 0,
-            'spam_rate': 0,
-        }
+        if period in ('all', 'custom'):
+            # No meaningful prior window to compare against
+            trends = {k: 0 for k in kpis}
+        else:
+            trends = {
+                'contacts_today': trend_pct(contacts_today, prev_contacts // max(period_days, 1)),
+                'pending_followups': 0,
+                'active_leads': trend_pct(active_leads, prev_leads),
+                'bookings_this_week': trend_pct(bookings_this_week, prev_bookings),
+                'conversion_rate': 0,
+                'spam_rate': 0,
+            }
 
         # --- Sparklines (last 7 days) ---
         sparklines = {k: [] for k in kpis}
@@ -2361,10 +2401,8 @@ class HealthLead(models.Model):
         # --- Status breakdown ---
         status_breakdown = []
         for status_val, _label in self._fields['contact_status'].selection:
-            count = Lead.search_count([
-                ('contact_status', '=', status_val),
-                ('create_date', '>=', period_start_dt),
-            ])
+            count = Lead.search_count(
+                [('contact_status', '=', status_val)] + period_clause)
             status_breakdown.append({
                 'status': status_val,
                 'label': str(_label),
@@ -2376,10 +2414,8 @@ class HealthLead(models.Model):
         channel_breakdown = []
         channel_selections = self._fields['vietnamese_channel'].selection or []
         for ch_val, ch_label in channel_selections:
-            count = Lead.search_count([
-                ('vietnamese_channel', '=', ch_val),
-                ('create_date', '>=', period_start_dt),
-            ])
+            count = Lead.search_count(
+                [('vietnamese_channel', '=', ch_val)] + period_clause)
             if count > 0:
                 channel_breakdown.append({
                     'channel': ch_val,

@@ -33,7 +33,6 @@ class HrEmployeePublic(models.Model):
     # Facility Assignment
     healthcare_facility_id = fields.Many2one('health.facility', string='Healthcare Facility', readonly=True)
     staff_catchment_province_id = fields.Many2one('health.catchment.province', string='Staff Catchment Province', readonly=True)
-    primary_facility_id = fields.Many2one('health.facility', string='Primary Facility', readonly=True)
     
     # Availability Settings
     available_for_clinic = fields.Boolean('Available for Clinic Visits', readonly=True)

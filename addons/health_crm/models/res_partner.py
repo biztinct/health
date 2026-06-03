@@ -20,8 +20,8 @@ class HealthContact(models.Model):
     )
     
     ethnicity = fields.Char(
-        'Dân tộc', 
-        help='Vietnamese Ethnicity (from Excel CMF)'
+        'Ethnicity',
+        help='Ethnicity / ethnic group (Dân tộc). Shown in Vietnamese for Vietnamese-language users.'
     )
     
     kinship_title = fields.Char(

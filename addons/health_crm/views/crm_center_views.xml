@@ -78,8 +78,11 @@
                         <page string="Client Details" name="client_details">
                             <group>
                                 <group>
-                                    <field name="client_name"/>
-                                    <field name="patient_id"/>
+                                    <!-- Free-text Client Name kept in DB for backend flows but hidden:
+                                         the "Client" relation below is the single source in this form. -->
+                                    <field name="client_name" invisible="1"/>
+                                    <field name="patient_id" string="Client"
+                                           invisible="contact_relationship_type == 'client'"/>
                                     <field name="service_interest"/>
                                     <field name="clinical_priority"/>
                                 </group>

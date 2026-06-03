@@ -309,6 +309,68 @@ select.qb-form-input { cursor: pointer; }
     font-family: 'Montserrat', 'Segoe UI', sans-serif;
 }
 
+.qb-pt-autoprice {
+    padding: 6px 12px 10px;
+    font-size: 11px;
+    color: #6A4FB6;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    .fa { color: #8E6FD8; }
+}
+
+// ===== Client home address block =====
+.qb-address-block {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    background: #FAFAFB;
+}
+.qb-address-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+    .qb-form-label { margin: 0; }
+    .fa { color: #1565C0; }
+}
+.qb-addr-edit {
+    border: none;
+    background: transparent;
+    color: #1565C0;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    &:hover { background: #E3F2FD; }
+}
+.qb-address-text {
+    font-size: 13px;
+    color: #37474F;
+    line-height: 1.4;
+}
+.qb-address-empty {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: #B26A00;
+    .fa-exclamation-triangle { color: #F59E0B; }
+}
+.qb-addr-add {
+    border: 1px solid #1565C0;
+    background: #fff;
+    color: #1565C0;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    &:hover { background: #1565C0; color: #fff; }
+}
+
 .qb-no-products {
     font-size: 12px;
     color: #1565C0;

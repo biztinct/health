@@ -44,7 +44,7 @@ class HealthRosterGrid(models.TransientModel):
             ('is_nurse_role', '=', True),
         ]
         if filters.get('facility_id'):
-            staff_domain.append(('primary_facility_id', '=', int(filters['facility_id'])))
+            staff_domain.append(('healthcare_facility_id', '=', int(filters['facility_id'])))
         if filters.get('catchment_id'):
             staff_domain.append(('staff_catchment_province_id', '=', int(filters['catchment_id'])))
         if filters.get('search'):

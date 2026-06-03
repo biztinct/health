@@ -19,6 +19,24 @@ const SERVICE_LOCATION_MAP = {
     diagnostic: { label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
 };
 
+// Editable Service Location choices (mirror service_location selection on the model)
+const LOCATION_OPTIONS = [
+    { key: 'home', label: 'Patient Home', icon: 'fa-home', cls: 'home' },
+    { key: 'clinic', label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
+    { key: 'hospital', label: 'Hospital', icon: 'fa-hospital-o', cls: 'clinic' },
+    { key: 'nursing_home', label: 'Nursing Home', icon: 'fa-bed', cls: 'clinic' },
+    { key: 'office', label: 'Office', icon: 'fa-building-o', cls: 'clinic' },
+    { key: 'online', label: 'Online / Telemedicine', icon: 'fa-laptop', cls: 'online' },
+    { key: 'other', label: 'Other Location', icon: 'fa-map-marker', cls: 'other' },
+];
+// Default location per service type (user can still override)
+const SERVICE_DEFAULT_LOCATION = {
+    home_visit: 'home', clinic_visit: 'clinic', consultation: 'clinic',
+    telemedicine: 'online', emergency: 'home', follow_up: 'home',
+    preventive: 'clinic', rehabilitation: 'clinic', vaccination: 'clinic',
+    diagnostic: 'clinic',
+};
+
 const TIME_PERIODS = [
     { key: 'morning', label: 'Morning', icon: 'fa-sun-o', range: '7am - 12pm', startH: 7, endH: 12 },
     { key: 'afternoon', label: 'Afternoon', icon: 'fa-cloud', range: '12pm - 5pm', startH: 12, endH: 17 },
@@ -65,6 +83,7 @@ class OpsQuickBooking extends Component {
             preferredStaffId: false,
 
             serviceType: 'home_visit',
+            serviceLocation: 'home',
             durationHours: 2,
             facilityId: false,
             notes: '',
@@ -193,9 +212,11 @@ class OpsQuickBooking extends Component {
             this.state.doctorList = data.doctor_list || [];
             this.state.products = data.products || [];
             this.state.productCategories = data.product_categories || [];
-            if (data.facilities.length > 0 && !this.state.facilityId) {
-                this.state.facilityId = data.facilities[0].id;
+            if (!this.state.facilityId) {
+                this.state.facilityId = data.default_facility_id
+                    || (data.facilities.length > 0 ? data.facilities[0].id : false);
             }
+            this.state.serviceLocation = SERVICE_DEFAULT_LOCATION[this.state.serviceType] || 'home';
             await this.checkAvailability();
         } catch (e) {
             console.error('Failed to load quick booking options:', e);
@@ -208,7 +229,11 @@ class OpsQuickBooking extends Component {
     // =========================================================================
 
     get serviceLocation() {
-        return SERVICE_LOCATION_MAP[this.state.serviceType] || SERVICE_LOCATION_MAP.home_visit;
+        return LOCATION_OPTIONS.find(l => l.key === this.state.serviceLocation) || LOCATION_OPTIONS[0];
+    }
+
+    get locationOptions() {
+        return LOCATION_OPTIONS;
     }
 
     get serviceLabel() {
@@ -358,6 +383,7 @@ class OpsQuickBooking extends Component {
         this.state.selectedSlot = slot;
         this.state.finetuneH = Math.floor(slot.hour);
         this.state.finetuneM = Math.round((slot.hour % 1) * 60);
+        this.previewPricing();  // appointment hour affects time-based pricing
     }
 
     getSlotClass(slot) {
@@ -440,11 +466,95 @@ class OpsQuickBooking extends Component {
     // FORM HANDLERS
     // =========================================================================
 
-    onServiceTypeChange(ev) { this.state.serviceType = ev.target.value; }
+    onServiceTypeChange(ev) {
+        this.state.serviceType = ev.target.value;
+        // Reset location to the sensible default for this service type (still overridable)
+        this.state.serviceLocation = SERVICE_DEFAULT_LOCATION[this.state.serviceType] || 'home';
+        this.previewPricing();
+    }
     onDurationChange(ev) { this.state.durationHours = parseFloat(ev.target.value) || 1; }
-    onFacilityChange(ev) {
+    onLocationChange(ev) {
+        this.state.serviceLocation = ev.target.value;
+        this.previewPricing();
+    }
+    async onFacilityChange(ev) {
         this.state.facilityId = parseInt(ev.target.value) || false;
+        // Refresh staff/doctors for the newly selected facility
+        try {
+            const data = await this.orm.call(
+                "health.fieldservice.order", "get_quick_booking_staff",
+                [this.state.facilityId || false]
+            );
+            this.state.staffList = data.staff_list || [];
+            this.state.doctorList = data.doctor_list || [];
+            // Drop any selected staff/lead/doctor no longer in this facility
+            const staffIds = new Set(this.state.staffList.map(s => s.id));
+            this.state.assignedStaffIds = this.state.assignedStaffIds.filter(id => staffIds.has(id));
+            if (this.state.staffId && !staffIds.has(this.state.staffId)) this.state.staffId = false;
+            const docIds = new Set(this.state.doctorList.map(d => d.id));
+            if (this.state.doctorId && !docIds.has(this.state.doctorId)) this.state.doctorId = false;
+        } catch (e) {
+            console.error('Failed to reload staff for facility:', e);
+        }
         this.checkAvailability();
+    }
+
+    async editClientAddress() {
+        if (!this.patientId) return;
+        await this.action.doAction({
+            type: 'ir.actions.act_window',
+            name: _t('Edit Address'),
+            res_model: 'res.partner',
+            res_id: this.patientId,
+            view_mode: 'form',
+            views: [[false, 'form']],
+            target: 'new',
+            context: { form_view_ref: 'health_base.view_health_patient_address_form' },
+        }, {
+            onClose: async () => {
+                // Refresh the client's address shown in the wizard
+                try {
+                    const data = await this.orm.call(
+                        "health.fieldservice.order", "get_quick_booking_options",
+                        [], { patient_id: this.patientId, facility_id: this.state.facilityId || false }
+                    );
+                    this.state.patient = data.patient || this.state.patient;
+                } catch (e) {
+                    console.error('Failed to refresh client address:', e);
+                }
+            },
+        });
+    }
+
+    async previewPricing() {
+        // Auto-price the quote lines from the booking conditions via advanced pricing
+        if (!this.state.selectedProducts.length) return;
+        try {
+            const result = await this.orm.call(
+                "health.fieldservice.order", "preview_quick_booking_pricing",
+                [{
+                    patient_id: this.patientId || false,
+                    service_type: this.state.serviceType,
+                    service_location: this.state.serviceLocation,
+                    facility_id: this.state.facilityId || false,
+                    date: this.state.selectedDate,
+                    time_hour: this.finetuneHourDecimal,
+                    product_lines: this.state.selectedProducts.map(p => ({
+                        product_id: p.product_id, qty: p.qty,
+                    })),
+                }]
+            );
+            const priced = (result && result.lines) || [];
+            for (const line of priced) {
+                const item = this.state.selectedProducts.find(p => p.product_id === line.product_id);
+                if (item) {
+                    item.price = line.unit_price;
+                    item.autopriced = !!line.adjusted;
+                }
+            }
+        } catch (e) {
+            console.error('Pricing preview failed:', e);
+        }
     }
     onNotesChange(ev) { this.state.notes = ev.target.value; }
     onStaffChange(ev) { this.state.staffId = parseInt(ev.target.value) || false; }
@@ -483,6 +593,7 @@ class OpsQuickBooking extends Component {
             selected: this.state.selectedProducts.map(p => ({ ...p })),
             onDone: (selections) => {
                 this.state.selectedProducts.splice(0, this.state.selectedProducts.length, ...selections);
+                this.previewPricing();
             },
         });
     }
@@ -495,6 +606,7 @@ class OpsQuickBooking extends Component {
         const qty = parseInt(ev.target.value) || 1;
         if (this.state.selectedProducts[index]) {
             this.state.selectedProducts[index].qty = Math.max(1, qty);
+            this.previewPricing();
         }
     }
 
@@ -570,6 +682,8 @@ class OpsQuickBooking extends Component {
                     time_hour: this.finetuneHourDecimal,
                     date: this.state.selectedDate,
                     facility_id: this.state.facilityId,
+                    service_location: this.state.serviceLocation,
+                    service_address: this.state.patient.address || '',
                     notes: this.state.notes,
                     product_lines: productLines.length > 0 ? productLines : null,
                     staff_id: this.state.staffId || false,
@@ -625,6 +739,8 @@ class OpsQuickBooking extends Component {
                     time_hour: this.finetuneHourDecimal,
                     date: this.state.selectedDate,
                     facility_id: this.state.facilityId || false,
+                    service_location: this.state.serviceLocation,
+                    service_address: this.state.patient.address || '',
                     notes: this.state.notes,
                     product_lines: productLines.length > 0 ? productLines : null,
                     staff_id: this.state.staffId || false,

@@ -66,6 +66,8 @@ class CrmDashboard extends Component {
         this.state = useState({
             isLoading: true,
             period: "month",
+            customFrom: "",
+            customTo: "",
             kpis: {},
             trends: {},
             sparklines: {},
@@ -106,7 +108,8 @@ class CrmDashboard extends Component {
         this.state.isLoading = true;
         try {
             const data = await this.orm.call(
-                "crm.lead", "get_crm_dashboard_data", [this.state.period]
+                "crm.lead", "get_crm_dashboard_data",
+                [this.state.period, this.state.customFrom || false, this.state.customTo || false]
             );
             this.state.kpis = data.kpis || {};
             this.state.trends = data.trends || {};
@@ -354,9 +357,27 @@ class CrmDashboard extends Component {
 
     async onPeriodChange(period) {
         this.state.period = period;
+        // "custom" only reloads once both dates are picked (handled in onCustomDateChange)
+        if (period === "custom" && !(this.state.customFrom && this.state.customTo)) {
+            return;
+        }
         await this.loadDashboardData();
         this.renderAllCharts();
         this.animateCounters();
+    }
+
+    async onCustomDateChange(which, value) {
+        if (which === "from") {
+            this.state.customFrom = value;
+        } else {
+            this.state.customTo = value;
+        }
+        this.state.period = "custom";
+        if (this.state.customFrom && this.state.customTo) {
+            await this.loadDashboardData();
+            this.renderAllCharts();
+            this.animateCounters();
+        }
     }
 
     async onRefresh() {

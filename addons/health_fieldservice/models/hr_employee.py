@@ -52,17 +52,9 @@ class HrEmployee(models.Model):
         help='Computed based on employment type - full-time staff can create invoices'
     )
     
-    # Facility Assignment (consolidated)
-    facility_ids = fields.Many2many(
-        'health.facility', 
-        'employee_facility_rel',
-        'employee_id', 'facility_id',
-        string='Assigned Facilities',
-        help='Healthcare facilities where this employee works'
-    )
-    primary_facility_id = fields.Many2one('health.facility', string='Primary Facility')
-    
-    # Healthcare Facility for Staff Assignment (used for catchment province filtering)
+    # Healthcare Facility for Staff Assignment (used for catchment province filtering).
+    # NOTE: this is the single canonical employee->facility link. The former
+    # facility_ids (m2m) and primary_facility_id were redundant/unused and removed.
     healthcare_facility_id = fields.Many2one(
         'health.facility',
         string='Healthcare Facility',
@@ -815,7 +807,7 @@ class HrEmployee(models.Model):
                 'rating': round(rating, 1),
                 'schedule_blocks': schedule_blocks,
                 'skills': skills,
-                'facility': emp.primary_facility_id.name if emp.primary_facility_id else '',
+                'facility': emp.healthcare_facility_id.name if emp.healthcare_facility_id else '',
             })
 
         return {

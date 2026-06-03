@@ -3754,7 +3754,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         Employee = self.env['hr.employee']
         staff_domain = [('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]
         if facility_id:
-            staff_domain.append(('facility_ids', 'in', [facility_id]))
+            staff_domain.append(('healthcare_facility_id', '=', facility_id))
         staff_members = Employee.search(staff_domain, order='name asc')
 
         staff_list = []
@@ -4484,8 +4484,9 @@ class HealthFieldServiceOrderUnified(models.Model):
             return {'success': False, 'error': str(e)}
 
     @api.model
-    def get_recurring_booking_options(self, patient_id=False):
-        """Return option lists for the recurring booking OWL wizard."""
+    def get_recurring_booking_options(self, patient_id=False, facility_id=False):
+        """Return option lists for the recurring booking OWL wizard.
+        When facility_id is provided, staff/doctor lists are limited to that facility."""
         service_types = [
             {'key': 'home_visit', 'label': 'Home Visit'},
             {'key': 'clinic_visit', 'label': 'Clinic Visit'},
@@ -4511,14 +4512,41 @@ class HealthFieldServiceOrderUnified(models.Model):
                 if p.name:
                     parts = p.name.split()
                     initials = ''.join(x[0] for x in parts if x)[:2].upper()
+                addr = (p.vietnamese_address or '').strip() if hasattr(p, 'vietnamese_address') else ''
+                if not addr:
+                    addr = ', '.join(filter(None, [
+                        p.street, p.street2, p.city,
+                        p.state_id.name if p.state_id else '', p.zip,
+                    ]))
                 patient = {
                     'id': p.id,
                     'name': p.name or '',
                     'code': p.patient_code or '',
                     'initials': initials,
+                    'address': addr,
+                    'address_empty': not bool(addr),
                 }
                 if hasattr(p, 'preferred_staff_id') and p.preferred_staff_id:
                     preferred_staff_id = p.preferred_staff_id.id
+                # Resolve a default facility from the client when none was passed
+                if not facility_id:
+                    pf = (getattr(p, 'primary_facility_id', False)
+                          or getattr(p, 'facility_id', False))
+                    if pf:
+                        facility_id = pf.id
+
+        # Optional facility scope: limit staff/doctors to the facility.
+        # Graceful fallback: if no staff are linked to the facility (data not
+        # configured), show all active staff so booking isn't blocked.
+        facility_clause = []
+        if facility_id:
+            # healthcare_facility_id is the single facility link for staff
+            facility_clause = [('healthcare_facility_id', '=', facility_id)]
+            if not self.env['hr.employee'].sudo().search_count([
+                ('is_healthcare_staff', '=', True),
+                ('employment_status', '=', 'active'),
+            ] + facility_clause):
+                facility_clause = []
 
         staff_list = []
         try:
@@ -4526,7 +4554,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 ('is_healthcare_staff', '=', True),
                 ('employment_status', '=', 'active'),
                 ('is_doctor_role', '=', False),
-            ], order='name', limit=100)
+            ] + facility_clause, order='name', limit=100)
             for emp in employees:
                 emp_initials = ''
                 if emp.name:
@@ -4571,7 +4599,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 ('is_healthcare_staff', '=', True),
                 ('is_doctor_role', '=', True),
                 ('employment_status', '=', 'active'),
-            ], order='name', limit=100)
+            ] + facility_clause, order='name', limit=100)
             for doc in doctors:
                 doctor_list.append({
                     'id': doc.id,
@@ -4634,6 +4662,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'doctor_list': doctor_list,
             'products': products,
             'product_categories': product_categories,
+            'default_facility_id': facility_id or (facilities[0]['id'] if facilities else False),
         }
 
     @api.model
@@ -4972,10 +5001,134 @@ class HealthFieldServiceOrderUnified(models.Model):
     # =====================================================================
 
     @api.model
-    def get_quick_booking_options(self, patient_id=False):
+    def get_quick_booking_options(self, patient_id=False, facility_id=False):
         """Return option lists for the quick booking OWL wizard.
-        Reuses recurring booking logic."""
-        return self.get_recurring_booking_options(patient_id=patient_id)
+        Reuses recurring booking logic; staff/doctors are scoped to the
+        client's (or given) facility."""
+        return self.get_recurring_booking_options(patient_id=patient_id, facility_id=facility_id)
+
+    @api.model
+    def get_quick_booking_staff(self, facility_id=False):
+        """Return staff + doctor lists scoped to a facility, for when the user
+        changes the Facility in the quick booking wizard."""
+        Emp = self.env['hr.employee'].sudo()
+        facility_clause = []
+        if facility_id:
+            # healthcare_facility_id is the single facility link for staff
+            facility_clause = [('healthcare_facility_id', '=', facility_id)]
+            # Fallback to all staff when none are linked to this facility
+            if not Emp.search_count([
+                ('is_healthcare_staff', '=', True),
+                ('employment_status', '=', 'active'),
+            ] + facility_clause):
+                facility_clause = []
+
+        staff_list = []
+        for emp in Emp.search([
+            ('is_healthcare_staff', '=', True),
+            ('employment_status', '=', 'active'),
+            ('is_doctor_role', '=', False),
+        ] + facility_clause, order='name', limit=100):
+            initials = ''.join(x[0] for x in (emp.name or '').split() if x)[:2].upper()
+            staff_list.append({
+                'id': emp.id,
+                'name': emp.name or '',
+                'job_title': emp.job_title or '',
+                'initials': initials,
+                'is_preferred': False,
+            })
+
+        doctor_list = []
+        for doc in Emp.search([
+            ('is_healthcare_staff', '=', True),
+            ('is_doctor_role', '=', True),
+            ('employment_status', '=', 'active'),
+        ] + facility_clause, order='name', limit=100):
+            doctor_list.append({
+                'id': doc.id,
+                'name': doc.name or '',
+                'specialization': doc.job_title or '',
+            })
+
+        return {'staff_list': staff_list, 'doctor_list': doctor_list}
+
+    @api.model
+    def preview_quick_booking_pricing(self, vals):
+        """Preview condition-based pricing for the quick booking quote, before
+        the booking/quote exists. Builds a pricing context from the wizard inputs
+        and runs the advanced-pricing engine per line. Returns adjusted unit prices.
+        Falls back to list price when no engine/rules apply."""
+        product_lines = vals.get('product_lines') or []
+        if not product_lines:
+            return {'lines': [], 'total': 0.0}
+
+        partner_id = vals.get('patient_id') or False
+        partner = self.env['res.partner'].browse(partner_id) if partner_id else self.env['res.partner']
+        pricelist = partner.property_product_pricelist if partner and hasattr(partner, 'property_product_pricelist') else False
+
+        # Resolve a pricing engine (pricelist engine first, else global default)
+        engine = False
+        if pricelist and getattr(pricelist, 'advanced_engine_id', False):
+            engine = pricelist.advanced_engine_id
+        else:
+            try:
+                config = self.env['advanced.pricing.config'].get_config()
+                engine = config.default_engine_id
+            except Exception:
+                engine = False
+
+        # Build the booking context the pricing rules evaluate against
+        time_hour = vals.get('time_hour', 9.0) or 0.0
+        appointment_hour = int(time_hour)
+        weekday = None
+        try:
+            from datetime import datetime as _dt
+            if vals.get('date'):
+                weekday = _dt.strptime(vals['date'], '%Y-%m-%d').weekday()
+        except (ValueError, TypeError):
+            weekday = None
+        base_context = {
+            'partner_id': partner_id,
+            'appointment_hour': appointment_hour,
+            'service_type': vals.get('service_type'),
+            'service_location': vals.get('service_location'),
+            'is_weekend': weekday in (5, 6) if weekday is not None else False,
+            'is_after_hours': appointment_hour < 7 or appointment_hour >= 19,
+            'distance': 0,
+            'urgency': 'normal',
+            'priority': '1',
+        }
+
+        lines = []
+        total = 0.0
+        for pl in product_lines:
+            product = self.env['product.product'].browse(pl['product_id'])
+            if not product.exists():
+                continue
+            qty = pl.get('qty', 1)
+            base_price = product.list_price or 0.0
+            if pricelist:
+                try:
+                    base_price = pricelist._get_product_price(product, qty)
+                except Exception:
+                    pass
+            unit_price = base_price
+            if engine:
+                ctx = dict(base_context)
+                code = product.default_code or ''
+                ctx['region'] = 'HCMC' if '_tphcm' in code else ('Hanoi' if '_hanoi' in code else '')
+                try:
+                    unit_price = engine.calculate_price(product.id, qty, partner_id, ctx)
+                except Exception:
+                    unit_price = base_price
+            lines.append({
+                'product_id': product.id,
+                'unit_price': unit_price,
+                'adjusted': abs((unit_price or 0) - (base_price or 0)) > 0.001,
+            })
+            total += (unit_price or 0) * qty
+
+        return {'lines': lines, 'total': total}
 
     @api.model
     def check_slot_availability(self, patient_id, date_str, facility_id, staff_ids=None):
@@ -5141,6 +5294,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             'preventive': 'clinic', 'rehabilitation': 'clinic', 'vaccination': 'clinic',
             'diagnostic': 'clinic',
         }
+        service_location = vals.get('service_location') or location_map.get(service_type, 'home')
+        service_address = (vals.get('service_address') or '').strip()
 
         fso_vals = {
             'patient_id': patient_id,
@@ -5149,8 +5304,10 @@ class HealthFieldServiceOrderUnified(models.Model):
             'scheduled_datetime': utc_dt,
             'scheduled_duration': int(duration_hours * 60),
             'intake_notes': notes or '',
-            'service_location': location_map.get(service_type, 'home'),
+            'service_location': service_location,
         }
+        if service_address:
+            fso_vals['service_address'] = service_address
         if lead_id:
             fso_vals['crm_lead_id'] = lead_id
         fso = self.create(fso_vals)
@@ -5163,12 +5320,14 @@ class HealthFieldServiceOrderUnified(models.Model):
             so_vals = {
                 'partner_id': patient_id,
                 'origin': fso.name or '',
+                # Link to the FSO so advanced pricing auto-applies the booking
+                # conditions (time, location, service type, priority, distance).
+                'fso_id': fso.id,
                 'order_line': [],
             }
             if pricelist:
                 so_vals['pricelist_id'] = pricelist.id
 
-            summary_lines = []
             for pl in product_lines:
                 product = self.env['product.product'].browse(pl['product_id'])
                 if not product.exists():
@@ -5185,16 +5344,21 @@ class HealthFieldServiceOrderUnified(models.Model):
                     'product_uom_qty': qty,
                     'price_unit': price,
                 }))
-                summary_lines.append({
-                    'name': product.name or '',
-                    'qty': qty,
-                    'unit_price': price,
-                    'subtotal': price * qty,
-                })
 
             if so_vals['order_line']:
                 so = self.env['sale.order'].create(so_vals)
                 fso.write({'sale_order_id': so.id})
+                # Recalculate line prices from the booking conditions (advanced pricing)
+                try:
+                    so.order_line._compute_advanced_price()
+                except Exception:
+                    pass
+                summary_lines = [{
+                    'name': line.product_id.name or '',
+                    'qty': line.product_uom_qty,
+                    'unit_price': line.price_unit,
+                    'subtotal': line.price_subtotal,
+                } for line in so.order_line]
                 quote_summary = {
                     'lines': summary_lines,
                     'total_per_booking': so.amount_total,

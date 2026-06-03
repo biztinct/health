@@ -138,12 +138,34 @@
                                         </t>
                                     </select>
                                 </div>
-                                <div class="qb-form-group qb-location-badge-wrap">
+                                <div class="qb-form-group">
                                     <div class="qb-form-label">Location</div>
-                                    <div t-attf-class="qb-location-badge qb-location-badge--#{serviceLocation.cls}">
-                                        <i t-attf-class="fa #{serviceLocation.icon}"/>
-                                        <span t-esc="serviceLocation.label"/>
-                                    </div>
+                                    <select class="qb-form-input" t-on-change="onLocationChange">
+                                        <t t-foreach="locationOptions" t-as="loc" t-key="loc.key">
+                                            <option t-att-value="loc.key"
+                                                    t-att-selected="loc.key === state.serviceLocation"
+                                                    t-esc="loc.label"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Client home address (shown for home visits) -->
+                            <div t-if="state.serviceLocation === 'home'" class="qb-address-block">
+                                <div class="qb-address-head">
+                                    <span class="qb-form-label"><i class="fa fa-home"/> Home Address</span>
+                                    <button t-if="state.patient.address" class="qb-addr-edit"
+                                            t-on-click="editClientAddress" title="Edit client address">
+                                        <i class="fa fa-pencil"/>
+                                    </button>
+                                </div>
+                                <div t-if="state.patient.address" class="qb-address-text" t-esc="state.patient.address"/>
+                                <div t-else="" class="qb-address-empty">
+                                    <i class="fa fa-exclamation-triangle"/>
+                                    <span>No address on file for this client.</span>
+                                    <button class="qb-addr-add" t-on-click="editClientAddress">
+                                        <i class="fa fa-pencil"/> Add address
+                                    </button>
                                 </div>
                             </div>
 
@@ -183,6 +205,9 @@
                                     <div class="qb-pt-footer">
                                         <div class="qb-pt-total-label">Total</div>
                                         <div class="qb-pt-total-value" t-esc="formatCurrency(productTotal)"/>
+                                    </div>
+                                    <div class="qb-pt-autoprice">
+                                        <i class="fa fa-magic"/> Prices auto-calculated from the booking conditions (time, location, service type).
                                     </div>
                                 </div>
                             </t>

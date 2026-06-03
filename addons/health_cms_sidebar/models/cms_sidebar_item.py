@@ -39,6 +39,13 @@ class CmsSidebarItem(models.Model):
     def get_sidebar_data(self):
         user = self.env.user
         user_role = user.access_role_id
+        # Users with the "Access Role: Administrator" privilege always see the full
+        # sidebar, without needing a business access.role assigned. (That privilege
+        # is separate from the access.role the items are gated by, and includes the
+        # superuser + base admin via the group's user_ids.) Note: base.group_system
+        # is intentionally NOT used here — many staff users carry it in this DB, so
+        # it would defeat per-role filtering.
+        is_admin = user.has_group('access_roles.access_role_group_administrator')
 
         sections = self.env['cms.sidebar.section'].search(
             [('active', '=', True)], order='sequence, id',
@@ -47,7 +54,9 @@ class CmsSidebarItem(models.Model):
             [('active', '=', True)], order='section_id, sequence, id',
         )
 
-        if user_role:
+        if is_admin:
+            visible_items = all_items
+        elif user_role:
             visible_items = all_items.filtered(
                 lambda i: not i.role_ids or user_role in i.role_ids
             )

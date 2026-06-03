@@ -201,10 +201,6 @@ class ResPartner(models.Model):
         self.ensure_one()
         return self.catchment_province_id or self.primary_facility_id.catchment_province_id
     
-    # Healthcare facility relationship
-    facility_id = fields.Many2one('health.facility', string='Facility Record',
-                                  help='Linked facility record if this contact is a healthcare facility')
-    
     # Medical specialties for healthcare staff
     medical_specialties = fields.Many2many('health.medical.specialty', 
                                           string='Medical Specialties')
@@ -761,13 +757,17 @@ class ResPartner(models.Model):
             'type': 'ir.actions.act_window',
             'name': f'Service Bookings - {self.name}',
             'res_model': 'health.fieldservice.order',
-            'view_mode': 'list,form,calendar',
+            'view_mode': 'list,calendar,form',
             'views': [
                 [list_view_id and list_view_id.id or False, 'list'],
-                [form_view_id and form_view_id.id or False, 'form'],
                 [False, 'calendar'],
+                [form_view_id and form_view_id.id or False, 'form'],
             ],
-            'target': 'new',
+            # Open in the main area (not a dialog): multi-record views like the
+            # calendar cannot be switched to inside a target='new' dialog, so the
+            # calendar toggle would silently no-op. Full-page keeps it working,
+            # with a breadcrumb back to the client.
+            'target': 'current',
             'domain': [('patient_id', '=', self.id)],
             'context': {'default_patient_id': self.id},
         }
@@ -863,18 +863,6 @@ class ResPartner(models.Model):
             </p>"""
         }
     
-    def action_view_facility_record(self):
-        """View the linked facility record"""
-        if self.facility_id:
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Facility Record',
-                'res_model': 'health.facility',
-                'res_id': self.facility_id.id,
-                'view_mode': 'form',
-                'target': 'current'
-            }
-
     def action_edit_vietnamese_address(self):
         """Open modal to edit Vietnamese address fields with auto-geocode on save."""
         self.ensure_one()

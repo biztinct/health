@@ -3702,3 +3702,8 @@ msgstr "ví dụ: 0909 123 456"
 #: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
 msgid "e.g. email@example.com"
 msgstr "ví dụ: email@example.com"
+
+#. module: health_crm
+#: model:ir.model.fields,field_description:health_crm.field_res_partner__ethnicity
+msgid "Ethnicity"
+msgstr "Dân tộc"

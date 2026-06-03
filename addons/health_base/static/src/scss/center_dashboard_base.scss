@@ -88,6 +88,32 @@
     }
 }
 
+.cd-custom-dates {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cd-date-input {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1px solid #E0E0E0;
+    background: white;
+    color: #37474F;
+    font-family: inherit;
+
+    &:focus {
+        outline: 0;
+        border-color: var(--cd-primary, #1A237E);
+    }
+}
+
+.cd-date-dash {
+    color: #B0BEC5;
+    font-weight: 700;
+}
+
 .cd-refresh-btn {
     width: 36px;
     height: 36px;

@@ -18,6 +18,17 @@
                             t-on-click="() => this.onPeriodChange('week')">This Week</button>
                     <button t-attf-class="cd-period-btn #{state.period === 'month' ? 'active' : ''}"
                             t-on-click="() => this.onPeriodChange('month')">This Month</button>
+                    <button t-attf-class="cd-period-btn #{state.period === 'all' ? 'active' : ''}"
+                            t-on-click="() => this.onPeriodChange('all')">All Dates</button>
+                    <button t-attf-class="cd-period-btn #{state.period === 'custom' ? 'active' : ''}"
+                            t-on-click="() => this.onPeriodChange('custom')">Custom</button>
+                </div>
+                <div t-if="state.period === 'custom'" class="cd-custom-dates">
+                    <input type="date" class="cd-date-input" t-att-value="state.customFrom"
+                           t-on-change="(ev) => this.onCustomDateChange('from', ev.target.value)" title="From"/>
+                    <span class="cd-date-dash">–</span>
+                    <input type="date" class="cd-date-input" t-att-value="state.customTo"
+                           t-on-change="(ev) => this.onCustomDateChange('to', ev.target.value)" title="To"/>
                 </div>
                 <button class="cd-refresh-btn" t-on-click="onRefresh">
                     <i class="fa fa-refresh"/>
