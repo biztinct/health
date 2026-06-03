@@ -36,10 +36,39 @@
         <field name="section_id" ref="section_finance"/>
         <field name="sequence">40</field>
         <field name="icon">fa fa-credit-card</field>
-        <field name="action_xmlid">health_invoicing.action_fin_ar_management</field>
-        <field name="action_tag">fin_ar_management</field>
-        <field name="match_action_tags">fin_ar_management</field>
+        <field name="action_xmlid"></field>
+        <field name="action_tag"></field>
+        <field name="match_action_tags"></field>
+        <field name="match_action_xmlids"></field>
+    </record>
+
+    <record id="item_fin_ar_account_payment" model="cms.sidebar.item">
+        <field name="name">Account Payment</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="parent_id" ref="item_fin_ar_management"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-money</field>
+        <field name="action_xmlid">health_invoicing.action_fin_account_payment</field>
+    </record>
+
+    <record id="item_fin_ar_cash_transit" model="cms.sidebar.item">
+        <field name="name">Cash In Transit</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="parent_id" ref="item_fin_ar_management"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-truck</field>
+        <field name="action_xmlid">health_invoicing.action_fin_cash_collections</field>
         <field name="match_action_xmlids">health_invoicing.action_fin_cash_collections</field>
+    </record>
+
+    <record id="item_fin_ar_refund" model="cms.sidebar.item">
+        <field name="name">Refund / Credit</field>
+        <field name="section_id" ref="section_finance"/>
+        <field name="parent_id" ref="item_fin_ar_management"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-undo</field>
+        <field name="action_xmlid">health_invoicing.action_fin_refund_credit</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_refund_credit</field>
     </record>
 
     <record id="item_fin_payments" model="cms.sidebar.item">

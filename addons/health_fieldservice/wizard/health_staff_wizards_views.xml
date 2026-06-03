@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ Record Time Off ============ -->
+    <record id="view_health_staff_timeoff_wizard_form" model="ir.ui.view">
+        <field name="name">health.staff.timeoff.wizard.form</field>
+        <field name="model">health.staff.timeoff.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Record Time Off">
+                <p class="text-muted">
+                    Record approved time off for staff. This creates standard Time Off
+                    records and applies them immediately to availability.
+                </p>
+                <group>
+                    <field name="employee_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    <field name="holiday_status_id" options="{'no_create': True}"/>
+                    <field name="request_date_from"/>
+                    <field name="request_date_to"/>
+                    <field name="name" placeholder="Reason (optional)"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Record Time Off" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_staff_timeoff_wizard" model="ir.actions.act_window">
+        <field name="name">Record Time Off</field>
+        <field name="res_model">health.staff.timeoff.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ============ Set Working Hours ============ -->
+    <record id="view_health_staff_schedule_wizard_form" model="ir.ui.view">
+        <field name="name">health.staff.schedule.wizard.form</field>
+        <field name="model">health.staff.schedule.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Working Hours">
+                <field name="employee_id" options="{'no_create': True}"
+                       invisible="context.get('default_employee_id')"/>
+                <group string="Weekly Working Hours">
+                    <label for="mon_from" string="Monday"/>
+                    <div class="o_row">
+                        <field name="mon_off"/><span class="me-3">Off</span>
+                        <field name="mon_from" widget="float_time" invisible="mon_off"/>
+                        <span invisible="mon_off" class="mx-2">to</span>
+                        <field name="mon_to" widget="float_time" invisible="mon_off"/>
+                    </div>
+                    <label for="tue_from" string="Tuesday"/>
+                    <div class="o_row">
+                        <field name="tue_off"/><span class="me-3">Off</span>
+                        <field name="tue_from" widget="float_time" invisible="tue_off"/>
+                        <span invisible="tue_off" class="mx-2">to</span>
+                        <field name="tue_to" widget="float_time" invisible="tue_off"/>
+                    </div>
+                    <label for="wed_from" string="Wednesday"/>
+                    <div class="o_row">
+                        <field name="wed_off"/><span class="me-3">Off</span>
+                        <field name="wed_from" widget="float_time" invisible="wed_off"/>
+                        <span invisible="wed_off" class="mx-2">to</span>
+                        <field name="wed_to" widget="float_time" invisible="wed_off"/>
+                    </div>
+                    <label for="thu_from" string="Thursday"/>
+                    <div class="o_row">
+                        <field name="thu_off"/><span class="me-3">Off</span>
+                        <field name="thu_from" widget="float_time" invisible="thu_off"/>
+                        <span invisible="thu_off" class="mx-2">to</span>
+                        <field name="thu_to" widget="float_time" invisible="thu_off"/>
+                    </div>
+                    <label for="fri_from" string="Friday"/>
+                    <div class="o_row">
+                        <field name="fri_off"/><span class="me-3">Off</span>
+                        <field name="fri_from" widget="float_time" invisible="fri_off"/>
+                        <span invisible="fri_off" class="mx-2">to</span>
+                        <field name="fri_to" widget="float_time" invisible="fri_off"/>
+                    </div>
+                    <label for="sat_from" string="Saturday"/>
+                    <div class="o_row">
+                        <field name="sat_off"/><span class="me-3">Off</span>
+                        <field name="sat_from" widget="float_time" invisible="sat_off"/>
+                        <span invisible="sat_off" class="mx-2">to</span>
+                        <field name="sat_to" widget="float_time" invisible="sat_off"/>
+                    </div>
+                    <label for="sun_from" string="Sunday"/>
+                    <div class="o_row">
+                        <field name="sun_off"/><span class="me-3">Off</span>
+                        <field name="sun_from" widget="float_time" invisible="sun_off"/>
+                        <span invisible="sun_off" class="mx-2">to</span>
+                        <field name="sun_to" widget="float_time" invisible="sun_off"/>
+                    </div>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Save Working Hours" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_staff_schedule_wizard" model="ir.actions.act_window">
+        <field name="name">Working Hours</field>
+        <field name="res_model">health.staff.schedule.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

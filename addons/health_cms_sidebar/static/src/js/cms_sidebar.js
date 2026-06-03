@@ -21,12 +21,14 @@ export class CmsSidebar extends Component {
             sections: [],
             activeItemId: null,
             collapsedSections: {},
+            expandedItems: {},
             loaded: false,
         });
 
         this._tagIndex = {};
         this._xmlidIndex = {};
         this._modelIndex = {};
+        this._childParent = {};
 
         this._loadCollapseState();
 
@@ -49,22 +51,26 @@ export class CmsSidebar extends Component {
         this._tagIndex = {};
         this._xmlidIndex = {};
         this._modelIndex = {};
+        this._childParent = {};
+        const indexOne = (item) => {
+            if (item.action_tag) this._tagIndex[item.action_tag] = item.id;
+            if (item.action_xmlid) this._xmlidIndex[item.action_xmlid] = item.id;
+            for (const tag of (item.match_action_tags || [])) {
+                if (tag) this._tagIndex[tag] = item.id;
+            }
+            for (const xmlid of (item.match_action_xmlids || [])) {
+                if (xmlid) this._xmlidIndex[xmlid] = item.id;
+            }
+            for (const model of (item.match_models || [])) {
+                if (model) this._modelIndex[model] = item.id;
+            }
+        };
         for (const section of this.state.sections) {
             for (const item of section.items) {
-                if (item.action_tag) {
-                    this._tagIndex[item.action_tag] = item.id;
-                }
-                if (item.action_xmlid) {
-                    this._xmlidIndex[item.action_xmlid] = item.id;
-                }
-                for (const tag of (item.match_action_tags || [])) {
-                    if (tag) this._tagIndex[tag] = item.id;
-                }
-                for (const xmlid of (item.match_action_xmlids || [])) {
-                    if (xmlid) this._xmlidIndex[xmlid] = item.id;
-                }
-                for (const model of (item.match_models || [])) {
-                    if (model) this._modelIndex[model] = item.id;
+                indexOne(item);
+                for (const child of (item.children || [])) {
+                    indexOne(child);
+                    this._childParent[child.id] = item.id;
                 }
             }
         }
@@ -79,17 +85,24 @@ export class CmsSidebar extends Component {
         const xmlId = action.xml_id;
         const model = action.res_model;
 
+        let found;
         if (tag && this._tagIndex[tag] !== undefined) {
-            this.state.activeItemId = this._tagIndex[tag];
-            return;
+            found = this._tagIndex[tag];
+        } else if (xmlId && this._xmlidIndex[xmlId] !== undefined) {
+            found = this._xmlidIndex[xmlId];
+        } else if (model && this._modelIndex[model] !== undefined) {
+            found = this._modelIndex[model];
         }
-        if (xmlId && this._xmlidIndex[xmlId] !== undefined) {
-            this.state.activeItemId = this._xmlidIndex[xmlId];
-            return;
+        if (found !== undefined) {
+            this.state.activeItemId = found;
+            this._expandParentOf(found);
         }
-        if (model && this._modelIndex[model] !== undefined) {
-            this.state.activeItemId = this._modelIndex[model];
-            return;
+    }
+
+    _expandParentOf(itemId) {
+        const pid = this._childParent[itemId];
+        if (pid !== undefined && !this.state.expandedItems[pid]) {
+            this.state.expandedItems = { ...this.state.expandedItems, [pid]: true };
         }
     }
 
@@ -104,6 +117,26 @@ export class CmsSidebar extends Component {
 
     isSectionCollapsed(sectionKey) {
         return !!this.state.collapsedSections[sectionKey];
+    }
+
+    onItemClick(item) {
+        // Items with children act as expandable groups; leaves navigate.
+        if (item.children && item.children.length) {
+            this.toggleItem(item.id);
+        } else {
+            this.navigateTo(item);
+        }
+    }
+
+    toggleItem(itemId) {
+        this.state.expandedItems = {
+            ...this.state.expandedItems,
+            [itemId]: !this.state.expandedItems[itemId],
+        };
+    }
+
+    isExpanded(itemId) {
+        return !!this.state.expandedItems[itemId];
     }
 
     navigateTo(item) {
@@ -190,6 +223,8 @@ const ALL_XMLIDS = new Set([
     "health_fieldservice.action_staff_workload_dashboard",
     "health_fieldservice.action_assignment_web_timeline_view",
     "health_fieldservice.action_ops_client_profile_form",
+    "health_fieldservice.action_health_staff_schedules",
+    "health_fieldservice.action_health_staff_timeoff",
     // Finance
     "health_invoicing.action_fin_invoice_list",
     "health_invoicing.action_fin_package_list",
@@ -199,6 +234,8 @@ const ALL_XMLIDS = new Set([
     "health_invoicing.action_fin_cash_collections",
     "health_invoicing.action_fin_vat_log",
     "health_invoicing.action_fin_ar_transactions",
+    "health_invoicing.action_fin_account_payment",
+    "health_invoicing.action_fin_refund_credit",
     // Admin
     "health_landing.action_admin_users",
     "health_landing.action_admin_facilities",

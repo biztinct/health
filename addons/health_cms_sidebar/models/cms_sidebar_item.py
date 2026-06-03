@@ -10,6 +10,10 @@ class CmsSidebarItem(models.Model):
     section_id = fields.Many2one(
         'cms.sidebar.section', required=True, ondelete='cascade', string='Section',
     )
+    parent_id = fields.Many2one(
+        'cms.sidebar.item', string='Parent Item', ondelete='cascade',
+        help='When set, this item is a sub-menu shown under its parent.',
+    )
     sequence = fields.Integer(default=10)
     icon = fields.Char(string='Icon Class', default='fa fa-circle-o')
     action_xmlid = fields.Char(
@@ -66,9 +70,30 @@ class CmsSidebarItem(models.Model):
         def _split(val):
             return [v.strip() for v in (val or '').split(',') if v.strip()]
 
+        def _item_dict(item):
+            return {
+                'id': item.id,
+                'name': item.name,
+                'icon': item.icon,
+                'action_xmlid': item.action_xmlid,
+                'action_tag': item.action_tag,
+                'match_action_tags': _split(item.match_action_tags),
+                'match_action_xmlids': _split(item.match_action_xmlids),
+                'match_models': _split(item.match_models),
+                'children': [],
+            }
+
         result = []
         for section in sections:
-            items = visible_items.filtered(lambda i, s=section: i.section_id == s)
+            sec_items = visible_items.filtered(lambda i, s=section: i.section_id == s)
+            tops = sec_items.filtered(lambda i: not i.parent_id).sorted(lambda i: (i.sequence, i.id))
+            items = []
+            for top in tops:
+                d = _item_dict(top)
+                kids = sec_items.filtered(lambda c, p=top: c.parent_id == p).sorted(
+                    lambda c: (c.sequence, c.id))
+                d['children'] = [_item_dict(k) for k in kids]
+                items.append(d)
             if not items:
                 continue
             result.append({
@@ -77,15 +102,6 @@ class CmsSidebarItem(models.Model):
                 'key': section.technical_key,
                 'icon': section.icon or False,
                 'color': section.color or False,
-                'items': [{
-                    'id': item.id,
-                    'name': item.name,
-                    'icon': item.icon,
-                    'action_xmlid': item.action_xmlid,
-                    'action_tag': item.action_tag,
-                    'match_action_tags': _split(item.match_action_tags),
-                    'match_action_xmlids': _split(item.match_action_xmlids),
-                    'match_models': _split(item.match_models),
-                } for item in items],
+                'items': items,
             })
         return result

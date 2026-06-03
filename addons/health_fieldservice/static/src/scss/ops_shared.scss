@@ -447,9 +447,14 @@
     border-radius: 50%;
     border: 2px solid var(--vu-surface-card);
 
-    &.available { background: $vu-state-completed; }
-    &.busy { background: $vu-state-active; }
-    &.off { background: $vu-state-cancelled; }
+    &.available { background: #10b981; }
+    &.busy { background: #3b82f6; }
+    &.full { background: #f59e0b; }
+    &.break { background: #8b5cf6; }
+    &.off_hours { background: #94a3b8; }
+    &.on_leave { background: #f97316; }
+    &.off { background: #ef4444; }
+    &.inactive { background: #9ca3af; }
 }
 
 .ops-staff-info {
@@ -468,9 +473,14 @@
 .ops-staff-status-text {
     font-size: 12px;
     font-weight: 500;
-    &.available { color: $vu-state-completed; }
-    &.busy { color: $vu-state-active; }
-    &.off { color: $vu-state-cancelled; }
+    &.available { color: #10b981; }
+    &.busy { color: #3b82f6; }
+    &.full { color: #d97706; }
+    &.break { color: #7c3aed; }
+    &.off_hours { color: #64748b; }
+    &.on_leave { color: #ea580c; }
+    &.off { color: #ef4444; }
+    &.inactive { color: #6b7280; }
 }
 
 .ops-staff-meta {

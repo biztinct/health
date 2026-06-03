@@ -35,3 +35,28 @@
         }
     }
 }
+
+/* Expandable parent items + sub-menus */
+.cms-sidebar {
+    .ops-nav-item.cms-has-children {
+        display: flex;
+        align-items: center;
+
+        .cms-item-label { flex: 1; }
+        .cms-item-chevron {
+            font-size: 9px;
+            opacity: 0.45;
+            color: white;
+            margin-left: 6px;
+        }
+    }
+
+    .ops-nav-item.cms-subitem {
+        padding-left: 38px;
+        font-size: 12.5px;
+        opacity: 0.82;
+
+        &.active { opacity: 1; }
+        &:hover { opacity: 1; }
+    }
+}

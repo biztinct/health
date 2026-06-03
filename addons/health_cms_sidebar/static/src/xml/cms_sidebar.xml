@@ -21,10 +21,20 @@
 
                 <t t-if="!isSectionCollapsed(section.key)">
                     <t t-foreach="section.items" t-as="item" t-key="item.id">
-                        <a t-attf-class="ops-nav-item #{isActive(item.id) ? 'active' : ''}"
-                           t-on-click="() => this.navigateTo(item)">
-                            <i t-att-class="item.icon"/> <t t-esc="item.name"/>
+                        <a t-attf-class="ops-nav-item #{isActive(item.id) ? 'active' : ''} #{item.children.length ? 'cms-has-children' : ''}"
+                           t-on-click="() => this.onItemClick(item)">
+                            <i t-att-class="item.icon"/> <span class="cms-item-label" t-esc="item.name"/>
+                            <i t-if="item.children.length"
+                               t-attf-class="fa #{isExpanded(item.id) ? 'fa-chevron-down' : 'fa-chevron-right'} cms-item-chevron"/>
                         </a>
+                        <t t-if="item.children.length and isExpanded(item.id)">
+                            <t t-foreach="item.children" t-as="child" t-key="child.id">
+                                <a t-attf-class="ops-nav-item cms-subitem #{isActive(child.id) ? 'active' : ''}"
+                                   t-on-click="() => this.navigateTo(child)">
+                                    <i t-att-class="child.icon"/> <t t-esc="child.name"/>
+                                </a>
+                            </t>
+                        </t>
                     </t>
                 </t>
             </t>

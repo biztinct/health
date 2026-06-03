@@ -108,9 +108,16 @@ class OpsStaffRoster extends Component {
             staff = staff.filter(s => s.role && s.role.toLowerCase().includes(this.state.roleFilter.toLowerCase()));
         }
         if (this.state.statusFilter) {
-            staff = staff.filter(s => s.status === this.state.statusFilter);
+            staff = staff.filter(s => this.statusBucket(s.status) === this.state.statusFilter);
         }
         return staff;
+    }
+
+    // Map granular duty status to the 3 roster buckets (available / busy / off)
+    statusBucket(status) {
+        if (status === 'available') return 'available';
+        if (['busy', 'full', 'break'].includes(status)) return 'busy';
+        return 'off';
     }
 
     // ===== HELPERS =====
@@ -118,9 +125,12 @@ class OpsStaffRoster extends Component {
     getStaffColor(idx) { return STAFF_COLORS[idx % STAFF_COLORS.length]; }
 
     getStatusLabel(status) {
-        if (status === 'available') return _t('Available');
-        if (status === 'busy') return _t('In Service');
-        return _t('Off Duty');
+        const map = {
+            available: _t('Available'), busy: _t('In Service'), full: _t('Full'),
+            break: _t('On Break'), off_hours: _t('Off-Hours'), on_leave: _t('On Leave'),
+            off: _t('Off Duty'), inactive: _t('Inactive'),
+        };
+        return map[status] || _t('Available');
     }
 
     getScheduleBlockStyle(block) {

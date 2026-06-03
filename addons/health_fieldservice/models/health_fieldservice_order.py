@@ -3762,32 +3762,24 @@ class HealthFieldServiceOrderUnified(models.Model):
             staff_domain.append(('healthcare_facility_id', '=', facility_id))
         staff_members = Employee.search(staff_domain, order='name asc')
 
+        Assignment = self.env['health.staff.assignment']
         staff_list = []
         for emp in staff_members:
-            today_assignments = self.env['health.staff.assignment'].search_count([
+            day_assignments = Assignment.search([
                 ('staff_id', '=', emp.id),
                 ('planned_start_time', '>=', day_start),
                 ('planned_start_time', '<=', day_end),
                 ('state', 'not in', ['cancelled', 'template']),
             ])
 
-            status = 'available'
-            active_assignment = self.env['health.staff.assignment'].search([
-                ('staff_id', '=', emp.id),
-                ('state', '=', 'in_progress'),
-                ('planned_start_time', '>=', day_start),
-                ('planned_start_time', '<=', day_end),
-            ], limit=1)
-            if active_assignment:
-                status = 'busy'
-            elif emp.employment_status != 'active' or (hasattr(emp, 'assignment_status') and emp.assignment_status == 'off_duty'):
-                status = 'off'
+            duty = emp._get_duty_status(day=df, day_assignments=day_assignments)
+            status = duty['code']
 
             next_available = ''
-            if status == 'busy' and active_assignment:
-                end_dt = active_assignment.planned_end_time
-                if end_dt:
-                    local_end = pytz.utc.localize(end_dt).astimezone(tz)
+            if status == 'busy':
+                active_assignment = day_assignments.filtered(lambda a: a.state == 'in_progress')[:1]
+                if active_assignment and active_assignment.planned_end_time:
+                    local_end = pytz.utc.localize(active_assignment.planned_end_time).astimezone(tz)
                     next_available = local_end.strftime('%H:%M')
 
             staff_list.append({
@@ -3795,7 +3787,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'name': emp.name or '',
                 'role': emp.access_role_display or '',
                 'status': status,
-                'today_assignments': today_assignments,
+                'status_label': duty['label'],
+                'today_assignments': len(day_assignments),
                 'next_available': next_available,
                 'initials': ''.join([p[0].upper() for p in (emp.name or 'U').split()[:2]]),
                 'color_index': emp.color or 0,

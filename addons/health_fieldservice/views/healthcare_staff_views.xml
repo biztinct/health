@@ -41,6 +41,22 @@
             <!-- Add Healthcare Tab as First Tab -->
             <xpath expr="//notebook/page[1]" position="before">
                 <page string="Healthcare Information" name="healthcare_info">
+                    <div class="d-flex align-items-center gap-2 mb-3" invisible="not is_healthcare_staff">
+                        <span class="fw-bold">Duty Status:</span>
+                        <field name="duty_status" widget="badge" nolabel="1"
+                               decoration-success="duty_status == 'available'"
+                               decoration-info="duty_status == 'busy'"
+                               decoration-warning="duty_status in ('off_hours','full','break')"
+                               decoration-danger="duty_status in ('on_leave','off','inactive')"/>
+                        <button name="%(action_health_staff_schedule_wizard)d" type="action"
+                                string="Working Hours" icon="fa-clock-o"
+                                class="btn btn-sm btn-outline-secondary ms-auto"
+                                context="{'default_employee_id': id}"/>
+                        <button name="%(action_health_staff_timeoff_wizard)d" type="action"
+                                string="Record Time Off" icon="fa-plane"
+                                class="btn btn-sm btn-outline-secondary"
+                                context="{'default_employee_ids': [(6, 0, [id])]}"/>
+                    </div>
                     <group>
                         <group string="Healthcare Role and Status">
                             <field name="is_healthcare_staff"/>
@@ -117,8 +133,31 @@
                     </div>
                 </button>
             </xpath>
-            
+
+            <!-- Hide the generic HR-presence badge for healthcare staff; the real
+                 Duty Status badge (Healthcare Information tab) replaces it. -->
+            <xpath expr="//field[@name='hr_icon_display']" position="attributes">
+                <attribute name="invisible">not show_hr_icon_display or not id or is_healthcare_staff</attribute>
+            </xpath>
+
         </field>
+    </record>
+
+    <!-- Staff sub-menu actions: Schedules + Time Off -->
+    <record id="action_health_staff_schedules" model="ir.actions.act_window">
+        <field name="name">Staff Schedules</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_healthcare_staff', '=', True)]</field>
+        <field name="view_id" ref="view_healthcare_staff_list"/>
+        <field name="context">{'search_default_is_healthcare_staff': 1}</field>
+    </record>
+
+    <record id="action_health_staff_timeoff" model="ir.actions.act_window">
+        <field name="name">Staff Time Off</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="domain">[('employee_id.is_healthcare_staff', '=', True)]</field>
     </record>
 
     <!-- Healthcare Staff Search View -->

@@ -267,6 +267,19 @@ class HrEmployee(models.Model):
     
     # Availability Status
     is_available_today = fields.Boolean('Available Today', compute='_compute_availability_today')
+
+    # Realistic, computed duty status (working hours + leave + assignments + manual)
+    duty_status = fields.Selection([
+        ('available', 'Available'),
+        ('busy', 'In Service'),
+        ('off_hours', 'Off-Hours'),
+        ('on_leave', 'On Leave'),
+        ('full', 'Full'),
+        ('break', 'On Break'),
+        ('off', 'Off Duty'),
+        ('inactive', 'Inactive'),
+    ], string='Duty Status', compute='_compute_duty_status')
+    duty_status_label = fields.Char('Duty Status Label', compute='_compute_duty_status')
     
     # Display Settings
     color = fields.Integer('Color Index', default=lambda self: self._default_color(), help='Color for calendar display and badge colors')
@@ -451,10 +464,160 @@ class HrEmployee(models.Model):
         """Check if staff is available today"""
         for employee in self:
             if employee.is_healthcare_staff:
-                # TODO: Implement real availability checking
-                employee.is_available_today = employee.assignment_status == 'available'
+                employee.is_available_today = employee._get_duty_status()['code'] == 'available'
             else:
                 employee.is_available_today = False
+
+    # ============================================================================
+    # Duty status engine — realistic availability
+    # ============================================================================
+
+    DUTY_LABELS = {
+        'available': 'Available', 'busy': 'In Service', 'off_hours': 'Off-Hours',
+        'on_leave': 'On Leave', 'full': 'Full', 'break': 'On Break',
+        'off': 'Off Duty', 'inactive': 'Inactive',
+    }
+
+    def _compute_duty_status(self):
+        for emp in self:
+            if not emp.is_healthcare_staff:
+                emp.duty_status = False
+                emp.duty_status_label = ''
+                continue
+            st = emp._get_duty_status()
+            emp.duty_status = st['code']
+            emp.duty_status_label = st['label']
+
+    @staticmethod
+    def _parse_hhmm(value):
+        """'09:30' -> 9.5 ; '9' -> 9.0 ; '' -> None"""
+        s = (value or '').strip()
+        if not s:
+            return None
+        try:
+            h, m = s.split(':')
+            return int(h) + int(m) / 60.0
+        except (ValueError, TypeError):
+            try:
+                return float(s)
+            except (ValueError, TypeError):
+                return None
+
+    def _working_intervals_for(self, weekday):
+        """Return list of (hour_from, hour_to) float tuples the staff works on the
+        given weekday (0=Mon..6=Sun). Prefers the standard resource.calendar; falls
+        back to the legacy working_hours_<weekday> Char fields."""
+        self.ensure_one()
+        cal = self.resource_calendar_id
+        if cal and cal.attendance_ids:
+            ivs = []
+            for att in cal.attendance_ids:
+                try:
+                    if int(att.dayofweek) == weekday:
+                        ivs.append((att.hour_from, att.hour_to))
+                except (TypeError, ValueError):
+                    continue
+            if ivs:
+                return ivs
+        char_map = {
+            0: 'working_hours_monday', 1: 'working_hours_tuesday',
+            2: 'working_hours_wednesday', 3: 'working_hours_thursday',
+            4: 'working_hours_friday', 5: 'working_hours_saturday',
+            6: 'working_hours_sunday',
+        }
+        raw = (getattr(self, char_map[weekday], '') or '').strip()
+        if not raw:
+            return []
+        out = []
+        for part in raw.split(','):
+            part = part.strip()
+            if '-' not in part:
+                continue
+            a, b = part.split('-', 1)
+            fa, fb = self._parse_hhmm(a), self._parse_hhmm(b)
+            if fa is not None and fb is not None and fb > fa:
+                out.append((fa, fb))
+        return out
+
+    def _has_leave_on(self, day):
+        """True if the staff has an approved (validated) Time Off covering `day`."""
+        self.ensure_one()
+        Leave = self.env.get('hr.leave')
+        if Leave is None:
+            return False
+        return bool(Leave.sudo().search_count([
+            ('employee_id', '=', self.id),
+            ('state', '=', 'validate'),
+            ('request_date_from', '<=', day),
+            ('request_date_to', '>=', day),
+        ]))
+
+    def _get_duty_status(self, day=None, day_assignments=None):
+        """Resolve a realistic duty/availability status for `day` (a date; defaults
+        to today). Returns {'code', 'label'}. Priority order is significant."""
+        self.ensure_one()
+        import pytz
+        labels = {k: _(v) for k, v in self.DUTY_LABELS.items()}
+
+        def res(code):
+            return {'code': code, 'label': labels.get(code, code)}
+
+        tz = pytz.timezone(self.env.user.tz or 'Asia/Ho_Chi_Minh')
+        now_local = pytz.utc.localize(fields.Datetime.now()).astimezone(tz)
+        if day is None:
+            day = now_local.date()
+        elif isinstance(day, str):
+            day = fields.Date.from_string(day)
+        is_today = (day == now_local.date())
+
+        # 1. Employment-level leave / inactivity
+        if self.employment_status == 'on_leave':
+            return res('on_leave')
+        if self.employment_status and self.employment_status != 'active':
+            return res('inactive')
+        # 2. Approved Time Off (hr.leave) or manual on-leave
+        if self._has_leave_on(day) or self.assignment_status == 'on_leave':
+            return res('on_leave')
+        # 3. Manual off duty
+        if self.assignment_status == 'off_duty':
+            return res('off')
+        # 4. Break / offline
+        if self.availability_status == 'break':
+            return res('break')
+        if self.availability_status == 'offline':
+            return res('off')
+
+        # day's assignments (reuse caller's set when provided)
+        if day_assignments is None:
+            day_start = tz.localize(datetime.combine(day, datetime.min.time())).astimezone(pytz.utc).replace(tzinfo=None)
+            day_end = tz.localize(datetime.combine(day, datetime.max.time())).astimezone(pytz.utc).replace(tzinfo=None)
+            day_assignments = self.env['health.staff.assignment'].search([
+                ('staff_id', '=', self.id),
+                ('planned_start_time', '>=', day_start),
+                ('planned_start_time', '<=', day_end),
+                ('state', 'not in', ['cancelled', 'template']),
+            ])
+
+        # 5. Currently in service
+        if day_assignments.filtered(lambda a: a.state == 'in_progress'):
+            return res('busy')
+
+        # 6. Off-hours — no shift that weekday, or (today) outside the shift window
+        intervals = self._working_intervals_for(day.weekday())
+        if not intervals:
+            return res('off_hours')
+        if is_today:
+            cur = now_local.hour + now_local.minute / 60.0
+            if not any(f <= cur < t for (f, t) in intervals):
+                return res('off_hours')
+
+        # 7. At capacity for the day
+        cap = self.max_daily_assignments or 0
+        if cap and len(day_assignments) >= cap:
+            return res('full')
+
+        # 8. Available
+        return res('available')
     
     # ============================================================================
     # Business Logic Methods
@@ -745,16 +908,15 @@ class HrEmployee(models.Model):
                 ('state', 'not in', ['cancelled', 'template']),
             ], order='planned_start_time asc')
 
-            active_now = today_assignments.filtered(lambda a: a.state == 'in_progress')
-            status = 'available'
-            if active_now:
-                status = 'busy'
-                busy_count += 1
-            elif hasattr(emp, 'assignment_status') and emp.assignment_status == 'off_duty':
-                status = 'off'
-                off_count += 1
-            else:
+            duty = emp._get_duty_status(day=target_date, day_assignments=today_assignments)
+            status = duty['code']
+            status_label = duty['label']
+            if status == 'available':
                 available_count += 1
+            elif status in ('busy', 'full', 'break'):
+                busy_count += 1
+            else:  # off_hours, on_leave, off, inactive
+                off_count += 1
 
             schedule_blocks = []
             for asgn in today_assignments:
@@ -799,6 +961,7 @@ class HrEmployee(models.Model):
                 'name': emp.name or '',
                 'role': emp.access_role_display or '',
                 'status': status,
+                'status_label': status_label,
                 'initials': ''.join([p[0].upper() for p in (emp.name or 'U').split()[:2]]),
                 'color_index': emp.color or 0,
                 'today_assignments': len(today_assignments),

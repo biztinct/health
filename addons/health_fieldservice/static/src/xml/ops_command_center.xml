@@ -239,9 +239,7 @@
                                 <div class="ops-staff-info">
                                     <div class="ops-staff-name" t-esc="staff.name"/>
                                     <div t-attf-class="ops-staff-status-text #{staff.status}">
-                                        <t t-if="staff.status === 'available'">Available</t>
-                                        <t t-elif="staff.status === 'busy'">In Service</t>
-                                        <t t-else="">Off Duty</t>
+                                        <t t-esc="staff.status_label or 'Available'"/>
                                         <t t-if="staff.next_available"> · Until <t t-esc="staff.next_available"/></t>
                                     </div>
                                     <div class="ops-staff-meta" t-esc="staff.role"/>
