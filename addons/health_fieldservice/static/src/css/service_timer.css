@@ -14,54 +14,59 @@
     align-items: center;
 }
 
+/* Slim status pill — flat, light tint of the state colour */
 .service-timer-container {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 8px;
-    padding: 6px 12px;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+    gap: 6px;
+    background: #EEF1F6;
+    color: #64748b;
+    border-radius: 999px;
+    padding: 5px 12px 5px 11px;
+    box-shadow: none;
     position: relative;
-    overflow: hidden;
 }
 
-/* Gradient overlay for glass effect */
+/* Clock glyph at the start of the pill */
 .service-timer-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    content: '\f017';
+    font-family: 'FontAwesome';
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0.85;
     pointer-events: none;
 }
 
-/* Status-specific colors */
+/* Status-specific light tints (text colour inherited by digits) */
 .service-timer-container.running {
-    background: linear-gradient(135deg, #176B47 0%, #2E6B33 100%);
-    box-shadow: 0 2px 8px rgba(23, 107, 71, 0.25);
-}
-
-.service-timer-container.running::before {
-    animation: shimmer 3s infinite;
+    background: #E7F5EA;
+    color: #2E7D32;
 }
 
 .service-timer-container.completed {
-    background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
-    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
+    background: #E3F2FD;
+    color: #1565C0;
 }
 
 .service-timer-container.stopped {
-    background: linear-gradient(135deg, #9E9E9E 0%, #757575 100%);
-    box-shadow: 0 2px 8px rgba(158, 158, 158, 0.2);
+    background: #EEF1F6;
+    color: #64748b;
 }
 
-@keyframes shimmer {
-    0% { opacity: 0.3; }
-    50% { opacity: 0.5; }
-    100% { opacity: 0.3; }
+/* Pulsing dot while running */
+.service-timer-container.running::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    margin-left: 2px;
+    animation: vu-timer-pulse 1.4s infinite;
+}
+
+@keyframes vu-timer-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
 }
 
 /* Timer Display - Ultra Compact Horizontal Layout */
@@ -82,36 +87,32 @@
 }
 
 .timer-digit {
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 4px;
-    padding: 4px 6px;
-    min-width: 32px;
+    background: none;
+    backdrop-filter: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    min-width: 0;
     text-align: center;
     font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
-    color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: inherit;
+    text-shadow: none;
     line-height: 1;
 }
 
+/* Drop the HOURS / MINUTES / SECONDS captions for a clean HH:MM:SS */
 .timer-unit-label {
-    font-size: 6px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    line-height: 1;
+    display: none;
 }
 
 .timer-separator {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.9);
+    color: inherit;
     margin: 0 1px;
-    padding-bottom: 8px;
+    padding-bottom: 0;
     line-height: 1;
 }
 
@@ -215,20 +216,11 @@
 }
 
 .o_form_view .service-timer-container {
-    transition: all 0.2s ease;
+    transition: filter 0.15s ease;
 }
 
 .o_form_view .service-timer-container:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
-}
-
-.o_form_view .service-timer-container.running:hover {
-    box-shadow: 0 4px 12px rgba(23, 107, 71, 0.35);
-}
-
-.o_form_view .service-timer-container.completed:hover {
-    box-shadow: 0 4px 12px rgba(21, 101, 192, 0.35);
+    filter: brightness(0.97);
 }
 
 /* Ensure timer doesn't interfere with form content */

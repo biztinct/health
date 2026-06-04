@@ -1120,7 +1120,7 @@
                             <div class="vu-client-card">
                                 <div class="vu-client-card__header">
                                     <div class="vu-client-card__title">
-                                        <span class="vu-section__icon" data-icon="user"/> Client Information
+                                        <span class="vu-section__icon" data-icon="id-card"/> Client Information
                                     </div>
                                     <button name="action_open_client_form" type="object"
                                             class="vu-client-card__link"
@@ -1188,7 +1188,7 @@
                             <div class="vu-detail-card" name="commission_fees_card">
                                 <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
                                 <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="dollar-sign"/>
+                                    <span class="vu-section__icon" data-icon="credit-card"/>
                                     <span>Commission &amp; Fees</span>
                                 </div>
                                 <group>

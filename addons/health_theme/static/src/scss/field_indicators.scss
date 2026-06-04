@@ -105,14 +105,12 @@
     }
 }
 
-// Ensure required fields keep a full, visible left border at rest (Odoo zeroes
-// the left border colour on required inputs). Concrete soft colour so it never
-// depends on the transparent --o-input-border-color. Scoped to the resting
-// state so hover/focus colour all four sides uniformly (brand).
-.o_form_view .o_field_widget.o_required_modifier .o_input:not(:hover):not(:focus),
-.o_form_view .o_field_widget.o_required_modifier input:not(:hover):not(:focus),
-.o_form_view .o_field_widget.o_required_modifier textarea:not(:hover):not(:focus) {
-    border-left-color: var(--vu-border-soft, #E0E0E0) !important;
+// Required fields follow the same native borderless style as other inputs
+// (Odoo's red left-border is neutralised via the shared --o-input-border-color).
+.o_form_view .o_field_widget.o_required_modifier .o_input,
+.o_form_view .o_field_widget.o_required_modifier input,
+.o_form_view .o_field_widget.o_required_modifier textarea {
+    border-left-color: var(--o-input-border-color, #dee2e6) !important;
     border-left-width: 1px !important;
 }
 
@@ -131,7 +129,7 @@
 // ---------------------------------------------------------------------------
 // Pencil icon on editable fields — shows edit affordance on hover
 // ---------------------------------------------------------------------------
-$_editable-field-selector: ':not(.o_readonly_modifier):not(.o_invisible_modifier):not(.o_field_boolean):not(.o_field_image):not(.o_field_binary):not(.o_field_one2many):not(.o_field_many2many_tags):not(.o_field_many2many):not(.o_field_statusbar)';
+$_editable-field-selector: ':not(.o_readonly_modifier):not(.o_invisible_modifier):not(.o_field_boolean):not(.o_field_image):not(.o_field_binary):not(.o_field_one2many):not(.o_field_many2many_tags):not(.o_field_many2many):not(.o_field_statusbar):not(.o_field_many2one):not(.o_field_selection)';
 
 .o_form_view .o_inner_group .o_wrap_field .o_cell.o_wrap_input .o_field_widget#{$_editable-field-selector},
 .o_form_view .vu-detail-card .o_field_widget#{$_editable-field-selector} {

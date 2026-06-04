@@ -20,7 +20,7 @@
 .ops-booking-form-page {
     display: flex !important;
     flex-direction: row !important;
-    background: var(--vu-surface-muted, #f8f9fa);
+    background: #f4f6fb;
     height: 100%;
 }
 
@@ -57,7 +57,7 @@
     }
 
     .o_form_sheet_bg {
-        background: var(--vu-surface-muted, #f8f9fa);
+        background: #f4f6fb;
         max-width: 100% !important;
         margin-right: 0 !important;
     }
@@ -174,8 +174,15 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        padding: 12px 0 8px;
-        gap: 16px;
+        gap: 18px;
+        flex-wrap: wrap;
+        background: var(--vu-surface-card, #fff);
+        border: 1px solid var(--vu-border-soft, #e6e9f1);
+        border-left: 4px solid #1A237E;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+        padding: 16px 22px;
+        margin-bottom: 14px;
     }
 
     .vu-hero-left {
@@ -283,36 +290,30 @@
         flex-shrink: 0;
     }
 
+    // Created <date> by <user> — all on a single line
     .vu-hero-meta {
+        display: block;
+        white-space: nowrap;
+        text-align: right;
         font-size: 0.75rem;
         color: #64748b;
-        display: flex;
-        align-items: baseline;
-        gap: 4px;
-        flex-wrap: nowrap;
-        justify-content: flex-end;
-        white-space: nowrap;
+        line-height: 1.4;
+
+        // Force every part (incl. field-widget internals) inline so it never wraps
+        * {
+            display: inline !important;
+            font-size: 0.75rem !important;
+        }
     }
 
     .vu-hero-meta__label {
         font-weight: 500;
-    }
-
-    .vu-hero-meta__value {
-        .o_field_widget {
-            display: inline !important;
-            font-size: 0.75rem !important;
-        }
+        margin-right: 4px;
     }
 
     .vu-hero-meta__by {
-        font-size: 0.75rem;
         color: #94a3b8;
-
-        .o_field_widget {
-            display: inline !important;
-            font-size: 0.75rem !important;
-        }
+        margin-left: 4px;
     }
 
     .vu-hero-timer {
@@ -325,46 +326,68 @@
     // QUICK INFO BAR — At-a-glance booking details
     // ─────────────────────────────────────────────────────────────────────
     .vu-quick-info {
-        display: flex;
-        background: var(--vu-surface-card, #fff);
-        border: 1px solid var(--vu-border-soft, #e2e8f0);
-        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin: 4px 0 14px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
         padding: 0;
-        margin: 4px 0 12px;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        overflow: visible;
     }
 
     .vu-quick-info__item {
-        flex: 1;
+        position: relative;
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 14px 18px;
-        border-right: 1px solid var(--vu-border-soft, #e2e8f0);
+        padding: 14px 16px;
         min-width: 0;
+        background: var(--vu-surface-card, #fff);
+        border: 1px solid var(--vu-border-soft, #e6e9f1);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+        overflow: hidden;
+        transition: transform 150ms, box-shadow 150ms;
 
-        &:last-child {
-            border-right: none;
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+        }
+
+        // left accent bar (per-metric colour set below via :has)
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: var(--vu-brand-primary, #1565C0);
         }
     }
+    // per-metric accent colour (matches the icon chip)
+    .vu-quick-info__item:has(.vu-qi-scheduled)::before { background: #1565C0; }
+    .vu-quick-info__item:has(.vu-qi-service)::before   { background: #7C3AED; }
+    .vu-quick-info__item:has(.vu-qi-duration)::before  { background: #FF6F00; }
+    .vu-quick-info__item:has(.vu-qi-facility)::before  { background: #00897B; }
+    .vu-quick-info__item:has(.vu-qi-catchment)::before { background: #2E7D32; }
 
     .vu-quick-info__icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        font-size: 1rem;
-        background: #eff6ff;
-        color: #2563eb;
+        font-size: 1.05rem;
+        background: #E3F2FD;
+        color: #1565C0;
     }
 
     .vu-quick-info__label {
         font-size: 0.6875rem;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.06em;
         color: #94a3b8;
@@ -372,9 +395,10 @@
     }
 
     .vu-quick-info__value {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #1e293b;
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.25;
 
         .o_field_widget {
             font-size: inherit !important;
@@ -440,9 +464,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #f1f5f9;
+        margin-bottom: 14px;
     }
 
     .vu-client-card__title {
@@ -636,8 +658,6 @@
         font-weight: 700;
         color: #1e293b;
         margin-bottom: 12px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #f1f5f9;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -690,25 +710,25 @@
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // NOTEBOOK TABS — Card-contained bar matching client profile style
+    // NOTEBOOK TABS — Borderless bar (clean bottom line only), prototype-style
     // ─────────────────────────────────────────────────────────────────────
     .o_notebook {
         .o_notebook_headers {
-            background: var(--vu-surface-card, #fff);
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            border: 1px solid var(--vu-border-soft, #e2e8f0);
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
             margin-bottom: 16px;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .nav-tabs {
-            border-bottom: none;
+            border-bottom: 2px solid var(--vu-border-soft, #e2e8f0);
             gap: 0;
             margin: 0;
 
             .nav-item {
-                margin-bottom: 0;
+                margin-bottom: -2px;
             }
 
             .nav-link {
@@ -738,8 +758,8 @@
                 }
 
                 &.active {
-                    color: var(--vu-brand-primary, #1565C0);
-                    border-bottom-color: var(--vu-brand-primary, #1565C0);
+                    color: #1A237E;
+                    border-bottom-color: #FF6F00;
                     background: transparent;
 
                     &::before { opacity: 1; }
@@ -783,67 +803,22 @@
     // ─────────────────────────────────────────────────────────────────────
     // QUICK INFO BAR — Color-coded icons
     // ─────────────────────────────────────────────────────────────────────
-    .vu-qi-scheduled {
-        background: #eff6ff !important;
-        color: #2563eb !important;
-    }
+    .vu-qi-scheduled { background: #E3F2FD !important; color: #1565C0 !important; }
+    .vu-qi-service   { background: #F3E8FF !important; color: #7C3AED !important; }
+    .vu-qi-duration  { background: #FFF3E0 !important; color: #FF6F00 !important; }
+    .vu-qi-facility  { background: #E0F2F1 !important; color: #00897B !important; }
+    .vu-qi-catchment { background: #E7F5EA !important; color: #2E7D32 !important; }
 
-    .vu-qi-service {
-        background: #f5f3ff !important;
-        color: #7c3aed !important;
-    }
-
-    .vu-qi-duration {
-        background: #fffbeb !important;
-        color: #d97706 !important;
-    }
-
-    .vu-qi-facility {
-        background: #ecfdf5 !important;
-        color: #059669 !important;
-    }
-
-    .vu-qi-catchment {
-        background: #fdf2f8 !important;
-        color: #db2777 !important;
-    }
-
-    // ─────────────────────────────────────────────────────────────────────
-    // EDITABILITY INDICATORS — Dotted underline + hover confirmation
-    // ─────────────────────────────────────────────────────────────────────
-    .vu-detail-card {
-        .o_field_widget:not(.o_readonly_modifier):not([name="assignment_ids"]):not([name="clinical_note_ids"]) {
-            .o_input, input, select, textarea {
-                border-bottom: 1px dashed rgba(0, 0, 0, 0.12) !important;
-                border-radius: 0;
-                transition: border-color 0.15s, background-color 0.15s;
-
-                &:hover {
-                    border-bottom-color: var(--vu-brand-primary, #2563eb) !important;
-                    background-color: rgba(37, 99, 235, 0.03);
-                }
-
-                &:focus {
-                    border-bottom: 2px solid var(--vu-brand-primary, #2563eb) !important;
-                    background-color: rgba(37, 99, 235, 0.03);
-                }
-            }
-        }
-
-        .o_field_widget.o_readonly_modifier {
-            .o_input, input, select {
-                border-bottom: none !important;
-            }
-        }
-    }
+    // Field inputs use the GLOBAL rounded-border treatment from health_theme
+    // (backend.scss / field_indicators.scss) — no per-card override here.
 
     // ─────────────────────────────────────────────────────────────────────
     // CARD HEADERS — Border separator + icon color (prototype-match)
     // ─────────────────────────────────────────────────────────────────────
     .vu-detail-card > .vu-card__title {
-        padding: 14px 20px;
-        margin: calc(-1 * var(--vu-space-md, 16px)) calc(-1 * var(--vu-space-md, 16px)) var(--vu-space-md, 16px);
-        border-bottom: 1px solid var(--vu-border-soft, #E0E0E0);
+        margin: 0 0 14px;
+        padding: 0;
+        border-bottom: none;
         font-size: 14px;
         font-weight: 700;
         color: #212121;
@@ -861,10 +836,10 @@
     // ─────────────────────────────────────────────────────────────────────
     .vu-action-card__supertitle {
         font-size: 0.6875rem;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.4px;
-        color: #d97706;
+        letter-spacing: 0.5px;
+        color: #FF6F00;
         margin-bottom: 4px;
         display: flex;
         align-items: center;
@@ -872,8 +847,32 @@
     }
 
     .vu-action-star {
-        color: #f59e0b !important;
+        color: #FF6F00 !important;
         font-size: 0.75rem;
+    }
+
+    // Quick Actions → icon-chip rows (matches the client profile sidebar)
+    .vu-action-item {
+        > .fa,
+        > i.fa {
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            background: #eef2f8;
+            color: #64748b;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-size: 0.8125rem;
+            transition: background 120ms, color 120ms;
+        }
+
+        &:hover > .fa,
+        &:hover > i.fa {
+            background: #1A237E;
+            color: #fff;
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -1050,6 +1049,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // RESPONSIVE — Mobile: hide sidebar, stack columns
 // ─────────────────────────────────────────────────────────────────────────────
+// Laptop: KPI cards 5 → 3
+@media (max-width: 1280px) {
+    .ops-booking-form-page .vu-quick-info { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (max-width: 1100px) {
     .ops-booking-form-page {
         .vu-three-col {
@@ -1057,6 +1061,7 @@
             gap: 12px;
         }
 
+        // Actions column docks below as a row of cards
         .vu-col-actions {
             grid-column: 1 / -1;
             position: static;
@@ -1064,72 +1069,36 @@
             overflow: visible;
             flex-direction: row;
             flex-wrap: wrap;
+            align-items: stretch;
         }
 
-        .vu-quick-info {
-            flex-wrap: wrap;
-        }
-
-        .vu-quick-info__item {
-            flex: 1 1 calc(33% - 1px);
-
-            &:nth-child(3) {
-                border-right: none;
-            }
-
-            &:nth-child(1),
-            &:nth-child(2),
-            &:nth-child(3) {
-                border-bottom: 1px solid var(--vu-border-soft, #e2e8f0);
-            }
-        }
+        .vu-quick-info { grid-template-columns: repeat(3, 1fr); }
     }
 }
 
 @media (max-width: 768px) {
     .ops-booking-form-page {
-        .ops-sidebar {
-            display: none;
-        }
+        .ops-sidebar { display: none; }
+        .ops-form-main-area { width: 100%; }
 
-        .ops-form-main-area {
-            width: 100%;
-        }
-
-        .vu-three-col {
-            grid-template-columns: 1fr;
-        }
+        .vu-three-col { grid-template-columns: 1fr; }
 
         .vu-col-actions {
             position: static;
             max-height: none;
             overflow: visible;
-            order: -1;
             flex-direction: column;
         }
 
-        .vu-booking-hero {
-            flex-direction: column;
-            gap: 12px;
-        }
+        .vu-booking-hero { flex-direction: column; gap: 12px; }
+        .vu-hero-right { text-align: left; align-items: flex-start; }
 
-        .vu-hero-right {
-            text-align: left;
-        }
-
-        .vu-quick-info {
-            flex-direction: column;
-        }
-
-        .vu-quick-info__item {
-            border-right: none;
-            border-bottom: 1px solid var(--vu-border-soft, #e2e8f0);
-
-            &:last-child {
-                border-bottom: none;
-            }
-        }
+        .vu-quick-info { grid-template-columns: repeat(2, 1fr); }
     }
+}
+
+@media (max-width: 560px) {
+    .ops-booking-form-page .vu-quick-info { grid-template-columns: 1fr; }
 }
 
 
