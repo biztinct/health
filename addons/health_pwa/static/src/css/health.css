@@ -312,7 +312,7 @@
   outline: none;
   border-color: var(--primary-color);
   background: var(--background-color);
-  box-shadow: 0 0 0 2px rgba(135, 90, 123, 0.1);
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.1);
 }
 
 .search-icon {
@@ -1103,7 +1103,7 @@ html {
   }
   
   .list-item:active {
-    background: rgba(135, 90, 123, 0.2);
+    background: rgba(21, 101, 192, 0.2);
   }
   
   .offline-notice {
@@ -1705,4 +1705,29 @@ html {
 /* Content clears the taller nav */
 .mobile-content {
   padding-bottom: calc(var(--bottom-nav-height) + 26px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* ============================================================
+   WIZARD / FORM POLISH — consistent rounding + brand focus ring
+   across the Start Service, Clinical Notes, Payment, Cancellation,
+   Create-Booking and Reschedule flows (CSS-only, no markup change).
+   ============================================================ */
+.modal-content input:not([type="checkbox"]):not([type="radio"]),
+.modal-content select,
+.modal-content textarea,
+.form-control,
+.clinical-form-field,
+.editable-input {
+  border-radius: 10px !important;
+}
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus,
+.form-control:focus,
+.clinical-form-field:focus,
+.editable-input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12) !important;
 }

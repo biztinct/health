@@ -3318,7 +3318,7 @@ window.healthPWA = {
         <!-- Cancellation Modal -->
         <div v-if="showCancellationModal" class="modal-backdrop" @click="showCancellationModal = false" style="background: white;">
           <div class="modal-container" @click.stop style="max-width: 420px;">
-            <div class="modal-header" style="background: #d32f2f; color: white;">
+            <div class="modal-header" style="background: #E53935; color: white;">
               <h3 style="color: white;">
                 <i class="material-icons">cancel</i>
                 {{ _t('Cancel/Refuse Visit') }}
@@ -3335,7 +3335,7 @@ window.healthPWA = {
             <div class="modal-body">
               <div style="margin-bottom: 16px;">
                 <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-                  {{ _t('Cancellation Reason') }} <span style="color: #d32f2f;">*</span>
+                  {{ _t('Cancellation Reason') }} <span style="color: #E53935;">*</span>
                 </label>
                 <select v-model="cancellationFormData.reason_id"
                   style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: white; appearance: auto;">
@@ -3478,7 +3478,7 @@ window.healthPWA = {
                     <strong style="font-size:14px;">{{ note.author }}</strong>
                     <small style="color:#999; font-size:11px;">{{ new Date(note.date).toLocaleString() }}</small>
                   </div>
-                  <div style="font-size:12px; color:#2196F3; margin-bottom:4px;">{{ note.author_role }}</div>
+                  <div style="font-size:12px; color:#1565C0; margin-bottom:4px;">{{ note.author_role }}</div>
                   <div v-if="note.clinical_notes" style="font-size:13px; color:#333; margin-bottom:4px; white-space:pre-line; max-height:60px; overflow:hidden; text-overflow:ellipsis;">{{ note.clinical_notes.replace(/<[^>]*>/g, '') }}</div>
                   <div v-if="note.diagnosis" style="font-size:12px; color:#666;"><strong>Dx:</strong> {{ note.diagnosis }}</div>
                   <div v-if="note.images && note.images.length > 0" style="display:flex; gap:4px; margin-top:6px;">
@@ -3504,7 +3504,7 @@ window.healthPWA = {
                   <strong>{{ viewingClinicalNote.author }}</strong>
                   <small style="color:#999;">{{ new Date(viewingClinicalNote.date).toLocaleString() }}</small>
                 </div>
-                <div style="font-size:12px; color:#2196F3;">{{ viewingClinicalNote.author_role }}</div>
+                <div style="font-size:12px; color:#1565C0;">{{ viewingClinicalNote.author_role }}</div>
               </div>
               <div v-if="viewingClinicalNote.clinical_notes" class="clinical-form-group">
                 <label class="clinical-form-label">{{ _t('Clinical Notes') }}</label>
@@ -4180,7 +4180,7 @@ window.healthPWA = {
 
               <!-- Error State -->
               <div v-else-if="catalogError" class="error-state">
-                <p style="color: #e74c3c;">{{ _t('Error:') }} {{ catalogError }}</p>
+                <p style="color: #E53935;">{{ _t('Error:') }} {{ catalogError }}</p>
               </div>
 
               <!-- Products Grid -->

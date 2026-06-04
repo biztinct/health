@@ -904,7 +904,7 @@
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
 }
 
 /* Captured Images Display */
@@ -1251,7 +1251,7 @@
 .invoice-table input.input-sm:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.1);
 }
 
 .btn-group-sm {

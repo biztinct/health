@@ -968,7 +968,7 @@ p {
 .form-control:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(135, 90, 123, 0.2);
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
 }
 
 .form-control:disabled {
@@ -1609,7 +1609,7 @@ p {
 
 .calendar-day.has-booking {
   border-color: var(--primary-color);
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(21, 101, 192, 0.1);
 }
 
 .calendar-day.is-today {
@@ -1941,7 +1941,7 @@ p {
 }
 
 .detail-error {
-  color: #e74c3c;
+  color: #E53935;
   background: rgba(231, 76, 60, 0.05);
   border-radius: var(--border-radius);
 }
@@ -2125,7 +2125,7 @@ p {
 }
 
 .btn-danger {
-  background: #e74c3c;
+  background: #E53935;
   color: white;
 }
 
@@ -2591,7 +2591,7 @@ p {
 
 .timer-badge i {
   font-size: 1rem;
-  color: #e74c3c;
+  color: #E53935;
 }
 
 .btn-modal-close {
@@ -3002,7 +3002,7 @@ p {
 
 .btn-invoice:hover {
   background: #6d28d9;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
 }
 
 .btn-invoice:active {
@@ -3879,7 +3879,7 @@ p {
 
 .form-group label:hover {
   border-color: var(--primary-color);
-  background: rgba(135, 90, 123, 0.05);
+  background: rgba(21, 101, 192, 0.05);
 }
 
 .form-group input[type="radio"],
@@ -3905,7 +3905,7 @@ p {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(135, 90, 123, 0.1);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
 }
 
 .form-group textarea {
@@ -4208,7 +4208,7 @@ p {
 .btn-remove-small {
   background: none;
   border: none;
-  color: #e74c3c;
+  color: #E53935;
   cursor: pointer;
   padding: var(--spacing-xs);
   display: flex;
@@ -4418,7 +4418,7 @@ p {
 .date-time-control:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(135, 90, 123, 0.15);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
   background: var(--background-color);
 }
 
@@ -4449,7 +4449,7 @@ p {
 .search-control-clean:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(135, 90, 123, 0.15);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
   background: var(--background-color);
 }
 
@@ -4522,7 +4522,7 @@ p {
   width: 80px;
   height: 80px;
   border-radius: 18px;
-  box-shadow: 0 4px 16px rgba(135, 90, 123, 0.3);
+  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);
 }
 
 .pwa-install-app-icon-emoji {
@@ -4530,7 +4530,7 @@ p {
   height: 80px;
   border-radius: 18px;
   background: linear-gradient(135deg, #1565C0, #0D47A1);
-  box-shadow: 0 4px 16px rgba(135, 90, 123, 0.3);
+  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4896,7 +4896,7 @@ p {
   flex-shrink: 0;
 }
 .notif-dismiss-x:active {
-  color: #d32f2f;
+  color: #E53935;
 }
 
 .notif-card-body {
@@ -4969,7 +4969,7 @@ p {
 }
 
 .notif-btn-ok {
-  background: #2196F3;
+  background: #1565C0;
   color: #fff;
   flex: 1;
 }
