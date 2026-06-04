@@ -178,7 +178,7 @@
         flex-wrap: wrap;
         background: var(--vu-surface-card, #fff);
         border: 1px solid var(--vu-border-soft, #e6e9f1);
-        border-left: 4px solid #1A237E;
+        border-left: 4px solid #1565C0;
         border-radius: 12px;
         box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
         padding: 16px 22px;
@@ -235,7 +235,7 @@
 
     .vu-urgency--emergency {
         background: #fee2e2;
-        color: #dc2626;
+        color: #E53935;
         border: 1px solid #fca5a5;
     }
 
@@ -365,12 +365,12 @@
             background: var(--vu-brand-primary, #1565C0);
         }
     }
-    // per-metric accent colour (matches the icon chip)
-    .vu-quick-info__item:has(.vu-qi-scheduled)::before { background: #1565C0; }
-    .vu-quick-info__item:has(.vu-qi-service)::before   { background: #7C3AED; }
-    .vu-quick-info__item:has(.vu-qi-duration)::before  { background: #FF6F00; }
-    .vu-quick-info__item:has(.vu-qi-facility)::before  { background: #00897B; }
-    .vu-quick-info__item:has(.vu-qi-catchment)::before { background: #2E7D32; }
+    // per-metric accent colour — Việt Úc brand palette only
+    .vu-quick-info__item:has(.vu-qi-scheduled)::before { background: #1565C0; } // Deep Blue
+    .vu-quick-info__item:has(.vu-qi-service)::before   { background: #42A5F5; } // Accent Blue
+    .vu-quick-info__item:has(.vu-qi-duration)::before  { background: #FB8C00; } // Hibiscus Orange
+    .vu-quick-info__item:has(.vu-qi-facility)::before  { background: #43A047; } // Leaf Green
+    .vu-quick-info__item:has(.vu-qi-catchment)::before { background: #1356A9; } // Deep Blue (darker)
 
     .vu-quick-info__icon {
         width: 40px;
@@ -758,8 +758,8 @@
                 }
 
                 &.active {
-                    color: #1A237E;
-                    border-bottom-color: #FF6F00;
+                    color: #1565C0;
+                    border-bottom-color: #FB8C00;
                     background: transparent;
 
                     &::before { opacity: 1; }
@@ -803,11 +803,11 @@
     // ─────────────────────────────────────────────────────────────────────
     // QUICK INFO BAR — Color-coded icons
     // ─────────────────────────────────────────────────────────────────────
-    .vu-qi-scheduled { background: #E3F2FD !important; color: #1565C0 !important; }
-    .vu-qi-service   { background: #F3E8FF !important; color: #7C3AED !important; }
-    .vu-qi-duration  { background: #FFF3E0 !important; color: #FF6F00 !important; }
-    .vu-qi-facility  { background: #E0F2F1 !important; color: #00897B !important; }
-    .vu-qi-catchment { background: #E7F5EA !important; color: #2E7D32 !important; }
+    .vu-qi-scheduled { background: #E4F4FD !important; color: #1565C0 !important; }
+    .vu-qi-service   { background: #E4F4FD !important; color: #42A5F5 !important; }
+    .vu-qi-duration  { background: #FEE8C9 !important; color: #FB8C00 !important; }
+    .vu-qi-facility  { background: #DBF0DB !important; color: #43A047 !important; }
+    .vu-qi-catchment { background: #E4F4FD !important; color: #1356A9 !important; }
 
     // Field inputs use the GLOBAL rounded-border treatment from health_theme
     // (backend.scss / field_indicators.scss) — no per-card override here.
@@ -839,7 +839,7 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #FF6F00;
+        color: #FB8C00;
         margin-bottom: 4px;
         display: flex;
         align-items: center;
@@ -847,7 +847,7 @@
     }
 
     .vu-action-star {
-        color: #FF6F00 !important;
+        color: #FB8C00 !important;
         font-size: 0.75rem;
     }
 
@@ -870,7 +870,7 @@
 
         &:hover > .fa,
         &:hover > i.fa {
-            background: #1A237E;
+            background: #1565C0;
             color: #fff;
         }
     }
@@ -915,12 +915,12 @@
         }
 
         .btn:has(.fa-times) {
-            color: #dc2626;
+            color: #E53935;
             border-color: #fca5a5;
 
             &:hover {
                 background: #fee2e2;
-                border-color: #dc2626;
+                border-color: #E53935;
             }
         }
 
@@ -1197,7 +1197,7 @@
         letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px;
     }
     &__badge--active { background: #dcfce7; color: #15803d; }
-    &__badge--exhausted { background: #fee2e2; color: #dc2626; }
+    &__badge--exhausted { background: #fee2e2; color: #E53935; }
     &__badge--expired { background: #fef3c7; color: #92400e; }
     &__badge--cancelled { background: #f1f5f9; color: #64748b; }
 
@@ -1211,7 +1211,7 @@
     }
     &__fill--green { background: linear-gradient(90deg, #22c55e, #16a34a); }
     &__fill--amber { background: linear-gradient(90deg, #f59e0b, #d97706); }
-    &__fill--red { background: linear-gradient(90deg, #ef4444, #dc2626); }
+    &__fill--red { background: linear-gradient(90deg, #F07C75, #E53935); }
 
     &__stats { display: flex; align-items: center; gap: 4px; font-size: 12px; white-space: nowrap; }
     &__used { font-weight: 700; color: #334155; }
@@ -1223,7 +1223,7 @@
     }
     &__remaining--plenty { background: #dcfce7; color: #15803d; }
     &__remaining--low { background: #fef3c7; color: #92400e; }
-    &__remaining--zero { background: #fee2e2; color: #dc2626; }
+    &__remaining--zero { background: #fee2e2; color: #E53935; }
 }
 
 // Empty state

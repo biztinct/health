@@ -590,9 +590,9 @@
 }
 
 .btn-action {
-  --btn-accent-rgb: 99, 102, 241;
+  --btn-accent-rgb: 21, 101, 192;
   --btn-border: rgba(148, 163, 184, 0.24);
-  --btn-border-hover: rgba(99, 102, 241, 0.35);
+  --btn-border-hover: rgba(21, 101, 192, 0.35);
   --btn-shadow: rgba(15, 23, 42, 0.08);
   --btn-shadow-hover: rgba(15, 23, 42, 0.14);
   --btn-ink: #1f2937;
@@ -1043,7 +1043,7 @@
 }
 
 .info-section h3 i {
-  color: #6366f1;
+  color: #1565C0;
 }
 
 .info-grid {

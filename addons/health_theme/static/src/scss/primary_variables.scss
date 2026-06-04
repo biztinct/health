@@ -292,15 +292,39 @@ $font-weight-extrabold: 800;
     --vu-icon-size: 20px;
 }
 
+// ===== DARK THEME =====
+// Deep-navy canvas derived from the brand Deep Blue family (neutrals dominate,
+// Accent Blue leads, light hibiscus tints for status). Activated by setting
+// data-theme="dark" on <html>/<body> (a user toggle wires this on).
 [data-theme='dark'] {
-    --vu-surface-app: #{$vu-text-primary};
-    --vu-surface-panel: #{darken($vu-text-primary, 5%)};
-    --vu-surface-card: #{darken($vu-text-primary, 8%)};
-    --vu-surface-muted: #{darken($vu-text-primary, 12%)};
+    --vu-surface-app: #0E1626;        // deep navy-charcoal canvas
+    --vu-surface-panel: #131D31;
+    --vu-surface-card: #16213A;       // cards / sheets
+    --vu-surface-muted: #0E1626;
+    --vu-surface-hover: #{rgba($vu-accent-blue, 0.14)};
+
     --vu-text-primary: #{$vu-white};
-    --vu-text-secondary: #{rgba($vu-white, 0.75)};
-    --vu-border-soft: #{rgba($vu-white, 0.15)};
-    --vu-border-strong: #{rgba($vu-white, 0.3)};
+    --vu-text-secondary: #{rgba($vu-white, 0.72)};
+    --vu-text-inverse: #0E1626;
+
+    --vu-border-soft: #243049;
+    --vu-border-strong: #324063;
+
+    // Lighten brand blue on dark so actions/links stay legible (contrast)
+    --vu-brand-primary: #{$vu-accent-blue};        // #42A5F5
+    --vu-brand-primary-dark: #{$vu-deep-blue};     // #1565C0
+    --vu-brand-secondary: #{$vu-deep-blue-light};  // #83C5FA
+    --vu-brand-accent: #FCB24D;                    // Hibiscus Orange (light)
+
+    // Status — light hibiscus / blue variants for contrast on dark
+    --vu-status-success: #7BC685;
+    --vu-status-info: #83C5FA;
+    --vu-status-warning: #FCB24D;
+    --vu-status-danger: #F07C75;
+
+    --vu-field-required-accent: #FCB24D;
+    --vu-field-editable-bg: #{rgba($vu-accent-blue, 0.06)};
+
     --vu-shadow-sm: 0 2px 6px rgba(0,0,0,0.4);
     --vu-shadow-md: 0 6px 20px rgba(0,0,0,0.45);
     --vu-shadow-lg: 0 10px 30px rgba(0,0,0,0.55);

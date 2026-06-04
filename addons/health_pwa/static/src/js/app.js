@@ -510,7 +510,10 @@ window.healthPWA = {
                   <i class="material-icons">arrow_back</i>
                 </button>
               </div>
-              <h1 class="mobile-header-title">{{ getRouteTitle() }}</h1>
+              <h1 class="mobile-header-title">
+                <img v-if="state.currentRoute === 'today'" class="header-logo" src="/health_pwa/static/img/VietLogo.png" alt="Việt Úc"/>
+                <span v-else>{{ getRouteTitle() }}</span>
+              </h1>
               <div class="mobile-header-right">
                 <button class="notif-bell-btn" @click="toggleNotifPanel" :class="{ active: state.notifPanelOpen }">
                   <i class="material-icons">notifications</i>
@@ -731,7 +734,7 @@ window.healthPWA = {
       methods: {
         getRouteTitle() {
           const titles = {
-            today: _t('Today'),
+            today: 'Việt Úc',
             patients: _t('Patients'),
             patient: _t('Patient Details'),
             profile: _t('Profile')
@@ -750,6 +753,17 @@ window.healthPWA = {
     // Create and mount Vue app
     const app = createApp(HealthApp);
     app.config.globalProperties._t = _t;
+    // Global initials helper (avatar text) available to every component template
+    app.config.globalProperties.initials = (name) => {
+      if (!name) return '?';
+      const parts = String(name).trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) return '?';
+      const first = parts[0][0] || '';
+      const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+      return (first + last).toUpperCase() || '?';
+    };
+    // App version (shown on the Profile screen)
+    app.config.globalProperties.pwaVersion = (window.healthPWAConfig && window.healthPWAConfig.version) || '';
     app.provide('_t', _t);
     
     // Register global components (will be loaded from separate files)
@@ -1173,6 +1187,7 @@ window.healthPWA = {
                   fso_id: order.id,
                   fso_name: order.name,
                   patient_name: order.patient_name,
+                  patient_code: order.patient_code || order.patient_ref || '',
                   patient_id: order.patient_id,
                   patient_phone: order.phone,
                   patient_zalo: order.patient_zalo || null,
@@ -1262,6 +1277,7 @@ window.healthPWA = {
                   fso_id: order.id,
                   fso_name: order.name,
                   patient_name: order.patient_name,
+                  patient_code: order.patient_code || order.patient_ref || '',
                   patient_id: order.patient_id,
                   patient_phone: order.phone,
                   patient_zalo: order.patient_zalo || null,
@@ -1504,22 +1520,22 @@ window.healthPWA = {
           // Support both 'status' (old) and 'state' (new API) properties
           const status = String(booking.status || booking.state || '').toLowerCase();
 
-          // Check for Running Late (orange)
+          // Check for Running Late (Hibiscus Orange)
           if (isRunningLate(booking)) {
-            return '#f39c12'; // Orange
+            return '#FB8C00'; // Hibiscus Orange
           }
 
           const colors = {
-            'draft': '#3498db',                      // Blue - Booked
-            'confirmed': '#3498db',                  // Blue - Confirmed
-            'assigned': '#3498db',                   // Blue - Assigned
-            'in_progress': '#2ecc71',                // Green - In Progress
-            'completed': '#95a5a6',                  // Grey - Completed
-            'completed_pending_invoice': '#95a5a6', // Grey - Pending Invoice
-            'closed': '#95a5a6',                     // Grey - Closed
-            'cancelled': '#e74c3c'                   // Red - Cancelled
+            'draft': '#1565C0',                      // Deep Blue - Booked
+            'confirmed': '#1565C0',                  // Deep Blue - Confirmed
+            'assigned': '#1565C0',                   // Deep Blue - Assigned
+            'in_progress': '#43A047',                // Leaf Green - In Progress
+            'completed': '#94A3B8',                  // Grey - Completed
+            'completed_pending_invoice': '#94A3B8', // Grey - Pending Invoice
+            'closed': '#94A3B8',                     // Grey - Closed
+            'cancelled': '#E53935'                   // Hibiscus Red - Cancelled
           };
-          return colors[status] || '#95a5a6';
+          return colors[status] || '#94A3B8';
         };
 
         const getStatusDisplay = (booking) => {
@@ -1544,6 +1560,54 @@ window.healthPWA = {
           };
           return displayMap[status] || status || _t('Unknown');
         };
+
+        // --- Brand status palette for redesigned cards (tint + accent + text) ---
+        const statusKey = (booking) => {
+          if (!booking) return 'upcoming';
+          if (isRunningLate(booking)) return 'late';
+          const s = String(booking.status || booking.state || '').toLowerCase();
+          if (s === 'in_progress') return 'inprogress';
+          if (['completed', 'completed_pending_invoice', 'closed'].includes(s)) return 'done';
+          if (s === 'cancelled') return 'cancelled';
+          return 'upcoming';
+        };
+        const STATUS_PALETTE = {
+          late:       { ac: '#FB8C00', bg: '#FEE8C9', tx: '#9C4C00' },
+          upcoming:   { ac: '#1565C0', bg: '#E4F4FD', tx: '#1356A9' },
+          inprogress: { ac: '#43A047', bg: '#DBF0DB', tx: '#2E6B33' },
+          done:       { ac: '#94A3B8', bg: '#EEF1F8', tx: '#475569' },
+          cancelled:  { ac: '#E53935', bg: '#FBE3E1', tx: '#C32B2E' },
+        };
+        const statusAccent = (booking) => STATUS_PALETTE[statusKey(booking)].ac;
+        const statusChip = (booking) => {
+          const p = STATUS_PALETTE[statusKey(booking)];
+          return { background: p.bg, color: p.tx };
+        };
+        const initials = (name) => {
+          if (!name) return '?';
+          const parts = String(name).trim().split(/\s+/).filter(Boolean);
+          if (!parts.length) return '?';
+          const first = parts[0][0] || '';
+          const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+          return (first + last).toUpperCase() || '?';
+        };
+
+        // Day summary counts (visits / late / done) for the Today pills
+        const daySummary = computed(() => {
+          const list = bookings.value || [];
+          let late = 0, done = 0;
+          list.forEach(b => {
+            const k = statusKey(b);
+            if (k === 'late') late++;
+            else if (k === 'done') done++;
+          });
+          return { visits: list.length, late, done };
+        });
+        // Whether the currently viewed date is today (to highlight the Today button)
+        const isToday = computed(() => {
+          try { return new Date().toDateString() === currentDate.value.toDateString(); }
+          catch (e) { return false; }
+        });
 
         const callPatient = (phone) => {
           if (phone) {
@@ -2770,6 +2834,12 @@ window.healthPWA = {
           handleTouchEnd,
           getStatusColor,
           getStatusDisplay,
+          statusKey,
+          statusAccent,
+          statusChip,
+          initials,
+          daySummary,
+          isToday,
           isRunningLate,
           callPatient,
           callZalo,
@@ -2894,54 +2964,36 @@ window.healthPWA = {
       },
       template: `
         <div class="today-view" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
-          <!-- Header with centered navigation -->
-          <div class="booking-header-main">
-            <button @click="goToPrevious" class="btn-nav-arrow-header">
-              <i class="material-icons">chevron_left</i>
-            </button>
+          <!-- Consolidated day sub-header -->
+          <div class="bk-sub">
+            <!-- Row 1: full date (left) + staff name (right, light grey) -->
+            <div class="bk-toprow">
+              <div class="bk-date">{{ displayDate }}</div>
+              <div class="bk-staff">{{ staffName }}</div>
+            </div>
+            <!-- Row 2: Today (all views) + date navigation -->
+            <div class="bk-navrow">
+              <button @click="goToToday" class="bk-today" :class="{ 'is-current': isToday }" :title="_t('Jump to today')">{{ _t('Today') }}</button>
+              <div class="bk-navbtns">
+                <button @click="goToPrevious" class="bk-rnd" :title="_t('Previous')">
+                  <i class="material-icons">chevron_left</i>
+                </button>
+                <button @click="toggleCalendar" class="bk-rnd solid" :title="_t('Select date')">
+                  <i class="material-icons">calendar_month</i>
+                </button>
+                <button @click="goToNext" class="bk-rnd" :title="_t('Next')">
+                  <i class="material-icons">chevron_right</i>
+                </button>
+              </div>
+            </div>
 
-            <button @click="goToToday" class="tab-btn" :class="{ active: new Date().toDateString() === currentDate.toDateString() }">
-              {{ _t('Today') }}
-            </button>
-
-            <button @click="goToNext" class="btn-nav-arrow-header">
-              <i class="material-icons">chevron_right</i>
-            </button>
-          </div>
-
-          <!-- View mode tabs -->
-          <div class="view-tabs">
-            <button
-              @click="setViewMode('day')"
-              :class="{ active: viewMode === 'day' }"
-              class="tab-btn tab-day"
-            >
-              {{ _t('Day') }}
-            </button>
-            <button
-              @click="setViewMode('week')"
-              :class="{ active: viewMode === 'week' }"
-              class="tab-btn tab-week"
-            >
-              {{ _t('Week') }}
-            </button>
-            <button
-              @click="setViewMode('month')"
-              :class="{ active: viewMode === 'month' }"
-              class="tab-btn tab-month"
-            >
-              {{ _t('Month') }}
-            </button>
-
-            <button @click="toggleCalendar" class="btn-calendar-icon" :title="_t('Select date')">
-              <i class="material-icons">calendar_month</i>
-            </button>
-          </div>
-
-          <!-- Date and staff info -->
-          <div class="booking-date-section">
-            <p class="staff-name">{{ staffName }}</p>
-            <p class="date-display">{{ displayDate }}</p>
+            <!-- Segmented control with sliding pill -->
+            <div class="bk-seg" :class="'sel-' + viewMode">
+              <span class="bk-seg-pill"></span>
+              <button @click="setViewMode('day')" :class="{ on: viewMode === 'day' }">{{ _t('Day') }}</button>
+              <button @click="setViewMode('week')" :class="{ on: viewMode === 'week' }">{{ _t('Week') }}</button>
+              <button @click="setViewMode('month')" :class="{ on: viewMode === 'month' }">{{ _t('Month') }}</button>
+            </div>
           </div>
 
           <!-- Content based on view mode -->
@@ -2958,27 +3010,37 @@ window.healthPWA = {
 
           <!-- Day view -->
           <div v-else-if="viewMode === 'day'">
+            <!-- Day summary pills -->
+            <div v-if="bookings.length" class="bk-summary">
+              <span class="bk-chip"><span class="dot" style="background:#1565C0"></span><b>{{ daySummary.visits }}</b> {{ _t('visits') }}</span>
+              <span class="bk-chip"><span class="dot" style="background:#FB8C00"></span><b>{{ daySummary.late }}</b> {{ _t('late') }}</span>
+              <span class="bk-chip"><span class="dot" style="background:#43A047"></span><b>{{ daySummary.done }}</b> {{ _t('done') }}</span>
+            </div>
+
             <div v-if="bookings.length === 0" class="empty-state">
               <i class="material-icons">event_note</i>
               <p>{{ _t('No bookings scheduled for this day') }}</p>
             </div>
 
             <div v-else class="bookings-list">
-              <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card" @click="toggleBookingDetail(booking.fso_id)">
+              <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card" :style="{ '--ac': statusAccent(booking) }" @click="toggleBookingDetail(booking.fso_id)">
                   <!-- Header with time and status -->
                   <div class="booking-card-header">
                     <div class="booking-time-badge">
-                      {{ booking.scheduled_duration }}min · {{ booking.formatted_time || booking.scheduled_time }}
+                      {{ booking.formatted_time || booking.scheduled_time }}<small>{{ booking.scheduled_duration }} min</small>
                     </div>
-                    <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
+                    <div class="status-badge" :style="statusChip(booking)">
                       {{ getStatusDisplay(booking) }}
                     </div>
                   </div>
 
                   <!-- Patient info -->
                   <div class="booking-patient-section">
-                    <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-                    <span v-if="booking.patient_code" style="margin-left: auto; font-weight: 600; font-size: 12px; color: #555;">{{ booking.patient_code }}</span>
+                    <div class="bk-avatar">{{ initials(booking.patient_name) }}</div>
+                    <div class="bk-who">
+                      <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                      <span v-if="booking.patient_code" class="bk-code">{{ booking.patient_code }}</span>
+                    </div>
                   </div>
 
                   <!-- Service type with action buttons inline -->
@@ -2993,7 +3055,7 @@ window.healthPWA = {
                       <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" :title="_t('Call patient')">
                         <i class="material-icons">call</i>
                       </button>
-                      <button v-if="booking.patient_zalo" @click.stop="callZalo(booking.patient_zalo)" class="btn-icon-action btn-icon-zalo" title="Zalo call" style="background: #0068FF; color: #fff;">
+                      <button v-if="booking.patient_zalo" @click.stop="callZalo(booking.patient_zalo)" class="btn-icon-action btn-icon-zalo" title="Zalo call">
                         <i class="material-icons">chat</i>
                       </button>
                       <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" :title="_t('Open map')">
@@ -3019,21 +3081,24 @@ window.healthPWA = {
                 <h4 class="date-group-title">{{ dateStr }}</h4>
                 <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card-container">
                   <!-- Clickable booking card -->
-                  <div @click="toggleBookingDetail(booking.fso_id)" class="booking-card" :class="{ expanded: selectedBookingId === booking.fso_id }">
+                  <div @click="toggleBookingDetail(booking.fso_id)" class="booking-card" :class="{ expanded: selectedBookingId === booking.fso_id }" :style="{ '--ac': statusAccent(booking) }">
                     <!-- Header with time and status -->
                     <div class="booking-card-header">
                       <div class="booking-time-badge">
-                        {{ booking.scheduled_duration || 60 }}min · {{ booking.scheduled_time }}
+                        {{ booking.scheduled_time }}<small>{{ booking.scheduled_duration || 60 }} min</small>
                       </div>
-                      <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
+                      <div class="status-badge" :style="statusChip(booking)">
                         {{ getStatusDisplay(booking) }}
                       </div>
                     </div>
 
                     <!-- Patient info -->
                     <div class="booking-patient-section">
-                      <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-                      <span v-if="booking.patient_code" style="margin-left: auto; font-weight: 600; font-size: 12px; color: #555;">{{ booking.patient_code }}</span>
+                      <div class="bk-avatar">{{ initials(booking.patient_name) }}</div>
+                      <div class="bk-who">
+                        <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                        <span v-if="booking.patient_code" class="bk-code">{{ booking.patient_code }}</span>
+                      </div>
                     </div>
 
                     <!-- Service type with action buttons inline -->
@@ -3073,21 +3138,24 @@ window.healthPWA = {
                 <h4 class="date-group-title">{{ dateStr }}</h4>
                 <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card-container">
                   <!-- Clickable booking card -->
-                  <div @click="toggleBookingDetail(booking.fso_id)" class="booking-card" :class="{ expanded: selectedBookingId === booking.fso_id }">
+                  <div @click="toggleBookingDetail(booking.fso_id)" class="booking-card" :class="{ expanded: selectedBookingId === booking.fso_id }" :style="{ '--ac': statusAccent(booking) }">
                     <!-- Header with time and status -->
                     <div class="booking-card-header">
                       <div class="booking-time-badge">
-                        {{ booking.scheduled_duration || 60 }}min · {{ booking.scheduled_time }}
+                        {{ booking.scheduled_time }}<small>{{ booking.scheduled_duration || 60 }} min</small>
                       </div>
-                      <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
+                      <div class="status-badge" :style="statusChip(booking)">
                         {{ getStatusDisplay(booking) }}
                       </div>
                     </div>
 
                     <!-- Patient info -->
                     <div class="booking-patient-section">
-                      <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-                      <span v-if="booking.patient_code" style="margin-left: auto; font-weight: 600; font-size: 12px; color: #555;">{{ booking.patient_code }}</span>
+                      <div class="bk-avatar">{{ initials(booking.patient_name) }}</div>
+                      <div class="bk-who">
+                        <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                        <span v-if="booking.patient_code" class="bk-code">{{ booking.patient_code }}</span>
+                      </div>
                     </div>
 
                     <!-- Service type with action buttons inline -->
@@ -3128,10 +3196,13 @@ window.healthPWA = {
               <button class="btn btn-secondary" @click="toggleBookingDetail(selectedBookingId)">{{ _t('Close') }}</button>
             </div>
             <div v-else-if="selectedBookingDetail" class="booking-detail-modal-content">
+              <!-- Drag handle -->
+              <div class="sheet-handle"></div>
               <!-- Modal header with close button -->
               <div class="modal-header">
                 <div class="header-content">
                   <h3 class="modal-title">{{ _t('Booking Details') }}</h3>
+                  <span class="status-badge sheet-status" :style="statusChip(selectedBookingDetail)">{{ getStatusDisplay(selectedBookingDetail) }}</span>
                   <!-- Timer Display when service is in progress -->
                   <div v-if="serviceStartedForBooking === selectedBookingId" class="timer-badge">
                     <i class="material-icons">schedule</i>
@@ -3207,7 +3278,7 @@ window.healthPWA = {
               <div class="modal-footer">
                 <!-- Before service start (hidden when completed) -->
                 <div v-if="serviceStartedForBooking !== selectedBookingId && selectedBookingDetail?.state !== 'in_progress' && selectedBookingDetail?.state !== 'completed'" class="modal-footer-content">
-                  <button @click="cancelVisit" class="btn btn-danger">{{ _t('Cancel/Refuse Visit') }}</button>
+                  <button @click="cancelVisit" class="btn btn-ghost-danger">{{ _t('Cancel/Refuse Visit') }}</button>
                   <button @click="startService" class="btn btn-success">{{ _t('Start Service') }}</button>
                 </div>
 
@@ -4216,21 +4287,24 @@ window.healthPWA = {
                   <h4 class="date-group-title">{{ dateData.date_display }}</h4>
                   <div v-for="booking in dateData.bookings" :key="booking.id" class="booking-card-container">
                     <!-- Booking card -->
-                    <div class="booking-card">
+                    <div class="booking-card" :style="{ '--ac': statusAccent({state: booking.state}) }">
                       <!-- Header with time and status -->
                       <div class="booking-card-header">
                         <div class="booking-time-badge">
-                          {{ booking.scheduled_duration || 60 }}min · {{ booking.scheduled_time }}
+                          {{ booking.scheduled_time }}<small>{{ booking.scheduled_duration || 60 }} min</small>
                         </div>
-                        <div class="status-badge" :style="{ backgroundColor: getStatusColor({state: booking.state}) }">
+                        <div class="status-badge" :style="statusChip({state: booking.state})">
                           {{ getStatusDisplay({state: booking.state}) }}
                         </div>
                       </div>
 
                       <!-- Patient info -->
                       <div class="booking-patient-section">
-                        <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-                        <span v-if="booking.patient_code" style="margin-left: auto; font-weight: 600; font-size: 12px; color: #555;">{{ booking.patient_code }}</span>
+                        <div class="bk-avatar">{{ initials(booking.patient_name) }}</div>
+                        <div class="bk-who">
+                          <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                          <span v-if="booking.patient_code" class="bk-code">{{ booking.patient_code }}</span>
+                        </div>
                       </div>
 
                       <!-- Service type with action buttons inline -->
@@ -4414,17 +4488,21 @@ window.healthPWA = {
             <div
               v-for="patient in filteredPatients"
               :key="patient.id"
-              class="booking-card"
+              class="booking-card pt-card"
               @click="viewPatient(patient.id)">
 
-              <!-- Patient name with phone and map icons -->
-              <div class="booking-service-row">
-                <h3 class="booking-patient-name" style="color: #9C4C00;">{{ patient.name || _t('Unnamed Patient') }}</h3>
+              <!-- Avatar + name/code + quick actions -->
+              <div class="pt-top">
+                <div class="bk-avatar">{{ initials(patient.name) }}</div>
+                <div class="bk-who">
+                  <h3 class="booking-patient-name">{{ patient.name || _t('Unnamed Patient') }}</h3>
+                  <span v-if="patient.patient_code" class="bk-code">{{ patient.patient_code }}</span>
+                </div>
                 <div class="booking-action-icons">
                   <button v-if="patient.phone" @click.stop="callPatient(patient.phone)" class="btn-icon-action btn-icon-call" :title="_t('Call patient')">
                     <i class="material-icons">call</i>
                   </button>
-                  <button v-if="patient.zalo_user_id" @click.stop="callZalo(patient.zalo_user_id)" class="btn-icon-action btn-icon-zalo" title="Zalo call" style="background: #0068FF; color: #fff;">
+                  <button v-if="patient.zalo_user_id" @click.stop="callZalo(patient.zalo_user_id)" class="btn-icon-action btn-icon-zalo" title="Zalo call">
                     <i class="material-icons">chat</i>
                   </button>
                   <button @click.stop="openMap(patient.street || patient.street2, patient.name)" class="btn-icon-action btn-icon-map" :title="_t('Open map')">
@@ -4433,14 +4511,10 @@ window.healthPWA = {
                 </div>
               </div>
 
-              <!-- Patient code -->
-              <div v-if="patient.patient_code" style="font-size: 13px; font-weight: 600; color: #555; margin-top: -2px;">
-                {{ patient.patient_code }}
-              </div>
-
               <!-- Patient address -->
-              <div class="booking-patient-section">
-                <span class="booking-service-type">{{ patient.street || patient.street2 || _t('No address provided') }}</span>
+              <div class="pt-addr">
+                <i class="material-icons">location_on</i>
+                <span>{{ patient.street || patient.street2 || _t('No address provided') }}</span>
               </div>
             </div>
           </div>
@@ -4539,9 +4613,7 @@ window.healthPWA = {
           <div v-else-if="patient" class="patient-details">
             <!-- Patient Header -->
             <div class="patient-header-card">
-              <div class="patient-avatar">
-                <i class="material-icons">person</i>
-              </div>
+              <div class="patient-avatar">{{ initials(patient.name) }}</div>
               <div class="patient-header-info">
                 <h2>{{ patient.name || _t('Unnamed Patient') }}</h2>
                 <p class="patient-code" v-if="patient.patient_code">ID: {{ patient.patient_code }}</p>
@@ -4804,13 +4876,12 @@ window.healthPWA = {
       template: `
         <div class="orders-view">
           <!-- View Toggle Header -->
-          <div class="view-toggle-header" style="padding: 1rem; background: #FBE3E1; border: none; margin-bottom: 1rem; border-radius: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <h3 style="margin: 0; color: #333; font-weight: 600;">{{ _t('Upcoming Bookings') }}</h3>
-              <button @click="$emit('navigate', 'past-bookings')" class="btn btn-secondary btn-sm" style="background: #E53935; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px;">
-                View Past Bookings
-              </button>
-            </div>
+          <div class="view-toggle-header">
+            <h3>{{ _t('Upcoming Bookings') }}</h3>
+            <button @click="$emit('navigate', 'past-bookings')" class="btn-past-bookings">
+              <i class="material-icons">history</i>
+              {{ _t('Past') }}
+            </button>
           </div>
 
           <!-- Loading State -->
@@ -6681,9 +6752,7 @@ window.healthPWA = {
       template: `
         <div class="profile-view">
           <div class="profile-header">
-            <div class="profile-avatar">
-              <i class="material-icons">account_circle</i>
-            </div>
+            <div class="profile-avatar">{{ initials(user?.name) }}</div>
             <h2>{{ user?.name || _t('User') }}</h2>
             <p>{{ user?.email || _t('No email') }}</p>
           </div>
@@ -6693,6 +6762,7 @@ window.healthPWA = {
               {{ _t('Sync Data') }}
             </button>
           </div>
+          <p class="profile-version">Viet Uc · v{{ pwaVersion }}</p>
         </div>
       `
     });

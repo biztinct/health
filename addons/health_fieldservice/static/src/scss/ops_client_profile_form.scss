@@ -3,10 +3,10 @@
 // OWL header (avatar, stats) + native Odoo form with ops styling
 // =============================================================================
 
-// Vibrant accent tokens (local defaults; won't override if already in scope)
-$crm-primary: #1A237E !default;
-$crm-accent:  #FF6F00 !default;
-$crm-danger:  #dc2626 !default;
+// Brand accent tokens (Việt Úc official palette)
+$crm-primary: #1565C0 !default;  // Deep Blue (brand primary)
+$crm-accent:  #FB8C00 !default;  // Hibiscus Orange (brand accent)
+$crm-danger:  #E53935 !default;  // Hibiscus Red
 
 .ops-client-profile-form-page {
     .o-mail-Form-chatter,
@@ -157,7 +157,7 @@ $crm-danger:  #dc2626 !default;
         width: 64px;
         height: 64px;
         border-radius: 50%;
-        background: linear-gradient(135deg, $crm-primary, $vu-deep-blue);
+        background: linear-gradient(135deg, $vu-deep-blue-darkest, $vu-deep-blue);
         color: #fff;
         display: flex;
         align-items: center;
@@ -268,11 +268,11 @@ $crm-danger:  #dc2626 !default;
             }
         }
         &.primary {
-            background: $crm-accent;
+            background: $crm-primary;
             color: #fff;
-            box-shadow: 0 3px 10px rgba(255, 111, 0, 0.35);
+            box-shadow: 0 3px 10px rgba(21, 101, 192, 0.35);
             &:hover {
-                background: darken($crm-accent, 6%);
+                background: darken($crm-primary, 6%);
                 transform: translateY(-1px);
             }
         }
@@ -361,13 +361,13 @@ $crm-danger:  #dc2626 !default;
         -webkit-mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
     }
 
-    // per-metric colors (vibrant)
-    .ph-kpi--bookings    { --c: #1565C0; --cb: #E3F2FD; }
-    .ph-kpi--packages    { --c: #7C3AED; --cb: #F3E8FF; }
-    .ph-kpi--spent       { --c: #2E7D32; --cb: #E7F5EA; }
-    .ph-kpi--outstanding { --c: #EA580C; --cb: #FFF1E6; }
-    .ph-kpi--satis       { --c: #{$crm-accent}; --cb: #FFF3E0; }
-    .ph-kpi--refer       { --c: #00897B; --cb: #E0F2F1; }
+    // per-metric colors — Việt Úc brand palette only (blue / green / orange / red)
+    .ph-kpi--bookings    { --c: #1565C0; --cb: #E4F4FD; } // Deep Blue
+    .ph-kpi--packages    { --c: #42A5F5; --cb: #E4F4FD; } // Accent Blue
+    .ph-kpi--spent       { --c: #43A047; --cb: #DBF0DB; } // Leaf Green
+    .ph-kpi--outstanding { --c: #E53935; --cb: #FBE3E1; } // Hibiscus Red (alert)
+    .ph-kpi--satis       { --c: #FB8C00; --cb: #FEE8C9; } // Hibiscus Orange
+    .ph-kpi--refer       { --c: #1356A9; --cb: #E4F4FD; } // Deep Blue (darker)
 
     .ph-kpi__value {
         font-size: 24px;
@@ -777,10 +777,10 @@ $crm-danger:  #dc2626 !default;
         transition: all 0.15s;
 
         &--primary {
-            background: $crm-accent;
+            background: $crm-primary;
             color: #fff;
-            box-shadow: 0 3px 10px rgba(255, 111, 0, 0.30);
-            &:hover { background: darken($crm-accent, 6%); }
+            box-shadow: 0 3px 10px rgba(21, 101, 192, 0.30);
+            &:hover { background: darken($crm-primary, 6%); }
         }
     }
 

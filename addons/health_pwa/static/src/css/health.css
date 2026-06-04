@@ -1168,3 +1168,541 @@ html {
     border: 1px solid var(--border-color) !important;
   }
 }
+
+/* ============================================================
+   VIET UC BRAND REDESIGN 2026 — Today screen + Booking sheet
+   Flat brand fills (no gradients); depth via elevation + tint.
+   Loaded last so these win the cascade over app.css/mobile.css.
+   ============================================================ */
+
+/* ---------- Consolidated day sub-header ---------- */
+.bk-sub {
+  background: var(--card-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 16px 14px;
+  flex-shrink: 0;
+}
+/* Row 1: full date + staff name */
+.bk-toprow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.bk-date {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.3px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.bk-staff {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #94a3b8;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* Row 2: Today button + date navigation */
+.bk-navrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.bk-navbtns { display: flex; gap: 6px; flex-shrink: 0; }
+.bk-rnd {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--card-color);
+  color: var(--primary-color);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.bk-rnd i { font-size: 1.25rem; }
+.bk-rnd:active { transform: scale(0.94); }
+.bk-rnd.solid { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+
+/* Segmented control with sliding pill */
+.bk-seg {
+  position: relative;
+  display: flex;
+  background: #eef1f8;
+  border-radius: 12px;
+  padding: 4px;
+}
+.bk-seg button {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 8px 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.bk-seg button.on { color: #fff; }
+.bk-seg-pill {
+  position: absolute;
+  top: 4px; bottom: 4px; left: 4px;
+  width: calc((100% - 8px) / 3);
+  background: var(--primary-color);
+  border-radius: 9px;
+  box-shadow: 0 3px 8px rgba(21, 101, 192, 0.3);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bk-seg.sel-day   .bk-seg-pill { transform: translateX(0); }
+.bk-seg.sel-week  .bk-seg-pill { transform: translateX(100%); }
+.bk-seg.sel-month .bk-seg-pill { transform: translateX(200%); }
+
+/* ---------- Booking card ---------- */
+.booking-card {
+  --ac: var(--primary-color);
+  border-radius: 18px !important;
+  padding: 14px 16px 14px 18px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.06) !important;
+  overflow: hidden;
+  gap: 0 !important;
+}
+.booking-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 5px;
+  background: var(--ac);
+}
+.booking-card:hover { box-shadow: 0 8px 22px rgba(16, 24, 40, 0.1) !important; }
+
+.booking-card-header { margin-bottom: 12px; }
+.booking-time-badge {
+  font-size: 1.3rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.5px;
+}
+.booking-time-badge small {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-left: 7px;
+  letter-spacing: 0;
+}
+
+/* Soft status chip (inline style supplies bg + text colour) */
+.status-badge {
+  display: inline-flex !important;
+  align-items: center;
+  border-radius: 999px !important;
+  padding: 5px 11px !important;
+  font-size: 0.65rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+/* Patient row: avatar + name/code */
+.booking-patient-section { gap: 12px !important; }
+.bk-avatar {
+  width: 44px; height: 44px;
+  flex: 0 0 44px;
+  border-radius: 13px;
+  background: var(--brand-navy);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.bk-who { min-width: 0; }
+.booking-patient-name { font-size: 1rem !important; font-weight: 800 !important; }
+.bk-code {
+  display: inline-block;
+  margin-top: 3px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  background: #f1f3fa;
+  padding: 1px 7px;
+  border-radius: 6px;
+}
+
+/* Service chip + actions */
+.booking-service-row { margin-top: 13px; }
+.booking-service-type {
+  display: inline-flex !important;
+  align-items: center;
+  background: var(--st-up-bg);
+  color: var(--st-up-tx) !important;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  flex: 0 1 auto !important;
+}
+.booking-lead-inline { color: var(--st-up-tx); font-weight: 700; }
+.btn-icon-action {
+  width: 42px !important; height: 42px !important;
+  border-radius: 13px !important;
+}
+.btn-icon-call { background: var(--st-prog-bg) !important; color: var(--success-color) !important; }
+.btn-icon-call:hover { background: var(--success-color) !important; color: #fff !important; }
+.btn-icon-map { background: var(--st-up-bg) !important; color: var(--primary-color) !important; }
+.btn-icon-map:hover { background: var(--primary-color) !important; color: #fff !important; }
+.btn-icon-zalo { background: #E4F1FF !important; color: #0068FF !important; }
+.btn-icon-zalo:hover { background: #0068FF !important; color: #fff !important; }
+
+/* ---------- Booking detail bottom-sheet ---------- */
+.booking-detail-modal { padding-top: 0 !important; }
+.sheet-handle {
+  width: 42px; height: 5px;
+  border-radius: 3px;
+  background: #d6dbeb;
+  margin: 10px auto 2px;
+  flex-shrink: 0;
+}
+.sheet-status { margin-left: 10px; }
+/* Scoped to the booking sheet so other modals keep their 24px header padding.
+   Right padding bumped to 22px so the close X isn't flush with the phone edge. */
+.booking-detail-modal-content .modal-header { padding: 8px 22px 14px !important; }
+.booking-detail-modal-content .modal-title { font-size: 1.15rem !important; }
+
+/* Section blocks become subtle cards */
+.booking-detail-modal-content .detail-section {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px 16px !important;
+}
+.booking-detail-modal-content .detail-section:last-of-type { border-bottom: 1px solid var(--border-color); }
+.section-title { font-size: 0.95rem !important; }
+.detail-row { border-bottom: 1px dashed #eef1f6; }
+.detail-row:last-child { border-bottom: none; }
+
+/* Sticky footer with safe-area inset; calm ghost + solid primary.
+   Scoped to the booking-detail sheet ONLY — other modals (invoice / clinical
+   notes) keep their global footer with bottom-nav clearance. */
+.booking-detail-modal-content .modal-footer {
+  padding: 14px 18px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+}
+.btn-ghost-danger {
+  background: #fff;
+  border: 1.5px solid #F07C75;
+  color: #C32B2E;
+}
+.btn-ghost-danger:hover { background: #FBE3E1; }
+.btn-success {
+  background: var(--success-color) !important;
+  box-shadow: 0 6px 16px rgba(67, 160, 71, 0.28);
+}
+.btn-success:hover { background: #2E6B33 !important; }
+.btn-icon-call-small { background: var(--st-prog-bg) !important; color: var(--success-color) !important; }
+
+/* ---------- Bottom nav: active pill + safe area + elevation ---------- */
+.mobile-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  box-shadow: 0 -6px 20px rgba(16, 24, 40, 0.07) !important;
+}
+.mobile-nav-icon {
+  width: 46px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+.mobile-nav-item.active .mobile-nav-icon { background: #eef1f8; }
+.mobile-nav-item { font-weight: 700; }
+.mobile-nav-label { font-weight: 700; }
+
+/* ============================================================
+   VIET UC BRAND REDESIGN 2026 — PHASE 2
+   Patients, Patient detail, Orders, Past bookings, Profile,
+   Teams, and the Notifications panel/cards + toasts.
+   ============================================================ */
+
+/* ---------- Soft brand badges (tint + dark text, pill) ---------- */
+.badge {
+  display: inline-flex !important;
+  align-items: center;
+  border-radius: 999px !important;
+  padding: 4px 10px !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.badge-primary   { background: var(--st-up-bg) !important;   color: var(--st-up-tx) !important; }
+.badge-info      { background: var(--st-up-bg) !important;   color: var(--st-up-tx) !important; }
+.badge-success   { background: var(--st-prog-bg) !important; color: var(--st-prog-tx) !important; }
+.badge-warning   { background: var(--st-late-bg) !important; color: var(--st-late-tx) !important; }
+.badge-danger    { background: var(--st-canc-bg) !important; color: var(--st-canc-tx) !important; }
+.badge-secondary { background: var(--st-done-bg) !important; color: var(--st-done-tx) !important; }
+
+/* ---------- Search input ---------- */
+.search-input { border-radius: 14px !important; }
+.search-input:focus { box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12); }
+
+/* ---------- Patients list card ---------- */
+.pt-top { display: flex; align-items: center; gap: 12px; }
+.pt-top .bk-who { flex: 1; min-width: 0; }
+.pt-top .booking-action-icons { margin-left: auto; }
+.pt-addr {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 11px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+.pt-addr i { font-size: 17px; color: var(--st-up-ac); flex-shrink: 0; }
+.pt-addr span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Orders / Past-bookings list items ---------- */
+.view-toggle-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 2px 14px;
+}
+.view-toggle-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; color: #0f172a; }
+.btn-past-bookings {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--st-up-bg);
+  color: var(--primary-color);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.btn-past-bookings i { font-size: 17px; }
+.btn-past-bookings:active { transform: scale(0.96); }
+.list-item {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.06) !important;
+  padding: 14px !important;
+}
+.list-item:hover { box-shadow: 0 8px 22px rgba(16, 24, 40, 0.1) !important; }
+.list-item-avatar {
+  width: 46px !important; height: 46px !important;
+  border-radius: 13px !important;
+  background: var(--brand-navy) !important;
+}
+.list-item-title { font-weight: 800 !important; }
+.list-item-meta { justify-content: center; }
+
+/* ---------- Patient detail ---------- */
+.patient-header-card {
+  position: relative;
+  border-radius: 18px !important;
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.06) !important;
+  overflow: hidden;
+}
+.patient-header-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+  background: var(--primary-color);
+}
+.patient-avatar {
+  border-radius: 16px !important;
+  background: var(--brand-navy) !important;
+  font-size: 1.4rem !important;
+  font-weight: 800;
+}
+.patient-header-info h2 { font-weight: 800 !important; }
+.info-section {
+  border-radius: 16px !important;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 10px rgba(16, 24, 40, 0.05) !important;
+}
+.info-section h3 { font-weight: 800 !important; }
+.info-item label { color: var(--st-up-tx); }
+.order-item { border-radius: 12px !important; }
+
+/* ---------- Profile ---------- */
+.profile-avatar {
+  border-radius: 22px !important;
+  background: var(--brand-navy) !important;
+  color: #fff !important;
+  font-size: 1.8rem !important;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.profile-header h2 { font-weight: 800; }
+
+/* ---------- Teams placeholder ---------- */
+.teams-view {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 60px 24px; color: var(--text-secondary);
+}
+.teams-view h2 { color: #0f172a; font-weight: 800; }
+
+/* ---------- Notification bell + panel ---------- */
+.notif-bell-btn.active { color: var(--primary-color); }
+.notif-badge { background: var(--error-color) !important; }
+.notif-panel {
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 0 10px 32px rgba(16, 24, 40, 0.16);
+}
+.notif-panel-header h3 { font-weight: 800; }
+
+/* ---------- Notification cards ---------- */
+.notif-card {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--st-up-ac);
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(16, 24, 40, 0.05);
+  margin-bottom: 10px;
+}
+.notif-card--cancelled { border-left: 4px solid var(--st-canc-ac); }
+.notif-card--rescheduled { border-left: 4px solid var(--st-late-ac); }
+
+.notif-type-badge {
+  border-radius: 999px;
+  font-weight: 800;
+  background: var(--st-up-bg);
+  color: var(--st-up-tx);
+}
+.notif-badge-assignment  { background: var(--st-up-bg) !important;   color: var(--st-up-tx) !important; }
+.notif-badge-cancelled   { background: var(--st-canc-bg) !important; color: var(--st-canc-tx) !important; }
+.notif-badge-rescheduled { background: var(--st-late-bg) !important; color: var(--st-late-tx) !important; }
+
+.notif-detail .material-icons { color: var(--st-up-ac); }
+.notif-btn { border-radius: 11px; font-weight: 700; }
+.notif-btn-accept { background: var(--success-color) !important; }
+.notif-btn-accept:active:not(:disabled) { background: #2E6B33 !important; }
+.notif-btn-decline {
+  background: #fff !important;
+  color: var(--st-canc-tx) !important;
+  border: 1.5px solid #F07C75 !important;
+}
+.notif-btn-decline:active:not(:disabled) { background: var(--st-canc-bg) !important; }
+.notif-btn-ok { background: var(--primary-color) !important; }
+.notif-btn-ok:active:not(:disabled) { background: var(--primary-dark) !important; }
+
+/* ---------- Toasts ---------- */
+.notification {
+  border-radius: 14px !important;
+  border-left: 4px solid var(--primary-color);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.16) !important;
+}
+.notification-success { border-left-color: var(--success-color); }
+.notification-error   { border-left-color: var(--error-color); }
+.notification-warning { border-left-color: var(--warning-color); }
+.notification-info    { border-left-color: var(--primary-color); }
+
+/* ============================================================
+   FEEDBACK FIXES — Today button, summary pills, version,
+   update banner contrast, language toggle.
+   ============================================================ */
+
+/* Today quick-jump button in the nav cluster */
+.bk-today {
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 10px;
+  height: 36px;
+  padding: 0 13px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.bk-today:active { transform: scale(0.95); background: var(--primary-dark); }
+
+/* Day summary pills (visits / late / done) */
+.bk-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 16px 2px;
+}
+.bk-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  box-shadow: 0 1px 4px rgba(16, 24, 40, 0.05);
+}
+.bk-chip b { color: #0f172a; }
+.bk-chip .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* Reserve top-right corner for the fixed VI/EN toggle so the bell + title clear it */
+.mobile-header-right { padding-right: 70px; }
+
+/* Hide the floating version badge — version now lives on the Profile screen */
+#pwa-version-badge { display: none !important; }
+.profile-version {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--text-disabled);
+}
+
+/* Update banner — flat deep-green so the white CTA button reads clearly */
+.pwa-update-banner { background: #2E6B33 !important; }
+.pwa-update-banner .banner-icon i { color: #fff !important; }
+.pwa-update-banner .btn-success {
+  background: #fff !important;
+  color: #2E6B33 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+.pwa-update-banner .btn-success:hover { background: #fff !important; }
+
+/* ============================================================
+   FEEDBACK FIXES v2 — header logo, wider cards, bottom-nav safe area
+   ============================================================ */
+
+/* Brand logo in the header (home screen) */
+.header-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Wider cards: drop the doubled inner gutters so the single
+   mobile-content padding (16px) is the only side margin. */
+.today-view .bookings-list,
+.today-view .grouped-bookings-list,
+.grouped-bookings-list,
+.bookings-list,
+.patients-view,
+.orders-view,
+.past-bookings-view {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+/* Keep the patient code on one line */
+.bk-code { white-space: nowrap; }
+
+/* Bottom nav: clear the iOS home indicator; tighter top, roomier bottom */
+.mobile-nav {
+  height: auto !important;
+  min-height: 56px;
+  align-items: center;
+  padding-top: 6px !important;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+}
+/* Content clears the taller nav */
+.mobile-content {
+  padding-bottom: calc(var(--bottom-nav-height) + 26px + env(safe-area-inset-bottom, 0px)) !important;
+}

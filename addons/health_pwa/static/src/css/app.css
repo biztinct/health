@@ -451,15 +451,23 @@
   /* Force light mode - no dark mode support */
   color-scheme: light;
 
-  /* Original brand colors */
-  --primary-color: #1565C0;
-  --primary-dark: #0D47A1;
-  --secondary-color: #42A5F5;
-  --accent-color: #E4F4FD;
-  --success-color: #176B47;
-  --warning-color: #946200;
-  --error-color: #C0332A;
-  --info-color: #2A7ABF;
+  /* Viet Uc brand palette */
+  --primary-color: #1565C0;     /* Deep Blue base */
+  --primary-dark: #0D356B;      /* Deep Blue darkest (navy) */
+  --secondary-color: #42A5F5;   /* Accent Blue */
+  --accent-color: #E4F4FD;      /* Deep Blue lightest */
+  --success-color: #43A047;     /* Leaf Green */
+  --warning-color: #FB8C00;     /* Hibiscus Orange */
+  --error-color: #E53935;       /* Hibiscus Red */
+  --info-color: #1565C0;        /* Deep Blue */
+
+  /* Brand navy + status tints (PWA redesign) */
+  --brand-navy: #0D356B;
+  --st-late-ac:#FB8C00; --st-late-bg:#FEE8C9; --st-late-tx:#9C4C00;
+  --st-up-ac:#1565C0;   --st-up-bg:#E4F4FD;   --st-up-tx:#1356A9;
+  --st-prog-ac:#43A047; --st-prog-bg:#DBF0DB; --st-prog-tx:#2E6B33;
+  --st-done-ac:#94A3B8; --st-done-bg:#EEF1F8; --st-done-tx:#475569;
+  --st-canc-ac:#E53935; --st-canc-bg:#FBE3E1; --st-canc-tx:#C32B2E;
 
   /* Dark theme colors - Mobilesample inspired */
   --bg-dark: #020617;           /* slate-950 */
@@ -1918,7 +1926,7 @@ p {
 }
 
 .btn-detail-back:hover {
-  color: #875A7B;
+  color: #1565C0;
   gap: var(--spacing-sm);
 }
 
@@ -1942,7 +1950,7 @@ p {
   width: 24px;
   height: 24px;
   border: 2px solid rgba(133, 90, 123, 0.2);
-  border-top-color: #875A7B;
+  border-top-color: #1565C0;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto var(--spacing-md);
@@ -4521,7 +4529,7 @@ p {
   width: 80px;
   height: 80px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #875A7B, #6d4c7d);
+  background: linear-gradient(135deg, #1565C0, #0D47A1);
   box-shadow: 0 4px 16px rgba(135, 90, 123, 0.3);
   display: flex;
   align-items: center;
@@ -4620,7 +4628,7 @@ p {
   width: 28px;
   height: 28px;
   min-width: 28px;
-  background: #875A7B;
+  background: #1565C0;
   color: white;
   border-radius: 50%;
   display: flex;
