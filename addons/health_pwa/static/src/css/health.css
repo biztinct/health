@@ -1731,3 +1731,10 @@ html {
   border-color: var(--primary-color) !important;
   box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12) !important;
 }
+
+/* Next-appointment Modal A has no sticky footer — give its body enough
+   bottom clearance so the last action button isn't cut off by the home
+   indicator / bottom edge (the modal grows taller, buttons sit higher). */
+.next-visit-modal .modal-body {
+  padding-bottom: calc(var(--spacing-lg) + 40px + env(safe-area-inset-bottom, 0px)) !important;
+}
