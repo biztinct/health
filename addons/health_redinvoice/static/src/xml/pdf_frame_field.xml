@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="health_redinvoice.PdfFrame">
+        <div class="redinv-pdf-frame-wrap">
+            <iframe t-if="src" t-att-src="src" class="redinv-pdf-frame" title="Red Invoice PDF"/>
+            <div t-else="" class="text-muted text-center p-4">No PDF available.</div>
+        </div>
+    </t>
+</templates>

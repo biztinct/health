@@ -1,5 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+from odoo.addons.health_base.models.phone_utils import normalize_vn_phone
 from datetime import date
 import re
 import requests
@@ -426,6 +427,13 @@ class ResPartner(models.Model):
 
     def write(self, vals):
         """Override write to auto-update date_localization and auto-geocode on address changes"""
+        # Normalize Vietnamese phone fields for individual contacts (skip when
+        # writing only to companies, e.g. the red-invoice seller).
+        if any(vals.get(f) for f in self._VN_PHONE_FIELDS) and not all(p.is_company for p in self):
+            for fname in self._VN_PHONE_FIELDS:
+                if vals.get(fname):
+                    vals[fname] = normalize_vn_phone(vals[fname])
+
         # Auto-set date_localization when coordinates are updated
         if ('partner_latitude' in vals or 'partner_longitude' in vals) and 'date_localization' not in vals:
             vals['date_localization'] = fields.Date.today()
@@ -695,16 +703,50 @@ class ResPartner(models.Model):
             if partner.email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', partner.email):
                 raise ValidationError(_('Please enter a valid email address.'))
     
-    @api.constrains('phone', 'mobile')
+    # Phone/mobile fields that follow the Vietnamese 10-digit rule.
+    # Applied to individual (non-company) contacts only, so the red-invoice
+    # company phone and supplier companies are never affected.
+    _VN_PHONE_FIELDS = ('phone', 'mobile', 'emergency_contact_phone')
+
+    @api.constrains('phone', 'mobile', 'emergency_contact_phone')
     def _check_phone(self):
-        """Validate phone number format — permissive to support international formats"""
-        # Allow digits, spaces, dashes, dots, parentheses, plus sign — min 5 chars
-        phone_pattern = re.compile(r'^\+?[\d\s\-\.\(\)]{5,20}$')
+        """Enforce the Vietnamese phone format on individual contacts.
+
+        Companies (e.g. the red-invoice seller) are skipped. ``write``/``create``
+        already normalize these values; this is the safety net for any other
+        write path (imports, direct ORM writes, etc.).
+        """
         for partner in self:
-            if partner.phone and not phone_pattern.match(partner.phone):
-                raise ValidationError(_('Please enter a valid phone number.'))
-            if partner.mobile and not phone_pattern.match(partner.mobile):
-                raise ValidationError(_('Please enter a valid mobile number.'))
+            if partner.is_company:
+                continue
+            for fname in self._VN_PHONE_FIELDS:
+                value = partner[fname]
+                if value:
+                    normalize_vn_phone(value)  # raises ValidationError if invalid
+
+    @api.onchange('phone', 'mobile', 'emergency_contact_phone')
+    def _onchange_normalize_vn_phone(self):
+        """Live-format phone fields in the form (e.g. 938038028 -> 0938038028)
+        and warn immediately when an entry is not a valid number."""
+        if self.is_company:
+            return
+        invalid = []
+        for fname in self._VN_PHONE_FIELDS:
+            value = self[fname]
+            if value:
+                try:
+                    self[fname] = normalize_vn_phone(value)
+                except ValidationError:
+                    invalid.append(value)
+        if invalid:
+            return {'warning': {
+                'title': _("Invalid phone number"),
+                'message': _(
+                    "%s is not a valid phone number.\n\n"
+                    "Enter a 9-digit number (a leading 0 is added automatically) "
+                    "or a 10-digit number starting with a single 0."
+                ) % ", ".join(invalid),
+            }}
 
     @api.constrains('is_patient', 'catchment_province_id')
     def _check_patient_catchment_province(self):
@@ -716,6 +758,13 @@ class ResPartner(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to set healthcare flags and customer rank for patients"""
+        # Normalize Vietnamese phone fields for individual contacts.
+        for vals in vals_list:
+            if not vals.get('is_company'):
+                for fname in self._VN_PHONE_FIELDS:
+                    if vals.get(fname):
+                        vals[fname] = normalize_vn_phone(vals[fname])
+
         partners = super().create(vals_list)
         
         # Get healthcare category references

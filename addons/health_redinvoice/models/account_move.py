@@ -69,6 +69,15 @@ class AccountMove(models.Model):
 
     def action_redinvoice_generate(self):
         for move in self:
+            # Guard against issuing a duplicate legal e-invoice for the same
+            # document. A new issue is only allowed from a non-issued state
+            # (failed / pending / cancelled). To re-issue, cancel first.
+            if move.red_invoice_state == 'issued':
+                raise UserError(_(
+                    "A Red Invoice (%s) has already been issued for this document. "
+                    "Cancel the existing Red Invoice before generating a new one — "
+                    "re-issuing would create a duplicate invoice at the tax authority."
+                ) % (move.red_invoice_no or _('unknown')))
             move._redinvoice_issue()
         return True
 
@@ -85,6 +94,33 @@ class AccountMove(models.Model):
             if action:
                 return action
         return True
+
+    def action_open_red_invoice_pdf(self):
+        """Open the Red Invoice representation PDF in a modal viewer with
+        Download / Email-to-client / Print actions. Used by the PDF icon on
+        list views, the invoice form and the booking."""
+        self.ensure_one()
+        if not self.red_invoice_download_attachment_id:
+            # Lazy-fetch the representation file if it wasn't downloaded yet
+            self._redinvoice_download(file_type='ZIP')
+        attachment = self.red_invoice_download_attachment_id
+        if not attachment:
+            raise UserError(_('No Red Invoice file is available yet for this document.'))
+        # Correct legacy attachments saved with a wrong mimetype so the PDF
+        # viewer renders them (the representation file is a PDF named *.pdf).
+        if (attachment.name or '').lower().endswith('.pdf') and attachment.mimetype != 'application/pdf':
+            attachment.sudo().mimetype = 'application/pdf'
+        return {
+            'name': _('Red Invoice'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'redinvoice.pdf.preview.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_move_id': self.id,
+                'default_attachment_id': attachment.id,
+            },
+        }
 
     def action_redinvoice_cancel(self):
         for move in self:
@@ -215,6 +251,13 @@ class AccountMove(models.Model):
         }
         if info.get('supplierTaxCode'):
             vals.setdefault('red_invoice_template_code', self.red_invoice_template_code or company.red_invoice_template_code)
+        # Build the public lookup/verification URL from the configurable base
+        # (left blank until a base URL is configured on the company).
+        lookup_base = (company.red_invoice_lookup_base_url or '').strip()
+        reservation = info.get('reservationCode')
+        if lookup_base and reservation:
+            sep = '' if lookup_base.endswith(('=', '/', '?', '&')) else '/'
+            vals['red_invoice_lookup_url'] = f"{lookup_base}{sep}{reservation}"
         self.write(vals)
         request_log.mark_success(code=str(response.status_code), body=response.text)
 
@@ -288,14 +331,24 @@ class AccountMove(models.Model):
             return
 
     def _redinvoice_attach_file(self, filename, file_bytes, file_type):
-        """Create attachment from base64 string."""
+        """Create attachment from base64 string.
+        Derive the mimetype from the real filename so a PDF representation is
+        served inline (Viettel returns the representation as a .pdf even though
+        the call is labelled 'ZIP')."""
+        fname = (filename or '').lower()
+        if fname.endswith('.pdf'):
+            mimetype = 'application/pdf'
+        elif fname.endswith('.zip'):
+            mimetype = 'application/zip'
+        else:
+            mimetype = 'application/zip' if file_type.upper() == 'ZIP' else 'application/pdf'
         return self.env['ir.attachment'].create({
             'name': filename,
             'res_model': self._name,
             'res_id': self.id,
             'type': 'binary',
             'datas': file_bytes,
-            'mimetype': 'application/zip' if file_type.upper() == 'ZIP' else 'application/pdf',
+            'mimetype': mimetype,
         })
 
     def _redinvoice_cancel_remote(self):

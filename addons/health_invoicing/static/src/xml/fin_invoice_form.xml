@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
 
     <t t-name="health_invoicing.FinInvoiceFormView" t-inherit="web.FormView" t-inherit-mode="primary">
-        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+        <xpath expr="//t[@t-component='props.Renderer'][@archInfo='archInfo']" position="before">
             <div t-if="headerState.isLoaded" class="fin-invoice-header">
                 <div class="fin-inv-hdr-left">
                     <div class="fin-inv-hdr-title-row">

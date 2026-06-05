@@ -8,6 +8,7 @@ class ResConfigSettings(models.TransientModel):
 
     red_supplier_tax_code = fields.Char(related='company_id.red_supplier_tax_code', readonly=False)
     red_invoice_api_base = fields.Char(related='company_id.red_invoice_api_base', readonly=False)
+    red_invoice_lookup_base_url = fields.Char(related='company_id.red_invoice_lookup_base_url', readonly=False)
     red_invoice_username = fields.Char(related='company_id.red_invoice_username', readonly=False)
     red_invoice_password = fields.Char(related='company_id.red_invoice_password', readonly=False)
     red_invoice_signing_mode = fields.Selection(related='company_id.red_invoice_signing_mode', readonly=False)

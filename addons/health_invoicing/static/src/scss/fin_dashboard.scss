@@ -81,6 +81,48 @@
     color: #9E9E9E;
 }
 
+// Date filter bar
+.fin-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 14px 28px;
+    background: white;
+    border-bottom: 1px solid #E8EAF0;
+}
+.fin-filter-chips { display: inline-flex; gap: 6px; background: #EEF2F1; padding: 4px; border-radius: 10px; }
+.fin-filter-chip {
+    border: none;
+    background: transparent;
+    color: #546E7A;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    &:hover { color: $fin-primary; }
+    &.active { background: $fin-primary; color: white; box-shadow: 0 2px 6px rgba(0, 77, 64, 0.25); }
+}
+.fin-custom-range { display: inline-flex; align-items: center; gap: 8px; }
+.fin-date-input {
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: #37474F;
+    &:focus { outline: none; border-color: $fin-primary; box-shadow: 0 0 0 3px rgba(0, 77, 64, 0.1); }
+}
+.fin-range-sep { color: #9E9E9E; font-size: 12px; }
+.fin-filter-apply {
+    display: inline-flex; align-items: center; gap: 5px;
+    border: none; background: $fin-primary; color: white;
+    font-size: 13px; font-weight: 600; padding: 7px 14px;
+    border-radius: 8px; cursor: pointer;
+    &:hover { background: $fin-primary-light; }
+}
+
 // Dashboard Body
 .fin-dashboard-body {
     padding: 24px 28px;
@@ -97,23 +139,29 @@
 .fin-kpi-card {
     background: white;
     border-radius: $fin-card-radius;
-    padding: 20px;
+    padding: 18px;
     box-shadow: $fin-card-shadow;
-    transition: box-shadow 0.2s;
+    transition: box-shadow 0.2s, transform 0.12s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
 
     &:hover { box-shadow: $fin-card-shadow-hover; }
 }
 
 .fin-kpi-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
-    margin-bottom: 12px;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin: 0;
 }
+
+.fin-kpi-body { min-width: 0; flex: 1; }
 
 .kpi-revenue .fin-kpi-icon { background: #E8F5E9; color: #2E7D32; }
 .kpi-outstanding .fin-kpi-icon { background: #FFF3E0; color: #E65100; }
@@ -122,12 +170,24 @@
 .kpi-packages .fin-kpi-icon { background: #E3F2FD; color: #1565C0; }
 .kpi-pending .fin-kpi-icon { background: #FFF8E1; color: #F57F17; }
 
+/* Red Invoice (Viettel) status cards */
+.kpi-ri-issued .fin-kpi-icon { background: #DBF0DB; color: #2E6B33; }
+.kpi-ri-failed .fin-kpi-icon { background: #FBE3E1; color: #C62828; }
+.kpi-ri-pending .fin-kpi-icon { background: #FEE8C9; color: #9C4C00; }
+.kpi-ri-cancelled .fin-kpi-icon { background: #ECEFF1; color: #607D8B; }
+.fin-ri-row { margin-top: 6px; grid-template-columns: repeat(4, 1fr); }
+.fin-clickable { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.fin-clickable:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 24, 40, 0.10); }
+
 .fin-kpi-value {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 26px;
+    font-weight: 800;
     color: $fin-primary;
-    line-height: 1;
+    line-height: 1.05;
     margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .fin-kpi-label {
@@ -142,11 +202,12 @@
     margin-top: 2px;
 }
 
-// Main Grid
+// Main Grid — 3 columns: payments | revenue trend | side stack
 .fin-main-grid {
     display: grid;
-    grid-template-columns: 1fr 340px;
+    grid-template-columns: 1.15fr 1fr 300px;
     gap: 20px;
+    align-items: start;
 }
 
 // Panels
@@ -205,10 +266,13 @@
     i { margin-left: 4px; }
 }
 
-// Payment Cards
+// Payment Cards — richer rows (avatar + main + amount/badge)
 .fin-payment-card {
-    padding: 14px 16px;
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
     cursor: pointer;
     transition: background 0.15s;
     border: 1px solid transparent;
@@ -221,25 +285,52 @@
     & + & { margin-top: 4px; }
 }
 
-.fin-payment-card-top {
+.fin-pay-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    flex-shrink: 0;
+    background: $fin-primary;
+    color: white;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.fin-pay-main { flex: 1; min-width: 0; }
+
+.fin-pay-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 3px;
+}
+
+.fin-pay-meta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.fin-pay-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    flex-shrink: 0;
 }
 
 .fin-payment-ref {
     font-size: 11px;
     font-weight: 700;
-    color: $fin-primary;
-    margin-right: 8px;
-    font-family: monospace;
+    color: #90A4AE;
 }
 
 .fin-payment-patient {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 13.5px;
+    font-weight: 700;
     color: #263238;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .fin-status-badge {
@@ -264,11 +355,10 @@
 }
 
 .fin-payment-amount {
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
     color: $fin-primary;
-
-    i { margin-right: 4px; font-size: 11px; }
+    white-space: nowrap;
 }
 
 .fin-payment-detail {
@@ -381,10 +471,60 @@
     color: #37474F;
 }
 
+// Revenue Trend chart (CSS bars)
+.fin-trend-chart {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    height: 190px;
+    padding: 6px 4px 0;
+}
+.fin-trend-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.fin-trend-val {
+    font-size: 10px;
+    font-weight: 700;
+    color: #546E7A;
+    margin-bottom: 5px;
+    white-space: nowrap;
+}
+.fin-trend-bar-wrap {
+    flex: 1;
+    width: 62%;
+    display: flex;
+    align-items: flex-end;
+}
+.fin-trend-bar {
+    width: 100%;
+    min-height: 4px;
+    border-radius: 6px 6px 0 0;
+    background: #26A69A;
+    transition: height 0.4s ease;
+}
+.fin-trend-col:last-child .fin-trend-bar { background: $fin-primary; }
+.fin-trend-label {
+    font-size: 11px;
+    color: #90A4AE;
+    margin-top: 7px;
+    font-weight: 600;
+}
+
 // Responsive
+@media (max-width: 1500px) {
+    .fin-main-grid { grid-template-columns: 1.2fr 1fr; }
+    .fin-side-panels { grid-column: 1 / -1; flex-direction: row; }
+    .fin-side-panels > .fin-panel { flex: 1; }
+}
+
 @media (max-width: 1200px) {
     .fin-kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .fin-ri-row { grid-template-columns: repeat(2, 1fr); }
     .fin-main-grid { grid-template-columns: 1fr; }
+    .fin-side-panels { flex-direction: column; }
 }
 
 @media (max-width: 768px) {

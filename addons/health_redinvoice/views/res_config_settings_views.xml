@@ -18,6 +18,8 @@
                             <field name="red_supplier_tax_code"/>
                             <label for="red_invoice_api_base"/>
                             <field name="red_invoice_api_base" placeholder="https://api-vinvoice.viettel.vn/services/einvoiceapplication/api"/>
+                            <label for="red_invoice_lookup_base_url"/>
+                            <field name="red_invoice_lookup_base_url" placeholder="https://lookup-portal.example/?code="/>
                             <label for="red_invoice_username"/>
                             <field name="red_invoice_username"/>
                             <label for="red_invoice_password"/>

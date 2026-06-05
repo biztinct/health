@@ -8,6 +8,10 @@ class Company(models.Model):
 
     red_supplier_tax_code = fields.Char(string='Red Invoice Tax Code')
     red_invoice_api_base = fields.Char(string='Red Invoice API Base URL')
+    red_invoice_lookup_base_url = fields.Char(
+        string='Red Invoice Lookup Base URL',
+        help='Public verification portal base. The reservation code is appended to '
+             'build each invoice Lookup URL, e.g. "https://portal.example/lookup?code=".')
     red_invoice_username = fields.Char(string='Red Invoice Username')
     red_invoice_password = fields.Char(string='Red Invoice Password', password=True)
     red_invoice_signing_mode = fields.Selection([

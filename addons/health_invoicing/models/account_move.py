@@ -1044,47 +1044,68 @@ class HealthcareInvoice(models.Model):
         return warnings
 
     @api.model
-    def get_finance_dashboard_data(self):
-        """Return KPIs, recent payments, and invoice breakdown for Finance Dashboard."""
+    def _fin_period_range(self, period, date_from=None, date_to=None):
+        """Resolve a dashboard period to (date_from, date_to, label).
+        None bounds mean unbounded (All Time)."""
         today = fields.Date.today()
-        month_start = today.replace(day=1)
+        if period == 'today':
+            return today, today, _('Today')
+        if period == 'week':
+            return today - timedelta(days=today.weekday()), today, _('This Week')
+        if period == 'month':
+            return today.replace(day=1), today, _('This Month')
+        if period == 'all':
+            return None, None, _('All Time')
+        if period == 'custom':
+            d_from = fields.Date.to_date(date_from) if date_from else None
+            d_to = fields.Date.to_date(date_to) if date_to else None
+            return d_from, d_to, _('Custom')
+        return today.replace(day=1), today, _('This Month')
 
-        # Revenue this month (posted customer invoices)
-        posted_invoices = self.search([
-            ('move_type', '=', 'out_invoice'),
-            ('state', '=', 'posted'),
-            ('invoice_date', '>=', month_start),
-            ('invoice_date', '<=', today),
-        ])
-        revenue_this_month = sum(posted_invoices.mapped('amount_total'))
+    @api.model
+    def get_finance_dashboard_data(self, period='month', date_from=None, date_to=None):
+        """KPIs, recent payments, invoice breakdown and revenue trend for the
+        Finance Dashboard. Period-based metrics honour the selected range;
+        snapshot metrics (AR / overdue / packages / pending delivery) are
+        always 'as of now'."""
+        today = fields.Date.today()
+        d_from, d_to, range_label = self._fin_period_range(period, date_from, date_to)
 
-        # Outstanding AR (all open customer invoices)
+        # ----- Period-bound invoice domain (by invoice_date) -----
+        period_domain = [('move_type', '=', 'out_invoice')]
+        if d_from:
+            period_domain.append(('invoice_date', '>=', d_from))
+        if d_to:
+            period_domain.append(('invoice_date', '<=', d_to))
+
+        # Revenue (period) — posted customer invoices
+        posted_period = self.search(period_domain + [('state', '=', 'posted')])
+        revenue = sum(posted_period.mapped('amount_total'))
+
+        # ----- Snapshot: Outstanding AR / Overdue (as of now) -----
         open_invoices = self.search([
-            ('move_type', '=', 'out_invoice'),
-            ('state', '=', 'posted'),
+            ('move_type', '=', 'out_invoice'), ('state', '=', 'posted'),
             ('payment_state', 'in', ['not_paid', 'partial']),
         ])
         outstanding_ar = sum(open_invoices.mapped('amount_residual'))
-
-        # Overdue amount
         overdue_invoices = open_invoices.filtered(
-            lambda inv: inv.invoice_date_due and inv.invoice_date_due < today
-        )
+            lambda inv: inv.invoice_date_due and inv.invoice_date_due < today)
         overdue_amount = sum(overdue_invoices.mapped('amount_residual'))
 
-        # Cash collected today
-        cash_today = 0
+        # Cash collected (period)
+        cash_collected = 0
         PaymentTx = self.env.get('health.payment.transaction')
         if PaymentTx is not None:
-            today_payments = PaymentTx.search([
-                ('transaction_date', '>=', fields.Datetime.to_string(
-                    datetime.combine(today, datetime.min.time())
-                )),
-                ('status', 'in', ['collected', 'delivered', 'reconciled']),
-            ])
-            cash_today = sum(today_payments.mapped('amount'))
+            pay_domain = [('status', 'in', ['collected', 'delivered', 'reconciled'])]
+            if d_from:
+                pay_domain.append(('transaction_date', '>=', fields.Datetime.to_string(
+                    datetime.combine(d_from, datetime.min.time()))))
+            if d_to:
+                pay_domain.append(('transaction_date', '<=', fields.Datetime.to_string(
+                    datetime.combine(d_to, datetime.max.time()))))
+            cash_collected = sum(PaymentTx.search(pay_domain).mapped('amount'))
 
-        # Active packages
+        # ----- Snapshot: active packages, pending delivery -----
         active_packages = 0
         packages_remaining_value = 0
         PackageModel = self.env.get('health.service.package')
@@ -1093,20 +1114,15 @@ class HealthcareInvoice(models.Model):
             active_packages = len(pkgs)
             for pkg in pkgs:
                 packages_remaining_value += pkg.remaining_services * pkg.price_per_service
-
-        # Pending delivery (nurse cash in transit)
         pending_delivery = 0
         if PaymentTx is not None:
-            pending_delivery = PaymentTx.search_count([
-                ('status', '=', 'pending_delivery'),
-            ])
+            pending_delivery = PaymentTx.search_count([('status', '=', 'pending_delivery')])
 
-        # Recent payments (last 10)
+        # Recent payments (last 10, always most-recent)
         recent_payments = []
         if PaymentTx is not None:
             recent_txs = PaymentTx.search([], order='create_date desc', limit=10)
             for tx in recent_txs:
-                time_ago = self._format_time_ago(tx.create_date)
                 recent_payments.append({
                     'id': tx.id,
                     'reference': tx.name or '',
@@ -1114,17 +1130,12 @@ class HealthcareInvoice(models.Model):
                     'amount': tx.amount,
                     'method': tx.payment_method or '',
                     'status': tx.status or '',
-                    'time_ago': time_ago,
+                    'time_ago': self._format_time_ago(tx.create_date),
                 })
 
-        # Invoice status breakdown (this month)
-        all_month = self.search([
-            ('move_type', '=', 'out_invoice'),
-            ('invoice_date', '>=', month_start),
-            ('invoice_date', '<=', today),
-        ])
-        total_count = len(all_month) or 1
-        breakdown = []
+        # Invoice status breakdown (period)
+        all_period = self.search(period_domain)
+        total_count = len(all_period) or 1
         status_map = [
             ('draft', 'Draft', lambda inv: inv.state == 'draft'),
             ('posted', 'Posted', lambda inv: inv.state == 'posted' and inv.payment_state == 'not_paid'),
@@ -1133,27 +1144,67 @@ class HealthcareInvoice(models.Model):
             ('overdue', 'Overdue', lambda inv: inv.state == 'posted' and inv.payment_state in ('not_paid', 'partial') and inv.invoice_date_due and inv.invoice_date_due < today),
             ('cancelled', 'Cancelled', lambda inv: inv.state == 'cancel'),
         ]
+        breakdown = []
         for status, label, filter_fn in status_map:
-            count = len(all_month.filtered(filter_fn))
+            count = len(all_period.filtered(filter_fn))
             breakdown.append({
-                'status': status,
-                'label': label,
-                'count': count,
+                'status': status, 'label': label, 'count': count,
                 'percent': round(count / total_count * 100, 1),
             })
 
+        # Red Invoice (Viettel) counts (period) — guarded if module absent
+        red_invoice = {'enabled': False, 'issued': 0, 'failed': 0, 'pending': 0, 'cancelled': 0}
+        if 'red_invoice_state' in self._fields:
+            red_invoice['enabled'] = self.env['ir.config_parameter'].sudo().get_param(
+                'vietnamese_tax.red_invoice_enabled', 'True') == 'True'
+            red_invoice['issued'] = len(posted_period.filtered(lambda m: m.red_invoice_state == 'issued'))
+            red_invoice['failed'] = len(posted_period.filtered(lambda m: m.red_invoice_state == 'failed'))
+            red_invoice['pending'] = len(posted_period.filtered(lambda m: m.red_invoice_state in ('pending', 'issuing')))
+            red_invoice['cancelled'] = len(posted_period.filtered(lambda m: m.red_invoice_state == 'cancelled'))
+
+        # Revenue trend — last 6 months (independent of the filter)
+        revenue_trend = []
+        y, m = today.year, today.month
+        months = []
+        for _i in range(6):
+            months.append((y, m))
+            m -= 1
+            if m == 0:
+                m, y = 12, y - 1
+        months.reverse()
+        for (yy, mm) in months:
+            m_start = fields.Date.to_date('%04d-%02d-01' % (yy, mm))
+            if mm == 12:
+                nxt = fields.Date.to_date('%04d-01-01' % (yy + 1))
+            else:
+                nxt = fields.Date.to_date('%04d-%02d-01' % (yy, mm + 1))
+            m_end = nxt - timedelta(days=1)
+            rev = sum(self.search([
+                ('move_type', '=', 'out_invoice'), ('state', '=', 'posted'),
+                ('invoice_date', '>=', m_start), ('invoice_date', '<=', m_end),
+            ]).mapped('amount_total'))
+            revenue_trend.append({'label': m_start.strftime('%b'), 'revenue': rev})
+
         return {
+            'period': period,
+            'range': {
+                'from': fields.Date.to_string(d_from) if d_from else None,
+                'to': fields.Date.to_string(d_to) if d_to else None,
+                'label': range_label,
+            },
             'kpis': {
-                'revenue_this_month': revenue_this_month,
+                'revenue': revenue,
                 'outstanding_ar': outstanding_ar,
                 'overdue_amount': overdue_amount,
-                'cash_collected_today': cash_today,
+                'cash_collected': cash_collected,
                 'active_packages': active_packages,
                 'packages_remaining_value': packages_remaining_value,
                 'pending_delivery': pending_delivery,
             },
             'recent_payments': recent_payments,
             'invoice_breakdown': breakdown,
+            'red_invoice': red_invoice,
+            'revenue_trend': revenue_trend,
         }
 
     def _format_time_ago(self, dt):

@@ -56,11 +56,13 @@
                 <field name="red_invoice_enabled" invisible="1"/>
                 <button name="action_redinvoice_generate" type="object" string="Generate Red Invoice"
                         class="btn-primary"
-                        invisible="not red_invoice_enabled or move_type not in ('out_invoice','out_refund') or state != 'posted'"/>
+                        invisible="not red_invoice_enabled or move_type not in ('out_invoice','out_refund') or state != 'posted' or red_invoice_state == 'issued'"/>
                 <button name="action_redinvoice_download_zip" type="object" string="Download Red Invoice"
                         class="btn-secondary"
                         invisible="not red_invoice_enabled or red_invoice_state != 'issued' or move_type not in ('out_invoice','out_refund')"/>
-                <button name="action_redinvoice_download_pdf" type="object" string="Download PDF"
+                <!-- 'Download PDF' (converted/exchange invoice) hidden for now; use the
+                     representation PDF via 'Open Red Invoice'. -->
+                <button name="action_open_red_invoice_pdf" type="object" string="Open Red Invoice"
                         class="btn-secondary"
                         invisible="not red_invoice_enabled or red_invoice_state != 'issued' or move_type not in ('out_invoice','out_refund')"/>
                 <button name="action_redinvoice_cancel" type="object" string="Cancel Red Invoice"
@@ -112,5 +114,99 @@
                 </page>
             </notebook>
         </field>
+    </record>
+
+    <!-- Red Invoice status badge + PDF icon on the Finance Invoices list -->
+    <record id="view_fin_invoice_list_redinvoice" model="ir.ui.view">
+        <field name="name">fin.invoice.list.redinvoice</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="health_invoicing.view_fin_invoice_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_state']" position="after">
+                <field name="red_invoice_state" widget="badge" string="Red Invoice"
+                       decoration-success="red_invoice_state=='issued'"
+                       decoration-danger="red_invoice_state=='failed'"
+                       decoration-warning="red_invoice_state=='pending'"
+                       decoration-info="red_invoice_state=='issuing'"
+                       decoration-muted="red_invoice_state in ('not_required','cancelled')"
+                       optional="show"/>
+                <button name="action_open_red_invoice_pdf" type="object"
+                        icon="/health_redinvoice/static/src/img/red_invoice.svg" title="Open Red Invoice"
+                        invisible="red_invoice_state != 'issued'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Red Invoice status badge + PDF icon on the VAT Invoices Log -->
+    <record id="view_vat_log_list_redinvoice" model="ir.ui.view">
+        <field name="name">vat.log.list.redinvoice</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="health_invoicing.view_healthcare_vat_invoice_log_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="red_invoice_state" widget="badge" string="Red Invoice"
+                       decoration-success="red_invoice_state=='issued'"
+                       decoration-danger="red_invoice_state=='failed'"
+                       decoration-warning="red_invoice_state=='pending'"
+                       decoration-info="red_invoice_state=='issuing'"
+                       decoration-muted="red_invoice_state in ('not_required','cancelled')"
+                       optional="show"/>
+                <button name="action_open_red_invoice_pdf" type="object"
+                        icon="/health_redinvoice/static/src/img/red_invoice.svg" title="Open Red Invoice"
+                        invisible="red_invoice_state != 'issued'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Red Invoice drill-down list (used by the dashboard cards): shows the
+         failure reason + Retry / Open PDF actions -->
+    <record id="view_redinvoice_drill_list" model="ir.ui.view">
+        <field name="name">redinvoice.drill.list</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <list string="Red Invoices" decoration-danger="red_invoice_state=='failed'"
+                  decoration-success="red_invoice_state=='issued'"
+                  decoration-warning="red_invoice_state in ('pending','issuing')">
+                <field name="name" string="Number"/>
+                <field name="partner_id" string="Patient"/>
+                <field name="invoice_date" string="Date"/>
+                <field name="amount_total" string="Total" sum="Total"/>
+                <field name="red_invoice_no" string="Red Invoice No" optional="show"/>
+                <field name="red_invoice_state" widget="badge" string="Status"
+                       decoration-success="red_invoice_state=='issued'"
+                       decoration-danger="red_invoice_state=='failed'"
+                       decoration-warning="red_invoice_state in ('pending','issuing')"
+                       decoration-muted="red_invoice_state in ('not_required','cancelled')"/>
+                <field name="red_invoice_last_error" string="Reason"/>
+                <button name="action_redinvoice_generate" type="object" icon="fa-refresh"
+                        title="Retry / Generate Red Invoice" invisible="red_invoice_state == 'issued'"/>
+                <button name="action_open_red_invoice_pdf" type="object" icon="/health_redinvoice/static/src/img/red_invoice.svg"
+                        title="Open Red Invoice" invisible="red_invoice_state != 'issued'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_redinvoice_failed" model="ir.actions.act_window">
+        <field name="name">Red Invoice — Failed</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('move_type','=','out_invoice'),('red_invoice_state','=','failed')]</field>
+        <field name="view_ids" eval="[(5,0,0),(0,0,{'view_mode':'list','view_id':ref('view_redinvoice_drill_list')})]"/>
+    </record>
+
+    <record id="action_redinvoice_pending" model="ir.actions.act_window">
+        <field name="name">Red Invoice — Pending</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('move_type','=','out_invoice'),('state','=','posted'),('red_invoice_state','in',['pending','issuing'])]</field>
+        <field name="view_ids" eval="[(5,0,0),(0,0,{'view_mode':'list','view_id':ref('view_redinvoice_drill_list')})]"/>
+    </record>
+
+    <record id="action_redinvoice_issued" model="ir.actions.act_window">
+        <field name="name">Red Invoice — Issued</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('move_type','=','out_invoice'),('red_invoice_state','=','issued')]</field>
+        <field name="view_ids" eval="[(5,0,0),(0,0,{'view_mode':'list','view_id':ref('view_redinvoice_drill_list')})]"/>
     </record>
 </odoo>

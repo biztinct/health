@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Red Invoice smart button on the Booking (field service order) form -->
+    <record id="view_fso_form_redinvoice" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.redinvoice</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+            <!-- Add a 'Red Invoice' item to the booking's QUICK ACTIONS panel,
+                 right after 'View Invoice'. Visible once the linked invoice's
+                 Red Invoice has been issued. -->
+            <xpath expr="//button[@name='action_view_all_invoices']" position="after">
+                <field name="red_invoice_state" invisible="1"/>
+                <button name="action_open_red_invoice" type="object" class="vu-action-item"
+                        invisible="red_invoice_state != 'issued'"
+                        title="Open the issued Red Invoice (VAT e-invoice) for this booking">
+                    <span class="hf-redinv-pdf"/> Red Invoice
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

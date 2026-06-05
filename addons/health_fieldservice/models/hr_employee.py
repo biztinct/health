@@ -1,4 +1,6 @@
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+from odoo.addons.health_base.models.phone_utils import normalize_vn_phone
 from datetime import datetime, timedelta
 
 
@@ -983,9 +985,51 @@ class HrEmployee(models.Model):
             'staff': staff_data,
         }
 
+    # Staff phone fields following the Vietnamese 10-digit rule.
+    _VN_PHONE_FIELDS = ('mobile_for_assignments', 'emergency_contact_phone')
+
+    @api.constrains('mobile_for_assignments', 'emergency_contact_phone')
+    def _check_vn_phone(self):
+        for employee in self:
+            for fname in self._VN_PHONE_FIELDS:
+                value = employee[fname]
+                if value:
+                    normalize_vn_phone(value)  # raises ValidationError if invalid
+
+    @api.onchange('mobile_for_assignments', 'emergency_contact_phone')
+    def _onchange_normalize_vn_phone(self):
+        invalid = []
+        for fname in self._VN_PHONE_FIELDS:
+            value = self[fname]
+            if value:
+                try:
+                    self[fname] = normalize_vn_phone(value)
+                except ValidationError:
+                    invalid.append(value)
+        if invalid:
+            return {'warning': {
+                'title': _("Invalid phone number"),
+                'message': _(
+                    "%s is not a valid phone number.\n\n"
+                    "Enter a 9-digit number (a leading 0 is added automatically) "
+                    "or a 10-digit number starting with a single 0."
+                ) % ", ".join(invalid),
+            }}
+
+    def write(self, vals):
+        for fname in self._VN_PHONE_FIELDS:
+            if vals.get(fname):
+                vals[fname] = normalize_vn_phone(vals[fname])
+        return super().write(vals)
+
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to set healthcare staff categories"""
+        for vals in vals_list:
+            for fname in self._VN_PHONE_FIELDS:
+                if vals.get(fname):
+                    vals[fname] = normalize_vn_phone(vals[fname])
+
         employees = super().create(vals_list)
         
         for employee in employees:

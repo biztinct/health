@@ -5,10 +5,11 @@
         <field name="model">redinvoice.pdf.preview.wizard</field>
         <field name="arch" type="xml">
             <form string="Red Invoice PDF" create="0" edit="0">
-                <group>
-                    <field name="pdf_binary" widget="pdf_viewer" readonly="1" filename="filename"/>
-                </group>
+                <field name="pdf_url" widget="redinvoice_pdf_frame" nolabel="1"/>
                 <footer>
+                    <button string="Download" type="object" name="action_download" class="btn-primary"/>
+                    <button string="Email to Client" type="object" name="action_email_client" class="btn-secondary"/>
+                    <button string="Print" type="object" name="action_print" class="btn-secondary"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

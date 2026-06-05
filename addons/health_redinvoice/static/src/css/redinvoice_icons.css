@@ -1,0 +1,46 @@
+/* Red Invoice SVG icons — CSS mask, data-URI, themeable via currentColor.
+   Works as a list-button icon (icon="hf-redinv-pdf") and as inline <span>. */
+.hf-redinv-pdf {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: -3px;
+    background-color: currentColor;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.4'%3E%3Cpath%20d='M4%201.8h4.5L12%205.3V14H4z'%20stroke-linejoin='round'/%3E%3Cpath%20d='M8.4%201.8v3.6H12'%20stroke-linejoin='round'/%3E%3Cpath%20d='M6%208.6h4M6%2010.9h4'%20stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2016%2016'%20fill='none'%20stroke='black'%20stroke-width='1.4'%3E%3Cpath%20d='M4%201.8h4.5L12%205.3V14H4z'%20stroke-linejoin='round'/%3E%3Cpath%20d='M8.4%201.8v3.6H12'%20stroke-linejoin='round'/%3E%3Cpath%20d='M6%208.6h4M6%2010.9h4'%20stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* When used as an Odoo list/form button icon, neutralise the inherited
+   font-awesome glyph box so only the SVG mask shows. */
+.o_button_icon.hf-redinv-pdf::before { content: none; }
+.btn .hf-redinv-pdf { color: var(--primary, #1565C0); }
+
+/* Ensure the Red Invoice SVG list-button icon has a visible size
+   (Odoo renders icon paths as <img> with no intrinsic CSS size). */
+button[name="action_open_red_invoice_pdf"] img,
+img[src$="red_invoice.svg"] {
+    width: 18px !important;
+    height: 18px !important;
+    vertical-align: middle;
+}
+
+/* Red Invoice PDF modal iframe — make the field + iframe fill the dialog */
+.o_field_redinvoice_pdf_frame {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+}
+.redinv-pdf-frame-wrap { width: 100%; }
+.redinv-pdf-frame {
+    width: 100%;
+    height: 78vh;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    background: #f5f5f5;
+}

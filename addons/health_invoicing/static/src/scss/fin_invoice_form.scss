@@ -1,108 +1,227 @@
-// Finance Invoice Form — OWL header
+// =====================================================================
+//  Finance Invoice Form — premium redesign (native Odoo form underneath,
+//  brand styling layered on top). Scoped to .fin-invoice-form-page.
+//  Finance-center teal ($fin-primary) leads; brand status colours accent.
+// =====================================================================
+
+$fin-navy: #00352C;          // deepest teal for headings
+$fin-accent: #00897B;        // lively teal accent
+$fin-ink: #0f172a;
+$fin-muted: #64748b;
+$fin-line: #E8EAF0;
+$fin-canvas: #F4F6FA;
+
 .fin-invoice-form-page {
     .o_form_view { overflow: visible; }
+
+    // ---- Canvas: lift the sheet onto a soft grey backdrop ----
+    .o_content { background: $fin-canvas; }
+    .o_form_sheet_bg {
+        background: transparent;
+        padding: 8px 0 0;
+        max-width: none !important;   // remove the centred narrow column
+    }
+    .o_form_sheet {
+        // Fill the width (match the full-width header) — no right-side gap
+        max-width: none !important;
+        width: auto !important;
+        margin: 0 16px 16px !important;
+        border: 1px solid $fin-line;
+        border-radius: 18px;
+        box-shadow: 0 4px 18px rgba(16, 24, 40, 0.06);
+        background: #fff;
+    }
+
+    // ---- Section separators (group "string" titles) ----
+    .o_horizontal_separator,
+    .o_group .o_horizontal_separator {
+        color: $fin-navy;
+        font-weight: 800;
+        font-size: 0.78rem;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        border-bottom: 2px solid rgba($fin-primary, 0.12);
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+    }
+
+    // ---- Field labels ----
+    .o_form_label { color: $fin-muted; font-weight: 600; }
+    .o_field_widget { color: $fin-ink; }
+
+    // ---- Notebook tabs: teal active underline ----
+    .o_notebook .nav-tabs {
+        border-bottom: 1px solid $fin-line;
+        .nav-link {
+            color: $fin-muted;
+            font-weight: 700;
+            border: none;
+            border-bottom: 2.5px solid transparent;
+            &:hover { color: $fin-primary; }
+            &.active {
+                color: $fin-primary;
+                background: transparent;
+                border-bottom-color: $fin-primary;
+            }
+        }
+    }
+
+    // ---- Statusbar action buttons ----
+    .o_statusbar_buttons .btn-primary {
+        background: $fin-primary;
+        border-color: $fin-primary;
+        &:hover { background: $fin-navy; border-color: $fin-navy; }
+    }
 }
 
+// =====================================================================
+//  Custom OWL header banner
+// =====================================================================
 .fin-invoice-header {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 28px;
-    background: white;
-    border-bottom: 1px solid #E8EAF0;
     gap: 24px;
+    margin: 12px 16px 4px;
+    padding: 18px 24px 18px 26px;
+    background: #fff;
+    border: 1px solid $fin-line;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(16, 24, 40, 0.05);
+    overflow: hidden;
+
+    &::before {              // brand accent bar
+        content: "";
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 5px;
+        background: $fin-primary;
+    }
 }
 
-.fin-inv-hdr-left {
-    flex: 1;
-    min-width: 0;
-}
+.fin-inv-hdr-left { flex: 1; min-width: 0; }
 
 .fin-inv-hdr-title-row {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .fin-inv-back {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 1px solid #E0E0E0;
-    background: white;
-    color: #546E7A;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    border: 1px solid $fin-line;
+    background: #fff;
+    color: $fin-muted;
     cursor: pointer;
     transition: all 150ms;
-
-    &:hover {
-        background: #E0F2F1;
-        border-color: #B2DFDB;
-        color: $fin-primary;
-    }
+    &:hover { background: rgba($fin-primary, 0.08); border-color: rgba($fin-primary, 0.4); color: $fin-primary; }
 }
 
 .fin-inv-hdr-number {
-    font-size: 20px;
-    font-weight: 700;
-    color: $fin-primary;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: $fin-navy;
     margin: 0;
 }
 
 .fin-inv-hdr-badge {
+    display: inline-flex;
+    align-items: center;
     font-size: 11px;
-    font-weight: 700;
-    padding: 3px 12px;
-    border-radius: 20px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
     white-space: nowrap;
 }
 
-.fin-pay-not_paid { background: #FFEBEE; color: #C62828; }
-.fin-pay-in_payment { background: #FFF8E1; color: #F57F17; }
-.fin-pay-paid { background: #E8F5E9; color: #2E7D32; }
-.fin-pay-partial { background: #FFF3E0; color: #E65100; }
-.fin-pay-reversed { background: #FAFAFA; color: #757575; }
+.fin-pay-not_paid { background: #FBE3E1; color: #C0332A; }
+.fin-pay-in_payment { background: #FEE8C9; color: #9C4C00; }
+.fin-pay-paid { background: #DBF0DB; color: #2E6B33; }
+.fin-pay-partial { background: #FEE8C9; color: #9C4C00; }
+.fin-pay-reversed { background: #ECEFF1; color: #607D8B; }
 
 .fin-inv-hdr-meta {
     display: flex;
-    gap: 16px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
 .fin-inv-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: 12px;
-    color: #78909C;
+    font-weight: 600;
+    color: $fin-muted;
+    background: $fin-canvas;
+    border: 1px solid $fin-line;
+    border-radius: 999px;
+    padding: 4px 11px;
 
-    i { margin-right: 4px; font-size: 11px; }
+    i { font-size: 11px; color: $fin-primary; }
 }
 
 .fin-inv-hdr-amounts {
     display: flex;
-    gap: 24px;
+    gap: 12px;
     flex-shrink: 0;
 }
 
 .fin-inv-amount-block {
     text-align: center;
-    min-width: 80px;
+    min-width: 96px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: $fin-canvas;
+    border: 1px solid $fin-line;
 }
 
 .fin-inv-amount-val {
     font-size: 20px;
-    font-weight: 700;
-    color: $fin-primary;
-    line-height: 1.2;
+    font-weight: 800;
+    color: $fin-navy;
+    line-height: 1.15;
 }
 
 .fin-inv-amount-lbl {
-    font-size: 11px;
-    color: #78909C;
-    font-weight: 500;
-    margin-top: 2px;
+    font-size: 10.5px;
+    color: $fin-muted;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 3px;
 }
 
-.amt-due .fin-inv-amount-val { color: #C62828; }
-.amt-paid .fin-inv-amount-val { color: #2E7D32; }
+.fin-inv-amount-block.amt-due { background: #FBE3E1; border-color: #F6CFCB; }
+.fin-inv-amount-block.amt-due .fin-inv-amount-val { color: #C0332A; }
+.fin-inv-amount-block.amt-paid { background: #DBF0DB; border-color: #C2E5C6; }
+.fin-inv-amount-block.amt-paid .fin-inv-amount-val { color: #2E6B33; }
+
+// =====================================================================
+//  Red Invoice tab — sectioned cards + status chip
+// =====================================================================
+.fin-invoice-form-page {
+    .o_notebook_content .tab-pane[name="red_invoice_tab"] {
+        .o_group {
+            > .o_group {
+                background: $fin-canvas;
+                border: 1px solid $fin-line;
+                border-radius: 14px;
+                padding: 14px 16px;
+            }
+        }
+        // state badge (red invoice)
+        .o_field_badge.o_field_widget {
+            .badge { font-weight: 800; border-radius: 999px; padding: 4px 12px; }
+        }
+    }
+}
