@@ -1,44 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
+<odoo>
+    <data noupdate="1">
+        <!-- PWA Configuration Data -->
+        <record id="pwa_config_data" model="ir.config_parameter">
+            <field name="key">health_pwa.version</field>
+            <field name="value">1.0.96</field>
+        </record>
     
-    <!-- PWA Configuration Data -->
-    <record id="pwa_config_data" model="ir.config_parameter">
-        <field name="key">health_pwa.version</field>
-        <field name="value">1.0.95</field>
-    </record>
+        <record id="pwa_config_theme" model="ir.config_parameter">
+            <field name="key">health_pwa.theme_color</field>
+            <field name="value">#875A7B</field>
+        </record>
     
-    <record id="pwa_config_theme" model="ir.config_parameter">
-        <field name="key">health_pwa.theme_color</field>
-        <field name="value">#875A7B</field>
-    </record>
+        <record id="pwa_config_background" model="ir.config_parameter">
+            <field name="key">health_pwa.background_color</field>
+            <field name="value">#FFFFFF</field>
+        </record>
     
-    <record id="pwa_config_background" model="ir.config_parameter">
-        <field name="key">health_pwa.background_color</field>
-        <field name="value">#FFFFFF</field>
-    </record>
+        <record id="pwa_config_offline_timeout" model="ir.config_parameter">
+            <field name="key">health_pwa.offline_timeout</field>
+            <field name="value">300000</field>
+        </record>
     
-    <record id="pwa_config_offline_timeout" model="ir.config_parameter">
-        <field name="key">health_pwa.offline_timeout</field>
-        <field name="value">300000</field>
-    </record>
-    
-    <record id="pwa_config_sync_interval" model="ir.config_parameter">
-        <field name="key">health_pwa.sync_interval</field>
-        <field name="value">600000</field>
-    </record>
+        <record id="pwa_config_sync_interval" model="ir.config_parameter">
+            <field name="key">health_pwa.sync_interval</field>
+            <field name="value">600000</field>
+        </record>
 
-    <!-- Health PWA Configuration Model Data -->
-    <!-- Disabled temporarily - will be created via API or management command -->
-    <!--
-    <record id="health_pwa_config_main" model="health.pwa.config">
-        <field name="name">Health PWA Configuration</field>
-        <field name="clinic_phone_number">+84 28 1234 5678</field>
-        <field name="clinic_name">VAFHS Clinic</field>
-        <field name="enable_offline_mode">True</field>
-        <field name="enable_gps_tracking">True</field>
-        <field name="enable_photo_capture">True</field>
-        <field name="active">True</field>
-    </record>
-    -->
+        <!-- Health PWA Configuration Model Data -->
+        <!-- Disabled temporarily - will be created via API or management command -->
+        <!--
+        <record id="health_pwa_config_main" model="health.pwa.config">
+            <field name="name">Health PWA Configuration</field>
+            <field name="clinic_phone_number">+84 28 1234 5678</field>
+            <field name="clinic_name">VAFHS Clinic</field>
+            <field name="enable_offline_mode">True</field>
+            <field name="enable_gps_tracking">True</field>
+            <field name="enable_photo_capture">True</field>
+            <field name="active">True</field>
+        </record>
+        -->
+    </data>
 
+    <!-- Version must advance on every module upgrade even though settings are protected. -->
+    <function model="ir.config_parameter" name="set_param"
+              eval="('health_pwa.version', '1.0.96')"/>
 </odoo>

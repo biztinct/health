@@ -10,6 +10,10 @@ from odoo.exceptions import ValidationError, UserError
 _logger = logging.getLogger(__name__)
 
 
+def _selection_labels(record, field_name):
+    return dict(record._fields[field_name]._description_selection(record.env))
+
+
 class HealthPWAAPIController(http.Controller):
     """RESTful API endpoints for PWA frontend"""
 
@@ -1488,7 +1492,7 @@ class HealthPWAAPIController(http.Controller):
                 # Get service type display name
                 service_type_label = 'Service'
                 if fso.service_type:
-                    service_type_dict = dict(fso._fields['service_type'].selection)
+                    service_type_dict = _selection_labels(fso, 'service_type')
                     service_type_label = service_type_dict.get(fso.service_type, fso.service_type)
 
                 # Get appointment type name if available
@@ -1512,7 +1516,9 @@ class HealthPWAAPIController(http.Controller):
                     'status_display': fso.state or 'Unknown',
                     'location': fso.service_location or fso.service_address or '',
                     'priority': fso.priority,
-                    'priority_display': dict(fso._fields['priority'].selection).get(fso.priority, '') if 'priority' in fso._fields and hasattr(fso._fields['priority'], 'selection') else '',
+                    'priority_display': _selection_labels(
+                        fso, 'priority'
+                    ).get(fso.priority, '') if 'priority' in fso._fields else '',
                     'lead_staff_name': fso.lead_staff_id.name if fso.lead_staff_id else None,
                     'scheduled_duration': fso.scheduled_duration if fso.scheduled_duration else 60,
                     'assignment_role': assignment.assignment_role if assignment else 'support',
@@ -2087,10 +2093,9 @@ class HealthPWAAPIController(http.Controller):
 
                 service_type = ''
                 if fso and hasattr(fso, 'service_type') and fso.service_type:
-                    try:
-                        service_type = dict(fso._fields['service_type'].selection).get(fso.service_type, fso.service_type)
-                    except Exception:
-                        service_type = fso.service_type or ''
+                    service_type = _selection_labels(
+                        fso, 'service_type'
+                    ).get(fso.service_type, fso.service_type)
 
                 notifications.append({
                     'id': assignment.id,

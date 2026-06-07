@@ -6,6 +6,10 @@ from odoo import http, fields, _
 from odoo.http import request
 
 
+def _selection_labels(record, field_name):
+    return dict(record._fields[field_name]._description_selection(record.env))
+
+
 class HealthPWASyncController(http.Controller):
     """Data synchronization endpoints for offline PWA functionality"""
     
@@ -280,7 +284,9 @@ class HealthPWASyncController(http.Controller):
                 'estimated_duration': order.estimated_duration,
                 'duration_minutes': order.scheduled_duration,
                 'service_type': order.service_type,
-                'service_type_name': dict(order._fields['service_type'].selection).get(order.service_type, ''),
+                'service_type_name': _selection_labels(
+                    order, 'service_type'
+                ).get(order.service_type, ''),
                 'team_id': order.team_id.id if order.team_id else None,
                 'team_name': order.team_id.name if order.team_id else None,
                 'booking_user_id': order.booking_user_id.id if order.booking_user_id else None,
@@ -613,7 +619,7 @@ class HealthPWASyncController(http.Controller):
                     'orders_updated_last_7_days': recent_orders,
                 },
                 'server_version': '19.0',
-                'pwa_version': '1.0.95',
+                'pwa_version': '1.0.96',
             }
             
             return self._prepare_sync_response(data=status_data)
