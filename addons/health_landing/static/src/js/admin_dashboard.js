@@ -34,6 +34,12 @@ export class AdminDashboard extends Component {
         this.state.isLoading = false;
     }
 
+    navigateToAction(actionXmlId) {
+        this.actionService.doAction(actionXmlId, {
+            clearBreadcrumbs: true,
+        });
+    }
+
     openAddUser() {
         this.actionService.doAction("health_landing.action_admin_users", {
             clearBreadcrumbs: true,

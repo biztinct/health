@@ -69,6 +69,17 @@
         <field name="require_staff_assignment" eval="True"/>
     </record>
 
+    <record id="stage_closed" model="health.fieldservice.stage">
+        <field name="name">Closed</field>
+        <field name="description">Booking closed - cash collected/reconciled, fully finalized</field>
+        <field name="sequence">68</field>
+        <field name="state">closed</field>
+        <field name="color">10</field>
+        <field name="is_closed" eval="True"/>
+        <field name="allow_edit" eval="False"/>
+        <field name="fold" eval="True"/>
+    </record>
+
     <record id="stage_cancelled" model="health.fieldservice.stage">
         <field name="name">Cancelled</field>
         <field name="description">Service cancelled</field>
