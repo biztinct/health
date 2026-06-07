@@ -90,10 +90,4 @@
               action="action_fin_ar_transactions"
               sequence="85"/>
 
-    <menuitem id="menu_fin_settings"
-              name="Settings"
-              parent="menu_fin_center_root"
-              action="action_fin_settings"
-              sequence="90"/>
-
 </odoo>

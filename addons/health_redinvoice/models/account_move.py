@@ -12,17 +12,27 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
+def _selection_red_invoice_state(model):
+    return [
+        ('not_required', model.env._('Not Required')),
+        ('pending', model.env._('Pending')),
+        ('issuing', model.env._('Issuing')),
+        ('issued', model.env._('Issued')),
+        ('failed', model.env._('Failed')),
+        ('cancelled', model.env._('Cancelled')),
+    ]
+
+
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    red_invoice_state = fields.Selection([
-        ('not_required', 'Not Required'),
-        ('pending', 'Pending'),
-        ('issuing', 'Issuing'),
-        ('issued', 'Issued'),
-        ('failed', 'Failed'),
-        ('cancelled', 'Cancelled'),
-    ], string='Red Invoice State', default='pending', copy=False, tracking=True)
+    red_invoice_state = fields.Selection(
+        _selection_red_invoice_state,
+        string='Red Invoice State',
+        default='pending',
+        copy=False,
+        tracking=True,
+    )
     red_invoice_no = fields.Char(string='Red Invoice No', copy=False, readonly=True)
     red_invoice_series = fields.Char(string='Red Invoice Series', copy=False)
     red_invoice_template_code = fields.Char(string='Red Invoice Template', copy=False)

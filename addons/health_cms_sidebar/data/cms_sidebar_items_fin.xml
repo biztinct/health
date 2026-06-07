@@ -109,14 +109,4 @@
         <field name="match_models">health.ar.transaction.log</field>
     </record>
 
-    <record id="item_fin_settings" model="cms.sidebar.item">
-        <field name="name">Settings</field>
-        <field name="section_id" ref="section_finance"/>
-        <field name="sequence">90</field>
-        <field name="icon">fa fa-sliders</field>
-        <field name="action_xmlid">health_invoicing.action_fin_settings</field>
-        <field name="action_tag">fin_settings</field>
-        <field name="match_action_tags">fin_settings</field>
-    </record>
-
 </odoo>

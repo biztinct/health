@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 11:27+0000\n"
+"POT-Creation-Date: 2026-06-07 07:29+0000\n"
 "PO-Revision-Date: 2026-06-06 10:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -481,11 +481,10 @@ msgid "AR payment record already exists."
 msgstr "Tài liệu thanh toán AR đã tồn tại."
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__moh_submission_status__accepted
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__tax_authority_submission_status__accepted
 msgid "Accepted"
-msgstr "Đã chấp nhận"
+msgstr "Được chấp nhận"
 
 #. module: health_invoicing
 #. odoo-javascript
@@ -1037,12 +1036,6 @@ msgid "Billing, Payments & Accounts Receivable"
 msgstr "Lập hóa đơn, thanh toán và công nợ phải thu"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Blocked"
-msgstr "Bị chặn"
-
-#. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__blood_pressure_monitoring
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_package_type__blood_pressure_monitoring
 msgid "Blood Pressure Monitoring"
@@ -1497,8 +1490,7 @@ msgid "Clinic"
 msgstr "Phòng khám"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__clinic_visit
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_prepaid_service__service_location__clinic
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__clinic_visit
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__clinic_visit
@@ -1659,13 +1651,12 @@ msgid "Connection Status"
 msgstr "Tình trạng kết nối"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__consultation
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__consultation
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__consultation
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_package_type__consultation
 msgid "Consultation"
-msgstr "Tư vấn"
+msgstr "Cuộc tham vấn"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_nurse_payment_wizard__prepaid_package_id
@@ -1915,18 +1906,6 @@ msgid "Customer CCCD Number"
 msgstr "Số CCCD của khách hàng"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Customer Credit Note"
-msgstr "Giấy báo có khách hàng"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Customer Invoice"
-msgstr "Hóa đơn bán hàng"
-
-#. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__misa_sync_log__sync_type__customer
 msgid "Customer Sync"
 msgstr "Đồng bộ hóa khách hàng"
@@ -2024,12 +2003,6 @@ msgstr "Ngày thanh toán"
 #: model:ir.model.fields,help:health_invoicing.field_health_payment_transaction__ar_reconciliation_date
 msgid "Date when payment was reconciled in AR system"
 msgstr "Ngày khi thanh toán được hòa giải trong hệ thống AR"
-
-#. module: health_invoicing
-#: model:ir.model.fields,help:health_invoicing.field_account_bank_statement_line__full_reconcile_payment_date
-#: model:ir.model.fields,help:health_invoicing.field_account_move__full_reconcile_payment_date
-msgid "Date when the complete reconciliation of this invoice occurred."
-msgstr "Ngày hoàn tất đối soát cho hóa đơn này."
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_service_package__purchase_date
@@ -2166,8 +2139,8 @@ msgstr "Khoảng cách đi du lịch để thăm nhà"
 #. odoo-javascript
 #. odoo-python
 #: code:addons/health_invoicing/models/account_move.py:0
-#: code:addons/health_invoicing/static/src/js/fin_invoice_form.js:0
 #: code:addons/health_invoicing/static/src/js/fin_invoice_list.js:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__tax_authority_submission_status__draft
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_ar_transaction_log__status__draft
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__billing_status__draft
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
@@ -2206,8 +2179,7 @@ msgid "Electronic receipt will be generated for your records"
 msgstr "Quý phiếu điện tử sẽ được tạo ra cho hồ sơ của bạn"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__emergency
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__emergency
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__emergency
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_package_type__emergency
@@ -2247,8 +2219,7 @@ msgid "Entity Code"
 msgstr "Mã đơn vị"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__equipment_rental
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__equipment_rental
 msgid "Equipment Rental"
 msgstr "Thuê thiết bị"
@@ -2458,8 +2429,7 @@ msgid "Flexible Location"
 msgstr "Địa điểm linh hoạt"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__follow_up
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__follow_up
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__follow_up
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_package_type__follow_up
@@ -2821,8 +2791,7 @@ msgid "Ho Chi Minh City"
 msgstr "Thành phố Hồ Chí Minh"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__home_visit
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__home_visit
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__home_visit
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_package_type__home_visit
@@ -2941,8 +2910,6 @@ msgstr "Mã hệ thống không thể thay đổi (UUID)"
 
 #. module: health_invoicing
 #. odoo-javascript
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
 #: code:addons/health_invoicing/static/src/js/fin_invoice_form.js:0
 msgid "In Payment"
 msgstr "Đang thanh toán"
@@ -3244,12 +3211,6 @@ msgid "Invoices can only be created for patients."
 msgstr "Các hóa đơn chỉ có thể được tạo cho bệnh nhân."
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Invoicing App Legacy"
-msgstr "Kế thừa ứng dụng hóa đơn"
-
-#. module: health_invoicing
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/js/fin_settings.js:0
 #: code:addons/health_invoicing/static/src/xml/fin_settings.xml:0
@@ -3289,12 +3250,10 @@ msgid "JSON mapping of tax codes between Odoo and MISA"
 msgstr "Bản đồ JSON của mã thuế giữa Odoo và MISA"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
 #: model:ir.model,name:health_invoicing.model_account_move
 #: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__move_id
 msgid "Journal Entry"
-msgstr "Bút toán"
+msgstr "Đăng ký tạp chí"
 
 #. module: health_invoicing
 #: model:ir.model,name:health_invoicing.model_account_move_line
@@ -3660,12 +3619,11 @@ msgid "Medical Equipment"
 msgstr "Thiết bị y tế"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__supplies
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move_line__healthcare_service_category__supplies
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__supplies
 msgid "Medical Supplies"
-msgstr "Vật tư y tế"
+msgstr "Các vật liệu y tế"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_billing__supplies_amount
@@ -3980,8 +3938,6 @@ msgstr "Không còn dịch vụ nào để hoàn lại."
 
 #. module: health_invoicing
 #. odoo-javascript
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
 #: code:addons/health_invoicing/static/src/js/fin_invoice_form.js:0
 msgid "Not Paid"
 msgstr "Chưa thanh toán"
@@ -3992,10 +3948,9 @@ msgid "Not Required"
 msgstr "Không cần thiết"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__misa_sync_status__not_synced
 msgid "Not Synced"
-msgstr "Chưa đồng bộ"
+msgstr "Không đồng bộ"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_vat_invoice_log_search
@@ -4688,12 +4643,6 @@ msgid "Partially Approved"
 msgstr "Một phần được chấp thuận"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Partially Paid"
-msgstr "Đã thanh toán một phần"
-
-#. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_misa_integration__misa_password
 msgid "Password for MISA system access"
 msgstr "Mật khẩu để truy cập hệ thống MISA"
@@ -4866,13 +4815,6 @@ msgid "Payment Count"
 msgstr "Số tiền thanh toán"
 
 #. module: health_invoicing
-#: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__full_reconcile_payment_date
-#: model:ir.model.fields,field_description:health_invoicing.field_account_move__full_reconcile_payment_date
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_move_form_payment_date_translation
-msgid "Payment Date"
-msgstr "Ngày thanh toán"
-
-#. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_workflow_wizard__due_date
 msgid "Payment Due Date"
 msgstr "Ngày thanh toán"
@@ -4941,8 +4883,6 @@ msgid "Payment Proof Required"
 msgstr "Bắt buộc có chứng từ thanh toán"
 
 #. module: health_invoicing
-#: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__payment_state
-#: model:ir.model.fields,field_description:health_invoicing.field_account_move__payment_state
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__status
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
 msgid "Payment Status"
@@ -5129,11 +5069,10 @@ msgid "Pending Issue"
 msgstr "Đang chờ phát hành"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__moh_submission_status__pending
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__tax_authority_submission_status__pending
 msgid "Pending Submission"
-msgstr "Chờ gửi"
+msgstr "Đang nộp"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_package_wizard_product_line__price_per_service
@@ -5362,8 +5301,7 @@ msgid "Prepared By"
 msgstr "Người lập"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__preventive
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__preventive
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__preventive
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_package_type__preventive
@@ -5544,12 +5482,6 @@ msgstr "Mua gói mới"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_package_wizard_form
 msgid "Purchase Package"
 msgstr "Mua gói"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Purchase Receipt"
-msgstr "Biên lai mua hàng"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_service_package_wizard_form
@@ -5760,21 +5692,19 @@ msgid "Register Payment"
 msgstr "Thuế đăng ký"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__healthcare_service_type__rehabilitation
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__rehabilitation
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__rehabilitation
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_package_type__rehabilitation
 msgid "Rehabilitation"
-msgstr "Phục hồi chức năng"
+msgstr "Phục hồi"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__insurance_claim_status__rejected
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__moh_submission_status__rejected
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__tax_authority_submission_status__rejected
 msgid "Rejected"
-msgstr "Bị từ chối"
+msgstr "Thất bại"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
@@ -5873,8 +5803,6 @@ msgstr "Xu hướng doanh thu"
 
 #. module: health_invoicing
 #. odoo-javascript
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
 #: code:addons/health_invoicing/static/src/js/fin_invoice_form.js:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_ar_transaction_log__status__reversed
 msgid "Reversed"
@@ -5898,12 +5826,6 @@ msgstr "Lỗi giao SMS"
 #: model:ir.model,name:health_invoicing.model_sale_order_line
 msgid "Sales Order Line"
 msgstr "Đường lệnh bán hàng"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Sales Receipt"
-msgstr "Biên lai bán hàng"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_search
@@ -6024,12 +5946,6 @@ msgstr "Sản phẩm được chọn phải là loại gói chăm sóc sức kh�
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_nurse_payment_wizard_form
 msgid "Send Invoice (Pay Later)"
 msgstr "Gửi hóa đơn (Điều trả sau))"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Sent"
-msgstr "Đã gửi"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_vat_invoice_log_list
@@ -6425,8 +6341,6 @@ msgid "Standard Odoo payment record for AR integration"
 msgstr "Hồ sơ thanh toán Odoo tiêu chuẩn cho sự tích hợp AR"
 
 #. module: health_invoicing
-#: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__state
-#: model:ir.model.fields,field_description:health_invoicing.field_account_move__state
 #: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__status
 #: model:ir.model.fields,field_description:health_invoicing.field_health_prepaid_service__status
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_package__state
@@ -6435,12 +6349,6 @@ msgstr "Hồ sơ thanh toán Odoo tiêu chuẩn cho sự tích hợp AR"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
 msgid "Status"
 msgstr "Tình trạng"
-
-#. module: health_invoicing
-#: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__status_in_payment
-#: model:ir.model.fields,field_description:health_invoicing.field_account_move__status_in_payment
-msgid "Status In Payment"
-msgstr "Trạng thái Đang thanh toán"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_payment_transaction__activity_state
@@ -6470,8 +6378,7 @@ msgid "Status of real-time submission to Vietnamese Tax Authorities"
 msgstr "Tình trạng nộp đơn thời gian thực cho Cơ quan thuế Việt Nam"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__tax_authority_submission_status__error
 msgid "Submission Error"
 msgstr "Lỗi gửi dữ liệu"
 
@@ -6481,12 +6388,11 @@ msgid "Submission will be done offline due to connectivity issues"
 msgstr "Việc nộp đơn sẽ được thực hiện ngoại tuyến do các vấn đề kết nối"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__insurance_claim_status__submitted
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__moh_submission_status__submitted
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__tax_authority_submission_status__submitted
 msgid "Submitted"
-msgstr "Đã gửi"
+msgstr "Được đệ trình"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_vat_invoice_log_list
@@ -6504,10 +6410,9 @@ msgid "Sync Date"
 msgstr "Ngày đồng bộ hóa"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__misa_sync_status__sync_error
 msgid "Sync Error"
-msgstr "Lỗi đồng bộ"
+msgstr "lỗi đồng bộ hóa"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_misa_integration__sync_errors_count
@@ -6530,10 +6435,9 @@ msgid "Sync Type"
 msgstr "Phụ hợp"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__misa_sync_status__synced
 msgid "Synced"
-msgstr "Đã đồng bộ"
+msgstr "Tích hợp"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_account_bank_statement_line__misa_sync_status
@@ -6542,10 +6446,9 @@ msgid "Synchronization status with MISA accounting system"
 msgstr "Tình trạng đồng bộ hóa với hệ thống kế toán MISA"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
+#: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__misa_sync_status__syncing
 msgid "Syncing"
-msgstr "Đang đồng bộ"
+msgstr "Đồng bộ hóa"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_nurse_payment_wizard_form
@@ -7124,8 +7027,6 @@ msgid "True if this product is a healthcare service package"
 msgstr "Đúng nếu sản phẩm này là một gói dịch vụ chăm sóc sức khỏe"
 
 #. module: health_invoicing
-#: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__move_type
-#: model:ir.model.fields,field_description:health_invoicing.field_account_move__move_type
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_service_package_wizard_form
 msgid "Type"
 msgstr "Loại"
@@ -7309,18 +7210,6 @@ msgid "Validity period for this package in weeks"
 msgstr "Thời gian hiệu lực của gói này trong vài tuần"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Vendor Bill"
-msgstr "Hóa đơn nhà cung cấp"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "Vendor Credit Note"
-msgstr "Giấy báo có nhà cung cấp"
-
-#. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_account_bank_statement_line__customer_cccd_number
 #: model:ir.model.fields,help:health_invoicing.field_account_move__customer_cccd_number
 msgid "Vietnamese Citizen ID for tax compliance"
@@ -7493,27 +7382,9 @@ msgstr "Các gói của bạn"
 
 #. module: health_invoicing
 #. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "accepted"
-msgstr "Đã chấp nhận"
-
-#. module: health_invoicing
-#. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 msgid "bank_transfer"
 msgstr "chuyển khoản ngân hàng"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "blocked"
-msgstr "Bị chặn"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "cancel"
-msgstr "Đã hủy"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_payment_collection_wizard__amount
@@ -7604,18 +7475,6 @@ msgstr "khách hàng)"
 
 #. module: health_invoicing
 #. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "clinic_visit"
-msgstr "Thăm khám tại phòng khám"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "consultation"
-msgstr "Tư vấn"
-
-#. module: health_invoicing
-#. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 msgid "credit_card"
 msgstr "thẻ tín dụng"
@@ -7639,33 +7498,9 @@ msgstr "e.g. Đưa hàng→Đơn đặt hàng→NURSE_CASH"
 
 #. module: health_invoicing
 #. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "emergency"
-msgstr "Chăm sóc khẩn cấp"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "equipment_rental"
-msgstr "Thuê thiết bị"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "error"
-msgstr "Lỗi"
-
-#. module: health_invoicing
-#. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 msgid "failed"
 msgstr "thất bại"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "follow_up"
-msgstr "Chăm sóc tiếp theo"
 
 #. module: health_invoicing
 #. odoo-python
@@ -7678,36 +7513,6 @@ msgstr "fso_id"
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 msgid "id"
 msgstr "ID"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "in_invoice"
-msgstr "Hóa đơn nhà cung cấp"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "in_payment"
-msgstr "Đang thanh toán"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "in_receipt"
-msgstr "Biên lai mua hàng"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "in_refund"
-msgstr "Giấy báo có nhà cung cấp"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "invoicing_legacy"
-msgstr "Kế thừa ứng dụng hóa đơn"
 
 #. module: health_invoicing
 #. odoo-javascript
@@ -7729,39 +7534,9 @@ msgstr "khác"
 
 #. module: health_invoicing
 #. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "out_invoice"
-msgstr "Hóa đơn bán hàng"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "out_receipt"
-msgstr "Biên lai bán hàng"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "out_refund"
-msgstr "Giấy báo có khách hàng"
-
-#. module: health_invoicing
-#. odoo-python
 #: code:addons/health_invoicing/models/health_service_package.py:0
 msgid "package_ids"
 msgstr "package_ids"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "paid"
-msgstr "Đã thanh toán"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "partial"
-msgstr "Đã thanh toán một phần"
 
 #. module: health_invoicing
 #. odoo-python
@@ -7777,33 +7552,15 @@ msgstr "patient_id"
 
 #. module: health_invoicing
 #. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "pending"
-msgstr "Đang chờ"
-
-#. module: health_invoicing
-#. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 msgid "pending_delivery"
 msgstr "chờ bàn giao"
 
 #. module: health_invoicing
 #. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "posted"
-msgstr "Đã ghi sổ"
-
-#. module: health_invoicing
-#. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 msgid "prepaid"
 msgstr "trả trước"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "preventive"
-msgstr "Chăm sóc phòng ngừa"
 
 #. module: health_invoicing
 #. odoo-python
@@ -7836,36 +7593,12 @@ msgid "refunded"
 msgstr "đã hoàn tiền"
 
 #. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "rehabilitation"
-msgstr "Phục hồi chức năng"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "rejected"
-msgstr "Bị từ chối"
-
-#. module: health_invoicing
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/xml/fin_dashboard.xml:0
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_patient_form_ops_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
 msgid "remaining"
 msgstr "còn lại"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "reversed"
-msgstr "Đã đảo"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "sent"
-msgstr "Đã gửi"
 
 #. module: health_invoicing
 #. odoo-javascript
@@ -7890,36 +7623,6 @@ msgid ""
 msgstr ""
 "Dịch vụ được sử dụng\n"
 "                                            <br/>"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "submitted"
-msgstr "Đã gửi"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "supplies"
-msgstr "Vật tư y tế"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "sync_error"
-msgstr "Lỗi đồng bộ"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "synced"
-msgstr "Đã đồng bộ"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid "syncing"
-msgstr "Đang đồng bộ"
 
 #. module: health_invoicing
 #. odoo-javascript

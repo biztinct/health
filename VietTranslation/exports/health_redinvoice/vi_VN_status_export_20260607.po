@@ -7,14 +7,13 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-07 11:32+0000\n"
-"PO-Revision-Date: 2026-02-25 06:15+0000\n"
+"PO-Revision-Date: 2026-06-07 11:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: vi_VN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: \n"
 
 #. module: health_redinvoice
 #. odoo-python
@@ -23,8 +22,8 @@ msgid ""
 "<p>Dear %s,</p><p>Please find attached your VAT (Red) invoice.</p><p>Best "
 "regards,<br/>%s</p>"
 msgstr ""
-"<p>Kính gửi %s,</p><p>Vui lòng xem hóa đơn VAT (hóa đơn đỏ) được đính kèm.</"
-"p><p>Trân trọng,<br/>%s</p>"
+"<p>Kính gửi %s,</p><p>Vui lòng xem hóa đơn VAT (hóa đơn đỏ) được đính "
+"kèm.</p><p>Trân trọng,<br/>%s</p>"
 
 #. module: health_redinvoice
 #: model_terms:ir.ui.view,arch_db:health_redinvoice.view_fso_form_redinvoice
@@ -36,8 +35,8 @@ msgstr "<span class=\"hf-redinv-pdf\"/> Hóa đơn đỏ"
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid ""
 "A Red Invoice (%s) has already been issued for this document. Cancel the "
-"existing Red Invoice before generating a new one — re-issuing would create a "
-"duplicate invoice at the tax authority."
+"existing Red Invoice before generating a new one — re-issuing would create a"
+" duplicate invoice at the tax authority."
 msgstr ""
 "Hóa đơn đỏ (%s) đã được phát hành cho chứng từ này. Hãy hủy hóa đơn đỏ hiện "
 "tại trước khi tạo hóa đơn mới vì phát hành lại sẽ tạo hóa đơn trùng tại cơ "
@@ -147,7 +146,7 @@ msgstr "Yêu cầu hủy từ Odoo"
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "Cancelled"
-msgstr "Đã hủy"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
@@ -404,13 +403,13 @@ msgstr "Loại hóa đơn 4"
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "Issued"
-msgstr "Đã phát hành"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "Issuing"
-msgstr "Đang phát hành"
+msgstr ""
 
 #. module: health_redinvoice
 #: model:ir.model,name:health_redinvoice.model_account_move
@@ -441,8 +440,8 @@ msgid ""
 "Master toggle — when unchecked, all Red Invoice functionality is disabled "
 "(no API calls, no auto-issue, tax tabs hidden on invoices)."
 msgstr ""
-"Công tắc chính — khi tắt, toàn bộ chức năng hóa đơn đỏ bị vô hiệu hóa (không "
-"gọi API, không tự động phát hành và ẩn các tab thuế trên hóa đơn)."
+"Công tắc chính — khi tắt, toàn bộ chức năng hóa đơn đỏ bị vô hiệu hóa (không"
+" gọi API, không tự động phát hành và ẩn các tab thuế trên hóa đơn)."
 
 #. module: health_redinvoice
 #: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
@@ -450,8 +449,8 @@ msgid ""
 "Master toggle — when unchecked, all Red Invoice functionality is disabled "
 "(no API calls, no auto-issue, tax tabs hidden)"
 msgstr ""
-"Công tắc chính — khi tắt, toàn bộ chức năng hóa đơn đỏ bị vô hiệu hóa (không "
-"gọi API, không tự động phát hành và ẩn các tab thuế)."
+"Công tắc chính — khi tắt, toàn bộ chức năng hóa đơn đỏ bị vô hiệu hóa (không"
+" gọi API, không tự động phát hành và ẩn các tab thuế)."
 
 #. module: health_redinvoice
 #: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_merchant_city
@@ -526,7 +525,7 @@ msgstr "Không có hóa đơn đỏ đã phát hành liên kết với lịch h�
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "Not Required"
-msgstr "Không bắt buộc"
+msgstr ""
 
 #. module: health_redinvoice
 #: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
@@ -928,7 +927,7 @@ msgstr "UUID giao dịch"
 #. module: health_redinvoice
 #: model:ir.model.fields.selection,name:health_redinvoice.selection__res_company__red_invoice_signing_mode__usb_token
 msgid "USB Token"
-msgstr "USB Token"
+msgstr ""
 
 #. module: health_redinvoice
 #: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_secret_mode
@@ -940,50 +939,44 @@ msgstr "Sử dụng chế độ mã bí mật"
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "cancelled"
-msgstr "Đã hủy"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "failed"
-msgstr "Thất bại"
+msgstr ""
 
 #. module: health_redinvoice
 #: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
 msgid "https://api-vinvoice.viettel.vn/services/einvoiceapplication/api"
-msgstr "https://api-vinvoice.viettel.vn/services/einvoiceapplication/api"
+msgstr ""
 
 #. module: health_redinvoice
 #: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
 msgid "https://lookup-portal.example/?code="
-msgstr "https://lookup-portal.example/?code="
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "issued"
-msgstr "Đã phát hành"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "issuing"
-msgstr "Đang phát hành"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "pending"
-msgstr "Đang chờ"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "unknown"
 msgstr "không xác định"
-
-#~ msgid "Download PDF"
-#~ msgstr "Tải PDF"
-
-#~ msgid "Credentials &amp; Defaults"
-#~ msgstr "Thông tin xác thực & Mặc định"

@@ -7,6 +7,81 @@ import requests
 from datetime import datetime, timedelta
 
 
+def _selection_move_type(model):
+    return [
+        ('entry', model.env._('Journal Entry')),
+        ('out_invoice', model.env._('Customer Invoice')),
+        ('out_refund', model.env._('Customer Credit Note')),
+        ('in_invoice', model.env._('Vendor Bill')),
+        ('in_refund', model.env._('Vendor Credit Note')),
+        ('out_receipt', model.env._('Sales Receipt')),
+        ('in_receipt', model.env._('Purchase Receipt')),
+    ]
+
+
+def _selection_move_state(model):
+    return [
+        ('draft', model.env._('Draft')),
+        ('posted', model.env._('Posted')),
+        ('cancel', model.env._('Cancelled')),
+    ]
+
+
+def _selection_payment_state(model):
+    return [
+        ('not_paid', model.env._('Not Paid')),
+        ('in_payment', model.env._('In Payment')),
+        ('paid', model.env._('Paid')),
+        ('partial', model.env._('Partially Paid')),
+        ('reversed', model.env._('Reversed')),
+        ('blocked', model.env._('Blocked')),
+        ('invoicing_legacy', model.env._('Invoicing App Legacy')),
+    ]
+
+
+def _selection_status_in_payment(model):
+    return _selection_payment_state(model) + [
+        ('draft', model.env._('Draft')),
+        ('posted', model.env._('Posted')),
+        ('sent', model.env._('Sent')),
+        ('cancel', model.env._('Cancelled')),
+    ]
+
+
+def _selection_healthcare_service_type(model):
+    return [
+        ('home_visit', model.env._('Home Visit')),
+        ('clinic_visit', model.env._('Clinic Visit')),
+        ('consultation', model.env._('Consultation')),
+        ('emergency', model.env._('Emergency Care')),
+        ('follow_up', model.env._('Follow-up Care')),
+        ('preventive', model.env._('Preventive Care')),
+        ('rehabilitation', model.env._('Rehabilitation')),
+        ('equipment_rental', model.env._('Equipment Rental')),
+        ('supplies', model.env._('Medical Supplies')),
+    ]
+
+
+def _selection_tax_authority_status(model):
+    return [
+        ('draft', model.env._('Draft')),
+        ('pending', model.env._('Pending Submission')),
+        ('submitted', model.env._('Submitted')),
+        ('accepted', model.env._('Accepted')),
+        ('rejected', model.env._('Rejected')),
+        ('error', model.env._('Submission Error')),
+    ]
+
+
+def _selection_misa_sync_status(model):
+    return [
+        ('not_synced', model.env._('Not Synced')),
+        ('syncing', model.env._('Syncing')),
+        ('synced', model.env._('Synced')),
+        ('sync_error', model.env._('Sync Error')),
+    ]
+
+
 class HealthcareInvoice(models.Model):
     """
     Healthcare Invoice extending standard Odoo account.move functionality
@@ -19,6 +94,14 @@ class HealthcareInvoice(models.Model):
     - Ministry of Health regulatory compliance
     """
     _inherit = 'account.move'
+
+    # Odoo 19 currently exposes static selection metadata in English through
+    # fields_get. Callable selections return labels in the active user language.
+    move_type = fields.Selection(selection=_selection_move_type)
+    state = fields.Selection(selection=_selection_move_state)
+    payment_state = fields.Selection(selection=_selection_payment_state)
+    status_in_payment = fields.Selection(selection=_selection_status_in_payment)
+    full_reconcile_payment_date = fields.Date(string='Payment Date')
 
     # Archive support — set active=False to hide records from all views
     active = fields.Boolean(default=True)
@@ -65,17 +148,11 @@ class HealthcareInvoice(models.Model):
     #     help='client receiving healthcare services'
     # )
     
-    healthcare_service_type = fields.Selection([
-        ('home_visit', 'Home Visit'),
-        ('clinic_visit', 'Clinic Visit'),
-        ('consultation', 'Consultation'),
-        ('emergency', 'Emergency Care'),
-        ('follow_up', 'Follow-up Care'),
-        ('preventive', 'Preventive Care'),
-        ('rehabilitation', 'Rehabilitation'),
-        ('equipment_rental', 'Equipment Rental'),
-        ('supplies', 'Medical Supplies'),
-    ], string='Healthcare Service Type', help='Type of healthcare service billed')
+    healthcare_service_type = fields.Selection(
+        _selection_healthcare_service_type,
+        string='Healthcare Service Type',
+        help='Type of healthcare service billed',
+    )
 
     # Vietnamese tax compliance fields
     vietnamese_tax_code = fields.Char(
@@ -83,15 +160,12 @@ class HealthcareInvoice(models.Model):
         help='Tax code for Vietnamese tax authority submission'
     )
     
-    tax_authority_submission_status = fields.Selection([
-        ('draft', 'Draft'),
-        ('pending', 'Pending Submission'),
-        ('submitted', 'Submitted'),
-        ('accepted', 'Accepted'),
-        ('rejected', 'Rejected'),
-        ('error', 'Submission Error'),
-    ], string='Tax Authority Status', default='draft',
-       help='Status of real-time submission to Vietnamese Tax Authorities')
+    tax_authority_submission_status = fields.Selection(
+        _selection_tax_authority_status,
+        string='Tax Authority Status',
+        default='draft',
+        help='Status of real-time submission to Vietnamese Tax Authorities',
+    )
     
     tax_submission_date = fields.Datetime(
         'Tax Submission Date',
@@ -115,13 +189,12 @@ class HealthcareInvoice(models.Model):
         help='Invoice ID in MISA accounting system'
     )
     
-    misa_sync_status = fields.Selection([
-        ('not_synced', 'Not Synced'),
-        ('syncing', 'Syncing'),
-        ('synced', 'Synced'),
-        ('sync_error', 'Sync Error'),
-    ], string='MISA Sync Status', default='not_synced',
-       help='Synchronization status with MISA accounting system')
+    misa_sync_status = fields.Selection(
+        _selection_misa_sync_status,
+        string='MISA Sync Status',
+        default='not_synced',
+        help='Synchronization status with MISA accounting system',
+    )
     
     misa_sync_date = fields.Datetime(
         'MISA Sync Date',
@@ -1234,7 +1307,9 @@ class HealthcareInvoice(models.Model):
     def get_invoice_header_data(self):
         """Return header data for the Finance Invoice Form OWL header."""
         self.ensure_one()
-        service_type_labels = dict(self._fields['healthcare_service_type'].selection or [])
+        service_type_labels = dict(
+            self._fields['healthcare_service_type']._description_selection(self.env)
+        )
         return {
             'name': self.name or '',
             'state': self.state,

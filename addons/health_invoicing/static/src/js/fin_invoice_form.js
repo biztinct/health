@@ -86,6 +86,10 @@ export class FinInvoiceFormController extends FormController {
         return "fin-pay-" + (state || "not_paid");
     }
 
+    get draftLabel() {
+        return _t("Draft");
+    }
+
     formatCurrency(val) {
         if (!val && val !== 0) return "0";
         return Number(val).toLocaleString();

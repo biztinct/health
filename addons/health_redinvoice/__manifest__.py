@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Red Invoice Integration',
-    'version': '19.0.1.0.2',
+    'version': '19.0.1.0.3',
     'summary': 'Vietnam Viettel SInvoice (Red Invoice) integration for healthcare invoicing',
     'category': 'Accounting',
     'author': 'I Am Dream Catcher Ltd',

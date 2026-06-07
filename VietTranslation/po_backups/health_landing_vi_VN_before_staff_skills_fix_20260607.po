@@ -3203,8 +3203,6 @@ msgid "Staff Notified"
 msgstr "Nhân viên được thông báo"
 
 #. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_skills
 msgid "Staff Skills"
 msgstr "Kỹ năng nhân viên"

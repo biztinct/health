@@ -9,7 +9,7 @@
                         <button class="fin-inv-back" t-on-click="goToInvoices">
                             <i class="fa fa-arrow-left"/>
                         </button>
-                        <h2 class="fin-inv-hdr-number" t-esc="headerState.header.name || 'Draft'"/>
+                        <h2 class="fin-inv-hdr-number" t-esc="headerState.header.name || draftLabel"/>
                         <span t-attf-class="fin-inv-hdr-badge #{getPaymentClass(headerState.header.payment_state)}">
                             <t t-esc="getPaymentLabel(headerState.header.payment_state)"/>
                         </span>

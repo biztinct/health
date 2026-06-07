@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="view_move_form_payment_date_translation" model="ir.ui.view">
+        <field name="name">account.move.form.payment.date.translation</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="partner_time_to_pay.view_move_form"/>
+        <field name="arch" type="xml">
+            <field name="full_reconcile_payment_date" position="attributes">
+                <attribute name="string">Payment Date</attribute>
+            </field>
+        </field>
+    </record>
+
     <!-- Healthcare Invoice Form View Extension -->
     <record id="view_healthcare_invoice_form" model="ir.ui.view">
         <field name="name">account.move.form.healthcare</field>

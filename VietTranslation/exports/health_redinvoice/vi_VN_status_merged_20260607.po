@@ -940,13 +940,13 @@ msgstr "Sử dụng chế độ mã bí mật"
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "cancelled"
-msgstr "Đã hủy"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "failed"
-msgstr "Thất bại"
+msgstr ""
 
 #. module: health_redinvoice
 #: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
@@ -962,19 +962,19 @@ msgstr "https://lookup-portal.example/?code="
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "issued"
-msgstr "Đã phát hành"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "issuing"
-msgstr "Đang phát hành"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
 #: code:addons/health_redinvoice/models/account_move.py:0
 msgid "pending"
-msgstr "Đang chờ"
+msgstr ""
 
 #. module: health_redinvoice
 #. odoo-python
