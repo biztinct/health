@@ -127,7 +127,10 @@ export class CrmContactFormController extends FormController {
     }
 
     actionMarkSpam() {
-        this.orm.call("crm.lead", "action_mark_spam_and_home", [[this.model.root.resId]]).then((action) => {
+        // Mark spam WITHOUT navigating away (action_mark_spam_and_home returns
+        // the hub-spoke dashboard action). action_mark_spam stays on the form
+        // (notification + soft_reload) and refreshes the header.
+        this.orm.call("crm.lead", "action_mark_spam", [[this.model.root.resId]]).then((action) => {
             if (action) this.actionService.doAction(action);
             else this._loadHeaderData();
         });

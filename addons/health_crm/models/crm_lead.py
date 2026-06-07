@@ -1765,9 +1765,9 @@ class HealthLead(models.Model):
         }
 
     def action_mark_spam(self):
-        """Mark contact as spam from list view — stays on the list."""
+        """Mark contact as spam — stays on the current view (no navigation)."""
         self.ensure_one()
-        if self.contact_status in ('active', 'lead'):
+        if self.contact_status != 'spam':
             self.write({
                 'contact_status': 'spam',
                 'contact_outcome': 'rejected',

@@ -5,6 +5,7 @@ import { activityView } from "@mail/views/web/activity/activity_view";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { useState } from "@odoo/owl";
+import { SelectCreateDialog } from "@web/views/view_dialogs/select_create_dialog";
 
 export class CrmActivityController extends ActivityController {
     static template = "health_crm.CrmActivityView";
@@ -85,6 +86,31 @@ export class CrmActivityController extends ActivityController {
         );
 
         return props;
+    }
+
+    /**
+     * Override: the base "Schedule activity" picker reuses the activity-filtered
+     * domain (e.g. "My Activities"), so when there are no activities yet the
+     * contact list shows "No record found" and the user cannot pick anyone —
+     * making the button appear to do nothing. Open the picker against ALL
+     * contacts so a contact can always be selected, then schedule.
+     */
+    scheduleActivity() {
+        this.dialog.add(
+            SelectCreateDialog,
+            {
+                resModel: this.props.resModel,
+                searchViewId: this.env.searchModel.searchViewId,
+                domain: [],
+                title: _t("Schedule Activity: select a contact"),
+                multiSelect: false,
+                context: this.props.context,
+                onSelected: async (resIds) => {
+                    await this.store.scheduleActivity(this.props.resModel, resIds);
+                },
+            },
+            { onClose: () => this.model.load(this.getSearchProps()) }
+        );
     }
 
     setTypeFilter(typeId) {

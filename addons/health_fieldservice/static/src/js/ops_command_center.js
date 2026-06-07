@@ -68,6 +68,7 @@ class OpsCommandCenter extends Component {
             activeTab: 'needs_staff',
             openDropdownId: false,
             openMenuId: false,
+            dropdownStyle: "",
         });
 
         this.timeSlots = this.generateTimeSlots(7, 18);
@@ -329,9 +330,27 @@ class OpsCommandCenter extends Component {
 
     // ===== INLINE ASSIGNMENT =====
 
-    toggleStaffDropdown(bookingId) {
+    toggleStaffDropdown(bookingId, ev) {
         this.state.openMenuId = false;
-        this.state.openDropdownId = this.state.openDropdownId === bookingId ? false : bookingId;
+        if (this.state.openDropdownId === bookingId) {
+            this.state.openDropdownId = false;
+            return;
+        }
+        // Render the menu as position:fixed anchored to the trigger so it is not
+        // clipped by the scrollable panel (.ops-panel-body has overflow:auto).
+        const rect = ev.currentTarget.getBoundingClientRect();
+        const width = Math.max(rect.width, 220);
+        const menuMax = 260;
+        const spaceBelow = window.innerHeight - rect.bottom;
+        let style = `position:fixed; left:${Math.round(rect.left)}px; right:auto;`
+            + ` width:${Math.round(width)}px; max-height:${menuMax}px; overflow:auto; z-index:1080;`;
+        if (spaceBelow < menuMax && rect.top > spaceBelow) {
+            style += ` bottom:${Math.round(window.innerHeight - rect.top + 4)}px; top:auto;`;
+        } else {
+            style += ` top:${Math.round(rect.bottom + 4)}px;`;
+        }
+        this.state.dropdownStyle = style;
+        this.state.openDropdownId = bookingId;
     }
 
     async selectStaff(bookingId, staffId) {
