@@ -2846,6 +2846,7 @@ window.healthPWA = {
           openMap,
           isTransitioning,
           // Calendar functions
+          getPWALocale,
           isCalendarOpen,
           calendarMonth,
           toggleCalendar,
