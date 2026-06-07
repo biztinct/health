@@ -251,35 +251,77 @@ class MigrationRunner(models.Model):
             self._xref_store('health.facility', key, fac.id, raw=city_raw)
         return fac
 
-    def _staff(self, raw):
-        raw = (raw or '').strip()
-        if not raw:
+    # Tokens that are NOT real staff (lab/diagnostic markers) -> skipped.
+    _NON_STAFF = ('diag', 'greenlab', 'lab', 'diagnostic')
+
+    def _normalize_nurse_name(self, seg):
+        """Turn ONE legacy nurse segment into (clean_name, is_doctor).
+
+        Handles: city prefix (HCM/HN, hyphen or en-dash), role tokens
+        (ĐD/DD/DT/ĐDT/DDT/ĐDPT/DDPT/BS/BSCKI/Dr), 'Partime' marker and a
+        trailing 'Oncall' shift marker. Example:
+        'HN – DD NGUYỄN THỊ HẰNG ONCALL' -> ('NGUYỄN THỊ HẰNG', False)
+        'HCM - BS TRẦN THANH TÂM'        -> ('TRẦN THANH TÂM', True)
+        """
+        s = (seg or '').strip().replace('–', '-').replace('—', '-')
+        s = re.sub(r'\s+', ' ', s)
+        # drop leading city prefix
+        s = re.sub(r'^(HCMC|HCM|HANOI|HN)\s*-\s*', '', s, flags=re.I)
+        is_doctor = bool(re.match(r'^\s*(BS|Dr)\b', s, flags=re.I))
+        # drop leading role token + its separator (space, dot or underscore)
+        s = re.sub(r'^(ĐDPT|DDPT|ĐDT|DDT|ĐD|DD|DT|BSCK[I0-9]*|BS|Dr)[\s._]+',
+                   '', s, flags=re.I)
+        # drop 'Partime' marker
+        s = re.sub(r'^part[\s_-]?time\s+', '', s, flags=re.I)
+        # drop trailing on-call marker
+        s = re.sub(r'[\s_-]*oncall\s*$', '', s, flags=re.I)
+        return s.strip(' _-'), is_doctor
+
+    def _staff_segment(self, seg):
+        """Resolve ONE nurse/doctor segment to an hr.employee (get-or-create)."""
+        name, is_doctor = self._normalize_nurse_name(seg)
+        if not name or _norm(name) in self._NON_STAFF:
             return None
-        key = 'staff:' + _norm(raw)
+        key = 'staff:' + _norm(name)
         rid = self._xref_lookup('hr.employee', key)
         if rid:
-            return self.env['hr.employee'].browse(rid)
-        role = 'doctor' if re.search(r'\bBS', raw, re.I) else 'nurse'
-        city, name = None, raw
-        parts = re.split(r'\s*-\s*', raw, maxsplit=1)
-        if len(parts) == 2:
-            city = parts[0]
-            name = re.sub(r'^(Đ?D\.?T?|BS[CK I]*|ĐD)\.?\s*', '', parts[1],
-                          flags=re.I).strip() or raw
+            emp = self.env['hr.employee'].with_context(active_test=False).browse(rid)
+            if emp.exists():
+                return emp
         Emp = self.env['hr.employee'].with_context(active_test=False)
-        emp = Emp.search([('name', '=', name)], limit=1)
+        emp = Emp.search([('name', '=ilike', name)], limit=1)
         if not emp:
-            fac = self._facility(city) if city else None
             emp = self._mk('hr.employee', {
                 'name': name, 'is_healthcare_staff': True,
-                'healthcare_role': role, 'employment_status': 'active',
-                'healthcare_facility_id': fac.id if fac else False,
+                'healthcare_role': 'doctor' if is_doctor else 'nurse',
+                'employment_status': 'active',
             })
-            self._xref_store('hr.employee', key, emp.id, raw=raw, auto=True,
-                             notes='staff stub ' + role)
+            self._xref_store('hr.employee', key, emp.id, raw=seg, auto=True,
+                             notes='staff stub ' + ('doctor' if is_doctor else 'nurse'))
         else:
-            self._xref_store('hr.employee', key, emp.id, raw=raw)
+            self._xref_store('hr.employee', key, emp.id, raw=seg)
         return emp
+
+    def _staff_list(self, raw):
+        """Split a (possibly multi-nurse, ';'-separated) legacy string into a
+        deduped recordset of hr.employee (creating individuals as needed)."""
+        emps = self.env['hr.employee']
+        if not raw:
+            return emps
+        seen = set()
+        for seg in str(raw).replace('–', '-').split(';'):
+            seg = seg.strip()
+            if not seg:
+                continue
+            emp = self._staff_segment(seg)
+            if emp and emp.id not in seen:
+                seen.add(emp.id)
+                emps |= emp
+        return emps
+
+    def _staff(self, raw):
+        """Backward-compatible single resolver (first individual nurse)."""
+        return self._staff_list(raw)[:1] or None
 
     def _product(self, name):
         name = (name or '').strip()
@@ -444,15 +486,15 @@ class MigrationRunner(models.Model):
                     fso.write({'appointment_type_id': st.id})
                 except Exception:
                     pass
-        # staff assignment
-        emp = self._staff(row.get('bac_si_dieu_duong'))
-        if emp and 'assigned_staff_ids' in fso._fields:
-            try:
-                if emp not in fso.assigned_staff_ids:
-                    fso.write({'assigned_staff_ids': [(4, emp.id)]})
-                    report['assignments'] += 1
-            except Exception as e:
-                report['assignment_errors'].append('%s: %s' % (ref, e))
+        # staff assignment — split multi-nurse ";" strings into individuals
+        if 'assigned_staff_ids' in fso._fields:
+            emps = self._staff_list(row.get('bac_si_dieu_duong'))
+            if emps:
+                try:
+                    fso.write({'assigned_staff_ids': [(6, 0, emps.ids)]})
+                    report['assignments'] += len(emps)
+                except Exception as e:
+                    report['assignment_errors'].append('%s: %s' % (ref, e))
         # sale order + lines (best effort)
         self._make_sale_lines(names, fso, client, report)
         # payment
@@ -588,6 +630,63 @@ class MigrationRunner(models.Model):
             if recs:
                 recs.write({'active': False})
             report['archived'][model] = len(recs)
+        return report
+
+    def remediate_staff(self, booking_path):
+        """Re-resolve and re-assign staff for already-migrated bookings using the
+        fixed multi-nurse (';') splitter. Replaces each booking's assigned_staff
+        with the correct individual nurses (creating any missing). Run after a
+        commit; follow with cleanup_orphan_staff()."""
+        rows = json.load(open(booking_path))
+        report = {'bookings_fixed': 0, 'multi_nurse_bookings': 0,
+                  'total_assignments': 0, 'no_fso': 0, 'no_nurse': 0, 'errors': []}
+        FSO = self._bulk_ctx('health.fieldservice.order')
+        for row in rows:
+            raw = row.get('bac_si_dieu_duong')
+            if not raw:
+                report['no_nurse'] += 1
+                continue
+            ref = self._booking_ref(row)
+            fso = FSO.search([('legacy_booking_ref', '=', ref)], limit=1)
+            if not fso:
+                report['no_fso'] += 1
+                continue
+            emps = self._staff_list(raw)
+            if not emps:
+                continue
+            try:
+                fso.write({'assigned_staff_ids': [(6, 0, emps.ids)]})
+                report['bookings_fixed'] += 1
+                report['total_assignments'] += len(emps)
+                if ';' in str(raw):
+                    report['multi_nurse_bookings'] += 1
+            except Exception as e:
+                report['errors'].append('%s: %s' % (ref, str(e)[:100]))
+        return report
+
+    def cleanup_orphan_staff(self):
+        """Delete migration-created staff stubs that are no longer assigned to any
+        booking (e.g. the old garbled/concatenated names). Archives instead of
+        deleting if the record can't be removed."""
+        report = {'deleted': 0, 'archived': 0, 'kept': 0}
+        Assign = self.env['health.staff.assignment'].with_context(active_test=False)
+        xrefs = self.env['migration.xref'].search(
+            [('target_model', '=', 'hr.employee'), ('auto_created', '=', True)])
+        for x in xrefs:
+            emp = self.env['hr.employee'].with_context(active_test=False).browse(x.res_id)
+            if not emp.exists():
+                x.unlink()
+                continue
+            if Assign.search_count([('staff_id', '=', emp.id)]) == 0 and not emp.user_id:
+                try:
+                    emp.unlink()
+                    x.unlink()
+                    report['deleted'] += 1
+                except Exception:
+                    emp.write({'active': False})
+                    report['archived'] += 1
+            else:
+                report['kept'] += 1
         return report
 
     def restore_baseline(self, run_tag='legacy_mig'):
