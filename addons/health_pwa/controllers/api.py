@@ -128,7 +128,7 @@ class HealthPWAAPIController(http.Controller):
     def api_patients_list(self, **kwargs):
         """Get list of patients with pagination and filtering"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
         
         try:
             # Parse query parameters
@@ -196,13 +196,13 @@ class HealthPWAAPIController(http.Controller):
     def api_patient_detail(self, patient_id, **kwargs):
         """Get detailed patient information"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
         
         try:
             patient = request.env['res.partner'].browse(patient_id)
             
             if not patient.exists() or not patient.is_patient:
-                return self._prepare_json_response(error='Patient not found', status_code=404)
+                return self._prepare_json_response(error=_('Patient not found'), status_code=404)
             
             # Get recent field service orders
             recent_orders = request.env['health.fieldservice.order'].search([
@@ -264,7 +264,7 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_list(self, **kwargs):
         """Get field service orders with filtering"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
         
         try:
             # Get current employee for staff name
@@ -387,13 +387,13 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_detail(self, order_id, **kwargs):
         """Get detailed field service order information"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
         
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
             
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
             
             # Get primary contact from patient relations
             primary_contact = None
@@ -521,13 +521,13 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_update(self, order_id, **kwargs):
         """Update field service order from mobile app"""
         if not self._check_api_access():
-            return {'success': False, 'error': 'Access denied'}
+            return {'success': False, 'error': _('Access denied')}
         
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
             
             if not order.exists():
-                return {'success': False, 'error': 'Order not found'}
+                return {'success': False, 'error': _('Order not found')}
             
             # Parse update data
             data = request.jsonrequest
@@ -546,7 +546,7 @@ class HealthPWAAPIController(http.Controller):
             # Update order
             order.write(update_vals)
             
-            return {'success': True, 'message': 'Order updated successfully'}
+            return {'success': True, 'message': _('Order updated successfully')}
             
         except Exception as e:
             return {'success': False, 'error': str(e)}
@@ -555,7 +555,7 @@ class HealthPWAAPIController(http.Controller):
     def api_teams_list(self, **kwargs):
         """Get list of field service teams"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
         
         try:
             teams = request.env['health.fieldservice.team'].search([])
@@ -579,7 +579,7 @@ class HealthPWAAPIController(http.Controller):
     def api_user_profile(self, **kwargs):
         """Get current user profile information"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
         
         try:
             user = request.env.user
@@ -610,7 +610,7 @@ class HealthPWAAPIController(http.Controller):
     def api_dashboard_stats(self, **kwargs):
         """Get dashboard statistics for mobile app"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             # Get current user's teams
@@ -664,13 +664,13 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_start_service(self, order_id, **kwargs):
         """Start service timer for FSO from mobile app"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             # Check if order is in assigned state
             if order.state not in ['assigned', 'confirmed']:
@@ -686,7 +686,7 @@ class HealthPWAAPIController(http.Controller):
             return self._prepare_json_response(data={
                 'actual_start_datetime': order.actual_start_datetime,
                 'state': order.state,
-                'message': 'Service started successfully'
+                'message': _('Service started successfully')
             })
 
         except Exception as e:
@@ -696,7 +696,7 @@ class HealthPWAAPIController(http.Controller):
     def api_get_cancellation_reasons(self, **kwargs):
         """Get list of cancellation reasons for dropdown"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             lang = kwargs.get('lang') or request.env.context.get('lang') or request.env.user.lang or 'en_US'
@@ -719,16 +719,19 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_cancel_service(self, order_id, **kwargs):
         """Cancel/Refuse visit for FSO from mobile app"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             if order.state in ['completed', 'cancelled', 'closed']:
-                return self._prepare_json_response(error=f'Cannot cancel service in {order.state} state', status_code=400)
+                return self._prepare_json_response(
+                    error=_('Cannot cancel service in %s state') % order.state,
+                    status_code=400,
+                )
 
             import json as json_module
             try:
@@ -740,11 +743,11 @@ class HealthPWAAPIController(http.Controller):
             cancellation_notes = data.get('cancellation_notes', '')
 
             if not cancellation_reason_id:
-                return self._prepare_json_response(error='Cancellation reason is required', status_code=400)
+                return self._prepare_json_response(error=_('Cancellation reason is required'), status_code=400)
 
             reason_record = request.env['health.booking.cancellation.reason'].browse(cancellation_reason_id)
             if not reason_record.exists():
-                return self._prepare_json_response(error='Invalid cancellation reason', status_code=400)
+                return self._prepare_json_response(error=_('Invalid cancellation reason'), status_code=400)
 
             cancellation_note = f"Visit Cancelled/Refused: {reason_record.name}"
             if cancellation_notes:
@@ -758,7 +761,7 @@ class HealthPWAAPIController(http.Controller):
 
             return self._prepare_json_response(data={
                 'state': order.state,
-                'message': 'Visit cancelled successfully',
+                'message': _('Visit cancelled successfully'),
                 'cancellation_reason': reason_record.name
             })
 
@@ -770,13 +773,13 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_complete_service(self, order_id, **kwargs):
         """Complete service and stop timer for FSO from mobile app"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             # Check if order is in progress
             if order.state != 'in_progress':
@@ -808,7 +811,7 @@ class HealthPWAAPIController(http.Controller):
             order.action_complete_service()
 
             # Handle invoice creation and payment
-            message = 'Service completed successfully'
+            message = _('Service completed successfully')
 
             # Check if invoice should be created (skip if amount is zero or prepaid)
             should_create_invoice = create_invoice_now and order.sale_order_id
@@ -817,7 +820,7 @@ class HealthPWAAPIController(http.Controller):
                 sale_order_total = order.sale_order_id.amount_total or 0.0
                 if sale_order_total <= 0.0:
                     should_create_invoice = False
-                    message = 'Service completed - No invoice created (zero amount)'
+                    message = _('Service completed - No invoice created (zero amount)')
                     _logger.info(f'Skipping invoice creation for FSO {order.name} - Sale order total is zero')
 
             if should_create_invoice:
@@ -852,20 +855,26 @@ class HealthPWAAPIController(http.Controller):
                     # Create transaction if model exists
                     if 'health.payment.transaction' in request.env:
                         transaction = request.env['health.payment.transaction'].create(transaction_vals)
-                        message = f'Service completed - {payment_method.replace("_", " ").title()} payment collected'
+                        message = _(
+                            'Service completed - %s payment collected'
+                        ) % payment_method.replace("_", " ").title()
                     else:
-                        message = f'Service completed - {payment_method.replace("_", " ").title()} payment noted'
+                        message = _(
+                            'Service completed - %s payment noted'
+                        ) % payment_method.replace("_", " ").title()
 
                 except Exception as e:
                     _logger.warning(f'Could not create payment transaction: {str(e)}')
-                    message = f'Service completed - {payment_method.replace("_", " ").title()} payment noted'
+                    message = _(
+                        'Service completed - %s payment noted'
+                    ) % payment_method.replace("_", " ").title()
             elif payment_choice == 'pay_later' and order.invoice_id:
                 # Pay Later (only if invoice exists)
-                message = 'Service completed - Invoice will be sent for later payment'
+                message = _('Service completed - Invoice will be sent for later payment')
             elif not order.invoice_id:
                 # No invoice created (zero amount or prepaid)
                 if 'zero amount' not in message:
-                    message = 'Service completed - No payment required'
+                    message = _('Service completed - No payment required')
 
             return self._prepare_json_response(data={
                 'actual_end_datetime': order.actual_end_datetime,
@@ -884,13 +893,13 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_complete_service_without_quote(self, order_id, **kwargs):
         """Complete service without quote - for cases where no invoice is needed"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             # Check if order is in progress
             if order.state != 'in_progress':
@@ -922,7 +931,7 @@ class HealthPWAAPIController(http.Controller):
                 'adjusted_end_datetime': order.adjusted_end_datetime if hasattr(order, 'adjusted_end_datetime') else None,
                 'actual_duration': order.actual_duration if hasattr(order, 'actual_duration') else None,
                 'state': order.state,
-                'message': 'Service completed successfully without invoice'
+                'message': _('Service completed successfully without invoice')
             })
 
         except Exception as e:
@@ -932,12 +941,12 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_save_clinical_notes(self, order_id, **kwargs):
         """Create a new clinical note record for the FSO"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             import json as json_module
             try:
@@ -967,7 +976,7 @@ class HealthPWAAPIController(http.Controller):
                 'note_id': note.id,
                 'clinical_notes_submitted': order.clinical_notes_submitted,
                 'clinical_note_count': order.clinical_note_count,
-                'message': 'Clinical note created successfully'
+                'message': _('Clinical note created successfully')
             })
 
         except Exception as e:
@@ -977,13 +986,13 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_save_intake_notes(self, order_id, **kwargs):
         """Save intake notes for FSO from mobile app"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             # Get intake notes from request body
             import json as json_module
@@ -1015,7 +1024,7 @@ class HealthPWAAPIController(http.Controller):
                 order.write(update_vals)
 
             return self._prepare_json_response(success=True, data={
-                'message': 'Intake notes saved successfully',
+                'message': _('Intake notes saved successfully'),
                 'order_id': order.id
             })
 
@@ -1027,16 +1036,16 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_upload_image(self, order_id, **kwargs):
         """Upload clinical image and attach to a clinical note"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             image_file = request.httprequest.files.get('image')
             if not image_file:
-                return self._prepare_json_response(error='No image provided', status_code=400)
+                return self._prepare_json_response(error=_('No image provided'), status_code=400)
 
             import base64
             image_data = base64.b64encode(image_file.read())
@@ -1068,16 +1077,16 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_get_quote(self, order_id, **kwargs):
         """Get quote/sale order for FSO from mobile app"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             if not order.sale_order_id:
-                return self._prepare_json_response(error='No quote found for this order', status_code=404)
+                return self._prepare_json_response(error=_('No quote found for this order'), status_code=404)
 
             sale_order = order.sale_order_id
 
@@ -1117,7 +1126,7 @@ class HealthPWAAPIController(http.Controller):
     def api_get_product_catalog(self, **kwargs):
         """Get product catalog for adding to quotes"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             # Parse query parameters
@@ -1177,16 +1186,16 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_update_quote(self, order_id, **kwargs):
         """Update quote lines for FSO from mobile app"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             if not order.sale_order_id:
-                return self._prepare_json_response(error='No quote found for this order', status_code=404)
+                return self._prepare_json_response(error=_('No quote found for this order'), status_code=404)
 
             sale_order = order.sale_order_id
 
@@ -1206,11 +1215,11 @@ class HealthPWAAPIController(http.Controller):
                 quantity = line_data.get('quantity', 1.0)
 
                 if not product_id:
-                    return self._prepare_json_response(error='Product ID required', status_code=400)
+                    return self._prepare_json_response(error=_('Product ID required'), status_code=400)
 
                 product = request.env['product.product'].browse(product_id)
                 if not product.exists():
-                    return self._prepare_json_response(error='Product not found', status_code=404)
+                    return self._prepare_json_response(error=_('Product not found'), status_code=404)
 
                 # Create order line
                 request.env['sale.order.line'].create({
@@ -1229,11 +1238,11 @@ class HealthPWAAPIController(http.Controller):
                 discount_reason = line_data.get('discount_reason')
 
                 if not line_id:
-                    return self._prepare_json_response(error='Line ID required', status_code=400)
+                    return self._prepare_json_response(error=_('Line ID required'), status_code=400)
 
                 line = request.env['sale.order.line'].browse(line_id)
                 if not line.exists() or line.order_id.id != sale_order.id:
-                    return self._prepare_json_response(error='Line not found', status_code=404)
+                    return self._prepare_json_response(error=_('Line not found'), status_code=404)
 
                 update_vals = {}
                 if quantity is not None:
@@ -1253,16 +1262,16 @@ class HealthPWAAPIController(http.Controller):
                 line_id = line_data.get('line_id')
 
                 if not line_id:
-                    return self._prepare_json_response(error='Line ID required', status_code=400)
+                    return self._prepare_json_response(error=_('Line ID required'), status_code=400)
 
                 line = request.env['sale.order.line'].browse(line_id)
                 if not line.exists() or line.order_id.id != sale_order.id:
-                    return self._prepare_json_response(error='Line not found', status_code=404)
+                    return self._prepare_json_response(error=_('Line not found'), status_code=404)
 
                 line.unlink()
 
             else:
-                return self._prepare_json_response(error='Invalid action', status_code=400)
+                return self._prepare_json_response(error=_('Invalid action'), status_code=400)
 
             # Return updated quote data
             updated_quote = {
@@ -1291,7 +1300,7 @@ class HealthPWAAPIController(http.Controller):
 
             return self._prepare_json_response(data={
                 'quote': updated_quote,
-                'message': 'Quote updated successfully'
+                'message': _('Quote updated successfully')
             })
 
         except Exception as e:
@@ -1301,16 +1310,16 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_save_quote(self, order_id, **kwargs):
         """Save quote with verification comments and sync modified line items from mobile app"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             if not order.sale_order_id:
-                return self._prepare_json_response(error='No quote found for this order', status_code=404)
+                return self._prepare_json_response(error=_('No quote found for this order'), status_code=404)
 
             sale_order = order.sale_order_id
 
@@ -1371,7 +1380,7 @@ class HealthPWAAPIController(http.Controller):
                 'quote_name': sale_order.name,
                 'comments_saved': bool(comments),
                 'modified_lines_count': len(modified_lines),
-                'message': 'Invoice verified and saved successfully'
+                'message': _('Invoice verified and saved successfully')
             })
 
         except Exception as e:
@@ -1385,7 +1394,7 @@ class HealthPWAAPIController(http.Controller):
         Supports optional 'date' query parameter in YYYY-MM-DD format
         """
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             # Get logged-in user
@@ -1406,7 +1415,7 @@ class HealthPWAAPIController(http.Controller):
                     target_date = dt.strptime(date_param, '%Y-%m-%d').date()
                 except ValueError:
                     return self._prepare_json_response(
-                        error='Invalid date format. Use YYYY-MM-DD',
+                        error=_('Invalid date format. Use YYYY-MM-DD'),
                         status_code=400
                     )
             else:
@@ -1532,7 +1541,7 @@ class HealthPWAAPIController(http.Controller):
         Used for the Call feature in the mobile app
         """
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             # Get PWA configuration
@@ -1569,16 +1578,16 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_next_visit_status(self, order_id, **kwargs):
         """Check if patient has a scheduled next visit"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             if not order.patient_id:
-                return self._prepare_json_response(error='No patient associated with this order', status_code=400)
+                return self._prepare_json_response(error=_('No patient associated with this order'), status_code=400)
 
             patient = order.patient_id
 
@@ -1666,16 +1675,16 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_no_future_visit(self, order_id, **kwargs):
         """Record that patient doesn't want/need future visits"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             if not order.patient_id:
-                return self._prepare_json_response(error='No patient associated with this order', status_code=400)
+                return self._prepare_json_response(error=_('No patient associated with this order'), status_code=400)
 
             # Get request data
             import json as json_module
@@ -1713,7 +1722,7 @@ class HealthPWAAPIController(http.Controller):
                 self._create_follow_up_activity(order, patient, reason_note)
 
             return self._prepare_json_response(data={
-                'message': 'Visit cancellation reason recorded successfully',
+                'message': _('Visit cancellation reason recorded successfully'),
                 'patient_id': patient.id,
                 'follow_up_created': need_follow_up
             })
@@ -1726,16 +1735,16 @@ class HealthPWAAPIController(http.Controller):
     def api_fso_schedule_next_visit(self, order_id, **kwargs):
         """Create new FSO or update existing next visit"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
 
             if not order.exists():
-                return self._prepare_json_response(error='Order not found', status_code=404)
+                return self._prepare_json_response(error=_('Order not found'), status_code=404)
 
             if not order.patient_id:
-                return self._prepare_json_response(error='No patient associated with this order', status_code=400)
+                return self._prepare_json_response(error=_('No patient associated with this order'), status_code=400)
 
             # Get request data
             import json as json_module
@@ -1775,7 +1784,10 @@ class HealthPWAAPIController(http.Controller):
                         next_visit_date = f'{date_part} {time_part}'
                 except Exception as e:
                     _logger.error(f'Error parsing datetime: {next_visit_date}, error: {str(e)}')
-                    return self._prepare_json_response(error=f'Invalid datetime format: {str(e)}', status_code=400)
+                    return self._prepare_json_response(
+                        error=_('Invalid datetime format: %s') % str(e),
+                        status_code=400,
+                    )
 
             patient = order.patient_id
 
@@ -1791,7 +1803,7 @@ class HealthPWAAPIController(http.Controller):
                         update_vals['lead_staff_id'] = False
                     next_fso.write(update_vals)
                 else:
-                    return self._prepare_json_response(error='Invalid FSO or patient mismatch', status_code=400)
+                    return self._prepare_json_response(error=_('Invalid FSO or patient mismatch'), status_code=400)
             else:
                 # Determine state: 'assigned' if staff assigned, 'confirmed' if unassigned
                 # First check if assigned_staff_id is provided and has a user_id
@@ -1818,7 +1830,10 @@ class HealthPWAAPIController(http.Controller):
                     facility_id = default_facility.id if default_facility else False
 
                 if not facility_id:
-                    return self._prepare_json_response(error='No facility found. Please set a facility on the original booking.', status_code=400)
+                    return self._prepare_json_response(
+                        error=_('No facility found. Please set a facility on the original booking.'),
+                        status_code=400,
+                    )
 
                 # Create new FSO
                 next_fso = request.env['health.fieldservice.order'].create({
@@ -1902,7 +1917,7 @@ class HealthPWAAPIController(http.Controller):
             patient.write({'next_visit_date': next_visit_date})
 
             return self._prepare_json_response(data={
-                'message': 'Next visit scheduled successfully',
+                'message': _('Next visit scheduled successfully'),
                 'fso_id': next_fso.id,
                 'fso_name': next_fso.name,
                 'patient_id': patient.id,
@@ -1917,7 +1932,7 @@ class HealthPWAAPIController(http.Controller):
     def api_get_future_bookings(self, **kwargs):
         """Get all future bookings for current user (staff), grouped by date"""
         if not self._check_api_access():
-            return self._prepare_json_response(error='Access denied', status_code=403)
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
 
         try:
             user = request.env.user
@@ -2124,11 +2139,11 @@ class HealthPWAAPIController(http.Controller):
         try:
             notif = request.env['health.pwa.staff.notification'].sudo().browse(notif_id)
             if not notif.exists():
-                return self._prepare_json_response(error='Notification not found', status_code=404)
+                return self._prepare_json_response(error=_('Notification not found'), status_code=404)
 
             # Verify ownership
             if notif.user_id.id != request.env.user.id:
-                return self._prepare_json_response(error='Not your notification', status_code=403)
+                return self._prepare_json_response(error=_('Not your notification'), status_code=403)
 
             notif.write({'is_read': True})
             return self._prepare_json_response(data={
@@ -2148,11 +2163,11 @@ class HealthPWAAPIController(http.Controller):
             action = body.get('action')  # 'accept' or 'decline'
 
             if action not in ('accept', 'decline'):
-                return self._prepare_json_response(error='Invalid action. Use accept or decline.', status_code=400)
+                return self._prepare_json_response(error=_('Invalid action. Use accept or decline.'), status_code=400)
 
             assignment = request.env['health.staff.assignment'].sudo().browse(assignment_id)
             if not assignment.exists():
-                return self._prepare_json_response(error='Assignment not found', status_code=404)
+                return self._prepare_json_response(error=_('Assignment not found'), status_code=404)
 
             # Verify the current user owns this assignment
             current_user = request.env.user
@@ -2161,7 +2176,7 @@ class HealthPWAAPIController(http.Controller):
             ], limit=1)
 
             if not employee or assignment.staff_id.id != employee.id:
-                return self._prepare_json_response(error='Not your assignment', status_code=403)
+                return self._prepare_json_response(error=_('Not your assignment'), status_code=403)
 
             if action == 'accept':
                 assignment.write({'state': 'confirmed'})
@@ -2169,7 +2184,7 @@ class HealthPWAAPIController(http.Controller):
                 return self._prepare_json_response(data={
                     'status': 'accepted',
                     'assignment_id': assignment_id,
-                    'message': 'Assignment confirmed successfully',
+                    'message': _('Assignment confirmed successfully'),
                 })
             else:
                 assignment.write({'state': 'cancelled'})
@@ -2177,7 +2192,7 @@ class HealthPWAAPIController(http.Controller):
                 return self._prepare_json_response(data={
                     'status': 'declined',
                     'assignment_id': assignment_id,
-                    'message': 'Assignment declined',
+                    'message': _('Assignment declined'),
                 })
 
         except Exception as e:
@@ -2220,7 +2235,7 @@ class HealthPWAAPIController(http.Controller):
 
             if not endpoint or not p256dh or not auth:
                 return self._prepare_json_response(
-                    error='Missing required fields: endpoint, keys.p256dh, keys.auth',
+                    error=_('Missing required fields: endpoint, keys.p256dh, keys.auth'),
                     status_code=400)
 
             user_agent = request.httprequest.environ.get('HTTP_USER_AGENT', '')[:200]
@@ -2264,7 +2279,7 @@ class HealthPWAAPIController(http.Controller):
             endpoint = body.get('endpoint')
 
             if not endpoint:
-                return self._prepare_json_response(error='Missing endpoint', status_code=400)
+                return self._prepare_json_response(error=_('Missing endpoint'), status_code=400)
 
             PushSub = request.env['health.pwa.push.subscription'].sudo()
             existing = PushSub.search([

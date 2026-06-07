@@ -1,0 +1,1100 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_flow
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-06 10:17+0000\n"
+"PO-Revision-Date: 2026-06-06 10:17+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "AR Management"
+msgstr "Quản lý công nợ phải thu"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "AR Transactions Log"
+msgstr "Nhật ký giao dịch công nợ"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Access Roles"
+msgstr "Vai trò truy cập"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Account Payment"
+msgstr "Thanh toán tài khoản"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Accounts Receivable"
+msgstr "Công nợ phải thu"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Action"
+msgstr "Hành động"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Action Error"
+msgstr "Lỗi hành động"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Action Not Found"
+msgstr "Không tìm thấy hành động"
+
+#. module: health_flow
+#: model_terms:ir.ui.view,arch_db:health_flow.view_health_flow_mail_activity_calendar_search
+msgid "Activity Type"
+msgstr "Loại hoạt động"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Add New Invoice"
+msgstr "Thêm hóa đơn mới"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Admin"
+msgstr "Quản trị"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "All Bookings"
+msgstr "Tất cả đặt lịch"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "All Clients"
+msgstr "Tất cả khách hàng"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "All Clients Error"
+msgstr "Lỗi tất cả khách hàng"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "All Contacts"
+msgstr "Tất cả liên hệ"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "All Contacts Error"
+msgstr "Lỗi tất cả liên hệ"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "All Leads"
+msgstr "Tất cả cơ hội"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "All bookings (grouped by month)"
+msgstr "Tất cả lịch hẹn (nhóm theo tháng)"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "All invoices"
+msgstr "Tất cả hóa đơn"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Assigned"
+msgstr "Đã phân công"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Assigned Bookings Calendar"
+msgstr "Lịch đặt hẹn đã phân công"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Assigned bookings"
+msgstr "Lịch hẹn đã phân công"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Assignment timeline view"
+msgstr "Giao diện dòng thời gian phân công"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Audit Log"
+msgstr "Nhật ký kiểm tra"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Booking"
+msgstr "Đặt lịch"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Booking Action Error"
+msgstr "Lỗi hành động đặt lịch"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Booking Calendar"
+msgstr "Lịch đặt hẹn"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Booking Dashboard"
+msgstr "Bảng đặt lịch"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Booking Lost"
+msgstr "Đặt lịch bị mất"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Booking not found."
+msgstr "Không tìm thấy đặt lịch."
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Bookings"
+msgstr "Đặt lịch"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Bookings and Assignments"
+msgstr "Lịch hẹn và phân công"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "CRM"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "CRM Action Error"
+msgstr "Lỗi hành động CRM"
+
+#. module: health_flow
+#: model:ir.actions.act_window,name:health_flow.action_health_flow_crm_activity_calendar
+#: model_terms:ir.ui.view,arch_db:health_flow.view_health_flow_mail_activity_calendar
+#: model_terms:ir.ui.view,arch_db:health_flow.view_health_flow_mail_activity_calendar_search
+msgid "CRM Activities"
+msgstr "Hoạt động CRM"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "CRM Calendar"
+msgstr "Lịch CRM"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "CRM Contact"
+msgstr "Liên hệ CRM"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "CRM Search"
+msgstr "Tìm kiếm CRM"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Cash In Transit Transfers"
+msgstr "Chuyển tiền mặt đang vận chuyển"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Catchment Provinces"
+msgstr "Tỉnh phục vụ"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Client Acquired"
+msgstr "Khách hàng đã tiếp nhận"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Client Action Error"
+msgstr "Lỗi hành động khách hàng"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Client Dashboard"
+msgstr "Bảng khách hàng"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Client not found."
+msgstr "Không tìm thấy khách hàng."
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Completed"
+msgstr "Hoàn thành"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Completed Bookings Calendar"
+msgstr "Lịch đặt hẹn đã hoàn thành"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Completed bookings"
+msgstr "Lịch hẹn hoàn thành"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Configure mandatory fields"
+msgstr "Cấu hình các trường bắt buộc"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Contact Name is required."
+msgstr "Tên liên hệ là bắt buộc."
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Contact Wizard Error"
+msgstr "Lỗi trình tạo liên hệ"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Contacts"
+msgstr "Liên hệ"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Continue Follow-up"
+msgstr "Tiếp tục theo dõi"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Create manual invoice"
+msgstr "Tạo hóa đơn thủ công"
+
+#. module: health_flow
+#: model:ir.model.fields,field_description:health_flow.field_health_flow_wizard__create_uid
+msgid "Created by"
+msgstr "Được tạo bởi"
+
+#. module: health_flow
+#: model:ir.model.fields,field_description:health_flow.field_health_flow_wizard__create_date
+msgid "Created on"
+msgstr "Ngày tạo"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Dashboard Error"
+msgstr "Lỗi bảng điều khiển"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Dashboard Not Found"
+msgstr "Không tìm thấy bảng điều khiển"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Define pricing rules"
+msgstr "Xác định quy tắc định giá"
+
+#. module: health_flow
+#: model:ir.model.fields,field_description:health_flow.field_health_flow_wizard__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Double-entry journal log"
+msgstr "Nhật ký kế toán kép"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Draft Bookings Calendar"
+msgstr "Lịch đặt hẹn nháp"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Draft bookings"
+msgstr "Lịch hẹn nháp"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/xml/list_export_button.xml:0
+msgid "Export All"
+msgstr "Xuất tất cả"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to load Booking action: %s"
+msgstr "Không thể tải thao tác lịch hẹn: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to load CRM action: %s"
+msgstr "Không thể tải thao tác CRM: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to load My Dashboard: %s"
+msgstr "Không thể tải Bảng điều khiển của tôi: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to load action: %s"
+msgstr "Không thể tải thao tác: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to load all clients: %s"
+msgstr "Không thể tải tất cả khách hàng: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to load all contacts: %s"
+msgstr "Không thể tải tất cả liên hệ: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to load client registry: %s"
+msgstr "Không thể tải danh sách khách hàng: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to load follow-up activities: %s"
+msgstr "Không thể tải các hoạt động theo dõi: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to open booking"
+msgstr "Không thể mở đặt lịch"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to open client"
+msgstr "Không thể mở khách hàng"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to open contact wizard: %s"
+msgstr "Không thể mở trình hướng dẫn liên hệ: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Failed to open lead"
+msgstr "Không thể mở cơ hội"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Field Requirements"
+msgstr "Yêu cầu trường dữ liệu"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Finance"
+msgstr "Tài chính"
+
+#. module: health_flow
+#: model:ir.model.fields,field_description:health_flow.field_health_flow_wizard__name
+msgid "Flow Dashboard"
+msgstr "Bảng điều khiển quy trình"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Follow-up Activities"
+msgstr "Hoạt động theo dõi"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Follow-up Activities Error"
+msgstr "Lỗi hoạt động theo dõi"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: model:ir.model,name:health_flow.model_health_flow_wizard
+msgid "Health Flow Dashboard"
+msgstr "Bảng điều khiển luồng y tế"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Healthcare Facilities"
+msgstr "Cơ sở y tế"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Healthcare Staff"
+msgstr "Nhân viên y tế"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+#: model:ir.actions.client,name:health_flow.action_health_flow_dashboard
+#: model:ir.ui.menu,name:health_flow.menu_health_flow_root
+msgid "Home Page"
+msgstr "Trang chủ"
+
+#. module: health_flow
+#: model:ir.model.fields,field_description:health_flow.field_health_flow_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "In Progress"
+msgstr "Đang thực hiện"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "In Progress Bookings Calendar"
+msgstr "Lịch đặt hẹn đang thực hiện"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "In progress bookings"
+msgstr "Lịch hẹn đang thực hiện"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Initial Contact"
+msgstr "Liên hệ ban đầu"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Insurance Providers"
+msgstr "Nhà cung cấp bảo hiểm"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Invoices"
+msgstr "Hóa đơn"
+
+#. module: health_flow
+#: model:ir.model.fields,field_description:health_flow.field_health_flow_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Cập nhật lần cuối bởi"
+
+#. module: health_flow
+#: model:ir.model.fields,field_description:health_flow.field_health_flow_wizard__write_date
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối vào"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Lead Dashboard"
+msgstr "Bảng cơ hội"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Log new contact / View contacts"
+msgstr "Ghi liên hệ mới / Xem liên hệ"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Manage leads and activities"
+msgstr "Quản lý liên hệ và hoạt động"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Manage users & roles"
+msgstr "Quản lý người dùng và vai trò"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Master Data"
+msgstr "Dữ liệu chính"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Master data management"
+msgstr "Quản lý dữ liệu danh mục"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "My Dashboard has not been configured yet."
+msgstr "Bảng điều khiển của tôi chưa được cấu hình."
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "New Booking"
+msgstr "Đặt lịch mới"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "New Client"
+msgstr "Khách hàng mới"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "New Contact"
+msgstr "Liên hệ mới"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "New Invoice"
+msgstr "Hóa đơn mới"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "New Lead"
+msgstr "Cơ hội mới"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "No leads found for this filter."
+msgstr "Không tìm thấy cơ hội cho bộ lọc này."
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Package Products"
+msgstr "Sản phẩm gói"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Patient Categories"
+msgstr "Danh mục bệnh nhân"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Patient categories"
+msgstr "Phân loại bệnh nhân"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Payment Transactions"
+msgstr "Giao dịch thanh toán"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Payment history"
+msgstr "Lịch sử thanh toán"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Payments, cash transit, refunds"
+msgstr "Thanh toán, tiền đang chuyển, hoàn tiền"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Planned Activities"
+msgstr "Hoạt động đã lên kế hoạch"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Portable Equipment"
+msgstr "Thiết bị di động"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Pricelist"
+msgstr "Bảng giá"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Pricing Rules"
+msgstr "Quy tắc giá"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Product catalog & pricing"
+msgstr "Danh mục sản phẩm và định giá"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Referral Sources"
+msgstr "Nguồn giới thiệu"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Refund / Credit"
+msgstr "Hoàn tiền / Ghi có"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Rescheduled: %s"
+msgstr "Đã đổi lịch: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Role Management"
+msgstr "Quản lý vai trò"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Sales & CRM"
+msgstr "Bán hàng & CRM"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Scheduled"
+msgstr "Đã lên lịch"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Scheduled Bookings Calendar"
+msgstr "Lịch đặt hẹn đã lên lịch"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Scheduled bookings"
+msgstr "Lịch hẹn đã lên lịch"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Search"
+msgstr "Tìm kiếm"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Search bookings"
+msgstr "Tìm kiếm lịch hẹn"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Service Types"
+msgstr "Loại dịch vụ"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Service packages"
+msgstr "Gói dịch vụ"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Staff Assignment"
+msgstr "Phân công nhân viên"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Staff Assignment Timeline"
+msgstr "Dòng thời gian phân công nhân viên"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Staff Workload"
+msgstr "Khối lượng công việc nhân viên"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Staff directory"
+msgstr "Danh bạ nhân viên"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Staff workload overview"
+msgstr "Tổng quan khối lượng công việc nhân viên"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Symptoms"
+msgstr "Triệu chứng"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "The requested action \"%s\" is not configured."
+msgstr "Thao tác được yêu cầu \"%s\" chưa được cấu hình."
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Track equipment"
+msgstr "Theo dõi thiết bị"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Unknown"
+msgstr "Không xác định"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Unpaid invoices & aging"
+msgstr "Hóa đơn chưa thanh toán và tuổi nợ"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Upcoming: %s"
+msgstr "Sắp tới: %s"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Urgency Levels"
+msgstr "Mức độ khẩn cấp"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "User Management"
+msgstr "Quản lý người dùng"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "Users"
+msgstr "Người dùng"
+
+#. module: health_flow
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "VAT Invoices Log"
+msgstr "Nhật ký hóa đơn VAT"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "VAT log for MISA validation"
+msgstr "Nhật ký VAT để xác thực MISA"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "View all clients"
+msgstr "Xem tất cả khách hàng"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "View all contacts by status"
+msgstr "Xem tất cả liên hệ theo trạng thái"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Visual booking calendar"
+msgstr "Lịch hẹn trực quan"
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "advanced_pricing.action_pricing_rules_with_visual"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_base.action_health_catchment_province"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_base.action_health_facility"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_base.action_health_insurance_provider"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_base.action_health_patient_category"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_base.action_health_referral_source"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_base.action_health_service_type"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_base.action_health_symptom"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_base.action_health_urgency_level"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_crm.action_healthcare_opportunities"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_field_requirements.action_field_requirements_dashboard"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_fieldservice.action_assignment_web_timeline_view"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_fieldservice.action_health_portable_equipment"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_fieldservice.action_healthcare_staff"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_fieldservice.action_staff_workload_dashboard"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_invoicing.action_health_payment_transaction"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_invoicing.action_healthcare_ar_dashboard"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_invoicing.action_healthcare_ar_transaction_log"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_invoicing.action_healthcare_invoices"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_invoicing.action_healthcare_package_products"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_invoicing.action_healthcare_vat_invoice_log"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_user_admin.action_healthcare_access_roles"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_user_admin.action_healthcare_role_management"
+msgstr ""
+
+#. module: health_flow
+#. odoo-python
+#: code:addons/health_flow/models/health_flow_wizard.py:0
+msgid "health_user_admin.action_healthcare_users"
+msgstr ""

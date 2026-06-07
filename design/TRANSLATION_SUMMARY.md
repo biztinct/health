@@ -1,5 +1,8 @@
 # Vietnamese Translation - Implementation Summary
 
+> Historical document. Use `VietTranslation/README.md` and the utilities in
+> `VietTranslation/scripts/` for the current Odoo 19 translation workflow.
+
 ## ✅ Completed Work
 
 ### 1. Infrastructure Setup

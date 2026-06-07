@@ -5,6 +5,7 @@ import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { useState } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 
 export class CrmActivityListController extends ListController {
     static template = "health_crm.CrmActivityListView";
@@ -22,22 +23,22 @@ export class CrmActivityListController extends ListController {
 
     get typeTabs() {
         return [
-            { id: "all", label: "All Activities", icon: "fa-list" },
-            { id: "call", label: "Call", icon: "fa-phone" },
-            { id: "meeting", label: "Meeting", icon: "fa-users" },
-            { id: "todo", label: "To-Do", icon: "fa-check-circle" },
-            { id: "email", label: "Email", icon: "fa-envelope" },
-            { id: "escalated", label: "Escalated", icon: "fa-exclamation-triangle" },
+            { id: "all", label: _t("All Activities"), icon: "fa-list" },
+            { id: "call", label: _t("Call"), icon: "fa-phone" },
+            { id: "meeting", label: _t("Meeting"), icon: "fa-users" },
+            { id: "todo", label: _t("To-Do"), icon: "fa-check-circle" },
+            { id: "email", label: _t("Email"), icon: "fa-envelope" },
+            { id: "escalated", label: _t("Escalated"), icon: "fa-exclamation-triangle" },
         ];
     }
 
     get dateTabs() {
         return [
-            { id: "all_dates", label: "All Dates" },
-            { id: "overdue", label: "Overdue" },
-            { id: "today", label: "Today" },
-            { id: "this_week", label: "This Week" },
-            { id: "this_month", label: "This Month" },
+            { id: "all_dates", label: _t("All Dates") },
+            { id: "overdue", label: _t("Overdue") },
+            { id: "today", label: _t("Today") },
+            { id: "this_week", label: _t("This Week") },
+            { id: "this_month", label: _t("This Month") },
         ];
     }
 

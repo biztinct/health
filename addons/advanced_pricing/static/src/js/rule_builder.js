@@ -22,7 +22,7 @@ export class PricingRuleBuilder extends Component {
         this.notification = useService('notification');
         
         this.state = useState({
-            ruleName: this.props.rule?.name || 'New Rule',
+            ruleName: this.props.rule?.name || _t('New Rule'),
             level: this.props.rule?.level || '1',
             generatedCode: '',
         });
@@ -45,14 +45,14 @@ export class PricingRuleBuilder extends Component {
                 ruleId = await this.orm.create('advanced.pricing.rule', ruleData);
             }
 
-            this.notification.add('Rule saved successfully', { type: 'success' });
+            this.notification.add(_t('Rule saved successfully'), { type: 'success' });
 
             if (this.props.onSave) {
                 this.props.onSave(ruleId);
             }
         } catch (error) {
             console.error('Error saving rule:', error);
-            this.notification.add('Error saving rule', { type: 'danger' });
+            this.notification.add(_t('Error saving rule'), { type: 'danger' });
         }
     }
 }

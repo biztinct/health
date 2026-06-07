@@ -1,6 +1,6 @@
 {
     'name': 'Health Field Requirements',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.1.1',
     'category': 'Healthcare',
     'summary': 'Configure mandatory fields per model, role, and state',
     'description': """

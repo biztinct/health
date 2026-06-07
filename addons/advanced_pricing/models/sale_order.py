@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import _, api, fields, models
 from odoo.fields import Domain
 
 class SaleOrder(models.Model):
@@ -346,7 +346,7 @@ class SaleOrder(models.Model):
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'message': 'Advanced pricing is not enabled for this quote.',
+                    'message': _('Advanced pricing is not enabled for this quote.'),
                     'type': 'warning',
                 }
             }
@@ -392,7 +392,11 @@ class SaleOrder(models.Model):
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'message': f'Please enable "Use Advanced Pricing Engine" on pricelist: {self.pricelist_id.name}. Go to Sales → Pricelists → {self.pricelist_id.name}',
+                    'message': _(
+                        'Please enable "Use Advanced Pricing Engine" on pricelist: '
+                        '%(pricelist)s. Go to Sales → Pricelists → %(pricelist)s',
+                        pricelist=self.pricelist_id.name,
+                    ),
                     'type': 'warning',
                     'sticky': True,
                 }
@@ -428,7 +432,7 @@ class SaleOrder(models.Model):
                     'healthcare_context': True,
                     'fso_id': self.fso_id.id,
                     'show_notification': True,
-                    'notification_message': 'Prices recalculated successfully!',
+                    'notification_message': _('Prices recalculated successfully!'),
                     'notification_type': 'success'
                 }
             }
@@ -442,7 +446,7 @@ class SaleOrder(models.Model):
                 'target': 'current',
                 'context': {
                     'show_notification': True,
-                    'notification_message': 'Prices recalculated successfully!',
+                    'notification_message': _('Prices recalculated successfully!'),
                     'notification_type': 'success'
                 }
             }
@@ -458,7 +462,7 @@ class SaleOrder(models.Model):
         
         if not self.fso_id:
             return {'type': 'ir.actions.client', 'tag': 'display_notification',
-                    'params': {'title': 'No Booking', 'message': 'No booking linked to this quote.',
+                    'params': {'title': _('No Booking'), 'message': _('No booking linked to this quote.'),
                                'type': 'warning', 'sticky': False}}
         
         # Store current total before recalc (if pre_service_amount not yet set)
@@ -489,8 +493,11 @@ class SaleOrder(models.Model):
         if abs(delta) < 0.01:
             # No difference — just return notification
             return {'type': 'ir.actions.client', 'tag': 'display_notification',
-                    'params': {'title': 'Pricing Up-to-Date',
-                               'message': f'No change in pricing. Total remains {new_total:,.0f} đ.',
+                    'params': {'title': _('Pricing Up-to-Date'),
+                               'message': _(
+                                   'No change in pricing. Total remains %s đ.',
+                                   f'{new_total:,.0f}',
+                               ),
                                'type': 'info', 'sticky': False}}
         
         if delta > 0 and self.pre_service_amount > 0:
@@ -499,8 +506,13 @@ class SaleOrder(models.Model):
                 supp_invoice = self._create_supplementary_invoice(delta)
                 if supp_invoice:
                     return {'type': 'ir.actions.client', 'tag': 'display_notification',
-                            'params': {'title': 'Supplementary Invoice Created',
-                                       'message': f'Post-service adjustment: +{delta:,.0f} đ. Supplementary invoice {supp_invoice.name} created.',
+                            'params': {'title': _('Supplementary Invoice Created'),
+                                       'message': _(
+                                           'Post-service adjustment: +%(delta)s đ. '
+                                           'Supplementary invoice %(invoice)s created.',
+                                           delta=f'{delta:,.0f}',
+                                           invoice=supp_invoice.name,
+                                       ),
                                        'type': 'warning', 'sticky': True}}
             except Exception as e:
                 _logger.warning('Failed to create supplementary invoice: %s', e)
@@ -511,15 +523,26 @@ class SaleOrder(models.Model):
                 credit_note = self._create_credit_note(abs(delta))
                 if credit_note:
                     return {'type': 'ir.actions.client', 'tag': 'display_notification',
-                            'params': {'title': 'Credit Note Created',
-                                       'message': f'Post-service adjustment: {delta:,.0f} đ. Credit note {credit_note.name} created.',
+                            'params': {'title': _('Credit Note Created'),
+                                       'message': _(
+                                           'Post-service adjustment: %(delta)s đ. '
+                                           'Credit note %(credit_note)s created.',
+                                           delta=f'{delta:,.0f}',
+                                           credit_note=credit_note.name,
+                                       ),
                                        'type': 'info', 'sticky': True}}
             except Exception as e:
                 _logger.warning('Failed to create credit note: %s', e)
         
         return {'type': 'ir.actions.client', 'tag': 'display_notification',
-                'params': {'title': 'Pricing Recalculated',
-                           'message': f'New total: {new_total:,.0f} đ (was {original_total:,.0f} đ, delta: {delta:+,.0f} đ)',
+                'params': {'title': _('Pricing Recalculated'),
+                           'message': _(
+                               'New total: %(new_total)s đ (was %(old_total)s đ, '
+                               'delta: %(delta)s đ)',
+                               new_total=f'{new_total:,.0f}',
+                               old_total=f'{original_total:,.0f}',
+                               delta=f'{delta:+,.0f}',
+                           ),
                            'type': 'success', 'sticky': False}}
     
     def _create_supplementary_invoice(self, delta_amount):
@@ -530,23 +553,23 @@ class SaleOrder(models.Model):
         # Build description of what changed
         changes = []
         if self.injection_count > 1:
-            changes.append(f'{self.injection_count - 1} extra injection(s)')
+            changes.append(_('%d extra injection(s)', self.injection_count - 1))
         if self.medication_count > 1:
-            changes.append(f'{self.medication_count - 1} extra medication(s)')
+            changes.append(_('%d extra medication(s)', self.medication_count - 1))
         if self.wound_count > 1:
-            changes.append(f'{self.wound_count - 1} extra wound treatment(s)')
+            changes.append(_('%d extra wound treatment(s)', self.wound_count - 1))
         if self.iv_fluid_count > 0:
-            changes.append(f'{self.iv_fluid_count} IV fluid bag(s)')
+            changes.append(_('%d IV fluid bag(s)', self.iv_fluid_count))
         
-        description = ', '.join(changes) if changes else 'Post-service adjustment'
+        description = ', '.join(changes) if changes else _('Post-service adjustment')
         
         invoice_vals = {
             'move_type': 'out_invoice',
             'partner_id': self.partner_id.id,
-            'invoice_origin': f'Supplementary: {fso.name}',
-            'ref': f'{fso.name} - Post-Service Adjustment',
+            'invoice_origin': _('Supplementary: %s', fso.name),
+            'ref': _('%s - Post-Service Adjustment', fso.name),
             'invoice_line_ids': [(0, 0, {
-                'name': f'Post-Service Adjustment ({description})',
+                'name': _('Post-Service Adjustment (%s)', description),
                 'quantity': 1,
                 'price_unit': delta_amount,
             })],
@@ -567,10 +590,12 @@ class SaleOrder(models.Model):
         invoice_vals = {
             'move_type': 'out_refund',
             'partner_id': self.partner_id.id,
-            'invoice_origin': f'Credit: {fso.name}',
-            'ref': f'{fso.name} - Post-Service Credit',
+            'invoice_origin': _('Credit: %s', fso.name),
+            'ref': _('%s - Post-Service Credit', fso.name),
             'invoice_line_ids': [(0, 0, {
-                'name': 'Post-Service Credit (service cost less than prepaid amount)',
+                'name': _(
+                    'Post-Service Credit (service cost less than prepaid amount)'
+                ),
                 'quantity': 1,
                 'price_unit': credit_amount,
             })],
@@ -642,7 +667,10 @@ class SaleOrder(models.Model):
 
         html = []
         html.append('<div style="margin-top:12px;">')
-        html.append(f'<h4 style="margin-bottom:8px;">{self._factor_icon("clipboard", 16)} Pricing Breakdown</h4>')
+        html.append(
+            f'<h4 style="margin-bottom:8px;">'
+            f'{self._factor_icon("clipboard", 16)} {_("Pricing Breakdown")}</h4>'
+        )
 
         # Context factors summary
         factors = []
@@ -650,17 +678,23 @@ class SaleOrder(models.Model):
             fso = self.fso_id
             loc = self.fso_service_location
             if loc == 'home':
-                factors.append(f'{self._factor_icon("home")} Home Visit')
+                factors.append(f'{self._factor_icon("home")} {_("Home Visit")}')
             elif loc == 'clinic':
-                factors.append(f'{self._factor_icon("clinic")} Clinic Visit')
+                factors.append(f'{self._factor_icon("clinic")} {_("Clinic Visit")}')
             if self.fso_distance and self.fso_distance > 0:
-                factors.append(f'{self._factor_icon("pin")} Distance: {self.fso_distance:.1f} km')
+                factors.append(
+                    f'{self._factor_icon("pin")} '
+                    f'{_("Distance: %(distance).1f km", distance=self.fso_distance)}'
+                )
             if self.is_after_hours:
-                factors.append(f'{self._factor_icon("moon")} After Hours')
+                factors.append(f'{self._factor_icon("moon")} {_("After Hours")}')
             if self.is_weekend:
-                factors.append(f'{self._factor_icon("calendar")} Weekend')
+                factors.append(f'{self._factor_icon("calendar")} {_("Weekend")}')
             if self.is_holiday:
-                factors.append(f'{self._factor_icon("flag")} Holiday ({self.holiday_type or "Public"})')
+                factors.append(
+                    f'{self._factor_icon("flag")} '
+                    f'{_("Holiday (%s)", self.holiday_type or _("Public"))}'
+                )
 
         if factors:
             html.append('<div style="background:#f0f4ff;padding:8px 12px;border-radius:6px;margin-bottom:10px;font-size:13px;">')
@@ -670,12 +704,12 @@ class SaleOrder(models.Model):
         # Table header
         html.append('<table style="width:100%;border-collapse:collapse;font-size:13px;">')
         html.append('<thead><tr style="background:#f8f9fa;">')
-        html.append('<th style="padding:6px 8px;text-align:left;border-bottom:2px solid #dee2e6;">Product</th>')
-        html.append('<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">Base Price</th>')
-        html.append('<th style="padding:6px 8px;text-align:left;border-bottom:2px solid #dee2e6;">Rules Applied</th>')
-        html.append('<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">Final Price</th>')
-        html.append('<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">Qty</th>')
-        html.append('<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">Subtotal</th>')
+        html.append(f'<th style="padding:6px 8px;text-align:left;border-bottom:2px solid #dee2e6;">{_("Product")}</th>')
+        html.append(f'<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">{_("Base Price")}</th>')
+        html.append(f'<th style="padding:6px 8px;text-align:left;border-bottom:2px solid #dee2e6;">{_("Rules Applied")}</th>')
+        html.append(f'<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">{_("Final Price")}</th>')
+        html.append(f'<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">{_("Qty")}</th>')
+        html.append(f'<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">{_("Subtotal")}</th>')
         html.append('</tr></thead>')
         html.append('<tbody>')
 
@@ -767,9 +801,15 @@ class SaleOrder(models.Model):
                 rules_html = '<br/>'.join(rules_text)
                 html.append(f'<td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;">{rules_html}</td>')
             elif abs(diff) < 0.01:
-                html.append(f'<td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;">No adjustments</td>')
+                html.append(
+                    f'<td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;">'
+                    f'{_("No adjustments")}</td>'
+                )
             else:
-                html.append(f'<td style="padding:6px 8px;border-bottom:1px solid #eee;">{fmt(diff):>+} đ adjustment</td>')
+                html.append(
+                    f'<td style="padding:6px 8px;border-bottom:1px solid #eee;">'
+                    f'{_("%s đ adjustment", f"{fmt(diff):>+}")}</td>'
+                )
 
             html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;font-weight:bold;">{fmt(final_price)} đ</td>')
             html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{qty:.0f}</td>')
@@ -778,7 +818,10 @@ class SaleOrder(models.Model):
 
         html.append('</tbody>')
         html.append(f'<tfoot><tr style="background:#f8f9fa;font-weight:bold;">')
-        html.append(f'<td colspan="5" style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">Total</td>')
+        html.append(
+            f'<td colspan="5" style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">'
+            f'{_("Total")}</td>'
+        )
         html.append(f'<td style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">{fmt(grand_total)} đ</td>')
         html.append('</tr></tfoot>')
         html.append('</table>')
@@ -811,17 +854,23 @@ class SaleOrder(models.Model):
         if self.fso_id:
             loc = self.fso_service_location
             if loc == 'home':
-                factors.append({'key': 'home', 'label': 'Home Visit'})
+                factors.append({'key': 'home', 'label': _('Home Visit')})
             elif loc == 'clinic':
-                factors.append({'key': 'clinic', 'label': 'Clinic Visit'})
+                factors.append({'key': 'clinic', 'label': _('Clinic Visit')})
             if self.fso_distance and self.fso_distance > 0:
-                factors.append({'key': 'pin', 'label': 'Distance: %.1f km' % self.fso_distance})
+                factors.append({
+                    'key': 'pin',
+                    'label': _('Distance: %.1f km', self.fso_distance),
+                })
             if self.is_after_hours:
-                factors.append({'key': 'moon', 'label': 'After Hours'})
+                factors.append({'key': 'moon', 'label': _('After Hours')})
             if self.is_weekend:
-                factors.append({'key': 'calendar', 'label': 'Weekend'})
+                factors.append({'key': 'calendar', 'label': _('Weekend')})
             if self.is_holiday:
-                factors.append({'key': 'flag', 'label': 'Holiday (%s)' % (self.holiday_type or 'Public')})
+                factors.append({
+                    'key': 'flag',
+                    'label': _('Holiday (%s)', self.holiday_type or _('Public')),
+                })
 
         engine = None
         if self.pricelist_id.advanced_engine_id:

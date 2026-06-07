@@ -77,7 +77,7 @@ export class VisualRuleBuilder extends Component {
         } catch (error) {
             console.error("❌ Failed to initialize Blockly:", error);
             this.state.isLoading = false;
-            this.notification.add(_t("Failed to load visual rule builder: " + error.message), {
+            this.notification.add(_t("Failed to load visual rule builder: %s", error.message), {
                 type: "danger",
             });
         }
@@ -160,38 +160,38 @@ export class VisualRuleBuilder extends Component {
         window.Blockly.Blocks['pricing_condition'] = {
             init: function() {
                 this.appendDummyInput()
-                    .appendField("If")
+                    .appendField(_t("If"))
                     .appendField(new window.Blockly.FieldDropdown([
-                        ["Order Total", "order_total"],
-                        ["Quantity", "quantity"],
-                        ["Customer Type", "customer_type"],
-                        ["--- FSO Fields ---", "separator1"],
-                        ["Distance (km)", "distance"],
-                        ["Appointment Hour", "appointment_hour"],
-                        ["Service Type", "service_type"],
-                        ["Service Location", "service_location"],
-                        ["Urgency Level", "urgency"],
-                        ["Priority", "priority"],
-                        ["Service Units", "service_units"],
-                        ["Service City", "service_city"],
-                        ["--- Time Conditions ---", "separator2"],
-                        ["Is Weekend", "is_weekend"],
-                        ["Is Holiday", "is_holiday"],
-                        ["Is After Hours", "is_after_hours"]
+                        [_t("Order Total"), "order_total"],
+                        [_t("Quantity"), "quantity"],
+                        [_t("Customer Type"), "customer_type"],
+                        [_t("--- FSO Fields ---"), "separator1"],
+                        [_t("Distance (km)"), "distance"],
+                        [_t("Appointment Hour"), "appointment_hour"],
+                        [_t("Service Type"), "service_type"],
+                        [_t("Service Location"), "service_location"],
+                        [_t("Urgency Level"), "urgency"],
+                        [_t("Priority"), "priority"],
+                        [_t("Service Units"), "service_units"],
+                        [_t("Service City"), "service_city"],
+                        [_t("--- Time Conditions ---"), "separator2"],
+                        [_t("Is Weekend"), "is_weekend"],
+                        [_t("Is Holiday"), "is_holiday"],
+                        [_t("Is After Hours"), "is_after_hours"]
                     ]), "FIELD")
                     .appendField(new window.Blockly.FieldDropdown([
-                        ["equals", "=="],
-                        ["greater than", ">"],
-                        ["less than", "<"],
-                        ["greater or equal", ">="],
-                        ["less or equal", "<="],
-                        ["not equal", "!="]
+                        [_t("equals"), "=="],
+                        [_t("greater than"), ">"],
+                        [_t("less than"), "<"],
+                        [_t("greater or equal"), ">="],
+                        [_t("less or equal"), "<="],
+                        [_t("not equal"), "!="]
                     ]), "OPERATOR");
                 this.appendValueInput("VALUE");
                 this.setInputsInline(true);
                 this.setOutput(true, "Boolean");
                 this.setColour(210);
-                this.setTooltip("Create a pricing condition");
+                this.setTooltip(_t("Create a pricing condition"));
                 this.setMovable(true);
                 this.setDeletable(true);
             }
@@ -200,20 +200,20 @@ export class VisualRuleBuilder extends Component {
         window.Blockly.Blocks['pricing_action'] = {
             init: function() {
                 this.appendDummyInput()
-                    .appendField("Set price to")
+                    .appendField(_t("Set price to"))
                     .appendField(new window.Blockly.FieldDropdown([
-                        ["Add Amount", "add"],
-                        ["Multiply by Factor", "multiply"],
-                        ["Apply Percentage", "percentage"],
-                        ["Set Fixed Price", "fixed"],
-                        ["Apply Formula", "formula"]
+                        [_t("Add Amount"), "add"],
+                        [_t("Multiply by Factor"), "multiply"],
+                        [_t("Apply Percentage"), "percentage"],
+                        [_t("Set Fixed Price"), "fixed"],
+                        [_t("Apply Formula"), "formula"]
                     ]), "ACTION_TYPE");
                 this.appendValueInput("VALUE");
                 this.setInputsInline(true);
                 this.setPreviousStatement(true, null);
                 this.setNextStatement(true, null);
                 this.setColour(160);
-                this.setTooltip("Define a pricing action");
+                this.setTooltip(_t("Define a pricing action"));
                 this.setMovable(true);
                 this.setDeletable(true);
             }
@@ -225,7 +225,7 @@ export class VisualRuleBuilder extends Component {
                     .appendField(new window.Blockly.FieldNumber(0), "NUM");
                 this.setOutput(true, "Number");
                 this.setColour(230);
-                this.setTooltip("A number value");
+                this.setTooltip(_t("A number value"));
                 this.setMovable(true);
                 this.setDeletable(true);
             }
@@ -234,16 +234,16 @@ export class VisualRuleBuilder extends Component {
         window.Blockly.Blocks['pricing_rule'] = {
             init: function() {
                 this.appendDummyInput()
-                    .appendField("Pricing Rule")
-                    .appendField(new window.Blockly.FieldTextInput("New Rule"), "RULE_NAME");
+                    .appendField(_t("Pricing Rule"))
+                    .appendField(new window.Blockly.FieldTextInput(_t("New Rule")), "RULE_NAME");
                 this.appendValueInput("CONDITION")
                     .setCheck("Boolean")
-                    .appendField("When");
+                    .appendField(_t("When"));
                 this.appendStatementInput("ACTIONS")
                     .setCheck(null)
-                    .appendField("Then");
+                    .appendField(_t("Then"));
                 this.setColour(120);
-                this.setTooltip("Create a complete pricing rule");
+                this.setTooltip(_t("Create a complete pricing rule"));
                 this.setMovable(true);
                 this.setDeletable(true);
             }
@@ -295,23 +295,23 @@ export class VisualRuleBuilder extends Component {
 
         const toolbox = `
         <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
-            <category name="Conditions" colour="210">
+            <category name="${_t("Conditions")}" colour="210">
                 <block type="pricing_condition"></block>
                 <block type="logic_boolean"></block>
                 <block type="logic_operation"></block>
                 <block type="logic_negate"></block>
             </category>
-            <category name="Actions" colour="160">
+            <category name="${_t("Actions")}" colour="160">
                 <block type="pricing_action"></block>
             </category>
-            <category name="Values" colour="230">
+            <category name="${_t("Values")}" colour="230">
                 <block type="number_value"></block>
                 <block type="text"></block>
             </category>
-            <category name="Rules" colour="120">
+            <category name="${_t("Rules")}" colour="120">
                 <block type="pricing_rule"></block>
             </category>
-            <category name="Logic" colour="210">
+            <category name="${_t("Logic")}" colour="210">
                 <block type="controls_if"></block>
                 <block type="logic_compare"></block>
                 <block type="math_arithmetic"></block>
@@ -395,7 +395,7 @@ export class VisualRuleBuilder extends Component {
             const ruleData = this.extractRuleDataFromBlocks();
             
             this.state.previewRule = {
-                name: ruleBlock.getFieldValue('RULE_NAME') || 'Untitled Rule',
+                name: ruleBlock.getFieldValue('RULE_NAME') || _t('Untitled Rule'),
                 visual_config: window.Blockly.Xml.workspaceToDom(this.state.workspace),
                 generated_code: this.state.generatedCode,
                 condition_field: ruleData.condition_field,
@@ -537,18 +537,18 @@ export class VisualRuleBuilder extends Component {
                         const ruleBlock = workspaceState.blocks.blocks.find(block => block.type === 'pricing_rule');
                         if (ruleBlock && ruleBlock.fields) {
                             this.state.previewRule = {
-                                name: ruleBlock.fields.RULE_NAME || 'Visual Rule',
+                                name: ruleBlock.fields.RULE_NAME || _t('Visual Rule'),
                                 generated_code: '// JSON format rule loaded successfully',
-                                description: 'Modern JSON format - ready for editing'
+                                description: _t('Modern JSON format - ready for editing')
                             };
                         }
                     }
                 } else {
                     // Legacy format
                     this.state.previewRule = {
-                        name: 'Legacy Rule',
+                        name: _t('Legacy Rule'),
                         generated_code: '// Legacy format - drag and drop will work for new rules',
-                        description: 'Create a new rule to use visual builder'
+                        description: _t('Create a new rule to use visual builder')
                     };
                 }
             }
@@ -603,7 +603,7 @@ export class VisualRuleBuilder extends Component {
             }
             
             const ruleData = {
-                name: this.state.previewRule.name || 'Visual Rule',
+                name: this.state.previewRule.name || _t('Visual Rule'),
                 visual_config: visualConfig,
                 generated_code: this.state.generatedCode,
                 rule_type: 'visual',
@@ -681,7 +681,7 @@ export class VisualRuleBuilder extends Component {
                 distance_pricing: `
                     <xml xmlns="https://developers.google.com/blockly/xml">
                         <block type="pricing_rule" x="20" y="20">
-                            <field name="RULE_NAME">Distance Surcharge</field>
+                            <field name="RULE_NAME">${_t("Distance Surcharge")}</field>
                         </block>
                         <block type="pricing_condition" x="20" y="120">
                             <field name="FIELD">distance</field>
@@ -701,7 +701,7 @@ export class VisualRuleBuilder extends Component {
                 bulk_discount: `
                     <xml xmlns="https://developers.google.com/blockly/xml">
                         <block type="pricing_rule" x="20" y="20">
-                            <field name="RULE_NAME">Bulk Discount</field>
+                            <field name="RULE_NAME">${_t("Bulk Discount")}</field>
                         </block>
                         <block type="pricing_condition" x="20" y="120">
                             <field name="FIELD">quantity</field>
@@ -813,7 +813,7 @@ export class VisualRuleBuilder extends Component {
 
         } catch (error) {
             console.error('Failed to load template:', error);
-            this.notification.add(_t("Failed to load template: " + error.message), {
+            this.notification.add(_t("Failed to load template: %s", error.message), {
                 type: "danger",
             });
         }

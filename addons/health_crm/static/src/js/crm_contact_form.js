@@ -7,11 +7,11 @@ import { useState, onMounted, onPatched, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 const STATUS_LABELS = {
-    active: "Initial Contact",
-    booking: "Booking",
-    lead: "Lead",
-    lost_booking: "Lost Booking",
-    spam: "Spam",
+    active: _t("Initial Contact"),
+    booking: _t("Booking"),
+    lead: _t("Lead"),
+    lost_booking: _t("Lost Booking"),
+    spam: _t("Spam"),
 };
 
 export class CrmContactFormController extends FormController {
@@ -79,7 +79,11 @@ export class CrmContactFormController extends FormController {
     }
 
     getStatusLabel(status) {
-        return STATUS_LABELS[status] || status || "Unknown";
+        return STATUS_LABELS[status] || status || _t("Unknown");
+    }
+
+    translateLabel(label) {
+        return label ? _t(label) : "";
     }
 
     getStatusClass(status) {

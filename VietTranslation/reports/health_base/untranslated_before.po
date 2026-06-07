@@ -1,0 +1,595 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-06 06:37+0000\n"
+"PO-Revision-Date: 2025-10-29 15:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Tiếng Việt\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_base
+#. odoo-python
+msgid ""
+"%s is not a valid phone number.\n"
+"\n"
+"Enter a 9-digit number (a leading 0 is added automatically) or a 10-digit "
+"number starting with a single 0."
+msgstr ""
+
+#. module: health_base
+msgid ""
+".\n"
+"                                    Enable Maps JavaScript API and Distance "
+"Matrix API."
+msgstr ""
+
+#. module: health_base
+msgid "30 Days"
+msgstr ""
+
+#. module: health_base
+msgid "<i class=\"fa fa-calendar\"/> View Bookings"
+msgstr ""
+
+#. module: health_base
+msgid "<i class=\"fa fa-calendar-plus-o\"/> Create Booking"
+msgstr ""
+
+#. module: health_base
+msgid "<i class=\"fa fa-th-list\"/> Actions"
+msgstr ""
+
+#. module: health_base
+msgid ""
+"<span class=\"badge patient-badge badge-deceased text-danger\" "
+"invisible=\"not deceased\">\n"
+"                                    <i class=\"fa fa-user-times\" "
+"title=\"Deceased\"/>\n"
+"                                </span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"fw-bold\">Client</span>"
+msgstr ""
+
+#. module: health_base
+msgid ""
+"<span class=\"vu-detail-card__edit-trigger\"><i class=\"fa fa-pencil\" "
+"title=\"Edit\"/></span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">Address</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">Age</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">Catchment</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">Email</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">Facility</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">Gender</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">I am Caregiver for</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">I am Payer for</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">I am Referrer for</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">I have Referrer</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">ID</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">Name</span>"
+msgstr ""
+
+#. module: health_base
+msgid "<span class=\"vu-summary-row__label\">Phone</span>"
+msgstr ""
+
+#. module: health_base
+msgid "Access Role"
+msgstr ""
+
+#. module: health_base
+msgid "Accountant"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Add"
+msgstr ""
+
+#. module: health_base
+msgid "Address Details"
+msgstr ""
+
+#. module: health_base
+msgid "Admin"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Alley (Ngõ)"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Apartment"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Building"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Cancel"
+msgstr ""
+
+#. module: health_base
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_base
+msgid "Catchment Province"
+msgstr ""
+
+#. module: health_base
+msgid "Catchment Province Name"
+msgstr ""
+
+#. module: health_base
+msgid "Catchment Province Search"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+msgid ""
+"Catchment Province is required for patients. Please select a catchment "
+"province to generate a valid Patient ID."
+msgstr ""
+
+#. module: health_base
+msgid "Catchment Provinces"
+msgstr ""
+
+#. module: health_base
+msgid ""
+"Catchment provinces define geographic service areas for healthcare "
+"operations.\n"
+"                Each catchment province can have multiple facilities "
+"assigned to it."
+msgstr ""
+
+#. module: health_base
+msgid "Changed By"
+msgstr ""
+
+#. module: health_base
+msgid "Choose the map provider for displaying patient addresses"
+msgstr ""
+
+#. module: health_base
+msgid "Choose the map service for displaying patient and facility locations"
+msgstr ""
+
+#. module: health_base
+msgid "Client Count"
+msgstr ""
+
+#. module: health_base
+msgid "Commission Duration"
+msgstr ""
+
+#. module: health_base
+msgid "Commission duration applied to this client from booking"
+msgstr ""
+
+#. module: health_base
+msgid "Create your first Catchment Province"
+msgstr ""
+
+#. module: health_base
+msgid ""
+"Default timezone for this catchment province. Copied to facilities when they "
+"select this province."
+msgstr ""
+
+#. module: health_base
+msgid "Description of this catchment province/area"
+msgstr ""
+
+#. module: health_base
+msgid "Description of this catchment province/area..."
+msgstr ""
+
+#. module: health_base
+msgid "Discard"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "District / City"
+msgstr ""
+
+#. module: health_base
+msgid "Duty Doctor"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+msgid "Edit Address"
+msgstr ""
+
+#. module: health_base
+msgid "Edit address"
+msgstr ""
+
+#. module: health_base
+msgid "Email address"
+msgstr ""
+
+#. module: health_base
+msgid ""
+"Enter your Google Maps API key. Required for Google Maps display and driving "
+"distance calculations."
+msgstr ""
+
+#. module: health_base
+msgid "Enter your Google Maps API key..."
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Extra Rights"
+msgstr ""
+
+#. module: health_base
+msgid "Facility Count"
+msgstr ""
+
+#. module: health_base
+msgid "From"
+msgstr ""
+
+#. module: health_base
+msgid "Full name"
+msgstr ""
+
+#. module: health_base
+msgid "Geocode Address"
+msgstr ""
+
+#. module: health_base
+msgid "Get your API key from the"
+msgstr ""
+
+#. module: health_base
+msgid "Google Cloud Console"
+msgstr ""
+
+#. module: health_base
+msgid "Google Maps (Requires API Key)"
+msgstr ""
+
+#. module: health_base
+msgid "Google Maps API Key"
+msgstr ""
+
+#. module: health_base
+msgid "Hanoi"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+msgid ""
+"Hard delete is restricted to Healthcare Owner users. Use Archive instead to "
+"deactivate records without deleting history."
+msgstr ""
+
+#. module: health_base
+msgid "Healthcare Catchment Province"
+msgstr ""
+
+#. module: health_base
+msgid "Healthcare Settings"
+msgstr ""
+
+#. module: health_base
+msgid "Healthcare facilities in this catchment province"
+msgstr ""
+
+#. module: health_base
+msgid "Ho Chi Minh City"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "House No."
+msgstr ""
+
+#. module: health_base
+msgid "Identity"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Install"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+msgid "Invalid phone number"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+msgid ""
+"Invalid phone number: '%s'. Enter a 9-digit number (a leading 0 is added "
+"automatically) or a 10-digit number starting with a single 0."
+msgstr ""
+
+#. module: health_base
+msgid "Is Doctor Role"
+msgstr ""
+
+#. module: health_base
+msgid "Is Duty Doctor"
+msgstr ""
+
+#. module: health_base
+msgid "Is Head Nurse"
+msgstr ""
+
+#. module: health_base
+msgid "Is Nurse Role"
+msgstr ""
+
+#. module: health_base
+msgid "Is Om Role"
+msgstr ""
+
+#. module: health_base
+msgid "Is this catchment province currently active?"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Loading relationship hierarchy..."
+msgstr ""
+
+#. module: health_base
+msgid "Location"
+msgstr ""
+
+#. module: health_base
+msgid "Map Provider"
+msgstr ""
+
+#. module: health_base
+msgid "Map Settings"
+msgstr ""
+
+#. module: health_base
+msgid "Module"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "My Support Team"
+msgstr ""
+
+#. module: health_base
+msgid "Name"
+msgstr ""
+
+#. module: health_base
+msgid "Name of the catchment province/area"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "No Relationships Found"
+msgstr ""
+
+#. module: health_base
+msgid "No changes recorded yet"
+msgstr ""
+
+#. module: health_base
+msgid "Number of clients/patients in this catchment province"
+msgstr ""
+
+#. module: health_base
+msgid "Number of facilities in this catchment province"
+msgstr ""
+
+#. module: health_base
+msgid "Number of users assigned to this catchment province"
+msgstr ""
+
+#. module: health_base
+msgid "Occupation"
+msgstr ""
+
+#. module: health_base
+msgid "One Time"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "OpenStreetMap"
+msgstr ""
+
+#. module: health_base
+msgid "OpenStreetMap (Free)"
+msgstr ""
+
+#. module: health_base
+msgid "Owner"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Patients I Support"
+msgstr ""
+
+#. module: health_base
+msgid "Phone number"
+msgstr ""
+
+#. module: health_base
+msgid "Profile Overview"
+msgstr ""
+
+#. module: health_base
+msgid "Relationships"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Remove relationship"
+msgstr ""
+
+#. module: health_base
+msgid "Required for Google Maps and driving distance calculations"
+msgstr ""
+
+#. module: health_base
+msgid "Role"
+msgstr ""
+
+#. module: health_base
+msgid "Save"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Save Address"
+msgstr ""
+
+#. module: health_base
+msgid "Schedule a new service visit for this client."
+msgstr ""
+
+#. module: health_base
+msgid "Search Audit Log"
+msgstr ""
+
+#. module: health_base
+msgid "Select province"
+msgstr ""
+
+#. module: health_base
+msgid "Sequence for ordering provinces"
+msgstr ""
+
+#. module: health_base
+msgid ""
+"Short code for the province (e.g., HCM, HN, DN). Used for patient ID "
+"generation."
+msgstr ""
+
+#. module: health_base
+msgid "Street name / Main road"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Sub-alley (Ngách)"
+msgstr ""
+
+#. module: health_base
+msgid "The catchment province/area this client belongs to"
+msgstr ""
+
+#. module: health_base
+msgid "The catchment province/area this facility belongs to"
+msgstr ""
+
+#. module: health_base
+msgid "The catchment province/area where this user primarily works"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "This partner doesn't have any relationship records yet."
+msgstr ""
+
+#. module: health_base
+msgid "Title"
+msgstr ""
+
+#. module: health_base
+msgid "To"
+msgstr ""
+
+#. module: health_base
+msgid "User Count"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "Ward / Commune"
+msgstr ""
+
+#. module: health_base
+msgid "When"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "You are offline. Some features may be limited."
+msgstr ""
+
+#. module: health_base
+msgid "clients"
+msgstr ""
+
+#. module: health_base
+msgid "e.g., HCM, HN, DN"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+msgid "km"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+msgid "primary_facility_id"
+msgstr ""

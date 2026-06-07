@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from '@web/core/registry';
+import { _t } from "@web/core/l10n/translation";
 
 export class PricingService {
     constructor(env, { orm, notification }) {
@@ -20,7 +21,7 @@ export class PricingService {
         const config = await this.orm.call('advanced.pricing.config', 'get_config', []);
         
         if (!config.default_engine_id) {
-            throw new Error('No default pricing engine configured');
+            throw new Error(_t('No default pricing engine configured'));
         }
 
         const price = await this.orm.call(

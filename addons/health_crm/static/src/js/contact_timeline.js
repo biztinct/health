@@ -3,14 +3,15 @@
 import { Component, useState, onWillStart, onMounted, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 
 const TYPE_CONFIG = {
-    created:    { color: '#78909C', icon: 'fa-plus-circle',  label: 'Created' },
-    status:     { color: '#2E7D32', icon: 'fa-exchange',     label: 'Status' },
-    activity:   { color: '#E65100', icon: 'fa-tasks',        label: 'Activity' },
-    escalation: { color: '#C62828', icon: 'fa-arrow-up',     label: 'Escalation' },
-    booking:    { color: '#1A237E', icon: 'fa-calendar',     label: 'Booking' },
-    referral:   { color: '#6A1B9A', icon: 'fa-share-alt',    label: 'Referral' },
+    created:    { color: '#78909C', icon: 'fa-plus-circle',  label: _t('Created') },
+    status:     { color: '#2E7D32', icon: 'fa-exchange',     label: _t('Status') },
+    activity:   { color: '#E65100', icon: 'fa-tasks',        label: _t('Activity') },
+    escalation: { color: '#C62828', icon: 'fa-arrow-up',     label: _t('Escalation') },
+    booking:    { color: '#1A237E', icon: 'fa-calendar',     label: _t('Booking') },
+    referral:   { color: '#6A1B9A', icon: 'fa-share-alt',    label: _t('Referral') },
 };
 
 export class ContactTimeline extends Component {
@@ -98,7 +99,7 @@ export class ContactTimeline extends Component {
         this.action.doAction({
             type: 'ir.actions.client',
             tag: 'ops_booking_detail',
-            name: ev.currentTarget.dataset.title || 'Booking',
+            name: ev.currentTarget.dataset.title || _t('Booking'),
             target: 'current',
             context: { active_id: bookingId },
         });

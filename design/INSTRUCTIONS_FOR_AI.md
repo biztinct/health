@@ -1,5 +1,8 @@
 # 🤖 Instructions for AI Assistants (Haiku/Claude Models)
 
+> Historical document. Use `VietTranslation/README.md` and the utilities in
+> `VietTranslation/scripts/` for the current Odoo 19 translation workflow.
+
 ## 📋 Quick Context
 
 **Project**: Vietnamese translation for VAFHS Healthcare Management System

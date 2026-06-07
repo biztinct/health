@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 import logging
 
@@ -293,9 +293,14 @@ class AdvancedPricingRule(models.Model):
             if rule.id in rules_to_notify:
                 notif = rules_to_notify[rule.id]
                 rule.message_post(
-                    body=f"⚠️ Pricing rule modified by <b>{notif['modified_by']}</b>. "
-                         f"Rule has been reset to Draft status and requires re-approval before becoming active again.<br/>"
-                         f"<b>Fields modified:</b> {notif['modified_fields']}",
+                    body=_(
+                        "Pricing rule modified by <b>%(modified_by)s</b>. "
+                        "The rule has been reset to Draft status and requires re-approval "
+                        "before becoming active again.<br/>"
+                        "<b>Fields modified:</b> %(modified_fields)s",
+                        modified_by=notif['modified_by'],
+                        modified_fields=notif['modified_fields'],
+                    ),
                     message_type='notification',
                     subtype_xmlid='mail.mt_note'
                 )
@@ -306,8 +311,11 @@ class AdvancedPricingRule(models.Model):
                     rule.activity_schedule(
                         'mail.mail_activity_data_todo',
                         user_id=board_group.user_ids[0].id,
-                        summary=f'Re-approval Required: {rule.name}',
-                        note=f'Pricing rule was modified and requires board re-approval before it can be used again.'
+                        summary=_("Re-approval Required: %s", rule.name),
+                        note=_(
+                            "The pricing rule was modified and requires board re-approval "
+                            "before it can be used again."
+                        ),
                     )
 
         return result
@@ -318,7 +326,7 @@ class AdvancedPricingRule(models.Model):
 
         self.ensure_one()
         if self.approval_status != 'draft':
-            raise UserError('Only draft rules can be submitted for approval')
+            raise UserError(_('Only draft rules can be submitted for approval.'))
 
         self.write({
             'approval_status': 'pending',
@@ -331,14 +339,23 @@ class AdvancedPricingRule(models.Model):
                 self.activity_schedule(
                     'mail.mail_activity_data_todo',
                     user_id=board_member.id,
-                    summary=f'Pricing Rule Approval Required: {self.name}',
-                    note=f'Please review and approve pricing rule.<br/>'
-                         f'<b>Action:</b> {dict(self._fields["action_type"].selection).get(self.action_type)}<br/>'
-                         f'<b>Value:</b> {self.action_value}'
+                    summary=_("Pricing Rule Approval Required: %s", self.name),
+                    note=_(
+                        "Please review and approve the pricing rule.<br/>"
+                        "<b>Action:</b> %(action)s<br/>"
+                        "<b>Value:</b> %(value)s",
+                        action=dict(
+                            self._fields["action_type"]._description_selection(self.env)
+                        ).get(self.action_type),
+                        value=self.action_value,
+                    ),
                 )
 
         self.message_post(
-            body=f'📋 Rule submitted for board approval by {self.env.user.name}',
+            body=_(
+                "Rule submitted for board approval by %s",
+                self.env.user.name,
+            ),
             message_type='notification',
             subtype_xmlid='mail.mt_note'
         )
@@ -350,10 +367,10 @@ class AdvancedPricingRule(models.Model):
         self.ensure_one()
 
         if not self.env.user.has_group('health_base.group_healthcare_owner'):
-            raise AccessError('Only Board members can approve pricing rules')
+            raise AccessError(_('Only Board members can approve pricing rules.'))
 
         if self.approval_status != 'pending':
-            raise UserError('Only pending rules can be approved')
+            raise UserError(_('Only pending rules can be approved.'))
 
         self.write({
             'approval_status': 'approved',
@@ -362,7 +379,10 @@ class AdvancedPricingRule(models.Model):
         })
 
         self.message_post(
-            body=f'✅ Rule approved by <b>{self.env.user.name}</b> and is now active',
+            body=_(
+                "Rule approved by <b>%s</b> and is now active.",
+                self.env.user.name,
+            ),
             message_type='notification',
             subtype_xmlid='mail.mt_note'
         )
@@ -377,7 +397,7 @@ class AdvancedPricingRule(models.Model):
         self.ensure_one()
 
         if not self.env.user.has_group('health_base.group_healthcare_owner'):
-            raise AccessError('Only Board members can reject pricing rules')
+            raise AccessError(_('Only Board members can reject pricing rules.'))
 
         return {
             'type': 'ir.actions.act_window',
@@ -777,70 +797,83 @@ class AdvancedPricingRule(models.Model):
         elif self.applied_on == '2_product_category' and self.categ_id:
             what = self.categ_id.display_name
         else:
-            what = 'all products'
+            what = _('all products')
         if self.region:
             what += ' · %s' % self.region
 
         # WHEN (conditions)
         conds = []
         if self.requires_home_service or self.service_location == 'home':
-            conds.append("at the client's home")
+            conds.append(_("at the client's home"))
         elif self.service_location:
             conds.append(loc_labels.get(self.service_location, self.service_location))
         if self.service_type:
             conds.append(type_labels.get(self.service_type, self.service_type))
         if self.is_after_hours_or_weekend:
-            conds.append("after-hours or weekend")
+            conds.append(_("after-hours or weekend"))
         if self.is_after_hours_required:
-            conds.append("after hours")
+            conds.append(_("after hours"))
         if self.is_weekend_required:
-            conds.append("weekends")
+            conds.append(_("weekends"))
         if self.is_holiday_required:
-            conds.append("holidays (%s)" % (self.holiday_type or 'public'))
+            conds.append(_("holidays (%s)", self.holiday_type or _('public')))
         if self.appointment_hour_min and self.appointment_hour_max:
-            conds.append("between %02dh and %02dh" % (self.appointment_hour_min, self.appointment_hour_max))
+            conds.append(
+                _("between %(start)02dh and %(end)02dh",
+                  start=self.appointment_hour_min, end=self.appointment_hour_max)
+            )
         if self.distance_min and self.distance_max:
-            conds.append("distance %g–%g km" % (self.distance_min, self.distance_max))
+            conds.append(
+                _("distance %(minimum)g–%(maximum)g km",
+                  minimum=self.distance_min, maximum=self.distance_max)
+            )
         elif self.distance_min:
-            conds.append("distance ≥ %g km" % self.distance_min)
+            conds.append(_("distance ≥ %g km", self.distance_min))
         elif self.distance_max:
-            conds.append("distance ≤ %g km" % self.distance_max)
+            conds.append(_("distance ≤ %g km", self.distance_max))
         if self.wound_count_min:
-            conds.append("≥ %d wounds" % self.wound_count_min)
+            conds.append(_("≥ %d wounds", self.wound_count_min))
         if self.injection_count_min:
-            conds.append("≥ %d injections" % self.injection_count_min)
+            conds.append(_("≥ %d injections", self.injection_count_min))
         if self.iv_fluid_count_min:
-            conds.append("≥ %d IV bags" % self.iv_fluid_count_min)
+            conds.append(_("≥ %d IV bags", self.iv_fluid_count_min))
         if self.medication_count_min:
-            conds.append("≥ %d medications" % self.medication_count_min)
-        when = ", ".join(conds) if conds else "always"
+            conds.append(_("≥ %d medications", self.medication_count_min))
+        when = ", ".join(conds) if conds else _("always")
 
         # THEN (action)
         at = self.action_type
         v = self.action_value
         if at == 'add':
-            then = "add %s đ" % fmt(v)
+            then = _("add %s đ", fmt(v))
         elif at == 'fixed':
-            then = "set the price to %s đ" % fmt(v)
+            then = _("set the price to %s đ", fmt(v))
         elif at == 'multiply':
-            then = "multiply the price ×%g" % (v or 0)
+            then = _("multiply the price ×%g", v or 0)
         elif at == 'percentage':
-            then = "increase the price by %g%%" % (v or 0)
+            then = _("increase the price by %g%%", v or 0)
         elif at == 'discount':
-            then = "give a %g%% discount" % ((v or 0) * 100)
+            then = _("give a %g%% discount", (v or 0) * 100)
         elif at == 'per_unit':
-            then = "add %s đ per %s" % (fmt(v), (self.per_unit_field or 'unit'))
+            then = _(
+                "add %(amount)s đ per %(unit)s",
+                amount=fmt(v),
+                unit=self.per_unit_field or _('unit'),
+            )
         else:
             then = None
 
         seg = lambda icon, label, body: (
             "<span class='apr-sum__seg'>%s<b>%s</b> %s</span>"
             % (self._summary_icon(icon), label, body))
-        parts = [seg('scope', 'For', what), seg('when', 'When', when)]
+        parts = [seg('scope', _('For'), what), seg('when', _('When'), when)]
         if then:
-            parts.append(seg('then', 'Then', then))
+            parts.append(seg('then', _('Then'), then))
         else:
-            parts.append("<span class='apr-sum__hint'>Pick a price action below to finish the rule.</span>")
+            parts.append(
+                "<span class='apr-sum__hint'>%s</span>"
+                % _("Pick a price action below to finish the rule.")
+            )
         return "<div class='apr-sum'>%s</div>" % "<span class='apr-sum__arrow'>→</span>".join(parts)
     
     def action_open_visual_builder(self):

@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { productCatalogKanbanView } from "@product/product_catalog/kanban_view";
 import { HealthcareProductCatalogController } from "./product_catalog_controller";
 
@@ -41,7 +42,7 @@ patch(ProductCatalogKanbanController.prototype, {
             // For healthcare/FSO quotes, open in modal popup with correct view
             await actionService.doAction({
                 type: "ir.actions.act_window",
-                name: "Healthcare Quote",
+                name: _t("Healthcare Quote"),
                 res_model: "sale.order",
                 res_id: this.orderId,
                 view_mode: "form",
@@ -72,7 +73,7 @@ patch(ProductCatalogKanbanController.prototype, {
                                  context.catalog_source === 'healthcare_quote';
         
         if (isHealthcareQuote) {
-            this.buttonString = "Back to Quote";
+            this.buttonString = _t("Back to Quote");
         }
     }
 });

@@ -4,7 +4,7 @@
     <!-- PWA Configuration Data -->
     <record id="pwa_config_data" model="ir.config_parameter">
         <field name="key">health_pwa.version</field>
-        <field name="value">1.0.82</field>
+        <field name="value">1.0.95</field>
     </record>
     
     <record id="pwa_config_theme" model="ir.config_parameter">

@@ -4,6 +4,79 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
 
+def _selection_health_contact_outcome(model):
+    return [
+        ('service_booked', model.env._('Service Booked')),
+        ('pending_follow_up', model.env._('Pending Follow-up')),
+        ('rejected', model.env._('Rejected')),
+        ('no_response', model.env._('No Response')),
+        ('not_qualified', model.env._('Not Qualified')),
+        ('future_opportunity', model.env._('Future Opportunity')),
+    ]
+
+
+def _selection_clinical_priority(model):
+    return [
+        ('routine', model.env._('Routine')),
+        ('urgent', model.env._('Urgent')),
+        ('emergency', model.env._('Emergency')),
+        ('preventive', model.env._('Preventive')),
+    ]
+
+
+def _selection_vietnamese_channel(model):
+    return [
+        ('zalo', model.env._('Zalo')),
+        ('facebook', model.env._('Facebook')),
+        ('linkedin', model.env._('LinkedIn')),
+        ('website', model.env._('Website')),
+        ('phone', model.env._('Phone Call')),
+        ('referral', model.env._('Referral')),
+        ('walk_in', model.env._('Walk-in')),
+        ('advertisement', model.env._('Advertisement')),
+        ('word_of_mouth', model.env._('Word of Mouth')),
+    ]
+
+
+def _selection_contact_outcome(model):
+    return [
+        ('service_booked', model.env._('Service Booked')),
+        ('pending_follow_up', model.env._('Pending Follow-up')),
+        ('rejected', model.env._('Rejected')),
+        ('no_response', model.env._('No Response')),
+        ('booking_lost', model.env._('Booking Lost')),
+    ]
+
+
+def _selection_contact_status(model):
+    return [
+        ('active', model.env._('Initial Contact')),
+        ('booking', model.env._('Booking')),
+        ('lead', model.env._('Lead')),
+        ('lost_booking', model.env._('Lost Booking')),
+        ('spam', model.env._('Spam Call')),
+    ]
+
+
+def _selection_contacting_on_behalf(model):
+    return [
+        ('self', model.env._('Self')),
+        ('other', model.env._('Another Person')),
+    ]
+
+
+def _selection_mode_of_contact(model):
+    return [
+        ('phone', model.env._('Phone Call')),
+        ('zalo', model.env._('Zalo')),
+        ('facebook', model.env._('Facebook')),
+        ('email', model.env._('Email')),
+        ('website', model.env._('Website')),
+        ('chatbox', model.env._('Chatbox')),
+        ('walk_in', model.env._('Walk-in')),
+    ]
+
+
 class HealthLead(models.Model):
     """
     Healthcare CRM Lead extending standard Odoo CRM functionality
@@ -24,36 +97,26 @@ class HealthLead(models.Model):
     ], string='Service Interest', help='Type of healthcare service the lead is interested in')
 
     # Healthcare contact outcome
-    health_contact_outcome = fields.Selection([
-        ('service_booked', 'Service Booked'),
-        ('pending_follow_up', 'Pending Follow-up'),
-        ('rejected', 'Rejected'),
-        ('no_response', 'No Response'),
-        ('not_qualified', 'Not Qualified'),
-        ('future_opportunity', 'Future Opportunity'),
-    ], string='Healthcare Outcome', help='Outcome of healthcare contact')
+    health_contact_outcome = fields.Selection(
+        _selection_health_contact_outcome,
+        string='Healthcare Outcome',
+        help='Outcome of healthcare contact',
+    )
 
     # Clinical priority classification
-    clinical_priority = fields.Selection([
-        ('routine', 'Routine'),
-        ('urgent', 'Urgent'),
-        ('emergency', 'Emergency'),
-        ('preventive', 'Preventive'),
-    ], string='Clinical Priority', default='routine',
-       help='Clinical urgency classification')
+    clinical_priority = fields.Selection(
+        _selection_clinical_priority,
+        string='Clinical Priority',
+        default='routine',
+        help='Clinical urgency classification',
+    )
 
     # Vietnamese healthcare channels (extends standard utm_source)
-    vietnamese_channel = fields.Selection([
-        ('zalo', 'Zalo'),
-        ('facebook', 'Facebook'),
-        ('linkedin', 'LinkedIn'),
-        ('website', 'Website'),
-        ('phone', 'Phone Call'),
-        ('referral', 'Referral'),
-        ('walk_in', 'Walk-in'),
-        ('advertisement', 'Advertisement'),
-        ('word_of_mouth', 'Word of Mouth'),
-    ], string='Vietnamese Channel', help='Specific Vietnamese contact channel')
+    vietnamese_channel = fields.Selection(
+        _selection_vietnamese_channel,
+        string='Vietnamese Channel',
+        help='Specific Vietnamese contact channel',
+    )
 
     # Contact relationship identification
     contact_relationship_type = fields.Selection([
@@ -197,27 +260,24 @@ class HealthLead(models.Model):
         default=fields.Datetime.now
     )
     
-    contact_outcome = fields.Selection([
-        ('service_booked', 'Service Booked'),
-        ('pending_follow_up', 'Pending Follow-up'), 
-        ('rejected', 'Rejected'),
-        ('no_response', 'No Response'),
-        ('booking_lost', 'Booking Lost')
-    ], string='Contact Outcome', help='From Excel: Contact Outcome field')
+    contact_outcome = fields.Selection(
+        _selection_contact_outcome,
+        string='Contact Outcome',
+        help='From Excel: Contact Outcome field',
+    )
 
     # =========================================================================
     # CONTACT-FIRST CRM FIELDS (New Contact Flow Requirements)
     # =========================================================================
     
     # Contact Status - tracks the lifecycle of a contact in the sales pipeline
-    contact_status = fields.Selection([
-        ('active', 'Initial Contact'),   # Initial contact, not yet qualified
-        ('booking', 'Booking'),         # Converted to booking
-        ('lead', 'Lead'),               # Converted to lead for follow-up
-        ('lost_booking', 'Lost Booking'), # Follow-up resulted in no booking
-        ('spam', 'Spam Call'),          # Junk/false contact
-    ], string='Contact Status', default='active',
-       help='Status of this contact in the sales pipeline', tracking=True)
+    contact_status = fields.Selection(
+        _selection_contact_status,
+        string='Contact Status',
+        default='active',
+        help='Status of this contact in the sales pipeline',
+        tracking=True,
+    )
     
     # Spam caller flag - computed from contact_status for visual tagging
     is_spam_caller = fields.Boolean(
@@ -421,23 +481,20 @@ class HealthLead(models.Model):
                 record.calendar_date_end = False
     
     # On behalf tracking - who is the contact calling for
-    contacting_on_behalf = fields.Selection([
-        ('self', 'Self'),
-        ('other', 'Another Person'),
-    ], string='Contacting On Behalf Of', default='self',
-       help='Whether the caller is contacting for themselves or someone else')
+    contacting_on_behalf = fields.Selection(
+        _selection_contacting_on_behalf,
+        string='Contacting On Behalf Of',
+        default='self',
+        help='Whether the caller is contacting for themselves or someone else',
+    )
     
     # Mode of contact - how did the contact reach us
-    mode_of_contact = fields.Selection([
-        ('phone', 'Phone Call'),
-        ('zalo', 'Zalo'),
-        ('facebook', 'Facebook'),
-        ('email', 'Email'),
-        ('website', 'Website'),
-        ('chatbox', 'Chatbox'),
-        ('walk_in', 'Walk-in'),
-    ], string='Mode of Contact', default='phone',
-       help='How the contact reached out to us')
+    mode_of_contact = fields.Selection(
+        _selection_mode_of_contact,
+        string='Mode of Contact',
+        default='phone',
+        help='How the contact reached out to us',
+    )
     
     # Escalation tracking fields
     escalated_to = fields.Selection([
@@ -946,7 +1003,7 @@ class HealthLead(models.Model):
                     ) % (
                         existing.name,
                         existing.unique_contact_code or 'N/A',
-                        dict(existing._fields['contact_status'].selection).get(
+                        dict(existing._fields['contact_status']._description_selection(existing.env)).get(
                             existing.contact_status, existing.contact_status or 'N/A'
                         ),
                     ),
@@ -2209,12 +2266,14 @@ class HealthLead(models.Model):
         if self.create_date:
             channel = ''
             if self.mode_of_contact:
-                channel = dict(self._fields['mode_of_contact'].selection or []).get(self.mode_of_contact, '')
+                channel = dict(
+                    self._fields['mode_of_contact']._description_selection(self.env)
+                ).get(self.mode_of_contact, '')
             events.append({
                 'type': 'created',
                 'date': self.create_date.strftime('%Y-%m-%d %H:%M:%S'),
-                'title': 'Contact Created',
-                'detail': channel or 'New Contact',
+                'title': _('Contact Created'),
+                'detail': _(channel) if channel else _('New Contact'),
                 'icon': 'fa-plus-circle',
             })
 
@@ -2226,12 +2285,12 @@ class HealthLead(models.Model):
                 ('mail_message_id.res_id', '=', self.id),
             ], order='create_date asc')
             for tv in trackings:
-                old_val = tv.old_value_char or ''
-                new_val = tv.new_value_char or ''
+                old_val = _(tv.old_value_char) if tv.old_value_char else ''
+                new_val = _(tv.new_value_char) if tv.new_value_char else ''
                 events.append({
                     'type': 'status',
                     'date': tv.create_date.strftime('%Y-%m-%d %H:%M:%S'),
-                    'title': new_val or 'Status Change',
+                    'title': new_val or _('Status Change'),
                     'detail': '%s → %s' % (old_val, new_val) if old_val else new_val,
                     'icon': 'fa-exchange',
                 })
@@ -2243,8 +2302,8 @@ class HealthLead(models.Model):
             events.append({
                 'type': 'escalation',
                 'date': self.escalation_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                'title': 'Escalated',
-                'detail': 'To %s' % target if target else 'Escalated',
+                'title': _('Escalated'),
+                'detail': _('To %s', _(target)) if target else _('Escalated'),
                 'icon': 'fa-arrow-up',
             })
 
@@ -2252,8 +2311,8 @@ class HealthLead(models.Model):
             events.append({
                 'type': 'escalation',
                 'date': self.referral_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                'title': 'Referred',
-                'detail': 'To Duty Doctor',
+                'title': _('Referred'),
+                'detail': _('To Duty Doctor'),
                 'icon': 'fa-user-md',
             })
 
@@ -2262,7 +2321,7 @@ class HealthLead(models.Model):
             ('res_id', '=', self.id),
         ], order='date_deadline asc')
         for act in activities:
-            act_type_name = act.activity_type_id.name if act.activity_type_id else 'Activity'
+            act_type_name = act.activity_type_id.name if act.activity_type_id else _('Activity')
             icon_map = {'Call': 'fa-phone', 'Email': 'fa-envelope', 'Meeting': 'fa-users', 'To-Do': 'fa-check-square'}
             events.append({
                 'type': 'activity',
@@ -2282,7 +2341,7 @@ class HealthLead(models.Model):
             events.append({
                 'type': 'activity',
                 'date': msg.date.strftime('%Y-%m-%d %H:%M:%S') if msg.date else '',
-                'title': 'Activity Done',
+                'title': _('Activity Done'),
                 'detail': msg.body and msg.body[:80] or '',
                 'icon': 'fa-check',
                 'done': True,
@@ -2305,8 +2364,11 @@ class HealthLead(models.Model):
             events.append({
                 'type': 'booking',
                 'date': bk.create_date.strftime('%Y-%m-%d %H:%M:%S') if bk.create_date else '',
-                'title': bk.name or 'Booking',
-                'detail': '%s — %s' % (stype, state_labels.get(bk.state, bk.state or '')) if stype else state_labels.get(bk.state, ''),
+                'title': bk.name or _('Booking'),
+                'detail': '%s — %s' % (
+                    _(stype),
+                    _(state_labels.get(bk.state, bk.state or '')),
+                ) if stype else _(state_labels.get(bk.state, '')),
                 'icon': 'fa-calendar',
                 'booking_id': bk.id,
             })
@@ -2333,7 +2395,7 @@ class HealthLead(models.Model):
         channel = ''
         if lead.mode_of_contact:
             channel = dict(
-                self._fields['mode_of_contact'].selection or []
+                self._fields['mode_of_contact']._description_selection(self.env)
             ).get(lead.mode_of_contact, '')
 
         return {
@@ -2344,7 +2406,7 @@ class HealthLead(models.Model):
             'phone': lead.phone or '',
             'email': lead.email_from or '',
             'contact_status': lead.contact_status or 'active',
-            'channel': channel,
+            'channel': _(channel) if channel else '',
             'province': lead.catchment_province_id.name if lead.catchment_province_id else '',
         }
 
@@ -2498,26 +2560,27 @@ class HealthLead(models.Model):
 
         # --- Status breakdown ---
         status_breakdown = []
-        for status_val, _label in self._fields['contact_status'].selection:
+        status_selections = self._fields['contact_status']._description_selection(self.env)
+        for status_val, _label in status_selections:
             count = Lead.search_count(
                 [('contact_status', '=', status_val)] + period_clause)
             status_breakdown.append({
                 'status': status_val,
-                'label': str(_label),
+                'label': _(_label),
                 'count': count,
                 'percent': round(count / period_total * 100, 1) if period_total else 0,
             })
 
         # --- Channel breakdown ---
         channel_breakdown = []
-        channel_selections = self._fields['vietnamese_channel'].selection or []
+        channel_selections = self._fields['vietnamese_channel']._description_selection(self.env)
         for ch_val, ch_label in channel_selections:
             count = Lead.search_count(
                 [('vietnamese_channel', '=', ch_val)] + period_clause)
             if count > 0:
                 channel_breakdown.append({
                     'channel': ch_val,
-                    'label': str(ch_label),
+                    'label': _(ch_label),
                     'count': count,
                 })
         channel_breakdown.sort(key=lambda x: x['count'], reverse=True)
@@ -2528,14 +2591,14 @@ class HealthLead(models.Model):
         for lead in recent:
             time_diff = now - lead.create_date
             if time_diff.days > 0:
-                time_ago = f"{time_diff.days}d ago"
+                time_ago = _("%s days ago", time_diff.days)
             else:
                 hours = time_diff.seconds // 3600
                 if hours > 0:
-                    time_ago = f"{hours}h ago"
+                    time_ago = _("%s hours ago", hours)
                 else:
                     mins = time_diff.seconds // 60
-                    time_ago = f"{max(mins, 1)}m ago"
+                    time_ago = _("%s minutes ago", max(mins, 1))
 
             recent_contacts.append({
                 'id': lead.id,
@@ -2544,7 +2607,9 @@ class HealthLead(models.Model):
                 'phone': lead.phone or '',
                 'contact_status': lead.contact_status or 'active',
                 'province': lead.catchment_province_id.name if lead.catchment_province_id else '',
-                'channel': dict(channel_selections).get(lead.vietnamese_channel, '') if lead.vietnamese_channel else '',
+                'channel': _(
+                    dict(channel_selections).get(lead.vietnamese_channel, '')
+                ) if lead.vietnamese_channel else '',
                 'time_ago': time_ago,
             })
 
@@ -2557,14 +2622,14 @@ class HealthLead(models.Model):
         for lead in upcoming:
             time_diff = now - lead.create_date
             if time_diff.days > 0:
-                time_ago = f"{time_diff.days}d ago"
+                time_ago = _("%s days ago", time_diff.days)
             else:
                 hours = time_diff.seconds // 3600
                 if hours > 0:
-                    time_ago = f"{hours}h ago"
+                    time_ago = _("%s hours ago", hours)
                 else:
                     mins = time_diff.seconds // 60
-                    time_ago = f"{max(mins, 1)}m ago"
+                    time_ago = _("%s minutes ago", max(mins, 1))
 
             # Linked booking record + its scheduled appointment date
             booking = FSO.search(
@@ -2582,7 +2647,9 @@ class HealthLead(models.Model):
                 'code': lead.unique_contact_code or '',
                 'contact_status': 'booking',
                 'province': lead.catchment_province_id.name if lead.catchment_province_id else '',
-                'channel': dict(channel_selections).get(lead.vietnamese_channel, '') if lead.vietnamese_channel else '',
+                'channel': _(
+                    dict(channel_selections).get(lead.vietnamese_channel, '')
+                ) if lead.vietnamese_channel else '',
                 'time_ago': time_ago,
                 'booking_id': booking.id if booking else False,
                 'scheduled': scheduled,

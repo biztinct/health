@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.3.0.0',
+    'version': '19.0.3.0.1',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -78,6 +78,7 @@
             'health_theme/static/src/js/vu_form_state.js',
             'health_theme/static/src/js/vu_progress_rail.js',
             'health_theme/static/src/js/vu_side_sheet.js',
+            'health_theme/static/src/js/vi_translation_terms.js',
             # OWL components — Templates
             'health_theme/static/src/xml/vu_progress_rail.xml',
             'health_theme/static/src/xml/vu_side_sheet.xml',

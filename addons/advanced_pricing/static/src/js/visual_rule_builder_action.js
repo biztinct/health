@@ -67,7 +67,10 @@ export class VisualRuleBuilderAction extends Component {
             }
         } catch (error) {
             console.error("Failed to save visual rule:", error);
-            this.notification.add(_t("Failed to save rule: ") + (error.message || _t('Unknown error')), {
+            this.notification.add(_t(
+                "Failed to save rule: %s",
+                error.message || _t('Unknown error')
+            ), {
                 type: "danger",
             });
         }

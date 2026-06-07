@@ -14,7 +14,12 @@ class Facility(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'name'
 
-    name = fields.Char('Facility Name', required=True, tracking=True)
+    name = fields.Char(
+        'Facility Name',
+        required=True,
+        tracking=True,
+        translate=True,
+    )
     code = fields.Char('Facility Code', required=True, size=10, tracking=True)
     province_code = fields.Char(
         'Province Code (Legacy)',

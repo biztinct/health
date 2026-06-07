@@ -1,0 +1,434 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_cms_sidebar
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-06 07:29+0000\n"
+"PO-Revision-Date: 2026-06-06 07:29+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.section,name:health_cms_sidebar.section_admin
+msgid "ADMIN"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_ar_dashboard
+msgid "AR Dashboard"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_ar_management
+msgid "AR Management"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_ar_transactions
+msgid "AR Transactions"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__color
+msgid "Accent Color"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_item_view_form
+msgid "Access Control"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_ar_account_payment
+msgid "Account Payment"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_item_view_form
+msgid "Action"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__action_xmlid
+msgid "Action XML ID"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__active
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__active
+msgid "Active"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_item_view_form
+msgid "Active Page Matching"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_crm_activities
+msgid "Activities"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__role_ids
+msgid "Allowed Roles"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_item_view_search
+msgid "Archived"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_audit
+msgid "Audit Log"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_item_view_form
+msgid "Basic"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_bookings
+msgid "Bookings"
+msgstr ""
+
+#. module: health_cms_sidebar
+#. odoo-javascript
+#: code:addons/health_cms_sidebar/static/src/xml/cms_sidebar.xml:0
+msgid "CMS"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.ui.menu,name:health_cms_sidebar.menu_cms_sidebar_config
+msgid "CMS Sidebar"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_cms_sidebar
+msgid "CMS Sidebar Config"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model,name:health_cms_sidebar.model_cms_sidebar_item
+msgid "CMS Sidebar Menu Item"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model,name:health_cms_sidebar.model_cms_sidebar_section
+msgid "CMS Sidebar Section"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.section,name:health_cms_sidebar.section_crm
+msgid "CRM"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_ar_cash_transit
+msgid "Cash In Transit"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__action_tag
+msgid "Client Action Tag"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_clients
+msgid "Clients"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_collections
+msgid "Collections"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__match_action_xmlids
+msgid "Comma-separated action XML IDs that highlight this item"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__match_action_tags
+msgid "Comma-separated client action tags that highlight this item"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__match_models
+msgid "Comma-separated model names that highlight this item"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_crm_contacts
+msgid "Contacts"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__create_uid
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__create_date
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_dashboard
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_crm_dashboard
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_dashboard
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_dashboard
+msgid "Dashboard"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__display_name
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_equipment
+msgid "Equipment"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.section,name:health_cms_sidebar.section_finance
+msgid "FINANCE"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_field_req
+msgid "Field Requirements"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_staff
+msgid "Healthcare Staff"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:res.groups,name:health_cms_sidebar.group_cms_sidebar_admin
+msgid "Healthcare: CMS Sidebar Administrator"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__id
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__id
+msgid "ID"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__icon
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__icon
+msgid "Icon Class"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_invoices
+msgid "Invoices"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__write_uid
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__write_date
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_master_data
+msgid "Master Data"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__match_action_tags
+msgid "Match Action Tags"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__match_action_xmlids
+msgid "Match Action XML IDs"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__match_models
+msgid "Match Models"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__item_ids
+#: model:ir.ui.menu,name:health_cms_sidebar.menu_cms_sidebar_items
+#: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_section_view_form
+msgid "Menu Items"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__name
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__name
+msgid "Name"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.section,name:health_cms_sidebar.section_ops
+msgid "OPERATIONS MANAGER"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_overdue
+msgid "Overdue Clients"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__parent_id
+msgid "Parent Item"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_payments
+msgid "Payments"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_pricing
+msgid "Pricing"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_holidays
+msgid "Public Holidays"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_ar_refund
+msgid "Refund / Credit"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_staff_roster
+msgid "Roster"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_staff_schedules
+msgid "Schedules"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__section_id
+#: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_item_view_search
+msgid "Section"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.ui.menu,name:health_cms_sidebar.menu_cms_sidebar_sections
+msgid "Sections"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__sequence
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_settings
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_settings
+msgid "Settings"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_item_view_search
+msgid "Sidebar Items"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.actions.act_window,name:health_cms_sidebar.action_cms_sidebar_item
+msgid "Sidebar Menu Items"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.actions.act_window,name:health_cms_sidebar.action_cms_sidebar_section
+msgid "Sidebar Sections"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_staff
+msgid "Staff"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_roster
+msgid "Staff Assignment"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__action_tag
+msgid "Tag for OWL client actions, e.g. crm_dashboard"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__technical_key
+msgid "Technical Key"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_staff_timeoff
+msgid "Time Off"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_users
+msgid "Users & Roles"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_vat_log
+msgid "VAT Log"
+msgstr ""
+
+#. module: health_cms_sidebar
+#. odoo-javascript
+#: code:addons/health_cms_sidebar/static/src/xml/cms_sidebar.xml:0
+msgid "VIET UC"
+msgstr ""
+
+#. module: health_cms_sidebar
+#. odoo-javascript
+#: code:addons/health_cms_sidebar/static/src/xml/cms_sidebar.xml:0
+#: model:ir.ui.menu,name:health_cms_sidebar.menu_cms_root
+msgid "Viet UC CMS"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__parent_id
+msgid "When set, this item is a sub-menu shown under its parent."
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_workload
+msgid "Workload"
+msgstr ""
+
+#. module: health_cms_sidebar
+#: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__action_xmlid
+msgid ""
+"XML ID of the action to execute on click, e.g. "
+"health_crm.action_crm_dashboard"
+msgstr ""

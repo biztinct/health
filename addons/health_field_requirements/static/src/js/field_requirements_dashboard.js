@@ -5,6 +5,27 @@ import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 
+const TRANSLATION_TERMS = [
+    _t("Active"),
+    _t("All roles"),
+    _t("Field"),
+    _t("Global (All Roles)"),
+    _t("Loading fields..."),
+    _t("Loading..."),
+    _t("Remove rule"),
+    _t("Required in States"),
+    _t("Roles"),
+    _t("Search fields..."),
+    _t("Select a model to configure its field requirements"),
+    _t("Select a section to configure field requirements"),
+    _t("Select a tile to see its models"),
+    _t("Type"),
+    _t("e.g. draft, confirmed"),
+    _t("model(s)"),
+    _t("rules"),
+    _t("tiles"),
+];
+
 /**
  * Field Requirements Dashboard — 4-Layer Drill-down
  *
@@ -18,6 +39,9 @@ class FieldRequirementsDashboard extends Component {
     static props = { "*": true };
 
     t(text) {
+        // Keep dynamic template lookups while making every supported term
+        // discoverable by Odoo's JavaScript translation extractor.
+        void TRANSLATION_TERMS;
         return _t(text);
     }
 
@@ -146,7 +170,7 @@ class FieldRequirementsDashboard extends Component {
 
     get breadcrumbs() {
         const crumbs = [];
-        crumbs.push({ label: 'Field Requirements', phase: 'nodes' });
+        crumbs.push({ label: _t("Field Requirements"), phase: 'nodes' });
         if (this.state.selectedNode) {
             crumbs.push({
                 label: this.state.selectedNode.name,

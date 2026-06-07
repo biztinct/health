@@ -9,27 +9,27 @@ import { ClientMatchDialog } from "./client_match_dialog";
 import { AddressDialog } from "@health_base/js/address_dialog";
 
 const SERVICE_LOCATION_MAP = {
-    home_visit: { label: 'Patient Home', icon: 'fa-home', cls: 'home' },
-    clinic_visit: { label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
-    consultation: { label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
-    telemedicine: { label: 'Online', icon: 'fa-laptop', cls: 'online' },
-    emergency: { label: 'Patient Home', icon: 'fa-ambulance', cls: 'home' },
-    follow_up: { label: 'Patient Home', icon: 'fa-home', cls: 'home' },
-    preventive: { label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
-    rehabilitation: { label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
-    vaccination: { label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
-    diagnostic: { label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
+    home_visit: { label: _t('Patient Home'), icon: 'fa-home', cls: 'home' },
+    clinic_visit: { label: _t('Clinic'), icon: 'fa-hospital-o', cls: 'clinic' },
+    consultation: { label: _t('Clinic'), icon: 'fa-hospital-o', cls: 'clinic' },
+    telemedicine: { label: _t('Online'), icon: 'fa-laptop', cls: 'online' },
+    emergency: { label: _t('Patient Home'), icon: 'fa-ambulance', cls: 'home' },
+    follow_up: { label: _t('Patient Home'), icon: 'fa-home', cls: 'home' },
+    preventive: { label: _t('Clinic'), icon: 'fa-hospital-o', cls: 'clinic' },
+    rehabilitation: { label: _t('Clinic'), icon: 'fa-hospital-o', cls: 'clinic' },
+    vaccination: { label: _t('Clinic'), icon: 'fa-hospital-o', cls: 'clinic' },
+    diagnostic: { label: _t('Clinic'), icon: 'fa-hospital-o', cls: 'clinic' },
 };
 
 // Editable Service Location choices (mirror service_location selection on the model)
 const LOCATION_OPTIONS = [
-    { key: 'home', label: 'Patient Home', icon: 'fa-home', cls: 'home' },
-    { key: 'clinic', label: 'Clinic', icon: 'fa-hospital-o', cls: 'clinic' },
-    { key: 'hospital', label: 'Hospital', icon: 'fa-hospital-o', cls: 'clinic' },
-    { key: 'nursing_home', label: 'Nursing Home', icon: 'fa-bed', cls: 'clinic' },
-    { key: 'office', label: 'Office', icon: 'fa-building-o', cls: 'clinic' },
-    { key: 'online', label: 'Online / Telemedicine', icon: 'fa-laptop', cls: 'online' },
-    { key: 'other', label: 'Other Location', icon: 'fa-map-marker', cls: 'other' },
+    { key: 'home', label: _t('Patient Home'), icon: 'fa-home', cls: 'home' },
+    { key: 'clinic', label: _t('Clinic'), icon: 'fa-hospital-o', cls: 'clinic' },
+    { key: 'hospital', label: _t('Hospital'), icon: 'fa-hospital-o', cls: 'clinic' },
+    { key: 'nursing_home', label: _t('Nursing Home'), icon: 'fa-bed', cls: 'clinic' },
+    { key: 'office', label: _t('Office'), icon: 'fa-building-o', cls: 'clinic' },
+    { key: 'online', label: _t('Online / Telemedicine'), icon: 'fa-laptop', cls: 'online' },
+    { key: 'other', label: _t('Other Location'), icon: 'fa-map-marker', cls: 'other' },
 ];
 // Default location per service type (user can still override)
 const SERVICE_DEFAULT_LOCATION = {

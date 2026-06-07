@@ -14,6 +14,14 @@ const STATUS_COLORS = {
     spam: "#757575",
 };
 
+const STATUS_LABELS = {
+    active: _t("Initial Contact"),
+    booking: _t("Booking"),
+    lead: _t("Lead"),
+    lost_booking: _t("Lost Booking"),
+    spam: _t("Spam Call"),
+};
+
 const CHANNEL_COLORS = [
     "#1A237E", "#3949AB", "#5C6BC0", "#7986CB", "#9FA8DA",
     "#FF6F00", "#FFA726", "#CE93D8", "#80CBC4",
@@ -173,7 +181,7 @@ class CrmDashboard extends Component {
         this.charts.donut = new Chart(el.getContext("2d"), {
             type: "doughnut",
             data: {
-                labels: bd.map((s) => s.label || s.status),
+                labels: bd.map((s) => this.getStatusLabel(s.status)),
                 datasets: [{
                     data: bd.map((s) => s.count),
                     backgroundColor: bd.map((s) => STATUS_COLORS[s.status] || "#9E9E9E"),
@@ -225,7 +233,7 @@ class CrmDashboard extends Component {
                     ctx.fillText(total, left + width / 2, top + height / 2 - 8);
                     ctx.font = "500 11px sans-serif";
                     ctx.fillStyle = "#90A4AE";
-                    ctx.fillText("Total", left + width / 2, top + height / 2 + 12);
+                    ctx.fillText(_t("Total"), left + width / 2, top + height / 2 + 12);
                     ctx.restore();
                 },
             }],
@@ -371,8 +379,7 @@ class CrmDashboard extends Component {
     }
 
     getStatusLabel(status) {
-        const item = this.state.statusBreakdown.find((s) => s.status === status);
-        return item?.label || status;
+        return STATUS_LABELS[status] || status;
     }
 
     // ===== ACTIONS =====
@@ -493,7 +500,7 @@ class CrmDashboard extends Component {
             this.action.doAction({
                 type: "ir.actions.client",
                 tag: "ops_booking_detail",
-                name: "Booking",
+                name: _t("Booking"),
                 target: "current",
                 context: { active_id: item.booking_id },
             });

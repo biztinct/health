@@ -34,7 +34,7 @@ export class PricingCalculator extends Component {
             );
 
             if (!config.default_engine_id) {
-                throw new Error('No default pricing engine configured');
+                throw new Error(_t('No default pricing engine configured'));
             }
 
             const result = await this.orm.call(
@@ -51,7 +51,7 @@ export class PricingCalculator extends Component {
 
             this.state.result = result;
         } catch (error) {
-            this.state.error = error.message || 'Calculation failed';
+            this.state.error = error.message || _t('Calculation failed');
         } finally {
             this.state.calculating = false;
         }

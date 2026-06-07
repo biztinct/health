@@ -12,6 +12,18 @@ import copy
 _logger = logging.getLogger(__name__)
 
 
+def _selection_service_location(model):
+    return [
+        ('home', model.env._('Patient Home')),
+        ('clinic', model.env._('Clinic')),
+        ('hospital', model.env._('Hospital')),
+        ('nursing_home', model.env._('Nursing Home')),
+        ('office', model.env._('Office')),
+        ('online', model.env._('Online/Telemedicine')),
+        ('other', model.env._('Other Location')),
+    ]
+
+
 class HealthFieldServiceOrderUnified(models.Model):
     """
     UNIFIED Healthcare Field Service Order (Booking + Assignment + Scheduling)
@@ -806,15 +818,13 @@ class HealthFieldServiceOrderUnified(models.Model):
     # LOCATION & SERVICE DELIVERY
     # ============================================================================
     
-    service_location = fields.Selection([
-        ('home', 'Patient Home'),
-        ('clinic', 'Clinic'),
-        ('hospital', 'Hospital'),
-        ('nursing_home', 'Nursing Home'),
-        ('office', 'Office'),
-        ('online', 'Online/Telemedicine'),
-        ('other', 'Other Location'),
-    ], string='Service Location', required=True, default='home', tracking=True)
+    service_location = fields.Selection(
+        _selection_service_location,
+        string='Service Location',
+        required=True,
+        default='home',
+        tracking=True,
+    )
     
     # Facility Information
     facility_id = fields.Many2one(
@@ -3936,7 +3946,9 @@ class HealthFieldServiceOrderUnified(models.Model):
         service_type_label = dict(b._fields['service_type'].selection).get(b.service_type, b.service_type or '')
         state_label = dict(b._fields['state'].selection).get(b.state, b.state or '')
         priority_label = dict(b._fields['priority'].selection).get(b.priority, '') if b.priority else ''
-        service_location_label = dict(b._fields['service_location'].selection).get(b.service_location, '') if b.service_location else ''
+        service_location_label = dict(
+            b._fields['service_location']._description_selection(b.env)
+        ).get(b.service_location, '') if b.service_location else ''
         booking_source_label = dict(b._fields['booking_source'].selection).get(b.booking_source, '') if b.booking_source else ''
 
         dur_mins = b.scheduled_duration or 60

@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime, timedelta
-from odoo import http, fields
+from odoo import http, fields, _
 from odoo.http import request
 
 
@@ -49,7 +49,7 @@ class HealthPWASyncController(http.Controller):
     def sync_debug_info(self, **kwargs):
         """Debug endpoint to check what data is available for sync"""
         if not self._check_sync_access():
-            return self._prepare_sync_response(error='Access denied', status_code=403)
+            return self._prepare_sync_response(error=_('Access denied'), status_code=403)
         
         try:
             # Check total counts
@@ -100,7 +100,7 @@ class HealthPWASyncController(http.Controller):
     def sync_get_changes(self, **kwargs):
         """Get changes since last sync timestamp for offline synchronization"""
         if not self._check_sync_access():
-            return self._prepare_sync_response(error='Access denied', status_code=403)
+            return self._prepare_sync_response(error=_('Access denied'), status_code=403)
         
         try:
             # Check if this is a forced full sync
@@ -424,7 +424,7 @@ class HealthPWASyncController(http.Controller):
     def sync_push_changes(self, **kwargs):
         """Push changes from mobile device back to server"""
         if not self._check_sync_access():
-            return {'success': False, 'error': 'Access denied'}
+            return {'success': False, 'error': _('Access denied')}
         
         try:
             data = request.jsonrequest
@@ -471,7 +471,7 @@ class HealthPWASyncController(http.Controller):
                         'type': 'field_service_order',
                         'id': None,
                         'success': False,
-                        'error': 'Missing order ID'
+                        'error': _('Missing order ID')
                     })
                     continue
                 
@@ -481,7 +481,7 @@ class HealthPWASyncController(http.Controller):
                         'type': 'field_service_order',
                         'id': order_id,
                         'success': False,
-                        'error': 'Order not found'
+                        'error': _('Order not found')
                     })
                     continue
                 
@@ -533,7 +533,7 @@ class HealthPWASyncController(http.Controller):
                         'type': 'patient',
                         'id': None,
                         'success': False,
-                        'error': 'Missing patient ID'
+                        'error': _('Missing patient ID')
                     })
                     continue
                 
@@ -543,7 +543,7 @@ class HealthPWASyncController(http.Controller):
                         'type': 'patient',
                         'id': patient_id,
                         'success': False,
-                        'error': 'Patient not found'
+                        'error': _('Patient not found')
                     })
                     continue
                 
@@ -583,7 +583,7 @@ class HealthPWASyncController(http.Controller):
     def sync_status(self, **kwargs):
         """Get sync status and server information"""
         if not self._check_sync_access():
-            return self._prepare_sync_response(error='Access denied', status_code=403)
+            return self._prepare_sync_response(error=_('Access denied'), status_code=403)
         
         try:
             # Get user's teams
@@ -613,7 +613,7 @@ class HealthPWASyncController(http.Controller):
                     'orders_updated_last_7_days': recent_orders,
                 },
                 'server_version': '19.0',
-                'pwa_version': '1.0.82',
+                'pwa_version': '1.0.95',
             }
             
             return self._prepare_sync_response(data=status_data)
@@ -625,13 +625,13 @@ class HealthPWASyncController(http.Controller):
     def sync_reset_client(self, **kwargs):
         """Reset client sync state - force full resync"""
         if not self._check_sync_access():
-            return {'success': False, 'error': 'Access denied'}
+            return {'success': False, 'error': _('Access denied')}
         
         try:
             # Return server time to reset client sync timestamp
             reset_data = {
                 'success': True,
-                'message': 'Client reset requested - perform full sync',
+                'message': _('Client reset requested - perform full sync'),
                 'reset_timestamp': fields.Datetime.now().isoformat(),
                 'server_time': fields.Datetime.now().isoformat(),
             }

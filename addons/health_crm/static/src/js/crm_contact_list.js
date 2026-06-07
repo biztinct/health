@@ -5,6 +5,7 @@ import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { useState, onWillStart, onMounted } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 
 export class CrmContactListController extends ListController {
     static template = "health_crm.CrmContactListView";
@@ -45,22 +46,22 @@ export class CrmContactListController extends ListController {
 
     get statusTabs() {
         return [
-            { id: "all", label: "All", icon: "fa-list" },
-            { id: "active", label: "Active", icon: "fa-phone" },
-            { id: "leads", label: "Leads", icon: "fa-bullseye", count: this.tabState.followupCount },
-            { id: "bookings", label: "Bookings", icon: "fa-calendar-check-o" },
-            { id: "lost", label: "Lost", icon: "fa-times-circle" },
-            { id: "spam", label: "Spam", icon: "fa-ban" },
+            { id: "all", label: _t("All"), icon: "fa-list" },
+            { id: "active", label: _t("Active"), icon: "fa-phone" },
+            { id: "leads", label: _t("Leads"), icon: "fa-bullseye", count: this.tabState.followupCount },
+            { id: "bookings", label: _t("Bookings"), icon: "fa-calendar-check-o" },
+            { id: "lost", label: _t("Lost"), icon: "fa-times-circle" },
+            { id: "spam", label: _t("Spam"), icon: "fa-ban" },
         ];
     }
 
     get dateTabs() {
         return [
-            { id: "all_dates", label: "All Dates" },
-            { id: "today", label: "Today" },
-            { id: "this_week", label: "This Week" },
-            { id: "this_month", label: "This Month" },
-            { id: "overdue", label: "Overdue" },
+            { id: "all_dates", label: _t("All Dates") },
+            { id: "today", label: _t("Today") },
+            { id: "this_week", label: _t("This Week") },
+            { id: "this_month", label: _t("This Month") },
+            { id: "overdue", label: _t("Overdue") },
         ];
     }
 
@@ -161,7 +162,7 @@ export class CrmContactListController extends ListController {
     _applyInitialDateFilter() {
         if (this.env.searchModel.query && this.env.searchModel.query.length > 0) return;
         const domain = this._getDateDomain("today");
-        const preFilter = { description: "Today", domain };
+        const preFilter = { description: _t("Today"), domain };
         this.env.searchModel.createNewFilters([preFilter]);
         this._dateFilterGroupId = preFilter.groupId;
     }

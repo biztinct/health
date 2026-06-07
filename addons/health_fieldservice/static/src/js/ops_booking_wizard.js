@@ -444,7 +444,15 @@ class OpsBookingWizard extends Component {
     }
 
     get serviceLocationLabel() {
-        const map = { home: 'Patient Home', clinic: 'Clinic', hospital: 'Hospital', nursing_home: 'Nursing Home', office: 'Office', online: 'Online/Telemedicine', other: 'Other' };
+        const map = {
+            home: _t('Patient Home'),
+            clinic: _t('Clinic'),
+            hospital: _t('Hospital'),
+            nursing_home: _t('Nursing Home'),
+            office: _t('Office'),
+            online: _t('Online/Telemedicine'),
+            other: _t('Other'),
+        };
         return map[this.state.serviceLocation] || this.state.serviceLocation;
     }
 

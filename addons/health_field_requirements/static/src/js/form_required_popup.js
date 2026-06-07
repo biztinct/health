@@ -15,6 +15,17 @@ import { Dialog } from "@web/core/dialog/dialog";
 import { Component, onMounted, onPatched } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
 
+const DIALOG_TRANSLATION_TERMS = [
+    _t("Admin Configured"),
+    _t("Admin Rule"),
+    _t("Form Required"),
+    _t("Go back and fill fields"),
+    _t("Missing Required Fields"),
+    _t("Required"),
+    _t("field(s)"),
+    _t("must be filled before saving."),
+];
+
 // =========================================================================
 // Dialog Component — shows the list of missing fields
 // =========================================================================
@@ -29,6 +40,7 @@ export class MissingFieldsDialog extends Component {
     };
 
     t(text) {
+        void DIALOG_TRANSLATION_TERMS;
         return _t(text);
     }
 }

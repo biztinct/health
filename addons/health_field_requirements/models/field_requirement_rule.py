@@ -258,53 +258,53 @@ class FieldRequirementRule(models.Model):
         nodes = [
             {
                 'key': 'crm',
-                'name': 'Sales & CRM',
+                'name': _('Sales & CRM'),
                 'icon': 'fa-handshake-o',
                 'color': '#4299e1',
                 'tiles': [
-                    {'key': 'crm-contacts', 'name': 'Contacts', 'icon': 'fa-phone'},
-                    {'key': 'crm-followup', 'name': 'Follow-up Activities', 'icon': 'fa-calendar-check-o'},
-                    {'key': 'crm-all-contacts', 'name': 'All Contacts', 'icon': 'fa-address-book'},
-                    {'key': 'crm-all-clients', 'name': 'All Clients', 'icon': 'fa-user'},
+                    {'key': 'crm-contacts', 'name': _('Contacts'), 'icon': 'fa-phone'},
+                    {'key': 'crm-followup', 'name': _('Follow-up Activities'), 'icon': 'fa-calendar-check-o'},
+                    {'key': 'crm-all-contacts', 'name': _('All Contacts'), 'icon': 'fa-address-book'},
+                    {'key': 'crm-all-clients', 'name': _('All Clients'), 'icon': 'fa-user'},
                 ],
             },
             {
                 'key': 'booking',
-                'name': 'Bookings & Assignments',
+                'name': _('Bookings & Assignments'),
                 'icon': 'fa-calendar',
                 'color': '#ed8936',
                 'tiles': [
-                    {'key': 'booking-all', 'name': 'All Bookings', 'icon': 'fa-list'},
-                    {'key': 'booking-staff', 'name': 'Staff Workload', 'icon': 'fa-user-md'},
-                    {'key': 'booking-staff-assignment', 'name': 'Staff Assignment', 'icon': 'fa-users'},
+                    {'key': 'booking-all', 'name': _('All Bookings'), 'icon': 'fa-list'},
+                    {'key': 'booking-staff', 'name': _('Staff Workload'), 'icon': 'fa-user-md'},
+                    {'key': 'booking-staff-assignment', 'name': _('Staff Assignment'), 'icon': 'fa-users'},
                 ],
             },
             {
                 'key': 'invoicing',
-                'name': 'Finance',
+                'name': _('Finance'),
                 'icon': 'fa-money',
                 'color': '#48bb78',
                 'tiles': [
-                    {'key': 'invoicing-invoices', 'name': 'Invoices', 'icon': 'fa-file-text-o'},
-                    {'key': 'invoicing-ar', 'name': 'Accounts Receivable', 'icon': 'fa-dashboard'},
-                    {'key': 'invoicing-ar-management', 'name': 'AR Management', 'icon': 'fa-tasks'},
-                    {'key': 'invoicing-payments', 'name': 'Payment Transactions', 'icon': 'fa-credit-card'},
+                    {'key': 'invoicing-invoices', 'name': _('Invoices'), 'icon': 'fa-file-text-o'},
+                    {'key': 'invoicing-ar', 'name': _('Accounts Receivable'), 'icon': 'fa-dashboard'},
+                    {'key': 'invoicing-ar-management', 'name': _('AR Management'), 'icon': 'fa-tasks'},
+                    {'key': 'invoicing-payments', 'name': _('Payment Transactions'), 'icon': 'fa-credit-card'},
                 ],
             },
             {
                 'key': 'admin',
-                'name': 'Admin',
+                'name': _('Admin'),
                 'icon': 'fa-cog',
                 'color': '#9f7aea',
                 'tiles': [
-                    {'key': 'admin-user-management', 'name': 'User Management', 'icon': 'fa-users'},
-                    {'key': 'admin-master-data', 'name': 'Master Data', 'icon': 'fa-database'},
-                    {'key': 'admin-pricelist', 'name': 'Pricelist', 'icon': 'fa-list-alt'},
-                    {'key': 'admin-package-products', 'name': 'Package Products', 'icon': 'fa-cube'},
-                    {'key': 'admin-pricing-rules', 'name': 'Pricing Rules', 'icon': 'fa-list-ul'},
-                    {'key': 'admin-portable-equipment', 'name': 'Portable Equipment', 'icon': 'fa-briefcase'},
-                    {'key': 'admin-healthcare-staff', 'name': 'Healthcare Staff', 'icon': 'fa-user-md'},
-                    {'key': 'admin-patient-categories', 'name': 'Patient Categories', 'icon': 'fa-bookmark'},
+                    {'key': 'admin-user-management', 'name': _('User Management'), 'icon': 'fa-users'},
+                    {'key': 'admin-master-data', 'name': _('Master Data'), 'icon': 'fa-database'},
+                    {'key': 'admin-pricelist', 'name': _('Pricelist'), 'icon': 'fa-list-alt'},
+                    {'key': 'admin-package-products', 'name': _('Package Products'), 'icon': 'fa-cube'},
+                    {'key': 'admin-pricing-rules', 'name': _('Pricing Rules'), 'icon': 'fa-list-ul'},
+                    {'key': 'admin-portable-equipment', 'name': _('Portable Equipment'), 'icon': 'fa-briefcase'},
+                    {'key': 'admin-healthcare-staff', 'name': _('Healthcare Staff'), 'icon': 'fa-user-md'},
+                    {'key': 'admin-patient-categories', 'name': _('Patient Categories'), 'icon': 'fa-bookmark'},
                 ],
             },
         ]
@@ -485,4 +485,3 @@ class FieldRequirementRule(models.Model):
         if rule.exists():
             rule.unlink()
         return True
-

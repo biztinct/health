@@ -6,7 +6,7 @@
             <t t-set="head_website">
                 <title>Viet Uc</title>
             </t>
-            <t t-set="pwa_asset_version">1.0.93</t>
+            <t t-set="pwa_asset_version">1.0.95</t>
             <t t-set="head">
                 <!-- PWA Meta Tags -->
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
@@ -71,7 +71,7 @@
                 </script>
 
                 <!-- PWA Loading Screen -->
-                <div id="pwa-loading" class="pwa-loading-screen">
+            <div id="pwa-loading" class="pwa-loading-screen" t-translation="off">
                     <div class="loading-container">
                         <div class="loading-logo">
                             <img src="/health_pwa/static/icons/icon-192.png" alt="Viet Uc" width="80" height="80"/>
@@ -94,7 +94,7 @@
             </div>
 
             <!-- PWA Install Banner -->
-            <div id="pwa-install-banner" class="pwa-install-banner" style="display: none;">
+            <div id="pwa-install-banner" class="pwa-install-banner" style="display: none;" t-translation="off">
                 <div class="banner-content">
                     <div class="banner-text">
                         <strong class="pwa-lang-content" data-lang="vi">Cài đặt Viet Uc</strong>
@@ -116,7 +116,7 @@
             </div>
 
             <!-- PWA Update Banner -->
-            <div id="pwa-update-banner" class="pwa-update-banner" style="display: none;">
+            <div id="pwa-update-banner" class="pwa-update-banner" style="display: none;" t-translation="off">
                 <div class="banner-content">
                     <div class="banner-icon">
                         <i class="material-icons" style="font-size: 28px; color: #4CAF50;">system_update</i>
@@ -148,7 +148,7 @@
             </div>
 
             <!-- Smart Install Overlay (shown when ?install=1) -->
-            <div id="pwa-install-overlay" class="pwa-install-overlay" style="display: none;">
+            <div id="pwa-install-overlay" class="pwa-install-overlay" style="display: none;" t-translation="off">
                 <div class="pwa-install-card">
                     <button class="pwa-install-close" id="pwa-install-close-btn">×</button>
                     <div class="pwa-install-icon-wrap">
@@ -243,7 +243,7 @@
                     apiBaseUrl: '/health_pwa/api',
                     syncUrl: '/health_pwa/sync',
                     websocketUrl: '/longpolling',
-                    version: '1.0.93',
+                    version: '1.0.95',
                     buildTime: '<t t-esc="datetime.datetime.now().isoformat()"/>',
                     showInstallOverlay: <t t-if="show_install_overlay">true</t><t t-else="">false</t>,
                 };
@@ -362,7 +362,7 @@
             <script>
                 if ('serviceWorker' in navigator) {
                     let refreshing = false;
-                    const PWA_SW_VERSION = '1.0.93';
+                    const PWA_SW_VERSION = '1.0.95';
                     console.log('[PWA] registering service worker version', PWA_SW_VERSION);
 
                     // Detect when service worker updates and reload
@@ -848,10 +848,10 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.93
+// Health PWA Service Worker v1.0.95
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_VERSION = '1.0.93';
+const CACHE_VERSION = '1.0.95';
 const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;
 const OFFLINE_URL = '/health_pwa/offline';
 const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;
@@ -1644,7 +1644,7 @@ console.log('Health PWA Service Worker loaded successfully');
                 </style>
             </t>
             
-            <div class="install-container">
+            <div class="install-container" t-translation="off">
                 <!-- Language Toggle -->
                 <div class="lang-toggle">
                     <button class="lang-btn active" onclick="switchLanguage('vi')" id="btn-vi">Tiếng Việt</button>

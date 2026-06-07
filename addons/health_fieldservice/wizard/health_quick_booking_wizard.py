@@ -4,6 +4,18 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
+def _selection_service_location(model):
+    return [
+        ('home', model.env._('Patient Home')),
+        ('clinic', model.env._('Clinic')),
+        ('hospital', model.env._('Hospital')),
+        ('nursing_home', model.env._('Nursing Home')),
+        ('office', model.env._('Office')),
+        ('online', model.env._('Online/Telemedicine')),
+        ('other', model.env._('Other Location')),
+    ]
+
+
 class HealthQuickBookingWizard(models.TransientModel):
     """Quick 2-step booking wizard launched from Client form.
 
@@ -53,15 +65,11 @@ class HealthQuickBookingWizard(models.TransientModel):
 
     service_subcategory = fields.Char('Sub-Category')
 
-    service_location = fields.Selection([
-        ('home', 'Patient Home'),
-        ('clinic', 'Clinic'),
-        ('hospital', 'Hospital'),
-        ('nursing_home', 'Nursing Home'),
-        ('office', 'Office'),
-        ('online', 'Online/Telemedicine'),
-        ('other', 'Other Location'),
-    ], string='Service Location', default='home')
+    service_location = fields.Selection(
+        _selection_service_location,
+        string='Service Location',
+        default='home',
+    )
 
     service_notes = fields.Text('Service Notes')
 

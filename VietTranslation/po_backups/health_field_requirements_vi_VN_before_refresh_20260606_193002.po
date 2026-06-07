@@ -1,0 +1,189 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_field_requirements
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-07 22:52+0000\n"
+"PO-Revision-Date: 2026-05-07 22:52+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_field_requirements
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:105
+msgid "New Rule"
+msgstr "Quy tắc mới"
+
+#. module: health_field_requirements
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:113
+msgid "Always"
+msgstr "Luôn luôn"
+
+#. module: health_field_requirements
+#: model:ir.ui.menu
+msgid "Field Requirements"
+msgstr "Yêu cầu trường"
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view
+msgid "Field Requirement Rules"
+msgstr "Quy tắc yêu cầu trường"
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view
+msgid "Required in States"
+msgstr "Bắt buộc trong trạng thái"
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view
+msgid "Field Requirement Rule"
+msgstr "Quy tắc yêu cầu trường"
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view
+msgid "Target"
+msgstr "Đối tượng"
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view
+msgid "Scope"
+msgstr "Phạm vi"
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view
+msgid "Search Requirement Rules"
+msgstr "Tìm kiếm quy tắc yêu cầu"
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view
+msgid "Global Rules"
+msgstr "Quy tắc toàn cục"
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: health_field_requirements
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:61
+msgid "Failed to load hierarchy"
+msgstr "Không thể tải phân cấp"
+
+#. module: health_field_requirements
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:79
+msgid "Failed to load fields"
+msgstr "Không thể tải trường"
+
+#. module: health_field_requirements
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:230
+msgid "Failed to save rule"
+msgstr "Không thể lưu quy tắc"
+
+#. module: health_field_requirements
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:242
+msgid "Rule removed"
+msgstr "Đã xóa quy tắc"
+
+#. module: health_field_requirements
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:245
+msgid "Failed to delete rule"
+msgstr "Không thể xóa quy tắc"
+
+#. module: health_field_requirements
+msgid "Loading..."
+msgstr "Đang tải..."
+
+#. module: health_field_requirements
+msgid "Select a section to configure field requirements"
+msgstr "Chọn một phần để cấu hình yêu cầu trường"
+
+#. module: health_field_requirements
+msgid "tiles"
+msgstr "ô"
+
+#. module: health_field_requirements
+msgid "rules"
+msgstr "quy tắc"
+
+#. module: health_field_requirements
+msgid "Select a tile to see its models"
+msgstr "Chọn một ô để xem các mô hình"
+
+#. module: health_field_requirements
+msgid "model(s)"
+msgstr "mô hình"
+
+#. module: health_field_requirements
+msgid "Select a model to configure its field requirements"
+msgstr "Chọn một mô hình để cấu hình yêu cầu trường"
+
+#. module: health_field_requirements
+msgid "Search fields..."
+msgstr "Tìm kiếm trường..."
+
+#. module: health_field_requirements
+msgid "Loading fields..."
+msgstr "Đang tải trường..."
+
+#. module: health_field_requirements
+msgid "Field"
+msgstr "Trường"
+
+#. module: health_field_requirements
+msgid "Type"
+msgstr "Loại"
+
+#. module: health_field_requirements
+msgid "Global (All Roles)"
+msgstr "Toàn cục (tất cả vai trò)"
+
+#. module: health_field_requirements
+msgid "Roles"
+msgstr "Vai trò"
+
+#. module: health_field_requirements
+msgid "All roles"
+msgstr "Tất cả vai trò"
+
+#. module: health_field_requirements
+msgid "e.g. draft, confirmed"
+msgstr "ví dụ: draft, confirmed"
+
+#. module: health_field_requirements
+msgid "Remove rule"
+msgstr "Xóa quy tắc"
+
+#. module: health_field_requirements
+msgid "Missing Required Fields"
+msgstr "Thiếu các trường bắt buộc"
+
+#. module: health_field_requirements
+msgid "field(s)"
+msgstr "trường"
+
+#. module: health_field_requirements
+msgid "must be filled before saving."
+msgstr "phải được điền trước khi lưu."
+
+#. module: health_field_requirements
+msgid "Form Required"
+msgstr "Bắt buộc trên biểu mẫu"
+
+#. module: health_field_requirements
+msgid "Admin Configured"
+msgstr "Quản trị viên cấu hình"
+
+#. module: health_field_requirements
+msgid "Admin Rule"
+msgstr "Quy tắc quản trị"
+
+#. module: health_field_requirements
+msgid "Go back and fill fields"
+msgstr "Quay lại và điền các trường"

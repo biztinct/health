@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-29 05:48+0000\n"
-"PO-Revision-Date: 2025-10-29 05:48+0000\n"
+"POT-Creation-Date: 2026-06-06 10:37+0000\n"
+"PO-Revision-Date: 2026-06-06 10:37+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: vi_VN\n"
@@ -19,18 +19,30 @@ msgstr ""
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "%d equipment item(s) assigned"
+msgstr "%d Các mặt hàng thiết bị được gán"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "%d package(s) assigned"
+msgstr "%d gói được gán"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
 msgid "%s Dashboard"
-msgstr "%s Bảng điều khiển"
+msgstr "%s bảng điều khiển"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "- Bookings"
-msgstr "- Đặt lịchs"
+msgstr "- Lịch hẹn"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
 msgid "- Client Info"
-msgstr "- Khách hàng Thông tin"
+msgstr "- Thông tin khách hàng"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
@@ -38,53 +50,91 @@ msgid "- Financials"
 msgstr "- Tài chính"
 
 #. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_internal_notes_modal
+msgid "- Internal Notes"
+msgstr "- Các ghi chú nội bộ"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "- Lead Info"
+msgstr "- Thông tin khách hàng tiềm năng"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_map_modal
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
 msgid "- Location"
 msgstr "- Vị trí"
 
 #. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
 msgid "- Relationships"
-msgstr "- Mối quan hệ"
+msgstr "- Quan hệ"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
 msgid "- Service Packages"
-msgstr "- Dịch vụ Góis"
+msgstr "- Các gói dịch vụ"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_source_modal
+msgid "- Source"
+msgstr "- Nguồn"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid ""
 "<i class=\"fa fa-clock-o me-1 text-muted\"/>\n"
 "                                                <strong>Scheduled:</strong>"
-msgstr "<i class=\"fa fa-clock-o me-1 text-muted\"/>\n                                                <strong>Đã lên lịch:</strong>"
+msgstr "<i class=\"fa fa-clock-o me-1 text-muted\"/>\n                                                <strong>Chương trình:</strong>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_patient_kanban_hub_spoke
 msgid "<i class=\"fa fa-tachometer\"/> Dashboard"
-msgstr "<i class=\"fa fa-tachometer\"/> Bảng điều khiển"
+msgstr "<i class=\"fa fa-tachometer\"/> bảng điều khiển"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid ""
 "<i class=\"fa fa-user-md me-1 text-muted\"/>\n"
 "                                                <strong>Nurse:</strong>"
-msgstr "<i class=\"fa fa-user-md me-1 text-muted\"/>\n                                                <strong>Y tá:</strong>"
+msgstr "<i class=\"fa fa-user-md me-1 text-muted\"/>\n                                                <strong>Chị y tá:</strong>"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid ""
+"<span class=\"fa fa-calendar-check-o\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"                            <span>View Activities</span>"
+msgstr "<span class=\"fa fa-calendar-check-o\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n                            <span>Xem các hoạt động</span>"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid ""
+"<span class=\"fa fa-plus-circle\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"                            <span>Schedule Activity</span>"
+msgstr "<span class=\"fa fa-plus-circle\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n                            <span>Chương trình hoạt động</span>"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid ""
+"<span class=\"fa fa-user-md\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"                            <span>View Client Dashboard</span>"
+msgstr "<span class=\"fa fa-user-md\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n                            <span>Xem bảng điều khiển khách hàng</span>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
 msgid "<span>Cash Collection from Nurse</span>"
-msgstr "<span>Tiền mặt Collection Từ Y tá</span>"
+msgstr "<span>Thu thập tiền mặt từ y tá</span>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "<span>Clinical Notes</span>"
-msgstr "<span>Lâm sàng Ghi chú</span>"
+msgstr "<span>Các ghi chú lâm sàng</span>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "<span>Invoice &amp; Quote Details</span>"
-msgstr "<span>Hóa đơn &amp; Quote Chi tiết</span>"
+msgstr "<span>Lập hóa đơn &amp; Các chi tiết trích dẫn</span>"
 
 #. module: health_landing
 #. odoo-python
@@ -92,59 +142,126 @@ msgstr "<span>Hóa đơn &amp; Quote Chi tiết</span>"
 msgid ""
 "<strong>Cash Collected by Operations Manager</strong><br/>Amount: %s "
 "%s<br/>Collected from: %s<br/>Collected by: %s<br/>Date: %s<br/>Notes: %s"
-msgstr "<strong>Tiền mặt Collected bởi Vận hành Người quản lý</strong><br/>Số tiền: %s %s<br/>Collected Từ: %s<br/>Collected bởi: %s<br/>Ngày: %s<br/>Ghi chú: %s"
+msgstr "<strong>Tiền mặt được thu thập bởi người quản lý hoạt động</strong><br/>Số lượng: %s %s<br/>Được thu thập từ: %s<br/>Được thu thập bởi: %s<br/>Ngày: %s<br/>Các ghi chú: %s"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+msgid "ACTIVE SERVICE PACKAGES"
+msgstr "CÁC GÓI DỊCH VỤ ĐANG HOẠT ĐỘNG"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
-msgid "ASSIGNED"
-msgstr "ĐÃ PHÂN CÔNG"
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "AR Dashboard"
+msgstr "Bảng điều khiển công nợ"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
-msgid "Active arrows and nodes glow to guide you through the workflow"
-msgstr "Đang hoạt động mũi têns và nút glow Đến guide you qua the workflow"
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_roles
+msgid "Access Roles"
+msgstr "Vai trò truy cập"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Accounts"
+msgstr "Tài khoản"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Accounts receivable overview"
+msgstr "Tổng quan công nợ phải thu"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Active Facilities"
+msgstr "Các cơ sở hoạt động"
+
+#. module: health_landing
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_clinical_notes__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_collect_cash__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_complete_service__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_confirm_booking__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_equipment__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_invoice__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_pay_later__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_pay_now__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_payment_received__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_quote__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_service_packages__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_staff_assignment__active
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_start_service__active
+msgid "Active Next Step"
+msgstr "Bước tiếp theo"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Active Users"
+msgstr "Người dùng tích cực"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Active service packages"
+msgstr "Các gói dịch vụ hoạt động"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__actual_start_datetime
 msgid "Actual Start Time"
-msgstr "Actual Bắt đầu Giờ"
+msgstr "Thời gian bắt đầu thực tế"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__actual_start_datetime
 msgid "Actual time when service started"
-msgstr "Actual Giờ khi nào dịch vụ bắt đầued"
+msgstr "Thời gian thực khi dịch vụ bắt đầu"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Add Facility"
+msgstr "Thêm tiện ích"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Add User"
+msgstr "Thêm User"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__collection_notes
 msgid "Additional notes about cash collection"
-msgstr "Bổ sung Ghi chú about Tiền mặt collection"
+msgstr "Các ghi chú bổ sung về thu tiền mặt"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
 msgid "Additional notes about cash collection..."
-msgstr "Bổ sung Ghi chú about Tiền mặt collection..."
+msgstr "Các ghi chú bổ sung về thu tiền mặt..."
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_service_packages_wizard__package_notes
 msgid "Additional notes about service packages"
-msgstr "Bổ sung Ghi chú about dịch vụ góis"
+msgstr "Các ghi chú bổ sung về gói dịch vụ"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_service_packages_wizard_form
 msgid "Additional notes about service packages..."
-msgstr "Bổ sung Ghi chú about dịch vụ góis..."
+msgstr "Các ghi chú bổ sung về gói dịch vụ..."
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_notes
 msgid "Additional notes about the payment"
-msgstr "Bổ sung Ghi chú about the Thanh toán"
+msgstr "Các ghi chú bổ sung về khoản thanh toán"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_payment_received_wizard_form
 msgid "Additional notes about the payment..."
-msgstr "Bổ sung Ghi chú about the Thanh toán..."
+msgstr "Các ghi chú bổ sung về khoản thanh toán..."
 
 #. module: health_landing
 #. odoo-javascript
@@ -154,154 +271,246 @@ msgstr "Địa chỉ"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "Age / Gender"
-msgstr "Tuổi / Giới tính"
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Address and location"
+msgstr "Địa chỉ và địa điểm"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_admin_center_root
+msgid "Admin Center"
+msgstr "Trung tâm quản trị"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+#: model:ir.actions.client,name:health_landing.action_admin_dashboard
+msgid "Admin Dashboard"
+msgstr "Bảng điều khiển quản trị"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+#: model:ir.actions.client,name:health_landing.action_admin_settings
+msgid "Admin Settings"
+msgstr "Cài đặt quản trị"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+msgid "Administrator"
+msgstr "Trình quản lý"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Advanced Pricelist"
+msgstr "Bảng giá nâng cao"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__cash_amount
 msgid "Amount of cash received from nurse"
-msgstr "Số tiền of Tiền mặt nhậnd Từ Y tá"
+msgstr "Số tiền mặt được nhận từ y tá"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__start_notes
 msgid "Any notes or observations at service start"
-msgstr "Bất kỳ Ghi chú hoặc quan sáts tại dịch vụ bắt đầu"
+msgstr "Bất kỳ ghi chú hoặc quan sát nào khi bắt đầu hoạt động"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_start_service_wizard_form
 msgid "Any notes or observations at service start..."
-msgstr "Bất kỳ Ghi chú hoặc quan sáts tại dịch vụ bắt đầu..."
+msgstr "Bất kỳ ghi chú hoặc quan sát nào khi bắt đầu hoạt động..."
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__confirmation_notes
 msgid "Any special instructions or notes for this booking confirmation"
-msgstr "Bất kỳ special hướng dẫn hoặc Ghi chú cho này đặt lịch xác nhậnation"
+msgstr "Bất kỳ hướng dẫn hoặc ghi chú đặc biệt nào cho xác nhận lịch hẹn này"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_confirm_booking_wizard_form
 msgid "Any special instructions or notes for this booking confirmation..."
-msgstr "Bất kỳ special hướng dẫn hoặc Ghi chú cho này đặt lịch xác nhậnation..."
+msgstr "Bất kỳ hướng dẫn hoặc ghi chú đặc biệt nào cho xác nhận lịch hẹn này..."
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Appointments and visits"
+msgstr "Các cuộc hẹn và chuyến thăm"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_staff_assignment_wizard_form
 msgid "Assign Staff"
-msgstr "Phân công Nhân viên"
+msgstr "Báo giá nhân viên"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Assign required equipment"
+msgstr "Đưa giao thiết bị cần thiết"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Assign staff first"
+msgstr "Đưa nhân viên lên trước"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Assign staff to booking"
+msgstr "Đưa nhân viên cho việc lịch hẹn"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Assign staff to this booking"
+msgstr "Đưa nhân viên vào chỗ này"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Assigned"
-msgstr "Phân cônged"
+msgstr "Báo giá"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__assigned_package_ids
 msgid "Assigned Service Packages"
-msgstr "Phân cônged Dịch vụ Góis"
+msgstr "Các gói dịch vụ được giao"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__assigned_staff_ids
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__assigned_staff
 msgid "Assigned Staff"
-msgstr "Phân cônged Nhân viên"
+msgstr "Nhân viên được phân công"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Assignment Dashboard"
+msgstr "Bảng điều khiển phân công"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__assignment_notes
 msgid "Assignment Notes"
-msgstr "Phân công Ghi chú"
+msgstr "Các ghi chú về việc bổ nhiệm"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__sale_order_id
 msgid "Associated healthcare quote/sales order for this service"
-msgstr "Liên kết Y tế quote/bán hàng thứ tự cho này dịch vụ"
+msgstr "Giá bán dịch vụ chăm sóc sức khỏe liên quan/đơn đặt hàng bán hàng cho dịch vụ này"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Audit Events Today"
+msgstr "Các sự kiện kiểm toán ngày nay"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_audit
+#: model:ir.ui.menu,name:health_landing.menu_admin_audit
+msgid "Audit Log"
+msgstr "Lập nhật kiểm toán"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
-msgid "BOOKED"
-msgstr "ĐÃ ĐẶT"
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_clinical_notes__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_collect_cash__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_complete_service__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_confirm_booking__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_equipment__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_invoice__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_pay_later__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_pay_now__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_payment_received__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_quote__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_service_packages__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_staff_assignment__available
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_start_service__available
+msgid "Available"
+msgstr "Có sẵn"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Awaiting payment"
+msgstr "Chờ tiền"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
 #: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
 msgid "Back"
-msgstr "Quay lại"
+msgstr "Trở lại"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
 msgid "Back to"
-msgstr "Quay lại Đến"
+msgstr "Trở lại"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "Back to Main Dashboard"
-msgstr "Quay lại Đến Main Bảng điều khiển"
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+msgid "Back to Hub"
+msgstr "Quay lại trung tâm"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
 msgid "Back to Viet Uc Dashboard"
-msgstr "Quay lại Đến Viet Uc Bảng điều khiển"
+msgstr "Trở lại bảng điều khiển Việt Nam"
 
 #. module: health_landing
 #: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__bank_transfer
 msgid "Bank Transfer"
-msgstr "Chuyển khoản ngân hàng"
+msgstr "Chuyển ngân hàng"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_reference
 msgid "Bank transaction ID or payment reference number"
-msgstr "Bank transhành động ID hoặc Thanh toán Tham chiếu Số"
+msgstr "Số ID giao dịch ngân hàng hoặc số tham chiếu thanh toán"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__base_price
 msgid "Base Service Price"
-msgstr "Base Dịch vụ Giá"
+msgstr "Giá dịch vụ cơ bản"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__base_price
 msgid "Base price for the service"
-msgstr "Base giá cho the dịch vụ"
+msgstr "Giá cơ bản cho dịch vụ"
 
 #. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_payment_received_arrow
-msgid "Blinks when Pay Later was selected and payment needs to be received"
-msgstr "Bliên kếts khi nào Pay Sau was đã chọn và Thanh toán nhu cầus Đến be nhậnd"
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Billing & Invoicing"
+msgstr "Thanh toán và lập hóa đơn"
 
 #. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_collect_cash_arrow
-msgid "Blinks when cash payment was collected by nurse and needs OM pickup"
-msgstr "Bliên kếts khi nào Tiền mặt Thanh toán was collected bởi Y tá và nhu cầus OM chọnup"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_invoice_arrow
-msgid "Blinks when clinical notes are filled but invoice not yet created"
-msgstr "Bliên kếts khi nào Lâm sàng Ghi chú are filled but Hóa đơn not yet Đã tạo"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_pay_later_arrow
-msgid ""
-"Blinks when service is in In Progress stage and payment can be deferred"
-msgstr "Bliên kếts khi nào dịch vụ là trong Đang thực hiện giai đoạn và Thanh toán can be deferred"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_pay_now_arrow
-msgid "Blinks when service is in In Progress stage and ready for payment"
-msgstr "Bliên kếts khi nào dịch vụ là trong Đang thực hiện giai đoạn và ready cho Thanh toán"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_clinical_notes_arrow
-msgid "Blinks when service is in progress or clinical notes not yet filled"
-msgstr "Bliên kếts khi nào dịch vụ là trong progress hoặc Lâm sàng Ghi chú not yet filled"
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Billing, invoicing, and financial management"
+msgstr "Việc thanh toán, hóa đơn và quản lý tài chính"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Blood pressure, temperature, pulse, etc..."
-msgstr "Blood nhấnure, temperature, pulse, etc..."
+msgstr "huyết áp, nhiệt độ, nhịp tim, vv..."
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__fso_id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__fso_id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__fso_id
@@ -312,36 +521,55 @@ msgstr "Blood nhấnure, temperature, pulse, etc..."
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__fso_id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__fso_id
 msgid "Booking"
-msgstr "Đặt lịch"
+msgstr "Lịch hẹn"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "Booking Information"
-msgstr "Đặt lịch Thông tin"
+msgstr "Thông tin lịch hẹn"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Booking confirmed"
+msgstr "Lịch hẹn đã được xác nhận"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_confirm_booking_wizard.py:0
 msgid "Booking confirmed."
-msgstr "Đặt lịch Đã xác nhận."
+msgstr "Lịch hẹn đã được xác nhận."
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Bookings"
+msgstr "Các lịch hẹn"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_fso_bookings_calendar
 msgid "Bookings Calendar"
-msgstr "Đặt lịchs Lịch"
+msgstr "Lịch lịch hẹn"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
-msgid "COMPLETED"
-msgstr "ĐÃ HOÀN THÀNH"
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "CRM"
+msgstr "CRM"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "CRM Contacts"
+msgstr "Liên hệ CRM"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Calendar View"
-msgstr "Lịch Xem"
+msgstr "Xem lịch"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
@@ -354,18 +582,25 @@ msgstr "Lịch Xem"
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_staff_assignment_wizard_form
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_start_service_wizard_form
 msgid "Cancel"
-msgstr "Hủy"
+msgstr "Tháo lại"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Cancelled"
-msgstr "Đã hủy"
+msgstr "Thủy bỏ"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Caregivers ("
-msgstr "Người chăm sócs ("
+msgstr "Người chăm sóc ("
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Caregivers, payers, contacts"
+msgstr "Người chăm sóc, người trả tiền, người liên hệ"
 
 #. module: health_landing
 #: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__cash
@@ -375,52 +610,79 @@ msgstr "Tiền mặt"
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__cash_amount
 msgid "Cash Amount Received"
-msgstr "Tiền mặt Số tiền Nhậnd"
+msgstr "Số tiền mặt được nhận"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__cash_collected_by_nurse
 msgid "Cash Collected by Nurse"
-msgstr "Tiền mặt Collected bởi Y tá"
+msgstr "Tiền mặt được chăm sóc y tế thu thập"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
 msgid "Cash Collection Details"
-msgstr "Tiền mặt Collection Chi tiết"
+msgstr "Chi tiết thu tiền mặt"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__cash_received_by_om
 msgid "Cash Received by OM"
-msgstr "Tiền mặt Nhậnd bởi OM"
+msgstr "Tiền mặt được nhận bởi OM"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_cash_collection_wizard.py:0
 msgid "Cash amount must be greater than zero."
-msgstr "Tiền mặt Số tiền must be greater than zero."
+msgstr "Số tiền mặt phải lớn hơn 0."
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/models/health_fieldservice_order.py:0
 msgid "Cash has already been received by Operations Manager."
-msgstr "Tiền mặt has already been nhậnd bởi Vận hành Người quản lý."
+msgstr "Tài khoản đã được nhận bởi người quản lý hoạt động."
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/models/health_fieldservice_order.py:0
-msgid ""
-"Cash has not been collected from patient yet. Please collect cash from "
-"patient first."
-msgstr "Tiền mặt has not been collected Từ Bệnh nhân yet. Vui lòng collect Tiền mặt Từ Bệnh nhân đầu tiên."
+msgid "Cash has not been collected from patient yet."
+msgstr "Chưa thu tiền mặt từ bệnh nhân."
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Cash payment not selected"
+msgstr "Chưa chọn thanh toán tiền mặt"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Cash received by OM"
+msgstr "Quản lý vận hành đã nhận tiền mặt"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Catchment & Reason"
+msgstr "Sự bắt bẫy và lý do"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Catchment Province"
+msgstr "tỉnh Catchment"
+
+#. module: health_landing
+#: model:ir.actions.act_window,name:health_landing.action_admin_catchments
+msgid "Catchment Provinces"
+msgstr "Các tỉnh khai thác"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
-msgid "Click on any section to view details"
-msgstr "Nhấn trên bất kỳ phần Đến Xem Chi tiết"
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
+msgid "Click any section to view details"
+msgstr "Nhấp vào bất kỳ phần nào để xem chi tiết"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__patient_id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__patient_id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__patient_id
@@ -436,172 +698,373 @@ msgstr "Khách hàng"
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Client Bookings"
-msgstr "Khách hàng Đặt lịchs"
+msgstr "Lịch hẹn khách hàng"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Client Condition"
-msgstr "Khách hàng Tình trạng"
+msgstr "Tình trạng của khách hàng"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__patient_condition_after
 msgid "Client Condition (After)"
-msgstr "Khách hàng Tình trạng (After)"
+msgstr "Tình trạng của khách hàng (sau)"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__patient_condition_before
 msgid "Client Condition (Before)"
-msgstr "Khách hàng Tình trạng (Trước)"
+msgstr "Tình trạng của khách hàng (trước đó))"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__patient_contacted
 msgid "Client Contacted"
-msgstr "Khách hàng Đã liên hệ"
+msgstr "Khách hàng liên lạc"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+msgid "Client Dashboard"
+msgstr "Bảng điều khiển khách hàng"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
 msgid "Client Financials"
-msgstr "Khách hàng Financials"
+msgstr "Tài chính của khách hàng"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Client Info"
+msgstr "Thông tin khách hàng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
 msgid "Client Information"
-msgstr "Khách hàng Thông tin"
+msgstr "Thông tin khách hàng"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
 msgid "Client Location"
-msgstr "Khách hàng Vị trí"
+msgstr "Địa điểm của khách hàng"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Client Name"
+msgstr "Tên khách hàng"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__patient_present
 msgid "Client Present and Verified"
-msgstr "Khách hàng Pređã gửi và Verified"
+msgstr "Khách hàng hiện diện và xác minh"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
 msgid "Client Relationships"
-msgstr "Khách hàng Mối quan hệ"
+msgstr "Quan hệ khách hàng"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Clinical Assessment"
-msgstr "Lâm sàng Đánh giá"
+msgstr "Đánh giá lâm sàng"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model:ir.actions.act_window,name:health_landing.action_health_fso_clinical_notes_wizard
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__clinical_notes
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Clinical Notes"
-msgstr "Lâm sàng Ghi chú"
+msgstr "Ghi chú lâm sàng"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/models/health_fieldservice_order.py:0
 msgid "Clinical Notes - %s"
-msgstr "Lâm sàng Ghi chú - %s"
+msgstr "Các ghi chú lâm sàng - %s"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__clinical_notes_submitted
 msgid "Clinical Notes Submitted"
-msgstr "Lâm sàng Ghi chú Submitted"
+msgstr "Các ghi chú lâm sàng được đệ trình"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Clinical Protocols"
+msgstr "Các giao thức lâm sàng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Clinical guidelines"
+msgstr "Các hướng dẫn lâm sàng"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Clinical notes submitted"
+msgstr "Đã gửi ghi chú lâm sàng"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_clinical_notes_wizard.py:0
 msgid "Clinical notes updated from dashboard"
-msgstr "Lâm sàng Ghi chú đã cập nhật Từ Bảng điều khiển"
+msgstr "Các ghi chú lâm sàng được cập nhật từ bảng điều khiển"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__clinical_notes
 msgid "Clinical observations and notes from service provider"
-msgstr "Lâm sàng quan sáts và Ghi chú Từ dịch vụ nhà cung cấp"
+msgstr "Các quan sát lâm sàng và ghi chú từ nhà cung cấp dịch vụ"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
 msgid "Close"
-msgstr "Đóng"
+msgstr "Gần"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Collect Cash"
+msgstr "Thu tiền mặt"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model:ir.actions.act_window,name:health_landing.action_health_fso_cash_collection_wizard
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
 msgid "Collect Cash from Nurse"
-msgstr "Collect Tiền mặt Từ Y tá"
+msgstr "Thu thập tiền mặt từ y tá"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/models/health_fieldservice_order.py:0
 msgid "Collect Cash from Nurse - %s"
-msgstr "Collect Tiền mặt Từ Y tá - %s"
+msgstr "Thu thập tiền mặt từ y tá - %s"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Collect immediate payment"
+msgstr "Thu tiền ngay"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__collected_by_user_id
 msgid "Collected By"
-msgstr "Collected Bởi"
+msgstr "Được thu thập bởi"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
 msgid "Collection Amount"
-msgstr "Collection Số tiền"
+msgstr "Số tiền thu thập"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__collection_date
 msgid "Collection Date & Time"
-msgstr "Collection Ngày & Giờ"
+msgstr "Ngày và giờ thu thập"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__collection_notes
 msgid "Collection Notes"
-msgstr "Collection Ghi chú"
+msgstr "Các ghi chú thu thập"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Communications"
+msgstr "Thông tin"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+msgid "Company Profile"
+msgstr "Hồ sơ công ty"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Complete Service"
+msgstr "Hoàn thành dịch vụ"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Complete clinical notes first"
+msgstr "Hoàn tất ghi chú lâm sàng trước"
+
+#. module: health_landing
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Complete service and collect payment"
+msgstr "Hoàn thành dịch vụ và thu tiền"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Complete service first"
+msgstr "Hoàn thành dịch vụ trước"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_clinical_notes__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_collect_cash__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_complete_service__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_confirm_booking__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_equipment__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_invoice__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_pay_later__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_pay_now__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_payment_received__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_quote__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_service_packages__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_staff_assignment__completed
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_start_service__completed
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Completed"
-msgstr "Đã hoàn thành"
+msgstr "Kết thúc"
 
 #. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configuration"
+msgstr "Thiết lập"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configure healthcare facilities"
+msgstr "Thiết lập các cơ sở y tế"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configure insurance"
+msgstr "Thiết lập bảo hiểm"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configure mandatory fields per model and state"
+msgstr "Thiết lập các trường bắt buộc theo mô hình và trạng thái"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Configure package products"
+msgstr "Thiết lập các sản phẩm gói"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configure patient categories"
+msgstr "Cấu hình các nhóm bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Configure patient types"
+msgstr "Cấu hình các loại bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configure pricing engines"
+msgstr "Thiết lập động cơ định giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configure service areas"
+msgstr "Thiết lập các khu vực dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configure service packages"
+msgstr "Thiết lập gói dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Configure symptoms"
+msgstr "Thiết lập các triệu chứng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_confirm_booking_wizard_form
 msgid "Confirm Booking"
-msgstr "Xác nhận Đặt lịch"
+msgstr "Đăng ký xác nhận"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
 msgid "Confirm Cash Collection"
-msgstr "Xác nhận Tiền mặt Collection"
+msgstr "Tiếp tục thu tiền mặt"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_payment_received_wizard_form
 msgid "Confirm Payment"
-msgstr "Xác nhận Thanh toán"
+msgstr "Đảm nhận thanh toán"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Confirm booking first"
+msgstr "Xác nhận lịch hẹn trước"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Confirm payment received"
+msgstr "Xác nhận đã nhận thanh toán"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__equipment_ready
 msgid "Confirm that all required equipment is ready"
-msgstr "Xác nhận đó Tất cả Bắt buộc thiết bị là ready"
+msgstr "Hãy xác nhận rằng tất cả thiết bị cần thiết đều sẵn sàng"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__staff_notified
 msgid "Confirm that assigned staff has been notified"
-msgstr "Xác nhận đó phân cônged nhân viên has been notified"
+msgstr "Đảm nhận rằng nhân viên được chỉ định đã được thông báo"
+
+#. module: health_landing
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Confirm the booking"
+msgstr "Xác nhận lịch hẹn"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__confirmation_notes
 msgid "Confirmation Notes"
-msgstr "Xác nhậnation Ghi chú"
+msgstr "Các ghi nhận xác nhận"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Confirmed"
-msgstr "Đã xác nhận"
+msgstr "Được xác nhận"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
+msgid "Consultation"
+msgstr "Cuộc tham vấn"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_res_partner
@@ -609,19 +1072,70 @@ msgid "Contact"
 msgstr "Liên hệ"
 
 #. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
-msgid "Contact Information"
-msgstr "Liên hệ Thông tin"
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Contact Reason"
+msgstr "Lý do liên lạc"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "Contact Status"
+msgstr "Trạng thái liên hệ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Could not complete service"
+msgstr "Không thể hoàn thành dịch vụ"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Create Booking"
+msgstr "Tạo lịch hẹn"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "Create Invoice"
-msgstr "Tạo mới Hóa đơn"
+msgstr "Tạo hóa đơn"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "Create Quote"
-msgstr "Tạo mới Quote"
+msgstr "Tạo trích dẫn"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Create a healthcare quote"
+msgstr "Tạo báo giá chăm sóc sức khỏe"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Create a quote"
+msgstr "Tạo báo giá"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Create a quote first"
+msgstr "Tạo báo giá trước"
+
+#. module: health_landing
+#: model:ir.model,website_form_label:health_landing.model_crm_lead
+msgid "Create an Opportunity"
+msgstr "Hãy tạo ra cơ hội"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Create and manage invoices"
+msgstr "Tạo và quản lý hóa đơn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Create invoice"
+msgstr "Tạo hóa đơn"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__create_uid
@@ -634,7 +1148,7 @@ msgstr "Tạo mới Quote"
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__create_uid
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__create_uid
 msgid "Created by"
-msgstr "Tạo bởi"
+msgstr "Được tạo bởi"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__create_date
@@ -647,12 +1161,12 @@ msgstr "Tạo bởi"
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__create_date
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__create_date
 msgid "Created on"
-msgstr "Đã tạo trên"
+msgstr "Được tạo ra trên"
 
 #. module: health_landing
 #: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__card
 msgid "Credit/Debit Card"
-msgstr "Crchỉnh sửa/Debit Thẻ"
+msgstr "Thẻ tín dụng/tài khoản"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__currency_id
@@ -662,36 +1176,89 @@ msgid "Currency"
 msgstr "Tiền tệ"
 
 #. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_res_partner__customer_invoice_ids
+#: model:ir.model.fields,field_description:health_landing.field_res_users__customer_invoice_ids
+msgid "Customer Invoices"
+msgstr "Hóa đơn khách hàng"
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_res_partner__customer_invoice_ids
+#: model:ir.model.fields,help:health_landing.field_res_users__customer_invoice_ids
+msgid "Customer invoices only (excludes payment entries and journal entries)"
+msgstr "Chỉ đơn hóa đơn của khách hàng (không bao gồm các mục thanh toán và các mục nhật ký))"
+
+#. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
-msgid "DRAFT"
-msgstr "Nháp"
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Customer relationship management"
+msgstr "Quản lý mối quan hệ khách hàng"
 
 #. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Customers"
+msgstr "Khách hàng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_admin_dashboard
 msgid "Dashboard"
-msgstr "Bảng điều khiển"
+msgstr "bảng điều khiển"
 
 #. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__payment_received_date
 #: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_date
 msgid "Date when payment was received"
-msgstr "Ngày khi nào Thanh toán was nhậnd"
+msgstr "Ngày nhận thanh toán"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+msgid "Default role and permission setup"
+msgstr "Đơn vị mặc định và cài đặt quyền"
+
+#. module: health_landing
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Defer payment"
+msgstr "Thanh toán sau"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Define pricing rules"
+msgstr "Định nghĩa các quy tắc định giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Define service types"
+msgstr "Định nghĩa các loại dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Define urgency levels"
+msgstr "Định nghĩa mức độ khẩn cấp"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Detailed clinical observations and notes..."
-msgstr "Chi tiết Lâm sàng quan sáts và Ghi chú..."
+msgstr "Các quan sát lâm sàng chi tiết và ghi chú..."
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__treatment_performed
 msgid "Detailed description of treatment provided"
-msgstr "Chi tiết Mô tả of Điều trị provided"
+msgstr "Mô tả chi tiết về phương pháp điều trị được cung cấp"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Detailed description of treatment provided..."
-msgstr "Chi tiết Mô tả of Điều trị provided..."
+msgstr "Mô tả chi tiết về phương pháp điều trị được cung cấp..."
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__diagnosis
@@ -699,6 +1266,23 @@ msgid "Diagnosis"
 msgstr "Chẩn đoán"
 
 #. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_internal_notes_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_map_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_source_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
+msgid "Discard"
+msgstr "Thả đi"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__display_name
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__display_name
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__display_name
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__display_name
@@ -708,36 +1292,44 @@ msgstr "Chẩn đoán"
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__display_name
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__display_name
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_prepaid_package_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_res_partner__display_name
+#: model:ir.model.fields,field_description:health_landing.field_res_users__display_name
 msgid "Display Name"
-msgstr "Display Tên"
+msgstr "Tên hiển thị"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Draft"
-msgstr "Nháp"
+msgstr "Dự thảo"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Due:"
-msgstr "Hạn:"
+msgstr "Tờ:"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Duration (hrs)"
-msgstr "Thời lượng (hrs)"
+msgstr "Thời gian (h))"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Dynamic pricing rules and engines"
+msgstr "Quy tắc và động cơ định giá động"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Edit Full Details"
-msgstr "Chỉnh sửa Đầy đủ Chi tiết"
+msgstr "chỉnh sửa chi tiết đầy đủ"
 
 #. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "Email"
-msgstr "Email"
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+msgid "Edit address"
+msgstr "Địa chỉ chỉnh sửa"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
@@ -748,38 +1340,65 @@ msgstr "Liên hệ khẩn cấp"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Emergency Contacts ("
-msgstr "Khẩn cấp Liên hệ ("
+msgstr "Liên hệ khẩn cấp ("
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Enter client name..."
+msgstr "Nhập tên khách hàng..."
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_admin_equipment
+msgid "Equipment"
+msgstr "Thiết bị"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__equipment_checklist_done
 msgid "Equipment Checklist Completed"
-msgstr "Thiết bị Kiểm tradanh sách Đã hoàn thành"
+msgstr "Danh sách kiểm tra thiết bị hoàn thành"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Equipment Items"
+msgstr "Các vật dụng"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__equipment_notes
 msgid "Equipment Notes"
-msgstr "Thiết bị Ghi chú"
+msgstr "Các ghi chú thiết bị"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__equipment_ready
 msgid "Equipment Ready"
-msgstr "Thiết bị Ready"
+msgstr "Thiết bị sẵn sàng"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_equipment_wizard_form
 msgid "Equipment Requirements"
-msgstr "Thiết bị Yêu cầus"
+msgstr "Yêu cầu về thiết bị"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_equipment_wizard__required_equipment_ids
 msgid "Equipment items required for this service"
-msgstr "Thiết bị items Bắt buộc cho này dịch vụ"
+msgstr "Các thiết bị cần thiết cho dịch vụ này"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_equipment_wizard.py:0
 msgid "Equipment updated: %s items - %s"
-msgstr "Thiết bị đã cập nhật: %s items - %s"
+msgstr "Thiết bị được cập nhật: %s các mục - %s"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Error"
+msgstr "Lỗi"
 
 #. module: health_landing
 #. odoo-javascript
@@ -789,71 +1408,135 @@ msgstr "Lỗi:"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "Expires:"
-msgstr "Hết hạn:"
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
+msgid "Escalate"
+msgstr "Chuyển cấp"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "Explore the full range of features available in this module."
-msgstr "Explore the Đầy đủ Phạm vi of features có sẵn trong này mô-đun."
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Expires:"
+msgstr "Thời hạn hết hạn:"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_cash_collection_wizard
 msgid "FSO Cash Collection Wizard"
-msgstr "FSO Tiền mặt Collection Công cụ"
+msgstr "Trình hướng dẫn thu tiền mặt FSO"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_clinical_notes_wizard
 msgid "FSO Clinical Notes Wizard"
-msgstr "FSO Lâm sàng Ghi chú Công cụ"
+msgstr "Trình hướng dẫn ghi chú lâm sàng FSO"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_confirm_booking_wizard
 msgid "FSO Confirm Booking Wizard"
-msgstr "FSO Xác nhận Đặt lịch Công cụ"
+msgstr "Trình hướng dẫn xác nhận lịch hẹn FSO"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_equipment_wizard
 msgid "FSO Equipment Wizard"
-msgstr "FSO Thiết bị Công cụ"
+msgstr "Trình hướng dẫn thiết bị FSO"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_invoice_wizard
 msgid "FSO Invoice Wizard"
-msgstr "FSO Hóa đơn Công cụ"
+msgstr "Trình hướng dẫn hóa đơn FSO"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_payment_received_wizard
 msgid "FSO Payment Received Wizard"
-msgstr "FSO Thanh toán Nhậnd Công cụ"
+msgstr "Trình hướng dẫn xác nhận thanh toán FSO"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_service_packages_wizard
 msgid "FSO Service Packages Wizard"
-msgstr "FSO Dịch vụ Góis Công cụ"
+msgstr "Trình hướng dẫn gói dịch vụ FSO"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_staff_assignment_wizard
 msgid "FSO Staff Assignment Wizard"
-msgstr "FSO Nhân viên Phân công Công cụ"
+msgstr "Trình hướng dẫn phân công nhân viên FSO"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fso_start_service_wizard
 msgid "FSO Start Service Wizard"
-msgstr "FSO Bắt đầu Dịch vụ Công cụ"
+msgstr "Trình hướng dẫn bắt đầu dịch vụ FSO"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "Favorites"
-msgstr "Yêu thích"
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Facilities"
+msgstr "Các cơ sở"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Failed to mark as spam"
+msgstr "Không được đánh dấu như thư rác"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.actions.client,name:health_landing.action_admin_field_req
+#: model:ir.ui.menu,name:health_landing.menu_admin_field_req
+msgid "Field Requirements"
+msgstr "Yêu cầu về lĩnh vực"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Field Service"
+msgstr "Dịch vụ hiện trường"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Field Service Orders"
+msgstr "Lệnh dịch vụ hiện trường"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Field Service Teams"
+msgstr "Nhóm dịch vụ hiện trường"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Field service orders and booking management"
+msgstr "Các đơn đặt hàng dịch vụ thực hiện và quản lý lịch hẹn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Fill clinical notes"
+msgstr "Nhập ghi chú lâm sàng"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Fill in clinical notes"
+msgstr "Nhập ghi chú lâm sàng"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
 msgid "Financial Summary"
-msgstr "Financial Tóm tắt"
+msgstr "Tổng kết tài chính"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Financial management and billing"
+msgstr "Quản lý tài chính và hóa đơn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Financials"
+msgstr "Tài chính"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
@@ -863,80 +1546,148 @@ msgstr "Theo dõi"
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__follow_up_date
 msgid "Follow-up Date"
-msgstr "Theo dõi Ngày"
+msgstr "Ngày tiếp theo"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__follow_up_notes
 msgid "Follow-up Notes"
-msgstr "Theo dõi Ghi chú"
+msgstr "Các ghi chú tiếp theo"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__follow_up_required
 msgid "Follow-up Required"
-msgstr "Theo dõi Bắt buộc"
+msgstr "Cần theo dõi"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Follow-up instructions and notes..."
-msgstr "Theo dõi hướng dẫn và Ghi chú..."
+msgstr "Các hướng dẫn và ghi chú tiếp theo..."
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "GPS Coordinates"
-msgstr "Tọa độ GPS"
+msgstr "Các định vị GPS"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+msgid "General Settings"
+msgstr "Các thiết lập chung"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__has_invoice
 msgid "Has Invoice"
-msgstr "Has Hóa đơn"
+msgstr "Có hóa đơn"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__has_quote
 msgid "Has Quote"
-msgstr "Có báo giá"
+msgstr "Có trích dẫn"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_source_modal
+msgid "Health Source"
+msgstr "Nguồn sức khỏe"
 
 #. module: health_landing
 #: model:ir.actions.client,name:health_landing.action_health_landing_dashboard
 msgid "Healthcare Dashboard"
-msgstr "Y tế Bảng điều khiển"
+msgstr "Bảng điều khiển chăm sóc sức khỏe"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_facilities
+msgid "Healthcare Facilities"
+msgstr "Các cơ sở chăm sóc sức khỏe"
 
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fieldservice_order
 msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr "Y tế Trường Dịch vụ Thứ tự (Unified Đặt lịch Hệ thống)"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "Healthcare Management System"
-msgstr "Y tế Quản lý Hệ thống"
+msgstr "Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__sale_order_id
 msgid "Healthcare Quote"
-msgstr "Y tế Quote"
+msgstr "Báo giá chăm sóc sức khỏe"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
 msgid "Healthcare Quote - %s"
-msgstr "Y tế Quote - %s"
+msgstr "Báo giá chăm sóc sức khỏe - %s"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Healthcare Relationships"
+msgstr "Quan hệ chăm sóc sức khỏe"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Healthcare Skills"
+msgstr "Kỹ năng chăm sóc sức khỏe"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_staff
+#: model:ir.ui.menu,name:health_landing.menu_admin_staff
+msgid "Healthcare Staff"
+msgstr "Nhân viên y tế"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Healthcare facility management"
+msgstr "Quản lý cơ sở chăm sóc sức khỏe"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Healthcare quote"
+msgstr "Báo giá chăm sóc sức khỏe"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__assigned_staff_ids
 msgid "Healthcare staff assigned to this service"
-msgstr "Y tế nhân viên Giao cho này dịch vụ"
+msgstr "Nhân viên y tế được giao dịch cho dịch vụ này"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
 #: model:ir.ui.menu,name:health_landing.menu_health_landing_home
 msgid "Home"
-msgstr "Trang chủ"
+msgstr "Nhà"
 
 #. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_map_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+msgid "Home Address"
+msgstr "Địa chỉ nhà"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__hub_stage_color
+msgid "Hub Stage Color"
+msgstr "Màu giai đoạn trung tâm"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "I am the:"
+msgstr "Tôi là người:"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_crm_lead__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__id
@@ -946,16 +1697,60 @@ msgstr "Trang chủ"
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__id
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_prepaid_package_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_res_partner__id
+#: model:ir.model.fields,field_description:health_landing.field_res_users__id
 msgid "ID"
-msgstr "ID"
+msgstr "Đơn vị nhận dạng"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
-msgid "IN PROGRESS"
-msgstr "ĐANG THỰC HIỆN"
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Immediate payment"
+msgstr "Tiền ngay lập tức"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Initial Contact"
+msgstr "Liên hệ ban đầu"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Inline edit pricing rules"
+msgstr "Đổi thay quy tắc định giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_insurance
+msgid "Insurance Providers"
+msgstr "Nhà cung cấp bảo hiểm"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Insurance companies"
+msgstr "Công ty bảo hiểm"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Interested"
+msgstr "Chào"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_internal_notes_modal
+msgid "Internal Notes"
+msgstr "Các ghi chú nội bộ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__invoice_id
 msgid "Invoice"
 msgstr "Hóa đơn"
@@ -964,46 +1759,60 @@ msgstr "Hóa đơn"
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
 msgid "Invoice - %s"
-msgstr "Hóa đơn - %s"
+msgstr "Lập hóa đơn - %s"
 
 #. module: health_landing
 #: model:ir.actions.act_window,name:health_landing.action_health_fso_invoice_wizard
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "Invoice Details"
-msgstr "Hóa đơn Chi tiết"
+msgstr "Chi tiết hóa đơn"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/models/health_fieldservice_order.py:0
 msgid "Invoice Details - %s"
-msgstr "Hóa đơn Chi tiết - %s"
+msgstr "Chi tiết hóa đơn - %s"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__invoice_state
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "Invoice Status"
-msgstr "Hóa đơn Trạng thái"
+msgstr "Trạng thái hóa đơn"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__invoice_submitted
 msgid "Invoice Submitted"
-msgstr "Hóa đơn Submitted"
+msgstr "Hóa đơn được nộp"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Invoice created"
+msgstr "Đã tạo hóa đơn"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__invoice_id
 msgid "Invoice generated for this service order"
-msgstr "Hóa đơn genetỷ lệd cho này dịch vụ thứ tự"
+msgstr "Hóa đơn được tạo ra cho đơn đặt hàng dịch vụ này"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
 msgid "Invoices"
-msgstr "Hóa đơns"
+msgstr "Tài khoản hóa đơn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Invoices and payments"
+msgstr "Hóa đơn và thanh toán"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Last Payment:"
-msgstr "Last Thanh toán:"
+msgstr "Số tiền thanh toán cuối cùng:"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__write_uid
@@ -1016,7 +1825,7 @@ msgstr "Last Thanh toán:"
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__write_uid
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__write_uid
 msgid "Last Updated by"
-msgstr "Cập nhật lần cuối bởi"
+msgstr "Lần cuối cùng được cập nhật bởi"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__write_date
@@ -1029,233 +1838,720 @@ msgstr "Cập nhật lần cuối bởi"
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__write_date
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__write_date
 msgid "Last Updated on"
-msgstr "Cập nhật lần cuối vào"
+msgstr "Lần cuối cùng được cập nhật vào"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+#: model:ir.model,name:health_landing.model_crm_lead
+msgid "Lead"
+msgstr "Khách hàng tiềm năng"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "Lead Details"
+msgstr "Chi tiết khách hàng tiềm năng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Lead Info"
+msgstr "Thông tin khách hàng tiềm năng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "Lead Information"
+msgstr "Thông tin khách hàng tiềm năng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_map_modal
+msgid "Lead Location"
+msgstr "Địa điểm dẫn"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Lead Reason"
+msgstr "Lý do khách hàng tiềm năng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Lead Relationships"
+msgstr "Quan hệ lãnh đạo"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_source_modal
+msgid "Lead Source"
+msgstr "Nguồn dẫn"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_fso_bookings_calendar_search
 msgid "Lead Staff"
-msgstr "Tiềm năng Nhân viên"
+msgstr "Nhân viên lãnh đạo"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "Loading data..."
-msgstr "Đang tải data..."
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Lead acquisition source"
+msgstr "Nguồn thu nhập dẫn"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
-msgid "Loading patient data..."
-msgstr "Đang tải Bệnh nhân data..."
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Lead details and contact"
+msgstr "Chi tiết khách hàng tiềm năng và liên lạc"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Leads"
+msgstr "Tạo dẫn"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
-msgid "Loading workflow data..."
-msgstr "Đang tải workflow data..."
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_clinical_notes__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_collect_cash__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_complete_service__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_confirm_booking__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_equipment__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_invoice__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_pay_later__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_pay_now__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_payment_received__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_quote__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_service_packages__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_staff_assignment__locked
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__node_state_start_service__locked
+msgid "Locked"
+msgstr "- Cốt khóa"
 
 #. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
-msgid "Location Map"
-msgstr "Vị trí Bản đồ"
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
+msgid "Log Activity"
+msgstr "Hoạt động nhật ký"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Lost Booking"
+msgstr "Mất lịch hẹn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+msgid "Main"
+msgstr "Trọng tài"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Main booking hub"
+msgstr "Trung tâm lịch hẹn chính"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__primary_staff_id
 msgid "Main staff member responsible for this service"
-msgstr "Main nhân viên member Người phụ trách cho này dịch vụ"
+msgstr "Nhân viên chính chịu trách nhiệm cho dịch vụ này"
 
 #. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
-msgid "Medical Information"
-msgstr "Thông tin y tế"
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage facility locations"
+msgstr "Quản lý các vị trí của cơ sở"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Manage healthcare staff"
+msgstr "Quản lý nhân viên chăm sóc sức khỏe"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage patient records and information"
+msgstr "Quản lý hồ sơ và thông tin bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage patient relationships"
+msgstr "Quản lý mối quan hệ với bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage potential customers"
+msgstr "Quản lý khách hàng tiềm năng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage pricing rules"
+msgstr "Quản lý quy tắc định giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Manage referral sources"
+msgstr "Quản lý nguồn giới thiệu"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage service orders"
+msgstr "Quản lý đơn đặt hàng dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage service packages and products"
+msgstr "Quản lý các gói dịch vụ và sản phẩm"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage service teams"
+msgstr "Quản lý các nhóm dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage specialties"
+msgstr "Quản lý các chuyên môn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Manage staff availability"
+msgstr "Quản lý sự sẵn sàng của nhân viên"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Manage staff skills"
+msgstr "Quản lý kỹ năng của nhân viên"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+msgid "Mandatory field configuration per model"
+msgstr "Thiết lập trường bắt buộc cho mỗi mô hình"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Map"
+msgstr "Bản đồ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
+msgid "Mark Spam"
+msgstr "Đánh dấu là thư rác"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_source_modal
+msgid "Marketing Source"
+msgstr "Nguồn tiếp thị"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_admin_master_data
+msgid "Master Data"
+msgstr "Dữ liệu chủ yếu"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_specialties
+msgid "Medical Specialties"
+msgstr "Các chuyên ngành y tế"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__diagnosis
 msgid "Medical diagnosis (Chuẩn đoán) - MOH compliance field"
-msgstr "Y khoa Chẩn đoán (Chuẩn đoán) - MOH tuân thủ trường"
+msgstr "Chẩn đoán y tế (Chuẩn đoán) - lĩnh vực tuân thủ MOH"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Medical diagnosis..."
-msgstr "Y khoa Chẩn đoán..."
+msgstr "Chẩn đoán y tế..."
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__medications_prescribed
 msgid "Medications Prescribed"
-msgstr "Thuốcs Prescribed"
+msgstr "Thuốc được kê đơn"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__medications_prescribed
 msgid "Medications prescribed during service"
-msgstr "Thuốcs prescribed during dịch vụ"
+msgstr "Thuốc được kê toa trong khi sử dụng"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Medications prescribed during service..."
-msgstr "Thuốcs prescribed during dịch vụ..."
+msgstr "Thuốc được kê toa trong khi sử dụng..."
 
 #. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__payment_method
-msgid "Method of payment selected"
-msgstr "Phương thức of Thanh toán đã chọn"
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Mobile healthcare service management"
+msgstr "Quản lý dịch vụ chăm sóc sức khỏe di động"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Monitor staff workload"
+msgstr "Theo dõi khối lượng công việc của nhân viên"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "Next Step"
+msgstr "Bước tiếp theo"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "No Follow-up Required"
+msgstr "Không cần theo dõi"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "No active packages"
-msgstr "Không Đang hoạt động góis"
+msgstr "Không có gói hoạt động"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
 msgid "No active service packages for this patient."
-msgstr "Không Đang hoạt động dịch vụ góis cho này Bệnh nhân."
+msgstr "Không có gói dịch vụ hoạt động cho bệnh nhân này."
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "No bookings found"
-msgstr "Không đặt lịchs được tìm thấy"
+msgstr "Không tìm thấy lịch hẹn"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "No financial data available"
-msgstr "Không financial data có sẵn"
+msgstr "Không có dữ liệu tài chính"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
 msgid "No invoice has been created for this booking yet."
-msgstr "Không Hóa đơn has been Đã tạo cho này đặt lịch yet."
+msgstr "Không có hóa đơn nào được tạo ra cho lịch hẹn này."
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
-msgid "No modules found for \""
-msgstr "Không tìm thấy mô-đun cho \""
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "No modules or features found for \""
-msgstr "Không tìm thấy mô-đun hoặc tính năng cho \""
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "No invoice or quote found for this booking."
+msgstr "Không tìm thấy hóa đơn hoặc báo giá cho lịch hẹn này."
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
 msgid "No quote has been created for this booking yet."
-msgstr "Không quote has been Đã tạo cho này đặt lịch yet."
+msgstr "Không có giá cả nào được tạo ra cho việc lịch hẹn này."
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "No recent audit events"
+msgstr "Không có sự kiện kiểm toán gần đây"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "No relationships found"
-msgstr "Không mối quan hệ được tìm thấy"
+msgstr "Không tìm thấy mối quan hệ"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_clinical_notes
+msgid "Node State Clinical Notes"
+msgstr "Trạng thái nút Ghi chú lâm sàng"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_collect_cash
+msgid "Node State Collect Cash"
+msgstr "Trạng thái nút Thu tiền mặt"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_complete_service
+msgid "Node State Complete Service"
+msgstr "Trạng thái nút Hoàn thành dịch vụ"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_confirm_booking
+msgid "Node State Confirm Booking"
+msgstr "Trạng thái nút Xác nhận lịch hẹn"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_equipment
+msgid "Node State Equipment"
+msgstr "Trạng thái nút Thiết bị"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_invoice
+msgid "Node State Invoice"
+msgstr "Trạng thái nút Hóa đơn"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_pay_later
+msgid "Node State Pay Later"
+msgstr "Trạng thái nút Thanh toán sau"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_pay_now
+msgid "Node State Pay Now"
+msgstr "Trạng thái nút Thanh toán ngay"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_payment_received
+msgid "Node State Payment Received"
+msgstr "Trạng thái nút Đã nhận thanh toán"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_quote
+msgid "Node State Quote"
+msgstr "Trạng thái nút Báo giá"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_service_packages
+msgid "Node State Service Packages"
+msgstr "Trạng thái nút Gói dịch vụ"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_staff_assignment
+msgid "Node State Staff Assignment"
+msgstr "Trạng thái nút Phân công nhân viên"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_state_start_service
+msgid "Node State Start Service"
+msgstr "Trạng thái nút Bắt đầu dịch vụ"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_clinical_notes
+msgid "Node Tip Clinical Notes"
+msgstr "Gợi ý nút Ghi chú lâm sàng"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_collect_cash
+msgid "Node Tip Collect Cash"
+msgstr "Gợi ý nút Thu tiền mặt"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_complete_service
+msgid "Node Tip Complete Service"
+msgstr "Gợi ý nút Hoàn thành dịch vụ"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_confirm_booking
+msgid "Node Tip Confirm Booking"
+msgstr "Gợi ý nút Xác nhận lịch hẹn"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_equipment
+msgid "Node Tip Equipment"
+msgstr "Gợi ý nút Thiết bị"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_invoice
+msgid "Node Tip Invoice"
+msgstr "Gợi ý nút Hóa đơn"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_pay_later
+msgid "Node Tip Pay Later"
+msgstr "Gợi ý nút Thanh toán sau"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_pay_now
+msgid "Node Tip Pay Now"
+msgstr "Gợi ý nút Thanh toán ngay"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_payment_received
+msgid "Node Tip Payment Received"
+msgstr "Gợi ý nút Đã nhận thanh toán"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_quote
+msgid "Node Tip Quote"
+msgstr "Gợi ý nút Báo giá"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_service_packages
+msgid "Node Tip Service Packages"
+msgstr "Gợi ý nút Gói dịch vụ"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_staff_assignment
+msgid "Node Tip Staff Assignment"
+msgstr "Gợi ý nút Phân công nhân viên"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__node_tip_start_service
+msgid "Node Tip Start Service"
+msgstr "Gợi ý nút Bắt đầu dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Not Interested"
+msgstr "Không quan tâm"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_start_service_wizard.py:0
 msgid "Not assigned"
-msgstr "Chưa gán"
+msgstr "Không được gán"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_payment_received_wizard.py:0
 msgid "Not specified"
-msgstr "Chưa xác định"
+msgstr "Không được xác định"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_internal_notes_modal
 msgid "Notes"
-msgstr "Ghi chú"
+msgstr "Các ghi chú"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Notes and requirements"
+msgstr "Các ghi chú và yêu cầu"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__lead_staff_id
 msgid "Nurse/Staff Who Collected Cash"
-msgstr "Y tá/Nhân viên Ai Collected Tiền mặt"
-
-#. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
-msgid "Open Booking Workflow Dashboard"
-msgstr "Mở Đặt lịch Workflow Bảng điều khiển"
+msgstr "Chị y tá/công viên thu tiền mặt"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "Overdue Invoices"
-msgstr "Quá hạn Hóa đơns"
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "OM collect cash"
+msgstr "Quản lý vận hành thu tiền mặt"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "OM to collect cash from nurse"
+msgstr "Quản lý vận hành thu tiền mặt từ y tá"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "Occupation"
+msgstr "Nghề nghiệp"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "PRIMARY"
-msgstr "CHÍNH"
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+msgid "Odoo system-wide configuration"
+msgstr "Odoo cấu hình toàn hệ thống"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "Open Client Dashboard"
+msgstr "Mở bảng điều khiển khách hàng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+msgid "Organization details and branding"
+msgstr "Chi tiết về tổ chức và thương hiệu"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "Other Information"
+msgstr "Thông tin khác"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Overdue Patients"
+msgstr "Bệnh nhân quá tuổi"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__package_notes
 msgid "Package Notes"
-msgstr "Gói Ghi chú"
+msgstr "Các ghi chú gói"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_packages
+msgid "Package Products"
+msgstr "Sản phẩm đóng gói"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Packages"
+msgstr "Các gói"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_res_partner__fso_past_ids
 #: model:ir.model.fields,field_description:health_landing.field_res_users__fso_past_ids
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Past Bookings"
-msgstr "Past Đặt lịchs"
+msgstr "Lịch hẹn trước đây"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_res_partner__fso_past_ids
 #: model:ir.model.fields,help:health_landing.field_res_users__fso_past_ids
 msgid "Past field service orders"
-msgstr "Past trường dịch vụ thứ tựs"
+msgstr "Các đơn đặt hàng phục vụ trên sân trước"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "Patient ID"
-msgstr "Mã bệnh nhân"
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Patient Bookings"
+msgstr "Lịch hẹn bệnh nhân"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_categories
+msgid "Patient Categories"
+msgstr "Các nhóm bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Patient Financials"
+msgstr "Tài chính của bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Patient Location"
+msgstr "Địa điểm của bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 msgid "Patient Management"
-msgstr "Bệnh nhân Quản lý"
+msgstr "Quản lý bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Patient Packages"
+msgstr "Các gói bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Patient Relationships"
+msgstr "Quan hệ với bệnh nhân"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Patient condition after service..."
-msgstr "Bệnh nhân Tình trạng after dịch vụ..."
+msgstr "Tình trạng bệnh nhân sau khi được điều trị..."
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Patient condition before service..."
-msgstr "Bệnh nhân Tình trạng trước dịch vụ..."
+msgstr "Tình trạng bệnh nhân trước khi được điều trị..."
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Patient management and client information"
+msgstr "Quản lý bệnh nhân và thông tin khách hàng"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Patient's reported symptoms or reason for visit..."
-msgstr "Bệnh nhân's báo cáoed Triệu chứng hoặc lý do cho Lần khám..."
+msgstr "Các triệu chứng hoặc lý do của bệnh nhân được báo cáo..."
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__pay_later
 msgid "Pay Later"
-msgstr "Pay Sau"
+msgstr "Thanh toán sau"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Pay Later not selected"
+msgstr "Chưa chọn Thanh toán sau"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Pay Later selected"
+msgstr "Đã chọn Thanh toán sau"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Pay Later was selected"
+msgstr "Đã chọn Thanh toán sau"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Pay Now"
+msgstr "Thanh toán ngay"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Pay Now was selected"
+msgstr "Đã chọn Thanh toán ngay"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Payers ("
-msgstr "Người thanh toáns ("
+msgstr "Người trả tiền ("
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_amount
 msgid "Payment Amount"
-msgstr "Thanh toán Số tiền"
+msgstr "Số tiền thanh toán"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Payment Collection"
+msgstr "Thu tiền"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_date
 msgid "Payment Date"
-msgstr "Thanh toán Ngày"
+msgstr "Ngày thanh toán"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__payment_method
@@ -1266,57 +2562,98 @@ msgstr "Phương thức thanh toán"
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_notes
 msgid "Payment Notes"
-msgstr "Thanh toán Ghi chú"
+msgstr "Các tờ ghi nợ"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_payment_received_wizard_form
 msgid "Payment Received"
-msgstr "Thanh toán Nhậnd"
+msgstr "Tiền được nhận"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__payment_received_date
 msgid "Payment Received Date"
-msgstr "Thanh toán Nhậnd Ngày"
+msgstr "Ngày nhận thanh toán"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_reference
 msgid "Payment Reference"
-msgstr "Thanh toán Tham chiếu"
+msgstr "Khán giả thanh toán"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Payment Transactions"
+msgstr "Giao dịch thanh toán"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_payment_received_wizard.py:0
 msgid "Payment amount must be greater than zero."
-msgstr "Thanh toán Số tiền must be greater than zero."
+msgstr "Số tiền thanh toán phải lớn hơn 0."
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Payment method: %s"
+msgstr "Phương pháp thanh toán: %s"
+
+#. module: health_landing
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Payment received"
+msgstr "Đã nhận thanh toán"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_payment_received_wizard.py:0
 msgid "Payment received: %s %s on %s. Reference: %s"
-msgstr "Thanh toán nhậnd: %s %s trên %s. Tham chiếu: %s"
+msgstr "Phí thanh toán được nhận: %s %s trên %s. Khán giả: %s"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Payment workflow"
+msgstr "Giai đoạn công việc thanh toán"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Pending Callback"
+msgstr "Chờ đợi gọi lại"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Pending Follow-up"
+msgstr "Việc tiếp tục"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Pending Invoices"
-msgstr "Đang chờ Hóa đơns"
+msgstr "Các hóa đơn đang chờ đợi"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
 msgid "Personal Details"
-msgstr "Cá nhân Chi tiết"
+msgstr "Thông tin cá nhân"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "Phone"
-msgstr "Điện thoại"
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+msgid "Personal details and contact"
+msgstr "Thông tin cá nhân và liên lạc"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_staff_assignment_wizard.py:0
 msgid "Please assign at least one staff member before saving."
-msgstr "Vui lòng phân công tại ít nhất one nhân viên member trước saving."
+msgstr "Xin vui lòng chỉ định ít nhất một nhân viên trước khi tiết kiệm."
 
 #. module: health_landing
 #. odoo-python
@@ -1324,85 +2661,262 @@ msgstr "Vui lòng phân công tại ít nhất one nhân viên member trước s
 msgid ""
 "Please confirm that the patient is present and verified before starting the "
 "service."
-msgstr "Vui lòng Xác nhận đó the Bệnh nhân là pređã gửi và verified trước bắt đầuing the dịch vụ."
+msgstr "Vui lòng xác nhận bệnh nhân hiện diện và xác minh trước khi bắt đầu điều trị."
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
 msgid "Please create a quote first before creating an invoice."
-msgstr "Vui lòng Tạo mới a quote đầu tiên trước creating an Hóa đơn."
+msgstr "Vui lòng tạo một trích dẫn trước khi tạo hóa đơn."
 
 #. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
-msgid "Postal Code"
-msgstr "Mã bưu điện"
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_clinical_notes_wizard.py:0
+msgid ""
+"Please fill in at least \"Clinical Notes\" or \"Treatment Performed\" before"
+" saving. Use the Cancel button if you do not wish to save."
+msgstr "Vui lòng điền ít nhất \"Các ý kiến lâm sàng\" hoặc \"Cử lý đã thực hiện\" trước khi lưu.."
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_equipment
+msgid "Portable Equipment"
+msgstr "Thiết bị di động"
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_prepaid_package_wizard
+msgid "Prepaid Package Creation Wizard"
+msgstr "Quản xuất gói trả trước"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_admin_pricing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "Pricing"
-msgstr "Định giá"
+msgstr "Giá cả"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+msgid "Pricing & Products"
+msgstr "Giá & Sản phẩm"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_pricelists
+#: model_terms:ir.ui.view,arch_db:health_landing.view_admin_pricelist_list
+msgid "Pricing Engines"
+msgstr "Máy động giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_pricing_rules
+msgid "Pricing Rules"
+msgstr "Quy tắc giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+msgid "Pricing engine configuration"
+msgstr "Thiết lập giá động cơ"
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__primary_next_step
+msgid "Primary Next Step"
+msgstr "Bước tiếp theo"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__primary_staff_id
 msgid "Primary Staff Member"
-msgstr "Chính Nhân viên Member"
+msgstr "Thành viên viên viên chính"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__lead_staff_id
 msgid ""
-"Primary staff member responsible for this service (computed from "
-"assignments)"
-msgstr "Chính nhân viên member Người phụ trách cho này dịch vụ (computed Từ phân côngs)"
+"Primary staff member responsible for this service (computed from assignments"
+" with lead role)"
+msgstr "Nhân viên chính chịu trách nhiệm cho dịch vụ này (được tính từ các nhiệm vụ có vai trò khách hàng tiềm năng))"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Priority levels"
+msgstr "Mức ưu tiên"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Process Payments"
+msgstr "Các khoản thanh toán quy trình"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "Province"
+msgstr "Quận"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_holidays
+#: model:ir.ui.menu,name:health_landing.menu_admin_holidays
+msgid "Public Holidays"
+msgstr "Ngày lễ công cộng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
 msgid "Quick Actions"
-msgstr "Quick Hành động"
+msgstr "Thao tác nhanh"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_quick_edit_rules
+msgid "Quick Edit Rules"
+msgstr "Các quy tắc chỉnh sửa nhanh"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Quick edit pricing rules"
+msgstr "Lập nhanh các quy tắc định giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Quote"
+msgstr "Báo giá"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__quote_state
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "Quote Status"
-msgstr "Quote Trạng thái"
+msgstr "Tình trạng trích dẫn"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Quote created"
+msgstr "Đã tạo báo giá"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Quote ready for invoicing"
+msgstr "Báo giá đã sẵn sàng lập hóa đơn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Real-time team communications"
+msgstr "Truyền thông nhóm thời gian thực"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Recent Activity"
+msgstr "Hoạt động gần đây"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Recent Bookings (Last 7 days)"
-msgstr "Recent Đặt lịchs (Last 7 days)"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "Recently Accessed"
-msgstr "Recently Truy cậped"
+msgstr "Lịch hẹn gần đây (7 ngày qua))"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__vital_signs
 msgid "Recorded vital signs during service"
-msgstr "Bản ghied sinh hiệu signs during dịch vụ"
+msgstr "Những dấu hiệu quan trọng được ghi lại trong thời gian phục vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_referral_sources
+msgid "Referral Sources"
+msgstr "Nguồn tham chiếu"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Rejected"
+msgstr "Thất bại"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Relations"
+msgstr "Quan hệ"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Relationship Context"
+msgstr "Mối quan hệ"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__required_equipment_ids
 msgid "Required Equipment"
-msgstr "Bắt buộc Thiết bị"
+msgstr "Thiết bị cần thiết"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Required equipment"
+msgstr "Thiết bị cần thiết"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+msgid "Resources"
+msgstr "Tài nguyên"
+
+#. module: health_landing
+#: model:ir.actions.act_window,name:health_landing.action_admin_role_mgmt
+msgid "Role Management"
+msgstr "Quản lý vai trò"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_equipment_wizard_form
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_service_packages_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_internal_notes_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_map_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_source_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
 msgid "Save"
-msgstr "Lưu"
+msgstr "Cung cấp"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Save & Close"
-msgstr "Lưu & Đóng"
+msgstr "Lưu & Close"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "Schedule a new activity for this lead"
+msgstr "Định lịch một hoạt động mới cho mục tiêu này"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Scheduled"
-msgstr "Đã lên lịch"
+msgstr "Chương trình"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__scheduled_datetime
@@ -1411,50 +2925,92 @@ msgstr "Đã lên lịch"
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__scheduled_datetime
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__scheduled_datetime
 msgid "Scheduled Date & Time"
-msgstr "Đã lên lịch Ngày & Giờ"
+msgstr "Ngày và giờ được lập kế hoạch"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Scheduling & Staff"
+msgstr "Lịch trình & Nhân viên"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_fso_bookings_calendar_search
 msgid "Search Bookings"
-msgstr "Tìm kiếm Đặt lịchs"
+msgstr "Tìm kiếm Lịch hẹn"
 
 #. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "Search modules and features... (Ctrl+K)"
-msgstr "Tìm kiếm mô-đuns và features... (Ctrl+K)"
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "Search for existing clients"
+msgstr "Tìm kiếm khách hàng hiện có"
 
 #. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
-msgid "Search modules... (Ctrl+K)"
-msgstr "Tìm kiếm mô-đuns... (Ctrl+K)"
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+msgid "Select Package"
+msgstr "Chọn gói"
 
 #. module: health_landing
 #: model:ir.actions.act_window,name:health_landing.action_patient_hub_spoke_list
 msgid "Select Patient"
-msgstr "Chọn Bệnh nhân"
+msgstr "Chọn bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
+msgid "Send Message"
+msgstr "Gửi thông điệp"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_areas
+msgid "Service Areas"
+msgstr "Các khu vực dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Service Billing"
+msgstr "Thuế dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Service Booked"
+msgstr "Dịch vụ đã đặt lịch"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Service Completed"
+msgstr "Dịch vụ đã hoàn thành"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__actual_end_datetime
 msgid "Service End Time"
-msgstr "Dịch vụ End Giờ"
+msgstr "Thời gian kết thúc dịch vụ"
 
 #. module: health_landing
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_landing/models/health_prepaid_package_wizard.py:0
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/js/hub_spoke_widget.js:0
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_service_packages_wizard_form
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
 msgid "Service Packages"
-msgstr "Dịch vụ Góis"
+msgstr "Các gói dịch vụ"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__actual_start_datetime
 msgid "Service Start Time"
-msgstr "Dịch vụ Bắt đầu Giờ"
+msgstr "Thời gian bắt đầu dịch vụ"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Service Timing"
-msgstr "Dịch vụ Timing"
+msgstr "Thời gian phục vụ"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__service_type
@@ -1465,223 +3021,400 @@ msgstr "Dịch vụ Timing"
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__service_type
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__service_type
 msgid "Service Type"
-msgstr "Dịch vụ Loại"
+msgstr "Loại dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_service_types
+msgid "Service Types"
+msgstr "Các loại dịch vụ"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Service completed"
+msgstr "Dịch vụ đã hoàn thành"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Service completed successfully!"
+msgstr "Dịch vụ đã hoàn thành!"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_service_packages_wizard__assigned_package_ids
 msgid "Service packages assigned to this booking"
-msgstr "Dịch vụ góis Giao cho này đặt lịch"
+msgstr "Các gói dịch vụ được chỉ định cho lịch hẹn này"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_service_packages_wizard.py:0
 msgid "Service packages updated: %s packages assigned"
-msgstr "Dịch vụ góis đã cập nhật: %s góis phân cônged"
+msgstr "Các gói dịch vụ được cập nhật: %s các gói được gán"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Service started"
+msgstr "Dịch vụ đã bắt đầu"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_start_service_wizard.py:0
 msgid "Service started at %s. Patient present: %s, Equipment ready: %s"
-msgstr "Dịch vụ bắt đầued tại %s. Bệnh nhân pređã gửi: %s, Thiết bị ready: %s"
+msgstr "Dịch vụ bắt đầu tại %s. Bệnh nhân hiện diện: %s, Thiết bị sẵn sàng: %s"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Sessions:"
-msgstr "Buổi:"
+msgstr "Các buổi:"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_admin_settings
+msgid "Settings"
+msgstr "Cài đặt"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_assigned_indicator
 msgid "Show Assigned Indicator"
-msgstr "Hiển thị Phân cônged Indicator"
+msgstr "Hình bày chỉ số được chỉ định"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_booked_indicator
 msgid "Show Booked Indicator"
-msgstr "Hiển thị Đã đặt Indicator"
+msgstr "Khán giả chỉ số đặt"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_clinical_notes_arrow
 msgid "Show Clinical Notes Arrow"
-msgstr "Hiển thị Lâm sàng Ghi chú Mũi tên"
+msgstr "Tự nhiên"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_collect_cash_arrow
 msgid "Show Collect Cash Arrow"
-msgstr "Hiển thị Collect Tiền mặt Mũi tên"
+msgstr "Tạo ra Bộ sưu tập mũi tên tiền mặt"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_completed_indicator
 msgid "Show Completed Indicator"
-msgstr "Hiển thị Đã hoàn thành Indicator"
+msgstr "hiển thị chỉ số hoàn thành"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_draft_indicator
 msgid "Show Draft Indicator"
-msgstr "Hiển thị Nháp Indicator"
+msgstr "Hình chỉ số dự thảo"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_in_progress_indicator
 msgid "Show In Progress Indicator"
-msgstr "Hiển thị Đang thực hiện Indicator"
+msgstr "Chỉ số tiến bộ"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_invoice_arrow
 msgid "Show Invoice Arrow"
-msgstr "Hiển thị Hóa đơn Mũi tên"
+msgstr "Tạo mũi tên hóa đơn"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_pay_later_arrow
 msgid "Show Pay Later Arrow"
-msgstr "Hiển thị Pay Sau Mũi tên"
+msgstr "Cho thấy trả tiền sau đó mũi tên"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_pay_now_arrow
 msgid "Show Pay Now Arrow"
-msgstr "Hiển thị Pay Bây giờ Mũi tên"
+msgstr "Hiển thị mũi tên Thanh toán ngay"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_payment_received_arrow
 msgid "Show Payment Received Arrow"
-msgstr "Hiển thị Thanh toán Nhậnd Mũi tên"
+msgstr "Hình ảnh thanh toán được nhận"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Source"
+msgstr "Nguồn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Spam Call"
+msgstr "Cuộc gọi rác"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "Spam Marked"
+msgstr "Đã đánh dấu là thư rác"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_equipment_wizard__equipment_notes
 msgid "Special instructions or notes about equipment"
-msgstr "Special hướng dẫn hoặc Ghi chú about thiết bị"
+msgstr "Các hướng dẫn hoặc ghi chú đặc biệt về thiết bị"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_equipment_wizard_form
 msgid "Special instructions or notes about equipment..."
-msgstr "Special hướng dẫn hoặc Ghi chú about thiết bị..."
+msgstr "Các hướng dẫn hoặc ghi chú đặc biệt về thiết bị..."
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__assignment_notes
 msgid "Special instructions or notes for assigned staff"
-msgstr "Special hướng dẫn hoặc Ghi chú cho phân cônged nhân viên"
+msgstr "Chỉ thị hoặc ghi chú đặc biệt cho nhân viên được chỉ định"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_staff_assignment_wizard_form
 msgid "Special instructions or notes for assigned staff..."
-msgstr "Special hướng dẫn hoặc Ghi chú cho phân cônged nhân viên..."
+msgstr "Chỉ thị hoặc ghi chú đặc biệt cho nhân viên được chỉ định..."
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_staff_assignment_wizard_form
 msgid "Staff Assignment"
-msgstr "Nhân viên Phân công"
+msgstr "Phân công nhân viên"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Staff Availability"
+msgstr "Sự sẵn sàng của nhân viên"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__staff_availability_checked
 msgid "Staff Availability Verified"
-msgstr "Nhân viên Availability Verified"
+msgstr "Việc kiểm tra sự sẵn có của nhân viên"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__staff_notified
 msgid "Staff Notified"
-msgstr "Nhân viên Notified"
+msgstr "Nhân viên được thông báo"
+
+#. module: health_landing
+#: model:ir.actions.act_window,name:health_landing.action_admin_skills
+msgid "Staff Skills"
+msgstr "Kỹ năng của nhân viên"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Staff Workload"
+msgstr "Số lượng công việc của nhân viên"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Staff assigned"
+msgstr "Nhân viên được chỉ định"
 
 #. module: health_landing
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_staff_assignment_wizard.py:0
 msgid "Staff assigned: %s. Primary: %s"
-msgstr "Nhân viên phân cônged: %s. Chính: %s"
+msgstr "Nhân viên được chỉ định: %s. Đội ngũ: %s"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Staff scheduling and workload management"
+msgstr "Lịch trình và quản lý khối lượng công việc của nhân viên"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_map_modal
+msgid "Standard Address"
+msgstr "Địa chỉ tiêu chuẩn"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__start_notes
 msgid "Start Notes"
-msgstr "Bắt đầu Ghi chú"
+msgstr "Bắt đầu ghi chú"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_start_service_wizard_form
 msgid "Start Service"
-msgstr "Bắt đầu Dịch vụ"
+msgstr "Bắt đầu dịch vụ"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Start service first"
+msgstr "Bắt đầu dịch vụ trước"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Start the service"
+msgstr "Bắt đầu dịch vụ"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Start the service delivery"
+msgstr "Bắt đầu cung cấp dịch vụ"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_fso_bookings_calendar_search
 msgid "State"
-msgstr "Tỉnh/Thành"
+msgstr "Nhà nước"
 
 #. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
-msgid "Summary"
-msgstr "Tóm tắt"
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "Status & Follow-up"
+msgstr "Tình trạng & Theo dõi"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "Step Locked"
+msgstr "Bước khóa"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Submit clinical notes first"
+msgstr "Gửi ghi chú lâm sàng trước"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Symptom catalog"
+msgstr "Danh mục triệu chứng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_symptoms
+msgid "Symptoms"
+msgstr "Các triệu chứng"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__symptoms
 msgid "Symptoms/Chief Complaint"
-msgstr "Triệu chứng/Chief Complaint"
+msgstr "Các triệu chứng/Sự phàn nàn chính"
 
 #. module: health_landing
 #. odoo-javascript
-#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
-msgid "Tip:"
-msgstr "Mẹo:"
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+msgid "System"
+msgstr "Hệ thống"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+msgid "System Management"
+msgstr "Quản lý hệ thống"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "System audit log and change tracking"
+msgstr "Lập nhật kiểm toán hệ thống và theo dõi thay đổi"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_settings.xml:0
+msgid "System configuration and management"
+msgstr "Thiết lập và quản lý hệ thống"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "System configuration and settings"
+msgstr "Thiết lập và cài đặt hệ thống"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "System overview and quick actions"
+msgstr "Hình ảnh tổng quan về hệ thống và các hành động nhanh chóng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/lead_hub_spoke_widget.js:0
+msgid "This contact has been marked as spam"
+msgstr "Liên hệ này đã được đánh dấu là thư rác"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Timeline View"
+msgstr "Xem thời gian"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Timeline of assignments"
+msgstr "Thời gian của các nhiệm vụ"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__total_price
 msgid "Total Amount"
-msgstr "Tổng cộng Số tiền"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
-msgid "Total Pending"
-msgstr "Tổng cộng Đang chờ"
+msgstr "Tổng số"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__total_price
 msgid "Total Price"
-msgstr "Tổng cộng Giá"
+msgstr "Giá tổng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Track customer interactions"
+msgstr "Theo dõi các tương tác của khách hàng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Track medical equipment"
+msgstr "Thiết bị y tế đường"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Track outstanding payments"
+msgstr "Theo dõi các khoản thanh toán còn vắng mặt"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "Track referral sources"
+msgstr "Theo dõi nguồn giới thiệu"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
 msgid "Treatment & Medications"
-msgstr "Điều trị & Thuốcs"
+msgstr "Điều trị & thuốc"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__treatment_performed
 msgid "Treatment Performed"
-msgstr "Điều trị Perbiểu mẫued"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__clinical_notes_submitted
-msgid "True if clinical notes have been entered"
-msgstr "Đúng nếu Lâm sàng Ghi chú have been nhậped"
+msgstr "Điều trị được thực hiện"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__invoice_submitted
 msgid "True if invoice has been created and submitted"
-msgstr "Đúng nếu Hóa đơn has been Đã tạo và submitted"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_assigned_indicator
-msgid "True when FSO is in Assigned stage"
-msgstr "Đúng khi nào FSO là trong Phân cônged giai đoạn"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_booked_indicator
-msgid "True when FSO is in Booked/Confirmed stage"
-msgstr "Đúng khi nào FSO là trong Đã đặt/Đã xác nhận giai đoạn"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_completed_indicator
-msgid "True when FSO is in Completed stage"
-msgstr "Đúng khi nào FSO là trong Đã hoàn thành giai đoạn"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_draft_indicator
-msgid "True when FSO is in Draft stage"
-msgstr "Đúng khi nào FSO là trong Nháp giai đoạn"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_in_progress_indicator
-msgid "True when FSO is in In Progress stage"
-msgstr "Đúng khi nào FSO là trong Đang thực hiện giai đoạn"
-
-#. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__cash_received_by_om
-msgid "True when Operations Manager has received cash from nurse"
-msgstr "Đúng khi nào Vận hành Người quản lý has nhậnd Tiền mặt Từ Y tá"
+msgstr "Đúng nếu hóa đơn đã được tạo và nộp"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__service_type
@@ -1692,7 +3425,7 @@ msgstr "Đúng khi nào Vận hành Người quản lý has nhậnd Tiền mặt
 #: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__service_type
 #: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__service_type
 msgid "Type of healthcare service requested"
-msgstr "Loại of Y tế dịch vụ requested"
+msgstr "Loại dịch vụ chăm sóc sức khỏe được yêu cầu"
 
 #. module: health_landing
 #. odoo-javascript
@@ -1701,13 +3434,38 @@ msgstr "Loại of Y tế dịch vụ requested"
 #: model:ir.model.fields,field_description:health_landing.field_res_users__fso_upcoming_ids
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
 msgid "Upcoming Bookings"
-msgstr "Upcoming Đặt lịchs"
+msgstr "Lịch hẹn sắp tới"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_res_partner__fso_upcoming_ids
 #: model:ir.model.fields,help:health_landing.field_res_users__fso_upcoming_ids
 msgid "Upcoming field service orders"
-msgstr "Upcoming trường dịch vụ thứ tựs"
+msgstr "Các đơn đặt hàng dịch vụ thực địa sắp tới"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+#: model:ir.actions.act_window,name:health_landing.action_admin_urgency
+msgid "Urgency Levels"
+msgstr "Mức độ khẩn cấp"
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_res_users
+msgid "User"
+msgstr "Người dùng"
+
+#. module: health_landing
+#: model:ir.actions.act_window,name:health_landing.action_admin_users
+msgid "Users"
+msgstr "Người dùng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_admin_users
+msgid "Users & Roles"
+msgstr "Người dùng & vai trò"
 
 #. module: health_landing
 #. odoo-javascript
@@ -1719,19 +3477,19 @@ msgstr "Viet Uc"
 #. module: health_landing
 #: model:ir.actions.client,name:health_landing.action_viet_uc_dashboard
 msgid "Viet Uc Dashboard"
-msgstr "Viet Uc Bảng điều khiển"
+msgstr "Bảng điều khiển Viet Uc"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
 msgid "Viet Uc Healthcare"
-msgstr "Viet Uc Y tế"
+msgstr "Y tế Việt Nam"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
 msgid "Viet Uc Logo"
-msgstr "Viet Uc Logo"
+msgstr "Logo Viet Uc"
 
 #. module: health_landing
 #. odoo-javascript
@@ -1739,44 +3497,107 @@ msgstr "Viet Uc Logo"
 msgid ""
 "Vietnam-Australia Family Health Service - Comprehensive Healthcare "
 "Management"
-msgstr "Vietnam-Australia Family Y tế Dịch vụ - Comprehensive Y tế Quản lý"
+msgstr "Dịch vụ Y tế Gia đình Việt Nam-Australia - Quản lý y tế toàn diện"
 
 #. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "Vietnam-Australia Family Health Service - Select a module to continue"
-msgstr "Vietnam-Australia Family Y tế Dịch vụ - Chọn a mô-đun Đến continue"
-
-#. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
-msgid "Home Address"
-msgstr "Địa chỉ nhà"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
-msgid "View All Features"
-msgstr "Xem Tất cả Features"
+#: model:ir.actions.act_window,name:health_landing.action_admin_districts
+msgid "Vietnamese Districts"
+msgstr "Các quận Việt Nam"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "View Invoice"
-msgstr "Xem Hóa đơn"
+msgstr "Xem hóa đơn"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "View Quote"
-msgstr "Xem Quote"
+msgstr "Xem trích dẫn"
 
 #. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
-msgid "View client and service details"
-msgstr "Xem Khách hàng và dịch vụ Chi tiết"
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "View all customers"
+msgstr "Xem tất cả khách hàng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "View all invoices"
+msgstr "Xem tất cả các hóa đơn"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "View and assign service packages"
+msgstr "Xem và gán gói dịch vụ"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "View or create quote"
+msgstr "Xem hoặc tạo báo giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "View patient hub-and-spoke dashboard"
+msgstr "Xem bảng điều khiển trung tâm và phát âm bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "View patient subscriptions"
+msgstr "Xem đăng ký bệnh nhân"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "View payment history"
+msgstr "Xem lịch sử thanh toán"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "View scheduled activities for this lead"
+msgstr "Xem các hoạt động được lên kế hoạch cho mục tiêu này"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/fso_hub_spoke_widget.js:0
+msgid "View service packages"
+msgstr "Xem gói dịch vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+msgid "View staff assignments"
+msgstr "Xem các nhiệm vụ của nhân viên"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Visual Scheduler"
+msgstr "Lịch trực quan"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/landing_dashboard.js:0
+#: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
+msgid "Visual scheduling interface"
+msgstr "Giao diện lập lịch thị giác"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__vital_signs
 msgid "Vital Signs"
-msgstr "Sinh hiệu Signs"
+msgstr "Các dấu hiệu quan trọng"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Waiting for nurse to collect cash"
+msgstr "Đang chờ y tá thu tiền mặt"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__scheduled_datetime
@@ -1785,33 +3606,32 @@ msgstr "Sinh hiệu Signs"
 #: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__scheduled_datetime
 #: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__scheduled_datetime
 msgid "When the service is scheduled to be performed"
-msgstr "Khi nào the dịch vụ là đã lên lịch Đến be perbiểu mẫued"
+msgstr "Khi dịch vụ được lên lịch để được thực hiện"
 
 #. module: health_landing
-#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__cash_collected_by_nurse
 #: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_amount
 msgid "client"
-msgstr "Khách hàng"
+msgstr "khách hàng"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__patient_condition_after
 msgid "client condition after service"
-msgstr "Khách hàng Tình trạng after dịch vụ"
+msgstr "tình trạng của khách hàng sau khi phục vụ"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__patient_condition_before
 msgid "client condition before service"
-msgstr "Khách hàng Tình trạng trước dịch vụ"
+msgstr "tình trạng của khách hàng trước khi phục vụ"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__patient_contacted
 msgid "client has been contacted about this booking"
-msgstr "Khách hàng has been đã liên hệ về điều này đặt lịch"
+msgstr "Khách hàng đã được liên hệ về lịch hẹn này"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__patient_present
 msgid "client is present and identity verified"
-msgstr "Khách hàng là pređã gửi và danh tính verified"
+msgstr "Khách hàng có mặt và xác minh danh tính"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__patient_id
@@ -1824,12 +3644,12 @@ msgstr "Khách hàng là pređã gửi và danh tính verified"
 #: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__patient_id
 #: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__patient_id
 msgid "client receiving the healthcare service"
-msgstr "Khách hàng nhận the Y tế dịch vụ"
+msgstr "khách hàng nhận dịch vụ chăm sóc sức khỏe"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__symptoms
 msgid "client's reported symptoms or reason for visit"
-msgstr "Khách hàng's báo cáoed Triệu chứng hoặc lý do cho Lần khám"
+msgstr "Các triệu chứng hoặc lý do của khách hàng"
 
 #. module: health_landing
 #. odoo-javascript
@@ -1847,779 +3667,21 @@ msgstr "còn lại"
 msgid ""
 "services used\n"
 "                                                <br/>"
-msgstr "dịch vụs used\n                                                <br/>"
+msgstr "Dịch vụ được sử dụng\n                                                <br/>"
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "years /"
-msgstr "năms /"
+msgstr "Những năm"
 
 #. module: health_landing
-#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
-msgid "📊 Dashboard"
-msgstr "📊 Bảng điều khiển"
-
-#. module: javascript
-msgid "Manage patient records and information"
-msgstr "Quản lý hồ sơ và thông tin bệnh nhân"
-
-#. module: javascript
-msgid "View patient hub-and-spoke dashboard"
-msgstr "Xem bảng điều khiển hub-and-spoke bệnh nhân"
-
-#. module: javascript
-msgid "Scheduling & Staff"
-msgstr "Lịch trình & Nhân viên"
-
-#. module: javascript
-msgid "Staff scheduling and workload management"
-msgstr "Quản lý lịch trình và khối lượng công việc nhân viên"
-
-#. module: javascript
-msgid "Assignment Dashboard"
-msgstr "Bảng điều khiển phân công"
-
-#. module: javascript
-msgid "View staff assignments"
-msgstr "Xem phân công nhân viên"
-
-#. module: javascript
-msgid "Visual Scheduler"
-msgstr "Bộ lập lịch trực quan"
-
-#. module: javascript
-msgid "Visual scheduling interface"
-msgstr "Giao diện lập lịch trực quan"
-
-#. module: javascript
-msgid "Timeline View"
-msgstr "Xem dòng thời gian"
-
-#. module: javascript
-msgid "Timeline of assignments"
-msgstr "Dòng thời gian phân công"
-
-#. module: javascript
-msgid "Staff Availability"
-msgstr "Khả dụng nhân viên"
-
-#. module: javascript
-msgid "Manage staff availability"
-msgstr "Quản lý khả dụng nhân viên"
-
-#. module: javascript
-msgid "Staff Workload"
-msgstr "Khối lượng công việc nhân viên"
-
-#. module: javascript
-msgid "Monitor staff workload"
-msgstr "Giám sát khối lượng công việc nhân viên"
-
-#. module: javascript
-msgid "Healthcare Skills"
-msgstr "Kỹ năng y tế"
-
-#. module: javascript
-msgid "Manage staff skills"
-msgstr "Quản lý kỹ năng nhân viên"
-
-#. module: javascript
-msgid "Service Areas"
-msgstr "Khu vực dịch vụ"
-
-#. module: javascript
-msgid "Configure service areas"
-msgstr "Cấu hình khu vực dịch vụ"
-
-#. module: javascript
-msgid "Healthcare Staff"
-msgstr "Nhân viên y tế"
-
-#. module: javascript
-msgid "Manage healthcare staff"
-msgstr "Quản lý nhân viên y tế"
-
-#. module: javascript
-msgid "CRM"
-msgstr "CRM"
-
-#. module: javascript
-msgid "Customer relationship management"
-msgstr "Quản lý quan hệ khách hàng"
-
-#. module: javascript
-msgid "Leads"
-msgstr "Liên hệ"
-
-#. module: javascript
-msgid "Manage potential customers"
-msgstr "Quản lý khách hàng tiềm năng"
-
-#. module: javascript
-msgid "CRM Contacts"
-msgstr "Liên hệ CRM"
-
-#. module: javascript
-msgid "Track customer interactions"
-msgstr "Theo dõi tương tác khách hàng"
-
-#. module: javascript
-msgid "Customers"
-msgstr "Khách hàng"
-
-#. module: javascript
-msgid "View all customers"
-msgstr "Xem tất cả khách hàng"
-
-#. module: javascript
-msgid "Healthcare Relationships"
-msgstr "Mối quan hệ y tế"
-
-#. module: javascript
-msgid "Manage patient relationships"
-msgstr "Quản lý mối quan hệ bệnh nhân"
-
-#. module: javascript
-msgid "Field Service"
-msgstr "Dịch vụ tại hiện trường"
-
-#. module: javascript
-msgid "Mobile healthcare service management"
-msgstr "Quản lý dịch vụ y tế di động"
-
-#. module: javascript
-msgid "Field Service Orders"
-msgstr "Đơn dịch vụ tại hiện trường"
-
-#. module: javascript
-msgid "Manage service orders"
-msgstr "Quản lý đơn dịch vụ"
-
-#. module: javascript
-msgid "Communications"
-msgstr "Truyền thông"
-
-#. module: javascript
-msgid "Real-time team communications"
-msgstr "Truyền thông nhóm thời gian thực"
-
-#. module: javascript
-msgid "Portable Equipment"
-msgstr "Thiết bị di động"
-
-#. module: javascript
-msgid "Track medical equipment"
-msgstr "Theo dõi thiết bị y tế"
-
-#. module: javascript
-msgid "Clinical Protocols"
-msgstr "Quy trình lâm sàng"
-
-#. module: javascript
-msgid "Clinical guidelines"
-msgstr "Hướng dẫn lâm sàng"
-
-#. module: javascript
-msgid "Field Service Teams"
-msgstr "Đội ngũ dịch vụ tại hiện trường"
-
-#. module: javascript
-msgid "Manage service teams"
-msgstr "Quản lý đội ngũ dịch vụ"
-
-#. module: javascript
-msgid "Manage service packages and products"
-msgstr "Quản lý gói dịch vụ và sản phẩm"
-
-#. module: javascript
-msgid "Package Products"
-msgstr "Sản phẩm gói"
-
-#. module: javascript
-msgid "Configure package products"
-msgstr "Cấu hình sản phẩm gói"
-
-#. module: javascript
-msgid "Patient Packages"
-msgstr "Gói bệnh nhân"
-
-#. module: javascript
-msgid "View patient subscriptions"
-msgstr "Xem đăng ký bệnh nhân"
-
-#. module: javascript
-msgid "Advanced Pricelist"
-msgstr "Bảng giá nâng cao"
-
-#. module: javascript
-msgid "Dynamic pricing rules and engines"
-msgstr "Quy tắc và công cụ định giá linh hoạt"
-
-#. module: javascript
-msgid "Pricing Engines"
-msgstr "Công cụ định giá"
-
-#. module: javascript
-msgid "Configure pricing engines"
-msgstr "Cấu hình công cụ định giá"
-
-#. module: javascript
-msgid "Pricing Rules"
-msgstr "Quy tắc định giá"
-
-#. module: javascript
-msgid "Manage pricing rules"
-msgstr "Quản lý quy tắc định giá"
-
-#. module: javascript
-msgid "Quick Edit Rules"
-msgstr "Chỉnh sửa nhanh quy tắc"
-
-#. module: javascript
-msgid "Inline edit pricing rules"
-msgstr "Chỉnh sửa nhanh quy tắc định giá"
-
-#. module: javascript
-msgid "Billing & Invoicing"
-msgstr "Thanh toán & Hóa đơn"
-
-#. module: javascript
-msgid "Financial management and billing"
-msgstr "Quản lý tài chính và thanh toán"
-
-#. module: javascript
-msgid "Service Billing"
-msgstr "Thanh toán dịch vụ"
-
-#. module: javascript
-msgid "Create and manage invoices"
-msgstr "Tạo và quản lý hóa đơn"
-
-#. module: javascript
-msgid "AR Dashboard"
-msgstr "Bảng điều khiển công nợ"
-
-#. module: javascript
-msgid "Accounts receivable overview"
-msgstr "Tổng quan công nợ phải thu"
-
-#. module: javascript
-msgid "Overdue Patients"
-msgstr "Bệnh nhân quá hạn"
-
-#. module: javascript
-msgid "Track outstanding payments"
-msgstr "Theo dõi thanh toán quá hạn"
-
-#. module: javascript
-msgid "Payment Transactions"
-msgstr "Giao dịch thanh toán"
-
-#. module: javascript
-msgid "View payment history"
-msgstr "Xem lịch sử thanh toán"
-
-#. module: javascript
-msgid "Process Payments"
-msgstr "Xử lý thanh toán"
-
-#. module: javascript
-msgid "Payment workflow"
-msgstr "Quy trình thanh toán"
-
-#. module: javascript
-msgid "Facilities"
-msgstr "Cơ sở"
-
-#. module: javascript
-msgid "Healthcare facility management"
-msgstr "Quản lý cơ sở y tế"
-
-#. module: javascript
-msgid "Healthcare Facilities"
-msgstr "Cơ sở y tế"
-
-#. module: javascript
-msgid "Manage facility locations"
-msgstr "Quản lý vị trí cơ sở"
-
-#. module: javascript
-msgid "Configuration"
-msgstr "Cấu hình"
-
-#. module: javascript
-msgid "System configuration and settings"
-msgstr "Cấu hình và cài đặt hệ thống"
-
-#. module: javascript
-msgid "Patient Categories"
-msgstr "Phân loại bệnh nhân"
-
-#. module: javascript
-msgid "Configure patient types"
-msgstr "Cấu hình loại bệnh nhân"
-
-#. module: javascript
-msgid "Service Types"
-msgstr "Loại dịch vụ"
-
-#. module: javascript
-msgid "Define service types"
-msgstr "Xác định loại dịch vụ"
-
-#. module: javascript
-msgid "Medical Specialties"
-msgstr "Chuyên khoa y tế"
-
-#. module: javascript
-msgid "Manage specialties"
-msgstr "Quản lý chuyên khoa"
-
-#. module: javascript
-msgid "Symptoms"
-msgstr "Triệu chứng"
-
-#. module: javascript
-msgid "Symptom catalog"
-msgstr "Danh mục triệu chứng"
-
-#. module: javascript
-msgid "Referral Sources"
-msgstr "Nguồn giới thiệu"
-
-#. module: javascript
-msgid "Track referral sources"
-msgstr "Theo dõi nguồn giới thiệu"
-
-#. module: javascript
-msgid "Insurance Providers"
-msgstr "Nhà cung cấp bảo hiểm"
-
-#. module: javascript
-msgid "Insurance companies"
-msgstr "Công ty bảo hiểm"
-
-#. module: javascript
-msgid "Urgency Levels"
-msgstr "Mức độ khẩn cấp"
-
-#. module: javascript
-msgid "Priority levels"
-msgstr "Mức độ ưu tiên"
-
-#. module: javascript
-msgid "Client Info"
-msgstr "Thông tin khách hàng"
-
-#. module: javascript
-msgid "Lead details and contact"
-msgstr "Chi tiết liên hệ và thông tin"
-
-#. module: javascript
-msgid "Relations"
-msgstr "Quan hệ"
-
-#. module: javascript
-msgid "Caregivers, payers, contacts"
-msgstr "Người chăm sóc, người thanh toán, liên hệ"
-
-#. module: javascript
-msgid "Source"
-msgstr "Nguồn"
-
-#. module: javascript
-msgid "Lead acquisition source"
-msgstr "Nguồn tiếp nhận liên hệ"
-
-#. module: javascript
-msgid "Internal Notes"
-msgstr "Ghi chú nội bộ"
-
-#. module: javascript
-msgid "Notes and requirements"
-msgstr "Ghi chú và yêu cầu"
-
-#. module: javascript
-msgid "Map"
-msgstr "Bản đồ"
-
-#. module: javascript
-msgid "Address and location"
-msgstr "Địa chỉ và vị trí"
-
-#. module: javascript
-msgid "Initial Contact"
-msgstr "Liên hệ ban đầu"
-
-#. module: javascript
-msgid "Lead"
-msgstr "Liên hệ"
-
-#. module: javascript
-msgid "Lost Booking"
-msgstr "Lịch hẹn đã mất"
-
-#. module: javascript
-msgid "Spam Call"
-msgstr "Cuộc gọi rác"
-
-#. module: javascript
-msgid "Pending Callback"
-msgstr "Chờ gọi lại"
-
-#. module: javascript
-msgid "Pending Follow-up"
-msgstr "Chờ theo dõi"
-
-#. module: javascript
-msgid "Service Booked"
-msgstr "Đã đặt dịch vụ"
-
-#. module: javascript
-msgid "Interested"
-msgstr "Quan tâm"
-
-#. module: javascript
-msgid "Not Interested"
-msgstr "Không quan tâm"
-
-#. module: javascript
-msgid "Rejected"
-msgstr "Từ chối"
-
-#. module: javascript
-msgid "No Follow-up Required"
-msgstr "Không cần theo dõi"
-
-#. module: javascript
-msgid "Lead Information"
-msgstr "Thông tin liên hệ"
-
-#. module: javascript
-msgid "Lead Relationships"
-msgstr "Mối quan hệ liên hệ"
-
-#. module: javascript
-msgid "Lead Location"
-msgstr "Vị trí liên hệ"
-
-#. module: javascript
-msgid "Lead Source"
-msgstr "Nguồn liên hệ"
-
-#. module: javascript
-msgid "This contact has been marked as spam"
-msgstr "Liên hệ này đã được đánh dấu là rác"
-
-#. module: javascript
-msgid "Spam Marked"
-msgstr "Đã đánh dấu rác"
-
-#. module: javascript
-msgid "Failed to mark as spam"
-msgstr "Không thể đánh dấu là rác"
-
-#. module: javascript
-msgid "View service packages"
-msgstr "Xem gói dịch vụ"
-
-#. module: javascript
-msgid "Quote"
-msgstr "Báo giá"
-
-#. module: javascript
-msgid "Healthcare quote"
-msgstr "Báo giá y tế"
-
-#. module: javascript
-msgid "Confirm the booking"
-msgstr "Xác nhận lịch hẹn"
-
-#. module: javascript
-msgid "Equipment"
-msgstr "Thiết bị"
-
-#. module: javascript
-msgid "Required equipment"
-msgstr "Thiết bị yêu cầu"
-
-#. module: javascript
-msgid "Main booking hub"
-msgstr "Trung tâm lịch hẹn chính"
-
-#. module: javascript
-msgid "Assign staff to booking"
-msgstr "Phân công nhân viên cho lịch hẹn"
-
-#. module: javascript
-msgid "Start the service"
-msgstr "Bắt đầu dịch vụ"
-
-#. module: javascript
-msgid "Fill clinical notes"
-msgstr "Điền ghi chú lâm sàng"
-
-#. module: javascript
-msgid "Create invoice"
-msgstr "Tạo hóa đơn"
-
-#. module: javascript
-msgid "Pay Now"
-msgstr "Thanh toán ngay"
-
-#. module: javascript
-msgid "Immediate payment"
-msgstr "Thanh toán ngay"
-
-#. module: javascript
-msgid "Defer payment"
-msgstr "Thanh toán sau"
-
-#. module: javascript
-msgid "Collect Cash"
-msgstr "Thu tiền mặt"
-
-#. module: javascript
-msgid "OM collect cash"
-msgstr "Quản lý thu tiền mặt"
-
-#. module: javascript
-msgid "Payment received"
-msgstr "Đã nhận thanh toán"
-
-#. module: javascript
-msgid "Payment has already been received for this booking. No further payment actions are needed."
-msgstr "Đã nhận thanh toán cho lịch hẹn này. Không cần thực hiện thêm hành động thanh toán nào."
-
-#. module: javascript
-msgid "Payment Completed"
-msgstr "Thanh toán hoàn tất"
-
-#. module: javascript
-msgid "Please create an invoice before processing payment."
-msgstr "Vui lòng tạo hóa đơn trước khi xử lý thanh toán."
-
-#. module: javascript
-msgid "Invoice Required"
-msgstr "Yêu cầu hóa đơn"
-
-#. module: javascript
-msgid "Payment Collection"
-msgstr "Thu tiền thanh toán"
-
-#. module: javascript
-msgid "Patient Bookings"
-msgstr "Lịch hẹn bệnh nhân"
-
-#. module: javascript
-msgid "Patient Financials"
-msgstr "Tài chính bệnh nhân"
-
-#. module: javascript
-msgid "Patient Relationships"
-msgstr "Mối quan hệ bệnh nhân"
-
-#. module: javascript
-msgid "Patient Location"
-msgstr "Vị trí bệnh nhân"
-
-#. module: javascript
-msgid "Patient management and client information"
-msgstr "Quản lý bệnh nhân và thông tin khách hàng"
-
-#. module: javascript
-msgid "Field service orders and booking management"
-msgstr "Quản lý đơn dịch vụ tại hiện trường và lịch hẹn"
-
-#. module: javascript
-msgid "Staff"
-msgstr "Nhân viên"
-
-#. module: javascript
-msgid "Accounts"
-msgstr "Kế toán"
-
-#. module: javascript
-msgid "Billing, invoicing, and financial management"
-msgstr "Quản lý thanh toán, hóa đơn và tài chính"
-
-#. module: javascript
-msgid "View all invoices"
-msgstr "Xem tất cả hóa đơn"
-
-#. module: javascript
-msgid "Configure patient categories"
-msgstr "Cấu hình phân loại bệnh nhân"
-
-#. module: javascript
-msgid "Configure symptoms"
-msgstr "Cấu hình triệu chứng"
-
-#. module: javascript
-msgid "Manage referral sources"
-msgstr "Quản lý nguồn giới thiệu"
-
-#. module: javascript
-msgid "Configure insurance"
-msgstr "Cấu hình bảo hiểm"
-
-#. module: javascript
-msgid "Define urgency levels"
-msgstr "Định nghĩa mức độ khẩn cấp"
-
-#. module: javascript
-msgid "Define pricing rules"
-msgstr "Định nghĩa quy tắc định giá"
-
-#. module: javascript
-msgid "Quick edit pricing rules"
-msgstr "Chỉnh sửa nhanh quy tắc định giá"
-
-#. module: javascript
-msgid "Configure healthcare facilities"
-msgstr "Cấu hình cơ sở y tế"
-
-#. module: javascript
-msgid "Configure service packages"
-msgstr "Cấu hình gói dịch vụ"
-
-#. module: javascript
-msgid "Field Requirements"
-msgstr "Yêu cầu trường"
-
-#. module: javascript
-msgid "Configure mandatory fields per model and state"
-msgstr "Cấu hình trường bắt buộc theo mô hình và trạng thái"
-
-#. module: javascript
-msgid "Audit Log"
-msgstr "Nhật ký kiểm tra"
-
-#. module: javascript
-msgid "System audit log and change tracking"
-msgstr "Nhật ký kiểm tra hệ thống và theo dõi thay đổi"
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/lead_hub_spoke_widget.xml:0
+msgid "⚠️ Spam Caller"
+msgstr "⚠️ Người gọi thư rác"
 
 #. module: health_landing
-msgid "No modules found for"
-msgstr "Không tìm thấy mô-đun cho"
-
-#. module: health_landing
-msgid "Viet-Uc Family Healthcare Services - Select a module to continue"
-msgstr "Dịch vụ Y tế Gia đình Việt-Úc - Chọn mô-đun để tiếp tục"
-
-#. module: health_landing
-msgid "No modules or features found for"
-msgstr "Không tìm thấy mô-đun hoặc tính năng cho"
-
-#. module: health_landing
-msgid "Back to Dashboard"
-msgstr "Quay lại bảng điều khiển"
-
-#. module: health_landing
-msgid "Explore the full set of features available in this module."
-msgstr "Khám phá toàn bộ tính năng có trong mô-đun này."
-
-#. module: javascript
-msgid "Lead Info"
-msgstr "Thông tin liên hệ"
-
-#. module: javascript
-msgid "Personal details and contact"
-msgstr "Thông tin cá nhân và liên hệ"
-
-#. module: javascript
-msgid "Packages"
-msgstr "Gói dịch vụ"
-
-#. module: javascript
-msgid "Active service packages"
-msgstr "Gói dịch vụ đang hoạt động"
-
-#. module: javascript
-msgid "Bookings"
-msgstr "Lịch hẹn"
-
-#. module: javascript
-msgid "Appointments and visits"
-msgstr "Cuộc hẹn và lượt thăm"
-
-#. module: javascript
-msgid "Financials"
-msgstr "Tài chính"
-
-#. module: javascript
-msgid "Invoices and payments"
-msgstr "Hóa đơn và thanh toán"
-
-#. module: javascript
-msgid "Complete Service"
-msgstr "Hoàn tất dịch vụ"
-
-#. module: javascript
-msgid "Complete service and collect payment"
-msgstr "Hoàn tất dịch vụ và thu tiền"
-
-#. module: javascript
-msgid "Step Locked"
-msgstr "Bước bị khóa"
-
-#. module: javascript
-msgid "No invoice or quote found for this booking."
-msgstr "Không tìm thấy hóa đơn hoặc báo giá cho lịch hẹn này."
-
-#. module: javascript
-msgid "Service completed successfully!"
-msgstr "Dịch vụ đã hoàn tất thành công!"
-
-#. module: javascript
-msgid "Service Completed"
-msgstr "Dịch vụ đã hoàn tất"
-
-#. module: javascript
-msgid "Could not complete service"
-msgstr "Không thể hoàn tất dịch vụ"
-
-#. module: javascript
-msgid "Error"
-msgstr "Lỗi"
-
-#. module: javascript
-msgid "Patient Code"
-msgstr "Mã bệnh nhân"
-
-#. module: javascript
-msgid "Contacts"
-msgstr "Liên hệ"
-
-#. module: javascript
-msgid "Mark as Spam"
-msgstr "Đánh dấu là spam"
-
-#. module: javascript
-msgid "Create Booking"
-msgstr "Tạo lịch hẹn"
-
-#. module: javascript
-msgid "Refer for Consultation"
-msgstr "Chuyển tư vấn"
-
-#. module: javascript
-msgid "Escalate Contact"
-msgstr "Chuyển cấp liên hệ"
-
-#. module: javascript
-msgid "Send Message"
-msgstr "Gửi tin nhắn"
-
-#. module: javascript
-msgid "Schedule Activity"
-msgstr "Lên lịch hoạt động"
-
-#. module: javascript
-msgid "Add Internal Note"
-msgstr "Thêm ghi chú nội bộ"
-
-#. module: javascript
-msgid "Loading contact data..."
-msgstr "Đang tải dữ liệu liên hệ..."
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
+msgid "🔍 Search"
+msgstr "🔍 Tìm kiếm"

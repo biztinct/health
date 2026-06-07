@@ -1,0 +1,249 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_field_requirements
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-06 09:29+0000\n"
+"PO-Revision-Date: 2026-06-06 09:29+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__active
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_search
+msgid "Active"
+msgstr ""
+
+#. module: health_field_requirements
+#: model_terms:ir.actions.act_window,help:health_field_requirements.action_field_requirement_rules
+msgid ""
+"Add rules to make specific fields mandatory - globally or per role,\n"
+"                always or only in certain states."
+msgstr ""
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Always"
+msgstr ""
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_form
+msgid "Archived"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model,name:health_field_requirements.model_base
+msgid "Base"
+msgstr "Cơ sở"
+
+#. module: health_field_requirements
+#: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__state_values
+msgid ""
+"Comma-separated list of state values where this field is required. Leave "
+"empty for \"always required\". Example: confirmed,assigned,in_progress"
+msgstr ""
+
+#. module: health_field_requirements
+#: model_terms:ir.actions.act_window,help:health_field_requirements.action_field_requirement_rules
+msgid "Configure mandatory fields for your forms"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_ir_ui_view__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Failed to delete rule"
+msgstr ""
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Failed to load fields"
+msgstr ""
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Failed to load hierarchy"
+msgstr ""
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Failed to save rule"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__field_id
+msgid "Field"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__field_label
+msgid "Field Label"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__field_name
+msgid "Field Name"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model,name:health_field_requirements.model_field_requirement_rule
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_form
+msgid "Field Requirement Rule"
+msgstr ""
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_list
+msgid "Field Requirement Rules"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.actions.act_window,name:health_field_requirements.action_field_requirement_rules
+#: model:ir.actions.client,name:health_field_requirements.action_field_requirements_dashboard
+#: model:ir.ui.menu,name:health_field_requirements.menu_field_requirements_root
+msgid "Field Requirements"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__is_global
+msgid "Global (All Roles)"
+msgstr ""
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_search
+msgid "Global Rules"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__id
+#: model:ir.model.fields,field_description:health_field_requirements.field_ir_ui_view__id
+msgid "ID"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__is_global
+msgid ""
+"If checked, this rule applies to ALL users. If unchecked, only applies to "
+"users with the selected roles."
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__model_id
+msgid "Model"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__model_name
+msgid "Model Name"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__display_name
+msgid "Name"
+msgstr ""
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "New Rule"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__state_values
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_list
+msgid "Required in States"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__role_ids
+msgid "Roles"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__role_ids
+msgid "Roles this rule applies to (only when Global is unchecked)"
+msgstr ""
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Rule removed"
+msgstr ""
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_form
+msgid "Scope"
+msgstr ""
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_search
+msgid "Search Requirement Rules"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__state_values_display
+msgid "States"
+msgstr ""
+
+#. module: health_field_requirements
+#: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_form
+msgid "Target"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__field_id
+msgid "The field that should be mandatory"
+msgstr ""
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/base_model_override.py:0
+msgid ""
+"The following mandatory fields must be filled on %(model)s:\n"
+"\n"
+"%(fields)s"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__model_id
+msgid "The model (form) this rule applies to"
+msgstr ""
+
+#. module: health_field_requirements
+#: model:ir.model,name:health_field_requirements.model_ir_ui_view
+msgid "View"
+msgstr "Chế độ xem"

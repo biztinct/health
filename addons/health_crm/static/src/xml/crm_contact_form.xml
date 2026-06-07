@@ -44,7 +44,7 @@
                                     <span><i class="fa fa-envelope-o"/> <t t-esc="headerState.header.email"/></span>
                                 </t>
                                 <t t-if="headerState.header.channel">
-                                    <span><i class="fa fa-hashtag"/> <t t-esc="headerState.header.channel"/></span>
+                                    <span><i class="fa fa-hashtag"/> <t t-esc="translateLabel(headerState.header.channel)"/></span>
                                 </t>
                                 <t t-if="headerState.header.province">
                                     <span><i class="fa fa-map-marker"/> <t t-esc="headerState.header.province"/></span>

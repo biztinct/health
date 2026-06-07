@@ -1,5 +1,8 @@
 # Translation Scripts - User Guide
 
+> Historical document. Use `VietTranslation/README.md` and the utilities in
+> `VietTranslation/scripts/` for the current Odoo 19 translation workflow.
+
 ## 📁 Available Translation Scripts
 
 ### 1. `translate_po_file.py` - Main Translation Script

@@ -1,0 +1,933 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_redinvoice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-06 11:22+0000\n"
+"PO-Revision-Date: 2026-06-06 11:22+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/wizard/redinvoice_pdf_preview_wizard.py:0
+msgid ""
+"<p>Dear %s,</p><p>Please find attached your VAT (Red) invoice.</p><p>Best "
+"regards,<br/>%s</p>"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_fso_form_redinvoice
+msgid "<span class=\"hf-redinv-pdf\"/> Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid ""
+"A Red Invoice (%s) has already been issued for this document. Cancel the "
+"existing Red Invoice before generating a new one — re-issuing would create a"
+" duplicate invoice at the tax authority."
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.ui.menu,name:health_redinvoice.menu_health_redinvoice_requests
+msgid "API Requests"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__attachment_id
+msgid "Attachment"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_auto_issue
+msgid "Auto-create Red Invoice on Post"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
+msgid "Automation"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__2
+msgid "Bank Transfer"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__7
+msgid "Bank Transfer (TT78)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_partner__buyer_id_type__3
+msgid "Business License"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__buyer_bank_account
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_users__buyer_bank_account
+msgid "Buyer Bank Account"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__buyer_bank_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_users__buyer_bank_name
+msgid "Buyer Bank Name"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__buyer_country_code
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_users__buyer_country_code
+msgid "Buyer Country Code"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__buyer_district_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_users__buyer_district_name
+msgid "Buyer District"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__buyer_id_type
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_users__buyer_id_type
+msgid "Buyer Document Type"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__buyer_legal_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_users__buyer_legal_name
+msgid "Buyer Legal Name"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__buyer_not_get_invoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_users__buyer_not_get_invoice
+msgid "Buyer Opt-out of Invoice Delivery"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__buyer_postal_code
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_users__buyer_postal_code
+msgid "Buyer Postal Code"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+msgid "Cancel Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "Cancellation failed: %s"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "Cancellation requested from Odoo"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_state__cancelled
+msgid "Cancelled"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "Cancelled from Odoo"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__1
+msgid "Cash"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__6
+msgid "Cash (TT78)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__3
+msgid "Cash/Bank Transfer"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__8
+msgid "Cash/Bank Transfer (TT78)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_pdf_preview_wizard
+msgid "Close"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_company__red_invoice_signing_mode__cloud_ca
+msgid "Cloud CA"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model,name:health_redinvoice.model_res_company
+msgid "Companies"
+msgstr "Công ty"
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__company_id
+msgid "Company"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,help:health_redinvoice.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_redinvoice
+#: model:ir.model,name:health_redinvoice.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_redinvoice
+#: model:ir.model,name:health_redinvoice.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__create_uid
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__create_date
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
+msgid "Credentials & Defaults"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__4
+msgid "Credit"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/wizard/redinvoice_pdf_preview_wizard.py:0
+msgid "Customer"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Date"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_exchange_user
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_exchange_user
+msgid "Default Exchange User"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_series
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_series
+msgid "Default Invoice Series"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_template_code
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_template_code
+msgid "Default Template Code"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__display_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__display_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__display_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__display_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_pdf_preview_wizard
+msgid "Download"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_allow_download_pdf
+msgid "Download Converted PDF"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+msgid "Download Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/wizard/redinvoice_pdf_preview_wizard.py:0
+msgid "Email Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_pdf_preview_wizard
+msgid "Email to Client"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__enable_red_invoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
+msgid "Enable Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__endpoint
+msgid "Endpoint"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__error_message
+msgid "Error Message"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_state__failed
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__redinvoice_request__state__failed
+msgid "Failed"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__filename
+msgid "Filename"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+msgid "Files"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+msgid "Generate Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__response_code
+msgid "HTTP Code"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_hash_string
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_hash_string
+msgid "Hash String"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model,name:health_redinvoice.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__id
+#: model:ir.model.fields,field_description:health_redinvoice.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__id
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__id
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__id
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__id
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_partner__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_partner__buyer_id_type__1
+msgid "ID Card"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+msgid "Identifiers"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__move_id
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__move_id
+msgid "Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_company__red_invoice_type__1
+msgid "Invoice Type 1 (TT78)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_company__red_invoice_type__2
+msgid "Invoice Type 2"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_company__red_invoice_type__3
+msgid "Invoice Type 3"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_company__red_invoice_type__4
+msgid "Invoice Type 4"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_state__issued
+msgid "Issued"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_state__issuing
+msgid "Issuing"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model,name:health_redinvoice.model_account_move
+msgid "Journal Entry"
+msgstr "Đăng ký tạp chí"
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__write_uid
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__write_date
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_lookup_url
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_lookup_url
+msgid "Lookup URL"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,help:health_redinvoice.field_res_config_settings__enable_red_invoice
+msgid ""
+"Master toggle — when unchecked, all Red Invoice functionality is disabled "
+"(no API calls, no auto-issue, tax tabs hidden on invoices)."
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
+msgid ""
+"Master toggle — when unchecked, all Red Invoice functionality is disabled "
+"(no API calls, no auto-issue, tax tabs hidden)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_merchant_city
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_merchant_city
+msgid "Merchant City (QR78)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_merchant_code
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_merchant_code
+msgid "Merchant Code (QR78)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_merchant_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_merchant_name
+msgid "Merchant Name (QR78)"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "Missing Red Invoice configuration on company."
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__name
+msgid "Name"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-javascript
+#: code:addons/health_redinvoice/static/src/xml/pdf_frame_field.xml:0
+msgid "No PDF available."
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "No Red Invoice PDF is available for this document."
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "No Red Invoice file is available yet for this document."
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "No Red Invoice was issued for this document."
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid ""
+"No invoice lines available to send to SInvoice. Please add at least one "
+"product/service line."
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/health_fieldservice_order.py:0
+msgid "No issued Red Invoice is linked to this booking."
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_state__not_required
+msgid "Not Required"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Number"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_fin_invoice_list_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_vat_log_list_redinvoice
+msgid "Open Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_fso_form_redinvoice
+msgid "Open the issued Red Invoice (VAT e-invoice) for this booking"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_payment_method__5
+msgid "Other"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__pdf_url
+msgid "PDF URL"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_partner__buyer_id_type__2
+msgid "Passport"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Patient"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_request_form
+msgid "Payload"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__payload
+msgid "Payload JSON"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+msgid "Payment"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_payment_method_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_payment_method_name
+msgid "Payment Method Name"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__account_move__red_invoice_state__pending
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__redinvoice_request__state__pending
+msgid "Pending"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_pdf_preview_wizard
+msgid "Print"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,help:health_redinvoice.field_res_company__red_invoice_lookup_base_url
+#: model:ir.model.fields,help:health_redinvoice.field_res_config_settings__red_invoice_lookup_base_url
+msgid ""
+"Public verification portal base. The reservation code is appended to build "
+"each invoice Lookup URL, e.g. \"https://portal.example/lookup?code=\"."
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Reason"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_fin_invoice_list_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_vat_log_list_redinvoice
+msgid "Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/wizard/redinvoice_pdf_preview_wizard.py:0
+msgid "Red Invoice %s"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
+msgid "Red Invoice (Viettel SInvoice)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_api_base
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_api_base
+msgid "Red Invoice API Base URL"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_last_error
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_last_error
+msgid "Red Invoice Error"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_healthcare_invoices_filter_redinvoice
+msgid "Red Invoice Failed"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_download_attachment_id
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_download_attachment_id
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_healthcare_invoices_list_redinvoice
+msgid "Red Invoice File"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_healthcare_invoices_filter_redinvoice
+msgid "Red Invoice Issued"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+msgid "Red Invoice Log"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_lookup_base_url
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_lookup_base_url
+msgid "Red Invoice Lookup Base URL"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:res.groups,name:health_redinvoice.group_health_redinvoice_manager
+msgid "Red Invoice Manager"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_no
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_no
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Red Invoice No"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+#: code:addons/health_redinvoice/static/src/xml/pdf_frame_field.xml:0
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_pdf_attachment_id
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_pdf_attachment_id
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_healthcare_invoices_list_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_pdf_preview_wizard
+msgid "Red Invoice PDF"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model,name:health_redinvoice.model_redinvoice_pdf_preview_wizard
+msgid "Red Invoice PDF Preview Wizard"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_password
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_password
+msgid "Red Invoice Password"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_payment_method
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_payment_method
+msgid "Red Invoice Payment Method"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_healthcare_invoices_filter_redinvoice
+msgid "Red Invoice Pending"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model,name:health_redinvoice.model_redinvoice_request
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_request_form
+msgid "Red Invoice Request"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.actions.act_window,name:health_redinvoice.action_redinvoice_requests
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_request_ids
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_request_ids
+msgid "Red Invoice Requests"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_series
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_series
+msgid "Red Invoice Series"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_signing_mode
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_signing_mode
+msgid "Red Invoice Signing Mode"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_state
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_state
+#: model:ir.model.fields,field_description:health_redinvoice.field_health_fieldservice_order__red_invoice_state
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_healthcare_invoices_filter_redinvoice
+msgid "Red Invoice State"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_healthcare_invoices_list_redinvoice
+msgid "Red Invoice Status"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_last_sync
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_last_sync
+msgid "Red Invoice Sync Date"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_supplier_tax_code
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_supplier_tax_code
+msgid "Red Invoice Tax Code"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_template_code
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_template_code
+msgid "Red Invoice Template"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_type
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_type
+msgid "Red Invoice Type"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_username
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_username
+msgid "Red Invoice Username"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "Red Invoice template code/series not configured."
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.actions.act_window,name:health_redinvoice.action_redinvoice_failed
+msgid "Red Invoice — Failed"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.actions.act_window,name:health_redinvoice.action_redinvoice_issued
+msgid "Red Invoice — Issued"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.actions.act_window,name:health_redinvoice.action_redinvoice_pending
+msgid "Red Invoice — Pending"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.ui.menu,name:health_redinvoice.menu_health_redinvoice_root
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Red Invoices"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_reservation_code
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_reservation_code
+msgid "Reservation Code"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_request_form
+msgid "Response"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__response_body
+msgid "Response Body"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Retry / Generate Red Invoice"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__retry_count
+msgid "Retry Count"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_bank_account
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_bank_account
+msgid "Seller Bank Account"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_bank_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_bank_name
+msgid "Seller Bank Name"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_country_code
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_country_code
+msgid "Seller Country Code"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_company__red_invoice_district_name
+#: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_district_name
+msgid "Seller District"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
+msgid "Seller Payment / QR78"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__redinvoice_request__state__sent
+msgid "Sent"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_company__red_invoice_signing_mode__server
+msgid "Server Signature (HSM)"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__state
+msgid "State"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_move_form_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Status"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__redinvoice_request__state__succeeded
+msgid "Succeeded"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_code_of_tax
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_code_of_tax
+msgid "Tax Office Code"
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "The stored Red Invoice attachment (%s) is not a PDF file."
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Total"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_transaction_id
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_transaction_id
+msgid "Transaction ID"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_transaction_uuid
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_transaction_uuid
+msgid "Transaction UUID"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields.selection,name:health_redinvoice.selection__res_company__red_invoice_signing_mode__usb_token
+msgid "USB Token"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_bank_statement_line__red_invoice_secret_mode
+#: model:ir.model.fields,field_description:health_redinvoice.field_account_move__red_invoice_secret_mode
+msgid "Use Secret Code Mode"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
+msgid "https://api-vinvoice.viettel.vn/services/einvoiceapplication/api"
+msgstr ""
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_res_config_settings_redinvoice
+msgid "https://lookup-portal.example/?code="
+msgstr ""
+
+#. module: health_redinvoice
+#. odoo-python
+#: code:addons/health_redinvoice/models/account_move.py:0
+msgid "unknown"
+msgstr ""

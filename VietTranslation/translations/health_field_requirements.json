@@ -1,0 +1,22 @@
+{
+  "Add rules to make specific fields mandatory - globally or per role,\n                always or only in certain states.": "Thêm quy tắc để bắt buộc các trường cụ thể - áp dụng toàn cục hoặc theo vai trò,\n                luôn bắt buộc hoặc chỉ trong một số trạng thái.",
+  "Archived": "Đã lưu trữ",
+  "Comma-separated list of state values where this field is required. Leave empty for \"always required\". Example: confirmed,assigned,in_progress": "Danh sách các giá trị trạng thái được phân tách bằng dấu phẩy mà trường này bắt buộc. Để trống nếu \"luôn bắt buộc\". Ví dụ: confirmed,assigned,in_progress",
+  "Configure mandatory fields for your forms": "Cấu hình các trường bắt buộc cho biểu mẫu",
+  "Created by": "Được tạo bởi",
+  "Created on": "Được tạo vào",
+  "Field Label": "Nhãn trường",
+  "Field Name": "Tên trường",
+  "ID": "ID",
+  "If checked, this rule applies to ALL users. If unchecked, only applies to users with the selected roles.": "Nếu chọn, quy tắc này áp dụng cho TẤT CẢ người dùng. Nếu bỏ chọn, quy tắc chỉ áp dụng cho người dùng có các vai trò đã chọn.",
+  "Last Updated by": "Cập nhật lần cuối bởi",
+  "Last Updated on": "Cập nhật lần cuối vào",
+  "Model": "Mô hình",
+  "Model Name": "Tên mô hình",
+  "Name": "Tên",
+  "Roles this rule applies to (only when Global is unchecked)": "Các vai trò áp dụng quy tắc này (chỉ khi bỏ chọn Toàn cục)",
+  "States": "Trạng thái",
+  "The field that should be mandatory": "Trường cần được đặt là bắt buộc",
+  "The following mandatory fields must be filled on %(model)s:\n\n%(fields)s": "Các trường bắt buộc sau phải được điền trên %(model)s:\n\n%(fields)s",
+  "The model (form) this rule applies to": "Mô hình (biểu mẫu) áp dụng quy tắc này"
+}
