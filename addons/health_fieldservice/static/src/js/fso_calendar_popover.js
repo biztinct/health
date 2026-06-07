@@ -3,21 +3,22 @@ import { CalendarCommonRenderer } from "@web/views/calendar/calendar_common/cale
 import { patch } from "@web/core/utils/patch";
 import { useService } from "@web/core/utils/hooks";
 import { renderToFragment } from "@web/core/utils/render";
+import { _t } from "@web/core/l10n/translation";
 
 const FSO_MODEL = "health.fieldservice.order";
 const NON_CANCELLABLE = ["completed", "completed_pending_invoice", "cancelled", "closed"];
 
 const SERVICE_LABELS = {
-    home_visit: "Home Visit", clinic_visit: "Clinic Visit", consultation: "Consultation",
-    emergency: "Emergency", follow_up: "Follow-up", preventive: "Preventive",
-    rehabilitation: "Rehabilitation", telemedicine: "Telemedicine", vaccination: "Vaccination",
-    diagnostic: "Diagnostic",
+    home_visit: _t("Home Visit"), clinic_visit: _t("Clinic Visit"), consultation: _t("Consultation"),
+    emergency: _t("Emergency"), follow_up: _t("Follow-up"), preventive: _t("Preventive"),
+    rehabilitation: _t("Rehabilitation"), telemedicine: _t("Telemedicine"), vaccination: _t("Vaccination"),
+    diagnostic: _t("Diagnostic"),
 };
 const STATE_LABELS = {
-    draft: "Draft", confirmed: "Confirmed", assigned: "Assigned", in_progress: "In Progress",
-    completed: "Completed", completed_pending_invoice: "Completed", cancelled: "Cancelled", closed: "Closed",
+    draft: _t("Draft"), confirmed: _t("Confirmed"), assigned: _t("Assigned"), in_progress: _t("In Progress"),
+    completed: _t("Completed"), completed_pending_invoice: _t("Completed"), cancelled: _t("Cancelled"), closed: _t("Closed"),
 };
-const PRIORITY_LABELS = { 2: "High", 3: "Urgent", 4: "Emergency" };
+const PRIORITY_LABELS = { 2: _t("High"), 3: _t("Urgent"), 4: _t("Emergency") };
 
 function _initials(name) {
     const parts = (name || "").trim().split(/\s+/);
@@ -96,7 +97,7 @@ patch(CalendarCommonPopover.prototype, {
             this.actionService.doAction({
                 type: "ir.actions.client",
                 tag: "ops_booking_detail",
-                name: "Booking",
+                name: _t("Booking"),
                 target: "current",
                 context: { active_id: this.props.record.id },
             });
@@ -110,7 +111,7 @@ patch(CalendarCommonPopover.prototype, {
         this.props.close();
         await this.actionService.doAction({
             type: "ir.actions.act_window",
-            name: "Cancel Booking",
+            name: _t("Cancel Booking"),
             res_model: "health.booking.cancel.wizard",
             view_mode: "form",
             views: [[false, "form"]],
@@ -168,7 +169,7 @@ patch(CalendarCommonRenderer.prototype, {
             this.env.services.action.doAction({
                 type: "ir.actions.client",
                 tag: "ops_booking_detail",
-                name: "Booking",
+                name: _t("Booking"),
                 target: "current",
                 context: { active_id: record.id },
             });

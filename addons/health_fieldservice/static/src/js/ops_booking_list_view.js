@@ -5,6 +5,7 @@ import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { useState, onWillStart } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 
 export class OpsBookingListController extends ListController {
     static template = "health_fieldservice.OpsBookingListView";
@@ -40,22 +41,22 @@ export class OpsBookingListController extends ListController {
 
     get statusTabs() {
         return [
-            { id: "all", label: "All", icon: "fa-list" },
-            { id: "needs_staff", label: "Needs Staff", icon: "fa-user-plus", count: this.tabState.needsStaffCount },
-            { id: "active", label: "Active", icon: "fa-play-circle" },
-            { id: "completed", label: "Completed", icon: "fa-check-circle" },
-            { id: "issues", label: "Issues", icon: "fa-exclamation-triangle" },
+            { id: "all", label: _t("All"), icon: "fa-list" },
+            { id: "needs_staff", label: _t("Needs Staff"), icon: "fa-user-plus", count: this.tabState.needsStaffCount },
+            { id: "active", label: _t("Active"), icon: "fa-play-circle" },
+            { id: "completed", label: _t("Completed"), icon: "fa-check-circle" },
+            { id: "issues", label: _t("Issues"), icon: "fa-exclamation-triangle" },
         ];
     }
 
     get dateTabs() {
         return [
-            { id: "all_dates", label: "All Dates" },
-            { id: "today", label: "Today" },
-            { id: "tomorrow", label: "Tomorrow" },
-            { id: "this_week", label: "This Week" },
-            { id: "this_month", label: "This Month" },
-            { id: "overdue", label: "Overdue" },
+            { id: "all_dates", label: _t("All Dates") },
+            { id: "today", label: _t("Today") },
+            { id: "tomorrow", label: _t("Tomorrow") },
+            { id: "this_week", label: _t("This Week") },
+            { id: "this_month", label: _t("This Month") },
+            { id: "overdue", label: _t("Overdue") },
         ];
     }
 
@@ -162,7 +163,7 @@ export class OpsBookingListController extends ListController {
         const domain = this._getDateDomain(dateId);
         if (!domain.length) return;
         const label = dateId === "custom"
-            ? `Custom (${this.tabState.customFrom || "…"} → ${this.tabState.customTo || "…"})`
+            ? _t("Custom (%s → %s)", this.tabState.customFrom || "…", this.tabState.customTo || "…")
             : (this.dateTabs.find(t => t.id === dateId)?.label || dateId);
         const preFilter = { description: label, domain };
         this.env.searchModel.createNewFilters([preFilter]);
@@ -192,7 +193,7 @@ export class OpsBookingListController extends ListController {
         this.actionService.doAction({
             type: 'ir.actions.client',
             tag: 'ops_quick_booking',
-            name: 'Create Booking',
+            name: _t('Create Booking'),
             target: 'current',
             context: { default_patient_id: patientId },
             params: { default_patient_id: patientId },

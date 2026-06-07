@@ -14,15 +14,16 @@
 
 import { Component } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { standardWidgetProps } from "@web/views/widgets/standard_widget_props";
 
 const DEFAULT_STEPS = [
-    { state: "draft", label: "Created", icon: "fa-file-o" },
-    { state: "confirmed", label: "Confirmed", icon: "fa-check" },
-    { state: "assigned", label: "Assigned", icon: "fa-users" },
-    { state: "in_progress", label: "In Progress", icon: "fa-play" },
-    { state: "completed", label: "Completed", icon: "fa-flag-checkered" },
-    { state: "closed", label: "Closed", icon: "fa-folder" },
+    { state: "draft", label: _t("Created"), icon: "fa-file-o" },
+    { state: "confirmed", label: _t("Confirmed"), icon: "fa-check" },
+    { state: "assigned", label: _t("Assigned"), icon: "fa-users" },
+    { state: "in_progress", label: _t("In Progress"), icon: "fa-play" },
+    { state: "completed", label: _t("Completed"), icon: "fa-flag-checkered" },
+    { state: "closed", label: _t("Closed"), icon: "fa-folder" },
 ];
 
 export class VuProgressRail extends Component {

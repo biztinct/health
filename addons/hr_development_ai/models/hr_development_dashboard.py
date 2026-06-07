@@ -5,10 +5,9 @@ from datetime import datetime, timedelta
 import json
 
 
-class HRDevelopmentDashboard(models.Model):
+class HRDevelopmentDashboard(models.AbstractModel):
     _name = 'hr.development.dashboard'
     _description = 'HR Development Dashboard'
-    _auto = False  # This is a virtual model for dashboard
 
     name = fields.Char('Dashboard')
 

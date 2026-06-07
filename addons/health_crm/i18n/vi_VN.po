@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 05:48+0000\n"
+"POT-Creation-Date: 2026-06-07 10:02+0000\n"
 "PO-Revision-Date: 2025-10-29 05:47+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1290,6 +1290,7 @@ msgstr "Cảnh sát."
 
 #. module: health_crm
 #. odoo-javascript
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: code:addons/health_crm/static/src/js/crm_contact_list.js:0
 msgid "All"
 msgstr "Tất cả"
@@ -1327,6 +1328,7 @@ msgstr "Tất cả các khách hàng tiềm năng hiện tại"
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/js/crm_activity_list.js:0
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: code:addons/health_crm/static/src/js/crm_contact_list.js:0
 #: code:addons/health_crm/static/src/xml/crm_dashboard.xml:0
 msgid "All Dates"
@@ -1993,6 +1995,7 @@ msgstr "Loại nhập lịch"
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/js/crm_activity_list.js:0
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_activity_search_crm_center
 msgid "Call"
 msgstr "Gọi"
@@ -2603,9 +2606,10 @@ msgid "Consultation = Temporary transfer for advice; Transfer = Full handover"
 msgstr "Tư vấn = chuyển giao tạm thời để tư vấn; chuyển giao = giao hoàn toàn"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__escalation_type__consultation
+#. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "Consultation Request"
-msgstr "Yêu cầu tham vấn"
+msgstr "Yêu cầu tư vấn"
 
 #. module: health_crm
 #. odoo-python
@@ -3454,8 +3458,9 @@ msgid "Duration (Hours)"
 msgstr "Thời lượng (Giờ)"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__escalated_to__duty_doctor
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__escalate_to__duty_doctor
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "Duty Doctor"
 msgstr "Bác sĩ trực"
 
@@ -3484,6 +3489,7 @@ msgstr "Chăm sóc người cao tuổi"
 #. odoo-python
 #: code:addons/health_crm/models/crm_lead.py:0
 #: code:addons/health_crm/static/src/js/crm_activity_list.js:0
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: code:addons/health_crm/static/src/xml/crm_new_contact.xml:0
 #: model:ir.model.fields,field_description:health_crm.field_health_booking_wizard__client_email
 #: model:ir.model.fields,field_description:health_crm.field_health_client_search_line__email
@@ -4053,9 +4059,10 @@ msgid "Full Name"
 msgstr "Họ và tên"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__escalation_type__transfer
+#. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "Full Transfer"
-msgstr "Chuyển chuyển đầy đủ"
+msgstr "Chuyển giao toàn bộ"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_booking_wizard__consolidated_address
@@ -4162,10 +4169,11 @@ msgid "Has Health Insurance"
 msgstr "Has Y tế Bảo hiểm"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__escalated_to__head_nurse
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__escalate_to__head_nurse
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "Head Nurse"
-msgstr "Head Y tá"
+msgstr "Điều dưỡng trưởng"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_lead_reason__category__event
@@ -4321,7 +4329,8 @@ msgid "Hierarchy View"
 msgstr "Hệ thống phân cấp Xem"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__urgency__high
+#. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "High"
 msgstr "Cao"
 
@@ -4721,7 +4730,7 @@ msgstr "Khách hàng tiềm năng Lý dos"
 #: model:ir.model.fields,field_description:health_crm.field_health_booking_services_wizard__lead_staff_id
 #: model_terms:ir.ui.view,arch_db:health_crm.view_booking_services_wizard_form
 msgid "Lead Staff"
-msgstr "Khách hàng tiềm năng Nhân viên"
+msgstr "Nhân viên chính"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__lead_status
@@ -4881,7 +4890,8 @@ msgid "Lost Booking"
 msgstr "Lịch hẹn đã mất"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__urgency__low
+#. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "Low"
 msgstr "Thấp"
 
@@ -4976,6 +4986,7 @@ msgstr "Trung bình"
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/js/crm_activity_list.js:0
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_activity_search_crm_center
 msgid "Meeting"
 msgstr "Cuộc họp"
@@ -5408,7 +5419,8 @@ msgid "No upcoming bookings"
 msgstr "Không có lịch hẹn sắp tới"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__urgency__normal
+#. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "Normal"
 msgstr "Bình thường"
 
@@ -5533,10 +5545,11 @@ msgid "Operations Management"
 msgstr "Vận hành Quản lý"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__escalated_to__om
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__escalate_to__om
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "Operations Manager"
-msgstr "Vận hành Người quản lý"
+msgstr "Quản lý vận hành"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_contact_action_wizard__lead_name
@@ -5551,13 +5564,14 @@ msgid "Optionally select a specific person to handle this"
 msgstr "Tùy chọn chọn một người cụ thể để xử lý điều này"
 
 #. module: health_crm
-#: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__escalated_to__other
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_cancellation_wizard__cancelled_by_relationship__other
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__client_gender__other
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__service_category__other
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__other
 #: model:ir.model.fields.selection,name:health_crm.selection__health_contact_reason__category__other
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__escalate_to__other
 #: model:ir.model.fields.selection,name:health_crm.selection__health_lead_reason__category__other
 #: model:ir.model.fields.selection,name:health_crm.selection__health_recurring_booking_wizard__service_category__other
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__relationship_type__other
@@ -7427,6 +7441,7 @@ msgstr "Trị liệu"
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/js/crm_activity_list.js:0
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: code:addons/health_crm/static/src/js/crm_contact_list.js:0
 #: code:addons/health_crm/static/src/xml/crm_dashboard.xml:0
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_activity_search_crm_center
@@ -7437,6 +7452,7 @@ msgstr "Tháng này"
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/js/crm_activity_list.js:0
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: code:addons/health_crm/static/src/js/crm_contact_list.js:0
 #: code:addons/health_crm/static/src/xml/crm_dashboard.xml:0
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_activity_search_crm_center
@@ -7528,6 +7544,7 @@ msgstr "Tới bác sĩ trực"
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/js/crm_activity_list.js:0
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_activity_search_crm_center
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_followup_search_crm_center
 msgid "To-Do"
@@ -7542,6 +7559,7 @@ msgstr "Các hoạt động cần làm"
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/js/crm_activity_list.js:0
+#: code:addons/health_crm/static/src/js/crm_activity_view.js:0
 #: code:addons/health_crm/static/src/js/crm_contact_list.js:0
 #: code:addons/health_crm/static/src/xml/crm_dashboard.xml:0
 #: model_terms:ir.ui.view,arch_db:health_crm.view_crm_bookings_search
@@ -7712,7 +7730,7 @@ msgstr "Mức độ khẩn cấp: %s"
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/models/crm_lead.py:0
-#: model:ir.model.fields.selection,name:health_crm.selection__health_escalation_wizard__urgency__urgent
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "Urgent"
 msgstr "Khẩn cấp"
 
@@ -8199,6 +8217,12 @@ msgid "clients/clients"
 msgstr "Khách hàng/Khách hàng"
 
 #. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "duty_doctor"
+msgstr "bác sĩ trực"
+
+#. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_crm_lead_quick_create
 msgid "e.g. \"0123456789\""
 msgstr "VD: \"0123456789\""
@@ -8265,6 +8289,18 @@ msgstr "future_opportunity"
 
 #. module: health_crm
 #. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
+msgid "head_nurse"
+msgstr "điều dưỡng trưởng"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
+msgid "high"
+msgstr "cao"
+
+#. module: health_crm
+#. odoo-python
 #: code:addons/health_crm/models/crm_lead.py:0
 #: code:addons/health_crm/wizard/booking_services_wizard.py:0
 #: code:addons/health_crm/wizard/booking_summary_wizard.py:0
@@ -8303,6 +8339,12 @@ msgstr "no_response"
 
 #. module: health_crm
 #. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
+msgid "normal"
+msgstr "bình thường"
+
+#. module: health_crm
+#. odoo-python
 #: code:addons/health_crm/models/crm_lead.py:0
 msgid "not_qualified"
 msgstr "not_qualified"
@@ -8310,6 +8352,14 @@ msgstr "not_qualified"
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/models/crm_lead.py:0
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
+msgid "om"
+msgstr "quản lý vận hành"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "other"
 msgstr "other"
 
@@ -8351,7 +8401,14 @@ msgstr "spam"
 
 #. module: health_crm
 #. odoo-python
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
+msgid "transfer"
+msgstr "chuyển giao"
+
+#. module: health_crm
+#. odoo-python
 #: code:addons/health_crm/models/crm_lead.py:0
+#: code:addons/health_crm/wizard/escalation_wizard.py:0
 msgid "urgent"
 msgstr "urgent"
 

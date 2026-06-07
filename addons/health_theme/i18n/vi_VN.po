@@ -24,9 +24,45 @@ msgstr "Đã hủy"
 
 #. module: health_theme
 #. odoo-javascript
+#: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+msgid "Assigned"
+msgstr "Đã phân công"
+
+#. module: health_theme
+#. odoo-javascript
 #: code:addons/health_theme/static/src/js/vi_translation_terms.js:0
 msgid "Chat"
 msgstr "Trò chuyện"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+msgid "Closed"
+msgstr "Đã đóng"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+msgid "Completed"
+msgstr "Hoàn thành"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+msgid "Confirmed"
+msgstr "Đã xác nhận"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+msgid "Created"
+msgstr "Đã tạo"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+msgid "In Progress"
+msgstr "Đang thực hiện"
 
 #. module: health_theme
 #. odoo-javascript

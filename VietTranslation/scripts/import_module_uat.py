@@ -20,9 +20,12 @@ def main():
     parser.add_argument("--catalog", type=pathlib.Path)
     args = parser.parse_args()
 
-    if not re.fullmatch(r"(?:health_[a-z0-9_]+|advanced_pricing)", args.module):
+    if not re.fullmatch(
+        r"(?:health_[a-z0-9_]+|advanced_pricing|hr_development_ai)",
+        args.module,
+    ):
         parser.error(
-            "module must be a health_* technical module name or advanced_pricing"
+            "module must be health_*, advanced_pricing, or hr_development_ai"
         )
 
     catalog = args.catalog or (

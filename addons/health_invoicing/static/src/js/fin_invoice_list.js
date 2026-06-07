@@ -5,6 +5,7 @@ import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { useState } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 
 export class FinInvoiceListController extends ListController {
     static template = "health_invoicing.FinInvoiceListView";
@@ -24,22 +25,22 @@ export class FinInvoiceListController extends ListController {
 
     get statusTabs() {
         return [
-            { id: "all", label: "All", icon: "fa-list" },
-            { id: "draft", label: "Draft", icon: "fa-pencil" },
-            { id: "posted", label: "Posted", icon: "fa-check" },
-            { id: "paid", label: "Paid", icon: "fa-check-circle" },
-            { id: "partial", label: "Partial", icon: "fa-adjust" },
-            { id: "overdue", label: "Overdue", icon: "fa-exclamation-triangle" },
-            { id: "cancelled", label: "Cancelled", icon: "fa-ban" },
+            { id: "all", label: _t("All"), icon: "fa-list" },
+            { id: "draft", label: _t("Draft"), icon: "fa-pencil" },
+            { id: "posted", label: _t("Posted"), icon: "fa-check" },
+            { id: "paid", label: _t("Paid"), icon: "fa-check-circle" },
+            { id: "partial", label: _t("Partial"), icon: "fa-adjust" },
+            { id: "overdue", label: _t("Overdue"), icon: "fa-exclamation-triangle" },
+            { id: "cancelled", label: _t("Cancelled"), icon: "fa-ban" },
         ];
     }
 
     get dateTabs() {
         return [
-            { id: "all_dates", label: "All Dates" },
-            { id: "today", label: "Today" },
-            { id: "this_week", label: "This Week" },
-            { id: "this_month", label: "This Month" },
+            { id: "all_dates", label: _t("All Dates") },
+            { id: "today", label: _t("Today") },
+            { id: "this_week", label: _t("This Week") },
+            { id: "this_month", label: _t("This Month") },
         ];
     }
 
@@ -141,7 +142,7 @@ export class FinInvoiceListController extends ListController {
         const domain = this._getDateDomain(dateId);
         if (!domain.length) return; // e.g. custom with no dates entered yet
         const label = dateId === "custom"
-            ? `Custom (${this.tabState.customFrom || "…"} → ${this.tabState.customTo || "…"})`
+            ? _t("Custom (%s → %s)", this.tabState.customFrom || "…", this.tabState.customTo || "…")
             : (this.dateTabs.find((t) => t.id === dateId)?.label || dateId);
         const preFilter = { description: label, domain };
         this.env.searchModel.createNewFilters([preFilter]);
@@ -157,7 +158,7 @@ export class FinInvoiceListController extends ListController {
     openNewInvoice() {
         this.actionService.doAction({
             type: "ir.actions.act_window",
-            name: "New Invoice",
+            name: _t("New Invoice"),
             res_model: "account.move",
             view_mode: "form",
             views: [[false, "form"]],

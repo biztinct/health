@@ -1121,6 +1121,9 @@ class HealthcareInvoice(models.Model):
         # Recent payments (last 10, always most-recent)
         recent_payments = []
         if PaymentTx is not None:
+            payment_method_labels = dict(
+                PaymentTx._fields['payment_method']._description_selection(self.env)
+            )
             recent_txs = PaymentTx.search([], order='create_date desc', limit=10)
             for tx in recent_txs:
                 recent_payments.append({
@@ -1128,7 +1131,10 @@ class HealthcareInvoice(models.Model):
                     'reference': tx.name or '',
                     'patient_name': tx.patient_id.name if tx.patient_id else '',
                     'amount': tx.amount,
-                    'method': tx.payment_method or '',
+                    'method': payment_method_labels.get(
+                        tx.payment_method,
+                        tx.payment_method or '',
+                    ),
                     'status': tx.status or '',
                     'time_ago': self._format_time_ago(tx.create_date),
                 })
@@ -1137,12 +1143,12 @@ class HealthcareInvoice(models.Model):
         all_period = self.search(period_domain)
         total_count = len(all_period) or 1
         status_map = [
-            ('draft', 'Draft', lambda inv: inv.state == 'draft'),
-            ('posted', 'Posted', lambda inv: inv.state == 'posted' and inv.payment_state == 'not_paid'),
-            ('paid', 'Paid', lambda inv: inv.payment_state == 'paid'),
-            ('partial', 'Partial', lambda inv: inv.payment_state == 'partial'),
-            ('overdue', 'Overdue', lambda inv: inv.state == 'posted' and inv.payment_state in ('not_paid', 'partial') and inv.invoice_date_due and inv.invoice_date_due < today),
-            ('cancelled', 'Cancelled', lambda inv: inv.state == 'cancel'),
+            ('draft', self.env._('Draft'), lambda inv: inv.state == 'draft'),
+            ('posted', self.env._('Posted'), lambda inv: inv.state == 'posted' and inv.payment_state == 'not_paid'),
+            ('paid', self.env._('Paid'), lambda inv: inv.payment_state == 'paid'),
+            ('partial', self.env._('Partial'), lambda inv: inv.payment_state == 'partial'),
+            ('overdue', self.env._('Overdue'), lambda inv: inv.state == 'posted' and inv.payment_state in ('not_paid', 'partial') and inv.invoice_date_due and inv.invoice_date_due < today),
+            ('cancelled', self.env._('Cancelled'), lambda inv: inv.state == 'cancel'),
         ]
         breakdown = []
         for status, label, filter_fn in status_map:
@@ -1214,15 +1220,15 @@ class HealthcareInvoice(models.Model):
         delta = now - dt
         minutes = int(delta.total_seconds() / 60)
         if minutes < 1:
-            return 'Just now'
+            return self.env._('Just now')
         if minutes < 60:
-            return f'{minutes}m ago'
+            return self.env._('%s min ago', minutes)
         hours = minutes // 60
         if hours < 24:
-            return f'{hours}h ago'
+            return self.env._('%s hr ago', hours)
         days = hours // 24
         if days < 30:
-            return f'{days}d ago'
+            return self.env._('%s days ago', days)
         return dt.strftime('%b %d')
 
     def get_invoice_header_data(self):

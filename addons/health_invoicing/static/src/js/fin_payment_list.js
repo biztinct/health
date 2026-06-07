@@ -5,6 +5,7 @@ import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { useState } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 
 export class FinPaymentListController extends ListController {
     static template = "health_invoicing.FinPaymentListView";
@@ -26,10 +27,10 @@ export class FinPaymentListController extends ListController {
 
     get dateTabs() {
         return [
-            { id: "all_dates", label: "All Dates" },
-            { id: "today", label: "Today" },
-            { id: "this_week", label: "This Week" },
-            { id: "this_month", label: "This Month" },
+            { id: "all_dates", label: _t("All Dates") },
+            { id: "today", label: _t("Today") },
+            { id: "this_week", label: _t("This Week") },
+            { id: "this_month", label: _t("This Month") },
         ];
     }
 
@@ -79,7 +80,7 @@ export class FinPaymentListController extends ListController {
         const domain = this._getDateDomain(dateId);
         if (!domain.length) return;
         const label = dateId === "custom"
-            ? `Custom (${this.tabState.customFrom || "…"} → ${this.tabState.customTo || "…"})`
+            ? _t("Custom (%s → %s)", this.tabState.customFrom || "…", this.tabState.customTo || "…")
             : (this.dateTabs.find((t) => t.id === dateId)?.label || dateId);
         const preFilter = { description: label, domain };
         this.env.searchModel.createNewFilters([preFilter]);
@@ -94,23 +95,23 @@ export class FinPaymentListController extends ListController {
 
     get statusTabs() {
         return [
-            { id: "all", label: "All", icon: "fa-list" },
-            { id: "collected", label: "Collected", icon: "fa-check" },
-            { id: "pending_delivery", label: "Pending Delivery", icon: "fa-truck" },
-            { id: "delivered", label: "Delivered", icon: "fa-inbox" },
-            { id: "reconciled", label: "Reconciled", icon: "fa-check-circle" },
-            { id: "failed", label: "Failed", icon: "fa-times-circle" },
+            { id: "all", label: _t("All"), icon: "fa-list" },
+            { id: "collected", label: _t("Collected"), icon: "fa-check" },
+            { id: "pending_delivery", label: _t("Pending Delivery"), icon: "fa-truck" },
+            { id: "delivered", label: _t("Delivered"), icon: "fa-inbox" },
+            { id: "reconciled", label: _t("Reconciled"), icon: "fa-check-circle" },
+            { id: "failed", label: _t("Failed"), icon: "fa-times-circle" },
         ];
     }
 
     get typeTabs() {
         return [
-            { id: "all_types", label: "All Types" },
-            { id: "cash", label: "Cash" },
-            { id: "bank_transfer", label: "Bank Transfer" },
-            { id: "credit_card", label: "Card" },
-            { id: "qr_code", label: "QR Code" },
-            { id: "prepaid", label: "Prepaid" },
+            { id: "all_types", label: _t("All Types") },
+            { id: "cash", label: _t("Cash") },
+            { id: "bank_transfer", label: _t("Bank Transfer") },
+            { id: "credit_card", label: _t("Card") },
+            { id: "qr_code", label: _t("QR Code") },
+            { id: "prepaid", label: _t("Prepaid") },
         ];
     }
 

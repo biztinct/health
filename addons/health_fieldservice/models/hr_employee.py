@@ -559,7 +559,16 @@ class HrEmployee(models.Model):
         to today). Returns {'code', 'label'}. Priority order is significant."""
         self.ensure_one()
         import pytz
-        labels = {k: _(v) for k, v in self.DUTY_LABELS.items()}
+        labels = {
+            'available': self.env._('Available'),
+            'busy': self.env._('In Service'),
+            'off_hours': self.env._('Off-Hours'),
+            'on_leave': self.env._('On Leave'),
+            'full': self.env._('Full'),
+            'break': self.env._('On Break'),
+            'off': self.env._('Off Duty'),
+            'inactive': self.env._('Inactive'),
+        }
 
         def res(code):
             return {'code': code, 'label': labels.get(code, code)}

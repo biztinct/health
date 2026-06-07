@@ -4,14 +4,15 @@ import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
+import { localization } from "@web/core/l10n/localization";
 
 const TIME_PERIODS = [
-    { key: 'morning', label: 'Morning', icon: 'fa-sun-o', range: '7am – 12pm', startH: 7, endH: 12 },
-    { key: 'afternoon', label: 'Afternoon', icon: 'fa-cloud', range: '12pm – 5pm', startH: 12, endH: 17 },
-    { key: 'evening', label: 'Evening', icon: 'fa-moon-o', range: '5pm – 8pm', startH: 17, endH: 21 },
+    { key: 'morning', label: _t('Morning'), icon: 'fa-sun-o', range: _t('7am - 12pm'), startH: 7, endH: 12 },
+    { key: 'afternoon', label: _t('Afternoon'), icon: 'fa-cloud', range: _t('12pm - 5pm'), startH: 12, endH: 17 },
+    { key: 'evening', label: _t('Evening'), icon: 'fa-moon-o', range: _t('5pm - 8pm'), startH: 17, endH: 21 },
 ];
 
-const DAY_NAMES = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+const DAY_NAMES = [_t('Mo'), _t('Tu'), _t('We'), _t('Th'), _t('Fr'), _t('Sa'), _t('Su')];
 
 class OpsRescheduleBooking extends Component {
     static template = "health_fieldservice.OpsRescheduleBooking";
@@ -121,9 +122,11 @@ class OpsRescheduleBooking extends Component {
     }
 
     get calendarTitle() {
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'];
-        return `${monthNames[this.state.calendarMonth]} ${this.state.calendarYear}`;
+        return new Date(this.state.calendarYear, this.state.calendarMonth, 1)
+            .toLocaleDateString(localization.code.replace("_", "-"), {
+                month: "long",
+                year: "numeric",
+            });
     }
 
     prevMonth() {

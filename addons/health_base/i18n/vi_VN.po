@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 06:37+0000\n"
+"POT-Creation-Date: 2026-06-07 09:59+0000\n"
 "PO-Revision-Date: 2026-06-06 07:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: Tiếng Việt\n"
@@ -24,7 +24,17 @@ msgid ""
 "\n"
 "Enter a 9-digit number (a leading 0 is added automatically) or a 10-digit "
 "number starting with a single 0."
-msgstr "%s không phải là số điện thoại hợp lệ.\n\nNhập số có 9 chữ số (hệ thống sẽ tự động thêm số 0 ở đầu) hoặc số có 10 chữ số bắt đầu bằng một số 0."
+msgstr ""
+"%s không phải là số điện thoại hợp lệ.\n"
+"\n"
+"Nhập số có 9 chữ số (hệ thống sẽ tự động thêm số 0 ở đầu) hoặc số có 10 chữ "
+"số bắt đầu bằng một số 0."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "%s years old"
+msgstr "%s tuổi"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.res_config_settings_view_form_health
@@ -32,7 +42,10 @@ msgid ""
 ".\n"
 "                                    Enable Maps JavaScript API and Distance "
 "Matrix API."
-msgstr ".\n                                    Bật Maps JavaScript API và Distance Matrix API."
+msgstr ""
+".\n"
+"                                    Bật Maps JavaScript API và Distance "
+"Matrix API."
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__commission_due_to__30_days
@@ -139,7 +152,12 @@ msgid ""
 "                                    <i class=\"fa fa-user-times\" "
 "title=\"Deceased\"/>\n"
 "                                </span>"
-msgstr "<span class=\"badge patient-badge badge-deceased text-danger\" invisible=\"not deceased\">\n                                    <i class=\"fa fa-user-times\" title=\"Đã mất\"/>\n                                </span>"
+msgstr ""
+"<span class=\"badge patient-badge badge-deceased text-danger\" "
+"invisible=\"not deceased\">\n"
+"                                    <i class=\"fa fa-user-times\" title=\"Đã "
+"mất\"/>\n"
+"                                </span>"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
@@ -156,7 +174,9 @@ msgstr "<span class=\"o_stat_text\">Giường bệnh</span>"
 msgid ""
 "<span class=\"vu-detail-card__edit-trigger\"><i class=\"fa fa-pencil\" "
 "title=\"Edit\"/></span>"
-msgstr "<span class=\"vu-detail-card__edit-trigger\"><i class=\"fa fa-pencil\" title=\"Chỉnh sửa\"/></span>"
+msgstr ""
+"<span class=\"vu-detail-card__edit-trigger\"><i class=\"fa fa-pencil\" "
+"title=\"Chỉnh sửa\"/></span>"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -682,12 +702,14 @@ msgstr "<span class=\"vu-summary-row__label\">Tôi là người chăm sóc cho</
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
 msgid "<span class=\"vu-summary-row__label\">I am Payer for</span>"
-msgstr "<span class=\"vu-summary-row__label\">Tôi là người thanh toán cho</span>"
+msgstr ""
+"<span class=\"vu-summary-row__label\">Tôi là người thanh toán cho</span>"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
 msgid "<span class=\"vu-summary-row__label\">I am Referrer for</span>"
-msgstr "<span class=\"vu-summary-row__label\">Tôi là người giới thiệu cho</span>"
+msgstr ""
+"<span class=\"vu-summary-row__label\">Tôi là người giới thiệu cho</span>"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
@@ -1114,6 +1136,12 @@ msgstr "Hiển thị tuổi"
 
 #. module: health_base
 #. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Age unknown"
+msgstr "Không rõ tuổi"
+
+#. module: health_base
+#. odoo-python
 #: code:addons/health_base/models/health_facility.py:0
 msgid "All facility licenses are current."
 msgstr "Tất cả Cơ sở giấy phéps are current."
@@ -1427,7 +1455,9 @@ msgstr "Tìm kiếm tỉnh phụ trách"
 msgid ""
 "Catchment Province is required for patients. Please select a catchment "
 "province to generate a valid Patient ID."
-msgstr "Bệnh nhân bắt buộc phải có tỉnh phụ trách. Vui lòng chọn tỉnh phụ trách để tạo mã bệnh nhân hợp lệ."
+msgstr ""
+"Bệnh nhân bắt buộc phải có tỉnh phụ trách. Vui lòng chọn tỉnh phụ trách để "
+"tạo mã bệnh nhân hợp lệ."
 
 #. module: health_base
 #: model:ir.actions.act_window,name:health_base.action_health_catchment_province
@@ -1443,7 +1473,9 @@ msgid ""
 "operations.\n"
 "                Each catchment province can have multiple facilities "
 "assigned to it."
-msgstr "Tỉnh phụ trách xác định khu vực địa lý cung cấp dịch vụ chăm sóc sức khỏe.\n                Mỗi tỉnh phụ trách có thể được phân công nhiều cơ sở y tế."
+msgstr ""
+"Tỉnh phụ trách xác định khu vực địa lý cung cấp dịch vụ chăm sóc sức khỏe.\n"
+"                Mỗi tỉnh phụ trách có thể được phân công nhiều cơ sở y tế."
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_service_type__category
@@ -2010,7 +2042,9 @@ msgstr "Mặc định Khẩn cấp"
 msgid ""
 "Default timezone for this catchment province. Copied to facilities when they "
 "select this province."
-msgstr "Múi giờ mặc định của tỉnh phụ trách này. Múi giờ được sao chép sang cơ sở y tế khi chọn tỉnh này."
+msgstr ""
+"Múi giờ mặc định của tỉnh phụ trách này. Múi giờ được sao chép sang cơ sở y "
+"tế khi chọn tỉnh này."
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
@@ -2267,7 +2301,9 @@ msgstr "Nhân viên"
 msgid ""
 "Enter your Google Maps API key. Required for Google Maps display and driving "
 "distance calculations."
-msgstr "Nhập khóa API Google Maps. Khóa này cần thiết để hiển thị Google Maps và tính khoảng cách di chuyển."
+msgstr ""
+"Nhập khóa API Google Maps. Khóa này cần thiết để hiển thị Google Maps và "
+"tính khoảng cách di chuyển."
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.res_config_settings_view_form_health
@@ -2671,7 +2707,9 @@ msgstr "Hà Nội"
 msgid ""
 "Hard delete is restricted to Healthcare Owner users. Use Archive instead to "
 "deactivate records without deleting history."
-msgstr "Chỉ người dùng có vai trò Chủ sở hữu hệ thống y tế mới được xóa vĩnh viễn. Hãy dùng Lưu trữ để ngừng kích hoạt bản ghi mà không xóa lịch sử."
+msgstr ""
+"Chỉ người dùng có vai trò Chủ sở hữu hệ thống y tế mới được xóa vĩnh viễn. "
+"Hãy dùng Lưu trữ để ngừng kích hoạt bản ghi mà không xóa lịch sử."
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__has_caregiver
@@ -2689,7 +2727,7 @@ msgstr "Has Tin nhắn"
 #: model:ir.model.fields.selection,name:health_base.selection__hr_employee_public__healthcare_role__head_nurse
 #: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__head_nurse
 msgid "Head Nurse"
-msgstr "Head Y tá"
+msgstr "Điều dưỡng trưởng"
 
 #. module: health_base
 #: model:res.groups,comment:health_base.group_healthcare_head_nurse
@@ -2786,7 +2824,7 @@ msgstr "Cài đặt chăm sóc sức khỏe"
 #: model:ir.model.fields,field_description:health_base.field_hr_employee_public__is_healthcare_staff
 #: model:res.partner.category,name:health_base.staff_category
 msgid "Healthcare Staff"
-msgstr "Y tế Nhân viên"
+msgstr "Nhân viên y tế"
 
 #. module: health_base
 #: model:ir.model.fields,help:health_base.field_health_catchment_province__facility_ids
@@ -3194,7 +3232,9 @@ msgstr "Số điện thoại không hợp lệ"
 msgid ""
 "Invalid phone number: '%s'. Enter a 9-digit number (a leading 0 is added "
 "automatically) or a 10-digit number starting with a single 0."
-msgstr "Số điện thoại không hợp lệ: '%s'. Nhập số có 9 chữ số (hệ thống sẽ tự động thêm số 0 ở đầu) hoặc số có 10 chữ số bắt đầu bằng một số 0."
+msgstr ""
+"Số điện thoại không hợp lệ: '%s'. Nhập số có 9 chữ số (hệ thống sẽ tự động "
+"thêm số 0 ở đầu) hoặc số có 10 chữ số bắt đầu bằng một số 0."
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__is_caregiver
@@ -4092,7 +4132,7 @@ msgstr "Hoạt độngal"
 #: model:ir.model.fields.selection,name:health_base.selection__hr_employee_public__healthcare_role__operations_manager
 #: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__operations_manager
 msgid "Operations Manager"
-msgstr "Vận hành Người quản lý"
+msgstr "Quản lý vận hành"
 
 #. module: health_base
 #: model:res.groups,comment:health_base.group_healthcare_operations_manager

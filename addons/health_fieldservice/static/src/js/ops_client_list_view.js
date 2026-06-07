@@ -5,6 +5,7 @@ import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { useState } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 
 export class OpsClientListController extends ListController {
     static template = "health_fieldservice.OpsClientListView";
@@ -24,20 +25,20 @@ export class OpsClientListController extends ListController {
 
     get tabs() {
         return [
-            { id: "all", label: "All Clients", icon: "fa-users" },
-            { id: "active", label: "Active", icon: "fa-check-circle" },
-            { id: "inactive", label: "Inactive", icon: "fa-pause-circle" },
-            { id: "recent", label: "Recent Visits", icon: "fa-clock-o" },
+            { id: "all", label: _t("All Clients"), icon: "fa-users" },
+            { id: "active", label: _t("Active"), icon: "fa-check-circle" },
+            { id: "inactive", label: _t("Inactive"), icon: "fa-pause-circle" },
+            { id: "recent", label: _t("Recent Visits"), icon: "fa-clock-o" },
         ];
     }
 
     // Date filter on the last visit date
     get dateTabs() {
         return [
-            { id: "all_dates", label: "All Dates" },
-            { id: "today", label: "Today" },
-            { id: "this_week", label: "This Week" },
-            { id: "this_month", label: "This Month" },
+            { id: "all_dates", label: _t("All Dates") },
+            { id: "today", label: _t("Today") },
+            { id: "this_week", label: _t("This Week") },
+            { id: "this_month", label: _t("This Month") },
         ];
     }
 
@@ -87,7 +88,7 @@ export class OpsClientListController extends ListController {
         const domain = this._getDateDomain(dateId);
         if (!domain.length) return;
         const label = dateId === "custom"
-            ? `Last visit ${this.tabState.customFrom || "…"} → ${this.tabState.customTo || "…"}`
+            ? _t("Last visit %s → %s", this.tabState.customFrom || "…", this.tabState.customTo || "…")
             : (this.dateTabs.find((t) => t.id === dateId)?.label || dateId);
         const preFilter = { description: label, domain };
         this.env.searchModel.createNewFilters([preFilter]);
@@ -115,15 +116,15 @@ export class OpsClientListController extends ListController {
             switch (tabId) {
                 case "active":
                     domain = [["patient_status", "=", "active"]];
-                    description = "Active";
+                    description = _t("Active");
                     break;
                 case "inactive":
                     domain = [["patient_status", "=", "inactive"]];
-                    description = "Inactive";
+                    description = _t("Inactive");
                     break;
                 case "recent":
                     domain = [["last_visit_date", "!=", false]];
-                    description = "Recent Visits";
+                    description = _t("Recent Visits");
                     break;
             }
             const preFilter = { description, domain };

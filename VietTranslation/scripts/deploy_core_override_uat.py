@@ -5,13 +5,23 @@ import argparse
 import datetime
 import json
 import pathlib
+import re
 import subprocess
+import time
 
 from po_catalog import parse_entries
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
-ALLOWED_MODULES = {"mail", "resource_mail", "web"}
+ALLOWED_MODULES = {
+    "account",
+    "calendar",
+    "hr",
+    "mail",
+    "resource_mail",
+    "sale",
+    "web",
+}
 
 
 def apply_overrides(base_catalog, overrides, module):
@@ -81,6 +91,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("module", choices=sorted(ALLOWED_MODULES))
     parser.add_argument("--host", default="VietUcUAT")
+    parser.add_argument("--database", default="vietuat")
+    parser.add_argument("--config", default="/etc/odoo-server.conf")
+    parser.add_argument("--odoo-bin", default="/odoo/odoo-server/odoo-bin")
+    parser.add_argument("--service", default="odoo-server")
     args = parser.parse_args()
 
     override = (
@@ -97,6 +111,18 @@ def main():
         check=True,
     )
     expected = catalog_values(override)
+    log_start = int(
+        subprocess.run(
+            [
+                "ssh",
+                args.host,
+                "sudo wc -l < /var/log/odoo/odoo-server.log",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    )
 
     date_stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     remote_catalog = f"/odoo/odoo-server/addons/{args.module}/i18n/vi.po"
@@ -148,6 +174,47 @@ def main():
         check=True,
     )
 
+    remote_import = remote_staging
+    remote_code = f"""
+from odoo.tools.translate import TranslationImporter
+
+module = env['ir.module.module'].search([
+    ('name', '=', {args.module!r}),
+    ('state', '=', 'installed'),
+], limit=1)
+if not module:
+    raise RuntimeError('Installed module not found: {args.module}')
+
+importer = TranslationImporter(env.cr)
+with open({remote_import!r}, 'rb') as catalog:
+    importer.load(catalog, 'po', 'vi_VN', module={args.module!r})
+importer.save(overwrite=True, force_overwrite=True)
+env.cr.commit()
+print('Imported reviewed {args.module} vi_VN override')
+"""
+    remote_command = (
+        f"sudo -u odoo python3 {args.odoo_bin} shell "
+        f"-c {args.config} -d {args.database} --no-http "
+        f"--pidfile=/tmp/odoo-core-translation-{args.module}.pid"
+    )
+    subprocess.run(
+        ["ssh", args.host, remote_command],
+        input=remote_code,
+        text=True,
+        check=True,
+    )
+    subprocess.run(
+        ["ssh", args.host, f"sudo systemctl restart {args.service}"],
+        check=True,
+    )
+    time.sleep(3)
+    status = subprocess.run(
+        ["ssh", args.host, f"sudo systemctl is-active {args.service}"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
     verification = patched.with_name(
         f"{args.module}_vi_deployed_{date_stamp}.po"
     )
@@ -179,9 +246,27 @@ def main():
         )
         raise RuntimeError(f"Core catalog deployment verification failed:\n{details}")
 
+    logs = subprocess.run(
+        [
+            "ssh",
+            args.host,
+            (
+                f"sudo sed -n '{log_start + 1},$p' "
+                "/var/log/odoo/odoo-server.log"
+            ),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    if re.search(r"(^|\s)(ERROR|CRITICAL)\s", logs, re.MULTILINE):
+        raise RuntimeError(
+            f"New Odoo log errors detected after {args.module} core override"
+        )
+
     print(
         f"Deployed and verified {len(expected)} reviewed translations "
-        f"in {remote_catalog}"
+        f"in {remote_catalog}; service={status}"
     )
     print(f"Backup: {backup}")
 

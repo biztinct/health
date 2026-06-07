@@ -4,6 +4,7 @@ import { registry } from "@web/core/registry";
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { localization } from "@web/core/l10n/localization";
 
 const STAFF_COLORS = [
     '#1565C0', '#43A047', '#7c3aed', '#E53935', '#FB8C00',
@@ -124,7 +125,7 @@ class OpsCommandCenter extends Component {
     }
 
     formatDateLabel(date) {
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString(localization.code.replace("_", "-"), {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
         });
     }
@@ -134,7 +135,7 @@ class OpsCommandCenter extends Component {
     }
 
     _fmtShort(iso) {
-        return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
+        return new Date(iso + 'T00:00:00').toLocaleDateString(localization.code.replace("_", "-"), {
             month: 'short', day: 'numeric', year: 'numeric',
         });
     }
@@ -165,12 +166,12 @@ class OpsCommandCenter extends Component {
 
     get headerLabel() {
         const p = this.state.period;
-        if (p === 'all') return 'All dates';
+        if (p === 'all') return _t('All dates');
         if (p === 'custom') {
             if (this.state.customFrom && this.state.customTo) {
                 return `${this._fmtShort(this.state.customFrom)} – ${this._fmtShort(this.state.customTo)}`;
             }
-            return 'Select a date range';
+            return _t('Select a date range');
         }
         const d = this._anchorDate();
         if (p === 'week') {
@@ -178,7 +179,7 @@ class OpsCommandCenter extends Component {
             return `${this._fmtShort(r.from)} – ${this._fmtShort(r.to)}`;
         }
         if (p === 'month') {
-            return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            return d.toLocaleDateString(localization.code.replace("_", "-"), { month: 'long', year: 'numeric' });
         }
         return this.formatDateLabel(d);
     }
@@ -304,9 +305,9 @@ class OpsCommandCenter extends Component {
         if (!minutes) return '';
         const hrs = Math.floor(minutes / 60);
         const mins = minutes % 60;
-        if (hrs && mins) return `${hrs}h ${mins}m`;
-        if (hrs) return `${hrs} hour${hrs > 1 ? 's' : ''}`;
-        return `${mins}m`;
+        if (hrs && mins) return _t("%s hr %s min", hrs, mins);
+        if (hrs) return hrs > 1 ? _t("%s hours", hrs) : _t("%s hour", hrs);
+        return _t("%s min", mins);
     }
 
     formatCurrency(amount) {

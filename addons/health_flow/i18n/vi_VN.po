@@ -1157,8 +1157,11 @@ msgstr "health_user_admin.action_healthcare_users"
 #~ msgid "Analytics"
 #~ msgstr "Phân tích"
 
-#~ msgid "Audit"
-#~ msgstr "Kiểm tra"
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Audit"
+msgstr "Kiểm tra"
 
 #~ msgid "Booking Search"
 #~ msgstr "Tìm kiếm lịch hẹn"

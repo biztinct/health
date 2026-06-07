@@ -77,6 +77,15 @@ def _selection_mode_of_contact(model):
     ]
 
 
+def _selection_escalated_to(model):
+    return [
+        ('head_nurse', model.env._('Head Nurse')),
+        ('om', model.env._('Operations Manager')),
+        ('duty_doctor', model.env._('Duty Doctor')),
+        ('other', model.env._('Other')),
+    ]
+
+
 class HealthLead(models.Model):
     """
     Healthcare CRM Lead extending standard Odoo CRM functionality
@@ -497,12 +506,9 @@ class HealthLead(models.Model):
     )
     
     # Escalation tracking fields
-    escalated_to = fields.Selection([
-        ('head_nurse', 'Head Nurse'),
-        ('om', 'Operations Manager'),
-        ('duty_doctor', 'Duty Doctor'),
-        ('other', 'Other'),
-    ], string='Escalated To',
+    escalated_to = fields.Selection(
+        _selection_escalated_to,
+        string='Escalated To',
        help='Person/role this contact was escalated to')
     
     escalation_datetime = fields.Datetime(
@@ -2298,7 +2304,9 @@ class HealthLead(models.Model):
         if self.escalation_datetime:
             target = ''
             if self.escalated_to:
-                target = dict(self._fields['escalated_to'].selection or []).get(self.escalated_to, '')
+                target = dict(
+                    self._fields['escalated_to']._description_selection(self.env)
+                ).get(self.escalated_to, '')
             events.append({
                 'type': 'escalation',
                 'date': self.escalation_datetime.strftime('%Y-%m-%d %H:%M:%S'),
@@ -2356,11 +2364,17 @@ class HealthLead(models.Model):
             fso_domain = [('id', '=', 0)]
 
         bookings = self.env['health.fieldservice.order'].search(fso_domain, order='create_date asc')
-        state_labels = dict(self.env['health.fieldservice.order']._fields['state'].selection or [])
+        booking_model = self.env['health.fieldservice.order']
+        state_labels = dict(
+            booking_model._fields['state']._description_selection(self.env)
+        )
+        service_type_labels = dict(
+            booking_model._fields['service_type']._description_selection(self.env)
+        )
         for bk in bookings:
             stype = ''
             if bk.service_type:
-                stype = dict(self.env['health.fieldservice.order']._fields['service_type'].selection or []).get(bk.service_type, '')
+                stype = service_type_labels.get(bk.service_type, '')
             events.append({
                 'type': 'booking',
                 'date': bk.create_date.strftime('%Y-%m-%d %H:%M:%S') if bk.create_date else '',

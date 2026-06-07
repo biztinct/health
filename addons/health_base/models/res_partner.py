@@ -399,13 +399,14 @@ class ResPartner(models.Model):
                 partner.age = 0
     
     @api.depends('age')
+    @api.depends_context('lang')
     def _compute_age_display(self):
         """Compute age display string"""
         for partner in self:
             if partner.age:
-                partner.age_display = f'{partner.age} years old'
+                partner.age_display = partner.env._('%s years old', partner.age)
             else:
-                partner.age_display = 'Age unknown'
+                partner.age_display = partner.env._('Age unknown')
 
     @api.depends('patient_code')
     def _compute_patient_code_display(self):

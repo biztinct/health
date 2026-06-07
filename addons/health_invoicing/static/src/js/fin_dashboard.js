@@ -127,6 +127,7 @@ class FinDashboard extends Component {
             collected: "fin-status-collected",
             pending_delivery: "fin-status-pending",
             delivered: "fin-status-delivered",
+            delivered_to_om: "fin-status-delivered",
             reconciled: "fin-status-reconciled",
             failed: "fin-status-failed",
         };
@@ -138,6 +139,7 @@ class FinDashboard extends Component {
             collected: _t("Collected"),
             pending_delivery: _t("Pending Delivery"),
             delivered: _t("Delivered"),
+            delivered_to_om: _t("Delivered"),
             reconciled: _t("Reconciled"),
             failed: _t("Failed"),
         };

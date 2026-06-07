@@ -8,6 +8,45 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+def _selection_labels(record, field_name):
+    return dict(record._fields[field_name]._description_selection(record.env))
+
+
+def _selection_assignment_status(model):
+    return [
+        ('assigned', model.env._('Assigned')),
+        ('confirmed', model.env._('Confirmed')),
+        ('en_route', model.env._('En Route')),
+        ('arrived', model.env._('Arrived')),
+        ('in_progress', model.env._('In Progress')),
+        ('completed', model.env._('Completed')),
+        ('cancelled', model.env._('Cancelled')),
+    ]
+
+
+def _selection_assignment_state(model):
+    return [
+        ('template', model.env._('Template')),
+        ('draft', model.env._('Draft')),
+        ('assigned', model.env._('Assigned')),
+        ('confirmed', model.env._('Staff Confirmed')),
+        ('in_progress', model.env._('In Progress')),
+        ('completed', model.env._('Completed')),
+        ('cancelled', model.env._('Cancelled')),
+        ('deferred', model.env._('Deferred')),
+    ]
+
+
+def _selection_assignment_priority(model):
+    return [
+        ('0', model.env._('Low')),
+        ('1', model.env._('Normal')),
+        ('2', model.env._('High')),
+        ('3', model.env._('Urgent')),
+        ('4', model.env._('Emergency')),
+    ]
+
+
 class HealthStaffAssignment(models.Model):
     """
     State-of-the-art staff assignment system with intelligent routing
@@ -24,7 +63,7 @@ class HealthStaffAssignment(models.Model):
     # ============================================================================
     # Core Assignment Fields
     # ============================================================================
-    
+
     # Timeline display name for better web_timeline integration
     @api.depends('name', 'fso_id', 'staff_id', 'assignment_role')
     def _compute_display_name(self):
@@ -36,7 +75,7 @@ class HealthStaffAssignment(models.Model):
                 record.display_name = f"{record.fso_id.name} - {record.staff_id.name} {role_badge}"
             else:
                 record.display_name = record.name or "New Assignment"
-    
+
     display_name = fields.Char(compute='_compute_display_name', store=True)
     # Strict patient name for timeline cards
     patient_name = fields.Char(
@@ -70,7 +109,7 @@ class HealthStaffAssignment(models.Model):
         help='If unchecked, the assignment is archived.'
     )
 
-    
+
     name = fields.Char('Assignment Reference', required=True, copy=False, readonly=True,
                       default=lambda self: _('New Assignment'))
     
@@ -160,15 +199,9 @@ class HealthStaffAssignment(models.Model):
     fso_duration_minutes = fields.Integer('Service Duration (Minutes)', compute='_compute_fso_duration', store=False)
     
     # Individual assignment status
-    assignment_status = fields.Selection([
-        ('assigned', 'Assigned'),
-        ('confirmed', 'Confirmed'),
-        ('en_route', 'En Route'),
-        ('arrived', 'Arrived'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled')
-    ], string='Assignment Status', default='assigned', required=True, tracking=True)
+    assignment_status = fields.Selection(
+        _selection_assignment_status,
+        string='Assignment Status', default='assigned', required=True, tracking=True)
     
     # Individual notes and feedback
     assignment_notes = fields.Text('Assignment Notes', help='Specific notes for this staff member')
@@ -203,24 +236,13 @@ class HealthStaffAssignment(models.Model):
     # State Management  
     # ============================================================================
     
-    state = fields.Selection([
-        ('template', 'Template'),  # Template record for timeline context (hidden from lists)
-        ('draft', 'Draft'),
-        ('assigned', 'Assigned'),
-        ('confirmed', 'Staff Confirmed'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled'),
-        ('deferred', 'Deferred')
-    ], string='Assignment State', default='assigned', tracking=True)
-    
-    priority = fields.Selection([
-        ('0', 'Low'),
-        ('1', 'Normal'),
-        ('2', 'High'),
-        ('3', 'Urgent'),
-        ('4', 'Emergency')
-    ], string='Priority', default='1', tracking=True)
+    state = fields.Selection(
+        _selection_assignment_state,
+        string='Assignment State', default='assigned', tracking=True)
+
+    priority = fields.Selection(
+        _selection_assignment_priority,
+        string='Priority', default='1', tracking=True)
     
     assignment_type = fields.Selection([
         ('clinic_visit', 'Clinic Visit'),
@@ -1975,7 +1997,7 @@ class HealthStaffAssignmentEngine(models.Model):
                     'duration': 60,  # Default duration in minutes
                     'priority': assignment.priority,
                     'state': assignment.state,
-                    'state_display': dict(assignment._fields['state'].selection)[assignment.state],
+                    'state_display': _selection_labels(assignment, 'state')[assignment.state],
                     'time_display': assignment.assignment_date.strftime('%H:%M - %H:%M')  # Will calculate end time
                 })
         

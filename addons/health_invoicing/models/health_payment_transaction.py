@@ -4,6 +4,37 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
 
+def _selection_payment_method(model):
+    return [
+        ('cash', model.env._('Cash')),
+        ('bank_transfer', model.env._('Bank Transfer')),
+        ('credit_card', model.env._('Credit Card')),
+        ('qr_code', model.env._('QR Code Payment')),
+        ('prepaid', model.env._('Prepaid Service')),
+        ('other', model.env._('Other')),
+    ]
+
+
+def _selection_transaction_type(model):
+    return [
+        ('immediate', model.env._('Pay Now - Immediate')),
+        ('deferred', model.env._('Pay Later - Deferred')),
+        ('prepaid', model.env._('Prepaid Service')),
+        ('refund', model.env._('Refund')),
+    ]
+
+
+def _selection_payment_status(model):
+    return [
+        ('collected', model.env._('Payment Collected')),
+        ('pending_delivery', model.env._('Cash Pending Delivery')),
+        ('delivered_to_om', model.env._('Cash Delivered to OM')),
+        ('reconciled', model.env._('Reconciled in AR')),
+        ('failed', model.env._('Payment Failed')),
+        ('refunded', model.env._('Refunded')),
+    ]
+
+
 class HealthPaymentTransaction(models.Model):
     """
     Enhanced Payment Transaction Tracking
@@ -43,7 +74,9 @@ class HealthPaymentTransaction(models.Model):
     def _compute_display_name(self):
         for transaction in self:
             if transaction.patient_id and transaction.amount:
-                method_label = dict(transaction._fields['payment_method'].selection).get(transaction.payment_method, '')
+                method_label = dict(
+                    transaction._fields['payment_method']._description_selection(transaction.env)
+                ).get(transaction.payment_method, '')
                 transaction.display_name = f"{transaction.patient_id.name} - {transaction.amount:,.0f} VND ({method_label})"
             else:
                 transaction.display_name = transaction.name
@@ -118,14 +151,9 @@ class HealthPaymentTransaction(models.Model):
         required=True
     )
     
-    payment_method = fields.Selection([
-        ('cash', 'Cash'),
-        ('bank_transfer', 'Bank Transfer'),
-        ('credit_card', 'Credit Card'),
-        ('qr_code', 'QR Code Payment'),
-        ('prepaid', 'Prepaid Service'),
-        ('other', 'Other'),
-    ], string='Payment Method', required=True, tracking=True,
+    payment_method = fields.Selection(
+        _selection_payment_method,
+        string='Payment Method', required=True, tracking=True,
        help='Method used for payment')
     
     # Transaction Timing
@@ -138,22 +166,14 @@ class HealthPaymentTransaction(models.Model):
     )
     
     # Transaction Status and Workflow
-    transaction_type = fields.Selection([
-        ('immediate', 'Pay Now - Immediate'),
-        ('deferred', 'Pay Later - Deferred'),
-        ('prepaid', 'Prepaid Service'),
-        ('refund', 'Refund'),
-    ], string='Transaction Type', required=True, tracking=True,
+    transaction_type = fields.Selection(
+        _selection_transaction_type,
+        string='Transaction Type', required=True, tracking=True,
        help='Type of payment transaction')
     
-    status = fields.Selection([
-        ('collected', 'Payment Collected'),
-        ('pending_delivery', 'Cash Pending Delivery'),
-        ('delivered_to_om', 'Cash Delivered to OM'),
-        ('reconciled', 'Reconciled in AR'),
-        ('failed', 'Payment Failed'),
-        ('refunded', 'Refunded'),
-    ], string='Payment Status', default='collected', tracking=True,
+    status = fields.Selection(
+        _selection_payment_status,
+        string='Payment Status', default='collected', tracking=True,
        help='Current status of this payment')
     
     # Staff Information

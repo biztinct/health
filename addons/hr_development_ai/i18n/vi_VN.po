@@ -1,0 +1,98 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hr_development_ai
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-07 00:00+0000\n"
+"PO-Revision-Date: 2026-06-07 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Vietnamese\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "% at Target"
+msgstr "% đạt mục tiêu"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "1 Level Below Target"
+msgstr "Thấp hơn mục tiêu 1 cấp"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "2+ Levels Below Target"
+msgstr "Thấp hơn mục tiêu từ 2 cấp"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "Add skills to this employee to see the skills matrix"
+msgstr "Thêm kỹ năng cho nhân viên này để xem ma trận kỹ năng"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "At or Above Target"
+msgstr "Đạt hoặc vượt mục tiêu"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "At Target"
+msgstr "Đạt mục tiêu"
+
+#. module: hr_development_ai
+#: model_terms:ir.ui.view,arch_db:hr_development_ai.view_hr_employee_form_skills_matrix
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "Skills Matrix"
+msgstr "Ma trận kỹ năng"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "Legend:"
+msgstr "Chú giải:"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "Loading skills matrix..."
+msgstr "Đang tải ma trận kỹ năng..."
+
+#. module: hr_development_ai
+#: model:ir.model.fields.selection,name:hr_development_ai.selection__hr_skill_gap__gap_severity__major_gap
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "Major Gap"
+msgstr "Thiếu hụt lớn"
+
+#. module: hr_development_ai
+#: model:ir.model.fields.selection,name:hr_development_ai.selection__hr_skill_gap__gap_severity__minor_gap
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "Minor Gap"
+msgstr "Thiếu hụt nhỏ"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "No Skills Defined"
+msgstr "Chưa xác định kỹ năng"
+
+#. module: hr_development_ai
+#. odoo-javascript
+#: code:addons/hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml:0
+msgid "No skills in this category"
+msgstr "Không có kỹ năng trong nhóm này"

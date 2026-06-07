@@ -4,6 +4,7 @@ import { ListController } from "@web/views/list/list_controller";
 import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { useState } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 
 export class FinPackageListController extends ListController {
     static template = "health_invoicing.FinPackageListView";
@@ -16,11 +17,11 @@ export class FinPackageListController extends ListController {
 
     get statusTabs() {
         return [
-            { id: "all", label: "All", icon: "fa-list" },
-            { id: "active", label: "Active", icon: "fa-check-circle" },
-            { id: "exhausted", label: "Exhausted", icon: "fa-battery-empty" },
-            { id: "expired", label: "Expired", icon: "fa-clock-o" },
-            { id: "cancelled", label: "Cancelled", icon: "fa-ban" },
+            { id: "all", label: _t("All"), icon: "fa-list" },
+            { id: "active", label: _t("Active"), icon: "fa-check-circle" },
+            { id: "exhausted", label: _t("Exhausted"), icon: "fa-battery-empty" },
+            { id: "expired", label: _t("Expired"), icon: "fa-clock-o" },
+            { id: "cancelled", label: _t("Cancelled"), icon: "fa-ban" },
         ];
     }
 

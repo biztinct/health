@@ -12,6 +12,48 @@ import copy
 _logger = logging.getLogger(__name__)
 
 
+def _selection_labels(record, field_name):
+    return dict(record._fields[field_name]._description_selection(record.env))
+
+
+def _selection_service_type(model):
+    return [
+        ('home_visit', model.env._('Home Visit')),
+        ('clinic_visit', model.env._('Clinic Visit')),
+        ('consultation', model.env._('Consultation')),
+        ('emergency', model.env._('Emergency Care')),
+        ('follow_up', model.env._('Follow-up Care')),
+        ('preventive', model.env._('Preventive Care')),
+        ('rehabilitation', model.env._('Rehabilitation')),
+        ('telemedicine', model.env._('Telemedicine/Online')),
+        ('vaccination', model.env._('Vaccination')),
+        ('diagnostic', model.env._('Diagnostic Services')),
+    ]
+
+
+def _selection_priority(model):
+    return [
+        ('0', model.env._('Low')),
+        ('1', model.env._('Normal')),
+        ('2', model.env._('High')),
+        ('3', model.env._('Urgent')),
+        ('4', model.env._('Emergency')),
+    ]
+
+
+def _selection_fso_state(model):
+    return [
+        ('draft', model.env._('Draft')),
+        ('confirmed', model.env._('Confirmed')),
+        ('assigned', model.env._('Assigned')),
+        ('in_progress', model.env._('In Progress')),
+        ('completed', model.env._('Completed')),
+        ('completed_pending_invoice', model.env._('Completed - Pending Invoice')),
+        ('cancelled', model.env._('Cancelled')),
+        ('closed', model.env._('Closed')),
+    ]
+
+
 def _selection_service_location(model):
     return [
         ('home', model.env._('Patient Home')),
@@ -90,7 +132,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _get_service_type_label(self):
         """Get the human-readable label for service type"""
         self.ensure_one()
-        service_type_dict = dict(self._fields['service_type'].selection)
+        service_type_dict = _selection_labels(self, 'service_type')
         return service_type_dict.get(self.service_type, self.service_type or 'Unknown Service')
 
     # ============================================================================
@@ -291,18 +333,9 @@ class HealthFieldServiceOrderUnified(models.Model):
     # SERVICE DETAILS (Core Booking Information)
     # ============================================================================
     
-    service_type = fields.Selection([
-        ('home_visit', 'Home Visit'),
-        ('clinic_visit', 'Clinic Visit'),
-        ('consultation', 'Consultation'),
-        ('emergency', 'Emergency Care'),
-        ('follow_up', 'Follow-up Care'),
-        ('preventive', 'Preventive Care'),
-        ('rehabilitation', 'Rehabilitation'),
-        ('telemedicine', 'Telemedicine/Online'),
-        ('vaccination', 'Vaccination'),
-        ('diagnostic', 'Diagnostic Services'),
-    ], string='Service Type', required=True, tracking=True, default='home_visit',
+    service_type = fields.Selection(
+        _selection_service_type,
+        string='Service Type', required=True, tracking=True, default='home_visit',
        help='Type of healthcare service requested')
     
     service_category = fields.Selection([
@@ -344,13 +377,9 @@ class HealthFieldServiceOrderUnified(models.Model):
     intake_notes = fields.Text('Intake Notes', help='Additional intake assessment notes')
 
     # Clinical Priority (From Client Requirements)
-    priority = fields.Selection([
-        ('0', 'Low'),
-        ('1', 'Normal'),
-        ('2', 'High'), 
-        ('3', 'Urgent'),
-        ('4', 'Emergency')
-    ], string='Priority', default='1', tracking=True)
+    priority = fields.Selection(
+        _selection_priority,
+        string='Priority', default='1', tracking=True)
     
     urgency_level = fields.Selection([
         ('routine', 'Routine'),
@@ -904,16 +933,9 @@ class HealthFieldServiceOrderUnified(models.Model):
     # ============================================================================
     
     # Backend state for logic (readonly, invisible, domain conditions)
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('confirmed', 'Confirmed'),
-        ('assigned', 'Assigned'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed'),
-        ('completed_pending_invoice', 'Completed - Pending Invoice'),
-        ('cancelled', 'Cancelled'),
-        ('closed', 'Closed'),
-    ], string='Status', default='draft', tracking=True, required=True,
+    state = fields.Selection(
+        _selection_fso_state,
+        string='Status', default='draft', tracking=True, required=True,
        help='Backend state for workflow logic and field visibility')
     
     # Visual stage for UI (kanban, colors, user experience)
@@ -1858,7 +1880,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         if self.base_price:
             lines_to_create.append({
                 'move_id': invoice.id,
-                'name': f'{dict(self._fields["service_type"].selection)[self.service_type]} - {self.patient_id.name}',
+                'name': f'{_selection_labels(self, "service_type")[self.service_type]} - {self.patient_id.name}',
                 'quantity': self.estimated_duration or 1,
                 'price_unit': self.base_price / (self.estimated_duration or 1),
                 'healthcare_service_category': 'consultation',
@@ -2166,7 +2188,7 @@ class HealthFieldServiceOrderUnified(models.Model):
 
             service_type = ''
             if hasattr(self, 'service_type') and self.service_type:
-                service_type = dict(self._fields['service_type'].selection).get(self.service_type, self.service_type)
+                service_type = _selection_labels(self, 'service_type').get(self.service_type, self.service_type)
 
             if is_en:
                 title = '📋 New Booking Assignment'
@@ -2760,7 +2782,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             raise UserError(_(
                 'Booking can only be closed from Completed or Completed-Pending Invoice stages.\n'
                 'Current stage: %s'
-            ) % dict(self._fields['state'].selection).get(self.state))
+            ) % _selection_labels(self, 'state').get(self.state))
 
         # Find Closed stage
         closed_stage = self.env['health.fieldservice.stage'].search([
@@ -2888,7 +2910,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'booking_name': self.name or '',
             'patient_name': self.patient_id.name if self.patient_id else '',
             'patient_id': self.patient_id.id if self.patient_id else False,
-            'service_type': dict(self._fields['service_type'].selection).get(self.service_type, self.service_type or ''),
+            'service_type': _selection_labels(self, 'service_type').get(self.service_type, self.service_type or ''),
             'facility_name': self.facility_id.name if self.facility_id else '',
             'facility_id': self.facility_id.id if self.facility_id else False,
             'current_date': current_date,
@@ -3243,7 +3265,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 self.env['sale.order.line'].create({
                     'order_id': quote.id,
                     'product_id': service_product.id,
-                    'name': f'{dict(self._fields["service_type"].selection)[self.service_type]} - {self.patient_id.name}',
+                    'name': f'{_selection_labels(self, "service_type")[self.service_type]} - {self.patient_id.name}',
                     'product_uom_qty': self.estimated_duration or 1,
                     'price_unit': self.base_price / (self.estimated_duration or 1),
                 })
@@ -3262,7 +3284,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     def _get_or_create_service_product(self):
         """Get or create a service product for healthcare services"""
-        product_name = f'Healthcare Service - {dict(self._fields["service_type"].selection)[self.service_type]}'
+        product_name = f'Healthcare Service - {_selection_labels(self, "service_type")[self.service_type]}'
         product = self.env['product.product'].search([('name', '=', product_name)], limit=1)
         if not product:
             product = self.env['product.product'].create({
@@ -3773,6 +3795,14 @@ class HealthFieldServiceOrderUnified(models.Model):
         staff_members = Employee.search(staff_domain, order='name asc')
 
         Assignment = self.env['health.staff.assignment']
+        role_labels = {
+            'Admin': self.env._('Admin'),
+            'Doctor': self.env._('Doctor'),
+            'Duty Doctor': self.env._('Duty Doctor'),
+            'Head Nurse': self.env._('Head Nurse'),
+            'Nurse': self.env._('Nurse'),
+            'Operations Manager': self.env._('Operations Manager'),
+        }
         staff_list = []
         for emp in staff_members:
             day_assignments = Assignment.search([
@@ -3795,7 +3825,10 @@ class HealthFieldServiceOrderUnified(models.Model):
             staff_list.append({
                 'id': emp.id,
                 'name': emp.name or '',
-                'role': emp.access_role_display or '',
+                'role': role_labels.get(
+                    emp.access_role_display,
+                    emp.access_role_display or '',
+                ),
                 'status': status,
                 'status_label': duty['label'],
                 'today_assignments': len(day_assignments),
@@ -3943,9 +3976,9 @@ class HealthFieldServiceOrderUnified(models.Model):
         self.ensure_one()
         b = self
 
-        service_type_label = dict(b._fields['service_type'].selection).get(b.service_type, b.service_type or '')
-        state_label = dict(b._fields['state'].selection).get(b.state, b.state or '')
-        priority_label = dict(b._fields['priority'].selection).get(b.priority, '') if b.priority else ''
+        service_type_label = _selection_labels(b, 'service_type').get(b.service_type, b.service_type or '')
+        state_label = _selection_labels(b, 'state').get(b.state, b.state or '')
+        priority_label = _selection_labels(b, 'priority').get(b.priority, '') if b.priority else ''
         service_location_label = dict(
             b._fields['service_location']._description_selection(b.env)
         ).get(b.service_location, '') if b.service_location else ''
@@ -4058,9 +4091,13 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Workflow steps
         state_order = ['draft', 'confirmed', 'assigned', 'in_progress', 'completed', 'completed_pending_invoice', 'closed']
         state_labels = {
-            'draft': 'Created', 'confirmed': 'Confirmed', 'assigned': 'Staff Assigned',
-            'in_progress': 'In Progress', 'completed': 'Completed',
-            'completed_pending_invoice': 'Invoiced', 'closed': 'Closed',
+            'draft': self.env._('Created'),
+            'confirmed': self.env._('Confirmed'),
+            'assigned': self.env._('Staff Assigned'),
+            'in_progress': self.env._('In Progress'),
+            'completed': self.env._('Completed'),
+            'completed_pending_invoice': self.env._('Invoiced'),
+            'closed': self.env._('Closed'),
         }
         current_idx = state_order.index(b.state) if b.state in state_order else 0
         steps = []
@@ -4372,7 +4409,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         if b.scheduled_datetime:
             time_str = b.scheduled_datetime.strftime('%b %d, %Y')
 
-        service_label = dict(b._fields['service_type'].selection).get(b.service_type, '') if b.service_type else ''
+        service_label = _selection_labels(b, 'service_type').get(b.service_type, '') if b.service_type else ''
 
         breakdown_parts = []
         if b.base_price:
@@ -5428,7 +5465,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 except Exception:
                     pass
 
-        service_type_dict = dict(self._fields['service_type'].selection)
+        service_type_dict = _selection_labels(self, 'service_type')
         service_label = service_type_dict.get(service_type, service_type or '')
         staff_name = ''
         if staff_id:
@@ -5491,8 +5528,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'phone': s.work_phone or s.mobile_phone or '',
             }
 
-        service_label = dict(b._fields['service_type'].selection).get(b.service_type, '') if b.service_type else ''
-        priority_label = dict(b._fields['priority'].selection).get(b.priority, '') if b.priority else ''
+        service_label = _selection_labels(b, 'service_type').get(b.service_type, '') if b.service_type else ''
+        priority_label = _selection_labels(b, 'priority').get(b.priority, '') if b.priority else ''
 
         # Timer
         start_iso = ''
@@ -5590,8 +5627,8 @@ class HealthFieldServiceOrderUnified(models.Model):
         self.ensure_one()
         b = self
 
-        service_label = dict(b._fields['service_type'].selection).get(b.service_type, '') if b.service_type else ''
-        priority_label = dict(b._fields['priority'].selection).get(b.priority, '') if b.priority else ''
+        service_label = _selection_labels(b, 'service_type').get(b.service_type, '') if b.service_type else ''
+        priority_label = _selection_labels(b, 'priority').get(b.priority, '') if b.priority else ''
 
         time_range = ''
         date_label = ''

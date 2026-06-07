@@ -1467,7 +1467,7 @@ msgstr "Trình hướng dẫn bắt đầu dịch vụ FSO"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 msgid "Facilities"
-msgstr "Các cơ sở"
+msgstr "Cơ sở"
 
 #. module: health_landing
 #. odoo-javascript
@@ -2408,7 +2408,7 @@ msgstr "Các ghi chú gói"
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_packages
 msgid "Package Products"
-msgstr "Sản phẩm đóng gói"
+msgstr "Sản phẩm gói dịch vụ"
 
 #. module: health_landing
 #. odoo-javascript
@@ -2712,7 +2712,7 @@ msgstr "Giá & Sản phẩm"
 #: model:ir.actions.act_window,name:health_landing.action_admin_pricelists
 #: model_terms:ir.ui.view,arch_db:health_landing.view_admin_pricelist_list
 msgid "Pricing Engines"
-msgstr "Máy động giá"
+msgstr "Công cụ định giá"
 
 #. module: health_landing
 #. odoo-javascript
@@ -2721,7 +2721,7 @@ msgstr "Máy động giá"
 #: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_pricing_rules
 msgid "Pricing Rules"
-msgstr "Quy tắc giá"
+msgstr "Quy tắc định giá"
 
 #. module: health_landing
 #. odoo-javascript
@@ -2844,7 +2844,7 @@ msgstr "Những dấu hiệu quan trọng được ghi lại trong thời gian p
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_referral_sources
 msgid "Referral Sources"
-msgstr "Nguồn tham chiếu"
+msgstr "Nguồn giới thiệu"
 
 #. module: health_landing
 #. odoo-javascript
@@ -2965,7 +2965,7 @@ msgstr "Gửi thông điệp"
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_areas
 msgid "Service Areas"
-msgstr "Các khu vực dịch vụ"
+msgstr "Khu vực dịch vụ"
 
 #. module: health_landing
 #. odoo-javascript
@@ -3030,7 +3030,7 @@ msgstr "Loại dịch vụ"
 #: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_service_types
 msgid "Service Types"
-msgstr "Các loại dịch vụ"
+msgstr "Loại dịch vụ"
 
 #. module: health_landing
 #. odoo-python
@@ -3205,7 +3205,7 @@ msgstr "Nhân viên được thông báo"
 #. module: health_landing
 #: model:ir.actions.act_window,name:health_landing.action_admin_skills
 msgid "Staff Skills"
-msgstr "Kỹ năng của nhân viên"
+msgstr "Kỹ năng nhân viên"
 
 #. module: health_landing
 #. odoo-javascript
@@ -3302,7 +3302,49 @@ msgstr "Danh mục triệu chứng"
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_symptoms
 msgid "Symptoms"
-msgstr "Các triệu chứng"
+msgstr "Triệu chứng"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Catchments"
+msgstr "Khu vực phụ trách"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Categories"
+msgstr "Danh mục"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Districts"
+msgstr "Quận/Huyện"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Insurance"
+msgstr "Bảo hiểm"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Quick Edit"
+msgstr "Chỉnh sửa nhanh"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Specialties"
+msgstr "Chuyên khoa"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Urgency"
+msgstr "Mức độ khẩn cấp"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__symptoms

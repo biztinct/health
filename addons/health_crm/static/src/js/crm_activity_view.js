@@ -3,6 +3,7 @@
 import { ActivityController } from "@mail/views/web/activity/activity_controller";
 import { activityView } from "@mail/views/web/activity/activity_view";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { useState } from "@odoo/owl";
 
 export class CrmActivityController extends ActivityController {
@@ -20,20 +21,20 @@ export class CrmActivityController extends ActivityController {
 
     get typeFilters() {
         return [
-            { id: "all", label: "All", icon: "fa-th-large" },
-            { id: "todo", label: "To-Do", icon: "fa-check-square-o" },
-            { id: "email", label: "Email", icon: "fa-envelope-o" },
-            { id: "call", label: "Call", icon: "fa-phone" },
-            { id: "meeting", label: "Meeting", icon: "fa-users" },
+            { id: "all", label: _t("All"), icon: "fa-th-large" },
+            { id: "todo", label: _t("To-Do"), icon: "fa-check-square-o" },
+            { id: "email", label: _t("Email"), icon: "fa-envelope-o" },
+            { id: "call", label: _t("Call"), icon: "fa-phone" },
+            { id: "meeting", label: _t("Meeting"), icon: "fa-users" },
         ];
     }
 
     get dateFilters() {
         return [
-            { id: "all", label: "All Dates" },
-            { id: "today", label: "Today" },
-            { id: "week", label: "This Week" },
-            { id: "month", label: "This Month" },
+            { id: "all", label: _t("All Dates") },
+            { id: "today", label: _t("Today") },
+            { id: "week", label: _t("This Week") },
+            { id: "month", label: _t("This Month") },
         ];
     }
 
@@ -109,7 +110,7 @@ export class CrmActivityController extends ActivityController {
         if (dateId === "today") {
             const todayStr = today.toISOString().slice(0, 10);
             domain = [["activity_date_deadline", "=", todayStr]];
-            description = "Today";
+            description = _t("Today");
         } else if (dateId === "week") {
             const dow = today.getDay();
             const weekStart = new Date(today);
@@ -120,11 +121,11 @@ export class CrmActivityController extends ActivityController {
                 ["activity_date_deadline", ">=", weekStart.toISOString().slice(0, 10)],
                 ["activity_date_deadline", "<=", weekEnd.toISOString().slice(0, 10)],
             ];
-            description = "This Week";
+            description = _t("This Week");
         } else if (dateId === "month") {
             const monthStart = today.toISOString().slice(0, 8) + "01";
             domain = [["activity_date_deadline", ">=", monthStart]];
-            description = "This Month";
+            description = _t("This Month");
         }
 
         if (domain) {

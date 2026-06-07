@@ -2,6 +2,10 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 
+def _selection_labels(record, field_name):
+    return dict(record._fields[field_name]._description_selection(record.env))
+
+
 class ResPartner(models.Model):
     """Extend res.partner with assignment-related patient data"""
     _inherit = 'res.partner'
@@ -123,7 +127,7 @@ class ResPartner(models.Model):
 
                 for fso in upcoming_fsos:
                     date_str = fso.scheduled_datetime.strftime('%d %b %Y, %H:%M') if fso.scheduled_datetime else 'TBD'
-                    state_display = dict(fso._fields['state'].selection).get(fso.state, fso.state)
+                    state_display = _selection_labels(fso, 'state').get(fso.state, fso.state)
                     staff = fso.lead_staff_id.name if fso.lead_staff_id else 'Unassigned'
                     timeline_events.append({
                         'type': 'upcoming',
@@ -131,7 +135,7 @@ class ResPartner(models.Model):
                         'title': fso.name,
                         'staff': staff,
                         'state': state_display,
-                        'service': dict(fso._fields['service_type'].selection).get(fso.service_type, fso.service_type or ''),
+                        'service': _selection_labels(fso, 'service_type').get(fso.service_type, fso.service_type or ''),
                     })
 
                 completed_fsos = self.env['health.fieldservice.order'].search([
@@ -146,8 +150,8 @@ class ResPartner(models.Model):
                         'date': date_str,
                         'title': fso.name,
                         'staff': fso.lead_staff_id.name if fso.lead_staff_id else '',
-                        'state': 'Completed',
-                        'service': dict(fso._fields['service_type'].selection).get(fso.service_type, fso.service_type or ''),
+                        'state': partner.env._('Completed'),
+                        'service': _selection_labels(fso, 'service_type').get(fso.service_type, fso.service_type or ''),
                     })
 
                 if timeline_events:
@@ -159,7 +163,10 @@ class ResPartner(models.Model):
                     html += '</ul>'
                     partner.timeline_html = html
                 else:
-                    partner.timeline_html = '<p class="text-muted text-center p-4">No booking history yet</p>'
+                    partner.timeline_html = (
+                        '<p class="text-muted text-center p-4">%s</p>'
+                        % partner.env._('No booking history yet')
+                    )
             else:
                 partner.timeline_html = False
 
@@ -201,7 +208,7 @@ class ResPartner(models.Model):
         gender_map = {'male': 'M', 'female': 'F', 'other': 'O'}
         age_gender = ''
         if partner.age:
-            age_gender = f"{partner.age} years old"
+            age_gender = partner.env._("%s years old", partner.age)
             if partner.gender and partner.gender in gender_map:
                 age_gender += f" ({gender_map[partner.gender]})"
 
@@ -268,11 +275,11 @@ class ResPartner(models.Model):
                 'name': f.name or '',
                 'date_label': dt.strftime('%b %d') if dt else '',
                 'time_label': dt.strftime('%H:%M') if dt else '',
-                'service_type': dict(f._fields['service_type'].selection).get(f.service_type, f.service_type or ''),
+                'service_type': _selection_labels(f, 'service_type').get(f.service_type, f.service_type or ''),
                 'staff_name': f.lead_staff_id.name if f.lead_staff_id else '',
                 'has_staff': f.has_staff_assigned,
                 'state': f.state or 'draft',
-                'state_label': dict(f._fields['state'].selection).get(f.state, f.state or ''),
+                'state_label': _selection_labels(f, 'state').get(f.state, f.state or ''),
             })
 
         # Active packages
@@ -376,11 +383,11 @@ class ResPartner(models.Model):
                 'date_display': dt.strftime('%b %d, %Y'),
                 'time': dt.strftime('%I:%M %p'),
                 'service_type': b.service_type or '',
-                'service_label': dict(b._fields['service_type'].selection).get(b.service_type, ''),
+                'service_label': _selection_labels(b, 'service_type').get(b.service_type, ''),
                 'service_icon': SERVICE_ICONS.get(b.service_type, 'fa-calendar'),
                 'duration': b.estimated_duration or b.scheduled_duration or 0,
                 'state': b.state or '',
-                'state_label': dict(b._fields['state'].selection).get(b.state, ''),
+                'state_label': _selection_labels(b, 'state').get(b.state, ''),
                 'staff_name': b.lead_staff_id.name if b.lead_staff_id else None,
                 'staff_initials': (b.lead_staff_id.name or '')[:1].upper() if b.lead_staff_id else None,
             })

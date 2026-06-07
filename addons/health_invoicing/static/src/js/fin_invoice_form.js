@@ -4,14 +4,15 @@ import { FormController } from "@web/views/form/form_controller";
 import { registry } from "@web/core/registry";
 import { useState, onMounted, onPatched, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 const PAYMENT_LABELS = {
-    not_paid: "Not Paid",
-    in_payment: "In Payment",
-    paid: "Paid",
-    partial: "Partial",
-    reversed: "Reversed",
-    invoicing_legacy: "Legacy",
+    not_paid: _t("Not Paid"),
+    in_payment: _t("In Payment"),
+    paid: _t("Paid"),
+    partial: _t("Partial"),
+    reversed: _t("Reversed"),
+    invoicing_legacy: _t("Legacy"),
 };
 
 export class FinInvoiceFormController extends FormController {
@@ -78,7 +79,7 @@ export class FinInvoiceFormController extends FormController {
     }
 
     getPaymentLabel(state) {
-        return PAYMENT_LABELS[state] || state || "Unknown";
+        return PAYMENT_LABELS[state] || state || _t("Unknown");
     }
 
     getPaymentClass(state) {

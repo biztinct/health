@@ -13,6 +13,7 @@ import { _t } from "@web/core/l10n/translation";
  */
 class HealthFlowAction extends Component {
     static template = "health_flow.HealthFlowTemplate";
+    static templateTranslationTerms = [_t("Audit")];
 
     // Breadcrumb display name for Odoo 19
     static displayName = _t("Home Page");

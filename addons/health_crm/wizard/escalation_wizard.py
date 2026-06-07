@@ -4,6 +4,35 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
 
+def _selection_escalation_type(model):
+    return [
+        ('consultation', model.env._('Consultation Request')),
+        ('transfer', model.env._('Full Transfer')),
+    ]
+
+
+def _selection_escalate_to(model):
+    return [
+        ('duty_doctor', model.env._('Duty Doctor')),
+        ('head_nurse', model.env._('Head Nurse')),
+        ('om', model.env._('Operations Manager')),
+        ('other', model.env._('Other')),
+    ]
+
+
+def _selection_urgency(model):
+    return [
+        ('low', model.env._('Low')),
+        ('normal', model.env._('Normal')),
+        ('high', model.env._('High')),
+        ('urgent', model.env._('Urgent')),
+    ]
+
+
+def _selection_labels(record, field_name):
+    return dict(record._fields[field_name]._description_selection(record.env))
+
+
 class HealthEscalationWizard(models.TransientModel):
     """
     Escalation & Consultation Transfer Wizard
@@ -34,18 +63,14 @@ class HealthEscalationWizard(models.TransientModel):
         help='The contact being escalated'
     )
     
-    escalation_type = fields.Selection([
-        ('consultation', 'Consultation Request'),
-        ('transfer', 'Full Transfer'),
-    ], string='Escalation Type', required=True, default='consultation',
+    escalation_type = fields.Selection(
+        _selection_escalation_type,
+        string='Escalation Type', required=True, default='consultation',
        help='Consultation = Temporary transfer for advice; Transfer = Full handover')
     
-    escalate_to = fields.Selection([
-        ('duty_doctor', 'Duty Doctor'),
-        ('head_nurse', 'Head Nurse'),
-        ('om', 'Operations Manager'),
-        ('other', 'Other'),
-    ], string='Escalate To', required=True,
+    escalate_to = fields.Selection(
+        _selection_escalate_to,
+        string='Escalate To', required=True,
        help='Person/role to escalate this contact to')
     
     # Optional: specific person selection
@@ -77,12 +102,9 @@ class HealthEscalationWizard(models.TransientModel):
         store=False
     )
     
-    urgency = fields.Selection([
-        ('low', 'Low'),
-        ('normal', 'Normal'),
-        ('high', 'High'),
-        ('urgent', 'Urgent'),
-    ], string='Urgency', default='normal', required=True)
+    urgency = fields.Selection(
+        _selection_urgency,
+        string='Urgency', default='normal', required=True)
     
     reason = fields.Text(
         'Reason for Escalation',
@@ -254,8 +276,12 @@ class HealthEscalationWizard(models.TransientModel):
         self._send_notifications(assigned_user)
         
         # Post message to chatter
-        escalate_to_label = dict(self._fields['escalate_to'].selection).get(self.escalate_to, self.escalate_to)
-        urgency_label = dict(self._fields['urgency'].selection).get(self.urgency, self.urgency)
+        escalate_to_label = _selection_labels(self, 'escalate_to').get(
+            self.escalate_to, self.escalate_to
+        )
+        urgency_label = _selection_labels(self, 'urgency').get(
+            self.urgency, self.urgency
+        )
         
         message_body = _(
             '<strong>Contact Escalated</strong><br/>'
@@ -302,8 +328,12 @@ class HealthEscalationWizard(models.TransientModel):
         self.ensure_one()
         
         # Prepare notification content
-        escalate_to_label = dict(self._fields['escalate_to'].selection).get(self.escalate_to, self.escalate_to)
-        urgency_label = dict(self._fields['urgency'].selection).get(self.urgency, self.urgency)
+        escalate_to_label = _selection_labels(self, 'escalate_to').get(
+            self.escalate_to, self.escalate_to
+        )
+        urgency_label = _selection_labels(self, 'urgency').get(
+            self.urgency, self.urgency
+        )
         
         subject = _('%(type)s: %(contact)s') % {
             'type': 'Consultation Request' if self.escalation_type == 'consultation' else 'Escalation',
