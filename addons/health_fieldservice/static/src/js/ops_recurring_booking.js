@@ -35,7 +35,7 @@ class OpsRecurringBooking extends Component {
             pattern: 'weekly',
             selectedDays: [0, 3],
             startDate: this._getNextMonday(),
-            occurrences: 8,
+            occurrences: 0,
             notes: '',
 
             // Staff & Doctor
@@ -188,7 +188,11 @@ class OpsRecurringBooking extends Component {
     onTimeChange(ev) { this.state.timeHour = parseInt(ev.target.value) || 9; this.refreshPreview(); }
     onFacilityChange(ev) { this.state.facilityId = parseInt(ev.target.value) || false; }
     onStartDateChange(ev) { this.state.startDate = ev.target.value; this.refreshPreview(); }
-    onOccurrencesChange(ev) { this.state.occurrences = parseInt(ev.target.value) || 1; this.refreshPreview(); }
+    onOccurrencesChange(ev) {
+        const v = parseInt(ev.target.value);
+        this.state.occurrences = (isNaN(v) || v < 0) ? 0 : v;
+        this.refreshPreview();
+    }
     onNotesChange(ev) { this.state.notes = ev.target.value; }
     onStaffChange(ev) { this.state.staffId = parseInt(ev.target.value) || false; }
     onDoctorChange(ev) { this.state.doctorId = parseInt(ev.target.value) || false; }
@@ -327,6 +331,14 @@ class OpsRecurringBooking extends Component {
     async createBookings() {
         if (this.state.isCreating) return;
 
+        // Occurrences must be a positive number — block and show a clear popup error.
+        if (!this.state.occurrences || this.state.occurrences < 1) {
+            this.state.validationErrors = [
+                _t("Number of occurrences must be more than 0. Please enter how many bookings you want to create."),
+            ];
+            return;
+        }
+
         const missing = [];
         if (!this.state.facilityId) missing.push('Facility');
         if (!this.hasServiceOrPackage) missing.push('Services or Package (add via Quote section)');
@@ -381,13 +393,22 @@ class OpsRecurringBooking extends Component {
             }
         } catch (e) {
             console.error('Create recurring error:', e);
-            this.notification.add(_t("Could not create recurring bookings"), { type: "danger" });
+            const msg = e?.data?.message || e?.message || _t("Could not create recurring bookings");
+            this.notification.add(msg, { type: "danger" });
         }
         this.state.isCreating = false;
     }
 
     async saveBookingsDraft() {
         if (this.state.isSaving) return;
+
+        // Occurrences must be a positive number — block and show a clear popup error.
+        if (!this.state.occurrences || this.state.occurrences < 1) {
+            this.state.validationErrors = [
+                _t("Number of occurrences must be more than 0. Please enter how many bookings you want to create."),
+            ];
+            return;
+        }
 
         const missing = [];
         if (!this.state.startDate) missing.push('Start Date');
@@ -434,7 +455,8 @@ class OpsRecurringBooking extends Component {
             }
         } catch (e) {
             console.error('Save draft error:', e);
-            this.notification.add(_t("Could not save bookings"), { type: "danger" });
+            const msg = e?.data?.message || e?.message || _t("Could not save bookings");
+            this.notification.add(msg, { type: "danger" });
         }
         this.state.isSaving = false;
     }

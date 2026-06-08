@@ -92,3 +92,7 @@ access_health_quick_booking_wizard_manager,health.quick.booking.wizard.manager,m
 access_health_quick_booking_wizard_owner,health.quick.booking.wizard.owner,model_health_quick_booking_wizard,health_base.group_healthcare_owner,1,1,1,1
 access_health_staff_timeoff_wizard,health.staff.timeoff.wizard,model_health_staff_timeoff_wizard,base.group_user,1,1,1,1
 access_health_staff_schedule_wizard,health.staff.schedule.wizard,model_health_staff_schedule_wizard,base.group_user,1,1,1,1
+access_sale_order_health_sales,sale.order.health.sales,sale.model_sale_order,health_base.group_healthcare_sales,1,1,1,1
+access_sale_order_line_health_sales,sale.order.line.health.sales,sale.model_sale_order_line,health_base.group_healthcare_sales,1,1,1,1
+access_sale_order_health_head_nurse,sale.order.health.head.nurse,sale.model_sale_order,health_base.group_healthcare_head_nurse,1,1,1,1
+access_sale_order_line_health_head_nurse,sale.order.line.health.head.nurse,sale.model_sale_order_line,health_base.group_healthcare_head_nurse,1,1,1,1

@@ -234,7 +234,7 @@
                                 </div>
                                 <div class="rb-form-group">
                                     <div class="rb-form-label">Occurrences</div>
-                                    <input class="rb-form-input" type="number" min="1" max="52"
+                                    <input class="rb-form-input" type="number" min="0" max="52"
                                            t-att-value="state.occurrences"
                                            t-on-change="onOccurrencesChange"/>
                                 </div>
