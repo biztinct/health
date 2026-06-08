@@ -338,7 +338,10 @@ class HealthPWAAPIController(http.Controller):
                 _logger.info(f'PWA FSO List: Excluded {excluded_count} completed future bookings')
 
             # Get staff name for response
-            staff_name = employee.name if employee else current_user.name
+            # sudo: a non-HR user (nurse) is served the employee *public* profile,
+            # and once the request prefetch is poisoned with role fields, even
+            # reading their own employee.name raises an AccessError.
+            staff_name = employee.sudo().name if employee else current_user.name
             
             orders_data = []
             for order in orders:
@@ -367,7 +370,7 @@ class HealthPWAAPIController(http.Controller):
                     'status_display': order.state,
                     'location': order.service_address,
                     'priority': order.priority,
-                    'lead_staff_name': order.lead_staff_id.name if order.lead_staff_id else None,
+                    'lead_staff_name': order.lead_staff_id.sudo().name if order.lead_staff_id else None,
                     'assignment_role': 'staff',
                     'notes': order.symptoms or order.patient_notes or '',
                 })
@@ -383,10 +386,11 @@ class HealthPWAAPIController(http.Controller):
             }
             
             return self._prepare_json_response(data=response_data)
-            
+
         except Exception as e:
+            _logger.exception('PWA api_fso_list failed for user %s', request.env.uid)
             return self._prepare_json_response(error=str(e), status_code=500)
-    
+
     @http.route('/health_pwa/api/fso/<int:order_id>', type='http', auth='user', methods=['GET'], csrf=False)
     def api_fso_detail(self, order_id, **kwargs):
         """Get detailed field service order information"""
@@ -474,8 +478,8 @@ class HealthPWAAPIController(http.Controller):
                     'name': order.team_id.name if order.team_id else None,
                 },
                 'assigned_user': {
-                    'id': order.lead_staff_id.id if order.lead_staff_id else None,
-                    'name': order.lead_staff_id.name if order.lead_staff_id else None,
+                    'id': order.lead_staff_id.sudo().id if order.lead_staff_id else None,
+                    'name': order.lead_staff_id.sudo().name if order.lead_staff_id else None,
                 },
                 'address': order.service_address,
                 'phone': order.patient_phone,
@@ -1519,7 +1523,7 @@ class HealthPWAAPIController(http.Controller):
                     'priority_display': _selection_labels(
                         fso, 'priority'
                     ).get(fso.priority, '') if 'priority' in fso._fields else '',
-                    'lead_staff_name': fso.lead_staff_id.name if fso.lead_staff_id else None,
+                    'lead_staff_name': fso.lead_staff_id.sudo().name if fso.lead_staff_id else None,
                     'scheduled_duration': fso.scheduled_duration if fso.scheduled_duration else 60,
                     'assignment_role': assignment.assignment_role if assignment else 'support',
                     'notes': getattr(fso, 'patient_notes', '') or getattr(fso, 'symptoms', '') or '',
@@ -1528,7 +1532,7 @@ class HealthPWAAPIController(http.Controller):
             response_data = {
                 'bookings': bookings_data,
                 'total_count': len(bookings_data),
-                'staff_name': employee.name if employee else current_user.name,
+                'staff_name': employee.sudo().name if employee else current_user.name,
                 'staff_id': employee.id if employee else None,
                 'date': target_date.isoformat(),
                 'requested_date': date_param or target_date.isoformat(),
@@ -1637,8 +1641,8 @@ class HealthPWAAPIController(http.Controller):
                 assigned_staff = []
                 for assignment in assignments:
                     assigned_staff.append({
-                        'id': assignment.staff_id.id,
-                        'name': assignment.staff_id.name,
+                        'id': assignment.staff_id.sudo().id,
+                        'name': assignment.staff_id.sudo().name,
                         'role': assignment.assignment_role or 'Staff',
                     })
 
@@ -2047,7 +2051,7 @@ class HealthPWAAPIController(http.Controller):
                 'name': user.name,
                 'email': user.email,
                 'employee_id': employee.id if employee else None,
-                'employee_name': employee.name if employee else user.name,
+                'employee_name': employee.sudo().name if employee else user.name,
                 'timezone': user.tz or 'UTC',  # User's timezone for proper datetime handling
                 'is_doctor': is_doctor,  # True if user is a doctor
                 'booking_credit': employee.booking_credit if employee else 0,  # PWA booking credits

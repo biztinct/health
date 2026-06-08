@@ -539,11 +539,14 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
         for record in self:
+            # sudo the role read: is_doctor_role derives from access_role_id, a
+            # private employee field non-HR users (e.g. nurses) cannot read, which
+            # would otherwise break this compute whenever they load bookings.
             staff_ids = record.assignment_ids.filtered(
                 lambda a: a.state != 'template'
                 and a.assignment_role != 'doctor'
                 and a.staff_id
-                and not a.staff_id.is_doctor_role
+                and not a.staff_id.sudo().is_doctor_role
             ).mapped('staff_id.id')
             record.assigned_staff_ids = [(6, 0, staff_ids)]
 
@@ -625,10 +628,11 @@ class HealthFieldServiceOrderUnified(models.Model):
                 doctor_ids.append(record.primary_doctor_id.id)
 
             # Look for doctors in assignments - check assignment_role first, then job_title
+            # sudo the job_title read (private employee field, unreadable by nurses)
             doctor_assignments = record.assignment_ids.filtered(
                 lambda a: a.state != 'template' and a.staff_id and (
                     a.assignment_role == 'doctor' or
-                    (a.staff_id.job_title and 'doctor' in a.staff_id.job_title.lower())
+                    (a.staff_id.sudo().job_title and 'doctor' in a.staff_id.sudo().job_title.lower())
                 )
             )
             doctor_ids.extend(doctor_assignments.mapped('staff_id.id'))
