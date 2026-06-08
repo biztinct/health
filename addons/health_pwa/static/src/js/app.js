@@ -6764,8 +6764,51 @@ window.healthPWA = {
             </button>
           </div>
           <p class="profile-version">Viet Uc · v{{ pwaVersion }}</p>
+          <div class="profile-actions">
+            <button @click="logout" class="btn btn-danger" :disabled="loggingOut">
+              <i class="material-icons">logout</i>
+              {{ loggingOut ? _t('Logging out…') : _t('Log Out') }}
+            </button>
+          </div>
         </div>
-      `
+      `,
+      data() {
+        return { loggingOut: false };
+      },
+      methods: {
+        async logout() {
+          if (this.loggingOut) return;
+          if (!window.confirm(this._t(
+            'Log out of Viet Uc? Sync your data first — any unsynced changes will be lost, and offline data on this device will be cleared.'
+          ))) {
+            return;
+          }
+          this.loggingOut = true;
+          // Wipe locally-cached PII (PouchDB stores + in-memory cache) so a lost
+          // or shared device retains no patient/booking data after logout.
+          try {
+            const sm = window.healthPWA && window.healthPWA.storageManager;
+            if (sm && sm.clearAllData) {
+              await sm.clearAllData();
+            }
+          } catch (e) {
+            console.warn('logout: clearAllData failed', e);
+          }
+          // Drop service-worker caches (cached API responses / assets).
+          try {
+            if (window.caches) {
+              const keys = await caches.keys();
+              await Promise.all(keys.map((k) => caches.delete(k)));
+            }
+          } catch (e) {
+            console.warn('logout: cache clear failed', e);
+          }
+          try { localStorage.clear(); } catch (e) { /* ignore */ }
+          // End the Odoo session, then return to the PWA (which bounces to login).
+          window.location.href =
+            '/web/session/logout?redirect=' + encodeURIComponent('/health_pwa');
+        }
+      }
     });
 
     // Call view - displays clinic phone and initiates calls
