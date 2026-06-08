@@ -1236,6 +1236,11 @@
                                     <field name="facility_id"/>
                                     <field name="patient_catchment_province_id"/>
                                     <field name="patient_address_display" string="Address" readonly="1"/>
+                                    <label for="travel_distance" string="Driving Distance"/>
+                                    <div>
+                                        <field name="travel_distance" readonly="1" nolabel="1" class="d-inline"/> km
+                                        <span invisible="not travel_time_minutes"> · ~<field name="travel_time_minutes" readonly="1" nolabel="1" class="d-inline"/> min</span>
+                                    </div>
                                     <field name="patient_notes" string="Additional Notes"/>
                                 </group>
                             </div>

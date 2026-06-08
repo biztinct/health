@@ -1,6 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
 from odoo.addons.health_base.models.phone_utils import normalize_vn_phone
+from odoo.addons.health_base.models import geo_utils
 from datetime import date
 import re
 import requests
@@ -257,7 +258,20 @@ class ResPartner(models.Model):
         compute='_compute_geo_coordinates',
         help='Latitude, Longitude coordinates'
     )
-    
+
+    # One-way DRIVING distance from the client's primary facility (computed via
+    # geo_utils.driving_distance on geocode / facility change — not an @api.depends
+    # compute because it makes a network call).
+    clinic_drive_distance_km = fields.Float(
+        'Driving Distance to Clinic (km)', digits=(8, 2), readonly=True,
+        help='One-way driving distance from the primary facility to this client.')
+    clinic_drive_minutes = fields.Float(
+        'Driving Time to Clinic (min)', digits=(8, 1), readonly=True)
+    clinic_distance_method = fields.Char('Distance Source', readonly=True,
+        help='google / osrm / approx (straight-line fallback)')
+    clinic_distance_display = fields.Char(
+        'Driving Distance', compute='_compute_clinic_distance_display')
+
     # Computed Fields
     visit_count = fields.Integer('Total Visits', compute='_compute_visit_count')
     
@@ -476,7 +490,45 @@ class ResPartner(models.Model):
 
         # Execute the write with coordinates already in vals
         result = super(ResPartner, self).write(vals)
+
+        # Recompute one-way driving distance to the primary facility whenever the
+        # client's coordinates or assigned facility change (skips the recursive
+        # inner write, which only touches the clinic_drive_* fields).
+        if not self.env.context.get('skip_distance_recompute') and \
+                any(k in vals for k in ('partner_latitude', 'partner_longitude',
+                                        'primary_facility_id')):
+            for partner in self:
+                if partner.is_patient:
+                    partner._update_clinic_distance()
         return result
+
+    @api.depends('clinic_drive_distance_km', 'clinic_drive_minutes')
+    def _compute_clinic_distance_display(self):
+        for p in self:
+            if p.clinic_drive_distance_km:
+                mins = (' · ~%d min' % round(p.clinic_drive_minutes)) if p.clinic_drive_minutes else ''
+                p.clinic_distance_display = '%.1f km%s' % (p.clinic_drive_distance_km, mins)
+            else:
+                p.clinic_distance_display = ''
+
+    def _update_clinic_distance(self):
+        """Compute & store the one-way driving distance from primary_facility_id
+        to this client. Safe to call after geocoding; no-op if coords missing."""
+        for p in self:
+            fac = p.primary_facility_id
+            if not (p.partner_latitude and p.partner_longitude
+                    and fac and fac.latitude and fac.longitude):
+                continue
+            res = geo_utils.driving_distance(
+                self.env, fac.latitude, fac.longitude,
+                p.partner_latitude, p.partner_longitude)
+            if not res:
+                continue
+            p.with_context(skip_distance_recompute=True).write({
+                'clinic_drive_distance_km': res['km'],
+                'clinic_drive_minutes': res['minutes'],
+                'clinic_distance_method': res['method'],
+            })
 
     def _message_track(self, fields_iter, initial_values_dict):
         """

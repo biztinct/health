@@ -3,6 +3,7 @@
 from markupsafe import Markup
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+from odoo.addons.health_base.models import geo_utils
 from datetime import datetime, timedelta
 import json
 import pytz
@@ -1641,6 +1642,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             order._update_patient_next_visit_date()
             # Check invoice authorization (Nurses/Doctors cannot raise invoices)
             order._check_invoice_authorization()
+            # Compute one-way driving distance (facility -> client) for pricing/display
+            order._update_travel_distance()
 
         return orders
     
@@ -1725,8 +1728,53 @@ class HealthFieldServiceOrderUnified(models.Model):
         # via the PWA. The advance happens in health_staff_assignment.write()
         # when assignment state changes to 'confirmed' (nurse accepted).
 
+        # Recompute one-way driving distance when facility/client changed.
+        if not self.env.context.get('skip_travel_recompute') and \
+                any(k in vals for k in ('facility_id', 'patient_id')):
+            for record in self:
+                record._update_travel_distance()
+
         return result
-    
+
+    def _update_travel_distance(self):
+        """Compute & store the one-way driving distance (facility -> client) on
+        the booking. Feeds advanced-pricing (sale.order.fso_distance) + display.
+        No-op when either endpoint lacks coordinates. When the booking's facility
+        is the client's primary facility, reuse the client's already-computed
+        distance (avoids a redundant routing call)."""
+        for fso in self:
+            fac, pat = fso.facility_id, fso.patient_id
+            if not (fac and pat):
+                continue
+            km = mins = None
+            if (pat.primary_facility_id and pat.primary_facility_id.id == fac.id
+                    and pat.clinic_drive_distance_km):
+                km, mins = pat.clinic_drive_distance_km, pat.clinic_drive_minutes
+            elif (fac.latitude and fac.longitude
+                  and pat.partner_latitude and pat.partner_longitude):
+                res = geo_utils.driving_distance(
+                    self.env, fac.latitude, fac.longitude,
+                    pat.partner_latitude, pat.partner_longitude)
+                if res:
+                    km, mins = res['km'], res['minutes']
+            if km is None:
+                continue
+            fso.with_context(skip_travel_recompute=True).write({
+                'travel_distance': km,
+                'travel_time_minutes': int(round(mins or 0)),
+            })
+            # Refresh distance-based pricing on an existing advanced-pricing quote
+            # (skipped during bulk backfill of historical bookings).
+            if self.env.context.get('skip_quote_recalc'):
+                continue
+            so = fso.sale_order_id
+            if so and getattr(so, 'use_advanced_pricing', False) and \
+                    hasattr(so, 'action_post_service_recalc'):
+                try:
+                    so.action_post_service_recalc()
+                except Exception as e:  # noqa: BLE001
+                    _logger.info('Quote recalc after distance update failed: %s', e)
+
     def _handle_state_change(self, new_state):
         """Handle automation based on state changes"""
         for record in self:
@@ -3754,8 +3802,12 @@ class HealthFieldServiceOrderUnified(models.Model):
         bookings = []
         for fso in all_fsos:
             patient_name = fso.patient_id.name if fso.patient_id else ''
-            lead_staff_name = fso.lead_staff_id.name if fso.lead_staff_id else ''
-            lead_staff_id = fso.lead_staff_id.id if fso.lead_staff_id else False
+            # sudo the employee read: non-HR dashboard users get the public
+            # profile, and reading the lead-staff name otherwise pulls restricted
+            # role fields via prefetch -> AccessError.
+            lead = fso.lead_staff_id.sudo()
+            lead_staff_name = lead.name if lead else ''
+            lead_staff_id = lead.id if lead else False
             facility_name = fso.facility_id.name if fso.facility_id else ''
             catchment = fso.catchment_province_id.name if fso.catchment_province_id else ''
             appointment_type = fso.appointment_type_id.name if fso.appointment_type_id else ''
@@ -3788,13 +3840,17 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'total_price': fso.total_price or 0,
             })
 
-        Employee = self.env['hr.employee']
+        # Staff roster: read with sudo so non-HR dashboard users (e.g. CRM /
+        # Operations roles that are not HR officers) can see role/duty flags.
+        # Odoo otherwise serves them the employee *public* profile, which hides
+        # access_role_id/is_om_role/is_head_nurse/is_duty_doctor -> AccessError.
+        Employee = self.env['hr.employee'].sudo()
         staff_domain = [('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]
         if facility_id:
             staff_domain.append(('healthcare_facility_id', '=', facility_id))
         staff_members = Employee.search(staff_domain, order='name asc')
 
-        Assignment = self.env['health.staff.assignment']
+        Assignment = self.env['health.staff.assignment'].sudo()
         role_labels = {
             'Admin': self.env._('Admin'),
             'Doctor': self.env._('Doctor'),

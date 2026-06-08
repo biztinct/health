@@ -178,6 +178,13 @@
                                             <field name="partner_longitude" invisible="1"/>
                                             <field name="date_localization" invisible="1"/>
                                         </group>
+                                        <div class="mt-2" invisible="not clinic_distance_display">
+                                            <span class="vu-section__icon" data-icon="navigation"/>
+                                            <span class="text-muted">Driving distance to clinic: </span>
+                                            <field name="clinic_distance_display" readonly="1" nolabel="1" class="fw-bold d-inline"/>
+                                            <field name="clinic_drive_distance_km" invisible="1"/>
+                                            <field name="clinic_drive_minutes" invisible="1"/>
+                                        </div>
                                         <div class="mt-2">
                                             <button name="action_geocode_address_photon"
                                                     type="object"

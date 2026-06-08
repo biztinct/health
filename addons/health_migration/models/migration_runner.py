@@ -689,6 +689,154 @@ class MigrationRunner(models.Model):
                 report['kept'] += 1
         return report
 
+    def backfill_geo(self):
+        """One-time backfill: geocode facilities + clients, then compute the
+        one-way driving distance for clients (clinic_drive_*) and bookings
+        (travel_distance). Idempotent + throttled. Run via odoo shell + commit."""
+        import time
+        report = {'facilities_geocoded': 0, 'clients_geocoded': 0,
+                  'clients_distance': 0, 'bookings_distance': 0,
+                  'methods': {}, 'errors': []}
+
+        def _tally(rec_field_obj):
+            m = rec_field_obj or 'none'
+            report['methods'][m] = report['methods'].get(m, 0) + 1
+
+        # 1) Facilities lacking coordinates -> Photon (city-level ok)
+        for f in self.env['health.facility'].with_context(active_test=False).search([]):
+            if not (f.latitude and f.longitude):
+                try:
+                    f._geocode_facility_address()
+                    if f.latitude and f.longitude:
+                        report['facilities_geocoded'] += 1
+                except Exception as e:  # noqa: BLE001
+                    report['errors'].append('fac %s: %s' % (f.id, str(e)[:60]))
+                time.sleep(0.3)
+
+        Partner = self.env['res.partner'].with_context(active_test=False)
+        clients = Partner.search([('is_patient', '=', True)])
+
+        # 2) Clients lacking coordinates -> geocode (skip the auto distance hook;
+        #    distance is computed in step 3 in one consistent pass)
+        for p in clients:
+            if not (p.partner_latitude and p.partner_longitude):
+                try:
+                    coords = p._get_geocode_coordinates_sync()
+                    if coords:
+                        p.with_context(skip_distance_recompute=True).write({
+                            'partner_latitude': coords['latitude'],
+                            'partner_longitude': coords['longitude'],
+                            'date_localization': fields.Date.today(),
+                        })
+                        report['clients_geocoded'] += 1
+                except Exception as e:  # noqa: BLE001
+                    report['errors'].append('cli %s: %s' % (p.id, str(e)[:60]))
+                time.sleep(0.3)
+
+        # 3) Client one-way driving distance from primary facility
+        for p in clients:
+            p._update_clinic_distance()
+            if p.clinic_drive_distance_km:
+                report['clients_distance'] += 1
+                _tally(p.clinic_distance_method)
+            time.sleep(0.12)
+
+        # 4) Booking one-way driving distance (facility -> client). Reuses the
+        #    client's distance for same-facility bookings (no API call) and skips
+        #    per-quote recompute for historical bookings.
+        for fso in self.env['health.fieldservice.order'].with_context(
+                active_test=False, skip_quote_recalc=True).search(
+                    [('legacy_booking_ref', '!=', False)]):
+            fso._update_travel_distance()
+            if fso.travel_distance:
+                report['bookings_distance'] += 1
+
+        return report
+
+    def reassign_facility_by_location(self):
+        """For every geocoded client, set primary_facility_id (and matching
+        catchment_province_id) to the NEAREST facility by straight-line distance,
+        then recompute the one-way driving distance. Fixes clients sitting on the
+        far-city facility (the cause of very long distances)."""
+        from odoo.addons.health_base.models import geo_utils
+        facs = [f for f in self.env['health.facility'].with_context(
+                active_test=False).search([]) if f.latitude and f.longitude]
+        if not facs:
+            return {'error': 'no geocoded facilities'}
+        report = {'reassigned': 0, 'unchanged': 0, 'no_coords': 0, 'by_facility': {}}
+        Partner = self.env['res.partner'].with_context(active_test=False)
+        for p in Partner.search([('is_patient', '=', True)]):
+            if not (p.partner_latitude and p.partner_longitude):
+                report['no_coords'] += 1
+                continue
+            nearest = min(facs, key=lambda f: geo_utils.haversine_km(
+                p.partner_latitude, p.partner_longitude, f.latitude, f.longitude))
+            vals = {}
+            if p.primary_facility_id.id != nearest.id:
+                vals['primary_facility_id'] = nearest.id
+            if nearest.catchment_province_id and \
+                    p.catchment_province_id.id != nearest.catchment_province_id.id:
+                vals['catchment_province_id'] = nearest.catchment_province_id.id
+            if vals:
+                p.write(vals)  # write hook recomputes the driving distance
+                report['reassigned'] += 1
+                report['by_facility'][nearest.name] = \
+                    report['by_facility'].get(nearest.name, 0) + 1
+            else:
+                report['unchanged'] += 1
+        return report
+
+    def set_placeholder_phones(self, overwrite_all=True):
+        """Put VALID random Vietnamese mobile numbers on clients + contacts so the
+        phone constraint stops blocking saves (legacy phones are truncated to 4
+        digits). overwrite_all=False only fixes empty/invalid numbers."""
+        import random
+        rnd = random.Random(20260608)
+        prefixes = ['3', '5', '7', '8', '9']
+
+        def gen():
+            return '0' + rnd.choice(prefixes) + ''.join(
+                rnd.choice('0123456789') for _ in range(8))
+
+        def is_valid(v):
+            if not v:
+                return False
+            try:
+                normalize_vn_phone(v)
+                return True
+            except ValidationError:
+                return False
+
+        report = {'clients': 0, 'leads': 0}
+        Partner = self.env['res.partner'].with_context(
+            active_test=False, skip_distance_recompute=True,
+            mail_create_nolog=True, tracking_disable=True)
+        for p in Partner.search([('is_patient', '=', True)]):
+            vals = {}
+            if overwrite_all or not is_valid(p.mobile):
+                vals['mobile'] = gen()
+            if overwrite_all or not is_valid(p.phone):
+                vals['phone'] = gen()
+            # The phone constraint re-validates emergency_contact_phone on any
+            # phone/mobile write, so a junk emergency number would block the save.
+            if p.emergency_contact_phone and not is_valid(p.emergency_contact_phone):
+                vals['emergency_contact_phone'] = gen()
+            if vals:
+                p.write(vals)
+                report['clients'] += 1
+        Lead = self.env['crm.lead'].with_context(
+            active_test=False, mail_create_nolog=True, tracking_disable=True)
+        for l in Lead.search([]):
+            vals = {}
+            if overwrite_all or not is_valid(l.phone):
+                vals['phone'] = gen()
+            if 'mobile' in l._fields and (overwrite_all or not is_valid(l.mobile)):
+                vals['mobile'] = gen()
+            if vals:
+                l.write(vals)
+                report['leads'] += 1
+        return report
+
     def restore_baseline(self, run_tag='legacy_mig'):
         n = 0
         for b in self.env['migration.baseline'].search([('run', '=', run_tag)]):
