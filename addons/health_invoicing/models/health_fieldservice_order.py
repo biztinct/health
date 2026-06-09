@@ -427,9 +427,11 @@ class HealthFieldserviceOrder(models.Model):
 
         quantity_per_pkg = self.package_consumption_quantity or 1
         for pkg in packages:
-            pkg.consumed_services -= quantity_per_pkg
-            if pkg.consumed_services < 0:
-                pkg.consumed_services = 0
+            # Clamp before assigning — the package model forbids a negative
+            # consumed count, so we must never write an intermediate negative
+            # (can happen on legacy bookings whose service was never reserved).
+            new_consumed = pkg.consumed_services - quantity_per_pkg
+            pkg.consumed_services = new_consumed if new_consumed > 0 else 0
 
             if pkg.state == 'exhausted':
                 pkg.state = 'active'
