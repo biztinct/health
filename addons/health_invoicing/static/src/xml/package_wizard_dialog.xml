@@ -12,7 +12,7 @@
                     <div class="pw-subtitle">
                         Select or purchase a package for
                         <strong t-esc="state.patientName"/>
-                        <span class="pw-booking-ref">
+                        <span class="pw-booking-ref" t-if="state.bookingName">
                             · <t t-esc="state.bookingName"/>
                         </span>
                     </div>
@@ -47,11 +47,11 @@
                                 <t t-foreach="state.existingPackages" t-as="pkg" t-key="pkg.id">
                                     <div t-att-class="'pw-card pw-card--existing'
                                         + (isPackageSelected(pkg.id) ? ' pw-card--selected' : '')
-                                        + (!pkg.selectable ? ' pw-card--disabled' : '')"
+                                        + (pkg.remaining_services === 0 ? ' pw-card--disabled' : '')"
                                          t-on-click="() => this.togglePackage(pkg.id)">
 
-                                        <!-- Selection indicator -->
-                                        <div class="pw-card-check">
+                                        <!-- Selection indicator (booking mode only) -->
+                                        <div class="pw-card-check" t-if="!isPatientMode">
                                             <t t-if="isPackageSelected(pkg.id)">
                                                 <i class="fa fa-check-circle"/>
                                             </t>
@@ -94,7 +94,7 @@
                                             </span>
                                         </div>
 
-                                        <t t-if="!pkg.selectable">
+                                        <t t-if="pkg.remaining_services === 0">
                                             <div class="pw-card-badge pw-card-badge--depleted">
                                                 <i class="fa fa-ban"/> Depleted
                                             </div>
@@ -103,8 +103,8 @@
                                 </t>
                             </div>
 
-                            <!-- Confirm existing button -->
-                            <div class="pw-section-action">
+                            <!-- Confirm existing button (booking mode only) -->
+                            <div class="pw-section-action" t-if="!isPatientMode">
                                 <button class="pw-btn pw-btn--primary"
                                         t-att-disabled="selectedCount === 0"
                                         t-on-click="onConfirmExisting">
@@ -166,7 +166,9 @@
                             <button class="pw-btn pw-btn--success"
                                     t-att-disabled="!state.selectedProductId"
                                     t-on-click="onPurchase">
-                                <i class="fa fa-shopping-cart"/> Purchase &amp; Assign
+                                <i class="fa fa-shopping-cart"/>
+                                <t t-if="isPatientMode"> Purchase Package</t>
+                                <t t-else=""> Purchase &amp; Assign</t>
                             </button>
                         </div>
                     </div>

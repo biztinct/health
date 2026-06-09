@@ -7,10 +7,17 @@ import { _t } from "@web/core/l10n/translation";
 export class PackageWizardDialog extends Component {
     static template = "health_invoicing.PackageWizardDialog";
     static props = {
-        fsoId: { type: Number },
+        // Booking mode passes fsoId (assign existing + purchase);
+        // client mode passes patientId (purchase only).
+        fsoId: { type: Number, optional: true },
+        patientId: { type: Number, optional: true },
         close: { type: Function },
         onDone: { type: Function, optional: true },
     };
+
+    get isPatientMode() {
+        return !this.props.fsoId;
+    }
 
     setup() {
         this.orm = useService("orm");
@@ -35,11 +42,17 @@ export class PackageWizardDialog extends Component {
     async loadData() {
         this.state.isLoading = true;
         try {
-            const data = await this.orm.call(
-                "health.fieldservice.order",
-                "get_package_dialog_data",
-                [this.props.fsoId]
-            );
+            const data = this.props.fsoId
+                ? await this.orm.call(
+                      "health.fieldservice.order",
+                      "get_package_dialog_data",
+                      [this.props.fsoId]
+                  )
+                : await this.orm.call(
+                      "res.partner",
+                      "get_package_dialog_data",
+                      [this.props.patientId]
+                  );
             this.state.patientName = data.patient_name;
             this.state.bookingName = data.booking_name;
             this.state.existingPackages = data.existing_packages || [];
@@ -126,6 +139,7 @@ export class PackageWizardDialog extends Component {
     }
 
     async onConfirmExisting() {
+        if (!this.props.fsoId) return;   // assigning needs a booking
         const ids = Object.keys(this.state.selectedPackageIds).map(Number);
         if (!ids.length) {
             this.notification.add(_t("Select at least one package"), { type: "warning" });
@@ -153,14 +167,25 @@ export class PackageWizardDialog extends Component {
             this.notification.add(_t("Select a package to purchase"), { type: "warning" });
             return;
         }
+        const onDone = this.props.onDone;
         try {
-            const result = await this.orm.call(
-                "health.fieldservice.order",
-                "action_purchase_package_owl",
-                [this.props.fsoId, this.state.selectedProductId]
-            );
+            const result = this.props.fsoId
+                ? await this.orm.call(
+                      "health.fieldservice.order",
+                      "action_purchase_package_owl",
+                      [this.props.fsoId, this.state.selectedProductId]
+                  )
+                : await this.orm.call(
+                      "res.partner",
+                      "action_purchase_package_owl",
+                      [this.props.patientId, this.state.selectedProductId]
+                  );
             this.props.close();
-            this.action.doAction(result);
+            // Reload the underlying form once the checkout wizard is closed, so the
+            // newly-purchased package shows up without a manual page refresh.
+            this.action.doAction(result, {
+                onClose: () => { if (onDone) onDone(); },
+            });
         } catch (e) {
             this.notification.add(_t("Failed to open purchase wizard"), { type: "danger" });
         }

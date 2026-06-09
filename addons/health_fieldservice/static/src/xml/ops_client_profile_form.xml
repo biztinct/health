@@ -182,7 +182,7 @@
 
                 <div class="ops-cp-sidebar__separator"/>
 
-                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_create_prepaid_package')">
+                <button class="ops-cp-sidebar__action" t-on-click="() => this.openPackagePurchase()">
                     <i class="fa fa-gift"/> Quick Package Purchase
                 </button>
                 <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_create_standard_invoice')">

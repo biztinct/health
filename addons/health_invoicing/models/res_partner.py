@@ -254,10 +254,72 @@ class Partner(models.Model):
             }
         }
     
+    def get_package_dialog_data(self):
+        """Return data for the OWL package dialog opened from a client profile
+        (patient mode — no booking, so packages are shown for context and the
+        action is purchasing a new package)."""
+        self.ensure_one()
+        existing = []
+        packages = self.env['health.service.package'].search([
+            ('patient_id', '=', self.id),
+            ('state', '=', 'active'),
+        ])
+        for pkg in packages:
+            existing.append({
+                'id': pkg.id,
+                'name': pkg.name,
+                'service_type': pkg.service_type or '',
+                'service_type_label': dict(pkg._fields['service_type'].selection).get(pkg.service_type, ''),
+                'total_services': pkg.total_services,
+                'consumed_services': pkg.consumed_services,
+                'remaining_services': pkg.remaining_services,
+                'selectable': False,
+                'selected': False,
+            })
+
+        products = []
+        for pt in self.env['product.template'].search([('is_healthcare_package', '=', True)]):
+            products.append({
+                'id': pt.id,
+                'name': pt.name,
+                'service_count': pt.healthcare_service_count,
+                'price': pt.list_price,
+                'price_per_service': pt.healthcare_price_per_visit,
+                'package_type': pt.healthcare_package_type or '',
+                'package_type_label': dict(pt._fields['healthcare_package_type'].selection).get(pt.healthcare_package_type, ''),
+            })
+
+        return {
+            'patient_name': self.name,
+            'booking_name': '',
+            'existing_packages': existing,
+            'available_products': products,
+        }
+
+    def action_purchase_package_owl(self, product_template_id=False):
+        """Open the purchase wizard for this client with the chosen package
+        product pre-selected (used by the client-profile package dialog)."""
+        self.ensure_one()
+        if not self.is_patient:
+            raise UserError(_('Prepaid packages can only be created for patients.'))
+        return {
+            'name': _('Purchase Package'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.prepaid.package.wizard',
+            'view_mode': 'form',
+            'views': [[False, 'form']],
+            'target': 'new',
+            'context': {
+                'default_patient_id': self.id,
+                'default_package_product_id': product_template_id or False,
+                'default_currency_id': self.env.company.currency_id.id,
+            },
+        }
+
     def action_create_standard_invoice(self):
         """Launch standard invoice creation"""
         self.ensure_one()
-        
+
         if not self.is_patient:
             raise UserError(_('Invoices can only be created for patients.'))
         

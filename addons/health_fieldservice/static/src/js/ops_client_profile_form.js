@@ -100,6 +100,12 @@ export class OpsClientProfileFormController extends FormController {
         this.doPartnerAction('action_open_quick_booking_owl');
     }
 
+    openPackagePurchase() {
+        // Fallback to the basic wizard; health_invoicing overrides this to open
+        // the rich OWL package dialog (cards + gauges) in patient mode.
+        this.doPartnerAction('action_create_prepaid_package');
+    }
+
     async doPartnerAction(methodName) {
         const resId = this.model.root.resId;
         if (!resId) return;

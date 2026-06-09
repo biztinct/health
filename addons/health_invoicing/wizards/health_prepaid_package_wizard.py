@@ -293,8 +293,15 @@ class HealthPrepaidPackageWizard(models.TransientModel):
             
             # If opened from a booking, auto-assign and return to booking
             if self.source_fso_id:
-                self.source_fso_id.write({'package_ids': [(4, package.id)]})
-                booking_name = self.source_fso_id.name
+                fso = self.source_fso_id
+                already_linked = package in fso.package_ids
+                fso.write({'package_ids': [(4, package.id)]})
+                # Reserve a service immediately when the booking is already past
+                # confirmation (reservation otherwise happens at confirmation time),
+                # so a package purchased for a confirmed booking shows 1 used, not 0.
+                if not already_linked and fso.state in fso._PACKAGE_RESERVED_STATES:
+                    fso._reserve_package_service(package)
+                booking_name = fso.name
                 return {
                     'type': 'ir.actions.client',
                     'tag': 'display_notification',
