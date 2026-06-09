@@ -183,11 +183,11 @@ class OpsRecurringBooking extends Component {
     }
 
     // Form handlers
-    onServiceTypeChange(ev) { this.state.serviceType = ev.target.value; }
+    onServiceTypeChange(ev) { this.state.serviceType = ev.target.value; this.previewPricing(); }
     onDurationChange(ev) { this.state.durationHours = parseFloat(ev.target.value) || 1; }
-    onTimeChange(ev) { this.state.timeHour = parseInt(ev.target.value) || 9; this.refreshPreview(); }
-    onFacilityChange(ev) { this.state.facilityId = parseInt(ev.target.value) || false; }
-    onStartDateChange(ev) { this.state.startDate = ev.target.value; this.refreshPreview(); }
+    onTimeChange(ev) { this.state.timeHour = parseInt(ev.target.value) || 9; this.refreshPreview(); this.previewPricing(); }
+    onFacilityChange(ev) { this.state.facilityId = parseInt(ev.target.value) || false; this.previewPricing(); }
+    onStartDateChange(ev) { this.state.startDate = ev.target.value; this.refreshPreview(); this.previewPricing(); }
     onOccurrencesChange(ev) {
         const v = parseInt(ev.target.value);
         this.state.occurrences = (isNaN(v) || v < 0) ? 0 : v;
@@ -230,8 +230,51 @@ class OpsRecurringBooking extends Component {
             selected: this.state.selectedProducts.map(p => ({ ...p })),
             onDone: (selections) => {
                 this.state.selectedProducts.splice(0, this.state.selectedProducts.length, ...selections);
+                this.previewPricing();
             },
         });
+    }
+
+    _serviceLocation() {
+        const map = {
+            home_visit: 'home', clinic_visit: 'clinic', consultation: 'clinic',
+            telemedicine: 'online', emergency: 'home', follow_up: 'home',
+            preventive: 'clinic', rehabilitation: 'clinic', vaccination: 'clinic',
+            diagnostic: 'clinic',
+        };
+        return map[this.state.serviceType] || 'home';
+    }
+
+    async previewPricing() {
+        // Auto-price the quote lines from the booking conditions via advanced
+        // pricing (same engine the bookings are priced with on creation).
+        if (!this.state.selectedProducts.length) return;
+        try {
+            const result = await this.orm.call(
+                "health.fieldservice.order", "preview_quick_booking_pricing",
+                [{
+                    patient_id: this.patientId || false,
+                    service_type: this.state.serviceType,
+                    service_location: this._serviceLocation(),
+                    facility_id: this.state.facilityId || false,
+                    date: this.state.startDate,
+                    time_hour: this.state.timeHour,
+                    product_lines: this.state.selectedProducts.map(p => ({
+                        product_id: p.product_id, qty: p.qty,
+                    })),
+                }]
+            );
+            const priced = (result && result.lines) || [];
+            for (const line of priced) {
+                const item = this.state.selectedProducts.find(p => p.product_id === line.product_id);
+                if (item) {
+                    item.price = line.unit_price;
+                    item.autopriced = !!line.adjusted;
+                }
+            }
+        } catch (e) {
+            console.error('Recurring pricing preview failed:', e);
+        }
     }
 
     get hasProducts() {
@@ -263,10 +306,12 @@ class OpsRecurringBooking extends Component {
                 qty: 1,
             });
         }
+        this.previewPricing();
     }
 
     removeProduct(index) {
         this.state.selectedProducts.splice(index, 1);
+        this.previewPricing();
     }
 
     updateProductQty(index, ev) {
@@ -274,6 +319,7 @@ class OpsRecurringBooking extends Component {
         if (this.state.selectedProducts[index]) {
             this.state.selectedProducts[index].qty = Math.max(1, qty);
         }
+        this.previewPricing();
     }
 
     onAddProductSelect(ev) {

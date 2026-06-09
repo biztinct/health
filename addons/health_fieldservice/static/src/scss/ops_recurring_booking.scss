@@ -466,6 +466,16 @@
     font-family: 'Montserrat', 'Segoe UI', sans-serif;
 }
 
+.rb-pt-autoprice {
+    padding: 6px 12px 10px;
+    font-size: 11px;
+    color: #6A4FB6;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    .fa { color: #8E6FD8; }
+}
+
 .rb-no-products {
     font-size: 12px;
     color: #1565C0;

@@ -147,6 +147,9 @@
                                         <div class="rb-pt-total-label">Total per booking</div>
                                         <div class="rb-pt-total-value" t-esc="formatCurrency(productTotal)"/>
                                     </div>
+                                    <div class="rb-pt-autoprice">
+                                        <i class="fa fa-magic"/> Prices auto-calculated from the booking conditions (time, location, service type).
+                                    </div>
                                 </div>
                             </t>
                             <t t-if="!hasProducts">
