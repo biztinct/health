@@ -380,14 +380,17 @@ class HealthFieldserviceOrder(models.Model):
     # -------------------------------------------------------------------------
     # Package helpers — multi-package aware
     # -------------------------------------------------------------------------
-    def _reserve_package_service(self):
-        """Reserve services from ALL assigned packages on booking confirmation."""
+    def _reserve_package_service(self, packages=None):
+        """Reserve services from the given packages (default: all assigned).
+        Called on booking confirmation, and when packages are assigned to an
+        already-confirmed booking."""
         self.ensure_one()
-        if not self.package_ids:
+        packages = packages if packages is not None else self.package_ids
+        if not packages:
             return False
 
         quantity_per_pkg = self.package_consumption_quantity or 1
-        for pkg in self.package_ids:
+        for pkg in packages:
             pkg.consumed_services += quantity_per_pkg
             try:
                 pkg.message_post(
@@ -413,14 +416,17 @@ class HealthFieldserviceOrder(models.Model):
 
         return True
 
-    def _release_package_service(self):
-        """Release reserved services from ALL assigned packages if booking is cancelled."""
+    def _release_package_service(self, packages=None):
+        """Release reserved services from the given packages (default: all assigned).
+        Called on cancellation, and when packages are unassigned from an
+        already-confirmed booking."""
         self.ensure_one()
-        if not self.package_ids:
+        packages = packages if packages is not None else self.package_ids
+        if not packages:
             return False
 
         quantity_per_pkg = self.package_consumption_quantity or 1
-        for pkg in self.package_ids:
+        for pkg in packages:
             pkg.consumed_services -= quantity_per_pkg
             if pkg.consumed_services < 0:
                 pkg.consumed_services = 0
@@ -710,10 +716,28 @@ class HealthFieldserviceOrder(models.Model):
             'available_products': products,
         }
 
+    # States in which package services have already been reserved
+    # (reservation happens at booking confirmation).
+    _PACKAGE_RESERVED_STATES = ('confirmed', 'assigned', 'in_progress')
+
     def action_assign_packages_owl(self, package_ids):
-        """Assign selected packages from OWL dialog."""
+        """Assign selected packages from OWL dialog.
+
+        If the booking has already passed confirmation (when package services are
+        reserved), reserve the newly-added packages and release any removed ones so
+        usage stays correct even when packages are assigned after confirmation.
+        For draft bookings, reservation still happens later at confirmation."""
         self.ensure_one()
+        old_pkgs = self.package_ids
         self.write({'package_ids': [(6, 0, package_ids)]})
+        if self.state in self._PACKAGE_RESERVED_STATES:
+            new_pkgs = self.package_ids
+            added = new_pkgs - old_pkgs
+            removed = old_pkgs - new_pkgs
+            if added:
+                self._reserve_package_service(added)
+            if removed:
+                self._release_package_service(removed)
         return True
 
     def action_purchase_package_owl(self, product_template_id):
@@ -735,7 +759,12 @@ class HealthFieldserviceOrder(models.Model):
         }
 
     def action_remove_packages_owl(self):
-        """Remove all package assignments from OWL dialog."""
+        """Remove all package assignments from OWL dialog.
+
+        Release any services that were reserved (when the booking is past
+        confirmation) before clearing the assignment."""
         self.ensure_one()
+        if self.state in self._PACKAGE_RESERVED_STATES and self.package_ids:
+            self._release_package_service(self.package_ids)
         self.write({'package_ids': [(5, 0, 0)]})
         return True

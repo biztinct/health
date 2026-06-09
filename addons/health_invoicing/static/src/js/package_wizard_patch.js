@@ -22,7 +22,10 @@ patch(FormController.prototype, {
                 }
                 this.__pkgDialogService.add(PackageWizardDialog, {
                     fsoId: resId,
-                    onDone: () => this.model.root.load(),
+                    // Reload the form after assignment so the Services/Packages
+                    // widget refreshes. Use model.load() — Record has no public
+                    // load(), so the previous model.root.load() silently failed.
+                    onDone: () => this.model.load(),
                 });
                 return false;
             }
