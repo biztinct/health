@@ -4938,6 +4938,9 @@ class HealthFieldServiceOrderUnified(models.Model):
                 quote_vals = {
                     'partner_id': patient_id,
                     'origin': fso_rec.name or '',
+                    # Link the quote to this booking so advanced pricing can read
+                    # its conditions (time, location, service type, distance, etc.).
+                    'fso_id': fso_rec.id,
                 }
                 if pricelist:
                     quote_vals['pricelist_id'] = pricelist.id
@@ -4964,6 +4967,14 @@ class HealthFieldServiceOrderUnified(models.Model):
                     })
 
                 fso_rec.sale_order_id = quote.id
+
+                # Recalculate line prices from this booking's conditions
+                # (advanced pricing) — each booking is priced on its own
+                # date/time, so per-quote recalculation is required.
+                try:
+                    quote.order_line._compute_advanced_price()
+                except Exception:
+                    pass
 
             first_quote = fso_records[:1].sale_order_id
             if first_quote:
