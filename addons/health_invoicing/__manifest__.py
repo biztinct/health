@@ -125,10 +125,14 @@
         'web.assets_backend': [
             # Package Wizard Dialog
             'health_invoicing/static/src/scss/package_wizard_dialog.scss',
+            'health_invoicing/static/src/js/package_purchase_dialog.js',
+            'health_invoicing/static/src/xml/package_purchase_dialog.xml',
             'health_invoicing/static/src/js/package_wizard_dialog.js',
             'health_invoicing/static/src/xml/package_wizard_dialog.xml',
             'health_invoicing/static/src/js/package_wizard_patch.js',
             'health_invoicing/static/src/js/client_package_patch.js',
+            'health_invoicing/static/src/js/active_packages_widget.js',
+            'health_invoicing/static/src/xml/active_packages_widget.xml',
 
             # Finance Center — shared must load first
             'health_invoicing/static/src/scss/fin_shared.scss',

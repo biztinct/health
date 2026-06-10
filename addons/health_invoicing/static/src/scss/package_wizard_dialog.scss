@@ -422,3 +422,103 @@
         &:hover { background: #F5F5F5; color: #424242; }
     }
 }
+
+/* ============================================================
+   Package Purchase (checkout) dialog
+   ============================================================ */
+.pp-dialog { max-width: 560px; }
+
+.pp-feature {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #E8EAF6;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #F8F9FF 0%, #FFFFFF 100%);
+    margin-bottom: 18px;
+}
+.pp-feature-icon {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: #E8EAF6; color: #3949AB; font-size: 22px;
+    flex: 0 0 auto;
+}
+.pp-feature-main { flex: 1 1 auto; min-width: 0; }
+.pp-feature-name { font-size: 16px; font-weight: 700; color: #1A237E; }
+.pp-feature-type {
+    display: inline-block; margin-top: 2px;
+    font-size: 11px; font-weight: 600; color: #5C6BC0;
+    background: #E8EAF6; padding: 1px 8px; border-radius: 10px;
+}
+.pp-feature-meta { margin-top: 6px; font-size: 12px; color: #607D8B; }
+.pp-dot { margin: 0 6px; color: #B0BEC5; }
+.pp-feature-price { text-align: right; flex: 0 0 auto; }
+.pp-price { font-size: 20px; font-weight: 800; color: #2E7D32; font-family: 'Montserrat','Segoe UI',sans-serif; }
+.pp-price-label { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: #9E9E9E; }
+
+.pp-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .05em; color: #90A4AE; margin: 4px 0 10px;
+}
+.pp-options { display: flex; flex-direction: column; gap: 10px; }
+.pp-option {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border: 1px solid #ECEFF1; border-radius: 12px;
+    cursor: pointer; transition: border-color .15s, background .15s;
+    &:hover { border-color: #C5CAE9; background: #FAFBFF; }
+}
+.pp-toggle {
+    width: 40px; height: 22px; border-radius: 11px; background: #CFD8DC;
+    position: relative; flex: 0 0 auto; transition: background .2s;
+    .pp-knob {
+        position: absolute; top: 2px; left: 2px;
+        width: 18px; height: 18px; border-radius: 50%; background: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: left .2s;
+    }
+    &.pp-toggle--on { background: #43A047; .pp-knob { left: 20px; } }
+}
+.pp-option-title { font-size: 13px; font-weight: 600; color: #37474F; }
+.pp-option-sub { font-size: 11px; color: #90A4AE; }
+.pp-payrow { display: flex; gap: 12px; padding: 4px 2px 0; }
+.pp-field { flex: 1 1 0; display: flex; flex-direction: column; gap: 4px; }
+.pp-field label { font-size: 11px; font-weight: 600; color: #78909C; }
+.pp-input {
+    border: 1px solid #CFD8DC; border-radius: 8px; padding: 8px 10px; font-size: 13px;
+    &:focus { outline: none; border-color: #5C6BC0; }
+}
+.pp-footer { display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ============================================================
+   Active Packages display (client profile)
+   ============================================================ */
+.ap-wrap { padding: 4px 0; }
+.ap-empty { padding: 24px; text-align: center; color: #90A4AE; font-size: 13px; .fa { margin-right: 6px; } }
+.ap-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px;
+}
+.ap-card {
+    border: 1px solid #ECEFF1; border-radius: 16px; padding: 18px 16px 16px;
+    background: #fff; text-align: center;
+    box-shadow: 0 1px 3px rgba(38,50,56,.06);
+    transition: transform .15s, box-shadow .15s;
+    &:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(38,50,56,.12); }
+    &.ap-card--empty { opacity: .75; }
+}
+.ap-name { font-size: 14px; font-weight: 700; color: #1A237E; }
+.ap-type {
+    display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 600;
+    color: #5C6BC0; background: #E8EAF6; padding: 1px 8px; border-radius: 10px;
+}
+.ap-donut { position: relative; width: 120px; height: 120px; margin: 12px auto 8px; }
+.ap-donut-svg { width: 100%; height: 100%; transform: rotate(0deg); }
+.ap-donut-center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+}
+.ap-donut-number { font-size: 28px; font-weight: 800; color: #263238; line-height: 1; }
+.ap-donut-label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #B0BEC5; }
+.ap-usage { font-size: 12px; color: #607D8B; font-weight: 600; }
+.ap-bar { height: 6px; border-radius: 3px; background: #ECEFF1; margin-top: 8px; overflow: hidden; }
+.ap-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #5C6BC0, #3949AB); transition: width .3s; }

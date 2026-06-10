@@ -696,22 +696,10 @@ class HealthFieldserviceOrder(models.Model):
                 'selected': pkg.id in current_ids,
             })
 
-        products = []
-        package_products = self.env['product.template'].search([
-            ('is_healthcare_package', '=', True),
-        ])
-        for pt in package_products:
-            products.append({
-                'id': pt.id,
-                'name': pt.name,
-                'service_count': pt.healthcare_service_count,
-                'price': pt.list_price,
-                'price_per_service': pt.healthcare_price_per_visit,
-                'package_type': pt.healthcare_package_type or '',
-                'package_type_label': dict(pt._fields['healthcare_package_type'].selection).get(pt.healthcare_package_type, ''),
-            })
+        products = self.env['res.partner']._package_products_data()
 
         return {
+            'patient_id': self.patient_id.id,
             'patient_name': self.patient_id.name or '',
             'booking_name': self.name or '',
             'existing_packages': existing,

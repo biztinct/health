@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_invoicing.ActivePackagesWidget">
+    <div class="ap-wrap">
+        <t t-if="state.loading">
+            <div class="ap-empty"><i class="fa fa-spinner fa-spin"/> Loading packages…</div>
+        </t>
+        <t t-elif="!state.packages.length">
+            <div class="ap-empty"><i class="fa fa-gift"/> No active packages for this client yet.</div>
+        </t>
+        <t t-else="">
+            <div class="ap-grid">
+                <t t-foreach="state.packages" t-as="pkg" t-key="pkg.id">
+                    <div t-att-class="'ap-card' + (pkg.remaining_services === 0 ? ' ap-card--empty' : '')">
+                        <div class="ap-name" t-esc="pkg.name"/>
+                        <div class="ap-type" t-esc="pkg.service_type_label"/>
+
+                        <div class="ap-donut">
+                            <svg class="ap-donut-svg" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="42" fill="none" stroke="#ECEFF1" stroke-width="8"/>
+                                <circle cx="50" cy="50" r="42" fill="none"
+                                        t-att-stroke="donutColor(pkg)"
+                                        stroke-width="8" stroke-linecap="round"
+                                        t-att-stroke-dasharray="donutCircumference()"
+                                        t-att-stroke-dashoffset="donutOffset(pkg)"
+                                        transform="rotate(-90 50 50)"/>
+                            </svg>
+                            <div class="ap-donut-center">
+                                <span class="ap-donut-number" t-esc="pkg.remaining_services"/>
+                                <span class="ap-donut-label">left</span>
+                            </div>
+                        </div>
+
+                        <div class="ap-usage">
+                            <t t-esc="pkg.consumed_services"/> / <t t-esc="pkg.total_services"/> used
+                        </div>
+                        <div class="ap-bar">
+                            <div class="ap-bar-fill" t-att-style="'width:' + usedPercent(pkg) + '%'"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </div>
+</t>
+
+</templates>

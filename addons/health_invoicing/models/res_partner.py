@@ -277,8 +277,24 @@ class Partner(models.Model):
                 'selected': False,
             })
 
+        return {
+            'patient_id': self.id,
+            'patient_name': self.name,
+            'booking_name': '',
+            'existing_packages': existing,
+            'available_products': self._package_products_data(),
+        }
+
+    @api.model
+    def _package_products_data(self):
+        """Healthcare package products available for purchase (shared by the
+        package dialogs)."""
         products = []
         for pt in self.env['product.template'].search([('is_healthcare_package', '=', True)]):
+            expiration = ''
+            if pt.healthcare_package_duration:
+                expiration = fields.Date.to_string(
+                    fields.Date.add(fields.Date.today(), weeks=pt.healthcare_package_duration))
             products.append({
                 'id': pt.id,
                 'name': pt.name,
@@ -287,14 +303,50 @@ class Partner(models.Model):
                 'price_per_service': pt.healthcare_price_per_visit,
                 'package_type': pt.healthcare_package_type or '',
                 'package_type_label': dict(pt._fields['healthcare_package_type'].selection).get(pt.healthcare_package_type, ''),
+                'expiration': expiration,
+                'notes': pt.healthcare_terms or '',
             })
+        return products
 
-        return {
-            'patient_name': self.name,
-            'booking_name': '',
-            'existing_packages': existing,
-            'available_products': products,
-        }
+    def get_active_packages_display(self):
+        """Active prepaid packages for this client, for the rich Active Packages
+        card display on the profile."""
+        self.ensure_one()
+        out = []
+        for pkg in self.env['health.service.package'].search([
+            ('patient_id', '=', self.id), ('state', '=', 'active'),
+        ], order='create_date desc'):
+            out.append({
+                'id': pkg.id,
+                'name': pkg.name,
+                'service_type_label': dict(pkg._fields['service_type'].selection).get(pkg.service_type, ''),
+                'total_services': pkg.total_services,
+                'consumed_services': pkg.consumed_services,
+                'remaining_services': pkg.remaining_services,
+            })
+        return out
+
+    def execute_package_purchase(self, product_template_id, create_invoice=True,
+                                 process_payment=False, payment_method='cash',
+                                 payment_amount=0.0, source_fso_id=False):
+        """Create the prepaid package (with optional invoice/payment) for this
+        client, reusing the package wizard's logic. Returns a simple result for
+        the OWL checkout dialog."""
+        self.ensure_one()
+        if not self.is_patient:
+            raise UserError(_('Prepaid packages can only be created for patients.'))
+        wiz = self.env['health.prepaid.package.wizard'].create({
+            'patient_id': self.id,
+            'package_product_id': product_template_id,
+            'create_invoice': bool(create_invoice),
+            'process_payment': bool(process_payment),
+            'payment_method': payment_method if process_payment else False,
+            'payment_amount': payment_amount if process_payment else 0.0,
+            'source_fso_id': source_fso_id or False,
+            'currency_id': self.env.company.currency_id.id,
+        })
+        wiz.action_create_package()
+        return {'success': True}
 
     def action_purchase_package_owl(self, product_template_id=False):
         """Open the purchase wizard for this client with the chosen package

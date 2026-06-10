@@ -3,6 +3,7 @@
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { PackagePurchaseDialog } from "./package_purchase_dialog";
 
 export class PackageWizardDialog extends Component {
     static template = "health_invoicing.PackageWizardDialog";
@@ -23,9 +24,11 @@ export class PackageWizardDialog extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
+        this.dialog = useService("dialog");
 
         this.state = useState({
             isLoading: true,
+            patientId: false,
             patientName: "",
             bookingName: "",
             existingPackages: [],
@@ -53,6 +56,7 @@ export class PackageWizardDialog extends Component {
                       "get_package_dialog_data",
                       [this.props.patientId]
                   );
+            this.state.patientId = data.patient_id;
             this.state.patientName = data.patient_name;
             this.state.bookingName = data.booking_name;
             this.state.existingPackages = data.existing_packages || [];
@@ -162,33 +166,27 @@ export class PackageWizardDialog extends Component {
         }
     }
 
-    async onPurchase() {
+    onPurchase() {
         if (!this.state.selectedProductId) {
             this.notification.add(_t("Select a package to purchase"), { type: "warning" });
             return;
         }
-        const onDone = this.props.onDone;
-        try {
-            const result = this.props.fsoId
-                ? await this.orm.call(
-                      "health.fieldservice.order",
-                      "action_purchase_package_owl",
-                      [this.props.fsoId, this.state.selectedProductId]
-                  )
-                : await this.orm.call(
-                      "res.partner",
-                      "action_purchase_package_owl",
-                      [this.props.patientId, this.state.selectedProductId]
-                  );
-            this.props.close();
-            // Reload the underlying form once the checkout wizard is closed, so the
-            // newly-purchased package shows up without a manual page refresh.
-            this.action.doAction(result, {
-                onClose: () => { if (onDone) onDone(); },
-            });
-        } catch (e) {
-            this.notification.add(_t("Failed to open purchase wizard"), { type: "danger" });
+        const product = this.state.availableProducts.find(
+            (p) => p.id === this.state.selectedProductId
+        );
+        if (!product) {
+            return;
         }
+        const onDone = this.props.onDone;
+        // Hand off to the rich checkout dialog (replaces the old basic wizard form).
+        this.props.close();
+        this.dialog.add(PackagePurchaseDialog, {
+            product,
+            patientId: this.state.patientId,
+            patientName: this.state.patientName,
+            fsoId: this.props.fsoId || false,
+            onDone,
+        });
     }
 
     onClose() {

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_invoicing.PackagePurchaseDialog">
+    <div class="pw-overlay" t-on-click.stop="onClose">
+        <div class="pw-dialog pp-dialog" t-on-click.stop="">
+
+            <!-- Header -->
+            <div class="pw-header">
+                <div>
+                    <div class="pw-title"><i class="fa fa-shopping-cart"/> Purchase Package</div>
+                    <div class="pw-subtitle">
+                        Confirm the package for
+                        <strong t-esc="props.patientName"/>
+                    </div>
+                </div>
+                <button class="pw-close-btn" t-on-click="onClose">
+                    <i class="fa fa-times"/>
+                </button>
+            </div>
+
+            <div class="pw-body">
+
+                <!-- Featured product -->
+                <div class="pp-feature">
+                    <div class="pp-feature-icon"><i class="fa fa-cube"/></div>
+                    <div class="pp-feature-main">
+                        <div class="pp-feature-name" t-esc="props.product.name"/>
+                        <div class="pp-feature-type" t-esc="props.product.package_type_label"/>
+                        <div class="pp-feature-meta">
+                            <span><t t-esc="props.product.service_count"/> services</span>
+                            <span class="pp-dot">·</span>
+                            <span><t t-esc="formatCurrency(props.product.price_per_service)"/>/ea</span>
+                            <t t-if="props.product.expiration">
+                                <span class="pp-dot">·</span>
+                                <span>expires <t t-esc="props.product.expiration"/></span>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="pp-feature-price">
+                        <div class="pp-price" t-esc="formatCurrency(props.product.price)"/>
+                        <div class="pp-price-label">total</div>
+                    </div>
+                </div>
+
+                <!-- Invoice &amp; Payment -->
+                <div class="pp-section-label">Invoice &amp; Payment</div>
+                <div class="pp-options">
+                    <div class="pp-option" t-on-click="toggleInvoice">
+                        <div t-att-class="'pp-toggle' + (state.createInvoice ? ' pp-toggle--on' : '')">
+                            <span class="pp-knob"/>
+                        </div>
+                        <div class="pp-option-text">
+                            <div class="pp-option-title">Create Invoice</div>
+                            <div class="pp-option-sub">Generate and post an invoice for this package.</div>
+                        </div>
+                    </div>
+
+                    <div class="pp-option" t-on-click="togglePayment">
+                        <div t-att-class="'pp-toggle' + (state.processPayment ? ' pp-toggle--on' : '')">
+                            <span class="pp-knob"/>
+                        </div>
+                        <div class="pp-option-text">
+                            <div class="pp-option-title">Process Payment Now</div>
+                            <div class="pp-option-sub">Record the payment immediately after creating the package.</div>
+                        </div>
+                    </div>
+
+                    <t t-if="state.processPayment">
+                        <div class="pp-payrow">
+                            <div class="pp-field">
+                                <label>Payment Method</label>
+                                <select class="pp-input" t-on-change="onMethodChange">
+                                    <option value="cash">Cash</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="qr_code">QR Code Payment</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="pp-field">
+                                <label>Amount</label>
+                                <input type="number" class="pp-input"
+                                       t-att-value="state.paymentAmount"
+                                       t-on-change="onAmountChange"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pw-footer pp-footer">
+                <button class="pw-btn pw-btn--ghost" t-on-click="onClose">Cancel</button>
+                <button class="pw-btn pw-btn--success"
+                        t-att-disabled="state.isSaving"
+                        t-on-click="onPurchase">
+                    <i class="fa fa-check"/> Purchase Package
+                </button>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>
