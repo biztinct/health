@@ -480,15 +480,15 @@ class BfsiAiDashboard extends Component {
         const team = this.state.teamPerformance;
         const bench = this.state.benchmarking;
 
-        let html = `<h2>🏢 Branch: ${this.state.branch.name || 'N/A'}</h2>`;
+        let html = `<h2><span class="lu lu-building"></span> Branch: ${this.state.branch.name || 'N/A'}</h2>`;
         html += `<p class="report-date">Report generated on ${new Date().toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>`;
 
         // Executive Summary
-        html += `<h3>📊 Executive Summary</h3>`;
+        html += `<h3><span class="lu lu-chart-column"></span> Executive Summary</h3>`;
         html += `<p>${ex.text || 'No summary available.'}</p>`;
 
         // KPI Overview
-        html += `<h3>📈 KPI Overview</h3>`;
+        html += `<h3><span class="lu lu-trending-up"></span> KPI Overview</h3>`;
         html += `<table class="report-table">`;
         html += `<tr><td><strong>Monthly Forecast</strong></td><td>${ks.forecast_pct || 0}% of target</td></tr>`;
         html += `<tr><td><strong>MTD Revenue</strong></td><td>${ks.mtd_revenue_formatted || '$0'}</td></tr>`;
@@ -500,7 +500,7 @@ class BfsiAiDashboard extends Component {
 
         // Root Cause
         if (rc.summary) {
-            html += `<h3>🔍 Root Cause Analysis</h3>`;
+            html += `<h3><span class="lu lu-search"></span> Root Cause Analysis</h3>`;
             html += `<p>${rc.summary}</p>`;
             if (rc.categories && rc.categories.length) {
                 html += `<ul>`;
@@ -512,14 +512,14 @@ class BfsiAiDashboard extends Component {
         }
 
         // Forecast
-        html += `<h3>📉 Forecast Performance</h3>`;
+        html += `<h3><span class="lu lu-trending-down"></span> Forecast Performance</h3>`;
         html += `<p>On track for <strong>${fc.on_track_pct || 0}%</strong> of target.`;
         if (fc.shortfall_formatted) html += ` Shortfall: ${fc.shortfall_formatted}`;
         html += `</p>`;
 
         // Team Performance
         if (team.length) {
-            html += `<h3>👥 Team Performance</h3>`;
+            html += `<h3><span class="lu lu-users"></span> Team Performance</h3>`;
             html += `<table class="report-table"><thead><tr>`;
             html += `<th>Banker</th><th>Score</th><th>Rank</th><th>Revenue</th><th>Conv. Rate</th><th>Forecast</th><th>Priority</th>`;
             html += `</tr></thead><tbody>`;
@@ -539,18 +539,18 @@ class BfsiAiDashboard extends Component {
 
         // Risk & Opportunity
         if (ex.top_risk || ex.top_opportunity) {
-            html += `<h3>⚠️ Risks & Opportunities</h3>`;
+            html += `<h3><span class="lu lu-triangle-alert"></span> Risks & Opportunities</h3>`;
             if (ex.top_risk) {
-                html += `<p>🔴 <strong>Top Risk:</strong> ${ex.top_risk.name} — Score: ${Math.round(ex.top_risk.score || 0)}</p>`;
+                html += `<p><span class="lu lu-dot" style="color:#EF4444"></span> <strong>Top Risk:</strong> ${ex.top_risk.name} — Score: ${Math.round(ex.top_risk.score || 0)}</p>`;
             }
             if (ex.top_opportunity) {
-                html += `<p>🟢 <strong>Top Opportunity:</strong> ${ex.top_opportunity.name} — ↑${ex.top_opportunity.rank_movement || 0} ranks</p>`;
+                html += `<p><span class="lu lu-dot" style="color:#10B981"></span> <strong>Top Opportunity:</strong> ${ex.top_opportunity.name} — <span class="lu lu-trending-up"></span>${ex.top_opportunity.rank_movement || 0} ranks</p>`;
             }
         }
 
         // Benchmarking
         if (bench.text) {
-            html += `<h3>🏆 Benchmarking</h3>`;
+            html += `<h3><span class="lu lu-trophy"></span> Benchmarking</h3>`;
             html += `<p>${bench.text}</p>`;
         }
 

@@ -4,6 +4,7 @@ import { Component, useState, onWillStart, onMounted } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
+import { BfsiCoachingWizard } from "../bfsi_coaching_wizard/bfsi_coaching_wizard";
 
 /* ── Chart.js state ── */
 let chartJSLoaded = false;
@@ -74,6 +75,7 @@ const destroyChart = (key) => {
 export class BfsiManagerDashboard extends Component {
     static template = "hr_development_ai.BfsiManagerDashboard";
     static props = ["*"];
+    static components = { BfsiCoachingWizard };
 
     setup() {
 
@@ -110,6 +112,13 @@ export class BfsiManagerDashboard extends Component {
             showBankerModal: false,
             bankerDetail: null,
             modalTab: 'profile',
+            bankerStory: null,   // AI diagnosis: bars + root cause (Phase 2 cockpit)
+
+            // Guided Coaching Wizard (OWL overlay)
+            wizardBankerId: null,
+
+            // Coaching Queue (prioritized "who needs me + why")
+            coachingQueue: [],
 
             // Coaching/Plans filter state
             coachingFilter: 'this_month',
@@ -128,6 +137,19 @@ export class BfsiManagerDashboard extends Component {
         onWillStart(async () => {
             await this.loadManagerContext();
             await this.loadTeamData();
+            if (!this.state.isBankerMode) {
+                await this.loadCoachingQueue();
+            } else {
+                // Banker mirror: load my own performance story (what to work on)
+                try {
+                    const ctx = await this.orm.call(
+                        'bfsi.coaching.flow', 'coaching_get_context', [this.state.managerId]
+                    );
+                    if (!ctx.error) this.state.bankerStory = ctx;
+                } catch (e) {
+                    console.error('banker self-story load failed', e);
+                }
+            }
         });
 
         onMounted(async () => {
@@ -597,6 +619,12 @@ export class BfsiManagerDashboard extends Component {
         this.state.showBankerModal = true;
         this.state.bankerDetail = null;
         this.state.modalTab = 'profile';
+        this.state.bankerStory = null;
+
+        // Load the AI performance story (bars + root cause) in parallel
+        this.orm.call('bfsi.coaching.flow', 'coaching_get_context', [bankerId])
+            .then(ctx => { if (!ctx.error) this.state.bankerStory = ctx; })
+            .catch(e => console.error('bankerStory load failed', e));
 
         try {
             // Get full banker data
@@ -1030,48 +1058,84 @@ export class BfsiManagerDashboard extends Component {
 
     /* ━━━ ACTIONS ━━━ */
 
-    async startCoachingSession(bankerId) {
-        try {
-            const result = await this.orm.call(
-                'hr.employee',
-                'action_start_ai_coaching',
-                [bankerId]
+    /* "Coach" and "Strategy" both launch the guided OWL wizard — one
+       continuous journey instead of dropping into a raw backend form. */
+    startCoachingSession(bankerId) {
+        this.openCoachingWizard(bankerId);
+    }
+
+    generateStrategy(bankerId) {
+        this.openCoachingWizard(bankerId);
+    }
+
+    openCoachingWizard(bankerId) {
+        // close the banker modal if open, then mount the wizard overlay
+        this.state.showBankerModal = false;
+        this.state.wizardBankerId = bankerId;
+    }
+
+    async closeCoachingWizard(result) {
+        this.state.wizardBankerId = null;
+        if (result && result.ok) {
+            this.notification.add(
+                `${result.banker_name} is now being coached — plan committed.`,
+                { type: 'success' }
             );
-            if (result && typeof result === 'object') {
-                if (!result.views) {
-                    result.views = [[false, 'form']];
-                }
-                this.action.doAction(result);
-            } else {
-                this.notification.add('Coaching session started', { type: 'success' });
-                await this.refresh();
-            }
-        } catch (error) {
-            console.error('Error starting coaching session:', error);
-            this.notification.add('Failed to start coaching session', { type: 'danger' });
+            // reload team context + queue so Active Plans / "being coached" update
+            Object.keys(chartInstances).forEach(destroyChart);
+            await this.loadManagerContext();
+            await this.loadCoachingQueue();
+            await this.renderDashboardCharts();
         }
     }
 
-    async generateStrategy(bankerId) {
+    /* ━━━ COACHING QUEUE ━━━ */
+    async loadCoachingQueue() {
         try {
-            const result = await this.orm.call(
-                'hr.employee',
-                'action_generate_coaching_strategy',
-                [bankerId]
+            const res = await this.orm.call(
+                'bfsi.coaching.flow', 'coaching_queue',
+                [this.state.branchId || false]
             );
-            if (result && typeof result === 'object') {
-                if (!result.views) {
-                    result.views = [[false, 'form']];
-                }
-                this.action.doAction(result);
-            } else {
-                this.notification.add('Strategy generated', { type: 'success' });
-                await this.refresh();
-            }
-        } catch (error) {
-            console.error('Error generating strategy:', error);
-            this.notification.add('Failed to generate coaching strategy', { type: 'danger' });
+            this.state.coachingQueue = (res && res.rows) || [];
+        } catch (e) {
+            console.error('loadCoachingQueue failed', e);
+            this.state.coachingQueue = [];
         }
+    }
+
+    queuePriorityClass(priority) {
+        return {
+            critical: 'bfsi-q-crit', high: 'bfsi-q-high',
+            medium: 'bfsi-q-med', low: 'bfsi-q-low',
+        }[priority] || 'bfsi-q-low';
+    }
+
+    queueRingColor(score) {
+        return score >= 50 ? '#10B981' : score >= 25 ? '#F59E0B' : '#EF4444';
+    }
+
+    /* Banker self-service: open the floating AI Coach panel */
+    openSelfCoach() {
+        const pill = document.querySelector('.bfsi-coach-pill, [class*="coach-pill"]');
+        if (pill) { pill.click(); return; }
+        // fallback: dispatch a custom event the coach panel can listen for
+        window.dispatchEvent(new CustomEvent('bfsi-open-ai-coach'));
+        this.notification.add('Open the AI Coach (bottom-right) to chat about your performance.', { type: 'info' });
+    }
+
+    /* ━━━ BANKER STORY (cockpit diagnostic) ━━━ */
+    storyBarColor(cat) {
+        return cat === 'input' ? '#3B82F6' : cat === 'beh' ? '#F59E0B' : '#10B981';
+    }
+    storyBarPct(value, target) {
+        return Math.min(100, target ? (value / target) * 100 : 0);
+    }
+
+    get openQueue() {
+        // genuine coaching priorities (critical/high), already priority-sorted.
+        // Bankers with an active plan still appear — shown as "follow up" —
+        // because coaching isn't one-and-done.
+        return this.state.coachingQueue.filter(r => r.needs_coaching);
     }
 
     viewBankerKpis(bankerId) {

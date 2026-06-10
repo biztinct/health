@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Coaching — Command Center (POC)</title>
+<style>
+:root{
+  --indigo:#4F46E5; --indigo-2:#6366F1; --violet:#7C3AED; --violet-soft:#A78BFA;
+  --head-a:#1e1b4b; --head-b:#312e81; --head-c:#4338ca;
+  --ink:#1e1b2e; --ink-2:#2d2a3f; --muted:#6B7280; --muted-2:#9CA3AF;
+  --line:#E5E7EB; --line-soft:#eef2ff;
+  --bg:#f4f4fb; --card:#ffffff; --soft:#fafbff;
+  --ok:#10B981; --ok-d:#047857; --warn:#F59E0B; --warn-d:#b45309; --danger:#EF4444; --info:#3B82F6;
+  --crit-bg:#fee2e2; --crit-tx:#b91c1c; --high-bg:#FEF3C7; --high-tx:#b45309;
+  --med-bg:#E0E7FF; --med-tx:#3730a3; --low-bg:#d1fae5; --low-tx:#047857;
+  --r:16px; --r-sm:10px; --shadow:0 1px 3px rgba(16,12,40,.06),0 8px 24px rgba(16,12,40,.05);
+  --shadow-lg:0 20px 60px rgba(30,27,75,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.hide{display:none!important}
+
+/* ---------- top nav ---------- */
+.topbar{height:48px;background:linear-gradient(135deg,var(--head-a) 0%,var(--head-b) 55%,var(--head-c) 100%);display:flex;align-items:center;padding:0 18px;color:#fff;gap:22px;position:sticky;top:0;z-index:30}
+.topbar .grid-ico{width:18px;height:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;opacity:.85}
+.topbar .grid-ico i{background:#fff;border-radius:1px}
+.brandword{font-weight:700;letter-spacing:.2px}
+.topnav{display:flex;gap:4px;margin-left:6px}
+.topnav button{color:#dcd9f5;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:500;transition:.15s}
+.topnav button:hover{background:rgba(255,255,255,.1);color:#fff}
+.topnav button.active{background:rgba(255,255,255,.16);color:#fff;font-weight:600}
+.topright{margin-left:auto;display:flex;align-items:center;gap:14px}
+.avatar-sm{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--indigo));display:grid;place-items:center;font-weight:700;color:#fff;font-size:12px}
+
+/* ---------- app shell ---------- */
+.page{max-width:1320px;margin:0 auto;padding:22px 26px 80px}
+.cmd-head{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.logo-badge{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--violet),var(--indigo));display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 8px 20px rgba(79,70,229,.35)}
+.cmd-head h1{font-size:21px;font-weight:800;letter-spacing:-.4px}
+.cmd-head .sub{color:var(--muted);font-size:12.5px;margin-top:1px}
+.branch-chip{margin-left:auto;display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-weight:600;box-shadow:var(--shadow)}
+.branch-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.daterow{display:flex;gap:6px;margin-left:14px}
+.daterow button{padding:7px 12px;border-radius:9px;background:#fff;border:1px solid var(--line);font-weight:600;color:var(--muted);font-size:12.5px}
+.daterow button.on{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+
+/* ---------- pulse cards ---------- */
+.pulse{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.pcard .ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:16px;margin-bottom:12px}
+.pcard .label{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.pcard .big{font-size:30px;font-weight:800;letter-spacing:-1px;margin:3px 0 4px;display:flex;align-items:baseline;gap:4px}
+.pcard .big small{font-size:15px;font-weight:700;color:var(--muted-2)}
+.pcard .delta{font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px}
+.delta.up{color:var(--ok-d)} .delta.down{color:var(--danger)}
+.pcard.warn-edge{border-left:4px solid var(--warn)}
+.pcard.crit-edge{border-left:4px solid var(--danger)}
+
+/* ---------- two column ---------- */
+.cols{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.panel-head{padding:16px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+.panel-head h2{font-size:15px;font-weight:800}
+.panel-head .tag{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--violet);background:var(--line-soft);padding:4px 10px;border-radius:999px}
+
+/* coaching queue rows */
+.qrow{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line-soft);transition:.15s;cursor:pointer}
+.qrow:hover{background:var(--soft)}
+.qrow:last-child{border-bottom:none}
+.qavatar{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;flex-shrink:0;font-size:15px}
+.qmeta{min-width:150px}
+.qmeta .nm{font-weight:700;font-size:14px}
+.qmeta .rl{color:var(--muted);font-size:12px;margin-top:1px}
+.qwhy{flex:1;font-size:12.5px;color:var(--ink-2);line-height:1.45}
+.qwhy b{color:var(--danger)}
+.qwhy .pin{color:var(--indigo);font-weight:700}
+.ring{--p:0;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;
+  background:conic-gradient(var(--rc) calc(var(--p)*1%),#eef0f6 0);position:relative}
+.ring::before{content:"";position:absolute;inset:5px;background:#fff;border-radius:50%}
+.ring span{position:relative;font-weight:800;font-size:13px}
+.badge{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:4px 9px;border-radius:7px;white-space:nowrap}
+.b-crit{background:var(--crit-bg);color:var(--crit-tx)} .b-high{background:var(--high-bg);color:var(--high-tx)}
+.b-med{background:var(--med-bg);color:var(--med-tx)} .b-low{background:var(--low-bg);color:var(--low-tx)}
+.qcta{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.btn{padding:8px 16px;border-radius:9px;font-weight:700;font-size:13px;transition:.15s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.btn-pri{background:linear-gradient(135deg,var(--violet),var(--indigo));color:#fff;box-shadow:0 6px 16px rgba(79,70,229,.32)}
+.btn-pri:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(79,70,229,.4)}
+.btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink-2)}
+.btn-ghost:hover{border-color:var(--indigo);color:var(--indigo)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-lg{padding:13px 24px;font-size:15px;border-radius:12px}
+
+/* sidebar */
+.side-item{padding:13px 16px;border-bottom:1px solid var(--line-soft);display:flex;gap:11px;align-items:flex-start}
+.side-item:last-child{border-bottom:none}
+.si-ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:13px;flex-shrink:0}
+.si-body .t{font-weight:700;font-size:13px}
+.si-body .d{color:var(--muted);font-size:12px;margin-top:2px;line-height:1.4}
+.si-body .ago{color:var(--muted-2);font-size:11px;margin-top:3px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:42px;padding:14px 16px 16px}
+.spark i{flex:1;background:linear-gradient(to top,var(--indigo),var(--violet-soft));border-radius:3px 3px 0 0;opacity:.85}
+
+/* ---------- slide over (banker cockpit) ---------- */
+.scrim{position:fixed;inset:0;background:rgba(20,16,48,.5);backdrop-filter:blur(2px);z-index:40;opacity:0;pointer-events:none;transition:.25s}
+.scrim.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:560px;max-width:94vw;background:var(--bg);z-index:50;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow-lg);overflow-y:auto}
+.drawer.show{transform:translateX(0)}
+.dk-head{background:linear-gradient(135deg,var(--head-a),var(--head-c));color:#fff;padding:22px 24px;position:relative}
+.dk-head .x{position:absolute;top:16px;right:18px;width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;font-size:17px}
+.dk-head .x:hover{background:rgba(255,255,255,.26)}
+.dk-id{display:flex;align-items:center;gap:16px}
+.dk-id .qavatar{width:58px;height:58px;border-radius:16px;font-size:20px;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+.dk-id h2{font-size:20px;font-weight:800}
+.dk-id .r{opacity:.8;font-size:13px;margin-top:2px}
+.dk-stats{display:flex;gap:10px;margin-top:18px}
+.dk-stat{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:11px 13px}
+.dk-stat .v{font-size:20px;font-weight:800}
+.dk-stat .l{font-size:11px;opacity:.78;text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+.dk-body{padding:20px 24px 40px}
+.sect-t{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:20px 0 12px;display:flex;align-items:center;gap:8px}
+.sect-t:first-child{margin-top:4px}
+.story-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.trend{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:6px}
+.trend i{flex:1;border-radius:4px 4px 0 0;background:linear-gradient(to top,var(--indigo),var(--violet-soft))}
+.kbar{margin-bottom:14px}
+.kbar .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+.kbar .top .nm{font-weight:600}
+.kbar .top .vl{font-weight:700}
+.kbar .track{height:8px;background:#eef0f6;border-radius:99px;position:relative;overflow:hidden}
+.kbar .fill{height:100%;border-radius:99px}
+.kbar .tgt{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink-2)}
+.ai-callout{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:14px;padding:16px 18px;display:flex;gap:13px}
+.ai-callout .ai-ico{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--violet),var(--indigo));display:grid;place-items:center;flex-shrink:0;color:#fff;font-size:15px}
+.ai-callout .t{font-weight:800;font-size:13px;color:var(--violet);margin-bottom:4px;letter-spacing:.2px}
+.ai-callout p{font-size:13px;line-height:1.55;color:var(--ink-2)}
+.dk-cta{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 75%,transparent);padding:18px 0 4px;margin-top:24px;display:flex;gap:10px}
+.dk-cta .btn-lg{flex:1;justify-content:center}
+
+/* ---------- wizard (full takeover) ---------- */
+.wiz{position:fixed;inset:0;background:var(--bg);z-index:60;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:.25s}
+.wiz.show{opacity:1;pointer-events:auto}
+.wiz-top{background:linear-gradient(135deg,var(--head-a),var(--head-c));color:#fff;padding:16px 26px;display:flex;align-items:center;gap:18px}
+.wiz-top .who{display:flex;align-items:center;gap:12px}
+.wiz-top .who .qavatar{width:40px;height:40px;border-radius:11px;font-size:15px}
+.wiz-top .who .nm{font-weight:800;font-size:15px}
+.wiz-top .who .r{opacity:.75;font-size:12px}
+.wiz-top .x{margin-left:auto;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;font-size:18px}
+.stepper{display:flex;align-items:center;gap:0;margin:0 auto}
+.step{display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.55);font-weight:700;font-size:13px}
+.step .n{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.4);display:grid;place-items:center;font-size:12px;transition:.2s}
+.step.on{color:#fff} .step.on .n{background:#fff;color:var(--indigo);border-color:#fff}
+.step.done{color:#c7d2fe} .step.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.step-line{width:38px;height:2px;background:rgba(255,255,255,.3);margin:0 12px}
+.wiz-body{flex:1;overflow-y:auto;padding:30px 26px 120px}
+.wiz-inner{max-width:920px;margin:0 auto}
+.wiz-foot{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:14px 26px;display:flex;align-items:center;gap:12px;z-index:61}
+.wiz-foot .spacer{flex:1}
+.wstep-h{margin-bottom:22px}
+.wstep-h h2{font-size:23px;font-weight:800;letter-spacing:-.5px}
+.wstep-h p{color:var(--muted);margin-top:5px;font-size:14px;max-width:620px;line-height:1.5}
+.genbar{display:flex;align-items:center;gap:10px;background:#fff;border:1px dashed var(--violet-soft);border-radius:12px;padding:11px 16px;font-size:13px;color:var(--violet);font-weight:600;margin-bottom:20px}
+.dot-pulse{width:8px;height:8px;border-radius:50%;background:var(--violet);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.dcard h3{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.dcard ul{list-style:none}
+.dcard li{display:flex;gap:9px;padding:7px 0;font-size:13.5px;line-height:1.45;align-items:flex-start}
+.dcard li .mk{flex-shrink:0;margin-top:1px}
+.conf{display:flex;align-items:center;gap:12px;margin-top:8px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-radius:12px;padding:14px 18px}
+.conf .meter{flex:1;height:8px;background:#ddd6fe;border-radius:99px;overflow:hidden}
+.conf .meter i{display:block;height:100%;width:88%;background:linear-gradient(90deg,var(--violet),var(--indigo));border-radius:99px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.chip{background:var(--line-soft);color:var(--indigo);font-weight:700;font-size:12.5px;padding:7px 14px;border-radius:999px;border:1px solid #dfe3fb}
+.acc{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.acc-h{padding:14px 18px;display:flex;align-items:center;gap:11px;font-weight:700;font-size:14px;cursor:pointer}
+.acc-h .ph{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:12px;color:#fff;font-weight:800}
+.acc-h .cv{margin-left:auto;color:var(--muted-2);transition:.2s}
+.acc.open .cv{transform:rotate(180deg)}
+.acc-b{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .25s ease}
+.acc.open .acc-b{max-height:300px;padding-bottom:16px}
+.acc-b ol{margin-left:18px;color:var(--ink-2)}
+.acc-b li{padding:5px 0;font-size:13.5px;line-height:1.5}
+
+/* session split */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.checks .ci{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line-soft)}
+.checks .ci:last-child{border:none}
+.cbox{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex-shrink:0;display:grid;place-items:center;font-size:12px;color:#fff;transition:.15s;margin-top:1px}
+.cbox.on{background:var(--ok);border-color:var(--ok)}
+.ci .tx{font-size:13.5px;line-height:1.45}
+.ci.done .tx{color:var(--muted-2);text-decoration:line-through}
+.chatbox{background:#0f0a1f;border-radius:14px;padding:16px;height:330px;display:flex;flex-direction:column}
+.chat-scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px}
+.msg{max-width:85%;padding:10px 13px;border-radius:13px;font-size:13px;line-height:1.5}
+.msg.ai{background:#241d3d;color:#e9e6f7;align-self:flex-start;border-bottom-left-radius:4px}
+.msg.me{background:linear-gradient(135deg,var(--violet),var(--indigo));color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-in{display:flex;gap:8px;margin-top:12px}
+.chat-in input{flex:1;background:#241d3d;border:1px solid #3a3158;color:#fff;border-radius:10px;padding:10px 13px;font-size:13px;outline:none}
+.chat-in button{background:var(--indigo);color:#fff;border-radius:10px;padding:0 16px;font-weight:700}
+textarea.notes{width:100%;min-height:120px;border:1px solid var(--line);border-radius:12px;padding:13px;font-family:inherit;font-size:13.5px;resize:vertical;outline:none}
+textarea.notes:focus{border-color:var(--indigo)}
+
+/* action items */
+.ai-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 17px;margin-bottom:12px;box-shadow:var(--shadow);position:relative}
+.ai-item .h{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.ai-item .h .num{width:24px;height:24px;border-radius:7px;background:var(--line-soft);color:var(--indigo);font-weight:800;display:grid;place-items:center;font-size:12px}
+.ai-item .h .ti{font-weight:700;font-size:14px;flex:1}
+.ai-item .h .src{font-size:10.5px;font-weight:800;color:var(--violet);background:var(--line-soft);padding:3px 8px;border-radius:6px}
+.ai-item .meta{display:flex;gap:8px;flex-wrap:wrap}
+.kpitag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:7px;background:#f1f5f9;color:var(--ink-2);display:inline-flex;align-items:center;gap:5px}
+.kpitag.in{background:#dbeafe;color:#1d4ed8} .kpitag.beh{background:#FEF3C7;color:#b45309}
+.kpitag.out{background:#d1fae5;color:#047857}
+.commit-banner{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #a7f3d0;border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:13px;margin-top:6px}
+.commit-banner .ci2{width:38px;height:38px;border-radius:11px;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:18px}
+
+/* done screen */
+.done-wrap{max-width:520px;margin:40px auto;text-align:center}
+.done-ring{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--ok),#059669);display:grid;place-items:center;margin:0 auto 22px;color:#fff;font-size:46px;box-shadow:0 16px 40px rgba(16,185,129,.4)}
+.done-wrap h2{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.done-wrap p{color:var(--muted);font-size:15px;margin-top:8px;line-height:1.55}
+.done-steps{text-align:left;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px 4px;margin-top:26px;box-shadow:var(--shadow)}
+.done-steps .ds{display:flex;gap:12px;align-items:center;padding:13px 18px;border-bottom:1px solid var(--line-soft)}
+.done-steps .ds:last-child{border:none}
+.done-steps .ds .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:14px;flex-shrink:0}
+
+/* ai coach fab */
+.fab{position:fixed;bottom:22px;right:24px;background:linear-gradient(135deg,#2d2a6e,#4338ca);color:#fff;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-weight:700;box-shadow:0 14px 34px rgba(49,46,129,.5);z-index:35}
+.fab .pic{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.fab .on{font-size:11px;opacity:.8;font-weight:600;display:flex;align-items:center;gap:5px}
+.fab .on::before{content:"";width:7px;height:7px;border-radius:50%;background:#4ade80}
+
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:13px 22px;border-radius:12px;font-weight:600;font-size:13.5px;box-shadow:var(--shadow-lg);z-index:80;opacity:0;transition:.25s;display:flex;align-items:center;gap:10px}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.fnote{max-width:1320px;margin:10px auto 0;padding:0 26px;color:var(--muted-2);font-size:11.5px;text-align:center}
+.poc-flag{position:fixed;top:54px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:999px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--violet);z-index:25}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="grid-ico"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <span class="brandword">AI Performance Coaching</span>
+  <div class="topnav">
+    <button class="active">Command Center</button>
+    <button onclick="toast('In the real build: opens the Coaching workspace')">Coaching</button>
+    <button onclick="toast('In the real build: opens Performance &amp; KPIs')">Performance</button>
+    <button onclick="toast('In the real build: opens Organization')">Organization</button>
+  </div>
+  <div class="topright">
+    <span style="opacity:.8;font-size:13px">VIET UC</span>
+    <div class="avatar-sm">NM</div>
+  </div>
+</div>
+<div class="poc-flag">◆ POC — Redesigned Branch-Manager flow · click anything</div>
+
+<!-- ============ COMMAND CENTER ============ -->
+<div class="page" id="home">
+  <div class="cmd-head">
+    <div class="logo-badge">AI</div>
+    <div>
+      <h1>Coaching Command Center</h1>
+      <div class="sub">Good morning, Nguyen Van Minh — here's where your team needs you today.</div>
+    </div>
+    <div class="branch-chip"><span class="dot"></span>District 1 Branch</div>
+    <div class="daterow">
+      <button>Today</button><button class="on">MTD</button><button>QTD</button>
+    </div>
+  </div>
+
+  <!-- PULSE -->
+  <div class="pulse">
+    <div class="pcard">
+      <div class="ico" style="background:#e0e7ff;color:#4338ca">📊</div>
+      <div class="label">Team Score</div>
+      <div class="big">22<small>/100</small></div>
+      <span class="delta down">▼ 6 pts vs last month</span>
+    </div>
+    <div class="pcard">
+      <div class="ico" style="background:#d1fae5;color:#047857">💰</div>
+      <div class="label">Revenue Forecast</div>
+      <div class="big">68<small>%</small></div>
+      <span class="delta down">▼ ₫340M short of target</span>
+    </div>
+    <div class="pcard crit-edge">
+      <div class="ico" style="background:#fee2e2;color:#b91c1c">🎯</div>
+      <div class="label">Needs Coaching</div>
+      <div class="big">5</div>
+      <span class="delta down">3 critical · 2 high</span>
+    </div>
+    <div class="pcard warn-edge">
+      <div class="ico" style="background:#fef3c7;color:#b45309">📋</div>
+      <div class="label">Active Plans</div>
+      <div class="big">0</div>
+      <span class="delta" style="color:var(--muted)">Nobody is being coached yet</span>
+    </div>
+  </div>
+
+  <!-- TWO COLUMN -->
+  <div class="cols">
+    <!-- coaching queue -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>🔥 Coaching Queue</h2>
+        <span style="color:var(--muted);font-size:12.5px;font-weight:600">Ranked by who'll move the needle most</span>
+        <span class="tag">AI prioritized</span>
+      </div>
+      <div id="queue"></div>
+    </div>
+
+    <!-- sidebar -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="panel">
+        <div class="panel-head"><h2>📅 Today</h2></div>
+        <div class="side-item">
+          <div class="si-ico" style="background:#fee2e2;color:#b91c1c">⚠️</div>
+          <div class="si-body"><div class="t">3 bankers below 25% score</div>
+          <div class="d">No active coaching plan. Start with Pham Duc Anh (6%).</div>
+          <div class="ago">Updated 4 min ago</div></div>
+        </div>
+        <div class="side-item">
+          <div class="si-ico" style="background:#e0e7ff;color:#4338ca">📈</div>
+          <div class="si-body"><div class="t">Le Hoang Nam climbing</div>
+          <div class="d">+2 ranks this week — reinforce what's working.</div>
+          <div class="ago">2 hrs ago</div></div>
+        </div>
+        <div class="side-item">
+          <div class="si-ico" style="background:#fef3c7;color:#b45309">🔔</div>
+          <div class="si-body"><div class="t">Monthly reviews due Fri</div>
+          <div class="d">5 of 5 sessions still to schedule.</div>
+          <div class="ago">Today</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>📉 Branch trend (30d)</h2></div>
+        <div class="spark" id="sparkBranch"></div>
+        <div style="padding:0 16px 16px;color:var(--muted);font-size:12px">Team avg score drifting down — coaching coverage is the lever.</div>
+      </div>
+    </div>
+  </div>
+  <div class="fnote">Redesign goal: every screen answers "who needs me, why, and what do I do next" — without hunting through menus.</div>
+</div>
+
+<!-- ============ BANKER COCKPIT (drawer) ============ -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer"><div id="drawerContent"></div></aside>
+
+<!-- ============ WIZARD ============ -->
+<div class="wiz" id="wiz">
+  <div class="wiz-top">
+    <div class="who" id="wizWho"></div>
+    <div class="stepper" id="stepper"></div>
+    <button class="x" onclick="closeWiz()">✕</button>
+  </div>
+  <div class="wiz-body"><div class="wiz-inner" id="wizBody"></div></div>
+  <div class="wiz-foot" id="wizFoot"></div>
+</div>
+
+<!-- AI COACH FAB -->
+<div class="fab" onclick="toast('AI Coach side-panel — ask anything about your team')">
+  <div class="pic">🤖</div>
+  <div><div>AI Coach</div><div class="on">Online</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- DATA (matches the live District 1 Branch) ---------------- */
+const TEAM = [
+  {id:5,name:"Pham Duc Anh",role:"Wealth Manager",initial:"P",color:"#EF4444",score:6,rank:5,move:-2,
+   prio:"crit",rev:"₫42M",revPct:31,
+   why:'Score <b>6/100</b> · rank #5 · <b>-2</b> this week. Root cause: <span class="pin">objection handling</span> &amp; thin pipeline.',
+   strengths:["Strong product knowledge (82/100)","Compliance spotless (96/100)","Good rapport on connected calls"],
+   gaps:["Objection handling 38/100 — losing deals at the close","Only 11 dials/day vs 40 target","Conversion rate 4% (target 18%)"],
+   root:"Pham knows the products but stalls the moment a client pushes back on price. Low activity compounds it — too few conversations to recover from lost deals. Coaching objection-handling + a daily dial floor are the two highest-leverage moves.",
+   bars:[["Dials/day","input",11,40],["Objection handling","beh",38,75],["Conversion rate","out",4,18],["Script adherence","beh",61,80]],
+   trend:[18,15,14,12,11,9,8,6]},
+  {id:4,name:"Vo Thi Mai",role:"Loan Officer",initial:"V",color:"#F59E0B",score:8,rank:4,move:0,
+   prio:"crit",rev:"₫58M",revPct:36,
+   why:'Score <b>8/100</b> · rank #4 · flat. <b>Need analysis</b> weak — proposing before understanding.',
+   strengths:["High dial volume (38/day)","Fast proposal turnaround","Reliable attendance"],
+   gaps:["Need-analysis quality 41/100","Customer satisfaction 52/100","Lots of activity, few conversions"],
+   root:"Mai is busy but not effective — she pitches loans before diagnosing the client's real need, so satisfaction and conversion both suffer. Coaching should slow her down at discovery.",
+   bars:[["Dials/day","input",38,40],["Need analysis","beh",41,75],["Customer satisfaction","out",52,85],["Conversion rate","out",6,18]],
+   trend:[10,9,11,8,9,7,8,8]},
+  {id:3,name:"Le Hoang Nam",role:"Relationship Manager",initial:"L",color:"#6366F1",score:19,rank:3,move:2,
+   prio:"high",rev:"₫96M",revPct:54,
+   why:'Score <b>19/100</b> · <span class="pin">+2 ranks</span> this week. Momentum — reinforce, don\'t reset.',
+   strengths:["Up +2 ranks — fastest riser","Improving script adherence","Building a healthy pipeline"],
+   gaps:["Still below branch average","Product knowledge gaps on wealth tier","Needs consistency week to week"],
+   root:"Nam is on the way up. The coaching job here is reinforcement, not rescue — lock in the new habits and stretch him toward the wealth product line.",
+   bars:[["Dials/day","input",31,40],["Script adherence","beh",70,80],["Conversion rate","out",12,18],["Product knowledge","beh",58,80]],
+   trend:[8,9,11,13,14,16,17,19]},
+  {id:2,name:"Hoang Minh Tuan",role:"Telesales Agent",initial:"H",color:"#7C3AED",score:24,rank:2,move:-1,
+   prio:"high",rev:"₫112M",revPct:62,
+   why:'Score <b>24/100</b> · <b>-1</b> this week. Slipping after a strong start — catch it early.',
+   strengths:["Best dial discipline on the team","Strong opener / script adherence","High connect rate"],
+   gaps:["Dropped -1 rank — early warning","Closing rate softening","Fatigue signs in afternoon blocks"],
+   root:"Tuan has the activity engine but his close rate dipped this week. A light-touch session now prevents a bigger slide — focus on closing technique and afternoon energy.",
+   bars:[["Dials/day","input",44,40],["Script adherence","beh",84,80],["Conversion rate","out",14,18],["Objection handling","beh",66,75]],
+   trend:[28,27,26,27,25,26,25,24]},
+  {id:1,name:"Tran Thi Lan",role:"Relationship Manager",initial:"T",color:"#10B981",score:53,rank:1,move:1,
+   prio:"low",rev:"₫184M",revPct:103,
+   why:'Score <b>53/100</b> · <span class="pin">#1, +1</span>. Top performer — coach to stretch &amp; mentor others.',
+   strengths:["Branch #1, beating target (103%)","Excellent objection handling","Trusted by high-value clients"],
+   gaps:["Could mentor weaker teammates","Stretch into regional pipeline","Risk of plateau without new goals"],
+   root:"Lan is your anchor. Coaching is about growth and retention — give her a stretch goal and a mentoring role so she stays engaged and lifts the team.",
+   bars:[["Dials/day","input",36,40],["Objection handling","beh",88,75],["Conversion rate","out",21,18],["Customer satisfaction","out",90,85]],
+   trend:[44,46,48,47,50,51,52,53]},
+];
+const PRIO_LABEL={crit:"Critical",high:"High",med:"Medium",low:"On track"};
+const PRIO_CLASS={crit:"b-crit",high:"b-high",med:"b-med",low:"b-low"};
+function ringColor(s){return s>=50?"var(--ok)":s>=25?"var(--warn)":"var(--danger)"}
+function barColor(t){return t==="input"?"#3B82F6":t==="beh"?"#F59E0B":"#10B981"}
+
+/* ---------------- COMMAND CENTER: queue ---------------- */
+function renderQueue(){
+  const order=[...TEAM].sort((a,b)=>({crit:0,high:1,med:2,low:3}[a.prio]-{crit:0,high:1,med:2,low:3}[b.prio]) || a.score-b.score);
+  document.getElementById('queue').innerHTML = order.map(b=>`
+    <div class="qrow" onclick="openDrawer(${b.id})">
+      <div class="qavatar" style="background:${b.color}">${b.initial}</div>
+      <div class="qmeta"><div class="nm">${b.name}</div><div class="rl">${b.role} · Rank #${b.rank}</div></div>
+      <div class="qwhy">${b.why}</div>
+      <div class="ring" style="--p:${b.score};--rc:${ringColor(b.score)}"><span>${b.score}</span></div>
+      <span class="badge ${PRIO_CLASS[b.prio]}">${PRIO_LABEL[b.prio]}</span>
+      <div class="qcta">
+        <button class="btn btn-pri btn-sm" onclick="event.stopPropagation();startWiz(${b.id})">✨ Coach</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDrawer(${b.id})">View</button>
+      </div>
+    </div>`).join('');
+}
+function renderSpark(){
+  const vals=[34,33,33,31,30,29,28,27,26,25,24,23,23,22,22];
+  document.getElementById('sparkBranch').innerHTML=vals.map(v=>`<i style="height:${(v/40)*100}%"></i>`).join('');
+}
+
+/* ---------------- BANKER COCKPIT ---------------- */
+function openDrawer(id){
+  const b=TEAM.find(x=>x.id===id);
+  document.getElementById('drawerContent').innerHTML=`
+    <div class="dk-head">
+      <button class="x" onclick="closeDrawer()">✕</button>
+      <div class="dk-id">
+        <div class="qavatar" style="background:${b.color}">${b.initial}</div>
+        <div><h2>${b.name}</h2><div class="r">${b.role} · District 1 Branch</div></div>
+      </div>
+      <div class="dk-stats">
+        <div class="dk-stat"><div class="v">${b.score}</div><div class="l">Score</div></div>
+        <div class="dk-stat"><div class="v">#${b.rank}</div><div class="l">Branch rank</div></div>
+        <div class="dk-stat"><div class="v">${b.move>0?'+'+b.move:b.move===0?'—':b.move}</div><div class="l">Move</div></div>
+        <div class="dk-stat"><div class="v">${b.revPct}%</div><div class="l">of target</div></div>
+      </div>
+    </div>
+    <div class="dk-body">
+      <div class="sect-t">📈 30-day score trend</div>
+      <div class="story-card">
+        <div class="trend">${b.trend.map(v=>`<i style="height:${(v/60)*100}%;opacity:${0.5+v/120}"></i>`).join('')}</div>
+      </div>
+
+      <div class="sect-t">🎯 What's driving the gap</div>
+      <div class="story-card">
+        ${b.bars.map(([nm,t,v,tg])=>`
+          <div class="kbar">
+            <div class="top"><span class="nm">${nm}</span><span class="vl" style="color:${v>=tg?'var(--ok-d)':'var(--danger)'}">${v} <span style="color:var(--muted-2);font-weight:500">/ ${tg} target</span></span></div>
+            <div class="track"><div class="fill" style="width:${Math.min(100,(v/tg)*100)}%;background:${barColor(t)}"></div><div class="tgt" style="left:100%"></div></div>
+          </div>`).join('')}
+      </div>
+
+      <div class="sect-t">🧠 AI root-cause read</div>
+      <div class="ai-callout">
+        <div class="ai-ico">🤖</div>
+        <div><div class="t">DIAGNOSIS · 88% confidence</div><p>${b.root}</p></div>
+      </div>
+
+      <div class="dk-cta">
+        <button class="btn btn-pri btn-lg" onclick="startWiz(${b.id})">✨ Start AI-Guided Coaching</button>
+        <button class="btn btn-ghost btn-lg" onclick="toast('Opens full KPI history')">KPIs</button>
+      </div>
+    </div>`;
+  document.getElementById('scrim').classList.add('show');
+  document.getElementById('drawer').classList.add('show');
+}
+function closeDrawer(){document.getElementById('scrim').classList.remove('show');document.getElementById('drawer').classList.remove('show')}
+
+/* ---------------- WIZARD ---------------- */
+let WB=null, WSTEP=0;
+const STEPS=["Diagnose","Strategy","Session","Action Plan"];
+function startWiz(id){
+  WB=TEAM.find(x=>x.id===id); WSTEP=0;
+  closeDrawer();
+  document.getElementById('wizWho').innerHTML=`
+    <div class="qavatar" style="background:${WB.color}">${WB.initial}</div>
+    <div><div class="nm">${WB.name}</div><div class="r">${WB.role} · Coaching session</div></div>`;
+  document.getElementById('wiz').classList.add('show');
+  renderStep();
+}
+function closeWiz(){document.getElementById('wiz').classList.remove('show')}
+function gotoStep(n){WSTEP=n;renderStep();document.querySelector('.wiz-body').scrollTop=0}
+function renderStepper(){
+  document.getElementById('stepper').innerHTML=STEPS.map((s,i)=>{
+    const cls=i<WSTEP?'done':i===WSTEP?'on':'';
+    return `<div class="step ${cls}"><span class="n">${i<WSTEP?'✓':i+1}</span>${s}</div>${i<3?'<span class="step-line"></span>':''}`;
+  }).join('');
+}
+function foot(left,right){document.getElementById('wizFoot').innerHTML=`${left||''}<div class="spacer"></div>${right||''}`}
+
+function renderStep(){
+  renderStepper();
+  const b=WB;
+  if(WSTEP===0){ // DIAGNOSE
+    document.getElementById('wizBody').innerHTML=`
+      <div class="wstep-h"><h2>Step 1 · Diagnose ${b.name}</h2>
+        <p>The AI read ${b.name.split(' ')[0]}'s last 30 days of KPIs against target and the rest of the branch. Confirm the picture before we build the strategy.</p></div>
+      <div class="genbar"><span class="dot-pulse"></span> AI analyzed 30 days × 18 KPIs · ranked against 5 peers · 1.4s</div>
+      <div class="grid2">
+        <div class="dcard"><h3 style="color:var(--ok-d)">✅ Strengths</h3><ul>${b.strengths.map(s=>`<li><span class="mk">🟢</span><span>${s}</span></li>`).join('')}</ul></div>
+        <div class="dcard"><h3 style="color:var(--danger)">⚠️ Gaps</h3><ul>${b.gaps.map(s=>`<li><span class="mk">🔴</span><span>${s}</span></li>`).join('')}</ul></div>
+      </div>
+      <div class="dcard" style="margin-top:16px"><h3 style="color:var(--violet)">🧠 Root cause</h3><p style="font-size:14px;line-height:1.6;color:var(--ink-2)">${b.root}</p></div>
+      <div class="conf"><b style="font-size:13px;color:var(--violet)">AI confidence</b><div class="meter"><i></i></div><b style="color:var(--violet)">88%</b></div>`;
+    foot('', `<button class="btn btn-pri btn-lg" onclick="gotoStep(1)">Looks right — build strategy →</button>`);
+  }
+  else if(WSTEP===1){ // STRATEGY
+    document.getElementById('wizBody').innerHTML=`
+      <div class="wstep-h"><h2>Step 2 · Coaching Strategy</h2>
+        <p>Your AI-built game plan for the session — themes, the exact questions to ask in each phase, and tips. Practice it with the AI if you want.</p></div>
+      <div class="genbar"><span class="dot-pulse"></span> Strategy generated · tuned to ${b.name.split(' ')[0]}'s gaps · GROW coaching model</div>
+      <div style="font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:10px">Coaching themes</div>
+      <div class="chips">
+        <span class="chip">Objection handling</span><span class="chip">Daily activity floor</span>
+        <span class="chip">Confidence at the close</span><span class="chip">Quick wins this week</span>
+      </div>
+      <div style="font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:20px 0 10px">Session game plan</div>
+      ${accordion('🟢','Opening — build trust','#10B981',[
+        "How do you feel your week went compared to where you wanted to be?",
+        "What was the best client conversation you had — what made it work?",
+        "When a client pushes back on price, walk me through what goes through your head."])}
+      ${accordion('🔍','Probing — find the real blocker','#6366F1',[
+        "You're at 11 dials a day against a 40 target — what's getting in the way?",
+        "Tell me about the last deal you lost at the close. What did the client say?",
+        "If we fixed just ONE thing this week, what would make the biggest difference?"])}
+      ${accordion('🏁','Closing — lock the commitment','#7C3AED',[
+        "What's one objection-handling technique you'll try on your next 3 calls?",
+        "What daily dial number can you commit to — that's realistic but a stretch?",
+        "How do you want me to check in with you this week?"])}
+      <div class="ai-callout" style="margin-top:8px">
+        <div class="ai-ico">💡</div>
+        <div><div class="t">COACHING TIP</div><p>${b.name.split(' ')[0]} responds well to specifics, not pep talks. Anchor every commitment to a number and a date. Avoid "try harder" — give a technique.</p></div>
+      </div>`;
+    foot(`<button class="btn btn-ghost btn-lg" onclick="gotoStep(0)">← Back</button>
+          <button class="btn btn-ghost btn-lg" onclick="toast('Opens AI roleplay — practice the conversation; the AI plays the banker')">🎭 Practice with AI</button>`,
+         `<button class="btn btn-pri btn-lg" onclick="gotoStep(2)">Start the session →</button>`);
+  }
+  else if(WSTEP===2){ // SESSION
+    document.getElementById('wizBody').innerHTML=`
+      <div class="wstep-h"><h2>Step 3 · Run the session</h2>
+        <p>Live cockpit. Tick off your talking points on the left, jot notes on the right, and ask the AI for a real-time assist if a conversation goes sideways.</p></div>
+      <div class="split">
+        <div class="dcard"><h3>🗣️ Talking points</h3><div class="checks" id="checks">
+          ${["Open: ask how the week felt vs the goal","Surface the real blocker (objection handling)","Review the lost-deal example together","Agree ONE technique to try next week","Set a daily dial commitment + number","Agree how you'll check in"].map((t,i)=>`
+            <div class="ci" onclick="this.classList.toggle('done');this.querySelector('.cbox').classList.toggle('on')">
+              <div class="cbox">✓</div><div class="tx">${t}</div></div>`).join('')}
+        </div></div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="dcard"><h3>📝 Quick notes</h3>
+            <textarea class="notes" placeholder="What did ${b.name.split(' ')[0]} say? What did you agree?">Pham admitted he freezes when clients challenge price. Agreed to use the "feel-felt-found" technique on his next 3 calls. Committed to 25 dials/day (up from 11).</textarea>
+          </div>
+          <div class="dcard" style="padding:14px"><h3 style="margin-bottom:10px">🤖 AI assist</h3>
+            <div class="chatbox">
+              <div class="chat-scroll" id="chat">
+                <div class="msg me">He says he "just isn't a natural closer". How do I respond?</div>
+                <div class="msg ai">Reframe it as a skill, not a trait. Try: "Closing isn't personality — it's a technique you haven't drilled yet. Let's practice one line you can say every time price comes up." Then role-play "feel-felt-found" right there in the session.</div>
+              </div>
+              <div class="chat-in"><input placeholder="Ask the AI coach..." onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">➤</button></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    foot(`<button class="btn btn-ghost btn-lg" onclick="gotoStep(1)">← Back</button>`,
+         `<button class="btn btn-pri btn-lg" onclick="gotoStep(3)">Capture outcome → build action plan</button>`);
+  }
+  else if(WSTEP===3){ // ACTION PLAN
+    document.getElementById('wizBody').innerHTML=`
+      <div class="wstep-h"><h2>Step 4 · Action plan</h2>
+        <p>The AI turned your session into a concrete, KPI-linked plan. Edit anything, then send it to ${b.name.split(' ')[0]} to commit — it'll track itself against his KPIs.</p></div>
+      <div class="genbar"><span class="dot-pulse"></span> 3 action items drafted from your notes + the strategy · each tied to a KPI</div>
+      ${actionItem(1,'Use "feel-felt-found" on every price objection','beh','Objection handling','38 → 60','This week')}
+      ${actionItem(2,'Hit 25 dials/day, logged daily','in','Dials/day','11 → 25','Daily · 2 wks')}
+      ${actionItem(3,'Shadow Tran Thi Lan on 2 closing calls','out','Conversion rate','4% → 10%','By Fri')}
+      <button class="btn btn-ghost btn-sm" style="margin:2px 0 18px" onclick="toast('Add a custom action item')">＋ Add item</button>
+      <div class="commit-banner">
+        <div class="ci2">🤝</div>
+        <div><div style="font-weight:800;font-size:14px">Check-in cadence: Weekly</div>
+        <div style="color:var(--ink-2);font-size:13px;margin-top:2px">${b.name.split(' ')[0]} commits in his app · you both get a nudge if he falls behind · progress auto-tracks from KPIs.</div></div>
+      </div>`;
+    foot(`<button class="btn btn-ghost btn-lg" onclick="gotoStep(2)">← Back</button>`,
+         `<button class="btn btn-pri btn-lg" onclick="finishWiz()">✓ Send plan &amp; finish</button>`);
+  }
+  else if(WSTEP===4){ // DONE
+    document.getElementById('wizFoot').innerHTML='';
+    document.getElementById('stepper').innerHTML='';
+    document.getElementById('wizBody').innerHTML=`
+      <div class="done-wrap">
+        <div class="done-ring">✓</div>
+        <h2>${b.name} is now being coached</h2>
+        <p>Strategy, session notes, and a 3-item action plan are saved and linked — no separate forms, no lost context. Here's what happens next, automatically:</p>
+        <div class="done-steps">
+          <div class="ds"><div class="ic" style="background:var(--indigo)">📲</div><div><b>${b.name.split(' ')[0]} gets the plan in his app</b><div style="color:var(--muted);font-size:12.5px">He reviews & taps Commit. You're notified.</div></div></div>
+          <div class="ds"><div class="ic" style="background:var(--ok)">📊</div><div><b>Progress tracks itself</b><div style="color:var(--muted);font-size:12.5px">Each item watches its KPI — dials, objection handling, conversion.</div></div></div>
+          <div class="ds"><div class="ic" style="background:var(--warn)">🔔</div><div><b>You both get a weekly check-in nudge</b><div style="color:var(--muted);font-size:12.5px">If he slips behind, it escalates to your Command Center.</div></div></div>
+        </div>
+        <div style="margin-top:26px;display:flex;gap:10px;justify-content:center">
+          <button class="btn btn-pri btn-lg" onclick="closeWiz();renderQueue();toast('Pham Duc Anh moved to Monitoring · Active Plans now 1')">Back to Command Center</button>
+          <button class="btn btn-ghost btn-lg" onclick="gotoStep(0)">Review the session</button>
+        </div>
+      </div>`;
+  }
+}
+function accordion(ph,title,color,qs){
+  return `<div class="acc" onclick="this.classList.toggle('open')">
+    <div class="acc-h"><span class="ph" style="background:${color}">${ph}</span>${title}<span class="cv">▾</span></div>
+    <div class="acc-b"><ol>${qs.map(q=>`<li>${q}</li>`).join('')}</ol></div></div>`;
+}
+function actionItem(n,title,kpiClass,kpi,target,due){
+  return `<div class="ai-item">
+    <div class="h"><div class="num">${n}</div><div class="ti">${title}</div><div class="src">✨ AI</div></div>
+    <div class="meta">
+      <span class="kpitag ${kpiClass}">📍 ${kpi}</span>
+      <span class="kpitag">🎯 ${target}</span>
+      <span class="kpitag">📅 ${due}</span>
+    </div></div>`;
+}
+function finishWiz(){WSTEP=4;renderStep()}
+function sendChat(){
+  const inp=document.querySelector('.chat-in input'); if(!inp.value.trim())return;
+  const c=document.getElementById('chat');
+  c.innerHTML+=`<div class="msg me">${inp.value}</div>`; inp.value='';
+  c.scrollTop=c.scrollHeight;
+  setTimeout(()=>{c.innerHTML+=`<div class="msg ai">Good question. Anchor it to a number he can control today, and have him say the commitment out loud — verbal commitments stick 3× better.</div>`;c.scrollTop=c.scrollHeight;},650);
+}
+
+/* ---------------- toast ---------------- */
+let tt;
+function toast(m){const t=document.getElementById('toast');t.innerHTML='💬 '+m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
+
+/* init */
+renderQueue();renderSpark();
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();}});
+</script>
+</body>
+</html>

@@ -181,6 +181,38 @@
                             </div>
                         </div>
 
+                        <!-- ═══ MY FOCUS — what to work on (banker mirror) ═══ -->
+                        <div t-if="state.bankerStory" class="bfsi-story" style="margin-top:8px;">
+                            <div class="bfsi-story-grid">
+                                <div class="bfsi-story-card">
+                                    <div class="bfsi-story-title"><span class="lu lu-target"/> What to work on</div>
+                                    <div t-foreach="state.bankerStory.bars" t-as="bar" t-key="bar_index" class="bfsi-kbar">
+                                        <div class="bfsi-kbar-top">
+                                            <span class="nm"><t t-esc="bar.name"/></span>
+                                            <span class="vl" t-attf-style="color:{{ bar.value >= bar.target ? '#047857' : '#EF4444' }}">
+                                                <t t-esc="bar.value"/> <span class="tg">/ <t t-esc="bar.target"/></span>
+                                            </span>
+                                        </div>
+                                        <div class="bfsi-kbar-track">
+                                            <div class="bfsi-kbar-fill"
+                                                 t-attf-style="width:{{ storyBarPct(bar.value, bar.target) }}%; background:{{ storyBarColor(bar.cat) }}"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="!state.bankerStory.bars.length" class="bfsi-story-empty">No KPI vs target data yet.</div>
+                                </div>
+                                <div class="bfsi-story-card bfsi-story-ai">
+                                    <div class="bfsi-story-ai-head">
+                                        <div class="bfsi-story-ai-ico"><span class="lu lu-brain"/></div>
+                                        <div class="bfsi-story-ai-t">YOUR AI COACH READ</div>
+                                    </div>
+                                    <p class="bfsi-story-root"><t t-esc="state.bankerStory.root_cause"/></p>
+                                    <button class="bfsi-story-cta" t-on-click="() => this.openSelfCoach()">
+                                        <span class="lu lu-messages-square"/> Ask your AI Coach
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- ═══ RESPONSIVE 2-COLUMN GRID ═══ -->
                         <div class="bfsi-banker-grid">
 
@@ -449,6 +481,42 @@
                             </div>
                         </div>
 
+                        <!-- ═══ COACHING QUEUE — who needs me now + why ═══ -->
+                        <div t-if="openQueue.length" class="bfsi-queue-panel">
+                            <div class="bfsi-queue-head">
+                                <span class="lu lu-list-checks"/>
+                                <h2>Coaching Queue</h2>
+                                <span class="bfsi-queue-sub">Ranked by who'll move the needle most</span>
+                                <span class="bfsi-queue-tag"><span class="lu lu-sparkles"/> AI prioritized</span>
+                            </div>
+                            <div class="bfsi-queue-rows">
+                                <div t-foreach="openQueue" t-as="q" t-key="q.id" class="bfsi-queue-row"
+                                     t-on-click="() => this.openBankerDetail(q.id)">
+                                    <div class="bfsi-q-avatar" t-attf-style="background:{{q.color}}"><t t-esc="q.initial"/></div>
+                                    <div class="bfsi-q-meta">
+                                        <div class="bfsi-q-name"><t t-esc="q.name"/></div>
+                                        <div class="bfsi-q-role"><t t-esc="q.role"/> · Rank #<t t-esc="q.rank || '-'"/></div>
+                                    </div>
+                                    <div class="bfsi-q-why">
+                                        <span class="lu lu-target" style="color:#7C3AED"/>
+                                        <span t-esc="q.why"/>
+                                        <span t-if="q.move > 0" class="bfsi-q-up"><span class="lu lu-trending-up"/> +<t t-esc="q.move"/></span>
+                                        <span t-if="q.move &lt; 0" class="bfsi-q-down"><span class="lu lu-trending-down"/> <t t-esc="q.move"/></span>
+                                    </div>
+                                    <div class="bfsi-q-ring" t-attf-style="background:conic-gradient({{queueRingColor(q.score)}} {{q.score}}%, #eef0f6 0)">
+                                        <span><t t-esc="q.score"/></span>
+                                    </div>
+                                    <span t-attf-class="bfsi-q-badge {{queuePriorityClass(q.priority)}}"><t t-esc="q.priority_label"/></span>
+                                    <span t-if="q.being_coached" class="bfsi-q-onplan" title="Active action plan in progress">
+                                        <span class="lu lu-clipboard-check"/> On plan
+                                    </span>
+                                    <button class="bfsi-q-coach" t-on-click.stop="() => this.openCoachingWizard(q.id)">
+                                        <span class="lu lu-sparkles"/> <t t-esc="q.being_coached ? 'Follow up' : 'Coach'"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- ═══ ORG CHART HIERARCHY ═══ -->
                         <div class="bfsi-kpi-title" style="margin-top:8px;">
                             <i class="fa fa-sitemap" style="color:var(--bfsi-primary); margin-right:6px;"></i>
@@ -534,7 +602,7 @@
                                         <!-- Rank + Trend Row -->
                                         <div class="bfsi-card-rank-row">
                                             <span t-attf-class="bfsi-rank-badge {{ (banker.current_month_rank || 99) &lt;= 3 ? 'bfsi-rank-top' : '' }}">
-                                                🏆 #<t t-esc="banker.current_month_rank || '-'"/>
+                                                <span class="lu lu-trophy"/> #<t t-esc="banker.current_month_rank || '-'"/>
                                             </span>
                                             <t t-set="movement" t-value="getRankMovement(banker.rank_movement)"/>
                                             <span t-attf-class="bfsi-trend {{ movement.class }}">
@@ -593,7 +661,7 @@
                                     <t t-esc="state.bankerDetail.role"/>
                                     <span style="margin: 0 8px; color:#D1D5DB;">·</span>
                                     <span t-attf-class="bfsi-rank-badge {{ (state.bankerDetail.rank || 99) &lt;= 3 ? 'bfsi-rank-top' : '' }}">
-                                        🏆 #<t t-esc="state.bankerDetail.rank || '-'"/>
+                                        <span class="lu lu-trophy"/> #<t t-esc="state.bankerDetail.rank || '-'"/>
                                     </span>
                                 </div>
                             </div>
@@ -658,6 +726,41 @@
 
                             <!-- PROFILE TAB -->
                             <div t-if="state.modalTab === 'profile'">
+
+                                <!-- ═══ PERFORMANCE STORY (AI cockpit) ═══ -->
+                                <div t-if="state.bankerStory" class="bfsi-story">
+                                    <div class="bfsi-story-grid">
+                                        <!-- What's driving the gap -->
+                                        <div class="bfsi-story-card">
+                                            <div class="bfsi-story-title"><span class="lu lu-target"/> What's driving the gap</div>
+                                            <div t-foreach="state.bankerStory.bars" t-as="bar" t-key="bar_index" class="bfsi-kbar">
+                                                <div class="bfsi-kbar-top">
+                                                    <span class="nm"><t t-esc="bar.name"/></span>
+                                                    <span class="vl" t-attf-style="color:{{ bar.value >= bar.target ? '#047857' : '#EF4444' }}">
+                                                        <t t-esc="bar.value"/> <span class="tg">/ <t t-esc="bar.target"/></span>
+                                                    </span>
+                                                </div>
+                                                <div class="bfsi-kbar-track">
+                                                    <div class="bfsi-kbar-fill"
+                                                         t-attf-style="width:{{ storyBarPct(bar.value, bar.target) }}%; background:{{ storyBarColor(bar.cat) }}"/>
+                                                </div>
+                                            </div>
+                                            <div t-if="!state.bankerStory.bars.length" class="bfsi-story-empty">No KPI vs target data yet.</div>
+                                        </div>
+                                        <!-- AI root-cause read -->
+                                        <div class="bfsi-story-card bfsi-story-ai">
+                                            <div class="bfsi-story-ai-head">
+                                                <div class="bfsi-story-ai-ico"><span class="lu lu-brain"/></div>
+                                                <div class="bfsi-story-ai-t">AI ROOT-CAUSE READ · <t t-esc="state.bankerStory.confidence"/>% confidence</div>
+                                            </div>
+                                            <p class="bfsi-story-root"><t t-esc="state.bankerStory.root_cause"/></p>
+                                            <button class="bfsi-story-cta" t-on-click="() => this.openCoachingWizard(state.bankerDetail.id)">
+                                                <span class="lu lu-sparkles"/> Start AI-Guided Coaching
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Profile Header -->
                                 <div class="profile-section">
                                     <div class="profile-details-grid">
@@ -701,32 +804,32 @@
                                     <h4 class="profile-section-title"><i class="fa fa-star"></i> Achievements</h4>
                                     <div class="badges-grid">
                                         <div t-attf-class="badge-card {{ getBadgeClass('top_performer') }}">
-                                            <div class="badge-icon">🏆</div>
+                                            <div class="badge-icon"><span class="lu lu-trophy"/></div>
                                             <div class="badge-name">Top Performer</div>
                                             <div class="badge-desc">Score above 80%</div>
                                         </div>
                                         <div t-attf-class="badge-card {{ getBadgeClass('podium') }}">
-                                            <div class="badge-icon">🥇</div>
+                                            <div class="badge-icon"><span class="lu lu-award"/></div>
                                             <div class="badge-name">Podium Finish</div>
                                             <div class="badge-desc">Top 3 rank</div>
                                         </div>
                                         <div t-attf-class="badge-card {{ getBadgeClass('climber') }}">
-                                            <div class="badge-icon">📈</div>
+                                            <div class="badge-icon"><span class="lu lu-trending-up"/></div>
                                             <div class="badge-name">Rank Climber</div>
                                             <div class="badge-desc">Improved 3+ ranks</div>
                                         </div>
                                         <div t-attf-class="badge-card {{ getBadgeClass('coach_fav') }}">
-                                            <div class="badge-icon">💬</div>
+                                            <div class="badge-icon"><span class="lu lu-messages-square"/></div>
                                             <div class="badge-name">Coach's Favorite</div>
                                             <div class="badge-desc">5+ coaching sessions</div>
                                         </div>
                                         <div t-attf-class="badge-card {{ getBadgeClass('action_taker') }}">
-                                            <div class="badge-icon">📋</div>
+                                            <div class="badge-icon"><span class="lu lu-clipboard-check"/></div>
                                             <div class="badge-name">Action Taker</div>
                                             <div class="badge-desc">Active action plan</div>
                                         </div>
                                         <div t-attf-class="badge-card {{ getBadgeClass('excellence') }}">
-                                            <div class="badge-icon">⭐</div>
+                                            <div class="badge-icon"><span class="lu lu-sparkles"/></div>
                                             <div class="badge-name">Excellence</div>
                                             <div class="badge-desc">Score above 90%</div>
                                         </div>
@@ -928,6 +1031,11 @@
                     </t>
                 </div>
             </div>
+
+            <!-- Guided Coaching Wizard (OWL overlay) -->
+            <BfsiCoachingWizard t-if="state.wizardBankerId"
+                                bankerId="state.wizardBankerId"
+                                onClose="(result) => this.closeCoachingWizard(result)"/>
 
         </div>
     </t>

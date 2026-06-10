@@ -72,29 +72,29 @@
                     <!-- KPI Context Card -->
                     <div class="bfsi-coach-context-bar" t-if="state.kpiData">
                         <div class="context-chip">
-                            <span class="chip-icon">📊</span>
+                            <span class="chip-icon"><span class="lu lu-gauge"/></span>
                             <span class="chip-label">Score</span>
                             <span t-attf-class="chip-value {{ state.kpiData.overall_score >= 75 ? 'good' : state.kpiData.overall_score >= 50 ? 'medium' : 'low' }}">
                                 <t t-esc="Math.round(state.kpiData.overall_score)"/>%
                             </span>
                         </div>
                         <div class="context-chip">
-                            <span class="chip-icon">🏆</span>
+                            <span class="chip-icon"><span class="lu lu-trophy"/></span>
                             <span class="chip-label">Rank</span>
                             <span class="chip-value">#<t t-esc="state.kpiData.branch_rank or '-'"/></span>
                         </div>
                         <div class="context-chip">
-                            <span class="chip-icon">📈</span>
+                            <span class="chip-icon"><span class="lu lu-trending-up"/></span>
                             <span class="chip-label">Conversions</span>
                             <span class="chip-value"><t t-esc="state.kpiData.conversions or 0"/></span>
                         </div>
                         <div class="context-chip">
-                            <span class="chip-icon">📅</span>
+                            <span class="chip-icon"><span class="lu lu-calendar"/></span>
                             <span class="chip-label">Meetings</span>
                             <span class="chip-value"><t t-esc="state.kpiData.meetings_scheduled or 0"/></span>
                         </div>
                         <div t-if="state.actionPlans.length > 0" class="context-chip">
-                            <span class="chip-icon">📋</span>
+                            <span class="chip-icon"><span class="lu lu-clipboard-check"/></span>
                             <span class="chip-label">Plans</span>
                             <span class="chip-value"><t t-esc="state.actionPlans.length"/></span>
                         </div>
@@ -132,8 +132,8 @@
                                         </span>
                                         <!-- Feedback buttons for AI messages -->
                                         <div class="msg-feedback" t-if="message.role === 'assistant' and !message.isGreeting">
-                                            <button class="feedback-btn" title="Helpful">👍</button>
-                                            <button class="feedback-btn" title="Not helpful">👎</button>
+                                            <button class="feedback-btn" title="Helpful"><span class="lu lu-thumbs-up"/></button>
+                                            <button class="feedback-btn" title="Not helpful"><span class="lu lu-thumbs-down"/></button>
                                         </div>
                                     </div>
 

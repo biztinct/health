@@ -108,6 +108,9 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
     ],
     'assets': {
         'web.assets_backend': [
+            # Lucide icon set (CSS-mask SVG) — load first, used everywhere
+            'hr_development_ai/static/src/css/bfsi_icons.css',
+
             # Global CSS
             'hr_development_ai/static/src/css/hr_development.css',
 
@@ -132,6 +135,11 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
             'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.js',
             'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.xml',
             'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.css',
+
+            # BFSI Guided Coaching Wizard (OWL overlay — replaces 6-tab session form)
+            'hr_development_ai/static/src/components/bfsi_coaching_wizard/bfsi_coaching_wizard.scss',
+            'hr_development_ai/static/src/components/bfsi_coaching_wizard/bfsi_coaching_wizard.js',
+            'hr_development_ai/static/src/components/bfsi_coaching_wizard/bfsi_coaching_wizard.xml',
 
             # BFSI AI Coach Panel (Persistent Sidebar)
             'hr_development_ai/static/src/components/bfsi_ai_coach_panel/bfsi_ai_coach_panel.js',

@@ -310,6 +310,17 @@
                                     <field name="currency_id" invisible="1"/>
                                 </group>
                             </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>Key Targets</span>
+                                </div>
+                                <group col="2">
+                                    <field name="target_overall_score" widget="progressbar"/>
+                                    <field name="target_revenue"/>
+                                </group>
+                                <small class="text-muted d-block mt-1">The two headline numbers. Detailed targets per KPI category are in the tabs below.</small>
+                            </div>
                         </div>
                     </div>
 

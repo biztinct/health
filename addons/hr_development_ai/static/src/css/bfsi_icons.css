@@ -1,0 +1,50 @@
+/* ════════════════════════════════════════════════════════════
+   BFSI Lucide icon set — CSS-mask SVG (themeable via currentColor)
+   Matches the project hf-wt-ico pattern. Use: <span class="lu lu-target"/>
+   Self-contained: SVGs bundled in this module, no cross-module dep.
+   ════════════════════════════════════════════════════════════ */
+.lu{
+  display:inline-block; width:1em; height:1em; flex:0 0 auto; vertical-align:-0.15em;
+  background-color:currentColor;
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center; mask-position:center;
+  -webkit-mask-size:contain; mask-size:contain;
+}
+.lu-arrow-right{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/arrow-right.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/arrow-right.svg')}
+.lu-award{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/award.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/award.svg')}
+.lu-bell{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/bell.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/bell.svg')}
+.lu-bot{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/bot.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/bot.svg')}
+.lu-brain{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/brain.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/brain.svg')}
+.lu-building{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/building.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/building.svg')}
+.lu-calendar{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/calendar.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/calendar.svg')}
+.lu-chart-column{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/chart-column.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/chart-column.svg')}
+.lu-check{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/check.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/check.svg')}
+.lu-circle-check{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/circle-check.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/circle-check.svg')}
+.lu-circle-x{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/circle-x.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/circle-x.svg')}
+.lu-clipboard-check{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/clipboard-check.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/clipboard-check.svg')}
+.lu-dot{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/dot.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/dot.svg')}
+.lu-flag{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/flag.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/flag.svg')}
+.lu-gauge{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/gauge.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/gauge.svg')}
+.lu-handshake{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/handshake.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/handshake.svg')}
+.lu-lightbulb{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/lightbulb.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/lightbulb.svg')}
+.lu-list-checks{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/list-checks.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/list-checks.svg')}
+.lu-map-pin{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/map-pin.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/map-pin.svg')}
+.lu-messages-square{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/messages-square.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/messages-square.svg')}
+.lu-phone{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/phone.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/phone.svg')}
+.lu-plus{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/plus.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/plus.svg')}
+.lu-refresh-cw{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/refresh-cw.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/refresh-cw.svg')}
+.lu-rocket{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/rocket.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/rocket.svg')}
+.lu-search{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/search.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/search.svg')}
+.lu-send{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/send.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/send.svg')}
+.lu-smartphone{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/smartphone.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/smartphone.svg')}
+.lu-sparkles{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/sparkles.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/sparkles.svg')}
+.lu-square-pen{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/square-pen.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/square-pen.svg')}
+.lu-target{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/target.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/target.svg')}
+.lu-thumbs-down{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/thumbs-down.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/thumbs-down.svg')}
+.lu-thumbs-up{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/thumbs-up.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/thumbs-up.svg')}
+.lu-trending-down{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/trending-down.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/trending-down.svg')}
+.lu-trending-up{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/trending-up.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/trending-up.svg')}
+.lu-triangle-alert{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/triangle-alert.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/triangle-alert.svg')}
+.lu-trophy{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/trophy.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/trophy.svg')}
+.lu-users{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/users.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/users.svg')}
+.lu-x{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/x.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/x.svg')}
