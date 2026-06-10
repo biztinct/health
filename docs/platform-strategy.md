@@ -159,6 +159,81 @@ Neither advantage applies to *your present situation* strongly enough to justify
 
 ---
 
+## 9. UI tech stack — current assessment & recommended starter stack
+
+A separate question from *which backend platform*: **is the frontend stack itself current and best-in-class for a design-led brand?** Verified against mid-2026 sources. **Verdict: the stack is genuinely modern — not outdated.** Vue 3 and Lucide are exactly what modern apps use; two pieces are worth reconsidering, and there is one strategic UI-library choice that matters when a *signature premium look* is the goal.
+
+### Component-by-component
+
+| Your choice | Current? | Used by beautiful apps? | Better option for your goal |
+|---|---|---|---|
+| **Vue 3** (Composition API) | ✅ 3.5 stable; **3.6 + Vapor Mode** (VDOM-free, ~Solid.js speed) in beta | ✅ Top-tier, mainstream | **Keep.** Optionally opt into Vapor Mode per-page later for perf. No framework change. |
+| **Lucide icons** | ✅ ~1,500 icons, actively maintained | ✅ Among the most-used | **Keep — but now the "default everywhere"** (AI output, starter kits), so it can read as generic. For a distinctive brand consider **Phosphor** (multi-weight) or **Tabler/Hugeicons**. CSS-mask approach is fine. |
+| **Quasar 2.x** | ✅ Maintained | ⚠️ Valid, not the 2026 "designer's darling" | See strategic note — the one real decision. |
+| **PouchDB 8** | ⚠️ Battle-tested but aging | ⚠️ Losing ground | **Consider RxDB.** PouchDB carries CouchDB revision-tree overhead you don't need (you sync to Odoo/Postgres via REST, not CouchDB). RxDB adds reactive queries, schema validation/migrations, better large-dataset perf, pluggable storage + custom REST replication — a cleaner fit. |
+| **Chart.js 3.9** | ⚠️ One major version behind (4.x current) | ✅ Still widely used | Bump to **Chart.js 4**; or **ECharts / unovis / Tremor** for a more premium dashboard look. Minor. |
+| **Custom SCSS + design tokens** | ✅ Best practice | ✅ | Solid. 2026 trend is **Tailwind v4 + CSS variables**, relevant only if adopting the shadcn-vue ecosystem (below). |
+
+### The one strategic choice: Quasar vs. the 2026 "premium" trend
+
+The Vue UI landscape splits into two philosophies:
+
+- **Batteries-included, opinionated** — **Quasar** (current), Vuetify, PrimeVue. Huge component set + mobile/PWA tooling out of the box, but a recognizable Material "default look" unless heavily re-themed. **Great for shipping fast, especially an offline mobile PWA for field workers** — exactly the `health_pwa` use case, so the choice was *pragmatically right*.
+- **Unstyled / design-ownership** — **shadcn-vue** (copy-paste components, Tailwind, zero bundle bloat, total design control) and **PrimeVue in unstyled mode + Tailwind**. What the "distinctive, signature-brand" crowd reaches for in 2026, because you own every pixel. Trade-off: you rebuild more plumbing yourself. **PrimeVue is the middle path** — 90+ components *and* unstyled+Tailwind mode, plus the best data tables in the Vue world (useful for clinical/ops grids).
+
+For a business where **UX is the supreme differentiator across many products**, the trend favors the **design-ownership** camp for *new* products where a recognizable look is the whole point.
+
+### Recommendation
+
+- **Don't rip anything out of the shipping `health_pwa`.** Vue 3 + Quasar + Lucide is a legitimately modern, production-grade stack, and Quasar earns its place for an offline field-worker PWA.
+- **For the reusable white-label starter (Section 8):** evaluate **PrimeVue (unstyled) + Tailwind**, or **shadcn-vue**, as the design foundation for new products; standardize on **RxDB** for the offline layer and **Chart.js 4 / ECharts** for data viz.
+- **Net:** you are not behind. These are "very good → best-in-class for a design-led brand" upgrades, not fixes for anything broken.
+
+**Sources:** [Best Vue UI Libraries 2026](https://www.c-sharpcorner.com/article/best-vue-ui-libraries-for-2026-which-one-should-you-choose/) · [Vue 3 UI library comparison](https://zenn.dev/totoro54gou/articles/d54g-vue-ui-library-comparison?locale=en) · [Vue 3.6 Vapor Mode](https://blog.imseankim.com/vue-3-6-beta-vapor-mode-virtual-dom-solidjs-svelte-feature-complete-2026/) · [shadcn/ui](https://ui.shadcn.com/) · [Open-source icon libraries 2026](https://dev.to/icons/21-best-open-source-icon-libraries-o5n) · [RxDB vs PouchDB](https://rxdb.info/alternatives.html) · [Offline-first tech stack 2026](https://cssauthor.com/offline-first-tech-stack/)
+
+---
+
+## 10. Custom-UI architecture — current pattern & improvement roadmap
+
+A question distinct from *platform* and *tech stack*: **how are the "beautiful" booking popups actually built, should that approach be used everywhere, and can it be improved?** Verified against the live `health_fieldservice` code.
+
+### How they're built — standalone custom OWL (not native Odoo wizards)
+
+Every custom dialog — **Booking wizard, Recurring booking, Quick booking, Staff assignment, Reschedule, Client-match, Product-catalog** — is a **hand-built OWL component**, *not* a native `TransientModel` wizard. Shared pattern:
+
+- Custom OWL `Component` registered as a client action (`registry.category("actions").add(...)`) or pushed via the `dialog` service.
+- **Hand-written QWeb markup** with bespoke CSS classes (`.bw-*`, `.rb-*`, `.pcd-*`, `.cmd-*`) — none of Odoo's `<form>/<sheet>/<group>/<field>` rendering.
+- Data via **direct ORM calls** (`useService("orm")` → `searchRead` / `orm.call`), all state client-side, a **single create call at the end** (`create_booking_from_wizard`, `action_create_recurring_from_owl`) — no transient drafts.
+- **Pure SCSS overlays** (fixed `.bw-overlay`, z-index 1060), independent of Odoo's form CSS.
+
+Representative files: `addons/health_fieldservice/static/src/js/ops_booking_wizard.js`, `…/ops_recurring_booking.js`, `…/client_match_dialog.js`.
+
+**The main record forms (FSO booking form, lead form) remain native Odoo form views**, with only a thin `OpsBookingFormController` extending the native `FormController`. So the codebase already runs a **hybrid**: native forms for records, custom OWL for workflows.
+
+### Should custom OWL be used on every form? No — keep the hybrid.
+
+| | Custom OWL (the wizards) | Native form + SCSS theme (record forms) |
+|---|---|---|
+| UX control | Total — pixel-perfect, guided flows | Good — themed, but Odoo's form skeleton shows |
+| Free functionality | None — you build it all | Chatter, activities, access rules, field widgets, list/kanban/filters, attachments, audit, mobile |
+| Upgrade cost (Odoo's yearly breaks) | **High** — JS is the most version-volatile layer | **Low** — XML views rarely break |
+| Right for | High-value, repeated *workflow* surfaces (booking, assignment) where UX *is* the product | Data-dense back-office CRUD across many models |
+
+**Rule of thumb:** reserve custom OWL for the handful of **money-making workflow screens**; leave the long tail of admin/config/record forms native-but-themed. Rebuilding everything as OWL multiplies the annual upgrade tax for marginal gain on screens users barely see.
+
+### Improvement roadmap (priority order)
+
+1. **Extract a shared OWL component library (biggest win).** Today each wizard copy-pastes its own overlay, stepper, autocomplete, live-preview, and error-modal. Consolidate into reusable base components — `<WizardShell>`, `<Stepper>`, `<SearchSelect>`, `<PreviewCard>`, `<ConfirmModal>`. **Shrinks the upgrade surface** (fix version breaks once, not seven times) and makes new wizards fast. This is the concrete form of the "reusable base" in Section 8.
+2. **Standardize on the native `Dialog` wrapper.** `ClientMatchDialog` correctly wraps `@web/core/dialog` (free focus-trap, ESC, backdrop, sizing); the booking wizard and `ProductCatalogDialog` use hand-rolled fixed overlays that likely **lack focus-trapping, ESC-to-close, and `aria-modal`/roles** — an accessibility + polish gap. Standardize on the native Dialog shell, brand-styled.
+3. **Centralize design tokens.** Some components use CSS vars (`--vu-surface-card`), others hardcode hex (`#1565C0`, `#E53935`). Move all into the `health_theme` token set so a rebrand is one file.
+4. **Polish micro-UX:** loading skeletons, optimistic submit, enter/exit transitions, debounced search (replace the `mousedown.prevent` blur-race hack with a shared autocomplete component).
+5. **Add tests** (Odoo `hoot`/QUnit) for the wizard state machines — now business-critical, currently untested, and in the layer most likely to break on upgrade.
+6. **Strategic option for the most premium flows:** render customer-facing wizards in the **separate Vue/PWA frontend** (already decoupled via REST) instead of OWL, fully insulating the best UX from Odoo's upgrade churn. Reserve for the highest-value surfaces.
+
+**Net:** the architecture is right and already hybrid. The upgrade is *consolidation* — turn seven bespoke wizards into one small, accessible, token-driven component library — which raises polish **and** lowers maintenance cost simultaneously.
+
+---
+
 ## Verification / how to pressure-test this conclusion
 
 This is a strategy paper, not code, so "verification" means stress-testing the decision before you commit:
