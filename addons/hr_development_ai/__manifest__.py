@@ -95,6 +95,9 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
         'views/bfsi_kpi_integration_views.xml',
         'views/bfsi_progress_wizard_views.xml',
 
+        # OWL Workspace client actions (must load before menus that use them)
+        'views/bfsi_workspace_views.xml',
+
         # Menus (must be loaded AFTER all views that define actions)
         'views/hr_development_menus.xml',
         'views/bfsi_menus.xml',
@@ -140,6 +143,14 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
             'hr_development_ai/static/src/components/bfsi_coaching_wizard/bfsi_coaching_wizard.scss',
             'hr_development_ai/static/src/components/bfsi_coaching_wizard/bfsi_coaching_wizard.js',
             'hr_development_ai/static/src/components/bfsi_coaching_wizard/bfsi_coaching_wizard.xml',
+
+            # BFSI Record Workspace (reusable OWL list + slide-over drawer)
+            'hr_development_ai/static/src/components/bfsi_workspace/bfsi_workspace.scss',
+            'hr_development_ai/static/src/components/bfsi_workspace/workspace_configs.js',
+            'hr_development_ai/static/src/components/bfsi_workspace/bfsi_workspace_drawer.js',
+            'hr_development_ai/static/src/components/bfsi_workspace/bfsi_workspace_drawer.xml',
+            'hr_development_ai/static/src/components/bfsi_workspace/bfsi_workspace.js',
+            'hr_development_ai/static/src/components/bfsi_workspace/bfsi_workspace.xml',
 
             # BFSI AI Coach Panel (Persistent Sidebar)
             'hr_development_ai/static/src/components/bfsi_ai_coach_panel/bfsi_ai_coach_panel.js',

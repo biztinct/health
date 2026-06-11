@@ -36,6 +36,7 @@
             <span t-if="s_index lt 3" class="bcw-step-line"></span>
           </t>
         </div>
+        <button class="bcw-home" t-on-click="goHome" title="Back to Command Center"><span class="lu lu-arrow-right" style="transform:rotate(180deg)"/></button>
         <button class="bcw-x" t-on-click="close"><span class="lu lu-x"/></button>
       </div>
 

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.BfsiWorkspace">
+  <div class="bws-root">
+
+    <!-- HEADER -->
+    <div class="bws-head">
+      <button class="bws-home" t-on-click="goHome" title="Back to Command Center">
+        <span class="lu lu-arrow-right" style="transform:rotate(180deg)"/>
+      </button>
+      <div class="bws-logo"><span t-attf-class="lu lu-{{config.icon}}"/></div>
+      <h1 t-esc="config.title"/>
+      <div class="bws-head-spacer"/>
+      <div t-if="scopeEnabled" class="bws-scope">
+        <button t-attf-class="{{state.scope==='my' ? 'on' : ''}}" t-on-click="() => this.setScope('my')">Mine</button>
+        <button t-attf-class="{{state.scope==='team' ? 'on' : ''}}" t-on-click="() => this.setScope('team')">My team</button>
+      </div>
+    </div>
+
+    <!-- SEGMENT TABS -->
+    <div class="bws-tabs">
+      <button t-foreach="config.segments" t-as="seg" t-key="seg.key"
+              t-attf-class="bws-tab {{state.segmentKey===seg.key ? 'on' : ''}}"
+              t-on-click="() => this.selectSegment(seg.key)">
+        <span t-attf-class="lu lu-{{seg.icon}}"/> <t t-esc="seg.label"/>
+      </button>
+    </div>
+
+    <!-- TOOLBAR: chips + search + sort -->
+    <div class="bws-toolbar">
+      <div class="bws-chips">
+        <t t-foreach="segment.chips" t-as="chip" t-key="chip.key">
+          <t t-if="chip.kind === 'date'">
+            <button t-attf-class="bws-chip {{isChipActive(chip.key,'today') ? 'on' : ''}}" t-on-click="() => this.setDatePreset(chip.key,'today')">Today</button>
+            <button t-attf-class="bws-chip {{isChipActive(chip.key,'week') ? 'on' : ''}}" t-on-click="() => this.setDatePreset(chip.key,'week')">This week</button>
+            <button t-attf-class="bws-chip {{isChipActive(chip.key,'month') ? 'on' : ''}}" t-on-click="() => this.setDatePreset(chip.key,'month')">This month</button>
+            <button t-attf-class="bws-chip {{isChipActive(chip.key,'overdue') ? 'on' : ''}}" t-on-click="() => this.setDatePreset(chip.key,'overdue')">Past due</button>
+            <span class="bws-chip-sep"/>
+          </t>
+          <t t-else="">
+            <button t-foreach="chip.options" t-as="opt" t-key="opt.v"
+                    t-attf-class="bws-chip {{isChipActive(chip.key,opt.v) ? 'on' : ''}}"
+                    t-on-click="() => this.toggleChip(chip.key, opt.v)">
+              <t t-esc="opt.l"/>
+            </button>
+            <span class="bws-chip-sep"/>
+          </t>
+        </t>
+      </div>
+      <div class="bws-toolbar-right">
+        <div t-if="hasPersonField" class="bws-latest">
+          <button t-attf-class="{{state.latestOnly ? 'on' : ''}}" t-on-click="() => this.toggleLatest()">Latest</button>
+          <button t-attf-class="{{!state.latestOnly ? 'on' : ''}}" t-on-click="() => this.toggleLatest()">All</button>
+        </div>
+        <div class="bws-search">
+          <span class="lu lu-search"/>
+          <input type="text" placeholder="Search…" t-att-value="state.search" t-on-input="onSearchInput"/>
+        </div>
+        <select class="bws-sort" t-on-change="(ev) => this.setSort(ev.target.value)">
+          <option t-foreach="segment.sorts" t-as="so" t-key="so.key" t-att-value="so.key"
+                  t-att-selected="state.sort===so.key" t-esc="so.l"/>
+        </select>
+      </div>
+    </div>
+
+    <!-- LIST -->
+    <div class="bws-list">
+      <div t-if="state.loading" class="bws-loading"><div class="bws-spin"/></div>
+      <t t-elif="!state.rows.length">
+        <div class="bws-empty">
+          <span class="lu lu-search"/>
+          <div>No records match. Try changing filters or scope.</div>
+        </div>
+      </t>
+      <t t-else="">
+        <div t-foreach="state.rows" t-as="row" t-key="row.id" class="bws-row" t-on-click="() => this.openDrawer(row)">
+
+          <!-- PLAN -->
+          <t t-if="segment.rowKind === 'plan'">
+            <div class="bws-av" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}"><t t-esc="initial(row.employee_id)"/></div>
+            <div class="bws-row-meta">
+              <div class="bws-row-name"><t t-esc="name(row.employee_id)"/></div>
+              <div class="bws-row-sub"><span class="lu lu-clipboard-check"/> <t t-esc="row.action_item_count"/> items · due <t t-esc="fmtDate(row.target_date)"/></div>
+            </div>
+            <div class="bws-row-prog">
+              <div class="bws-prog-top"><span><t t-esc="row.completed_items"/>/<t t-esc="row.action_item_count"/></span><b t-esc="Math.round(row.progress_percentage) + '%'"/></div>
+              <div class="bws-prog-track"><div class="bws-prog-fill" t-attf-style="width:{{Math.round(row.progress_percentage)}}%;background:{{ringColor(row.progress_percentage)}}"/></div>
+            </div>
+            <span t-attf-class="bws-badge {{stateClass(row.state)}}"><t t-esc="stateLabel(row.state)"/></span>
+          </t>
+
+          <!-- SESSION -->
+          <t t-if="segment.rowKind === 'session'">
+            <div class="bws-av" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}"><t t-esc="initial(row.employee_id)"/></div>
+            <div class="bws-row-meta">
+              <div class="bws-row-name"><t t-esc="name(row.employee_id)"/></div>
+              <div class="bws-row-sub"><span t-attf-class="lu lu-{{typeIcon(row.session_type)}}"/> <t t-esc="row.name"/></div>
+            </div>
+            <div class="bws-row-side"><span class="lu lu-calendar"/> <t t-esc="fmtDate(row.session_date)"/></div>
+            <span t-attf-class="bws-badge {{stateClass(row.state)}}"><t t-esc="stateLabel(row.state)"/></span>
+          </t>
+
+          <!-- STRATEGY -->
+          <t t-if="segment.rowKind === 'strategy'">
+            <div class="bws-av" t-attf-style="background:{{avatarColor(row.banker_id and row.banker_id[0])}}"><t t-esc="initial(row.banker_id)"/></div>
+            <div class="bws-row-meta">
+              <div class="bws-row-name"><t t-esc="name(row.banker_id)"/></div>
+              <div class="bws-row-sub"><span class="lu lu-brain"/> Strategy · <t t-esc="fmtDate(row.kpi_snapshot_date)"/></div>
+            </div>
+            <div class="bws-row-conf">
+              <div class="bws-conf-label">AI confidence</div>
+              <div class="bws-conf-track"><div class="bws-conf-fill" t-attf-style="width:{{Math.round(row.ai_confidence)}}%"/></div>
+            </div>
+            <span t-attf-class="bws-badge {{stateClass(row.state)}}"><t t-esc="stateLabel(row.state)"/></span>
+          </t>
+
+          <!-- KPI -->
+          <t t-if="segment.rowKind === 'kpi'">
+            <div class="bws-av" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}"><t t-esc="initial(row.employee_id)"/></div>
+            <div class="bws-row-meta">
+              <div class="bws-row-name"><t t-esc="name(row.employee_id)"/></div>
+              <div class="bws-row-sub"><span class="lu lu-calendar"/> <t t-esc="fmtDate(row.period_date)"/> · rank #<t t-esc="row.branch_rank"/></div>
+            </div>
+            <div class="bws-row-side"><span class="lu lu-trophy"/> <t t-esc="Math.round(row.overall_score)"/> / 100</div>
+            <span t-attf-class="bws-badge {{prioClass(row.coaching_priority)}}"><t t-esc="stateLabel(row.coaching_priority)"/></span>
+          </t>
+
+          <!-- TARGET -->
+          <t t-if="segment.rowKind === 'target'">
+            <div class="bws-av" style="background:#7C3AED"><span class="lu lu-target"/></div>
+            <div class="bws-row-meta" style="min-width:240px">
+              <div class="bws-row-name"><t t-esc="row.name"/></div>
+              <div class="bws-row-sub"><span class="lu lu-calendar"/> <t t-esc="row.period_type"/> · from <t t-esc="fmtDate(row.valid_from)"/></div>
+            </div>
+            <div class="bws-row-side">Score <t t-esc="Math.round(row.target_overall_score)"/> · Rev <t t-esc="Math.round(row.target_revenue)"/></div>
+            <span t-attf-class="bws-badge {{row.is_active ? 'bws-st-ok' : 'bws-st-muted'}}"><t t-esc="row.is_active ? 'Active' : 'Inactive'"/></span>
+          </t>
+
+          <!-- BRANCH -->
+          <t t-if="segment.rowKind === 'branch'">
+            <div class="bws-av" style="background:#4338ca"><span class="lu lu-building"/></div>
+            <div class="bws-row-meta" style="min-width:200px">
+              <div class="bws-row-name"><t t-esc="row.name"/></div>
+              <div class="bws-row-sub"><span class="lu lu-users"/> <t t-esc="row.banker_count"/> bankers · <t t-esc="name(row.region_id)"/></div>
+            </div>
+            <div class="bws-row-side"><span class="lu lu-gauge"/> Avg <t t-esc="Math.round(row.avg_performance_score)"/></div>
+            <span t-if="row.bankers_needing_coaching" class="bws-badge bws-st-warn"><t t-esc="row.bankers_needing_coaching"/> need coaching</span>
+          </t>
+
+          <!-- REGION -->
+          <t t-if="segment.rowKind === 'region'">
+            <div class="bws-av" style="background:#0f766e"><span class="lu lu-map-pin"/></div>
+            <div class="bws-row-meta" style="min-width:240px">
+              <div class="bws-row-name"><t t-esc="row.name"/></div>
+              <div class="bws-row-sub"><span class="lu lu-building"/> <t t-esc="row.branch_count"/> branches · <t t-esc="name(row.regional_manager_id)"/></div>
+            </div>
+          </t>
+
+          <span class="lu lu-arrow-right bws-row-chev"/>
+        </div>
+        <div t-if="state.hasMore" class="bws-more">Showing first <t t-esc="state.limit"/> · refine filters to narrow</div>
+      </t>
+    </div>
+
+    <!-- DRAWER -->
+    <BfsiWorkspaceDrawer t-if="state.drawerId"
+                         model="state.drawerModel" recordId="state.drawerId" drawerKind="state.drawerKind"
+                         onClose="() => this.closeDrawer()"
+                         onAction="() => this.onDrawerAction()"
+                         openForm="(m,i) => this.openForm(m,i)"
+                         openWizard="(b) => this.openWizard(b)"/>
+
+    <!-- WIZARD overlay -->
+    <BfsiCoachingWizard t-if="state.wizardBankerId"
+                        bankerId="state.wizardBankerId"
+                        onClose="(r) => this.closeWizard(r)"/>
+  </div>
+</t>
+
+</templates>

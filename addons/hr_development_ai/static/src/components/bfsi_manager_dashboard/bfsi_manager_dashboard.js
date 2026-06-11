@@ -5,6 +5,7 @@ import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
 import { BfsiCoachingWizard } from "../bfsi_coaching_wizard/bfsi_coaching_wizard";
+import { BfsiWorkspaceDrawer } from "../bfsi_workspace/bfsi_workspace_drawer";
 
 /* ── Chart.js state ── */
 let chartJSLoaded = false;
@@ -75,7 +76,7 @@ const destroyChart = (key) => {
 export class BfsiManagerDashboard extends Component {
     static template = "hr_development_ai.BfsiManagerDashboard";
     static props = ["*"];
-    static components = { BfsiCoachingWizard };
+    static components = { BfsiCoachingWizard, BfsiWorkspaceDrawer };
 
     setup() {
 
@@ -116,6 +117,9 @@ export class BfsiManagerDashboard extends Component {
 
             // Guided Coaching Wizard (OWL overlay)
             wizardBankerId: null,
+
+            // Record slide-over drawer (reused from the workspace)
+            recDrawer: null,   // { model, id, kind }
 
             // Coaching Queue (prioritized "who needs me + why")
             coachingQueue: [],
@@ -701,7 +705,7 @@ export class BfsiManagerDashboard extends Component {
 
                 sessions: sessions.map(s => ({
                     id: s.id,
-                    date: s.session_date || '-',
+                    date: this.fmtDateTimeNoSec(s.session_date),
                     raw_date: s.session_date || '',
                     type: s.session_type || 'General',
                     notes: s.name || s.discussion_notes || '',
@@ -738,6 +742,37 @@ export class BfsiManagerDashboard extends Component {
         this.state.bankerDetail = null;
         destroyChart('modalRadar');
         destroyChart('modalTrend');
+    }
+
+    /* Open the rich OWL slide-over drawer for a session / plan / strategy
+       (replaces dropping into the raw Odoo form). */
+    openRecordDrawer(model, id, kind) {
+        this.state.recDrawer = { model, id, kind };
+    }
+    closeRecordDrawer() { this.state.recDrawer = null; }
+    async onRecDrawerAction() {
+        // refresh the banker detail so counts/progress update
+        if (this.state.bankerDetail) await this.openBankerDetail(this.state.bankerDetail.id);
+    }
+
+    /* ━━━ formatting helpers ━━━ */
+    fmtMoney(v) {
+        v = v || 0;
+        const a = Math.abs(v), s = v < 0 ? '-' : '';
+        if (a >= 1e9) return `${s}₫${(a / 1e9).toFixed(1)}B`;
+        if (a >= 1e6) return `${s}₫${(a / 1e6).toFixed(1)}M`;
+        if (a >= 1e3) return `${s}₫${(a / 1e3).toFixed(1)}K`;
+        return `₫${Math.round(a)}`;
+    }
+    fmtDateOnly(s) {
+        if (!s) return '—';
+        const d = new Date(s);
+        return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    fmtDateTimeNoSec(s) {
+        if (!s) return '—';
+        const d = new Date(s);
+        return `${d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}, ${d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`;
     }
 
     async switchModalTab(tab) {

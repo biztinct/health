@@ -29,7 +29,7 @@
 
     /* top bar */
     .bcw-top {
-        background: linear-gradient(135deg, var(--ha), var(--hc));
+        background: #312e81;
         color: #fff; padding: 14px 26px; display: flex; align-items: center; gap: 18px;
     }
     .bcw-who { display: flex; align-items: center; gap: 12px; }
@@ -86,9 +86,9 @@
     .bcw-root { font-size: 14px; line-height: 1.6; color: var(--ink2); }
     .bcw-conf {
         display: flex; align-items: center; gap: 12px; margin-top: 16px;
-        background: linear-gradient(135deg, #f5f3ff, #ede9fe); border-radius: 12px; padding: 14px 18px;
+        background: #f5f3ff; border-radius: 12px; padding: 14px 18px;
         .bcw-meter { flex: 1; height: 8px; background: #ddd6fe; border-radius: 99px; overflow: hidden;
-            i { display: block; height: 100%; background: linear-gradient(90deg, var(--vio), var(--ind)); border-radius: 99px; } }
+            i { display: block; height: 100%; background: #4F46E5; border-radius: 99px; } }
     }
 
     /* strategy */
@@ -106,10 +106,10 @@
         &.open { .cv { transform: rotate(270deg); } .acc-b { max-height: 320px; padding-bottom: 16px; } }
     }
     .bcw-callout {
-        background: linear-gradient(135deg, #f5f3ff, #ede9fe); border: 1px solid #ddd6fe; border-radius: 14px;
+        background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 14px;
         padding: 16px 18px; display: flex; gap: 13px;
         .ai-ico { width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: grid; place-items: center;
-            background: linear-gradient(135deg, var(--vio), var(--ind)); color: #fff; font-size: 15px; }
+            background: #4F46E5; color: #fff; font-size: 15px; }
         .t { font-weight: 800; font-size: 13px; color: var(--vio); margin-bottom: 4px; letter-spacing: .2px; }
         p { font-size: 13px; line-height: 1.55; color: var(--ink2); }
     }
@@ -139,7 +139,7 @@
     .bcw-msg {
         max-width: 86%; padding: 10px 13px; border-radius: 13px; font-size: 13px; line-height: 1.5;
         &.ai { background: #241d3d; color: #e9e6f7; align-self: flex-start; border-bottom-left-radius: 4px; }
-        &.me { background: linear-gradient(135deg, var(--vio), var(--ind)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+        &.me { background: #4F46E5; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
     }
     .bcw-chat-in { display: flex; gap: 8px; margin-top: 12px;
         input { flex: 1; background: #241d3d; border: 1px solid #3a3158; color: #fff; border-radius: 10px; padding: 10px 13px; font-size: 13px; outline: none; }
@@ -165,7 +165,7 @@
         &.out { background: #d1fae5; color: #047857; }
     }
     .bcw-commit {
-        background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1px solid #a7f3d0; border-radius: 14px;
+        background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 14px;
         padding: 16px 18px; display: flex; align-items: center; gap: 13px; margin-top: 6px;
         .ci2 { width: 38px; height: 38px; border-radius: 11px; background: var(--ok); color: #fff; display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
     }
@@ -178,7 +178,7 @@
     }
     .bcw-done-ring {
         width: 92px; height: 92px; border-radius: 50%; margin: 0 auto 22px; display: grid; place-items: center;
-        background: linear-gradient(135deg, var(--ok), #059669); color: #fff; font-size: 44px;
+        background: #10B981; color: #fff; font-size: 44px;
         box-shadow: 0 16px 40px rgba(16, 185, 129, .4); animation: bcwPop .35s ease;
     }
     .bcw-done-steps {
@@ -201,7 +201,7 @@
         padding: 8px 16px; display: inline-flex; align-items: center; gap: 7px; transition: .15s;
         &.bcw-lg { padding: 13px 24px; font-size: 15px; border-radius: 12px; }
         &.bcw-sm { padding: 6px 12px; font-size: 12px; }
-        &.bcw-pri { background: linear-gradient(135deg, var(--vio), var(--ind)); color: #fff; box-shadow: 0 6px 16px rgba(79, 70, 229, .32);
+        &.bcw-pri { background: #4F46E5; color: #fff; box-shadow: 0 6px 16px rgba(79, 70, 229, .32);
             &:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(79, 70, 229, .4); }
             &:disabled { opacity: .6; cursor: default; transform: none; } }
         &.bcw-ghost { background: #fff; border: 1px solid var(--line); color: var(--ink2);
@@ -220,3 +220,12 @@
         .bcw-stepper { display: none; }
     }
 }
+
+/* wizard home button (mid-session escape to Command Center) */
+.bcw-overlay .bcw-home {
+    margin-left: auto; width: 34px; height: 34px; border: none; cursor: pointer;
+    border-radius: 9px; background: rgba(255, 255, 255, .14); color: #fff;
+    display: grid; place-items: center; font-size: 15px;
+    &:hover { background: rgba(255, 255, 255, .26); }
+}
+.bcw-overlay .bcw-home + .bcw-x { margin-left: 8px; }

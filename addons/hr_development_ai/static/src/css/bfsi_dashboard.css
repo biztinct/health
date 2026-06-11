@@ -51,7 +51,7 @@
 /* Override Odoo's dual-colored progressbar to use a single clean color */
 .o_progressbar .o_progressbar_complete,
 .o_field_progressbar .o_progressbar .o_progressbar_complete {
-    background: linear-gradient(90deg, #4F46E5, #6366F1) !important;
+    background: #4F46E5 !important;
     border-radius: 20px !important;
 }
 
@@ -104,7 +104,7 @@
    GRADIENT HEADER
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .bfsi-dashboard-header {
-    background: linear-gradient(135deg, var(--bfsi-header-start) 0%, var(--bfsi-header-end) 60%, #4338ca 100%);
+    background: #312e81;
     color: #fff;
     padding: 12px 24px;
     border-radius: 0 0 16px 16px;
@@ -511,7 +511,7 @@
     font-weight: 700;
     color: #fff;
     flex-shrink: 0;
-    background: linear-gradient(135deg, var(--bfsi-primary), var(--bfsi-indigo));
+    background: #4F46E5;
     box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
 }
 
@@ -633,7 +633,7 @@
 }
 
 .bfsi-rank-badge.bfsi-rank-top {
-    background: linear-gradient(135deg, #FDE68A, #FCD34D);
+    background: #FCD34D;
     color: #78350F;
     box-shadow: 0 2px 6px rgba(252, 211, 77, 0.3);
 }
@@ -842,7 +842,7 @@
     font-weight: 700;
     color: #fff;
     flex-shrink: 0;
-    background: linear-gradient(135deg, var(--bfsi-primary), var(--bfsi-indigo));
+    background: #4F46E5;
     box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
 }
 
@@ -1083,7 +1083,7 @@
 }
 
 .bfsi-modal-btn.ai {
-    background: linear-gradient(135deg, var(--bfsi-primary), var(--bfsi-indigo));
+    background: #4F46E5;
     color: #fff;
     box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
 }
@@ -1199,7 +1199,7 @@
 .bfsi-plan-progress-fill {
     height: 100%;
     border-radius: 3px;
-    background: linear-gradient(90deg, var(--bfsi-primary), var(--bfsi-indigo));
+    background: #4F46E5;
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

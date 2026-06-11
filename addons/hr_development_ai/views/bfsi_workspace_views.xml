@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- OWL Record Workspace client actions (one component, three configs) -->
+
+    <record id="action_bfsi_workspace_coaching" model="ir.actions.client">
+        <field name="name">Coaching</field>
+        <field name="tag">bfsi_workspace</field>
+        <field name="target">main</field>
+        <field name="params">{'workspace': 'coaching'}</field>
+    </record>
+
+    <record id="action_bfsi_workspace_performance" model="ir.actions.client">
+        <field name="name">Performance</field>
+        <field name="tag">bfsi_workspace</field>
+        <field name="target">main</field>
+        <field name="params">{'workspace': 'performance'}</field>
+    </record>
+
+    <record id="action_bfsi_workspace_organization" model="ir.actions.client">
+        <field name="name">Organization</field>
+        <field name="tag">bfsi_workspace</field>
+        <field name="target">main</field>
+        <field name="params">{'workspace': 'organization'}</field>
+    </record>
+
+</odoo>

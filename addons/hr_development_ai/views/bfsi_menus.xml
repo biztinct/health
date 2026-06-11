@@ -28,105 +28,32 @@
     <!-- (Business Impact Dashboard menu lives in bfsi_ai_dashboard_views.xml,
          re-parented to this root at sequence 2) -->
 
-    <!-- ── 2 · COACHING ──────────────────────────────────────────── -->
+    <!-- ── 2 · COACHING ──────────────────────────────────────────────
+         One OWL workspace (Sessions / Strategies / Action Plans) with a
+         role-aware My/Team toggle — replaces the 5 old list menus. -->
     <menuitem
         id="menu_bfsi_coaching"
         name="Coaching"
         parent="menu_bfsi_root"
+        action="action_bfsi_workspace_coaching"
         sequence="20"/>
 
-    <!-- Manager view: full team -->
-    <menuitem
-        id="menu_bfsi_action_plans"
-        name="Action Plans"
-        parent="menu_bfsi_coaching"
-        action="action_bfsi_action_plan"
-        sequence="1"
-        groups="hr_development_ai.group_bfsi_branch_manager"/>
-
-    <menuitem
-        id="menu_bfsi_coaching_sessions"
-        name="Coaching Sessions"
-        parent="menu_bfsi_coaching"
-        action="action_hr_coaching_session"
-        sequence="2"
-        groups="hr_development_ai.group_bfsi_branch_manager"/>
-
-    <menuitem
-        id="menu_bfsi_coaching_strategies"
-        name="Coaching Strategies"
-        parent="menu_bfsi_coaching"
-        action="action_bfsi_coaching_strategy"
-        sequence="3"
-        groups="hr_development_ai.group_bfsi_branch_manager"/>
-
-    <!-- Banker self-service (shown to non-managers) -->
-    <menuitem
-        id="menu_bfsi_my_action_plans"
-        name="My Action Plans"
-        parent="menu_bfsi_coaching"
-        action="action_bfsi_action_plan_my"
-        sequence="11"/>
-
-    <menuitem
-        id="menu_bfsi_my_coaching_sessions"
-        name="My Coaching Sessions"
-        parent="menu_bfsi_coaching"
-        action="action_hr_coaching_session_my"
-        sequence="12"/>
-
-    <!-- ── 3 · PERFORMANCE (data layer) ──────────────────────────── -->
+    <!-- ── 3 · PERFORMANCE — OWL workspace (KPIs / Targets) ────────── -->
     <menuitem
         id="menu_bfsi_performance"
         name="Performance"
         parent="menu_bfsi_root"
+        action="action_bfsi_workspace_performance"
         sequence="30"/>
 
-    <menuitem
-        id="menu_bfsi_realtime_kpi_tracking"
-        name="Performance KPIs"
-        parent="menu_bfsi_performance"
-        action="action_bfsi_performance_kpi"
-        sequence="1"/>
-
-    <menuitem
-        id="menu_bfsi_kpi_targets"
-        name="KPI Targets"
-        parent="menu_bfsi_performance"
-        action="action_bfsi_kpi_target"
-        sequence="2"
-        groups="hr_development_ai.group_bfsi_branch_manager"/>
-
-    <menuitem
-        id="menu_bfsi_kpi_integration"
-        name="KPI Integration"
-        parent="menu_bfsi_performance"
-        action="action_bfsi_kpi_integration"
-        sequence="3"
-        groups="hr_development_ai.group_hr_development_admin"/>
-
-    <!-- ── 4 · ORGANIZATION ──────────────────────────────────────── -->
+    <!-- ── 4 · ORGANIZATION — OWL workspace (Branches / Regions) ───── -->
     <menuitem
         id="menu_bfsi_organization"
         name="Organization"
         parent="menu_bfsi_root"
+        action="action_bfsi_workspace_organization"
         sequence="40"
         groups="hr_development_ai.group_bfsi_branch_manager"/>
-
-    <menuitem
-        id="menu_bfsi_branches"
-        name="Branches"
-        parent="menu_bfsi_organization"
-        action="action_bfsi_branch"
-        sequence="1"/>
-
-    <menuitem
-        id="menu_bfsi_regions"
-        name="Regions"
-        parent="menu_bfsi_organization"
-        action="action_bfsi_region"
-        sequence="2"
-        groups="hr_development_ai.group_bfsi_regional_manager"/>
 
     <!-- ── 5 · CONFIGURATION ─────────────────────────────────────── -->
     <menuitem
@@ -142,6 +69,13 @@
         parent="menu_bfsi_configuration"
         action="action_bfsi_kpi_target"
         sequence="1"/>
+
+    <menuitem
+        id="menu_bfsi_kpi_integration"
+        name="KPI Integration"
+        parent="menu_bfsi_configuration"
+        action="action_bfsi_kpi_integration"
+        sequence="3"/>
 
     <menuitem
         id="menu_bfsi_ai_provider_config"

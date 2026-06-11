@@ -408,6 +408,244 @@ class BFSICoachingFlow(models.AbstractModel):
         }
 
     # ════════════════════════════════════════════════════════════════
+    #  WORKSPACE DRAWER — enriched detail payload for the OWL workspace
+    # ════════════════════════════════════════════════════════════════
+    @api.model
+    def workspace_drawer_data(self, model, res_id):
+        """Single aggregator that returns a flat, template-ready dict for the
+        slide-over drawer of any workspace record. sudo() like the rest of
+        this model so the drawer can read related employee/branch context."""
+        res_id = int(res_id)
+        dispatch = {
+            'hr.coaching.session': self._drawer_session,
+            'bfsi.coaching.strategy': self._drawer_strategy,
+            'bfsi.action.plan': self._drawer_plan,
+            'bfsi.performance.kpi': self._drawer_kpi,
+            'bfsi.branch': self._drawer_branch,
+            'bfsi.region': self._drawer_region,
+        }
+        handler = dispatch.get(model)
+        if not handler:
+            return {'error': 'Unsupported model %s' % model}
+        rec = self.env[model].sudo().browse(res_id)
+        if not rec.exists():
+            return {'error': 'Record not found'}
+        return handler(rec)
+
+    def _emp_head(self, emp):
+        """Common avatar/name/role header block for a person."""
+        if not emp:
+            return {}
+        return {
+            'id': emp.id,
+            'name': emp.name,
+            'role': self._role(emp),
+            'initial': (emp.name or '?').strip()[:1].upper(),
+            'color': _TYPE_COLOR.get(emp.banker_type, '#6366F1'),
+        }
+
+    def _employee_story(self, emp):
+        """Reuse the KPI-vs-target bars + root cause for a banker (drawer context)."""
+        if not emp:
+            return {'bars': [], 'root_cause': ''}
+        KPI = self.env['bfsi.performance.kpi'].sudo()
+        latest = KPI.search([('employee_id', '=', emp.id)],
+                            order='period_date desc', limit=1)
+        target = self.env['bfsi.kpi.target'].sudo().get_target_for_employee(emp.id)
+        bars, _strengths, gaps = self._build_kpi_bars(latest, target)
+        return {'bars': bars, 'root_cause': self._build_root_cause(emp, latest, gaps)}
+
+    # ── SESSION ──────────────────────────────────────────────────────
+    def _drawer_session(self, s):
+        guide = self._session_guide(s)
+        return {
+            'kind': 'session',
+            'id': s.id,
+            'name': s.name,
+            'state': s.state,
+            'employee': self._emp_head(s.employee_id),
+            'coach': self._emp_head(s.coach_id),
+            'session_type': s.session_type,
+            'session_type_label': dict(s._fields['session_type'].selection).get(s.session_type, ''),
+            'topic_label': dict(s._fields['topic'].selection).get(s.topic, ''),
+            'session_date': s.session_date.isoformat() if s.session_date else '',
+            'duration': s.duration,
+            'outcome': s.outcome or '',
+            'outcome_label': dict(s._fields['outcome'].selection).get(s.outcome, '') if s.outcome else '',
+            'description': s.description or '',
+            'discussion_notes': s.discussion_notes or '',
+            'ai_summary': s.action_items or '',
+            'ai_chat_history': s.ai_chat_history or '',
+            'has_chat': s.session_type in ('ai', 'hybrid'),
+            'strategy_id': s.coaching_strategy_id.id or False,
+            'strategy_name': s.coaching_strategy_id.name or '',
+            'plan_id': s.action_plan_id.id or False,
+            'plan_name': s.action_plan_id.name or '',
+            'guide': guide,
+            'story': self._employee_story(s.employee_id),
+            'ai_available': self._ai_available(),
+        }
+
+    def _session_guide(self, s):
+        """Consolidate the 9 overlapping AI fields into ONE phase-organized guide.
+        Prefer structured strategy questions + per-phase talking points; fall
+        back to the legacy single blob only when no strategy is linked."""
+        phases = [
+            ('opening', 'Opening — build rapport', s.strategy_opening_questions, s.ai_suggestion_opening),
+            ('probing', 'Probing — find root cause', s.strategy_probing_questions, s.ai_suggestion_probing),
+            ('closing', 'Closing — drive commitment', s.strategy_closing_questions, s.ai_suggestion_closing),
+        ]
+        out_phases = []
+        for key, label, questions_txt, tips_html in phases:
+            out_phases.append({
+                'key': key,
+                'label': label,
+                'questions': _split_lines(questions_txt),
+                'tips_html': tips_html or '',
+            })
+        has_strategy = bool(s.coaching_strategy_id)
+        return {
+            'phases': out_phases,
+            'general_tips': _split_lines(s.strategy_coaching_tips),
+            'general_tips_html': s.ai_suggestion_tips or '',
+            # legacy fallback shown only when there is no structured strategy
+            'legacy_html': (s.ai_suggested_questions or s.strategy_session_guide or '')
+                           if not has_strategy else '',
+            'has_strategy': has_strategy,
+        }
+
+    # ── STRATEGY ─────────────────────────────────────────────────────
+    def _drawer_strategy(self, st):
+        return {
+            'kind': 'strategy',
+            'id': st.id,
+            'name': st.name,
+            'state': st.state,
+            'banker': self._emp_head(st.banker_id),
+            'manager': self._emp_head(st.manager_id),
+            'ai_confidence': round(st.ai_confidence or 0),
+            'snapshot_date': st.kpi_snapshot_date.isoformat() if st.kpi_snapshot_date else '',
+            'performance_summary': st.performance_summary or '',
+            'root_cause_analysis': st.root_cause_analysis or '',
+            'strengths': _split_lines(st.strengths),
+            'improvement_areas': _split_lines(st.improvement_areas),
+            'themes': _split_lines(st.coaching_themes),
+            'ai_strategy': st.ai_strategy or '',
+            'proposed_plan': st.proposed_plan or '',
+            'opening_questions': _split_lines(st.opening_questions),
+            'probing_questions': _split_lines(st.probing_questions),
+            'closing_questions': _split_lines(st.closing_questions),
+            'coaching_tips': _split_lines(st.coaching_tips),
+            'session_guide': st.session_guide or '',
+            'has_roleplay': bool(st.roleplay_scenarios),
+            'session_id': st.coaching_session_id.id or False,
+            'ai_available': self._ai_available(),
+        }
+
+    # ── ACTION PLAN ──────────────────────────────────────────────────
+    def _drawer_plan(self, p):
+        items = [{
+            'id': it.id,
+            'name': it.name,
+            'description': it.description or '',
+            'progress': round(it.progress or 0),
+            'state': it.state,
+            'priority': it.priority,
+            'kpi_category': it.kpi_category or '',
+            'specific_kpi': dict(it._fields['specific_kpi'].selection).get(it.specific_kpi, '') if it.specific_kpi else '',
+            'target_value': it.target_value or 0,
+            'target_end_date': it.target_end_date.isoformat() if it.target_end_date else '',
+        } for it in p.action_item_ids]
+        return {
+            'kind': 'plan',
+            'id': p.id,
+            'name': p.name,
+            'state': p.state,
+            'employee': self._emp_head(p.employee_id),
+            'manager': self._emp_head(p.manager_id),
+            'progress': round(p.progress_percentage or 0),
+            'item_count': p.action_item_count,
+            'completed_items': p.completed_items,
+            'is_overdue': p.is_overdue,
+            'days_remaining': p.days_remaining,
+            'commitment_date': p.commitment_date.isoformat() if p.commitment_date else '',
+            'target_date': p.target_date.isoformat() if p.target_date else '',
+            'completion_date': p.completion_date.isoformat() if p.completion_date else '',
+            'check_in_frequency': p.check_in_frequency or '',
+            'next_check_in_date': p.next_check_in_date.isoformat() if p.next_check_in_date else '',
+            'employee_notes': p.employee_notes or '',
+            'employee_feedback': p.employee_feedback or '',
+            'manager_review': p.manager_review or '',
+            'effectiveness_rating': p.effectiveness_rating or '',
+            'ai_recommendations': p.ai_recommendations or '',
+            'session_id': p.coaching_session_id.id or False,
+            'items': items,
+        }
+
+    # ── KPI (Performance, phase 2) ───────────────────────────────────
+    def _drawer_kpi(self, k):
+        KPI = self.env['bfsi.performance.kpi'].sudo()
+        trend_recs = KPI.search([('employee_id', '=', k.employee_id.id)],
+                                order='period_date desc', limit=8)
+        trend = list(reversed([round(r.overall_score or 0) for r in trend_recs]))
+        target = self.env['bfsi.kpi.target'].sudo().get_target_for_employee(k.employee_id.id)
+        bars, _s, gaps = self._build_kpi_bars(k, target)
+        return {
+            'kind': 'kpi',
+            'id': k.id,
+            'name': k.display_name,
+            'employee': self._emp_head(k.employee_id),
+            'period_date': k.period_date.isoformat() if k.period_date else '',
+            'overall_score': round(k.overall_score or 0),
+            'branch_rank': k.branch_rank,
+            'rank_movement': k.rank_movement,
+            'coaching_priority': k.coaching_priority or 'low',
+            'revenue': k.revenue or 0,
+            'conversions': k.conversions or 0,
+            'trend': trend,
+            'bars': bars,
+            'root_cause': self._build_root_cause(k.employee_id, k, gaps),
+            'ai_analysis': k.ai_analysis or '',
+        }
+
+    # ── BRANCH / REGION (Organization, phase 3) ──────────────────────
+    def _drawer_branch(self, b):
+        roster = [{
+            **self._emp_head(e),
+            'score': round(e.latest_overall_score or 0),
+            'rank': e.current_month_rank or 0,
+            'priority': e.coaching_priority or 'low',
+        } for e in b.banker_ids.filtered(lambda e: e.active)]
+        return {
+            'kind': 'branch',
+            'id': b.id,
+            'name': b.name,
+            'code': b.code or '',
+            'manager': self._emp_head(b.manager_id),
+            'region': b.region_id.name if b.region_id else '',
+            'banker_count': b.banker_count,
+            'avg_score': round(b.avg_performance_score or 0),
+            'needs_coaching': b.bankers_needing_coaching,
+            'roster': sorted(roster, key=lambda r: r['rank'] or 99),
+        }
+
+    def _drawer_region(self, r):
+        branches = [{
+            'id': br.id, 'name': br.name, 'code': br.code or '',
+            'banker_count': br.banker_count,
+            'avg_score': round(br.avg_performance_score or 0),
+        } for br in r.branch_ids]
+        return {
+            'kind': 'region',
+            'id': r.id,
+            'name': r.name,
+            'code': r.code or '',
+            'manager': self._emp_head(r.regional_manager_id),
+            'branch_count': r.branch_count,
+            'branches': branches,
+        }
+
+    # ════════════════════════════════════════════════════════════════
     #  helpers
     # ════════════════════════════════════════════════════════════════
     @api.model
@@ -424,6 +662,21 @@ class BFSICoachingFlow(models.AbstractModel):
         if emp.job_id:
             return emp.job_id.name
         return _ROLE_LABEL.get(emp.banker_type, emp.banker_type or 'Banker')
+
+
+def _split_lines(text):
+    """Split a stored multi-line/numbered text field into clean list items.
+    Strips leading numbering / bullets (mirrors hr_coaching_session.get_quick_questions)."""
+    if not text:
+        return []
+    if isinstance(text, (list, tuple)):
+        return [str(x) for x in text if str(x).strip()]
+    out = []
+    for raw in str(text).splitlines():
+        line = raw.strip().lstrip('0123456789.').lstrip('•-–*▸💡 ').strip()
+        if line:
+            out.append(line)
+    return out
 
 
 def _fmt(v):

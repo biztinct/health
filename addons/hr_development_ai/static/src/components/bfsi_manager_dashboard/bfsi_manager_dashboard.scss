@@ -624,7 +624,7 @@
 }
 
 .bfsi-rank-badge.bfsi-rank-top {
-    background: linear-gradient(135deg, #FDE68A, #FCD34D);
+    background: #FCD34D;
     color: #78350F;
     box-shadow: 0 2px 6px rgba(252, 211, 77, 0.3);
 }
@@ -1074,14 +1074,14 @@
 }
 
 .bfsi-modal-btn.ai {
-    background: var(--bfsi-indigo);
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+    background: #fff;
+    color: var(--bfsi-indigo);
+    border: 1px solid #c7d2fe;
 }
 
 .bfsi-modal-btn.ai:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    background: #eef2ff;
+    border-color: var(--bfsi-indigo);
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1719,7 +1719,7 @@
     transition: all 0.2s;
 
     &.earned {
-        background: linear-gradient(135deg, #fef9e7, #fffdf5);
+        background: #fef9e7;
         border-color: #FDE68A;
         box-shadow: 0 2px 8px rgba(252, 211, 77, 0.15);
 
@@ -2097,7 +2097,7 @@
     border: none; cursor: pointer; white-space: nowrap;
     display: inline-flex; align-items: center; gap: 7px;
     padding: 8px 16px; border-radius: 9px; font-weight: 700; font-size: 13px;
-    color: #fff; background: linear-gradient(135deg, #7C3AED, #4F46E5);
+    color: #fff; background: #4F46E5;
     box-shadow: 0 6px 16px rgba(79,70,229,.32); transition: .15s;
     &:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(79,70,229,.4); }
 }
@@ -2140,13 +2140,13 @@
 }
 .bfsi-story-empty { color: #9CA3AF; font-size: 13px; }
 .bfsi-story-ai {
-    background: linear-gradient(135deg, #f5f3ff, #ede9fe); border-color: #ddd6fe;
+    background: #f5f3ff; border-color: #ddd6fe;
     display: flex; flex-direction: column;
 }
 .bfsi-story-ai-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .bfsi-story-ai-ico {
     width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0; display: grid; place-items: center;
-    background: linear-gradient(135deg, #7C3AED, #4F46E5); color: #fff; .lu { font-size: 16px; }
+    background: #4F46E5; color: #fff; .lu { font-size: 16px; }
 }
 .bfsi-story-ai-t { font-size: 11.5px; font-weight: 800; color: #7C3AED; letter-spacing: .3px; }
 .bfsi-story-root { font-size: 13px; line-height: 1.55; color: #2d2a3f; flex: 1; }
@@ -2154,7 +2154,7 @@
     margin-top: 14px; border: none; cursor: pointer; width: 100%;
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     padding: 11px 16px; border-radius: 11px; font-weight: 700; font-size: 14px; color: #fff;
-    background: linear-gradient(135deg, #7C3AED, #4F46E5); box-shadow: 0 6px 16px rgba(79,70,229,.32);
+    background: #4F46E5; box-shadow: 0 6px 16px rgba(79,70,229,.32);
     transition: .15s;
     &:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(79,70,229,.4); }
 }

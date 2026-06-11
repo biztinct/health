@@ -255,13 +255,13 @@
                                                     <tbody>
                                                         <t t-foreach="group.items" t-as="kpi" t-key="kpi.id">
                                                             <tr>
-                                                                <td><t t-esc="kpi.period_date || '-'"/></td>
+                                                                <td><t t-esc="fmtDateOnly(kpi.period_date)"/></td>
                                                                 <td style="text-align:center;">
                                                                     <span t-attf-class="bfsi-priority-badge {{ getScoreBadgeClass(kpi.overall_score) }}">
                                                                         <t t-esc="Math.round(kpi.overall_score || 0)"/>%
                                                                     </span>
                                                                 </td>
-                                                                <td style="text-align:center;"><t t-esc="kpi.revenue || '-'"/></td>
+                                                                <td style="text-align:center;"><t t-esc="fmtMoney(kpi.revenue)"/></td>
                                                                 <td style="text-align:center;"><t t-esc="kpi.conversions || '-'"/></td>
                                                                 <td style="text-align:center;">#<t t-esc="kpi.branch_rank || '-'"/></td>
                                                                 <td style="text-align:center;">
@@ -916,7 +916,7 @@
                                 <div class="bfsi-sessions-list" style="max-height:350px; overflow-y:auto;">
                                     <t t-if="filteredSessions.length > 0">
                                         <t t-foreach="filteredSessions" t-as="session" t-key="session.id">
-                                            <div class="bfsi-session-item" style="cursor:pointer;" t-on-click="() => this.openRecord('hr.coaching.session', session.id)">
+                                            <div class="bfsi-session-item" style="cursor:pointer;" t-on-click="() => this.openRecordDrawer('hr.coaching.session', session.id, 'session')">
                                                 <div class="bfsi-session-date"><t t-esc="session.date"/></div>
                                                 <div class="bfsi-session-type"><t t-esc="session.type"/></div>
                                                 <div class="bfsi-session-notes"><t t-esc="session.notes || 'No notes'"/></div>
@@ -959,7 +959,7 @@
                                 <div class="bfsi-plans-list" style="max-height:350px; overflow-y:auto;">
                                     <t t-if="filteredPlans.length > 0">
                                         <t t-foreach="filteredPlans" t-as="plan" t-key="plan.id">
-                                            <div class="bfsi-plan-item" style="cursor:pointer;" t-on-click="() => this.openRecord('bfsi.action.plan', plan.id)">
+                                            <div class="bfsi-plan-item" style="cursor:pointer;" t-on-click="() => this.openRecordDrawer('bfsi.action.plan', plan.id, 'plan')">
                                                 <div class="bfsi-plan-header">
                                                     <div class="bfsi-plan-title"><t t-esc="plan.name"/></div>
                                                     <div style="display:flex; gap:8px; align-items:center;">
@@ -1000,13 +1000,13 @@
                                         <tbody>
                                             <t t-foreach="state.bankerDetail.kpi_history" t-as="kpi" t-key="kpi.id">
                                                 <tr style="border-bottom:1px solid #f5f5f5;">
-                                                    <td style="padding:8px;"><t t-esc="kpi.period"/></td>
+                                                    <td style="padding:8px;"><t t-esc="fmtDateOnly(kpi.period)"/></td>
                                                     <td style="padding:8px; text-align:center;">
                                                         <span t-attf-class="bfsi-priority-badge {{ getScoreBadgeClass(kpi.score) }}">
                                                             <t t-esc="Math.round(kpi.score)"/>%
                                                         </span>
                                                     </td>
-                                                    <td style="padding:8px; text-align:center;"><t t-esc="kpi.revenue || '-'"/></td>
+                                                    <td style="padding:8px; text-align:center;"><t t-esc="fmtMoney(kpi.revenue)"/></td>
                                                     <td style="padding:8px; text-align:center;"><t t-esc="kpi.conversions || '-'"/></td>
                                                 </tr>
                                             </t>
@@ -1036,6 +1036,14 @@
             <BfsiCoachingWizard t-if="state.wizardBankerId"
                                 bankerId="state.wizardBankerId"
                                 onClose="(result) => this.closeCoachingWizard(result)"/>
+
+            <!-- Record slide-over drawer (session / plan / strategy) -->
+            <BfsiWorkspaceDrawer t-if="state.recDrawer"
+                                 model="state.recDrawer.model" recordId="state.recDrawer.id" drawerKind="state.recDrawer.kind"
+                                 onClose="() => this.closeRecordDrawer()"
+                                 onAction="() => this.onRecDrawerAction()"
+                                 openForm="(m,i) => this.openRecord(m,i)"
+                                 openWizard="(b) => this.openCoachingWizard(b)"/>
 
         </div>
     </t>

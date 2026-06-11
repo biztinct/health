@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.BfsiWorkspaceDrawer">
+  <div class="bws-scrim" t-on-click="close"/>
+  <aside class="bws-drawer">
+
+    <div t-if="state.loading" class="bws-dloading"><div class="bws-spin"/></div>
+
+    <t t-elif="state.data">
+      <!-- ── CHROME HEADER ── -->
+      <div class="bws-dhead">
+        <button class="bws-dx" t-on-click="close"><span class="lu lu-x"/></button>
+        <div class="bws-dhead-id">
+          <t t-set="isOrg" t-value="props.drawerKind === 'branch' or props.drawerKind === 'region'"/>
+          <t t-set="head" t-value="isOrg ? {} : (d.employee or d.banker or d.manager or {})"/>
+          <div class="bws-dav" t-attf-style="background:{{head.color or '#6366F1'}}">
+            <t t-if="isOrg"><span t-attf-class="lu lu-{{props.drawerKind==='branch' ? 'building' : 'map-pin'}}"/></t>
+            <t t-else="" t-esc="head.initial or '•'"/>
+          </div>
+          <div>
+            <h2 t-esc="isOrg ? d.name : (head.name or d.name)"/>
+            <div class="bws-dhead-sub">
+              <t t-esc="isOrg ? (d.region or d.code or '') : (head.role or '')"/>
+              <span t-if="d.state" t-attf-class="bws-badge {{stateClass(d.state)}}" style="margin-left:8px"><t t-esc="stateLabel(d.state)"/></span>
+            </div>
+          </div>
+        </div>
+        <button class="bws-openform" t-on-click="openForm"><span class="lu lu-arrow-right"/> Open full record</button>
+      </div>
+
+      <div class="bws-dbody">
+
+        <!-- ════ SESSION ════ -->
+        <t t-if="props.drawerKind === 'session'">
+          <div class="bws-meta-row">
+            <div class="bws-meta"><span class="lu lu-messages-square"/> <t t-esc="d.session_type_label"/></div>
+            <div class="bws-meta"><span class="lu lu-target"/> <t t-esc="d.topic_label"/></div>
+            <div class="bws-meta"><span class="lu lu-calendar"/> <t t-esc="d.session_date"/></div>
+            <div t-if="d.coach and d.coach.name" class="bws-meta"><span class="lu lu-users"/> <t t-esc="d.coach.name"/></div>
+          </div>
+
+          <!-- story bars -->
+          <t t-if="d.story and d.story.bars.length">
+            <div class="bws-sect-t"><span class="lu lu-target"/> What's driving the gap</div>
+            <div class="bws-card">
+              <div t-foreach="d.story.bars" t-as="bar" t-key="bar_index" class="bws-kbar">
+                <div class="bws-kbar-top"><span t-esc="bar.name"/><b t-attf-style="color:{{bar.value >= bar.target ? '#047857' : '#EF4444'}}"><t t-esc="bar.value"/> / <t t-esc="bar.target"/></b></div>
+                <div class="bws-kbar-track"><div class="bws-kbar-fill" t-attf-style="width:{{barPct(bar.value,bar.target)}}%;background:{{barColor(bar.cat)}}"/></div>
+              </div>
+            </div>
+          </t>
+
+          <!-- consolidated Coaching Guide -->
+          <div class="bws-sect-t"><span class="lu lu-brain"/> Coaching guide</div>
+          <t t-if="d.guide.has_strategy">
+            <div t-foreach="d.guide.phases" t-as="ph" t-key="ph.key" t-attf-class="bws-acc {{state.openPhase===ph.key ? 'open' : ''}}">
+              <div class="bws-acc-h" t-on-click="() => this.togglePhase(ph.key)">
+                <span t-esc="ph.label"/>
+                <button class="bws-mini" t-on-click.stop="() => this.runMethod('action_ai_suggest_' + ph.key)"><span class="lu lu-sparkles"/> AI</button>
+                <span class="lu lu-arrow-right bws-acc-cv"/>
+              </div>
+              <div class="bws-acc-b">
+                <ol><li t-foreach="ph.questions" t-as="q" t-key="q_index" t-esc="q"/></ol>
+                <div t-if="ph.tips_html" class="bws-tips" t-out="raw(ph.tips_html)"/>
+              </div>
+            </div>
+            <div t-if="d.guide.general_tips.length or d.guide.general_tips_html" class="bws-card" style="margin-top:8px">
+              <div class="bws-card-t"><span class="lu lu-lightbulb"/> Tips</div>
+              <ul><li t-foreach="d.guide.general_tips" t-as="t" t-key="t_index" t-esc="t"/></ul>
+              <div t-if="d.guide.general_tips_html" class="bws-tips" t-out="raw(d.guide.general_tips_html)"/>
+            </div>
+          </t>
+          <t t-else="">
+            <div class="bws-card">
+              <button class="bws-btn bws-ghost bws-sm" t-on-click="() => this.runMethod('action_suggest_questions')"><span class="lu lu-sparkles"/> Generate coaching questions</button>
+              <div t-if="d.guide.legacy_html" class="bws-tips" style="margin-top:10px" t-out="raw(d.guide.legacy_html)"/>
+            </div>
+          </t>
+
+          <t t-if="d.discussion_notes">
+            <div class="bws-sect-t"><span class="lu lu-square-pen"/> Discussion notes</div>
+            <div class="bws-card bws-html" t-out="raw(d.discussion_notes)"/>
+          </t>
+          <t t-if="d.ai_summary">
+            <div class="bws-sect-t"><span class="lu lu-sparkles"/> AI summary</div>
+            <div class="bws-card bws-html" t-out="raw(d.ai_summary)"/>
+          </t>
+          <t t-if="d.has_chat and d.ai_chat_history">
+            <div class="bws-sect-t"><span class="lu lu-bot"/> AI chat</div>
+            <div class="bws-card bws-html" t-out="raw(d.ai_chat_history)"/>
+          </t>
+
+          <div t-if="d.plan_id or d.strategy_id" class="bws-links">
+            <button t-if="d.plan_id" class="bws-link" t-on-click="() => this.props.openForm('bfsi.action.plan', d.plan_id)"><span class="lu lu-clipboard-check"/> <t t-esc="d.plan_name"/></button>
+            <button t-if="d.strategy_id" class="bws-link" t-on-click="() => this.props.openForm('bfsi.coaching.strategy', d.strategy_id)"><span class="lu lu-brain"/> <t t-esc="d.strategy_name"/></button>
+          </div>
+        </t>
+
+        <!-- ════ STRATEGY ════ -->
+        <t t-if="props.drawerKind === 'strategy'">
+          <div class="bws-conf2">
+            <b>AI confidence</b>
+            <div class="bws-conf2-track"><div class="bws-conf2-fill" t-attf-style="width:{{d.ai_confidence}}%"/></div>
+            <b><t t-esc="d.ai_confidence"/>%</b>
+          </div>
+          <t t-if="d.performance_summary">
+            <div class="bws-sect-t"><span class="lu lu-chart-column"/> Performance summary</div>
+            <div class="bws-card bws-html" t-out="raw(d.performance_summary)"/>
+          </t>
+          <t t-if="d.root_cause_analysis">
+            <div class="bws-sect-t"><span class="lu lu-brain"/> Root cause</div>
+            <div class="bws-card bws-html" t-out="raw(d.root_cause_analysis)"/>
+          </t>
+          <div t-if="d.themes.length" class="bws-chips-wrap">
+            <span class="bws-tag" t-foreach="d.themes" t-as="th" t-key="th_index" t-esc="th"/>
+          </div>
+          <div class="bws-grid2" t-if="d.strengths.length or d.improvement_areas.length">
+            <div class="bws-card"><div class="bws-card-t" style="color:#047857"><span class="lu lu-circle-check"/> Strengths</div><ul><li t-foreach="d.strengths" t-as="s" t-key="s_index" t-esc="s"/></ul></div>
+            <div class="bws-card"><div class="bws-card-t" style="color:#EF4444"><span class="lu lu-triangle-alert"/> Improve</div><ul><li t-foreach="d.improvement_areas" t-as="a" t-key="a_index" t-esc="a"/></ul></div>
+          </div>
+          <t t-if="d.ai_strategy">
+            <div class="bws-sect-t"><span class="lu lu-target"/> Strategy</div>
+            <div class="bws-card bws-html" t-out="raw(d.ai_strategy)"/>
+          </t>
+          <t t-if="d.opening_questions.length or d.probing_questions.length or d.closing_questions.length">
+            <div class="bws-sect-t"><span class="lu lu-messages-square"/> Session game plan</div>
+            <div class="bws-card"><div class="bws-card-t">Opening</div><ol><li t-foreach="d.opening_questions" t-as="q" t-key="q_index" t-esc="q"/></ol></div>
+            <div class="bws-card"><div class="bws-card-t">Probing</div><ol><li t-foreach="d.probing_questions" t-as="q" t-key="q_index" t-esc="q"/></ol></div>
+            <div class="bws-card"><div class="bws-card-t">Closing</div><ol><li t-foreach="d.closing_questions" t-as="q" t-key="q_index" t-esc="q"/></ol></div>
+          </t>
+        </t>
+
+        <!-- ════ ACTION PLAN ════ -->
+        <t t-if="props.drawerKind === 'plan'">
+          <div class="bws-plan-top">
+            <div class="bws-ring2" t-attf-style="background:conic-gradient({{ringColor(d.progress)}} {{d.progress}}%, #eef0f6 0)"><span><t t-esc="d.progress"/>%</span></div>
+            <div class="bws-plan-meta">
+              <div><span class="lu lu-clipboard-check"/> <t t-esc="d.completed_items"/>/<t t-esc="d.item_count"/> items done</div>
+              <div><span class="lu lu-calendar"/> Due <t t-esc="d.target_date"/> <t t-if="d.is_overdue"><span class="bws-badge bws-st-crit">Overdue</span></t></div>
+              <div t-if="d.check_in_frequency"><span class="lu lu-bell"/> Check-in: <t t-esc="d.check_in_frequency"/></div>
+            </div>
+          </div>
+
+          <div class="bws-sect-t"><span class="lu lu-list-checks"/> Action items</div>
+          <div t-foreach="d.items" t-as="it" t-key="it.id" class="bws-item">
+            <div class="bws-item-h">
+              <span t-attf-class="bws-item-cb {{it.state==='completed' ? 'on' : ''}}" t-on-click="() => this.runItem(it.id, it.state==='completed' ? 'action_mark_blocked' : 'action_mark_complete')"><span class="lu lu-check"/></span>
+              <div class="bws-item-name" t-attf-class="{{it.state==='completed' ? 'done' : ''}}"><t t-esc="it.name"/></div>
+              <span t-attf-class="bws-badge {{stateClass(it.state)}}"><t t-esc="stateLabel(it.state)"/></span>
+            </div>
+            <div class="bws-item-meta">
+              <span t-if="it.specific_kpi" t-attf-class="bws-kpitag {{itemKpiClass(it.kpi_category)}}"><span class="lu lu-target"/> <t t-esc="it.specific_kpi"/></span>
+              <span t-if="it.target_end_date" class="bws-kpitag"><span class="lu lu-calendar"/> <t t-esc="it.target_end_date"/></span>
+              <div class="bws-item-prog"><div class="bws-item-fill" t-attf-style="width:{{it.progress}}%;background:{{ringColor(it.progress)}}"/></div>
+            </div>
+          </div>
+
+          <t t-if="d.employee_notes">
+            <div class="bws-sect-t"><span class="lu lu-square-pen"/> Banker notes</div>
+            <div class="bws-card" style="white-space:pre-wrap" t-esc="d.employee_notes"/>
+          </t>
+          <t t-if="d.manager_review">
+            <div class="bws-sect-t"><span class="lu lu-users"/> Manager review</div>
+            <div class="bws-card" style="white-space:pre-wrap" t-esc="d.manager_review"/>
+          </t>
+          <t t-if="d.ai_recommendations">
+            <div class="bws-sect-t"><span class="lu lu-sparkles"/> AI recommendations</div>
+            <div class="bws-card" style="white-space:pre-wrap" t-esc="d.ai_recommendations"/>
+          </t>
+        </t>
+
+        <!-- ════ KPI / BRANCH / REGION (phases 2-3) ════ -->
+        <t t-if="props.drawerKind === 'kpi'">
+          <div class="bws-plan-top">
+            <div class="bws-ring2" t-attf-style="background:conic-gradient({{ringColor(d.overall_score)}} {{d.overall_score}}%, #eef0f6 0)"><span><t t-esc="d.overall_score"/></span></div>
+            <div class="bws-plan-meta">
+              <div><span class="lu lu-trophy"/> Rank #<t t-esc="d.branch_rank"/></div>
+              <div><span class="lu lu-calendar"/> <t t-esc="d.period_date"/></div>
+            </div>
+          </div>
+          <t t-if="d.bars and d.bars.length">
+            <div class="bws-sect-t"><span class="lu lu-target"/> KPIs vs target</div>
+            <div class="bws-card">
+              <div t-foreach="d.bars" t-as="bar" t-key="bar_index" class="bws-kbar">
+                <div class="bws-kbar-top"><span t-esc="bar.name"/><b><t t-esc="bar.value"/> / <t t-esc="bar.target"/></b></div>
+                <div class="bws-kbar-track"><div class="bws-kbar-fill" t-attf-style="width:{{barPct(bar.value,bar.target)}}%;background:{{barColor(bar.cat)}}"/></div>
+              </div>
+            </div>
+          </t>
+        </t>
+        <t t-if="props.drawerKind === 'branch'">
+          <div class="bws-meta-row">
+            <div class="bws-meta"><span class="lu lu-users"/> <t t-esc="d.banker_count"/> bankers</div>
+            <div class="bws-meta"><span class="lu lu-gauge"/> Avg <t t-esc="d.avg_score"/></div>
+            <div class="bws-meta"><span class="lu lu-triangle-alert"/> <t t-esc="d.needs_coaching"/> need coaching</div>
+          </div>
+          <div class="bws-sect-t"><span class="lu lu-users"/> Roster</div>
+          <div t-foreach="d.roster" t-as="m" t-key="m.id" class="bws-row" style="cursor:default">
+            <div class="bws-av" t-attf-style="background:{{m.color}}"><t t-esc="m.initial"/></div>
+            <div class="bws-row-meta"><div class="bws-row-name"><t t-esc="m.name"/></div><div class="bws-row-sub"><t t-esc="m.role"/> · #<t t-esc="m.rank"/></div></div>
+            <b t-attf-style="color:{{ringColor(m.score)}}"><t t-esc="m.score"/></b>
+          </div>
+        </t>
+        <t t-if="props.drawerKind === 'region'">
+          <div class="bws-meta-row"><div class="bws-meta"><span class="lu lu-building"/> <t t-esc="d.branch_count"/> branches</div></div>
+          <div t-foreach="d.branches" t-as="br" t-key="br.id" class="bws-row" style="cursor:default">
+            <div class="bws-row-meta"><div class="bws-row-name"><t t-esc="br.name"/></div><div class="bws-row-sub"><t t-esc="br.banker_count"/> bankers</div></div>
+            <b><t t-esc="br.avg_score"/></b>
+          </div>
+        </t>
+
+      </div>
+
+      <!-- ── FOOTER ACTIONS ── -->
+      <div class="bws-dfoot">
+        <button class="bws-btn bws-ghost" t-on-click="coachNow" t-if="props.drawerKind==='session' or props.drawerKind==='strategy'"><span class="lu lu-sparkles"/> Coach now</button>
+        <div class="bws-foot-spacer"/>
+        <t t-if="props.drawerKind === 'session'">
+          <button t-if="d.state==='scheduled'" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_start_session')">Start</button>
+          <button t-if="d.state==='in_progress'" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_complete_session')">Complete</button>
+          <button t-if="d.state==='completed'" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_generate_ai_summary')"><span class="lu lu-sparkles"/> AI summary</button>
+          <button t-if="['in_progress','completed'].includes(d.state) and !d.plan_id" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_create_action_plan')"><span class="lu lu-clipboard-check"/> Action plan</button>
+          <button t-if="d.has_chat" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_open_ai_chat')"><span class="lu lu-bot"/> AI chat</button>
+        </t>
+        <t t-if="props.drawerKind === 'strategy'">
+          <button t-if="d.state==='draft'" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_generate_strategy')"><span class="lu lu-sparkles"/> Generate</button>
+          <button t-if="['generated','reviewed'].includes(d.state)" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_start_roleplay')"><span class="lu lu-messages-square"/> Roleplay</button>
+          <button t-if="['generated','reviewed'].includes(d.state)" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_create_session')"><span class="lu lu-arrow-right"/> Start session</button>
+          <button t-if="d.state==='in_use'" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_mark_complete')">Mark complete</button>
+        </t>
+        <t t-if="props.drawerKind === 'plan'">
+          <button t-if="d.state==='draft'" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_commit')">Commit</button>
+          <button t-if="d.state==='committed'" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_start')">Start</button>
+          <button t-if="['committed','in_progress'].includes(d.state)" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_report_progress')"><span class="lu lu-square-pen"/> Report progress</button>
+          <button t-if="['committed','in_progress'].includes(d.state)" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_complete')">Complete</button>
+        </t>
+      </div>
+    </t>
+  </aside>
+</t>
+
+</templates>

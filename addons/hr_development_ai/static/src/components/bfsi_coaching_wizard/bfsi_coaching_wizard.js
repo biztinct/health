@@ -23,6 +23,7 @@ export class BfsiCoachingWizard extends Component {
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
+        this.action = useService("action");
 
         this.STEPS = ["Diagnose", "Strategy", "Session", "Action Plan"];
         this.state = useState({
@@ -87,6 +88,7 @@ export class BfsiCoachingWizard extends Component {
     next() { this.goto(this.state.step + 1); }
     back() { this.goto(this.state.step - 1); }
     close() { this.props.onClose(this.state.result); }
+    goHome() { this.action.doAction("hr_development_ai.action_bfsi_manager_dashboard"); }
 
     stepClass(i) {
         if (i < this.state.step) return "done";
