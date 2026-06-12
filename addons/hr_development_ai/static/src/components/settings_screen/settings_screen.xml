@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.SettingsScreen">
+    <div class="bfsi-home bfsi-settings">
+
+        <header class="bfsi-team-head">
+            <div>
+                <h1 class="bfsi-team-title"><span class="lu lu-settings"/> Settings</h1>
+                <p class="bfsi-section-sub">Targets and data connections that power the coaching engine</p>
+            </div>
+            <div class="bfsi-team-tools">
+                <button t-if="state.tab === 'targets'" class="bfsi-btn bfsi-btn-primary" t-on-click="newTarget">
+                    <span class="lu lu-plus"/> New target
+                </button>
+                <button t-if="state.tab === 'integrations'" class="bfsi-btn bfsi-btn-primary" t-on-click="newIntegration">
+                    <span class="lu lu-plus"/> New connection
+                </button>
+            </div>
+        </header>
+
+        <div class="bfsi-p360-tabs">
+            <button t-attf-class="bfsi-p360-tab {{state.tab === 'targets' ? 'on' : ''}}"
+                    t-on-click="() => state.tab = 'targets'">
+                <span class="lu lu-target"/> KPI Targets <small t-esc="state.targets.length"/>
+            </button>
+            <button t-attf-class="bfsi-p360-tab {{state.tab === 'integrations' ? 'on' : ''}}"
+                    t-on-click="() => state.tab = 'integrations'">
+                <span class="lu lu-refresh-cw"/> Integrations <small t-esc="state.integrations.length"/>
+            </button>
+            <button t-attf-class="bfsi-p360-tab {{state.tab === 'providers' ? 'on' : ''}}"
+                    t-on-click="() => state.tab = 'providers'">
+                <span class="lu lu-bot"/> AI Provider <small t-esc="state.providers.length"/>
+            </button>
+        </div>
+
+        <div t-if="state.loading" class="bfsi-empty bfsi-loading">
+            <span class="lu lu-refresh-cw bfsi-spin"/> Loading settings…
+        </div>
+        <div t-elif="state.error" class="bfsi-empty">
+            <span class="lu lu-circle-alert"/> <t t-esc="state.error"/>
+        </div>
+
+        <!-- ── TARGETS ─────────────────────────────────────────── -->
+        <t t-elif="state.tab === 'targets'">
+            <div t-if="!state.targets.length" class="bfsi-empty">
+                <span class="lu lu-target"/> No targets yet — create the first one.
+            </div>
+            <section class="bfsi-branch-grid">
+                <div t-foreach="state.targets" t-as="t" t-key="t.id"
+                     t-attf-class="bfsi-card bfsi-set-card {{t.is_active ? '' : 'bfsi-set-off'}}">
+                    <div class="bfsi-set-head">
+                        <div class="bfsi-set-scope">
+                            <b t-esc="t.scope"/>
+                            <small t-esc="t.period_label"/>
+                        </div>
+                        <label class="bfsi-switch" t-att-title="t.is_active ? 'Active' : 'Inactive'">
+                            <input type="checkbox" t-att-checked="t.is_active"
+                                   t-on-change="() => this.toggleTargetActive(t)"/>
+                            <span class="bfsi-switch-track"/>
+                        </label>
+                    </div>
+                    <div class="bfsi-set-stats">
+                        <div class="bfsi-set-stat">
+                            <small>Score target</small>
+                            <b><t t-esc="t.score"/>/100</b>
+                        </div>
+                        <div class="bfsi-set-stat">
+                            <small>Revenue target</small>
+                            <b t-esc="t.revenue_formatted"/>
+                        </div>
+                        <div class="bfsi-set-stat">
+                            <small>Valid</small>
+                            <b>
+                                <t t-esc="t.valid_from_label or '—'"/>
+                                <t t-if="t.valid_to_label"> → <t t-esc="t.valid_to_label"/></t>
+                            </b>
+                        </div>
+                    </div>
+                    <div class="bfsi-team-card-actions">
+                        <button class="bfsi-btn bfsi-btn-ghost" t-on-click="() => this.editTarget(t)">
+                            <span class="lu lu-square-pen"/> Edit
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </t>
+
+        <!-- ── INTEGRATIONS ────────────────────────────────────── -->
+        <t t-elif="state.tab === 'integrations'">
+            <div t-if="!state.integrations.length" class="bfsi-empty">
+                <span class="lu lu-refresh-cw"/> No connections yet — add your CRM or dialer.
+            </div>
+            <section class="bfsi-branch-grid">
+                <div t-foreach="state.integrations" t-as="i" t-key="i.id" class="bfsi-card bfsi-set-card">
+                    <div class="bfsi-set-head">
+                        <div class="bfsi-set-scope">
+                            <b t-esc="i.name"/>
+                            <small t-esc="i.source_label"/>
+                        </div>
+                        <span t-attf-class="bfsi-chip {{stateChip(i.state)}}" t-esc="i.state_label"/>
+                    </div>
+                    <div class="bfsi-set-stats">
+                        <div class="bfsi-set-stat">
+                            <small>Last sync</small>
+                            <b t-esc="i.last_sync"/>
+                        </div>
+                        <div class="bfsi-set-stat">
+                            <small>Frequency</small>
+                            <b t-esc="i.sync_label"/>
+                        </div>
+                        <div class="bfsi-set-stat">
+                            <small>Records synced</small>
+                            <b t-esc="i.records_synced"/>
+                        </div>
+                    </div>
+                    <div class="bfsi-team-card-actions">
+                        <button class="bfsi-btn bfsi-btn-ghost"
+                                t-att-disabled="state.busyAction"
+                                t-on-click="() => this.runIntegrationAction(i, 'action_test_connection')">
+                            <span t-attf-class="lu lu-refresh-cw {{state.busyAction === i.id + ':action_test_connection' ? 'lu-spin' : ''}}"/> Test
+                        </button>
+                        <button class="bfsi-btn bfsi-btn-ghost"
+                                t-att-disabled="state.busyAction"
+                                t-on-click="() => this.runIntegrationAction(i, 'action_sync_now')">
+                            <span class="lu lu-download"/> Sync now
+                        </button>
+                        <button class="bfsi-btn bfsi-btn-soft" t-on-click="() => this.editIntegration(i)">
+                            <span class="lu lu-square-pen"/> Edit
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </t>
+
+        <!-- ── AI PROVIDERS ────────────────────────────────────── -->
+        <t t-elif="state.tab === 'providers'">
+            <div t-if="!state.providers.length" class="bfsi-empty">
+                <span class="lu lu-bot"/> No AI provider configured.
+            </div>
+            <section class="bfsi-branch-grid">
+                <div t-foreach="state.providers" t-as="p" t-key="p.id"
+                     t-attf-class="bfsi-card bfsi-set-card {{p.is_active ? '' : 'bfsi-set-off'}}">
+                    <div class="bfsi-set-head">
+                        <div class="bfsi-set-scope">
+                            <b t-esc="p.provider_label"/>
+                            <small><t t-esc="p.company"/><t t-if="p.model_name"> · <t t-esc="p.model_name"/></t></small>
+                        </div>
+                        <label class="bfsi-switch" t-att-title="p.is_active ? 'Active' : 'Inactive'">
+                            <input type="checkbox" t-att-checked="p.is_active"
+                                   t-on-change="() => this.toggleProviderActive(p)"/>
+                            <span class="bfsi-switch-track"/>
+                        </label>
+                    </div>
+                    <div class="bfsi-set-stats">
+                        <div class="bfsi-set-stat">
+                            <small>Status</small>
+                            <b><span t-attf-class="bfsi-chip {{stateChip(p.status)}}" t-esc="p.status_label or 'Not tested'"/></b>
+                        </div>
+                        <div class="bfsi-set-stat">
+                            <small>Last tested</small>
+                            <b t-esc="p.last_tested"/>
+                        </div>
+                        <div class="bfsi-set-stat">
+                            <small>Timeout</small>
+                            <b><t t-esc="p.timeout"/>s</b>
+                        </div>
+                    </div>
+                    <div t-if="p.last_result" class="bfsi-set-result" t-esc="p.last_result"/>
+                    <div class="bfsi-team-card-actions">
+                        <button class="bfsi-btn bfsi-btn-ghost" t-att-disabled="state.busyAction"
+                                t-on-click="() => this.testProvider(p)">
+                            <span t-attf-class="lu lu-refresh-cw {{state.busyAction === p.id + ':test' ? 'lu-spin' : ''}}"/> Test connection
+                        </button>
+                        <button class="bfsi-btn bfsi-btn-soft" t-on-click="() => this.editProvider(p)">
+                            <span class="lu lu-square-pen"/> Edit
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </t>
+
+        <!-- ── TARGET DIALOG ───────────────────────────────────── -->
+        <div t-if="state.dialog === 'target'" class="bfsi-overlay bfsi-dialog-scrim"
+             t-on-pointerdown.self="closeDialog">
+            <div class="bfsi-dialog bfsi-dialog-wide">
+                <h3><span class="lu lu-target"/> <t t-esc="state.recId ? 'Edit target' : 'New target'"/></h3>
+
+                <div class="bfsi-dialog-label">Who is this target for? (pick one — most specific wins)</div>
+                <div class="bfsi-form-grid">
+                    <label>Banker
+                        <select t-on-change="(ev) => this.setVal('employee_id', ev.target.value ? parseInt(ev.target.value) : '')">
+                            <option value="">—</option>
+                            <option t-foreach="state.options.employees or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.employee_id === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                    <label>Banker type
+                        <select t-on-change="(ev) => this.setVal('banker_type', ev.target.value)">
+                            <option value="">—</option>
+                            <option t-foreach="state.options.banker_types or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.banker_type === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                    <label>Job position
+                        <select t-on-change="(ev) => this.setVal('job_id', ev.target.value ? parseInt(ev.target.value) : '')">
+                            <option value="">—</option>
+                            <option t-foreach="state.options.jobs or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.job_id === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                    <label>Branch
+                        <select t-on-change="(ev) => this.setVal('branch_id', ev.target.value ? parseInt(ev.target.value) : '')">
+                            <option value="">—</option>
+                            <option t-foreach="state.options.branches or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.branch_id === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="bfsi-dialog-label">Period &amp; validity</div>
+                <div class="bfsi-form-grid">
+                    <label>Period
+                        <select t-on-change="(ev) => this.setVal('period_type', ev.target.value)">
+                            <option t-foreach="state.options.period_types or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.period_type === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                    <label>Valid from
+                        <input type="date" t-att-value="state.vals.valid_from"
+                               t-on-change="(ev) => this.setVal('valid_from', ev.target.value)"/>
+                    </label>
+                    <label>Valid to
+                        <input type="date" t-att-value="state.vals.valid_to"
+                               t-on-change="(ev) => this.setVal('valid_to', ev.target.value)"/>
+                    </label>
+                </div>
+
+                <div class="bfsi-dialog-label">Headline targets</div>
+                <div class="bfsi-form-grid">
+                    <label>Overall score (0-100)
+                        <input type="number" min="0" max="100" t-att-value="state.vals.target_overall_score"
+                               t-on-input="(ev) => this.onNumber('target_overall_score', ev)"/>
+                    </label>
+                    <label>Revenue (₫)
+                        <input type="number" min="0" t-att-value="state.vals.target_revenue"
+                               t-on-input="(ev) => this.onNumber('target_revenue', ev)"/>
+                    </label>
+                </div>
+
+                <button class="bfsi-set-advanced" t-on-click="() => state.advancedOpen = !state.advancedOpen">
+                    <span t-attf-class="lu {{state.advancedOpen ? 'lu-chevron-down' : 'lu-chevron-right'}}"/>
+                    Per-KPI targets (advanced)
+                </button>
+                <div t-if="state.advancedOpen" class="bfsi-form-grid bfsi-form-grid-3">
+                    <label t-foreach="ADVANCED_FIELDS" t-as="f" t-key="f[0]">
+                        <t t-esc="f[1]"/>
+                        <input type="number" min="0" t-att-value="state.vals[f[0]]"
+                               t-on-input="(ev) => this.onNumber(f[0], ev)"/>
+                    </label>
+                </div>
+
+                <div class="bfsi-dialog-actions">
+                    <button class="bfsi-btn bfsi-btn-ghost" t-on-click="closeDialog">Cancel</button>
+                    <button class="bfsi-btn bfsi-btn-primary" t-att-disabled="state.busy" t-on-click="saveDialog">
+                        <t t-if="state.busy">Saving…</t><t t-else="">Save target</t>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── INTEGRATION DIALOG ──────────────────────────────── -->
+        <div t-if="state.dialog === 'integration'" class="bfsi-overlay bfsi-dialog-scrim"
+             t-on-pointerdown.self="closeDialog">
+            <div class="bfsi-dialog bfsi-dialog-wide">
+                <h3><span class="lu lu-refresh-cw"/> <t t-esc="state.recId ? 'Edit connection' : 'New connection'"/></h3>
+
+                <div class="bfsi-form-grid">
+                    <label>Name
+                        <input type="text" t-att-value="state.vals.name"
+                               t-on-input="(ev) => this.onInput('name', ev)" placeholder="e.g. Call Center Dialer"/>
+                    </label>
+                    <label>Source system
+                        <select t-on-change="(ev) => this.setVal('source_system', ev.target.value)">
+                            <option t-foreach="state.options.source_systems or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.source_system === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                    <label>API base URL
+                        <input type="text" t-att-value="state.vals.api_base_url"
+                               t-on-input="(ev) => this.onInput('api_base_url', ev)" placeholder="https://…"/>
+                    </label>
+                    <label>Authentication
+                        <select t-on-change="(ev) => this.setVal('auth_type', ev.target.value)">
+                            <option t-foreach="state.options.auth_types or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.auth_type === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                    <label>API key
+                        <input type="password" t-att-value="state.vals.api_key"
+                               t-on-input="(ev) => this.onInput('api_key', ev)"
+                               t-att-placeholder="state.recId ? 'Unchanged — type to replace' : ''"/>
+                    </label>
+                    <label>Sync frequency
+                        <select t-on-change="(ev) => this.setVal('sync_frequency', ev.target.value)">
+                            <option t-foreach="state.options.sync_frequencies or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.sync_frequency === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                    <label>Data endpoint
+                        <input type="text" t-att-value="state.vals.data_endpoint"
+                               t-on-input="(ev) => this.onInput('data_endpoint', ev)" placeholder="/api/kpis"/>
+                    </label>
+                </div>
+
+                <div class="bfsi-dialog-actions">
+                    <button class="bfsi-btn bfsi-btn-ghost" t-on-click="closeDialog">Cancel</button>
+                    <button class="bfsi-btn bfsi-btn-primary" t-att-disabled="state.busy" t-on-click="saveDialog">
+                        <t t-if="state.busy">Saving…</t><t t-else="">Save connection</t>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── AI PROVIDER DIALOG ──────────────────────────────── -->
+        <div t-if="state.dialog === 'provider'" class="bfsi-overlay bfsi-dialog-scrim"
+             t-on-pointerdown.self="closeDialog">
+            <div class="bfsi-dialog bfsi-dialog-wide">
+                <h3><span class="lu lu-bot"/> AI Provider</h3>
+
+                <div class="bfsi-form-grid">
+                    <label>Provider
+                        <select t-on-change="(ev) => this.setVal('provider', ev.target.value)">
+                            <option t-foreach="state.options.ai_providers or []" t-as="o" t-key="o.v"
+                                    t-att-value="o.v" t-att-selected="state.vals.provider === o.v" t-esc="o.l"/>
+                        </select>
+                    </label>
+                    <label>Model name
+                        <input type="text" t-att-value="state.vals.model_name"
+                               t-on-input="(ev) => this.onInput('model_name', ev)"
+                               placeholder="e.g. gpt-4o-mini, llama3.1"/>
+                    </label>
+                    <label t-if="state.vals.provider === 'openai'">OpenAI API key
+                        <input type="password" t-att-value="state.vals.openai_api_key"
+                               t-on-input="(ev) => this.onInput('openai_api_key', ev)"
+                               placeholder="Unchanged — type to replace"/>
+                    </label>
+                    <label t-if="state.vals.provider === 'llama'">Llama / Ollama endpoint
+                        <input type="text" t-att-value="state.vals.llama_endpoint"
+                               t-on-input="(ev) => this.onInput('llama_endpoint', ev)"
+                               placeholder="http://localhost:11434"/>
+                    </label>
+                    <label t-if="state.vals.provider === 'mistral'">Mistral endpoint
+                        <input type="text" t-att-value="state.vals.mistral_endpoint"
+                               t-on-input="(ev) => this.onInput('mistral_endpoint', ev)"
+                               placeholder="http://localhost:11434"/>
+                    </label>
+                    <label>Timeout (seconds)
+                        <input type="number" min="5" t-att-value="state.vals.timeout"
+                               t-on-input="(ev) => this.onNumber('timeout', ev)"/>
+                    </label>
+                </div>
+
+                <div class="bfsi-dialog-actions">
+                    <button class="bfsi-btn bfsi-btn-ghost" t-on-click="closeDialog">Cancel</button>
+                    <button class="bfsi-btn bfsi-btn-primary" t-att-disabled="state.busy" t-on-click="saveDialog">
+                        <t t-if="state.busy">Saving…</t><t t-else="">Save provider</t>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

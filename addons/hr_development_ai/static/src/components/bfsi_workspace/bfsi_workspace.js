@@ -217,6 +217,12 @@ export class BfsiWorkspace extends Component {
         this.state.drawerId = null;
         this.state.drawerKind = null;
     }
+    /* re-target the drawer onto a linked record (plan ↔ strategy ↔ session) */
+    openRecordDrawer(model, id, kind) {
+        this.state.drawerModel = model;
+        this.state.drawerId = id;
+        this.state.drawerKind = kind;
+    }
     onDrawerAction() { this.loadSegment(); }
 
     openForm(model, id) {
@@ -224,6 +230,14 @@ export class BfsiWorkspace extends Component {
             type: "ir.actions.act_window", res_model: model, res_id: id,
             views: [[false, "form"]], target: "current",
         });
+    }
+
+    /* avatar click → Person 360 when hosted inside the shell */
+    openPerson(m2o) {
+        const empId = m2o && m2o[0];
+        if (empId && this.props.onOpenPerson) {
+            this.props.onOpenPerson(empId);
+        }
     }
 
     /* ── wizard overlay (Coach now) ── */
@@ -243,7 +257,7 @@ export class BfsiWorkspace extends Component {
     initial(m2o) { return ((m2o && m2o[1]) || "?").trim()[0].toUpperCase(); }
     name(m2o) { return (m2o && m2o[1]) || "—"; }
     avatarColor(id) {
-        const palette = ["#6366F1", "#7C3AED", "#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#14B8A6", "#EC4899"];
+        const palette = ["#3B82F6", "#1E40AF", "#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#14B8A6", "#EC4899"];
         return palette[(id || 0) % palette.length];
     }
     ringColor(v) { return v >= 50 ? "#10B981" : v >= 25 ? "#F59E0B" : "#EF4444"; }

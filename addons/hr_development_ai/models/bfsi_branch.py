@@ -137,57 +137,30 @@ class BFSIBranch(models.Model):
 
     @api.depends('banker_ids', 'banker_ids.branch_id')
     def _compute_branch_metrics(self):
-        """Compute branch-level metrics from banker KPIs"""
+        """Branch-level metrics — delegated to the canonical bfsi.scoring service."""
+        Scoring = self.env['bfsi.scoring']
         for branch in self:
-            bankers = branch.banker_ids.filtered(lambda e: e.active)
+            bankers = branch.banker_ids.filtered(
+                lambda e: e.active and e.banker_type not in (
+                    'branch_manager', 'regional_manager'))
             branch.banker_count = len(bankers)
-
-            # Calculate average performance score from latest KPIs
-            if bankers:
-                kpi_model = self.env['bfsi.performance.kpi']
-                today = fields.Date.today()
-
-                # Get latest KPI for each banker
-                total_score = 0
-                total_revenue = 0
-                banker_with_kpi = 0
-
-                for banker in bankers:
-                    latest_kpi = kpi_model.search([
-                        ('employee_id', '=', banker.id),
-                        ('period_date', '<=', today)
-                    ], order='period_date desc', limit=1)
-
-                    if latest_kpi:
-                        total_score += latest_kpi.overall_score or 0
-                        total_revenue += latest_kpi.revenue or 0
-                        banker_with_kpi += 1
-
-                branch.avg_performance_score = total_score / banker_with_kpi if banker_with_kpi > 0 else 0
-                branch.total_revenue = total_revenue
-            else:
+            if not branch.id:
                 branch.avg_performance_score = 0
                 branch.total_revenue = 0
+                continue
+            snap = Scoring.branch_snapshot(branch.id)
+            branch.avg_performance_score = snap['avg_score']
+            branch.total_revenue = snap['latest_revenue']
 
     @api.depends('banker_ids')
     def _compute_coaching_needs(self):
-        """Count bankers needing coaching based on coaching_priority"""
+        """Count bankers needing coaching — same canonical snapshot rule."""
+        Scoring = self.env['bfsi.scoring']
         for branch in self:
-            # Check KPIs for coaching priority
-            kpi_model = self.env['bfsi.performance.kpi']
-            today = fields.Date.today()
-
-            need_coaching_count = 0
-            for banker in branch.banker_ids.filtered(lambda e: e.active):
-                latest_kpi = kpi_model.search([
-                    ('employee_id', '=', banker.id),
-                    ('period_date', '<=', today)
-                ], order='period_date desc', limit=1)
-
-                if latest_kpi and latest_kpi.coaching_priority in ['high', 'critical']:
-                    need_coaching_count += 1
-
-            branch.bankers_needing_coaching = need_coaching_count
+            if not branch.id:
+                branch.bankers_needing_coaching = 0
+                continue
+            branch.bankers_needing_coaching = Scoring.branch_snapshot(branch.id)['needs_coaching']
 
     def _compute_coaching_stats(self):
         """Compute coaching statistics for the branch"""

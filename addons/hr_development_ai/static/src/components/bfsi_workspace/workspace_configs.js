@@ -156,27 +156,6 @@ export const WORKSPACE_CONFIGS = {
                 drawer: "kpi",
                 formAction: "hr_development_ai.action_bfsi_performance_kpi",
             },
-            {
-                key: "targets",
-                label: "Targets",
-                icon: "target",
-                model: "bfsi.kpi.target",
-                fields: ["name", "period_type", "target_overall_score", "target_revenue",
-                    "valid_from", "is_active"],
-                order: "valid_from desc",
-                scopeDomains: { my: () => [], team: () => [] },
-                chips: [
-                    {
-                        key: "period_type", label: "Period", options: [
-                            { v: "daily", l: "Daily" }, { v: "weekly", l: "Weekly" }, { v: "monthly", l: "Monthly" }],
-                    },
-                ],
-                search: ["name"],
-                sorts: [{ key: "valid_from desc", l: "Newest" }],
-                rowKind: "target",
-                drawer: null,   // -> opens the full record form
-                formAction: "hr_development_ai.action_bfsi_kpi_target",
-            },
         ],
     },
 

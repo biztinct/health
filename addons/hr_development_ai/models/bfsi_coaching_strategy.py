@@ -170,6 +170,18 @@ class BFSICoachingStrategy(models.Model):
             else:
                 strategy.name = "New Coaching Strategy"
 
+    @api.constrains('state', 'ai_confidence', 'root_cause_analysis')
+    def _check_in_use_has_analysis(self):
+        """A strategy can only be 'in use' when it carries real analysis —
+        prevents the empty 0%-confidence shells that erode trust in the data."""
+        for strategy in self:
+            if (strategy.state == 'in_use'
+                    and not strategy.ai_confidence
+                    and not strategy.root_cause_analysis):
+                raise UserError(_(
+                    'This strategy has no analysis yet (0%% confidence, no root '
+                    'cause). Generate or fill in the analysis before using it.'))
+
     def action_generate_strategy(self):
         """Generate AI coaching strategy based on banker's performance"""
         self.ensure_one()
@@ -293,7 +305,7 @@ Focus on:
                 'opening_questions': self._format_list_field(strategy_data.get('opening_questions', []), numbered=True),
                 'probing_questions': self._format_list_field(strategy_data.get('probing_questions', []), numbered=True),
                 'closing_questions': self._format_list_field(strategy_data.get('closing_questions', []), numbered=True),
-                'coaching_tips': self._format_list_field(strategy_data.get('coaching_tips', []), prefix='💡'),
+                'coaching_tips': self._format_list_field(strategy_data.get('coaching_tips', [])),
                 'roleplay_scenarios': self._format_scenarios(strategy_data.get('roleplay_scenarios', [])),
                 'learning_recommendations': self._format_learning(strategy_data.get('learning_recommendations', [])),
                 'ai_confidence': strategy_data.get('confidence', 0.75) * 100,
@@ -386,10 +398,10 @@ Focus on:
             return str(guide) if guide else ''
         sections = []
         labels = {
-            'opening': '🟢 Opening',
-            'exploration': '🔍 Exploration',
-            'action_planning': '📋 Action Planning',
-            'closing': '🏁 Closing'
+            'opening': 'Opening',
+            'exploration': 'Exploration',
+            'action_planning': 'Action Planning',
+            'closing': 'Closing'
         }
         for key, label in labels.items():
             if key in guide:
@@ -578,7 +590,7 @@ class BFSICoachingRoleplayWizard(models.TransientModel):
                 if isinstance(scenario, dict):
                     lines = []
                     if scenario.get('title'):
-                        lines.append(f"📋 {scenario['title']}")
+                        lines.append(scenario['title'])
                     if scenario.get('situation'):
                         lines.append(f"Situation: {scenario['situation']}")
                     if scenario.get('banker_personality'):
@@ -608,9 +620,9 @@ class BFSICoachingRoleplayWizard(models.TransientModel):
                 role = msg.get('role', 'unknown')
                 content = msg.get('content', '')
                 if role == 'manager':
-                    lines.append(f"👤 Manager:\n{content}")
+                    lines.append(f"Manager:\n{content}")
                 elif role == 'banker':
-                    lines.append(f"🏦 Banker (AI):\n{content}")
+                    lines.append(f"Banker (AI):\n{content}")
                 else:
                     lines.append(f"{role}:\n{content}")
             else:

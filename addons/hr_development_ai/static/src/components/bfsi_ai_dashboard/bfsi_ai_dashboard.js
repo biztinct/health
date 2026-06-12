@@ -3,25 +3,12 @@
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState, onWillStart, onMounted, useRef, markup } from "@odoo/owl";
+import { ensureChartJS } from "../../core/charts";
 
-/* ── Chart.js loader ── */
-let chartJSLoaded = false;
-const loadChartJS = async () => {
-    if (chartJSLoaded || (typeof Chart !== 'undefined')) { chartJSLoaded = true; return true; }
-    try {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js';
-        document.head.appendChild(script);
-        await new Promise((ok, fail) => { script.onload = ok; script.onerror = fail; });
-        chartJSLoaded = true;
-        return true;
-    } catch (e) {
-        console.error('Failed to load Chart.js:', e);
-        return false;
-    }
-};
+/* Chart.js — locally bundled, no CDN dependency */
+const loadChartJS = ensureChartJS;
 
-class BfsiAiDashboard extends Component {
+export class BfsiAiDashboard extends Component {
     static template = "hr_development_ai.BfsiAiDashboard";
     static props = ["*"];
 
@@ -198,8 +185,8 @@ class BfsiAiDashboard extends Component {
             {
                 label: 'Actual Revenue',
                 data: f.chart.actual,
-                borderColor: '#4F46E5',
-                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                borderColor: '#2563EB',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
                 fill: true,
                 tension: 0.4,
                 pointRadius: 2,

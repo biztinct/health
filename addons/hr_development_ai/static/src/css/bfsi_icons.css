@@ -48,3 +48,22 @@
 .lu-trophy{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/trophy.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/trophy.svg')}
 .lu-users{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/users.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/users.svg')}
 .lu-x{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/x.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/x.svg')}
+.lu-house{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/house.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/house.svg')}
+.lu-layout-dashboard{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/layout-dashboard.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/layout-dashboard.svg')}
+.lu-settings{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/settings.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/settings.svg')}
+.lu-chevron-left{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/chevron-left.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/chevron-left.svg')}
+.lu-chevron-right{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/chevron-right.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/chevron-right.svg')}
+.lu-chevron-down{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/chevron-down.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/chevron-down.svg')}
+.lu-user{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/user.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/user.svg')}
+.lu-history{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/history.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/history.svg')}
+.lu-panel-right{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/panel-right.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/panel-right.svg')}
+.lu-filter{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/filter.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/filter.svg')}
+.lu-download{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/download.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/download.svg')}
+.lu-info{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/info.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/info.svg')}
+.lu-log-out{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/log-out.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/log-out.svg')}
+.lu-clock{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/clock.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/clock.svg')}
+.lu-circle-alert{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/circle-alert.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/circle-alert.svg')}
+.lu-copy{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/copy.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/copy.svg')}
+.lu-file-text{-webkit-mask-image:url('/hr_development_ai/static/src/img/lucide/file-text.svg');mask-image:url('/hr_development_ai/static/src/img/lucide/file-text.svg')}
+.lu-spin{animation:lu-spin 1s linear infinite}
+@keyframes lu-spin{to{transform:rotate(360deg)}}

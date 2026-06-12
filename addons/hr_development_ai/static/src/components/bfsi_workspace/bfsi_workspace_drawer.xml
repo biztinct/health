@@ -2,7 +2,9 @@
 <templates xml:space="preserve">
 
 <t t-name="hr_development_ai.BfsiWorkspaceDrawer">
-  <div class="bws-scrim" t-on-click="close"/>
+  <!-- pointerdown: the click that opened the drawer can land on the scrim
+       as a synthetic click — pointerdown only fires on a real new press -->
+  <div class="bws-scrim" t-on-pointerdown="close"/>
   <aside class="bws-drawer">
 
     <div t-if="state.loading" class="bws-dloading"><div class="bws-spin"/></div>
@@ -14,7 +16,7 @@
         <div class="bws-dhead-id">
           <t t-set="isOrg" t-value="props.drawerKind === 'branch' or props.drawerKind === 'region'"/>
           <t t-set="head" t-value="isOrg ? {} : (d.employee or d.banker or d.manager or {})"/>
-          <div class="bws-dav" t-attf-style="background:{{head.color or '#6366F1'}}">
+          <div class="bws-dav" t-attf-style="background:{{head.color or '#3B82F6'}}">
             <t t-if="isOrg"><span t-attf-class="lu lu-{{props.drawerKind==='branch' ? 'building' : 'map-pin'}}"/></t>
             <t t-else="" t-esc="head.initial or '•'"/>
           </div>
@@ -26,7 +28,6 @@
             </div>
           </div>
         </div>
-        <button class="bws-openform" t-on-click="openForm"><span class="lu lu-arrow-right"/> Open full record</button>
       </div>
 
       <div class="bws-dbody">
@@ -36,8 +37,19 @@
           <div class="bws-meta-row">
             <div class="bws-meta"><span class="lu lu-messages-square"/> <t t-esc="d.session_type_label"/></div>
             <div class="bws-meta"><span class="lu lu-target"/> <t t-esc="d.topic_label"/></div>
-            <div class="bws-meta"><span class="lu lu-calendar"/> <t t-esc="d.session_date"/></div>
+            <div class="bws-meta"><span class="lu lu-calendar"/> <t t-esc="d.session_date_relative or d.session_date"/></div>
             <div t-if="d.coach and d.coach.name" class="bws-meta"><span class="lu lu-users"/> <t t-esc="d.coach.name"/></div>
+            <div t-if="d.outcome_label" class="bws-meta"><span class="lu lu-flag"/> <t t-esc="d.outcome_label"/></div>
+          </div>
+
+          <!-- a completed session must carry an outcome — capture it inline -->
+          <div t-if="d.state === 'completed' and !d.outcome" class="bws-card bws-outcome-fix">
+            <div class="bws-card-t"><span class="lu lu-flag"/> What was the outcome?</div>
+            <div class="bws-outcome-row">
+              <button t-foreach="OUTCOMES" t-as="o" t-key="o.v" class="bws-btn bws-ghost bws-sm"
+                      t-att-disabled="state.busy"
+                      t-on-click="() => this.saveField({ outcome: o.v })" t-esc="o.l"/>
+            </div>
           </div>
 
           <!-- story bars -->
@@ -86,14 +98,22 @@
             <div class="bws-sect-t"><span class="lu lu-sparkles"/> AI summary</div>
             <div class="bws-card bws-html" t-out="raw(d.ai_summary)"/>
           </t>
-          <t t-if="d.has_chat and d.ai_chat_history">
+          <t t-if="d.has_chat">
             <div class="bws-sect-t"><span class="lu lu-bot"/> AI chat</div>
-            <div class="bws-card bws-html" t-out="raw(d.ai_chat_history)"/>
+            <div t-if="d.ai_chat_history" class="bws-card bws-html bws-chat-scrollbox" t-out="raw(d.ai_chat_history)"/>
+            <div class="bws-chatbar">
+              <input placeholder="Ask the AI coach…" t-att-value="state.chatInput"
+                     t-att-disabled="state.chatBusy"
+                     t-on-input="onChatInput" t-on-keydown="onChatKey"/>
+              <button class="bws-btn bws-pri bws-sm" t-att-disabled="state.chatBusy" t-on-click="sendChat">
+                <span t-attf-class="lu {{state.chatBusy ? 'lu-refresh-cw lu-spin' : 'lu-send'}}"/>
+              </button>
+            </div>
           </t>
 
           <div t-if="d.plan_id or d.strategy_id" class="bws-links">
-            <button t-if="d.plan_id" class="bws-link" t-on-click="() => this.props.openForm('bfsi.action.plan', d.plan_id)"><span class="lu lu-clipboard-check"/> <t t-esc="d.plan_name"/></button>
-            <button t-if="d.strategy_id" class="bws-link" t-on-click="() => this.props.openForm('bfsi.coaching.strategy', d.strategy_id)"><span class="lu lu-brain"/> <t t-esc="d.strategy_name"/></button>
+            <button t-if="d.plan_id" class="bws-link" t-on-click="() => this.openLinked('bfsi.action.plan', d.plan_id, 'plan')"><span class="lu lu-clipboard-check"/> <t t-esc="d.plan_name"/></button>
+            <button t-if="d.strategy_id" class="bws-link" t-on-click="() => this.openLinked('bfsi.coaching.strategy', d.strategy_id, 'strategy')"><span class="lu lu-brain"/> <t t-esc="d.strategy_name"/></button>
           </div>
         </t>
 
@@ -137,9 +157,24 @@
             <div class="bws-ring2" t-attf-style="background:conic-gradient({{ringColor(d.progress)}} {{d.progress}}%, #eef0f6 0)"><span><t t-esc="d.progress"/>%</span></div>
             <div class="bws-plan-meta">
               <div><span class="lu lu-clipboard-check"/> <t t-esc="d.completed_items"/>/<t t-esc="d.item_count"/> items done</div>
-              <div><span class="lu lu-calendar"/> Due <t t-esc="d.target_date"/> <t t-if="d.is_overdue"><span class="bws-badge bws-st-crit">Overdue</span></t></div>
-              <div t-if="d.check_in_frequency"><span class="lu lu-bell"/> Check-in: <t t-esc="d.check_in_frequency"/></div>
+              <div>
+                <span class="lu lu-calendar"/> Due <t t-esc="d.target_date"/>
+                <span t-if="d.timeline_label" t-attf-class="bws-badge {{d.is_overdue ? 'bws-st-crit' : 'bws-st-info'}}" style="margin-left:6px"><t t-esc="d.timeline_label"/></span>
+              </div>
+              <div t-if="d.check_in_frequency">
+                <span class="lu lu-bell"/> Check-in: <t t-esc="d.check_in_frequency"/>
+                <t t-if="d.next_check_in_relative"> · next <t t-esc="d.next_check_in_relative"/></t>
+              </div>
             </div>
+          </div>
+
+          <div class="bws-kvgrid bws-card" style="margin-bottom:4px">
+            <div class="bws-kv" t-if="d.manager and d.manager.name"><span class="bws-kv-l">Manager</span><b class="bws-kv-v" t-esc="d.manager.name"/></div>
+            <div class="bws-kv" t-if="d.branch_name"><span class="bws-kv-l">Branch</span><b class="bws-kv-v" t-esc="d.branch_name"/></div>
+            <div class="bws-kv" t-if="d.commitment_date"><span class="bws-kv-l">Committed</span><b class="bws-kv-v" t-esc="d.commitment_date"/></div>
+            <div class="bws-kv" t-if="d.last_update"><span class="bws-kv-l">Last update</span><b class="bws-kv-v" t-esc="d.last_update"/></div>
+            <div class="bws-kv" t-if="d.completion_date"><span class="bws-kv-l">Completed on</span><b class="bws-kv-v" t-esc="d.completion_date"/></div>
+            <div class="bws-kv" t-if="d.effectiveness_label"><span class="bws-kv-l">Effectiveness</span><b class="bws-kv-v" t-esc="d.effectiveness_label"/></div>
           </div>
 
           <div class="bws-sect-t"><span class="lu lu-list-checks"/> Action items</div>
@@ -156,14 +191,44 @@
             </div>
           </div>
 
-          <t t-if="d.employee_notes">
-            <div class="bws-sect-t"><span class="lu lu-square-pen"/> Banker notes</div>
-            <div class="bws-card" style="white-space:pre-wrap" t-esc="d.employee_notes"/>
-          </t>
-          <t t-if="d.manager_review">
-            <div class="bws-sect-t"><span class="lu lu-users"/> Manager review</div>
-            <div class="bws-card" style="white-space:pre-wrap" t-esc="d.manager_review"/>
-          </t>
+          <div t-if="state.progressOpen" class="bws-card bws-progress-form">
+            <div class="bws-card-t"><span class="lu lu-trending-up"/> Report progress</div>
+            <textarea class="bws-edit-ta" placeholder="What progress have you made on this plan?"
+                      t-att-value="state.progressNotes" t-on-input="onProgressInput"/>
+            <div class="bws-edit-actions">
+              <button class="bws-btn bws-ghost bws-sm" t-on-click="toggleProgress">Cancel</button>
+              <button class="bws-btn bws-pri bws-sm" t-att-disabled="state.busy" t-on-click="submitProgress">
+                <span class="lu lu-check"/> Submit progress
+              </button>
+            </div>
+          </div>
+
+          <div class="bws-sect-t"><span class="lu lu-square-pen"/> Banker notes
+            <button class="bws-mini" t-on-click="() => this.startEdit('employee_notes', d.employee_notes)"><span class="lu lu-square-pen"/> Edit</button>
+          </div>
+          <div t-if="state.editing === 'employee_notes'" class="bws-card">
+            <textarea class="bws-edit-ta" t-att-value="state.editValue" t-on-input="onEditInput"
+                      placeholder="How is the plan going?"/>
+            <div class="bws-edit-actions">
+              <button class="bws-btn bws-ghost bws-sm" t-on-click="cancelEdit">Cancel</button>
+              <button class="bws-btn bws-pri bws-sm" t-att-disabled="state.busy" t-on-click="saveEdit">Save</button>
+            </div>
+          </div>
+          <div t-elif="d.employee_notes" class="bws-card" style="white-space:pre-wrap" t-esc="d.employee_notes"/>
+          <div t-else="" class="bws-card" style="color:#9CA3AF;font-size:12.5px">No notes yet.</div>
+
+          <div class="bws-sect-t"><span class="lu lu-users"/> Manager review
+            <button class="bws-mini" t-on-click="() => this.startEdit('manager_review', d.manager_review)"><span class="lu lu-square-pen"/> Edit</button>
+          </div>
+          <div t-if="state.editing === 'manager_review'" class="bws-card">
+            <textarea class="bws-edit-ta" t-att-value="state.editValue" t-on-input="onEditInput"
+                      placeholder="Your review of how the plan went…"/>
+            <div class="bws-edit-actions">
+              <button class="bws-btn bws-ghost bws-sm" t-on-click="cancelEdit">Cancel</button>
+              <button class="bws-btn bws-pri bws-sm" t-att-disabled="state.busy" t-on-click="saveEdit">Save</button>
+            </div>
+          </div>
+          <div t-elif="d.manager_review" class="bws-card" style="white-space:pre-wrap" t-esc="d.manager_review"/>
           <t t-if="d.ai_recommendations">
             <div class="bws-sect-t"><span class="lu lu-sparkles"/> AI recommendations</div>
             <div class="bws-card" style="white-space:pre-wrap" t-esc="d.ai_recommendations"/>
@@ -176,8 +241,13 @@
             <div class="bws-ring2" t-attf-style="background:conic-gradient({{ringColor(d.overall_score)}} {{d.overall_score}}%, #eef0f6 0)"><span><t t-esc="d.overall_score"/></span></div>
             <div class="bws-plan-meta">
               <div><span class="lu lu-trophy"/> Rank #<t t-esc="d.branch_rank"/></div>
-              <div><span class="lu lu-calendar"/> <t t-esc="d.period_date"/></div>
+              <div><span class="lu lu-calendar"/> <t t-esc="d.period_date"/> <small t-if="d.period_date_relative" style="color:#9CA3AF">(<t t-esc="d.period_date_relative"/>)</small></div>
+              <div t-if="d.revenue_formatted"><span class="lu lu-trending-up"/> <t t-esc="d.revenue_formatted"/> · <t t-esc="d.conversions"/> conversions</div>
             </div>
+          </div>
+          <div t-if="d.root_cause" class="bws-card" style="margin-bottom:12px">
+            <div class="bws-card-t"><span class="lu lu-lightbulb"/> What's going on</div>
+            <div style="font-size:13px;line-height:1.55"><t t-esc="d.root_cause"/></div>
           </div>
           <t t-if="d.bars and d.bars.length">
             <div class="bws-sect-t"><span class="lu lu-target"/> KPIs vs target</div>
@@ -187,6 +257,33 @@
                 <div class="bws-kbar-track"><div class="bws-kbar-fill" t-attf-style="width:{{barPct(bar.value,bar.target)}}%;background:{{barColor(bar.cat)}}"/></div>
               </div>
             </div>
+          </t>
+
+          <!-- full per-metric breakdown: replaces the backend form -->
+          <div class="bws-sect-t"><span class="lu lu-list-checks"/> Full breakdown</div>
+          <div t-foreach="d.breakdown or []" t-as="sec" t-key="sec.key"
+               t-attf-class="bws-acc {{state.openPhase===sec.key ? 'open' : ''}}">
+            <div class="bws-acc-h" t-on-click="() => this.togglePhase(sec.key)">
+              <span><span t-attf-class="lu lu-{{sec.icon}}" style="margin-right:7px"/><t t-esc="sec.label"/></span>
+              <span class="lu lu-arrow-right bws-acc-cv"/>
+            </div>
+            <div class="bws-acc-b">
+              <div class="bws-kvgrid">
+                <div t-foreach="sec.rows" t-as="r" t-key="r.label" class="bws-kv">
+                  <span class="bws-kv-l" t-esc="r.label"/>
+                  <b class="bws-kv-v" t-esc="r.value"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <t t-if="d.ai_analysis">
+            <div class="bws-sect-t"><span class="lu lu-sparkles"/> AI analysis</div>
+            <div class="bws-card" style="white-space:pre-wrap;font-size:13px;line-height:1.55" t-esc="d.ai_analysis"/>
+          </t>
+          <t t-if="d.notes">
+            <div class="bws-sect-t"><span class="lu lu-square-pen"/> Notes</div>
+            <div class="bws-card" style="white-space:pre-wrap" t-esc="d.notes"/>
           </t>
         </t>
         <t t-if="props.drawerKind === 'branch'">
@@ -214,26 +311,27 @@
 
       <!-- ── FOOTER ACTIONS ── -->
       <div class="bws-dfoot">
-        <button class="bws-btn bws-ghost" t-on-click="coachNow" t-if="props.drawerKind==='session' or props.drawerKind==='strategy'"><span class="lu lu-sparkles"/> Coach now</button>
+        <button class="bws-btn bws-ghost" t-on-click="coachNow" t-if="props.drawerKind==='session'"><span class="lu lu-sparkles"/> Coach now</button>
+        <button class="bws-btn bws-pri" t-on-click="coachNow" t-if="props.drawerKind==='kpi' and d.can_coach"><span class="lu lu-sparkles"/> Coach now</button>
         <div class="bws-foot-spacer"/>
         <t t-if="props.drawerKind === 'session'">
-          <button t-if="d.state==='scheduled'" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_start_session')">Start</button>
-          <button t-if="d.state==='in_progress'" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_complete_session')">Complete</button>
-          <button t-if="d.state==='completed'" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_generate_ai_summary')"><span class="lu lu-sparkles"/> AI summary</button>
-          <button t-if="['in_progress','completed'].includes(d.state) and !d.plan_id" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_create_action_plan')"><span class="lu lu-clipboard-check"/> Action plan</button>
-          <button t-if="d.has_chat" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_open_ai_chat')"><span class="lu lu-bot"/> AI chat</button>
+          <button t-if="d.state==='scheduled'" class="bws-btn bws-pri" t-on-click="() => this.sessionAction('action_start_session')">Start</button>
+          <button t-if="d.state==='in_progress'" class="bws-btn bws-pri" t-on-click="() => this.sessionAction('action_complete_session')">Complete</button>
+          <button t-if="d.state==='completed'" class="bws-btn bws-ghost" t-on-click="() => this.sessionAction('action_generate_ai_summary')"><span class="lu lu-sparkles"/> AI summary</button>
+          <button t-if="['in_progress','completed'].includes(d.state) and !d.plan_id" class="bws-btn bws-pri" t-on-click="() => this.sessionAction('action_create_action_plan')"><span class="lu lu-clipboard-check"/> Action plan</button>
+          <button t-if="d.has_chat" class="bws-btn bws-ghost" t-on-click="toggleChat"><span class="lu lu-bot"/> AI chat</button>
         </t>
         <t t-if="props.drawerKind === 'strategy'">
           <button t-if="d.state==='draft'" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_generate_strategy')"><span class="lu lu-sparkles"/> Generate</button>
           <button t-if="['generated','reviewed'].includes(d.state)" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_start_roleplay')"><span class="lu lu-messages-square"/> Roleplay</button>
-          <button t-if="['generated','reviewed'].includes(d.state)" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_create_session')"><span class="lu lu-arrow-right"/> Start session</button>
+          <button t-if="['generated','reviewed','in_use'].includes(d.state)" class="bws-btn bws-pri" t-on-click="coachNow"><span class="lu lu-sparkles"/> Coach now</button>
           <button t-if="d.state==='in_use'" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_mark_complete')">Mark complete</button>
         </t>
         <t t-if="props.drawerKind === 'plan'">
-          <button t-if="d.state==='draft'" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_commit')">Commit</button>
-          <button t-if="d.state==='committed'" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_start')">Start</button>
-          <button t-if="['committed','in_progress'].includes(d.state)" class="bws-btn bws-ghost" t-on-click="() => this.runMethod('action_report_progress')"><span class="lu lu-square-pen"/> Report progress</button>
-          <button t-if="['committed','in_progress'].includes(d.state)" class="bws-btn bws-pri" t-on-click="() => this.runMethod('action_complete')">Complete</button>
+          <button t-if="d.state==='draft'" class="bws-btn bws-pri" t-on-click="() => this.planAction('action_commit')">Commit</button>
+          <button t-if="d.state==='committed'" class="bws-btn bws-ghost" t-on-click="() => this.planAction('action_start')">Start</button>
+          <button t-if="['committed','in_progress'].includes(d.state)" class="bws-btn bws-ghost" t-on-click="toggleProgress"><span class="lu lu-square-pen"/> Report progress</button>
+          <button t-if="['committed','in_progress'].includes(d.state)" class="bws-btn bws-pri" t-on-click="() => this.planAction('action_complete')">Complete</button>
         </t>
       </div>
     </t>

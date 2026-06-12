@@ -214,11 +214,13 @@
         </field>
     </record>
 
-    <!-- Manager Dashboard Client Action -->
+    <!-- Manager Dashboard — deprecated alias, re-tagged into the shell
+         so stale bookmarks land on the new adaptive Home -->
     <record id="action_bfsi_manager_dashboard" model="ir.actions.client">
-        <field name="name">Manager Dashboard</field>
-        <field name="tag">bfsi_manager_dashboard</field>
+        <field name="name">AI Performance Coaching</field>
+        <field name="tag">bfsi_coaching_workspace</field>
         <field name="target">main</field>
+        <field name="params">{'start': 'command_center'}</field>
     </record>
 
 </odoo>

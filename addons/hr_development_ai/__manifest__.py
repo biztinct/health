@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'AI-Enabled Employee Development System',
-    'version': '19.0.1.0.1',
+    'version': '19.0.5.3.0',
     'category': 'Human Resources/Employee Development',
     'summary': 'AI-native employee development with skills intelligence, coaching, learning paths, and knowledge management',
     'description': """
@@ -114,6 +114,13 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
             # Lucide icon set (CSS-mask SVG) — load first, used everywhere
             'hr_development_ai/static/src/css/bfsi_icons.css',
 
+            # Design tokens — the workspace visual language
+            'hr_development_ai/static/src/scss/bfsi_tokens.scss',
+
+            # Core utilities (nav store, bundled Chart.js loader)
+            'hr_development_ai/static/src/core/nav.js',
+            'hr_development_ai/static/src/core/charts.js',
+
             # Global CSS
             'hr_development_ai/static/src/css/hr_development.css',
 
@@ -157,18 +164,45 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
             'hr_development_ai/static/src/components/bfsi_ai_coach_panel/bfsi_ai_coach_panel.xml',
             'hr_development_ai/static/src/components/bfsi_ai_coach_panel/bfsi_ai_coach_panel.scss',
 
-            # BFSI Dashboard Premium CSS
-            'hr_development_ai/static/src/css/bfsi_dashboard.css',
-
-            # BFSI Manager Dashboard
-            'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.js',
-            'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.xml',
-            'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.scss',
 
             # BFSI AI Performance Dashboard (PerformX-inspired)
             'hr_development_ai/static/src/components/bfsi_ai_dashboard/bfsi_ai_dashboard.js',
             'hr_development_ai/static/src/components/bfsi_ai_dashboard/bfsi_ai_dashboard.xml',
             'hr_development_ai/static/src/components/bfsi_ai_dashboard/bfsi_ai_dashboard.scss',
+
+            # Shared workspace primitives (score ring, sparkline, KPI card)
+            'hr_development_ai/static/src/components/shared/score_ring.js',
+            'hr_development_ai/static/src/components/shared/score_ring.xml',
+            'hr_development_ai/static/src/components/shared/sparkline.js',
+            'hr_development_ai/static/src/components/shared/sparkline.xml',
+            'hr_development_ai/static/src/components/shared/kpi_card.js',
+            'hr_development_ai/static/src/components/shared/kpi_card.xml',
+
+            # Person 360 — the per-banker hub every list links to
+            'hr_development_ai/static/src/components/person_360/person_360.scss',
+            'hr_development_ai/static/src/components/person_360/person_360.js',
+            'hr_development_ai/static/src/components/person_360/person_360.xml',
+
+            # Adaptive Home screens (banker 360 / team cockpit / region rollup)
+            'hr_development_ai/static/src/components/home_banker/home_banker.js',
+            'hr_development_ai/static/src/components/home_banker/home_banker.xml',
+            'hr_development_ai/static/src/components/home_manager/home_manager.js',
+            'hr_development_ai/static/src/components/home_manager/home_manager.xml',
+            'hr_development_ai/static/src/components/home_regional/home_regional.js',
+            'hr_development_ai/static/src/components/home_regional/home_regional.xml',
+
+            # Team roster screen
+            'hr_development_ai/static/src/components/team_screen/team_screen.js',
+            'hr_development_ai/static/src/components/team_screen/team_screen.xml',
+
+            # Settings screen (KPI targets + integrations, in-workspace)
+            'hr_development_ai/static/src/components/settings_screen/settings_screen.js',
+            'hr_development_ai/static/src/components/settings_screen/settings_screen.xml',
+
+            # THE workspace shell (sidebar + route stack + overlays)
+            'hr_development_ai/static/src/components/workspace_shell/workspace_shell.scss',
+            'hr_development_ai/static/src/components/workspace_shell/workspace_shell.js',
+            'hr_development_ai/static/src/components/workspace_shell/workspace_shell.xml',
         ],
     },
     'installable': True,

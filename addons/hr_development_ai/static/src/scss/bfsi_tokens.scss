@@ -1,0 +1,164 @@
+/* ════════════════════════════════════════════════════════════════
+   BFSI design tokens — the single source for the coaching workspace
+   visual language. Scoped to .bfsi-app (shell) and .bfsi-overlay
+   (drawers / wizard / dialogs rendered in portals).
+   ════════════════════════════════════════════════════════════════ */
+
+.bfsi-app, .bfsi-overlay {
+  /* ── brand ── */
+  --bfsi-primary: #2563EB;
+  --bfsi-primary-600: #1D4ED8;
+  --bfsi-accent: #0EA5E9;
+  --bfsi-grad: #2563EB;              /* SOLID — one action colour, no gradients */
+  --bfsi-hero: #0F1E45;              /* deep navy hero surfaces */
+  --bfsi-grad-soft: linear-gradient(135deg, rgba(37,99,235,.08), rgba(37,99,235,.06));
+  --bfsi-indigo-50: #EFF6FF;
+  --bfsi-indigo-100: #DBEAFE;
+  --bfsi-indigo-200: #BFDBFE;
+  --bfsi-indigo-900: #0F1E45;
+  --bfsi-ink-deep: #0B1530;
+
+  /* ── neutrals ── */
+  --bfsi-ink: #101728;
+  --bfsi-muted: #6B7280;
+  --bfsi-faint: #9CA3AF;
+  --bfsi-line: #E5E7EB;
+  --bfsi-line-soft: #F1F0F7;
+  --bfsi-bg: #F4F6FB;
+  --bfsi-surface: #ffffff;
+
+  /* ── semantic ── */
+  --bfsi-ok: #10B981;
+  --bfsi-ok-bg: #ECFDF5;
+  --bfsi-warn: #F59E0B;
+  --bfsi-warn-bg: #FFFBEB;
+  --bfsi-danger: #EF4444;
+  --bfsi-danger-bg: #FEF2F2;
+  --bfsi-info: #3B82F6;
+  --bfsi-info-bg: #EFF6FF;
+
+  /* ── KPI category palette (input / behavior / output) ── */
+  --bfsi-cat-input: #3B82F6;
+  --bfsi-cat-behavior: #F59E0B;
+  --bfsi-cat-output: #10B981;
+
+  /* ── spacing (4px scale) ── */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-7: 32px; --sp-8: 40px;
+
+  /* ── radii ── */
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-pill: 999px;
+
+  /* ── shadows ── */
+  --sh-sm: 0 1px 2px rgba(16, 12, 40, .06);
+  --sh-md: 0 8px 24px rgba(16, 12, 40, .07);
+  --sh-lg: 0 18px 50px rgba(16, 12, 40, .16);
+  --sh-ring: 0 0 0 3px rgba(37, 99, 235, .18);
+
+  /* ── motion ── */
+  --t-fast: 120ms; --t-med: 200ms; --t-slow: 300ms;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--bfsi-ink);
+}
+
+/* ── shared keyframes ─────────────────────────────────────────── */
+@keyframes bfsi-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes bfsi-fade-in {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes bfsi-slide-in-right {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes bfsi-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes bfsi-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .55; }
+}
+@keyframes bfsi-ring-grow {
+  from { stroke-dashoffset: var(--ring-circ, 264); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bfsi-app *, .bfsi-overlay * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── shared primitives used across screens ────────────────────── */
+.bfsi-app {
+  .bfsi-card {
+    background: var(--bfsi-surface);
+    border: 1px solid var(--bfsi-line-soft);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sh-md);
+  }
+  .bfsi-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: var(--r-pill);
+    font-size: 11px; font-weight: 700; letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+  .bfsi-chip-crit  { background: var(--bfsi-danger-bg); color: var(--bfsi-danger); }
+  .bfsi-chip-warn  { background: var(--bfsi-warn-bg);   color: #B45309; }
+  .bfsi-chip-ok    { background: var(--bfsi-ok-bg);     color: #047857; }
+  .bfsi-chip-info  { background: var(--bfsi-info-bg);   color: #1D4ED8; }
+  .bfsi-chip-muted { background: var(--bfsi-line-soft); color: var(--bfsi-muted); }
+
+  .bfsi-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    border: 1px solid transparent; border-radius: var(--r-md);
+    padding: 9px 16px; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all var(--t-fast) ease;
+    background: transparent; color: var(--bfsi-ink);
+    white-space: nowrap;
+  }
+  .bfsi-btn:hover { transform: translateY(-1px); }
+  .bfsi-btn:active { transform: translateY(0); }
+  .bfsi-btn-primary {
+    background: var(--bfsi-grad); color: #fff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, .35);
+  }
+  .bfsi-btn-primary:hover { box-shadow: 0 6px 20px rgba(37, 99, 235, .45); }
+  .bfsi-btn-ghost {
+    border-color: var(--bfsi-line); color: var(--bfsi-ink);
+    background: var(--bfsi-surface);
+  }
+  .bfsi-btn-ghost:hover { border-color: var(--bfsi-primary); color: var(--bfsi-primary); }
+  .bfsi-btn-soft {
+    background: var(--bfsi-indigo-50); color: var(--bfsi-primary);
+  }
+  .bfsi-btn-soft:hover { background: var(--bfsi-indigo-100); }
+  .bfsi-btn[disabled] { opacity: .5; pointer-events: none; }
+
+  .bfsi-avatar {
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--r-pill); color: #fff; font-weight: 800;
+    flex: 0 0 auto; user-select: none;
+  }
+
+  .bfsi-section-title {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 15px; font-weight: 800; color: var(--bfsi-ink);
+    margin: 0 0 var(--sp-3);
+    .lu { color: var(--bfsi-primary); }
+  }
+  .bfsi-section-sub {
+    font-size: 12px; color: var(--bfsi-muted); font-weight: 500;
+  }
+
+  .bfsi-empty {
+    padding: var(--sp-7); text-align: center; color: var(--bfsi-faint);
+    font-size: 13px;
+    .lu { font-size: 26px; display: block; margin: 0 auto var(--sp-2); }
+  }
+}

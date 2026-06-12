@@ -55,8 +55,16 @@ class BFSIAIDashboard(models.AbstractModel):
         if not branch.exists():
             return {'error': 'Branch not found'}
 
-        # Collect all bankers in this branch
-        banker_ids = branch.banker_ids.filtered(lambda e: e.active).ids
+        # Collect the front-line bankers in this branch (banker_ids is a
+        # One2many that also contains the managers — exclude them)
+        banker_ids = branch.banker_ids.filtered(
+            lambda e: e.active and e.banker_type not in (
+                'branch_manager', 'regional_manager')).ids
+
+        # Never show a zero wall: fall back to the latest period with data
+        period = self.env['bfsi.scoring'].resolve_period(
+            banker_ids, date_from, date_to, range_type=date_range)
+        date_from, date_to = period['date_from'], period['date_to']
 
         return {
             'branch': {
@@ -71,6 +79,8 @@ class BFSIAIDashboard(models.AbstractModel):
                 'from': date_from.isoformat() if date_from else None,
                 'to': date_to.isoformat() if date_to else None,
                 'label': self._get_date_range_label(date_range, date_from, date_to),
+                'fallback_applied': period['fallback_applied'],
+                'fallback_label': period['fallback_label'],
             },
             'kpi_summary': self._get_kpi_summary(branch, banker_ids, date_from, date_to),
             'root_cause': self._get_root_cause_analysis(branch, banker_ids, date_from, date_to),
@@ -163,10 +173,9 @@ class BFSIAIDashboard(models.AbstractModel):
         total_conversions = sum(current_kpis.mapped('conversions'))
         total_meetings = sum(current_kpis.mapped('meetings_conducted'))
         total_dials = sum(current_kpis.mapped('total_dials'))
-        avg_score = (
-            sum(current_kpis.mapped('overall_score')) / len(current_kpis)
-            if current_kpis else 0
-        )
+        # Canonical branch score: same population rule as every other screen
+        branch_snap = self.env['bfsi.scoring'].branch_snapshot(branch.id, as_of=date_to)
+        avg_score = branch_snap['avg_score']
         avg_conversion_rate = (
             sum(current_kpis.mapped('conversion_rate')) / len(current_kpis)
             if current_kpis else 0
@@ -245,7 +254,9 @@ class BFSIAIDashboard(models.AbstractModel):
             'total_conversions': total_conversions,
             'total_meetings': total_meetings,
             'total_dials': total_dials,
-            'avg_score': round(avg_score, 1),
+            'avg_score': avg_score,
+            'score_coverage': branch_snap['coverage'],
+            'score_coverage_label': branch_snap['coverage_label'],
             'target_revenue': target_revenue,
             'target_revenue_formatted': self._format_currency(target_revenue, currency),
             'currency_symbol': currency.symbol,
@@ -328,7 +339,7 @@ class BFSIAIDashboard(models.AbstractModel):
                 'impact_formatted': self._format_currency(abs(activity_impact), currency),
                 'detail': 'from ' + ', '.join(activity_details),
                 'color': '#3B82F6',
-                'icon': 'fa-phone',
+                'icon': 'phone',
             })
 
         # 2. Behavior Issues
@@ -353,7 +364,7 @@ class BFSIAIDashboard(models.AbstractModel):
                 'impact_formatted': self._format_currency(abs(behavior_impact), currency),
                 'detail': 'from ' + ', '.join(behavior_details),
                 'color': '#F59E0B',
-                'icon': 'fa-user',
+                'icon': 'users',
             })
 
         # 3. Product Mix Issues (revenue per conversion)
@@ -380,7 +391,7 @@ class BFSIAIDashboard(models.AbstractModel):
                 'impact_formatted': self._format_currency(abs(product_impact), currency),
                 'detail': 'from ' + ', '.join(product_details),
                 'color': '#EF4444',
-                'icon': 'fa-cubes',
+                'icon': 'brain',
             })
 
         # Build summary
@@ -675,8 +686,8 @@ class BFSIAIDashboard(models.AbstractModel):
                 'banker_type_label': banker_type_label,
                 'branch_name': branch.name,
 
-                # KPI metrics
-                'overall_score': latest_kpi.overall_score if latest_kpi else 0,
+                # KPI metrics (rounded — canonical display rule)
+                'overall_score': round(latest_kpi.overall_score or 0) if latest_kpi else 0,
                 'branch_rank': latest_kpi.branch_rank if latest_kpi else 0,
                 'rank_movement': latest_kpi.rank_movement if latest_kpi else 0,
                 'coaching_priority': latest_kpi.coaching_priority if latest_kpi else 'low',
@@ -719,12 +730,13 @@ class BFSIAIDashboard(models.AbstractModel):
         currency_sym = self.env.company.currency_id.symbol
 
         summary_text = (
-            f"SUMMARY — Overall branch performance at "
-            f"{kpi_summary['avg_score']}/100 avg score. "
-            f"Revenue MTD: {kpi_summary['mtd_revenue_formatted']} "
+            f"SUMMARY — Branch performance at "
+            f"{kpi_summary['avg_score']}/100 avg score "
+            f"({kpi_summary['score_coverage_label']}). "
+            f"Revenue: {kpi_summary['mtd_revenue_formatted']} "
             f"({kpi_summary['forecast_pct']}% of target). "
             f"{kpi_summary['active_bankers_count']}/{kpi_summary['total_bankers']} "
-            f"bankers active."
+            f"bankers active this period."
         )
 
         return {
@@ -972,22 +984,8 @@ class BFSIAIDashboard(models.AbstractModel):
 
     @api.model
     def _format_currency(self, amount, currency=None):
-        """Format currency amount with appropriate abbreviation."""
-        if not currency:
-            currency = self.env.company.currency_id
-        symbol = currency.symbol or '$'
-
-        abs_amount = abs(amount)
-        sign = '-' if amount < 0 else ''
-
-        if abs_amount >= 1_000_000_000:
-            return f"{sign}{symbol}{abs_amount / 1_000_000_000:.1f}B"
-        elif abs_amount >= 1_000_000:
-            return f"{sign}{symbol}{abs_amount / 1_000_000:.1f}M"
-        elif abs_amount >= 1_000:
-            return f"{sign}{symbol}{abs_amount / 1_000:.1f}K"
-        else:
-            return f"{sign}{symbol}{abs_amount:,.0f}"
+        """Format currency amount — delegated to the canonical scoring service."""
+        return self.env['bfsi.scoring'].fmt_currency(amount, currency)
 
     @api.model
     def _explain_change(self, metric_name, current, previous, unit=''):

@@ -78,7 +78,7 @@
 
           <!-- PLAN -->
           <t t-if="segment.rowKind === 'plan'">
-            <div class="bws-av" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}"><t t-esc="initial(row.employee_id)"/></div>
+            <div class="bws-av bws-av-link" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}" t-on-click.stop="() => this.openPerson(row.employee_id)" title="Open 360° profile"><t t-esc="initial(row.employee_id)"/></div>
             <div class="bws-row-meta">
               <div class="bws-row-name"><t t-esc="name(row.employee_id)"/></div>
               <div class="bws-row-sub"><span class="lu lu-clipboard-check"/> <t t-esc="row.action_item_count"/> items · due <t t-esc="fmtDate(row.target_date)"/></div>
@@ -92,7 +92,7 @@
 
           <!-- SESSION -->
           <t t-if="segment.rowKind === 'session'">
-            <div class="bws-av" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}"><t t-esc="initial(row.employee_id)"/></div>
+            <div class="bws-av bws-av-link" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}" t-on-click.stop="() => this.openPerson(row.employee_id)" title="Open 360° profile"><t t-esc="initial(row.employee_id)"/></div>
             <div class="bws-row-meta">
               <div class="bws-row-name"><t t-esc="name(row.employee_id)"/></div>
               <div class="bws-row-sub"><span t-attf-class="lu lu-{{typeIcon(row.session_type)}}"/> <t t-esc="row.name"/></div>
@@ -103,7 +103,7 @@
 
           <!-- STRATEGY -->
           <t t-if="segment.rowKind === 'strategy'">
-            <div class="bws-av" t-attf-style="background:{{avatarColor(row.banker_id and row.banker_id[0])}}"><t t-esc="initial(row.banker_id)"/></div>
+            <div class="bws-av bws-av-link" t-attf-style="background:{{avatarColor(row.banker_id and row.banker_id[0])}}" t-on-click.stop="() => this.openPerson(row.banker_id)" title="Open 360° profile"><t t-esc="initial(row.banker_id)"/></div>
             <div class="bws-row-meta">
               <div class="bws-row-name"><t t-esc="name(row.banker_id)"/></div>
               <div class="bws-row-sub"><span class="lu lu-brain"/> Strategy · <t t-esc="fmtDate(row.kpi_snapshot_date)"/></div>
@@ -117,7 +117,7 @@
 
           <!-- KPI -->
           <t t-if="segment.rowKind === 'kpi'">
-            <div class="bws-av" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}"><t t-esc="initial(row.employee_id)"/></div>
+            <div class="bws-av bws-av-link" t-attf-style="background:{{avatarColor(row.employee_id and row.employee_id[0])}}" t-on-click.stop="() => this.openPerson(row.employee_id)" title="Open 360° profile"><t t-esc="initial(row.employee_id)"/></div>
             <div class="bws-row-meta">
               <div class="bws-row-name"><t t-esc="name(row.employee_id)"/></div>
               <div class="bws-row-sub"><span class="lu lu-calendar"/> <t t-esc="fmtDate(row.period_date)"/> · rank #<t t-esc="row.branch_rank"/></div>
@@ -128,7 +128,7 @@
 
           <!-- TARGET -->
           <t t-if="segment.rowKind === 'target'">
-            <div class="bws-av" style="background:#7C3AED"><span class="lu lu-target"/></div>
+            <div class="bws-av" style="background:#1E40AF"><span class="lu lu-target"/></div>
             <div class="bws-row-meta" style="min-width:240px">
               <div class="bws-row-name"><t t-esc="row.name"/></div>
               <div class="bws-row-sub"><span class="lu lu-calendar"/> <t t-esc="row.period_type"/> · from <t t-esc="fmtDate(row.valid_from)"/></div>
@@ -139,7 +139,7 @@
 
           <!-- BRANCH -->
           <t t-if="segment.rowKind === 'branch'">
-            <div class="bws-av" style="background:#4338ca"><span class="lu lu-building"/></div>
+            <div class="bws-av" style="background:#1D4ED8"><span class="lu lu-building"/></div>
             <div class="bws-row-meta" style="min-width:200px">
               <div class="bws-row-name"><t t-esc="row.name"/></div>
               <div class="bws-row-sub"><span class="lu lu-users"/> <t t-esc="row.banker_count"/> bankers · <t t-esc="name(row.region_id)"/></div>
@@ -169,7 +169,8 @@
                          onClose="() => this.closeDrawer()"
                          onAction="() => this.onDrawerAction()"
                          openForm="(m,i) => this.openForm(m,i)"
-                         openWizard="(b) => this.openWizard(b)"/>
+                         openWizard="(b) => this.openWizard(b)"
+                         openRecord="(m,i,k) => this.openRecordDrawer(m,i,k)"/>
 
     <!-- WIZARD overlay -->
     <BfsiCoachingWizard t-if="state.wizardBankerId"

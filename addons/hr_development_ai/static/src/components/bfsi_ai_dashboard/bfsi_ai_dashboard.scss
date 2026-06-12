@@ -8,14 +8,14 @@ $dash-bg: #F0F2F8;
 $dash-bg-card: #FFFFFF;
 $dash-bg-card-hover: #F8F9FC;
 $dash-border: #E2E6EF;
-$dash-border-active: rgba(79, 70, 229, 0.4);
+$dash-border-active: rgba(37, 99, 235, 0.4);
 $dash-text: #1E293B;
 $dash-text-muted: #64748B;
 $dash-text-dim: #94A3B8;
-$dash-accent: #4F46E5;
-$dash-accent-light: #6366F1;
-$dash-accent-glow: rgba(79, 70, 229, 0.08);
-$dash-accent-bg: rgba(79, 70, 229, 0.06);
+$dash-accent: #2563EB;
+$dash-accent-light: #3B82F6;
+$dash-accent-glow: rgba(37, 99, 235, 0.08);
+$dash-accent-bg: rgba(37, 99, 235, 0.06);
 $dash-success: #10B981;
 $dash-success-bg: rgba(16, 185, 129, 0.08);
 $dash-warning: #F59E0B;
@@ -332,7 +332,7 @@ $dash-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
 
 .ai-dash-ai-text {
     background: $dash-accent-bg;
-    border: 1px solid rgba(79, 70, 229, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.15);
     border-radius: $dash-radius-sm;
     padding: 10px 14px;
     font-size: 12px;
@@ -895,9 +895,9 @@ $dash-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
 
 // ═══════════════════════ AI INSIGHTS TOGGLE ═══════════════════════
 .ai-insights-toggle {
-    background: rgba(79, 70, 229, 0.08) !important;
+    background: rgba(37, 99, 235, 0.08) !important;
     color: $dash-accent !important;
-    border: 1px solid rgba(79, 70, 229, 0.2) !important;
+    border: 1px solid rgba(37, 99, 235, 0.2) !important;
     font-weight: 600 !important;
     padding: 6px 14px !important;
     border-radius: 8px !important;
@@ -989,7 +989,7 @@ $dash-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
     flex-direction: column;
     box-shadow:
         0 25px 80px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(79, 70, 229, 0.1);
+        0 0 0 1px rgba(37, 99, 235, 0.1);
     animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -1009,7 +1009,7 @@ $dash-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
         margin: 0;
         font-size: 1.2rem;
         font-weight: 700;
-        color: #1e1b4b;
+        color: #0B1530;
 
         .fa { color: $dash-accent; margin-right: 8px; }
     }
@@ -1062,7 +1062,7 @@ $dash-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
     h2 {
         font-size: 1.3rem;
         font-weight: 800;
-        color: #1e1b4b;
+        color: #0B1530;
         margin: 0 0 8px 0;
         padding-bottom: 12px;
         border-bottom: 2px solid #E5E7EB;
@@ -1071,7 +1071,7 @@ $dash-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
     h3 {
         font-size: 1.05rem;
         font-weight: 700;
-        color: #1e1b4b;
+        color: #0B1530;
         margin: 24px 0 12px 0;
         padding: 10px 0;
         border-bottom: 1px solid #F3F4F6;
@@ -1095,7 +1095,7 @@ $dash-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
     strong {
-        color: #1e1b4b;
+        color: #0B1530;
         font-weight: 700;
     }
 
@@ -1141,4 +1141,14 @@ $dash-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
             font-size: 11px;
         }
     }
+}
+
+/* fallback-period banner (no zero walls) */
+.ai-dash-fallback {
+    display: flex; align-items: center; gap: 8px;
+    background: #EFF6FF; border: 1px solid #BFDBFE; color: #3730A3;
+    border-radius: 12px; padding: 10px 16px; margin-bottom: 18px;
+    font-size: 13px; font-weight: 600;
+    .lu { font-size: 15px; }
+    .ai-dash-fallback-sub { color: #6B7280; font-weight: 500; }
 }

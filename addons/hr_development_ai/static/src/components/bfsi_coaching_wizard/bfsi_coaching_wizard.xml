@@ -29,10 +29,13 @@
         </div>
         <div class="bcw-stepper" t-if="state.step lt 4">
           <t t-foreach="STEPS" t-as="s" t-key="s_index">
-            <div t-attf-class="bcw-step {{stepClass(s_index)}}">
+            <button t-attf-class="bcw-step {{stepClass(s_index)}} {{s_index lt state.step ? 'clickable' : ''}}"
+                    t-att-disabled="s_index gt state.step"
+                    t-att-title="s_index lt state.step ? 'Go back to ' + s : ''"
+                    t-on-click="() => this.goStep(s_index)">
               <span class="n"><span t-if="s_index lt state.step" class="lu lu-check"/><t t-else="" t-esc="s_index + 1"/></span>
               <t t-esc="s"/>
-            </div>
+            </button>
             <span t-if="s_index lt 3" class="bcw-step-line"></span>
           </t>
         </div>
@@ -42,7 +45,7 @@
 
       <!-- BODY -->
       <div class="bcw-body">
-        <div class="bcw-inner">
+        <div t-attf-class="bcw-inner {{state.step === 2 ? 'bcw-inner-wide' : ''}}">
 
           <!-- ░░ STEP 1 — DIAGNOSE ░░ -->
           <div t-if="state.step === 0">
@@ -51,6 +54,34 @@
               <p>The AI read <t t-esc="banker.name.split(' ')[0]"/>'s recent KPIs against target and the rest of the branch. Confirm the picture before we build the strategy.</p>
             </div>
             <div class="bcw-genbar"><span class="bcw-pulse"></span> Analyzed performance history · ranked against branch peers</div>
+
+            <!-- strategy reuse: one active playbook per banker -->
+            <div t-if="existingStrategy and existingStrategy.is_fresh"
+                 t-attf-class="bcw-strategy-note {{state.useExisting ? '' : 'bcw-strategy-note-off'}}">
+              <span class="lu lu-brain"/>
+              <div class="bcw-strategy-note-text">
+                <t t-if="state.useExisting">
+                  <b><t t-esc="banker.name.split(' ')[0]"/> already has an active strategy</b>
+                  (built <t t-esc="existingStrategy.date"/> · <t t-esc="existingStrategy.confidence"/>% confidence)
+                  — the data hasn't changed, so this session will continue with it.
+                </t>
+                <t t-else="">
+                  <b>Rebuilding from today's diagnosis.</b>
+                  The strategy from <t t-esc="existingStrategy.date"/> will be archived when you commit.
+                </t>
+              </div>
+              <button class="bcw-btn bcw-ghost bcw-sm" t-on-click="toggleRebuild">
+                <t t-if="state.useExisting">Rebuild instead</t>
+                <t t-else="">Keep existing</t>
+              </button>
+            </div>
+            <div t-elif="existingStrategy and !existingStrategy.is_fresh" class="bcw-strategy-note bcw-strategy-note-stale">
+              <span class="lu lu-refresh-cw"/>
+              <div class="bcw-strategy-note-text">
+                <b>New KPI data since the last strategy</b> (<t t-esc="existingStrategy.date"/>) —
+                we'll build a fresh one; the old strategy gets archived automatically.
+              </div>
+            </div>
             <div class="bcw-grid2">
               <div class="bcw-card"><h3 style="color:#047857"><span class="lu lu-circle-check"/> Strengths</h3>
                 <ul><li t-foreach="state.ctx.strengths" t-as="s" t-key="s_index"><span class="mk lu lu-circle-check" style="color:#10B981"/><span t-esc="s"/></li></ul>
@@ -59,13 +90,13 @@
                 <ul><li t-foreach="state.ctx.gaps" t-as="g" t-key="g_index"><span class="mk lu lu-circle-x" style="color:#EF4444"/><span t-esc="g"/></li></ul>
               </div>
             </div>
-            <div class="bcw-card" style="margin-top:16px"><h3 style="color:#7C3AED"><span class="lu lu-brain"/> Root cause</h3>
+            <div class="bcw-card" style="margin-top:16px"><h3 style="color:#1E40AF"><span class="lu lu-brain"/> Root cause</h3>
               <p class="bcw-root" t-esc="state.ctx.root_cause"/>
             </div>
             <div class="bcw-conf">
-              <b style="color:#7C3AED">AI confidence</b>
+              <b style="color:#1E40AF">AI confidence</b>
               <div class="bcw-meter"><i t-attf-style="width:{{state.ctx.confidence}}%"></i></div>
-              <b style="color:#7C3AED"><t t-esc="state.ctx.confidence"/>%</b>
+              <b style="color:#1E40AF"><t t-esc="state.ctx.confidence"/>%</b>
             </div>
           </div>
 
@@ -75,19 +106,22 @@
               <h2>Step 2 · Coaching Strategy</h2>
               <p>Your game plan — themes, the exact questions to ask in each phase, and tips. Built around <t t-esc="banker.name.split(' ')[0]"/>'s gaps.</p>
             </div>
-            <div class="bcw-genbar"><span class="bcw-pulse"></span> Strategy tuned to the diagnosis · GROW coaching model</div>
+            <div class="bcw-genbar"><span class="bcw-pulse"></span>
+              <t t-if="state.useExisting and existingStrategy">Continuing with the strategy built <t t-esc="existingStrategy.date"/> · <t t-esc="existingStrategy.confidence"/>% confidence</t>
+              <t t-else="">Strategy tuned to the diagnosis · GROW coaching model</t>
+            </div>
             <div class="bcw-label">Coaching themes</div>
             <div class="bcw-chips">
               <span class="bcw-chip" t-foreach="state.ctx.themes" t-as="t" t-key="t_index" t-esc="t"/>
             </div>
             <div class="bcw-label" style="margin-top:20px">Session game plan</div>
             <t t-call="hr_development_ai.BcwAccordion"><t t-set="icon" t-value="'flag'"/><t t-set="color" t-value="'#10B981'"/><t t-set="title" t-value="'Opening — build trust'"/><t t-set="qs" t-value="state.ctx.opening"/></t>
-            <t t-call="hr_development_ai.BcwAccordion"><t t-set="icon" t-value="'search'"/><t t-set="color" t-value="'#6366F1'"/><t t-set="title" t-value="'Probing — find the real blocker'"/><t t-set="qs" t-value="state.ctx.probing"/></t>
-            <t t-call="hr_development_ai.BcwAccordion"><t t-set="icon" t-value="'circle-check'"/><t t-set="color" t-value="'#7C3AED'"/><t t-set="title" t-value="'Closing — lock the commitment'"/><t t-set="qs" t-value="state.ctx.closing"/></t>
+            <t t-call="hr_development_ai.BcwAccordion"><t t-set="icon" t-value="'search'"/><t t-set="color" t-value="'#3B82F6'"/><t t-set="title" t-value="'Probing — find the real blocker'"/><t t-set="qs" t-value="state.ctx.probing"/></t>
+            <t t-call="hr_development_ai.BcwAccordion"><t t-set="icon" t-value="'circle-check'"/><t t-set="color" t-value="'#1E40AF'"/><t t-set="title" t-value="'Closing — lock the commitment'"/><t t-set="qs" t-value="state.ctx.closing"/></t>
             <div class="bcw-callout" style="margin-top:8px">
               <div class="ai-ico"><span class="lu lu-lightbulb"/></div>
               <div><div class="t">COACHING TIPS</div>
-                <p t-foreach="state.ctx.tips" t-as="tip" t-key="tip_index" style="margin-bottom:4px;display:flex;gap:7px"><span class="lu lu-dot" style="color:#7C3AED;margin-top:2px"/><span t-esc="tip"/></p>
+                <p t-foreach="state.ctx.tips" t-as="tip" t-key="tip_index" style="margin-bottom:4px;display:flex;gap:7px"><span class="lu lu-dot" style="color:#1E40AF;margin-top:2px"/><span t-esc="tip"/></p>
               </div>
             </div>
           </div>
@@ -98,26 +132,84 @@
               <h2>Step 3 · Run the session</h2>
               <p>Tick off your talking points, jot notes, and ask the AI for a real-time assist if a conversation goes sideways.</p>
             </div>
-            <div class="bcw-split">
-              <div class="bcw-card"><h3><span class="lu lu-messages-square"/> Talking points</h3>
-                <div class="bcw-checks">
-                  <div t-foreach="state.checklist" t-as="c" t-key="c_index"
-                       t-attf-class="bcw-ci {{c.done ? 'done' : ''}}" t-on-click="() => this.toggleCheck(c_index)">
-                    <div t-attf-class="bcw-cbox {{c.done ? 'on' : ''}}"><span class="lu lu-check"/></div>
-                    <div class="tx" t-esc="c.text"/>
+            <div class="bcw-split3">
+
+              <!-- COL 1 · talking points + the performance behind them -->
+              <div class="bcw-col">
+                <div class="bcw-card"><h3><span class="lu lu-messages-square"/> Talking points</h3>
+                  <div class="bcw-checks">
+                    <div t-foreach="state.checklist" t-as="c" t-key="c_index"
+                         t-attf-class="bcw-ci {{c.done ? 'done' : ''}}" t-on-click="() => this.toggleCheck(c_index)">
+                      <div t-attf-class="bcw-cbox {{c.done ? 'on' : ''}}"><span class="lu lu-check"/></div>
+                      <div class="tx" t-esc="c.text"/>
+                    </div>
+                  </div>
+                </div>
+
+                <div t-if="(state.ctx.bars or []).length" class="bcw-card">
+                  <h3><span class="lu lu-gauge"/> Performance behind these points</h3>
+                  <div t-foreach="state.ctx.bars" t-as="bar" t-key="bar_index" class="bcw-perf">
+                    <div class="bcw-perf-head" t-on-click="() => this.togglePerf(bar_index)">
+                      <span class="bcw-perf-name" t-esc="bar.name"/>
+                      <b t-attf-style="color:{{bar.below ? '#DC2626' : '#047857'}}"><t t-esc="bar.value"/> / <t t-esc="bar.target"/></b>
+                      <span t-attf-class="lu lu-chevron-{{state.perfOpen === bar_index ? 'down' : 'right'}} bcw-perf-cv"/>
+                    </div>
+                    <div class="bcw-perf-track">
+                      <div class="bcw-perf-fill" t-attf-style="width:{{barPct(bar.value,bar.target)}}%;background:{{barColor(bar.cat)}}"/>
+                    </div>
+                    <div t-if="state.perfOpen === bar_index" class="bcw-perf-detail">
+                      <t t-if="bar.below">
+                        <span class="lu lu-triangle-alert" style="color:#DC2626"/>
+                        <t t-esc="bar.phrase"/> · <b><t t-esc="bar.deficit"/>% below target</b>
+                      </t>
+                      <t t-else="">
+                        <span class="lu lu-circle-check" style="color:#047857"/>
+                        <t t-esc="bar.phrase"/> · meeting target
+                      </t>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div style="display:flex;flex-direction:column;gap:16px">
+
+              <!-- COL 2 · notes + outcome -->
+              <div class="bcw-col">
                 <div class="bcw-card"><h3><span class="lu lu-square-pen"/> Quick notes</h3>
                   <textarea class="bcw-notes" placeholder="What did you discuss? What did you agree?"
                             t-on-input="onNotes" t-att-value="state.notes"></textarea>
                 </div>
-                <div class="bcw-card" style="padding:14px"><h3 style="margin-bottom:10px"><span class="lu lu-bot"/> AI assist</h3>
+                <div class="bcw-card"><h3><span class="lu lu-flag"/> Session outcome <span class="bcw-req">required</span></h3>
+                  <div class="bcw-field-label">How did the session go?</div>
+                  <div class="bcw-outcomes">
+                    <button t-foreach="OUTCOMES" t-as="o" t-key="o.v"
+                            t-attf-class="bcw-outcome {{state.outcome === o.v ? 'on' : ''}}"
+                            t-on-click="() => this.setOutcome(o.v)" t-esc="o.l"/>
+                  </div>
+                  <div class="bcw-field-label" style="margin-top:16px">How did it land?</div>
+                  <div class="bcw-outcomes">
+                    <button t-foreach="[['5','Great'],['4','Good'],['3','OK'],['2','Tense'],['1','Poor']]" t-as="s" t-key="s[0]"
+                            t-attf-class="bcw-outcome bcw-outcome-sm {{state.satisfaction === s[0] ? 'on' : ''}}"
+                            t-on-click="() => this.setSatisfaction(s[0])" t-esc="s[1]"/>
+                  </div>
+                </div>
+              </div>
+
+              <!-- COL 3 · AI assist, full height -->
+              <div class="bcw-col">
+                <div class="bcw-card bcw-ai-card"><h3 style="margin-bottom:10px"><span class="lu lu-bot"/> AI assist</h3>
+                  <div class="bcw-quickprompts">
+                    <button t-foreach="quickPrompts" t-as="qp" t-key="qp_index"
+                            class="bcw-qp" t-att-disabled="state.chatBusy"
+                            t-att-title="qp.text" t-on-click="() => this.askQuick(qp.text)">
+                      <span class="lu lu-sparkles"/> <t t-esc="qp.label"/>
+                    </button>
+                  </div>
                   <div class="bcw-chatbox">
-                    <div class="bcw-chat-scroll">
-                      <div t-foreach="state.chat" t-as="m" t-key="m_index" t-attf-class="bcw-msg {{m.role}}" t-esc="m.text"/>
-                      <div t-if="state.chatBusy" class="bcw-msg ai">…</div>
+                    <div class="bcw-chat-scroll" t-ref="chatScroll">
+                      <div t-foreach="state.chat" t-as="m" t-key="m_index" t-attf-class="bcw-msg {{m.role}}">
+                        <t t-if="m.role === 'ai'" t-out="fmtMsg(m.text)"/>
+                        <t t-else="" t-esc="m.text"/>
+                      </div>
+                      <div t-if="state.chatBusy" class="bcw-msg ai bcw-typing"><span/><span/><span/></div>
                     </div>
                     <div class="bcw-chat-in">
                       <input placeholder="Ask the AI coach…" t-att-value="state.chatInput"
@@ -178,12 +270,13 @@
             <h2><t t-esc="banker.name"/> is now being coached</h2>
             <p>Strategy, session notes and a <t t-esc="state.result.item_count"/>-item action plan are saved and linked — no separate forms, no lost context. Here's what happens next, automatically:</p>
             <div class="bcw-done-steps">
-              <div class="ds"><div class="ic" style="background:#4F46E5"><span class="lu lu-smartphone"/></div><div><b><t t-esc="banker.name.split(' ')[0]"/> gets the plan in his app</b><div class="sub">He reviews &amp; commits. You're notified.</div></div></div>
+              <div class="ds"><div class="ic" style="background:#2563EB"><span class="lu lu-smartphone"/></div><div><b><t t-esc="banker.name.split(' ')[0]"/> gets the plan in his app</b><div class="sub">He reviews &amp; commits. You're notified.</div></div></div>
               <div class="ds"><div class="ic" style="background:#10B981"><span class="lu lu-chart-column"/></div><div><b>Progress tracks itself</b><div class="sub">Each item watches its KPI.</div></div></div>
               <div class="ds"><div class="ic" style="background:#F59E0B"><span class="lu lu-bell"/></div><div><b>You both get a check-in nudge</b><div class="sub">If he slips, it escalates to your Command Center.</div></div></div>
             </div>
             <div style="margin-top:26px;display:flex;gap:10px;justify-content:center">
-              <button class="bcw-btn bcw-pri bcw-lg" t-on-click="close">Back to dashboard</button>
+              <button class="bcw-btn bcw-ghost bcw-lg" t-on-click="viewPlan"><span class="lu lu-clipboard-check"/> View the plan</button>
+              <button class="bcw-btn bcw-pri bcw-lg" t-on-click="close">Done</button>
             </div>
           </div>
 
@@ -194,9 +287,21 @@
       <div t-if="state.step lt 4" class="bcw-foot">
         <button t-if="state.step gt 0" class="bcw-btn bcw-ghost bcw-lg" t-on-click="back"><span class="lu lu-arrow-right" style="transform:rotate(180deg)"/> Back</button>
         <div class="bcw-spacer"></div>
-        <button t-if="state.step === 0" class="bcw-btn bcw-pri bcw-lg" t-on-click="next">Looks right — build strategy <span class="lu lu-arrow-right"/></button>
-        <button t-if="state.step === 1" class="bcw-btn bcw-pri bcw-lg" t-on-click="next">Start the session <span class="lu lu-arrow-right"/></button>
-        <button t-if="state.step === 2" class="bcw-btn bcw-pri bcw-lg" t-on-click="next">Capture outcome → build plan</button>
+        <button t-if="state.step === 0" class="bcw-btn bcw-pri bcw-lg" t-on-click="next">
+          <t t-if="reviewing">Strategy</t>
+          <t t-elif="state.useExisting">Looks right — continue with this strategy</t>
+          <t t-else="">Looks right — build strategy</t>
+          <span class="lu lu-arrow-right"/>
+        </button>
+        <button t-if="state.step === 1" class="bcw-btn bcw-pri bcw-lg" t-on-click="next">
+          <t t-if="reviewing">Session</t><t t-else="">Start the session</t> <span class="lu lu-arrow-right"/>
+        </button>
+        <button t-if="state.step === 2" class="bcw-btn bcw-pri bcw-lg"
+                t-att-disabled="!state.outcome" t-att-title="state.outcome ? '' : 'Pick a session outcome first'"
+                t-on-click="next">
+          <t t-if="reviewing">Action plan <span class="lu lu-arrow-right"/></t>
+          <t t-else="">Capture outcome → build plan</t>
+        </button>
         <button t-if="state.step === 3" class="bcw-btn bcw-pri bcw-lg" t-att-disabled="state.committing" t-on-click="commit">
           <t t-if="state.committing">Saving…</t><t t-else=""><span class="lu lu-check"/> Send plan &amp; finish</t>
         </button>

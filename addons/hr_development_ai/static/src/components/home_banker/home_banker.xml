@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.HomeBanker">
+    <div class="bfsi-home">
+
+        <!-- ── Hero: my score + trend ───────────────────────────── -->
+        <header class="bfsi-hero bfsi-hero-banker">
+            <div class="bfsi-hero-text">
+                <h1 t-esc="greeting()"/>
+                <p>
+                    <span t-esc="d.user.role"/>
+                    <span t-if="d.user.branch_name"> · <t t-esc="d.user.branch_name"/></span>
+                </p>
+                <p t-if="me.root_cause" class="bfsi-hero-insight">
+                    <span class="lu lu-lightbulb"/> <t t-esc="me.root_cause"/>
+                </p>
+            </div>
+            <div class="bfsi-hero-score">
+                <ScoreRing value="snap.score or 0" size="92"/>
+                <div class="bfsi-hero-score-meta">
+                    <span t-if="snap.rank">Rank #<t t-esc="snap.rank"/></span>
+                    <Sparkline t-if="snap.trend and snap.trend.length > 1" values="snap.trend"/>
+                </div>
+            </div>
+        </header>
+
+        <div class="bfsi-home-grid">
+            <div class="bfsi-home-col">
+
+                <!-- ── My KPIs vs target ────────────────────────── -->
+                <section class="bfsi-card bfsi-pad">
+                    <h2 class="bfsi-section-title"><span class="lu lu-gauge"/> My KPIs vs target</h2>
+                    <div t-if="!(me.bars or []).length" class="bfsi-empty">
+                        <span class="lu lu-gauge"/> No performance data yet.
+                    </div>
+                    <div t-foreach="me.bars or []" t-as="bar" t-key="bar.name" class="bfsi-bar">
+                        <div class="bfsi-bar-head">
+                            <span t-esc="bar.name"/>
+                            <b><t t-esc="bar.value"/> <small>/ <t t-esc="bar.target"/></small></b>
+                        </div>
+                        <div class="bfsi-bar-track">
+                            <div class="bfsi-bar-fill"
+                                 t-attf-style="width:{{barPct(bar)}}%;background:{{barColor(bar.cat)}}"/>
+                            <div class="bfsi-bar-target"/>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── My plan checklist ────────────────────────── -->
+                <section class="bfsi-card bfsi-pad">
+                    <h2 class="bfsi-section-title"><span class="lu lu-clipboard-check"/> My action plan</h2>
+                    <div t-if="!plans.length" class="bfsi-empty">
+                        <span class="lu lu-clipboard-check"/>
+                        No active plan — your next coaching session will set one up.
+                    </div>
+                    <div t-foreach="plans" t-as="plan" t-key="plan.id" class="bfsi-plan">
+                        <div class="bfsi-plan-head">
+                            <button class="bfsi-plan-title"
+                                    t-on-click="() => props.onOpenDrawer('bfsi.action.plan', plan.id, 'plan')">
+                                <b t-esc="plan.name"/>
+                                <span class="lu lu-chevron-right"/>
+                            </button>
+                            <span t-if="plan.timeline_label"
+                                  t-attf-class="bfsi-chip {{plan.is_overdue ? 'bfsi-chip-crit' : 'bfsi-chip-info'}}"
+                                  t-esc="plan.timeline_label"/>
+                        </div>
+                        <div class="bfsi-plan-progress">
+                            <div class="bfsi-bar-track">
+                                <div class="bfsi-bar-fill" t-attf-style="width:{{plan.progress}}%;background:var(--bfsi-ok)"/>
+                            </div>
+                            <small><t t-esc="plan.completed_items"/>/<t t-esc="plan.item_count"/> done</small>
+                        </div>
+                        <button t-foreach="plan.items" t-as="item" t-key="item.id"
+                                t-attf-class="bfsi-check {{item.state === 'completed' ? 'bfsi-check-done' : ''}}"
+                                t-on-click="() => this.toggleItem(item)">
+                            <span t-attf-class="lu {{item.state === 'completed' ? 'lu-circle-check' : 'lu-circle-x'}} bfsi-check-ico"/>
+                            <span class="bfsi-check-text" t-esc="item.name"/>
+                            <small t-if="item.target_end_date" t-esc="item.target_end_date"/>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="bfsi-rail">
+                <!-- ── Nudges ───────────────────────────────────── -->
+                <section t-if="(me.nudges or []).length" class="bfsi-card bfsi-rail-card bfsi-nudges">
+                    <h2 class="bfsi-section-title"><span class="lu lu-sparkles"/> AI nudges</h2>
+                    <div t-foreach="me.nudges" t-as="n" t-key="n.id" class="bfsi-nudge">
+                        <b t-esc="n.title"/>
+                        <div class="bfsi-nudge-msg" t-out="n.message"/>
+                    </div>
+                </section>
+
+                <!-- ── Recent sessions ──────────────────────────── -->
+                <section class="bfsi-card bfsi-rail-card">
+                    <h2 class="bfsi-section-title"><span class="lu lu-messages-square"/> My sessions</h2>
+                    <div t-if="!sessions.length" class="bfsi-empty">
+                        <span class="lu lu-messages-square"/> No sessions yet.
+                    </div>
+                    <button t-foreach="sessions" t-as="s" t-key="s.id" class="bfsi-checkin"
+                            t-on-click="() => props.onOpenDrawer('hr.coaching.session', s.id, 'session')">
+                        <div class="bfsi-checkin-meta">
+                            <b t-esc="s.topic_label or s.name"/>
+                            <small><t t-esc="s.date"/> · <t t-esc="s.date_relative"/></small>
+                        </div>
+                        <span t-if="s.outcome_label" t-attf-class="bfsi-chip {{outcomeChip(s.outcome)}}"
+                              t-esc="s.outcome_label"/>
+                        <span class="lu lu-chevron-right bfsi-checkin-go"/>
+                    </button>
+                </section>
+            </aside>
+        </div>
+    </div>
+</t>
+
+</templates>

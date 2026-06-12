@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.KpiCard">
+    <div t-attf-class="bfsi-card bfsi-kpi-card {{toneClass}} {{props.onClick ? 'bfsi-kpi-clickable' : ''}}"
+         t-on-click="() => props.onClick &amp;&amp; props.onClick()">
+        <div class="bfsi-kpi-ico"><span t-attf-class="lu lu-{{props.icon}}"/></div>
+        <div class="bfsi-kpi-body">
+            <div class="bfsi-kpi-value"><t t-esc="props.value"/></div>
+            <div class="bfsi-kpi-label"><t t-esc="props.label"/></div>
+            <div t-if="props.sub" class="bfsi-kpi-sub"><t t-esc="props.sub"/></div>
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -313,11 +313,4 @@
         </field>
     </record>
 
-    <record id="action_bfsi_action_plan_my" model="ir.actions.act_window">
-        <field name="name">My Action Plans</field>
-        <field name="res_model">bfsi.action.plan</field>
-        <field name="view_mode">kanban,list,form</field>
-        <field name="context">{'search_default_my_plans': 1}</field>
-    </record>
-
 </odoo>

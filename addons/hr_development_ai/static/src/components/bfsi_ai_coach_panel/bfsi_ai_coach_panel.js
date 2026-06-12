@@ -218,9 +218,9 @@ export class BfsiAiCoachPanel extends Component {
 
         let greeting = `${timeGreeting}, ${name}! I'm your AI Performance Coach.`;
 
-        // Add context based on KPI data
+        // Add context based on KPI data (rounded — canonical display rule)
         if (this.state.kpiData) {
-            const score = this.state.kpiData.overall_score;
+            const score = Math.round(this.state.kpiData.overall_score || 0);
             const priority = this.state.kpiData.coaching_priority;
 
             if (score >= 90) {
@@ -551,12 +551,12 @@ export class BfsiAiCoachPanel extends Component {
     }
 
     /**
-     * Get rank movement icon
+     * Get rank movement icon (Lucide)
      */
     getRankMovementIcon(movement) {
-        if (movement > 0) return 'fa-arrow-up text-success';
-        if (movement < 0) return 'fa-arrow-down text-danger';
-        return 'fa-minus text-muted';
+        if (movement > 0) return 'lu-trending-up text-success';
+        if (movement < 0) return 'lu-trending-down text-danger';
+        return 'lu-dot text-muted';
     }
 }
 

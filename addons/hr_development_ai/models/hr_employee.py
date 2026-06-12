@@ -866,7 +866,10 @@ Coaching Priority: {context.get('coaching_priority', 'N/A')}
         
         if not employee:
             return {'error': 'No employee record found'}
-        
+
+        Scoring = self.env['bfsi.scoring']
+        own_snap = Scoring.employee_snapshot(employee.id)
+
         result = {
             'id': employee.id,
             'name': employee.name,
@@ -876,28 +879,37 @@ Coaching Priority: {context.get('coaching_priority', 'N/A')}
             'current_month_rank': employee.current_month_rank,
             'previous_month_rank': employee.previous_month_rank,
             'rank_movement': employee.rank_movement,
-            'latest_overall_score': employee.latest_overall_score,
-            'coaching_priority': employee.coaching_priority or 'low',
+            'latest_overall_score': own_snap['score'],
+            'has_kpi_data': own_snap['has_data'],
+            'coaching_priority': own_snap['priority'],
             'coaching_sessions_received': employee.coaching_sessions_received,
             'active_action_plan_count': employee.active_action_plan_count,
             'action_plan_completion_rate': employee.action_plan_completion_rate,
         }
-        
+
         # Detect role
         manager_types = ['branch_manager', 'regional_manager']
         is_manager = employee.banker_type in manager_types
         result['is_manager'] = is_manager
-        
+
         if is_manager and employee.branch_id:
+            # Canonical branch rollup — same number every screen shows
+            branch_snap = Scoring.branch_snapshot(employee.branch_id.id)
+            result['avg_team_score'] = branch_snap['avg_score']
+            result['team_coverage'] = branch_snap['coverage']
+            result['team_coverage_label'] = branch_snap['coverage_label']
+            result['team_needs_coaching'] = branch_snap['needs_coaching']
+
             # Load team data for managers
             team = self.env['hr.employee'].sudo().search([
                 ('branch_id', '=', employee.branch_id.id),
                 ('banker_type', 'not in', manager_types),
                 ('id', '!=', employee.id),
             ], order='current_month_rank asc')
-            
+
             team_data = []
             for member in team:
+                member_snap = Scoring.employee_snapshot(member.id)
                 team_data.append({
                     'id': member.id,
                     'name': member.name,
@@ -906,12 +918,13 @@ Coaching Priority: {context.get('coaching_priority', 'N/A')}
                     'current_month_rank': member.current_month_rank,
                     'previous_month_rank': member.previous_month_rank,
                     'rank_movement': member.rank_movement,
-                    'latest_overall_score': member.latest_overall_score,
-                    'coaching_priority': member.coaching_priority or 'low',
+                    'latest_overall_score': member_snap['score'],
+                    'has_kpi_data': member_snap['has_data'],
+                    'coaching_priority': member_snap['priority'],
                     'coaching_sessions_received': member.coaching_sessions_received,
                     'active_action_plan_count': member.active_action_plan_count,
                     'action_plan_completion_rate': member.action_plan_completion_rate,
                 })
             result['team_members'] = team_data
-        
+
         return result

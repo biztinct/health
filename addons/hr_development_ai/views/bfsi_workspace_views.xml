@@ -1,27 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- OWL Record Workspace client actions (one component, three configs) -->
+    <!-- ════════════════════════════════════════════════════════════
+         THE app — one adaptive coaching workspace (WorkspaceShell).
+         Role-aware: banker → My 360, branch manager → Team Cockpit,
+         regional manager → Region Rollup. All other screens
+         (Coaching / Performance / Analytics) live INSIDE the shell.
+         ════════════════════════════════════════════════════════════ -->
+    <record id="action_bfsi_coaching_workspace" model="ir.actions.client">
+        <field name="name">AI Performance Coaching</field>
+        <field name="tag">bfsi_coaching_workspace</field>
+        <field name="target">main</field>
+    </record>
 
+    <!-- Settings inside the workspace (KPI Targets + Integrations) -->
+    <record id="action_bfsi_settings" model="ir.actions.client">
+        <field name="name">Coaching Settings</field>
+        <field name="tag">bfsi_coaching_workspace</field>
+        <field name="target">main</field>
+        <field name="params">{'start': 'settings'}</field>
+    </record>
+
+    <!-- ── Deprecated aliases ──────────────────────────────────────
+         The old per-menu actions are kept but RE-TAGGED so stale
+         bookmarks and open tabs land inside the new shell instead of
+         erroring. Remove in a later release. -->
     <record id="action_bfsi_workspace_coaching" model="ir.actions.client">
         <field name="name">Coaching</field>
-        <field name="tag">bfsi_workspace</field>
+        <field name="tag">bfsi_coaching_workspace</field>
         <field name="target">main</field>
-        <field name="params">{'workspace': 'coaching'}</field>
+        <field name="params">{'start': 'coaching'}</field>
     </record>
 
     <record id="action_bfsi_workspace_performance" model="ir.actions.client">
         <field name="name">Performance</field>
-        <field name="tag">bfsi_workspace</field>
+        <field name="tag">bfsi_coaching_workspace</field>
         <field name="target">main</field>
-        <field name="params">{'workspace': 'performance'}</field>
+        <field name="params">{'start': 'performance'}</field>
     </record>
 
     <record id="action_bfsi_workspace_organization" model="ir.actions.client">
         <field name="name">Organization</field>
-        <field name="tag">bfsi_workspace</field>
+        <field name="tag">bfsi_coaching_workspace</field>
         <field name="target">main</field>
-        <field name="params">{'workspace': 'organization'}</field>
+        <field name="params">{'start': 'organization'}</field>
     </record>
 
 </odoo>

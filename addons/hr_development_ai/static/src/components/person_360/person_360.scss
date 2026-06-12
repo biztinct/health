@@ -1,0 +1,138 @@
+/* Person 360 — the per-banker hub */
+.bfsi-app .bfsi-p360 {
+  animation: bfsi-fade-up var(--t-slow) var(--ease-out);
+
+  .bfsi-p360-head {
+    display: flex; align-items: center; gap: var(--sp-5);
+    padding: var(--sp-5) var(--sp-6);
+    margin-bottom: var(--sp-5);
+    flex-wrap: wrap;
+
+    .bfsi-p360-avatar {
+      width: 72px; height: 72px; border-radius: var(--r-pill); object-fit: cover;
+      box-shadow: var(--sh-ring);
+    }
+    .bfsi-p360-id {
+      flex: 1; min-width: 220px;
+      h1 { font-size: 20px; font-weight: 800; margin: 0; }
+      p { margin: 2px 0 8px; font-size: 12.5px; color: var(--bfsi-muted); }
+    }
+    .bfsi-p360-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .bfsi-p360-scorebox {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .bfsi-p360-cta { display: flex; flex-direction: column; gap: var(--sp-2); }
+  }
+
+  .bfsi-p360-root {
+    background: var(--bfsi-grad-soft);
+    border: 1px solid var(--bfsi-indigo-100);
+    border-radius: var(--r-md);
+    padding: 10px 14px; font-size: 13px; margin: 0 0 var(--sp-4);
+    .lu { color: var(--bfsi-accent); margin-right: 4px; }
+  }
+
+  .bfsi-p360-ai {
+    margin-top: var(--sp-3);
+    .bfsi-p360-aitext {
+      background: var(--bfsi-indigo-50); border-radius: var(--r-md);
+      padding: 12px 14px; font-size: 13px; line-height: 1.55;
+      animation: bfsi-fade-up var(--t-med) var(--ease-out);
+      .lu { color: var(--bfsi-accent); margin-right: 4px; }
+    }
+  }
+
+  .bfsi-p360-past { margin-top: var(--sp-5); .bfsi-section-sub { margin-bottom: var(--sp-2); } }
+
+  .bfsi-p360-timeline {
+    position: relative; display: flex; flex-direction: column;
+    &::before {
+      content: ""; position: absolute; left: 5px; top: 12px; bottom: 12px;
+      width: 2px; background: var(--bfsi-line-soft);
+    }
+    .bfsi-p360-session {
+      display: flex; align-items: center; gap: var(--sp-3);
+      border: 0; background: transparent; cursor: pointer; text-align: left;
+      padding: 9px 8px 9px 0; border-radius: var(--r-md); position: relative;
+      &:hover { background: var(--bfsi-indigo-50); }
+      .bfsi-p360-dot {
+        width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto;
+        background: var(--bfsi-primary); border: 3px solid #fff;
+        box-shadow: 0 0 0 1.5px var(--bfsi-indigo-200); z-index: 1;
+      }
+      .bfsi-p360-session-meta {
+        flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.3;
+        b { font-size: 13px; }
+        small { font-size: 11.5px; color: var(--bfsi-muted); }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .bfsi-p360-head { padding: var(--sp-4); gap: var(--sp-3); }
+    .bfsi-p360-cta { flex-direction: row; width: 100%; }
+  }
+}
+
+/* quick check-in dialog (portal-ish overlay) */
+.bfsi-app .bfsi-dialog-scrim {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(20, 16, 48, .5); backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  animation: bfsi-fade-in var(--t-fast) ease;
+
+  .bfsi-dialog {
+    background: #fff; border-radius: var(--r-lg); box-shadow: var(--sh-lg);
+    width: 440px; max-width: calc(100vw - 32px);
+    padding: var(--sp-6);
+    animation: bfsi-fade-up var(--t-med) var(--ease-out);
+    h3 {
+      font-size: 15.5px; font-weight: 800; margin: 0 0 var(--sp-4);
+      display: flex; align-items: center; gap: 8px;
+      .lu { color: var(--bfsi-primary); }
+    }
+    .bfsi-dialog-label { font-size: 12px; font-weight: 700; color: var(--bfsi-muted); margin-bottom: var(--sp-2); }
+    .bfsi-dialog-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: var(--sp-4); }
+    .bfsi-outcome-chip {
+      border: 1.5px solid var(--bfsi-line); background: #fff; border-radius: var(--r-pill);
+      padding: 7px 13px; font-size: 12.5px; font-weight: 700; cursor: pointer;
+      transition: all var(--t-fast) ease;
+      &:hover { border-color: var(--bfsi-accent); color: var(--bfsi-accent); }
+      &.on {
+        background: var(--bfsi-grad); color: #fff; border-color: transparent;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, .35);
+      }
+    }
+    .bfsi-dialog-notes {
+      width: 100%; min-height: 90px; resize: vertical;
+      border: 1.5px solid var(--bfsi-line); border-radius: var(--r-md);
+      padding: 10px 12px; font-size: 13px; font-family: inherit;
+      &:focus { outline: none; border-color: var(--bfsi-primary); box-shadow: var(--sh-ring); }
+    }
+    .bfsi-dialog-actions {
+      display: flex; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-4);
+    }
+  }
+}
+
+/* tab pills — shared by Person 360, Settings and future screens */
+.bfsi-app .bfsi-p360-tabs {
+  display: flex; gap: var(--sp-2); margin-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--bfsi-line-soft); padding-bottom: var(--sp-3);
+  .bfsi-p360-tab {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 0; background: transparent; cursor: pointer;
+    font-size: 13px; font-weight: 700; color: var(--bfsi-muted);
+    padding: 7px 13px; border-radius: var(--r-pill);
+    transition: all var(--t-fast) ease;
+    small {
+      background: var(--bfsi-line-soft); border-radius: var(--r-pill);
+      padding: 1px 7px; font-size: 10.5px; font-weight: 800;
+    }
+    &:hover { color: var(--bfsi-primary); }
+    &.on {
+      background: var(--bfsi-indigo-50); color: var(--bfsi-primary);
+      small { background: var(--bfsi-indigo-100); }
+    }
+  }
+}

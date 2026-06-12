@@ -11,7 +11,7 @@ class BFSIPerformanceKPI(models.Model):
     _description = 'BFSI Performance KPI'
     _inherit = ['mail.thread']
     _order = 'period_date desc, employee_id'
-    _rec_name = 'display_name'
+    _rec_name = 'name'
 
     name = fields.Char(
         string='Name',
@@ -568,34 +568,34 @@ Provide analysis in the following JSON format:
 
         # Strengths
         if data.get('strengths'):
-            lines = ['✅ STRENGTHS']
+            lines = ['STRENGTHS']
             for item in data['strengths']:
                 lines.append(f'  • {item}')
             sections.append('\n'.join(lines))
 
         # Improvement Areas
         if data.get('improvement_areas'):
-            lines = ['⚠️ IMPROVEMENT AREAS']
+            lines = ['IMPROVEMENT AREAS']
             for item in data['improvement_areas']:
                 lines.append(f'  • {item}')
             sections.append('\n'.join(lines))
 
         # Root Causes
         if data.get('root_causes'):
-            lines = ['🔍 ROOT CAUSES']
+            lines = ['ROOT CAUSES']
             for item in data['root_causes']:
                 lines.append(f'  • {item}')
             sections.append('\n'.join(lines))
 
         # Quick Wins
         if data.get('quick_wins'):
-            lines = ['🚀 QUICK WINS']
+            lines = ['QUICK WINS']
             for i, item in enumerate(data['quick_wins'], 1):
                 lines.append(f'  {i}. {item}')
             sections.append('\n'.join(lines))
 
         # Coaching Focus
         if data.get('coaching_focus'):
-            sections.append(f'🎯 COACHING FOCUS\n  {data["coaching_focus"]}')
+            sections.append(f'COACHING FOCUS\n  {data["coaching_focus"]}')
 
         return '\n\n'.join(sections) if sections else response

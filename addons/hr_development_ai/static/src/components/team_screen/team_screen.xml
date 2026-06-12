@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.TeamScreen">
+    <div class="bfsi-home bfsi-team">
+        <header class="bfsi-team-head">
+            <div>
+                <h1 class="bfsi-team-title"><span class="lu lu-users"/> Team</h1>
+                <p class="bfsi-section-sub" t-esc="state.branchName"/>
+            </div>
+            <div class="bfsi-team-tools">
+                <div class="bfsi-team-search">
+                    <span class="lu lu-search"/>
+                    <input placeholder="Search the team…" t-att-value="state.search"
+                           t-on-input="(ev) => state.search = ev.target.value"/>
+                </div>
+                <select class="bfsi-team-sort" t-on-change="(ev) => state.sort = ev.target.value">
+                    <option value="priority">Needs coaching first</option>
+                    <option value="score_asc">Lowest score</option>
+                    <option value="score_desc">Top score</option>
+                    <option value="rank">By rank</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="bfsi-team-chips">
+            <button t-foreach="[['critical','Critical'],['high','High'],['medium','Medium'],['low','On track']]"
+                    t-as="p" t-key="p[0]"
+                    t-attf-class="bfsi-chip {{prioChip(p[0])}} bfsi-team-chip {{state.prio === p[0] ? 'on' : ''}}"
+                    t-on-click="() => this.togglePrio(p[0])">
+                <t t-esc="p[1]"/> <t t-esc="prioCounts[p[0]] or 0"/>
+            </button>
+        </div>
+
+        <div t-if="state.loading" class="bfsi-empty bfsi-loading">
+            <span class="lu lu-refresh-cw bfsi-spin"/> Loading team…
+        </div>
+        <div t-elif="!filtered.length" class="bfsi-empty">
+            <span class="lu lu-users"/> No one matches these filters.
+        </div>
+
+        <section class="bfsi-team-grid">
+            <div t-foreach="filtered" t-as="row" t-key="row.id" class="bfsi-card bfsi-team-card">
+                <button class="bfsi-team-card-top" t-on-click="() => props.onOpenPerson(row.id)">
+                    <div class="bfsi-avatar" t-attf-style="width:46px;height:46px;font-size:17px;background:{{row.color}}">
+                        <t t-esc="row.initial"/>
+                    </div>
+                    <div class="bfsi-team-card-id">
+                        <b t-esc="row.name"/>
+                        <small><t t-esc="row.role"/> · #<t t-esc="row.rank"/></small>
+                    </div>
+                    <ScoreRing value="row.score" size="48" thickness="4"/>
+                </button>
+                <div class="bfsi-team-card-why" t-esc="row.why"/>
+                <div class="bfsi-team-card-meta">
+                    <span t-attf-class="bfsi-chip {{prioChip(row.priority)}}" t-esc="row.priority_label"/>
+                    <span t-if="row.being_coached" class="bfsi-chip bfsi-chip-ok">On plan</span>
+                    <span t-if="row.move" class="bfsi-chip bfsi-chip-muted"
+                          t-attf-style="color:{{moveTone(row.move)}}">
+                        <t t-esc="row.move > 0 ? '+' + row.move : row.move"/> ranks
+                    </span>
+                    <Sparkline t-if="row.trend and row.trend.length > 1" values="row.trend" width="64" height="22"/>
+                </div>
+                <div class="bfsi-team-card-actions">
+                    <button class="bfsi-btn bfsi-btn-ghost" t-on-click="() => props.onOpenPerson(row.id)">
+                        <span class="lu lu-user"/> 360°
+                    </button>
+                    <button class="bfsi-btn bfsi-btn-primary" t-on-click="() => props.onCoach(row.id)">
+                        <span class="lu lu-sparkles"/> Coach now
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+</t>
+
+</templates>

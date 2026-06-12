@@ -263,9 +263,9 @@ class HRCoachingSession(models.Model):
             # Italic
             html = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', html)
             # Numbered items
-            html = re.sub(r'^(\d+)\.\s+(.+)$', r'<div style="padding:4px 0 4px 24px;position:relative;"><span style="position:absolute;left:0;color:#4F46E5;font-weight:700;">\1.</span>\2</div>', html, flags=re.MULTILINE)
+            html = re.sub(r'^(\d+)\.\s+(.+)$', r'<div style="padding:4px 0 4px 24px;position:relative;"><span style="position:absolute;left:0;color:#2563EB;font-weight:700;">\1.</span>\2</div>', html, flags=re.MULTILINE)
             # Bullet items
-            html = re.sub(r'^[\-\*•]\s+(.+)$', r'<div style="padding:2px 0 2px 18px;position:relative;color:#6B7280;font-size:13px;"><span style="position:absolute;left:4px;top:9px;width:5px;height:5px;background:#7C3AED;border-radius:50%;display:inline-block;"></span>\1</div>', html, flags=re.MULTILINE)
+            html = re.sub(r'^[\-\*•]\s+(.+)$', r'<div style="padding:2px 0 2px 18px;position:relative;color:#6B7280;font-size:13px;"><span style="position:absolute;left:4px;top:9px;width:5px;height:5px;background:#1E40AF;border-radius:50%;display:inline-block;"></span>\1</div>', html, flags=re.MULTILINE)
             # Line breaks
             html = html.replace('\n\n', '</p><p style="margin:6px 0;">')
             html = html.replace('\n', '<br/>')
@@ -273,7 +273,7 @@ class HRCoachingSession(models.Model):
 
         for record in self:
             if not record.ai_transcript:
-                record.ai_chat_history = '<div style="text-align:center;padding:40px 20px;color:#9CA3AF;"><i class="fa fa-comments" style="font-size:2rem;margin-bottom:8px;display:block;"></i><p>No messages yet. Start a conversation with your AI coach!</p></div>'
+                record.ai_chat_history = '<div style="text-align:center;padding:40px 20px;color:#9CA3AF;"><p style="font-size:1rem;">No messages yet. Start a conversation with your AI coach!</p></div>'
                 continue
 
             try:
@@ -305,12 +305,10 @@ class HRCoachingSession(models.Model):
                     if role == 'user':
                         html_parts.append(f'''
                         <div style="display:flex;gap:10px;align-items:flex-start;">
-                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">
-                                <i class="fa fa-user"></i>
-                            </div>
+                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2563EB,#1E40AF);color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700;">You</div>
                             <div style="flex:1;">
-                                <div style="font-size:12px;font-weight:600;color:#4F46E5;margin-bottom:3px;"><i class="fa fa-user" style="margin-right:4px;"></i> You {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
-                                <div style="background:linear-gradient(135deg,#4F46E5,#7C3AED);color:white;padding:10px 14px;border-radius:14px 14px 14px 4px;font-size:13.5px;line-height:1.5;">
+                                <div style="font-size:12px;font-weight:600;color:#2563EB;margin-bottom:3px;">You {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
+                                <div style="background:linear-gradient(135deg,#2563EB,#1E40AF);color:white;padding:10px 14px;border-radius:14px 14px 14px 4px;font-size:13.5px;line-height:1.5;">
                                     {content}
                                 </div>
                             </div>
@@ -319,12 +317,10 @@ class HRCoachingSession(models.Model):
                         formatted_content = _md_to_html(content)
                         html_parts.append(f'''
                         <div style="display:flex;gap:10px;align-items:flex-start;">
-                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#312e81,#7C3AED);color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">
-                                <i class="fa fa-robot"></i>
-                            </div>
+                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0F1E45,#1E40AF);color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700;">AI</div>
                             <div style="flex:1;">
-                                <div style="font-size:12px;font-weight:600;color:#312e81;margin-bottom:3px;"><i class="fa fa-magic" style="margin-right:4px;color:#A78BFA;"></i> AI Coach {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
-                                <div style="background:linear-gradient(135deg,#ffffff,#f5f3ff);border:1px solid rgba(79,70,229,0.1);padding:12px 14px;border-radius:14px 14px 14px 4px;font-size:13.5px;line-height:1.6;color:#1e1b4b;">
+                                <div style="font-size:12px;font-weight:600;color:#0F1E45;margin-bottom:3px;">AI Coach {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
+                                <div style="background:linear-gradient(135deg,#ffffff,#EFF6FF);border:1px solid rgba(37,99,235,0.1);padding:12px 14px;border-radius:14px 14px 14px 4px;font-size:13.5px;line-height:1.6;color:#0B1530;">
                                     <p style="margin:0;">{formatted_content}</p>
                                 </div>
                             </div>
@@ -347,16 +343,25 @@ class HRCoachingSession(models.Model):
     def action_complete_session(self):
         """Complete coaching session"""
         self.ensure_one()
+        if self.is_bfsi_session and not self.outcome:
+            raise UserError(_('Record the session outcome before completing — '
+                              'it powers the coaching analytics.'))
         self.state = 'completed'
 
-        # Create follow-up activity if next session scheduled
+        # Create follow-up activity if next session scheduled (non-fatal:
+        # a notification hiccup must never block completing the session)
         if self.next_session_date:
-            self.activity_schedule(
-                'mail.mail_activity_data_todo',
-                date_deadline=self.next_session_date.date(),
-                summary=f'Next coaching session: {self.name}',
-                user_id=self.coach_id.user_id.id if self.coach_id else self.env.user.id
-            )
+            try:
+                self.activity_schedule(
+                    'mail.mail_activity_data_todo',
+                    date_deadline=self.next_session_date.date(),
+                    summary=f'Next coaching session: {self.name}',
+                    user_id=self.coach_id.user_id.id if self.coach_id else self.env.user.id
+                )
+            except Exception as e:  # noqa: BLE001
+                import logging
+                logging.getLogger(__name__).warning(
+                    'Coaching session follow-up activity skipped: %s', e)
 
     def action_cancel_session(self):
         """Cancel coaching session"""
@@ -408,25 +413,25 @@ PERFORMANCE DATA:
 
 Generate questions in EXACTLY this HTML format (do NOT use markdown):
 
-<h4>🎯 Opening Questions</h4>
+<h4>Opening Questions</h4>
 <p>Use these to start the conversation and build rapport</p>
 <ol>
 <li><strong>Question text here</strong><br/><em>Purpose: why this question matters</em></li>
 </ol>
 
-<h4>🔍 Probing Questions</h4>
+<h4>Probing Questions</h4>
 <p>Use these to explore root causes and deeper issues</p>
 <ol>
 <li><strong>Question text here</strong><br/><em>Purpose: why this question matters</em></li>
 </ol>
 
-<h4>💡 Action-Oriented Questions</h4>
+<h4>Action-Oriented Questions</h4>
 <p>Use these to drive commitments and next steps</p>
 <ol>
 <li><strong>Question text here</strong><br/><em>Purpose: why this question matters</em></li>
 </ol>
 
-<h4>📋 Coaching Tips</h4>
+<h4>Coaching Tips</h4>
 <ul>
 <li>Tip text here</li>
 </ul>
@@ -549,26 +554,26 @@ THE QUESTIONS THE MANAGER HAS FOR THIS PHASE:
 Generate coaching suggestions in EXACTLY this HTML format:
 
 <div class="ai-suggest-section">
-<h5>🗣️ Talking Points</h5>
+<h5>Talking Points</h5>
 <ul>
 <li><strong>Point 1:</strong> What to say, referencing specific data from the banker's performance</li>
 <li><strong>Point 2:</strong> Another talking point with concrete examples</li>
 <li><strong>Point 3:</strong> ...</li>
 </ul>
 
-<h5>🔢 Data to Reference</h5>
+<h5>Data to Reference</h5>
 <ul>
 <li><strong>Metric:</strong> Specific number and what it means</li>
 <li><strong>Comparison:</strong> How it compares to team/target</li>
 </ul>
 
-<h5>⚡ Handling Pushback</h5>
+<h5>Handling Pushback</h5>
 <ul>
 <li><strong>If they say:</strong> "<em>common pushback</em>"<br/><strong>Respond with:</strong> "suggested response with empathy and data"</li>
 <li><strong>If they say:</strong> "<em>another common pushback</em>"<br/><strong>Respond with:</strong> "suggested response"</li>
 </ul>
 
-<h5>✅ Key Message to Drive Home</h5>
+<h5>Key Message to Drive Home</h5>
 <p><strong>The one takeaway:</strong> A clear, motivating message the banker should remember from this part of the conversation.</p>
 </div>
 
@@ -858,7 +863,7 @@ Return ONLY the JSON array, nothing else."""
             "What specific actions can improve my conversion rate?",
         ]
         categories.append({
-            'title': '📊 Performance Review',
+            'title': 'Performance Review',
             'icon': 'fa-line-chart',
             'questions': perf_questions
         })
@@ -871,7 +876,7 @@ Return ONLY the JSON array, nothing else."""
             "Give me tips for better client follow-up strategies.",
         ]
         categories.append({
-            'title': '🎯 Sales & Client Engagement',
+            'title': 'Sales & Client Engagement',
             'icon': 'fa-bullseye',
             'questions': sales_questions
         })
@@ -914,7 +919,7 @@ Return ONLY the JSON array, nothing else."""
             "What daily habits will improve my performance?",
         ]
         categories.append({
-            'title': '📋 Goals & Action Planning',
+            'title': 'Goals & Action Planning',
             'icon': 'fa-tasks',
             'questions': goal_questions
         })
@@ -927,7 +932,7 @@ Return ONLY the JSON array, nothing else."""
             "How do I develop better time management skills?",
         ]
         categories.append({
-            'title': '💡 Skill Development',
+            'title': 'Skill Development',
             'icon': 'fa-graduation-cap',
             'questions': skill_questions
         })
@@ -1013,9 +1018,9 @@ Return ONLY the JSON array, nothing else."""
             role = msg.get('role', 'unknown')
             content = msg.get('content', '')
             if role == 'user':
-                lines.append(f"👤 You:\n{content}")
+                lines.append(f"You:\n{content}")
             elif role == 'assistant':
-                lines.append(f"🤖 AI Coach:\n{content}")
+                lines.append(f"AI Coach:\n{content}")
             else:
                 lines.append(f"{role}:\n{content}")
         return '\n\n─────────────────────\n\n'.join(lines)
@@ -1027,14 +1032,26 @@ Return ONLY the JSON array, nothing else."""
         separator = '─────────────────────'
         blocks = [b.strip() for b in text.split(separator) if b.strip()]
         messages = []
+        # accept both the current plain markers and the legacy emoji ones
+        user_markers = ('You:', '👤 You:')
+        ai_markers = ('AI Coach:', '🤖 AI Coach:')
         for block in blocks:
-            if block.startswith('👤 You:'):
-                content = block[len('👤 You:'):].strip()
-                messages.append({'role': 'user', 'content': content})
-            elif block.startswith('🤖 AI Coach:'):
-                content = block[len('🤖 AI Coach:'):].strip()
-                messages.append({'role': 'assistant', 'content': content})
-            else:
+            matched = False
+            for marker in user_markers:
+                if block.startswith(marker):
+                    messages.append({'role': 'user',
+                                     'content': block[len(marker):].strip()})
+                    matched = True
+                    break
+            if matched:
+                continue
+            for marker in ai_markers:
+                if block.startswith(marker):
+                    messages.append({'role': 'assistant',
+                                     'content': block[len(marker):].strip()})
+                    matched = True
+                    break
+            if not matched:
                 # Fallback
                 messages.append({'role': 'assistant', 'content': block})
         return messages

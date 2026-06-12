@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.HomeManager">
+    <div class="bfsi-home">
+
+        <!-- ── Hero ─────────────────────────────────────────────── -->
+        <header class="bfsi-hero">
+            <div class="bfsi-hero-text">
+                <h1>
+                    <t t-if="props.cockpitOnly" t-esc="(d.branch and d.branch.name) or ''"/>
+                    <t t-else="" t-esc="greeting()"/>
+                </h1>
+                <p>
+                    <span t-if="!props.cockpitOnly and d.branch" t-esc="d.branch.name"/>
+                    <span t-if="d.today_label"> · <t t-esc="d.today_label"/></span>
+                </p>
+            </div>
+            <button class="bfsi-btn bfsi-hero-refresh" t-on-click="() => props.onRefresh()" title="Refresh">
+                <span class="lu lu-refresh-cw"/>
+            </button>
+        </header>
+
+        <!-- ── KPI strip ────────────────────────────────────────── -->
+        <section class="bfsi-strip">
+            <div class="bfsi-card bfsi-strip-score">
+                <ScoreRing value="strip.avg_score or 0" size="74"/>
+                <div>
+                    <div class="bfsi-strip-score-label">Team score</div>
+                    <div class="bfsi-strip-score-sub" t-esc="strip.coverage_label or ''"/>
+                </div>
+            </div>
+            <KpiCard icon="'triangle-alert'" tone="'danger'"
+                     value="strip.needs_coaching or 0" label="'Need coaching'"
+                     sub="'critical or high priority'"/>
+            <KpiCard icon="'clipboard-check'" tone="'info'"
+                     value="strip.active_plans or 0" label="'Active plans'"
+                     sub="(strip.overdue_plans or 0) + ' overdue'"/>
+            <KpiCard icon="'messages-square'" tone="'ok'"
+                     value="strip.sessions_this_month or 0" label="'Sessions this month'"
+                     sub="(strip.plan_completion_rate or 0) + '% plan completion'"/>
+            <KpiCard icon="'trending-up'" tone="'brand'"
+                     value="strip.revenue_formatted or '—'" label="'Latest revenue'"
+                     sub="'team total'"/>
+        </section>
+
+        <div class="bfsi-home-grid">
+
+            <!-- ── Coaching queue ───────────────────────────────── -->
+            <section class="bfsi-card bfsi-queue">
+                <div class="bfsi-queue-head">
+                    <h2 class="bfsi-section-title">
+                        <span class="lu lu-list-checks"/> Coaching queue
+                    </h2>
+                    <span class="bfsi-section-sub">Ranked by who'll move the needle most</span>
+                </div>
+
+                <div t-if="!queue.length" class="bfsi-empty">
+                    <span class="lu lu-circle-check"/>
+                    No one on the queue — the team is on track.
+                </div>
+
+                <div t-foreach="queue" t-as="row" t-key="row.id"
+                     t-attf-class="bfsi-qrow {{row.needs_coaching ? 'bfsi-qrow-hot' : ''}}">
+                    <button class="bfsi-qrow-person" t-on-click="() => props.onOpenPerson(row.id)"
+                            title="Open 360° profile">
+                        <div class="bfsi-avatar" t-attf-style="width:42px;height:42px;font-size:16px;background:{{row.color}}">
+                            <t t-esc="row.initial"/>
+                        </div>
+                        <div class="bfsi-qrow-main">
+                            <div class="bfsi-qrow-name">
+                                <b t-esc="row.name"/>
+                                <span class="bfsi-qrow-role"><t t-esc="row.role"/> · #<t t-esc="row.rank"/></span>
+                            </div>
+                            <div class="bfsi-qrow-why">
+                                <span t-esc="row.why"/>
+                                <span t-if="row.move" t-attf-style="color:{{moveTone(row.move)}};font-weight:700">
+                                    <t t-esc="row.move > 0 ? '+' + row.move : row.move"/>
+                                </span>
+                            </div>
+                        </div>
+                    </button>
+                    <div class="bfsi-qrow-score">
+                        <ScoreRing value="row.score" size="44" thickness="4"/>
+                    </div>
+                    <span t-attf-class="bfsi-chip {{prioChip(row.priority)}}" t-esc="row.priority_label"/>
+                    <span t-if="row.being_coached" class="bfsi-chip bfsi-chip-ok">On plan</span>
+                    <div class="bfsi-qrow-actions">
+                        <button class="bfsi-btn bfsi-btn-ghost" t-on-click="() => props.onOpenPerson(row.id)">
+                            <span class="lu lu-user"/> 360°
+                        </button>
+                        <button class="bfsi-btn bfsi-btn-primary" t-on-click="() => props.onCoach(row.id)">
+                            <span class="lu lu-sparkles"/> Coach now
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Right rail: check-ins due ────────────────────── -->
+            <aside class="bfsi-rail">
+                <section class="bfsi-card bfsi-rail-card">
+                    <h2 class="bfsi-section-title"><span class="lu lu-clock"/> Check-ins due</h2>
+                    <div t-if="!checkins.length" class="bfsi-empty">
+                        <span class="lu lu-circle-check"/> Nothing due today.
+                    </div>
+                    <button t-foreach="checkins" t-as="c" t-key="c.plan_id"
+                            class="bfsi-checkin"
+                            t-on-click="() => props.onOpenDrawer('bfsi.action.plan', c.plan_id, 'plan')">
+                        <div class="bfsi-avatar" t-attf-style="width:30px;height:30px;font-size:12px;background:{{c.employee.color}}">
+                            <t t-esc="c.employee.initial"/>
+                        </div>
+                        <div class="bfsi-checkin-meta">
+                            <b t-esc="c.employee.name"/>
+                            <small>
+                                <t t-esc="c.due"/> · <t t-esc="c.progress"/>% done
+                            </small>
+                        </div>
+                        <span t-if="c.is_overdue" class="bfsi-chip bfsi-chip-crit">Overdue</span>
+                        <span class="lu lu-chevron-right bfsi-checkin-go"/>
+                    </button>
+                </section>
+            </aside>
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Client Action for Business Impact Dashboard -->
+    <!-- Business Impact Dashboard — deprecated alias, re-tagged into the
+         shell (Analytics tab) so stale bookmarks keep working -->
     <record id="action_bfsi_ai_dashboard" model="ir.actions.client">
         <field name="name">Business Impact Dashboard</field>
-        <field name="tag">bfsi_ai_dashboard</field>
+        <field name="tag">bfsi_coaching_workspace</field>
         <field name="target">main</field>
+        <field name="params">{'start': 'analytics'}</field>
     </record>
-
-    <!-- Menu Item under BFSI Performance Coaching -->
-    <menuitem id="menu_bfsi_ai_dashboard"
-        name="Business Impact Dashboard"
-        parent="menu_bfsi_root"
-        action="action_bfsi_ai_dashboard"
-        sequence="2"
-        groups="hr_development_ai.group_bfsi_banker"/>
 
 </odoo>

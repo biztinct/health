@@ -2,86 +2,19 @@
 <odoo>
 
     <!-- ════════════════════════════════════════════════════════════
-         AI Performance Coaching — streamlined IA
-         5 top sections: Command Center · Coaching · Performance ·
-         Organization · Configuration. Organized around the manager's
-         job, not the database tables.
+         AI Performance Coaching — single-action app.
+         Clicking the app launches the adaptive workspace; ALL
+         navigation (Home · Team · Coaching · Performance · Analytics ·
+         Settings) lives in the workspace's own left sidebar, so there
+         are NO redundant second-level top menus.
          ════════════════════════════════════════════════════════════ -->
 
     <menuitem
         id="menu_bfsi_root"
         name="AI Performance Coaching"
         web_icon="hr_development_ai,static/description/icon.png"
-        sequence="45"/>
-
-    <!-- ── 1 · COMMAND CENTER ─────────────────────────────────────
-         The role-adaptive home: manager sees the team cockpit +
-         coaching queue; banker sees their own performance. This is
-         where the Coach buttons launch the guided wizard. -->
-    <menuitem
-        id="menu_bfsi_command_center"
-        name="Command Center"
-        parent="menu_bfsi_root"
-        action="action_bfsi_manager_dashboard"
-        sequence="1"/>
-
-    <!-- (Business Impact Dashboard menu lives in bfsi_ai_dashboard_views.xml,
-         re-parented to this root at sequence 2) -->
-
-    <!-- ── 2 · COACHING ──────────────────────────────────────────────
-         One OWL workspace (Sessions / Strategies / Action Plans) with a
-         role-aware My/Team toggle — replaces the 5 old list menus. -->
-    <menuitem
-        id="menu_bfsi_coaching"
-        name="Coaching"
-        parent="menu_bfsi_root"
-        action="action_bfsi_workspace_coaching"
-        sequence="20"/>
-
-    <!-- ── 3 · PERFORMANCE — OWL workspace (KPIs / Targets) ────────── -->
-    <menuitem
-        id="menu_bfsi_performance"
-        name="Performance"
-        parent="menu_bfsi_root"
-        action="action_bfsi_workspace_performance"
-        sequence="30"/>
-
-    <!-- ── 4 · ORGANIZATION — OWL workspace (Branches / Regions) ───── -->
-    <menuitem
-        id="menu_bfsi_organization"
-        name="Organization"
-        parent="menu_bfsi_root"
-        action="action_bfsi_workspace_organization"
-        sequence="40"
-        groups="hr_development_ai.group_bfsi_branch_manager"/>
-
-    <!-- ── 5 · CONFIGURATION ─────────────────────────────────────── -->
-    <menuitem
-        id="menu_bfsi_configuration"
-        name="Configuration"
-        parent="menu_bfsi_root"
-        sequence="100"
-        groups="hr_development_ai.group_hr_development_admin"/>
-
-    <menuitem
-        id="menu_bfsi_kpi_target_config"
-        name="KPI Target Templates"
-        parent="menu_bfsi_configuration"
-        action="action_bfsi_kpi_target"
-        sequence="1"/>
-
-    <menuitem
-        id="menu_bfsi_kpi_integration"
-        name="KPI Integration"
-        parent="menu_bfsi_configuration"
-        action="action_bfsi_kpi_integration"
-        sequence="3"/>
-
-    <menuitem
-        id="menu_bfsi_ai_provider_config"
-        name="AI Provider"
-        parent="menu_bfsi_configuration"
-        action="action_ai_provider_config"
-        sequence="5"/>
+        action="action_bfsi_coaching_workspace"
+        sequence="45"
+        groups="hr_development_ai.group_bfsi_banker"/>
 
 </odoo>

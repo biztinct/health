@@ -239,6 +239,18 @@ class BFSIActionPlan(models.Model):
         days = freq_days.get(self.check_in_frequency, 7)
         self.next_check_in_date = today + timedelta(days=days)
 
+    def _safe_notify(self, user_id, summary, note):
+        """Schedule a manager activity WITHOUT letting a notification failure
+        (mail config, locking, access) roll back the state change that matters."""
+        try:
+            self.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=user_id, summary=summary, note=note)
+        except Exception as e:  # noqa: BLE001
+            import logging
+            logging.getLogger(__name__).warning(
+                'Action plan notification skipped: %s', e)
+
     def action_commit(self):
         """Banker commits to the action plan"""
         self.ensure_one()
@@ -250,14 +262,11 @@ class BFSIActionPlan(models.Model):
             'commitment_date': fields.Date.today()
         })
 
-        # Notify manager
+        # Notify manager (non-fatal)
         if self.manager_id and self.manager_id.user_id:
-            self.activity_schedule(
-                'mail.mail_activity_data_todo',
-                user_id=self.manager_id.user_id.id,
-                summary=_('Action Plan Committed'),
-                note=_('%s has committed to their action plan.') % self.employee_id.name
-            )
+            self._safe_notify(
+                self.manager_id.user_id.id, _('Action Plan Committed'),
+                _('%s has committed to their action plan.') % self.employee_id.name)
 
     def action_start(self):
         """Start working on the action plan"""
@@ -275,14 +284,12 @@ class BFSIActionPlan(models.Model):
             'completion_date': fields.Date.today()
         })
 
-        # Notify manager for review
+        # Notify manager for review (non-fatal)
         if self.manager_id and self.manager_id.user_id:
-            self.activity_schedule(
-                'mail.mail_activity_data_todo',
-                user_id=self.manager_id.user_id.id,
-                summary=_('Action Plan Completed - Review Required'),
-                note=_('%s has completed their action plan. Please review and rate effectiveness.') % self.employee_id.name
-            )
+            self._safe_notify(
+                self.manager_id.user_id.id,
+                _('Action Plan Completed - Review Required'),
+                _('%s has completed their action plan. Please review and rate effectiveness.') % self.employee_id.name)
 
     def action_cancel(self):
         """Cancel the action plan"""

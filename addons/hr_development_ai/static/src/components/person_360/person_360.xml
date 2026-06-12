@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.Person360">
+    <div class="bfsi-p360">
+
+        <div t-if="state.loading" class="bfsi-empty bfsi-loading">
+            <span class="lu lu-refresh-cw bfsi-spin"/> Loading profile…
+        </div>
+        <div t-elif="state.error" class="bfsi-empty">
+            <span class="lu lu-circle-alert"/> <t t-esc="state.error"/>
+        </div>
+
+        <t t-elif="state.d">
+            <!-- ── Header card ─────────────────────────────────── -->
+            <header class="bfsi-card bfsi-p360-head">
+                <img class="bfsi-p360-avatar" t-att-src="d.employee.avatar_url" t-att-alt="d.employee.name"/>
+                <div class="bfsi-p360-id">
+                    <h1 t-esc="d.employee.name"/>
+                    <p>
+                        <t t-esc="d.employee.role"/>
+                        <t t-if="d.employee.branch_name"> · <t t-esc="d.employee.branch_name"/></t>
+                    </p>
+                    <div class="bfsi-p360-chips">
+                        <span t-attf-class="bfsi-chip {{prioChip(snap.priority)}}" t-esc="prioLabel(snap.priority)"/>
+                        <span t-if="snap.rank" class="bfsi-chip bfsi-chip-muted">Rank #<t t-esc="snap.rank"/></span>
+                        <span t-if="snap.movement" class="bfsi-chip bfsi-chip-muted"
+                              t-attf-style="color:{{moveTone(snap.movement)}}">
+                            <t t-esc="snap.movement > 0 ? '+' + snap.movement : snap.movement"/> ranks
+                        </span>
+                        <span t-if="snap.period_date and snap.period_date.relative" class="bfsi-chip bfsi-chip-muted"
+                              t-esc="'Data: ' + snap.period_date.relative"/>
+                    </div>
+                </div>
+                <div class="bfsi-p360-scorebox">
+                    <ScoreRing value="snap.score or 0" size="84"/>
+                    <Sparkline t-if="snap.trend and snap.trend.length > 1" values="snap.trend" width="96"/>
+                </div>
+                <div class="bfsi-p360-cta">
+                    <button t-if="d.can_coach" class="bfsi-btn bfsi-btn-primary"
+                            t-on-click="() => props.onCoach(d.employee.id)">
+                        <span class="lu lu-sparkles"/> Coach now
+                    </button>
+                    <button t-if="d.can_coach" class="bfsi-btn bfsi-btn-ghost" t-on-click="openCheckin">
+                        <span class="lu lu-square-pen"/> Log check-in
+                    </button>
+                </div>
+            </header>
+
+            <div class="bfsi-home-grid">
+                <div class="bfsi-home-col">
+
+                    <!-- ── KPI story ───────────────────────────── -->
+                    <section class="bfsi-card bfsi-pad">
+                        <h2 class="bfsi-section-title"><span class="lu lu-gauge"/> Performance story</h2>
+                        <p t-if="d.root_cause" class="bfsi-p360-root">
+                            <span class="lu lu-lightbulb"/> <t t-esc="d.root_cause"/>
+                        </p>
+                        <div t-if="!(d.bars or []).length" class="bfsi-empty">
+                            <span class="lu lu-gauge"/> No KPI data yet.
+                        </div>
+                        <div t-foreach="d.bars or []" t-as="bar" t-key="bar.name" class="bfsi-bar">
+                            <div class="bfsi-bar-head">
+                                <span t-esc="bar.name"/>
+                                <b><t t-esc="bar.value"/> <small>/ <t t-esc="bar.target"/></small></b>
+                            </div>
+                            <div class="bfsi-bar-track">
+                                <div class="bfsi-bar-fill"
+                                     t-attf-style="width:{{barPct(bar)}}%;background:{{barColor(bar.cat)}}"/>
+                            </div>
+                        </div>
+                        <div t-if="d.ai_available" class="bfsi-p360-ai">
+                            <button t-if="!state.aiText" class="bfsi-btn bfsi-btn-soft"
+                                    t-att-disabled="state.aiBusy" t-on-click="aiInsight">
+                                <span class="lu lu-sparkles"/>
+                                <t t-if="state.aiBusy">Thinking…</t>
+                                <t t-else="">AI deep insight</t>
+                            </button>
+                            <div t-else="" class="bfsi-p360-aitext">
+                                <span class="lu lu-sparkles"/> <t t-esc="state.aiText"/>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ── Tabs: plans / sessions / strategies ─── -->
+                    <section class="bfsi-card bfsi-pad">
+                        <div class="bfsi-p360-tabs">
+                            <button t-attf-class="bfsi-p360-tab {{state.tab === 'plans' ? 'on' : ''}}"
+                                    t-on-click="() => state.tab = 'plans'">
+                                <span class="lu lu-clipboard-check"/> Plans
+                                <small t-esc="(d.plans or []).length"/>
+                            </button>
+                            <button t-attf-class="bfsi-p360-tab {{state.tab === 'sessions' ? 'on' : ''}}"
+                                    t-on-click="() => state.tab = 'sessions'">
+                                <span class="lu lu-messages-square"/> Sessions
+                                <small t-esc="(d.sessions or []).length"/>
+                            </button>
+                            <button t-attf-class="bfsi-p360-tab {{state.tab === 'strategies' ? 'on' : ''}}"
+                                    t-on-click="() => state.tab = 'strategies'">
+                                <span class="lu lu-brain"/> Strategies
+                                <small t-esc="(d.strategies or []).length"/>
+                            </button>
+                        </div>
+
+                        <!-- PLANS -->
+                        <t t-if="state.tab === 'plans'">
+                            <div t-if="!(d.plans or []).length" class="bfsi-empty">
+                                <span class="lu lu-clipboard-check"/> No plans yet — start with "Coach now".
+                            </div>
+                            <div t-foreach="activePlans" t-as="plan" t-key="plan.id" class="bfsi-plan">
+                                <div class="bfsi-plan-head">
+                                    <button class="bfsi-plan-title"
+                                            t-on-click="() => props.onOpenDrawer('bfsi.action.plan', plan.id, 'plan')">
+                                        <b t-esc="plan.name"/>
+                                        <span class="lu lu-chevron-right"/>
+                                    </button>
+                                    <span t-attf-class="bfsi-chip {{stateChip(plan.state)}}" t-esc="stateLabel(plan.state)"/>
+                                    <span t-if="plan.timeline_label"
+                                          t-attf-class="bfsi-chip {{plan.is_overdue ? 'bfsi-chip-crit' : 'bfsi-chip-muted'}}"
+                                          t-esc="plan.timeline_label"/>
+                                </div>
+                                <div class="bfsi-plan-progress">
+                                    <div class="bfsi-bar-track">
+                                        <div class="bfsi-bar-fill" t-attf-style="width:{{plan.progress}}%;background:var(--bfsi-ok)"/>
+                                    </div>
+                                    <small><t t-esc="plan.completed_items"/>/<t t-esc="plan.item_count"/> done</small>
+                                </div>
+                                <button t-foreach="plan.items" t-as="item" t-key="item.id"
+                                        t-attf-class="bfsi-check {{item.state === 'completed' ? 'bfsi-check-done' : ''}}"
+                                        t-on-click="() => this.toggleItem(item)">
+                                    <span t-attf-class="lu {{item.state === 'completed' ? 'lu-circle-check' : 'lu-circle-x'}} bfsi-check-ico"/>
+                                    <span class="bfsi-check-text" t-esc="item.name"/>
+                                    <small t-if="item.target_end_date" t-esc="item.target_end_date"/>
+                                </button>
+                            </div>
+                            <div t-if="pastPlans.length" class="bfsi-p360-past">
+                                <div class="bfsi-section-sub">Past plans</div>
+                                <button t-foreach="pastPlans" t-as="plan" t-key="plan.id" class="bfsi-checkin"
+                                        t-on-click="() => props.onOpenDrawer('bfsi.action.plan', plan.id, 'plan')">
+                                    <div class="bfsi-checkin-meta">
+                                        <b t-esc="plan.name"/>
+                                        <small><t t-esc="plan.progress"/>% · <t t-esc="plan.target_date"/></small>
+                                    </div>
+                                    <span t-attf-class="bfsi-chip {{stateChip(plan.state)}}" t-esc="stateLabel(plan.state)"/>
+                                    <span class="lu lu-chevron-right bfsi-checkin-go"/>
+                                </button>
+                            </div>
+                        </t>
+
+                        <!-- SESSIONS -->
+                        <t t-if="state.tab === 'sessions'">
+                            <div t-if="!(d.sessions or []).length" class="bfsi-empty">
+                                <span class="lu lu-messages-square"/> No sessions yet.
+                            </div>
+                            <div class="bfsi-p360-timeline">
+                                <button t-foreach="d.sessions or []" t-as="s" t-key="s.id" class="bfsi-p360-session"
+                                        t-on-click="() => props.onOpenDrawer('hr.coaching.session', s.id, 'session')">
+                                    <span class="bfsi-p360-dot"/>
+                                    <div class="bfsi-p360-session-meta">
+                                        <b t-esc="s.topic_label or s.name"/>
+                                        <small>
+                                            <t t-esc="s.date"/> · <t t-esc="s.date_relative"/>
+                                            <t t-if="s.coach and s.coach.name"> · with <t t-esc="s.coach.name"/></t>
+                                        </small>
+                                    </div>
+                                    <span t-if="s.outcome_label" t-attf-class="bfsi-chip {{outcomeChip(s.outcome)}}"
+                                          t-esc="s.outcome_label"/>
+                                    <span t-else="" t-attf-class="bfsi-chip {{stateChip(s.state)}}" t-esc="stateLabel(s.state)"/>
+                                </button>
+                            </div>
+                        </t>
+
+                        <!-- STRATEGIES -->
+                        <t t-if="state.tab === 'strategies'">
+                            <div t-if="!(d.strategies or []).length" class="bfsi-empty">
+                                <span class="lu lu-brain"/> No strategies yet.
+                            </div>
+                            <button t-foreach="d.strategies or []" t-as="st" t-key="st.id" class="bfsi-checkin"
+                                    t-on-click="() => props.onOpenDrawer('bfsi.coaching.strategy', st.id, 'strategy')">
+                                <div class="bfsi-checkin-meta">
+                                    <b t-esc="st.name"/>
+                                    <small>
+                                        <t t-esc="st.date"/>
+                                        <t t-if="st.themes.length"> · <t t-esc="st.themes.join(', ')"/></t>
+                                    </small>
+                                </div>
+                                <span class="bfsi-chip bfsi-chip-info"><t t-esc="st.confidence"/>% conf.</span>
+                                <span class="lu lu-chevron-right bfsi-checkin-go"/>
+                            </button>
+                        </t>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ── Quick check-in dialog ───────────────────────── -->
+            <div t-if="state.checkinOpen" class="bfsi-overlay bfsi-dialog-scrim"
+                 t-on-pointerdown.self="() => state.checkinOpen = false">
+                <div class="bfsi-dialog">
+                    <h3><span class="lu lu-square-pen"/> Log a check-in with <t t-esc="d.employee.name.split(' ').pop()"/></h3>
+                    <div class="bfsi-dialog-label">How is it going?</div>
+                    <div class="bfsi-dialog-chips">
+                        <button t-foreach="[['excellent','Excellent'],['good','Good'],['moderate','Moderate'],['needs_improvement','Needs work']]"
+                                t-as="o" t-key="o[0]"
+                                t-attf-class="bfsi-outcome-chip {{state.checkinOutcome === o[0] ? 'on' : ''}}"
+                                t-on-click="() => state.checkinOutcome = o[0]" t-esc="o[1]"/>
+                    </div>
+                    <textarea class="bfsi-dialog-notes" placeholder="What did you discuss? Anything to flag?"
+                              t-on-input="(ev) => state.checkinNotes = ev.target.value"
+                              t-att-value="state.checkinNotes"/>
+                    <div class="bfsi-dialog-actions">
+                        <button class="bfsi-btn bfsi-btn-ghost" t-on-click="() => state.checkinOpen = false">Cancel</button>
+                        <button class="bfsi-btn bfsi-btn-primary"
+                                t-att-disabled="!state.checkinOutcome or state.checkinBusy"
+                                t-on-click="saveCheckin">
+                            <t t-if="state.checkinBusy">Saving…</t>
+                            <t t-else="">Save check-in</t>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </div>
+</t>
+
+</templates>

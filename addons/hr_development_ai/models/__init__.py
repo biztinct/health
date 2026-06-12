@@ -25,6 +25,7 @@ from . import skills_inference_engine
 from . import hr_development_dashboard
 
 # BFSI Performance Coaching Models
+from . import bfsi_scoring  # Canonical scoring & formatting service
 from . import bfsi_branch  # Contains BFSIRegion and BFSIBranch
 from . import bfsi_kpi_target
 from . import bfsi_performance_kpi

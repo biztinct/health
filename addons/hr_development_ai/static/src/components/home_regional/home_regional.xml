@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.HomeRegional">
+    <div class="bfsi-home">
+        <header class="bfsi-hero">
+            <div class="bfsi-hero-text">
+                <h1 t-esc="greeting()"/>
+                <p>Region overview · <t t-esc="d.today_label"/></p>
+            </div>
+        </header>
+
+        <div t-if="!branches.length" class="bfsi-empty">
+            <span class="lu lu-building"/> No branches in your region yet.
+        </div>
+
+        <section class="bfsi-branch-grid">
+            <button t-foreach="branches" t-as="b" t-key="b.branch_id"
+                    class="bfsi-card bfsi-branch-card"
+                    t-on-click="() => props.onOpenBranch(b.branch_id)">
+                <div class="bfsi-branch-head">
+                    <div>
+                        <b t-esc="b.branch_name"/>
+                        <small t-if="b.manager and b.manager.name" class="bfsi-branch-mgr">
+                            <t t-esc="b.manager.name"/>
+                        </small>
+                    </div>
+                    <ScoreRing value="b.avg_score" size="56" thickness="5"/>
+                </div>
+                <div class="bfsi-branch-meta">
+                    <span class="bfsi-chip bfsi-chip-muted" t-esc="b.coverage_label"/>
+                    <span t-if="b.needs_coaching"
+                          class="bfsi-chip bfsi-chip-crit">
+                        <t t-esc="b.needs_coaching"/> need coaching
+                    </span>
+                    <span t-else="" class="bfsi-chip bfsi-chip-ok">On track</span>
+                </div>
+                <div class="bfsi-branch-stats">
+                    <span><span class="lu lu-trending-up"/> <t t-esc="b.latest_revenue_formatted"/></span>
+                    <span><span class="lu lu-messages-square"/> <t t-esc="b.sessions_this_month"/> sessions</span>
+                    <span><span class="lu lu-clipboard-check"/> <t t-esc="b.plan_completion_rate"/>%</span>
+                </div>
+                <div class="bfsi-branch-go">
+                    Open cockpit <span class="lu lu-arrow-right"/>
+                </div>
+            </button>
+        </section>
+    </div>
+</t>
+
+</templates>

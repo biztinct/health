@@ -17,7 +17,7 @@
                 <div class="pill-avatar">
                     <div class="pill-avatar-glow"></div>
                     <img t-if="state.aiCoachIconUrl" t-att-src="state.aiCoachIconUrl" class="ai-coach-icon" alt="AI"/>
-                    <i t-else="" class="fa fa-robot"></i>
+                    <i t-else="" class="lu lu-bot"></i>
                 </div>
                 <div class="pill-text">
                     <span class="pill-title">AI Coach</span>
@@ -26,7 +26,7 @@
                         Online
                     </span>
                 </div>
-                <i class="fa fa-chevron-up pill-expand-icon"></i>
+                <span class="lu lu-chevron-right pill-expand-icon"></span>
             </button>
 
             <!-- ═══════════════════════════════════════
@@ -48,7 +48,7 @@
                                 <div class="avatar-ring ring-3"></div>
                                 <div class="avatar-core">
                                     <img t-if="state.aiCoachIconUrl" t-att-src="state.aiCoachIconUrl" class="ai-coach-icon" alt="AI"/>
-                                    <i t-else="" class="fa fa-robot"></i>
+                                    <i t-else="" class="lu lu-bot"></i>
                                 </div>
                             </div>
                             <div class="modal-title-group">
@@ -61,10 +61,10 @@
                         </div>
                         <div class="modal-header-actions">
                             <button class="modal-action-btn" t-on-click="clearChat" title="Clear Chat">
-                                <i class="fa fa-trash-o"></i>
+                                <span class="lu lu-x"></span>
                             </button>
                             <button class="modal-action-btn minimize-btn" t-on-click="toggleExpand" title="Minimize">
-                                <i class="fa fa-chevron-down"></i>
+                                <span class="lu lu-chevron-down"></span>
                             </button>
                         </div>
                     </div>
@@ -108,12 +108,12 @@
                                     <t t-if="message.role === 'assistant'">
                                         <div class="ai-msg-avatar">
                                             <img t-if="state.aiCoachIconUrl" t-att-src="state.aiCoachIconUrl" class="ai-coach-icon" alt="AI"/>
-                                            <i t-else="" class="fa fa-robot"></i>
+                                            <i t-else="" class="lu lu-bot"></i>
                                         </div>
                                     </t>
                                     <t t-else="">
                                         <div class="user-msg-avatar">
-                                            <i class="fa fa-user"></i>
+                                            <span class="lu lu-user"></span>
                                         </div>
                                     </t>
                                 </div>
@@ -150,7 +150,7 @@
                                     <!-- Learning Content Link -->
                                     <div class="msg-learning" t-if="message.learning_content">
                                         <a href="#" class="learning-link">
-                                            <i class="fa fa-book me-1"></i>
+                                            <span class="lu lu-file-text me-1"></span>
                                             <t t-esc="message.learning_content.title"/>
                                         </a>
                                     </div>
@@ -163,7 +163,7 @@
                             <div class="msg-avatar">
                                 <div class="ai-msg-avatar typing-pulse">
                                     <img t-if="state.aiCoachIconUrl" t-att-src="state.aiCoachIconUrl" class="ai-coach-icon" alt="AI"/>
-                                    <i t-else="" class="fa fa-robot"></i>
+                                    <i t-else="" class="lu lu-bot"></i>
                                 </div>
                             </div>
                             <div class="msg-body">
@@ -186,32 +186,32 @@
                         <!-- Banker Quick Actions -->
                         <div class="quick-actions-row" t-if="!isManager">
                             <button class="qa-chip" t-on-click="() => this.onQuickAction('check_kpis')">
-                                <i class="fa fa-line-chart"></i> My KPIs
+                                <span class="lu lu-trending-up"></span> My KPIs
                             </button>
                             <button class="qa-chip" t-on-click="() => this.onQuickAction('action_plan')">
-                                <i class="fa fa-tasks"></i> Action Plan
+                                <span class="lu lu-list-checks"></span> Action Plan
                             </button>
                             <button class="qa-chip" t-on-click="() => this.onQuickAction('get_coaching')">
-                                <i class="fa fa-graduation-cap"></i> Coaching
+                                <span class="lu lu-award"></span> Coaching
                             </button>
                             <button class="qa-chip" t-on-click="() => this.onQuickAction('difficult_scenario')">
-                                <i class="fa fa-question-circle"></i> Help Me
+                                <span class="lu lu-info"></span> Help Me
                             </button>
                         </div>
 
                         <!-- Manager Quick Actions -->
                         <div class="quick-actions-row" t-if="isManager">
                             <button class="qa-chip" t-on-click="() => this.onManagerQuickAction('team_overview')">
-                                <i class="fa fa-users"></i> Team Overview
+                                <span class="lu lu-users"></span> Team Overview
                             </button>
                             <button class="qa-chip" t-on-click="() => this.onManagerQuickAction('needs_coaching')">
-                                <i class="fa fa-exclamation-triangle"></i> Needs Coaching
+                                <span class="lu lu-triangle-alert"></span> Needs Coaching
                             </button>
                             <button class="qa-chip" t-on-click="() => this.onManagerQuickAction('generate_strategy')">
-                                <i class="fa fa-magic"></i> AI Strategy
+                                <span class="lu lu-sparkles"></span> AI Strategy
                             </button>
                             <button class="qa-chip" t-on-click="() => this.onManagerQuickAction('practice_roleplay')">
-                                <i class="fa fa-comments"></i> Practice
+                                <span class="lu lu-messages-square"></span> Practice
                             </button>
                         </div>
                     </div>
@@ -230,8 +230,8 @@
                                 class="send-btn"
                                 t-on-click="sendMessage"
                                 t-att-disabled="state.isLoading or !state.inputMessage.trim()">
-                                <i t-if="state.isLoading" class="fa fa-spinner fa-spin"></i>
-                                <i t-else="" class="fa fa-paper-plane"></i>
+                                <i t-if="state.isLoading" class="lu lu-refresh-cw lu-spin"></i>
+                                <i t-else="" class="lu lu-send"></i>
                             </button>
                         </div>
                         <div class="input-hint">

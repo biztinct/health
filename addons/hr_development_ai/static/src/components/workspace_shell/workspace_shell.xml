@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="hr_development_ai.WorkspaceShell">
+    <div class="bfsi-app">
+
+        <!-- ── Sidebar ──────────────────────────────────────────── -->
+        <aside t-attf-class="bfsi-side {{state.navOpen ? 'bfsi-side-open' : ''}}">
+            <div class="bfsi-side-brand">
+                <div class="bfsi-side-logo"><span class="lu lu-sparkles"/></div>
+                <div class="bfsi-side-title">
+                    <b>AI Coaching</b>
+                    <small t-if="state.home and state.home.user.branch_name"
+                           t-esc="state.home.user.branch_name"/>
+                </div>
+            </div>
+
+            <nav class="bfsi-side-nav">
+                <t t-foreach="navItems" t-as="item" t-key="item.key">
+                    <button t-attf-class="bfsi-side-item {{isActive(item.key) ? 'bfsi-side-active' : ''}}"
+                            t-on-click="() => this.reset(item.key)">
+                        <span t-attf-class="lu lu-{{item.icon}}"/>
+                        <span class="bfsi-side-label" t-esc="item.label"/>
+                    </button>
+                </t>
+            </nav>
+
+            <div class="bfsi-side-foot">
+                <button t-if="state.isAdmin"
+                        t-attf-class="bfsi-side-item {{settingsActive ? 'bfsi-side-active' : ''}}"
+                        t-on-click="openSettings">
+                    <span class="lu lu-settings"/>
+                    <span class="bfsi-side-label">Settings</span>
+                </button>
+                <div t-if="state.home" class="bfsi-side-user">
+                    <div class="bfsi-avatar" t-attf-style="width:30px;height:30px;font-size:12px;background:{{state.home.user.color}}">
+                        <t t-esc="state.home.user.initial"/>
+                    </div>
+                    <div class="bfsi-side-user-meta">
+                        <b t-esc="state.home.user.name"/>
+                        <small t-esc="state.home.user.role"/>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- mobile scrim for the nav sheet -->
+        <div t-if="state.navOpen" class="bfsi-nav-scrim" t-on-click="() => state.navOpen = false"/>
+
+        <!-- ── Main column ──────────────────────────────────────── -->
+        <main class="bfsi-main">
+
+            <!-- mobile top bar -->
+            <div class="bfsi-mobile-bar">
+                <button class="bfsi-btn bfsi-btn-ghost" t-on-click="() => state.navOpen = !state.navOpen">
+                    <span class="lu lu-layout-dashboard"/>
+                </button>
+                <b>AI Coaching</b>
+            </div>
+
+            <div t-if="state.loading" class="bfsi-empty bfsi-loading">
+                <span class="lu lu-refresh-cw bfsi-spin"/>
+                Loading your workspace…
+            </div>
+
+            <div t-elif="state.error" class="bfsi-empty">
+                <span class="lu lu-circle-alert"/>
+                <t t-esc="state.error"/>
+            </div>
+
+            <t t-else="">
+                <!-- breadcrumb back for drill-ins -->
+                <div t-if="canBack" class="bfsi-backbar">
+                    <button class="bfsi-btn bfsi-btn-ghost" t-on-click="back">
+                        <span class="lu lu-chevron-left"/> Back
+                    </button>
+                </div>
+
+                <!-- HOME (role-adaptive) -->
+                <t t-if="route.screen === 'home'">
+                    <HomeBanker t-if="state.role === 'banker'"
+                                data="state.home"
+                                onRefresh.bind="loadHome"
+                                onOpenDrawer.bind="openDrawer"/>
+                    <HomeManager t-elif="state.role === 'branch_manager'"
+                                 data="state.home"
+                                 onRefresh.bind="loadHome"
+                                 onCoach.bind="openWizard"
+                                 onOpenPerson.bind="openPerson"
+                                 onOpenDrawer.bind="openDrawer"/>
+                    <HomeRegional t-else=""
+                                  data="state.home"
+                                  onOpenBranch="(id) => this.push('branch', { branchId: id })"/>
+                </t>
+
+                <!-- BRANCH drill-in (regional manager) -->
+                <t t-elif="route.screen === 'branch'">
+                    <div t-if="state.branchLoading" class="bfsi-empty bfsi-loading">
+                        <span class="lu lu-refresh-cw bfsi-spin"/> Loading branch…
+                    </div>
+                    <HomeManager t-elif="state.branchCockpit"
+                                 data="state.branchCockpit"
+                                 cockpitOnly="true"
+                                 onRefresh="() => this.afterNavigate()"
+                                 onCoach.bind="openWizard"
+                                 onOpenPerson.bind="openPerson"
+                                 onOpenDrawer.bind="openDrawer"/>
+                </t>
+
+                <!-- PERSON 360 -->
+                <Person360 t-elif="route.screen === 'person'"
+                           employeeId="route.params.employeeId"
+                           onCoach.bind="openWizard"
+                           onOpenDrawer.bind="openDrawer"/>
+
+                <!-- TEAM roster -->
+                <TeamScreen t-elif="route.screen === 'team'"
+                            onCoach.bind="openWizard"
+                            onOpenPerson.bind="openPerson"/>
+
+                <!-- COACHING / PERFORMANCE — embedded workspace -->
+                <div t-elif="route.screen === 'coaching'" class="bfsi-embed">
+                    <BfsiWorkspace action="workspaceAction('coaching')" onOpenPerson.bind="openPerson"/>
+                </div>
+                <div t-elif="route.screen === 'performance'" class="bfsi-embed">
+                    <BfsiWorkspace action="workspaceAction('performance')" onOpenPerson.bind="openPerson"/>
+                </div>
+
+                <!-- SETTINGS (admin) -->
+                <SettingsScreen t-elif="route.screen === 'settings'"/>
+
+                <!-- ANALYTICS — Business Impact dashboard -->
+                <div t-elif="route.screen === 'analytics'" class="bfsi-embed bfsi-embed-analytics">
+                    <BfsiAiDashboard/>
+                </div>
+            </t>
+        </main>
+
+        <!-- ── Overlays ─────────────────────────────────────────── -->
+        <BfsiCoachingWizard t-if="state.wizardBankerId"
+                            bankerId="state.wizardBankerId"
+                            onClose.bind="closeWizard"/>
+
+        <BfsiWorkspaceDrawer t-if="state.drawer"
+                             model="state.drawer.model"
+                             recordId="state.drawer.id"
+                             drawerKind="state.drawer.kind"
+                             onClose.bind="closeDrawer"
+                             onAction.bind="onDrawerAction"
+                             openForm.bind="openForm"
+                             openWizard.bind="openWizard"
+                             openRecord.bind="openDrawer"/>
+    </div>
+</t>
+
+</templates>
