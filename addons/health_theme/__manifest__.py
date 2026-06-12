@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.3.0.2',
+    'version': '19.0.4.0.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -66,6 +66,13 @@
             # Core theme
             'health_theme/static/src/scss/backend.scss',
             'health_theme/static/src/scss/loading_spinner.scss',
+            # VU Form Engine — rich UI for ALL native form views
+            'health_theme/static/src/scss/vu_tokens.scss',
+            'health_theme/static/src/scss/vu_icons.scss',
+            'health_theme/static/src/scss/vu_form_engine.scss',
+            'health_theme/static/src/js/vu_form_hero_registry.js',
+            'health_theme/static/src/js/vu_form_compiler.js',
+            'health_theme/static/src/js/vu_form_renderer.js',
             # VU Design System — Adaptive Form Framework
             'health_theme/static/src/scss/state_system.scss',
             'health_theme/static/src/scss/three_column.scss',

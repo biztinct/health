@@ -1,0 +1,103 @@
+// =============================================================================
+// VU FORM ENGINE — DESIGN TOKENS  (Direction B: "Indigo Workspace", mono colors)
+// -----------------------------------------------------------------------------
+// Engine-scoped tokens use the --vuf- prefix to stay collision-free with the
+// existing --vu-* brand tokens declared in primary_variables.scss.
+// Rule application is scoped under .vu-form; declaring at :root only defines
+// inert custom properties.
+// HARD RULE (user requirement): flat mono colors only — no gradients anywhere.
+// =============================================================================
+
+:root {
+    // ── Brand / action ───────────────────────────────────────────────
+    --vuf-primary: #1565C0;          // VU deep blue — the single action color
+    --vuf-primary-ink: #FFFFFF;
+    --vuf-primary-soft: #E8F0FB;     // tinted background for soft chips/icons
+    --vuf-primary-glow: rgba(21, 101, 192, .30);
+    --vuf-hero: #0F1E45;             // deep navy hero band (flat)
+    --vuf-hero-ink: #FFFFFF;
+
+    // ── Neutrals ─────────────────────────────────────────────────────
+    --vuf-ink: #101728;
+    --vuf-muted: #6B7280;
+    --vuf-faint: #9CA3AF;
+    --vuf-line: #E5E7EB;
+    --vuf-line-soft: #F1F0F7;
+    --vuf-bg: #F4F6FB;
+    --vuf-surface: #FFFFFF;
+
+    // ── Semantic ─────────────────────────────────────────────────────
+    --vuf-ok: #10B981;
+    --vuf-ok-bg: #E7F6EF;
+    --vuf-warn: #B45309;
+    --vuf-warn-bg: #FDF3E2;
+    --vuf-danger: #DC2626;
+    --vuf-danger-bg: #FDECEC;
+    --vuf-info: #1565C0;
+    --vuf-info-bg: #E8F0FB;
+
+    // ── Spacing (4px scale) ──────────────────────────────────────────
+    --vuf-sp-1: 4px;
+    --vuf-sp-2: 8px;
+    --vuf-sp-3: 12px;
+    --vuf-sp-4: 16px;
+    --vuf-sp-5: 20px;
+    --vuf-sp-6: 24px;
+    --vuf-sp-7: 32px;
+
+    // ── Radii ────────────────────────────────────────────────────────
+    --vuf-r-sm: 10px;
+    --vuf-r-md: 12px;
+    --vuf-r-lg: 16px;
+    --vuf-r-pill: 999px;
+
+    // ── Shadows (layered, soft) ──────────────────────────────────────
+    --vuf-sh-sm: 0 1px 2px rgba(16, 12, 40, .05);
+    --vuf-sh-md: 0 8px 24px rgba(16, 12, 40, .07);
+    --vuf-sh-lg: 0 18px 50px rgba(16, 12, 40, .14);
+    --vuf-sh-ring: 0 0 0 3px rgba(21, 101, 192, .16);
+
+    // ── Motion ───────────────────────────────────────────────────────
+    --vuf-t-fast: 120ms;
+    --vuf-t-med: 200ms;
+    --vuf-ease: cubic-bezier(.16, 1, .3, 1);
+
+    // ── Type ─────────────────────────────────────────────────────────
+    --vuf-font: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+
+    // ── Layout ───────────────────────────────────────────────────────
+    // Single content width for the whole form grid. NOTE: declared as a
+    // custom property so Sass passes min()/calc() through verbatim —
+    // writing min(px, calc(%)) in a normal property makes Bootstrap's
+    // Sass min() choke and kills the entire bundle compilation.
+    --vuf-content-w: min(1272px, calc(100% - 48px));
+
+    // ── Workflow state accents (reuse brand state palette) ───────────
+    --vuf-state-draft: #64748b;
+    --vuf-state-confirmed: #2563eb;
+    --vuf-state-assigned: #7c3aed;
+    --vuf-state-active: #ea580c;
+    --vuf-state-completed: #16a34a;
+    --vuf-state-cancelled: #dc2626;
+    --vuf-state-closed: #475569;
+}
+
+// ── Keyframes ────────────────────────────────────────────────────────
+@keyframes vuf-fade-up {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes vuf-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vu-form *,
+    .vu-form *::before,
+    .vu-form *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
