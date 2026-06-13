@@ -493,6 +493,8 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
+        white-space: nowrap;   // never wraps to two lines in the card header
+        flex-shrink: 0;
 
         &:hover {
             background: #eff6ff;
@@ -629,12 +631,13 @@
     }
 
     .vu-client-card__meta-item {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: #64748b;
         background: #f1f5f9;
-        padding: 2px 10px;
+        padding: 2px 8px;
         border-radius: 100px;
         font-weight: 500;
+        white-space: nowrap;   // pills stay on one row beside each other
 
         .o_field_widget {
             font-size: inherit !important;

@@ -33,15 +33,19 @@ a {
     }
 }
 
-// Clean card styling for healthcare forms
-.o_form_sheet_bg {
+// Clean card styling for healthcare forms.
+// NOTE: scoped to :not(.vu-form) — the VU Form Engine owns all styling inside
+// vu-forms (vu_form_engine.scss). These legacy rules remain for the contexts
+// the engine deliberately skips: dialogs, Settings, and excluded views.
+// This removes the old !important tug-of-war (single owner per context).
+.o_form_renderer:not(.vu-form) .o_form_sheet_bg {
     background: var(--vu-surface-panel);
     padding: var(--vu-space-sm) var(--vu-space-lg) var(--vu-space-lg);
     border: 0 !important;
     box-shadow: none !important;
 }
 
-.o_form_sheet {
+.o_form_renderer:not(.vu-form) .o_form_sheet {
     @include vu-card(var(--vu-space-lg));
     font-family: var(--vu-font-family-base);
     border: 0;
@@ -51,8 +55,8 @@ a {
     border-width: 0 !important;
 }
 
-.o_form_sheet::after,
-.o_form_sheet_bg::after {
+.o_form_renderer:not(.vu-form) .o_form_sheet::after,
+.o_form_renderer:not(.vu-form) .o_form_sheet_bg::after {
     display: none !important;
 }
 
@@ -71,8 +75,9 @@ a {
     box-shadow: none !important;
 }
 
-.o_form_view .o_group:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"])),
-.o_form_view .kept-for-backward-compat:not(:has(.o_field_widget[name="groups_id"])) {
+// Legacy form-group card system — scoped to non-vu forms (engine owns vu-forms)
+.o_form_renderer:not(.vu-form) .o_group:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"])),
+.o_form_renderer:not(.vu-form) .kept-for-backward-compat:not(:has(.o_field_widget[name="groups_id"])) {
     display: block;
     width: 100%;
     padding: var(--vu-space-md);
@@ -83,19 +88,19 @@ a {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.o_form_view .o_group:not(.o_inner_group):has(>.o_group.row:not(.o_inner_group)):not(:has(.o_field_widget[name="groups_id"])),
-.o_form_view .o_group:not(.o_inner_group):has(>.o_inner_group):not(:has(.o_field_widget[name="groups_id"])) {
+.o_form_renderer:not(.vu-form) .o_group:not(.o_inner_group):has(>.o_group.row:not(.o_inner_group)):not(:has(.o_field_widget[name="groups_id"])),
+.o_form_renderer:not(.vu-form) .o_group:not(.o_inner_group):has(>.o_inner_group):not(:has(.o_field_widget[name="groups_id"])) {
     padding: 0;
     background: transparent;
     border: 0;
     box-shadow: none;
 }
 
-.o_form_view .o_group:not(.o_inner_group)>table {
+.o_form_renderer:not(.vu-form) .o_group:not(.o_inner_group)>table {
     width: 100%;
 }
 
-.o_form_view .o_group.row:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"])) {
+.o_form_renderer:not(.vu-form) .o_group.row:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"])) {
     display: flex;
     flex-wrap: wrap;
     gap: var(--vu-space-lg);
@@ -107,7 +112,7 @@ a {
     align-items: stretch !important;
 }
 
-.o_form_view .o_group.row:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"]))>.o_inner_group {
+.o_form_renderer:not(.vu-form) .o_group.row:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"]))>.o_inner_group {
     flex: 1 1 420px;
     min-width: 320px;
     width: 100% !important;
@@ -124,8 +129,8 @@ a {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-// Tighter row gap inside inner groups for compact form fields
-.o_form_view .o_inner_group {
+// Tighter row gap inside inner groups for compact form fields (non-vu)
+.o_form_renderer:not(.vu-form) .o_inner_group {
     gap: 2px var(--vu-space-sm) !important;
     margin-bottom: var(--vu-space-xs) !important;
 }

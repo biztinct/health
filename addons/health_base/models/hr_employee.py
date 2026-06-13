@@ -29,7 +29,8 @@ class HrEmployee(models.Model):
 
     access_role_id = fields.Many2one(
         'access.role', string='Access Role',
-        compute='_compute_access_role', store=True, readonly=True,
+        compute='_compute_access_role', inverse='_inverse_access_role',
+        store=True, readonly=False,
     )
     is_duty_doctor = fields.Boolean('Is Duty Doctor', default=False, tracking=True)
     is_head_nurse = fields.Boolean('Is Head Nurse', default=False, tracking=True)
@@ -51,6 +52,15 @@ class HrEmployee(models.Model):
     def _compute_access_role(self):
         for emp in self:
             emp.access_role_id = emp.user_id.access_role_id if emp.user_id else False
+
+    def _inverse_access_role(self):
+        """Allow editing Access Role on the staff form once a login exists.
+        Writes back to the linked user, whose own write() syncs the security
+        groups for the chosen role (see access_roles/models/res_users.py).
+        Staff without a user account can't have a role and stay read-only."""
+        for emp in self:
+            if emp.user_id and emp.user_id.access_role_id != emp.access_role_id:
+                emp.user_id.access_role_id = emp.access_role_id
 
     @api.depends('access_role_id', 'access_role_id.name')
     def _compute_role_flags(self):

@@ -1165,22 +1165,21 @@
                                 </div>
                             </div>
 
-                            <!-- Service Details Card -->
+                            <!-- Staff Assignment Card -->
                             <div class="vu-detail-card">
                                 <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
                                 <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="file-text"/>
-                                    <span>Service Details</span>
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Staff Assignment</span>
                                 </div>
                                 <group>
-                                    <field name="service_type"/>
-                                    <field name="patient_national_id" string="National ID" readonly="1"/>
-                                    <field name="category_of_service_id" string="Service Category"/>
-                                    <field name="scheduled_datetime" readonly="has_staff_assigned"/>
-                                    <field name="scheduled_duration" widget="integer"/>
-                                    <field name="service_location"/>
-                                    <field name="booking_timezone" readonly="1"/>
-                                    <field name="team_id"/>
+                                    <field name="assigned_staff_ids" widget="many2many_tags"
+                                           options="{'color_field': 'color', 'no_create': False}"
+                                           readonly="state == 'draft'"/>
+                                    <field name="lead_staff_id"
+                                           options="{'no_create': False}"/>
+                                    <field name="assigned_doctor_ids" widget="many2many_tags"
+                                           options="{'color_field': 'color', 'no_create': False}"/>
                                 </group>
                             </div>
 
@@ -1204,21 +1203,22 @@
                         <!-- COLUMN 2 -->
                         <div class="vu-col-2">
 
-                            <!-- Staff Assignment Card -->
+                            <!-- Service Details Card -->
                             <div class="vu-detail-card">
                                 <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
                                 <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="users-group"/>
-                                    <span>Staff Assignment</span>
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Service Details</span>
                                 </div>
                                 <group>
-                                    <field name="assigned_staff_ids" widget="many2many_tags"
-                                           options="{'color_field': 'color', 'no_create': False}"
-                                           readonly="state == 'draft'"/>
-                                    <field name="lead_staff_id"
-                                           options="{'no_create': False}"/>
-                                    <field name="assigned_doctor_ids" widget="many2many_tags"
-                                           options="{'color_field': 'color', 'no_create': False}"/>
+                                    <field name="service_type"/>
+                                    <field name="patient_national_id" string="National ID" readonly="1"/>
+                                    <field name="category_of_service_id" string="Service Category"/>
+                                    <field name="scheduled_datetime" readonly="has_staff_assigned"/>
+                                    <field name="scheduled_duration" widget="integer"/>
+                                    <field name="service_location"/>
+                                    <field name="booking_timezone" readonly="1"/>
+                                    <field name="team_id"/>
                                 </group>
                             </div>
 

@@ -60,7 +60,10 @@
                     <group>
                         <group string="Healthcare Role and Status">
                             <field name="is_healthcare_staff"/>
-                            <field name="access_role_id" readonly="1" string="Access Role"/>
+                            <field name="user_id" invisible="1"/>
+                            <field name="access_role_id" string="Access Role"
+                                   readonly="not user_id" options="{'no_create': True}"
+                                   help="Editable once a login is created for this staff. Setting a role (e.g. Nurse) syncs the user's permissions and includes the staff in the booking staff pickers."/>
                             <field name="is_doctor_role" invisible="1"/>
                             <field name="is_nurse_role" invisible="1"/>
                             <field name="is_duty_doctor" invisible="not is_doctor_role"/>
@@ -127,7 +130,7 @@
                         invisible="not is_healthcare_staff">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value">
-                            <field name="availability_status"/>
+                            <field name="availability_status" readonly="1"/>
                         </span>
                         <span class="o_stat_text">Status</span>
                     </div>

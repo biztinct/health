@@ -168,6 +168,8 @@ class OpsStaffRoster extends Component {
     }
 
     openStaffProfile(staffId) {
+        // hr.employee is in the CMS sidebar's windowModels, so the form keeps
+        // the left CMS sidebar (see health_cms_sidebar ALL_MODELS).
         this.action.doAction({
             type: 'ir.actions.act_window',
             res_model: 'hr.employee',

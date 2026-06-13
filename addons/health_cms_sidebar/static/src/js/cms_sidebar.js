@@ -271,6 +271,9 @@ const ALL_MODELS = new Set([
     "account.move", "account.move.line",
     "health.audit.log.view",
     "cms.sidebar.item", "cms.sidebar.section",
+    // staff record form (opened from the Staff Roster, Staff Assignment, …)
+    // must keep the CMS sidebar like every other CMS record form
+    "hr.employee",
 ]);
 
 sidebarRegistry.add("cms_unified", {

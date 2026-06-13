@@ -17,14 +17,11 @@ import { vuIconForSection } from "./vu_form_hero_registry";
  *    component inside stays the same editable instance.
  */
 
-// Bespoke form views that keep their hand-built UI (migrate later, Phase 3)
+// Bespoke form views that keep their hand-built UI.
+// (admin_model_navigator_view was removed — it's a LIST js_class, never a
+//  form, so it never matched here; the admin record forms it links to are
+//  native and already get the engine skin.)
 const VU_EXCLUDED_JS_CLASS = new Set([
-    "ops_booking_form",
-    "ops_client_profile_form",
-    "crm_contact_form_view",
-    "healthcare_lead_form_redirect",
-    "healthcare_quote_form",
-    "admin_model_navigator_view",
     "synconics_bi_dashboard_form_view",
 ]);
 
@@ -34,6 +31,15 @@ const VU_EXCLUDED_JS_CLASS = new Set([
 // on the <form> arch.
 const VU_NO_HERO_JS_CLASS = new Set([
     "fin_invoice_form_view",
+    // Phase 3 migration: booking cockpit keeps its controller (side sheets)
+    // and its own sticky header; layout + skin now come from the engine
+    "ops_booking_form",
+    // Phase 3 migration: client profile keeps its OWL chrome (hero with
+    // avatar + stat strip + right action sidebar); engine skins the form
+    "ops_client_profile_form",
+    // Phase 3 migration: CRM contact form keeps its OWL header (contact
+    // name + status + action buttons); engine skins the vu-card sections
+    "crm_contact_form_view",
 ]);
 
 function buildHero(res) {

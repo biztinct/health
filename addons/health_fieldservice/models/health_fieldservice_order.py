@@ -2944,11 +2944,29 @@ class HealthFieldServiceOrderUnified(models.Model):
                     'initials': ''.join([p[0] for p in (staff.name or '').split() if p][:2]).upper(),
                 })
 
+        # Same filter as the booking wizard (get_quick_booking_staff):
+        # nurses/support staff only (exclude doctors), scoped to this
+        # booking's facility, with a fallback to all staff when nobody is
+        # linked to the facility.
+        Emp = self.env['hr.employee'].sudo()
+        facility_clause = []
+        if self.facility_id:
+            facility_clause = [('healthcare_facility_id', '=', self.facility_id.id)]
+            if not Emp.search_count([
+                ('is_healthcare_staff', '=', True),
+                ('employment_status', '=', 'active'),
+            ] + facility_clause):
+                facility_clause = []
+
         staff_list = []
-        employees = self.env['hr.employee'].sudo().search([
+        employees = Emp.search([
             ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
-        ], order='name')
+            ('is_doctor_role', '=', False),
+            # nurse-only: keep role-less field nurses + explicit nurses,
+            # drop back-office roles (CRM/Accountant/Owner/OM/Trainer)
+            '|', ('access_role_id', '=', False), ('is_nurse_role', '=', True),
+        ] + facility_clause, order='name')
         for emp in employees:
             staff_list.append({
                 'id': emp.id,
@@ -4661,6 +4679,9 @@ class HealthFieldServiceOrderUnified(models.Model):
                 ('is_healthcare_staff', '=', True),
                 ('employment_status', '=', 'active'),
                 ('is_doctor_role', '=', False),
+                # nurse-only: keep role-less field nurses + explicit nurses,
+                # drop back-office roles (CRM/Accountant/Owner/OM/Trainer)
+                '|', ('access_role_id', '=', False), ('is_nurse_role', '=', True),
             ] + facility_clause, order='name', limit=100)
             for emp in employees:
                 emp_initials = ''
@@ -5146,6 +5167,9 @@ class HealthFieldServiceOrderUnified(models.Model):
             ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
             ('is_doctor_role', '=', False),
+            # nurse-only: keep role-less field nurses + explicit nurses,
+            # drop back-office roles (CRM/Accountant/Owner/OM/Trainer)
+            '|', ('access_role_id', '=', False), ('is_nurse_role', '=', True),
         ] + facility_clause, order='name', limit=100):
             initials = ''.join(x[0] for x in (emp.name or '').split() if x)[:2].upper()
             staff_list.append({
@@ -5733,9 +5757,24 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         staff_list = []
         try:
-            employees = self.env['hr.employee'].search([
-                ('active', '=', True),
-            ], order='name', limit=30)
+            # Same nurse-only + facility scope as the booking/recurring/
+            # reschedule flows, so the staff picker is consistent everywhere.
+            facility_clause = []
+            if b.facility_id:
+                facility_clause = [('healthcare_facility_id', '=', b.facility_id.id)]
+                if not self.env['hr.employee'].sudo().search_count([
+                    ('is_healthcare_staff', '=', True),
+                    ('employment_status', '=', 'active'),
+                ] + facility_clause):
+                    facility_clause = []
+            employees = self.env['hr.employee'].sudo().search([
+                ('is_healthcare_staff', '=', True),
+                ('employment_status', '=', 'active'),
+                ('is_doctor_role', '=', False),
+                # nurse-only: keep role-less field nurses + explicit nurses,
+                # drop back-office roles (CRM/Accountant/Owner/OM/Trainer)
+                '|', ('access_role_id', '=', False), ('is_nurse_role', '=', True),
+            ] + facility_clause, order='name', limit=30)
 
             scheduled_date = b.scheduled_datetime.date() if b.scheduled_datetime else fields.Date.today()
 

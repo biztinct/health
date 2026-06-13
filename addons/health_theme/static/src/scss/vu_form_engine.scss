@@ -368,6 +368,29 @@
         }
     }
 
+    // bespoke cards (booking cockpit, client profile, CRM contact…) already
+    // provide the card chrome — groups inside them must not double-card
+    .vu-detail-card .o_inner_group.vu-sec,
+    .vu-summary-card .o_inner_group.vu-sec,
+    .vu-side-card .o_inner_group.vu-sec,
+    .vu-card .o_inner_group.vu-sec {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0 !important;
+        animation: none;
+    }
+
+    // …and their title rows need breathing room before the content —
+    // the flattened groups no longer bring their own top padding, so
+    // labels/textareas were touching the title icon
+    .vu-detail-card > .vu-card__title,
+    .vu-summary-card > .vu-card__title,
+    .vu-side-card > .vu-card__title,
+    .vu-card > .vu-card__title {
+        margin-bottom: var(--vuf-sp-3) !important;
+    }
+
     // the title wrapper must own its full grid row — on multi-column groups
     // (col="4" etc.) it otherwise spans half and the first field label lands
     // BESIDE the section title instead of below it
@@ -833,7 +856,235 @@
 }
 
 // =========================================================================
-// 10. RESPONSIVE
+// 10. THREE-COLUMN WORKSPACE LAYOUT — summary | content | actions
+//     Generic engine feature (owns what three_column.scss used to do).
+//     Any form opts in by wrapping content in:
+//       <div class="vu-three-col">
+//         <div class="vu-col-summary">…  <div class="vu-col-content">…
+//         <div class="vu-col-actions">…
+//     Used by: booking form (ops cockpit), patient form.
+// =========================================================================
+
+// workspace layouts are width-hungry — lift the 1320px sheet cap for them
+.o_form_view .o_form_renderer.vu-form:has(.vu-three-col) .o_form_sheet {
+    max-width: none !important;
+}
+
+// …and the statusbar follows the full width instead of the 1272px grid
+.o_form_view .o_form_renderer.vu-form:has(.vu-three-col) .o_form_statusbar {
+    width: calc(100% - 2 * var(--vuf-sp-6));
+}
+
+// side columns are dense glance panels — engine input chrome (boxes,
+// compound wrappers, readonly insets) is too heavy at 250px wide; render
+// fields compact and naked there. Covers both naming generations:
+// vu-col-summary/vu-col-actions (engine layout) and vu-col-1/vu-col-3
+// (ops booking cockpit arch).
+.o_form_renderer.vu-form :is(.vu-col-summary, .vu-col-actions, .vu-col-1, .vu-col-3) {
+    .o_field_widget input.o_input,
+    .o_field_widget select.o_input,
+    .o_field_widget textarea.o_input,
+    .o_field_widget button.o_input,
+    .o_field_many2one_selection,
+    .o_field_monetary > div.d-inline-flex {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+    }
+
+    .o_cell > .o_field_widget,
+    .o_field_widget {
+        padding-left: 0 !important;
+    }
+
+    // a 250px column can't host a label|value grid — stack label over value
+    .o_inner_group {
+        grid-template-columns: 1fr !important;
+
+        .o_cell {
+            grid-column: 1 / -1 !important;
+            width: 100% !important;
+            max-width: 100%;
+        }
+        .o_cell.o_wrap_label { padding-top: var(--vuf-sp-1); }
+    }
+
+    // the bespoke side cards provide the chrome — no card-within-card
+    .o_inner_group.vu-sec {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    // editable widgets in group cells use the full (narrow) width — but ONLY
+    // those: forcing every field widget to block/100% stacked the inline
+    // phone/ID/age items of the client card vertically
+    .o_cell .o_field_widget,
+    .o_select_menu,
+    .o_input_dropdown {
+        width: 100% !important;
+    }
+}
+
+.o_form_renderer.vu-form {
+
+    .vu-three-col {
+        display: grid;
+        grid-template-columns: 360px minmax(0, 1fr) 300px;
+        gap: var(--vuf-sp-4);
+        width: 100%;
+        min-height: 400px;
+    }
+
+    .vu-col-summary,
+    .vu-col-actions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--vuf-sp-3);
+        position: sticky;
+        top: var(--vuf-sp-3);
+        align-self: start;
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--vuf-line) transparent;
+    }
+
+    .vu-col-summary { grid-column: 1; }
+    .vu-col-actions { grid-column: 3; }
+
+    .vu-col-content {
+        grid-column: 2;
+        display: flex;
+        flex-direction: column;
+        gap: var(--vuf-sp-3);
+        min-width: 0;
+
+        .o_notebook, .tab-content, .tab-pane { min-width: 0; max-width: 100%; }
+        > * { min-width: 0; max-width: 100%; }
+    }
+    .vu-col-actions > * { min-width: 0; max-width: 100%; }
+
+    // ── summary cards: same design language as section cards ──
+    .vu-summary-card {
+        background: var(--vuf-surface);
+        border: 1px solid var(--vuf-line-soft);
+        border-radius: var(--vuf-r-md);
+        padding: var(--vuf-sp-4);
+        box-shadow: var(--vuf-sh-sm);
+    }
+
+    .vu-summary-header {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        color: var(--vuf-muted);
+        padding-bottom: var(--vuf-sp-2);
+        border-bottom: 1px solid var(--vuf-line-soft);
+        margin-bottom: var(--vuf-sp-2);
+    }
+
+    .vu-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: var(--vuf-sp-1) 0;
+        gap: var(--vuf-sp-2);
+
+        &:not(:last-child) { border-bottom: 1px solid var(--vuf-line-soft); }
+    }
+
+    .vu-summary-row__label {
+        font-size: 12px;
+        color: var(--vuf-muted);
+        flex-shrink: 0;
+        min-width: 64px;
+    }
+
+    .vu-summary-row__value {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--vuf-ink);
+        text-align: right;
+        word-break: break-word;
+
+        // summary values are read-only glances — no input chrome
+        .o_field_widget { padding-left: 0 !important; }
+    }
+
+    .vu-summary-divider {
+        height: 1px;
+        background: var(--vuf-line-soft);
+        margin: var(--vuf-sp-1) 0;
+    }
+
+    .vu-summary-edit {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--vuf-sp-1);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--vuf-primary);
+        cursor: pointer;
+        padding: var(--vuf-sp-1) 0;
+        border: none;
+        background: none;
+
+        &:hover { color: #0F4C90; }   // flat darker step of primary
+        .fa { font-size: .65em; }
+    }
+}
+
+@media (max-width: 1280px) {
+    .o_form_renderer.vu-form .vu-three-col {
+        grid-template-columns: 320px minmax(0, 1fr) 270px;
+        gap: var(--vuf-sp-3);
+    }
+}
+
+@media (max-width: 1080px) {
+    .o_form_renderer.vu-form {
+        .vu-three-col { grid-template-columns: minmax(0, 1fr) 250px; }
+
+        .vu-col-summary {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            flex-direction: row;
+            flex-wrap: wrap;
+            position: static;
+            max-height: none;
+            overflow: visible;
+
+            .vu-summary-card { flex: 1 1 200px; }
+        }
+        .vu-col-content { grid-column: 1; grid-row: 2; }
+        .vu-col-actions { grid-column: 2; grid-row: 2; }
+    }
+}
+
+@media (max-width: 768px) {
+    .o_form_renderer.vu-form {
+        .vu-three-col { grid-template-columns: 1fr; }
+
+        .vu-col-summary,
+        .vu-col-content,
+        .vu-col-actions {
+            grid-column: 1;
+            position: static;
+            max-height: none;
+            overflow: visible;
+        }
+        .vu-col-actions { order: -1; }   // next-best-action stays prominent
+    }
+}
+
+// =========================================================================
+// 11. RESPONSIVE
 // =========================================================================
 @media (max-width: 768px) {
     .o_form_view .o_form_renderer.vu-form {
