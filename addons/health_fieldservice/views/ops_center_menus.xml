@@ -130,10 +130,11 @@
               action="action_ops_calendar"
               sequence="30"/>
 
-<menuitem id="menu_ops_staff_roster"
-              name="Staff Roster"
+<!-- Unified Staff Schedule: redirected from the legacy Staff Roster cards. -->
+    <menuitem id="menu_ops_staff_roster"
+              name="Staff Schedule"
               parent="menu_ops_center_root"
-              action="action_ops_staff_roster"
+              action="action_staff_schedule"
               sequence="40"/>
 
     <menuitem id="menu_ops_staff_workload"

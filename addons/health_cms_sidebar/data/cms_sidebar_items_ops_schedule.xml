@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Staff Schedule cutover (Unified Staff Schedule).
+    Consolidates the legacy Roster + Schedules + Staff Assignment sidebar items
+    into a single availability-aware "Staff Schedule" timeline.
+    noupdate="0" on purpose: this MUST overwrite the seed rows defined (noupdate=1)
+    in cms_sidebar_items_ops.xml. Loaded after that file in the manifest.
+-->
+<odoo noupdate="0">
+
+    <!-- The timeline item becomes the one unified "Staff Schedule" entry. -->
+    <record id="item_ops_roster" model="cms.sidebar.item">
+        <field name="name">Staff Schedule</field>
+        <field name="icon">fa fa-calendar</field>
+        <field name="action_xmlid">health_fieldservice.action_staff_schedule</field>
+        <field name="action_tag"></field>
+        <field name="match_action_tags">ops_roster_planning,ops_staff_roster</field>
+        <field name="match_action_xmlids">health_fieldservice.action_staff_schedule,health_fieldservice.action_assignment_web_timeline_view,health_fieldservice.action_ops_staff_roster,health_fieldservice.action_health_staff_schedules</field>
+        <field name="match_models">health.staff.assignment</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Roster cards + the hr.employee "Schedules" directory are now merged in. -->
+    <record id="item_ops_staff_roster" model="cms.sidebar.item">
+        <field name="active">False</field>
+    </record>
+    <record id="item_ops_staff_schedules" model="cms.sidebar.item">
+        <field name="active">False</field>
+    </record>
+
+</odoo>

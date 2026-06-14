@@ -1,0 +1,408 @@
+// =============================================================================
+// Unified Staff Schedule — engine A (vis-timeline) skin
+// Availability background shading + per-row capacity/status labels, VU palette.
+// =============================================================================
+
+// ---- availability background items (off-hours / leave / "no-drop" zones) ----
+.vis-timeline .vis-item.vis-background.hf-av--off {
+    background: repeating-linear-gradient(
+        45deg, #EEF1F5, #EEF1F5 5px, #E4E8EF 5px, #E4E8EF 10px
+    );
+}
+.vis-timeline .vis-item.vis-background.hf-av--leave {
+    background: repeating-linear-gradient(
+        45deg, #FDE3E1, #FDE3E1 5px, #F6CAC6 5px, #F6CAC6 10px
+    );
+}
+
+// ---- sticky toolbar (Today / Day-Week / zoom / Jump to date / facility) ----
+.oe_timeline_view .oe_timeline_buttons {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: #fff;
+    padding: 8px 6px;
+    margin: 0 0 2px;
+    border-bottom: 1px solid #E6EAF0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+// ---- facility filter as a segmented control (matches the day-scale pills) ----
+.oe_timeline_buttons .hf-fac-pills {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 2px;
+    margin-left: auto;
+    padding: 2px;
+    border-radius: 9px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    vertical-align: middle;
+
+    .hf-fac-ico {
+        color: #64748b;
+        width: 15px;
+        height: 15px;
+        margin: 0 5px 0 6px;
+    }
+    .hf-fac-pill {
+        border: 0;
+        background: transparent;
+        border-radius: 7px;
+        padding: 4px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: 0.01em;
+        color: #475569;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+
+        &:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: #4338ca;
+        }
+        &.is-active {
+            background: #6366f1;
+            color: #fff;
+            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.18);
+        }
+    }
+}
+
+// dragging an unassigned booking out of the rail
+.hf-rail .hf-rail-card[draggable="true"] {
+    cursor: grab;
+}
+.hf-rail .hf-rail-card--dragging {
+    opacity: 0.5;
+}
+
+// ---- legend (wraps to its own row in the sticky toolbar) ----
+.oe_timeline_buttons .hf-legend {
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    padding: 8px 2px 2px;
+    margin-top: 6px;
+    border-top: 1px dashed #E6EAF0;
+
+    .hf-lg-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #6B7280;
+    }
+    .hf-lg-sw {
+        width: 22px;
+        height: 13px;
+        border-radius: 3px;
+        border: 1px solid #D7DCE5;
+        flex: 0 0 auto;
+    }
+    .hf-lg-work {
+        background: #fff;
+    }
+    .hf-lg-off {
+        background: repeating-linear-gradient(
+            45deg, #EEF1F5, #EEF1F5 4px, #E4E8EF 4px, #E4E8EF 8px
+        );
+    }
+    .hf-lg-leave {
+        background: repeating-linear-gradient(
+            45deg, #FDE3E1, #FDE3E1 4px, #F6CAC6 4px, #F6CAC6 8px
+        );
+    }
+    .hf-lg-dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        flex: 0 0 auto;
+    }
+    .hf-lg-sep {
+        width: 1px;
+        height: 16px;
+        background: #E6EAF0;
+        margin: 0 2px;
+    }
+}
+
+// ---- unassigned-bookings side rail ----
+.oe_timeline_view .hf-tl-body {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    min-height: 0;
+}
+.oe_timeline_view .hf-tl-body > .oe_timeline_widget {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.hf-rail {
+    flex: 0 0 264px;
+    width: 264px;
+    border-left: 1px solid #E6EAF0;
+    background: #FAFBFD;
+    overflow-y: auto;
+    padding: 10px;
+
+    .hf-rail-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2px 4px 10px;
+    }
+    .hf-rail-title {
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #6B7280;
+    }
+    .hf-rail-count {
+        font-size: 11px;
+        font-weight: 800;
+        color: #fff;
+        background: #F59E0B;
+        border-radius: 999px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        display: grid;
+        place-items: center;
+    }
+    .hf-rail-empty {
+        font-size: 11.5px;
+        color: #9CA3AF;
+        padding: 14px 6px;
+        text-align: center;
+    }
+    .hf-rail-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .hf-rail-card {
+        background: #fff;
+        border: 1px solid #E6EAF0;
+        border-left: 3px solid #F59E0B;
+        border-radius: 9px;
+        padding: 8px 10px;
+        cursor: pointer;
+        transition: box-shadow 0.12s, border-color 0.12s;
+
+        &:hover {
+            border-color: #F59E0B;
+            box-shadow: 0 4px 12px rgba(16, 23, 40, 0.08);
+        }
+    }
+    .hf-rail-card-top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 6px;
+    }
+    .hf-rail-card-name {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #101728;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .hf-rail-card-dur {
+        font-size: 10px;
+        font-weight: 700;
+        color: #6B7280;
+        flex: 0 0 auto;
+    }
+    .hf-rail-card-svc {
+        font-size: 11px;
+        color: #374151;
+        margin-top: 2px;
+    }
+    .hf-rail-card-when {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #1565C0;
+        margin-top: 3px;
+    }
+    .hf-rail-card-fac {
+        font-size: 10px;
+        color: #9CA3AF;
+        margin-top: 1px;
+    }
+}
+
+// ---- drag preview: card shown as a dashed "proposed" slot while dragging ----
+.vis-timeline .vis-item.hf-dragging {
+    outline: 2px dashed #1565C0;
+    outline-offset: -1px;
+    opacity: 0.9;
+    box-shadow: 0 6px 18px rgba(21, 101, 192, 0.22);
+}
+// Resize (edge) handles only make sense in Day view — hide in Week/Month/Year,
+// where a drag changes the date and the time-of-day is preserved.
+.o_timeline_view[data-timeline-mode="week"] .vis-item .vis-drag-left,
+.o_timeline_view[data-timeline-mode="week"] .vis-item .vis-drag-right,
+.o_timeline_view[data-timeline-mode="month"] .vis-item .vis-drag-left,
+.o_timeline_view[data-timeline-mode="month"] .vis-item .vis-drag-right,
+.o_timeline_view[data-timeline-mode="year"] .vis-item .vis-drag-left,
+.o_timeline_view[data-timeline-mode="year"] .vis-item .vis-drag-right {
+    display: none !important;
+}
+
+// ---- reschedule / reassign confirm dialog ----
+.hf-resched {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13.5px;
+    color: #101728;
+
+    .hf-resched-head {
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.35;
+    }
+    .hf-resched-note {
+        position: relative;
+        padding: 8px 12px 8px 30px;
+        border-radius: 9px;
+        background: #F4F6FB;
+        color: #475569;
+        line-height: 1.4;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 11px;
+            top: 11px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #1565C0;
+        }
+        b {
+            color: #101728;
+        }
+    }
+}
+
+// ---- drag feedback: card over an unavailable (off-hours / leave) zone ----
+.vis-timeline .vis-item.hf-drag--bad {
+    outline: 2px solid #DC2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.22);
+    opacity: 0.92;
+    cursor: not-allowed;
+}
+
+// ---- staff row labels (avatar + name + capacity + status) ----
+.vis-timeline {
+    .hf-tl-label {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 6px 10px;
+        width: 100%;
+    }
+    .hf-tl-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: #fff;
+        flex: 0 0 auto;
+        background: #1565C0;
+    }
+    .hf-tl-avatar--unassigned {
+        background: #F59E0B;
+    }
+    .hf-tl-meta {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+    .hf-tl-name {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #101728;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .hf-tl-sub {
+        font-size: 10.5px;
+        color: #9CA3AF;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .hf-tl-cap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 3px;
+    }
+    .hf-tl-cap-bar {
+        flex: 1 1 auto;
+        height: 4px;
+        border-radius: 2px;
+        background: #EEF1F5;
+        overflow: hidden;
+        min-width: 40px;
+    }
+    .hf-tl-cap-fill {
+        height: 100%;
+        background: #1565C0;
+        border-radius: 2px;
+    }
+    .hf-tl-cap-txt {
+        font-size: 9.5px;
+        font-weight: 700;
+        color: #6B7280;
+        flex: 0 0 auto;
+    }
+    .hf-tl-st {
+        flex: 0 0 auto;
+        font-size: 8.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        padding: 2px 7px;
+        border-radius: 999px;
+        align-self: flex-start;
+    }
+    .hf-tl-st--av    { background: #E7F6EF; color: #16A34A; }
+    .hf-tl-st--busy  { background: #E8F0FB; color: #1565C0; }
+    .hf-tl-st--leave { background: #FDECEC; color: #DC2626; }
+    .hf-tl-st--off   { background: #EEF1F5; color: #6B7280; }
+
+    // avatar hue palette (deterministic per staff color index)
+    .hf-hue-0 { background: hsl(210,55%,48%); }
+    .hf-hue-1 { background: hsl(150,52%,42%); }
+    .hf-hue-2 { background: hsl(0,60%,52%); }
+    .hf-hue-3 { background: hsl(280,45%,52%); }
+    .hf-hue-4 { background: hsl(35,75%,48%); }
+    .hf-hue-5 { background: hsl(190,60%,42%); }
+    .hf-hue-6 { background: hsl(330,55%,52%); }
+    .hf-hue-7 { background: hsl(255,50%,55%); }
+    .hf-hue-8 { background: hsl(95,45%,42%); }
+    .hf-hue-9 { background: hsl(20,70%,50%); }
+
+    // widen the left group panel so labels + capacity fit
+    .vis-panel.vis-left { width: 230px !important; }
+    .vis-labelset .vis-label .vis-inner { padding: 0; width: 100%; }
+}

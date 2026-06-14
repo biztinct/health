@@ -18,6 +18,7 @@
         'data/cms_sidebar_sections.xml',
         'data/cms_sidebar_items_crm.xml',
         'data/cms_sidebar_items_ops.xml',
+        'data/cms_sidebar_items_ops_schedule.xml',
         'data/cms_sidebar_items_fin.xml',
         'data/cms_sidebar_items_admin.xml',
         'views/cms_sidebar_section_views.xml',

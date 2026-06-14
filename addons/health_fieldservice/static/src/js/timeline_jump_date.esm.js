@@ -76,6 +76,12 @@ patch(TimelineRenderer.prototype, {
             {animation: false}
         );
 
+        // Day view: open at the business hour (facility tz) of the picked calendar
+        // date. _applyDayWideWindow consumes this anchor (date → 08:00 facility).
+        if (unit === "day") {
+            this._dayAnchor = {year: date.year, month: date.month, day: date.day};
+        }
+
         switch (mode) {
             case "week":
                 this._onScaleWeekClicked();

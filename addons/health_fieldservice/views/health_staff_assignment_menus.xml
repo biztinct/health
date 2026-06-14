@@ -29,11 +29,11 @@
         <field name="sequence">20</field>
     </record>
 
-    <!-- Timeline View for Assignment Tracking -->
+    <!-- Unified Staff Schedule (redirected from the legacy Timeline View). -->
     <record id="menu_assignment_timeline" model="ir.ui.menu">
-        <field name="name">Timeline View</field>
+        <field name="name">Staff Schedule</field>
         <field name="parent_id" ref="menu_health_staff_assignment_root"/>
-        <field name="action" ref="action_assignment_web_timeline_view"/>
+        <field name="action" ref="action_staff_schedule"/>
         <field name="sequence">30</field>
     </record>
 

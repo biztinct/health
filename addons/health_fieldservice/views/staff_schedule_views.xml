@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Unified Staff Schedule — availability-aware resource timeline (engine A) -->
+    <record id="view_staff_schedule_timeline" model="ir.ui.view">
+        <field name="name">Staff Schedule Timeline</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="type">timeline</field>
+        <field name="priority">5</field>
+        <field name="arch" type="xml">
+            <timeline js_class="staff_schedule_timeline"
+                      date_start="planned_start_time"
+                      date_stop="planned_end_time"
+                      string="display_name"
+                      default_group_by="staff_id"
+                      event_open_popup="true"
+                      create="false"
+                      quick_create="false"
+                      mode="day"
+                      stack="true"
+                      class="hf-staff-schedule"
+                      domain="[('state', '!=', 'template')]"
+                      colors="#94a3b8:state == 'draft';#2563eb:state == 'assigned';#0ea5e9:state == 'confirmed';#16a34a:state == 'in_progress';#14b8a6:state == 'completed';#ef4444:state == 'cancelled';#f59e0b:state == 'deferred'">
+                <field name="fso_id"/>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="staff_id"/>
+                <field name="assignment_type"/>
+                <field name="display_name"/>
+                <field name="patient_name"/>
+                <field name="patient_code"/>
+                <field name="patient_initials"/>
+                <field name="avatar_hue"/>
+                <field name="state_label"/>
+                <field name="type_label"/>
+                <field name="formatted_duration"/>
+                <field name="planned_start_time"/>
+                <field name="planned_end_time"/>
+                <field name="formatted_time"/>
+                <templates>
+                    <t t-name="timeline-item">
+                        <div t-attf-class="hf-wt-card hf-state-#{record.state} #{record.priority == '4' ? 'hf-prio-emergency' : ''}">
+                            <div class="hf-wt-row">
+                                <span t-attf-class="hf-wt-avatar hf-av-#{record.avatar_hue or '0'}"><t t-esc="record.patient_initials or '?'"/></span>
+                                <span class="hf-wt-title"><t t-esc="record.patient_name or 'Client'"/></span>
+                            </div>
+                            <div class="hf-wt-meta">
+                                <span class="hf-wt-time"><t t-esc="record.formatted_time"/></span>
+                                <span class="hf-wt-sep">·</span>
+                                <span class="hf-wt-dur"><t t-esc="record.formatted_duration"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </timeline>
+        </field>
+    </record>
+
+    <record id="action_staff_schedule" model="ir.actions.act_window">
+        <field name="name">Staff Schedule</field>
+        <field name="res_model">health.staff.assignment</field>
+        <field name="view_mode">timeline,list,form</field>
+        <field name="view_id" ref="view_staff_schedule_timeline"/>
+        <field name="target">current</field>
+        <field name="domain">[('state', '!=', 'template')]</field>
+        <field name="context">{'timeline_default_group_by': 'staff_id', 'active_center': 'ops_center'}</field>
+    </record>
+
+</odoo>

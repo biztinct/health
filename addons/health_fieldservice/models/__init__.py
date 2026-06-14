@@ -1,3 +1,4 @@
+from . import ir_http
 from . import health_appointment  # CRITICAL: Must load first - defines health.appointment model
 from . import health_clinical_note
 from . import health_fieldservice_order

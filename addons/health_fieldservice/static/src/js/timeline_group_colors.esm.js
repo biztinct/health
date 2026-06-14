@@ -30,8 +30,9 @@ const DAY_SCALES = {
 };
 const DEFAULT_DAY_SCALE = "30min";
 // Where the visible window starts (24h clock) when the displayed day is not
-// today. On "today" we center on the current hour instead.
-const DAY_WINDOW_START_HOUR = 7;
+// today. On "today" we center on the current hour instead. Jump-to-date sets an
+// explicit anchor (this._dayAnchor) so it always opens at this hour, facility tz.
+const DAY_WINDOW_START_HOUR = 8;
 
 patch(TimelineRenderer.prototype, {
     setup() {
@@ -39,6 +40,18 @@ patch(TimelineRenderer.prototype, {
         // Reactive day-view time scale (15min / 30min / 1hr). Drives both the
         // toolbar button highlighting and the window span in _applyDayWideWindow.
         this.dayScale = useState({value: DEFAULT_DAY_SCALE});
+    },
+
+    // Window math runs in the schedule's FACILITY timezone when the renderer sets
+    // `this.scheduleTz` (Staff Schedule); otherwise it falls back to the user/local
+    // zone. This keeps the day/month windows aligned with the facility-tz axis.
+    _schedNow() {
+        return this.scheduleTz ? DateTime.now().setZone(this.scheduleTz) : DateTime.now();
+    },
+    _schedFromJS(d) {
+        return this.scheduleTz
+            ? DateTime.fromJSDate(d, {zone: this.scheduleTz})
+            : DateTime.fromJSDate(d);
     },
 
     /**
@@ -55,7 +68,11 @@ patch(TimelineRenderer.prototype, {
         super.init_timeline();
         this.timeline?.setOptions({
             itemsAlwaysDraggable: {item: true, range: false},
-            editable: {updateTime: false},
+            // Allow dragging in time/date and between staff rows, plus edge-resize.
+            // Day view applies the new time verbatim; Week/Month preserve the
+            // booking's time-of-day (date-only) and hide the resize handles via CSS.
+            // The drop is gated + confirmed in StaffScheduleController._onMove.
+            editable: {updateTime: true, updateGroup: true},
         });
     },
 
@@ -82,20 +99,36 @@ patch(TimelineRenderer.prototype, {
         if (!this.timeline || this.mode.data !== "day") return;
 
         const cfg = DAY_SCALES[this.dayScale?.value || DEFAULT_DAY_SCALE];
-        const win = this.timeline.getWindow();
-        const dayStart = DateTime.fromJSDate(win.start).startOf("day");
-        const now = DateTime.now();
-
-        // Center on the current hour when viewing today, otherwise start at the
-        // business hour. The rest of the day is reached by horizontal scroll.
-        let start = dayStart.plus({hours: DAY_WINDOW_START_HOUR});
-        if (now >= dayStart && now < dayStart.plus({days: 1})) {
-            start = now.minus({hours: 1}).startOf("hour");
+        let start;
+        if (this._dayAnchor) {
+            // Jump-to-date: always open at the business hour of the picked date,
+            // in the facility timezone (independent of "today" / browser tz).
+            const tz = this.scheduleTz || DateTime.local().zoneName;
+            start = DateTime.fromObject(
+                {
+                    year: this._dayAnchor.year,
+                    month: this._dayAnchor.month,
+                    day: this._dayAnchor.day,
+                    hour: DAY_WINDOW_START_HOUR,
+                },
+                {zone: tz}
+            );
+            this._dayAnchor = null;
+        } else {
+            const win = this.timeline.getWindow();
+            const dayStart = this._schedFromJS(win.start).startOf("day");
+            const now = this._schedNow();
+            // Center on the current hour when viewing today, otherwise the business hour.
+            start = dayStart.plus({hours: DAY_WINDOW_START_HOUR});
+            if (now >= dayStart && now < dayStart.plus({days: 1})) {
+                start = now.minus({hours: 1}).startOf("hour");
+            }
         }
         const end = start.plus({hours: cfg.visibleHours});
 
         this.timeline.setOptions({
-            horizontalScroll: true,
+            // Wheel scrolls the rows vertically (like Week); pan the day by drag.
+            horizontalScroll: false,
             zoomKey: "ctrlKey",
             moveable: true,
             timeAxis: cfg.timeAxis,
@@ -114,9 +147,9 @@ patch(TimelineRenderer.prototype, {
         if (this.mode.data !== "day" || !this.timeline) return;
 
         const cfg = DAY_SCALES[scale];
-        const start = DateTime.fromJSDate(this.timeline.getWindow().start);
+        const start = this._schedFromJS(this.timeline.getWindow().start);
         this.timeline.setOptions({
-            horizontalScroll: true,
+            horizontalScroll: false,
             zoomKey: "ctrlKey",
             moveable: true,
             timeAxis: cfg.timeAxis,
@@ -141,7 +174,7 @@ patch(TimelineRenderer.prototype, {
         const updatedItems = [];
         for (const item of itemsData.get()) {
             if (!item.start) continue;
-            const startDate = DateTime.fromJSDate(item.start);
+            const startDate = this._schedFromJS(item.start);
             updatedItems.push({
                 ...item,
                 start: startDate.startOf("day").toJSDate(),
@@ -167,12 +200,12 @@ patch(TimelineRenderer.prototype, {
         if (!this.timeline || this.mode.data !== "month") return;
 
         const win = this.timeline.getWindow();
-        const monthStart = DateTime.fromJSDate(win.start).startOf("month");
-        const now = DateTime.now();
+        const monthStart = this._schedFromJS(win.start).startOf("month");
+        const now = this._schedNow();
 
         // Land on "today" when the displayed month is the current one, otherwise
         // start at the beginning of that month. The rest of the month is reached
-        // by horizontal scroll / drag.
+        // by horizontal drag.
         let start = monthStart;
         if (now >= monthStart && now < monthStart.plus({months: 1})) {
             start = now.startOf("day");
@@ -180,7 +213,8 @@ patch(TimelineRenderer.prototype, {
         const end = start.plus({days: MONTH_VISIBLE_DAYS});
 
         this.timeline.setOptions({
-            horizontalScroll: true,
+            // Wheel scrolls the rows vertically (like Week); pan the month by drag.
+            horizontalScroll: false,
             zoomKey: "ctrlKey",
             moveable: true,
         });

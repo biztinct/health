@@ -1222,9 +1222,446 @@ class HealthStaffAssignment(models.Model):
         self._update_staff_availability()  # Same logic - free up time
     
     # ============================================================================
+    # Unified Staff Schedule (timeline overlay + drag validation)
+    # ============================================================================
+
+    @api.model
+    @api.model
+    def _schedule_tz_name(self):
+        """Timezone the Unified Staff Schedule grid renders in: the operator's
+        FACILITY timezone — never their physical/browser location. Falls back to
+        the user's catchment province, then their Odoo tz, then Asia/Ho_Chi_Minh."""
+        user = self.env.user
+        emp = user.employee_id or self.env['hr.employee'].search(
+            [('user_id', '=', user.id)], limit=1)
+        fac = emp.healthcare_facility_id if emp else False
+        if fac and fac.timezone:
+            return fac.timezone
+        if user.catchment_province_id and user.catchment_province_id.timezone:
+            return user.catchment_province_id.timezone
+        return user.tz or 'Asia/Ho_Chi_Minh'
+
+    @api.model
+    def _facility_tz(self, facility_id=None):
+        """Timezone of a given facility (the schedule follows the facility filter);
+        falls back to the operator's facility tz when none is selected."""
+        if facility_id:
+            fac = self.env['health.facility'].browse(facility_id).exists()
+            if fac and fac.timezone:
+                return fac.timezone
+        return self._schedule_tz_name()
+
+    def _staff_tz(self, emp):
+        """Facility timezone of a staff member (for availability checks)."""
+        fac = emp.healthcare_facility_id if emp else False
+        if fac and fac.timezone:
+            return fac.timezone
+        return self._schedule_tz_name()
+
+    @api.model
+    def get_schedule_meta(self):
+        """Front-end bootstrap for the Staff Schedule: the grid timezone and the
+        facility-filter options (defaulting to the operator's own facility)."""
+        user = self.env.user
+        emp = user.employee_id or self.env['hr.employee'].search(
+            [('user_id', '=', user.id)], limit=1)
+        default_fac = emp.healthcare_facility_id if emp else False
+        facs = self.env['health.facility'].search([], order='name asc')
+        default_tz = self._schedule_tz_name()
+        return {
+            'tz': default_tz,
+            'facilities': [
+                {'id': f.id, 'name': f.name, 'tz': f.timezone or default_tz}
+                for f in facs
+            ],
+            'default_facility_id': default_fac.id if default_fac else False,
+        }
+
+    def _sched_parse_iso(self, value):
+        """Parse a JS ISO datetime ('2026-06-13T01:30:00.000Z') to a naive-UTC
+        datetime (the same basis as planned_start_time)."""
+        if not value:
+            return None
+        if not isinstance(value, str):
+            return value
+        v = value.strip().replace('T', ' ').replace('Z', '')
+        if '.' in v:
+            v = v.split('.')[0]
+        if '+' in v[10:]:
+            v = v[:10] + v[10:].split('+')[0]
+        try:
+            return fields.Datetime.from_string(v)
+        except Exception:
+            return None
+
+    @api.model
+    def get_schedule_overlay(self, date_start, date_end, staff_ids=None, facility_id=None):
+        """Overlay data for the Unified Staff Schedule timeline (engine A).
+
+        Foreground assignment items are loaded by the timeline view itself; this
+        returns everything *around* them, for the visible [date_start, date_end)
+        window (ISO strings from the client):
+          - 'rows'        : ALL active healthcare staff (ordered) with status +
+                            capacity (used/cap/util%) — feeds the row labels &
+                            ensures staff with no assignments still get a row.
+          - 'backgrounds' : vis.js background segments per staff — off-hours and
+                            leave — to shade the non-droppable time. Datetimes are
+                            naive-UTC ISO (same basis as planned_start_time).
+          - 'unassigned'  : bookings still needing staff, for the side rail.
+        Reuses hr.employee._working_intervals_for / _has_leave_on / _get_duty_status.
+        """
+        import pytz
+        from datetime import datetime as _dt, timedelta as _td, time as _time
+        tz = pytz.timezone(self._facility_tz(facility_id))
+
+        # Convention: datetimes exchanged with the front-end are LOCAL wall-clock
+        # (the basis vis-timeline items end up on). DB queries convert to UTC.
+        def to_utc(local_naive):
+            return tz.localize(local_naive).astimezone(pytz.utc).replace(tzinfo=None)
+
+        def to_local_str(naive_utc):
+            return fields.Datetime.to_string(
+                pytz.utc.localize(naive_utc).astimezone(tz).replace(tzinfo=None))
+
+        def off_bg(emp_id, day, h_from, h_to, kind='off'):
+            # Emit segment bounds as REAL UTC (the facility-local hour-of-day
+            # converted to UTC), so the front-end positions them on the very same
+            # basis as the foreground cards (which are stored UTC). vis then renders
+            # both through the facility-tz `moment`, keeping shading and cards aligned.
+            base = _dt.combine(day, _time(0, 0))
+            return {
+                'staff_id': emp_id,
+                'start': fields.Datetime.to_string(to_utc(base + _td(hours=h_from))),
+                'end': fields.Datetime.to_string(to_utc(base + _td(hours=h_to))),
+                'kind': kind,
+            }
+
+        win_start = self._sched_parse_iso(date_start)   # naive LOCAL wall-clock
+        win_end = self._sched_parse_iso(date_end)
+        if not win_start or not win_end:
+            return {'rows': [], 'backgrounds': [], 'unassigned': []}
+        d0 = win_start.date()
+        # exclusive end: a window ending exactly at local midnight must not pull
+        # in the following day
+        d1 = (win_end - _td(seconds=1)).date()
+        if d1 < d0:
+            d1 = d0
+        win_start_utc = to_utc(win_start)
+        win_end_utc = to_utc(win_end)
+
+        Emp = self.env['hr.employee']
+        if staff_ids:
+            staff = Emp.browse(staff_ids).exists()
+        else:
+            staff_domain = [
+                ('is_healthcare_staff', '=', True),
+                ('employment_status', '=', 'active'),
+            ]
+            if facility_id:
+                staff_domain.append(('healthcare_facility_id', '=', facility_id))
+            staff = Emp.search(staff_domain, order='name asc')
+
+        rows, backgrounds = [], []
+        for emp in staff:
+            day_asgs = self.search([
+                ('staff_id', '=', emp.id),
+                ('planned_start_time', '>=', win_start_utc),
+                ('planned_start_time', '<', win_end_utc),
+                ('state', 'not in', ['cancelled', 'template']),
+            ])
+            work_hours = 0.0
+            day = d0
+            while day <= d1:
+                if emp._has_leave_on(day):
+                    backgrounds.append(off_bg(emp.id, day, 0, 24, kind='leave'))
+                else:
+                    intervals = sorted(emp._working_intervals_for(day.weekday()))
+                    if not intervals:
+                        backgrounds.append(off_bg(emp.id, day, 0, 24))
+                    else:
+                        cursor = 0.0
+                        for (f, t) in intervals:
+                            work_hours += max(0.0, t - f)
+                            if f > cursor:
+                                backgrounds.append(off_bg(emp.id, day, cursor, f))
+                            cursor = max(cursor, t)
+                        if cursor < 24.0:
+                            backgrounds.append(off_bg(emp.id, day, cursor, 24))
+                day += _td(days=1)
+
+            busy = 0.0
+            for a in day_asgs:
+                if a.planned_start_time and a.planned_end_time:
+                    busy += (a.planned_end_time - a.planned_start_time).total_seconds() / 3600.0
+            util = round(100 * busy / work_hours) if work_hours else 0
+            duty = emp._get_duty_status(day=d0, day_assignments=day_asgs)
+            rows.append({
+                'id': emp.id,
+                'name': emp.name or '',
+                'initials': ''.join([p[0].upper() for p in (emp.name or 'U').split()[:2]]),
+                'color': emp.color or 0,
+                'facility': emp.healthcare_facility_id.name if emp.healthcare_facility_id else '',
+                'role': emp.access_role_display or '',
+                'status': duty['code'],
+                'status_label': duty['label'],
+                'used': len(day_asgs),
+                'cap': emp.max_daily_assignments or 0,
+                'util_pct': min(util, 999),
+            })
+
+        unassigned = []
+        FSO = self.env['health.fieldservice.order']
+        fso_domain = [
+            ('scheduled_datetime', '>=', win_start_utc),
+            ('scheduled_datetime', '<', win_end_utc),
+            ('state', 'not in', ['cancelled', 'rejected', 'completed', 'closed']),
+        ]
+        if facility_id:
+            fso_domain.append(('facility_id', '=', facility_id))
+        fsos = FSO.search(fso_domain, order='scheduled_datetime asc', limit=80)
+        svc_labels = _selection_labels(FSO.browse(), 'service_type') if fsos else {}
+        for fso in fsos:
+            has_staff = fso.assignment_ids.filtered(
+                lambda a: a.state not in ('cancelled', 'template') and a.staff_id)
+            if has_staff:
+                continue
+            unassigned.append({
+                'fso_id': fso.id,
+                'patient_name': fso.patient_id.name if fso.patient_id else '',
+                'service_label': svc_labels.get(fso.service_type, fso.service_type or ''),
+                'duration_min': fso.scheduled_duration or 60,
+                'facility': fso.facility_id.name if fso.facility_id else '',
+                'start_iso': to_local_str(fso.scheduled_datetime) if fso.scheduled_datetime else '',
+                'start_utc': fields.Datetime.to_string(fso.scheduled_datetime) if fso.scheduled_datetime else '',
+            })
+
+        return {'rows': rows, 'backgrounds': backgrounds, 'unassigned': unassigned}
+
+    def _check_emp_slot(self, emp, start_utc, end_utc, exclude_assignment_id=None):
+        """Availability of ONE staff member for [start_utc, end_utc) (naive UTC),
+        evaluated in that staff's facility timezone. Returns
+        {ok, hard, reason, message[, overlap]} where hard=True means off-hours/leave
+        (a snap-back) and overlap=True is a soft double-booking."""
+        import pytz
+        tz = pytz.timezone(self._staff_tz(emp))
+        start_local = pytz.utc.localize(start_utc).astimezone(tz).replace(tzinfo=None)
+        end_local = pytz.utc.localize(end_utc).astimezone(tz).replace(tzinfo=None)
+        day = start_local.date()
+
+        if emp._has_leave_on(day):
+            return {'ok': False, 'hard': True, 'reason': 'on_leave',
+                    'message': self.env._('%s is on leave that day.') % emp.name}
+
+        intervals = sorted(emp._working_intervals_for(day.weekday()))
+        # Merge contiguous/overlapping segments. A resource calendar often lists
+        # several attendance lines that touch (e.g. 08:00-12:00 + 12:00-17:00); the
+        # staff actually works straight through, so a booking that spans an internal
+        # split must NOT be rejected. This mirrors the overlay shading, which merges
+        # the same way (so validation and the visible working band always agree).
+        merged = []
+        for (f, t) in intervals:
+            if merged and f <= merged[-1][1] + 1e-6:
+                merged[-1] = (merged[-1][0], max(merged[-1][1], t))
+            else:
+                merged.append((f, t))
+        s_h = start_local.hour + start_local.minute / 60.0
+        e_h = end_local.hour + end_local.minute / 60.0
+        if end_local.date() != day:
+            e_h = 24.0
+        inside = any(f <= s_h and e_h <= t for (f, t) in merged)
+        if not merged or not inside:
+            return {'ok': False, 'hard': True, 'reason': 'outside_hours',
+                    'message': self.env._("Outside %s's working hours.") % emp.name}
+
+        dom = [('staff_id', '=', emp.id),
+               ('state', 'not in', ['cancelled', 'template']),
+               ('planned_start_time', '<', end_utc),
+               ('planned_end_time', '>', start_utc)]
+        if exclude_assignment_id:
+            dom.append(('id', '!=', exclude_assignment_id))
+        clash = self.search(dom, limit=1)
+        if clash:
+            return {'ok': True, 'hard': False, 'reason': 'overlap', 'overlap': True,
+                    'message': self.env._("Overlaps %(staff)s's booking %(bk)s.",
+                                          staff=emp.name, bk=(clash.fso_id.name or ''))}
+        return {'ok': True, 'hard': False, 'reason': 'ok'}
+
+    @api.model
+    def validate_drop(self, staff_id, start_iso, end_iso, assignment_id=None):
+        """Validate a proposed timeline drop for a single staff member.
+        Incoming times are REAL UTC (the basis of the timeline items); availability
+        is checked in the STAFF's own facility timezone.
+        Returns {ok, hard_block, reason, message, overlap}:
+          - hard_block True  → outside working hours or on leave → caller snaps back.
+          - overlap   True   → overlaps an existing assignment → caller confirms.
+        """
+        emp = self.env['hr.employee'].browse(staff_id).exists()
+        if not emp:
+            return {'ok': False, 'hard_block': True, 'reason': 'no_staff',
+                    'message': self.env._('Unknown staff member.')}
+        start_utc = self._sched_parse_iso(start_iso)
+        end_utc = self._sched_parse_iso(end_iso) or (start_utc and start_utc + timedelta(hours=1))
+        if not start_utc:
+            return {'ok': False, 'hard_block': True, 'reason': 'bad_time',
+                    'message': self.env._('Invalid time.')}
+        r = self._check_emp_slot(emp, start_utc, end_utc, exclude_assignment_id=assignment_id)
+        if r.get('hard'):
+            return {'ok': False, 'hard_block': True, 'reason': r['reason'], 'message': r['message']}
+        if r.get('overlap'):
+            return {'ok': True, 'hard_block': False, 'reason': 'overlap', 'overlap': True,
+                    'message': r['message'] + ' ' + self.env._('Assign anyway?')}
+        return {'ok': True, 'hard_block': False, 'reason': 'ok'}
+
+    def _effective_reschedule_times(self, fso, new_start_utc, new_end_utc, mode):
+        """Day view uses the dropped times verbatim. Week/Month preserve the
+        booking's facility-local time-of-day (and current duration) and move only
+        the DATE — so a horizontal drag across day columns never changes the time."""
+        if mode == 'day' or not fso or not fso.scheduled_datetime:
+            return new_start_utc, new_end_utc
+        import pytz
+        from datetime import datetime as _dt
+        tz = pytz.timezone(self._facility_tz(fso.facility_id.id if fso.facility_id else None))
+        new_date = pytz.utc.localize(new_start_utc).astimezone(tz).date()
+        cur_local = pytz.utc.localize(fso.scheduled_datetime).astimezone(tz)
+        dur = fso.scheduled_duration or 60
+        eff_local = tz.localize(_dt.combine(new_date, cur_local.time()))
+        eff_start = eff_local.astimezone(pytz.utc).replace(tzinfo=None)
+        return eff_start, eff_start + timedelta(minutes=dur)
+
+    @api.model
+    def validate_timeline_change(self, assignment_id, new_start_iso, new_end_iso,
+                                 new_staff_id, mode='day'):
+        """Validate a drag/resize of an existing assignment. Real-UTC inputs.
+        Hard-blocks: dragged staff unavailable; any OTHER assigned staff unavailable
+        at the new time; booking already in progress. Returns flags + names so the
+        front-end can show the right confirm dialog before applying."""
+        a = self.browse(assignment_id).exists()
+        if not a:
+            return {'ok': False, 'hard_block': True, 'reason': 'no_assignment',
+                    'message': self.env._('Unknown assignment.')}
+        fso = a.fso_id
+        old_staff = a.staff_id
+        new_staff = (self.env['hr.employee'].browse(new_staff_id).exists()
+                     if new_staff_id else old_staff)
+        if not new_staff:
+            return {'ok': False, 'hard_block': True, 'reason': 'no_staff',
+                    'message': self.env._('Drop on a staff member.')}
+        ns = self._sched_parse_iso(new_start_iso)
+        ne = self._sched_parse_iso(new_end_iso) or (ns and ns + timedelta(hours=1))
+        if not ns:
+            return {'ok': False, 'hard_block': True, 'reason': 'bad_time',
+                    'message': self.env._('Invalid time.')}
+        eff_start, eff_end = self._effective_reschedule_times(fso, ns, ne, mode)
+
+        staff_changed = bool(new_staff_id) and new_staff.id != old_staff.id
+        cur_dur = (fso.scheduled_duration or 60) if fso else 0
+        new_dur = int(round((eff_end - eff_start).total_seconds() / 60.0))
+        time_changed = bool(fso) and bool(fso.scheduled_datetime) and (
+            eff_start != fso.scheduled_datetime or new_dur != cur_dur)
+
+        if time_changed and fso:
+            started = fso.assignment_ids.filtered(
+                lambda x: x.state != 'template'
+                and x.assignment_status in ('en_route', 'arrived', 'in_progress', 'completed'))
+            if started:
+                return {'ok': False, 'hard_block': True, 'reason': 'started',
+                        'message': self.env._('This booking is already in progress and '
+                                              'cannot be rescheduled here.')}
+
+        if staff_changed:
+            r = self._check_emp_slot(new_staff, eff_start, eff_end, exclude_assignment_id=a.id)
+            if r.get('hard'):
+                return {'ok': False, 'hard_block': True, 'reason': r['reason'],
+                        'message': r['message']}
+
+        co_staff_names, conflicts = [], []
+        if time_changed and fso:
+            for other in fso.assignment_ids.filtered(
+                    lambda x: x.state not in ('cancelled', 'template') and x.staff_id):
+                emp = new_staff if other.id == a.id else other.staff_id
+                if other.id != a.id:
+                    co_staff_names.append(other.staff_id.name)
+                r = self._check_emp_slot(emp, eff_start, eff_end, exclude_assignment_id=other.id)
+                if r.get('hard'):
+                    conflicts.append('%s (%s)' % (emp.name, r['message']))
+            if conflicts:
+                return {'ok': False, 'hard_block': True, 'reason': 'staff_conflict',
+                        'message': self.env._('Cannot reschedule — ') + '; '.join(conflicts)}
+
+        import pytz
+        tz = pytz.timezone(self._staff_tz(new_staff))
+        el = pytz.utc.localize(eff_start).astimezone(tz)
+        return {
+            'ok': True, 'hard_block': False, 'reason': 'ok',
+            'time_changed': time_changed, 'staff_changed': staff_changed,
+            'co_staff_names': co_staff_names, 'multi': len(co_staff_names) > 0,
+            'new_staff_name': new_staff.name, 'old_staff_name': old_staff.name or '',
+            'patient_name': (fso.patient_id.name if fso and fso.patient_id else ''),
+            'new_time_label': el.strftime('%H:%M'),
+            'new_date_label': el.strftime('%a %d %b'),
+        }
+
+    @api.model
+    def apply_timeline_change(self, assignment_id, new_start_iso, new_end_iso,
+                              new_staff_id, mode='day'):
+        """Persist a validated drag/resize. Staff change → reassign + notify new/old;
+        time change → write the FSO datetime/duration (cascades to all assignments and
+        fires reschedule notifications)."""
+        a = self.browse(assignment_id).exists()
+        if not a:
+            return {'ok': False, 'message': self.env._('Unknown assignment.')}
+        fso = a.fso_id
+        old_staff = a.staff_id
+        new_staff = (self.env['hr.employee'].browse(new_staff_id).exists()
+                     if new_staff_id else old_staff)
+        ns = self._sched_parse_iso(new_start_iso)
+        ne = self._sched_parse_iso(new_end_iso) or (ns and ns + timedelta(hours=1))
+        eff_start, eff_end = self._effective_reschedule_times(fso, ns, ne, mode)
+        staff_changed = bool(new_staff_id) and new_staff and new_staff.id != old_staff.id
+        dur = max(15, int(round((eff_end - eff_start).total_seconds() / 60.0)))
+        time_changed = bool(fso) and fso.scheduled_datetime and (
+            eff_start != fso.scheduled_datetime or dur != (fso.scheduled_duration or 60))
+
+        if staff_changed:
+            a.write({'staff_id': new_staff.id})
+            try:
+                if fso:
+                    fso._send_staff_assignment_notification(new_staff, a)
+                    if old_staff:
+                        fso._send_staff_cancellation_notification(old_staff)
+            except Exception as e:
+                _logger.warning('Timeline reassign notification failed: %s', e)
+
+        if time_changed and fso:
+            fso.write({'scheduled_datetime': eff_start, 'scheduled_duration': dur})
+
+        return {'ok': True, 'time_changed': time_changed, 'staff_changed': staff_changed}
+
+    @api.model
+    def assign_booking(self, fso_id, staff_id):
+        """Assign a staff member to an unassigned booking (drag from the side rail).
+        The booking keeps its own scheduled date/time — create() forces planned times
+        from the FSO — so this only adds the staff link. Availability is validated by
+        the caller via validate_drop. Returns {ok, message}."""
+        fso = self.env['health.fieldservice.order'].browse(fso_id).exists()
+        emp = self.env['hr.employee'].browse(staff_id).exists()
+        if not fso or not emp:
+            return {'ok': False, 'message': self.env._('Unknown booking or staff member.')}
+        dup = self.search([
+            ('fso_id', '=', fso_id),
+            ('staff_id', '=', staff_id),
+            ('state', 'not in', ['cancelled', 'template']),
+        ], limit=1)
+        if dup:
+            return {'ok': False,
+                    'message': self.env._('%s is already assigned to this booking.') % emp.name}
+        self.create({'fso_id': fso_id, 'staff_id': staff_id})
+        return {'ok': True}
+
+    # ============================================================================
     # API Methods for Mobile Interface
     # ============================================================================
-    
+
     @api.model
     def get_my_assignments_mobile(self, staff_id, date_from=None, date_to=None):
         """Get assignments for mobile staff interface"""
