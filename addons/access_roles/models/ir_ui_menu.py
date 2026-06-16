@@ -44,12 +44,26 @@ class IrUiMenu(models.Model):
 
     @api.model
     def _visible_menu_ids(self, debug=False):
-        """Override to dynamically hide menus based on role management."""
+        """Override to dynamically hide menus based on role management.
+
+        Hiding a menu hides its WHOLE branch: every descendant of a selected menu
+        is hidden too, so picking an App (or any parent) in Role Management removes
+        the entire sub-tree in one go (matches the 'hide the whole branch' choice).
+        Only the selected parents are stored; the descendants are expanded here."""
         visible_menu_ids = super()._visible_menu_ids(debug=debug)
         role = self.env.user.access_role_id
         hidden_menu_ids = set()
-        if role.role_management_id and role.role_management_id.menu_ids:
-            hidden_menu_ids.update(role.role_management_id.menu_ids.ids)
+        rm = role.role_management_id
+        if rm and rm.menu_ids:
+            selected = rm.menu_ids.sudo()
+            hidden_menu_ids.update(selected.ids)
+            paths = [m.parent_path for m in selected if m.parent_path]
+            if paths:
+                domain = ['|'] * (len(paths) - 1)
+                for path in paths:
+                    domain.append(('parent_path', '=like', path + '%'))
+                descendants = self.sudo().search(domain)
+                hidden_menu_ids.update(descendants.ids)
         return visible_menu_ids - hidden_menu_ids
 
     @api.model

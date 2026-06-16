@@ -126,7 +126,10 @@ class HealthStaffAssignment(models.Model):
         'hr.employee',
         string='Assigned Staff',
         required=False,  # Allow unassigned staff in draft state for timeline drag-drop
-        domain=[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')],
+        # Nurse-only picker (the nurse/lead-staff field). Doctor assignments are
+        # created programmatically via the FSO doctor m2m, which bypasses this domain.
+        domain=[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active'),
+                ('is_nurse_role', '=', True)],
         tracking=True,
         help='Individual staff member for this assignment (can be unassigned in draft state)'
     )
@@ -1527,6 +1530,123 @@ class HealthStaffAssignment(models.Model):
         eff_local = tz.localize(_dt.combine(new_date, cur_local.time()))
         eff_start = eff_local.astimezone(pytz.utc).replace(tzinfo=None)
         return eff_start, eff_start + timedelta(minutes=dur)
+
+    @api.model
+    def migrate_booking_staff_roles(self, dry_run=False, limit=None):
+        """Data migration — wired into migrations/19.0.2.3.7/post-migrate.py.
+
+        For every staff member assigned in real bookings, ensure they hold the right
+        ACCESS ROLE (Nurse / Doctor) — derived from the deprecated `healthcare_role`
+        — creating an internal user (no invitation email) when the staff has none,
+        then clearing `healthcare_role`. Idempotent.
+
+        Classification by healthcare_role:
+          - doctor / duty_doctor  -> Doctor access role
+          - nurse / head_nurse    -> Nurse access role
+          - anything else (admin, support, technician, none, ...) -> SKIPPED.
+
+        Returns a summary dict; `created_user_ids` lets the run be reversed.
+        Pass dry_run=True to report without writing, limit=N to process a subset.
+        """
+        Emp = self.env['hr.employee'].sudo()
+        Users = self.env['res.users'].sudo()
+        Role = self.env['access.role'].sudo()
+        nurse_role = Role.search([('name', '=ilike', 'nurse')], limit=1)
+        doctor_role = Role.search([('name', '=ilike', 'doctor')], limit=1)
+        if not nurse_role or not doctor_role:
+            return {'error': 'Nurse and/or Doctor access.role not found'}
+
+        DOCTOR_HC = ('doctor', 'duty_doctor')
+        NURSE_HC = ('nurse', 'head_nurse')
+
+        staff = self.sudo().search([
+            ('state', 'not in', ['template', 'cancelled']),
+            ('staff_id', '!=', False),
+        ]).mapped('staff_id')
+        if limit:
+            staff = staff[:limit]
+
+        summary = {
+            'assigned_staff': len(staff), 'nurses_done': 0, 'doctors_done': 0,
+            'users_created': 0, 'cleaned': 0, 'skipped': 0, 'already_ok': 0,
+            'kept_other_role': 0, 'dry_run': dry_run,
+        }
+        created_user_ids, would_create, other_role = [], [], []
+
+        for emp in staff:
+            hc = emp.healthcare_role
+            if hc in DOCTOR_HC:
+                target = doctor_role
+            elif hc in NURSE_HC:
+                target = nurse_role
+            else:
+                summary['skipped'] += 1
+                continue
+
+            user = emp.user_id
+            # NEVER overwrite an existing access role. If the user already has ANY
+            # role, leave it untouched (matches "only assign if they have no role").
+            if user and user.access_role_id:
+                if user.access_role_id.id == target.id:
+                    summary['already_ok'] += 1
+                    if not dry_run and emp.healthcare_role:
+                        emp.healthcare_role = False  # correct role already; drop the dup tag
+                        summary['cleaned'] += 1
+                else:
+                    summary['kept_other_role'] += 1
+                    other_role.append('%s -> %s' % (emp.name, user.access_role_id.name))
+                continue
+
+            # No role yet: assign target (creating an internal user if needed).
+            if dry_run:
+                if not user:
+                    summary['users_created'] += 1
+                    would_create.append(emp.name)
+                summary['cleaned'] += 1 if emp.healthcare_role else 0
+                summary['nurses_done' if target == nurse_role else 'doctors_done'] += 1
+                continue
+
+            if not user:
+                login = (emp.work_email or '').strip() or ('staff_%d' % emp.id)
+                if Users.with_context(active_test=False).search_count([('login', '=', login)]):
+                    login = 'staff_%d' % emp.id
+                company = emp.company_id or self.env.company
+                try:
+                    user = Users.with_context(
+                        no_reset_password=True, mail_create_nosubscribe=True,
+                        mail_create_nolog=True, tracking_disable=True,
+                    ).create({
+                        'name': emp.name or login,
+                        'login': login,
+                        'company_id': company.id,
+                        'company_ids': [(6, 0, [company.id])],
+                        'access_role_id': target.id,
+                    })
+                except Exception as e:
+                    _logger.warning(
+                        'migrate_booking_staff_roles: user create failed for %s (%s): %s',
+                        emp.name, emp.id, e)
+                    continue
+                created_user_ids.append(user.id)
+                summary['users_created'] += 1
+                emp.user_id = user.id
+            else:
+                user.write({'access_role_id': target.id})
+            # keep the role.user_ids denormalisation consistent (onchange does this in the UI)
+            if user.id not in target.user_ids.ids:
+                target.write({'user_ids': [(4, user.id)]})
+
+            if emp.healthcare_role:
+                emp.healthcare_role = False
+                summary['cleaned'] += 1
+            summary['nurses_done' if target == nurse_role else 'doctors_done'] += 1
+
+        summary['created_user_ids'] = created_user_ids
+        if dry_run:
+            summary['would_create_sample'] = would_create[:10]
+        if other_role:
+            summary['kept_other_role_detail'] = other_role
+        return summary
 
     @api.model
     def validate_timeline_change(self, assignment_id, new_start_iso, new_end_iso,

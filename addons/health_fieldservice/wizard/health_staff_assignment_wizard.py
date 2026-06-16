@@ -64,7 +64,7 @@ class HealthStaffAssignmentWizard(models.TransientModel):
         'wizard_id',
         'employee_id',
         string='Assigned Nurses/Staff',
-        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]",
+        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active'), ('is_nurse_role', '=', True)]",
         help='Select healthcare staff members (nurses) to assign to this service'
     )
 
@@ -87,7 +87,7 @@ class HealthStaffAssignmentWizard(models.TransientModel):
     selected_suggestion_staff_id = fields.Many2one(
         'hr.employee',
         string='AI-Selected Staff',
-        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]",
+        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active'), ('is_nurse_role', '=', True)]",
         help='Staff member selected from AI recommendations'
     )
     

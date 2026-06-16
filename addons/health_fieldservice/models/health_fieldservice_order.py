@@ -754,7 +754,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         domain=[
             ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
-            ('is_doctor_role', '=', False),
+            ('is_nurse_role', '=', True),
         ],
         help='All staff members assigned to this service (editable - creates/updates assignments)'
     )
@@ -2962,10 +2962,8 @@ class HealthFieldServiceOrderUnified(models.Model):
         employees = Emp.search([
             ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
-            ('is_doctor_role', '=', False),
-            # nurse-only: keep role-less field nurses + explicit nurses,
-            # drop back-office roles (CRM/Accountant/Owner/OM/Trainer)
-            '|', ('access_role_id', '=', False), ('is_nurse_role', '=', True),
+            # nurse-only: staff must hold the Nurse access role.
+            ('is_nurse_role', '=', True),
         ] + facility_clause, order='name')
         for emp in employees:
             staff_list.append({
@@ -4678,10 +4676,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             employees = self.env['hr.employee'].sudo().search([
                 ('is_healthcare_staff', '=', True),
                 ('employment_status', '=', 'active'),
-                ('is_doctor_role', '=', False),
-                # nurse-only: keep role-less field nurses + explicit nurses,
-                # drop back-office roles (CRM/Accountant/Owner/OM/Trainer)
-                '|', ('access_role_id', '=', False), ('is_nurse_role', '=', True),
+                # nurse-only: staff must hold the Nurse access role.
+                ('is_nurse_role', '=', True),
             ] + facility_clause, order='name', limit=100)
             for emp in employees:
                 emp_initials = ''
@@ -5166,10 +5162,8 @@ class HealthFieldServiceOrderUnified(models.Model):
         for emp in Emp.search([
             ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
-            ('is_doctor_role', '=', False),
-            # nurse-only: keep role-less field nurses + explicit nurses,
-            # drop back-office roles (CRM/Accountant/Owner/OM/Trainer)
-            '|', ('access_role_id', '=', False), ('is_nurse_role', '=', True),
+            # nurse-only: staff must hold the Nurse access role.
+            ('is_nurse_role', '=', True),
         ] + facility_clause, order='name', limit=100):
             initials = ''.join(x[0] for x in (emp.name or '').split() if x)[:2].upper()
             staff_list.append({
@@ -5770,10 +5764,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             employees = self.env['hr.employee'].sudo().search([
                 ('is_healthcare_staff', '=', True),
                 ('employment_status', '=', 'active'),
-                ('is_doctor_role', '=', False),
-                # nurse-only: keep role-less field nurses + explicit nurses,
-                # drop back-office roles (CRM/Accountant/Owner/OM/Trainer)
-                '|', ('access_role_id', '=', False), ('is_nurse_role', '=', True),
+                # nurse-only: staff must hold the Nurse access role.
+                ('is_nurse_role', '=', True),
             ] + facility_clause, order='name', limit=30)
 
             scheduled_date = b.scheduled_datetime.date() if b.scheduled_datetime else fields.Date.today()
