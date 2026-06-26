@@ -911,32 +911,8 @@ class SaleOrder(models.Model):
                     ctx['region'] = 'HCMC'
                 elif '_hanoi' in code:
                     ctx['region'] = 'Hanoi'
-                approved = engine.rule_ids.filtered(
-                    lambda r: r.active and r.approval_status == 'approved')
-                for rule in approved.sorted('sequence'):
-                    try:
-                        if rule.evaluate_condition(line.product_id.id, self.partner_id.id, qty, ctx):
-                            if rule.action_type == 'add':
-                                desc = '+%s đ' % ('{:,.0f}'.format(rule.action_value))
-                            elif rule.action_type == 'fixed':
-                                desc = '→ %s đ' % ('{:,.0f}'.format(rule.action_value))
-                            elif rule.action_type == 'multiply':
-                                desc = '×%s' % rule.action_value
-                            elif rule.action_type == 'discount':
-                                desc = '-%.0f%%' % (rule.action_value * 100)
-                            elif rule.action_type == 'per_unit':
-                                desc = '+%s đ/unit' % ('{:,.0f}'.format(rule.action_value))
-                            elif rule.action_type == 'percentage':
-                                desc = '+%s%%' % rule.action_value
-                            else:
-                                desc = ''
-                            short = rule.name
-                            parts = short.split(' - ')
-                            if len(parts) >= 2:
-                                short = parts[-1]
-                            rules.append({'label': short, 'desc': desc})
-                    except Exception:
-                        pass
+                rules = engine.explain_applied_rules(
+                    line.product_id.id, self.partner_id.id, qty, ctx)
             lines[str(line.id)] = {
                 'code': line.product_id.default_code or '',
                 'name': line.product_id.name or '',

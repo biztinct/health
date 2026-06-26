@@ -742,6 +742,38 @@ class AdvancedPricingRule(models.Model):
     def apply_cascading_action(self, price, context_data):
         """Apply cascading action for Level 2 rules"""
         return self.apply_action(price, context_data)
+
+    # ------------------------------------------------------------------
+    # Plain-language helpers (shared by pricing panels + quick booking)
+    # ------------------------------------------------------------------
+    def _pricing_rule_short_label(self):
+        """Human label for the rule, dropping the 'Region - ' prefix
+        (e.g. 'Hanoi - Ultrasound - Is Service at home' -> 'Is Service at home')."""
+        self.ensure_one()
+        short = self.name or ''
+        parts = short.split(' - ')
+        if len(parts) >= 2:
+            short = parts[-1]
+        return short
+
+    def _pricing_rule_action_desc(self):
+        """Symbolic effect of this rule's action, e.g. '+200,000 đ', '×3', '-10%'."""
+        self.ensure_one()
+        av = self.action_value
+        at = self.action_type
+        if at == 'add':
+            return '+%s đ' % '{:,.0f}'.format(av)
+        if at == 'fixed':
+            return '→ %s đ' % '{:,.0f}'.format(av)
+        if at == 'multiply':
+            return '×%s' % av
+        if at == 'discount':
+            return '-%.0f%%' % (av * 100)
+        if at == 'per_unit':
+            return '+%s đ/unit' % '{:,.0f}'.format(av)
+        if at == 'percentage':
+            return '+%s%%' % av
+        return ''
     
     @api.depends('rule_type')
     def _compute_is_visual_rule(self):

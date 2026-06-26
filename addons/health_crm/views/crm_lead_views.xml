@@ -372,11 +372,14 @@
                                             <field name="building_name" string="Building Name"/>
                                             <field name="zip" string="Postal Code"/>
                                             <field name="street" string="Street" placeholder="Street name / Main road"/>
-                                            <field name="city" string="City" placeholder="District / City"/>
+                                            <!-- City = catchment province; District filtered by it; `city` is derived -->
+                                            <field name="catchment_province_name" invisible="1"/>
+                                            <field name="city" invisible="1"/>
+                                            <field name="catchment_province_id" string="City" options="{'no_create': True}"/>
+                                            <field name="district_id" string="District" options="{'no_create': True, 'no_create_edit': True}"/>
                                             <field name="state_id" string="Province" options="{'no_create': True}" placeholder="Select province"/>
                                             <field name="country_id" string="Country" options="{'no_create': True}"/>
                                             <field name="full_vietnamese_address" string="Home Address" colspan="2"/>
-                                            <field name="catchment_province_id" string="Catchment Province" options="{'no_create': True}" colspan="2"/>
                                         </group>
                                     </div>
                                     

@@ -110,6 +110,7 @@ class OpsQuickBooking extends Component {
             doctorId: false,
 
             selectedProducts: [],
+            pricingFactors: [],
             packageId: false,
 
             validationErrors: [],
@@ -588,6 +589,24 @@ class OpsQuickBooking extends Component {
         } catch (e) {
             console.error('Failed to reload staff for facility:', e);
         }
+        // Rescope the service catalog to the new facility's catchment area.
+        try {
+            const pdata = await this.orm.call(
+                "health.fieldservice.order", "get_quick_booking_products",
+                [this.state.facilityId || false]
+            );
+            this.state.products = pdata.products || [];
+            this.state.productCategories = pdata.product_categories || [];
+            // Drop selected services no longer offered in this catchment area.
+            const allowed = new Set(this.state.products.map(p => p.id));
+            const kept = this.state.selectedProducts.filter(p => allowed.has(p.product_id));
+            if (kept.length !== this.state.selectedProducts.length) {
+                this.state.selectedProducts.splice(0, this.state.selectedProducts.length, ...kept);
+                this.previewPricing();
+            }
+        } catch (e) {
+            console.error('Failed to reload products for facility:', e);
+        }
         this.checkAvailability();
     }
 
@@ -660,9 +679,12 @@ class OpsQuickBooking extends Component {
                 const item = this.state.selectedProducts.find(p => p.product_id === line.product_id);
                 if (item) {
                     item.price = line.unit_price;
+                    item.basePrice = line.base_price;
                     item.autopriced = !!line.adjusted;
+                    item.rules = line.rules || [];
                 }
             }
+            this.state.pricingFactors = (result && result.factors) || [];
         } catch (e) {
             console.error('Pricing preview failed:', e);
         }

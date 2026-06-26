@@ -225,6 +225,18 @@ class ResPartner(models.Model):
     alley_number = fields.Char('Alley Number', help='Số ngõ')
     ward_commune = fields.Char('Ward/Commune', help='Phường/Xã')
 
+    # District (Quận/Huyện) — dropdown from the Vietnamese district master,
+    # filtered by the chosen City (= catchment province). The standard `city`
+    # Char stays populated (derived as "<District>, <City>") so geocoding and
+    # address formatting keep working unchanged.
+    district_id = fields.Many2one(
+        'health.vietnamese.district', string='District',
+        domain="[('province_name', '=', catchment_province_name)]",
+        help='Quận/Huyện — filtered by the selected City (catchment province).')
+    catchment_province_name = fields.Char(
+        related='catchment_province_id.name', string='City Name', store=False,
+        help='Helper for the District domain (the City = catchment province).')
+
     # Computed concatenated home address
     vietnamese_address = fields.Text(
         'Home Address',
@@ -400,6 +412,56 @@ class ResPartner(models.Model):
 
             rec.vietnamese_address = ', '.join(address_parts) if address_parts else ''
 
+    @staticmethod
+    def _vn_compose_city(district_name, province_name):
+        """Build the denormalized `city` string from the District + City
+        (catchment province). Kept as a plain Char so geocoding / address
+        formatting / lead sync that read `city` keep working unchanged."""
+        parts = [p for p in (district_name, province_name) if p]
+        return ', '.join(parts)
+
+    def _vn_apply_city_from_parts(self, vals):
+        """When district_id / catchment_province_id are set on a write/create and
+        `city` is not explicitly provided, derive `city` from them. Returns the
+        (possibly updated) vals dict. Direct `city` writes (imports) are honored."""
+        if 'city' in vals:
+            return vals
+        if 'district_id' not in vals and 'catchment_province_id' not in vals:
+            return vals
+        District = self.env['health.vietnamese.district']
+        Province = self.env['health.catchment.province']
+        # Resolve names from the incoming vals, falling back to the record.
+        if 'district_id' in vals:
+            dname = District.browse(vals['district_id']).name if vals['district_id'] else False
+        else:
+            dname = self.district_id.name if self else False
+        if 'catchment_province_id' in vals:
+            pname = Province.browse(vals['catchment_province_id']).name if vals['catchment_province_id'] else False
+        else:
+            pname = self.catchment_province_id.name if self else False
+        composed = self._vn_compose_city(dname, pname)
+        if composed:
+            vals['city'] = composed
+        return vals
+
+    @api.onchange('district_id', 'catchment_province_id')
+    def _onchange_vn_city_parts(self):
+        """Live-derive the `city` string in the form as District / City change."""
+        for rec in self:
+            composed = rec._vn_compose_city(
+                rec.district_id.name, rec.catchment_province_id.name)
+            if composed:
+                rec.city = composed
+
+    @api.onchange('catchment_province_id')
+    def _onchange_clear_district_on_city(self):
+        """If the City (catchment province) changes, drop a District that no
+        longer belongs to it."""
+        for rec in self:
+            if rec.district_id and rec.catchment_province_id \
+                    and rec.district_id.province_name != rec.catchment_province_id.name:
+                rec.district_id = False
+
     @api.depends('birth_date')
     def _compute_age(self):
         """Compute age from birth date"""
@@ -448,6 +510,12 @@ class ResPartner(models.Model):
             for fname in self._VN_PHONE_FIELDS:
                 if vals.get(fname):
                     vals[fname] = normalize_vn_phone(vals[fname])
+
+        # Derive the denormalized `city` string from District + City parts.
+        if ('district_id' in vals or 'catchment_province_id' in vals) and 'city' not in vals:
+            for partner in self:
+                partner._vn_apply_city_from_parts(vals)
+                break  # vals is shared; one resolution is enough for the batch
 
         # Auto-set date_localization when coordinates are updated
         if ('partner_latitude' in vals or 'partner_longitude' in vals) and 'date_localization' not in vals:
@@ -817,6 +885,8 @@ class ResPartner(models.Model):
                 for fname in self._VN_PHONE_FIELDS:
                     if vals.get(fname):
                         vals[fname] = normalize_vn_phone(vals[fname])
+            # Derive the denormalized `city` string from District + City parts.
+            self._vn_apply_city_from_parts(vals)
 
         partners = super().create(vals_list)
         
@@ -841,7 +911,25 @@ class ResPartner(models.Model):
                 # Generate patient code if not already set
                 if not partner.patient_code:
                     partner.patient_code = partner._generate_patient_code()
-                
+                # Auto-geocode ON CREATE (e.g. a client auto-created from a lead at
+                # booking time) so the address is mapped without anyone having to
+                # open the record and click "Geocode Address". Uses the SAME proven
+                # method as the manual button (action_geocode_address_photon) — the
+                # older _get_geocode_coordinates_sync over-specifies the query with
+                # house number + ward, which makes Photon return 0 results for VN
+                # addresses. Pass context `skip_auto_geocode=True` for bulk imports
+                # to avoid a geocode API call per record.
+                if not self.env.context.get('skip_auto_geocode') \
+                        and not (partner.partner_latitude and partner.partner_longitude) \
+                        and (partner.street or partner.city):
+                    try:
+                        partner.action_geocode_address_photon()
+                    except Exception as e:
+                        # Never block client/booking creation on a geocode failure.
+                        _logger.warning(
+                            "Auto-geocoding on create failed for partner %s: %s",
+                            partner.id, e)
+
         return partners
     
     def action_view_appointments(self):
@@ -1168,32 +1256,21 @@ class ResPartner(models.Model):
         if vals is None:
             vals = {}
 
-        # Build Vietnamese-style address query
+        # Build the geocoding query the SAME way as the working manual button
+        # (action_geocode_address_photon): street / street2 / city / state /
+        # country only. Including the house number, alley and ward over-specifies
+        # the query and makes Photon return 0 results for Vietnamese addresses
+        # (verified against the live API). vals-aware so an edit geocodes the NEW
+        # address being saved.
         address_parts = []
 
-        # Start with house/street level details
-        street_parts = []
-        house_number = vals.get('house_number', self.house_number)
-        alley_number = vals.get('alley_number', self.alley_number)
-        sub_alley_number = vals.get('sub_alley_number', self.sub_alley_number)
         street = vals.get('street', self.street)
-
-        if house_number:
-            street_parts.append(house_number)
-        if alley_number:
-            street_parts.append(f"Ngõ {alley_number}")
-        if sub_alley_number:
-            street_parts.append(f"Ngách {sub_alley_number}")
         if street:
-            street_parts.append(street)
+            address_parts.append(street)
 
-        if street_parts:
-            address_parts.append(' '.join(street_parts))
-
-        # Add ward/commune
-        ward_commune = vals.get('ward_commune', self.ward_commune)
-        if ward_commune:
-            address_parts.append(ward_commune)
+        street2 = vals.get('street2', self.street2)
+        if street2:
+            address_parts.append(street2)
 
         # Add city/district
         city = vals.get('city', self.city)

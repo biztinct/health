@@ -4607,6 +4607,36 @@ class HealthFieldServiceOrderUnified(models.Model):
             return {'success': False, 'error': str(e)}
 
     @api.model
+    def _resolve_facility_catchment_area(self, facility_id):
+        """Map a facility to a product catchment-area key ('hanoi' / 'tphcm'),
+        matching product.product.catalog_catchment_area. Returns '' when the
+        facility/region is unknown so callers fall back to the full catalog."""
+        if not facility_id:
+            return ''
+        fac = self.env['health.facility'].browse(facility_id)
+        if not fac.exists():
+            return ''
+        name = ((fac.catchment_province_id.name if fac.catchment_province_id else '')
+                or fac.city or fac.name or '').lower()
+        if 'hanoi' in name or 'ha noi' in name or 'hà nội' in name:
+            return 'hanoi'
+        if ('chi minh' in name or 'hcm' in name or 'tphcm'
+                in name or 'ho chi minh' in name or 'hồ chí minh' in name):
+            return 'tphcm'
+        return ''
+
+    @api.model
+    def get_quick_booking_products(self, facility_id=False):
+        """Return just the service catalog + categories scoped to a facility's
+        catchment area, for refreshing the Add Services list when the user
+        changes the Facility in the quick booking wizard."""
+        data = self.get_recurring_booking_options(facility_id=facility_id)
+        return {
+            'products': data.get('products', []),
+            'product_categories': data.get('product_categories', []),
+        }
+
+    @api.model
     def get_recurring_booking_options(self, patient_id=False, facility_id=False):
         """Return option lists for the recurring booking OWL wizard.
         When facility_id is provided, staff/doctor lists are limited to that facility."""
@@ -4735,11 +4765,20 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         products = []
         categ_ids = set()
+        # Scope the service catalog to the booking facility's catchment area so
+        # staff only see services that belong to that region (Hanoi vs HCMC).
+        # Region-agnostic services (no _hanoi/_tphcm suffix) always show.
+        catchment_clause = []
+        region = self._resolve_facility_catchment_area(facility_id)
+        if region:
+            catchment_clause = ['|',
+                                ('catalog_catchment_area', '=', region),
+                                ('catalog_catchment_area', '=', False)]
         try:
             service_products = self.env['product.product'].search([
                 ('type', '=', 'service'),
                 ('sale_ok', '=', True),
-            ], order='categ_id, name', limit=200)
+            ] + catchment_clause, order='categ_id, name', limit=200)
             for prod in service_products:
                 categ_name = ''
                 categ_id = False
@@ -5217,12 +5256,30 @@ class HealthFieldServiceOrderUnified(models.Model):
         time_hour = vals.get('time_hour', 9.0) or 0.0
         appointment_hour = int(time_hour)
         weekday = None
+        date_obj = None
         try:
             from datetime import datetime as _dt
             if vals.get('date'):
-                weekday = _dt.strptime(vals['date'], '%Y-%m-%d').weekday()
+                date_obj = _dt.strptime(vals['date'], '%Y-%m-%d').date()
+                weekday = date_obj.weekday()
         except (ValueError, TypeError):
             weekday = None
+
+        # Public-holiday multiplier (TET/national) — same source the confirmed
+        # quote uses, so the live preview matches the final price.
+        holiday_info = {'is_holiday': False, 'holiday_type': False, 'multiplier': 1.0}
+        if date_obj is not None:
+            try:
+                holiday_info = self.env['sale.order']._check_holiday(date_obj)
+            except Exception:
+                pass
+
+        # One-way clinic→home driving distance already stored on the client,
+        # so distance-based rules preview correctly before the booking exists.
+        distance = 0.0
+        if partner and getattr(partner, 'clinic_drive_distance_km', 0):
+            distance = partner.clinic_drive_distance_km or 0.0
+
         base_context = {
             'partner_id': partner_id,
             'appointment_hour': appointment_hour,
@@ -5230,10 +5287,16 @@ class HealthFieldServiceOrderUnified(models.Model):
             'service_location': vals.get('service_location'),
             'is_weekend': weekday in (5, 6) if weekday is not None else False,
             'is_after_hours': appointment_hour < 7 or appointment_hour >= 19,
-            'distance': 0,
+            'is_holiday': holiday_info.get('is_holiday', False),
+            'holiday_type': holiday_info.get('holiday_type', False),
+            'holiday_multiplier': holiday_info.get('multiplier', 1.0) or 1.0,
+            'distance': distance,
             'urgency': 'normal',
             'priority': '1',
         }
+
+        # Plain-language factor chips describing the booking conditions in play
+        factors = self._quick_booking_pricing_factors(base_context)
 
         lines = []
         total = 0.0
@@ -5249,22 +5312,46 @@ class HealthFieldServiceOrderUnified(models.Model):
                 except Exception:
                     pass
             unit_price = base_price
+            rules = []
             if engine:
                 ctx = dict(base_context)
                 code = product.default_code or ''
                 ctx['region'] = 'HCMC' if '_tphcm' in code else ('Hanoi' if '_hanoi' in code else '')
                 try:
                     unit_price = engine.calculate_price(product.id, qty, partner_id, ctx)
+                    rules = engine.explain_applied_rules(product.id, partner_id, qty, ctx)
                 except Exception:
                     unit_price = base_price
             lines.append({
                 'product_id': product.id,
                 'unit_price': unit_price,
+                'base_price': base_price,
                 'adjusted': abs((unit_price or 0) - (base_price or 0)) > 0.001,
+                'rules': rules,
             })
             total += (unit_price or 0) * qty
 
-        return {'lines': lines, 'total': total}
+        return {'lines': lines, 'total': total, 'factors': factors}
+
+    @api.model
+    def _quick_booking_pricing_factors(self, ctx):
+        """Build the highlighted condition chips (Home Visit, After Hours,
+        Weekend, Distance, Holiday) shown next to the auto-priced quote."""
+        factors = []
+        loc = ctx.get('service_location')
+        if loc == 'home':
+            factors.append({'key': 'home', 'label': 'Home Visit'})
+        elif loc == 'clinic':
+            factors.append({'key': 'clinic', 'label': 'Clinic Visit'})
+        if ctx.get('distance'):
+            factors.append({'key': 'pin', 'label': 'Distance: %.1f km' % ctx['distance']})
+        if ctx.get('is_after_hours'):
+            factors.append({'key': 'moon', 'label': 'After Hours'})
+        if ctx.get('is_weekend'):
+            factors.append({'key': 'calendar', 'label': 'Weekend'})
+        if ctx.get('is_holiday'):
+            factors.append({'key': 'flag', 'label': 'Holiday (%s)' % (ctx.get('holiday_type') or 'Public')})
+        return factors
 
     @api.model
     def check_slot_availability(self, patient_id, date_str, facility_id, staff_ids=None):
@@ -5504,16 +5591,27 @@ class HealthFieldServiceOrderUnified(models.Model):
                     so.order_line._compute_advanced_price()
                 except Exception:
                     pass
+                # Plain-language pricing breakdown (which rules fired + why),
+                # so the confirmation shows the same explanation as the live quote.
+                breakdown = {}
+                try:
+                    breakdown = so._build_pricing_breakdown_data() or {}
+                except Exception:
+                    breakdown = {}
+                bd_lines = breakdown.get('lines', {}) if breakdown else {}
                 summary_lines = [{
                     'name': line.product_id.name or '',
                     'qty': line.product_uom_qty,
                     'unit_price': line.price_unit,
                     'subtotal': line.price_subtotal,
+                    'base_price': line.base_price or line.product_id.list_price or 0,
+                    'rules': bd_lines.get(str(line.id), {}).get('rules', []),
                 } for line in so.order_line]
                 quote_summary = {
                     'lines': summary_lines,
                     'total_per_booking': so.amount_total,
                     'total_all': so.amount_total,
+                    'factors': breakdown.get('factors', []) if breakdown else [],
                 }
 
         if not draft_only:

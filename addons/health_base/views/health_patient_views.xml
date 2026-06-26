@@ -739,8 +739,14 @@
                         <field name="building_name"/>
                         <field name="zip" string="Postal Code"/>
                         <field name="street" placeholder="Street name / Main road"/>
-                        <field name="city" placeholder="District / City" required="1"/>
-                        <field name="state_id" string="Province" placeholder="Select province" options="{'no_create': True}" required="1"/>
+                        <!-- City = catchment province; District dropdown filtered by it.
+                             `city` stays as the derived "<District>, <City>" string. -->
+                        <field name="catchment_province_name" invisible="1"/>
+                        <field name="catchment_province_id" string="City" required="1"/>
+                        <field name="district_id" string="District"
+                               options="{'no_create': True, 'no_create_edit': True}"/>
+                        <field name="city" invisible="1"/>
+                        <field name="state_id" string="Province" placeholder="Select province" options="{'no_create': True}"/>
                         <field name="country_id" string="Country" options="{'no_create': True}"/>
                     </group>
                 </sheet>

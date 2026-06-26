@@ -366,6 +366,8 @@ class HealthContact(models.Model):
             'street2': self.street2,
             'city': self.city,
             'zip': self.zip,
+            'district_id': self.district_id.id if self.district_id else False,
+            'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
             'state_id': self.state_id.id if self.state_id else False,
             'country_id': self.country_id.id if self.country_id else False,
             'team_id': self.env.ref('health_crm.healthcare_crm_team', raise_if_not_found=False).id,

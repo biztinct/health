@@ -2,6 +2,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.addons.health_base.models.phone_utils import normalize_vn_phone
 
 
 def _selection_health_contact_outcome(model):
@@ -658,6 +659,17 @@ class HealthLead(models.Model):
     sub_alley_number = fields.Char('Sub-Alley Number', help='Số ngách')
     alley_number = fields.Char('Alley Number', help='Số ngõ')
     ward_commune = fields.Char('Ward/Commune', help='Phường/Xã')
+    # District (Quận/Huyện) — dropdown from the Vietnamese district master,
+    # filtered by the chosen City (= catchment province). The standard `city`
+    # Char stays populated (derived as "<District>, <City>") so address
+    # formatting / lead→client sync keep working unchanged.
+    district_id = fields.Many2one(
+        'health.vietnamese.district', string='District',
+        domain="[('province_name', '=', catchment_province_name)]",
+        help='Quận/Huyện — filtered by the selected City (catchment province).')
+    catchment_province_name = fields.Char(
+        related='catchment_province_id.name', string='City Name', store=False,
+        help='Helper for the District domain (the City = catchment province).')
     full_vietnamese_address = fields.Char(
         'Home Address',
         help='Complete home address'
@@ -818,6 +830,16 @@ class HealthLead(models.Model):
             vals_list = [vals_list]
             
         for vals in vals_list:
+            # Validate & normalize the Vietnamese phone AT LEAD CREATION TIME, so a
+            # bad number is rejected here with a clear message rather than slipping
+            # through to the booking save (where the lead→client conversion fails).
+            for fname in self._vn_phone_fields_present:
+                if vals.get(fname):
+                    vals[fname] = normalize_vn_phone(vals[fname])
+
+            # Derive the denormalized `city` string from District + City parts.
+            self._vn_apply_city_from_parts(vals)
+
             # Generate unique contact code only for opportunities
             if not vals.get('unique_contact_code') and vals.get('type') == 'opportunity':
                 vals['unique_contact_code'] = self._generate_unique_contact_code(vals)
@@ -844,13 +866,96 @@ class HealthLead(models.Model):
         return records
     
     # =========================================================================
+    # Vietnamese phone validation — enforced AT LEAD CREATION TIME
+    # =========================================================================
+    # The lead's phone (and mobile) must already be a valid VN number on the
+    # lead itself, so it never reaches the lead→client conversion (booking save)
+    # as garbage. create()/write() normalize; this constraint is the safety net
+    # for any other write path (imports, direct ORM writes, etc.).
+    _VN_PHONE_FIELDS = ('phone', 'mobile')
+
+    @property
+    def _vn_phone_fields_present(self):
+        """`_VN_PHONE_FIELDS` filtered to fields that actually exist on this
+        registry. Some Odoo builds drop `mobile` from crm.lead, so iterating the
+        raw tuple and doing self['mobile'] would KeyError."""
+        return tuple(f for f in self._VN_PHONE_FIELDS if f in self._fields)
+
+    @api.constrains('phone', 'mobile')
+    def _check_vn_phone(self):
+        for lead in self:
+            for fname in self._vn_phone_fields_present:
+                if lead[fname]:
+                    normalize_vn_phone(lead[fname])  # raises ValidationError if invalid
+
+    @api.onchange('phone', 'mobile')
+    def _onchange_normalize_vn_phone(self):
+        """Live-format the phone/mobile in the contact form (e.g. 938038028 ->
+        0938038028) and warn immediately when an entry is not a valid number —
+        so the user is corrected while typing the lead, not at booking save."""
+        invalid = []
+        for fname in self._vn_phone_fields_present:
+            value = self[fname]
+            if value:
+                try:
+                    self[fname] = normalize_vn_phone(value)
+                except ValidationError:
+                    invalid.append(value)
+        if invalid:
+            return {'warning': {
+                'title': _("Invalid phone number"),
+                'message': _(
+                    "%s is not a valid phone number.\n\n"
+                    "Enter a 9-digit number (a leading 0 is added automatically) "
+                    "or a 10-digit number starting with a single 0."
+                ) % ", ".join(invalid),
+            }}
+
+    # =========================================================================
+    # District / City — derive the denormalized `city` string from the parts
+    # =========================================================================
+    def _vn_apply_city_from_parts(self, vals):
+        """Derive `city` from district_id + catchment_province_id when those are
+        set and `city` isn't explicitly provided (direct city writes honored)."""
+        if 'city' in vals:
+            return vals
+        if 'district_id' not in vals and 'catchment_province_id' not in vals:
+            return vals
+        District = self.env['health.vietnamese.district']
+        Province = self.env['health.catchment.province']
+        if 'district_id' in vals:
+            dname = District.browse(vals['district_id']).name if vals['district_id'] else False
+        else:
+            dname = self.district_id.name if self else False
+        if 'catchment_province_id' in vals:
+            pname = Province.browse(vals['catchment_province_id']).name if vals['catchment_province_id'] else False
+        else:
+            pname = self.catchment_province_id.name if self else False
+        composed = self.env['res.partner']._vn_compose_city(dname, pname)
+        if composed:
+            vals['city'] = composed
+        return vals
+
+    @api.onchange('district_id', 'catchment_province_id')
+    def _onchange_vn_city_parts(self):
+        for lead in self:
+            composed = lead.env['res.partner']._vn_compose_city(
+                lead.district_id.name, lead.catchment_province_id.name)
+            if composed:
+                lead.city = composed
+            # Drop a District that no longer belongs to the chosen City.
+            if lead.district_id and lead.catchment_province_id \
+                    and lead.district_id.province_name != lead.catchment_province_id.name:
+                lead.district_id = False
+
+    # =========================================================================
     # CRITICAL: Override phone/email sync to prevent contact→client contamination
     # =========================================================================
-    # In standard Odoo CRM, lead.phone syncs back to partner_id.phone via 
-    # _inverse_phone. But in healthcare CRM, the caller (contact) can be a 
-    # different person than the client (partner_id). A caregiver's phone 
+    # In standard Odoo CRM, lead.phone syncs back to partner_id.phone via
+    # _inverse_phone. But in healthcare CRM, the caller (contact) can be a
+    # different person than the client (partner_id). A caregiver's phone
     # should NOT overwrite the patient's phone.
-    
+
     def _inverse_phone(self):
         """Override to prevent syncing contact phone to client partner.
         
@@ -901,7 +1006,16 @@ class HealthLead(models.Model):
 
     def write(self, vals):
         """Override write to handle relationship changes and sync contact_status."""
-        
+
+        # Keep the phone format valid on every edit too (same rule as create).
+        for fname in self._vn_phone_fields_present:
+            if vals.get(fname):
+                vals[fname] = normalize_vn_phone(vals[fname])
+
+        # Derive the denormalized `city` string from District + City parts.
+        if ('district_id' in vals or 'catchment_province_id' in vals) and 'city' not in vals:
+            self[:1]._vn_apply_city_from_parts(vals)
+
         # Server-side sync: when contact_outcome changes, also update contact_status
         # This is required because contact_status is readonly in the form view,
         # so onchange-set values are NOT included in the save payload by Odoo.
@@ -1237,6 +1351,10 @@ class HealthLead(models.Model):
             'sub_alley_number': self.sub_alley_number,
             'alley_number': self.alley_number,
             'ward_commune': self.ward_commune,
+            'district_id': self.district_id.id if self.district_id else False,
+            # City = catchment province; carry it so the client's District domain
+            # and the derived `city` string stay consistent.
+            'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
             # Note: vietnamese_address is computed automatically in res.partner
         })
         # Copy phone/email only when the contact IS the client (otherwise they
@@ -1626,7 +1744,7 @@ class HealthLead(models.Model):
         if address:
             addr_fields = ['house_number', 'alley_number', 'sub_alley_number', 'street',
                            'ward_commune', 'named_area', 'building_name', 'apartment_number',
-                           'city', 'zip']
+                           'district_id', 'catchment_province_id', 'city', 'zip']
             vals = {k: address.get(k) for k in addr_fields if address.get(k)}
             if vals:
                 self.write(vals)

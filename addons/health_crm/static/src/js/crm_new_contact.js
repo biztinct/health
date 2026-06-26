@@ -626,7 +626,7 @@ class CrmNewContact extends Component {
             const addr = this.state.address || {};
             for (const f of ["house_number", "alley_number", "sub_alley_number", "street",
                              "ward_commune", "named_area", "building_name", "apartment_number",
-                             "city", "zip"]) {
+                             "district_id", "catchment_province_id", "city", "zip"]) {
                 if (addr[f]) vals[f] = addr[f];
             }
 

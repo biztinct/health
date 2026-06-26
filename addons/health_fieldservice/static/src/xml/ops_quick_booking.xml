@@ -222,11 +222,32 @@
                                                 </button>
                                             </div>
                                         </div>
+                                        <t t-if="item.rules and item.rules.length">
+                                            <div class="qb-pt-breakdown">
+                                                <span class="qb-bd-base">
+                                                    Base <t t-esc="formatCurrency(item.basePrice)"/>
+                                                </span>
+                                                <t t-foreach="item.rules" t-as="rule" t-key="rule_index">
+                                                    <span class="qb-rule-chip">
+                                                        <span class="qb-rule-desc" t-esc="rule.desc"/>
+                                                        <span class="qb-rule-label" t-esc="rule.label"/>
+                                                    </span>
+                                                </t>
+                                            </div>
+                                        </t>
                                     </t>
                                     <div class="qb-pt-footer">
                                         <div class="qb-pt-total-label">Total</div>
                                         <div class="qb-pt-total-value" t-esc="formatCurrency(productTotal)"/>
                                     </div>
+                                    <t t-if="state.pricingFactors and state.pricingFactors.length">
+                                        <div class="qb-pt-factors">
+                                            <span class="qb-factors-label">Applied conditions:</span>
+                                            <t t-foreach="state.pricingFactors" t-as="factor" t-key="factor_index">
+                                                <span class="qb-factor-chip" t-esc="factor.label"/>
+                                            </t>
+                                        </div>
+                                    </t>
                                     <div class="qb-pt-autoprice">
                                         <i class="fa fa-magic"/> Prices auto-calculated from the booking conditions (time, location, service type).
                                     </div>
@@ -518,6 +539,19 @@
                                                 <div class="qb-mq-col qb-mq-price" t-esc="formatCurrency(line.unit_price)"/>
                                                 <div class="qb-mq-col qb-mq-sub" t-esc="formatCurrency(line.subtotal)"/>
                                             </div>
+                                            <t t-if="line.rules and line.rules.length">
+                                                <div class="qb-mq-breakdown">
+                                                    <span class="qb-bd-base">
+                                                        Base <t t-esc="formatCurrency(line.base_price)"/>
+                                                    </span>
+                                                    <t t-foreach="line.rules" t-as="rule" t-key="rule_index">
+                                                        <span class="qb-rule-chip">
+                                                            <span class="qb-rule-desc" t-esc="rule.desc"/>
+                                                            <span class="qb-rule-label" t-esc="rule.label"/>
+                                                        </span>
+                                                    </t>
+                                                </div>
+                                            </t>
                                         </t>
                                         <div class="qb-mq-footer">
                                             <div class="qb-mq-footer-row qb-mq-grand">
@@ -526,6 +560,14 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <t t-if="state.creationResult.quote_summary.factors and state.creationResult.quote_summary.factors.length">
+                                        <div class="qb-mq-factors">
+                                            <span class="qb-factors-label">Applied conditions:</span>
+                                            <t t-foreach="state.creationResult.quote_summary.factors" t-as="factor" t-key="factor_index">
+                                                <span class="qb-factor-chip" t-esc="factor.label"/>
+                                            </t>
+                                        </div>
+                                    </t>
                                 </div>
                             </t>
                         </div>

@@ -98,14 +98,22 @@
                         <page string="Address" name="address">
                             <group>
                                 <group>
-                                    <field name="province_code"/>
+                                    <!-- City = catchment province; District filtered by it -->
+                                    <field name="catchment_province_name" invisible="1"/>
+                                    <field name="catchment_province_id" string="City"/>
+                                    <field name="district_id" string="District"
+                                           options="{'no_create': True, 'no_create_edit': True}"/>
                                     <field name="house_number"/>
                                     <field name="alley_number"/>
                                     <field name="sub_alley_number"/>
+                                    <field name="street"/>
                                 </group>
                                 <group>
                                     <field name="ward_commune"/>
                                     <field name="named_area"/>
+                                    <field name="building_name"/>
+                                    <field name="apartment_number"/>
+                                    <field name="zip" string="Postal Code"/>
                                     <field name="full_vietnamese_address" readonly="1"/>
                                 </group>
                             </group>

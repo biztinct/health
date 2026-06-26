@@ -319,6 +319,66 @@ select.qb-form-input { cursor: pointer; }
     .fa { color: #8E6FD8; }
 }
 
+// ===== Per-line price-rule breakdown + condition chips =====
+.qb-pt-breakdown,
+.qb-mq-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px 8px;
+    border-bottom: 1px dashed #EEEEEE;
+}
+
+.qb-bd-base {
+    font-size: 11px;
+    color: #9E9E9E;
+    margin-right: 2px;
+}
+
+.qb-rule-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    border: 1px solid #BBDEFB;
+    border-radius: 11px;
+    background: #F5F9FF;
+    font-size: 11px;
+    line-height: 1.5;
+
+    .qb-rule-desc { font-weight: 700; color: #1565C0; }
+    .qb-rule-label { color: #616161; }
+}
+
+.qb-pt-factors,
+.qb-mq-factors {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+}
+
+.qb-factors-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #757575;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.qb-factor-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: 11px;
+    background: #EDE7F6;
+    color: #5E35B1;
+    font-size: 11px;
+    font-weight: 600;
+}
+
 // ===== Client home address block =====
 .qb-address-block {
     margin-top: 10px;

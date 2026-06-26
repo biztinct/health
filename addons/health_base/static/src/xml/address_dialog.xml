@@ -21,8 +21,25 @@
                     <input class="form-control" t-model="state.building_name"/></div>
                 <div class="col-6"><label class="o_form_label">Apartment</label>
                     <input class="form-control" t-model="state.apartment_number"/></div>
-                <div class="col-6"><label class="o_form_label">District / City</label>
-                    <input class="form-control" t-model="state.city"/></div>
+                <div class="col-6"><label class="o_form_label">City</label>
+                    <select class="form-select" t-on-change="onCityChange">
+                        <option value="">-</option>
+                        <t t-foreach="provinces" t-as="p" t-key="p.id">
+                            <option t-att-value="p.id"
+                                    t-att-selected="p.id === state.catchment_province_id"
+                                    t-esc="p.name"/>
+                        </t>
+                    </select></div>
+                <div class="col-6"><label class="o_form_label">District</label>
+                    <select class="form-select" t-on-change="onDistrictChange"
+                            t-att-disabled="!state.catchment_province_id">
+                        <option value="">-</option>
+                        <t t-foreach="districtOptions" t-as="d" t-key="d.id">
+                            <option t-att-value="d.id"
+                                    t-att-selected="d.id === state.district_id"
+                                    t-esc="d.name"/>
+                        </t>
+                    </select></div>
                 <div class="col-6"><label class="o_form_label">Postal Code</label>
                     <input class="form-control" t-model="state.zip"/></div>
             </div>
