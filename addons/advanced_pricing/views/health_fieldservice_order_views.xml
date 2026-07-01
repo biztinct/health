@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add a "Pricing" page to the ops booking form showing the advanced-pricing
+         breakdown (base price, applied rules, conditions) of the linked quote. -->
+    <record id="view_health_fso_form_ops_pricing" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops.pricing</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='overview']" position="after">
+                <page string="Pricing" name="pricing" invisible="not sale_order_id">
+                    <group>
+                        <field name="pricing_breakdown_html" nolabel="1" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

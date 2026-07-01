@@ -550,3 +550,60 @@
     padding: 12px 28px;
     &:hover { background: #388E3C; box-shadow: 0 2px 8px rgba(33,33,33,.12); }
 }
+
+// ===== "Why this price" — applied advanced-pricing rules on the payment card =====
+.sip-price-why {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #E0E0E0;
+}
+.sip-why-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    color: #757575;
+    margin-bottom: 6px;
+}
+.sip-why-line { margin-bottom: 8px; }
+.sip-why-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #212121;
+    margin-bottom: 3px;
+}
+.sip-why-rules {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+.sip-why-base { font-size: 11px; color: #9E9E9E; }
+.sip-why-final { font-size: 11px; font-weight: 700; color: #1565C0; }
+.sip-why-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 7px;
+    border: 1px solid #BBDEFB;
+    border-radius: 10px;
+    background: #F5F9FF;
+    font-size: 10px;
+    line-height: 1.5;
+    .sip-why-desc { font-weight: 700; color: #1565C0; }
+    .sip-why-label { color: #616161; }
+}
+.sip-why-factors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 6px;
+}
+.sip-why-factor {
+    padding: 1px 8px;
+    border-radius: 10px;
+    background: #EDE7F6;
+    color: #5E35B1;
+    font-size: 10px;
+    font-weight: 600;
+}

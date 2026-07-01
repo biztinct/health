@@ -485,11 +485,39 @@ class SaleOrder(models.Model):
         
         new_total = self.amount_total
         delta = new_total - original_total
-        
+
+        # Plain-language list of the rules now shaping the price (e.g. the
+        # count-based rules that fired once procedure counts were entered), so
+        # the adjustment is explainable rather than an unexplained number.
+        applied_chips = []
+        for line in self.order_line:
+            if line.product_id:
+                applied_chips += line._pricing_rule_chips()
+
         import logging
         _logger = logging.getLogger(__name__)
         _logger.info('Post-service recalc: original=%.2f, new=%.2f, delta=%.2f', original_total, new_total, delta)
-        
+
+        # Post an audit note (with the rules) to the booking + quote chatter.
+        if abs(delta) >= 0.01:
+            rules_html = ''
+            if applied_chips:
+                items = ''.join(
+                    '<li><b>%s</b> %s</li>' % (c['desc'], c['label']) for c in applied_chips)
+                rules_html = '<br/>Applied rules:<ul>%s</ul>' % items
+            body = _(
+                'Post-service price recalculated: %(old)s đ → %(new)s đ '
+                '(%(delta)s đ).',
+                old=f'{original_total:,.0f}', new=f'{new_total:,.0f}',
+                delta=f'{delta:+,.0f}',
+            ) + rules_html
+            try:
+                self.message_post(body=body)
+                if self.fso_id:
+                    self.fso_id.message_post(body=body)
+            except Exception:
+                pass
+
         if abs(delta) < 0.01:
             # No difference — just return notification
             return {'type': 'ir.actions.client', 'tag': 'display_notification',
@@ -503,7 +531,7 @@ class SaleOrder(models.Model):
         if delta > 0 and self.pre_service_amount > 0:
             # Client owes more — create supplementary invoice
             try:
-                supp_invoice = self._create_supplementary_invoice(delta)
+                supp_invoice = self._create_supplementary_invoice(delta, applied_chips)
                 if supp_invoice:
                     return {'type': 'ir.actions.client', 'tag': 'display_notification',
                             'params': {'title': _('Supplementary Invoice Created'),
@@ -545,11 +573,13 @@ class SaleOrder(models.Model):
                            ),
                            'type': 'success', 'sticky': False}}
     
-    def _create_supplementary_invoice(self, delta_amount):
-        """Create a supplementary invoice for the post-service excess amount"""
+    def _create_supplementary_invoice(self, delta_amount, applied_chips=None):
+        """Create a supplementary invoice for the post-service excess amount.
+        ``applied_chips`` ([{'label','desc'}]) names the pricing rule(s) behind
+        the increase, so the invoice line itself explains the adjustment."""
         self.ensure_one()
         fso = self.fso_id
-        
+
         # Build description of what changed
         changes = []
         if self.injection_count > 1:
@@ -560,8 +590,11 @@ class SaleOrder(models.Model):
             changes.append(_('%d extra wound treatment(s)', self.wound_count - 1))
         if self.iv_fluid_count > 0:
             changes.append(_('%d IV fluid bag(s)', self.iv_fluid_count))
-        
+
         description = ', '.join(changes) if changes else _('Post-service adjustment')
+        if applied_chips:
+            rule_text = ', '.join('%s %s' % (c['desc'], c['label']) for c in applied_chips)
+            description = '%s — %s' % (description, rule_text)
         
         invoice_vals = {
             'move_type': 'out_invoice',
@@ -889,30 +922,9 @@ class SaleOrder(models.Model):
             qty = line.product_uom_qty or 0
             rules = []
             if engine and engine.rule_ids:
-                ctx = {
-                    'distance': self.fso_distance or 0,
-                    'appointment_hour': self.appointment_hour or 0,
-                    'is_weekend': self.is_weekend,
-                    'is_holiday': self.is_holiday,
-                    'holiday_type': self.holiday_type,
-                    'is_after_hours': self.is_after_hours,
-                    'service_type': self.fso_service_type,
-                    'service_location': self.fso_service_location,
-                    'urgency': self.fso_urgency,
-                    'priority': self.fso_priority,
-                    'region': '',
-                    'injection_count': self.injection_count or 0,
-                    'medication_count': self.medication_count or 0,
-                    'wound_count': self.wound_count or 0,
-                    'iv_fluid_count': self.iv_fluid_count or 0,
-                }
-                code = line.product_id.default_code or ''
-                if '_tphcm' in code:
-                    ctx['region'] = 'HCMC'
-                elif '_hanoi' in code:
-                    ctx['region'] = 'Hanoi'
                 rules = engine.explain_applied_rules(
-                    line.product_id.id, self.partner_id.id, qty, ctx)
+                    line.product_id.id, self.partner_id.id, qty,
+                    line._pricing_rule_context())
             lines[str(line.id)] = {
                 'code': line.product_id.default_code or '',
                 'name': line.product_id.name or '',
@@ -1097,3 +1109,64 @@ class SaleOrderLine(models.Model):
                 # Fall back to standard pricing
                 line.base_price = line.product_id.list_price or 0
                 line.price_unit = line.base_price
+
+    # ------------------------------------------------------------------
+    # Shared per-line breakdown (one source of truth for every surface:
+    # quote panel, quote/invoice PDF, FSO form, service-in-progress)
+    # ------------------------------------------------------------------
+    def _pricing_rule_context(self):
+        """Booking context this line's price was evaluated against."""
+        self.ensure_one()
+        o = self.order_id
+        ctx = {
+            'distance': o.fso_distance or 0,
+            'appointment_hour': o.appointment_hour or 0,
+            'is_weekend': o.is_weekend,
+            'is_holiday': o.is_holiday,
+            'holiday_type': o.holiday_type,
+            'holiday_multiplier': o.holiday_multiplier or 1.0,
+            'is_after_hours': o.is_after_hours,
+            'service_type': o.fso_service_type,
+            'service_location': o.fso_service_location,
+            'urgency': o.fso_urgency,
+            'priority': o.fso_priority,
+            'region': '',
+            'injection_count': o.injection_count or 0,
+            'medication_count': o.medication_count or 0,
+            'wound_count': o.wound_count or 0,
+            'iv_fluid_count': o.iv_fluid_count or 0,
+        }
+        code = self.product_id.default_code or ''
+        if '_tphcm' in code:
+            ctx['region'] = 'HCMC'
+        elif '_hanoi' in code:
+            ctx['region'] = 'Hanoi'
+        return ctx
+
+    def _pricing_engine(self):
+        """Resolve the pricing engine for this line's order (pricelist or default)."""
+        self.ensure_one()
+        o = self.order_id
+        if o.pricelist_id.advanced_engine_id:
+            return o.pricelist_id.advanced_engine_id
+        config = self.env['advanced.pricing.config'].get_config()
+        return config.default_engine_id
+
+    def _pricing_rule_chips(self):
+        """Plain-language list of advanced-pricing rules applied to this line:
+        ``[{'label', 'desc'}]``. Empty when advanced pricing is off or nothing
+        matched. Reused by the quote/invoice PDFs, the FSO form and the
+        service-in-progress screen so every surface shows the same explanation."""
+        self.ensure_one()
+        o = self.order_id
+        if not getattr(o, 'use_advanced_pricing', False) or not self.product_id:
+            return []
+        engine = self._pricing_engine()
+        if not engine or not engine.rule_ids:
+            return []
+        try:
+            return engine.explain_applied_rules(
+                self.product_id.id, o.partner_id.id,
+                self.product_uom_qty, self._pricing_rule_context())
+        except Exception:
+            return []

@@ -25,6 +25,7 @@ Features:
     'depends': [
         'base',
         'sale',
+        'account',
         'product',
         'web',
         'mail',
@@ -43,6 +44,8 @@ Features:
         'views/visual_rule_builder_views.xml',
         'views/product_catalog_views.xml',
         'views/pricing_import_wizard_views.xml',
+        'views/health_fieldservice_order_views.xml',
+        'report/pricing_report_templates.xml',
         'views/menu_items.xml',
         'data/demo_data.xml',
         'data/pricing_rule_templates.xml',

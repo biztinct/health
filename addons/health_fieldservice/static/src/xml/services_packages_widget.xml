@@ -24,6 +24,20 @@
                             <span class="vu-svc-item__qty"><t t-esc="'× ' + svc.qty"/></span>
                             <span class="vu-svc-item__price" t-esc="formatAmount(svc.price)"/>
                         </div>
+                        <div class="vu-svc-breakdown" t-if="svc.rules and svc.rules.length">
+                            <span class="vu-svc-bd-base">Base <t t-esc="formatAmount(svc.base)"/></span>
+                            <t t-foreach="svc.rules" t-as="rule" t-key="rule_index">
+                                <span class="vu-svc-chip">
+                                    <span class="vu-svc-chip__desc" t-esc="rule.desc"/>
+                                    <span class="vu-svc-chip__label" t-esc="rule.label"/>
+                                </span>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+                <div class="vu-svc-factors" t-if="state.data.factors and state.data.factors.length">
+                    <t t-foreach="state.data.factors" t-as="factor" t-key="factor_index">
+                        <span class="vu-svc-factor" t-esc="factor.label"/>
                     </t>
                 </div>
                 <div class="vu-svc-total">

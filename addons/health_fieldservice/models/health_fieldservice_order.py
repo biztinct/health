@@ -1168,14 +1168,30 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
 
         if self.sale_order_id:
-            for line in self.sale_order_id.order_line.filtered(lambda l: not l.display_type):
+            so = self.sale_order_id
+            for line in so.order_line.filtered(lambda l: not l.display_type):
+                rules = []
+                base = line.price_unit
+                try:
+                    rules = line._pricing_rule_chips()
+                    base = line.base_price or line.product_id.list_price or line.price_unit
+                except Exception:
+                    rules = []
                 result['services'].append({
                     'name': line.product_id.name or line.name or '',
                     'qty': line.product_uom_qty,
                     'price': line.price_subtotal,
+                    'base': base,
+                    'rules': rules,
                 })
             result['service_count'] = len(result['services'])
-            result['total_amount'] = self.sale_order_id.amount_total
+            result['total_amount'] = so.amount_total
+            # Booking-condition chips (Home Visit, After Hours, Distance, Holiday…)
+            try:
+                bd = so._build_pricing_breakdown_data() or {}
+                result['factors'] = bd.get('factors', []) if bd else []
+            except Exception:
+                result['factors'] = []
 
         if hasattr(self, 'package_ids') and self.package_ids:
             result['has_packages'] = True
@@ -5776,6 +5792,32 @@ class HealthFieldServiceOrderUnified(models.Model):
             'has_invoice': bool(b.invoice_id),
             'invoice_id': b.invoice_id.id if b.invoice_id else False,
         }
+
+        # Advanced-pricing breakdown of the linked quote: per service line, the
+        # base price, the rules that fired (plain language) and the final price —
+        # so the nurse sees WHY the price is what it is while delivering service.
+        quote_breakdown = {}
+        so = b.sale_order_id
+        if so and getattr(so, 'use_advanced_pricing', False):
+            try:
+                bd = so._build_pricing_breakdown_data() or {}
+            except Exception:
+                bd = {}
+            if bd:
+                bd_lines = bd.get('lines', {})
+                quote_breakdown = {
+                    'factors': bd.get('factors', []),
+                    'lines': [{
+                        'name': info.get('name', ''),
+                        'base': info.get('base', 0),
+                        'final': info.get('final', 0),
+                        'qty': info.get('qty', 1),
+                        'subtotal': info.get('subtotal', 0),
+                        'rules': info.get('rules', []),
+                    } for info in bd_lines.values()],
+                    'total': so.amount_total or 0,
+                }
+        payment['quote_breakdown'] = quote_breakdown
 
         # Timeline
         timeline = []

@@ -235,6 +235,34 @@
                                 <span class="sip-info-label" style="font-weight:700">Total</span>
                                 <span class="sip-info-value" style="font-size:15px;color:#1565C0" t-esc="formatCurrency(state.payment.total_price)"/>
                             </div>
+
+                            <!-- Why this price: applied advanced-pricing rules -->
+                            <t t-if="state.payment.quote_breakdown and state.payment.quote_breakdown.lines and state.payment.quote_breakdown.lines.length">
+                                <div class="sip-price-why">
+                                    <div class="sip-why-title">Why this price</div>
+                                    <t t-foreach="state.payment.quote_breakdown.lines" t-as="ln" t-key="ln_index">
+                                        <div class="sip-why-line" t-if="ln.rules and ln.rules.length">
+                                            <div class="sip-why-name" t-esc="ln.name"/>
+                                            <div class="sip-why-rules">
+                                                <span class="sip-why-base">Base <t t-esc="formatCurrency(ln.base)"/></span>
+                                                <t t-foreach="ln.rules" t-as="rule" t-key="rule_index">
+                                                    <span class="sip-why-chip">
+                                                        <span class="sip-why-desc" t-esc="rule.desc"/>
+                                                        <span class="sip-why-label" t-esc="rule.label"/>
+                                                    </span>
+                                                </t>
+                                                <span class="sip-why-final">= <t t-esc="formatCurrency(ln.final)"/></span>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <div class="sip-why-factors" t-if="state.payment.quote_breakdown.factors and state.payment.quote_breakdown.factors.length">
+                                        <t t-foreach="state.payment.quote_breakdown.factors" t-as="factor" t-key="factor_index">
+                                            <span class="sip-why-factor" t-esc="factor.label"/>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
                             <button class="sip-collect-btn" t-on-click="collectPayment">
                                 <i class="fa fa-money"/> Collect Payment
                             </button>

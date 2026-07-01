@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Print the applied price rules underneath each line on the customer-facing
+        quotation and invoice PDFs, so the client sees WHY a price was adjusted
+        (e.g. "Base 300,000 đ · +200,000 đ Home Visit"). Reuses the shared
+        sale.order.line._pricing_rule_chips() helper — same explanation as the
+        on-screen quote panel and the booking dialog.
+    -->
+
+    <!-- Quotation / Sale Order PDF -->
+    <template id="report_saleorder_pricing_rules"
+              inherit_id="sale.report_saleorder_document">
+        <xpath expr="//td[@name='td_product_name']" position="inside">
+            <t t-set="ap_chips" t-value="line._pricing_rule_chips()"/>
+            <div t-if="ap_chips" class="ap-rule-notes"
+                 style="font-size:11px; color:#5a5a5a; margin-top:4px;">
+                <span style="font-weight:600;">Pricing:</span>
+                <span style="color:#9e9e9e;">Base
+                    <span t-esc="line.base_price"
+                          t-options='{"widget": "monetary", "display_currency": line.currency_id}'/>
+                </span>
+                <t t-foreach="ap_chips" t-as="chip">
+                    <span style="display:inline-block; margin-left:6px;">
+                        <span style="font-weight:700; color:#1565C0;" t-esc="chip['desc']"/>
+                        <span style="color:#616161;" t-esc="chip['label']"/>
+                    </span>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Customer Invoice PDF -->
+    <template id="report_invoice_pricing_rules"
+              inherit_id="account.report_invoice_document">
+        <xpath expr="//td[@name='account_invoice_line_name']" position="inside">
+            <t t-set="ap_sale_line" t-value="line.sale_line_ids[:1]"/>
+            <t t-set="ap_chips" t-value="ap_sale_line._pricing_rule_chips() if ap_sale_line else []"/>
+            <div t-if="ap_chips" class="ap-rule-notes"
+                 style="font-size:11px; color:#5a5a5a; margin-top:4px;">
+                <span style="font-weight:600;">Pricing:</span>
+                <span style="color:#9e9e9e;">Base
+                    <span t-esc="ap_sale_line.base_price"
+                          t-options='{"widget": "monetary", "display_currency": ap_sale_line.currency_id}'/>
+                </span>
+                <t t-foreach="ap_chips" t-as="chip">
+                    <span style="display:inline-block; margin-left:6px;">
+                        <span style="font-weight:700; color:#1565C0;" t-esc="chip['desc']"/>
+                        <span style="color:#616161;" t-esc="chip['label']"/>
+                    </span>
+                </t>
+            </div>
+        </xpath>
+    </template>
+</odoo>
