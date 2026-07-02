@@ -66,8 +66,9 @@ class BiField(models.Model):
     format_json = fields.Json(
         help='{"decimals": 0, "currency": "VND", "prefix": "", "suffix": ""}')
     selection_labels_json = fields.Json(
-        help="For selection columns: raw value -> translated label, baked at "
-             "scan time so clients can label results without extra RPCs.")
+        help="For selection columns, baked at scan time per installed "
+             "language: {lang_code: {raw value: label}}. Legacy flat "
+             "{value: label} maps are still understood.")
     is_translated_column = fields.Boolean(
         help="Underlying column is a translated jsonb — the engine extracts "
              "the user language with en_US fallback.")
@@ -118,6 +119,21 @@ class BiField(models.Model):
         return validate_expression(
             self.expression, known,
             allow_aggregates=self.role == 'measure')
+
+    def _selection_labels_for(self, lang=None):
+        """Selection labels in the given (or user) language, with en_US then
+        any-language fallback. Handles both the per-language format and
+        legacy flat maps."""
+        self.ensure_one()
+        labels = self.selection_labels_json or {}
+        if not labels:
+            return {}
+        first_value = next(iter(labels.values()), None)
+        if not isinstance(first_value, dict):
+            return labels  # legacy flat {value: label}
+        lang = lang or self.env.user.lang or 'en_US'
+        return (labels.get(lang) or labels.get('en_US')
+                or next(iter(labels.values()), {}))
 
     def _expression_field_map(self):
         """ref name -> bi.field for expression compilation at query time."""

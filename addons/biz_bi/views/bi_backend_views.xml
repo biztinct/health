@@ -71,6 +71,8 @@
                     <button name="action_sync_now" type="object"
                             string="Sync Now"
                             invisible="type != 'external'"/>
+                    <button name="action_open_pipeline_editor" type="object"
+                            string="Pipeline Editor"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -87,6 +89,10 @@
                             <field name="connector_type"
                                    invisible="type != 'external'"/>
                             <field name="connection_json" widget="json"
+                                   invisible="type != 'external'"/>
+                            <field name="sync_interval"
+                                   invisible="type != 'external'"/>
+                            <field name="next_sync"
                                    invisible="type != 'external'"/>
                         </group>
                         <group>

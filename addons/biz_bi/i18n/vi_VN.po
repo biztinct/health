@@ -421,3 +421,393 @@ msgstr "Chưa có gì để truy vấn — hãy thêm một trường dữ liệ
 #: code:addons/biz_bi/static/src/components:0
 msgid "The query took longer than %s seconds. Add filters or publish the dataset to Gold."
 msgstr "Truy vấn mất hơn %s giây. Hãy thêm bộ lọc hoặc xuất bản bộ dữ liệu sang Gold."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Today"
+msgstr "Hôm nay"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Yesterday"
+msgstr "Hôm qua"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Last 7 days"
+msgstr "7 ngày qua"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Last 30 days"
+msgstr "30 ngày qua"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "This week"
+msgstr "Tuần này"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "This month"
+msgstr "Tháng này"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Last month"
+msgstr "Tháng trước"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "This quarter"
+msgstr "Quý này"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Last 6 months"
+msgstr "6 tháng qua"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Last 12 months"
+msgstr "12 tháng qua"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "This year"
+msgstr "Năm nay"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Last year"
+msgstr "Năm trước"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Others"
+msgstr "Khác"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "All time"
+msgstr "Toàn thời gian"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Insights"
+msgstr "Phân tích thông minh"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Nothing unusual in the current scope."
+msgstr "Không có gì bất thường trong phạm vi hiện tại."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "No data in the current scope."
+msgstr "Không có dữ liệu trong phạm vi hiện tại."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "up"
+msgstr "tăng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "down"
+msgstr "giảm"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Count"
+msgstr "Số lượng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "%(measure)s is %(dir)s %(pct)s%% in the latest complete period (%(cur)s vs %(prev)s)."
+msgstr "%(measure)s %(dir)s %(pct)s%% trong kỳ hoàn chỉnh gần nhất (%(cur)s so với %(prev)s)."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "%(bucket)s is unusual: %(value)s vs a typical %(mean)s (z=%(z)s)."
+msgstr "%(bucket)s bất thường: %(value)s so với mức thông thường %(mean)s (z=%(z)s)."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "%(top)s alone holds %(share)s%% of total %(measure)s."
+msgstr "Riêng %(top)s chiếm %(share)s%% tổng %(measure)s."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "%(member)s stands out with %(value)s (typical %(dim)s value: %(mean)s)."
+msgstr "%(member)s nổi bật với %(value)s (mức thông thường của %(dim)s: %(mean)s)."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Ask AI"
+msgstr "Hỏi AI"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Compose Report"
+msgstr "Soạn báo cáo"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Thinking…"
+msgstr "Đang suy nghĩ…"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Ask for a chart… e.g. “monthly revenue by facility”"
+msgstr "Yêu cầu một biểu đồ… ví dụ “doanh thu hàng tháng theo cơ sở”"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Semantic Modeler"
+msgstr "Mô hình ngữ nghĩa"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Open in Explore"
+msgstr "Mở trong Khám phá"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Re-publish"
+msgstr "Xuất bản lại"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Rescan Fields"
+msgstr "Quét lại trường"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Suggested joins"
+msgstr "Liên kết gợi ý"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Entity"
+msgstr "Thực thể"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Fields rescanned."
+msgstr "Đã quét lại trường dữ liệu."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Dataset published."
+msgstr "Đã xuất bản bộ dữ liệu."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Joined %s."
+msgstr "Đã liên kết %s."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Join type"
+msgstr "Kiểu liên kết"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Cardinality"
+msgstr "Quan hệ"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Left (keep all rows)"
+msgstr "Left (giữ mọi dòng)"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Inner (matched only)"
+msgstr "Inner (chỉ dòng khớp)"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "N:1 lookup"
+msgstr "Tra cứu N:1"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "1:N detail (fan-out)"
+msgstr "Chi tiết 1:N (nhân dòng)"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Close"
+msgstr "Đóng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Pipeline Editor"
+msgstr "Trình biến đổi dữ liệu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Rename Columns"
+msgstr "Đổi tên cột"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Change Type"
+msgstr "Đổi kiểu dữ liệu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Filter Rows"
+msgstr "Lọc dòng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Calculated Column"
+msgstr "Cột tính toán"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Remove Duplicates"
+msgstr "Loại bỏ trùng lặp"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Validate & Apply"
+msgstr "Kiểm tra & Áp dụng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Pipeline applied."
+msgstr "Đã áp dụng biến đổi."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Cleaned Data Preview"
+msgstr "Xem trước dữ liệu đã làm sạch"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Apply the pipeline to preview the cleaned data."
+msgstr "Áp dụng biến đổi để xem trước dữ liệu."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Select a source to transform"
+msgstr "Chọn nguồn dữ liệu để biến đổi"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "+ Add Step"
+msgstr "+ Thêm bước"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Email Snapshot"
+msgstr "Gửi báo cáo qua email"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Dashboards & Schedules"
+msgstr "Bảng điều khiển & Lịch gửi"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Import CSV / Excel"
+msgstr "Nhập CSV / Excel"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Export XLSX"
+msgstr "Xuất XLSX"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Export PNG"
+msgstr "Xuất PNG"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Add"
+msgstr "Thêm"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Add to which dashboard?"
+msgstr "Thêm vào bảng điều khiển nào?"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "New dashboard name…"
+msgstr "Tên bảng điều khiển mới…"

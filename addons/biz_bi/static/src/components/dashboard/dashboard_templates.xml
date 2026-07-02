@@ -38,11 +38,10 @@
                             <select class="bi-select bi-select-sm"
                                     t-on-change="(ev) => this.onFilterChange(filter, 'relative', ev.target.value)">
                                 <option value="">All time</option>
-                                <t t-set="ranges" t-value="['today','last_7_days','last_30_days','this_week','this_month','last_month','this_quarter','last_6_months','last_12_months','this_year','last_year']"/>
-                                <option t-foreach="ranges" t-as="range" t-key="range"
-                                        t-att-value="range"
-                                        t-att-selected="activeFilterValue(filter) === range"
-                                        t-esc="range.replaceAll('_', ' ')"/>
+                                <option t-foreach="relativeRanges" t-as="range" t-key="range[0]"
+                                        t-att-value="range[0]"
+                                        t-att-selected="activeFilterValue(filter) === range[0]"
+                                        t-esc="range[1]"/>
                             </select>
                         </t>
                         <t t-elif="filter.filter_type === 'search'">

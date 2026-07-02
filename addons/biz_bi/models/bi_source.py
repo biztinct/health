@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from psycopg2.extras import execute_values
@@ -69,6 +69,14 @@ class BiSource(models.Model):
     ], default='draft')
     last_sync = fields.Datetime(readonly=True)
     last_error = fields.Text(readonly=True)
+
+    sync_interval = fields.Selection([
+        ('manual', 'Manual Only'),
+        ('hourly', 'Every Hour'),
+        ('daily', 'Daily'),
+    ], default='manual', string='Auto-Sync',
+        help="Automatic refresh cadence for external connectors.")
+    next_sync = fields.Datetime(readonly=True, copy=False)
 
     pipeline_id = fields.One2many('bi.pipeline', 'source_id',
                                   string='Pipeline')
@@ -181,11 +189,19 @@ class BiSource(models.Model):
                 'selection': False,
             }
             if field_obj.type == 'selection':
-                try:
-                    entry['selection'] = dict(
-                        field_obj._description_selection(self.env))
-                except Exception:
-                    entry['selection'] = False
+                # bake labels for EVERY installed language so any user sees
+                # selection values in their own language (generic — not tied
+                # to one country)
+                labels = {}
+                for lang_code, _name in self.env['res.lang'].get_installed():
+                    try:
+                        labels[lang_code] = dict(
+                            field_obj._description_selection(
+                                self.env(context=dict(self.env.context,
+                                                      lang=lang_code))))
+                    except Exception:
+                        continue
+                entry['selection'] = labels or False
             result.append(entry)
         return result
 
@@ -227,6 +243,15 @@ class BiSource(models.Model):
     # ------------------------------------------------------------------
     # Connector contract (implemented per type; external lands Phase 3)
     # ------------------------------------------------------------------
+
+    def action_open_pipeline_editor(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'biz_bi.pipeline',
+            'name': _("Pipeline: %s", self.name),
+            'params': {'source_id': self.id},
+        }
 
     def action_test_connection(self):
         self.ensure_one()
@@ -298,7 +323,46 @@ class BiSource(models.Model):
         except Exception as exc:
             self.write({'state': 'error', 'last_error': str(exc)})
             raise
+        finally:
+            self._bump_next_sync()
         return True
+
+    def _bump_next_sync(self):
+        for source in self:
+            if source.sync_interval == 'hourly':
+                source.next_sync = fields.Datetime.now() + timedelta(hours=1)
+            elif source.sync_interval == 'daily':
+                source.next_sync = fields.Datetime.now() + timedelta(days=1)
+            else:
+                source.next_sync = False
+
+    def write(self, vals):
+        result = super().write(vals)
+        if 'sync_interval' in vals:
+            for source in self:
+                if source.sync_interval != 'manual' and not source.next_sync:
+                    source._bump_next_sync()
+                elif source.sync_interval == 'manual':
+                    source.next_sync = False
+        return result
+
+    @api.model
+    def _process_sync_queue(self):
+        """Hourly cron: refresh external sources that are due. One failure
+        never blocks the rest; failures back off to the next interval."""
+        due = self.search([
+            ('type', '=', 'external'),
+            ('connector_type', '=', 'rest_json'),
+            ('sync_interval', '!=', 'manual'),
+            ('next_sync', '!=', False),
+            ('next_sync', '<=', fields.Datetime.now()),
+        ])
+        for source in due:
+            try:
+                source.action_sync_now()
+            except Exception:  # noqa: BLE001 — logged on the record
+                _logger.exception("biz_bi: auto-sync failed for %s",
+                                  source.name)
 
     def _fetch_batch(self, cursor_state=None):
         """Pull the full JSON payload and return a list of flat dicts."""

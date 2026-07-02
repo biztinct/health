@@ -13,6 +13,7 @@ import {
     checkCompatibility,
     recommendChartType,
 } from "../../core/chart_recommender";
+import { RELATIVE_RANGES } from "../../core/range_labels";
 
 const CHART_GALLERY = [
     { type: "bar", label: _t("Bar"), icon: "bar" },
@@ -55,6 +56,7 @@ export class ExploreAction extends Component {
         this.gallery = CHART_GALLERY;
         this.grains = DATE_GRAINS;
         this.aggs = AGGS;
+        this.relativeRanges = RELATIVE_RANGES;
 
         this.state = useState({
             datasets: [],

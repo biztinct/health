@@ -234,7 +234,7 @@ class BiQueryEngine(models.AbstractModel):
                 'role': field.role,
                 'grain': dim['grain'],
                 'format': field.format_json or {},
-                'selection_labels': field.selection_labels_json or {},
+                'selection_labels': field._selection_labels_for(),
             })
         for index, meas in enumerate(measures):
             field = meas['field']

@@ -1,9 +1,21 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 /**
- * Value formatting for BI results. Vietnamese number style uses '.' for
- * thousands and ',' for decimals; VND has no decimal places.
+ * Value formatting for BI results. Locale-generic: any Odoo language code
+ * maps to its Intl locale (vi_VN -> vi-VN, th_TH -> th-TH, ...), so number
+ * and date styles follow each user's language automatically.
  */
+
+function localeOf(lang) {
+    try {
+        return Intl.getCanonicalLocales(
+            (lang || "en_US").replace("_", "-"))[0];
+    } catch {
+        return "en-US";
+    }
+}
 
 export function formatNumber(value, format = {}, lang = "en_US") {
     if (value === null || value === undefined) {
@@ -12,7 +24,7 @@ export function formatNumber(value, format = {}, lang = "en_US") {
     if (typeof value !== "number") {
         return String(value);
     }
-    const locale = lang.startsWith("vi") ? "vi-VN" : "en-US";
+    const locale = localeOf(lang);
     const currency = format.currency;
     const decimals =
         format.decimals !== undefined ? format.decimals : currency === "VND" ? 0 : guessDecimals(value);
@@ -43,7 +55,7 @@ export function formatFull(value, format = {}, lang = "en_US") {
     if (typeof value !== "number") {
         return String(value);
     }
-    const locale = lang.startsWith("vi") ? "vi-VN" : "en-US";
+    const locale = localeOf(lang);
     const decimals = format.decimals !== undefined ? format.decimals : guessDecimals(value);
     let text = value.toLocaleString(locale, { maximumFractionDigits: decimals });
     if (format.currency === "VND") {
@@ -71,7 +83,7 @@ export function formatDimensionValue(value, column, lang = "en_US") {
         return "–";
     }
     if (value === "__bi_others__") {
-        return lang.startsWith("vi") ? "Khác" : "Others";
+        return _t("Others");
     }
     const labels = column.selection_labels || {};
     if (labels[value] !== undefined) {
@@ -80,7 +92,7 @@ export function formatDimensionValue(value, column, lang = "en_US") {
     if (column.type === "date" || column.type === "datetime" || column.grain) {
         const date = new Date(value);
         if (!isNaN(date)) {
-            const locale = lang.startsWith("vi") ? "vi-VN" : "en-GB";
+            const locale = lang.startsWith("en") ? "en-GB" : localeOf(lang);
             if (column.grain === "quarter") {
                 return "Q" + (Math.floor(date.getMonth() / 3) + 1) + " " + date.getFullYear();
             }

@@ -219,6 +219,15 @@ class BiRelationship(models.Model):
          'A node can only be joined into the graph once.'),
     ]
 
+    def write(self, vals):
+        result = super().write(vals)
+        if {'join_type', 'cardinality', 'parent_field', 'child_field'} \
+                & set(vals):
+            for dataset in self.mapped('dataset_id'):
+                if dataset.state == 'published':
+                    dataset._recreate_silver_view()
+        return result
+
     @api.constrains('parent_field', 'child_field', 'parent_node_id',
                     'child_node_id')
     def _check_join_columns(self):
@@ -560,7 +569,7 @@ class BiDataset(models.Model):
                 'folder': field.folder or 'General',
                 'node': field.node_id.name,
                 'format': field.format_json or {},
-                'selection_labels': field.selection_labels_json or {},
+                'selection_labels': field._selection_labels_for(),
                 'glossary': field.glossary_term_id.definition or '',
             })
         return {
@@ -679,7 +688,7 @@ class BiDataset(models.Model):
                 'folder': field.folder or 'General',
                 'description': field.description or '',
                 'selection_values': list(
-                    (field.selection_labels_json or {}).keys()) or None,
+                    field._selection_labels_for('en_US').keys()) or None,
             })
         relationships = [
             '%s -> %s via %s (%s)' % (

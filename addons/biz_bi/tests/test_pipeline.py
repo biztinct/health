@@ -94,6 +94,27 @@ class TestPipeline(TransactionCase):
             with self.assertRaises(UserError):
                 self.pipeline.compile_sql()
 
+    def test_editor_data_and_step_schemas(self):
+        data = self.env['bi.pipeline'].get_editor_data(self.source.id)
+        # schema BEFORE each of the 4 steps + implicit base
+        self.assertEqual(len(data['schemas']), 5)
+        self.assertIsNone(data['invalid_step'])
+        base_cols = dict(data['schemas'][0])
+        self.assertIn('full_name', base_cols)
+        after_rename = dict(data['schemas'][1])
+        self.assertIn('customer', after_rename)
+        self.assertNotIn('full_name', after_rename)
+
+    def test_save_steps_reports_invalid_step(self):
+        data = self.env['bi.pipeline'].save_steps(self.source.id, [
+            {'id': 's1', 'type': 'rename',
+             'params': {'map': {'full_name': 'customer'}}},
+            {'id': 's2', 'type': 'filter',
+             'params': {'conditions': [['ghost_column', 'eq', 1]]}},
+        ])
+        self.assertEqual(data['invalid_step'], 1)
+        self.assertIn('ghost_column', data['error'])
+
     def test_dataset_reads_clean_view(self):
         self.pipeline.action_apply()
         workspace = self.env['bi.workspace'].create({'name': 'P'})

@@ -11,6 +11,7 @@ import {
 } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { RELATIVE_RANGES } from "../../core/range_labels";
 import { ChartRenderer } from "../explore/chart_renderer";
 import { KpiCard } from "../explore/kpi_card";
 import { DataTable } from "../explore/data_table";
@@ -50,6 +51,7 @@ export class DashboardAction extends Component {
         this.biData = useService("bi_data");
         this.biFilter = useService("bi_filter");
 
+        this.relativeRanges = RELATIVE_RANGES;
         this.gridRef = useRef("grid");
         this.grid = null;
         this._refreshTimer = null;

@@ -265,10 +265,9 @@
                                     <select t-if="chip.op === 'relative'" class="bi-chip-select"
                                             t-on-change="(ev) => this.setFilterValue(chip, ev)">
                                         <option value="">…</option>
-                                        <t t-set="ranges" t-value="['today','yesterday','last_7_days','last_30_days','this_week','this_month','last_month','this_quarter','last_6_months','last_12_months','this_year','last_year']"/>
-                                        <option t-foreach="ranges" t-as="range" t-key="range"
-                                                t-att-value="range" t-att-selected="chip.value === range"
-                                                t-esc="range"/>
+                                        <option t-foreach="relativeRanges" t-as="range" t-key="range[0]"
+                                                t-att-value="range[0]" t-att-selected="chip.value === range[0]"
+                                                t-esc="range[1]"/>
                                     </select>
                                     <input t-else="" class="bi-chip-input" type="text"
                                            t-att-value="filterValueText(chip)"

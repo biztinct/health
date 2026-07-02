@@ -237,7 +237,7 @@ class BiDashboard(models.Model):
                     'field_id': mapping.field_id.id,
                     'data_type': mapping.field_id.data_type,
                     'selection_labels':
-                        mapping.field_id.selection_labels_json or {},
+                        mapping.field_id._selection_labels_for(),
                 } for mapping in flt.mapping_ids],
             } for flt in self.filter_ids],
         }

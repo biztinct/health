@@ -38,6 +38,7 @@ export class ModelerAction extends Component {
             fieldSearch: "",
             drawerOpen: true,
             joinMenuNodeId: null,
+            editEdgeId: null,
             busy: false,
         });
 
@@ -199,6 +200,18 @@ export class ModelerAction extends Component {
         } finally {
             this.state.busy = false;
         }
+    }
+
+    toggleEdgeEditor(edgeId) {
+        this.state.editEdgeId =
+            this.state.editEdgeId === edgeId ? null : edgeId;
+        this.state.joinMenuNodeId = null;
+    }
+
+    async updateEdge(edge, key, value) {
+        await this.orm.write("bi.relationship", [edge.id], { [key]: value });
+        await this.loadDataset(this.state.datasetId);
+        this.state.editEdgeId = edge.id; // keep the popover open
     }
 
     async removeEdge(edge) {

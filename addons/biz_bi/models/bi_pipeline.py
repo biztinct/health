@@ -26,7 +26,7 @@ from odoo import _, api, fields, models, tools
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import SQL
 
-from .bi_expression import ExpressionCompiler, ExpressionError
+from .bi_expression import ExpressionCompiler, ExpressionError  # noqa: F401 — ExpressionError used in editor API
 
 _logger = logging.getLogger(__name__)
 
@@ -281,3 +281,91 @@ class BiPipeline(models.Model):
             tools.drop_view_if_exists(
                 self.env.cr, pipeline._clean_view_name())
         return super().unlink()
+
+    # ------------------------------------------------------------------
+    # Visual editor API
+    # ------------------------------------------------------------------
+
+    def _step_schemas(self, steps):
+        """Schema BEFORE each step (index-aligned) plus the final schema.
+        On an invalid step, returns what compiled so far + the error."""
+        self.ensure_one()
+        schema = self._base_schema()
+        schemas = [dict(schema)]
+        for index, step in enumerate(steps, start=1):
+            handler = getattr(
+                self, '_step_%s' % (step or {}).get('type'), None)
+            if handler is None:
+                return schemas, index - 1, _(
+                    "Unknown step type '%s'.", (step or {}).get('type'))
+            try:
+                _sql, schema = handler(
+                    step.get('params') or {}, 's%d' % (index - 1),
+                    schema, index)
+            except (UserError, ValidationError, ExpressionError) as exc:
+                return schemas, index - 1, str(exc)
+            schemas.append(dict(schema))
+        return schemas, None, None
+
+    @api.model
+    def get_editor_data(self, source_id):
+        source = self.env['bi.source'].browse(int(source_id))
+        source.check_access('read')
+        pipeline = source.pipeline_id[:1]
+        steps = (pipeline.steps_json or {}).get('steps') or [] \
+            if pipeline else []
+        if pipeline:
+            schemas, invalid_step, error = pipeline._step_schemas(steps)
+        else:
+            schemas = [{col['name']: col['odoo_type']
+                        for col in source._fetch_schema(raw=True)}]
+            invalid_step, error = None, None
+
+        preview = None
+        if pipeline and source.has_active_pipeline:
+            view = pipeline._clean_view_name()
+            self.env.cr.execute(SQL(
+                "SELECT * FROM %s LIMIT 10", SQL.identifier(view)))
+            columns = [d.name for d in self.env.cr.description
+                       if not d.name.startswith('_bi_')]
+            indexes = [i for i, d in enumerate(self.env.cr.description)
+                       if not d.name.startswith('_bi_')]
+            preview = {
+                'columns': columns,
+                'rows': [[str(row[i]) if row[i] is not None else None
+                          for i in indexes]
+                         for row in self.env.cr.fetchall()],
+            }
+
+        return {
+            'source_id': source.id,
+            'source_name': source.name,
+            'source_type': source.type,
+            'is_active': pipeline.is_active if pipeline else True,
+            'applied': source.has_active_pipeline,
+            'steps': steps,
+            'schemas': [sorted(s.items()) for s in schemas],
+            'invalid_step': invalid_step,
+            'error': error or (pipeline.last_error if pipeline else None),
+            'preview': preview,
+        }
+
+    @api.model
+    def save_steps(self, source_id, steps, is_active=True):
+        """Persist + apply the pipeline; returns fresh editor data. On a
+        validation error nothing is applied and the error is reported
+        against its step."""
+        source = self.env['bi.source'].browse(int(source_id))
+        source.check_access('write')
+        pipeline = source.pipeline_id[:1]
+        if not pipeline:
+            pipeline = self.create({'source_id': source.id})
+        pipeline.write({
+            'steps_json': {'version': 1, 'steps': steps},
+            'is_active': is_active,
+        })
+        try:
+            pipeline.action_apply()
+        except (UserError, ValidationError):
+            pass  # error captured on the record; editor shows it per-step
+        return self.get_editor_data(source.id)

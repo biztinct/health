@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="biz_bi.Pipeline">
+        <div class="o_biz_bi bi-pipeline-editor">
+
+            <!-- Toolbar -->
+            <div class="bi-toolbar">
+                <div class="bi-toolbar-left">
+                    <span class="bi-brand-dot"/>
+                    <select class="bi-select" t-on-change="onSourceSelectChange">
+                        <option t-foreach="state.sources" t-as="src" t-key="src.id"
+                                t-att-value="src.id"
+                                t-att-selected="src.id === state.sourceId">
+                            <t t-esc="src.name"/> (<t t-esc="src.type"/>)
+                        </option>
+                    </select>
+                    <span t-if="state.editor and state.editor.applied and !state.dirty"
+                          class="bi-state-badge published">applied</span>
+                    <span t-if="state.dirty" class="bi-state-badge">unsaved</span>
+                </div>
+                <div class="bi-toolbar-right">
+                    <button class="bi-btn bi-btn-primary" t-on-click="apply"
+                            t-att-disabled="state.busy or !state.sourceId">
+                        Validate &amp; Apply
+                    </button>
+                </div>
+            </div>
+
+            <div class="bi-pipeline-body" t-if="state.editor">
+
+                <!-- Step rail -->
+                <div class="bi-step-rail">
+                    <div class="bi-step-card bi-step-source">
+                        <div class="bi-step-head">
+                            <span class="bi-step-type">Source</span>
+                            <span class="bi-step-title" t-esc="state.editor.source_name"/>
+                        </div>
+                        <div class="bi-step-note">
+                            <t t-esc="schemaBefore(0).length"/> columns
+                        </div>
+                    </div>
+
+                    <t t-foreach="state.steps" t-as="step" t-key="step_index">
+                        <div class="bi-step-arrow">↓</div>
+                        <div class="bi-step-card"
+                             t-att-class="stepError(step_index) ? 'error' : ''">
+                            <div class="bi-step-head">
+                                <span class="bi-step-type" t-esc="stepTypeLabel(step.type)"/>
+                                <span class="bi-step-actions">
+                                    <button t-on-click="() => this.moveStep(step_index, -1)"
+                                            t-att-disabled="step_index === 0">↑</button>
+                                    <button t-on-click="() => this.moveStep(step_index, 1)"
+                                            t-att-disabled="step_index === state.steps.length - 1">↓</button>
+                                    <button class="bi-step-remove"
+                                            t-on-click="() => this.removeStep(step_index)">×</button>
+                                </span>
+                            </div>
+
+                            <!-- RENAME -->
+                            <t t-if="step.type === 'rename'">
+                                <div t-foreach="renameEntries(step)" t-as="entry"
+                                     t-key="entry_index" class="bi-step-row">
+                                    <select class="bi-select bi-select-sm"
+                                            t-on-change="(ev) => this.setRename(step, entry[0], ev.target.value, entry[1])">
+                                        <option value="">— column —</option>
+                                        <option t-foreach="schemaBefore(step_index)" t-as="col"
+                                                t-key="col.name" t-att-value="col.name"
+                                                t-att-selected="col.name === entry[0]"
+                                                t-esc="col.name"/>
+                                    </select>
+                                    <span class="bi-step-sep">→</span>
+                                    <input class="bi-input bi-input-sm" type="text"
+                                           placeholder="new_name" t-att-value="entry[1]"
+                                           t-on-change="(ev) => this.setRename(step, entry[0], entry[0], ev.target.value)"/>
+                                </div>
+                                <button class="bi-btn bi-btn-ghost bi-btn-sm"
+                                        t-on-click="() => this.addRename(step)">+ rename</button>
+                            </t>
+
+                            <!-- CAST -->
+                            <t t-if="step.type === 'cast'">
+                                <div class="bi-step-row">
+                                    <select class="bi-select bi-select-sm"
+                                            t-on-change="(ev) => { step.params.col = ev.target.value; this.markDirty(); }">
+                                        <option value="">— column —</option>
+                                        <option t-foreach="schemaBefore(step_index)" t-as="col"
+                                                t-key="col.name" t-att-value="col.name"
+                                                t-att-selected="col.name === step.params.col"
+                                                t-esc="col.name + ' (' + col.type + ')'"/>
+                                    </select>
+                                    <span class="bi-step-sep">as</span>
+                                    <select class="bi-select bi-select-sm"
+                                            t-on-change="(ev) => { step.params.to = ev.target.value; this.markDirty(); }">
+                                        <option t-foreach="castTargets" t-as="target" t-key="target"
+                                                t-att-value="target"
+                                                t-att-selected="target === step.params.to"
+                                                t-esc="target"/>
+                                    </select>
+                                </div>
+                            </t>
+
+                            <!-- FILTER -->
+                            <t t-if="step.type === 'filter'">
+                                <div t-foreach="step.params.conditions" t-as="condition"
+                                     t-key="condition_index" class="bi-step-row">
+                                    <select class="bi-select bi-select-sm"
+                                            t-on-change="(ev) => this.setCondition(step, condition_index, 0, ev.target.value)">
+                                        <option value="">— column —</option>
+                                        <option t-foreach="schemaBefore(step_index)" t-as="col"
+                                                t-key="col.name" t-att-value="col.name"
+                                                t-att-selected="col.name === condition[0]"
+                                                t-esc="col.name"/>
+                                    </select>
+                                    <select class="bi-select bi-select-sm"
+                                            t-on-change="(ev) => this.setCondition(step, condition_index, 1, ev.target.value)">
+                                        <option t-foreach="filterOps" t-as="op" t-key="op"
+                                                t-att-value="op"
+                                                t-att-selected="op === condition[1]"
+                                                t-esc="op"/>
+                                    </select>
+                                    <input t-if="condition[1] !== 'is_set' and condition[1] !== 'is_null'"
+                                           class="bi-input bi-input-sm" type="text"
+                                           placeholder="value" t-att-value="condition[2]"
+                                           t-on-change="(ev) => this.setCondition(step, condition_index, 2, ev.target.value)"/>
+                                    <button class="bi-step-remove"
+                                            t-on-click="() => this.removeCondition(step, condition_index)">×</button>
+                                </div>
+                                <button class="bi-btn bi-btn-ghost bi-btn-sm"
+                                        t-on-click="() => this.addCondition(step)">+ condition</button>
+                            </t>
+
+                            <!-- CALC -->
+                            <t t-if="step.type === 'calc'">
+                                <div class="bi-step-row">
+                                    <input class="bi-input bi-input-sm" type="text"
+                                           placeholder="new_column" t-att-value="step.params.as"
+                                           t-on-change="(ev) => { step.params.as = ev.target.value; this.markDirty(); }"/>
+                                </div>
+                                <textarea class="bi-input bi-step-expression"
+                                          placeholder="e.g. coalesce([amount], 0) * 1.08"
+                                          t-att-value="step.params.expression"
+                                          t-on-change="(ev) => { step.params.expression = ev.target.value; this.markDirty(); }"/>
+                            </t>
+
+                            <!-- DEDUPE -->
+                            <t t-if="step.type === 'dedupe'">
+                                <div class="bi-step-note">Key columns (duplicates collapse to one row):</div>
+                                <div class="bi-step-chips">
+                                    <label t-foreach="schemaBefore(step_index)" t-as="col"
+                                           t-key="col.name" class="bi-step-chip">
+                                        <input type="checkbox"
+                                               t-att-checked="(step.params.keys or []).indexOf(col.name) !== -1"
+                                               t-on-change="() => this.toggleKey(step, col.name)"/>
+                                        <t t-esc="col.name"/>
+                                    </label>
+                                </div>
+                                <div class="bi-step-row">
+                                    <span class="bi-step-sep">keep first by</span>
+                                    <select class="bi-select bi-select-sm"
+                                            t-on-change="(ev) => this.setDedupeOrder(step, ev.target.value, 'desc')">
+                                        <option value="">— column —</option>
+                                        <option t-foreach="schemaBefore(step_index)" t-as="col"
+                                                t-key="col.name" t-att-value="col.name"
+                                                t-att-selected="(step.params.order_by or [])[0] and step.params.order_by[0].col === col.name"
+                                                t-esc="col.name"/>
+                                    </select>
+                                    <span class="bi-step-sep">desc</span>
+                                </div>
+                            </t>
+
+                            <div t-if="stepError(step_index)" class="bi-step-error"
+                                 t-esc="stepError(step_index)"/>
+                        </div>
+                    </t>
+
+                    <div class="bi-step-arrow">↓</div>
+                    <div class="bi-step-add">
+                        <button class="bi-btn"
+                                t-on-click="() => state.addMenuOpen = !state.addMenuOpen">
+                            + Add Step
+                        </button>
+                        <div t-if="state.addMenuOpen" class="bi-menu bi-step-add-menu">
+                            <button t-foreach="stepTypes" t-as="entry" t-key="entry.type"
+                                    t-on-click="() => this.addStep(entry.type)"
+                                    t-esc="entry.label"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="bi-pipeline-preview">
+                    <div class="bi-panel-title">Cleaned Data Preview</div>
+                    <div t-if="state.editor.error and !state.dirty"
+                         class="bi-preview-error" t-esc="state.editor.error"/>
+                    <t t-elif="state.editor.preview">
+                        <div class="bi-table-wrap">
+                            <table class="bi-table">
+                                <thead>
+                                    <tr>
+                                        <th t-foreach="state.editor.preview.columns" t-as="col"
+                                            t-key="col" t-esc="col"/>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="state.editor.preview.rows" t-as="row"
+                                        t-key="row_index">
+                                        <td t-foreach="row" t-as="cell" t-key="cell_index"
+                                            t-esc="cell === null ? '–' : cell"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bi-preview-meta">first 10 rows of the cleaned view</div>
+                    </t>
+                    <div t-else="" class="bi-preview-empty">
+                        <p>Apply the pipeline to preview the cleaned data.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div t-if="!state.editor" class="bi-explore-empty">
+                <h3>Select a source to transform</h3>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -44,15 +44,20 @@
                     <svg class="bi-map" t-att-width="lay.width" t-att-height="lay.height">
                         <!-- edges -->
                         <g t-foreach="lay.edges" t-as="edge" t-key="edge.id"
-                           class="bi-edge-group">
-                            <path t-att-d="edge.path" class="bi-edge"/>
-                            <g t-att-transform="'translate(' + edge.labelX + ',' + edge.labelY + ')'">
+                           class="bi-edge-group"
+                           t-att-class="edge.id === state.editEdgeId ? 'editing' : ''">
+                            <path t-att-d="edge.path" class="bi-edge"
+                                  t-att-class="edge.join_type === 'inner' ? 'inner' : ''"/>
+                            <g t-att-transform="'translate(' + edge.labelX + ',' + edge.labelY + ')'"
+                               class="bi-edge-hotspot"
+                               t-on-click.stop="() => this.toggleEdgeEditor(edge.id)">
                                 <text class="bi-edge-label" text-anchor="middle">
                                     <t t-esc="edge.parent_field"/>
                                     <t t-esc="edge.cardinality === 'many2one' ? ' · N:1' : ' · 1:N'"/>
+                                    <t t-esc="edge.join_type === 'inner' ? ' · inner' : ''"/>
                                 </text>
                                 <g t-if="edge.deletable" class="bi-edge-delete"
-                                   t-on-click="() => this.removeEdge(edge)">
+                                   t-on-click.stop="() => this.removeEdge(edge)">
                                     <circle cx="0" cy="14" r="8"/>
                                     <text x="0" y="18" text-anchor="middle">×</text>
                                 </g>
@@ -83,6 +88,36 @@
                             </g>
                         </g>
                     </svg>
+
+                    <!-- edge editor popover (HTML overlay) -->
+                    <t t-set="editEdge" t-value="(layout.edges || []).find((e) => e.id === state.editEdgeId)"/>
+                    <div t-if="editEdge" class="bi-join-menu bi-edge-editor"
+                         t-att-style="'left:' + (editEdge.labelX - 100) + 'px; top:' + (editEdge.labelY + 20) + 'px;'">
+                        <div class="bi-join-menu-title">
+                            Join via <t t-esc="editEdge.parent_field"/>
+                        </div>
+                        <div class="bi-edge-editor-row">
+                            <label>Join type</label>
+                            <select class="bi-select bi-select-sm"
+                                    t-on-change="(ev) => this.updateEdge(editEdge, 'join_type', ev.target.value)">
+                                <option value="left" t-att-selected="editEdge.join_type === 'left'">Left (keep all rows)</option>
+                                <option value="inner" t-att-selected="editEdge.join_type === 'inner'">Inner (matched only)</option>
+                            </select>
+                        </div>
+                        <div class="bi-edge-editor-row">
+                            <label>Cardinality</label>
+                            <select class="bi-select bi-select-sm"
+                                    t-on-change="(ev) => this.updateEdge(editEdge, 'cardinality', ev.target.value)">
+                                <option value="many2one" t-att-selected="editEdge.cardinality === 'many2one'">N:1 lookup</option>
+                                <option value="one2many" t-att-selected="editEdge.cardinality === 'one2many'">1:N detail (fan-out)</option>
+                            </select>
+                        </div>
+                        <div class="bi-edge-editor-hint" t-if="editEdge.cardinality === 'one2many'">
+                            ⚠ Detail joins multiply rows — parent-side sums are guarded.
+                        </div>
+                        <button class="bi-btn bi-btn-ghost"
+                                t-on-click="() => this.toggleEdgeEditor(null)">Close</button>
+                    </div>
 
                     <!-- join suggestion menu (HTML overlay) -->
                     <t t-set="menuNode" t-value="(layout.nodes || []).find((n) => n.id === state.joinMenuNodeId)"/>

@@ -174,6 +174,24 @@ class TestQueryEngine(BiCase):
             {'field_id': self.f_latitude.id, 'agg': 'sum'}]}, 'filters': []}
         self.assertIsNone(chart._to_compare_request())
 
+    def test_selection_labels_per_language(self):
+        """Selection labels bake per installed language and serve the user's
+        language with fallback; legacy flat maps still pass through."""
+        type_field = self.dataset.field_ids.filtered(
+            lambda f: f.technical_name == 'type'
+            and f.node_id == self.node_root)[:1]
+        self.assertTrue(type_field)
+        baked = type_field.selection_labels_json
+        self.assertIn('en_US', baked)  # nested per-language format
+        served = type_field._selection_labels_for('en_US')
+        self.assertIn('contact', served)
+        # unknown language falls back to en_US
+        self.assertEqual(type_field._selection_labels_for('xx_XX'), served)
+        # legacy flat map passes through untouched
+        type_field.selection_labels_json = {'a': 'Alpha'}
+        self.assertEqual(type_field._selection_labels_for('vi_VN'),
+                         {'a': 'Alpha'})
+
     def test_grain_override_drill(self):
         chart = self.env['bi.chart'].create({
             'name': 'Trend', 'dataset_id': self.dataset.id,
