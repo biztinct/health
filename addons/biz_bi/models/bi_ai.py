@@ -83,15 +83,38 @@ class BiAiProvider(models.Model):
                 payload={'provider': provider.provider})
 
     def _api_key(self):
+        """Own encrypted key, falling back to the AI Performance Coach
+        configuration (hr_development_ai) when installed — one place to
+        rotate the OpenAI key instead of two."""
         self.ensure_one()
-        if not self.api_key_encrypted:
+        if self.api_key_encrypted:
+            return _fernet(self.env).decrypt(
+                self.api_key_encrypted.encode()).decode()
+        return self._coach_fallback_key()
+
+    def _coach_fallback_key(self):
+        self.ensure_one()
+        if self.provider != 'openai' \
+                or 'hr.ai.provider.config' not in self.env:
             return None
-        return _fernet(self.env).decrypt(
-            self.api_key_encrypted.encode()).decode()
+        coach = self.env['hr.ai.provider.config'].sudo().search(
+            [('provider', '=', 'openai'), ('is_active', '=', True)], limit=1)
+        return coach.openai_api_key or None
+
+    def _is_usable(self):
+        self.ensure_one()
+        if self.provider == 'ollama':
+            return True
+        return bool(self.api_key_encrypted or self._coach_fallback_key())
 
     @api.model
     def get_default(self):
         provider = self.search([('is_default', '=', True)], limit=1)
+        if provider and provider._is_usable():
+            return provider
+        for candidate in self.search([]):
+            if candidate._is_usable():
+                return candidate
         return provider or self.search([], limit=1)
 
     # ------------------------------------------------------------------
@@ -236,8 +259,7 @@ class BiAi(models.AbstractModel):
     @api.model
     def is_available(self):
         provider = self.env['bi.ai.provider'].get_default()
-        return bool(provider and (provider.has_api_key
-                                  or provider.provider == 'ollama'))
+        return bool(provider and provider._is_usable())
 
     @api.model
     def nlq_chart(self, dataset_id, prompt):

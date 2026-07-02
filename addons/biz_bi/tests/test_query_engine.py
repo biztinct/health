@@ -174,6 +174,25 @@ class TestQueryEngine(BiCase):
             {'field_id': self.f_latitude.id, 'agg': 'sum'}]}, 'filters': []}
         self.assertIsNone(chart._to_compare_request())
 
+    def test_grain_override_drill(self):
+        chart = self.env['bi.chart'].create({
+            'name': 'Trend', 'dataset_id': self.dataset.id,
+            'chart_type': 'line',
+            'config_json': {'slots': {
+                'x': [{'field_id': self.f_create_date.id, 'grain': 'year'}],
+                'values': [{'field_id': self.f_latitude.id, 'agg': 'sum'}]}},
+        })
+        request = chart._to_query_request(
+            grain_overrides={str(self.f_create_date.id): 'month'})
+        self.assertEqual(request['dimensions'][0]['grain'], 'month')
+        # drill filter: this year's bucket only, finer grain — runs clean
+        start, end = self.engine.relative_bounds('this_year')
+        result = self.engine.run(dict(request, filters=[
+            {'field_id': self.f_create_date.id, 'op': 'date_range',
+             'value': [str(start), str(end)]}]))
+        self.assertNotIn('error', result)
+        self.assertTrue(result['rows'])
+
     def test_chart_to_request(self):
         chart = self.env['bi.chart'].create({
             'name': 'Test Chart',

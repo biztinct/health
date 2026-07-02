@@ -99,6 +99,19 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div t-if="(state.drillPaths[widget.id] or []).length"
+                                     class="bi-drill-crumbs">
+                                    <button class="bi-drill-crumb bi-drill-root"
+                                            t-on-click="() => this.drillTo(widget, -1)">⌂</button>
+                                    <t t-foreach="state.drillPaths[widget.id]" t-as="level"
+                                       t-key="level_index">
+                                        <span class="bi-drill-sep">›</span>
+                                        <button class="bi-drill-crumb"
+                                                t-att-class="level_index === state.drillPaths[widget.id].length - 1 ? 'active' : ''"
+                                                t-on-click="() => this.drillTo(widget, level_index)"
+                                                t-esc="level.label"/>
+                                    </t>
+                                </div>
                                 <div class="bi-widget-body">
                                     <t t-set="envelope" t-value="state.envelopes[widget.id]"/>
                                     <t t-if="envelope and !envelope.error">

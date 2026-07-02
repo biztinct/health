@@ -50,25 +50,27 @@ class BiChart(models.Model):
                 'chart_save', dataset=chart.dataset_id, record=chart)
         return charts
 
-    def _to_query_request(self, extra_filters=None):
+    def _to_query_request(self, extra_filters=None, grain_overrides=None):
         """Compile config_json into an engine request. `extra_filters` are
-        dashboard global/local filters: [{field_id, op, value}]."""
+        dashboard global/local filters: [{field_id, op, value}];
+        `grain_overrides` maps field_id -> grain (drill-down zooming a date
+        dimension to a finer grain than the saved config)."""
         self.ensure_one()
         config = self.config_json or {}
         slots = config.get('slots') or {}
+        overrides = {int(k): v for k, v in (grain_overrides or {}).items()}
 
         dimensions = []
         seen = set()
         for slot_name in ('x', 'series'):
             for entry in (slots.get(slot_name) or []):
-                key = (entry.get('field_id'), entry.get('grain'))
+                field_id = entry.get('field_id')
+                grain = overrides.get(field_id, entry.get('grain'))
+                key = (field_id, grain)
                 if key in seen:
                     continue  # same field+grain in x and series adds nothing
                 seen.add(key)
-                dimensions.append({
-                    'field_id': entry.get('field_id'),
-                    'grain': entry.get('grain'),
-                })
+                dimensions.append({'field_id': field_id, 'grain': grain})
         measures = [{
             'field_id': entry.get('field_id'),
             'agg': entry.get('agg'),

@@ -44,8 +44,9 @@ export class KpiCard extends Component {
             return null;
         }
         const pct = ((current - previous) / Math.abs(previous)) * 100;
+        const magnitude = Math.abs(pct);
         return {
-            pct: Math.abs(pct).toFixed(1),
+            pct: magnitude > 999 ? ">999" : magnitude.toFixed(1),
             direction: pct >= 0 ? "up" : "down",
         };
     }

@@ -23,6 +23,9 @@
     <menuitem id="menu_bi_dataset_wizard" name="New Dataset"
               parent="menu_bi_data" sequence="5"
               action="action_bi_dataset_wizard"/>
+    <menuitem id="menu_bi_modeler" name="Semantic Modeler"
+              parent="menu_bi_data" sequence="8"
+              action="action_bi_modeler"/>
     <menuitem id="menu_bi_datasets" name="Datasets"
               parent="menu_bi_data" sequence="10"
               action="action_bi_dataset"/>

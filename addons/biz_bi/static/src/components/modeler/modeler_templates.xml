@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="biz_bi.Modeler">
+        <div class="o_biz_bi bi-modeler">
+
+            <!-- Toolbar -->
+            <div class="bi-toolbar">
+                <div class="bi-toolbar-left">
+                    <span class="bi-brand-dot"/>
+                    <select class="bi-select" t-on-change="onDatasetSelectChange">
+                        <option t-foreach="state.datasets" t-as="ds" t-key="ds.id"
+                                t-att-value="ds.id"
+                                t-att-selected="ds.id === state.datasetId">
+                            <t t-esc="ds.name"/>
+                        </option>
+                    </select>
+                    <span t-if="state.model" class="bi-state-badge"
+                          t-att-class="state.model.state === 'published' ? 'published' : ''">
+                        <t t-esc="state.model.state"/>
+                    </span>
+                    <span t-if="state.model and state.model.has_fanout"
+                          class="bi-fanout-warn"
+                          title="This dataset joins detail rows — sum/avg measures on parent entities are guarded against double counting.">
+                        ⚠ fan-out
+                    </span>
+                </div>
+                <div class="bi-toolbar-right">
+                    <button class="bi-btn" t-on-click="openExplore"
+                            t-att-disabled="!state.datasetId">Open in Explore</button>
+                    <button class="bi-btn bi-btn-primary" t-on-click="publish"
+                            t-att-disabled="state.busy or !state.datasetId">
+                        <t t-if="state.model and state.model.state === 'published'">Re-publish</t>
+                        <t t-else="">Publish</t>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bi-modeler-body" t-if="state.model">
+
+                <!-- Relationship map (SVG) -->
+                <div class="bi-map-scroll">
+                    <t t-set="lay" t-value="layout"/>
+                    <svg class="bi-map" t-att-width="lay.width" t-att-height="lay.height">
+                        <!-- edges -->
+                        <g t-foreach="lay.edges" t-as="edge" t-key="edge.id"
+                           class="bi-edge-group">
+                            <path t-att-d="edge.path" class="bi-edge"/>
+                            <g t-att-transform="'translate(' + edge.labelX + ',' + edge.labelY + ')'">
+                                <text class="bi-edge-label" text-anchor="middle">
+                                    <t t-esc="edge.parent_field"/>
+                                    <t t-esc="edge.cardinality === 'many2one' ? ' · N:1' : ' · 1:N'"/>
+                                </text>
+                                <g t-if="edge.deletable" class="bi-edge-delete"
+                                   t-on-click="() => this.removeEdge(edge)">
+                                    <circle cx="0" cy="14" r="8"/>
+                                    <text x="0" y="18" text-anchor="middle">×</text>
+                                </g>
+                            </g>
+                        </g>
+                        <!-- nodes -->
+                        <g t-foreach="lay.nodes" t-as="node" t-key="node.id"
+                           t-att-transform="'translate(' + node.x + ',' + node.y + ')'"
+                           class="bi-node"
+                           t-att-class="(node.is_root ? 'root ' : '') + (node.id === state.selectedNodeId ? 'selected' : '')"
+                           t-on-click="() => this.selectNode(node.id)">
+                            <rect t-att-width="lay.NODE_W" t-att-height="lay.NODE_H"
+                                  rx="10" class="bi-node-rect"/>
+                            <rect t-att-width="lay.NODE_W" height="4" rx="2"
+                                  class="bi-node-accent"/>
+                            <text x="14" y="28" class="bi-node-name"
+                                  t-esc="node.name.length > 22 ? node.name.slice(0, 21) + '…' : node.name"/>
+                            <text x="14" y="47" class="bi-node-table"
+                                  t-esc="node.table"/>
+                            <text x="14" y="66" class="bi-node-roles"
+                                  t-esc="roleSummary(node)"/>
+                            <g t-if="node.suggestions.length"
+                               t-att-transform="'translate(' + (lay.NODE_W - 30) + ',' + (lay.NODE_H - 28) + ')'"
+                               class="bi-node-addjoin"
+                               t-on-click.stop="() => this.toggleJoinMenu(node.id)">
+                                <circle cx="10" cy="10" r="11"/>
+                                <text x="10" y="15" text-anchor="middle">+</text>
+                            </g>
+                        </g>
+                    </svg>
+
+                    <!-- join suggestion menu (HTML overlay) -->
+                    <t t-set="menuNode" t-value="(layout.nodes || []).find((n) => n.id === state.joinMenuNodeId)"/>
+                    <div t-if="menuNode" class="bi-join-menu"
+                         t-att-style="'left:' + (menuNode.x + 190) + 'px; top:' + (menuNode.y + 80) + 'px;'">
+                        <div class="bi-join-menu-title">Join related entity</div>
+                        <button t-foreach="menuNode.suggestions" t-as="sug"
+                                t-key="sug.parent_field"
+                                class="bi-join-menu-item"
+                                t-att-disabled="state.busy"
+                                t-on-click="() => this.addJoin(menuNode, sug)">
+                            <span class="bi-join-menu-label" t-esc="sug.label"/>
+                            <span class="bi-join-menu-model" t-esc="sug.comodel"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Node panel -->
+                <div class="bi-node-panel" t-if="selectedNode">
+                    <div class="bi-panel-title">Entity</div>
+                    <div class="bi-node-panel-name" t-esc="selectedNode.name"/>
+                    <div class="bi-node-panel-meta">
+                        <span t-esc="selectedNode.table"/> ·
+                        <span t-esc="selectedNode.alias"/>
+                        <span t-if="selectedNode.is_root"> · root</span>
+                    </div>
+                    <div class="bi-node-panel-roles" t-esc="roleSummary(selectedNode)"/>
+                    <button class="bi-btn" t-att-disabled="state.busy"
+                            t-on-click="() => this.rescanNode(selectedNode)">
+                        ↻ Rescan Fields
+                    </button>
+                    <div t-if="selectedNode.suggestions.length" class="bi-panel-section">
+                        <div class="bi-panel-title">Suggested joins</div>
+                        <button t-foreach="selectedNode.suggestions.slice(0, 12)" t-as="sug"
+                                t-key="sug.parent_field"
+                                class="bi-suggestion-row"
+                                t-att-disabled="state.busy"
+                                t-on-click="() => this.addJoin(selectedNode, sug)">
+                            + <t t-esc="sug.label"/>
+                            <span class="bi-join-menu-model" t-esc="sug.comodel"/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Field curator drawer -->
+            <div class="bi-curator" t-if="state.model"
+                 t-att-class="state.drawerOpen ? '' : 'collapsed'">
+                <div class="bi-curator-head"
+                     t-on-click="() => state.drawerOpen = !state.drawerOpen">
+                    <span class="bi-curator-caret"
+                          t-att-class="state.drawerOpen ? 'open' : ''"/>
+                    <span class="bi-panel-title" style="margin: 0;">
+                        Fields<t t-if="selectedNode"> — <t t-esc="selectedNode.name"/></t>
+                    </span>
+                    <input t-if="state.drawerOpen" class="bi-input bi-input-sm"
+                           placeholder="Search…" t-model="state.fieldSearch"
+                           t-on-click.stop=""/>
+                    <span class="bi-curator-count">
+                        <t t-esc="visibleFields.length"/> fields
+                    </span>
+                </div>
+                <div t-if="state.drawerOpen" class="bi-curator-table-wrap">
+                    <table class="bi-table bi-curator-table">
+                        <thead>
+                            <tr>
+                                <th>Business Name</th>
+                                <th>Column</th>
+                                <th>Type</th>
+                                <th>Role</th>
+                                <th>Default Agg</th>
+                                <th>Folder</th>
+                                <th>Visibility</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="visibleFields" t-as="field" t-key="field.id">
+                                <td>
+                                    <input class="bi-curator-input" type="text"
+                                           t-att-value="field.name"
+                                           t-on-change="(ev) => this.updateField(field, 'name', ev.target.value)"/>
+                                </td>
+                                <td class="bi-curator-tech" t-esc="field.technical_name"/>
+                                <td class="bi-curator-tech" t-esc="field.data_type"/>
+                                <td>
+                                    <select class="bi-curator-select"
+                                            t-on-change="(ev) => this.updateField(field, 'role', ev.target.value)">
+                                        <option t-foreach="roleOptions" t-as="role" t-key="role"
+                                                t-att-value="role"
+                                                t-att-selected="field.role === role"
+                                                t-esc="role"/>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="bi-curator-select"
+                                            t-on-change="(ev) => this.updateField(field, 'default_agg', ev.target.value)">
+                                        <option t-foreach="aggOptions" t-as="agg" t-key="agg"
+                                                t-att-value="agg"
+                                                t-att-selected="field.default_agg === agg"
+                                                t-esc="agg"/>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input class="bi-curator-input" type="text"
+                                           t-att-value="field.folder or ''"
+                                           t-on-change="(ev) => this.updateField(field, 'folder', ev.target.value)"/>
+                                </td>
+                                <td>
+                                    <select class="bi-curator-select"
+                                            t-on-change="(ev) => this.updateField(field, 'visibility', ev.target.value)">
+                                        <option t-foreach="visibilityOptions" t-as="vis" t-key="vis"
+                                                t-att-value="vis"
+                                                t-att-selected="field.visibility === vis"
+                                                t-esc="vis"/>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div t-if="!state.model" class="bi-explore-empty">
+                <h3>Select a dataset to model</h3>
+            </div>
+        </div>
+    </t>
+
+</templates>

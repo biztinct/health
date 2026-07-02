@@ -22,6 +22,21 @@ const MIN_SIZES = {
     default: { minW: 3, minH: 3 },
 };
 
+// drill ladder: each date-bucket click zooms one level deeper
+const GRAIN_LADDER = { year: "quarter", quarter: "month", month: "day", week: "day" };
+
+function bucketEnd(startIso, grain) {
+    const date = new Date(startIso);
+    switch (grain) {
+        case "year": date.setUTCFullYear(date.getUTCFullYear() + 1); break;
+        case "quarter": date.setUTCMonth(date.getUTCMonth() + 3); break;
+        case "month": date.setUTCMonth(date.getUTCMonth() + 1); break;
+        case "week": date.setUTCDate(date.getUTCDate() + 7); break;
+        default: date.setUTCDate(date.getUTCDate() + 1);
+    }
+    return date.toISOString().slice(0, 19).replace("T", " ");
+}
+
 export class DashboardAction extends Component {
     static template = "biz_bi.Dashboard";
     static components = { ChartRenderer, KpiCard, DataTable, PivotTable };
@@ -44,6 +59,7 @@ export class DashboardAction extends Component {
             envelopes: {}, // widgetId -> envelope
             compareEnvelopes: {}, // widgetId -> previous-period envelope
             crossFilter: null, // {widgetId, datasetId, fieldId, value, label}
+            drillPaths: {}, // widgetId -> [{fieldId, grain, start, end, label}]
             editMode: false,
             tvMode: false,
             loading: true,
@@ -163,7 +179,20 @@ export class DashboardAction extends Component {
             extra.push({ field_id: cross.fieldId, op: "eq",
                          value: cross.value });
         }
+        for (const level of this.state.drillPaths[widget.id] || []) {
+            extra.push({ field_id: level.fieldId, op: "date_range",
+                         value: [level.start, level.end] });
+        }
         return extra;
+    }
+
+    _widgetGrainOverrides(widget) {
+        const path = this.state.drillPaths[widget.id];
+        if (!path || !path.length) {
+            return undefined;
+        }
+        const last = path[path.length - 1];
+        return { [last.fieldId]: GRAIN_LADDER[last.grain] || "day" };
     }
 
     async loadAllWidgetData({ noCache = false } = {}) {
@@ -177,7 +206,8 @@ export class DashboardAction extends Component {
         const mapping = []; // {widgetId, kind: 'main'|'compare'}
         for (const widget of dashboard.widgets) {
             const extra = this._widgetExtraFilters(widget);
-            requests.push({ chart_id: widget.chart_id, extra_filters: extra });
+            requests.push({ chart_id: widget.chart_id, extra_filters: extra,
+                            grain_overrides: this._widgetGrainOverrides(widget) });
             mapping.push({ widgetId: widget.id, kind: "main" });
             if (widget.chart_type === "kpi") {
                 requests.push({ chart_id: widget.chart_id,
@@ -212,9 +242,23 @@ export class DashboardAction extends Component {
                 || payload.rawValue === null) {
             return;
         }
-        // date buckets need range predicates — Phase-next; skip for now
+        // date buckets drill the source widget one grain deeper
         if (column.grain || column.type === "date"
                 || column.type === "datetime") {
+            const grain = column.grain || "day";
+            if (!GRAIN_LADDER[grain]) {
+                return; // day level — nothing deeper
+            }
+            const path = this.state.drillPaths[widget.id] || [];
+            path.push({
+                fieldId: column.field_id,
+                grain,
+                start: payload.rawValue,
+                end: bucketEnd(payload.rawValue, grain),
+                label: payload.category,
+            });
+            this.state.drillPaths[widget.id] = path;
+            this.loadAllWidgetData();
             return;
         }
         const cross = this.state.crossFilter;
@@ -235,6 +279,13 @@ export class DashboardAction extends Component {
 
     clearCrossFilter() {
         this.state.crossFilter = null;
+        this.loadAllWidgetData();
+    }
+
+    drillTo(widget, levelIndex) {
+        // levelIndex -1 = reset to top
+        const path = this.state.drillPaths[widget.id] || [];
+        this.state.drillPaths[widget.id] = path.slice(0, levelIndex + 1);
         this.loadAllWidgetData();
     }
 

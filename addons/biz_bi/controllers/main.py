@@ -75,7 +75,8 @@ class BiController(http.Controller):
                     expanded.append(compare_request)
                 else:
                     expanded.append(chart._to_query_request(
-                        entry.get('extra_filters')))
+                        entry.get('extra_filters'),
+                        grain_overrides=entry.get('grain_overrides')))
             else:
                 expanded.append(entry)
         results = engine.run_batch([e for e in expanded if e is not None])

@@ -474,6 +474,15 @@ class BiDataset(models.Model):
                 'dataset_publish', dataset=dataset)
         return True
 
+    def action_open_modeler(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'biz_bi.modeler',
+            'name': self.name,
+            'params': {'dataset_id': self.id},
+        }
+
     def action_unpublish(self):
         for dataset in self:
             dataset.state = 'draft'
@@ -563,6 +572,89 @@ class BiDataset(models.Model):
             'freshness_at': self.freshness_at,
             'fields': fields_payload,
         }
+
+    def get_modeler_data(self):
+        """Everything the visual Semantic Modeler needs: nodes with field
+        stats, edges with join details, and per-node join suggestions."""
+        self.ensure_one()
+        nodes = []
+        for node in self.node_ids:
+            roles = {}
+            for field in node.field_ids:
+                if field.visibility == 'visible':
+                    roles[field.role] = roles.get(field.role, 0) + 1
+            existing_joins = {
+                rel.parent_field for rel in self.relationship_ids
+                if rel.parent_node_id == node}
+            nodes.append({
+                'id': node.id,
+                'name': node.name,
+                'alias': node.alias,
+                'is_root': node.is_root,
+                'table': node.source_id._table_name(),
+                'source_type': node.source_id.type,
+                'field_total': len(node.field_ids),
+                'roles': roles,
+                'suggestions': [
+                    s for s in node.suggest_relationships()
+                    if s['parent_field'] not in existing_joins],
+            })
+        return {
+            'id': self.id,
+            'name': self.name,
+            'state': self.state,
+            'storage_mode': self.storage_mode,
+            'is_certified': self.is_certified,
+            'has_fanout': self.has_fanout,
+            'nodes': nodes,
+            'relationships': [{
+                'id': rel.id,
+                'parent_node_id': rel.parent_node_id.id,
+                'child_node_id': rel.child_node_id.id,
+                'parent_field': rel.parent_field,
+                'child_field': rel.child_field,
+                'join_type': rel.join_type,
+                'cardinality': rel.cardinality,
+                'origin': rel.origin,
+            } for rel in self.relationship_ids],
+        }
+
+    def add_suggested_relationship(self, parent_node_id, parent_field,
+                                   comodel, label):
+        """Modeler one-click join: create (or reuse) the comodel source,
+        add the child node + relationship, scan and prefix its fields."""
+        self.ensure_one()
+        parent_node = self.env['bi.dataset.node'].browse(int(parent_node_id))
+        if parent_node.dataset_id != self:
+            raise UserError(_("Node does not belong to this dataset."))
+        Source = self.env['bi.source']
+        ir_model = self.env['ir.model']._get(comodel)
+        source = Source.search([('model_id', '=', ir_model.id)], limit=1)
+        if not source:
+            source = Source.create({
+                'name': ir_model.name, 'type': 'odoo_model',
+                'model_id': ir_model.id, 'state': 'ready'})
+        child = self.env['bi.dataset.node'].create({
+            'dataset_id': self.id, 'source_id': source.id})
+        self.env['bi.relationship'].create({
+            'dataset_id': self.id,
+            'parent_node_id': parent_node.id,
+            'child_node_id': child.id,
+            'parent_field': parent_field,
+            'child_field': 'id',
+            'cardinality': 'many2one',
+            'origin': 'manual',
+        })
+        child.action_scan_fields()
+        for field in child.field_ids:
+            if field.technical_name == 'name':
+                field.write({'name': label, 'folder': label,
+                             'visibility': 'visible', 'sequence': 1})
+            else:
+                field.visibility = 'hidden'
+        if self.state == 'published':
+            self._recreate_silver_view()
+        return child.id
 
     def get_dataset_card(self):
         """LLM-ready dataset card: business names EN/VI, types, roles,

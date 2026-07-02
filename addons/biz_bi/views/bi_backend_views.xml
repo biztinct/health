@@ -117,6 +117,8 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button name="action_open_modeler" type="object"
+                            string="Visual Modeler" class="btn-secondary"/>
                     <button name="action_publish" type="object"
                             string="Publish" class="btn-primary"
                             invisible="state == 'published'"/>

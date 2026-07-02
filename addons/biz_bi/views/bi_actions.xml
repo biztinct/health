@@ -11,6 +11,11 @@
         <field name="tag">biz_bi.explore</field>
     </record>
 
+    <record id="action_bi_modeler" model="ir.actions.client">
+        <field name="name">Semantic Modeler</field>
+        <field name="tag">biz_bi.modeler</field>
+    </record>
+
     <record id="action_bi_dashboard_view" model="ir.actions.client">
         <field name="name">Dashboard</field>
         <field name="tag">biz_bi.dashboard</field>
