@@ -19,8 +19,13 @@
                 <field name="preferred_name" placeholder="Preferred calling name"/>
             </xpath>
 
-            <!-- Add healthcare role flags with visual tags -->
-            <xpath expr="//field[@name='category_id']" position="after">
+            <!-- Add healthcare role flags with visual tags.
+                 NOTE: injected after the PARENT group (…/..), not after the
+                 category_id field — a <group> nested inside an inner group
+                 turns that inner group into an outer one, which silently
+                 dropped the labels of every sibling field (Job Position,
+                 VAT, Website, Language, Tags rendered placeholder-only). -->
+            <xpath expr="//field[@name='category_id']/.." position="after">
                 <group name="healthcare_roles" string="Healthcare Roles">
                     <!-- Hidden boolean fields for computation -->
                     <field name="is_patient" invisible="1"/>
