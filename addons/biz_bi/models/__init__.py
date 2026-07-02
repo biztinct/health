@@ -4,6 +4,7 @@ from . import bi_source
 from . import bi_field
 from . import bi_dataset
 from . import bi_gold
+from . import bi_pipeline
 from . import bi_query_cache
 from . import bi_query_engine
 from . import bi_chart

@@ -23,6 +23,8 @@ access_bi_dashboard_filter_creator,bi.dashboard.filter creator,model_bi_dashboar
 access_bi_dashboard_filter_mapping_viewer,bi.dashboard.filter.mapping viewer,model_bi_dashboard_filter_mapping,group_bi_viewer,1,0,0,0
 access_bi_dashboard_filter_mapping_creator,bi.dashboard.filter.mapping creator,model_bi_dashboard_filter_mapping,group_bi_creator,1,1,1,1
 access_bi_refresh_job_viewer,bi.refresh.job viewer,model_bi_refresh_job,group_bi_viewer,1,0,0,0
+access_bi_pipeline_viewer,bi.pipeline viewer,model_bi_pipeline,group_bi_viewer,1,0,0,0
+access_bi_pipeline_modeler,bi.pipeline modeler,model_bi_pipeline,group_bi_modeler,1,1,1,1
 access_bi_refresh_job_modeler,bi.refresh.job modeler,model_bi_refresh_job,group_bi_modeler,1,1,1,1
 access_bi_access_rule_modeler,bi.access.rule modeler,model_bi_access_rule,group_bi_modeler,1,0,0,0
 access_bi_access_rule_admin,bi.access.rule admin,model_bi_access_rule,group_bi_admin,1,1,1,1

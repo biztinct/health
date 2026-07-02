@@ -176,7 +176,7 @@ export class DashboardAction extends Component {
         const cross = this.state.crossFilter;
         if (cross && cross.datasetId === widget.dataset_id
                 && cross.widgetId !== widget.id) {
-            extra.push({ field_id: cross.fieldId, op: "eq",
+            extra.push({ field_id: cross.fieldId, op: cross.op || "eq",
                          value: cross.value });
         }
         for (const level of this.state.drillPaths[widget.id] || []) {
@@ -242,7 +242,8 @@ export class DashboardAction extends Component {
                 || payload.rawValue === null) {
             return;
         }
-        // date buckets drill the source widget one grain deeper
+        // date buckets: drill the source widget one grain deeper AND focus
+        // sibling widgets on the same bucket (pill mirrors the breadcrumb)
         if (column.grain || column.type === "date"
                 || column.type === "datetime") {
             const grain = column.grain || "day";
@@ -258,6 +259,7 @@ export class DashboardAction extends Component {
                 label: payload.category,
             });
             this.state.drillPaths[widget.id] = path;
+            this._syncDateCrossFilter(widget);
             this.loadAllWidgetData();
             return;
         }
@@ -286,7 +288,34 @@ export class DashboardAction extends Component {
         // levelIndex -1 = reset to top
         const path = this.state.drillPaths[widget.id] || [];
         this.state.drillPaths[widget.id] = path.slice(0, levelIndex + 1);
+        this._syncDateCrossFilter(widget);
         this.loadAllWidgetData();
+    }
+
+    /** The date pill mirrors the deepest breadcrumb of the drilled widget. */
+    _syncDateCrossFilter(widget) {
+        const cross = this.state.crossFilter;
+        const ownsCross = cross && cross.widgetId === widget.id
+            && cross.op === "date_range";
+        const path = this.state.drillPaths[widget.id] || [];
+        if (!path.length) {
+            if (ownsCross) {
+                this.state.crossFilter = null;
+            }
+            return;
+        }
+        const deepest = path[path.length - 1];
+        if (cross && !ownsCross && cross.op !== "date_range") {
+            return; // don't clobber an active category cross-filter
+        }
+        this.state.crossFilter = {
+            widgetId: widget.id,
+            datasetId: widget.dataset_id,
+            fieldId: deepest.fieldId,
+            op: "date_range",
+            value: [deepest.start, deepest.end],
+            label: deepest.label,
+        };
     }
 
     setupTvRefresh() {

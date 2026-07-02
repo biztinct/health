@@ -38,6 +38,9 @@
     <menuitem id="menu_bi_refresh" name="Refresh Jobs"
               parent="menu_bi_data" sequence="30"
               action="action_bi_refresh_job"/>
+    <menuitem id="menu_bi_dashboards_backend" name="Dashboards &amp; Schedules"
+              parent="menu_bi_data" sequence="35"
+              action="action_bi_dashboard_backend"/>
     <menuitem id="menu_bi_glossary" name="Glossary"
               parent="menu_bi_data" sequence="40"
               action="action_bi_glossary"/>

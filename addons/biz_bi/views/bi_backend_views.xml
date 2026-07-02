@@ -87,9 +87,101 @@
                         <group>
                             <field name="last_sync"/>
                             <field name="last_error"/>
+                            <field name="has_active_pipeline"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Pipeline">
+                            <field name="pipeline_id">
+                                <form>
+                                    <header>
+                                        <button name="action_apply" type="object"
+                                                string="Validate &amp; Apply"
+                                                class="btn-primary"/>
+                                    </header>
+                                    <group>
+                                        <field name="is_active"/>
+                                    </group>
+                                    <group string="Steps (JSON)">
+                                        <field name="steps_json" widget="json"
+                                               nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group string="Compiled SQL (read-only)">
+                                        <field name="last_compiled_sql"
+                                               nolabel="1" colspan="2"/>
+                                        <field name="last_error" colspan="2"/>
+                                    </group>
+                                </form>
+                                <list>
+                                    <field name="is_active"/>
+                                    <field name="last_error"/>
+                                    <button name="action_apply" type="object"
+                                            string="Apply" icon="fa-play"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================= Dashboard (schedule management) ================= -->
+    <record id="view_bi_dashboard_backend_list" model="ir.ui.view">
+        <field name="name">bi.dashboard.list</field>
+        <field name="model">bi.dashboard</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="workspace_id"/>
+                <field name="owner_id"/>
+                <field name="schedule_enabled"/>
+                <field name="schedule_interval"/>
+                <field name="next_send"/>
+                <field name="last_sent"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_bi_dashboard_backend_form" model="ir.ui.view">
+        <field name="name">bi.dashboard.form</field>
+        <field name="model">bi.dashboard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workspace_id"/>
+                            <field name="owner_id"/>
+                            <field name="share_mode"/>
+                        </group>
+                        <group>
+                            <field name="is_tv_mode_enabled"/>
+                            <field name="refresh_seconds"/>
+                        </group>
+                    </group>
+                    <group string="Scheduled Email Snapshot">
+                        <group>
+                            <field name="schedule_enabled"/>
+                            <field name="schedule_interval"
+                                   invisible="not schedule_enabled"/>
+                            <field name="schedule_hour"
+                                   invisible="not schedule_enabled"/>
+                        </group>
+                        <group>
+                            <field name="recipient_ids" widget="many2many_tags"
+                                   invisible="not schedule_enabled"/>
+                            <field name="next_send"
+                                   invisible="not schedule_enabled"/>
+                            <field name="last_sent"
+                                   invisible="not schedule_enabled"/>
                         </group>
                     </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -419,6 +511,13 @@
         <field name="res_model">bi.dataset.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
+    </record>
+
+    <record id="action_bi_dashboard_backend" model="ir.actions.act_window">
+        <field name="name">Dashboards &amp; Schedules</field>
+        <field name="res_model">bi.dashboard</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_bi_dashboard_backend_list"/>
     </record>
 
     <record id="action_bi_csv_import" model="ir.actions.act_window">

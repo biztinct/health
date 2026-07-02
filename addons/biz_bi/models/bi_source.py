@@ -60,6 +60,19 @@ class BiSource(models.Model):
     last_sync = fields.Datetime(readonly=True)
     last_error = fields.Text(readonly=True)
 
+    pipeline_id = fields.One2many('bi.pipeline', 'source_id',
+                                  string='Pipeline')
+    has_active_pipeline = fields.Boolean(compute='_compute_has_pipeline')
+
+    def _compute_has_pipeline(self):
+        for source in self:
+            pipeline = source.pipeline_id[:1]
+            source.has_active_pipeline = bool(
+                pipeline and pipeline.is_active
+                and pipeline.last_compiled_sql and not pipeline.last_error
+                and source._pg_relation_exists(
+                    pipeline._clean_view_name()))
+
     _sql_constraints = [
         ('model_uniq', 'unique(model_id)',
          'A source already exists for this Odoo model.'),
@@ -103,9 +116,12 @@ class BiSource(models.Model):
     # Physical access — what the query engine builds FROM clauses with
     # ------------------------------------------------------------------
 
-    def _table_name(self):
-        """Physical relation backing this source."""
+    def _table_name(self, raw=False):
+        """Physical relation backing this source. With an applied active
+        pipeline, that's the cleaned view (Silver) unless raw=True."""
         self.ensure_one()
+        if not raw and self.has_active_pipeline:
+            return self.pipeline_id[:1]._clean_view_name()
         if self.type == 'odoo_model':
             return self.env[self.model_name]._table
         if self.type == 'sql_view':
@@ -118,13 +134,17 @@ class BiSource(models.Model):
     # Schema introspection — feeds the field scanner
     # ------------------------------------------------------------------
 
-    def _fetch_schema(self):
+    def _fetch_schema(self, raw=False):
         """Return column descriptors:
         [{name, odoo_type, string, comodel, translated, selection}]
         Only stored, physically-present columns are returned — the engine
-        queries tables, not the ORM.
+        queries tables, not the ORM. With an applied pipeline, the cleaned
+        view's columns are what's real (renames/calcs included).
         """
         self.ensure_one()
+        if not raw and self.has_active_pipeline:
+            return self._fetch_schema_pg(
+                self.pipeline_id[:1]._clean_view_name())
         if self.type == 'odoo_model':
             return self._fetch_schema_odoo()
         if self.type in ('sql_view', 'csv', 'external'):
@@ -170,13 +190,13 @@ class BiSource(models.Model):
         'jsonb': 'char',
     }
 
-    def _fetch_schema_pg(self):
+    def _fetch_schema_pg(self, table=None):
         self.env.cr.execute("""
             SELECT column_name, data_type
             FROM information_schema.columns
             WHERE table_name = %s AND table_schema = current_schema()
             ORDER BY ordinal_position
-        """, (self._table_name(),))
+        """, (table or self._table_name(raw=True),))
         return [{
             'name': row[0],
             'odoo_type': self.PG_TYPE_MAP.get(row[1], 'char'),
