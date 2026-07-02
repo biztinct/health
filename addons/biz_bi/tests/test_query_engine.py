@@ -122,6 +122,52 @@ class TestQueryEngine(BiCase):
         self.assertNotIn('error', results[0])
         self.assertIn('error', results[1])
 
+    def test_top_n_with_others(self):
+        result = self.engine.run(self._base_request(
+            options={'top_n': {'ref': 'm0', 'n': 1, 'others': True}}))
+        self.assertEqual(len(result['rows']), 2)  # top-1 + Others
+        self.assertEqual(result['rows'][1][0], '__bi_others__')
+        # additive: top + others == grand total (60)
+        total = sum(row[1] for row in result['rows'])
+        self.assertEqual(total, 60.0)
+
+    def test_shift_filters_previous(self):
+        shifted, any_shifted = self.engine.shift_filters_previous([
+            {'field_id': self.f_create_date.id, 'op': 'relative',
+             'value': 'this_month'},
+            {'field_id': self.f_name.id, 'op': 'like_i', 'value': 'x'},
+        ])
+        self.assertTrue(any_shifted)
+        self.assertEqual(shifted[0]['op'], 'date_range')
+        self.assertEqual(shifted[1]['op'], 'like_i')  # untouched
+        # previous window ends where the current one starts
+        from odoo import fields as odoo_fields
+        start, _end = self.engine.relative_bounds('this_month')
+        self.assertEqual(odoo_fields.Date.to_date(shifted[0]['value'][1]),
+                         start)
+        # no date filter -> not shiftable
+        _s, any2 = self.engine.shift_filters_previous(
+            [{'field_id': self.f_name.id, 'op': 'eq', 'value': 'x'}])
+        self.assertFalse(any2)
+
+    def test_compare_request_runs(self):
+        chart = self.env['bi.chart'].create({
+            'name': 'KPI', 'dataset_id': self.dataset.id, 'chart_type': 'kpi',
+            'config_json': {'slots': {
+                'values': [{'field_id': self.f_latitude.id, 'agg': 'sum'}]},
+                'filters': [{'field_id': self.f_create_date.id,
+                             'op': 'relative', 'value': 'this_month'}]},
+        })
+        compare_request = chart._to_compare_request()
+        self.assertIsNotNone(compare_request)
+        result = self.engine.run(compare_request)
+        # previous month has no fixture rows -> SUM is NULL
+        self.assertEqual(result['rows'][0][0], None)
+        # chart without date filter has nothing to compare
+        chart.config_json = {'slots': {'values': [
+            {'field_id': self.f_latitude.id, 'agg': 'sum'}]}, 'filters': []}
+        self.assertIsNone(chart._to_compare_request())
+
     def test_chart_to_request(self):
         chart = self.env['bi.chart'].create({
             'name': 'Test Chart',

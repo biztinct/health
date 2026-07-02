@@ -30,7 +30,7 @@
 
                 <!-- Global filter bar -->
                 <div class="bi-filter-bar"
-                     t-if="!state.tvMode and state.dashboard.filters.length">
+                     t-if="!state.tvMode and (state.dashboard.filters.length or state.crossFilter)">
                     <div t-foreach="state.dashboard.filters" t-as="filter" t-key="filter.id"
                          class="bi-filter-chip">
                         <span class="bi-filter-name" t-esc="filter.name"/>
@@ -57,6 +57,10 @@
                                    t-on-change="(ev) => this.onListFilterChange(filter, ev)"/>
                         </t>
                     </div>
+                    <span t-if="state.crossFilter" class="bi-cross-pill">
+                        <span t-esc="state.crossFilter.label"/>
+                        <button class="bi-cross-pill-x" t-on-click="clearCrossFilter">×</button>
+                    </span>
                     <button class="bi-btn bi-btn-ghost" t-on-click="clearFilters">Clear</button>
                 </div>
 
@@ -88,6 +92,8 @@
                                             <button t-if="state.dashboard.can_edit"
                                                     t-on-click="() => this.duplicateWidget(widget)">Duplicate</button>
                                             <button t-on-click="() => this.exportWidgetCsv(widget)">Export CSV</button>
+                                            <button t-on-click="() => this.exportWidgetXlsx(widget)">Export XLSX</button>
+                                            <button t-on-click="() => this.exportWidgetPng(widget)">Export PNG</button>
                                             <button t-if="state.dashboard.can_edit" class="bi-menu-danger"
                                                     t-on-click="() => this.removeWidget(widget)">Remove</button>
                                         </div>
@@ -98,11 +104,15 @@
                                     <t t-if="envelope and !envelope.error">
                                         <KpiCard t-if="rendererFor(widget) === 'kpi'"
                                                  envelope="envelope" config="widgetConfig(widget)"
+                                                 compareEnvelope="state.compareEnvelopes[widget.id]"
                                                  showLabel="false"/>
                                         <DataTable t-elif="rendererFor(widget) === 'table'"
                                                    envelope="envelope" config="widgetConfig(widget)"/>
+                                        <PivotTable t-elif="rendererFor(widget) === 'pivot'"
+                                                    envelope="envelope" config="widgetConfig(widget)"/>
                                         <ChartRenderer t-else=""
-                                                       envelope="envelope" config="widgetConfig(widget)"/>
+                                                       envelope="envelope" config="widgetConfig(widget)"
+                                                       onDatapointClick="(payload) => this.onDatapointClick(widget, payload)"/>
                                     </t>
                                     <div t-elif="envelope and envelope.error" class="bi-widget-error"
                                          t-esc="envelope.error"/>

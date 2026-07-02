@@ -13,7 +13,7 @@ export class KpiCard extends Component {
     static props = {
         envelope: { type: Object },
         config: { type: Object },
-        compareEnvelope: { type: Object, optional: true },
+        compareEnvelope: { optional: true },
         showLabel: { type: Boolean, optional: true },
     };
 

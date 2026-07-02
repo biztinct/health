@@ -37,6 +37,64 @@
         </div>
     </t>
 
+    <t t-name="biz_bi.PivotTable">
+        <div class="bi-table-wrap bi-pivot-wrap">
+            <table class="bi-table bi-pivot">
+                <thead>
+                    <tr>
+                        <th class="bi-pivot-corner" t-esc="matrix.cornerLabel"/>
+                        <th t-foreach="matrix.cols" t-as="col" t-key="col_index"
+                            class="bi-num" t-esc="col"/>
+                        <th class="bi-num bi-pivot-total">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="matrix.rows" t-as="row" t-key="row_index">
+                        <th class="bi-pivot-rowhead" t-esc="row.label"/>
+                        <td t-foreach="row.values" t-as="cell" t-key="cell_index"
+                            class="bi-num" t-esc="cell"/>
+                        <td class="bi-num bi-pivot-total" t-esc="row.total"/>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="bi-pivot-rowhead">Total</th>
+                        <td t-foreach="matrix.colTotals" t-as="total" t-key="total_index"
+                            class="bi-num bi-pivot-total" t-esc="total"/>
+                        <td class="bi-num bi-pivot-total" t-esc="matrix.grandTotal"/>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="biz_bi.AddToDashboardDialog">
+        <Dialog title.translate="Add to Dashboard" size="'md'">
+            <div class="bi-dashpick">
+                <label t-foreach="props.dashboards" t-as="dash" t-key="dash.id"
+                       class="bi-dashpick-row">
+                    <input type="radio" name="bi_dashpick"
+                           t-att-checked="state.selectedId === dash.id"
+                           t-on-change="() => this.select(dash.id)"/>
+                    <span t-esc="dash.name"/>
+                </label>
+                <label class="bi-dashpick-row bi-dashpick-new">
+                    <input type="radio" name="bi_dashpick"
+                           t-att-checked="state.selectedId === 0"
+                           t-on-change="() => this.select(0)"/>
+                    <input type="text" class="bi-input bi-input-sm"
+                           placeholder="New dashboard name…"
+                           t-model="state.newName"
+                           t-on-focus="() => this.select(0)"/>
+                </label>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="confirm">Add</button>
+                <button class="btn btn-secondary" t-on-click="() => this.props.close()">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+
     <t t-name="biz_bi.Explore">
         <div class="o_biz_bi bi-explore">
 
@@ -66,6 +124,25 @@
                         Add to Dashboard
                     </button>
                 </div>
+            </div>
+
+            <!-- AI bar -->
+            <div class="bi-ai-bar" t-if="state.datasetId and state.aiAvailable">
+                <span class="bi-ai-spark">✨</span>
+                <input class="bi-input bi-ai-input" type="text"
+                       placeholder="Ask for a chart… e.g. “monthly revenue by facility”"
+                       t-model="state.aiPrompt"
+                       t-on-keydown="(ev) => ev.key === 'Enter' and this.askAi()"/>
+                <button class="bi-btn" t-on-click="askAi"
+                        t-att-disabled="state.aiBusy">
+                    <t t-if="state.aiBusy">Thinking…</t>
+                    <t t-else="">Ask AI</t>
+                </button>
+                <button class="bi-btn" t-on-click="composeAi"
+                        t-att-disabled="state.aiBusy"
+                        title="Generate a full multi-chart report from your prompt">
+                    Compose Report
+                </button>
             </div>
 
             <div class="bi-explore-body" t-if="state.datasetId">
@@ -109,6 +186,8 @@
                                  envelope="state.envelope" config="chartConfig"/>
                         <DataTable t-elif="rendererKind === 'table'"
                                    envelope="state.envelope" config="chartConfig"/>
+                        <PivotTable t-elif="rendererKind === 'pivot'"
+                                    envelope="state.envelope" config="chartConfig"/>
                         <ChartRenderer t-else=""
                                        envelope="state.envelope" config="chartConfig"/>
                         <div class="bi-preview-meta">

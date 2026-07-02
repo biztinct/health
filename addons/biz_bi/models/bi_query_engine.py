@@ -124,8 +124,15 @@ class BiQueryEngine(models.AbstractModel):
 
         started = time.monotonic()
         spec = self._resolve_request(dataset, request)
+        top_n = spec['top_n'] if len(spec['dimensions']) == 1 else None
+        if top_n:
+            ref = top_n.get('ref') or ('m0' if spec['measures'] else 'd0')
+            spec['sort'] = [{'ref': ref, 'dir': 'desc'}]
+            spec['limit'] = min(int(top_n.get('n') or 10), spec['limit'])
         query = self._build_sql(dataset, spec)
         rows = self._execute(query)
+        if top_n and top_n.get('others') and rows:
+            rows = rows + self._others_row(dataset, spec, rows)
         duration_ms = int((time.monotonic() - started) * 1000)
 
         envelope = {
@@ -394,7 +401,43 @@ class BiQueryEngine(models.AbstractModel):
             rule_sql = self._compile_root_ir_rules(dataset)
             if rule_sql is not None:
                 parts.append(rule_sql)
+
+        # 6. engine-internal predicates (top-N "Others" exclusion)
+        parts.extend(spec.get('extra_predicates') or [])
         return parts
+
+    OTHERS_KEY = '__bi_others__'
+
+    def _others_row(self, dataset, spec, rows):
+        """Aggregate everything outside the top-N into one 'Others' row.
+        Only correct for additive aggregations — silently skipped otherwise
+        (avg of group-avgs would lie)."""
+        additive = all(
+            m['agg'] in ('sum', 'count') and m['field'].origin == 'stored'
+            for m in spec['measures'])
+        if not additive or not spec['measures']:
+            return []
+        lang = self.env.user.lang or 'en_US'
+        dim = spec['dimensions'][0]
+        field = dim['field']
+        if field.origin == 'calculated':
+            expr, _uses_agg = self._calc_expr(field, spec['target'], lang, False)
+        else:
+            expr = self._field_expr(field, spec['target'], lang)
+        if dim['grain']:
+            expr = SQL("DATE_TRUNC('" + dim['grain'] + "', %s)", expr)
+        top_values = [row[0] for row in rows if row[0] is not None]
+        if not top_values:
+            return []
+        others_spec = dict(
+            spec, dimensions=[], sort=[], limit=1, offset=0,
+            extra_predicates=[SQL(
+                "(%s IS NULL OR NOT (%s = ANY(%s)))",
+                expr, expr, top_values)])
+        others = self._execute(self._build_sql(dataset, others_spec))
+        if others and any(value not in (None, 0) for value in others[0]):
+            return [(self.OTHERS_KEY,) + tuple(others[0])]
+        return []
 
     def _compile_root_ir_rules(self, dataset):
         root_source = dataset.root_node_id.source_id
@@ -447,14 +490,51 @@ class BiQueryEngine(models.AbstractModel):
         if op == 'is_null':
             return SQL("%s IS NULL", column)
         if op == 'relative':
-            builder = RELATIVE_RANGES.get(value)
-            if not builder:
-                raise UserError(_(
-                    "Unknown relative range '%s'. Allowed: %s",
-                    value, ', '.join(sorted(RELATIVE_RANGES))))
-            start, end = builder(fields.Date.context_today(self))
+            start, end = self.relative_bounds(value)
             return SQL("(%s >= %s AND %s < %s)", column, start, column, end)
+        if op == 'date_range':
+            # internal half-open range [start, end) — used for shifted
+            # previous-period comparisons
+            if not isinstance(value, (list, tuple)) or len(value) != 2:
+                raise UserError(_("'date_range' filter needs [start, end)."))
+            return SQL("(%s >= %s AND %s < %s)",
+                       column, value[0], column, value[1])
         raise UserError(_("Unknown filter operator '%s'.", op))
+
+    @api.model
+    def relative_bounds(self, value):
+        builder = RELATIVE_RANGES.get(value)
+        if not builder:
+            raise UserError(_(
+                "Unknown relative range '%s'. Allowed: %s",
+                value, ', '.join(sorted(RELATIVE_RANGES))))
+        return builder(fields.Date.context_today(self))
+
+    @api.model
+    def shift_filters_previous(self, filters):
+        """Shift every relative/date_range filter one window back (for
+        previous-period KPI comparisons). Returns (shifted_filters, shifted?)
+        — shifted? is False when there is no date filter to compare against."""
+        shifted = []
+        any_shifted = False
+        for filt in filters or []:
+            op, value = filt.get('op'), filt.get('value')
+            if op == 'relative':
+                start, end = self.relative_bounds(value)
+                length = end - start
+                shifted.append(dict(filt, op='date_range',
+                                    value=[start - length, start]))
+                any_shifted = True
+            elif op == 'date_range' and isinstance(value, (list, tuple)) \
+                    and len(value) == 2:
+                start, end = fields.Date.to_date(value[0]), \
+                    fields.Date.to_date(value[1])
+                length = end - start
+                shifted.append(dict(filt, value=[start - length, start]))
+                any_shifted = True
+            else:
+                shifted.append(filt)
+        return shifted, any_shifted
 
     def _build_order(self, spec):
         valid_refs = {'d%d' % i for i in range(len(spec['dimensions']))}

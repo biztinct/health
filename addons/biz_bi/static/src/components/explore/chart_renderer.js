@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { Component, onMounted, onWillUnmount, onWillUpdateProps, useRef } from "@odoo/owl";
-import { buildChartOption } from "../../core/chart_option_builder";
+import { buildChartOption, pivotEnvelope } from "../../core/chart_option_builder";
 import { user } from "@web/core/user";
 
 /**
@@ -50,13 +50,22 @@ export class ChartRenderer extends Component {
         /* global echarts */
         this.chart = echarts.init(this.containerRef.el, null, { renderer: "canvas" });
         this.chart.on("click", (params) => {
-            if (this.props.onDatapointClick) {
-                this.props.onDatapointClick({
-                    category: params.name,
-                    seriesName: params.seriesName,
-                    value: params.value,
-                });
+            if (!this.props.onDatapointClick) {
+                return;
             }
+            // resolve the RAW first-dimension value so cross-filtering can
+            // build an exact predicate (labels are formatted, values aren't)
+            const pivot = this._lastPivot;
+            const raw = pivot && pivot.rawCategories
+                ? pivot.rawCategories[params.dataIndex]
+                : undefined;
+            this.props.onDatapointClick({
+                category: params.name,
+                seriesName: params.seriesName,
+                value: params.value,
+                rawValue: raw,
+                dimColumn: pivot ? pivot.dimColumn : null,
+            });
         });
         this._render(this.props);
     }
@@ -65,7 +74,15 @@ export class ChartRenderer extends Component {
         if (!this.chart || !props.envelope || props.envelope.error) {
             return;
         }
-        const option = buildChartOption(props.envelope, props.config, user.lang || "en_US");
+        const lang = user.lang || "en_US";
+        this._lastPivot = pivotEnvelope(props.envelope, lang);
+        const option = buildChartOption(props.envelope, props.config, lang);
         this.chart.setOption(option, { notMerge: true });
+    }
+
+    exportPng() {
+        return this.chart
+            ? this.chart.getDataURL({ pixelRatio: 2, backgroundColor: "#fff" })
+            : null;
     }
 }

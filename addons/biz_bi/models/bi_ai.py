@@ -165,6 +165,214 @@ class BiAiProvider(models.Model):
         return response.json()['message']['content']
 
 
+NLQ_SYSTEM_PROMPT = """You are a BI chart configuration generator inside an
+Odoo analytics platform. You receive a DATASET CARD describing the available
+fields, and a user request in English or Vietnamese.
+
+You output ONLY a JSON object — no prose, no markdown fences — matching:
+{
+  "name": "<short chart title in the user's language>",
+  "chart_type": "<one of: bar, bar_stacked, bar_h, line, area, combo, donut,
+                  kpi, table, scatter, heatmap, treemap, funnel, gauge>",
+  "slots": {
+    "x": [{"field_id": <ref>, "grain": "<year|quarter|month|week|day, dates only>"}],
+    "values": [{"field_id": <ref>, "agg": "<sum|avg|min|max|count|count_distinct>"}],
+    "series": [{"field_id": <ref>}]
+  },
+  "filters": [{"field_id": <ref>, "op": "<eq|neq|gt|gte|lt|lte|in|not_in|between|like_i|is_set|is_null|relative>", "value": <value>}]
+}
+
+Rules:
+- field_id MUST be a "ref" integer from the dataset card. Never invent refs.
+- Use "relative" op with values like: today, last_7_days, last_30_days,
+  this_week, this_month, last_month, this_quarter, last_6_months,
+  last_12_months, this_year, last_year.
+- kpi charts: no x/series, exactly one values entry.
+- donut: exactly one x, one values.
+- Time series requests: use the most relevant date field with grain "month"
+  unless the user asks otherwise.
+- Prefer measures with role "measure"; counting rows: any field with agg "count".
+"""
+
+REPORT_SYSTEM_PROMPT = """You are a BI report designer inside an Odoo
+analytics platform. You receive a DATASET CARD and a user request describing
+a report/dashboard they want.
+
+You output ONLY a JSON object — no prose, no markdown fences:
+{
+  "title": "<dashboard title in the user's language>",
+  "widgets": [
+    {"name": "...", "chart_type": "...", "slots": {...}, "filters": [...],
+     "width": <3|4|6|12>, "height": <2|3|4|5>}
+  ]
+}
+
+Each widget follows the exact same schema rules as a single chart:
+""" + NLQ_SYSTEM_PROMPT.split('Rules:')[1] + """
+- Compose 4 to 7 widgets: start with 2-3 KPI cards (width 3, height 2), then
+  trend and breakdown charts (width 6, height 5), optionally one full-width
+  chart (width 12, height 5).
+"""
+
+
+class BiAi(models.AbstractModel):
+    """AI features. The LLM only ever sees the dataset card and only ever
+    produces chart-config JSON, validated through the exact same resolver as
+    human-built charts. It never sees or produces SQL."""
+    _name = 'bi.ai'
+    _description = 'BI AI Services'
+
+    @api.model
+    def is_available(self):
+        provider = self.env['bi.ai.provider'].get_default()
+        return bool(provider and (provider.has_api_key
+                                  or provider.provider == 'ollama'))
+
+    @api.model
+    def nlq_chart(self, dataset_id, prompt):
+        """Natural-language → validated chart config proposal."""
+        dataset = self.env['bi.dataset'].browse(int(dataset_id))
+        dataset.check_access('read')
+        config, error = self._complete_validated(
+            dataset, NLQ_SYSTEM_PROMPT, prompt, kind='nlq',
+            validate=lambda cfg: self._validate_chart_config(dataset, cfg))
+        if error:
+            return {'error': error}
+        return {'config': config}
+
+    @api.model
+    def compose_report(self, dataset_id, prompt):
+        """Natural-language → draft dashboard with validated widgets."""
+        dataset = self.env['bi.dataset'].browse(int(dataset_id))
+        dataset.check_access('read')
+
+        def validate(plan):
+            if not isinstance(plan.get('widgets'), list) or not plan['widgets']:
+                raise UserError(_("Plan has no widgets."))
+            valid, dropped = [], []
+            for widget in plan['widgets']:
+                try:
+                    self._validate_chart_config(dataset, widget)
+                    valid.append(widget)
+                except Exception as exc:  # noqa: BLE001 — collect, don't die
+                    dropped.append('%s: %s' % (widget.get('name', '?'), exc))
+            if not valid:
+                raise UserError(_(
+                    "No valid widgets in plan: %s", '; '.join(dropped)))
+            plan['widgets'] = valid
+            plan['dropped'] = dropped
+            return plan
+
+        plan, error = self._complete_validated(
+            dataset, REPORT_SYSTEM_PROMPT, prompt, kind='report',
+            validate=validate)
+        if error:
+            return {'error': error}
+
+        dashboard = self.env['bi.dashboard'].create({
+            'name': plan.get('title') or _("AI Report"),
+            'workspace_id': dataset.workspace_id.id,
+        })
+        x = y = row_height = 0
+        for widget_plan in plan['widgets']:
+            chart = self.env['bi.chart'].create({
+                'name': widget_plan.get('name') or _("Chart"),
+                'dataset_id': dataset.id,
+                'chart_type': widget_plan.get('chart_type') or 'bar',
+                'config_json': {
+                    'version': 1,
+                    'chart_type': widget_plan.get('chart_type') or 'bar',
+                    'slots': widget_plan.get('slots') or {},
+                    'filters': widget_plan.get('filters') or [],
+                    'limit': 500,
+                    'display': {},
+                },
+            })
+            width = int(widget_plan.get('width') or 6)
+            height = int(widget_plan.get('height') or 5)
+            if x + width > 12:
+                x, y = 0, y + row_height
+                row_height = 0
+            self.env['bi.dashboard.widget'].create({
+                'dashboard_id': dashboard.id, 'chart_id': chart.id,
+                'grid_x': x, 'grid_y': y, 'grid_w': width, 'grid_h': height,
+            })
+            x += width
+            row_height = max(row_height, height)
+        return {'dashboard_id': dashboard.id,
+                'dropped': plan.get('dropped') or []}
+
+    # ------------------------------------------------------------------
+
+    def _validate_chart_config(self, dataset, config):
+        """Run an LLM-proposed config through the human trust boundary:
+        chart config -> query request -> engine resolver (field ownership,
+        masking, op/agg/grain enums). Raises on anything invalid."""
+        chart = self.env['bi.chart'].new({
+            'name': config.get('name') or 'proposal',
+            'dataset_id': dataset.id,
+            'chart_type': config.get('chart_type') or 'bar',
+            'config_json': {
+                'slots': config.get('slots') or {},
+                'filters': config.get('filters') or [],
+                'limit': 500,
+            },
+        })
+        request = chart._to_query_request()
+        self.env['bi.query.engine']._resolve_request(dataset, request)
+        return config
+
+    def _complete_validated(self, dataset, system, prompt, kind, validate):
+        provider = self.env['bi.ai.provider'].get_default()
+        if not provider:
+            return None, _("No AI provider configured.")
+        card = dataset.get_dataset_card()
+        user_message = "DATASET CARD:\n%s\n\nUSER REQUEST:\n%s" % (
+            json.dumps(card, ensure_ascii=False, default=str), prompt)
+        started = fields.Datetime.now()
+        last_error = None
+        for attempt in range(2):
+            try:
+                raw = provider._complete(system, user_message)
+                config = self._parse_json(raw)
+                result = validate(config)
+                self._log(provider, kind, prompt, result, started, True)
+                return result, None
+            except Exception as exc:  # noqa: BLE001 — retry once with error
+                last_error = str(exc)
+                user_message += (
+                    "\n\nYour previous answer was invalid: %s\n"
+                    "Return corrected JSON only." % last_error)
+        self._log(provider, kind, prompt, {'error': last_error}, started, False)
+        return None, _(
+            "The AI could not build a valid chart: %s", last_error)
+
+    @staticmethod
+    def _parse_json(raw):
+        text = (raw or '').strip()
+        if text.startswith('```'):
+            text = text.strip('`')
+            if text.startswith('json'):
+                text = text[4:]
+        start, end = text.find('{'), text.rfind('}')
+        if start == -1 or end == -1:
+            raise ValueError("No JSON object in the response")
+        return json.loads(text[start:end + 1])
+
+    def _log(self, provider, kind, prompt, response, started, accepted):
+        duration = int((fields.Datetime.now() - started).total_seconds() * 1000)
+        self.env['bi.ai.log'].sudo().create({
+            'provider_id': provider.id,
+            'kind': kind,
+            'request_json': {'prompt': prompt},
+            'response_json': response,
+            'accepted': accepted,
+            'duration_ms': duration,
+        })
+        self.env['bi.audit.log'].sudo().log(
+            'ai_request', payload={'kind': kind, 'accepted': accepted})
+
+
 class BiAiLog(models.Model):
     _name = 'bi.ai.log'
     _description = 'BI AI Request Log'

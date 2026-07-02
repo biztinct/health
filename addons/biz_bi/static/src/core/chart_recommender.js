@@ -16,6 +16,14 @@ export const CHART_REQUIREMENTS = {
     donut: { minDims: 1, maxDims: 1, minMeasures: 1 },
     kpi: { minDims: 0, maxDims: 0, minMeasures: 1 },
     table: { minDims: 0, maxDims: 8, minMeasures: 0 },
+    scatter: { minDims: 0, maxDims: 1, minMeasures: 2 },
+    heatmap: { minDims: 2, maxDims: 2, minMeasures: 1 },
+    treemap: { minDims: 1, maxDims: 1, minMeasures: 1 },
+    funnel: { minDims: 1, maxDims: 1, minMeasures: 1 },
+    gauge: { minDims: 0, maxDims: 0, minMeasures: 1 },
+    waterfall: { minDims: 1, maxDims: 1, minMeasures: 1 },
+    pareto: { minDims: 1, maxDims: 1, minMeasures: 1 },
+    pivot: { minDims: 2, maxDims: 2, minMeasures: 1 },
 };
 
 export function checkCompatibility(chartType, dims, measures) {

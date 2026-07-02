@@ -366,6 +366,33 @@
         </field>
     </record>
 
+    <!-- ================= CSV import wizard ================= -->
+    <record id="view_bi_csv_import_wizard_form" model="ir.ui.view">
+        <field name="name">bi.csv.import.wizard.form</field>
+        <field name="model">bi.csv.import.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="name"/>
+                    <field name="file" filename="filename"/>
+                    <field name="filename" invisible="1"/>
+                    <field name="has_header"/>
+                    <field name="date_format_hint"/>
+                    <field name="existing_source_id"/>
+                    <field name="create_dataset"
+                           invisible="existing_source_id"/>
+                    <field name="workspace_id"
+                           invisible="not create_dataset or existing_source_id"/>
+                </group>
+                <footer>
+                    <button name="action_import" type="object"
+                            string="Import" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     <!-- ================= Window actions ================= -->
     <record id="action_bi_workspace" model="ir.actions.act_window">
         <field name="name">Workspaces</field>
@@ -388,6 +415,13 @@
     <record id="action_bi_dataset_wizard" model="ir.actions.act_window">
         <field name="name">New Dataset</field>
         <field name="res_model">bi.dataset.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_bi_csv_import" model="ir.actions.act_window">
+        <field name="name">Import CSV / Excel</field>
+        <field name="res_model">bi.csv.import.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

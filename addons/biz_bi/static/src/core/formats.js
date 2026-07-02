@@ -70,6 +70,9 @@ export function formatDimensionValue(value, column, lang = "en_US") {
     if (value === null || value === undefined || value === false) {
         return "–";
     }
+    if (value === "__bi_others__") {
+        return lang.startsWith("vi") ? "Khác" : "Others";
+    }
     const labels = column.selection_labels || {};
     if (labels[value] !== undefined) {
         return labels[value];

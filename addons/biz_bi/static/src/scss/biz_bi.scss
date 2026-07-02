@@ -355,6 +355,76 @@
         }
     }
 
+    // ================================================================ AI BAR
+    .bi-ai-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--bi-surface-card);
+        border-bottom: 1px solid var(--bi-border);
+        flex: 0 0 auto;
+
+        .bi-ai-spark { font-size: 15px; }
+        .bi-ai-input { flex: 1; max-width: 560px; }
+    }
+
+    // more chart-type glyphs
+    .bi-cticon-pivot::before {
+        left: 1px; top: 1px; width: 24px; height: 18px;
+        background: transparent;
+        border: 2px solid var(--bi-primary);
+        border-radius: 2px;
+    }
+    .bi-cticon-pivot::after {
+        left: 8px; top: 1px; width: 2px; height: 18px;
+        box-shadow: 0 7px 0 -0px var(--bi-primary);
+        background: var(--bi-primary);
+    }
+    .bi-cticon-scatter::before {
+        left: 4px; top: 4px; width: 5px; height: 5px; border-radius: 50%;
+        box-shadow: 10px 8px 0 var(--bi-primary), 14px -2px 0 var(--bi-primary),
+                    4px 11px 0 var(--bi-primary);
+    }
+    .bi-cticon-heatmap::before {
+        left: 2px; top: 2px; width: 7px; height: 7px;
+        box-shadow: 8px 0 0 rgba(21, 101, 192, 0.45),
+                    16px 0 0 var(--bi-primary),
+                    0 8px 0 var(--bi-primary),
+                    8px 8px 0 rgba(21, 101, 192, 0.25),
+                    16px 8px 0 rgba(21, 101, 192, 0.6);
+    }
+    .bi-cticon-treemap::before { left: 1px; top: 1px; width: 14px; height: 18px; }
+    .bi-cticon-treemap::after {
+        left: 17px; top: 1px; width: 8px; height: 8px;
+        box-shadow: 0 10px 0 rgba(21, 101, 192, 0.5);
+        opacity: 0.7;
+    }
+    .bi-cticon-funnel::before {
+        left: 2px; top: 1px; width: 22px; height: 18px;
+        clip-path: polygon(0 0, 100% 0, 68% 55%, 68% 100%, 32% 100%, 32% 55%);
+    }
+    .bi-cticon-gauge::before {
+        left: 3px; top: 3px; width: 20px; height: 20px;
+        background: transparent;
+        border: 4px solid var(--bi-primary);
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        transform: rotate(-45deg);
+    }
+    .bi-cticon-waterfall::before {
+        left: 2px; bottom: 0; width: 5px; height: 95%;
+        box-shadow: 8px -6px 0 var(--bi-primary);
+    }
+    .bi-cticon-waterfall::after {
+        left: 18px; bottom: 0; width: 5px; height: 45%;
+        background: var(--bi-accent);
+    }
+    .bi-cticon-pareto::before { left: 2px; bottom: 0; width: 5px; height: 90%;
+        box-shadow: 8px 5px 0 var(--bi-primary), 16px 9px 0 var(--bi-primary); }
+    .bi-cticon-pareto::after { left: 0; top: 3px; width: 100%; height: 2px;
+        transform: rotate(-16deg); background: var(--bi-accent); }
+
     // ============================================================ DASHBOARD
     .bi-filter-bar {
         display: flex;
@@ -371,6 +441,26 @@
             .bi-filter-name {
                 font-size: 12px; font-weight: 600; color: var(--bi-text-muted);
             }
+        }
+    }
+
+    .bi-cross-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bi-primary);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 99px;
+        padding: 3px 6px 3px 12px;
+
+        .bi-cross-pill-x {
+            border: none; background: rgba(255, 255, 255, 0.25);
+            color: #fff; border-radius: 50%;
+            width: 17px; height: 17px; line-height: 1;
+            cursor: pointer; font-size: 12px; padding: 0;
+            &:hover { background: rgba(255, 255, 255, 0.45); }
         }
     }
 
@@ -563,6 +653,23 @@
         }
     }
 
+    // pivot matrix
+    .bi-pivot-wrap {
+        .bi-pivot-rowhead {
+            position: sticky; left: 0;
+            background: var(--bi-surface-muted);
+            font-weight: 600;
+            z-index: 1;
+        }
+        .bi-pivot-corner { z-index: 2; left: 0; position: sticky; }
+        .bi-pivot-total { font-weight: 700; background: var(--bi-surface-muted); }
+        tfoot th, tfoot td {
+            position: sticky; bottom: 0;
+            background: var(--bi-surface-muted);
+            border-top: 2px solid var(--bi-border);
+        }
+    }
+
     // ================================================================ HOME
     &.bi-home {
         overflow-y: auto;
@@ -671,4 +778,27 @@
 // class; ensure widgets keep a sane height
 @media (max-width: 768px) {
     .o_biz_bi .grid-stack-item { min-height: 220px; }
+}
+
+// add-to-dashboard picker (rendered inside the web Dialog, outside .o_biz_bi)
+.bi-dashpick {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .bi-dashpick-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border: 1px solid var(--vu-border-color, #E3E7ED);
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 0;
+        font-weight: 400;
+
+        &:hover { background: var(--vu-surface-hover, #E8F1FB); }
+        input[type='radio'] { margin: 0; }
+        input[type='text'] { flex: 1; }
+    }
 }

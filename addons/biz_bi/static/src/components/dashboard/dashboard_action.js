@@ -14,6 +14,7 @@ import { _t } from "@web/core/l10n/translation";
 import { ChartRenderer } from "../explore/chart_renderer";
 import { KpiCard } from "../explore/kpi_card";
 import { DataTable } from "../explore/data_table";
+import { PivotTable } from "../explore/pivot_table";
 
 const MIN_SIZES = {
     kpi: { minW: 2, minH: 2 },
@@ -23,7 +24,7 @@ const MIN_SIZES = {
 
 export class DashboardAction extends Component {
     static template = "biz_bi.Dashboard";
-    static components = { ChartRenderer, KpiCard, DataTable };
+    static components = { ChartRenderer, KpiCard, DataTable, PivotTable };
     static props = { "*": true };
     static displayName = _t("Dashboard");
 
@@ -41,6 +42,8 @@ export class DashboardAction extends Component {
         this.state = useState({
             dashboard: null,
             envelopes: {}, // widgetId -> envelope
+            compareEnvelopes: {}, // widgetId -> previous-period envelope
+            crossFilter: null, // {widgetId, datasetId, fieldId, value, label}
             editMode: false,
             tvMode: false,
             loading: true,
@@ -151,6 +154,18 @@ export class DashboardAction extends Component {
     // Data
     // ------------------------------------------------------------------
 
+    _widgetExtraFilters(widget) {
+        const extra = this.biFilter.extraFiltersFor(
+            widget.dataset_id, this.state.dashboard.filters);
+        const cross = this.state.crossFilter;
+        if (cross && cross.datasetId === widget.dataset_id
+                && cross.widgetId !== widget.id) {
+            extra.push({ field_id: cross.fieldId, op: "eq",
+                         value: cross.value });
+        }
+        return extra;
+    }
+
     async loadAllWidgetData({ noCache = false } = {}) {
         const dashboard = this.state.dashboard;
         if (!dashboard || !dashboard.widgets.length) {
@@ -158,19 +173,69 @@ export class DashboardAction extends Component {
             return;
         }
         this.state.loading = true;
-        const requests = dashboard.widgets.map((widget) => ({
-            chart_id: widget.chart_id,
-            extra_filters: this.biFilter.extraFiltersFor(
-                widget.dataset_id, dashboard.filters),
-        }));
+        const requests = [];
+        const mapping = []; // {widgetId, kind: 'main'|'compare'}
+        for (const widget of dashboard.widgets) {
+            const extra = this._widgetExtraFilters(widget);
+            requests.push({ chart_id: widget.chart_id, extra_filters: extra });
+            mapping.push({ widgetId: widget.id, kind: "main" });
+            if (widget.chart_type === "kpi") {
+                requests.push({ chart_id: widget.chart_id,
+                                extra_filters: extra, compare: true });
+                mapping.push({ widgetId: widget.id, kind: "compare" });
+            }
+        }
         try {
             const results = await this.biData.queryBatch(requests, { noCache });
-            dashboard.widgets.forEach((widget, index) => {
-                this.state.envelopes[widget.id] = results[index];
+            results.forEach((result, index) => {
+                const target = mapping[index];
+                if (target.kind === "main") {
+                    this.state.envelopes[target.widgetId] = result;
+                } else {
+                    this.state.compareEnvelopes[target.widgetId] =
+                        result && !result.skipped && !result.error
+                            ? result : null;
+                }
             });
         } finally {
             this.state.loading = false;
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Cross-filtering: click a datapoint, filter sibling widgets
+    // ------------------------------------------------------------------
+
+    onDatapointClick(widget, payload) {
+        const column = payload.dimColumn;
+        if (!column || payload.rawValue === undefined
+                || payload.rawValue === null) {
+            return;
+        }
+        // date buckets need range predicates — Phase-next; skip for now
+        if (column.grain || column.type === "date"
+                || column.type === "datetime") {
+            return;
+        }
+        const cross = this.state.crossFilter;
+        if (cross && cross.widgetId === widget.id
+                && cross.value === payload.rawValue) {
+            this.state.crossFilter = null; // click again to clear
+        } else {
+            this.state.crossFilter = {
+                widgetId: widget.id,
+                datasetId: widget.dataset_id,
+                fieldId: column.field_id,
+                value: payload.rawValue,
+                label: `${column.label}: ${payload.category}`,
+            };
+        }
+        this.loadAllWidgetData();
+    }
+
+    clearCrossFilter() {
+        this.state.crossFilter = null;
+        this.loadAllWidgetData();
     }
 
     setupTvRefresh() {
@@ -224,6 +289,9 @@ export class DashboardAction extends Component {
         if (widget.chart_type === "table") {
             return "table";
         }
+        if (widget.chart_type === "pivot") {
+            return "pivot";
+        }
         return "chart";
     }
 
@@ -271,6 +339,29 @@ export class DashboardAction extends Component {
         await this.orm.call("bi.dashboard", "add_chart",
             [[this.dashboardId], chartId.id || chartId]);
         await this.reloadFull();
+    }
+
+    exportWidgetXlsx(widget) {
+        const filters = JSON.stringify(this._widgetExtraFilters(widget));
+        window.open(`/bi/export/xlsx?chart_id=${widget.chart_id}` +
+            `&filters=${encodeURIComponent(filters)}`, "_blank");
+    }
+
+    exportWidgetPng(widget) {
+        /* global echarts */
+        const host = this.gridRef.el?.querySelector(
+            `[data-widget-id="${widget.id}"] .bi-chart-host`);
+        const instance = host && echarts.getInstanceByDom(host);
+        if (!instance) {
+            this.notification.add(
+                _t("PNG export works for chart widgets."), { type: "info" });
+            return;
+        }
+        const link = document.createElement("a");
+        link.href = instance.getDataURL({ pixelRatio: 2,
+                                          backgroundColor: "#fff" });
+        link.download = `${widget.title}.png`;
+        link.click();
     }
 
     exportWidgetCsv(widget) {

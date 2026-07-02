@@ -29,6 +29,9 @@
     <menuitem id="menu_bi_sources" name="Sources"
               parent="menu_bi_data" sequence="20"
               action="action_bi_source"/>
+    <menuitem id="menu_bi_csv_import" name="Import CSV / Excel"
+              parent="menu_bi_data" sequence="25"
+              action="action_bi_csv_import"/>
     <menuitem id="menu_bi_refresh" name="Refresh Jobs"
               parent="menu_bi_data" sequence="30"
               action="action_bi_refresh_job"/>

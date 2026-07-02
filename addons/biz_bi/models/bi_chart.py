@@ -12,13 +12,14 @@ CHART_TYPES = [
     ('donut', 'Donut'),
     ('kpi', 'KPI Card'),
     ('table', 'Table'),
-    # Phase 2
     ('scatter', 'Scatter'),
     ('heatmap', 'Heatmap'),
     ('treemap', 'Treemap'),
     ('funnel', 'Funnel'),
     ('gauge', 'Gauge'),
     ('waterfall', 'Waterfall'),
+    ('pareto', 'Pareto'),
+    ('pivot', 'Pivot Matrix'),
 ]
 
 
@@ -86,6 +87,18 @@ class BiChart(models.Model):
             'limit': config.get('limit') or 500,
             'options': config.get('options') or {},
         }
+
+    def _to_compare_request(self, extra_filters=None):
+        """Same query shifted one period back (KPI comparison). Returns None
+        when there is no relative/date-range filter to shift."""
+        self.ensure_one()
+        request = self._to_query_request(extra_filters)
+        shifted, any_shifted = self.env['bi.query.engine'] \
+            .shift_filters_previous(request['filters'])
+        if not any_shifted:
+            return None
+        request['filters'] = shifted
+        return request
 
     def action_duplicate(self):
         self.ensure_one()

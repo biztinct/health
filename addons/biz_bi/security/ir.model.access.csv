@@ -35,4 +35,5 @@ access_bi_ai_provider_modeler,bi.ai.provider modeler,model_bi_ai_provider,group_
 access_bi_ai_provider_admin,bi.ai.provider admin,model_bi_ai_provider,group_bi_admin,1,1,1,1
 access_bi_ai_log_admin,bi.ai.log admin,model_bi_ai_log,group_bi_admin,1,0,0,0
 access_bi_dataset_wizard_modeler,bi.dataset.wizard modeler,model_bi_dataset_wizard,group_bi_modeler,1,1,1,1
+access_bi_csv_import_wizard_modeler,bi.csv.import.wizard modeler,model_bi_csv_import_wizard,group_bi_modeler,1,1,1,1
 

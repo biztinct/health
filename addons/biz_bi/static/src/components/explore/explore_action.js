@@ -7,8 +7,9 @@ import { _t } from "@web/core/l10n/translation";
 import { ChartRenderer } from "./chart_renderer";
 import { KpiCard } from "./kpi_card";
 import { DataTable } from "./data_table";
+import { PivotTable } from "./pivot_table";
+import { AddToDashboardDialog } from "./add_to_dashboard_dialog";
 import {
-    CHART_REQUIREMENTS,
     checkCompatibility,
     recommendChartType,
 } from "../../core/chart_recommender";
@@ -23,6 +24,14 @@ const CHART_GALLERY = [
     { type: "donut", label: _t("Donut"), icon: "donut" },
     { type: "kpi", label: _t("KPI"), icon: "kpi" },
     { type: "table", label: _t("Table"), icon: "table" },
+    { type: "pivot", label: _t("Pivot"), icon: "pivot" },
+    { type: "scatter", label: _t("Scatter"), icon: "scatter" },
+    { type: "heatmap", label: _t("Heatmap"), icon: "heatmap" },
+    { type: "treemap", label: _t("Treemap"), icon: "treemap" },
+    { type: "funnel", label: _t("Funnel"), icon: "funnel" },
+    { type: "gauge", label: _t("Gauge"), icon: "gauge" },
+    { type: "waterfall", label: _t("Waterfall"), icon: "waterfall" },
+    { type: "pareto", label: _t("Pareto"), icon: "pareto" },
 ];
 
 const DATE_GRAINS = ["year", "quarter", "month", "week", "day"];
@@ -30,7 +39,7 @@ const AGGS = ["sum", "avg", "min", "max", "count", "count_distinct"];
 
 export class ExploreAction extends Component {
     static template = "biz_bi.Explore";
-    static components = { ChartRenderer, KpiCard, DataTable };
+    static components = { ChartRenderer, KpiCard, DataTable, PivotTable };
     static props = { "*": true };
     static displayName = _t("Explore");
 
@@ -38,6 +47,7 @@ export class ExploreAction extends Component {
         this.orm = useService("orm");
         this.actionService = useService("action");
         this.notification = useService("notification");
+        this.dialogService = useService("dialog");
         this.biData = useService("bi_data");
 
         this.gallery = CHART_GALLERY;
@@ -59,6 +69,9 @@ export class ExploreAction extends Component {
             chartName: "",
             saving: false,
             dragOverSlot: null,
+            aiAvailable: false,
+            aiPrompt: "",
+            aiBusy: false,
         });
         this._debounce = null;
 
@@ -68,6 +81,9 @@ export class ExploreAction extends Component {
                 [["state", "=", "published"]],
                 ["name", "description", "is_certified", "storage_mode"]
             );
+            this.orm.call("bi.ai", "is_available", []).then((available) => {
+                this.state.aiAvailable = available;
+            });
             const params = this.props.action?.params || {};
             if (params.chart_id) {
                 await this.loadChart(params.chart_id);
@@ -112,7 +128,14 @@ export class ExploreAction extends Component {
             "bi.chart", [chartId],
             ["name", "dataset_id", "chart_type", "config_json"]);
         await this.selectDataset(chart.dataset_id[0]);
-        const config = chart.config_json || {};
+        this.materializeConfig(chart.config_json || {}, chart.chart_type);
+        this.state.chartId = chartId;
+        this.state.chartName = chart.name;
+        this.refresh();
+    }
+
+    /** Turn a saved/AI chart config into live slot chips. */
+    materializeConfig(config, chartType) {
         const slots = config.slots || {};
         const byId = Object.fromEntries(
             this.state.metadata.fields.map((f) => [f.id, f]));
@@ -130,11 +153,64 @@ export class ExploreAction extends Component {
                 value: f.value,
             })),
         };
-        this.state.chartType = chart.chart_type;
+        this.state.chartType = chartType || config.chart_type || "bar";
         this.state.userPickedType = true;
-        this.state.chartId = chartId;
-        this.state.chartName = chart.name;
-        this.refresh();
+    }
+
+    // ------------------------------------------------------------------
+    // AI: natural-language chart + report composer
+    // ------------------------------------------------------------------
+
+    async askAi() {
+        const prompt = this.state.aiPrompt.trim();
+        if (!prompt || this.state.aiBusy) {
+            return;
+        }
+        this.state.aiBusy = true;
+        try {
+            const result = await this.orm.call(
+                "bi.ai", "nlq_chart", [this.state.datasetId, prompt]);
+            if (result.error) {
+                this.notification.add(result.error, { type: "warning" });
+                return;
+            }
+            this.materializeConfig(result.config, result.config.chart_type);
+            if (result.config.name && !this.state.chartName) {
+                this.state.chartName = result.config.name;
+            }
+            this.refresh();
+        } finally {
+            this.state.aiBusy = false;
+        }
+    }
+
+    async composeAi() {
+        const prompt = this.state.aiPrompt.trim();
+        if (!prompt || this.state.aiBusy) {
+            return;
+        }
+        this.state.aiBusy = true;
+        try {
+            const result = await this.orm.call(
+                "bi.ai", "compose_report", [this.state.datasetId, prompt]);
+            if (result.error) {
+                this.notification.add(result.error, { type: "warning" });
+                return;
+            }
+            if (result.dropped && result.dropped.length) {
+                this.notification.add(
+                    _t("%s widget(s) could not be built and were skipped.",
+                       result.dropped.length),
+                    { type: "info" });
+            }
+            this.actionService.doAction({
+                type: "ir.actions.client",
+                tag: "biz_bi.dashboard",
+                params: { dashboard_id: result.dashboard_id },
+            });
+        } finally {
+            this.state.aiBusy = false;
+        }
     }
 
     get folders() {
@@ -369,6 +445,9 @@ export class ExploreAction extends Component {
         if (this.state.chartType === "table") {
             return "table";
         }
+        if (this.state.chartType === "pivot") {
+            return "pivot";
+        }
         return "chart";
     }
 
@@ -433,28 +512,22 @@ export class ExploreAction extends Component {
         }
         const dashboards = await this.orm.searchRead(
             "bi.dashboard", [], ["name"]);
-        if (!dashboards.length) {
-            this.notification.add(_t("Create a dashboard first (BI Home)."),
-                { type: "warning" });
-            return;
-        }
-        // simple picker: first dashboard for now; kebab menu refines later
-        const name = prompt(
-            _t("Add to which dashboard?") + "\n" +
-            dashboards.map((d, i) => `${i + 1}. ${d.name}`).join("\n"),
-            "1");
-        const index = parseInt(name) - 1;
-        if (isNaN(index) || !dashboards[index]) {
-            return;
-        }
-        await this.orm.call("bi.dashboard", "add_chart",
-            [[dashboards[index].id], this.state.chartId]);
-        this.notification.add(_t("Added to %s.", dashboards[index].name),
-            { type: "success" });
-        this.actionService.doAction({
-            type: "ir.actions.client",
-            tag: "biz_bi.dashboard",
-            params: { dashboard_id: dashboards[index].id },
+        this.dialogService.add(AddToDashboardDialog, {
+            dashboards,
+            onConfirm: async (choice) => {
+                let dashboardId = choice.dashboardId;
+                if (!dashboardId) {
+                    [dashboardId] = await this.orm.create(
+                        "bi.dashboard", [{ name: choice.newName }]);
+                }
+                await this.orm.call("bi.dashboard", "add_chart",
+                    [[dashboardId], this.state.chartId]);
+                this.actionService.doAction({
+                    type: "ir.actions.client",
+                    tag: "biz_bi.dashboard",
+                    params: { dashboard_id: dashboardId },
+                });
+            },
         });
     }
 }
