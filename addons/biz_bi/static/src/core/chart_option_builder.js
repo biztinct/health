@@ -307,6 +307,74 @@ export function buildChartOption(envelope, config, lang = "en_US") {
         };
     }
 
+    if (chartType === "sankey") {
+        // flows: d0 (source) -> d1 (target), weight = m0
+        const envelopeColumns = envelope.columns || [];
+        const dimCols = envelopeColumns.filter((c) => c.ref.startsWith("d"));
+        const measureCol = envelopeColumns.find((c) => c.ref === "m0");
+        const nodeSet = new Set();
+        const links = [];
+        for (const row of envelope.rows || []) {
+            const source = "▸ " + formatDimensionValue(
+                row[envelopeColumns.indexOf(dimCols[0])], dimCols[0], lang);
+            const target = formatDimensionValue(
+                row[envelopeColumns.indexOf(dimCols[1])], dimCols[1], lang);
+            const value = row[envelopeColumns.indexOf(measureCol)];
+            if (!value || value < 0) {
+                continue;
+            }
+            nodeSet.add(source);
+            nodeSet.add(target);
+            links.push({ source, target, value });
+        }
+        return {
+            ...base,
+            tooltip: { ...base.tooltip, trigger: "item",
+                       valueFormatter: (v) => formatFull(v, measureCol?.format || {}, lang) },
+            legend: { show: false },
+            series: [{
+                type: "sankey",
+                left: 20, right: 90, top: 10, bottom: 10,
+                nodeGap: 10,
+                lineStyle: { color: "source", opacity: 0.25, curveness: 0.55 },
+                itemStyle: { borderRadius: 3 },
+                label: { fontSize: 11, color: textColor },
+                emphasis: { focus: "adjacency" },
+                data: [...nodeSet].map((name) => ({ name })),
+                links,
+            }],
+        };
+    }
+
+    if (chartType === "radar") {
+        // indicators = d0 members, one polygon per measure
+        const maxValue = Math.max(
+            1, ...series.flatMap((s) => s.data.map((v) => Math.abs(v || 0))));
+        return {
+            ...base,
+            tooltip: { ...base.tooltip, trigger: "item" },
+            radar: {
+                indicator: categories.map((name) => ({
+                    name, max: maxValue * 1.15,
+                })),
+                splitLine: { lineStyle: { color: gridLine } },
+                splitArea: { show: false },
+                axisLine: { lineStyle: { color: gridLine } },
+                axisName: { color: textColor, fontSize: 11 },
+            },
+            series: [{
+                type: "radar",
+                symbolSize: 4,
+                data: series.map((s) => ({
+                    name: s.name,
+                    value: s.data.map((v) => v || 0),
+                    areaStyle: { opacity: 0.12 },
+                    lineStyle: { width: 2 },
+                })),
+            }],
+        };
+    }
+
     if (chartType === "waterfall") {
         // cumulative bridge: transparent base + positive/negative deltas
         const data = series[0] ? series[0].data : [];

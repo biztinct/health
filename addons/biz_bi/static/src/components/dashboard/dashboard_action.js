@@ -60,6 +60,7 @@ export class DashboardAction extends Component {
             compareEnvelopes: {}, // widgetId -> previous-period envelope
             crossFilter: null, // {widgetId, datasetId, fieldId, value, label}
             drillPaths: {}, // widgetId -> [{fieldId, grain, start, end, label}]
+            insights: null, // {widgetTitle, findings, narration, loading}
             editMode: false,
             tvMode: false,
             loading: true,
@@ -419,6 +420,31 @@ export class DashboardAction extends Component {
         await this.orm.call("bi.dashboard", "add_chart",
             [[this.dashboardId], chartId.id || chartId]);
         await this.reloadFull();
+    }
+
+    async showInsights(widget) {
+        this.state.openMenu = null;
+        this.state.insights = {
+            widgetTitle: widget.title, findings: [], narration: null,
+            loading: true,
+        };
+        try {
+            const result = await this.orm.call("bi.insights", "analyze_chart",
+                [widget.chart_id, this._widgetExtraFilters(widget)]);
+            this.state.insights = {
+                widgetTitle: widget.title,
+                findings: result.findings || [],
+                narration: result.narration,
+                loading: false,
+            };
+        } catch (error) {
+            this.state.insights = null;
+            throw error;
+        }
+    }
+
+    closeInsights() {
+        this.state.insights = null;
     }
 
     exportWidgetXlsx(widget) {

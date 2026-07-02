@@ -24,6 +24,8 @@ export const CHART_REQUIREMENTS = {
     waterfall: { minDims: 1, maxDims: 1, minMeasures: 1 },
     pareto: { minDims: 1, maxDims: 1, minMeasures: 1 },
     pivot: { minDims: 2, maxDims: 2, minMeasures: 1 },
+    sankey: { minDims: 2, maxDims: 2, minMeasures: 1 },
+    radar: { minDims: 1, maxDims: 1, minMeasures: 1 },
 };
 
 export function checkCompatibility(chartType, dims, measures) {

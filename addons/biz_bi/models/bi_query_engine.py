@@ -238,10 +238,16 @@ class BiQueryEngine(models.AbstractModel):
             })
         for index, meas in enumerate(measures):
             field = meas['field']
+            if meas['agg'] == 'count':
+                label = _("Count")  # a row count is not about the field
+            elif meas['agg'] == 'count_distinct':
+                label = _("# unique %s", field.name)
+            else:
+                label = field.name
             columns_meta.append({
                 'ref': 'm%d' % index,
                 'field_id': field.id,
-                'label': field.name,
+                'label': label,
                 'type': field.data_type,
                 'role': 'measure',
                 'agg': meas['agg'],

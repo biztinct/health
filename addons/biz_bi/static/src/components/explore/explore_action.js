@@ -32,6 +32,8 @@ const CHART_GALLERY = [
     { type: "gauge", label: _t("Gauge"), icon: "gauge" },
     { type: "waterfall", label: _t("Waterfall"), icon: "waterfall" },
     { type: "pareto", label: _t("Pareto"), icon: "pareto" },
+    { type: "sankey", label: _t("Sankey"), icon: "sankey" },
+    { type: "radar", label: _t("Radar"), icon: "radar" },
 ];
 
 const DATE_GRAINS = ["year", "quarter", "month", "week", "day"];

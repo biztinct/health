@@ -20,6 +20,8 @@ CHART_TYPES = [
     ('waterfall', 'Waterfall'),
     ('pareto', 'Pareto'),
     ('pivot', 'Pivot Matrix'),
+    ('sankey', 'Sankey Flow'),
+    ('radar', 'Radar'),
 ]
 
 

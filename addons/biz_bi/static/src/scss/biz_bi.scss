@@ -1024,3 +1024,109 @@
         }
     }
 }
+
+// insights drawer
+.o_biz_bi .bi-insight-panel {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 340px;
+    background: var(--bi-surface-card);
+    border-left: 1px solid var(--bi-border);
+    box-shadow: var(--bi-shadow-lg);
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+
+    .bi-insight-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--bi-border);
+
+        .bi-insight-spark { font-size: 17px; }
+        .bi-insight-title { font-size: 14px; font-weight: 700; }
+        .bi-insight-sub { font-size: 11px; color: var(--bi-text-muted); }
+        .bi-insight-close {
+            margin-left: auto;
+            border: none; background: none;
+            font-size: 18px; color: var(--bi-text-muted);
+            cursor: pointer;
+            &:hover { color: var(--bi-text); }
+        }
+    }
+
+    .bi-insight-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .bi-insight-narration {
+        background: var(--bi-surface-hover);
+        border-left: 3px solid var(--bi-primary);
+        border-radius: var(--bi-radius-sm);
+        padding: 10px 12px;
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+    .bi-finding {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        border: 1px solid var(--bi-border);
+        border-radius: var(--bi-radius-md);
+        padding: 8px 10px;
+
+        .bi-finding-kind {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--bi-text-muted);
+        }
+        .bi-finding-text { font-size: 12.5px; line-height: 1.4; }
+
+        &.bi-sev-high { border-left: 3px solid var(--bi-danger); }
+        &.bi-sev-medium { border-left: 3px solid var(--bi-warning); }
+        &.bi-sev-info { border-left: 3px solid var(--bi-primary); }
+    }
+
+    .bi-insight-empty {
+        color: var(--bi-text-muted);
+        font-size: 12.5px;
+        text-align: center;
+        padding: 20px 0;
+    }
+}
+
+.o_biz_bi.bi-dashboard { position: relative; }
+
+// sankey & radar chart-type glyphs
+.o_biz_bi .bi-cticon-sankey::before {
+    left: 1px; top: 2px; width: 6px; height: 16px;
+    background: var(--vu-brand-primary, #1565C0);
+}
+.o_biz_bi .bi-cticon-sankey::after {
+    left: 7px; top: 2px; width: 18px; height: 6px;
+    background: var(--vu-brand-primary, #1565C0);
+    opacity: 0.45;
+    clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 60%);
+    box-shadow: 0 10px 0 var(--vu-brand-primary, #1565C0);
+}
+.o_biz_bi .bi-cticon-radar::before {
+    left: 3px; top: 0; width: 20px; height: 20px;
+    background: transparent;
+    border: 2px solid var(--vu-brand-primary, #1565C0);
+    clip-path: polygon(50% 0, 100% 38%, 81% 100%, 19% 100%, 0 38%);
+}
+.o_biz_bi .bi-cticon-radar::after {
+    left: 8px; top: 6px; width: 10px; height: 10px;
+    background: var(--vu-brand-primary, #1565C0);
+    opacity: 0.35;
+    clip-path: polygon(50% 0, 100% 38%, 81% 100%, 19% 100%, 0 38%);
+}

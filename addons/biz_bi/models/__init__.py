@@ -13,3 +13,4 @@ from . import bi_access_rule
 from . import bi_audit_log
 from . import bi_glossary
 from . import bi_ai
+from . import bi_insights

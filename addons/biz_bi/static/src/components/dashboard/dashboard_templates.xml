@@ -87,6 +87,7 @@
                                         <button class="bi-kebab"
                                                 t-on-click="() => this.toggleMenu(widget.id)">⋮</button>
                                         <div t-if="state.openMenu === widget.id" class="bi-menu">
+                                            <button t-on-click="() => this.showInsights(widget)">✨ Insights</button>
                                             <button t-if="state.dashboard.can_edit"
                                                     t-on-click="() => this.editWidget(widget)">Edit in Explore</button>
                                             <button t-if="state.dashboard.can_edit"
@@ -142,6 +143,36 @@
                         <div class="bi-empty-tile">
                             <p>No charts yet.</p>
                             <p>Build one in <b>Explore</b> and click <b>Add to Dashboard</b>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insights drawer -->
+                <div t-if="state.insights" class="bi-insight-panel">
+                    <div class="bi-insight-head">
+                        <span class="bi-insight-spark">✨</span>
+                        <div>
+                            <div class="bi-insight-title">Insights</div>
+                            <div class="bi-insight-sub" t-esc="state.insights.widgetTitle"/>
+                        </div>
+                        <button class="bi-insight-close" t-on-click="closeInsights">×</button>
+                    </div>
+                    <div t-if="state.insights.loading" class="bi-insight-body">
+                        <div class="bi-spinner"/>
+                    </div>
+                    <div t-else="" class="bi-insight-body">
+                        <div t-if="state.insights.narration" class="bi-insight-narration">
+                            <t t-esc="state.insights.narration"/>
+                        </div>
+                        <div t-foreach="state.insights.findings" t-as="finding"
+                             t-key="finding_index" class="bi-finding"
+                             t-att-class="'bi-sev-' + finding.severity">
+                            <span class="bi-finding-kind" t-esc="finding.kind"/>
+                            <span class="bi-finding-text" t-esc="finding.text"/>
+                        </div>
+                        <div t-if="!state.insights.findings.length"
+                             class="bi-insight-empty">
+                            Nothing unusual in the current scope.
                         </div>
                     </div>
                 </div>

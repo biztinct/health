@@ -16,6 +16,7 @@ EVENTS = [
     ('provider_change', 'AI Provider Changed'),
     ('ai_request', 'AI Request'),
     ('csv_import', 'CSV Import'),
+    ('external_sync', 'External Sync'),
 ]
 
 

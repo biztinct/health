@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
+import logging
 import re
+from datetime import datetime
+
+import requests
+from psycopg2.extras import execute_values
 
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools import SQL
+
+_logger = logging.getLogger(__name__)
 
 SQL_VIEW_NAME_RE = re.compile(r'^bi_[a-z0-9_]+$')
+COLUMN_NAME_RE = re.compile(r'[^a-z0-9_]+')
+MAX_SYNC_ROWS = 200000
 
 
 class BiSource(models.Model):
@@ -235,10 +245,185 @@ class BiSource(models.Model):
             if not self._pg_relation_exists(self.view_name):
                 raise ValidationError(
                     _("View %s not found.", self.view_name))
+        elif self.type == 'external' and self.connector_type == 'rest_json':
+            response = requests.request(
+                (self.connection_json or {}).get('method', 'GET'),
+                self._rest_url(), headers=self._rest_headers(), timeout=30)
+            response.raise_for_status()
+        elif self.type == 'csv':
+            if not self._pg_relation_exists(self.stage_table):
+                raise ValidationError(_(
+                    "No staged data yet — import a file first."))
         else:
             raise ValidationError(_(
                 "Connector type %s is not implemented yet.", self.type))
 
+    # ------------------------------------------------------------------
+    # REST JSON connector
+    # connection_json: {"url", "method", "headers": {...}, "params": {...},
+    #                   "json_path": "data.items"}
+    # Header values written as "param:some.key" resolve from
+    # ir.config_parameter so tokens never live in this record.
+    # ------------------------------------------------------------------
+
+    def _rest_url(self):
+        url = (self.connection_json or {}).get('url')
+        if not url or not url.startswith(('http://', 'https://')):
+            raise UserError(_("Connector needs a valid http(s) 'url'."))
+        return url
+
+    def _rest_headers(self):
+        headers = dict((self.connection_json or {}).get('headers') or {})
+        Params = self.env['ir.config_parameter'].sudo()
+        for key, value in headers.items():
+            if isinstance(value, str) and value.startswith('param:'):
+                resolved = Params.get_param(value[6:])
+                if not resolved:
+                    raise UserError(_(
+                        "System parameter '%s' is not set.", value[6:]))
+                headers[key] = resolved
+        return headers
+
+    def action_sync_now(self):
+        self.ensure_one()
+        if self.type != 'external' or self.connector_type != 'rest_json':
+            raise UserError(_("Sync applies to REST connectors."))
+        try:
+            rows = self._fetch_batch()
+            self._stage_write(rows)
+            self.write({'state': 'ready', 'last_error': False,
+                        'last_sync': fields.Datetime.now()})
+            self.env['bi.audit.log'].sudo().log(
+                'external_sync', record=self, payload={'rows': len(rows)})
+        except Exception as exc:
+            self.write({'state': 'error', 'last_error': str(exc)})
+            raise
+        return True
+
     def _fetch_batch(self, cursor_state=None):
-        """External connectors pull batches into the stage table (Phase 3)."""
-        raise NotImplementedError
+        """Pull the full JSON payload and return a list of flat dicts."""
+        self.ensure_one()
+        config = self.connection_json or {}
+        response = requests.request(
+            config.get('method', 'GET'), self._rest_url(),
+            headers=self._rest_headers(), params=config.get('params'),
+            timeout=120)
+        response.raise_for_status()
+        payload = response.json()
+        for part in filter(None, (config.get('json_path') or '').split('.')):
+            if not isinstance(payload, dict) or part not in payload:
+                raise UserError(_(
+                    "json_path '%s' not found in the response.",
+                    config.get('json_path')))
+            payload = payload[part]
+        if isinstance(payload, dict):
+            payload = [payload]
+        if not isinstance(payload, list):
+            raise UserError(_("The response is not a list of records."))
+        if len(payload) > MAX_SYNC_ROWS:
+            raise UserError(_("Response too large (max %s rows).",
+                              MAX_SYNC_ROWS))
+        rows = []
+        for item in payload:
+            if isinstance(item, dict):
+                rows.append({key: value for key, value in item.items()
+                             if not isinstance(value, (dict, list))})
+        if not rows:
+            raise UserError(_("No flat records found in the response."))
+        return rows
+
+    # -- staging: JSON-typed rows -> typed bi_stage_<id> table ----------
+
+    @staticmethod
+    def _stage_column_name(key):
+        name = COLUMN_NAME_RE.sub('_', str(key).lower()).strip('_')
+        if not name or not name[0].isalpha() or name.startswith('_bi_'):
+            return None
+        return name
+
+    def _stage_write(self, rows):
+        self.ensure_one()
+        # pass 1: derive the column schema across all rows
+        columns = {}
+        for row in rows:
+            for key, value in row.items():
+                name = self._stage_column_name(key)
+                if name:
+                    columns[name] = self._merge_pg_type(
+                        columns.get(name), self._pg_type_of(value))
+        if not columns:
+            raise UserError(_("No usable columns in the response."))
+        cr = self.env.cr
+        table = self.stage_table
+        cr.execute(SQL("DROP TABLE IF EXISTS %s CASCADE",
+                       SQL.identifier(table)))
+        column_defs = [SQL("_bi_row_id bigserial PRIMARY KEY"),
+                       SQL("_bi_loaded_at timestamp DEFAULT "
+                           "(now() AT TIME ZONE 'UTC')")]
+        for name, pg_type in columns.items():
+            column_defs.append(SQL("%s " + pg_type, SQL.identifier(name)))
+        cr.execute(SQL("CREATE TABLE %s (%s)", SQL.identifier(table),
+                       SQL(", ").join(column_defs)))
+        # pass 2: values, first raw key mapping to a column name wins
+        names = list(columns)
+        values = []
+        for row in rows:
+            normalized = {}
+            for key, value in row.items():
+                name = self._stage_column_name(key)
+                if name and name not in normalized:
+                    normalized[name] = value
+            values.append(tuple(
+                self._coerce_stage_value(normalized.get(n), columns[n])
+                for n in names))
+        columns_sql = self.env.cr.mogrify(
+            SQL(", ").join(SQL.identifier(n) for n in names)).decode()
+        execute_values(
+            cr._obj,
+            'INSERT INTO "%s" (%s) VALUES %%s' % (table, columns_sql),
+            values, page_size=2000)
+        _logger.info("biz_bi: staged %s rows into %s", len(rows), table)
+
+    @staticmethod
+    def _pg_type_of(value):
+        if value is None:
+            return None
+        if isinstance(value, bool):
+            return 'boolean'
+        if isinstance(value, int):
+            return 'bigint'
+        if isinstance(value, float):
+            return 'numeric'
+        if isinstance(value, str):
+            text = value.rstrip('Z').split('+')[0]
+            try:
+                datetime.strptime(text[:19], '%Y-%m-%dT%H:%M:%S')
+                return 'timestamp'
+            except ValueError:
+                pass
+            try:
+                datetime.strptime(text, '%Y-%m-%d')
+                return 'date'
+            except ValueError:
+                pass
+        return 'text'
+
+    @staticmethod
+    def _merge_pg_type(previous, current):
+        if previous is None:
+            return current or 'text'
+        if current is None or previous == current:
+            return previous
+        if {previous, current} == {'bigint', 'numeric'}:
+            return 'numeric'
+        return 'text'
+
+    @staticmethod
+    def _coerce_stage_value(value, pg_type):
+        if value is None:
+            return None
+        if pg_type == 'text':
+            return str(value)
+        if pg_type in ('date', 'timestamp') and isinstance(value, str):
+            return value.rstrip('Z').split('+')[0][:19]
+        return value
