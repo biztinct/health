@@ -80,7 +80,9 @@
    Uses extreme specificity to override Odoo inline styles
    ══════════════════════════════════════════════════════════════ */
 
-/* Master rule: outer event gets thick black border only */
+/* Master rule: soft 1px outline (Theme Engine Phase 4 — the previous
+   2.5px #222 outline read far heavier than the rest of the design system;
+   pastel fill + hairline border matches the list-view pill language) */
 .o_calendar_view .fc-event,
 .o_calendar_view .fc .fc-event,
 .o_calendar_view .fc .fc-daygrid-event,
@@ -88,7 +90,8 @@
 .o_calendar_view .fc .fc-h-event,
 .o_calendar_view .fc-daygrid-event,
 .o_calendar_renderer .fc-event {
-    border: 2.5px solid #222 !important;
+    border: 1px solid rgba(15, 30, 69, 0.28) !important;
+    border-left-width: 3px !important;
     border-radius: 6px !important;
     padding: 2px 6px !important;
     margin: 1.5px 2px !important;

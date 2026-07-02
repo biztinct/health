@@ -1,0 +1,396 @@
+// =============================================================================
+// MODERN FORM HEADER BUTTONS - Universal Styling
+// =============================================================================
+// Applies to all form header buttons across health_crm, health_fieldservice, etc.
+// Design: Pill-shaped with light backgrounds, dark/colored borders, bold text
+
+.o_form_view .o_form_statusbar>.o_statusbar_buttons,
+.o_form_view header .o_statusbar_buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 4px 0;
+
+    // Base button style — flat mono (Theme Engine Phase 1: gradients and the
+    // shine-sweep animation removed per the flat-single-color rule; pill
+    // silhouette unchanged so layouts don't move)
+    button {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: background var(--vu-transition-fast), color var(--vu-transition-fast),
+            border-color var(--vu-transition-fast), box-shadow var(--vu-transition-fast);
+        background: var(--vu-statusbar-btn-bg, var(--vu-surface-card));
+        color: var(--vu-statusbar-btn-text, #495057);
+        border: 2px solid var(--vu-statusbar-btn-border, var(--vu-border-soft));
+        box-shadow: var(--vu-shadow-sm);
+
+        &:hover {
+            box-shadow: var(--vu-shadow-md);
+        }
+    }
+
+    // Primary action buttons (oe_highlight, btn-primary) — brand blue, flat
+    button.oe_highlight,
+    button.btn-primary {
+        background: var(--vu-btn-primary-bg, var(--vu-brand-primary));
+        color: var(--vu-btn-primary-text, var(--vu-text-inverse));
+        border-color: var(--vu-btn-primary-bg, var(--vu-brand-primary));
+
+        &:hover {
+            background: var(--vu-btn-primary-hover, var(--vu-brand-primary-dark));
+            border-color: var(--vu-btn-primary-hover, var(--vu-brand-primary-dark));
+        }
+    }
+
+    // Success buttons — green tint, flat
+    button.btn-success {
+        background: #DBF0DB;
+        color: #146c43;
+        border-color: #198754;
+
+        &:hover {
+            background: var(--vu-status-success);
+            border-color: var(--vu-status-success);
+            color: var(--vu-text-inverse);
+        }
+    }
+
+    // Warning/Caution buttons — amber tint, flat
+    button.btn-warning {
+        background: #FEE8C9;
+        color: #856404;
+        border-color: var(--vu-status-warning);
+
+        &:hover {
+            background: var(--vu-status-warning);
+            color: var(--vu-text-inverse);
+        }
+    }
+
+    // Danger/Cancel buttons — red outlined, flat
+    button.btn-danger,
+    button[name*="cancel"],
+    button[name*="reject"] {
+        background: #FBE3E1;
+        color: var(--vu-status-danger);
+        border-color: var(--vu-status-danger);
+
+        &:hover {
+            background: var(--vu-status-danger);
+            color: var(--vu-text-inverse);
+        }
+    }
+
+    // Secondary/Info buttons — light gray outlined
+    button.btn-secondary,
+    button.btn-info {
+        background: var(--vu-surface-panel);
+        color: #6c757d;
+        border-color: #adb5bd;
+
+        &:hover {
+            background: var(--vu-surface-muted);
+            color: #495057;
+            border-color: #6c757d;
+        }
+    }
+}
+
+// =============================================================================
+// COLORED ICONS FOR FORM HEADER BUTTONS
+// =============================================================================
+// Each button type gets a distinct, colorful icon to improve visual recognition
+
+.o_form_view .o_form_statusbar>.o_statusbar_buttons,
+.o_form_view header .o_statusbar_buttons,
+.o_form_view header.o_form_statusbar {
+
+    button {
+
+        // Default icon styling - contrasting color
+        .fa,
+        i.fa,
+        i[class*="fa-"] {
+            font-size: 14px !important;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        &:hover .fa,
+        &:hover i.fa,
+        &:hover i[class*="fa-"] {
+            transform: scale(1.1);
+        }
+    }
+
+    // Home button - gray icon
+    button[name*="home"] .fa,
+    button[name*="home"] i.fa,
+    button[name*="spam"] .fa,
+    button[name*="spam"] i.fa {
+        color: #6c757d !important;
+    }
+
+    // Primary/Booking buttons - white icon
+    button.btn-primary .fa,
+    button.btn-primary i.fa,
+    button.oe_highlight .fa,
+    button.oe_highlight i.fa {
+        color: #fff !important;
+    }
+
+    // Cancellation button - red icon
+    button[name*="cancellation"] .fa,
+    button[name*="cancellation"] i.fa,
+    button[name*="open_cancellation"] .fa,
+    button[name*="open_cancellation"] i.fa {
+        color: #dc3545 !important;
+    }
+
+    // Cancel/Danger buttons - red icon
+    button.btn-danger .fa,
+    button.btn-danger i.fa,
+    button[name*="cancel_booking"] .fa,
+    button[name*="cancel_booking"] i.fa {
+        color: #dc3545 !important;
+    }
+
+    button.btn-danger:hover .fa,
+    button.btn-danger:hover i.fa {
+        color: #fff !important;
+    }
+
+    // Success/Confirm buttons - green icon
+    button.btn-success .fa,
+    button.btn-success i.fa {
+        color: #198754 !important;
+    }
+
+    button.btn-success:hover .fa,
+    button.btn-success:hover i.fa {
+        color: #fff !important;
+    }
+
+    // Dashboard button - purple/indigo icon
+    button[name*="dashboard"] .fa,
+    button[name*="dashboard"] i.fa {
+        color: #6f42c1 !important;
+    }
+
+    // Calendar/Reschedule - orange icon
+    button[name*="reschedule"] .fa,
+    button[name*="reschedule"] i.fa,
+    button[name="action_reschedule_booking"] .fa,
+    button[name="action_reschedule_booking"] i.fa {
+        color: #fd7e14 !important;
+    }
+
+    // Consultation - purple icon
+    button[name*="consultation"] .fa,
+    button[name*="consultation"] i.fa,
+    button[name*="escalate_consultation"] .fa,
+    button[name*="escalate_consultation"] i.fa {
+        color: #6f42c1 !important;
+    }
+
+    // Escalate - red-orange icon
+    button[name="action_escalate_contact"] .fa,
+    button[name="action_escalate_contact"] i.fa {
+        color: #e74c3c !important;
+    }
+
+    // Message - teal icon
+    button[name*="message"] .fa,
+    button[name*="message"] i.fa {
+        color: #20c997 !important;
+    }
+
+    // Log Lead/User - blue icon
+    button[name*="log_lead"] .fa,
+    button[name*="log_lead"] i.fa,
+    button[name*="log_as_lead"] .fa,
+    button[name*="log_as_lead"] i.fa {
+        color: #0d6efd !important;
+    }
+
+    // Log Activity/Clock - orange icon
+    button[name*="activity"] .fa,
+    button[name*="activity"] i.fa,
+    button[name*="schedule"] .fa,
+    button[name*="schedule"] i.fa {
+        color: #fd7e14 !important;
+    }
+
+    // Log Note - amber icon
+    button[name*="note"] .fa,
+    button[name*="note"] i.fa {
+        color: #ffc107 !important;
+    }
+
+    // Quote/Invoice - purple icon
+    button[name*="quote"] .fa,
+    button[name*="quote"] i.fa,
+    button.btn-info .fa,
+    button.btn-info i.fa {
+        color: #6f42c1 !important;
+    }
+
+    // Warning buttons - dark amber text
+    button.btn-warning .fa,
+    button.btn-warning i.fa {
+        color: #664d03 !important;
+    }
+
+    // Start Service - white on blue/green
+    button[name*="start"] .fa,
+    button[name*="start"] i.fa {
+        color: #fff !important;
+    }
+
+    // Staff Assignment - white on blue
+    button[name*="assign"] .fa,
+    button[name*="assign"] i.fa {
+        color: #fff !important;
+    }
+}
+
+// =============================================================================
+// COMPACT TITLE AREA
+// =============================================================================
+.o_form_view .oe_title > h1 {
+    min-height: 28px !important;
+    font-size: 1.15rem;
+    line-height: 1.2;
+    margin-bottom: 2px !important;
+}
+
+.o_form_view .oe_title > h2 {
+    min-height: 24px !important;
+    font-size: 1rem;
+    margin-bottom: 2px !important;
+}
+
+.o_form_view .oe_title {
+    max-width: 80%;
+    margin-bottom: 4px !important;
+}
+
+// Compact avatar size
+.o_form_view .oe_avatar .img,
+.o_form_view .oe_avatar > img {
+    width: 64px !important;
+    height: 64px !important;
+}
+
+// Compact status bar area
+.o_form_view .o_form_statusbar {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    min-height: auto !important;
+}
+
+// Compact status widget (New Client > Active > Inactive arrows)
+.o_form_view .o_statusbar_status {
+    font-size: 0.75rem;
+
+    .o_arrow_button {
+        padding: 3px 12px !important;
+        font-size: 0.75rem;
+    }
+}
+
+// Compact stat buttons (Bookings, Packages, Payments)
+.o_form_view .oe_button_box .oe_stat_button {
+    padding: 2px 8px !important;
+    min-height: auto !important;
+    font-size: 0.75rem;
+
+    .o_stat_info {
+        .o_stat_value {
+            font-size: 0.875rem;
+            line-height: 1.2;
+        }
+        .o_stat_text {
+            font-size: 0.7rem;
+        }
+    }
+}
+
+// Tighter badge row spacing
+.o_form_view .oe_title + div,
+.o_form_view .oe_title ~ .d-flex,
+.o_form_view .oe_title ~ div:has(.badge) {
+    margin-top: 2px !important;
+    margin-bottom: 4px !important;
+}
+
+// Compact card titles inside vu-cards
+.vu-card__title {
+    font-size: 0.78rem !important;
+    gap: var(--vu-space-xs);
+    margin-bottom: 0 !important;
+}
+
+// =============================================================================
+// SMOOTHER INPUT FIELDS
+// =============================================================================
+// Record-form inputs use Odoo's clean native style (borderless until
+// hover/focus, dropdown carets for m2o/selection). Boxed inputs are reserved
+// for wizards/dialogs, which use their own input classes (.nc-input, etc.).
+.o_form_view .o_field_widget .o_input,
+.o_form_view .o_field_widget input.o_input,
+.o_form_view .o_field_widget textarea.o_input,
+.o_form_view .o_field_widget select.o_input {
+    border-width: 1px;
+    padding: 4px 8px;
+    font-size: inherit;
+    transition: border-color var(--vu-transition-fast), background var(--vu-transition-fast);
+
+    &:hover:not(:focus) {
+        background: var(--vu-surface-panel);
+    }
+}
+
+// Native underline: a visible bottom border at rest (the other three sides stay
+// transparent via --o-input-border-color). Matches Odoo's standard form fields.
+.o_form_view .o_field_widget .o_input:not(:hover):not(:focus) {
+    border-bottom-color: var(--vu-border-soft, #E0E0E0) !important;
+}
+// Keep inputs inside embedded list/grid tables flat (no underline at rest).
+.o_form_view .o_list_renderer .o_field_widget .o_input:not(:hover):not(:focus),
+.o_form_view .o_list_table .o_field_widget .o_input:not(:hover):not(:focus) {
+    border-bottom-color: transparent !important;
+}
+
+// Show the dropdown caret at rest on many2one / selection fields (Odoo hides it
+// until hover; native settings show it always — that's what we want here).
+.o_form_view .o_field_many2one .o_dropdown_button,
+.o_form_view .o_field_widget .o_select_menu_caret {
+    visibility: visible !important;
+}
+
+// Compact form labels — slightly smaller, tighter
+.o_form_view .o_form_label {
+    font-size: 0.8125rem;
+    margin-bottom: 1px;
+}
+
+// =============================================================================
+// COMPACT NOTEBOOK / TABS
+// =============================================================================
+.o_form_view .o_notebook {
+    margin-top: var(--vu-space-sm);
+}
+
+.o_form_view .o_notebook > ul > li > a,
+.o_form_view .o_notebook > .nav-tabs > li > a,
+.o_form_view .o_notebook .nav-link {
+    font-size: 0.8125rem;
+    padding: var(--vu-space-xs) var(--vu-space-sm);
+}
+

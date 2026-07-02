@@ -144,6 +144,49 @@
 }
 
 // ---------------------------------------------------------------------------
+// Narrow screens — auto-compact + visible thin scrollbar
+// ---------------------------------------------------------------------------
+// The rail scrolls horizontally, but with the scrollbar hidden the clipped
+// tail steps ("Completed", "Closed") looked cut off at tablet widths.
+// Below 992px: compact metrics so more steps fit, and a discoverable
+// 4px scrollbar for whatever still overflows.
+@media (max-width: 992px) {
+    .vu-progress-rail {
+        padding: var(--vu-space-sm) var(--vu-space-md);
+        scrollbar-width: thin;
+
+        &::-webkit-scrollbar {
+            display: block;
+            height: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--vu-border-strong);
+            border-radius: 2px;
+        }
+
+        .vu-progress-rail__indicator {
+            width: 20px;
+            height: 20px;
+            font-size: 0.5625rem;
+        }
+
+        .vu-progress-rail__label {
+            font-size: 0.5625rem;
+        }
+
+        .vu-progress-rail__meta {
+            display: none;
+        }
+
+        .vu-progress-rail__connector {
+            min-width: 10px;
+            max-width: 28px;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Compact variant (for tight spaces / mobile)
 // ---------------------------------------------------------------------------
 .vu-progress-rail--compact {

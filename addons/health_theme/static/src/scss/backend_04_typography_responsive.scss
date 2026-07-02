@@ -1,0 +1,264 @@
+// =============================================================================
+// RESPONSIVE FONT SCALING
+// =============================================================================
+// Slightly smaller on ≤1400px screens
+@media (max-width: 1400px) {
+    body {
+        font-size: 0.8125rem; // 13px
+    }
+
+    .o_form_view .o_form_label {
+        font-size: 0.78rem;
+    }
+
+    .o_form_view .o_form_sheet {
+        padding: var(--vu-space-md);
+    }
+}
+
+// Even more compact on ≤1200px screens
+@media (max-width: 1200px) {
+    body {
+        font-size: 0.78rem; // ~12.5px
+    }
+
+    .o_form_view .o_form_label {
+        font-size: 0.75rem;
+    }
+
+    .o_form_view .oe_title > h1 {
+        font-size: 1.25rem;
+        min-height: 34px !important;
+    }
+
+    .o_form_view .o_form_sheet {
+        padding: var(--vu-space-sm);
+    }
+
+    .badge.bg-info,
+    .badge.bg-secondary {
+        font-size: 12px !important;
+        padding: 2px 8px !important;
+    }
+}
+
+// =============================================================================
+// LIST VIEW COMPACTNESS
+// =============================================================================
+.o_list_view .o_data_row > .o_data_cell {
+    padding-top: var(--vu-table-row-py, 4px);
+    padding-bottom: var(--vu-table-row-py, 4px);
+    font-size: var(--vu-font-size-base, 0.8125rem);
+}
+
+.o_list_view thead th {
+    font-size: 0.78rem;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--vu-text-secondary);
+}
+
+// =============================================================================
+// GLOBAL PROPORTIONAL FONT OVERRIDES — All remaining components
+// =============================================================================
+// Root web client — ensure 13px cascades everywhere (tokenized, Phase 1)
+.o_web_client {
+    font-size: var(--vu-font-size-base, 0.8125rem);
+}
+
+// Navbar
+.o_main_navbar {
+    font-size: 0.8125rem !important;
+
+    .o_menu_brand,
+    .o_menu_entry,
+    .dropdown-item {
+        font-size: 0.8125rem !important;
+    }
+
+    .o_navbar_apps_menu .dropdown-item {
+        font-size: 0.8125rem !important;
+    }
+
+    // Navbar badge counters
+    .badge {
+        font-size: 0.65rem !important;
+    }
+}
+
+// Control panel — breadcrumbs, search, pager
+.o_control_panel {
+    font-size: 0.8125rem;
+
+    .breadcrumb-item {
+        font-size: 0.8125rem;
+    }
+
+    .o_cp_searchbar input {
+        font-size: 0.8125rem;
+    }
+
+    // Pager
+    .o_pager {
+        font-size: 0.78rem;
+    }
+
+    // Action buttons in control panel
+    .o_cp_action_menus .dropdown-toggle,
+    .o_cp_buttons .btn {
+        font-size: 0.8125rem;
+    }
+}
+
+// Dropdowns globally
+.dropdown-menu {
+    font-size: 0.8125rem !important;
+
+    .dropdown-item {
+        font-size: 0.8125rem !important;
+        padding: 4px 12px;
+    }
+}
+
+// Modals / Dialogs
+.modal .modal-content {
+    font-size: 0.8125rem;
+
+    .modal-title {
+        font-size: 1rem;
+    }
+
+    .modal-body {
+        font-size: 0.8125rem;
+    }
+
+    .modal-footer .btn {
+        font-size: 0.8125rem;
+    }
+}
+
+// Kanban view
+.o_kanban_view .o_kanban_record {
+    font-size: 0.8125rem;
+}
+
+.o_kanban_view .o_kanban_group_header {
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+// Search panel (left sidebar)
+.o_search_panel {
+    font-size: 0.8125rem;
+
+    .o_search_panel_label {
+        font-size: 0.78rem;
+    }
+
+    .o_search_panel_category_value,
+    .o_search_panel_filter_value {
+        font-size: 0.78rem;
+    }
+
+    .o_search_panel_section_header {
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+}
+
+// Many2many tags
+.o_field_many2many_tags .badge {
+    font-size: 0.75rem !important;
+    padding: 2px 6px !important;
+}
+
+// Wizard dialogs (inline forms in modals)
+.o_dialog .o_form_view {
+    font-size: 0.8125rem;
+
+    .o_form_label {
+        font-size: 0.78rem;
+    }
+}
+
+// Breadcrumb
+.o_breadcrumb .active {
+    font-size: 0.9rem;
+}
+
+// Status bar inside forms
+.o_form_view .o_form_statusbar .o_statusbar_buttons button {
+    font-size: 12px;
+}
+
+// Tooltip
+.o_tooltip {
+    font-size: 0.75rem !important;
+}
+
+// Many2one dropdown results
+.o_field_many2one_selection .dropdown-menu,
+.ui-autocomplete {
+    font-size: 0.8125rem !important;
+}
+
+// Sidebar attachments link count
+.o-mail-Chatter .o-mail-Chatter-topbar .btn .badge,
+.o-mail-Chatter .o-mail-Chatter-topbar .fa {
+    font-size: 0.75rem !important;
+}
+
+// =============================================================================
+// CONTROL PANEL — Breadcrumb / Search overlap fix
+// =============================================================================
+.o_control_panel .o_control_panel_main {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+}
+
+.o_control_panel .o_control_panel_breadcrumbs {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+
+    .breadcrumb {
+        flex-wrap: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.o_control_panel .o_cp_searchbar {
+    flex: 0 1 auto;
+    min-width: 200px;
+    max-width: 350px;
+}
+
+// =============================================================================
+// SEARCH BOX — quiet at rest (Phase 1)
+// =============================================================================
+// Stock Odoo 19 paints the searchview border in brand primary at rest, which
+// makes every screen look like the search box is permanently focused. Neutral
+// border at rest; brand border + soft ring only when actually focused.
+.o_control_panel .o_searchview,
+.o_control_panel .o_searchview_dropdown_toggler {
+    border-color: var(--vu-border-soft) !important;
+    transition: border-color var(--vu-transition-fast), box-shadow var(--vu-transition-fast);
+}
+
+.o_control_panel .o_cp_searchview:focus-within {
+    .o_searchview,
+    .o_searchview_dropdown_toggler {
+        border-color: var(--vu-brand-primary) !important;
+    }
+
+    .o_searchview {
+        box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.14);
+    }
+}

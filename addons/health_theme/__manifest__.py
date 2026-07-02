@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.4.1.0',
+    'version': '19.0.5.0.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -55,16 +55,25 @@
         'base',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/webclient_templates.xml',
         'views/res_users_views.xml',
+        'views/vu_theme_views.xml',
+        'data/theme_presets.xml',
     ],
     'assets': {
         'web._assets_primary_variables': [
             ('prepend', 'health_theme/static/src/scss/primary_variables.scss'),
         ],
         'web.assets_backend': [
-            # Core theme
-            'health_theme/static/src/scss/backend.scss',
+            # Theme Engine — draft preview loader (published themes are pure CSS)
+            'health_theme/static/src/services/theme_loader_service.js',
+            # Core theme — backend.scss split into ordered partials (Phase 4);
+            # numbered prefixes make the cascade order explicit
+            'health_theme/static/src/scss/backend_01_chrome_forms.scss',
+            'health_theme/static/src/scss/backend_02_chatter_components.scss',
+            'health_theme/static/src/scss/backend_03_header_buttons.scss',
+            'health_theme/static/src/scss/backend_04_typography_responsive.scss',
             'health_theme/static/src/scss/loading_spinner.scss',
             # VU Form Engine — rich UI for ALL native form views
             'health_theme/static/src/scss/vu_tokens.scss',
@@ -90,6 +99,14 @@
             # OWL components — Templates
             'health_theme/static/src/xml/vu_progress_rail.xml',
             'health_theme/static/src/xml/vu_side_sheet.xml',
+            # Theme Studio (admin-only client action)
+            'health_theme/static/src/studio/theme_studio_action.js',
+            'health_theme/static/src/studio/theme_studio.scss',
+            'health_theme/static/src/studio/theme_studio.xml',
+            # Apps menu grid launcher
+            'health_theme/static/src/webclient/apps_menu_patch.js',
+            'health_theme/static/src/webclient/apps_menu.scss',
+            'health_theme/static/src/webclient/apps_menu.xml',
         ],
     },
     'installable': True,

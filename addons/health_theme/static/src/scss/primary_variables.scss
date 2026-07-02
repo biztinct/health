@@ -290,6 +290,29 @@ $font-weight-extrabold: 800;
 
     /* Icon defaults */
     --vu-icon-size: 20px;
+
+    /* ===== Theme Engine knobs (Phase 1) =====
+       Runtime-configurable tokens. Defaults reproduce today's rendering
+       exactly — adding these changes nothing until a theme overrides them. */
+    --vu-density: 1;                      // multiplier on the space scale
+    --vu-radius-scale: 1;                 // multiplier on radii
+    --vu-shadow-depth: 1;                 // 0 = flat, 1 = current, 2-3 = deeper
+    --vu-motion-scale: 1;                 // 0 disables theme transitions
+
+    --vu-navbar-height: 46px;
+    --vu-navbar-bg: #{$vu-navbar-bg};
+    --vu-navbar-text: #{$vu-navbar-text};
+
+    --vu-sidebar-width: 220px;
+    --vu-sidebar-bg: #0D356B;             // current CMS sidebar navy
+    --vu-sidebar-text: #{$vu-white};
+    --vu-sidebar-hover: #{rgba($vu-white, 0.08)};
+
+    --vu-table-row-py: 4px;               // list-view cell vertical padding
+    --vu-link-color: #{$vu-deep-blue};
+    --vu-font-body: #{$font-family-sans-serif};
+    --vu-font-headings: #{$font-family-headings};
+    --vu-font-size-base: 0.8125rem;       // compact 13px default
 }
 
 // ===== DARK THEME =====

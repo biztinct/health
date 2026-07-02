@@ -10,8 +10,11 @@
 
 :root {
     // ── Brand / action ───────────────────────────────────────────────
-    --vuf-primary: #1565C0;          // VU deep blue — the single action color
-    --vuf-primary-ink: #FFFFFF;
+    // Layer-3 tokens: derive from the --vu-* semantic layer (Theme Engine
+    // Phase 1). Fallbacks are the previous literal values, so rendering is
+    // byte-identical when no theme override is active.
+    --vuf-primary: var(--vu-brand-primary, #1565C0);
+    --vuf-primary-ink: var(--vu-text-inverse, #FFFFFF);
     --vuf-primary-soft: #E8F0FB;     // tinted background for soft chips/icons
     --vuf-primary-glow: rgba(21, 101, 192, .30);
     --vuf-hero: #0F1E45;             // deep navy hero band (flat)
@@ -27,13 +30,15 @@
     --vuf-surface: #FFFFFF;
 
     // ── Semantic ─────────────────────────────────────────────────────
+    // Status hues keep their own engine-tuned values as fallbacks but track
+    // the semantic layer when a theme overrides it.
     --vuf-ok: #10B981;
     --vuf-ok-bg: #E7F6EF;
     --vuf-warn: #B45309;
     --vuf-warn-bg: #FDF3E2;
     --vuf-danger: #DC2626;
     --vuf-danger-bg: #FDECEC;
-    --vuf-info: #1565C0;
+    --vuf-info: var(--vu-brand-primary, #1565C0);
     --vuf-info-bg: #E8F0FB;
 
     // ── Spacing (4px scale) ──────────────────────────────────────────
@@ -72,14 +77,14 @@
     // Sass min() choke and kills the entire bundle compilation.
     --vuf-content-w: min(1272px, calc(100% - 48px));
 
-    // ── Workflow state accents (reuse brand state palette) ───────────
-    --vuf-state-draft: #64748b;
-    --vuf-state-confirmed: #2563eb;
-    --vuf-state-assigned: #7c3aed;
-    --vuf-state-active: #ea580c;
-    --vuf-state-completed: #16a34a;
-    --vuf-state-cancelled: #dc2626;
-    --vuf-state-closed: #475569;
+    // ── Workflow state accents (derive from brand state palette) ─────
+    --vuf-state-draft: var(--vu-state-draft, #64748b);
+    --vuf-state-confirmed: var(--vu-state-confirmed, #2563eb);
+    --vuf-state-assigned: var(--vu-state-assigned, #7c3aed);
+    --vuf-state-active: var(--vu-state-active, #ea580c);
+    --vuf-state-completed: var(--vu-state-completed, #16a34a);
+    --vuf-state-cancelled: var(--vu-state-cancelled, #dc2626);
+    --vuf-state-closed: var(--vu-state-closed, #475569);
 }
 
 // ── Keyframes ────────────────────────────────────────────────────────

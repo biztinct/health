@@ -11,9 +11,8 @@ class IrHttp(models.AbstractModel):
         instantly revert every form to stock Odoo rendering without a deploy.
         """
         info = super().session_info()
-        info["vu_form_engine"] = (
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param("health_theme.vu_form_engine", "on")
-        )
+        icp = self.env["ir.config_parameter"].sudo()
+        info["vu_form_engine"] = icp.get_param("health_theme.vu_form_engine", "on")
+        # Published theme version — cache-busting handle for /vu_theme/tokens.css
+        info["vu_theme_version"] = icp.get_param("health_theme.theme_version", "0")
         return info

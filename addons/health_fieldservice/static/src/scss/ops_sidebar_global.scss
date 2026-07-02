@@ -20,12 +20,33 @@ body.has-custom-sidebar {
         flex: 1 1 auto;
         min-width: 0;
         overflow: auto;
+
+        // Restore stock layout rules lost to the wrapper. Odoo core scopes
+        // them as `.o_web_client > .o_action_manager > .o_action` (see
+        // web/static/src/webclient/webclient_layout.scss) — our wrapper div
+        // breaks that direct-child chain, which collapsed every view's
+        // height and let the empty-state helper overlap list headers.
+        > .o_action {
+            height: 100%;
+            display: flex;
+            flex-flow: column nowrap;
+            overflow: hidden;
+
+            > .o_control_panel {
+                flex: 0 0 auto;
+            }
+
+            .o_content {
+                overflow: auto;
+                height: 100%;
+            }
+        }
     }
 }
 
 .ops-global-sidebar {
-    width: 220px;
-    background: #0D356B;
+    width: var(--vu-sidebar-width, 220px);
+    background: var(--vu-sidebar-bg, #0D356B);
     color: white;
     display: flex;
     flex-direction: column;
@@ -143,5 +164,74 @@ body.has-custom-sidebar {
     .ops-user-role {
         font-size: 11px;
         opacity: 0.5;
+    }
+}
+
+// =============================================================================
+// RESPONSIVE — collapse to icon rail ≤1024px, expand as overlay on hover
+// =============================================================================
+// Below tablet-landscape the fixed 220px sidebar crushed content (calendar
+// day cells shrank to ~30px). Collapsed rail keeps one-click navigation;
+// hovering expands it OVER the content (no reflow) with a shadow.
+@media (max-width: 1024px) {
+    .ops-layout-wrapper {
+        position: relative;
+        padding-left: 56px;
+    }
+
+    .ops-global-sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        height: auto;
+        width: 56px;
+        overflow-x: hidden;
+        transition: width 160ms ease, box-shadow 160ms ease;
+
+        &:hover {
+            width: var(--vu-sidebar-width, 220px);
+            box-shadow: 6px 0 24px rgba(0, 0, 0, 0.28);
+        }
+
+        // Collapsed state: icons only, everything textual hidden
+        &:not(:hover) {
+            .ops-sidebar-logo {
+                justify-content: center;
+                padding: 16px 8px;
+
+                > *:not(.ops-logo-icon) {
+                    display: none;
+                }
+            }
+
+            .ops-nav-section-label,
+            .cms-section-header,
+            .cms-item-label,
+            .cms-item-chevron,
+            .ops-nav-item.cms-subitem {
+                display: none;
+            }
+
+            .ops-nav-item {
+                font-size: 0;          // hides the raw text node next to the icon
+                gap: 0;
+                justify-content: center;
+                padding: 12px 0;
+
+                i {
+                    font-size: 15px;
+                }
+            }
+
+            .ops-sidebar-user {
+                justify-content: center;
+                padding: 12px 8px;
+
+                > *:not(.ops-user-avatar) {
+                    display: none;
+                }
+            }
+        }
     }
 }

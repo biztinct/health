@@ -1,0 +1,778 @@
+// =============================================================================
+// CHATTER — Match compact body font
+// =============================================================================
+.oe_chatter,
+.o-mail-Chatter {
+    font-size: 0.8125rem !important;   // Match body 13px
+    line-height: var(--vu-line-height-normal);
+}
+
+.oe_chatter .o-mail-Thread .o-mail-Message-body,
+.oe_chatter .o-mail-Composer,
+.oe_chatter .o_chatter_button_icon,
+.oe_chatter .o_chatter_button_text,
+.o-mail-Chatter .o-mail-Thread,
+.o-mail-Chatter .o-mail-Message-body,
+.o-mail-Chatter .o-mail-Chatter-topbar,
+.o-mail-Chatter .o-mail-Chatter-content,
+.o-mail-Chatter .o-mail-Chatter-sendMessage,
+.o-mail-Chatter .o-mail-Chatter-logNote,
+.o-mail-Chatter .o-mail-Chatter-activity,
+.o-mail-Chatter .o-mail-Message-textContent {
+    font-size: inherit !important;
+    line-height: inherit;
+}
+
+// Chatter topbar buttons (Send message, Log note, Activity)
+.o-mail-Chatter .o-mail-Chatter-topbar .btn,
+.o-mail-Chatter .o-mail-Chatter-topbar button {
+    font-size: 0.75rem !important;
+    padding: 3px 10px !important;
+}
+
+// Activity items
+.o-mail-Activity {
+    font-size: 0.8125rem !important;
+}
+
+// Composer text area
+.o-mail-Composer .o-mail-Composer-input,
+.o-mail-Composer textarea {
+    font-size: 0.8125rem !important;
+}
+
+// Message author name / date
+.o-mail-Message-header,
+.o-mail-Message-author,
+.o-mail-Message-date {
+    font-size: 0.75rem !important;
+}
+
+// Planned Activities heading
+.o-mail-Chatter .o-mail-Activity-summary,
+.o-mail-Chatter h4,
+.o-mail-Chatter h5 {
+    font-size: 0.8125rem !important;
+}
+
+.o_form_view .o_group.o_group_no_card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--vu-space-lg);
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.o_form_view .o_horizontal_separator {
+    box-shadow: none !important;
+    border: 0 !important;
+    background: transparent !important;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: .05em;
+    color: var(--vu-text-secondary);
+    padding-bottom: var(--vu-space-xs);
+    padding-left: var(--vu-space-lg);
+    padding-right: var(--vu-space-lg);
+    margin: var(--vu-space-xs) 0 !important;
+}
+
+.o_form_view .o_horizontal_separator::after,
+.o_form_view .o_horizontal_separator::before {
+    display: none !important;
+}
+
+// Fix padding for standalone elements outside of groups (separators, radio buttons, etc.)
+// These elements appear directly on the form sheet without a containing <group> tag
+.o_form_sheet>.o_field_widget,
+.o_form_sheet>.o_wrap_field,
+.o_form_sheet>div:not(.o_group):not(.vu-section):not(.vu-card):not(.oe_title):not(.o_notebook):not(.alert):not(.vu-section-grid)>.o_field_widget,
+.o_dialog .modal-body>.o_field_widget,
+.o_dialog .modal-body>.o_wrap_field {
+    padding-left: var(--vu-space-lg);
+    padding-right: var(--vu-space-lg);
+    margin-bottom: var(--vu-space-md);
+}
+
+// Radio widget horizontal layout with proper padding
+.o_form_view .o_field_widget.o_field_radio,
+.o_dialog .o_field_widget.o_field_radio {
+    padding-left: var(--vu-space-lg);
+    padding-right: var(--vu-space-lg);
+
+    .o_radio_item {
+        margin-right: var(--vu-space-md);
+    }
+}
+
+// Ensure groups that follow separators have consistent left padding
+.o_form_sheet>.o_group:not(:first-child) {
+    padding-left: var(--vu-space-md);
+    padding-right: var(--vu-space-md);
+}
+
+.o_form_view .o_notebook {
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.o_form_view .o_notebook .nav-tabs {
+    border-bottom: 0 !important;
+}
+
+.vu-section .o_group,
+.vu-card .o_group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--vu-space-lg);
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.vu-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-sm);
+    padding: var(--vu-space-sm) var(--vu-space-md);
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-md);
+    border: 1px solid var(--vu-border-soft);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.vu-section:has(>.vu-section-grid) {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.vu-section:not(:has(.vu-card:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), .o_field_widget:not(.o_invisible_modifier), .o_address_map_widget, field))) {
+    display: none;
+}
+
+.vu-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-md);
+}
+
+.vu-card:not(:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), .o_field_widget:not(.o_invisible_modifier), .o_address_map_widget, field)) {
+    display: none;
+}
+
+.vu-section-grid:not(:has(.vu-card:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), .o_field_widget:not(.o_invisible_modifier), .o_address_map_widget, field))) {
+    display: none;
+}
+
+.vu-section__title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    color: var(--vu-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--vu-space-xs);
+}
+
+// Subtitle text under section title
+.vu-section__title + div,
+.vu-section__title + span,
+.vu-section__title + p {
+    font-size: 0.75rem;
+    color: var(--vu-text-secondary);
+    margin-top: -2px;
+    margin-bottom: 2px;
+}
+
+.vu-section__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--vu-surface-hover);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: var(--vu-brand-primary);
+
+    &::after {
+        content: '';
+        width: 16px;
+        height: 16px;
+        mask-repeat: no-repeat;
+        mask-position: center;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        -webkit-mask-size: contain;
+        background-color: currentColor;
+    }
+}
+
+.vu-section__icon[data-icon="map-pin"] {
+    background: rgba(66, 165, 245, 0.15);
+    color: #1F5E97;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/map-pin.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/map-pin.svg');
+    }
+}
+
+.vu-section__icon[data-icon="heart-pulse"] {
+    background: rgba(23, 107, 71, 0.15);
+    color: #176B47;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/heart-pulse.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/heart-pulse.svg');
+    }
+}
+
+.vu-section__icon[data-icon="stethoscope"] {
+    background: rgba(106, 27, 154, 0.15);
+    color: #6A1B9A;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/stethoscope.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/stethoscope.svg');
+    }
+}
+
+.vu-section__icon[data-icon="id-card"] {
+    background: rgba(251, 140, 0, 0.15);
+    color: #D46E00;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/id-card.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/id-card.svg');
+    }
+}
+
+.vu-section__icon[data-icon="life-ring"] {
+    background: rgba(63, 81, 181, 0.15);
+    color: #3F51B5;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/life-ring.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/life-ring.svg');
+    }
+}
+
+.vu-section__icon[data-icon="users-group"] {
+    background: rgba(0, 150, 136, 0.15);
+    color: #009688;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
+    }
+}
+
+.vu-section__icon[data-icon="file-text"] {
+    background: rgba(96, 125, 139, 0.15);
+    color: #607D8B;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/file-text.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/file-text.svg');
+    }
+}
+
+.vu-section__icon[data-icon="clipboard-list"] {
+    background: rgba(0, 150, 136, 0.12);
+    color: #00796B;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/clipboard-list.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/clipboard-list.svg');
+    }
+}
+
+.vu-section__icon[data-icon="credit-card"] {
+    background: rgba(25, 118, 210, 0.12);
+    color: #1E5FAF;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/credit-card.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/credit-card.svg');
+    }
+}
+
+.vu-section__icon[data-icon="shield-check"] {
+    background: rgba(56, 142, 60, 0.12);
+    color: #2E7D32;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/shield-check.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/shield-check.svg');
+    }
+}
+
+.vu-section__icon[data-icon="history"] {
+    background: rgba(251, 192, 45, 0.2);
+    color: #F9A825;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/history.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/history.svg');
+    }
+}
+
+.vu-section__icon[data-icon="package"] {
+    background: rgba(255, 152, 0, 0.15);
+    color: #EF6C00;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/package.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/package.svg');
+    }
+}
+
+.vu-section__icon[data-icon="timeline"] {
+    background: rgba(84, 110, 122, 0.15);
+    color: #455A64;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/timeline.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/timeline.svg');
+    }
+}
+
+.vu-section__icon[data-icon="building"] {
+    background: rgba(21, 101, 192, 0.12);
+    color: #1B4F91;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/building-2.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/building-2.svg');
+    }
+}
+
+.vu-section__icon[data-icon="book-open"] {
+    background: rgba(106, 27, 154, 0.12);
+    color: #6A1B9A;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/book-open.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/book-open.svg');
+    }
+}
+
+.vu-section__icon[data-icon="globe"] {
+    background: rgba(2, 119, 189, 0.12);
+    color: #0E5C88;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/globe.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/globe.svg');
+    }
+}
+
+.vu-section__icon[data-icon="pill"] {
+    background: rgba(236, 64, 122, 0.15);
+    color: #C2185B;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/pill.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/pill.svg');
+    }
+}
+
+.vu-section__icon[data-icon="alert-triangle"] {
+    background: rgba(251, 140, 0, 0.15);
+    color: #BF5B04;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/alert-triangle.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/alert-triangle.svg');
+    }
+}
+
+.vu-section__icon[data-icon="activity"] {
+    background: rgba(0, 150, 136, 0.12);
+    color: #00695C;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/activity.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/activity.svg');
+    }
+}
+
+.vu-section__icon[data-icon="tag"] {
+    background: rgba(158, 158, 158, 0.18);
+    color: #424242;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/tag.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/tag.svg');
+    }
+}
+
+.vu-section__icon[data-icon="calendar"] {
+    background: rgba(33, 150, 243, 0.15);
+    color: #1E88E5;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/calendar.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/calendar.svg');
+    }
+}
+
+.vu-section__icon[data-icon="syringe"] {
+    background: rgba(0, 137, 123, 0.15);
+    color: #00796B;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/syringe.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/syringe.svg');
+    }
+}
+
+.vu-section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--vu-space-lg);
+    width: 100%;
+}
+
+.vu-card {
+    @include vu-card(var(--vu-space-md));
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-sm);
+    box-shadow: 0 1px 4px rgba(15, 35, 75, 0.06);
+}
+
+.vu-card__title {
+    display: flex;
+    align-items: center;
+    gap: var(--vu-space-sm);
+    font-size: var(--vu-font-size-md);
+    font-weight: 600;
+    color: var(--vu-text-secondary);
+}
+
+.vu-field-label {
+    font-size: var(--vu-font-size-sm);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--vu-text-secondary);
+    margin-bottom: var(--vu-space-xxs);
+}
+
+.vu-field-value {
+    font-size: var(--vu-font-size-lg);
+    color: var(--vu-text-primary);
+    font-weight: 500;
+}
+
+.vu-action-bar {
+    position: sticky;
+    bottom: 0;
+    // B2 fix: rgba(var(--hex), a) is invalid CSS — the backdrop silently never
+    // applied, letting content show through while scrolling. Solid card surface.
+    background: var(--vu-surface-card);
+    padding: var(--vu-space-md) var(--vu-space-lg);
+    border-top: 1px solid var(--vu-border-soft);
+    box-shadow: var(--vu-shadow-sm);
+    display: flex;
+    gap: var(--vu-space-sm);
+    justify-content: flex-end;
+    z-index: 5;
+}
+
+// Buttons to feel modern — component tokens first, semantic fallbacks
+// (--vu-btn-* lets a theme recolor buttons independently of the primary)
+.btn-primary,
+.o_form_button_save {
+    background: var(--vu-btn-primary-bg, var(--vu-brand-primary));
+    color: var(--vu-btn-primary-text, var(--vu-text-inverse));
+    border: 1px solid var(--vu-btn-primary-bg, var(--vu-brand-primary-dark));
+    border-radius: var(--vu-radius-sm);
+    box-shadow: var(--vu-shadow-sm);
+    padding: 6px 16px;
+    font-weight: 600;
+    font-size: var(--vu-font-size-sm);
+    transition: background var(--vu-transition-fast), box-shadow var(--vu-transition-fast);
+
+    &:hover {
+        background: var(--vu-btn-primary-hover, var(--vu-brand-primary-dark));
+        box-shadow: var(--vu-shadow-md);
+    }
+}
+
+.btn-secondary,
+.o_form_button_cancel {
+    background: var(--vu-btn-secondary-bg, var(--vu-surface-muted));
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-sm);
+    color: var(--vu-btn-secondary-text, var(--vu-text-secondary));
+    padding: 6px 16px;
+    font-size: var(--vu-font-size-sm);
+    transition: background var(--vu-transition-fast), color var(--vu-transition-fast);
+
+    &:hover {
+        background: var(--vu-btn-secondary-hover, var(--vu-surface-hover));
+    }
+}
+
+// Professional selection highlighting
+.o_list_view .o_data_row.o_selected_row,
+.o_list_view .o_data_row:focus {
+    background-color: rgba(21, 101, 192, 0.08); // Deep Blue highlight
+}
+
+// Healthcare Badge Colors (ID, Age, etc.) - Professional pill-shaped badges
+.badge.bg-info {
+    // Flat mono (Phase 1): tinted background + solid border, no gradient
+    background: #E4F4FD !important;
+    color: #0D356B !important;
+    border: 1.5px solid #42A5F5 !important;
+    border-radius: 16px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    padding: 3px 10px !important;
+    box-shadow: 0 1px 3px rgba(66, 165, 245, 0.12) !important;
+    transition: all 0.2s ease !important;
+
+    strong {
+        color: #1565C0 !important;
+        font-weight: 700 !important;
+        margin-right: 3px;
+    }
+
+    .o_field_widget {
+        display: inline-block !important;
+        background: transparent !important;
+        border: none !important;
+        color: #0D356B !important;
+        padding: 0 !important;
+        margin: 0 0 0 3px !important;
+        width: 100px !important;
+        min-width: 80px !important;
+        max-width: 160px !important;
+        font-size: 13px !important;
+
+        input,
+        span {
+            background: transparent !important;
+            border: none !important;
+            color: #0D356B !important;
+            padding: 0 !important;
+            width: 100px !important;
+            min-width: 80px !important;
+            box-shadow: none !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+        }
+    }
+
+    &:hover {
+        box-shadow: 0 2px 6px rgba(66, 165, 245, 0.2) !important;
+        transform: translateY(-1px);
+    }
+}
+
+.badge.bg-secondary {
+    // Flat mono (Phase 1): tinted background + solid border, no gradient
+    background: #E4F4FD !important;
+    color: #1F5E97 !important;
+    border: 1.5px solid #1565C0 !important;
+    border-radius: 16px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    padding: 3px 10px !important;
+    box-shadow: 0 1px 3px rgba(21, 101, 192, 0.12) !important;
+    transition: all 0.2s ease !important;
+
+    strong {
+        color: #1565C0 !important;
+        font-weight: 700 !important;
+        margin-right: 3px;
+    }
+
+    .o_field_widget {
+        display: inline-block !important;
+        background: transparent !important;
+        border: none !important;
+        color: #1F5E97 !important;
+        padding: 0 !important;
+        margin: 0 0 0 3px !important;
+        width: 100px !important;
+        min-width: 80px !important;
+        max-width: 160px !important;
+        font-size: 13px !important;
+
+        input,
+        span {
+            background: transparent !important;
+            border: none !important;
+            color: #1F5E97 !important;
+            padding: 0 !important;
+            width: 100px !important;
+            min-width: 80px !important;
+            box-shadow: none !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+        }
+    }
+
+    &:hover {
+        box-shadow: 0 2px 6px rgba(21, 101, 192, 0.2) !important;
+        transform: translateY(-1px);
+    }
+}
+
+// Modern tabs
+.o_notebook {
+    border-bottom: 1px solid var(--vu-border-soft);
+    margin-bottom: var(--vu-space-md);
+
+    >ul {
+        display: flex;
+        gap: var(--vu-space-md);
+        border: none;
+        padding-bottom: var(--vu-space-xs);
+
+        >li>a {
+            font-weight: 600;
+            letter-spacing: .04em;
+            color: var(--vu-text-secondary);
+            padding: var(--vu-space-xs) 0;
+            position: relative;
+            transition: color var(--vu-transition-fast);
+
+            &::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -6px;
+                height: 3px;
+                background: transparent;
+                border-radius: 99px;
+                transition: background var(--vu-transition-fast), transform var(--vu-transition-fast);
+                transform: scaleX(0);
+            }
+        }
+
+        >li.ui-tabs-active>a {
+            color: var(--vu-tab-active, var(--vu-brand-primary));
+
+            &::after {
+                background: var(--vu-tab-active, var(--vu-brand-primary));
+                transform: scaleX(1);
+            }
+        }
+    }
+}
+
+// Native focus: brand border for pointer focus, visible ring for keyboard
+// focus (Phase 1 accessibility fix — WCAG 2.4.7). Mouse users keep the quiet
+// underline look; Tab navigation gets an unmistakable brand ring.
+.o_form_view .o_field_widget input:focus,
+.o_form_view .o_field_widget textarea:focus,
+.o_form_view .o_field_widget select:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: var(--vu-brand-primary) !important;
+}
+
+.o_form_view .o_field_widget input:focus-visible,
+.o_form_view .o_field_widget textarea:focus-visible,
+.o_form_view .o_field_widget select:focus-visible,
+.o_web_client button:focus-visible,
+.o_web_client a:focus-visible,
+.o_web_client [role="button"]:focus-visible,
+.o_web_client .nav-link:focus-visible {
+    outline: 2px solid var(--vu-focus-ring, var(--vu-brand-primary)) !important;
+    outline-offset: 2px;
+    border-radius: var(--vu-radius-sm);
+}
+
+// Patient badges smaller/right aligned
+.o_form_patient_record .patient-badges {
+    display: inline-flex;
+    gap: var(--vu-space-sm);
+    margin-left: auto;
+}
+
+.o_form_patient_record .patient-badge {
+    background-color: var(--vu-surface-muted) !important;
+    color: var(--vu-brand-primary) !important;
+    border: 2px solid var(--vu-brand-primary) !important;
+    border-radius: 999px;
+    padding: 6px 16px !important;
+    font-size: var(--vu-font-size-md) !important;
+    font-weight: 600 !important;
+}
+
+.o_form_patient_record .patient-badge.badge-age {
+    color: #BF5B04 !important;
+    border-color: #BF5B04 !important;
+}
+
+// Icon utilities
+.vu-icon {
+    width: var(--vu-icon-size);
+    height: var(--vu-icon-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vu-brand-primary);
+
+    &--success {
+        color: var(--vu-status-success);
+    }
+
+    &--info {
+        color: var(--vu-status-info);
+    }
+
+    &--warning {
+        color: var(--vu-status-warning);
+    }
+
+    &--danger {
+        color: var(--vu-status-danger);
+    }
+}
+
+// Fix for User Roles form layout text wrapping
+.o_user_role_groups {
+    // Ensure the group takes full width
+    width: 100% !important;
+
+    // Target the inner groups (columns) to ensure they have enough width
+    .o_inner_group {
+        min-width: 450px !important;
+        flex: 1 1 auto !important;
+    }
+
+    // Prevent premature wrapping on checkbox labels
+    .form-check {
+        width: 100%;
+        padding-right: var(--vu-space-md);
+
+        .form-check-label {
+            white-space: nowrap !important;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+        }
+    }
+}
+
