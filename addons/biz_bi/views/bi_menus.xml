@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_bi_root" name="Analytics"
+              web_icon="biz_bi,static/description/icon.png"
+              sequence="145"
+              groups="biz_bi.group_bi_viewer"/>
+
+    <menuitem id="menu_bi_home" name="Home"
+              parent="menu_bi_root" sequence="10"
+              action="action_bi_home"
+              groups="biz_bi.group_bi_viewer"/>
+
+    <menuitem id="menu_bi_explore" name="Explore"
+              parent="menu_bi_root" sequence="20"
+              action="action_bi_explore"
+              groups="biz_bi.group_bi_creator"/>
+
+    <menuitem id="menu_bi_data" name="Data"
+              parent="menu_bi_root" sequence="30"
+              groups="biz_bi.group_bi_modeler"/>
+
+    <menuitem id="menu_bi_dataset_wizard" name="New Dataset"
+              parent="menu_bi_data" sequence="5"
+              action="action_bi_dataset_wizard"/>
+    <menuitem id="menu_bi_datasets" name="Datasets"
+              parent="menu_bi_data" sequence="10"
+              action="action_bi_dataset"/>
+    <menuitem id="menu_bi_sources" name="Sources"
+              parent="menu_bi_data" sequence="20"
+              action="action_bi_source"/>
+    <menuitem id="menu_bi_refresh" name="Refresh Jobs"
+              parent="menu_bi_data" sequence="30"
+              action="action_bi_refresh_job"/>
+    <menuitem id="menu_bi_glossary" name="Glossary"
+              parent="menu_bi_data" sequence="40"
+              action="action_bi_glossary"/>
+
+    <menuitem id="menu_bi_config" name="Configuration"
+              parent="menu_bi_root" sequence="90"
+              groups="biz_bi.group_bi_admin"/>
+
+    <menuitem id="menu_bi_workspaces" name="Workspaces"
+              parent="menu_bi_config" sequence="10"
+              action="action_bi_workspace"/>
+    <menuitem id="menu_bi_access_rules" name="Access Rules"
+              parent="menu_bi_config" sequence="20"
+              action="action_bi_access_rule"/>
+    <menuitem id="menu_bi_ai_providers" name="AI Providers"
+              parent="menu_bi_config" sequence="30"
+              action="action_bi_ai_provider"/>
+    <menuitem id="menu_bi_audit" name="Audit Log"
+              parent="menu_bi_config" sequence="40"
+              action="action_bi_audit_log"/>
+
+</odoo>

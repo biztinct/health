@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ============================================================ -->
+        <!-- Security groups: viewer -> creator -> modeler -> admin       -->
+        <!-- Odoo 19: no category_id on res.groups; chain via implied_ids -->
+        <!-- ============================================================ -->
+
+        <record id="group_bi_viewer" model="res.groups">
+            <field name="name">BI Viewer</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Can view dashboards and charts shared with them.</field>
+        </record>
+
+        <record id="group_bi_creator" model="res.groups">
+            <field name="name">BI Dashboard Creator</field>
+            <field name="implied_ids" eval="[(4, ref('group_bi_viewer'))]"/>
+            <field name="comment">Can build charts and dashboards on published datasets.</field>
+        </record>
+
+        <record id="group_bi_modeler" model="res.groups">
+            <field name="name">BI Data Modeler</field>
+            <field name="implied_ids" eval="[(4, ref('group_bi_creator'))]"/>
+            <field name="comment">Can manage sources, datasets, relationships and refresh jobs.</field>
+        </record>
+
+        <record id="group_bi_admin" model="res.groups">
+            <field name="name">BI Administrator</field>
+            <field name="implied_ids" eval="[(4, ref('group_bi_modeler'))]"/>
+            <field name="comment">Full control including access rules and AI providers.</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Record rules                                                  -->
+        <!-- ============================================================ -->
+
+        <!-- Workspace visibility: owner, member, group share, or default -->
+        <record id="rule_bi_workspace_visibility" model="ir.rule">
+            <field name="name">BI Workspace: visible to owner/members/groups</field>
+            <field name="model_id" ref="model_bi_workspace"/>
+            <field name="domain_force">['|', '|', '|',
+                ('owner_id', '=', user.id),
+                ('member_ids', 'in', user.id),
+                ('group_ids', 'in', user.all_group_ids.ids),
+                '&amp;', ('member_ids', '=', False), ('group_ids', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_viewer'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Admins see and manage everything -->
+        <record id="rule_bi_workspace_admin" model="ir.rule">
+            <field name="name">BI Workspace: admin full access</field>
+            <field name="model_id" ref="model_bi_workspace"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_admin'))]"/>
+        </record>
+
+        <!-- Workspace multi-company -->
+        <record id="rule_bi_workspace_company" model="ir.rule">
+            <field name="name">BI Workspace: multi-company</field>
+            <field name="model_id" ref="model_bi_workspace"/>
+            <field name="domain_force">['|', ('company_ids', '=', False), ('company_ids', 'in', company_ids)]</field>
+            <field name="global" eval="True"/>
+        </record>
+
+        <!-- Datasets follow their workspace -->
+        <record id="rule_bi_dataset_workspace" model="ir.rule">
+            <field name="name">BI Dataset: workspace scoped</field>
+            <field name="model_id" ref="model_bi_dataset"/>
+            <field name="domain_force">['|', '|', '|',
+                ('workspace_id.owner_id', '=', user.id),
+                ('workspace_id.member_ids', 'in', user.id),
+                ('workspace_id.group_ids', 'in', user.all_group_ids.ids),
+                '&amp;', ('workspace_id.member_ids', '=', False), ('workspace_id.group_ids', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_viewer'))]"/>
+        </record>
+
+        <record id="rule_bi_dataset_admin" model="ir.rule">
+            <field name="name">BI Dataset: admin full access</field>
+            <field name="model_id" ref="model_bi_dataset"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_admin'))]"/>
+        </record>
+
+        <!-- Charts: viewers read workspace-visible; creators write own -->
+        <record id="rule_bi_chart_read" model="ir.rule">
+            <field name="name">BI Chart: workspace scoped read</field>
+            <field name="model_id" ref="model_bi_chart"/>
+            <field name="domain_force">['|', '|', '|',
+                ('workspace_id.owner_id', '=', user.id),
+                ('workspace_id.member_ids', 'in', user.id),
+                ('workspace_id.group_ids', 'in', user.all_group_ids.ids),
+                '&amp;', ('workspace_id.member_ids', '=', False), ('workspace_id.group_ids', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_viewer'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_bi_chart_creator_own" model="ir.rule">
+            <field name="name">BI Chart: creators manage own</field>
+            <field name="model_id" ref="model_bi_chart"/>
+            <field name="domain_force">[('owner_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_creator'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_bi_chart_modeler" model="ir.rule">
+            <field name="name">BI Chart: modelers manage all in visible workspaces</field>
+            <field name="model_id" ref="model_bi_chart"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_modeler'))]"/>
+        </record>
+
+        <!-- Dashboards mirror charts -->
+        <record id="rule_bi_dashboard_read" model="ir.rule">
+            <field name="name">BI Dashboard: workspace scoped read</field>
+            <field name="model_id" ref="model_bi_dashboard"/>
+            <field name="domain_force">['|', '|', '|', '|',
+                ('owner_id', '=', user.id),
+                ('workspace_id.owner_id', '=', user.id),
+                ('workspace_id.member_ids', 'in', user.id),
+                ('workspace_id.group_ids', 'in', user.all_group_ids.ids),
+                '&amp;', ('workspace_id.member_ids', '=', False), ('workspace_id.group_ids', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_viewer'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_bi_dashboard_creator_own" model="ir.rule">
+            <field name="name">BI Dashboard: creators manage own</field>
+            <field name="model_id" ref="model_bi_dashboard"/>
+            <field name="domain_force">[('owner_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_creator'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_bi_dashboard_modeler" model="ir.rule">
+            <field name="name">BI Dashboard: modelers manage all</field>
+            <field name="model_id" ref="model_bi_dashboard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_bi_modeler'))]"/>
+        </record>
+
+    </data>
+</odoo>

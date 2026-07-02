@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_bi_home" model="ir.actions.client">
+        <field name="name">Analytics Home</field>
+        <field name="tag">biz_bi.home</field>
+    </record>
+
+    <record id="action_bi_explore" model="ir.actions.client">
+        <field name="name">Explore</field>
+        <field name="tag">biz_bi.explore</field>
+    </record>
+
+    <record id="action_bi_dashboard_view" model="ir.actions.client">
+        <field name="name">Dashboard</field>
+        <field name="tag">biz_bi.dashboard</field>
+    </record>
+
+</odoo>

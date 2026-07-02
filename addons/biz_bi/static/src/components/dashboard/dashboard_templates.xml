@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="biz_bi.Dashboard">
+        <div class="o_biz_bi bi-dashboard" t-att-class="state.tvMode ? 'bi-tv' : ''">
+
+            <t t-if="state.dashboard">
+                <!-- Toolbar (hidden in TV mode) -->
+                <div class="bi-toolbar" t-if="!state.tvMode">
+                    <div class="bi-toolbar-left">
+                        <span class="bi-brand-dot"/>
+                        <div>
+                            <div class="bi-dash-title" t-esc="state.dashboard.name"/>
+                            <div class="bi-dash-sub" t-esc="state.dashboard.workspace"/>
+                        </div>
+                    </div>
+                    <div class="bi-toolbar-right">
+                        <button class="bi-btn" t-on-click="() => this.loadAllWidgetData({noCache: true})"
+                                title="Refresh data">↻</button>
+                        <button t-if="state.dashboard.tv_enabled" class="bi-btn"
+                                t-on-click="enterTv" title="TV mode">⛶ TV</button>
+                        <button t-if="state.dashboard.can_edit" class="bi-btn"
+                                t-att-class="state.editMode ? 'bi-btn-primary' : ''"
+                                t-on-click="toggleEdit">
+                            <t t-if="state.editMode">Done</t>
+                            <t t-else="">Edit Layout</t>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global filter bar -->
+                <div class="bi-filter-bar"
+                     t-if="!state.tvMode and state.dashboard.filters.length">
+                    <div t-foreach="state.dashboard.filters" t-as="filter" t-key="filter.id"
+                         class="bi-filter-chip">
+                        <span class="bi-filter-name" t-esc="filter.name"/>
+                        <t t-if="filter.filter_type === 'relative_date'">
+                            <select class="bi-select bi-select-sm"
+                                    t-on-change="(ev) => this.onFilterChange(filter, 'relative', ev.target.value)">
+                                <option value="">All time</option>
+                                <t t-set="ranges" t-value="['today','last_7_days','last_30_days','this_week','this_month','last_month','this_quarter','last_6_months','last_12_months','this_year','last_year']"/>
+                                <option t-foreach="ranges" t-as="range" t-key="range"
+                                        t-att-value="range"
+                                        t-att-selected="activeFilterValue(filter) === range"
+                                        t-esc="range.replaceAll('_', ' ')"/>
+                            </select>
+                        </t>
+                        <t t-elif="filter.filter_type === 'search'">
+                            <input class="bi-input bi-input-sm" type="text"
+                                   placeholder="Search…"
+                                   t-att-value="activeFilterValue(filter)"
+                                   t-on-change="(ev) => this.onFilterChange(filter, 'like_i', ev.target.value)"/>
+                        </t>
+                        <t t-else="">
+                            <input class="bi-input bi-input-sm" type="text"
+                                   placeholder="Values, comma-separated"
+                                   t-on-change="(ev) => this.onListFilterChange(filter, ev)"/>
+                        </t>
+                    </div>
+                    <button class="bi-btn bi-btn-ghost" t-on-click="clearFilters">Clear</button>
+                </div>
+
+                <!-- Canvas -->
+                <div class="bi-canvas">
+                    <div class="grid-stack" t-ref="grid">
+                        <div t-foreach="state.dashboard.widgets" t-as="widget" t-key="widget.id"
+                             class="grid-stack-item"
+                             t-att-data-widget-id="widget.id"
+                             t-att-gs-x="widget.grid.x" t-att-gs-y="widget.grid.y"
+                             t-att-gs-w="widget.grid.w" t-att-gs-h="widget.grid.h"
+                             t-att-gs-min-w="minSize(widget).minW"
+                             t-att-gs-min-h="minSize(widget).minH">
+                            <div class="grid-stack-item-content bi-widget">
+                                <div class="bi-widget-header" t-if="widget.show_title or state.editMode">
+                                    <span class="bi-widget-title" t-esc="widget.title"/>
+                                    <t t-set="fresh" t-value="freshness(widget)"/>
+                                    <span t-if="fresh and !state.tvMode" class="bi-fresh-pill"
+                                          t-att-class="fresh.stale ? 'stale' : ''"
+                                          t-att-title="'source: ' + fresh.source">
+                                        <t t-esc="fresh.label"/>
+                                    </span>
+                                    <div class="bi-widget-menu" t-if="!state.tvMode">
+                                        <button class="bi-kebab"
+                                                t-on-click="() => this.toggleMenu(widget.id)">⋮</button>
+                                        <div t-if="state.openMenu === widget.id" class="bi-menu">
+                                            <button t-if="state.dashboard.can_edit"
+                                                    t-on-click="() => this.editWidget(widget)">Edit in Explore</button>
+                                            <button t-if="state.dashboard.can_edit"
+                                                    t-on-click="() => this.duplicateWidget(widget)">Duplicate</button>
+                                            <button t-on-click="() => this.exportWidgetCsv(widget)">Export CSV</button>
+                                            <button t-if="state.dashboard.can_edit" class="bi-menu-danger"
+                                                    t-on-click="() => this.removeWidget(widget)">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bi-widget-body">
+                                    <t t-set="envelope" t-value="state.envelopes[widget.id]"/>
+                                    <t t-if="envelope and !envelope.error">
+                                        <KpiCard t-if="rendererFor(widget) === 'kpi'"
+                                                 envelope="envelope" config="widgetConfig(widget)"
+                                                 showLabel="false"/>
+                                        <DataTable t-elif="rendererFor(widget) === 'table'"
+                                                   envelope="envelope" config="widgetConfig(widget)"/>
+                                        <ChartRenderer t-else=""
+                                                       envelope="envelope" config="widgetConfig(widget)"/>
+                                    </t>
+                                    <div t-elif="envelope and envelope.error" class="bi-widget-error"
+                                         t-esc="envelope.error"/>
+                                    <div t-else="" class="bi-widget-loading">
+                                        <div class="bi-spinner"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty canvas: dashed placeholder tile -->
+                    <div t-if="!state.dashboard.widgets.length" class="bi-canvas-empty">
+                        <div class="bi-empty-tile">
+                            <p>No charts yet.</p>
+                            <p>Build one in <b>Explore</b> and click <b>Add to Dashboard</b>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TV exit -->
+                <button t-if="state.tvMode" class="bi-tv-exit" t-on-click="exitTv">✕</button>
+            </t>
+
+            <div t-else="" class="bi-explore-empty">
+                <h3>No dashboard found. Create one from BI Home.</h3>
+            </div>
+        </div>
+    </t>
+
+</templates>

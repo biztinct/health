@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="biz_bi.ChartRenderer">
+        <div class="bi-chart-host" t-ref="container"/>
+    </t>
+
+    <t t-name="biz_bi.KpiCard">
+        <div class="bi-kpi-card" t-att-title="metric.full">
+            <div t-if="props.showLabel !== false" class="bi-kpi-label" t-esc="metric.label"/>
+            <div class="bi-kpi-value" t-esc="metric.value"/>
+            <div t-if="delta" class="bi-kpi-delta"
+                 t-att-class="delta.direction === 'up' ? 'bi-kpi-up' : 'bi-kpi-down'">
+                <span t-esc="(delta.direction === 'up' ? '▲ ' : '▼ ') + delta.pct + '%'"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="biz_bi.DataTable">
+        <div class="bi-table-wrap">
+            <table class="bi-table">
+                <thead>
+                    <tr>
+                        <th t-foreach="table.columns" t-as="col" t-key="col.ref"
+                            t-att-class="col.role === 'measure' ? 'bi-num' : ''"
+                            t-esc="col.label"/>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="table.rows" t-as="row" t-key="row_index">
+                        <td t-foreach="row" t-as="cell" t-key="cell_index"
+                            t-att-class="table.columns[cell_index].role === 'measure' ? 'bi-num' : ''"
+                            t-esc="cell"/>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="biz_bi.Explore">
+        <div class="o_biz_bi bi-explore">
+
+            <!-- Toolbar -->
+            <div class="bi-toolbar">
+                <div class="bi-toolbar-left">
+                    <span class="bi-brand-dot"/>
+                    <select class="bi-select" t-on-change="onDatasetSelectChange">
+                        <option value="" t-att-selected="!state.datasetId">— Select a dataset —</option>
+                        <option t-foreach="state.datasets" t-as="ds" t-key="ds.id"
+                                t-att-value="ds.id"
+                                t-att-selected="ds.id === state.datasetId">
+                            <t t-esc="ds.name"/><t t-if="ds.is_certified"> ✦</t>
+                        </option>
+                    </select>
+                </div>
+                <div class="bi-toolbar-right">
+                    <input class="bi-input bi-chart-name" type="text"
+                           placeholder="Chart name…"
+                           t-model="state.chartName"/>
+                    <button class="bi-btn" t-on-click="saveChart"
+                            t-att-disabled="state.saving or !state.datasetId">
+                        Save
+                    </button>
+                    <button class="bi-btn bi-btn-primary" t-on-click="addToDashboard"
+                            t-att-disabled="!state.datasetId">
+                        Add to Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <div class="bi-explore-body" t-if="state.datasetId">
+
+                <!-- Left: field well -->
+                <div class="bi-field-well">
+                    <input class="bi-input bi-field-search" type="text"
+                           placeholder="Search fields…" t-model="state.search"/>
+                    <div class="bi-folders">
+                        <div t-foreach="folders" t-as="folder" t-key="folder.name"
+                             class="bi-folder">
+                            <div class="bi-folder-title"
+                                 t-on-click="() => this.toggleFolder(folder.name)">
+                                <span class="bi-folder-caret"
+                                      t-att-class="state.openFolders[folder.name] ? 'open' : ''"/>
+                                <span t-esc="folder.name"/>
+                            </div>
+                            <div t-if="state.openFolders[folder.name]" class="bi-folder-fields">
+                                <div t-foreach="folder.fields" t-as="field" t-key="field.id"
+                                     class="bi-field-item"
+                                     t-att-class="'bi-role-' + field.role"
+                                     draggable="true"
+                                     t-att-title="field.description or field.glossary or field.name"
+                                     t-on-dragstart="(ev) => this.onFieldDragStart(ev, field)"
+                                     t-on-dblclick="() => this.addToSlot(field.role === 'measure' ? 'values' : 'x', field)">
+                                    <span class="bi-field-ico"/>
+                                    <span class="bi-field-name" t-esc="field.name"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center: preview -->
+                <div class="bi-preview">
+                    <div t-if="state.loading" class="bi-preview-loading">
+                        <div class="bi-spinner"/>
+                    </div>
+                    <t t-if="state.envelope and !state.envelope.error">
+                        <KpiCard t-if="rendererKind === 'kpi'"
+                                 envelope="state.envelope" config="chartConfig"/>
+                        <DataTable t-elif="rendererKind === 'table'"
+                                   envelope="state.envelope" config="chartConfig"/>
+                        <ChartRenderer t-else=""
+                                       envelope="state.envelope" config="chartConfig"/>
+                        <div class="bi-preview-meta">
+                            <span t-esc="state.envelope.meta.row_count"/> rows ·
+                            <span t-esc="state.envelope.meta.duration_ms"/> ms ·
+                            <span t-esc="state.envelope.meta.source"/>
+                        </div>
+                    </t>
+                    <div t-elif="state.envelope and state.envelope.error"
+                         class="bi-preview-error">
+                        <span t-esc="state.envelope.error"/>
+                    </div>
+                    <div t-else="" class="bi-preview-empty">
+                        <div class="bi-empty-art"/>
+                        <p>Drag a measure into <b>Values</b> and a field into <b>Axis</b> to start.</p>
+                    </div>
+                </div>
+
+                <!-- Right: chart types + slots -->
+                <div class="bi-config-panel">
+                    <div class="bi-panel-section">
+                        <div class="bi-panel-title">Chart Type</div>
+                        <div class="bi-gallery">
+                            <t t-foreach="gallery" t-as="entry" t-key="entry.type">
+                                <t t-set="gstate" t-value="galleryEntryState(entry.type)"/>
+                                <button class="bi-gallery-item"
+                                        t-att-class="(gstate.active ? 'active ' : '') + (gstate.ok ? '' : 'disabled ') + (gstate.recommended ? 'recommended' : '')"
+                                        t-att-title="gstate.ok ? entry.label : gstate.reason"
+                                        t-on-click="() => gstate.ok and this.pickChartType(entry.type)">
+                                    <span t-att-class="'bi-cticon bi-cticon-' + entry.icon"/>
+                                    <span class="bi-gallery-label" t-esc="entry.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <t t-set="slotDefs" t-value="[
+                        {key: 'x', label: 'Axis / Category'},
+                        {key: 'values', label: 'Values'},
+                        {key: 'series', label: 'Series / Color'},
+                        {key: 'filters', label: 'Filters'},
+                    ]"/>
+                    <div t-foreach="slotDefs" t-as="slotDef" t-key="slotDef.key"
+                         class="bi-panel-section">
+                        <div class="bi-panel-title" t-esc="slotDef.label"/>
+                        <div class="bi-slot"
+                             t-att-class="state.dragOverSlot === slotDef.key ? 'bi-slot-over' : ''"
+                             t-on-dragover="(ev) => this.onSlotDragOver(ev, slotDef.key)"
+                             t-on-dragleave="onSlotDragLeave"
+                             t-on-drop="(ev) => this.onSlotDrop(ev, slotDef.key)">
+                            <div t-foreach="state.slots[slotDef.key]" t-as="chip" t-key="chip.id"
+                                 class="bi-chip" t-att-class="'bi-role-' + (chip.role or 'dimension')">
+                                <span class="bi-chip-name" t-esc="chip.name"/>
+                                <select t-if="slotDef.key === 'values'" class="bi-chip-select"
+                                        t-on-change="(ev) => this.setChipAgg(chip, ev.target.value)">
+                                    <option t-foreach="aggs" t-as="agg" t-key="agg"
+                                            t-att-value="agg" t-att-selected="chip.agg === agg"
+                                            t-esc="agg"/>
+                                </select>
+                                <select t-if="slotDef.key !== 'values' and slotDef.key !== 'filters' and (chip.data_type === 'date' or chip.data_type === 'datetime')"
+                                        class="bi-chip-select"
+                                        t-on-change="(ev) => this.setChipGrain(chip, ev.target.value)">
+                                    <option t-foreach="grains" t-as="grain" t-key="grain"
+                                            t-att-value="grain" t-att-selected="chip.grain === grain"
+                                            t-esc="grain"/>
+                                </select>
+                                <t t-if="slotDef.key === 'filters'">
+                                    <select class="bi-chip-select"
+                                            t-on-change="(ev) => this.setFilterOp(chip, ev)">
+                                        <t t-set="ops" t-value="(chip.data_type === 'date' or chip.data_type === 'datetime') ? ['relative','gte','lte'] : (['integer','float','monetary'].indexOf(chip.data_type) !== -1 ? ['gte','lte','eq','between'] : ['like_i','eq','in','is_set'])"/>
+                                        <option t-foreach="ops" t-as="op" t-key="op"
+                                                t-att-value="op" t-att-selected="chip.op === op"
+                                                t-esc="op"/>
+                                    </select>
+                                    <select t-if="chip.op === 'relative'" class="bi-chip-select"
+                                            t-on-change="(ev) => this.setFilterValue(chip, ev)">
+                                        <option value="">…</option>
+                                        <t t-set="ranges" t-value="['today','yesterday','last_7_days','last_30_days','this_week','this_month','last_month','this_quarter','last_6_months','last_12_months','this_year','last_year']"/>
+                                        <option t-foreach="ranges" t-as="range" t-key="range"
+                                                t-att-value="range" t-att-selected="chip.value === range"
+                                                t-esc="range"/>
+                                    </select>
+                                    <input t-else="" class="bi-chip-input" type="text"
+                                           t-att-value="filterValueText(chip)"
+                                           placeholder="value"
+                                           t-on-change="(ev) => this.setFilterValue(chip, ev)"/>
+                                </t>
+                                <button class="bi-chip-remove"
+                                        t-on-click="() => this.removeFromSlot(slotDef.key, chip_index)">×</button>
+                            </div>
+                            <div t-if="!state.slots[slotDef.key].length" class="bi-slot-hint">
+                                Drop a field here
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div t-else="" class="bi-explore-empty">
+                <div class="bi-empty-art"/>
+                <h3>Pick a dataset to start exploring</h3>
+            </div>
+        </div>
+    </t>
+
+</templates>

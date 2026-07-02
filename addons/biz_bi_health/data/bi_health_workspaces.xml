@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="workspace_operations" model="bi.workspace">
+            <field name="name">Operations</field>
+            <field name="code">health_ops</field>
+            <field name="color">0</field>
+            <field name="icon">stethoscope</field>
+            <field name="description">Bookings, staff workload and service delivery.</field>
+        </record>
+
+        <record id="workspace_finance" model="bi.workspace">
+            <field name="name">Finance</field>
+            <field name="code">health_fin</field>
+            <field name="color">2</field>
+            <field name="icon">credit-card</field>
+            <field name="description">Revenue, invoicing and receivables.</field>
+        </record>
+
+        <record id="workspace_growth" model="bi.workspace">
+            <field name="name">Growth</field>
+            <field name="code">health_growth</field>
+            <field name="color">1</field>
+            <field name="icon">target</field>
+            <field name="description">Leads, conversion and acquisition channels.</field>
+        </record>
+
+    </data>
+</odoo>

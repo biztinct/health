@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="biz_bi.Home">
+        <div class="o_biz_bi bi-home">
+            <div class="bi-home-hero">
+                <div>
+                    <h2>Analytics</h2>
+                    <p class="bi-home-sub">Explore data, build charts, share dashboards.</p>
+                </div>
+                <div class="bi-home-ctas">
+                    <button t-if="state.isCreator" class="bi-btn bi-btn-primary"
+                            t-on-click="openExplore">+ New Chart</button>
+                    <button t-if="state.isCreator" class="bi-btn"
+                            t-on-click="newDashboard">+ New Dashboard</button>
+                </div>
+            </div>
+
+            <div t-if="state.recents.length" class="bi-home-section">
+                <div class="bi-home-section-title">Recently viewed</div>
+                <div class="bi-recent-row">
+                    <button t-foreach="state.recents" t-as="recent" t-key="recent.id"
+                            class="bi-recent-card"
+                            t-on-click="() => this.openDashboard(recent.id)">
+                        <span class="bi-recent-name" t-esc="recent.name"/>
+                        <span class="bi-recent-ws" t-esc="recent.workspace"/>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bi-home-section">
+                <div class="bi-home-section-title">Workspaces</div>
+                <div class="bi-workspace-grid">
+                    <div t-foreach="state.workspaces" t-as="workspace" t-key="workspace.id"
+                         class="bi-workspace-card"
+                         t-att-class="'bi-color-' + (workspace.color % 10)">
+                        <div class="bi-workspace-head">
+                            <span class="bi-workspace-name" t-esc="workspace.name"/>
+                            <span class="bi-workspace-counts">
+                                <t t-esc="workspace.dashboard_count"/> dashboards ·
+                                <t t-esc="workspace.dataset_count"/> datasets
+                            </span>
+                        </div>
+                        <p t-if="workspace.description" class="bi-workspace-desc"
+                           t-esc="workspace.description"/>
+                        <div class="bi-workspace-dashlist">
+                            <button t-foreach="dashboardsOf(workspace.id)" t-as="dash"
+                                    t-key="dash.id" class="bi-dash-link"
+                                    t-on-click="() => this.openDashboard(dash.id)">
+                                <span class="bi-dash-dot"/>
+                                <span t-esc="dash.name"/>
+                            </button>
+                            <div t-if="!dashboardsOf(workspace.id).length"
+                                 class="bi-dash-none">No dashboards yet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="glossary_booking" model="bi.glossary.term">
+            <field name="name">Booking</field>
+            <field name="definition">A field service order (FSO): one scheduled home-care visit for one client, possibly served by multiple staff.</field>
+            <field name="formula_note">1 booking = 1 health.fieldservice.order record</field>
+        </record>
+
+        <record id="glossary_service_fee" model="bi.glossary.term">
+            <field name="name">Service Fee</field>
+            <field name="definition">The VND fee charged for one booking, before travel fees and package deductions.</field>
+        </record>
+
+        <record id="glossary_outstanding" model="bi.glossary.term">
+            <field name="name">Outstanding Amount</field>
+            <field name="definition">Invoiced but not yet paid (accounts receivable): posted customer invoice residuals.</field>
+            <field name="formula_note">sum of amount_residual on posted customer invoices</field>
+        </record>
+
+    </data>
+</odoo>

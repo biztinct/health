@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Provider templates: endpoints and models pre-filled, keys empty. -->
+        <record id="ai_provider_claude" model="bi.ai.provider">
+            <field name="name">Anthropic Claude</field>
+            <field name="provider">anthropic</field>
+            <field name="endpoint">https://api.anthropic.com/v1/messages</field>
+            <field name="model_name">claude-sonnet-4-5</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="ai_provider_openai" model="bi.ai.provider">
+            <field name="name">OpenAI</field>
+            <field name="provider">openai</field>
+            <field name="endpoint">https://api.openai.com/v1/chat/completions</field>
+            <field name="model_name">gpt-4o-mini</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="ai_provider_ollama" model="bi.ai.provider">
+            <field name="name">Ollama (local)</field>
+            <field name="provider">ollama</field>
+            <field name="endpoint">http://localhost:11434/api/chat</field>
+            <field name="model_name">llama3.1:8b</field>
+            <field name="active" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

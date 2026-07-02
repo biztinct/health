@@ -1,0 +1,423 @@
+# Vietnamese translation for biz_bi
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 biz_bi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: vi_VN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Analytics"
+msgstr "Phân tích"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Home"
+msgstr "Trang chủ"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Explore"
+msgstr "Khám phá"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Data"
+msgstr "Dữ liệu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "New Dataset"
+msgstr "Tạo bộ dữ liệu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Datasets"
+msgstr "Bộ dữ liệu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Sources"
+msgstr "Nguồn dữ liệu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Refresh Jobs"
+msgstr "Lịch làm mới"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Glossary"
+msgstr "Thuật ngữ"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Configuration"
+msgstr "Cấu hình"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Workspaces"
+msgstr "Không gian làm việc"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Access Rules"
+msgstr "Quy tắc truy cập"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "AI Providers"
+msgstr "Nhà cung cấp AI"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Audit Log"
+msgstr "Nhật ký kiểm tra"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Bar"
+msgstr "Cột"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Stacked"
+msgstr "Cột chồng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "H. Bar"
+msgstr "Cột ngang"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Line"
+msgstr "Đường"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Area"
+msgstr "Vùng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Combo"
+msgstr "Kết hợp"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Donut"
+msgstr "Vòng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "KPI"
+msgstr "KPI"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Table"
+msgstr "Bảng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Chart Type"
+msgstr "Loại biểu đồ"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Axis / Category"
+msgstr "Trục / Danh mục"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Values"
+msgstr "Giá trị"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Series / Color"
+msgstr "Chuỗi / Màu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Filters"
+msgstr "Bộ lọc"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Drop a field here"
+msgstr "Kéo trường dữ liệu vào đây"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Save"
+msgstr "Lưu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Add to Dashboard"
+msgstr "Thêm vào bảng điều khiển"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Chart saved."
+msgstr "Đã lưu biểu đồ."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Give the chart a name first."
+msgstr "Hãy đặt tên cho biểu đồ trước."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Measures go in Values"
+msgstr "Chỉ số phải đặt vào ô Giá trị"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Pick a dataset to start exploring"
+msgstr "Chọn một bộ dữ liệu để bắt đầu khám phá"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Search fields…"
+msgstr "Tìm trường dữ liệu…"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Chart name…"
+msgstr "Tên biểu đồ…"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Dashboard"
+msgstr "Bảng điều khiển"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Edit Layout"
+msgstr "Sửa bố cục"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Done"
+msgstr "Xong"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Clear"
+msgstr "Xóa lọc"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Edit in Explore"
+msgstr "Sửa trong Khám phá"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Duplicate"
+msgstr "Nhân bản"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Export CSV"
+msgstr "Xuất CSV"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Remove"
+msgstr "Gỡ bỏ"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "just now"
+msgstr "vừa xong"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "%s min ago"
+msgstr "%s phút trước"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "No charts yet."
+msgstr "Chưa có biểu đồ nào."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Explore data, build charts, share dashboards."
+msgstr "Khám phá dữ liệu, tạo biểu đồ, chia sẻ bảng điều khiển."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "+ New Chart"
+msgstr "+ Biểu đồ mới"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "+ New Dashboard"
+msgstr "+ Bảng điều khiển mới"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Recently viewed"
+msgstr "Xem gần đây"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Dashboard name"
+msgstr "Tên bảng điều khiển"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "No dashboards yet"
+msgstr "Chưa có bảng điều khiển"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "BI Workspace"
+msgstr "Không gian BI"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "BI Dataset"
+msgstr "Bộ dữ liệu BI"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "BI Semantic Field"
+msgstr "Trường ngữ nghĩa BI"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "BI Chart"
+msgstr "Biểu đồ BI"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "BI Dashboard"
+msgstr "Bảng điều khiển BI"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Business Name"
+msgstr "Tên nghiệp vụ"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Dimension"
+msgstr "Chiều phân tích"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Measure"
+msgstr "Chỉ số"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Date"
+msgstr "Ngày"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Publish"
+msgstr "Xuất bản"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Unpublish"
+msgstr "Hủy xuất bản"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Refresh Now"
+msgstr "Làm mới ngay"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Dataset %s is not published."
+msgstr "Bộ dữ liệu %s chưa được xuất bản."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "Nothing to query — add a field."
+msgstr "Chưa có gì để truy vấn — hãy thêm một trường dữ liệu."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components:0
+msgid "The query took longer than %s seconds. Add filters or publish the dataset to Gold."
+msgstr "Truy vấn mất hơn %s giây. Hãy thêm bộ lọc hoặc xuất bản bộ dữ liệu sang Gold."
