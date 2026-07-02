@@ -9,6 +9,7 @@ import base64
 import hashlib
 import json
 import logging
+import re
 
 import requests
 
@@ -208,7 +209,9 @@ Rules:
 - NEVER use the same field in both x and series.
 - Time series ("monthly", "over time", "trend"): x = the date field with the
   grain; the breakdown dimension ("by facility", "by status") goes in series.
-- Titles: use the same language as the USER REQUEST text.
+- Titles: obey the TITLE LANGUAGE line in the user message exactly — every
+  name/title field must be in that language, regardless of the languages
+  used inside the dataset card.
 - Use "relative" op with values like: today, last_7_days, last_30_days,
   this_week, this_month, last_month, this_quarter, last_6_months,
   last_12_months, this_year, last_year.
@@ -383,13 +386,27 @@ class BiAi(models.AbstractModel):
         self.env['bi.query.engine']._resolve_request(dataset, request)
         return config
 
+    # Vietnamese is unambiguously detectable by its diacritics; anything
+    # else defaults to English. Deterministic — never left to the model.
+    VIETNAMESE_CHARS = re.compile(
+        '[ăđơưà-ãè-êì-íò-õ'
+        'ù-úýẠ-ỹ]', re.IGNORECASE)
+
+    @classmethod
+    def _title_language(cls, prompt):
+        return 'Vietnamese' if cls.VIETNAMESE_CHARS.search(prompt or '') \
+            else 'English'
+
     def _complete_validated(self, dataset, system, prompt, kind, validate):
         provider = self.env['bi.ai.provider'].get_default()
         if not provider:
             return None, _("No AI provider configured.")
         card = dataset.get_dataset_card()
-        user_message = "DATASET CARD:\n%s\n\nUSER REQUEST:\n%s" % (
-            json.dumps(card, ensure_ascii=False, default=str), prompt)
+        user_message = (
+            "TITLE LANGUAGE: %s — every name/title you output MUST be in "
+            "this language.\n\nDATASET CARD:\n%s\n\nUSER REQUEST:\n%s" % (
+                self._title_language(prompt),
+                json.dumps(card, ensure_ascii=False, default=str), prompt))
         started = fields.Datetime.now()
         last_error = None
         for attempt in range(2):

@@ -29,8 +29,9 @@ def _bucket_label(value):
 
 NARRATION_SYSTEM_PROMPT = """You are a BI analyst. You receive computed
 FINDINGS (JSON) about one chart. Write 2-4 short sentences summarizing what
-matters for a business reader, in the SAME LANGUAGE as the provided
-chart_title. Only restate the numbers given — never invent or recompute.
+matters for a business reader, in the language named by OUTPUT LANGUAGE —
+exactly that language, regardless of the languages inside the findings.
+Only restate the numbers given — never invent or recompute.
 No markdown, no bullet points, plain sentences."""
 
 
@@ -224,6 +225,9 @@ class BiInsights(models.AbstractModel):
         provider = self.env['bi.ai.provider'].get_default()
         if not provider or not provider._is_usable():
             return None
+        lang_code = self.env.user.lang or 'en_US'
+        lang = self.env['res.lang'].search(
+            [('code', '=', lang_code)], limit=1)
         payload = {
             'chart_title': chart.name,
             'findings': [{'kind': f['kind'], 'severity': f['severity'],
@@ -233,7 +237,9 @@ class BiInsights(models.AbstractModel):
         try:
             narration = provider._complete(
                 NARRATION_SYSTEM_PROMPT,
-                json.dumps(payload, ensure_ascii=False, default=str),
+                "OUTPUT LANGUAGE: %s\n\n%s" % (
+                    lang.name or 'English',
+                    json.dumps(payload, ensure_ascii=False, default=str)),
                 force_json=False)
         except Exception:  # noqa: BLE001 — narration is optional sugar
             return None
