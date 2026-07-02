@@ -58,8 +58,13 @@ class BiChart(models.Model):
         slots = config.get('slots') or {}
 
         dimensions = []
+        seen = set()
         for slot_name in ('x', 'series'):
             for entry in (slots.get(slot_name) or []):
+                key = (entry.get('field_id'), entry.get('grain'))
+                if key in seen:
+                    continue  # same field+grain in x and series adds nothing
+                seen.add(key)
                 dimensions.append({
                     'field_id': entry.get('field_id'),
                     'grain': entry.get('grain'),

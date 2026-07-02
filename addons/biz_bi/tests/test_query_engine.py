@@ -38,10 +38,16 @@ class TestQueryEngine(BiCase):
         self.assertTrue(result['rows'])
 
     def test_rejects_bad_grain(self):
+        # hostile grain strings are rejected...
         with self.assertRaises(UserError):
             self.engine.run(self._base_request(
-                dimensions=[{'field_id': self.f_country_name.id,
-                             'grain': 'month'}]))
+                dimensions=[{'field_id': self.f_create_date.id,
+                             'grain': "1); DROP TABLE res_users"}]))
+        # ...but a valid grain on a non-date field is simply ignored
+        result = self.engine.run(self._base_request(
+            dimensions=[{'field_id': self.f_country_name.id,
+                         'grain': 'month'}]))
+        self.assertNotIn('error', result)
 
     def test_rejects_foreign_field(self):
         other = self.env['bi.dataset'].create({

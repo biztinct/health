@@ -165,13 +165,8 @@ class BiAiProvider(models.Model):
         return response.json()['message']['content']
 
 
-NLQ_SYSTEM_PROMPT = """You are a BI chart configuration generator inside an
-Odoo analytics platform. You receive a DATASET CARD describing the available
-fields, and a user request in English or Vietnamese.
-
-You output ONLY a JSON object — no prose, no markdown fences — matching:
-{
-  "name": "<short chart title in the user's language>",
+CHART_SCHEMA_BLOCK = """The chart configuration schema (used below):
+  "name": "<short chart title>",
   "chart_type": "<one of: bar, bar_stacked, bar_h, line, area, combo, donut,
                   kpi, table, scatter, heatmap, treemap, funnel, gauge>",
   "slots": {
@@ -180,19 +175,36 @@ You output ONLY a JSON object — no prose, no markdown fences — matching:
     "series": [{"field_id": <ref>}]
   },
   "filters": [{"field_id": <ref>, "op": "<eq|neq|gt|gte|lt|lte|in|not_in|between|like_i|is_set|is_null|relative>", "value": <value>}]
-}
+
+Every slot entry and every filter MUST be a JSON object exactly as shown —
+never a bare number or string.
 
 Rules:
 - field_id MUST be a "ref" integer from the dataset card. Never invent refs.
+- "grain" may ONLY be set on fields whose type is date or datetime.
+- NEVER use the same field in both x and series.
+- Time series ("monthly", "over time", "trend"): x = the date field with the
+  grain; the breakdown dimension ("by facility", "by status") goes in series.
+- Titles: use the same language as the USER REQUEST text.
 - Use "relative" op with values like: today, last_7_days, last_30_days,
   this_week, this_month, last_month, this_quarter, last_6_months,
   last_12_months, this_year, last_year.
-- kpi charts: no x/series, exactly one values entry.
+- kpi charts: empty x and series, exactly one values entry. Example:
+  {"name": "Total Revenue", "chart_type": "kpi",
+   "slots": {"x": [], "series": [],
+             "values": [{"field_id": 631, "agg": "sum"}]}, "filters": []}
 - donut: exactly one x, one values.
-- Time series requests: use the most relevant date field with grain "month"
-  unless the user asks otherwise.
 - Prefer measures with role "measure"; counting rows: any field with agg "count".
 """
+
+NLQ_SYSTEM_PROMPT = """You are a BI chart configuration generator inside an
+Odoo analytics platform. You receive a DATASET CARD describing the available
+fields, and a user request in English or Vietnamese.
+
+You output ONLY a JSON object — no prose, no markdown fences — with the keys
+"name", "chart_type", "slots", "filters".
+
+""" + CHART_SCHEMA_BLOCK
 
 REPORT_SYSTEM_PROMPT = """You are a BI report designer inside an Odoo
 analytics platform. You receive a DATASET CARD and a user request describing
@@ -200,15 +212,14 @@ a report/dashboard they want.
 
 You output ONLY a JSON object — no prose, no markdown fences:
 {
-  "title": "<dashboard title in the user's language>",
+  "title": "<dashboard title in the user request's language>",
   "widgets": [
     {"name": "...", "chart_type": "...", "slots": {...}, "filters": [...],
      "width": <3|4|6|12>, "height": <2|3|4|5>}
   ]
 }
 
-Each widget follows the exact same schema rules as a single chart:
-""" + NLQ_SYSTEM_PROMPT.split('Rules:')[1] + """
+""" + CHART_SCHEMA_BLOCK + """
 - Compose 4 to 7 widgets: start with 2-3 KPI cards (width 3, height 2), then
   trend and breakdown charts (width 6, height 5), optionally one full-width
   chart (width 12, height 5).
@@ -246,7 +257,10 @@ class BiAi(models.AbstractModel):
         dataset = self.env['bi.dataset'].browse(int(dataset_id))
         dataset.check_access('read')
 
+        attempts = {'count': 0}
+
         def validate(plan):
+            attempts['count'] += 1
             if not isinstance(plan.get('widgets'), list) or not plan['widgets']:
                 raise UserError(_("Plan has no widgets."))
             valid, dropped = [], []
@@ -259,6 +273,11 @@ class BiAi(models.AbstractModel):
             if not valid:
                 raise UserError(_(
                     "No valid widgets in plan: %s", '; '.join(dropped)))
+            if dropped and attempts['count'] == 1:
+                # first round: give the model one chance to fix its own drops
+                raise UserError(_(
+                    "These widgets were invalid — fix them and return the "
+                    "FULL corrected plan: %s", '; '.join(dropped)))
             plan['widgets'] = valid
             plan['dropped'] = dropped
             return plan
@@ -304,10 +323,30 @@ class BiAi(models.AbstractModel):
 
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _coerce_config(config):
+        """Normalize sloppy-but-recoverable LLM output: bare refs in slots
+        become proper entry objects; non-dict filters are dropped."""
+        slots = config.get('slots') or {}
+        for slot_name in ('x', 'values', 'series'):
+            entries = slots.get(slot_name) or []
+            normalized = []
+            for entry in entries:
+                if isinstance(entry, dict):
+                    normalized.append(entry)
+                elif isinstance(entry, (int, str)) and str(entry).isdigit():
+                    normalized.append({'field_id': int(entry)})
+            slots[slot_name] = normalized
+        config['slots'] = slots
+        config['filters'] = [f for f in (config.get('filters') or [])
+                             if isinstance(f, dict)]
+        return config
+
     def _validate_chart_config(self, dataset, config):
         """Run an LLM-proposed config through the human trust boundary:
         chart config -> query request -> engine resolver (field ownership,
         masking, op/agg/grain enums). Raises on anything invalid."""
+        config = self._coerce_config(config)
         chart = self.env['bi.chart'].new({
             'name': config.get('name') or 'proposal',
             'dataset_id': dataset.id,

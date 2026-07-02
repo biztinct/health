@@ -178,9 +178,10 @@ class BiQueryEngine(models.AbstractModel):
         for dim in request.get('dimensions') or []:
             field = browse_field(dim.get('field_id'), _("dimensions"))
             grain = dim.get('grain')
-            if grain and (grain not in ALLOWED_GRAINS
-                          or field.data_type not in ('date', 'datetime')):
+            if grain and grain not in ALLOWED_GRAINS:
                 raise UserError(_("Invalid date grain '%s'.", grain))
+            if field.data_type not in ('date', 'datetime'):
+                grain = None  # grain is only meaningful on dates — ignore
             dimensions.append({'field': field, 'grain': grain})
 
         fanout_unsafe = (dataset._fanout_unsafe_node_ids()
