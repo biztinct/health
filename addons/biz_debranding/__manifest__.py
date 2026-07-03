@@ -24,6 +24,12 @@
         "views/res_config_settings_views.xml",
         "data/apply_brand.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "biz_debranding/static/src/xml/notification_alert.xml",
+            "biz_debranding/static/src/xml/res_config_edition.xml",
+        ],
+    },
     "installable": True,
     "application": False,
     "auto_install": False,
