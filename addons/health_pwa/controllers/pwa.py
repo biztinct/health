@@ -280,15 +280,19 @@ class HealthPWAController(http.Controller):
     
     @http.route('/health_pwa/manifest.json', type='http', auth='public')
     def pwa_manifest(self, **kwargs):
-        """PWA Manifest for installation"""
+        """PWA Manifest for installation (brand-configurable, per database)"""
+        icp = request.env['ir.config_parameter'].sudo()
+        brand = (icp.get_param('web_debranding.new_name')
+                 or icp.get_param('biz_debranding.brand_name') or 'Viet Uc Care').strip()
+        theme_color = (icp.get_param('biz_debranding.theme_color') or '#1565C0').strip()
         manifest = {
-            "name": "Viet Uc - Ứng dụng Y tế Di động",
-            "short_name": "Viet Uc",
+            "name": "%s - Ứng dụng Y tế Di động" % brand,
+            "short_name": brand,
             "description": "Ứng dụng di động cho nhân viên y tế làm việc tại gia với khả năng offline",
             "start_url": "/health_pwa/?utm_source=pwa_installed&utm_medium=homescreen",
             "display": "standalone",
             "orientation": "portrait-primary",
-            "theme_color": "#875A7B",
+            "theme_color": theme_color,
             "background_color": "#FFFFFF",
             "color_scheme": "light",
             "categories": ["health", "medical", "productivity"],

@@ -9,7 +9,7 @@
     
         <record id="pwa_config_theme" model="ir.config_parameter">
             <field name="key">health_pwa.theme_color</field>
-            <field name="value">#875A7B</field>
+            <field name="value">#1565C0</field>
         </record>
     
         <record id="pwa_config_background" model="ir.config_parameter">

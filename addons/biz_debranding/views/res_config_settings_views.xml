@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of the Viet Uc Care white-label layer. License LGPL-3. -->
+<odoo>
+    <record id="res_config_settings_view_form_biz_debranding" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.biz_debranding</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="priority" eval="100"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='companies']" position="after">
+                <div id="biz_branding">
+                    <block title="Branding" name="biz_branding_container">
+                        <setting id="biz_brand_name_setting" string="Brand Name"
+                                 help="Product name shown everywhere in place of Odoo (title, backend, emails, PWA, bot).">
+                            <field name="biz_brand_name" placeholder="Viet Uc Care"/>
+                        </setting>
+                        <setting id="biz_brand_website_setting" string="Brand Website"
+                                 help="Replaces odoo.com links across the UI.">
+                            <field name="biz_brand_website" placeholder="https://care.biztinct.com"/>
+                        </setting>
+                        <setting id="biz_theme_color_setting" string="Brand Theme Color"
+                                 help="PWA / mobile theme color (hex).">
+                            <field name="biz_theme_color" placeholder="#1565C0"/>
+                        </setting>
+                    </block>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
