@@ -868,6 +868,11 @@
 // workspace layouts are width-hungry — lift the 1320px sheet cap for them
 .o_form_view .o_form_renderer.vu-form:has(.vu-three-col) .o_form_sheet {
     max-width: none !important;
+    // Reflow keyed to the form's OWN width, not the viewport — so the layout
+    // self-corrects whether the app sidebar is open or collapsed. The sheet
+    // sits inside .o_content (the scroll container), so its width already
+    // equals the real available form width.
+    container: vuform / inline-size;
 }
 
 // …and the statusbar follows the full width instead of the 1272px grid
@@ -934,7 +939,10 @@
 
     .vu-three-col {
         display: grid;
-        grid-template-columns: 360px minmax(0, 1fr) 300px;
+        // Fluid rails with real floors (never fixed-then-starve-the-middle).
+        // The container-query ladder below drops columns before these floors
+        // would ever crush the middle.
+        grid-template-columns: minmax(280px, 340px) minmax(0, 1fr) minmax(280px, 320px);
         gap: var(--vuf-sp-4);
         width: 100%;
         min-height: 400px;
@@ -963,11 +971,24 @@
         flex-direction: column;
         gap: var(--vuf-sp-3);
         min-width: 0;
+        // query container so the middle column's label|value pairs can stack
+        // when it gets narrow (see the @container rule near the ladder below)
+        container-type: inline-size;
 
         .o_notebook, .tab-content, .tab-pane { min-width: 0; max-width: 100%; }
         > * { min-width: 0; max-width: 100%; }
     }
     .vu-col-actions > * { min-width: 0; max-width: 100%; }
+
+    // long unbreakable-ish values (timezones, addresses, ids) wrap by WORD,
+    // never one character/word per line — the core anti-collapse guard
+    .vu-col-summary, .vu-col-content, .vu-col-actions,
+    .vu-col-1, .vu-col-2, .vu-col-3 {
+        .o_cell, .o_field_widget, .vu-summary-row__value { min-width: 0; }
+        .o_field_widget, .o_field_char, .o_field_text, .vu-summary-row__value {
+            overflow-wrap: break-word;
+        }
+    }
 
     // ── summary cards: same design language as section cards ──
     .vu-summary-card {
@@ -991,10 +1012,10 @@
 
     .vu-summary-row {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+        flex-wrap: wrap;               // value drops UNDER the label when narrow
+        align-items: baseline;
         padding: var(--vuf-sp-1) 0;
-        gap: var(--vuf-sp-2);
+        gap: 2px var(--vuf-sp-3);
 
         &:not(:last-child) { border-bottom: 1px solid var(--vuf-line-soft); }
     }
@@ -1002,16 +1023,21 @@
     .vu-summary-row__label {
         font-size: 12px;
         color: var(--vuf-muted);
-        flex-shrink: 0;
-        min-width: 64px;
+        flex: 0 0 auto;
+        min-width: 72px;
+        max-width: 140px;
     }
 
     .vu-summary-row__value {
         font-size: 12.5px;
         font-weight: 600;
         color: var(--vuf-ink);
-        text-align: right;
-        word-break: break-word;
+        // fills the space right AFTER the label (not pinned to the far right);
+        // wraps to its own line under the label once < 140px is available
+        flex: 1 1 140px;
+        min-width: 0;
+        text-align: left;
+        overflow-wrap: break-word;
 
         // summary values are read-only glances — no input chrome
         .o_field_widget { padding-left: 0 !important; }
@@ -1040,34 +1066,45 @@
     }
 }
 
-@media (max-width: 1280px) {
-    .o_form_renderer.vu-form .vu-three-col {
-        grid-template-columns: 320px minmax(0, 1fr) 270px;
-        gap: var(--vuf-sp-3);
-    }
-}
+// =========================================================================
+// 10b. RESPONSIVE LADDER — keyed to the FORM's own width (@container vuform),
+//      NOT the viewport. This self-corrects for the app sidebar (open vs
+//      collapsed) and the sheet cap, which viewport media queries could not.
+//      Content-first: actions rail docks below before the middle ever starves.
+// =========================================================================
 
-@media (max-width: 1080px) {
+// TIER 2 — two columns: summary + roomy work area; actions dock to a
+// full-width bar underneath.
+@container vuform (max-width: 1240px) {
     .o_form_renderer.vu-form {
-        .vu-three-col { grid-template-columns: minmax(0, 1fr) 250px; }
+        .vu-three-col {
+            grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+            gap: var(--vuf-sp-3);
+        }
+        .vu-col-summary { grid-column: 1; grid-row: 1; }
+        .vu-col-content { grid-column: 2; grid-row: 1; }
 
-        .vu-col-summary {
+        .vu-col-actions {
             grid-column: 1 / -1;
-            grid-row: 1;
-            flex-direction: row;
-            flex-wrap: wrap;
+            grid-row: 2;
             position: static;
             max-height: none;
             overflow: visible;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-start;
 
-            .vu-summary-card { flex: 1 1 200px; }
+            > * { flex: 1 1 240px; min-width: 0; }
+            .vu-action-card,
+            .vu-action-card--primary { flex: 2 1 320px; }
+            .vu-action-separator { display: none; }
+            .vu-action-section-label { flex-basis: 100%; }
         }
-        .vu-col-content { grid-column: 1; grid-row: 2; }
-        .vu-col-actions { grid-column: 2; grid-row: 2; }
     }
 }
 
-@media (max-width: 768px) {
+// TIER 3 — single column stack; keep the next-best-action prominent.
+@container vuform (max-width: 880px) {
     .o_form_renderer.vu-form {
         .vu-three-col { grid-template-columns: 1fr; }
 
@@ -1079,7 +1116,27 @@
             max-height: none;
             overflow: visible;
         }
-        .vu-col-actions { order: -1; }   // next-best-action stays prominent
+        .vu-col-summary {
+            flex-direction: row;
+            flex-wrap: wrap;
+            .vu-summary-card { flex: 1 1 220px; }
+        }
+        .vu-col-actions { flex-direction: column; }
+    }
+}
+
+// Middle column safety net: if the CONTENT column itself gets narrow
+// (deep/zoomed cases), stack its label|value pairs like the side columns.
+// Uses the container-type on .vu-col-content declared above.
+@container (max-width: 340px) {
+    .o_form_renderer.vu-form .vu-col-content .o_inner_group {
+        grid-template-columns: 1fr !important;
+
+        .o_cell {
+            grid-column: 1 / -1 !important;
+            width: 100% !important;
+            max-width: 100%;
+        }
     }
 }
 
