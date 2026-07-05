@@ -1088,45 +1088,40 @@
         .vu-col-summary { grid-column: 1; grid-row: 1; }
         .vu-col-content { grid-column: 2; grid-row: 1; }
 
-        // Actions dock below as a tidy band. Handles BOTH structures:
+        // Actions dock below as TWO columns: the "next best action" card on the
+        // left, "quick actions" (label + wrapping items) on the right — so the
+        // right-hand white space is used. Handles BOTH structures:
         //  • ops form  → primary card + loose .vu-action-item buttons
         //  • patient   → primary card + .vu-action-panel__header + .vu-action-panel
+        //    (display:contents unwraps the panel so its links join this grid).
         .vu-col-actions {
             grid-column: 1 / -1;
             grid-row: 2;
             position: static;
             max-height: none;
             overflow: visible;
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            gap: var(--vuf-sp-2) var(--vuf-sp-4);
 
-            // the "next best action" card is a fixed left block, not stretched
+            display: grid;
+            grid-template-columns: minmax(300px, 340px) repeat(auto-fill, minmax(190px, 1fr));
+            gap: var(--vuf-sp-1) var(--vuf-sp-4);
+            align-items: start;
+
+            // NBA card reserves column 1 across all rows
             > .vu-action-card,
-            > .vu-action-card--primary { flex: 0 1 360px; }
+            > .vu-action-card--primary { grid-column: 1; grid-row: 1 / span 99; }
 
-            // section labels/headers break onto their own full-width row
+            // "Quick actions" label sits atop the item area (columns 2…N)
             > .vu-action-panel__header,
-            > .vu-action-section-label {
-                flex: 1 1 100%;
-                margin: var(--vuf-sp-2) 0 0;
-            }
+            > .vu-action-section-label { grid-column: 2 / -1; margin: 0; }
 
-            // patient: the link panel fills the width and lays links in a grid
-            > .vu-action-panel {
-                flex: 1 1 100%;
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-                gap: 0 var(--vuf-sp-3);
-            }
+            // patient: unwrap the panel so its .vu-action-item children flow
+            // directly into the grid columns alongside the ops loose buttons
+            > .vu-action-panel { display: contents; }
 
-            // ops: loose action buttons wrap as an even row
-            > .vu-action-item { flex: 1 1 210px; }
-            > .o_widget { flex: 1 1 100%; }
-
-            // dividers make no sense in a horizontal grid of links
+            // links flow into columns 2…N and wrap
+            .vu-action-item { grid-column: auto; }
             .vu-action-separator { display: none; }
+            > .o_widget { grid-column: 2 / -1; }
         }
     }
 }
