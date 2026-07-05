@@ -880,6 +880,13 @@
     width: calc(100% - 2 * var(--vuf-sp-6));
 }
 
+// The state pills (Active / Inactive) must NOT stick to the top on scroll —
+// core makes the statusbar sticky, which hid content behind it.
+.o_form_view:has(.o_form_renderer.vu-form) .o_form_statusbar {
+    position: static !important;
+    top: auto !important;
+}
+
 // side columns are dense glance panels — engine input chrome (boxes,
 // compound wrappers, readonly insets) is too heavy at 250px wide; render
 // fields compact and naked there. Covers both naming generations:
@@ -948,18 +955,15 @@
         min-height: 400px;
     }
 
+    // Side rails scroll with the page (NOT sticky) — pinned rails that follow
+    // the scroll until they hit the chatter felt broken.
     .vu-col-summary,
     .vu-col-actions {
         display: flex;
         flex-direction: column;
         gap: var(--vuf-sp-3);
-        position: sticky;
-        top: var(--vuf-sp-3);
         align-self: start;
-        max-height: calc(100vh - 180px);
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--vuf-line) transparent;
+        min-width: 0;
     }
 
     .vu-col-summary { grid-column: 1; }
@@ -1084,6 +1088,9 @@
         .vu-col-summary { grid-column: 1; grid-row: 1; }
         .vu-col-content { grid-column: 2; grid-row: 1; }
 
+        // Actions dock below as a tidy band. Handles BOTH structures:
+        //  • ops form  → primary card + loose .vu-action-item buttons
+        //  • patient   → primary card + .vu-action-panel__header + .vu-action-panel
         .vu-col-actions {
             grid-column: 1 / -1;
             grid-row: 2;
@@ -1093,12 +1100,33 @@
             flex-direction: row;
             flex-wrap: wrap;
             align-items: flex-start;
+            gap: var(--vuf-sp-2) var(--vuf-sp-4);
 
-            > * { flex: 1 1 240px; min-width: 0; }
-            .vu-action-card,
-            .vu-action-card--primary { flex: 2 1 320px; }
+            // the "next best action" card is a fixed left block, not stretched
+            > .vu-action-card,
+            > .vu-action-card--primary { flex: 0 1 360px; }
+
+            // section labels/headers break onto their own full-width row
+            > .vu-action-panel__header,
+            > .vu-action-section-label {
+                flex: 1 1 100%;
+                margin: var(--vuf-sp-2) 0 0;
+            }
+
+            // patient: the link panel fills the width and lays links in a grid
+            > .vu-action-panel {
+                flex: 1 1 100%;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+                gap: 0 var(--vuf-sp-3);
+            }
+
+            // ops: loose action buttons wrap as an even row
+            > .vu-action-item { flex: 1 1 210px; }
+            > .o_widget { flex: 1 1 100%; }
+
+            // dividers make no sense in a horizontal grid of links
             .vu-action-separator { display: none; }
-            .vu-action-section-label { flex-basis: 100%; }
         }
     }
 }
