@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_evv_verification" model="ir.actions.report">
+        <field name="name">EVV Verification Report</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">health_evv.report_evv_verification</field>
+        <field name="report_file">health_evv.report_evv_verification</field>
+        <field name="print_report_name">'EVV_Verification_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="health_fieldservice.model_health_fieldservice_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_evv_verification">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <h2>EVV Verification — <span t-field="o.name"/></h2>
+
+                        <!-- Chain status banner (flat mono colors) -->
+                        <t t-set="evv_events" t-value="o.evv_event_ids.sorted(key=lambda e: (e.sequence, e.id))"/>
+                        <div t-if="o.evv_chain_valid and evv_events"
+                             style="background-color:#2e7d32;color:#ffffff;padding:8px 12px;margin:8px 0;font-weight:bold;">
+                            Chain intact — <t t-esc="len(evv_events)"/> events
+                        </div>
+                        <div t-if="not o.evv_chain_valid"
+                             style="background-color:#c62828;color:#ffffff;padding:8px 12px;margin:8px 0;font-weight:bold;">
+                            TAMPER DETECTED at seq
+                            <t t-esc="min(evv_events.filtered(lambda e: not e.chain_valid).mapped('sequence') or [0])"/>
+                        </div>
+                        <div t-if="not evv_events"
+                             style="background-color:#616161;color:#ffffff;padding:8px 12px;margin:8px 0;font-weight:bold;">
+                            No EVV events recorded for this visit
+                        </div>
+
+                        <!-- Visit header -->
+                        <table class="table table-sm" style="margin-top:8px;">
+                            <tr>
+                                <td style="width:25%;"><strong>Client</strong></td>
+                                <td><span t-field="o.patient_id.name"/></td>
+                                <td style="width:25%;"><strong>Lead Staff</strong></td>
+                                <td><span t-field="o.lead_staff_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Scheduled</strong></td>
+                                <td>
+                                    <span t-field="o.scheduled_datetime"/>
+                                    (<t t-esc="o.scheduled_duration"/> min)
+                                </td>
+                                <td><strong>Actual</strong></td>
+                                <td>
+                                    <span t-field="o.actual_start_datetime"/>
+                                    <t t-if="o.actual_end_datetime"> →
+                                        <span t-field="o.actual_end_datetime"/>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Verified</strong></td>
+                                <td>
+                                    <t t-if="o.evv_verified">Yes</t>
+                                    <t t-else="">No</t>
+                                </td>
+                                <td><strong>Verified Units</strong></td>
+                                <td><t t-esc="'%.2f h' % o.evv_verified_units"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Event table -->
+                        <h4 style="margin-top:12px;">Event Chain</h4>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Type</th>
+                                    <th>Time (UTC)</th>
+                                    <th class="text-end">Distance (m)</th>
+                                    <th>In Fence</th>
+                                    <th class="text-end">Accuracy (m)</th>
+                                    <th>Chain</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="evv_events" t-as="e">
+                                    <td><t t-esc="e.sequence"/></td>
+                                    <td><span t-field="e.event_type"/></td>
+                                    <td><span t-field="e.event_datetime"/></td>
+                                    <td class="text-end"><t t-esc="'%.1f' % (e.distance_m or 0.0)"/></td>
+                                    <td>
+                                        <t t-if="e.inside_geofence">Inside</t>
+                                        <t t-else="">Outside</t>
+                                    </td>
+                                    <td class="text-end"><t t-esc="'%.1f' % (e.accuracy_m or 0.0)"/></td>
+                                    <td>
+                                        <t t-if="e.chain_valid">OK</t>
+                                        <t t-else="">BROKEN</t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Signature -->
+                        <t t-if="o.evv_signature_attachment_id">
+                            <h4 style="margin-top:12px;">Signature</h4>
+                            <img t-if="o.evv_signature_attachment_id.datas"
+                                 t-att-src="image_data_uri(o.evv_signature_attachment_id.datas)"
+                                 style="max-width:280px;max-height:180px;border:1px solid #9e9e9e;"/>
+                            <p>
+                                Signed by <strong t-esc="o.evv_signer_name or ''"/>
+                                (<span t-field="o.evv_signer_relationship"/>)
+                                at <span t-field="o.evv_signed_at"/>
+                            </p>
+                        </t>
+
+                        <!-- Verification fingerprint -->
+                        <div t-if="evv_events" style="margin-top:16px;font-size:11px;color:#424242;">
+                            <strong>Verification fingerprint (last chain hash):</strong><br/>
+                            <code t-esc="evv_events[-1].chain_hash"/>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

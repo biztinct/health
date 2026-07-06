@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_evv_event_list" model="ir.ui.view">
+        <field name="name">health.evv.event.list</field>
+        <field name="model">health.evv.event</field>
+        <field name="arch" type="xml">
+            <list string="EVV Events" create="false" edit="false" delete="false"
+                  decoration-danger="not chain_valid">
+                <field name="fso_id"/>
+                <field name="sequence"/>
+                <field name="event_type"/>
+                <field name="event_datetime"/>
+                <field name="staff_id"/>
+                <field name="distance_m" optional="show"/>
+                <field name="inside_geofence"/>
+                <field name="accuracy_m" optional="hide"/>
+                <field name="origin" optional="hide"/>
+                <field name="chain_valid"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_evv_event_form" model="ir.ui.view">
+        <field name="name">health.evv.event.form</field>
+        <field name="model">health.evv.event</field>
+        <field name="arch" type="xml">
+            <form string="EVV Event" create="false" edit="false" delete="false">
+                <sheet>
+                    <div class="alert alert-danger" role="alert"
+                         invisible="chain_valid">
+                        Chain validation failed at or before this event —
+                        possible tampering.
+                    </div>
+                    <group>
+                        <group string="Event">
+                            <field name="fso_id"/>
+                            <field name="sequence"/>
+                            <field name="event_type"/>
+                            <field name="event_datetime"/>
+                            <field name="server_datetime"/>
+                            <field name="staff_id"/>
+                            <field name="origin"/>
+                        </group>
+                        <group string="Location">
+                            <field name="lat"/>
+                            <field name="lng"/>
+                            <field name="accuracy_m"/>
+                            <field name="distance_m"/>
+                            <field name="inside_geofence"/>
+                        </group>
+                    </group>
+                    <group string="Hash Chain">
+                        <field name="client_event_uuid"/>
+                        <field name="device_uuid"/>
+                        <field name="payload_hash"/>
+                        <field name="prev_hash"/>
+                        <field name="chain_hash"/>
+                        <field name="chain_valid"/>
+                    </group>
+                    <group string="Payload">
+                        <field name="payload" nolabel="1" colspan="2" widget="json"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_evv_event_search" model="ir.ui.view">
+        <field name="name">health.evv.event.search</field>
+        <field name="model">health.evv.event</field>
+        <field name="arch" type="xml">
+            <search string="EVV Events">
+                <field name="fso_id"/>
+                <field name="staff_id"/>
+                <field name="client_event_uuid"/>
+                <filter string="Tampered" name="tampered"
+                        domain="[('chain_valid', '=', False)]"/>
+                <filter string="Outside Geofence" name="outside_geofence"
+                        domain="[('inside_geofence', '=', False)]"/>
+                <filter string="Offline Sync" name="offline_sync"
+                        domain="[('origin', '=', 'offline_sync')]"/>
+                <separator/>
+                <filter string="Visit" name="group_fso"
+                        context="{'group_by': 'fso_id'}"/>
+                <filter string="Event Type" name="group_event_type"
+                        context="{'group_by': 'event_type'}"/>
+                <filter string="Staff" name="group_staff"
+                        context="{'group_by': 'staff_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_evv_event" model="ir.actions.act_window">
+        <field name="name">EVV Events</field>
+        <field name="res_model">health.evv.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_evv_event_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No EVV events yet
+            </p>
+            <p>
+                EVV events are appended automatically by the nurse PWA at
+                check-in, check-out and signature capture. They are
+                hash-chained and can never be edited or deleted.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_health_evv_events"
+              name="EVV Events"
+              parent="health_fieldservice.menu_ops_center_root"
+              action="action_health_evv_event"
+              groups="health_evv.group_evv_manager"
+              sequence="72"/>
+
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_evv_validate_chains" model="ir.cron">
+            <field name="name">EVV: nightly chain validation</field>
+            <field name="model_id" ref="model_health_evv_event"/>
+            <field name="state">code</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="code">model.cron_validate_chains(days=2)</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 02:30:00')"/>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="config_param_default_accuracy_max_m" model="ir.config_parameter">
+            <field name="key">health_evv.default_accuracy_max_m</field>
+            <field name="value">100</field>
+        </record>
+
+    </data>
+</odoo>

@@ -6,7 +6,7 @@
             <t t-set="head_website">
                 <title>Viet Uc Care</title>
             </t>
-            <t t-set="pwa_asset_version">1.0.99</t>
+            <t t-set="pwa_asset_version">1.1.0</t>
             <t t-set="head">
                 <!-- PWA Meta Tags -->
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
@@ -243,7 +243,7 @@
                     apiBaseUrl: '/health_pwa/api',
                     syncUrl: '/health_pwa/sync',
                     websocketUrl: '/longpolling',
-                    version: '1.0.99',
+                    version: '1.1.0',
                     buildTime: '<t t-esc="datetime.datetime.now().isoformat()"/>',
                     showInstallOverlay: <t t-if="show_install_overlay">true</t><t t-else="">false</t>,
                 };
@@ -362,7 +362,7 @@
             <script>
                 if ('serviceWorker' in navigator) {
                     let refreshing = false;
-                    const PWA_SW_VERSION = '1.0.99';
+                    const PWA_SW_VERSION = '1.1.0';
                     console.log('[PWA] registering service worker version', PWA_SW_VERSION);
 
                     // Detect when service worker updates and reload
@@ -848,10 +848,10 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.99
+// Health PWA Service Worker v1.1.0
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_VERSION = '1.0.99';
+const CACHE_VERSION = '1.1.0';
 const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;
 const OFFLINE_URL = '/health_pwa/offline';
 const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;
@@ -938,6 +938,11 @@ self.addEventListener('fetch', event => {
     // Handle PWA app requests
     if (url.pathname.startsWith('/health_pwa')) {
         if (url.pathname.startsWith('/health_pwa/api/') || url.pathname.startsWith('/health_pwa/sync/')) {
+            // EVV endpoints (health_evv) are NETWORK-ONLY: hash-chained
+            // verification data must never be served from cache.
+            if (url.pathname.includes('/evv/')) {
+                return; // default browser networking, no cache read/write
+            }
             // API requests - Network First with Cache Fallback
             event.respondWith(handleAPIRequest(request));
         } else if (request.mode === 'navigate' || url.pathname === '/health_pwa' || url.pathname === '/health_pwa/') {
@@ -1047,6 +1052,16 @@ self.addEventListener('sync', event => {
     
     if (event.tag === 'health-pwa-sync') {
         event.waitUntil(performBackgroundSync());
+    }
+
+    // EVV offline queue (health_evv): the actual flush runs in app
+    // context where the local store lives — just wake the clients.
+    if (event.tag === 'evv-flush') {
+        event.waitUntil(
+            self.clients.matchAll({ includeUncontrolled: true }).then(clients => {
+                clients.forEach(client => client.postMessage({ type: 'EVV_FLUSH' }));
+            })
+        );
     }
 });
 

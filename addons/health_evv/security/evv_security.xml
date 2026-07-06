@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         Groups — reuse the health_base Healthcare privilege
+         (res.groups needs privilege_id, never category_id directly).
+         ===================================================================== -->
+
+    <record id="group_evv_user" model="res.groups">
+        <field name="name">EVV: User</field>
+        <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
+        <field name="comment">Can read and append EVV events for visits they are assigned to.</field>
+    </record>
+
+    <record id="group_evv_manager" model="res.groups">
+        <field name="name">EVV: Manager</field>
+        <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
+        <field name="implied_ids" eval="[(4, ref('group_evv_user'))]"/>
+        <field name="comment">Catchment-wide read access to EVV events and reports. Immutability is absolute: managers cannot edit or delete events either.</field>
+    </record>
+
+    <!-- Auto-grant: the nurse groups that gate the PWA imply EVV user;
+         the operations/manager groups imply EVV manager. -->
+    <record id="health_base.group_healthcare_nurse" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('health_evv.group_evv_user'))]"/>
+    </record>
+    <record id="health_base.group_healthcare_head_nurse" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('health_evv.group_evv_user'))]"/>
+    </record>
+    <record id="health_base.group_healthcare_operations_manager" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('health_evv.group_evv_manager'))]"/>
+    </record>
+    <record id="health_base.group_healthcare_manager" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('health_evv.group_evv_manager'))]"/>
+    </record>
+
+    <!-- =====================================================================
+         Record rules — mirror the FSO scoping used by health_fieldservice
+         (fieldservice_order_staff_rule / fieldservice_order_manager_rule),
+         reached through fso_id.
+         ===================================================================== -->
+
+    <record id="evv_event_user_rule" model="ir.rule">
+        <field name="name">EVV Events: staff see events of their assigned visits</field>
+        <field name="model_id" ref="model_health_evv_event"/>
+        <field name="domain_force">[
+            '&amp;',
+            '&amp;', ('fso_id.catchment_province_id', '=', user.catchment_province_id.id), ('fso_id.catchment_province_id', '!=', False),
+            '|', '|',
+            ('fso_id.assignment_ids.staff_id.user_id', '=', user.id),
+            ('fso_id.primary_doctor_id.user_id', '=', user.id),
+            ('fso_id.primary_nurse_id.user_id', '=', user.id)
+        ]</field>
+        <field name="groups" eval="[(4, ref('group_evv_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="evv_event_manager_rule" model="ir.rule">
+        <field name="name">EVV Events: managers see their catchment</field>
+        <field name="model_id" ref="model_health_evv_event"/>
+        <field name="domain_force">['&amp;', ('fso_id.catchment_province_id', '=', user.catchment_province_id.id), ('fso_id.catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('group_evv_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_fieldservice_order_form_evv" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.evv</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_evv_events" type="object"
+                        class="oe_stat_button" icon="fa-shield"
+                        invisible="evv_event_count == 0">
+                    <field name="evv_event_count" widget="statinfo"
+                           string="EVV Events"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//notebook[1]" position="inside">
+                <page string="EVV" name="evv_page">
+                    <group>
+                        <group string="Verification">
+                            <field name="evv_verified"/>
+                            <field name="evv_chain_valid"/>
+                            <field name="evv_verified_units"/>
+                        </group>
+                        <group string="Signature">
+                            <field name="evv_signer_name"/>
+                            <field name="evv_signer_relationship"/>
+                            <field name="evv_signed_at"/>
+                            <field name="evv_signature_attachment_id"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="mb-2">
+                        <button name="action_evv_report" type="object"
+                                string="EVV Verification Report"
+                                class="btn btn-secondary"/>
+                    </div>
+                    <field name="evv_event_ids" readonly="1">
+                        <list decoration-danger="not chain_valid">
+                            <field name="sequence"/>
+                            <field name="event_type"/>
+                            <field name="event_datetime"/>
+                            <field name="staff_id"/>
+                            <field name="distance_m"/>
+                            <field name="inside_geofence"/>
+                            <field name="chain_valid"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

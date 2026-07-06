@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_evv_event_user,health.evv.event.user,model_health_evv_event,group_evv_user,1,0,1,0
+access_health_evv_event_manager,health.evv.event.manager,model_health_evv_event,group_evv_manager,1,0,1,0

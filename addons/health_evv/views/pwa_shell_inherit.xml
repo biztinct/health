@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject the EVV PWA scripts into the app shell without touching
+         health_pwa's template body. Loaded after router.js so
+         window.healthPWA and the Vue app bootstrap already exist.
+         Order matters: evv-queue.js defines the canonical-hash helpers
+         used by geofence-service.js and evv-components.js. -->
+    <template id="app_shell_evv" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — EVV Scripts">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_evv/static/src/js/evv-queue.js?v=#{pwa_asset_version}"></script>
+            <script t-attf-src="/health_evv/static/src/js/geofence-service.js?v=#{pwa_asset_version}"></script>
+            <script t-attf-src="/health_evv/static/src/js/evv-components.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_evv_geofence" model="ir.ui.view">
+        <field name="name">res.partner.form.evv.geofence</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group name="evv_geofence" string="EVV Geofence"
+                       invisible="not is_patient">
+                    <field name="is_patient" invisible="1"/>
+                    <field name="geofence_enabled"/>
+                    <field name="geofence_radius_m"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

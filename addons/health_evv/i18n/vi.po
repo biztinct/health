@@ -1,0 +1,171 @@
+# Vietnamese translation for health_evv
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_evv\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_evv
+msgid "EVV Event"
+msgstr "Sự kiện EVV"
+
+#. module: health_evv
+msgid "EVV Events"
+msgstr "Sự kiện EVV"
+
+#. module: health_evv
+msgid "Check-in"
+msgstr "Check in"
+
+#. module: health_evv
+msgid "Check-out"
+msgstr "Check out"
+
+#. module: health_evv
+msgid "Signature"
+msgstr "Chữ ký"
+
+#. module: health_evv
+msgid "Task Attestation"
+msgstr "Xác nhận công việc"
+
+#. module: health_evv
+msgid "Photo"
+msgstr "Ảnh"
+
+#. module: health_evv
+msgid "Online"
+msgstr "Trực tuyến"
+
+#. module: health_evv
+msgid "Offline Sync"
+msgstr "Đồng bộ ngoại tuyến"
+
+#. module: health_evv
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_evv
+msgid "Family Member"
+msgstr "Người nhà"
+
+#. module: health_evv
+msgid "Caregiver"
+msgstr "Người chăm sóc"
+
+#. module: health_evv
+msgid "Other"
+msgstr "Khác"
+
+#. module: health_evv
+msgid "Geofence Radius (m)"
+msgstr "Bán kính hàng rào địa lý (m)"
+
+#. module: health_evv
+msgid "Geofence Enabled"
+msgstr "Bật hàng rào địa lý"
+
+#. module: health_evv
+msgid "EVV Verified"
+msgstr "Đã xác minh EVV"
+
+#. module: health_evv
+msgid "EVV Chain Valid"
+msgstr "Chuỗi EVV hợp lệ"
+
+#. module: health_evv
+msgid "EVV Verified Units (h)"
+msgstr "Số giờ đã xác minh EVV"
+
+#. module: health_evv
+msgid "Signer Name"
+msgstr "Tên người ký"
+
+#. module: health_evv
+msgid "Signer Relationship"
+msgstr "Quan hệ người ký"
+
+#. module: health_evv
+msgid "Signed At"
+msgstr "Ký lúc"
+
+#. module: health_evv
+msgid "EVV Signature"
+msgstr "Chữ ký EVV"
+
+#. module: health_evv
+msgid "EVV Verification Report"
+msgstr "Báo cáo xác minh EVV"
+
+#. module: health_evv
+msgid "EVV events are append-only and can never be modified. To correct an event, append a new one with payload={'corrects': <event_id>, ...}."
+msgstr "Sự kiện EVV chỉ cho phép ghi thêm và không bao giờ được sửa đổi. Để sửa một sự kiện, hãy thêm sự kiện mới với payload={'corrects': <event_id>, ...}."
+
+#. module: health_evv
+msgid "EVV events are append-only and can never be deleted."
+msgstr "Sự kiện EVV chỉ cho phép ghi thêm và không bao giờ được xóa."
+
+#. module: health_evv
+msgid "EVV event is missing client_event_uuid."
+msgstr "Sự kiện EVV thiếu client_event_uuid."
+
+#. module: health_evv
+msgid "EVV TAMPER DETECTED: %s"
+msgstr "PHÁT HIỆN GIẢ MẠO EVV: %s"
+
+#. module: health_evv
+msgid "Access denied"
+msgstr "Từ chối truy cập"
+
+#. module: health_evv
+msgid "Order not found"
+msgstr "Không tìm thấy đơn hàng"
+
+#. module: health_evv
+msgid "Invalid JSON body"
+msgstr "Nội dung JSON không hợp lệ"
+
+#. module: health_evv
+msgid "event_type and client_event_uuid are required"
+msgstr "event_type và client_event_uuid là bắt buộc"
+
+#. module: health_evv
+msgid "Current user has no linked employee"
+msgstr "Người dùng hiện tại chưa liên kết nhân viên"
+
+#. module: health_evv
+msgid "events must be a list"
+msgstr "events phải là một danh sách"
+
+#. module: health_evv
+msgid "Batch too large (max %s events)"
+msgstr "Lô quá lớn (tối đa %s sự kiện)"
+
+#. module: health_evv
+msgid "image_base64 and client_event_uuid are required"
+msgstr "image_base64 và client_event_uuid là bắt buộc"
+
+#. module: health_evv
+msgid "Invalid base64 image"
+msgstr "Ảnh base64 không hợp lệ"
+
+#. module: health_evv
+msgid "Tampered"
+msgstr "Bị giả mạo"
+
+#. module: health_evv
+msgid "Outside Geofence"
+msgstr "Ngoài hàng rào địa lý"
+
+#. module: health_evv
+msgid "EVV: User"
+msgstr "EVV: Người dùng"
+
+#. module: health_evv
+msgid "EVV: Manager"
+msgstr "EVV: Quản lý"
