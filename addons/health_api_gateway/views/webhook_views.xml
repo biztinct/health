@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_webhook_subscription_list" model="ir.ui.view">
+        <field name="name">webhook.subscription.list</field>
+        <field name="model">webhook.subscription</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="target_url"/>
+                <field name="event_codes"/>
+                <field name="failure_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_webhook_subscription_form" model="ir.ui.view">
+        <field name="name">webhook.subscription.form</field>
+        <field name="model">webhook.subscription</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Endpoint">
+                            <field name="name"/>
+                            <field name="target_url" placeholder="https://partner.example.com/hooks/health19"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Events">
+                            <field name="event_codes"
+                                   placeholder="booking.completed booking.cancelled"/>
+                            <field name="secret" password="True"
+                                   groups="health_api_gateway.group_gateway_admin"/>
+                            <field name="failure_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Deliveries" name="deliveries">
+                            <field name="delivery_ids" readonly="1">
+                                <list>
+                                    <field name="create_date"/>
+                                    <field name="outbox_id"/>
+                                    <field name="state"/>
+                                    <field name="attempt"/>
+                                    <field name="next_attempt_at"/>
+                                    <field name="response_code"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_webhook_subscription" model="ir.actions.act_window">
+        <field name="name">Webhook Subscriptions</field>
+        <field name="res_model">webhook.subscription</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_webhook_subscription" name="Webhook Subscriptions"
+              parent="menu_gateway_root" action="action_webhook_subscription"
+              sequence="30"/>
+
+    <!-- Deliveries -->
+    <record id="view_webhook_delivery_list" model="ir.ui.view">
+        <field name="name">webhook.delivery.list</field>
+        <field name="model">webhook.delivery</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="create_date"/>
+                <field name="subscription_id"/>
+                <field name="outbox_id"/>
+                <field name="state"/>
+                <field name="attempt"/>
+                <field name="next_attempt_at"/>
+                <field name="response_code"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_webhook_delivery_form" model="ir.ui.view">
+        <field name="name">webhook.delivery.form</field>
+        <field name="model">webhook.delivery</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_replay" type="object" string="Replay"
+                            class="btn-primary"
+                            invisible="state == 'sent'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="subscription_id" readonly="1"/>
+                            <field name="outbox_id" readonly="1"/>
+                            <field name="attempt" readonly="1"/>
+                            <field name="next_attempt_at" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="response_code" readonly="1"/>
+                            <field name="signature" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Response Body">
+                        <field name="response_body" nolabel="1" colspan="2" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_webhook_delivery" model="ir.actions.act_window">
+        <field name="name">Webhook Deliveries</field>
+        <field name="res_model">webhook.delivery</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_webhook_delivery" name="Webhook Deliveries"
+              parent="menu_gateway_root" action="action_webhook_delivery"
+              sequence="31"/>
+
+    <!-- Outbox (read-only) -->
+    <record id="view_integration_outbox_list" model="ir.ui.view">
+        <field name="name">integration.outbox.list</field>
+        <field name="model">integration.outbox</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="created_at"/>
+                <field name="event_code"/>
+                <field name="res_model"/>
+                <field name="res_id"/>
+                <field name="state"/>
+                <field name="dispatched_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_integration_outbox" model="ir.actions.act_window">
+        <field name="name">Integration Outbox</field>
+        <field name="res_model">integration.outbox</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <menuitem id="menu_integration_outbox" name="Integration Outbox"
+              parent="menu_gateway_root" action="action_integration_outbox"
+              sequence="35"/>
+</odoo>

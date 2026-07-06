@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_outbox_dispatch" model="ir.cron">
+            <field name="name">API Gateway: dispatch integration outbox</field>
+            <field name="model_id" ref="model_integration_outbox"/>
+            <field name="state">code</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="code">model._cron_dispatch()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="ir_cron_token_purge" model="ir.cron">
+            <field name="name">API Gateway: purge expired tokens</field>
+            <field name="model_id" ref="model_gateway_token"/>
+            <field name="state">code</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="code">model._cron_purge_expired()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="ir_cron_rate_counter_prune" model="ir.cron">
+            <field name="name">API Gateway: prune rate counters</field>
+            <field name="model_id" ref="model_gateway_rate_counter"/>
+            <field name="state">code</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="code">model._cron_prune()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="icp_rate_limit_per_min" model="ir.config_parameter">
+            <field name="key">gateway.rate_limit_per_min</field>
+            <field name="value">120</field>
+        </record>
+        <record id="icp_rate_limit_burst" model="ir.config_parameter">
+            <field name="key">gateway.rate_limit_burst</field>
+            <field name="value">240</field>
+        </record>
+    </data>
+</odoo>

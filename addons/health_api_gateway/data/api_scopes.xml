@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="scope_pwa_read" model="api.key.scope">
+            <field name="code">pwa.read</field>
+            <field name="name">PWA Read</field>
+            <field name="description">Read access for PWA-migrated routes.</field>
+        </record>
+        <record id="scope_pwa_write" model="api.key.scope">
+            <field name="code">pwa.write</field>
+            <field name="name">PWA Write</field>
+            <field name="description">Write access for PWA-migrated routes.</field>
+        </record>
+        <record id="scope_patient_read" model="api.key.scope">
+            <field name="code">patient.read</field>
+            <field name="name">Patients Read</field>
+            <field name="description">Read patient demographic data.</field>
+        </record>
+        <record id="scope_booking_read" model="api.key.scope">
+            <field name="code">booking.read</field>
+            <field name="name">Bookings Read</field>
+            <field name="description">Read bookings, quotes and assignments.</field>
+        </record>
+        <record id="scope_booking_write" model="api.key.scope">
+            <field name="code">booking.write</field>
+            <field name="name">Bookings Write</field>
+            <field name="description">Start/complete/cancel bookings and write clinical notes.</field>
+        </record>
+        <record id="scope_invoice_read" model="api.key.scope">
+            <field name="code">invoice.read</field>
+            <field name="name">Invoices Read</field>
+            <field name="description">Read invoice data.</field>
+        </record>
+        <record id="scope_webhook_manage" model="api.key.scope">
+            <field name="code">webhook.manage</field>
+            <field name="name">Webhooks Manage</field>
+            <field name="description">Manage webhook subscriptions via API.</field>
+        </record>
+        <record id="scope_system_patient_read" model="api.key.scope">
+            <field name="code">system/Patient.read</field>
+            <field name="name">FHIR Patient Read</field>
+            <field name="description">SMART backend-services read scope for FHIR Patient.</field>
+        </record>
+        <record id="scope_system_practitioner_read" model="api.key.scope">
+            <field name="code">system/Practitioner.read</field>
+            <field name="name">FHIR Practitioner Read</field>
+            <field name="description">SMART backend-services read scope for FHIR Practitioner.</field>
+        </record>
+        <record id="scope_system_organization_read" model="api.key.scope">
+            <field name="code">system/Organization.read</field>
+            <field name="name">FHIR Organization Read</field>
+            <field name="description">SMART backend-services read scope for FHIR Organization.</field>
+        </record>
+        <record id="scope_system_location_read" model="api.key.scope">
+            <field name="code">system/Location.read</field>
+            <field name="name">FHIR Location Read</field>
+            <field name="description">SMART backend-services read scope for FHIR Location.</field>
+        </record>
+        <record id="scope_system_encounter_read" model="api.key.scope">
+            <field name="code">system/Encounter.read</field>
+            <field name="name">FHIR Encounter Read</field>
+            <field name="description">SMART backend-services read scope for FHIR Encounter.</field>
+        </record>
+        <record id="scope_system_appointment_read" model="api.key.scope">
+            <field name="code">system/Appointment.read</field>
+            <field name="name">FHIR Appointment Read</field>
+            <field name="description">SMART backend-services read scope for FHIR Appointment.</field>
+        </record>
+        <record id="scope_system_service_request_read" model="api.key.scope">
+            <field name="code">system/ServiceRequest.read</field>
+            <field name="name">FHIR ServiceRequest Read</field>
+            <field name="description">SMART backend-services read scope for FHIR ServiceRequest.</field>
+        </record>
+        <record id="scope_system_document_reference_read" model="api.key.scope">
+            <field name="code">system/DocumentReference.read</field>
+            <field name="name">FHIR DocumentReference Read</field>
+            <field name="description">SMART backend-services read scope for FHIR DocumentReference.</field>
+        </record>
+        <record id="scope_system_all_read" model="api.key.scope">
+            <field name="code">system/*.read</field>
+            <field name="name">FHIR All Resources Read</field>
+            <field name="description">SMART backend-services wildcard read scope (all FHIR resources).</field>
+        </record>
+    </data>
+</odoo>

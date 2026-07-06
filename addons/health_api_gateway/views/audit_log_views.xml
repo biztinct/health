@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_api_audit_log_list" model="ir.ui.view">
+        <field name="name">api.audit.log.list</field>
+        <field name="model">api.audit.log</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="ts"/>
+                <field name="auth_kind"/>
+                <field name="key_or_client"/>
+                <field name="user_id"/>
+                <field name="method"/>
+                <field name="route"/>
+                <field name="status_code"/>
+                <field name="latency_ms"/>
+                <field name="ip"/>
+                <field name="resource_type"/>
+                <field name="patient_ids"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_api_audit_log_search" model="ir.ui.view">
+        <field name="name">api.audit.log.search</field>
+        <field name="model">api.audit.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="route"/>
+                <field name="user_id"/>
+                <field name="key_or_client"/>
+                <field name="patient_ids"/>
+                <filter string="Errors" name="errors"
+                        domain="[('status_code', '>=', 400)]"/>
+                <separator/>
+                <filter string="Route" name="group_route"
+                        context="{'group_by': 'route'}"/>
+                <filter string="Service User" name="group_user"
+                        context="{'group_by': 'user_id'}"/>
+                <filter string="Auth Kind" name="group_auth"
+                        context="{'group_by': 'auth_kind'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- List-only by design: rows are append-only, no form editing surface -->
+    <record id="action_api_audit_log" model="ir.actions.act_window">
+        <field name="name">API Audit Log</field>
+        <field name="res_model">api.audit.log</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_api_audit_log_search"/>
+    </record>
+
+    <menuitem id="menu_api_audit_log" name="API Audit Log"
+              parent="menu_gateway_root" action="action_api_audit_log"
+              sequence="50"/>
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_api_gateway" model="ir.module.category">
+        <field name="name">API Gateway</field>
+        <field name="description">Health API Gateway access management</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="res_groups_privilege_api_gateway" model="res.groups.privilege">
+        <field name="name">API Gateway</field>
+        <field name="sequence">60</field>
+        <field name="category_id" ref="module_category_api_gateway"/>
+    </record>
+
+    <record id="group_gateway_admin" model="res.groups">
+        <field name="name">Gateway Administrator</field>
+        <field name="privilege_id" ref="res_groups_privilege_api_gateway"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Manage API keys, OAuth clients, webhook subscriptions and read the API audit log.</field>
+    </record>
+
+    <record id="group_gateway_readonly_docs" model="res.groups">
+        <field name="name">Gateway API Docs Reader</field>
+        <field name="privilege_id" ref="res_groups_privilege_api_gateway"/>
+        <field name="comment">May browse the human-readable API documentation.</field>
+    </record>
+
+    <record id="base.user_admin" model="res.users">
+        <field name="group_ids" eval="[(4, ref('health_api_gateway.group_gateway_admin'))]"/>
+    </record>
+</odoo>

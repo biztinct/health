@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_gateway_oauth_client_list" model="ir.ui.view">
+        <field name="name">gateway.oauth.client.list</field>
+        <field name="model">gateway.oauth.client</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="user_id"/>
+                <field name="token_lifetime"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_gateway_oauth_client_form" model="ir.ui.view">
+        <field name="name">gateway.oauth.client.form</field>
+        <field name="model">gateway.oauth.client</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_regenerate_secret" type="object"
+                            string="Generate Secret" class="btn-primary"
+                            help="Generates a new client secret and shows it once. Only the hash is stored."/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Client">
+                            <field name="name"/>
+                            <field name="client_id" readonly="1"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Grant">
+                            <field name="user_id"/>
+                            <field name="token_lifetime"/>
+                        </group>
+                    </group>
+                    <group string="Allowed Scopes">
+                        <field name="allowed_scope_ids" nolabel="1" colspan="2"
+                               widget="many2many_tags"/>
+                    </group>
+                    <group string="Advanced (SMART backend services, Phase 3)">
+                        <field name="jwks"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_gateway_oauth_client" model="ir.actions.act_window">
+        <field name="name">OAuth Clients</field>
+        <field name="res_model">gateway.oauth.client</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_gateway_oauth_client" name="OAuth Clients"
+              parent="menu_gateway_root" action="action_gateway_oauth_client"
+              sequence="20"/>
+</odoo>
