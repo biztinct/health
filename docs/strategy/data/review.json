@@ -1,0 +1,53 @@
+{
+  "modules": [
+    {"name": "health_base", "title": "Healthcare Foundation", "maturity": "mature", "purpose": "Core patient/facility/service-type models, patient coding, Morse fall-risk scale, RxNorm/OpenFDA drug-interaction checks, catchment provinces, audit log, Vietnamese localization."},
+    {"name": "health_fieldservice", "title": "Booking & Field Service Engine", "maturity": "mature", "purpose": "Unified booking model (health.fieldservice.order) with full state machine, staff assignments, availability matrix, skills, AI assignment engine with daily optimization crons, clinical notes & protocols, portable equipment, ops command center."},
+    {"name": "health_pwa", "title": "Nurse Field PWA", "maturity": "mature", "purpose": "Vue 3 + Quasar offline-first mobile app: PouchDB/IndexedDB 30-day sync, check-in/out, GPS, clinical notes + photos, quote verification, payment collection, VAPID web push."},
+    {"name": "health_crm", "title": "Healthcare CRM", "maturity": "mature", "purpose": "Contact-first intake flow, healthcare lead qualification, client↔representative relationship model (caregiver/payer/referrer/guardian kinship), Vietnamese channels (Zalo, FB), D3 relationship network graph."},
+    {"name": "health_invoicing", "title": "Billing & Finance Center", "maturity": "mature", "purpose": "Auto-invoice on visit completion, prepaid service packages with visit countdown, AR dashboard, payment transactions, MISA sync fields, Finance Center workspace."},
+    {"name": "advanced_pricing", "title": "Visual Pricing Engine", "maturity": "mature", "purpose": "Google Blockly visual rule builder, multi-level cascading rules, holiday/TET multipliers, distance/time/urgency conditions, approval workflow, plain-language rule explanations."},
+    {"name": "health_redinvoice", "title": "Viettel Red Invoice", "maturity": "mature", "purpose": "Vietnam tax-authority e-invoice submission (Viettel SInvoice) with status sync and retry."},
+    {"name": "health_roster", "title": "Roster Planning Board", "maturity": "mature", "purpose": "Weekly nurses × days drag-drop grid with leave overlay, utilization, conflict detection; unified availability-aware staff schedule timeline."},
+    {"name": "health_zalo", "title": "Zalo Integration", "maturity": "mature", "purpose": "OAuth, webhooks, ZNS template notifications, persistent chat-hub widget, conversations linked to patient records."},
+    {"name": "health_voip24h", "title": "VoIP Integration", "maturity": "mature", "purpose": "Click-to-dial, CDR sync every 15 min, call recordings with playback, incoming-call popups with contact matching."},
+    {"name": "biz_bi / biz_bi_health", "title": "Semantic BI Platform", "maturity": "mature", "purpose": "Semantic datasets with row/column security, silver/gold medallion pipeline, ECharts drag-drop explorer, GridStack dashboards with TV mode, pluggable LLM chart generation (Claude/OpenAI/Ollama) that never sees raw rows."},
+    {"name": "health_theme", "title": "Theme Engine + Studio", "maturity": "mature", "purpose": "56-token CSS custom-property system, live Theme Studio, VU form engine with hero rendering, side sheets, progress rails, docked actions."},
+    {"name": "pb_hr_workforce", "title": "Workforce Management", "maturity": "mature", "purpose": "Shift roster grid, live attendance Kanban, Gantt timecards, OT rules with approval, payroll variance analytics."},
+    {"name": "hr_development_ai", "title": "AI Workforce Development", "maturity": "mature", "purpose": "Multi-provider AI framework (Claude/OpenAI/Ollama/Mistral, Fernet-encrypted keys): skills inference, coaching nudges, mentor matching, learning paths; 65+ models."},
+    {"name": "access_roles / health_user_admin", "title": "Access Control & Tenant Admin", "maturity": "mature", "purpose": "Field-level + record-level role permissions, SaaS-safe tenant admin (user management without sysadmin powers)."},
+    {"name": "health_flow / health_landing / health_cms_sidebar", "title": "Navigation Shells", "maturity": "mature", "purpose": "Circular workflow dashboard, card-based landing hub, role-based unified sidebar."},
+    {"name": "health_migration", "title": "Migration Tooling", "maturity": "partial", "purpose": "Idempotent, reversible legacy import runner with crosswalk and dry-run."},
+    {"name": "biz_deroute", "title": "URL Rebranding", "maturity": "mature", "purpose": "Serves web client at /bizapp with 301 legacy redirects, router patching, service-worker hygiene."}
+  ],
+  "strengths": [
+    "Unified booking model: one health.fieldservice.order carries scheduling, staff, clinical notes, quote, invoice and compliance state — competitors typically fragment this across 3-4 systems.",
+    "Offline-first nurse PWA with payment collection in the field — most competitors' mobile apps are online-only or read-mostly.",
+    "Visual Blockly pricing engine with plain-language rule explanations and approval workflow — genuinely rare; most competitors hard-code rate tables.",
+    "Semantic BI layer with governed LLM chart generation (metadata-only, provider-pluggable including local Ollama) — ahead of most home-care vendors' static reporting.",
+    "Deep Vietnam compliance moat: Viettel Red Invoice, MISA sync, Vietnamese address/kinship structures, Zalo-native communications, TET pricing.",
+    "AI assignment engine with scheduled optimization and a reusable multi-provider AI framework already in production.",
+    "Theme token engine + workspace shells give a design-system foundation most Odoo (and healthcare) products lack.",
+    "Catchment-province access model cleanly supports geographic multi-branch operations.",
+    "Relationship-first CRM (client ↔ caregiver/payer/referrer/guardian) matches the reality that home-care buyers are usually family members, not patients."
+  ],
+  "weaknesses": [
+    "Clinical depth is thin: clinical documentation is largely free text; no care plans, structured vitals, eMAR, incidents, or wound tracking — this is the biggest gap vs. AlayaCare/WellSky-class platforms.",
+    "Client-facing surface is nearly zero: portal is a stub, no self-booking, no family visibility, no telehealth — competitors monetize family engagement heavily.",
+    "Zero interoperability: no FHIR/HL7/SNOMED/ICD/LOINC and no enterprise API gateway, blocking government programs, insurers, and ASEAN national platforms (e.g. SATUSEHAT).",
+    "Scheduling lacks route optimization, shift swaps, and true recurring-series generation — the roster is visual but not yet intelligent about geography.",
+    "Visit verification is not EVV-grade: GPS points exist but no geofencing, no signatures, no tamper-evident audit — a blocker for government-funded programs in AU/US-style markets.",
+    "Notifications are one-way and manual: no SMS/Zalo reminder automation, no secure two-way client messaging.",
+    "Compliance posture is Vietnam-only: no consent management, no GDPR/HIPAA-grade audit and data-residency story for expansion markets.",
+    "Vitals stored as free text prevents trending, alerting, and any predictive clinical AI until structured."
+  ],
+  "gaps": [
+    {"domain": "Clinical Core", "severity": "critical", "items": ["Care plan model with goals, interventions, review cycles", "Structured vitals with LOINC coding, trending, alert thresholds", "Medication management + eMAR (administration records)", "Incident/adverse-event management with investigation workflow", "Assessment library beyond Morse falls (pain, nutrition, cognition, ADL, pressure injury)", "Wound care tracking with photo timeline", "Consent capture and management", "Structured progress notes with outcome trending", "Configurable clinical forms engine"]},
+    {"domain": "Interoperability", "severity": "critical", "items": ["FHIR R4 facade + resource mapping", "SNOMED CT / ICD-10 / LOINC terminology service", "Country adapters (VN MOH, Singapore NEHR, Indonesia SATUSEHAT, AU My Health Record/NDIS)", "Enterprise API gateway (OpenAPI, keys, rate limits, webhooks)", "Lab/imaging integration, DICOMweb reference strategy"]},
+    {"domain": "Client & Family Experience", "severity": "high", "items": ["Family/client portal with care visibility", "Online self-booking", "Telehealth/video visits", "Bill pay + document sharing", "Satisfaction capture beyond a 1-5 field"]},
+    {"domain": "Scheduling Intelligence", "severity": "high", "items": ["Route optimization + travel-aware assignment", "Shift swap marketplace with approval", "Recurring series auto-generation and bulk reschedule", "Demand forecasting and capacity planning"]},
+    {"domain": "Mobile / EVV", "severity": "high", "items": ["Geofenced auto check-in/out", "Signature capture", "Voice capture and dictation", "Offline structured forms", "Lone-worker safety features"]},
+    {"domain": "Communications", "severity": "medium", "items": ["Automated SMS/Zalo/WhatsApp appointment reminders", "Secure in-app client messaging", "Family visit-update broadcasts", "Multi-language notification templates"]},
+    {"domain": "Revenue & Funding", "severity": "medium", "items": ["Claims management workflow", "Government program / funding budget management (NDIS-style)", "Payer-specific billing rules", "Denial tracking"]},
+    {"domain": "Compliance & Quality", "severity": "medium", "items": ["Quality audit workflows", "Credential/certification expiry tracking", "GDPR/PDPA-grade consent + audit", "Data-residency architecture for multi-country"]}
+  ]
+}

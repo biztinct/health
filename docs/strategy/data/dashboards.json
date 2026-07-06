@@ -1,0 +1,160 @@
+{
+  "dashboards": [
+    {
+      "name": "Executive Command Center",
+      "audience": "CEO / owners / board",
+      "key_widgets": [
+        "Revenue vs target by service line (home care, clinic, nursing, allied health)",
+        "Active clients & package burn-down runway",
+        "Visit completion rate and missed-visit trend",
+        "Gross margin per visit-hour by catchment",
+        "Cash position: AR aging + collections velocity",
+        "Net client growth funnel (leads → assessments → active)"
+      ],
+      "data_sources": "biz_bi gold datasets over health_fieldservice, health_invoicing, health_crm, advanced_pricing"
+    },
+    {
+      "name": "Clinical Quality & Outcomes",
+      "audience": "Clinical director / head nurse",
+      "key_widgets": [
+        "Falls per 1,000 visit-hours (Morse-banded)",
+        "Wound healing velocity distribution",
+        "Medication administration compliance & error rate",
+        "Care plan goal attainment by discipline",
+        "Assessment score trends (Barthel/MMSE cohorts)",
+        "Overdue clinical reviews worklist"
+      ],
+      "data_sources": "health_careplan, health_vitals, health_emar, health_incident, health_forms via biz_bi silver/gold"
+    },
+    {
+      "name": "Client Risk Radar",
+      "audience": "Care managers",
+      "key_widgets": [
+        "Ranked deterioration early-warning worklist (twin scores)",
+        "Abnormal vitals in last 72h",
+        "Telemonitoring signal anomalies (sleep, activity, missed meals)",
+        "Clients with rising cancellation/refusal patterns",
+        "Hospitalization-proxy flags",
+        "One-click 'dispatch assessment visit' actions"
+      ],
+      "data_sources": "health_twin predictions, health_vitals, health_telemonitoring, health_fieldservice cancellations"
+    },
+    {
+      "name": "Workforce Utilization & Burnout Radar",
+      "audience": "Operations / HR managers",
+      "key_widgets": [
+        "Billable utilization per nurse vs target band",
+        "Travel time vs care time ratio by route",
+        "Overtime and consecutive-day streaks",
+        "Shift-swap frequency spikes (burnout signal)",
+        "Skill coverage heatmap vs demand by catchment",
+        "Documentation time per visit trend"
+      ],
+      "data_sources": "pb_hr_workforce timecards, health.staff.assignment, health_routes, hr_development_ai signals"
+    },
+    {
+      "name": "Live Operations Wallboard",
+      "audience": "Dispatch / duty coordinators (office TV)",
+      "key_widgets": [
+        "Real-time visit status map (in progress, late, at-risk)",
+        "GPS check-in exceptions and geofence misses",
+        "Unassigned visits next 48h with AI-suggested fills",
+        "Nurse ETA delays cascading to later visits",
+        "Incident and escalation ticker",
+        "PWA sync health (devices offline > 24h)"
+      ],
+      "data_sources": "health_fieldservice live states, health_pwa check-in/GPS, health_routes ETAs, AI assignment engine"
+    },
+    {
+      "name": "Revenue Cycle & Collections",
+      "audience": "Finance team",
+      "key_widgets": [
+        "AR aging waterfall by payer type (private/corporate/government)",
+        "Invoice-to-payment cycle time",
+        "Red invoice (Viettel SInvoice) issuance status & failures",
+        "Package prepayment liability vs delivered visits",
+        "Claim rejection rates and reasons by funder",
+        "Payment method mix (cash/card/transfer) by district"
+      ],
+      "data_sources": "health_invoicing, health_redinvoice, health_claims, payment transactions via biz_bi"
+    },
+    {
+      "name": "Package & Pricing Performance",
+      "audience": "Commercial / pricing managers",
+      "key_widgets": [
+        "Package profitability after travel + labor cost",
+        "Visit countdown at-risk packages (expiring underused)",
+        "Pricing rule hit-rates and discount leakage (Blockly rule analytics)",
+        "Holiday/TET multiplier revenue impact",
+        "Quote conversion rate by price tier",
+        "Renewal and upsell pipeline"
+      ],
+      "data_sources": "advanced_pricing rule logs, health_invoicing packages, health_crm quotes"
+    },
+    {
+      "name": "Catchment Demand & Growth Map",
+      "audience": "Expansion / marketing leadership",
+      "key_widgets": [
+        "Demand heatmap by province/district vs staffed capacity",
+        "Referral source flows (hospital, Zalo, word-of-mouth)",
+        "Lead response time by channel",
+        "Competitor-loss reasons from CRM",
+        "Aging-population density overlay vs coverage",
+        "Next-facility site scoring"
+      ],
+      "data_sources": "catchment-province model, health_crm channels, health_zalo lead webhooks, biz_bi ECharts map"
+    },
+    {
+      "name": "Family Engagement & Experience",
+      "audience": "Customer experience lead",
+      "key_widgets": [
+        "Portal/Zalo Mini App active family ratio per client",
+        "Message response times (team → family)",
+        "Nudge engine adherence lift by cohort",
+        "Post-visit satisfaction pulse scores",
+        "Complaint themes (LLM-clustered from Zalo/notes)",
+        "Care-moment shares per nurse"
+      ],
+      "data_sources": "health_portal_family, health_messaging, health_zalo chat hub, biz_bi LLM summarization"
+    },
+    {
+      "name": "Compliance & Incident Register",
+      "audience": "Quality & compliance officer",
+      "key_widgets": [
+        "Open incidents by severity with CAPA aging",
+        "Reportable-incident submission clock (NDIS 24h rule)",
+        "Consent coverage: clients missing/expired consents",
+        "Credential and certification expiry runway per nurse",
+        "Audit log anomalies (after-hours record access)",
+        "Trust-receipt verification exceptions"
+      ],
+      "data_sources": "health_incident, health_consent, access_roles audit, health.staff.skill certifications"
+    },
+    {
+      "name": "Telemonitoring Fleet Health",
+      "audience": "Clinical technology coordinator",
+      "key_widgets": [
+        "Device fleet status (battery, last-seen, offline gateways)",
+        "Alert volume vs actioned rate (alarm fatigue index)",
+        "Signal quality by rural vs urban catchment",
+        "Wearable-triggered dispatches and response times",
+        "Sensor-to-intervention conversion (signals that changed care plans)",
+        "Cost per monitored client vs visit reduction"
+      ],
+      "data_sources": "health_telemonitoring registry + signal tables, health_fieldservice dispatches, biz_bi silver layer"
+    },
+    {
+      "name": "AI & Automation Performance",
+      "audience": "Product / platform owner",
+      "key_widgets": [
+        "Ambient documentation adoption and edit-distance (AI draft vs final note)",
+        "AI assignment acceptance rate vs manual overrides",
+        "Early-warning precision/recall against confirmed deteriorations",
+        "LLM cost per encounter by provider (Claude/OpenAI/Ollama)",
+        "Nudge experiment lift results",
+        "Zero-data-entry visit percentage trend"
+      ],
+      "data_sources": "hr_development_ai provider logs, biz_bi bi_ai usage, health_twin model metrics, health_pwa telemetry"
+    }
+  ]
+}

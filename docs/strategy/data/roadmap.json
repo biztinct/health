@@ -1,0 +1,81 @@
+{
+  "horizons": [
+    {
+      "name": "Horizon 0 — Quick Wins",
+      "window": "0–3 months",
+      "theme": "Compress clicks, automate the obvious, instrument everything",
+      "items": [
+        "Omnichannel reminder cascade: ZNS → SMS → automated voice call, delivery-status driven (FB-041)",
+        "Geofenced auto check-in/out + signature capture in the PWA — the EVV foundation (FA area: mobile)",
+        "Exception-only visit completion: auto-verify untouched quotes, one-sheet complete (W-007/W-008)",
+        "Nightly batch Red Invoice submission with retry queue (W-016/W-017)",
+        "Timecards auto-filled from PWA GPS check-in/out; only mismatches surface (W-040)",
+        "Post-visit family snapshot via Zalo ZNS (FA-066) and no-login live-ETA link (UX-093)",
+        "Glove mode + sunlight theme for the nurse PWA (UX-081/083)",
+        "Structured vitals v1: coded model behind the existing free-text field, trending charts in biz_bi",
+        "Instant first-visit offer at lead qualification — 3 feasible slots as one-tap ZNS accept (W-026)"
+      ],
+      "outcome": "Visible relief for nurses, dispatchers and finance inside one quarter; data foundations (vitals, EVV events) laid for everything that follows."
+    },
+    {
+      "name": "Horizon 1 — Clinical Spine",
+      "window": "3–9 months",
+      "theme": "Become a clinical platform, not just an operations platform — and beat the Vietnam EMR deadline",
+      "items": [
+        "health_careplan: goals, interventions, review cycles — compiled into per-visit PWA task checklists",
+        "health_vitals: LOINC-coded observations, per-client Blockly alert thresholds (FA-005)",
+        "health_emar: medication orders + administration records with refusal reasons",
+        "health_forms: configurable assessment/forms engine on the VU form engine (pain, ADL, nutrition, cognition)",
+        "health_incident: adverse-event capture, investigation workflow, register",
+        "health_consent: consent capture at intake + check_consent() cross-cutting layer",
+        "EVV verification chain: hash-linked GPS + geofence + signature + task attestations (FA-052)",
+        "health_api_gateway v1: OpenAPI, API keys/OAuth2, /api/v1 wrapping the PWA controller",
+        "Read-only FHIR R4 facade over existing models (Patient, Encounter, Observation, DocumentReference)",
+        "VNeID identifier slots + MOH EMR export pack — Circular 13/2025 readiness before the 31 Dec 2026 facility deadline"
+      ],
+      "outcome": "Care plans, vitals, meds, incidents and consent close the gap to AlayaCare/WellSky table stakes; Vietnam regulatory position secured ahead of the market."
+    },
+    {
+      "name": "Horizon 2 — Experience & Expansion",
+      "window": "9–18 months",
+      "theme": "Win families, win referrers, enter new markets",
+      "items": [
+        "health_portal_family + Zalo Mini App: care visibility, visit stories, bill pay, kinship-aware permissions (FB-003/FB-013)",
+        "health_messaging: secure in-app client messaging + broadcast + auto-triaged Zalo inbox (UX-061)",
+        "Online self-booking against FHIR Slot/Schedule (clinic services first)",
+        "health_telehealth: video micro-consults attached to bookings",
+        "health_routes: learned motorbike travel-time matrices from PWA GPS history → route-optimized assignment (AI-022)",
+        "Ambient scribe v1: Vietnamese ASR (PhoWhisper) + LLM structured notes, offline-capable, nurse-confirmed (AI-001/AI-002)",
+        "health_fhir_gateway: country adapters — SATUSEHAT conformance (Indonesia) as first external proof, NEHR (Singapore) scoped",
+        "health_claims: NDIS/My Aged Care funding budgets + claim scrubbing for Australia entry",
+        "Margin-per-visit engine live in biz_bi (FB-062)",
+        "AI gateway: PHI redaction, cloud/local model routing, per-feature budgets (AI-058)"
+      ],
+      "outcome": "Family experience becomes a sales weapon; ambient documentation matches WellSky/Dragon in a language they don't serve; first non-Vietnam market entered through FHIR conformance."
+    },
+    {
+      "name": "Horizon 3 — Intelligence Moats",
+      "window": "18–36 months",
+      "theme": "Things no competitor can copy",
+      "items": [
+        "Client health digital twin + honest trajectory view for families (IF-001/IF-032)",
+        "Operations twin: what-if simulator for demand, staffing and coverage (IF-002)",
+        "health_telemonitoring at scale: wearables/IoT ingestion as FHIR Observations, device fleet dashboard",
+        "Blockly automation studio: no-code event→condition→action across the whole platform (FB-110)",
+        "Clinical pathway builder: Blockly-composed PlanDefinitions with outcome tracking (IF-004)",
+        "Zero-data-entry visit: ambient voice + camera verification + sensor fusion compose the record; nurse just confirms (IF-031)",
+        "Predictive staffing and burnout radar feeding the roster (AI bank workforce cluster)",
+        "Outcome benchmarking network across providers (anonymized, opt-in) (IF bank)",
+        "Value-based contract engine: outcome-linked pricing on the Blockly paradigm (IF-022)"
+      ],
+      "outcome": "Proprietary data (travel matrices, outcomes, twins) + no-code operations = a defensible platform, not a feature list."
+    }
+  ],
+  "principles": [
+    "Every horizon ships nurse-visible relief, not just infrastructure.",
+    "New clinical models are born-FHIR — schema designed from the resource inward.",
+    "AI features route through one governed gateway; local-model (Ollama) fallback wherever PHI residency demands.",
+    "Extend proven paradigms (Blockly, offline sync, workspace shells) instead of inventing new ones.",
+    "Regulatory deadlines are roadmap anchors: VN Circular 13/2025 (Dec 2026), AU Support at Home, SATUSEHAT conformance."
+  ]
+}

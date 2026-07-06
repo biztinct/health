@@ -1,0 +1,109 @@
+{
+  "modules": [
+    {
+      "name": "health_careplan",
+      "title": "Care Plans & Goals",
+      "purpose": "The missing clinical spine: structured care plans with goals, interventions, review cycles, and outcome measures; links every FSO visit and task back to a plan goal; Blockly pathway rules auto-adjust plans from assessment scores. Foundation for outcome-linked pricing and the health twin.",
+      "depends_on": "health_fieldservice, health_clinical (notes/protocols), advanced_pricing (Blockly runtime)",
+      "phase": 1
+    },
+    {
+      "name": "health_vitals",
+      "title": "Structured Vitals & Observations",
+      "purpose": "Replaces free-text vitals with typed, unit-validated observation records (BP, HR, SpO2, glucose, weight, pain) with per-client reference ranges, trend charts, and abnormal-value escalation. LOINC-coded from day one so the FHIR gateway maps cleanly to Observation resources.",
+      "depends_on": "health_clinical, health_pwa (capture UI), biz_bi (trending)",
+      "phase": 1
+    },
+    {
+      "name": "health_emar",
+      "title": "Medication Management & eMAR",
+      "purpose": "Client medication list, schedules, administration records with witness/refusal/PRN flows, and reconciliation at intake — wired to the existing RxNorm/OpenFDA interaction checker in health.medication.safety. Offline administration recording in the nurse PWA.",
+      "depends_on": "health_clinical (medication.safety), health_pwa, health_careplan",
+      "phase": 1
+    },
+    {
+      "name": "health_forms",
+      "title": "Clinical Forms & Assessment Engine",
+      "purpose": "A structured forms builder (Barthel, MMSE, PHQ-9, custom intake) with versioning, scoring formulas, conditional sections, and offline PWA rendering — generalizing the Morse falls pattern into a reusable engine whose scores feed care plans and the early-warning model.",
+      "depends_on": "health_clinical, health_pwa, access_roles",
+      "phase": 1
+    },
+    {
+      "name": "health_incident",
+      "title": "Incident & Event Management",
+      "purpose": "Falls, medication errors, injuries, complaints and near-misses with severity taxonomy, immediate-notification rules, investigation workflow, CAPA tracking, and regulator-ready registers (NDIS reportable incidents format for Australia). One-tap incident capture from the PWA mid-visit.",
+      "depends_on": "health_fieldservice, health_pwa, access_roles",
+      "phase": 1
+    },
+    {
+      "name": "health_consent",
+      "title": "Consent & Privacy Management",
+      "purpose": "Versioned consent artifacts (service, data-sharing, photography, telehealth) with e-signature capture on the nurse's device, per-purpose data-sharing scopes enforced via access_roles, expiry/renewal tracking, and Decree 13/PDPA/GDPR-grade audit trails.",
+      "depends_on": "access_roles, health_pwa (signature capture), health_crm",
+      "phase": 1
+    },
+    {
+      "name": "health_portal_family",
+      "title": "Family & Client Portal",
+      "purpose": "Role-scoped portal driven by the health.client.relation kinship graph: visit calendar and summaries, care-moment feed, quote approval, payments, task board for family members, and the honest-trajectory view. Zalo Mini App and web front ends share one API.",
+      "depends_on": "health_crm (client relations), health_invoicing, health_zalo, health_theme",
+      "phase": 2
+    },
+    {
+      "name": "health_messaging",
+      "title": "Secure Messaging & Reminders",
+      "purpose": "In-app secure threads between care team and family (attachment-safe, consent-aware), plus an omnichannel reminder orchestrator (ZNS-first, SMS fallback, push) with the behavioural nudge engine's send-time and tone optimization.",
+      "depends_on": "health_zalo, health_pwa (push), health_consent",
+      "phase": 2
+    },
+    {
+      "name": "health_telehealth",
+      "title": "Telehealth & Micro-Consults",
+      "purpose": "WebRTC video consultations with waiting room, in-visit micro-consult requests from nurse to on-call doctor (async photo/voice or live), consult notes flowing into the clinical record, and billing through existing quote/invoice rails.",
+      "depends_on": "health_fieldservice, health_invoicing, health_clinical, health_consent",
+      "phase": 2
+    },
+    {
+      "name": "health_routes",
+      "title": "Route Optimization & Geo Intelligence",
+      "purpose": "Daily multi-stop route optimization per nurse (travel-time matrices tuned for motorbike traffic in HCMC/Hanoi), geofenced auto check-in/out suggestions, live ETA sharing to families via ZNS, and travel-cost analytics feeding the assignment engine's optimization crons.",
+      "depends_on": "health_staff (assignment engine), health_pwa (GPS), health_zalo",
+      "phase": 2
+    },
+    {
+      "name": "health_telemonitoring",
+      "title": "Remote Monitoring & Device Hub",
+      "purpose": "Device registry and ingestion pipeline for BLE/LoRa home sensors and consumer wearables (store-and-forward gateway for rural connectivity), signal normalization into biz_bi silver tables, threshold/trend alerting, and the wearable-triggered dispatch hook into the booking engine.",
+      "depends_on": "biz_bi, health_vitals, health_fieldservice, health_careplan",
+      "phase": 2
+    },
+    {
+      "name": "health_fhir_gateway",
+      "title": "FHIR R4 Gateway & Country Adapters",
+      "purpose": "Canonical FHIR R4 facade (Patient, Encounter, ServiceRequest, Observation, CarePlan, Coverage) over existing models with SNOMED-CT/ICD-10/LOINC terminology service, OAuth2/SMART scopes, and pluggable country adapters: VN MOH EMR circulars/LGSP, Singapore NEHR, Australia NDIS/My Health Record.",
+      "depends_on": "health_crm, health_fieldservice, health_vitals, health_careplan, health_consent",
+      "phase": 2
+    },
+    {
+      "name": "health_api_gateway",
+      "title": "Enterprise API Platform",
+      "purpose": "Versioned OpenAPI surface over the whole platform (beyond the PWA-only REST): API keys, per-partner rate limits, webhook subscriptions, scoped tokens, and full request audit — the substrate for the care-ecosystem exchange, corporate payer integrations, and MISA/insurer connections.",
+      "depends_on": "access_roles, health_user_admin",
+      "phase": 2
+    },
+    {
+      "name": "health_claims",
+      "title": "Claims & Funder Billing",
+      "purpose": "Claim lifecycle management for non-private payers: corporate contracts, Vietnamese social insurance readiness, NDIS bulk payment requests and price-guide validation, Singapore MediSave/CHAS formats — with rejection handling, remittance reconciliation against health_invoicing AR, and funder-specific document packs.",
+      "depends_on": "health_invoicing, advanced_pricing, health_fhir_gateway (coding)",
+      "phase": 3
+    },
+    {
+      "name": "health_twin",
+      "title": "Digital Twin & Predictive Engine",
+      "purpose": "The client health twin and operations twin: trajectory modeling from vitals/notes/telemonitoring, deterioration early-warning worklists (cloud LLM or on-prem Ollama), what-if simulation for care intensity and staffing scenarios, and the benchmarking-network export layer.",
+      "depends_on": "health_vitals, health_careplan, health_telemonitoring, biz_bi, hr_development_ai (provider factory)",
+      "phase": 3
+    }
+  ]
+}
