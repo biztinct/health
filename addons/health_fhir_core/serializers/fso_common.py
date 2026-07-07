@@ -12,6 +12,26 @@ from .base import FHIRBadRequest, parse_reference_value, date_param_domain
 
 FSO_MODEL = 'health.fieldservice.order'
 
+
+def encounter_ref_if_qualifies(serializer, fso):
+    """Encounter reference for a linked FSO, but ONLY when that FSO is in
+    an Encounter-qualifying state (binding decision 3): a draft/confirmed/
+    cancelled visit surfaces as an Appointment, not an Encounter, so a
+    reference to Encounter/<id> there would dangle. Returns None otherwise,
+    so callers omit the key entirely."""
+    if fso and fso.state in ENCOUNTER_STATES:
+        return serializer.reference('Encounter', fso.id)
+    return None
+
+
+def patient_ref_domain(field):
+    """Search-param callable translating a ``patient`` reference value into
+    a domain on the given related path (``client_id``,
+    ``careplan_id.client_id`` …)."""
+    def _domain(value):
+        return [(field, '=', parse_reference_value(value, 'Patient'))]
+    return _domain
+
 # state → Encounter.status (design-platform-services.md §C.3)
 ENCOUNTER_STATUS_MAP = {
     'draft': 'planned',

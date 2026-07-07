@@ -22,6 +22,12 @@ _logger = logging.getLogger(__name__)
 COUNT_DEFAULT = 50
 COUNT_MAX = 200
 
+# Coding-system URIs shared across Phase 2 serializers (handover §2.4).
+LOINC_SYSTEM = 'http://loinc.org'
+UCUM_SYSTEM = 'http://unitsofmeasure.org'
+RXNORM_SYSTEM = 'http://www.nlm.nih.gov/research/umls/rxnorm'
+DAV_SYSTEM = 'https://dav.gov.vn/so-dang-ky'
+
 # Query params handled by the framework itself (not per-resource search params).
 RESERVED_PARAMS = ('_count', '_cursor', '_format')
 

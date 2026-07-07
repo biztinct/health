@@ -108,15 +108,18 @@ class TestFHIRCore(TransactionCase):
     # CapabilityStatement
     # ------------------------------------------------------------------
 
-    def test_capability_statement_lists_8_resources(self):
+    def test_capability_statement_lists_phase1_resources(self):
         clear_capability_cache()
         statement = build_capability(self.env)
         self.assertEqual(statement['resourceType'], 'CapabilityStatement')
         self.assertEqual(statement['fhirVersion'], '4.0.1')
         listed = [r['type'] for r in statement['rest'][0]['resource']]
-        self.assertEqual(sorted(listed), sorted(EXPECTED_RESOURCES))
-        self.assertEqual(len(listed), 8)
-        for resource in statement['rest'][0]['resource']:
+        # Phase 2 adds resources to the registry — assert the 8 Phase-1
+        # resources remain present (subset), not an exact count.
+        self.assertTrue(set(EXPECTED_RESOURCES).issubset(set(listed)))
+        phase1 = [r for r in statement['rest'][0]['resource']
+                  if r['type'] in EXPECTED_RESOURCES]
+        for resource in phase1:
             codes = [i['code'] for i in resource['interaction']]
             self.assertEqual(codes, ['read', 'search-type'])
             names = [p['name'] for p in resource['searchParam']]
