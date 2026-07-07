@@ -40,6 +40,30 @@ class CmsSidebarItem(models.Model):
     )
 
     @api.model
+    def get_match_keys(self):
+        """Union of every active item's action tags / action xml-ids / models
+        (own + match_* hints). The frontend feeds these into the custom-sidebar
+        registry so navigating to ANY wired screen keeps the CMS shell — no
+        hardcoded allowlist edit needed when a new item is added."""
+        def _split(val):
+            return [v.strip() for v in (val or '').split(',') if v.strip()]
+
+        tags, xmlids, models = set(), set(), set()
+        for item in self.search([('active', '=', True)]):
+            if item.action_tag:
+                tags.add(item.action_tag)
+            if item.action_xmlid:
+                xmlids.add(item.action_xmlid)
+            tags.update(_split(item.match_action_tags))
+            xmlids.update(_split(item.match_action_xmlids))
+            models.update(_split(item.match_models))
+        return {
+            'tags': sorted(tags),
+            'xmlids': sorted(xmlids),
+            'models': sorted(models),
+        }
+
+    @api.model
     def get_sidebar_data(self):
         user = self.env.user
         user_role = user.access_role_id

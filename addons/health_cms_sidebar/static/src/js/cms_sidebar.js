@@ -2,6 +2,7 @@
 
 import { Component, useState, onMounted } from "@odoo/owl";
 import { useService, useBus } from "@web/core/utils/hooks";
+import { registry } from "@web/core/registry";
 import { sidebarRegistry } from "@health_fieldservice/js/sidebar_registry";
 
 export class CmsSidebar extends Component {
@@ -261,29 +262,9 @@ const ALL_XMLIDS = new Set([
     // CMS Sidebar Config
     "health_cms_sidebar.action_cms_sidebar_item",
     "health_cms_sidebar.action_cms_sidebar_section",
-    // Clinical
-    "health_vitals.action_health_observation",
-    "health_vitals.action_health_vitals_threshold",
-    "health_vitals.action_health_vitals_type",
-    "health_careplan.action_health_careplan",
-    "health_emar.action_health_medication_order",
-    "health_emar.action_health_medication_administration",
-    "health_emar.action_health_medication_emar",
-    "health_forms.action_health_form_instance",
-    "health_forms.action_health_form_template",
-    "health_incident.action_health_incident",
-    "health_incident.action_health_incident_action",
-    "health_incident.action_health_incident_analysis",
-    "health_consent.action_health_consent",
-    "health_consent.action_health_consent_expiring",
-    // Interop & Compliance
-    "health_fhir_terminology.action_medical_code",
-    "health_fhir_terminology.action_medical_coding_system",
-    "health_fhir_terminology.action_medical_code_import",
-    "health_fhir_adapter_base.action_fhir_submission_log",
-    "health_fhir_adapter_vn.action_vn_emr_readiness",
-    "health_messaging.action_outbound_message",
-    "health_evv.action_health_evv_event",
+    // NB: clinical / interop / any future items are added at runtime from
+    // cms.sidebar.item data by the cms_sidebar_keys service below — no need
+    // to hardcode new action XML IDs here.
 ]);
 
 const ALL_MODELS = new Set([
@@ -297,19 +278,8 @@ const ALL_MODELS = new Set([
     // staff record form (opened from the Staff Roster, Staff Assignment, …)
     // must keep the CMS sidebar like every other CMS record form
     "hr.employee",
-    // Clinical spine + interop record models (keep the sidebar on their
-    // list/form screens like every other CMS screen)
-    "health.observation", "health.vitals.threshold", "health.vitals.type",
-    "health.careplan", "health.careplan.goal", "health.careplan.task",
-    "health.medication.order", "health.medication.administration",
-    "health.medication",
-    "health.form.instance", "health.form.template",
-    "health.incident", "health.incident.action",
-    "health.consent",
-    "medical.code", "medical.coding.system",
-    "fhir.submission.log",
-    "health.outbound.message",
-    "health.evv.event",
+    // NB: clinical / interop / future record models are added at runtime
+    // from cms.sidebar.item.match_models by the cms_sidebar_keys service.
 ]);
 
 sidebarRegistry.add("cms_unified", {
@@ -318,3 +288,29 @@ sidebarRegistry.add("cms_unified", {
     windowModels: ALL_MODELS,
     Component: CmsSidebar,
 });
+
+// ---------------------------------------------------------------------------
+// Data-driven visibility: at startup, load the action tags / xml-ids / models
+// declared by every cms.sidebar.item and add them to the (shared) registry
+// sets, so a newly-wired feature keeps the CMS shell WITHOUT a JS edit. The
+// hardcoded sets above are a bootstrap that keeps the core screens shell-y
+// even before this RPC resolves (and if it ever fails). SidebarHost reads the
+// sets live via .has(), so mutating them here is picked up on the next resolve.
+// ---------------------------------------------------------------------------
+const cmsSidebarKeysService = {
+    dependencies: ["orm"],
+    async start(env, { orm }) {
+        try {
+            const keys = await orm.call("cms.sidebar.item", "get_match_keys", []);
+            (keys.tags || []).forEach((t) => ALL_ACTION_TAGS.add(t));
+            (keys.xmlids || []).forEach((x) => ALL_XMLIDS.add(x));
+            (keys.models || []).forEach((m) => ALL_MODELS.add(m));
+            // Nudge the always-mounted SidebarHost to re-resolve now that the
+            // sets include the freshly-loaded keys.
+            env.bus.trigger("ACTION_MANAGER:UI-UPDATED");
+        } catch {
+            // Best-effort: the bootstrap sets still cover the core screens.
+        }
+    },
+};
+registry.category("services").add("cms_sidebar_keys", cmsSidebarKeysService);
