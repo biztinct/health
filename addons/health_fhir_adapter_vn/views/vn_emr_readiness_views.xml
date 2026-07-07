@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_vn_emr_readiness_form" model="ir.ui.view">
+        <field name="name">vn.emr.readiness.form</field>
+        <field name="model">vn.emr.readiness</field>
+        <field name="arch" type="xml">
+            <form string="EMR Readiness Report">
+                <group>
+                    <group>
+                        <field name="facility_id"/>
+                    </group>
+                    <group>
+                        <field name="coding_density"/>
+                        <field name="notes_coded"/>
+                        <field name="notes_total"/>
+                    </group>
+                </group>
+                <field name="report_html" nolabel="1"/>
+                <footer>
+                    <button string="Close" special="cancel"
+                            class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_vn_emr_readiness" model="ir.actions.act_window">
+        <field name="name">EMR Readiness Report</field>
+        <field name="res_model">vn.emr.readiness</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

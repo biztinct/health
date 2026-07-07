@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Catchment province record rules (conventions §4 template) on
+         fhir.submission.log: healthcare users see only their own catchment;
+         owner sees all. -->
+
+    <record id="rule_fhir_submission_log_catchment" model="ir.rule">
+        <field name="name">Submission Log: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_fhir_submission_log"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+
+    <record id="rule_fhir_submission_log_owner" model="ir.rule">
+        <field name="name">Submission Log: Owner sees all</field>
+        <field name="model_id" ref="model_fhir_submission_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner')), (4, ref('health_base.group_healthcare_admin'))]"/>
+    </record>
+
+</odoo>

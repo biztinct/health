@@ -1,0 +1,95 @@
+# Vietnamese translation for health_fhir_adapter_base
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_fhir_adapter_base\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_fhir_adapter_base
+msgid "EMR Export"
+msgstr "Xuất hồ sơ bệnh án điện tử"
+
+#. module: health_fhir_adapter_base
+msgid "EMR Submissions"
+msgstr "Hồ sơ đã xuất"
+
+#. module: health_fhir_adapter_base
+msgid "EMR Submission"
+msgstr "Hồ sơ đã xuất"
+
+#. module: health_fhir_adapter_base
+msgid "FHIR Submission Log"
+msgstr "Nhật ký gửi FHIR"
+
+#. module: health_fhir_adapter_base
+msgid "Reference"
+msgstr "Mã tham chiếu"
+
+#. module: health_fhir_adapter_base
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_fhir_adapter_base
+msgid "Bundle SHA-256"
+msgstr "Mã băm SHA-256 của gói"
+
+#. module: health_fhir_adapter_base
+msgid "Entry Count"
+msgstr "Số lượng bản ghi"
+
+#. module: health_fhir_adapter_base
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_fhir_adapter_base
+msgid "Exported"
+msgstr "Đã xuất"
+
+#. module: health_fhir_adapter_base
+msgid "Submitted"
+msgstr "Đã gửi"
+
+#. module: health_fhir_adapter_base
+msgid "Acknowledged"
+msgstr "Đã xác nhận"
+
+#. module: health_fhir_adapter_base
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_fhir_adapter_base
+msgid "Receipt Reference"
+msgstr "Mã biên nhận"
+
+#. module: health_fhir_adapter_base
+msgid "Profile Validation Issues"
+msgstr "Vấn đề kiểm tra hồ sơ"
+
+#. module: health_fhir_adapter_base
+msgid "Exported By"
+msgstr "Người xuất"
+
+#. module: health_fhir_adapter_base
+msgid "Exported At"
+msgstr "Thời điểm xuất"
+
+#. module: health_fhir_adapter_base
+msgid "Bundle Attachment"
+msgstr "Tệp đính kèm gói"
+
+#. module: health_fhir_adapter_base
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_fhir_adapter_base
+msgid ""
+"Only draft submission logs can be deleted — exported logs are audit "
+"evidence (%s)."
+msgstr ""
+"Chỉ có thể xóa nhật ký ở trạng thái nháp — nhật ký đã xuất là bằng chứng "
+"kiểm toán (%s)."

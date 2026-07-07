@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vn_emr_readiness_ops,vn.emr.readiness ops,model_vn_emr_readiness,health_base.group_healthcare_operations_manager,1,1,1,1
+access_vn_emr_readiness_manager,vn.emr.readiness manager,model_vn_emr_readiness,health_base.group_healthcare_manager,1,1,1,1
+access_vn_emr_readiness_admin,vn.emr.readiness admin,model_vn_emr_readiness,health_base.group_healthcare_admin,1,1,1,1
+access_vn_emr_readiness_owner,vn.emr.readiness owner,model_vn_emr_readiness,health_base.group_healthcare_owner,1,1,1,1

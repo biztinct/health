@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_vn_emr_readiness"
+              name="EMR Readiness Report"
+              parent="health_fhir_adapter_base.menu_fhir_adapter_root"
+              action="action_vn_emr_readiness"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="20"/>
+
+</odoo>

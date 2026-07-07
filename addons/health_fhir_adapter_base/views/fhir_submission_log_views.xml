@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_fhir_submission_log_list" model="ir.ui.view">
+        <field name="name">fhir.submission.log.list</field>
+        <field name="model">fhir.submission.log</field>
+        <field name="arch" type="xml">
+            <list string="EMR Submissions" create="0">
+                <field name="name"/>
+                <field name="adapter_code"/>
+                <field name="patient_id"/>
+                <field name="entry_count"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'acked'"
+                       decoration-info="state in ('exported','submitted')"
+                       decoration-danger="state == 'error'"/>
+                <field name="exported_at"/>
+                <field name="exported_by_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_fhir_submission_log_form" model="ir.ui.view">
+        <field name="name">fhir.submission.log.form</field>
+        <field name="model">fhir.submission.log</field>
+        <field name="arch" type="xml">
+            <form string="EMR Submission" create="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="adapter_code" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="state"/>
+                            <field name="receipt_ref"/>
+                        </group>
+                        <group>
+                            <field name="entry_count" readonly="1"/>
+                            <field name="bundle_sha256" readonly="1"/>
+                            <field name="attachment_id" readonly="1"/>
+                            <field name="exported_by_id" readonly="1"/>
+                            <field name="exported_at" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Profile Validation Issues"
+                           invisible="not issue_text">
+                        <field name="issue_text" nolabel="1" readonly="1"/>
+                    </group>
+                    <group string="Error" invisible="not error_text">
+                        <field name="error_text" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_fhir_submission_log_search" model="ir.ui.view">
+        <field name="name">fhir.submission.log.search</field>
+        <field name="model">fhir.submission.log</field>
+        <field name="arch" type="xml">
+            <search string="EMR Submissions">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="adapter_code"/>
+                <filter name="exported" string="Exported"
+                        domain="[('state','=','exported')]"/>
+                <filter name="acked" string="Acknowledged"
+                        domain="[('state','=','acked')]"/>
+                <filter name="error" string="Error"
+                        domain="[('state','=','error')]"/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+                <filter name="group_adapter" string="Adapter"
+                        context="{'group_by': 'adapter_code'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fhir_submission_log" model="ir.actions.act_window">
+        <field name="name">EMR Submissions</field>
+        <field name="res_model">fhir.submission.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_fhir_submission_log_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- EMR Export root under Healthcare (matches the Incidents register
+         placement pattern). -->
+    <menuitem id="menu_fhir_adapter_root"
+              name="EMR Export"
+              parent="health_base.menu_healthcare_root"
+              groups="health_base.group_healthcare_nurse,health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="30"/>
+
+    <menuitem id="menu_fhir_submission_log"
+              name="EMR Submissions"
+              parent="menu_fhir_adapter_root"
+              action="action_fhir_submission_log"
+              sequence="10"/>
+
+</odoo>

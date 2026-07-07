@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_facility_form_vn" model="ir.ui.view">
+        <field name="name">health.facility.form.vn</field>
+        <field name="model">health.facility</field>
+        <field name="inherit_id" ref="health_base.view_health_facility_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='health_license_number']" position="after">
+                <field name="moh_facility_code"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

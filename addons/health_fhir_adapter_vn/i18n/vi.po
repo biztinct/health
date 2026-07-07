@@ -1,0 +1,67 @@
+# Vietnamese translation for health_fhir_adapter_vn
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_fhir_adapter_vn\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_fhir_adapter_vn
+msgid "Export EMR Bundle (VN)"
+msgstr "Xuất hồ sơ bệnh án điện tử (VN)"
+
+#. module: health_fhir_adapter_vn
+msgid "EMR Submission"
+msgstr "Hồ sơ đã xuất"
+
+#. module: health_fhir_adapter_vn
+msgid "EMR Readiness Report"
+msgstr "Báo cáo mức độ sẵn sàng EMR"
+
+#. module: health_fhir_adapter_vn
+msgid "VN EMR Readiness Report"
+msgstr "Báo cáo mức độ sẵn sàng EMR (VN)"
+
+#. module: health_fhir_adapter_vn
+msgid "MOH Facility Code (mã cơ sở KCB)"
+msgstr "Mã cơ sở KCB (Bộ Y tế)"
+
+#. module: health_fhir_adapter_vn
+msgid "VNeID Verified"
+msgstr "Đã xác thực VNeID"
+
+#. module: health_fhir_adapter_vn
+msgid "VNeID Verified On"
+msgstr "Ngày xác thực VNeID"
+
+#. module: health_fhir_adapter_vn
+msgid "Facility"
+msgstr "Cơ sở"
+
+#. module: health_fhir_adapter_vn
+msgid "Coding Density (%)"
+msgstr "Mật độ mã hóa (%)"
+
+#. module: health_fhir_adapter_vn
+msgid "Clinical Notes (90d)"
+msgstr "Ghi chú lâm sàng (90 ngày)"
+
+#. module: health_fhir_adapter_vn
+msgid "Notes with ICD-10 Code (90d)"
+msgstr "Ghi chú có mã ICD-10 (90 ngày)"
+
+#. module: health_fhir_adapter_vn
+msgid "Readiness Report"
+msgstr "Báo cáo mức độ sẵn sàng"
+
+#. module: health_fhir_adapter_vn
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_fhir_adapter_vn
+msgid "Only operations managers and above may export EMR bundles."
+msgstr "Chỉ quản lý vận hành trở lên mới được xuất hồ sơ bệnh án điện tử."

@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fhir_submission_log_nurse,fhir.submission.log nurse,model_fhir_submission_log,health_base.group_healthcare_nurse,1,0,0,0
+access_fhir_submission_log_head_nurse,fhir.submission.log head_nurse,model_fhir_submission_log,health_base.group_healthcare_head_nurse,1,0,0,0
+access_fhir_submission_log_doctor,fhir.submission.log doctor,model_fhir_submission_log,health_base.group_healthcare_doctor,1,0,0,0
+access_fhir_submission_log_operations_manager,fhir.submission.log operations_manager,model_fhir_submission_log,health_base.group_healthcare_operations_manager,1,1,1,0
+access_fhir_submission_log_manager,fhir.submission.log manager,model_fhir_submission_log,health_base.group_healthcare_manager,1,1,1,0
+access_fhir_submission_log_admin,fhir.submission.log admin,model_fhir_submission_log,health_base.group_healthcare_admin,1,1,1,0
+access_fhir_submission_log_owner,fhir.submission.log owner,model_fhir_submission_log,health_base.group_healthcare_owner,1,1,1,1

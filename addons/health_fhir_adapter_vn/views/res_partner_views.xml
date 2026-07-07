@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_patient_form_vn_emr" model="ir.ui.view">
+        <field name="name">res.partner.patient.form.vn.emr</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_export_emr_bundle_vn" type="object"
+                        string="Export EMR Bundle (VN)" class="btn-primary"
+                        groups="health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+            </xpath>
+            <xpath expr="//field[@name='national_id']" position="after">
+                <field name="vneid_verified"/>
+                <field name="vneid_verified_date"
+                       readonly="not vneid_verified"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
