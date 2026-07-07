@@ -73,6 +73,17 @@ html.vu-glove .input-sm {
   font-size: 1.05rem;
 }
 
+/* Today-screen day-strip controls: the "Today" button and the
+   Day/Week/Month segmented toggle (verified live — these use bespoke
+   classes, not .btn). */
+html.vu-glove .bk-today,
+html.vu-glove .bk-seg > button,
+html.vu-glove .bk-seg button {
+  min-height: 60px;
+  font-size: 1.1rem;
+  padding: 10px 18px;
+}
+
 /* --- inputs / selects / checkbox+radio ------------------------------ */
 html.vu-glove .form-control,
 html.vu-glove input[type="text"],
@@ -279,6 +290,21 @@ html.vu-sunlight a.btn-primary {
   color: #ffffff !important;
   border: 2px solid #000000 !important;
   font-weight: 700 !important;
+}
+
+/* Day-strip segmented toggle (Day/Week/Month): white ground + black
+   border; the active segment inverts to solid black. */
+html.vu-sunlight .bk-seg button,
+html.vu-sunlight .bk-today {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  font-weight: 700 !important;
+}
+html.vu-sunlight .bk-seg button.on,
+html.vu-sunlight .bk-today.is-current {
+  background: #000000 !important;
+  color: #ffffff !important;
 }
 
 /* Links: black, underlined (color alone is not a cue at 100k lux). */
