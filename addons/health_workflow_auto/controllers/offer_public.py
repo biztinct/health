@@ -47,9 +47,11 @@ class OfferPublicController(http.Controller):
             'slots': offer.slot_ids.sorted('index'),
         })
 
+    # POST-only: chat-app link previews and mail scanners follow GET links,
+    # and accepting books a visit — a side effect must never ride a GET.
     @http.route('/booking/offer/<string:token>/accept/<int:slot_index>',
                 type='http', auth='public', website=False,
-                methods=['GET', 'POST'], csrf=False)
+                methods=['POST'], csrf=False)
     def offer_accept(self, token, slot_index, **kwargs):
         if self._rate_limited():
             return self._neutral_expired()

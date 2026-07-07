@@ -21,7 +21,8 @@
             .wa-slot { display: flex; align-items: center; gap: 12px; width: 100%;
                        text-decoration: none; color: #1f2733; background: #ffffff;
                        border: 1.5px solid #0b6b5a; border-radius: 12px; padding: 14px 16px;
-                       margin-bottom: 12px; font-size: 16px; font-weight: 600; }
+                       margin-bottom: 12px; font-size: 16px; font-weight: 600;
+                       font-family: inherit; text-align: left; cursor: pointer; }
             .wa-slot:active { background: #0b6b5a; color: #ffffff; }
             .wa-slot svg { width: 20px; height: 20px; flex: 0 0 auto; color: #0b6b5a; }
             .wa-slot .wa-staff { display: block; font-size: 13px; font-weight: 500; color: #5b6572; }
@@ -59,21 +60,25 @@
                             <p class="wa-sub">Đặt lịch thăm khám đầu tiên của bạn — chọn khung giờ phù hợp.
                                <br/>(Book your first visit — pick a time that suits you.)</p>
 
+                            <!-- Accept is POST-only: link scanners / chat preview
+                                 bots follow GET links, and booking is a side effect. -->
                             <t t-foreach="slots" t-as="slot">
-                                <a class="wa-slot"
-                                   t-attf-href="/booking/offer/#{offer.token}/accept/#{slot.index}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                         stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                        <path d="M16 2v4M8 2v4M3 10h18"/>
-                                    </svg>
-                                    <span>
-                                        <t t-esc="slot.label()"/>
-                                        <span class="wa-staff" t-if="slot.staff_id">
-                                            <t t-esc="slot.staff_id.name"/>
+                                <form method="post"
+                                      t-attf-action="/booking/offer/#{offer.token}/accept/#{slot.index}">
+                                    <button type="submit" class="wa-slot">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                            <path d="M16 2v4M8 2v4M3 10h18"/>
+                                        </svg>
+                                        <span>
+                                            <t t-esc="slot.label()"/>
+                                            <span class="wa-staff" t-if="slot.staff_id">
+                                                <t t-esc="slot.staff_id.name"/>
+                                            </span>
                                         </span>
-                                    </span>
-                                </a>
+                                    </button>
+                                </form>
                             </t>
 
                             <p class="wa-note" t-if="offer.expires_at">
