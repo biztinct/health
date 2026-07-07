@@ -261,6 +261,29 @@ const ALL_XMLIDS = new Set([
     // CMS Sidebar Config
     "health_cms_sidebar.action_cms_sidebar_item",
     "health_cms_sidebar.action_cms_sidebar_section",
+    // Clinical
+    "health_vitals.action_health_observation",
+    "health_vitals.action_health_vitals_threshold",
+    "health_vitals.action_health_vitals_type",
+    "health_careplan.action_health_careplan",
+    "health_emar.action_health_medication_order",
+    "health_emar.action_health_medication_administration",
+    "health_emar.action_health_medication_emar",
+    "health_forms.action_health_form_instance",
+    "health_forms.action_health_form_template",
+    "health_incident.action_health_incident",
+    "health_incident.action_health_incident_action",
+    "health_incident.action_health_incident_analysis",
+    "health_consent.action_health_consent",
+    "health_consent.action_health_consent_expiring",
+    // Interop & Compliance
+    "health_fhir_terminology.action_medical_code",
+    "health_fhir_terminology.action_medical_coding_system",
+    "health_fhir_terminology.action_medical_code_import",
+    "health_fhir_adapter_base.action_fhir_submission_log",
+    "health_fhir_adapter_vn.action_vn_emr_readiness",
+    "health_messaging.action_outbound_message",
+    "health_evv.action_health_evv_event",
 ]);
 
 const ALL_MODELS = new Set([
@@ -274,6 +297,19 @@ const ALL_MODELS = new Set([
     // staff record form (opened from the Staff Roster, Staff Assignment, …)
     // must keep the CMS sidebar like every other CMS record form
     "hr.employee",
+    // Clinical spine + interop record models (keep the sidebar on their
+    // list/form screens like every other CMS screen)
+    "health.observation", "health.vitals.threshold", "health.vitals.type",
+    "health.careplan", "health.careplan.goal", "health.careplan.task",
+    "health.medication.order", "health.medication.administration",
+    "health.medication",
+    "health.form.instance", "health.form.template",
+    "health.incident", "health.incident.action",
+    "health.consent",
+    "medical.code", "medical.coding.system",
+    "fhir.submission.log",
+    "health.outbound.message",
+    "health.evv.event",
 ]);
 
 sidebarRegistry.add("cms_unified", {
