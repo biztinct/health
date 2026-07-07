@@ -146,6 +146,16 @@ injects JS into the shell requires bumping `health_pwa`:
     falsy). `res.partner` also validates `mobile` on create, so the
     real "no usable phone" case is an EMPTY mobile — wrap the helper in
     try/except when you want falsy-on-invalid semantics.
+16. `res.groups` has NO `.users` attribute in Odoo 19 — it is
+    `.user_ids` (mirrors the `groups_id`→`group_ids` rename). Also
+    `crm.lead` has NO `mobile` field (only `phone`) — guard with
+    `getattr(lead, 'mobile', '')`. And `action_create_from_quick_
+    booking_owl(vals)` writes `contact_outcome` on the lead when
+    `lead_id` is passed, which re-runs `_get_or_create_patient` and
+    raises "Catchment Province is required" if the new patient lacks
+    one — pass `patient_id` (already resolved) and OMIT `lead_id`.
+    FSO `action_confirm_booking` requires a quote line or prepaid
+    package, so any programmatic booking must attach `product_lines`.
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
