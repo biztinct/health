@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_outbound_message_list" model="ir.ui.view">
+        <field name="name">health.outbound.message.list</field>
+        <field name="model">health.outbound.message</field>
+        <field name="arch" type="xml">
+            <list string="Outbound Messages" create="0">
+                <field name="name"/>
+                <field name="purpose"/>
+                <field name="channel"/>
+                <field name="partner_id"/>
+                <field name="fso_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ('sent','simulated')"
+                       decoration-info="state == 'queued'"
+                       decoration-warning="state in ('skipped','escalated')"
+                       decoration-danger="state == 'failed'"/>
+                <field name="sent_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_outbound_message_form" model="ir.ui.view">
+        <field name="name">health.outbound.message.form</field>
+        <field name="model">health.outbound.message</field>
+        <field name="arch" type="xml">
+            <form string="Outbound Message" create="0" edit="0">
+                <header>
+                    <button name="action_retry" type="object"
+                            string="Retry" class="btn-primary"
+                            invisible="state in ('sent','simulated')"
+                            groups="health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="purpose" readonly="1"/>
+                            <field name="channel" readonly="1"/>
+                            <field name="state" readonly="1"/>
+                            <field name="sent_at" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="fso_id" readonly="1"/>
+                            <field name="phone" readonly="1"/>
+                            <field name="dedup_key" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Error" invisible="not error_text">
+                        <field name="error_text" nolabel="1" readonly="1"/>
+                    </group>
+                    <group string="Payload">
+                        <field name="payload_json" widget="text" nolabel="1"
+                               readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_outbound_message_search" model="ir.ui.view">
+        <field name="name">health.outbound.message.search</field>
+        <field name="model">health.outbound.message</field>
+        <field name="arch" type="xml">
+            <search string="Outbound Messages">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="fso_id"/>
+                <filter name="queued" string="Queued" domain="[('state','=','queued')]"/>
+                <filter name="simulated" string="Simulated" domain="[('state','=','simulated')]"/>
+                <filter name="sent" string="Sent" domain="[('state','=','sent')]"/>
+                <filter name="escalated" string="Escalated" domain="[('state','=','escalated')]"/>
+                <filter name="failed" string="Failed" domain="[('state','=','failed')]"/>
+                <separator/>
+                <filter name="group_purpose" string="Purpose" context="{'group_by': 'purpose'}"/>
+                <filter name="group_channel" string="Channel" context="{'group_by': 'channel'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_outbound_message" model="ir.actions.act_window">
+        <field name="name">Outbound Messages</field>
+        <field name="res_model">health.outbound.message</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_outbound_message_search"/>
+    </record>
+
+</odoo>

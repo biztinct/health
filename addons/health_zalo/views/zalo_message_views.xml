@@ -84,12 +84,11 @@
                 <filter string="Outgoing" name="outgoing" domain="[('direction', '=', 'outgoing')]"/>
                 <filter string="Unread" name="unread" domain="[('is_read', '=', False), ('direction', '=', 'incoming')]"/>
                 <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
-                <group string="Group By">
-                    <filter string="Conversation" name="group_conversation" context="{'group_by': 'conversation_id'}"/>
-                    <filter string="Direction" name="group_direction" context="{'group_by': 'direction'}"/>
-                    <filter string="Type" name="group_type" context="{'group_by': 'message_type'}"/>
-                    <filter string="Date" name="group_date" context="{'group_by': 'sent_date'}"/>
-                </group>
+                <separator/>
+                <filter string="Conversation" name="group_conversation" context="{'group_by': 'conversation_id'}"/>
+                <filter string="Direction" name="group_direction" context="{'group_by': 'direction'}"/>
+                <filter string="Type" name="group_type" context="{'group_by': 'message_type'}"/>
+                <filter string="Date" name="group_date" context="{'group_by': 'sent_date'}"/>
             </search>
         </field>
     </record>

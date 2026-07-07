@@ -1,0 +1,123 @@
+# Vietnamese translation for health_messaging
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_messaging\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_messaging
+msgid "Visit Messages"
+msgstr "Tin nhắn lịch hẹn"
+
+#. module: health_messaging
+msgid "Outbound Message"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_messaging
+msgid "Outbound Messages"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_messaging
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: health_messaging
+msgid "Booking Confirmation"
+msgstr "Xác nhận đặt lịch"
+
+#. module: health_messaging
+msgid "Reminder (24h)"
+msgstr "Nhắc lịch (24 giờ)"
+
+#. module: health_messaging
+msgid "Reminder (2h)"
+msgstr "Nhắc lịch (2 giờ)"
+
+#. module: health_messaging
+msgid "Cancellation Notice"
+msgstr "Thông báo huỷ lịch"
+
+#. module: health_messaging
+msgid "Zalo ZNS"
+msgstr "Zalo ZNS"
+
+#. module: health_messaging
+msgid "Email"
+msgstr "Email"
+
+#. module: health_messaging
+msgid "Staff Call Activity"
+msgstr "Nhiệm vụ gọi điện của nhân viên"
+
+#. module: health_messaging
+msgid "Recipient"
+msgstr "Người nhận"
+
+#. module: health_messaging
+msgid "Visit"
+msgstr "Lịch hẹn"
+
+#. module: health_messaging
+msgid "Queued"
+msgstr "Đang chờ"
+
+#. module: health_messaging
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_messaging
+msgid "Simulated"
+msgstr "Mô phỏng"
+
+#. module: health_messaging
+msgid "Failed"
+msgstr "Thất bại"
+
+#. module: health_messaging
+msgid "Skipped"
+msgstr "Bỏ qua"
+
+#. module: health_messaging
+msgid "Escalated"
+msgstr "Chuyển nhân viên"
+
+#. module: health_messaging
+msgid "Retry"
+msgstr "Thử lại"
+
+#. module: health_messaging
+msgid "Call patient to confirm visit"
+msgstr "Gọi cho khách hàng để xác nhận lịch hẹn"
+
+#. module: health_messaging
+msgid "Enable visit messaging"
+msgstr "Bật nhắn tin lịch hẹn"
+
+#. module: health_messaging
+msgid "Simulation mode (log only, no real sends)"
+msgstr "Chế độ mô phỏng (chỉ ghi log, không gửi thật)"
+
+#. module: health_messaging
+msgid "Visit Messaging (Zalo ZNS)"
+msgstr "Nhắn tin lịch hẹn (Zalo ZNS)"
+
+#. module: health_messaging
+msgid "Quiet hours start"
+msgstr "Giờ yên lặng bắt đầu"
+
+#. module: health_messaging
+msgid "Quiet hours end"
+msgstr "Giờ yên lặng kết thúc"
+
+#. module: health_messaging
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_messaging
+msgid "Payload"
+msgstr "Dữ liệu"

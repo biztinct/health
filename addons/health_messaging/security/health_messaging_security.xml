@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Catchment province record rules (conventions §4 template) on
+         health.outbound.message. -->
+
+    <record id="rule_outbound_message_catchment" model="ir.rule">
+        <field name="name">Outbound Message: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_outbound_message"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+
+    <record id="rule_outbound_message_owner" model="ir.rule">
+        <field name="name">Outbound Message: Owner/admin see all</field>
+        <field name="model_id" ref="model_health_outbound_message"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner')), (4, ref('health_base.group_healthcare_admin'))]"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_messaging" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.messaging</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Visit Messaging (Zalo ZNS)" name="health_messaging_settings">
+                    <setting id="messaging_enabled_setting" string="Enable visit messaging"
+                             help="Master switch. Off by default — nothing is sent until switched on.">
+                        <field name="messaging_enabled"/>
+                    </setting>
+                    <setting id="messaging_dry_run_setting" string="Simulation mode"
+                             help="SAFETY: on by default. Runs the full pipeline but skips real sends (rows marked simulated).">
+                        <field name="messaging_dry_run"/>
+                    </setting>
+                    <setting id="messaging_quiet_setting" string="Quiet hours"
+                             help="Local wall-clock hours (24h, e.g. 21.0 and 7.0) during which messages are held until the window passes.">
+                        <div class="content-group">
+                            <div class="row">
+                                <label for="messaging_quiet_start" string="From" class="col-lg-3 o_light_label"/>
+                                <field name="messaging_quiet_start"/>
+                            </div>
+                            <div class="row">
+                                <label for="messaging_quiet_end" string="To" class="col-lg-3 o_light_label"/>
+                                <field name="messaging_quiet_end"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting id="messaging_templates_setting" string="ZNS template IDs"
+                             help="Zalo ZNS template IDs from the Zalo portal, per purpose.">
+                        <div class="content-group">
+                            <div class="row">
+                                <label for="messaging_zns_template_confirmation" string="Confirmation" class="col-lg-4 o_light_label"/>
+                                <field name="messaging_zns_template_confirmation"/>
+                            </div>
+                            <div class="row">
+                                <label for="messaging_zns_template_reminder24" string="24h reminder" class="col-lg-4 o_light_label"/>
+                                <field name="messaging_zns_template_reminder24"/>
+                            </div>
+                            <div class="row">
+                                <label for="messaging_zns_template_reminder2" string="2h reminder" class="col-lg-4 o_light_label"/>
+                                <field name="messaging_zns_template_reminder2"/>
+                            </div>
+                            <div class="row">
+                                <label for="messaging_zns_template_cancellation" string="Cancellation" class="col-lg-4 o_light_label"/>
+                                <field name="messaging_zns_template_cancellation"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_outbound_message"
+              name="Visit Messages"
+              parent="health_base.menu_healthcare_root"
+              action="action_outbound_message"
+              groups="health_base.group_healthcare_nurse,health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="29"/>
+
+</odoo>

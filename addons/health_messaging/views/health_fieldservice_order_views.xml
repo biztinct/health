@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_fieldservice_order_form_messaging" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.messaging</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_outbound_messages" type="object"
+                        class="oe_stat_button" icon="fa-comments-o"
+                        invisible="outbound_message_count == 0">
+                    <field name="outbound_message_count" widget="statinfo"
+                           string="Messages"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

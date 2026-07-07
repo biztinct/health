@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data noupdate="1">
+
+    <!-- Bilingual (Vietnamese + English) transactional templates. Self-
+         contained on object.* so they pass mail.template's install-time
+         render check; visit date/time are formatted in the FSO booking
+         timezone via format_datetime (never the raw UTC scheduled_datetime). -->
+
+    <record id="mail_template_booking_confirmation" model="mail.template">
+        <field name="name">Visit — Booking Confirmation</field>
+        <field name="model_id" ref="health_fieldservice.model_health_fieldservice_order"/>
+        <field name="subject">Xác nhận lịch hẹn / Booking confirmed — {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</field>
+        <field name="email_to">{{ object.patient_email or '' }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family:Arial,sans-serif;color:#1e293b;">
+                <p>Kính gửi {{ object.patient_id.name or '' }},</p>
+                <p>Lịch hẹn của quý khách đã được xác nhận:</p>
+                <ul>
+                    <li><strong>Ngày:</strong> {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</li>
+                    <li><strong>Giờ:</strong> {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</li>
+                    <li><strong>Cơ sở:</strong> {{ object.facility_id.name or '' }}</li>
+                </ul>
+                <hr/>
+                <p>Dear {{ object.patient_id.name or '' }}, your visit is confirmed for
+                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}
+                    at {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}
+                    ({{ object.facility_id.name or '' }}).</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_reminder_24h" model="mail.template">
+        <field name="name">Visit — 24h Reminder</field>
+        <field name="model_id" ref="health_fieldservice.model_health_fieldservice_order"/>
+        <field name="subject">Nhắc lịch hẹn / Visit reminder — {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</field>
+        <field name="email_to">{{ object.patient_email or '' }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family:Arial,sans-serif;color:#1e293b;">
+                <p>Kính gửi {{ object.patient_id.name or '' }},</p>
+                <p>Xin nhắc quý khách có lịch hẹn vào
+                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</strong>
+                    lúc <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>
+                    ({{ object.facility_id.name or '' }}).</p>
+                <hr/>
+                <p>Dear {{ object.patient_id.name or '' }}, this is a reminder of your visit on
+                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}
+                    at {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_reminder_2h" model="mail.template">
+        <field name="name">Visit — 2h Reminder</field>
+        <field name="model_id" ref="health_fieldservice.model_health_fieldservice_order"/>
+        <field name="subject">Nhắc lịch hẹn hôm nay / Visit today — {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</field>
+        <field name="email_to">{{ object.patient_email or '' }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family:Arial,sans-serif;color:#1e293b;">
+                <p>Kính gửi {{ object.patient_id.name or '' }},</p>
+                <p>Quý khách có lịch hẹn hôm nay lúc
+                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>
+                    ({{ object.facility_id.name or '' }}).</p>
+                <hr/>
+                <p>Dear {{ object.patient_id.name or '' }}, your visit is today at
+                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}
+                    ({{ object.facility_id.name or '' }}).</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_cancellation_notice" model="mail.template">
+        <field name="name">Visit — Cancellation Notice</field>
+        <field name="model_id" ref="health_fieldservice.model_health_fieldservice_order"/>
+        <field name="subject">Huỷ lịch hẹn / Visit cancelled — {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</field>
+        <field name="email_to">{{ object.patient_email or '' }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family:Arial,sans-serif;color:#1e293b;">
+                <p>Kính gửi {{ object.patient_id.name or '' }},</p>
+                <p>Lịch hẹn ngày
+                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</strong>
+                    lúc <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>
+                    ({{ object.facility_id.name or '' }}) đã được huỷ. Vui lòng liên hệ để đặt lại.</p>
+                <hr/>
+                <p>Dear {{ object.patient_id.name or '' }}, your visit on
+                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}
+                    ({{ object.facility_id.name or '' }}) has been cancelled. Please contact us to rebook.</p>
+            </div>
+        </field>
+    </record>
+
+</data></odoo>

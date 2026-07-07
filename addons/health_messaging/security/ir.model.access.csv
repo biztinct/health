@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_outbound_message_nurse,health.outbound.message nurse,model_health_outbound_message,health_base.group_healthcare_nurse,1,0,0,0
+access_outbound_message_head_nurse,health.outbound.message head_nurse,model_health_outbound_message,health_base.group_healthcare_head_nurse,1,0,0,0
+access_outbound_message_doctor,health.outbound.message doctor,model_health_outbound_message,health_base.group_healthcare_doctor,1,0,0,0
+access_outbound_message_operations_manager,health.outbound.message operations_manager,model_health_outbound_message,health_base.group_healthcare_operations_manager,1,1,1,0
+access_outbound_message_manager,health.outbound.message manager,model_health_outbound_message,health_base.group_healthcare_manager,1,1,1,0
+access_outbound_message_admin,health.outbound.message admin,model_health_outbound_message,health_base.group_healthcare_admin,1,1,1,0
+access_outbound_message_owner,health.outbound.message owner,model_health_outbound_message,health_base.group_healthcare_owner,1,1,1,1
