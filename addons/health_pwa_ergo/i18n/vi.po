@@ -1,0 +1,19 @@
+# Vietnamese translation for health_pwa_ergo
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_pwa_ergo\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_pwa_ergo
+msgid "Health PWA Ergonomic Modes"
+msgstr "Chế độ tiện dụng cho ứng dụng PWA"
+
+#. module: health_pwa_ergo
+msgid "Glove mode + sunlight (high-contrast) mode for the field PWA"
+msgstr "Chế độ găng tay + chế độ ngoài trời (tương phản cao) cho ứng dụng hiện trường"

@@ -1,0 +1,419 @@
+/* =====================================================================
+ * Health PWA Ergonomic Modes — ergo.css
+ * Loaded AFTER health.css so the cascade wins without specificity hacks.
+ * Mono flat colors only (no gradients). Two independent, composable classes
+ * on <html>:  .vu-glove  (big gloved-hand targets)  and  .vu-sunlight
+ * (max-contrast pure black/white for 100k-lux outdoor reading).
+ * ===================================================================== */
+
+/* =====================================================================
+ * 1. GLOVE MODE  (html.vu-glove)
+ * Variable overrides do most of the work (many components already read
+ * --touch-target / --bottom-nav-height / the spacing + font scale); the
+ * component rules below cover the screens that hardcode sizes.
+ * ===================================================================== */
+html.vu-glove {
+  --touch-target: 64px;
+  --bottom-nav-height: 76px;
+
+  /* Spacing scale ×~1.6 — grows padding/margins built on these vars. */
+  --mobile-padding: 1.6rem;
+  --mobile-margin: 1.2rem;
+  --spacing-xs: 0.4rem;
+  --spacing-sm: 0.8rem;
+  --spacing-md: 1.6rem;
+  --spacing-lg: 2.4rem;
+  --spacing-xl: 3.2rem;
+
+  /* Type scale up one step. */
+  --mobile-font-sm: 1rem;
+  --mobile-font-base: 1.125rem;
+  --mobile-font-lg: 1.25rem;
+  --mobile-font-xl: 1.5rem;
+  --mobile-font-2xl: 1.75rem;
+}
+
+html.vu-glove body {
+  font-size: 1.06rem;
+}
+
+/* --- buttons: >=64px hit targets, grown gaps ------------------------- */
+html.vu-glove .btn,
+html.vu-glove button.btn,
+html.vu-glove .btn-action,
+html.vu-glove .btn-call-primary,
+html.vu-glove .btn-clinical-notes,
+html.vu-glove .next-booking-btn,
+html.vu-glove .btn-photo-capture,
+html.vu-glove .btn-back,
+html.vu-glove .btn-close-modal,
+html.vu-glove .btn-modal-close,
+html.vu-glove .modal-footer .btn,
+html.vu-glove .button-row .btn {
+  min-height: 64px;
+  padding: 14px 20px;
+  font-size: 1.125rem;
+  gap: 12px;
+}
+
+/* Icon-only round actions (call / map / zalo). */
+html.vu-glove .btn-icon-action,
+html.vu-glove .btn-icon-call,
+html.vu-glove .btn-icon-map,
+html.vu-glove .btn-icon-zalo {
+  min-width: 64px;
+  min-height: 64px;
+}
+
+/* Small/xs buttons still clear the gloved-hand floor. */
+html.vu-glove .btn-sm,
+html.vu-glove .btn-xs,
+html.vu-glove .input-sm {
+  min-height: 56px;
+  font-size: 1.05rem;
+}
+
+/* --- inputs / selects / checkbox+radio ------------------------------ */
+html.vu-glove .form-control,
+html.vu-glove input[type="text"],
+html.vu-glove input[type="tel"],
+html.vu-glove input[type="number"],
+html.vu-glove input[type="search"],
+html.vu-glove input[type="date"],
+html.vu-glove textarea,
+html.vu-glove select {
+  min-height: 64px;
+  font-size: 1.125rem;
+  padding: 12px 16px;
+}
+
+html.vu-glove input[type="checkbox"],
+html.vu-glove input[type="radio"] {
+  width: 30px;
+  height: 30px;
+}
+
+/* --- bottom navigation --------------------------------------------- */
+html.vu-glove .mobile-nav-item {
+  min-height: 64px;
+  padding: 8px 4px;
+}
+html.vu-glove .mobile-nav-icon {
+  transform: scale(1.25);
+}
+html.vu-glove .mobile-nav-label {
+  font-size: 0.9rem;
+}
+
+/* --- list rows / cards (today screen) ------------------------------ */
+html.vu-glove .booking-card,
+html.vu-glove .booking-card-container,
+html.vu-glove .bk-seg-pill,
+html.vu-glove .selected-item {
+  min-height: 64px;
+}
+html.vu-glove .booking-card {
+  padding: 18px 16px;
+  margin-bottom: 14px;
+}
+
+/* --- segmented controls / chips ------------------------------------ */
+html.vu-glove .bk-seg-pill,
+html.vu-glove .bk-chip,
+html.vu-glove .bk-rnd {
+  min-height: 56px;
+  padding: 10px 16px;
+}
+
+/* --- dialog action rows -------------------------------------------- */
+html.vu-glove .button-row,
+html.vu-glove .modal-footer {
+  gap: 14px;
+}
+
+/* --- gloved hands get NO hover; give strong :active feedback -------- */
+html.vu-glove .btn:active,
+html.vu-glove .btn-action:active,
+html.vu-glove .mobile-nav-item:active,
+html.vu-glove .booking-card:active,
+html.vu-glove .bk-seg-pill:active {
+  transform: scale(0.97);
+  filter: brightness(0.92);
+}
+/* Fatter focus ring for keyboard/stylus. */
+html.vu-glove .btn:focus-visible,
+html.vu-glove .form-control:focus-visible,
+html.vu-glove select:focus-visible {
+  outline: 3px solid var(--primary-color, #1565C0);
+  outline-offset: 2px;
+}
+
+/* =====================================================================
+ * 2. SUNLIGHT MODE  (html.vu-sunlight)
+ * Pure black-on-white. Color tints wash out at 100k lux, so every status
+ * tint becomes a 2px solid black border + the existing icon/text. All
+ * box-shadows off. Weights bumped. Body text 21:1 (WCAG AAA).
+ * ===================================================================== */
+html.vu-sunlight {
+  /* Collapse the brand + status palette to pure mono. */
+  --primary-color: #000000;
+  --primary-dark: #000000;
+  --secondary-color: #000000;
+  --info-color: #000000;
+  --success-color: #000000;
+  --warning-color: #000000;
+  --error-color: #000000;
+  --brand-navy: #000000;
+
+  --text-primary: #000000;
+  --text-secondary: #000000;
+  --text-disabled: #000000;
+  --text-on-primary: #ffffff;
+
+  --background-color: #ffffff;
+  --surface-color: #ffffff;
+  --card-color: #ffffff;
+  --border-color: #000000;
+  --divider-color: #000000;
+
+  /* Status tint triplets -> mono. Backgrounds go white, text/accents black;
+     the chip rules below add the 2px black border that carries the meaning. */
+  --st-late-ac:#000000; --st-late-bg:#ffffff; --st-late-tx:#000000;
+  --st-up-ac:#000000;   --st-up-bg:#ffffff;   --st-up-tx:#000000;
+  --st-prog-ac:#000000; --st-prog-bg:#ffffff; --st-prog-tx:#000000;
+  --st-done-ac:#000000; --st-done-bg:#ffffff; --st-done-tx:#000000;
+  --st-canc-ac:#000000; --st-canc-bg:#ffffff; --st-canc-tx:#000000;
+
+  /* Shadows -> none. */
+  --shadow-1: none; --shadow-2: none; --shadow-3: none;
+  --shadow-dark-sm: none; --shadow-dark-md: none;
+  --shadow-dark-lg: none; --shadow-dark-xl: none;
+}
+
+html.vu-sunlight body {
+  background: #ffffff;
+  color: #000000;
+  font-weight: 500; /* body >=500 */
+}
+
+/* Kill every remaining shadow + gradient background. */
+html.vu-sunlight * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+html.vu-sunlight [class*="gradient"],
+html.vu-sunlight .booking-card,
+html.vu-sunlight .card,
+html.vu-sunlight .mobile-nav {
+  background-image: none !important;
+  background: #ffffff !important;
+}
+
+/* Headings heavier. */
+html.vu-sunlight h1,
+html.vu-sunlight h2,
+html.vu-sunlight h3,
+html.vu-sunlight .bk-today,
+html.vu-sunlight .booking-patient-name {
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+
+/* Cards / rows / nav: white ground + 2px black border. */
+html.vu-sunlight .booking-card,
+html.vu-sunlight .booking-card-container,
+html.vu-sunlight .card,
+html.vu-sunlight .selected-item,
+html.vu-sunlight .mobile-nav {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Status chips / badges: color tint -> white ground, black 2px border,
+   black bold text. Meaning now carried by border + label, not hue. */
+html.vu-sunlight .badge,
+html.vu-sunlight .badge-primary,
+html.vu-sunlight .badge-info,
+html.vu-sunlight .badge-success,
+html.vu-sunlight .badge-warning,
+html.vu-sunlight .badge-danger,
+html.vu-sunlight .badge-secondary,
+html.vu-sunlight .bk-chip,
+html.vu-sunlight .booking-time-badge,
+html.vu-sunlight .booking-lead-inline,
+html.vu-sunlight [class*="status-"] {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* Icon action buttons: mono. */
+html.vu-sunlight .btn-icon-call,
+html.vu-sunlight .btn-icon-map,
+html.vu-sunlight .btn-icon-zalo,
+html.vu-sunlight .btn-icon-call-small {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Buttons: secondary = black on white w/ border; primary = inverted block. */
+html.vu-sunlight .btn,
+html.vu-sunlight .btn-secondary,
+html.vu-sunlight .btn-outline {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  font-weight: 700 !important;
+}
+html.vu-sunlight .btn-primary,
+html.vu-sunlight .btn-success,
+html.vu-sunlight .btn-danger,
+html.vu-sunlight .btn-call-primary,
+html.vu-sunlight .btn-start,
+html.vu-sunlight .btn-complete-service,
+html.vu-sunlight a.btn-primary {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* Links: black, underlined (color alone is not a cue at 100k lux). */
+html.vu-sunlight a {
+  color: #000000 !important;
+  text-decoration: underline;
+}
+
+/* Inputs: white ground, black 2px border. */
+html.vu-sunlight .form-control,
+html.vu-sunlight input,
+html.vu-sunlight textarea,
+html.vu-sunlight select {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Bottom nav item states in pure mono. */
+html.vu-sunlight .mobile-nav-item,
+html.vu-sunlight .mobile-nav-label,
+html.vu-sunlight .mobile-nav-icon {
+  color: #000000 !important;
+}
+html.vu-sunlight .mobile-nav-item.active,
+html.vu-sunlight .mobile-nav-item[aria-current="page"] {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+html.vu-sunlight .mobile-nav-item.active .mobile-nav-label,
+html.vu-sunlight .mobile-nav-item.active .mobile-nav-icon {
+  color: #ffffff !important;
+}
+
+/* =====================================================================
+ * 3. COMPOSITION  (html.vu-glove.vu-sunlight)
+ * Both sets of rules already compose (glove = geometry, sunlight = color).
+ * Only explicit collision fix: the glove :active brightness filter would
+ * grey a pure-black button — use an inversion nudge instead.
+ * ===================================================================== */
+html.vu-glove.vu-sunlight .btn-primary:active,
+html.vu-glove.vu-sunlight .btn-start:active,
+html.vu-glove.vu-sunlight .btn-complete-service:active {
+  filter: none;
+  transform: scale(0.97);
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* =====================================================================
+ * 4. TOGGLE UI  (pill + bottom sheet) — always mono, works in every mode.
+ * ===================================================================== */
+#vu-ergo-pill {
+  position: fixed;
+  right: 12px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--bottom-nav-height, 60px) + 12px);
+  z-index: 2000;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #0b6b5a;
+  background: #ffffff;
+  color: #0b6b5a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+#vu-ergo-pill svg { width: 24px; height: 24px; }
+#vu-ergo-pill.vu-ergo-pill--glove { width: 64px; height: 64px; }
+#vu-ergo-pill.vu-ergo-pill--glove svg { width: 32px; height: 32px; }
+html.vu-sunlight #vu-ergo-pill {
+  border-color: #000000;
+  color: #000000;
+  box-shadow: none;
+}
+
+.vu-ergo-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2001;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: flex-end;
+}
+.vu-ergo-sheet-overlay[hidden] { display: none; }
+.vu-ergo-sheet {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 16px 18px calc(env(safe-area-inset-bottom, 0px) + 20px);
+  font-family: -apple-system, "Roboto", "Segoe UI", Arial, sans-serif;
+  color: #1f2733;
+}
+.vu-ergo-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.vu-ergo-close {
+  background: none;
+  border: none;
+  color: #5b6572;
+  padding: 6px;
+  cursor: pointer;
+}
+.vu-ergo-close svg { width: 22px; height: 22px; }
+.vu-ergo-row { margin-bottom: 18px; }
+.vu-ergo-label { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.vu-ergo-segs { display: flex; gap: 8px; }
+.vu-ergo-seg {
+  flex: 1 1 0;
+  min-height: 48px;
+  border: 1.5px solid #0b6b5a;
+  background: #ffffff;
+  color: #0b6b5a;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.vu-ergo-seg--on { background: #0b6b5a; color: #ffffff; }
+/* Sheet itself grows in glove mode. */
+html.vu-glove .vu-ergo-seg { min-height: 64px; font-size: 1.05rem; }
+html.vu-glove .vu-ergo-label { font-size: 1.05rem; }
+/* Sheet in sunlight mode -> mono. */
+html.vu-sunlight .vu-ergo-sheet { color: #000000; border: 2px solid #000000; }
+html.vu-sunlight .vu-ergo-seg { border-color: #000000; color: #000000; }
+html.vu-sunlight .vu-ergo-seg--on { background: #000000; color: #ffffff; }

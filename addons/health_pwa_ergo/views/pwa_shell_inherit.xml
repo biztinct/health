@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- HEAD: no-FOUC boot script (before the stylesheets) + ergo.css after
+         health.css so the cascade wins without specificity hacks. The tiny
+         inline script applies the saved mode classes to <html> immediately,
+         so a nurse who chose glove/sunlight never sees a 44px / tinted flash.
+         Keep it minimal and try/except-wrapped (localStorage throws in
+         private mode). Marker string 'vu_ergo_modes' is asserted by the test. -->
+    <template id="app_shell_ergo_head" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Ergo Modes (head)">
+        <xpath expr="//link[contains(@t-attf-href, 'css/health.css')]"
+               position="after">
+            <link t-attf-href="/health_pwa_ergo/static/src/css/ergo.css?v=#{pwa_asset_version}"
+                  rel="stylesheet" type="text/css"/>
+        </xpath>
+        <xpath expr="//link[contains(@t-attf-href, 'css/app.css')]"
+               position="before">
+            <script>
+                (function(){try{var m=JSON.parse(localStorage.getItem('vu_ergo_modes')||'{}');
+                var r=document.documentElement;if(m.glove){r.classList.add('vu-glove');}
+                if(m.sunlight==='on'){r.classList.add('vu-sunlight');}}catch(e){}})();
+            </script>
+        </xpath>
+    </template>
+
+    <!-- BODY/SCRIPTS: ergo.js after router.js (consent-module pattern). -->
+    <template id="app_shell_ergo_scripts" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Ergo Modes (scripts)">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_pwa_ergo/static/src/js/ergo.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>
