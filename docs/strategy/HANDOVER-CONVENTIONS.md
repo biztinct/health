@@ -133,6 +133,19 @@ injects JS into the shell requires bumping `health_pwa`:
 13. Custom field search methods may receive `OrderedSet` (not list/set
     builtins) and the domain optimizer rewrites `=` to `in [..]` —
     handle generic iterables and falsy members.
+14. `mail.template` renders every subject/body AT INSTALL
+    (`_check_can_be_rendered` constraint) against a bare sample record —
+    any variable you meant to inject later via
+    `_render_field(add_context=...)` raises NameError and blocks
+    install. Templates must be self-contained on `object.*`; for
+    tz-correct datetimes use `{{ format_datetime(object.dt,
+    tz=object.booking_timezone, dt_format='HH:mm') if object.dt
+    else '' }}`.
+15. `health_base`'s `normalize_vn_phone(value)` RAISES ValidationError
+    on a non-empty invalid number (it returns the value only when
+    falsy). `res.partner` also validates `mobile` on create, so the
+    real "no usable phone" case is an EMPTY mobile — wrap the helper in
+    try/except when you want falsy-on-invalid semantics.
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
