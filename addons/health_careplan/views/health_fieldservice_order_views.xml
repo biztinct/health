@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_fieldservice_order_form_careplan" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.careplan</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_careplan_tasks" type="object"
+                        class="oe_stat_button" icon="fa-check-square-o"
+                        invisible="careplan_task_count == 0">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="careplan_task_done_count"/>/<field name="careplan_task_count"/>
+                        </span>
+                        <span class="o_stat_text">Care Tasks</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- Care Plan Tasks page after Clinical Notes (spec §1.5) -->
+            <xpath expr="//page[@name='clinical_notes'][1]" position="after">
+                <page string="Care Plan Tasks" name="careplan_tasks">
+                    <field name="has_open_careplan_tasks" invisible="1"/>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not has_open_careplan_tasks">
+                        Open care-plan tasks remain on this visit.
+                    </div>
+                    <field name="careplan_task_ids" readonly="1">
+                        <list decoration-success="state == 'done'"
+                              decoration-danger="state == 'not_done'">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="is_prn" optional="hide"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'done'"
+                                   decoration-danger="state == 'not_done'"/>
+                            <field name="not_done_reason"/>
+                            <field name="completed_by_id"/>
+                            <field name="completed_datetime" optional="show"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

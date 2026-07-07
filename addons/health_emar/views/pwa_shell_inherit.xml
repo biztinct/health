@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject the eMAR PWA scripts into the app shell without touching
+         health_pwa's template body (same pattern as health_evv /
+         health_forms). Loaded after router.js so window.healthPWA /
+         PWAUtils exist. Order matters: emar-store.js defines the data
+         layer and offline outbox used by emar-components.js. -->
+    <template id="app_shell_emar" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — eMAR Scripts">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_emar/static/src/js/emar-store.js?v=#{pwa_asset_version}"></script>
+            <script t-attf-src="/health_emar/static/src/js/emar-components.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

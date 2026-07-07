@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="notgiven_reason_refused_client" model="health.medication.notgiven.reason">
+            <field name="code">refused_client</field>
+            <field name="name">Client refused</field>
+            <field name="name_vi">Khách hàng từ chối</field>
+            <field name="applies_to">refused</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="notgiven_reason_asleep" model="health.medication.notgiven.reason">
+            <field name="code">asleep</field>
+            <field name="name">Client asleep/unavailable</field>
+            <field name="name_vi">Khách hàng ngủ/vắng mặt</field>
+            <field name="applies_to">not_given</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="notgiven_reason_nausea" model="health.medication.notgiven.reason">
+            <field name="code">nausea</field>
+            <field name="name">Nausea or vomiting</field>
+            <field name="name_vi">Buồn nôn hoặc nôn</field>
+            <field name="applies_to">both</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="notgiven_reason_npo" model="health.medication.notgiven.reason">
+            <field name="code">npo</field>
+            <field name="name">Nil by mouth (NPO)</field>
+            <field name="name_vi">Nhịn ăn uống</field>
+            <field name="applies_to">not_given</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="notgiven_reason_unavailable" model="health.medication.notgiven.reason">
+            <field name="code">unavailable</field>
+            <field name="name">Medication unavailable</field>
+            <field name="name_vi">Không có thuốc</field>
+            <field name="applies_to">not_given</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="notgiven_reason_clinical_hold" model="health.medication.notgiven.reason">
+            <field name="code">clinical_hold</field>
+            <field name="name">Withheld — clinical judgement</field>
+            <field name="name_vi">Tạm ngừng theo đánh giá lâm sàng</field>
+            <field name="applies_to">not_given</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="notgiven_reason_other" model="health.medication.notgiven.reason">
+            <field name="code">other</field>
+            <field name="name">Other</field>
+            <field name="name_vi">Khác</field>
+            <field name="applies_to">both</field>
+            <field name="sequence">70</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data noupdate="1">
+
+    <!-- Daily: flip active plans to under_review at next_review_date
+         + to-do activity for the author (spec §1.4). -->
+    <record id="ir_cron_careplan_reviews" model="ir.cron" forcecreate="True">
+        <field name="name">Care Plan: Review due</field>
+        <field name="model_id" ref="model_health_careplan"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_careplan_reviews()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+    </record>
+
+    <!-- Weekly (Mon 03:00): trailing-30-day adherence, drift flag +
+         author activity below the configured threshold (spec §1.4). -->
+    <record id="ir_cron_careplan_drift" model="ir.cron" forcecreate="True">
+        <field name="name">Care Plan: Drift detection</field>
+        <field name="model_id" ref="model_health_careplan"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_careplan_drift()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=(7 - DateTime.now().weekday()) % 7 or 7)).strftime('%Y-%m-%d 03:00:00')"/>
+    </record>
+
+</data></odoo>

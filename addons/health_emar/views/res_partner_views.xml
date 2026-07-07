@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_emar" model="ir.ui.view">
+        <field name="name">res.partner.form.emar</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_medication_orders" type="object"
+                        class="oe_stat_button" icon="fa-medkit"
+                        invisible="not is_patient">
+                    <field name="medication_order_count" widget="statinfo"
+                           string="Medications"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

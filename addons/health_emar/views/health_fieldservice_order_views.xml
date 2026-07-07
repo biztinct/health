@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_fieldservice_order_form_emar" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.emar</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_medication_administrations" type="object"
+                        class="oe_stat_button" icon="fa-medkit"
+                        invisible="medication_admin_count == 0">
+                    <field name="medication_admin_count" widget="statinfo"
+                           string="Medications"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//notebook[1]" position="inside">
+                <page string="Medications" name="medication_administrations">
+                    <group>
+                        <field name="medication_admin_done_count"
+                               string="Recorded"/>
+                    </group>
+                    <field name="medication_administration_ids" readonly="1">
+                        <list decoration-success="state == 'given'"
+                              decoration-danger="state == 'refused'"
+                              decoration-warning="state == 'not_given'"
+                              decoration-muted="state == 'cancelled'">
+                            <field name="planned_datetime"/>
+                            <field name="medication_id"/>
+                            <field name="dose_given"/>
+                            <field name="dose_unit"/>
+                            <field name="state" widget="badge"/>
+                            <field name="nurse_id"/>
+                            <field name="reason_id"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

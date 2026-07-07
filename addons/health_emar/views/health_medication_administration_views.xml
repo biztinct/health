@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- MAR register (§3.5) -->
+    <record id="view_health_medication_administration_list" model="ir.ui.view">
+        <field name="name">health.medication.administration.list</field>
+        <field name="model">health.medication.administration</field>
+        <field name="arch" type="xml">
+            <list default_order="planned_datetime desc"
+                  decoration-success="state == 'given'"
+                  decoration-danger="state == 'refused'"
+                  decoration-warning="state == 'not_given'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="planned_datetime"/>
+                <field name="client_id"/>
+                <field name="medication_id"/>
+                <field name="dose_given"/>
+                <field name="dose_unit" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'given'"
+                       decoration-danger="state == 'refused'"
+                       decoration-warning="state == 'not_given'"
+                       decoration-muted="state == 'cancelled'"/>
+                <field name="nurse_id"/>
+                <field name="fso_id"/>
+                <field name="reason_id"/>
+                <field name="is_prn_dose" optional="hide"/>
+                <field name="is_amended" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_medication_administration_form" model="ir.ui.view">
+        <field name="name">health.medication.administration.form</field>
+        <field name="model">health.medication.administration</field>
+        <field name="arch" type="xml">
+            <form string="Medication Administration">
+                <header>
+                    <button name="action_ui_record_given" type="object"
+                            string="Record Given" class="btn-primary"
+                            invisible="state != 'planned'"/>
+                    <button name="action_ui_record_not_given" type="object"
+                            string="Record Not Given"
+                            invisible="state != 'planned'"/>
+                    <button name="action_ui_record_refused" type="object"
+                            string="Record Refused"
+                            invisible="state != 'planned'"/>
+                    <button name="action_cancel_slot" type="object"
+                            string="Cancel Slot"
+                            invisible="state != 'planned'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="planned,given"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-info" role="alert"
+                         invisible="not is_amended">
+                        <field name="is_amended" invisible="1"/>
+                        Amended record — the correction trail is preserved
+                        in the log below.
+                    </div>
+                    <group>
+                        <group name="what" string="Medication">
+                            <field name="order_id"
+                                   readonly="state != 'planned'"/>
+                            <field name="client_id"/>
+                            <field name="medication_id"/>
+                            <field name="dose_given"/>
+                            <field name="dose_unit"/>
+                            <field name="is_prn_dose"/>
+                        </group>
+                        <group name="when" string="Timing &amp; Outcome">
+                            <field name="planned_datetime"
+                                   readonly="state != 'planned'"/>
+                            <field name="actual_datetime"/>
+                            <field name="fso_id"/>
+                            <field name="nurse_id"/>
+                            <field name="witness_id"/>
+                            <field name="reason_id"
+                                   required="state in ('not_given', 'refused')"/>
+                            <field name="amended_by_id"
+                                   invisible="not is_amended"/>
+                            <field name="amended_date"
+                                   invisible="not is_amended"/>
+                            <field name="catchment_province_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_medication_administration_search" model="ir.ui.view">
+        <field name="name">health.medication.administration.search</field>
+        <field name="model">health.medication.administration</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="client_id"/>
+                <field name="medication_id"/>
+                <field name="order_id"/>
+                <field name="nurse_id"/>
+                <filter name="today" string="Today"
+                        domain="[('planned_datetime', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0))), ('planned_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 59)))]"/>
+                <filter name="missed" string="Missed"
+                        domain="[('state', '=', 'planned'), ('planned_datetime', '&lt;', datetime.datetime.now() - datetime.timedelta(days=1))]"/>
+                <filter name="refused" string="Refused"
+                        domain="[('state', '=', 'refused')]"/>
+                <separator/>
+                <filter name="group_client" string="Client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter name="group_order" string="Order"
+                        context="{'group_by': 'order_id'}"/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_medication_administration" model="ir.actions.act_window">
+        <field name="name">Administration Register</field>
+        <field name="res_model">health.medication.administration</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_medication_administration_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                The MAR register
+            </p>
+            <p>
+                Planned and recorded medication administrations
+                (FHIR MedicationAdministration). Ticks are recorded from
+                the nurse PWA visit checklist.
+            </p>
+        </field>
+    </record>
+
+    <!-- Not-Given Reasons (Configuration, editable list) -->
+    <record id="view_health_medication_notgiven_reason_list" model="ir.ui.view">
+        <field name="name">health.medication.notgiven.reason.list</field>
+        <field name="model">health.medication.notgiven.reason</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="name_vi"/>
+                <field name="applies_to"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_health_medication_notgiven_reason" model="ir.actions.act_window">
+        <field name="name">Not-Given Reasons</field>
+        <field name="res_model">health.medication.notgiven.reason</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

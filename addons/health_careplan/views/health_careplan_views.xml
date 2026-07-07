@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form -->
+    <record id="view_health_careplan_form" model="ir.ui.view">
+        <field name="name">health.careplan.form</field>
+        <field name="model">health.careplan</field>
+        <field name="arch" type="xml">
+            <form string="Care Plan">
+                <header>
+                    <button name="action_activate" type="object"
+                            string="Activate" class="btn-primary"
+                            invisible="state != 'draft'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager"/>
+                    <button name="action_start_review" type="object"
+                            string="Start Review"
+                            invisible="state != 'active'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager"/>
+                    <button name="action_confirm_review" type="object"
+                            string="Confirm Review" class="btn-primary"
+                            invisible="state != 'under_review'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager"/>
+                    <button name="action_complete" type="object"
+                            string="Complete"
+                            confirm="Complete this care plan? Update the goal lifecycle statuses first."
+                            invisible="state not in ('active', 'under_review')"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel Plan"
+                            confirm="Cancel this care plan? Pending tasks on future visits will be removed."
+                            invisible="state not in ('draft', 'active', 'under_review')"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager"/>
+                    <button name="action_reset_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state != 'cancelled'"
+                            groups="health_base.group_healthcare_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,under_review,completed"/>
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_view_client" type="object"
+                                class="oe_stat_button" icon="fa-user"
+                                invisible="not client_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Client</span>
+                            </div>
+                        </button>
+                        <button name="action_view_goals" type="object"
+                                class="oe_stat_button" icon="fa-bullseye">
+                            <field name="goal_count" widget="statinfo"
+                                   string="Goals"/>
+                        </button>
+                        <button name="action_view_activities" type="object"
+                                class="oe_stat_button" icon="fa-tasks">
+                            <field name="activity_count" widget="statinfo"
+                                   string="Interventions"/>
+                        </button>
+                        <button name="action_view_tasks" type="object"
+                                class="oe_stat_button" icon="fa-check-square-o"
+                                invisible="task_count == 0">
+                            <field name="task_count" widget="statinfo"
+                                   string="Visit Tasks"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Drift"
+                            bg_color="text-bg-danger"
+                            invisible="not drift_flag"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <h2><field name="title" placeholder="Plan title..."/></h2>
+                    </div>
+                    <group>
+                        <group string="Plan">
+                            <field name="client_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="category"/>
+                            <field name="facility_id"/>
+                            <field name="author_id"/>
+                            <field name="protocol_id"/>
+                            <field name="catchment_province_id"/>
+                        </group>
+                        <group string="Period &amp; Review">
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="review_cycle_days"/>
+                            <field name="next_review_date"/>
+                            <field name="last_review_date"/>
+                            <field name="version"/>
+                            <field name="adherence_rate" widget="percentage"/>
+                            <field name="drift_flag"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Goals" name="goals">
+                            <field name="goal_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="vitals_type_id"/>
+                                    <field name="baseline_value" optional="show"/>
+                                    <field name="target_value_min"/>
+                                    <field name="target_value_max"/>
+                                    <field name="target_unit" optional="show"/>
+                                    <field name="due_date"/>
+                                    <field name="priority" optional="hide"/>
+                                    <field name="lifecycle_status"/>
+                                    <field name="achievement_status"/>
+                                    <field name="latest_value" optional="show"/>
+                                    <field name="is_on_target" widget="boolean_toggle"
+                                           readonly="1" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Interventions" name="interventions">
+                            <field name="careplan_activity_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="service_type_id" optional="show"/>
+                                    <field name="frequency"/>
+                                    <field name="frequency_interval"/>
+                                    <field name="times_per_period" optional="hide"/>
+                                    <field name="visit_filter"/>
+                                    <field name="status"/>
+                                    <field name="start_date" optional="hide"/>
+                                    <field name="end_date" optional="hide"/>
+                                    <field name="duration_minutes" optional="hide"/>
+                                    <field name="goal_ids" widget="many2many_tags"
+                                           optional="hide"/>
+                                    <field name="instructions"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List -->
+    <record id="view_health_careplan_list" model="ir.ui.view">
+        <field name="name">health.careplan.list</field>
+        <field name="model">health.careplan</field>
+        <field name="arch" type="xml">
+            <list string="Care Plans"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="category"/>
+                <field name="period_start"/>
+                <field name="next_review_date"/>
+                <field name="adherence_rate" widget="percentage"/>
+                <field name="drift_flag" widget="boolean"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'under_review'"
+                       decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban -->
+    <record id="view_health_careplan_kanban" model="ir.ui.view">
+        <field name="name">health.careplan.kanban</field>
+        <field name="model">health.careplan</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="drift_flag"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="p-2">
+                            <div class="fw-bold">
+                                <field name="client_id"/>
+                            </div>
+                            <div class="text-muted">
+                                <field name="name"/>
+                                &#160;<field name="category"/>
+                            </div>
+                            <div>
+                                <span><field name="goal_count"/> goals</span>
+                                &#160;—&#160;
+                                <field name="adherence_rate" widget="percentage"/>
+                                <span t-if="record.drift_flag.raw_value"
+                                      class="badge text-bg-danger ms-2">Drift</span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search (Odoo 19: group-by filters directly in <search>) -->
+    <record id="view_health_careplan_search" model="ir.ui.view">
+        <field name="name">health.careplan.search</field>
+        <field name="model">health.careplan</field>
+        <field name="arch" type="xml">
+            <search string="Care Plans">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="title"/>
+                <field name="author_id"/>
+                <filter string="My Plans" name="my_plans"
+                        domain="[('author_id', '=', uid)]"/>
+                <filter string="Active" name="active_plans"
+                        domain="[('state', 'in', ('active', 'under_review'))]"/>
+                <filter string="Review Due" name="review_due"
+                        domain="[('next_review_date', '&lt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Drift" name="drift"
+                        domain="[('drift_flag', '=', True)]"/>
+                <separator/>
+                <filter string="Archived" name="archived"
+                        domain="[('active', '=', False)]"/>
+                <filter string="Client" name="group_client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter string="Category" name="group_category"
+                        context="{'group_by': 'category'}"/>
+                <filter string="Facility" name="group_facility"
+                        context="{'group_by': 'facility_id'}"/>
+                <filter string="Status" name="group_state"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_health_careplan" model="ir.actions.act_window">
+        <field name="name">Care Plans</field>
+        <field name="res_model">health.careplan</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_health_careplan_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a care plan
+            </p>
+            <p>
+                Goals, interventions and per-visit task checklists with
+                review cycles and drift detection.
+            </p>
+        </field>
+    </record>
+
+</odoo>

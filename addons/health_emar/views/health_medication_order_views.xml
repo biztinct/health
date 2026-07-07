@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_medication_order_list" model="ir.ui.view">
+        <field name="name">health.medication.order.list</field>
+        <field name="model">health.medication.order</field>
+        <field name="arch" type="xml">
+            <list default_order="create_date desc">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="medication_id"/>
+                <field name="dose_quantity" string="Dose"/>
+                <field name="dose_unit"/>
+                <field name="frequency"/>
+                <field name="start_date"/>
+                <field name="end_date" optional="show"/>
+                <field name="interaction_severity" widget="badge"
+                       decoration-danger="interaction_severity == 'major'"
+                       decoration-warning="interaction_severity == 'moderate'"
+                       decoration-info="interaction_severity == 'minor'"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'on_hold'"
+                       decoration-info="state == 'draft'"
+                       decoration-muted="state in ('completed', 'cancelled')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_medication_order_form" model="ir.ui.view">
+        <field name="name">health.medication.order.form</field>
+        <field name="model">health.medication.order</field>
+        <field name="arch" type="xml">
+            <form string="Medication Order">
+                <header>
+                    <button name="action_activate" type="object"
+                            string="Activate" class="btn-primary"
+                            invisible="state != 'draft'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                    <button name="action_acknowledge_interaction" type="object"
+                            string="Acknowledge Interaction" class="btn-warning"
+                            invisible="interaction_severity != 'major' or interaction_ack"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+                            confirm="Acknowledge this major drug interaction? The acknowledgement is logged."/>
+                    <button name="action_hold" type="object"
+                            string="Put On Hold"
+                            invisible="state != 'active'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                    <button name="action_resume" type="object"
+                            string="Resume"
+                            invisible="state != 'on_hold'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                    <button name="action_complete" type="object"
+                            string="Complete"
+                            invisible="state != 'active'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel"
+                            invisible="state not in ('draft', 'active', 'on_hold')"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+                            confirm="Cancel this medication order? Future planned administrations will be cancelled."/>
+                    <button name="action_reset_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state != 'cancelled'"
+                            groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_administrations" type="object"
+                                class="oe_stat_button" icon="fa-check-square-o"
+                                invisible="administration_count == 0">
+                            <field name="administration_count" widget="statinfo"
+                                   string="Administrations"/>
+                        </button>
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not interaction_warning">
+                        <field name="interaction_warning" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group name="subject" string="Client &amp; Medication">
+                            <field name="client_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="medication_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="prescriber_id"/>
+                            <field name="prescriber_name"/>
+                        </group>
+                        <group name="dosage" string="Dosage">
+                            <field name="dose_quantity"/>
+                            <field name="dose_unit"/>
+                            <field name="route"/>
+                            <field name="frequency"/>
+                            <field name="admin_times"
+                                   invisible="is_prn"/>
+                            <field name="is_prn"/>
+                            <field name="prn_reason"
+                                   invisible="not is_prn"
+                                   required="is_prn"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="period" string="Period">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                        <group name="safety" string="Safety">
+                            <field name="interaction_severity"/>
+                            <field name="interaction_ack" readonly="1"/>
+                            <field name="interaction_ack_by_id"
+                                   invisible="not interaction_ack"/>
+                            <field name="interaction_ack_date"
+                                   invisible="not interaction_ack"/>
+                            <field name="catchment_province_id" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Instructions">
+                        <field name="instructions" nolabel="1"
+                               placeholder="Patient instructions (FHIR Dosage.patientInstruction)"/>
+                    </group>
+                    <notebook>
+                        <page string="Administrations" name="administrations">
+                            <field name="administration_ids" readonly="1">
+                                <list>
+                                    <field name="planned_datetime"/>
+                                    <field name="actual_datetime"/>
+                                    <field name="dose_given"/>
+                                    <field name="dose_unit"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'given'"
+                                           decoration-danger="state == 'refused'"
+                                           decoration-warning="state == 'not_given'"
+                                           decoration-muted="state == 'cancelled'"/>
+                                    <field name="nurse_id"/>
+                                    <field name="fso_id"/>
+                                    <field name="reason_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_medication_order_search" model="ir.ui.view">
+        <field name="name">health.medication.order.search</field>
+        <field name="model">health.medication.order</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="medication_id"/>
+                <field name="prescriber_id"/>
+                <filter name="active_orders" string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="prn" string="PRN"
+                        domain="[('is_prn', '=', True)]"/>
+                <filter name="major_interaction" string="Major Interaction"
+                        domain="[('interaction_severity', '=', 'major')]"/>
+                <separator/>
+                <filter name="group_client" string="Client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter name="group_medication" string="Medication"
+                        context="{'group_by': 'medication_id'}"/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_medication_order" model="ir.actions.act_window">
+        <field name="name">Medication Orders</field>
+        <field name="res_model">health.medication.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_medication_order_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a medication order
+            </p>
+            <p>
+                Structured dosage orders (FHIR MedicationRequest) drive the
+                per-visit administration checklist in the nurse PWA.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_health_emar" name="Medications (eMAR)"
+              parent="health_base.menu_healthcare_clinical" sequence="9"/>
+
+    <menuitem id="menu_health_emar_orders" name="Medication Orders"
+              parent="menu_health_emar" sequence="10"
+              action="action_health_medication_order"/>
+
+    <menuitem id="menu_health_emar_administrations" name="Administration Register"
+              parent="menu_health_emar" sequence="20"
+              action="action_health_medication_administration"/>
+
+    <!-- Configuration lookups: reuse the existing health_base medication
+         catalog action (its own menuitem is commented out in health_base). -->
+    <menuitem id="menu_health_emar_medication_catalog" name="Medication Catalog"
+              parent="health_base.menu_healthcare_lookups" sequence="70"
+              action="action_health_medication_emar"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <menuitem id="menu_health_emar_notgiven_reasons" name="Not-Given Reasons"
+              parent="health_base.menu_healthcare_lookups" sequence="71"
+              action="action_health_medication_notgiven_reason"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+</odoo>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Care Plan Sequence (spec §1.9: prefix CP, padding 5) -->
+    <record id="seq_health_careplan" model="ir.sequence">
+        <field name="name">Care Plan</field>
+        <field name="code">health.careplan</field>
+        <field name="prefix">CP</field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+    </record>
+
+</odoo>

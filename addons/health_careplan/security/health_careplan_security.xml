@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         Catchment province record rules (spec §0.3 template) for
+         health.careplan and health.careplan.task (direct
+         catchment_province_id) plus goal/activity through
+         careplan_id.catchment_province_id (spec §1.6).
+         ===================================================================== -->
+
+    <record id="rule_health_careplan_catchment" model="ir.rule">
+        <field name="name">Care Plan: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_careplan"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_health_careplan_owner" model="ir.rule">
+        <field name="name">Care Plan: Owner sees all</field>
+        <field name="model_id" ref="model_health_careplan"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+    <record id="rule_health_careplan_task_catchment" model="ir.rule">
+        <field name="name">Care Plan Task: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_careplan_task"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_health_careplan_task_owner" model="ir.rule">
+        <field name="name">Care Plan Task: Owner sees all</field>
+        <field name="model_id" ref="model_health_careplan_task"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+    <record id="rule_health_careplan_goal_catchment" model="ir.rule">
+        <field name="name">Care Plan Goal: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_careplan_goal"/>
+        <field name="domain_force">['&amp;', ('careplan_id.catchment_province_id', '=', user.catchment_province_id.id), ('careplan_id.catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_health_careplan_goal_owner" model="ir.rule">
+        <field name="name">Care Plan Goal: Owner sees all</field>
+        <field name="model_id" ref="model_health_careplan_goal"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+    <record id="rule_health_careplan_activity_catchment" model="ir.rule">
+        <field name="name">Care Plan Activity: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_careplan_activity"/>
+        <field name="domain_force">['&amp;', ('careplan_id.catchment_province_id', '=', user.catchment_province_id.id), ('careplan_id.catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_health_careplan_activity_owner" model="ir.rule">
+        <field name="name">Care Plan Activity: Owner sees all</field>
+        <field name="model_id" ref="model_health_careplan_activity"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>

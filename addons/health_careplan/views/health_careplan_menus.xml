@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Care Plans under Clinical Intelligence (spec §1.5, sequence 5) -->
+    <menuitem id="menu_health_careplan"
+              name="Care Plans"
+              parent="health_base.menu_healthcare_clinical"
+              action="action_health_careplan"
+              sequence="5"/>
+
+    <!-- Visit-task register (manager+) -->
+    <menuitem id="menu_health_careplan_tasks"
+              name="Visit Tasks"
+              parent="menu_health_careplan"
+              action="action_health_careplan_task"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="10"/>
+
+</odoo>

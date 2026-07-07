@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Medication Order Sequence (§3.9) -->
+    <record id="seq_health_medication_order" model="ir.sequence">
+        <field name="name">Medication Order</field>
+        <field name="code">health.medication.order</field>
+        <field name="prefix">MO</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+</odoo>

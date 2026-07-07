@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         Groups: health_emar reuses the health_base healthcare groups
+         (never redefined here — §0.2). Catchment record rules (§0.3) on
+         order + administration; the not-given reason lookup is a global
+         catalog with no rules.
+         ===================================================================== -->
+
+    <record id="rule_health_medication_order_catchment" model="ir.rule">
+        <field name="name">Medication Order: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_medication_order"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+
+    <record id="rule_health_medication_order_owner" model="ir.rule">
+        <field name="name">Medication Order: Owner sees all</field>
+        <field name="model_id" ref="model_health_medication_order"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+    <record id="rule_health_medication_administration_catchment" model="ir.rule">
+        <field name="name">Medication Administration: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_medication_administration"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+
+    <record id="rule_health_medication_administration_owner" model="ir.rule">
+        <field name="name">Medication Administration: Owner sees all</field>
+        <field name="model_id" ref="model_health_medication_administration"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>
