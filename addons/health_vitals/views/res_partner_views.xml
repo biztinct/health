@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Health client form (health_base): Vitals smart button +
+         Alert Thresholds page. -->
+    <record id="view_health_patient_form_vitals" model="ir.ui.view">
+        <field name="name">res.partner.health.patient.form.vitals</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_observations" type="object"
+                        class="oe_stat_button" icon="fa-heartbeat">
+                    <field name="observation_count" widget="statinfo"
+                           string="Vitals"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Alert Thresholds" name="vitals_thresholds"
+                      groups="health_base.group_healthcare_nurse">
+                    <field name="vitals_threshold_ids">
+                        <list editable="bottom">
+                            <field name="vitals_type_id"/>
+                            <field name="severity" widget="badge"
+                                   decoration-danger="severity == 'critical'"
+                                   decoration-warning="severity == 'warning'"/>
+                            <field name="min_value"/>
+                            <field name="max_value"/>
+                            <field name="escalation_action"/>
+                            <field name="notes" optional="show"/>
+                            <field name="active" optional="hide"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- BARTHEL — Barthel ADL Index (Chỉ số Barthel), seeded published v1.
+         Standard published item scores (Mahoney &amp; Barthel 1965 /
+         Collin 1988). -->
+
+    <record id="form_template_barthel" model="health.form.template">
+        <field name="name">Barthel ADL Index</field>
+        <field name="name_vi">Chỉ số Barthel ADL</field>
+        <field name="code">BARTHEL</field>
+        <field name="version">1</field>
+        <field name="category">assessment</field>
+        <field name="scoring_method">sum</field>
+        <field name="score_vitals_type_id" ref="vitals_type_barthel_total"/>
+        <field name="scoring_bands_json" eval="[
+            {'min': 0, 'max': 40, 'label': 'Severe dependence', 'label_vi': 'Phụ thuộc nặng', 'color': '#B3261E'},
+            {'min': 45, 'max': 60, 'label': 'Moderate dependence', 'label_vi': 'Phụ thuộc vừa', 'color': '#B26A00'},
+            {'min': 65, 'max': 100, 'label': 'Independent/mild', 'label_vi': 'Độc lập/nhẹ', 'color': '#1B6E20'},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_feeding" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">10</field>
+        <field name="key">feeding</field>
+        <field name="question_type">selection</field>
+        <field name="label">Feeding</field>
+        <field name="label_vi">Ăn uống</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'unable', 'label': 'Unable', 'label_vi': 'Không thể', 'score': 0},
+            {'value': 'needs_help', 'label': 'Needs help (cutting, spreading butter, etc.)', 'label_vi': 'Cần trợ giúp (cắt thức ăn, phết bơ,...)', 'score': 5},
+            {'value': 'independent', 'label': 'Independent', 'label_vi': 'Tự lập', 'score': 10},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_bathing" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">20</field>
+        <field name="key">bathing</field>
+        <field name="question_type">selection</field>
+        <field name="label">Bathing</field>
+        <field name="label_vi">Tắm rửa</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'dependent', 'label': 'Dependent', 'label_vi': 'Phụ thuộc', 'score': 0},
+            {'value': 'independent', 'label': 'Independent (or in shower)', 'label_vi': 'Tự lập (kể cả khi tắm vòi sen)', 'score': 5},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_grooming" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">30</field>
+        <field name="key">grooming</field>
+        <field name="question_type">selection</field>
+        <field name="label">Grooming</field>
+        <field name="label_vi">Vệ sinh cá nhân</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'needs_help', 'label': 'Needs help with personal care', 'label_vi': 'Cần trợ giúp chăm sóc cá nhân', 'score': 0},
+            {'value': 'independent', 'label': 'Independent (face/hair/teeth/shaving)', 'label_vi': 'Tự lập (rửa mặt/chải tóc/đánh răng/cạo râu)', 'score': 5},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_dressing" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">40</field>
+        <field name="key">dressing</field>
+        <field name="question_type">selection</field>
+        <field name="label">Dressing</field>
+        <field name="label_vi">Mặc quần áo</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'dependent', 'label': 'Dependent', 'label_vi': 'Phụ thuộc', 'score': 0},
+            {'value': 'needs_help', 'label': 'Needs help but can do about half unaided', 'label_vi': 'Cần trợ giúp nhưng tự làm được khoảng một nửa', 'score': 5},
+            {'value': 'independent', 'label': 'Independent (including buttons, zips, laces)', 'label_vi': 'Tự lập (kể cả cài cúc, kéo khóa, buộc dây)', 'score': 10},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_bowels" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">50</field>
+        <field name="key">bowels</field>
+        <field name="question_type">selection</field>
+        <field name="label">Bowels</field>
+        <field name="label_vi">Đại tiện</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'incontinent', 'label': 'Incontinent (or needs enemas)', 'label_vi': 'Không tự chủ (hoặc cần thụt tháo)', 'score': 0},
+            {'value': 'occasional', 'label': 'Occasional accident', 'label_vi': 'Thỉnh thoảng không tự chủ', 'score': 5},
+            {'value': 'continent', 'label': 'Continent', 'label_vi': 'Tự chủ', 'score': 10},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_bladder" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">60</field>
+        <field name="key">bladder</field>
+        <field name="question_type">selection</field>
+        <field name="label">Bladder</field>
+        <field name="label_vi">Tiểu tiện</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'incontinent', 'label': 'Incontinent or catheterized and unable to manage alone', 'label_vi': 'Không tự chủ hoặc đặt ống thông và không tự quản lý được', 'score': 0},
+            {'value': 'occasional', 'label': 'Occasional accident', 'label_vi': 'Thỉnh thoảng không tự chủ', 'score': 5},
+            {'value': 'continent', 'label': 'Continent', 'label_vi': 'Tự chủ', 'score': 10},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_toilet_use" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">70</field>
+        <field name="key">toilet_use</field>
+        <field name="question_type">selection</field>
+        <field name="label">Toilet use</field>
+        <field name="label_vi">Sử dụng nhà vệ sinh</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'dependent', 'label': 'Dependent', 'label_vi': 'Phụ thuộc', 'score': 0},
+            {'value': 'needs_help', 'label': 'Needs some help, but can do something alone', 'label_vi': 'Cần một phần trợ giúp, nhưng tự làm được một số việc', 'score': 5},
+            {'value': 'independent', 'label': 'Independent (on and off, dressing, wiping)', 'label_vi': 'Tự lập (ngồi vào/ra, chỉnh quần áo, lau chùi)', 'score': 10},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_transfers" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">80</field>
+        <field name="key">transfers</field>
+        <field name="question_type">selection</field>
+        <field name="label">Transfers (bed to chair and back)</field>
+        <field name="label_vi">Di chuyển (từ giường sang ghế và ngược lại)</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'unable', 'label': 'Unable, no sitting balance', 'label_vi': 'Không thể, không giữ được thăng bằng khi ngồi', 'score': 0},
+            {'value': 'major_help', 'label': 'Major help (one or two people, physical), can sit', 'label_vi': 'Cần trợ giúp nhiều (một hoặc hai người), ngồi được', 'score': 5},
+            {'value': 'minor_help', 'label': 'Minor help (verbal or physical)', 'label_vi': 'Cần trợ giúp ít (lời nói hoặc động tác)', 'score': 10},
+            {'value': 'independent', 'label': 'Independent', 'label_vi': 'Tự lập', 'score': 15},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_mobility" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">90</field>
+        <field name="key">mobility</field>
+        <field name="question_type">selection</field>
+        <field name="label">Mobility (on level surfaces)</field>
+        <field name="label_vi">Đi lại (trên mặt phẳng)</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'immobile', 'label': 'Immobile or less than 50 m', 'label_vi': 'Không di chuyển được hoặc dưới 50 m', 'score': 0},
+            {'value': 'wheelchair', 'label': 'Wheelchair independent, including corners', 'label_vi': 'Tự dùng xe lăn, kể cả rẽ góc', 'score': 5},
+            {'value': 'walks_with_help', 'label': 'Walks with help of one person (verbal or physical)', 'label_vi': 'Đi được với trợ giúp của một người (lời nói hoặc động tác)', 'score': 10},
+            {'value': 'independent', 'label': 'Independent (but may use any aid, e.g. stick)', 'label_vi': 'Tự lập (có thể dùng dụng cụ hỗ trợ, ví dụ gậy)', 'score': 15},
+        ]"/>
+    </record>
+
+    <record id="form_question_barthel_stairs" model="health.form.question">
+        <field name="template_id" ref="form_template_barthel"/>
+        <field name="sequence">100</field>
+        <field name="key">stairs</field>
+        <field name="question_type">selection</field>
+        <field name="label">Stairs</field>
+        <field name="label_vi">Leo cầu thang</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'unable', 'label': 'Unable', 'label_vi': 'Không thể', 'score': 0},
+            {'value': 'needs_help', 'label': 'Needs help (verbal, physical, carrying aid)', 'label_vi': 'Cần trợ giúp (lời nói, động tác, mang dụng cụ hỗ trợ)', 'score': 5},
+            {'value': 'independent', 'label': 'Independent', 'label_vi': 'Tự lập', 'score': 10},
+        ]"/>
+    </record>
+
+    <function model="health.form.template" name="action_publish"
+              eval="[[ref('form_template_barthel')]]"/>
+
+</odoo>

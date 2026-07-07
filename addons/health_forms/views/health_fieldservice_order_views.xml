@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_fieldservice_order_form_forms" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.forms</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_form_instances" type="object"
+                        class="oe_stat_button" icon="fa-list-alt"
+                        invisible="form_instance_count == 0">
+                    <field name="form_instance_count" widget="statinfo"
+                           string="Assessments"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//notebook[1]" position="inside">
+                <page string="Assessments" name="form_instances">
+                    <div class="mb-2">
+                        <button name="action_new_form_instance" type="object"
+                                string="New Assessment"
+                                class="btn btn-primary"/>
+                    </div>
+                    <field name="form_instance_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="template_code"/>
+                            <field name="template_version"/>
+                            <field name="total_score"/>
+                            <field name="score_label"/>
+                            <field name="state"/>
+                            <field name="completed_datetime"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

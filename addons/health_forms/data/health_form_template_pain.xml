@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- PAIN — Pain Scale (Thang điểm đau), seeded published v1. -->
+
+    <record id="form_template_pain" model="health.form.template">
+        <field name="name">Pain Scale</field>
+        <field name="name_vi">Thang điểm đau</field>
+        <field name="code">PAIN</field>
+        <field name="version">1</field>
+        <field name="category">assessment</field>
+        <field name="scoring_method">sum</field>
+        <field name="score_vitals_type_id" ref="health_vitals.vitals_type_pain_score"/>
+        <field name="scoring_bands_json" eval="[
+            {'min': 0, 'max': 3, 'label': 'Mild', 'label_vi': 'Đau nhẹ', 'color': '#1B6E20'},
+            {'min': 4, 'max': 6, 'label': 'Moderate', 'label_vi': 'Đau vừa', 'color': '#B26A00'},
+            {'min': 7, 'max': 10, 'label': 'Severe', 'label_vi': 'Đau nặng', 'color': '#B3261E'},
+        ]"/>
+    </record>
+
+    <record id="form_question_pain_score" model="health.form.question">
+        <field name="template_id" ref="form_template_pain"/>
+        <field name="sequence">10</field>
+        <field name="key">pain_score</field>
+        <field name="question_type">number</field>
+        <field name="label">Pain score (0 = no pain, 10 = worst possible pain)</field>
+        <field name="label_vi">Mức độ đau (0 = không đau, 10 = đau dữ dội nhất)</field>
+        <field name="required" eval="True"/>
+        <field name="min_value">0</field>
+        <field name="max_value">10</field>
+        <field name="score_weight">1.0</field>
+        <field name="vitals_type_id" ref="health_vitals.vitals_type_pain_score"/>
+        <field name="help">Ask the client to rate their current pain on a 0-10 scale.</field>
+        <field name="help_vi">Đề nghị khách hàng đánh giá mức độ đau hiện tại theo thang 0-10.</field>
+    </record>
+
+    <record id="form_question_pain_location" model="health.form.question">
+        <field name="template_id" ref="form_template_pain"/>
+        <field name="sequence">20</field>
+        <field name="key">pain_location</field>
+        <field name="question_type">text</field>
+        <field name="label">Pain location</field>
+        <field name="label_vi">Vị trí đau</field>
+    </record>
+
+    <record id="form_question_pain_character" model="health.form.question">
+        <field name="template_id" ref="form_template_pain"/>
+        <field name="sequence">30</field>
+        <field name="key">pain_character</field>
+        <field name="question_type">selection</field>
+        <field name="label">Pain character</field>
+        <field name="label_vi">Tính chất đau</field>
+        <field name="options_json" eval="[
+            {'value': 'dull', 'label': 'Dull', 'label_vi': 'Âm ỉ'},
+            {'value': 'sharp', 'label': 'Sharp', 'label_vi': 'Đau nhói'},
+            {'value': 'burning', 'label': 'Burning', 'label_vi': 'Rát bỏng'},
+            {'value': 'throbbing', 'label': 'Throbbing', 'label_vi': 'Đau theo nhịp đập'},
+            {'value': 'other', 'label': 'Other', 'label_vi': 'Khác'},
+        ]"/>
+    </record>
+
+    <function model="health.form.template" name="action_publish"
+              eval="[[ref('form_template_pain')]]"/>
+
+</odoo>

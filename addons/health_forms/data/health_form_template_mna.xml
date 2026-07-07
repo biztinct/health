@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- MNA_SF — Mini Nutritional Assessment Short Form (Đánh giá dinh
+         dưỡng), seeded published v1. Standard MNA-SF items A-F. -->
+
+    <record id="form_template_mna" model="health.form.template">
+        <field name="name">Mini Nutritional Assessment SF</field>
+        <field name="name_vi">Đánh giá dinh dưỡng (MNA-SF)</field>
+        <field name="code">MNA_SF</field>
+        <field name="version">1</field>
+        <field name="category">assessment</field>
+        <field name="scoring_method">sum</field>
+        <field name="score_vitals_type_id" ref="vitals_type_mna_sf_total"/>
+        <field name="scoring_bands_json" eval="[
+            {'min': 0, 'max': 7, 'label': 'Malnourished', 'label_vi': 'Suy dinh dưỡng', 'color': '#B3261E'},
+            {'min': 8, 'max': 11, 'label': 'At risk of malnutrition', 'label_vi': 'Nguy cơ suy dinh dưỡng', 'color': '#B26A00'},
+            {'min': 12, 'max': 14, 'label': 'Normal nutritional status', 'label_vi': 'Dinh dưỡng bình thường', 'color': '#1B6E20'},
+        ]"/>
+    </record>
+
+    <record id="form_question_mna_food_intake" model="health.form.question">
+        <field name="template_id" ref="form_template_mna"/>
+        <field name="sequence">10</field>
+        <field name="key">food_intake_decline</field>
+        <field name="question_type">selection</field>
+        <field name="label">Has food intake declined over the past 3 months due to loss of appetite, digestive problems, chewing or swallowing difficulties?</field>
+        <field name="label_vi">Lượng ăn có giảm trong 3 tháng qua do chán ăn, rối loạn tiêu hóa, khó nhai hoặc khó nuốt không?</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'severe_decrease', 'label': 'Severe decrease in food intake', 'label_vi': 'Giảm ăn nhiều', 'score': 0},
+            {'value': 'moderate_decrease', 'label': 'Moderate decrease in food intake', 'label_vi': 'Giảm ăn vừa phải', 'score': 1},
+            {'value': 'no_decrease', 'label': 'No decrease in food intake', 'label_vi': 'Không giảm ăn', 'score': 2},
+        ]"/>
+    </record>
+
+    <record id="form_question_mna_weight_loss" model="health.form.question">
+        <field name="template_id" ref="form_template_mna"/>
+        <field name="sequence">20</field>
+        <field name="key">weight_loss</field>
+        <field name="question_type">selection</field>
+        <field name="label">Weight loss during the last 3 months</field>
+        <field name="label_vi">Sụt cân trong 3 tháng qua</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'over_3kg', 'label': 'Weight loss greater than 3 kg', 'label_vi': 'Sụt trên 3 kg', 'score': 0},
+            {'value': 'unknown', 'label': 'Does not know', 'label_vi': 'Không rõ', 'score': 1},
+            {'value': '1_to_3kg', 'label': 'Weight loss between 1 and 3 kg', 'label_vi': 'Sụt từ 1 đến 3 kg', 'score': 2},
+            {'value': 'none', 'label': 'No weight loss', 'label_vi': 'Không sụt cân', 'score': 3},
+        ]"/>
+    </record>
+
+    <record id="form_question_mna_mobility" model="health.form.question">
+        <field name="template_id" ref="form_template_mna"/>
+        <field name="sequence">30</field>
+        <field name="key">mobility</field>
+        <field name="question_type">selection</field>
+        <field name="label">Mobility</field>
+        <field name="label_vi">Khả năng di chuyển</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'bed_chair_bound', 'label': 'Bed or chair bound', 'label_vi': 'Nằm giường hoặc ngồi ghế tại chỗ', 'score': 0},
+            {'value': 'out_of_bed_no_out', 'label': 'Able to get out of bed/chair but does not go out', 'label_vi': 'Ra khỏi giường/ghế được nhưng không ra ngoài', 'score': 1},
+            {'value': 'goes_out', 'label': 'Goes out', 'label_vi': 'Ra ngoài được', 'score': 2},
+        ]"/>
+    </record>
+
+    <record id="form_question_mna_acute_stress" model="health.form.question">
+        <field name="template_id" ref="form_template_mna"/>
+        <field name="sequence">40</field>
+        <field name="key">acute_stress</field>
+        <field name="question_type">selection</field>
+        <field name="label">Has suffered psychological stress or acute disease in the past 3 months?</field>
+        <field name="label_vi">Có sang chấn tâm lý hoặc bệnh cấp tính trong 3 tháng qua không?</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'yes', 'label': 'Yes', 'label_vi': 'Có', 'score': 0},
+            {'value': 'no', 'label': 'No', 'label_vi': 'Không', 'score': 2},
+        ]"/>
+    </record>
+
+    <record id="form_question_mna_neuropsych" model="health.form.question">
+        <field name="template_id" ref="form_template_mna"/>
+        <field name="sequence">50</field>
+        <field name="key">neuropsych</field>
+        <field name="question_type">selection</field>
+        <field name="label">Neuropsychological problems</field>
+        <field name="label_vi">Vấn đề tâm thần kinh</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'severe', 'label': 'Severe dementia or depression', 'label_vi': 'Sa sút trí tuệ hoặc trầm cảm nặng', 'score': 0},
+            {'value': 'mild', 'label': 'Mild dementia', 'label_vi': 'Sa sút trí tuệ nhẹ', 'score': 1},
+            {'value': 'none', 'label': 'No psychological problems', 'label_vi': 'Không có vấn đề tâm lý', 'score': 2},
+        ]"/>
+    </record>
+
+    <record id="form_question_mna_bmi_band" model="health.form.question">
+        <field name="template_id" ref="form_template_mna"/>
+        <field name="sequence">60</field>
+        <field name="key">bmi_band</field>
+        <field name="question_type">selection</field>
+        <field name="label">Body Mass Index (BMI)</field>
+        <field name="label_vi">Chỉ số khối cơ thể (BMI)</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'below_19', 'label': 'BMI less than 19', 'label_vi': 'BMI dưới 19', 'score': 0},
+            {'value': '19_to_21', 'label': 'BMI 19 to less than 21', 'label_vi': 'BMI từ 19 đến dưới 21', 'score': 1},
+            {'value': '21_to_23', 'label': 'BMI 21 to less than 23', 'label_vi': 'BMI từ 21 đến dưới 23', 'score': 2},
+            {'value': '23_plus', 'label': 'BMI 23 or greater', 'label_vi': 'BMI từ 23 trở lên', 'score': 3},
+        ]"/>
+    </record>
+
+    <function model="health.form.template" name="action_publish"
+              eval="[[ref('form_template_mna')]]"/>
+
+</odoo>

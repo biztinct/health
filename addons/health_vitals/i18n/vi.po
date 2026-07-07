@@ -1,0 +1,355 @@
+# Vietnamese translation for health_vitals
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_vitals\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_vitals
+msgid "Vital Sign / Observation Type"
+msgstr "Loại sinh hiệu / quan sát"
+
+#. module: health_vitals
+msgid "Clinical Observation"
+msgstr "Quan sát lâm sàng"
+
+#. module: health_vitals
+msgid "Per-Client Vitals Alert Threshold"
+msgstr "Ngưỡng cảnh báo sinh hiệu theo khách hàng"
+
+#. module: health_vitals
+msgid "Vitals & Observations"
+msgstr "Sinh hiệu & Quan sát"
+
+#. module: health_vitals
+msgid "Observation Types"
+msgstr "Loại quan sát"
+
+#. module: health_vitals
+msgid "Vitals Thresholds"
+msgstr "Ngưỡng sinh hiệu"
+
+#. module: health_vitals
+msgid "Observation"
+msgstr "Quan sát"
+
+#. module: health_vitals
+msgid "Observations"
+msgstr "Quan sát"
+
+#. module: health_vitals
+msgid "Observation Type"
+msgstr "Loại quan sát"
+
+#. module: health_vitals
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_vitals
+msgid "Value"
+msgstr "Giá trị"
+
+#. module: health_vitals
+msgid "Text Value"
+msgstr "Giá trị văn bản"
+
+#. module: health_vitals
+msgid "Unit"
+msgstr "Đơn vị"
+
+#. module: health_vitals
+msgid "Unit Display"
+msgstr "Đơn vị hiển thị"
+
+#. module: health_vitals
+msgid "UCUM Unit"
+msgstr "Đơn vị UCUM"
+
+#. module: health_vitals
+msgid "LOINC Code"
+msgstr "Mã LOINC"
+
+#. module: health_vitals
+msgid "Effective Datetime"
+msgstr "Thời điểm đo"
+
+#. module: health_vitals
+msgid "Performer"
+msgstr "Người thực hiện"
+
+#. module: health_vitals
+msgid "Body Position"
+msgstr "Tư thế"
+
+#. module: health_vitals
+msgid "Sitting"
+msgstr "Ngồi"
+
+#. module: health_vitals
+msgid "Standing"
+msgstr "Đứng"
+
+#. module: health_vitals
+msgid "Lying"
+msgstr "Nằm"
+
+#. module: health_vitals
+msgid "Unknown"
+msgstr "Không rõ"
+
+#. module: health_vitals
+msgid "Visit"
+msgstr "Lượt thăm khám"
+
+#. module: health_vitals
+msgid "Clinical Note"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_vitals
+msgid "Panel Observation"
+msgstr "Quan sát nhóm"
+
+#. module: health_vitals
+msgid "Panel Members"
+msgstr "Thành phần nhóm"
+
+#. module: health_vitals
+msgid "Panel (no value)"
+msgstr "Nhóm (không có giá trị)"
+
+#. module: health_vitals
+msgid "Numeric"
+msgstr "Dạng số"
+
+#. module: health_vitals
+msgid "Text"
+msgstr "Văn bản"
+
+#. module: health_vitals
+msgid "Preliminary"
+msgstr "Sơ bộ"
+
+#. module: health_vitals
+msgid "Final"
+msgstr "Hoàn tất"
+
+#. module: health_vitals
+msgid "Amended"
+msgstr "Đã sửa đổi"
+
+#. module: health_vitals
+msgid "Entered in Error"
+msgstr "Nhập sai"
+
+#. module: health_vitals
+msgid "Mark Entered in Error"
+msgstr "Đánh dấu nhập sai"
+
+#. module: health_vitals
+msgid "None"
+msgstr "Không"
+
+#. module: health_vitals
+msgid "Warning"
+msgstr "Cảnh báo"
+
+#. module: health_vitals
+msgid "Critical"
+msgstr "Nguy kịch"
+
+#. module: health_vitals
+msgid "Severity"
+msgstr "Mức độ"
+
+#. module: health_vitals
+msgid "Min"
+msgstr "Tối thiểu"
+
+#. module: health_vitals
+msgid "Max"
+msgstr "Tối đa"
+
+#. module: health_vitals
+msgid "Record Only"
+msgstr "Chỉ ghi nhận"
+
+#. module: health_vitals
+msgid "Post on Client Chatter"
+msgstr "Đăng lên trao đổi của khách hàng"
+
+#. module: health_vitals
+msgid "Create Activity for Facility Manager"
+msgstr "Tạo hoạt động cho quản lý cơ sở"
+
+#. module: health_vitals
+msgid "Create Activity for Care Plan Author"
+msgstr "Tạo hoạt động cho người lập kế hoạch chăm sóc"
+
+#. module: health_vitals
+msgid "Structured"
+msgstr "Có cấu trúc"
+
+#. module: health_vitals
+msgid "Structured Vitals"
+msgstr "Sinh hiệu có cấu trúc"
+
+#. module: health_vitals
+msgid "Vital Signs (free text — legacy)"
+msgstr "Sinh hiệu (văn bản tự do — cũ)"
+
+#. module: health_vitals
+msgid "Alert Thresholds"
+msgstr "Ngưỡng cảnh báo"
+
+#. module: health_vitals
+msgid "Vitals"
+msgstr "Sinh hiệu"
+
+#. module: health_vitals
+msgid "Vitals Trend"
+msgstr "Xu hướng sinh hiệu"
+
+#. module: health_vitals
+msgid "Abnormal"
+msgstr "Bất thường"
+
+#. module: health_vitals
+msgid "Today"
+msgstr "Hôm nay"
+
+#. module: health_vitals
+msgid "This Week"
+msgstr "Tuần này"
+
+#. module: health_vitals
+msgid "My Entries"
+msgstr "Bản ghi của tôi"
+
+#. module: health_vitals
+msgid "FHIR Vital Sign"
+msgstr "Sinh hiệu FHIR"
+
+#. module: health_vitals
+msgid "FHIR Vital Signs"
+msgstr "Sinh hiệu FHIR"
+
+#. module: health_vitals
+msgid "Vietnamese Name"
+msgstr "Tên tiếng Việt"
+
+#. module: health_vitals
+msgid "Panel"
+msgstr "Nhóm"
+
+#. module: health_vitals
+msgid "Archived"
+msgstr "Đã lưu trữ"
+
+#. module: health_vitals
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_vitals
+msgid "LOINC code must be unique."
+msgstr "Mã LOINC phải là duy nhất."
+
+#. module: health_vitals
+msgid "Internal code must be unique."
+msgstr "Mã nội bộ phải là duy nhất."
+
+#. module: health_vitals
+msgid "One threshold per client, type and severity."
+msgstr "Mỗi khách hàng, loại và mức độ chỉ có một ngưỡng."
+
+#. module: health_vitals
+msgid "A threshold needs at least a minimum or a maximum value."
+msgstr "Ngưỡng cần ít nhất một giá trị tối thiểu hoặc tối đa."
+
+#. module: health_vitals
+msgid "Threshold minimum cannot exceed its maximum."
+msgstr "Giá trị tối thiểu của ngưỡng không được vượt quá giá trị tối đa."
+
+#. module: health_vitals
+msgid "%(name)s: value %(value)s outside plausible range [%(min)s – %(max)s]."
+msgstr "%(name)s: giá trị %(value)s ngoài phạm vi hợp lệ [%(min)s – %(max)s]."
+
+#. module: health_vitals
+msgid "Only a head nurse (or above) can amend the value of a final observation."
+msgstr "Chỉ điều dưỡng trưởng (hoặc cấp cao hơn) mới được sửa giá trị của quan sát đã hoàn tất."
+
+#. module: health_vitals
+msgid "Clinical observations are append-only and cannot be deleted. Mark the record 'Entered in Error' and re-enter the correct value instead."
+msgstr "Quan sát lâm sàng chỉ được thêm mới, không thể xóa. Hãy đánh dấu bản ghi là 'Nhập sai' và nhập lại giá trị đúng."
+
+#. module: health_vitals
+msgid "Observation %s is already marked entered in error."
+msgstr "Quan sát %s đã được đánh dấu nhập sai."
+
+#. module: health_vitals
+msgid "ALERT: %(type)s %(value)s%(unit)s breached %(severity)s threshold [%(min)s-%(max)s]"
+msgstr "CẢNH BÁO: %(type)s %(value)s%(unit)s vượt ngưỡng %(severity)s [%(min)s-%(max)s]"
+
+#. module: health_vitals
+msgid "Unknown observation code: %s"
+msgstr "Mã quan sát không xác định: %s"
+
+#. module: health_vitals
+msgid "Unknown panel type code: %s"
+msgstr "Mã loại nhóm không xác định: %s"
+
+#. module: health_vitals
+msgid "%s is a panel type — use create_panel() with its components."
+msgstr "%s là loại nhóm — hãy dùng create_panel() với các thành phần của nó."
+
+#. module: health_vitals
+msgid "%s is not a panel type."
+msgstr "%s không phải là loại nhóm."
+
+#. module: health_vitals
+msgid "Source: %s"
+msgstr "Nguồn: %s"
+
+#. module: health_vitals
+msgid "panel"
+msgstr "nhóm"
+
+#. module: health_vitals
+msgid "Access denied"
+msgstr "Từ chối truy cập"
+
+#. module: health_vitals
+msgid "Invalid JSON body"
+msgstr "Nội dung JSON không hợp lệ"
+
+#. module: health_vitals
+msgid "Order not found"
+msgstr "Không tìm thấy lượt đặt"
+
+#. module: health_vitals
+msgid "Order has no client"
+msgstr "Lượt đặt không có khách hàng"
+
+#. module: health_vitals
+msgid "Patient not found"
+msgstr "Không tìm thấy khách hàng"
+
+#. module: health_vitals
+msgid "%(name)s %(value)s%(unit)s is %(level)s"
+msgstr "%(name)s %(value)s%(unit)s ở mức %(level)s"
+
+#. module: health_vitals
+msgid "Vitals threshold breached"
+msgstr "Vượt ngưỡng sinh hiệu"
+
+#. module: health_vitals
+msgid "Record a structured observation"
+msgstr "Ghi nhận một quan sát có cấu trúc"
+
+#. module: health_vitals
+msgid "Define a per-client alert threshold"
+msgstr "Định nghĩa ngưỡng cảnh báo theo khách hàng"

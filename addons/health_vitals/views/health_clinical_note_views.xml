@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Clinical note: structured vitals sidecar. The legacy free-text
+         vital_signs field is KEPT (coding-sidecar pattern). -->
+    <record id="view_health_clinical_note_form_vitals" model="ir.ui.view">
+        <field name="name">health.clinical.note.form.vitals</field>
+        <field name="model">health.clinical.note</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_clinical_note_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vital_signs']" position="attributes">
+                <attribute name="string">Vital Signs (free text — legacy)</attribute>
+            </xpath>
+            <xpath expr="//field[@name='vital_signs']" position="before">
+                <field name="has_structured_vitals" widget="boolean_toggle"
+                       readonly="1"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Structured Vitals" name="structured_vitals">
+                    <field name="observation_ids">
+                        <list editable="bottom">
+                            <field name="vitals_type_id"/>
+                            <field name="value_quantity"/>
+                            <field name="unit_display"/>
+                            <field name="effective_datetime"/>
+                            <field name="body_position"/>
+                            <field name="alert_level" widget="badge"
+                                   decoration-danger="alert_level == 'critical'"
+                                   decoration-warning="alert_level == 'warning'"/>
+                            <field name="client_id" optional="hide"/>
+                            <field name="state" column_invisible="1"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

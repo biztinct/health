@@ -1,0 +1,155 @@
+// health_forms backend renderer — flat mono colors only (hard
+// convention: no gradients, no dual-tone; hf-wt-ico icons elsewhere).
+
+.hf-form {
+    padding: 8px 0;
+
+    &__empty {
+        color: #616161;
+        padding: 8px 0;
+    }
+
+    &__question {
+        padding: 10px 0;
+        border-bottom: 1px solid #e0e0e0;
+
+        &:last-of-type {
+            border-bottom: none;
+        }
+    }
+
+    &__label {
+        font-weight: 600;
+        color: #212121;
+        margin-bottom: 4px;
+    }
+
+    &__label-vi {
+        font-weight: 400;
+        color: #616161;
+        font-size: 0.9em;
+    }
+
+    &__required {
+        color: #b3261e;
+        margin-left: 2px;
+    }
+
+    &__help {
+        color: #616161;
+        font-size: 0.85em;
+        margin-bottom: 4px;
+    }
+
+    &__input {
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 4px 8px;
+        background: #ffffff;
+        color: #212121;
+
+        &--number {
+            max-width: 140px;
+        }
+
+        &--text {
+            width: 100%;
+            max-width: 640px;
+        }
+    }
+
+    &__unit {
+        margin-left: 6px;
+        color: #616161;
+    }
+
+    &__options {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        &--inline {
+            flex-direction: row;
+            gap: 16px;
+        }
+    }
+
+    &__option {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        font-weight: 400;
+        cursor: pointer;
+    }
+
+    &__score-hint {
+        color: #616161;
+        font-size: 0.85em;
+    }
+
+    &__media-preview {
+        display: block;
+        max-width: 320px;
+        max-height: 200px;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        margin-bottom: 6px;
+
+        &--signature {
+            background: #ffffff;
+        }
+    }
+
+    &__media-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__computed {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #212121;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 0 4px;
+        border-top: 2px solid #212121;
+        margin-top: 8px;
+    }
+
+    &__total-label {
+        color: #616161;
+    }
+
+    &__total {
+        font-size: 1.3em;
+        font-weight: 700;
+        color: #212121;
+    }
+
+    &__band-chip {
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 2px 12px;
+        font-size: 0.9em;
+    }
+}
+
+.hf-json-edit {
+    width: 100%;
+    font-family: monospace;
+    font-size: 0.85em;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #212121;
+
+    &--invalid {
+        border-color: #b3261e;
+    }
+}

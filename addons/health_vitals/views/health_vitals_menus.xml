@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vitals & Observations under Clinical Intelligence -->
+    <menuitem id="menu_health_vitals"
+              name="Vitals &amp; Observations"
+              parent="health_base.menu_healthcare_clinical"
+              action="action_health_observation"
+              sequence="8"/>
+
+    <!-- Thresholds (head_nurse+) under Vitals -->
+    <menuitem id="menu_health_vitals_thresholds"
+              name="Vitals Thresholds"
+              parent="menu_health_vitals"
+              action="action_health_vitals_threshold"
+              groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="10"/>
+
+    <!-- Catalog under Configuration -->
+    <menuitem id="menu_health_vitals_types"
+              name="Observation Types"
+              parent="health_base.menu_healthcare_lookups"
+              action="action_health_vitals_type"
+              sequence="30"/>
+
+</odoo>

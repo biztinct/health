@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="health_forms.FormRenderer">
+        <div class="hf-form">
+            <t t-if="!schema.questions.length">
+                <div class="hf-form__empty">
+                    Select a published form template to load its questions.
+                </div>
+            </t>
+            <t t-foreach="visibleQuestions" t-as="question" t-key="question.key">
+                <div class="hf-form__question">
+                    <div class="hf-form__label">
+                        <span t-esc="question.label"/>
+                        <span t-if="question.required" class="hf-form__required">*</span>
+                        <div t-if="question.label_vi" class="hf-form__label-vi"
+                             t-esc="question.label_vi"/>
+                    </div>
+                    <div t-if="question.help or question.help_vi" class="hf-form__help">
+                        <span t-esc="question.help"/>
+                        <span t-if="question.help_vi"> — <t t-esc="question.help_vi"/></span>
+                    </div>
+
+                    <!-- number -->
+                    <t t-if="question.type === 'number'">
+                        <input type="number" class="hf-form__input hf-form__input--number"
+                               t-att-min="question.min" t-att-max="question.max"
+                               t-att-value="answers[question.key]"
+                               t-att-disabled="!isEditable"
+                               t-on-change="(ev) => this.onNumberInput(question, ev)"/>
+                        <span t-if="question.ucum_unit" class="hf-form__unit"
+                              t-esc="question.ucum_unit"/>
+                    </t>
+
+                    <!-- selection -->
+                    <t t-if="question.type === 'selection'">
+                        <div class="hf-form__options">
+                            <label t-foreach="question.options || []" t-as="option"
+                                   t-key="option.value" class="hf-form__option">
+                                <input type="radio" t-att-name="props.name + '_' + question.key"
+                                       t-att-checked="answers[question.key] === option.value"
+                                       t-att-disabled="!isEditable"
+                                       t-on-change="() => this.onSelect(question, option.value)"/>
+                                <span t-esc="optionLabel(option)"/>
+                                <span t-if="option.score != null" class="hf-form__score-hint"
+                                      t-esc="'(' + option.score + ')'"/>
+                            </label>
+                        </div>
+                    </t>
+
+                    <!-- multiselect -->
+                    <t t-if="question.type === 'multiselect'">
+                        <div class="hf-form__options">
+                            <label t-foreach="question.options || []" t-as="option"
+                                   t-key="option.value" class="hf-form__option">
+                                <input type="checkbox"
+                                       t-att-checked="isMultiChecked(question, option.value)"
+                                       t-att-disabled="!isEditable"
+                                       t-on-change="() => this.toggleMulti(question, option.value)"/>
+                                <span t-esc="optionLabel(option)"/>
+                                <span t-if="option.score != null" class="hf-form__score-hint"
+                                      t-esc="'(' + option.score + ')'"/>
+                            </label>
+                        </div>
+                    </t>
+
+                    <!-- boolean -->
+                    <t t-if="question.type === 'boolean'">
+                        <div class="hf-form__options hf-form__options--inline">
+                            <label class="hf-form__option">
+                                <input type="radio" t-att-name="props.name + '_' + question.key"
+                                       t-att-checked="answers[question.key] === true"
+                                       t-att-disabled="!isEditable"
+                                       t-on-change="() => this.onBoolean(question, true)"/>
+                                <span>Yes / Có</span>
+                            </label>
+                            <label class="hf-form__option">
+                                <input type="radio" t-att-name="props.name + '_' + question.key"
+                                       t-att-checked="answers[question.key] === false"
+                                       t-att-disabled="!isEditable"
+                                       t-on-change="() => this.onBoolean(question, false)"/>
+                                <span>No / Không</span>
+                            </label>
+                        </div>
+                    </t>
+
+                    <!-- text -->
+                    <t t-if="question.type === 'text'">
+                        <textarea class="hf-form__input hf-form__input--text" rows="2"
+                                  t-att-disabled="!isEditable"
+                                  t-on-change="(ev) => this.onTextInput(question, ev)"
+                                  t-esc="answers[question.key] || ''"/>
+                    </t>
+
+                    <!-- date -->
+                    <t t-if="question.type === 'date'">
+                        <input type="date" class="hf-form__input hf-form__input--date"
+                               t-att-value="answers[question.key]"
+                               t-att-disabled="!isEditable"
+                               t-on-change="(ev) => this.onDateInput(question, ev)"/>
+                    </t>
+
+                    <!-- photo / signature: attachment preview + upload -->
+                    <t t-if="question.type === 'photo' or question.type === 'signature'">
+                        <div class="hf-form__media">
+                            <img t-if="attachmentUrl(question)"
+                                 t-att-src="attachmentUrl(question)"
+                                 t-att-class="'hf-form__media-preview' + (question.type === 'signature' ? ' hf-form__media-preview--signature' : '')"
+                                 alt="Attachment preview"/>
+                            <div t-if="isEditable" class="hf-form__media-actions">
+                                <input type="file" accept="image/*"
+                                       t-on-change="(ev) => this.onMediaFile(question, ev)"/>
+                                <button t-if="attachmentId(question)" type="button"
+                                        class="btn btn-sm btn-secondary"
+                                        t-on-click="() => this.clearMedia(question)">
+                                    Remove
+                                </button>
+                            </div>
+                            <div t-if="!attachmentUrl(question) and !isEditable"
+                                 class="hf-form__empty">No attachment</div>
+                        </div>
+                    </t>
+
+                    <!-- computed_score -->
+                    <t t-if="question.type === 'computed_score'">
+                        <div class="hf-form__computed" t-esc="totalScore"/>
+                    </t>
+                </div>
+            </t>
+
+            <!-- Live total-score footer with band chip (flat mono) -->
+            <div t-if="hasScoring" class="hf-form__footer">
+                <span class="hf-form__total-label">Total score / Tổng điểm:</span>
+                <span class="hf-form__total" t-esc="totalScore"/>
+                <span t-if="band" class="hf-form__band-chip"
+                      t-attf-style="background-color: {{ band.color || '#616161' }};">
+                    <t t-esc="band.label"/><t t-if="band.label_vi"> / <t t-esc="band.label_vi"/></t>
+                </span>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="health_forms.JsonEdit">
+        <textarea rows="6"
+                  t-att-class="state.invalid ? 'hf-json-edit hf-json-edit--invalid' : 'hf-json-edit'"
+                  t-att-disabled="props.readonly"
+                  t-on-change="onChange"
+                  t-esc="textValue"/>
+    </t>
+
+</templates>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Blood pressure panel + components (FHIR BP profile) -->
+        <record id="vitals_type_bp_panel" model="health.vitals.type">
+            <field name="name">Blood pressure panel</field>
+            <field name="name_vi">Huyết áp</field>
+            <field name="code">bp_panel</field>
+            <field name="loinc_code">85354-9</field>
+            <field name="value_type">panel</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="vitals_type_bp_systolic" model="health.vitals.type">
+            <field name="name">Systolic blood pressure</field>
+            <field name="name_vi">Huyết áp tâm thu</field>
+            <field name="code">bp_sys</field>
+            <field name="loinc_code">8480-6</field>
+            <field name="ucum_unit">mm[Hg]</field>
+            <field name="unit_display">mmHg</field>
+            <field name="value_type">quantity</field>
+            <field name="parent_id" ref="vitals_type_bp_panel"/>
+            <field name="plausible_min">40</field>
+            <field name="plausible_max">300</field>
+            <field name="default_method">oscillometric</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">11</field>
+        </record>
+
+        <record id="vitals_type_bp_diastolic" model="health.vitals.type">
+            <field name="name">Diastolic blood pressure</field>
+            <field name="name_vi">Huyết áp tâm trương</field>
+            <field name="code">bp_dia</field>
+            <field name="loinc_code">8462-4</field>
+            <field name="ucum_unit">mm[Hg]</field>
+            <field name="unit_display">mmHg</field>
+            <field name="value_type">quantity</field>
+            <field name="parent_id" ref="vitals_type_bp_panel"/>
+            <field name="plausible_min">20</field>
+            <field name="plausible_max">200</field>
+            <field name="default_method">oscillometric</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">12</field>
+        </record>
+
+        <record id="vitals_type_heart_rate" model="health.vitals.type">
+            <field name="name">Heart rate</field>
+            <field name="name_vi">Nhịp tim</field>
+            <field name="code">hr</field>
+            <field name="loinc_code">8867-4</field>
+            <field name="ucum_unit">/min</field>
+            <field name="unit_display">bpm</field>
+            <field name="value_type">quantity</field>
+            <field name="plausible_min">20</field>
+            <field name="plausible_max">300</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="vitals_type_resp_rate" model="health.vitals.type">
+            <field name="name">Respiratory rate</field>
+            <field name="name_vi">Nhịp thở</field>
+            <field name="code">rr</field>
+            <field name="loinc_code">9279-1</field>
+            <field name="ucum_unit">/min</field>
+            <field name="unit_display">breaths/min</field>
+            <field name="value_type">quantity</field>
+            <field name="plausible_min">4</field>
+            <field name="plausible_max">80</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="vitals_type_body_temp" model="health.vitals.type">
+            <field name="name">Body temperature</field>
+            <field name="name_vi">Nhiệt độ</field>
+            <field name="code">temp</field>
+            <field name="loinc_code">8310-5</field>
+            <field name="ucum_unit">Cel</field>
+            <field name="unit_display">°C</field>
+            <field name="value_type">quantity</field>
+            <field name="decimals">1</field>
+            <field name="plausible_min">30</field>
+            <field name="plausible_max">45</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="vitals_type_spo2" model="health.vitals.type">
+            <field name="name">Oxygen saturation in Arterial blood</field>
+            <field name="name_vi">SpO2</field>
+            <field name="code">spo2</field>
+            <field name="loinc_code">2708-6</field>
+            <field name="ucum_unit">%</field>
+            <field name="unit_display">%</field>
+            <field name="value_type">quantity</field>
+            <field name="plausible_min">50</field>
+            <field name="plausible_max">100</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- Default PWA entry: pulse oximetry is what field nurses
+             actually measure; 2708-6 kept for interop inbound. -->
+        <record id="vitals_type_spo2_pulse_ox" model="health.vitals.type">
+            <field name="name">Oxygen saturation by Pulse oximetry</field>
+            <field name="name_vi">SpO2 (máy đo)</field>
+            <field name="code">spo2_po</field>
+            <field name="loinc_code">59408-5</field>
+            <field name="ucum_unit">%</field>
+            <field name="unit_display">%</field>
+            <field name="value_type">quantity</field>
+            <field name="plausible_min">50</field>
+            <field name="plausible_max">100</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">51</field>
+        </record>
+
+        <record id="vitals_type_weight" model="health.vitals.type">
+            <field name="name">Body weight</field>
+            <field name="name_vi">Cân nặng</field>
+            <field name="code">weight</field>
+            <field name="loinc_code">29463-7</field>
+            <field name="ucum_unit">kg</field>
+            <field name="unit_display">kg</field>
+            <field name="value_type">quantity</field>
+            <field name="decimals">1</field>
+            <field name="plausible_min">1</field>
+            <field name="plausible_max">400</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="vitals_type_height" model="health.vitals.type">
+            <field name="name">Body height</field>
+            <field name="name_vi">Chiều cao</field>
+            <field name="code">height</field>
+            <field name="loinc_code">8302-2</field>
+            <field name="ucum_unit">cm</field>
+            <field name="unit_display">cm</field>
+            <field name="value_type">quantity</field>
+            <field name="decimals">1</field>
+            <field name="plausible_min">30</field>
+            <field name="plausible_max">250</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">61</field>
+        </record>
+
+        <record id="vitals_type_bmi" model="health.vitals.type">
+            <field name="name">Body mass index</field>
+            <field name="name_vi">BMI</field>
+            <field name="code">bmi</field>
+            <field name="loinc_code">39156-5</field>
+            <field name="ucum_unit">kg/m2</field>
+            <field name="unit_display">kg/m²</field>
+            <field name="value_type">quantity</field>
+            <field name="decimals">1</field>
+            <field name="plausible_min">8</field>
+            <field name="plausible_max">80</field>
+            <field name="is_fhir_vital_sign" eval="True"/>
+            <field name="sequence">62</field>
+        </record>
+
+        <record id="vitals_type_glucose" model="health.vitals.type">
+            <field name="name">Glucose [Moles/volume] in Blood</field>
+            <field name="name_vi">Đường huyết</field>
+            <field name="code">glucose</field>
+            <field name="loinc_code">15074-8</field>
+            <field name="ucum_unit">mmol/L</field>
+            <field name="unit_display">mmol/L</field>
+            <field name="value_type">quantity</field>
+            <field name="decimals">1</field>
+            <field name="plausible_min">1</field>
+            <field name="plausible_max">50</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="vitals_type_pain_score" model="health.vitals.type">
+            <field name="name">Pain severity 0-10</field>
+            <field name="name_vi">Mức độ đau</field>
+            <field name="code">pain</field>
+            <field name="loinc_code">72514-3</field>
+            <field name="ucum_unit">{score}</field>
+            <field name="unit_display">/10</field>
+            <field name="value_type">quantity</field>
+            <field name="plausible_min">0</field>
+            <field name="plausible_max">10</field>
+            <field name="sequence">80</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Assessment-score observation types (extends the health_vitals §2.9
+         catalog). Codes marked local: use system health19-assessments —
+         bind LOINC at terminology-pack time. Pain reuses
+         health_vitals.vitals_type_pain_score (72514-3); Morse 59461-4
+         stays with health.fall.risk in health_base. -->
+
+    <record id="vitals_type_barthel_total" model="health.vitals.type">
+        <field name="name">Barthel ADL Index total score</field>
+        <field name="name_vi">Tổng điểm chỉ số Barthel ADL</field>
+        <field name="code">barthel_total</field>
+        <field name="loinc_code">local:barthel-total</field>
+        <field name="ucum_unit">{score}</field>
+        <field name="unit_display">points</field>
+        <field name="value_type">quantity</field>
+        <field name="decimals">0</field>
+        <field name="plausible_min">0</field>
+        <field name="plausible_max">100</field>
+        <field name="sequence">110</field>
+    </record>
+
+    <record id="vitals_type_mna_sf_total" model="health.vitals.type">
+        <field name="name">Mini Nutritional Assessment (SF) score</field>
+        <field name="name_vi">Điểm đánh giá dinh dưỡng MNA-SF</field>
+        <field name="code">mna_sf_total</field>
+        <field name="loinc_code">local:mna-sf-total</field>
+        <field name="ucum_unit">{score}</field>
+        <field name="unit_display">points</field>
+        <field name="value_type">quantity</field>
+        <field name="decimals">0</field>
+        <field name="plausible_min">0</field>
+        <field name="plausible_max">14</field>
+        <field name="sequence">120</field>
+    </record>
+
+    <record id="vitals_type_braden_total" model="health.vitals.type">
+        <field name="name">Braden scale total score</field>
+        <field name="name_vi">Tổng điểm thang Braden</field>
+        <field name="code">braden_total</field>
+        <field name="loinc_code">38228-3</field>
+        <field name="ucum_unit">{score}</field>
+        <field name="unit_display">points</field>
+        <field name="value_type">quantity</field>
+        <field name="decimals">0</field>
+        <field name="plausible_min">6</field>
+        <field name="plausible_max">23</field>
+        <field name="sequence">130</field>
+    </record>
+
+    <record id="vitals_type_amts_total" model="health.vitals.type">
+        <field name="name">AMTS score</field>
+        <field name="name_vi">Điểm AMTS (đánh giá nhận thức)</field>
+        <field name="code">amts_total</field>
+        <field name="loinc_code">local:amts-total</field>
+        <field name="ucum_unit">{score}</field>
+        <field name="unit_display">points</field>
+        <field name="value_type">quantity</field>
+        <field name="decimals">0</field>
+        <field name="plausible_min">0</field>
+        <field name="plausible_max">10</field>
+        <field name="sequence">140</field>
+    </record>
+
+</odoo>

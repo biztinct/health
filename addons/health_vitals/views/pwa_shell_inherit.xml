@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject the Vitals PWA scripts into the app shell without
+         touching health_pwa's template body (health_evv pattern).
+         Loaded after router.js so window.healthPWA and the Vue app
+         bootstrap already exist. Order matters: vitals-service.js owns
+         the types cache + offline outbox used by vitals-components.js. -->
+    <template id="app_shell_vitals" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Vitals Scripts">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_vitals/static/src/js/vitals-service.js?v=#{pwa_asset_version}"></script>
+            <script t-attf-src="/health_vitals/static/src/js/vitals-components.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

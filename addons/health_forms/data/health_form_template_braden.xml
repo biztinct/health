@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- BRADEN — Braden Pressure Injury Risk (Nguy cơ loét tì đè),
+         seeded published v1. Standard Braden subscale scores. -->
+
+    <record id="form_template_braden" model="health.form.template">
+        <field name="name">Braden Pressure Injury Risk</field>
+        <field name="name_vi">Nguy cơ loét tì đè (Braden)</field>
+        <field name="code">BRADEN</field>
+        <field name="version">1</field>
+        <field name="category">assessment</field>
+        <field name="scoring_method">sum</field>
+        <field name="score_vitals_type_id" ref="vitals_type_braden_total"/>
+        <field name="scoring_bands_json" eval="[
+            {'min': 6, 'max': 12, 'label': 'High risk', 'label_vi': 'Nguy cơ cao', 'color': '#B3261E'},
+            {'min': 13, 'max': 14, 'label': 'Moderate risk', 'label_vi': 'Nguy cơ vừa', 'color': '#B26A00'},
+            {'min': 15, 'max': 18, 'label': 'Mild risk', 'label_vi': 'Nguy cơ nhẹ', 'color': '#7A6A00'},
+            {'min': 19, 'max': 23, 'label': 'No risk', 'label_vi': 'Không có nguy cơ', 'color': '#1B6E20'},
+        ]"/>
+    </record>
+
+    <record id="form_question_braden_sensory" model="health.form.question">
+        <field name="template_id" ref="form_template_braden"/>
+        <field name="sequence">10</field>
+        <field name="key">sensory_perception</field>
+        <field name="question_type">selection</field>
+        <field name="label">Sensory perception</field>
+        <field name="label_vi">Nhận cảm giác</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'completely_limited', 'label': 'Completely limited', 'label_vi': 'Hạn chế hoàn toàn', 'score': 1},
+            {'value': 'very_limited', 'label': 'Very limited', 'label_vi': 'Hạn chế nhiều', 'score': 2},
+            {'value': 'slightly_limited', 'label': 'Slightly limited', 'label_vi': 'Hạn chế nhẹ', 'score': 3},
+            {'value': 'no_impairment', 'label': 'No impairment', 'label_vi': 'Không suy giảm', 'score': 4},
+        ]"/>
+    </record>
+
+    <record id="form_question_braden_moisture" model="health.form.question">
+        <field name="template_id" ref="form_template_braden"/>
+        <field name="sequence">20</field>
+        <field name="key">moisture</field>
+        <field name="question_type">selection</field>
+        <field name="label">Moisture</field>
+        <field name="label_vi">Độ ẩm da</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'constantly_moist', 'label': 'Constantly moist', 'label_vi': 'Ẩm liên tục', 'score': 1},
+            {'value': 'very_moist', 'label': 'Very moist', 'label_vi': 'Rất ẩm', 'score': 2},
+            {'value': 'occasionally_moist', 'label': 'Occasionally moist', 'label_vi': 'Thỉnh thoảng ẩm', 'score': 3},
+            {'value': 'rarely_moist', 'label': 'Rarely moist', 'label_vi': 'Hiếm khi ẩm', 'score': 4},
+        ]"/>
+    </record>
+
+    <record id="form_question_braden_activity" model="health.form.question">
+        <field name="template_id" ref="form_template_braden"/>
+        <field name="sequence">30</field>
+        <field name="key">activity</field>
+        <field name="question_type">selection</field>
+        <field name="label">Activity</field>
+        <field name="label_vi">Mức độ hoạt động</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'bedfast', 'label': 'Bedfast', 'label_vi': 'Nằm liệt giường', 'score': 1},
+            {'value': 'chairfast', 'label': 'Chairfast', 'label_vi': 'Ngồi ghế tại chỗ', 'score': 2},
+            {'value': 'walks_occasionally', 'label': 'Walks occasionally', 'label_vi': 'Thỉnh thoảng đi lại', 'score': 3},
+            {'value': 'walks_frequently', 'label': 'Walks frequently', 'label_vi': 'Đi lại thường xuyên', 'score': 4},
+        ]"/>
+    </record>
+
+    <record id="form_question_braden_mobility" model="health.form.question">
+        <field name="template_id" ref="form_template_braden"/>
+        <field name="sequence">40</field>
+        <field name="key">mobility</field>
+        <field name="question_type">selection</field>
+        <field name="label">Mobility</field>
+        <field name="label_vi">Khả năng thay đổi tư thế</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'completely_immobile', 'label': 'Completely immobile', 'label_vi': 'Bất động hoàn toàn', 'score': 1},
+            {'value': 'very_limited', 'label': 'Very limited', 'label_vi': 'Hạn chế nhiều', 'score': 2},
+            {'value': 'slightly_limited', 'label': 'Slightly limited', 'label_vi': 'Hạn chế nhẹ', 'score': 3},
+            {'value': 'no_limitation', 'label': 'No limitation', 'label_vi': 'Không hạn chế', 'score': 4},
+        ]"/>
+    </record>
+
+    <record id="form_question_braden_nutrition" model="health.form.question">
+        <field name="template_id" ref="form_template_braden"/>
+        <field name="sequence">50</field>
+        <field name="key">nutrition</field>
+        <field name="question_type">selection</field>
+        <field name="label">Nutrition</field>
+        <field name="label_vi">Dinh dưỡng</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'very_poor', 'label': 'Very poor', 'label_vi': 'Rất kém', 'score': 1},
+            {'value': 'probably_inadequate', 'label': 'Probably inadequate', 'label_vi': 'Có thể không đủ', 'score': 2},
+            {'value': 'adequate', 'label': 'Adequate', 'label_vi': 'Đầy đủ', 'score': 3},
+            {'value': 'excellent', 'label': 'Excellent', 'label_vi': 'Rất tốt', 'score': 4},
+        ]"/>
+    </record>
+
+    <record id="form_question_braden_friction" model="health.form.question">
+        <field name="template_id" ref="form_template_braden"/>
+        <field name="sequence">60</field>
+        <field name="key">friction_shear</field>
+        <field name="question_type">selection</field>
+        <field name="label">Friction and shear</field>
+        <field name="label_vi">Ma sát và trượt</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'problem', 'label': 'Problem', 'label_vi': 'Có vấn đề', 'score': 1},
+            {'value': 'potential_problem', 'label': 'Potential problem', 'label_vi': 'Có nguy cơ', 'score': 2},
+            {'value': 'no_problem', 'label': 'No apparent problem', 'label_vi': 'Không có vấn đề rõ rệt', 'score': 3},
+        ]"/>
+    </record>
+
+    <function model="health.form.template" name="action_publish"
+              eval="[[ref('form_template_braden')]]"/>
+
+</odoo>

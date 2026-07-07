@@ -1,0 +1,239 @@
+# Vietnamese translation of health_forms
+# Instrument names/labels are seeded vi-first in data files (label_vi /
+# name_vi columns); this catalog covers module UI strings.
+msgid ""
+msgstr ""
+"Project-Id-Version: health_forms 19.0.1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_forms
+#: model:ir.ui.menu,name:health_forms.menu_health_forms
+msgid "Assessments & Forms"
+msgstr "Đánh giá & Biểu mẫu"
+
+#. module: health_forms
+#: model:ir.ui.menu,name:health_forms.menu_health_form_instances
+#: model:ir.actions.act_window,name:health_forms.action_health_form_instance
+msgid "Form Instances"
+msgstr "Phiếu đánh giá"
+
+#. module: health_forms
+#: model:ir.ui.menu,name:health_forms.menu_health_form_templates
+#: model:ir.ui.menu,name:health_forms.menu_health_form_templates_config
+#: model:ir.actions.act_window,name:health_forms.action_health_form_template
+msgid "Form Templates"
+msgstr "Mẫu biểu đánh giá"
+
+#. module: health_forms
+#: model:ir.model,name:health_forms.model_health_form_template
+msgid "Clinical Form Template"
+msgstr "Mẫu biểu mẫu lâm sàng"
+
+#. module: health_forms
+#: model:ir.model,name:health_forms.model_health_form_question
+msgid "Clinical Form Question"
+msgstr "Câu hỏi biểu mẫu lâm sàng"
+
+#. module: health_forms
+#: model:ir.model,name:health_forms.model_health_form_instance
+msgid "Clinical Form Instance (Response)"
+msgstr "Phiếu đánh giá lâm sàng (phản hồi)"
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_pain
+msgid "Pain Scale"
+msgstr "Thang điểm đau"
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_barthel
+msgid "Barthel ADL Index"
+msgstr "Chỉ số Barthel ADL"
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_mna
+msgid "Mini Nutritional Assessment SF"
+msgstr "Đánh giá dinh dưỡng (MNA-SF)"
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_braden
+msgid "Braden Pressure Injury Risk"
+msgstr "Nguy cơ loét tì đè (Braden)"
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_amts
+msgid "Abbreviated Mental Test Score"
+msgstr "Đánh giá nhận thức (AMTS)"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Publish"
+msgstr "Xuất bản"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Retire"
+msgstr "Ngừng sử dụng"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "New Version"
+msgstr "Phiên bản mới"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Complete"
+msgstr "Hoàn thành"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Extracted Observations"
+msgstr "Chỉ số đã trích xuất"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Photos & Signatures"
+msgstr "Ảnh & Chữ ký"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_fieldservice_order_form_forms
+msgid "Assessments"
+msgstr "Đánh giá"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_fieldservice_order_form_forms
+msgid "New Assessment"
+msgstr "Đánh giá mới"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Questions"
+msgstr "Câu hỏi"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Scoring Bands"
+msgstr "Khoảng điểm"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Preview"
+msgstr "Xem trước"
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Cannot publish a form template without questions."
+msgstr "Không thể xuất bản mẫu biểu mẫu không có câu hỏi."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Question keys must be unique within the template."
+msgstr "Khóa câu hỏi phải là duy nhất trong mẫu."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Only draft templates can be published."
+msgstr "Chỉ mẫu ở trạng thái nháp mới được xuất bản."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Only published templates can be retired."
+msgstr "Chỉ mẫu đã xuất bản mới có thể ngừng sử dụng."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_question.py:0
+msgid ""
+"Questions of a published form template are immutable. Create a new "
+"version instead."
+msgstr ""
+"Câu hỏi của mẫu đã xuất bản không thể chỉnh sửa. Hãy tạo phiên bản mới."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Only draft form instances can be completed."
+msgstr "Chỉ phiếu đánh giá ở trạng thái nháp mới có thể hoàn thành."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Required question \"%s\" is not answered."
+msgstr "Câu hỏi bắt buộc \"%s\" chưa được trả lời."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Answer to \"%s\" must be a number."
+msgstr "Câu trả lời cho \"%s\" phải là một số."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Answer to \"%s\" is below the minimum (%s)."
+msgstr "Câu trả lời cho \"%s\" thấp hơn giá trị tối thiểu (%s)."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Answer to \"%s\" is above the maximum (%s)."
+msgstr "Câu trả lời cho \"%s\" cao hơn giá trị tối đa (%s)."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Only head nurses and above can amend a completed form instance."
+msgstr ""
+"Chỉ điều dưỡng trưởng trở lên mới được sửa phiếu đánh giá đã hoàn thành."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Only head nurses and above can cancel form instances."
+msgstr "Chỉ điều dưỡng trưởng trở lên mới được hủy phiếu đánh giá."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Only draft or completed form instances can be cancelled."
+msgstr ""
+"Chỉ phiếu đánh giá ở trạng thái nháp hoặc đã hoàn thành mới có thể hủy."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid ""
+"Completed form instances cannot be deleted (clinical record integrity). "
+"Cancel or amend instead."
+msgstr ""
+"Không thể xóa phiếu đánh giá đã hoàn thành (bảo toàn hồ sơ lâm sàng). "
+"Hãy hủy hoặc sửa đổi."
+
+#. module: health_forms
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Form instances can only be created from published templates."
+msgstr "Phiếu đánh giá chỉ được tạo từ mẫu đã xuất bản."
+
+#. module: health_forms
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Access denied"
+msgstr "Từ chối truy cập"
+
+#. module: health_forms
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Invalid JSON body"
+msgstr "Nội dung JSON không hợp lệ"
+
+#. module: health_forms
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Order not found"
+msgstr "Không tìm thấy lịch hẹn"
+
+#. module: health_forms
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Template not found"
+msgstr "Không tìm thấy mẫu"
+
+#. module: health_forms
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Patient not found"
+msgstr "Không tìm thấy khách hàng"

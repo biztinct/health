@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_form_instance_list" model="ir.ui.view">
+        <field name="name">health.form.instance.list</field>
+        <field name="model">health.form.instance</field>
+        <field name="arch" type="xml">
+            <list default_order="create_date desc">
+                <field name="name"/>
+                <field name="template_code"/>
+                <field name="client_id"/>
+                <field name="order_id" optional="show"/>
+                <field name="total_score"/>
+                <field name="score_label"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'completed'"
+                       decoration-info="state == 'amended'"
+                       decoration-muted="state == 'cancelled'"/>
+                <field name="completed_datetime"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_form_instance_form" model="ir.ui.view">
+        <field name="name">health.form.instance.form</field>
+        <field name="model">health.form.instance</field>
+        <field name="arch" type="xml">
+            <form string="Form Instance">
+                <header>
+                    <button name="action_complete" type="object"
+                            string="Complete" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel"
+                            invisible="state not in ('draft', 'completed')"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+                            confirm="Cancel this form instance?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="client_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="template_id"
+                                   readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <field name="template_version"/>
+                            <field name="order_id"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="performer_id"/>
+                            <field name="completed_datetime"/>
+                            <field name="total_score"/>
+                            <field name="score_label"/>
+                            <field name="score_label_vi"/>
+                            <field name="catchment_province_id"
+                                   invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="schema_snapshot" invisible="1"/>
+                    <field name="answers_json"
+                           widget="health_form_renderer"
+                           options="{'schema_field': 'schema_snapshot'}"
+                           readonly="state != 'draft'"
+                           nolabel="1"/>
+                    <notebook>
+                        <page string="Extracted Observations"
+                              name="observations">
+                            <field name="observation_ids" readonly="1">
+                                <list>
+                                    <field name="vitals_type_id"/>
+                                    <field name="loinc_code"/>
+                                    <field name="value_quantity"/>
+                                    <field name="effective_datetime"/>
+                                    <field name="alert_level"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Photos &amp; Signatures"
+                              name="attachments">
+                            <field name="attachment_ids"
+                                   widget="many2many_binary"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_form_instance_graph" model="ir.ui.view">
+        <field name="name">health.form.instance.graph</field>
+        <field name="model">health.form.instance</field>
+        <field name="arch" type="xml">
+            <graph string="Assessment Trends" type="line" sample="1">
+                <field name="completed_datetime" interval="week"/>
+                <field name="template_code"/>
+                <field name="total_score" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_health_form_instance_search" model="ir.ui.view">
+        <field name="name">health.form.instance.search</field>
+        <field name="model">health.form.instance</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="template_code"/>
+                <filter name="my_instances" string="My Instances"
+                        domain="[('performer_id', '=', uid)]"/>
+                <separator/>
+                <filter name="filter_pain" string="Pain"
+                        domain="[('template_code', '=', 'PAIN')]"/>
+                <filter name="filter_barthel" string="Barthel"
+                        domain="[('template_code', '=', 'BARTHEL')]"/>
+                <filter name="filter_mna" string="MNA-SF"
+                        domain="[('template_code', '=', 'MNA_SF')]"/>
+                <filter name="filter_braden" string="Braden"
+                        domain="[('template_code', '=', 'BRADEN')]"/>
+                <filter name="filter_amts" string="AMTS"
+                        domain="[('template_code', '=', 'AMTS')]"/>
+                <separator/>
+                <filter name="filter_completed" string="Completed"
+                        domain="[('state', 'in', ('completed', 'amended'))]"/>
+                <separator/>
+                <filter name="group_by_client" string="Client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter name="group_by_template" string="Form"
+                        context="{'group_by': 'template_code'}"/>
+                <filter name="group_by_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>

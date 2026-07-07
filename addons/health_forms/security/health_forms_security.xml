@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         Groups: health_forms reuses the health_base healthcare groups
+         (never redefined here — §0.2). Record rules apply to instances
+         only; templates and questions are global configuration.
+         ===================================================================== -->
+
+    <record id="rule_health_form_instance_catchment" model="ir.rule">
+        <field name="name">Form Instance: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_form_instance"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+
+    <record id="rule_health_form_instance_owner" model="ir.rule">
+        <field name="name">Form Instance: Owner sees all</field>
+        <field name="model_id" ref="model_health_form_instance"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>

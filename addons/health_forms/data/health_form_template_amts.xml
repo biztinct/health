@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- AMTS — Abbreviated Mental Test Score (Đánh giá nhận thức),
+         seeded published v1. Correct = 1 / incorrect = 0 via boolean
+         option scores; the address-registration step scores 0 and the
+         historic-date item uses VN-appropriate wording (Năm thống nhất
+         đất nước 1975). -->
+
+    <record id="form_template_amts" model="health.form.template">
+        <field name="name">Abbreviated Mental Test Score</field>
+        <field name="name_vi">Đánh giá nhận thức (AMTS)</field>
+        <field name="code">AMTS</field>
+        <field name="version">1</field>
+        <field name="category">assessment</field>
+        <field name="scoring_method">sum</field>
+        <field name="score_vitals_type_id" ref="vitals_type_amts_total"/>
+        <field name="scoring_bands_json" eval="[
+            {'min': 0, 'max': 6, 'label': 'Cognitive impairment likely', 'label_vi': 'Có khả năng suy giảm nhận thức', 'color': '#B3261E'},
+            {'min': 7, 'max': 8, 'label': 'Borderline', 'label_vi': 'Ranh giới', 'color': '#B26A00'},
+            {'min': 9, 'max': 10, 'label': 'Normal', 'label_vi': 'Bình thường', 'color': '#1B6E20'},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_age" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">10</field>
+        <field name="key">age</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Age — client states their age correctly</field>
+        <field name="label_vi">Tuổi — khách hàng nói đúng tuổi của mình</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_time" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">20</field>
+        <field name="key">time</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Time — client states the time to the nearest hour</field>
+        <field name="label_vi">Thời gian — khách hàng nói đúng giờ hiện tại (làm tròn đến giờ)</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_address_registered" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">30</field>
+        <field name="key">address_recall_registered</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Registration — give the client an address to remember (e.g. "42 Lê Lợi") and ask them to repeat it (not scored)</field>
+        <field name="label_vi">Ghi nhớ — đọc cho khách hàng một địa chỉ (ví dụ "42 Lê Lợi") và đề nghị nhắc lại (không tính điểm)</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Repeated correctly', 'label_vi': 'Nhắc lại đúng', 'score': 0},
+            {'value': 'false', 'label': 'Could not repeat', 'label_vi': 'Không nhắc lại được', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_year" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">40</field>
+        <field name="key">year</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Year — client states the current year</field>
+        <field name="label_vi">Năm — khách hàng nói đúng năm hiện tại</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_place" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">50</field>
+        <field name="key">place</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Place — client names the current location</field>
+        <field name="label_vi">Địa điểm — khách hàng nói đúng nơi đang ở</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_person_recognition" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">60</field>
+        <field name="key">person_recognition</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Recognition — client recognizes two persons (e.g. doctor, nurse)</field>
+        <field name="label_vi">Nhận biết — khách hàng nhận ra hai người (ví dụ bác sĩ, điều dưỡng)</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_dob" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">70</field>
+        <field name="key">dob</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Date of birth — client states their date of birth</field>
+        <field name="label_vi">Ngày sinh — khách hàng nói đúng ngày sinh của mình</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_historic_date" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">80</field>
+        <field name="key">historic_date</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Historic date — year of national reunification (1975)</field>
+        <field name="label_vi">Sự kiện lịch sử — Năm thống nhất đất nước 1975</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_head_of_state" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">90</field>
+        <field name="key">head_of_state</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Head of state — client names the current head of state</field>
+        <field name="label_vi">Nguyên thủ — khách hàng nói đúng tên Chủ tịch nước hiện nay</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_count_backwards" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">100</field>
+        <field name="key">count_backwards</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Count backwards — from 20 down to 1</field>
+        <field name="label_vi">Đếm ngược — từ 20 về 1</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <record id="form_question_amts_address_recall" model="health.form.question">
+        <field name="template_id" ref="form_template_amts"/>
+        <field name="sequence">110</field>
+        <field name="key">address_recall</field>
+        <field name="question_type">boolean</field>
+        <field name="label">Recall — client recalls the address given earlier</field>
+        <field name="label_vi">Nhớ lại — khách hàng nhắc lại đúng địa chỉ đã cho lúc đầu</field>
+        <field name="required" eval="True"/>
+        <field name="options_json" eval="[
+            {'value': 'true', 'label': 'Correct', 'label_vi': 'Đúng', 'score': 1},
+            {'value': 'false', 'label': 'Incorrect', 'label_vi': 'Sai', 'score': 0},
+        ]"/>
+    </record>
+
+    <function model="health.form.template" name="action_publish"
+              eval="[[ref('form_template_amts')]]"/>
+
+</odoo>

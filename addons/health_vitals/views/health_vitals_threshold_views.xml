@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_vitals_threshold_list" model="ir.ui.view">
+        <field name="name">health.vitals.threshold.list</field>
+        <field name="model">health.vitals.threshold</field>
+        <field name="arch" type="xml">
+            <list string="Vitals Thresholds" editable="bottom">
+                <field name="client_id"/>
+                <field name="vitals_type_id"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'warning'"/>
+                <field name="min_value"/>
+                <field name="max_value"/>
+                <field name="escalation_action"/>
+                <field name="notes" optional="show"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_vitals_threshold_search" model="ir.ui.view">
+        <field name="name">health.vitals.threshold.search</field>
+        <field name="model">health.vitals.threshold</field>
+        <field name="arch" type="xml">
+            <search string="Vitals Thresholds">
+                <field name="client_id"/>
+                <field name="vitals_type_id"/>
+                <filter string="Critical" name="critical"
+                        domain="[('severity', '=', 'critical')]"/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active', '=', False)]"/>
+                <filter string="Client" name="group_client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter string="Observation Type" name="group_type"
+                        context="{'group_by': 'vitals_type_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_vitals_threshold" model="ir.actions.act_window">
+        <field name="name">Vitals Thresholds</field>
+        <field name="res_model">health.vitals.threshold</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_health_vitals_threshold_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define a per-client alert threshold
+            </p>
+            <p>
+                When an observation breaches a band, the escalation
+                action runs (chatter note or activity for the facility
+                manager / care plan author).
+            </p>
+        </field>
+    </record>
+
+</odoo>

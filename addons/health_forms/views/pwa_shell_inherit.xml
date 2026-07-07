@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject the clinical-forms PWA scripts into the app shell without
+         touching health_pwa's template body (same pattern as health_evv).
+         Loaded after router.js so window.healthPWA / PWAUtils exist.
+         Order matters: forms-store.js defines the template cache and
+         offline outbox used by forms-runner.js. -->
+    <template id="app_shell_forms" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Clinical Forms Scripts">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_forms/static/src/js/forms-store.js?v=#{pwa_asset_version}"></script>
+            <script t-attf-src="/health_forms/static/src/js/forms-runner.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_vitals_type_list" model="ir.ui.view">
+        <field name="name">health.vitals.type.list</field>
+        <field name="model">health.vitals.type</field>
+        <field name="arch" type="xml">
+            <list string="Observation Types">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="name_vi" optional="show"/>
+                <field name="code"/>
+                <field name="loinc_code"/>
+                <field name="ucum_unit"/>
+                <field name="unit_display"/>
+                <field name="value_type"/>
+                <field name="parent_id"/>
+                <field name="is_fhir_vital_sign" optional="show"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_vitals_type_form" model="ir.ui.view">
+        <field name="name">health.vitals.type.form</field>
+        <field name="model">health.vitals.type</field>
+        <field name="arch" type="xml">
+            <form string="Observation Type">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived"
+                            bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Heart rate"/></h1>
+                    </div>
+                    <group>
+                        <group string="Coding">
+                            <field name="name_vi"/>
+                            <field name="code"/>
+                            <field name="loinc_code"/>
+                            <field name="value_type"/>
+                            <field name="parent_id"
+                                   domain="[('value_type', '=', 'panel')]"/>
+                            <field name="is_fhir_vital_sign"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Unit &amp; Validation">
+                            <field name="ucum_unit"/>
+                            <field name="unit_display"/>
+                            <field name="decimals"/>
+                            <field name="plausible_min"/>
+                            <field name="plausible_max"/>
+                            <field name="default_method"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Panel Members" name="panel_members"
+                              invisible="value_type != 'panel'">
+                            <field name="child_ids">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="loinc_code"/>
+                                    <field name="unit_display"/>
+                                    <field name="plausible_min"/>
+                                    <field name="plausible_max"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_vitals_type_search" model="ir.ui.view">
+        <field name="name">health.vitals.type.search</field>
+        <field name="model">health.vitals.type</field>
+        <field name="arch" type="xml">
+            <search string="Observation Types">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="loinc_code"/>
+                <filter string="FHIR Vital Signs" name="fhir_vitals"
+                        domain="[('is_fhir_vital_sign', '=', True)]"/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active', '=', False)]"/>
+                <filter string="Value Type" name="group_value_type"
+                        context="{'group_by': 'value_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_vitals_type" model="ir.actions.act_window">
+        <field name="name">Observation Types</field>
+        <field name="res_model">health.vitals.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_vitals_type_search"/>
+    </record>
+
+</odoo>

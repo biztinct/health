@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List -->
+    <record id="view_health_observation_list" model="ir.ui.view">
+        <field name="name">health.observation.list</field>
+        <field name="model">health.observation</field>
+        <field name="arch" type="xml">
+            <list string="Observations" default_order="effective_datetime desc"
+                  decoration-muted="state == 'entered_in_error'">
+                <field name="effective_datetime"/>
+                <field name="client_id"/>
+                <field name="vitals_type_id"/>
+                <field name="value_quantity"/>
+                <field name="unit_display"/>
+                <field name="alert_level" widget="badge"
+                       decoration-danger="alert_level == 'critical'"
+                       decoration-warning="alert_level == 'warning'"/>
+                <field name="performer_id"/>
+                <field name="order_id" optional="show"/>
+                <field name="state"/>
+                <field name="is_abnormal" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="view_health_observation_form" model="ir.ui.view">
+        <field name="name">health.observation.form</field>
+        <field name="model">health.observation</field>
+        <field name="arch" type="xml">
+            <form string="Observation">
+                <header>
+                    <button name="action_mark_entered_in_error" type="object"
+                            string="Mark Entered in Error"
+                            confirm="Mark this observation as entered in error? It will be excluded from all trends."
+                            invisible="state == 'entered_in_error'"
+                            groups="health_base.group_healthcare_nurse"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="final,amended,entered_in_error"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Observation">
+                            <field name="client_id"/>
+                            <field name="vitals_type_id"/>
+                            <field name="loinc_code"/>
+                            <field name="value_quantity"/>
+                            <field name="value_text"/>
+                            <field name="unit_display"/>
+                            <field name="alert_level"/>
+                            <field name="is_abnormal"/>
+                        </group>
+                        <group string="Context">
+                            <field name="effective_datetime"/>
+                            <field name="performer_id"/>
+                            <field name="method"/>
+                            <field name="body_position"/>
+                            <field name="device"/>
+                            <field name="catchment_province_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Links">
+                            <field name="order_id"/>
+                            <field name="clinical_note_id"/>
+                            <field name="parent_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Panel Members" name="panel_members"
+                              invisible="not child_ids and not parent_id">
+                            <field name="child_ids">
+                                <list editable="bottom">
+                                    <field name="vitals_type_id"/>
+                                    <field name="value_quantity"/>
+                                    <field name="unit_display"/>
+                                    <field name="alert_level"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Graph -->
+    <record id="view_health_observation_graph" model="ir.ui.view">
+        <field name="name">health.observation.graph</field>
+        <field name="model">health.observation</field>
+        <field name="arch" type="xml">
+            <graph string="Vitals Trend" type="line" sample="1">
+                <field name="effective_datetime" interval="day"/>
+                <field name="vitals_type_id"/>
+                <field name="value_quantity" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Pivot -->
+    <record id="view_health_observation_pivot" model="ir.ui.view">
+        <field name="name">health.observation.pivot</field>
+        <field name="model">health.observation</field>
+        <field name="arch" type="xml">
+            <pivot string="Observations">
+                <field name="client_id" type="row"/>
+                <field name="vitals_type_id" type="col"/>
+                <field name="value_quantity" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search (Odoo 19: group-by filters directly in <search>) -->
+    <record id="view_health_observation_search" model="ir.ui.view">
+        <field name="name">health.observation.search</field>
+        <field name="model">health.observation</field>
+        <field name="arch" type="xml">
+            <search string="Observations">
+                <field name="client_id"/>
+                <field name="vitals_type_id"/>
+                <field name="loinc_code"/>
+                <field name="performer_id"/>
+                <field name="order_id"/>
+                <filter string="Abnormal" name="abnormal"
+                        domain="[('is_abnormal', '=', True)]"/>
+                <filter string="Critical" name="critical"
+                        domain="[('alert_level', '=', 'critical')]"/>
+                <separator/>
+                <filter string="Today" name="today"
+                        domain="[('effective_datetime', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0))), ('effective_datetime', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 59)))]"/>
+                <filter string="This Week" name="this_week"
+                        domain="[('effective_datetime', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="My Entries" name="my_entries"
+                        domain="[('performer_id', '=', uid)]"/>
+                <filter string="Client" name="group_client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter string="Observation Type" name="group_type"
+                        context="{'group_by': 'vitals_type_id'}"/>
+                <filter string="Visit" name="group_order"
+                        context="{'group_by': 'order_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_health_observation" model="ir.actions.act_window">
+        <field name="name">Vitals &amp; Observations</field>
+        <field name="res_model">health.observation</field>
+        <field name="view_mode">list,graph,pivot,form</field>
+        <field name="search_view_id" ref="view_health_observation_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Record a structured observation
+            </p>
+            <p>
+                LOINC-coded vital signs with per-client alert thresholds
+                and trending.
+            </p>
+        </field>
+    </record>
+
+    <!-- FSO form: Vitals smart button (spec §2.5 — no EVV-style page) -->
+    <record id="view_health_fieldservice_order_form_vitals" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.vitals</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_observations" type="object"
+                        class="oe_stat_button" icon="fa-heartbeat"
+                        invisible="observation_count == 0">
+                    <field name="observation_count" widget="statinfo"
+                           string="Vitals"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
