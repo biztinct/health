@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Standalone, self-contained mobile pages (no website/backend assets).
+         Flat mono colors, no gradients, inlined SVG icons (currentColor) — the
+         public page cannot load the backend theme's hf-wt-ico mask CSS, so
+         icons are inlined. No emoji. -->
+    <template id="offer_styles" name="Offer Styles">
+        <style>
+            * { box-sizing: border-box; }
+            body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+                   background: #f4f5f7; color: #1f2733; -webkit-text-size-adjust: 100%; }
+            .wa-wrap { max-width: 480px; margin: 0 auto; padding: 24px 18px 48px; }
+            .wa-card { background: #ffffff; border: 1px solid #e3e6ea; border-radius: 14px;
+                       padding: 22px 20px; }
+            .wa-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; color: #0b6b5a; }
+            .wa-brand svg { width: 26px; height: 26px; }
+            .wa-brand span { font-weight: 700; font-size: 17px; letter-spacing: .2px; }
+            .wa-h1 { font-size: 20px; font-weight: 700; margin: 6px 0 4px; }
+            .wa-sub { color: #5b6572; font-size: 14px; margin: 0 0 18px; }
+            .wa-slot { display: flex; align-items: center; gap: 12px; width: 100%;
+                       text-decoration: none; color: #1f2733; background: #ffffff;
+                       border: 1.5px solid #0b6b5a; border-radius: 12px; padding: 14px 16px;
+                       margin-bottom: 12px; font-size: 16px; font-weight: 600; }
+            .wa-slot:active { background: #0b6b5a; color: #ffffff; }
+            .wa-slot svg { width: 20px; height: 20px; flex: 0 0 auto; color: #0b6b5a; }
+            .wa-slot .wa-staff { display: block; font-size: 13px; font-weight: 500; color: #5b6572; }
+            .wa-slot:active .wa-staff { color: #d7efe9; }
+            .wa-note { font-size: 13px; color: #8a94a1; margin-top: 16px; text-align: center; }
+            .wa-notice { background: #fff4e5; border: 1px solid #f0c78a; color: #8a5a12;
+                         border-radius: 10px; padding: 10px 12px; font-size: 14px; margin-bottom: 16px; }
+            .wa-ok svg { width: 54px; height: 54px; display: block; margin: 6px auto 14px; color: #0b6b5a; }
+            .wa-ref { font-weight: 700; }
+            .wa-center { text-align: center; }
+        </style>
+    </template>
+
+    <template id="offer_page" name="First-Visit Offer">
+        <t t-name="health_workflow_auto.offer_page">
+            <html lang="vi">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                    <title>Đặt lịch thăm khám</title>
+                    <t t-call="health_workflow_auto.offer_styles"/>
+                </head>
+                <body>
+                    <div class="wa-wrap">
+                        <div class="wa-card">
+                            <div class="wa-brand">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 21s-7-4.35-9.5-8.5A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6.5C19 16.65 12 21 12 21z"/>
+                                </svg>
+                                <span>Viet Uc Health</span>
+                            </div>
+                            <div t-if="notice" class="wa-notice"><t t-esc="notice"/></div>
+                            <div class="wa-h1">Xin chào <t t-esc="offer.partner_id.name"/></div>
+                            <p class="wa-sub">Đặt lịch thăm khám đầu tiên của bạn — chọn khung giờ phù hợp.
+                               <br/>(Book your first visit — pick a time that suits you.)</p>
+
+                            <t t-foreach="slots" t-as="slot">
+                                <a class="wa-slot"
+                                   t-attf-href="/booking/offer/#{offer.token}/accept/#{slot.index}">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                        <path d="M16 2v4M8 2v4M3 10h18"/>
+                                    </svg>
+                                    <span>
+                                        <t t-esc="slot.label()"/>
+                                        <span class="wa-staff" t-if="slot.staff_id">
+                                            <t t-esc="slot.staff_id.name"/>
+                                        </span>
+                                    </span>
+                                </a>
+                            </t>
+
+                            <p class="wa-note" t-if="offer.expires_at">
+                                Ưu đãi có hiệu lực đến <t t-esc="offer.expires_at" t-options="{'widget': 'datetime'}"/>.
+                            </p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        </t>
+    </template>
+
+    <template id="offer_confirmed" name="First-Visit Offer Confirmed">
+        <t t-name="health_workflow_auto.offer_confirmed">
+            <html lang="vi">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                    <title>Đã đặt lịch</title>
+                    <t t-call="health_workflow_auto.offer_styles"/>
+                </head>
+                <body>
+                    <div class="wa-wrap">
+                        <div class="wa-card wa-center">
+                            <div class="wa-ok">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <path d="M22 4 12 14.01l-3-3"/>
+                                </svg>
+                            </div>
+                            <div class="wa-h1">Đã đặt lịch! (Booked!)</div>
+                            <p class="wa-sub">Mã đặt lịch: <span class="wa-ref"><t t-esc="fso.name"/></span></p>
+                            <p class="wa-sub">
+                                <t t-esc="slot.label()"/>
+                                <t t-if="staff_first_name"> · <t t-esc="staff_first_name"/></t>
+                            </p>
+                            <p class="wa-note">Chúng tôi sẽ liên hệ để xác nhận. (We will contact you to confirm.)</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        </t>
+    </template>
+
+    <template id="offer_expired" name="First-Visit Offer Expired">
+        <t t-name="health_workflow_auto.offer_expired">
+            <html lang="vi">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                    <title>Liên kết không còn hiệu lực</title>
+                    <t t-call="health_workflow_auto.offer_styles"/>
+                </head>
+                <body>
+                    <div class="wa-wrap">
+                        <div class="wa-card wa-center">
+                            <div class="wa-h1">Liên kết không còn hiệu lực</div>
+                            <p class="wa-sub">This offer link is no longer available.
+                               Please contact us to book your visit.</p>
+                            <p class="wa-note">Viet Uc Health</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        </t>
+    </template>
+
+</odoo>

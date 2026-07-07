@@ -6,7 +6,7 @@
             <t t-set="head_website">
                 <title>Viet Uc Care</title>
             </t>
-            <t t-set="pwa_asset_version">1.4.0</t>
+            <t t-set="pwa_asset_version">1.5.0</t>
             <t t-set="head">
                 <!-- PWA Meta Tags -->
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
@@ -243,7 +243,7 @@
                     apiBaseUrl: '/health_pwa/api',
                     syncUrl: '/health_pwa/sync',
                     websocketUrl: '/longpolling',
-                    version: '1.4.0',
+                    version: '1.5.0',
                     buildTime: '<t t-esc="datetime.datetime.now().isoformat()"/>',
                     showInstallOverlay: <t t-if="show_install_overlay">true</t><t t-else="">false</t>,
                 };
@@ -362,7 +362,7 @@
             <script>
                 if ('serviceWorker' in navigator) {
                     let refreshing = false;
-                    const PWA_SW_VERSION = '1.4.0';
+                    const PWA_SW_VERSION = '1.5.0';
                     console.log('[PWA] registering service worker version', PWA_SW_VERSION);
 
                     // Detect when service worker updates and reload
@@ -848,10 +848,10 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.4.0
+// Health PWA Service Worker v1.5.0
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_VERSION = '1.4.0';
+const CACHE_VERSION = '1.5.0';
 const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;
 const OFFLINE_URL = '/health_pwa/offline';
 const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;

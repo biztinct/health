@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_workflow_auto" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.workflow.auto</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Workflow Automations (H0)" name="health_workflow_auto_settings">
+                    <setting id="wf_onetap_setting" string="One-tap visit completion"
+                             help="Adds a one-tap complete button on unchanged-quote visits (PWA). Safe: only adds a button.">
+                        <field name="wf_onetap_enabled"/>
+                    </setting>
+                    <setting id="wf_redinvoice_setting" string="Nightly Red Invoice batch"
+                             help="SAFETY: off by default — talks to Viettel production. Submits eligible posted invoices nightly with a retry queue.">
+                        <field name="wf_redinvoice_batch_enabled"/>
+                    </setting>
+                    <setting id="wf_timecard_setting" string="Timecard auto-fill from visits"
+                             help="SAFETY: off by default — writes payroll-adjacent hr.attendance from visit check-in/out.">
+                        <field name="wf_timecard_sync_enabled"/>
+                    </setting>
+                    <setting id="wf_offer_template_setting" string="First-visit offer ZNS template"
+                             help="Zalo ZNS template ID for the first-visit offer. Rides the messaging enabled/dry-run switches. Empty = ZNS step skipped (offer still created).">
+                        <field name="wf_zns_template_visit_offer"/>
+                    </setting>
+                    <setting id="wf_offer_product_setting" string="First-visit offer service"
+                             help="Billable service line attached to a booking created from a first-visit offer (required for confirmation).">
+                        <field name="wf_offer_service_product_id"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

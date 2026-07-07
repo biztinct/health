@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- E.3 — nightly Red Invoice batch (01:30) -->
+        <record id="cron_redinvoice_batch_submit" model="ir.cron">
+            <field name="name">Red Invoice: nightly batch submit</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_redinvoice_batch_submit()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=1, minute=30, second=0) + timedelta(days=1))"/>
+        </record>
+
+        <!-- E.3 — Red Invoice retry queue (every 30 min) -->
+        <record id="cron_redinvoice_retry" model="ir.cron">
+            <field name="name">Red Invoice: retry failed submissions</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_redinvoice_retry()</field>
+            <field name="interval_number">30</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- E.4 — nightly timecard reconciliation (02:00) -->
+        <record id="cron_reconcile_timecards" model="ir.cron">
+            <field name="name">Timecards: reconcile visits vs attendance</field>
+            <field name="model_id" ref="model_health_timecard_mismatch"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_reconcile_timecards()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=2, minute=0, second=0) + timedelta(days=1))"/>
+        </record>
+
+        <!-- E.5 — expire first-visit offers (hourly) -->
+        <record id="cron_expire_offers" model="ir.cron">
+            <field name="name">Visit offers: expire</field>
+            <field name="model_id" ref="model_health_visit_offer"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_expire_offers()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

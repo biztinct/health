@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject the one-tap completion script into the app shell without
+         touching health_pwa's template body (health_incident / health_evv
+         pattern). Exposes window.healthOnetap used by the visit screen to
+         show the one-tap button (online-only). -->
+    <template id="app_shell_workflow_auto" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — One-Tap Scripts">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_workflow_auto/static/src/js/onetap-service.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

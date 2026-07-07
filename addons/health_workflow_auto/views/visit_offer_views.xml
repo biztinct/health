@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_visit_offer_list" model="ir.ui.view">
+        <field name="name">health.visit.offer.list</field>
+        <field name="model">health.visit.offer</field>
+        <field name="arch" type="xml">
+            <list string="First-Visit Offers">
+                <field name="name"/>
+                <field name="lead_id"/>
+                <field name="partner_id"/>
+                <field name="state"
+                       decoration-success="state == 'accepted'"
+                       decoration-muted="state in ('expired','cancelled')"
+                       widget="badge"/>
+                <field name="expires_at"/>
+                <field name="fso_id"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_visit_offer_form" model="ir.ui.view">
+        <field name="name">health.visit.offer.form</field>
+        <field name="model">health.visit.offer</field>
+        <field name="arch" type="xml">
+            <form string="First-Visit Offer">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="lead_id"/>
+                            <field name="partner_id"/>
+                            <field name="state" widget="badge"/>
+                        </group>
+                        <group>
+                            <field name="expires_at"/>
+                            <field name="fso_id"/>
+                            <field name="outbound_message_id"/>
+                            <field name="fso_timezone"/>
+                        </group>
+                    </group>
+                    <field name="slot_ids">
+                        <list string="Slots">
+                            <field name="index"/>
+                            <field name="slot_date"/>
+                            <field name="start_time" widget="float_time"/>
+                            <field name="staff_id"/>
+                            <field name="confidence"/>
+                            <field name="taken"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_visit_offer" model="ir.actions.act_window">
+        <field name="name">First-Visit Offers</field>
+        <field name="res_model">health.visit.offer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

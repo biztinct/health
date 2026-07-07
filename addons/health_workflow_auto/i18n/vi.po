@@ -1,0 +1,135 @@
+# Vietnamese translation for health_workflow_auto
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_workflow_auto\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_workflow_auto
+msgid "Workflow Automations"
+msgstr "Tự động hóa quy trình"
+
+#. module: health_workflow_auto
+msgid "Workflow Automations (H0)"
+msgstr "Tự động hóa quy trình (H0)"
+
+#. module: health_workflow_auto
+msgid "First-Visit Offers"
+msgstr "Ưu đãi thăm khám đầu tiên"
+
+#. module: health_workflow_auto
+msgid "First-Visit Offer"
+msgstr "Ưu đãi thăm khám đầu tiên"
+
+#. module: health_workflow_auto
+msgid "First-Visit Offer Slot"
+msgstr "Khung giờ ưu đãi thăm khám"
+
+#. module: health_workflow_auto
+msgid "Timecard Mismatches"
+msgstr "Sai lệch chấm công"
+
+#. module: health_workflow_auto
+msgid "Timecard Mismatch"
+msgstr "Sai lệch chấm công"
+
+#. module: health_workflow_auto
+msgid "Slots"
+msgstr "Khung giờ"
+
+#. module: health_workflow_auto
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: health_workflow_auto
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_workflow_auto
+msgid "Accepted"
+msgstr "Đã chấp nhận"
+
+#. module: health_workflow_auto
+msgid "Expired"
+msgstr "Đã hết hạn"
+
+#. module: health_workflow_auto
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_workflow_auto
+msgid "Open"
+msgstr "Đang mở"
+
+#. module: health_workflow_auto
+msgid "Resolved"
+msgstr "Đã xử lý"
+
+#. module: health_workflow_auto
+msgid "Use Visit Times"
+msgstr "Dùng giờ thăm khám"
+
+#. module: health_workflow_auto
+msgid "Keep Attendance"
+msgstr "Giữ chấm công"
+
+#. module: health_workflow_auto
+msgid "Manual"
+msgstr "Thủ công"
+
+#. module: health_workflow_auto
+msgid "PWA Visit"
+msgstr "Thăm khám qua ứng dụng"
+
+#. module: health_workflow_auto
+msgid "Start gap >15m"
+msgstr "Lệch giờ bắt đầu >15 phút"
+
+#. module: health_workflow_auto
+msgid "End gap >15m"
+msgstr "Lệch giờ kết thúc >15 phút"
+
+#. module: health_workflow_auto
+msgid "Visit w/o attendance"
+msgstr "Thăm khám không có chấm công"
+
+#. module: health_workflow_auto
+msgid "Attendance never closed"
+msgstr "Chấm công chưa đóng"
+
+#. module: health_workflow_auto
+msgid "One-Tap Visit Completion"
+msgstr "Hoàn tất thăm khám một chạm"
+
+#. module: health_workflow_auto
+msgid "Nightly Red Invoice Batch"
+msgstr "Xuất hóa đơn đỏ hàng đêm"
+
+#. module: health_workflow_auto
+msgid "Timecard Auto-Fill from Visits"
+msgstr "Tự động điền chấm công từ thăm khám"
+
+#. module: health_workflow_auto
+msgid "First-visit offer accepted — booking %s created for %s."
+msgstr "Đã chấp nhận ưu đãi thăm khám — tạo lịch %s cho %s."
+
+#. module: health_workflow_auto
+msgid "First-visit offer expired"
+msgstr "Ưu đãi thăm khám đã hết hạn"
+
+#. module: health_workflow_auto
+msgid "Send first-visit offer manually"
+msgstr "Gửi ưu đãi thăm khám thủ công"
+
+#. module: health_workflow_auto
+msgid "Service completed"
+msgstr "Đã hoàn tất dịch vụ"
+
+#. module: health_workflow_auto
+msgid "Visit completed - no exceptions reported (one-tap complete)"
+msgstr "Đã hoàn tất thăm khám - không có ngoại lệ (hoàn tất một chạm)"

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Feature switches (safety rails, handover §B). noupdate so a live
+         operator toggle is never reset by a module upgrade. -->
+    <data noupdate="1">
+        <!-- E.2 — only adds a button; safe on by default. -->
+        <record id="param_onetap_enabled" model="ir.config_parameter">
+            <field name="key">health_workflow_auto.onetap_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <!-- E.3 — talks to Viettel production; off by default. -->
+        <record id="param_redinvoice_batch_enabled" model="ir.config_parameter">
+            <field name="key">health_workflow_auto.redinvoice_batch_enabled</field>
+            <field name="value">False</field>
+        </record>
+        <!-- E.4 — writes payroll-adjacent hr.attendance; off by default. -->
+        <record id="param_timecard_sync_enabled" model="ir.config_parameter">
+            <field name="key">health_workflow_auto.timecard_sync_enabled</field>
+            <field name="value">False</field>
+        </record>
+
+        <!-- E.5 — first-visit offer sequence -->
+        <record id="seq_visit_offer" model="ir.sequence">
+            <field name="name">First-Visit Offer</field>
+            <field name="code">health.visit.offer</field>
+            <field name="prefix">OFFER/%(year)s/</field>
+            <field name="padding">5</field>
+        </record>
+    </data>
+</odoo>

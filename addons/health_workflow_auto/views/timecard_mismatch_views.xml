@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_timecard_mismatch_list" model="ir.ui.view">
+        <field name="name">health.timecard.mismatch.list</field>
+        <field name="model">health.timecard.mismatch</field>
+        <field name="arch" type="xml">
+            <list string="Timecard Mismatches"
+                  decoration-warning="state == 'open'"
+                  decoration-muted="state == 'resolved'">
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="kind"/>
+                <field name="delta_minutes"/>
+                <field name="fso_id"/>
+                <field name="attendance_id"/>
+                <field name="state" widget="badge"/>
+                <field name="resolved_by"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_timecard_mismatch_form" model="ir.ui.view">
+        <field name="name">health.timecard.mismatch.form</field>
+        <field name="model">health.timecard.mismatch</field>
+        <field name="arch" type="xml">
+            <form string="Timecard Mismatch">
+                <header>
+                    <button name="action_resolve_use_fso" type="object" string="Use Visit Times"
+                            class="btn-primary" invisible="state == 'resolved'"/>
+                    <button name="action_resolve_keep" type="object" string="Keep Attendance"
+                            invisible="state == 'resolved'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="date"/>
+                            <field name="kind"/>
+                            <field name="delta_minutes"/>
+                        </group>
+                        <group>
+                            <field name="fso_id"/>
+                            <field name="attendance_id"/>
+                            <field name="resolution"/>
+                            <field name="resolved_by"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_timecard_mismatch" model="ir.actions.act_window">
+        <field name="name">Timecard Mismatches</field>
+        <field name="res_model">health.timecard.mismatch</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <record id="view_timecard_mismatch_search" model="ir.ui.view">
+        <field name="name">health.timecard.mismatch.search</field>
+        <field name="model">health.timecard.mismatch</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id"/>
+                <field name="fso_id"/>
+                <filter name="open" string="Open" domain="[('state','=','open')]"/>
+                <filter name="resolved" string="Resolved" domain="[('state','=','resolved')]"/>
+                <filter name="by_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                <filter name="by_kind" string="Kind" context="{'group_by': 'kind'}"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>

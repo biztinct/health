@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_visit_offer_salesman,health.visit.offer.salesman,model_health_visit_offer,sales_team.group_sale_salesman,1,1,1,0
+access_visit_offer_manager,health.visit.offer.manager,model_health_visit_offer,sales_team.group_sale_manager,1,1,1,1
+access_visit_offer_slot_salesman,health.visit.offer.slot.salesman,model_health_visit_offer_slot,sales_team.group_sale_salesman,1,1,1,1
+access_visit_offer_slot_manager,health.visit.offer.slot.manager,model_health_visit_offer_slot,sales_team.group_sale_manager,1,1,1,1
+access_timecard_mismatch_user,health.timecard.mismatch.user,model_health_timecard_mismatch,base.group_user,1,0,0,0
+access_timecard_mismatch_officer,health.timecard.mismatch.officer,model_health_timecard_mismatch,hr_attendance.group_hr_attendance_officer,1,1,1,0
+access_timecard_mismatch_manager,health.timecard.mismatch.manager,model_health_timecard_mismatch,hr.group_hr_manager,1,1,1,1

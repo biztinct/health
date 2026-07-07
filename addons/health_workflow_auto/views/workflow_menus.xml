@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_workflow_auto_root"
+              name="Workflow Automations"
+              sequence="95"/>
+
+    <menuitem id="menu_visit_offer"
+              name="First-Visit Offers"
+              parent="menu_workflow_auto_root"
+              action="action_visit_offer"
+              sequence="10"/>
+
+    <menuitem id="menu_timecard_mismatch"
+              name="Timecard Mismatches"
+              parent="menu_workflow_auto_root"
+              action="action_timecard_mismatch"
+              sequence="20"/>
+
+</odoo>

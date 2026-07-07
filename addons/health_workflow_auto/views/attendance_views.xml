@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Surface the visit link + source on the attendance list so ops can see
+         which rows came from PWA check-in/out (E.4). -->
+    <record id="view_attendance_tree_workflow_auto" model="ir.ui.view">
+        <field name="name">hr.attendance.list.workflow.auto</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+        <field name="arch" type="xml">
+            <field name="check_out" position="after">
+                <field name="attendance_source" optional="show"/>
+                <field name="fso_id" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
