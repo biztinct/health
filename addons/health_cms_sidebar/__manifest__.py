@@ -11,6 +11,20 @@
         'health_landing',
         'health_flow',
         'access_roles',
+        # Clinical spine + interop modules surfaced in the CLINICAL and
+        # INTEROP & COMPLIANCE sidebar sections (their actions are referenced
+        # by cms.sidebar.item.action_xmlid).
+        'health_vitals',
+        'health_careplan',
+        'health_emar',
+        'health_forms',
+        'health_incident',
+        'health_consent',
+        'health_evv',
+        'health_fhir_terminology',
+        'health_fhir_adapter_base',
+        'health_fhir_adapter_vn',
+        'health_messaging',
     ],
     'data': [
         'security/health_cms_sidebar_security.xml',
@@ -21,6 +35,7 @@
         'data/cms_sidebar_items_ops_schedule.xml',
         'data/cms_sidebar_items_fin.xml',
         'data/cms_sidebar_items_admin.xml',
+        'data/cms_sidebar_items_clinical.xml',
         'views/cms_sidebar_section_views.xml',
         'views/cms_sidebar_item_views.xml',
         'views/cms_sidebar_menus.xml',

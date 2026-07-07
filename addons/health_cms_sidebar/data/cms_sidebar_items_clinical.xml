@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- =====================================================================
+         Two new sidebar sections wiring the clinical spine + interop modules
+         into the Viet UC CMS sidebar. Parent items act as expanders (their
+         action is ignored on click); leaf items navigate via action_xmlid.
+         Items are ungated (no role_ids) → visible to every sidebar user;
+         the underlying module ACLs still protect the data.
+         ===================================================================== -->
+
+    <record id="section_clinical" model="cms.sidebar.section">
+        <field name="name">CLINICAL</field>
+        <field name="technical_key">clinical</field>
+        <field name="sequence">32</field>
+        <field name="icon">fa fa-stethoscope</field>
+    </record>
+
+    <record id="section_interop" model="cms.sidebar.section">
+        <field name="name">INTEROP &amp; COMPLIANCE</field>
+        <field name="technical_key">interop</field>
+        <field name="sequence">35</field>
+        <field name="icon">fa fa-exchange</field>
+    </record>
+
+    <!-- ================= CLINICAL ================= -->
+
+    <!-- Vitals & Observations -->
+    <record id="item_clin_vitals" model="cms.sidebar.item">
+        <field name="name">Vitals &amp; Observations</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-heartbeat</field>
+    </record>
+    <record id="item_clin_vitals_obs" model="cms.sidebar.item">
+        <field name="name">Observations</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_vitals"/>
+        <field name="sequence">11</field>
+        <field name="icon">fa fa-heartbeat</field>
+        <field name="action_xmlid">health_vitals.action_health_observation</field>
+        <field name="match_action_xmlids">health_vitals.action_health_observation</field>
+        <field name="match_models">health.observation</field>
+    </record>
+    <record id="item_clin_vitals_thresholds" model="cms.sidebar.item">
+        <field name="name">Thresholds</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_vitals"/>
+        <field name="sequence">12</field>
+        <field name="icon">fa fa-sliders</field>
+        <field name="action_xmlid">health_vitals.action_health_vitals_threshold</field>
+        <field name="match_action_xmlids">health_vitals.action_health_vitals_threshold</field>
+    </record>
+    <record id="item_clin_vitals_types" model="cms.sidebar.item">
+        <field name="name">Observation Types</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_vitals"/>
+        <field name="sequence">13</field>
+        <field name="icon">fa fa-list</field>
+        <field name="action_xmlid">health_vitals.action_health_vitals_type</field>
+        <field name="match_action_xmlids">health_vitals.action_health_vitals_type</field>
+    </record>
+
+    <!-- Care Plans -->
+    <record id="item_clin_careplan" model="cms.sidebar.item">
+        <field name="name">Care Plans</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-clipboard</field>
+        <field name="action_xmlid">health_careplan.action_health_careplan</field>
+        <field name="match_action_xmlids">health_careplan.action_health_careplan</field>
+        <field name="match_models">health.careplan</field>
+    </record>
+
+    <!-- Medications (eMAR) -->
+    <record id="item_clin_emar" model="cms.sidebar.item">
+        <field name="name">Medications (eMAR)</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-medkit</field>
+    </record>
+    <record id="item_clin_emar_orders" model="cms.sidebar.item">
+        <field name="name">Medication Orders</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_emar"/>
+        <field name="sequence">31</field>
+        <field name="icon">fa fa-medkit</field>
+        <field name="action_xmlid">health_emar.action_health_medication_order</field>
+        <field name="match_action_xmlids">health_emar.action_health_medication_order</field>
+        <field name="match_models">health.medication.order</field>
+    </record>
+    <record id="item_clin_emar_admin" model="cms.sidebar.item">
+        <field name="name">Administration Register</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_emar"/>
+        <field name="sequence">32</field>
+        <field name="icon">fa fa-check-square-o</field>
+        <field name="action_xmlid">health_emar.action_health_medication_administration</field>
+        <field name="match_action_xmlids">health_emar.action_health_medication_administration</field>
+    </record>
+    <record id="item_clin_emar_catalog" model="cms.sidebar.item">
+        <field name="name">Medication Catalog</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_emar"/>
+        <field name="sequence">33</field>
+        <field name="icon">fa fa-book</field>
+        <field name="action_xmlid">health_emar.action_health_medication_emar</field>
+        <field name="match_action_xmlids">health_emar.action_health_medication_emar</field>
+    </record>
+
+    <!-- Clinical Forms -->
+    <record id="item_clin_forms" model="cms.sidebar.item">
+        <field name="name">Clinical Forms</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-list-alt</field>
+    </record>
+    <record id="item_clin_forms_instances" model="cms.sidebar.item">
+        <field name="name">Assessments</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_forms"/>
+        <field name="sequence">41</field>
+        <field name="icon">fa fa-list-alt</field>
+        <field name="action_xmlid">health_forms.action_health_form_instance</field>
+        <field name="match_action_xmlids">health_forms.action_health_form_instance</field>
+        <field name="match_models">health.form.instance</field>
+    </record>
+    <record id="item_clin_forms_templates" model="cms.sidebar.item">
+        <field name="name">Form Templates</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_forms"/>
+        <field name="sequence">42</field>
+        <field name="icon">fa fa-wpforms</field>
+        <field name="action_xmlid">health_forms.action_health_form_template</field>
+        <field name="match_action_xmlids">health_forms.action_health_form_template</field>
+    </record>
+
+    <!-- Incidents -->
+    <record id="item_clin_incidents" model="cms.sidebar.item">
+        <field name="name">Incidents</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-exclamation-triangle</field>
+    </record>
+    <record id="item_clin_incidents_register" model="cms.sidebar.item">
+        <field name="name">Incident Register</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_incidents"/>
+        <field name="sequence">51</field>
+        <field name="icon">fa fa-exclamation-triangle</field>
+        <field name="action_xmlid">health_incident.action_health_incident</field>
+        <field name="match_action_xmlids">health_incident.action_health_incident</field>
+        <field name="match_models">health.incident</field>
+    </record>
+    <record id="item_clin_incidents_actions" model="cms.sidebar.item">
+        <field name="name">Corrective Actions</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_incidents"/>
+        <field name="sequence">52</field>
+        <field name="icon">fa fa-wrench</field>
+        <field name="action_xmlid">health_incident.action_health_incident_action</field>
+        <field name="match_action_xmlids">health_incident.action_health_incident_action</field>
+    </record>
+    <record id="item_clin_incidents_analysis" model="cms.sidebar.item">
+        <field name="name">Analysis</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_incidents"/>
+        <field name="sequence">53</field>
+        <field name="icon">fa fa-bar-chart</field>
+        <field name="action_xmlid">health_incident.action_health_incident_analysis</field>
+        <field name="match_action_xmlids">health_incident.action_health_incident_analysis</field>
+    </record>
+
+    <!-- Consents -->
+    <record id="item_clin_consents" model="cms.sidebar.item">
+        <field name="name">Consents</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="sequence">60</field>
+        <field name="icon">fa fa-handshake-o</field>
+    </record>
+    <record id="item_clin_consents_all" model="cms.sidebar.item">
+        <field name="name">Consents</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_consents"/>
+        <field name="sequence">61</field>
+        <field name="icon">fa fa-handshake-o</field>
+        <field name="action_xmlid">health_consent.action_health_consent</field>
+        <field name="match_action_xmlids">health_consent.action_health_consent</field>
+        <field name="match_models">health.consent</field>
+    </record>
+    <record id="item_clin_consents_expiring" model="cms.sidebar.item">
+        <field name="name">Expiring Consents</field>
+        <field name="section_id" ref="section_clinical"/>
+        <field name="parent_id" ref="item_clin_consents"/>
+        <field name="sequence">62</field>
+        <field name="icon">fa fa-clock-o</field>
+        <field name="action_xmlid">health_consent.action_health_consent_expiring</field>
+        <field name="match_action_xmlids">health_consent.action_health_consent_expiring</field>
+    </record>
+
+    <!-- ================= INTEROP &amp; COMPLIANCE ================= -->
+
+    <!-- Terminology -->
+    <record id="item_int_terminology" model="cms.sidebar.item">
+        <field name="name">Medical Terminology</field>
+        <field name="section_id" ref="section_interop"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-book</field>
+    </record>
+    <record id="item_int_term_codes" model="cms.sidebar.item">
+        <field name="name">Medical Codes</field>
+        <field name="section_id" ref="section_interop"/>
+        <field name="parent_id" ref="item_int_terminology"/>
+        <field name="sequence">11</field>
+        <field name="icon">fa fa-book</field>
+        <field name="action_xmlid">health_fhir_terminology.action_medical_code</field>
+        <field name="match_action_xmlids">health_fhir_terminology.action_medical_code</field>
+        <field name="match_models">medical.code</field>
+    </record>
+    <record id="item_int_term_systems" model="cms.sidebar.item">
+        <field name="name">Coding Systems</field>
+        <field name="section_id" ref="section_interop"/>
+        <field name="parent_id" ref="item_int_terminology"/>
+        <field name="sequence">12</field>
+        <field name="icon">fa fa-database</field>
+        <field name="action_xmlid">health_fhir_terminology.action_medical_coding_system</field>
+        <field name="match_action_xmlids">health_fhir_terminology.action_medical_coding_system</field>
+    </record>
+    <record id="item_int_term_import" model="cms.sidebar.item">
+        <field name="name">Import Codes</field>
+        <field name="section_id" ref="section_interop"/>
+        <field name="parent_id" ref="item_int_terminology"/>
+        <field name="sequence">13</field>
+        <field name="icon">fa fa-upload</field>
+        <field name="action_xmlid">health_fhir_terminology.action_medical_code_import</field>
+        <field name="match_action_xmlids">health_fhir_terminology.action_medical_code_import</field>
+    </record>
+
+    <!-- EMR Export (VN) -->
+    <record id="item_int_emr_export" model="cms.sidebar.item">
+        <field name="name">EMR Export (VN)</field>
+        <field name="section_id" ref="section_interop"/>
+        <field name="sequence">20</field>
+        <field name="icon">fa fa-share-square-o</field>
+        <field name="action_xmlid">health_fhir_adapter_base.action_fhir_submission_log</field>
+        <field name="match_action_xmlids">health_fhir_adapter_base.action_fhir_submission_log</field>
+        <field name="match_models">fhir.submission.log</field>
+    </record>
+
+    <!-- EMR Readiness -->
+    <record id="item_int_emr_readiness" model="cms.sidebar.item">
+        <field name="name">EMR Readiness</field>
+        <field name="section_id" ref="section_interop"/>
+        <field name="sequence">30</field>
+        <field name="icon">fa fa-check-circle-o</field>
+        <field name="action_xmlid">health_fhir_adapter_vn.action_vn_emr_readiness</field>
+        <field name="match_action_xmlids">health_fhir_adapter_vn.action_vn_emr_readiness</field>
+    </record>
+
+    <!-- Visit Messaging -->
+    <record id="item_int_messaging" model="cms.sidebar.item">
+        <field name="name">Visit Messaging</field>
+        <field name="section_id" ref="section_interop"/>
+        <field name="sequence">40</field>
+        <field name="icon">fa fa-comments-o</field>
+        <field name="action_xmlid">health_messaging.action_outbound_message</field>
+        <field name="match_action_xmlids">health_messaging.action_outbound_message</field>
+        <field name="match_models">health.outbound.message</field>
+    </record>
+
+    <!-- EVV Events -->
+    <record id="item_int_evv" model="cms.sidebar.item">
+        <field name="name">EVV Events</field>
+        <field name="section_id" ref="section_interop"/>
+        <field name="sequence">50</field>
+        <field name="icon">fa fa-map-marker</field>
+        <field name="action_xmlid">health_evv.action_health_evv_event</field>
+        <field name="match_action_xmlids">health_evv.action_health_evv_event</field>
+        <field name="match_models">health.evv.event</field>
+    </record>
+
+</odoo>
