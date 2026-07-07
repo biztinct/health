@@ -1,0 +1,431 @@
+# Vietnamese translation for health_incident
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_incident\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_incident
+msgid "Incident / Adverse Event"
+msgstr "Sự cố / Biến cố bất lợi"
+
+#. module: health_incident
+msgid "Incident"
+msgstr "Sự cố"
+
+#. module: health_incident
+msgid "Incidents"
+msgstr "Sự cố"
+
+#. module: health_incident
+msgid "Incident Register"
+msgstr "Sổ đăng ký sự cố"
+
+#. module: health_incident
+msgid "Incident Corrective Action"
+msgstr "Hành động khắc phục sự cố"
+
+#. module: health_incident
+msgid "Corrective Actions"
+msgstr "Hành động khắc phục"
+
+#. module: health_incident
+msgid "Corrective Action"
+msgstr "Hành động khắc phục"
+
+#. module: health_incident
+msgid "Analysis"
+msgstr "Phân tích"
+
+#. module: health_incident
+msgid "Incident Analysis"
+msgstr "Phân tích sự cố"
+
+#. module: health_incident
+msgid "Fall"
+msgstr "Té ngã"
+
+#. module: health_incident
+msgid "Medication Error"
+msgstr "Sai sót thuốc"
+
+#. module: health_incident
+msgid "Injury"
+msgstr "Chấn thương"
+
+#. module: health_incident
+msgid "Behaviour"
+msgstr "Hành vi"
+
+#. module: health_incident
+msgid "Property Damage/Loss"
+msgstr "Hư hỏng/mất tài sản"
+
+#. module: health_incident
+msgid "Near Miss"
+msgstr "Suýt xảy ra"
+
+#. module: health_incident
+msgid "Other"
+msgstr "Khác"
+
+#. module: health_incident
+msgid "1 — Negligible"
+msgstr "1 — Không đáng kể"
+
+#. module: health_incident
+msgid "2 — Minor"
+msgstr "2 — Nhẹ"
+
+#. module: health_incident
+msgid "3 — Moderate"
+msgstr "3 — Trung bình"
+
+#. module: health_incident
+msgid "4 — Major"
+msgstr "4 — Nặng"
+
+#. module: health_incident
+msgid "5 — Catastrophic"
+msgstr "5 — Thảm khốc"
+
+#. module: health_incident
+msgid "Reported"
+msgstr "Đã báo cáo"
+
+#. module: health_incident
+msgid "Under Review"
+msgstr "Đang xem xét"
+
+#. module: health_incident
+msgid "Investigation"
+msgstr "Điều tra"
+
+#. module: health_incident
+msgid "Actions Assigned"
+msgstr "Đã giao hành động"
+
+#. module: health_incident
+msgid "Closed"
+msgstr "Đã đóng"
+
+#. module: health_incident
+msgid "Open"
+msgstr "Mở"
+
+#. module: health_incident
+msgid "In Progress"
+msgstr "Đang thực hiện"
+
+#. module: health_incident
+msgid "Done"
+msgstr "Hoàn thành"
+
+#. module: health_incident
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_incident
+msgid "No Harm"
+msgstr "Không tổn hại"
+
+#. module: health_incident
+msgid "Minor Harm"
+msgstr "Tổn hại nhẹ"
+
+#. module: health_incident
+msgid "Moderate Harm"
+msgstr "Tổn hại trung bình"
+
+#. module: health_incident
+msgid "Severe Harm"
+msgstr "Tổn hại nặng"
+
+#. module: health_incident
+msgid "Death"
+msgstr "Tử vong"
+
+#. module: health_incident
+msgid "Type"
+msgstr "Loại"
+
+#. module: health_incident
+msgid "Severity"
+msgstr "Mức độ nghiêm trọng"
+
+#. module: health_incident
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_incident
+msgid "Visit"
+msgstr "Lượt thăm khám"
+
+#. module: health_incident
+msgid "Facility"
+msgstr "Cơ sở"
+
+#. module: health_incident
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_incident
+msgid "Location"
+msgstr "Vị trí"
+
+#. module: health_incident
+msgid "Incident Date/Time"
+msgstr "Ngày/giờ sự cố"
+
+#. module: health_incident
+msgid "Reporter"
+msgstr "Người báo cáo"
+
+#. module: health_incident
+msgid "Reported On"
+msgstr "Báo cáo lúc"
+
+#. module: health_incident
+msgid "Description"
+msgstr "Mô tả"
+
+#. module: health_incident
+msgid "Immediate Actions"
+msgstr "Hành động xử lý ngay"
+
+#. module: health_incident
+msgid "Witnesses"
+msgstr "Nhân chứng"
+
+#. module: health_incident
+msgid "Investigator"
+msgstr "Người điều tra"
+
+#. module: health_incident
+msgid "Root Cause"
+msgstr "Nguyên nhân gốc"
+
+#. module: health_incident
+msgid "Contributing Factors"
+msgstr "Yếu tố góp phần"
+
+#. module: health_incident
+msgid "Outcome"
+msgstr "Kết cục"
+
+#. module: health_incident
+msgid "Notifiable"
+msgstr "Phải báo cáo cơ quan chức năng"
+
+#. module: health_incident
+msgid "Notified Authority"
+msgstr "Cơ quan đã báo cáo"
+
+#. module: health_incident
+msgid "Notified Date"
+msgstr "Ngày báo cáo"
+
+#. module: health_incident
+msgid "Notification"
+msgstr "Báo cáo cơ quan"
+
+#. module: health_incident
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_incident
+msgid "Assignee"
+msgstr "Người phụ trách"
+
+#. module: health_incident
+msgid "Due Date"
+msgstr "Hạn hoàn thành"
+
+#. module: health_incident
+msgid "Action"
+msgstr "Hành động"
+
+#. module: health_incident
+msgid "Actions"
+msgstr "Hành động"
+
+#. module: health_incident
+msgid "Effectiveness Review"
+msgstr "Đánh giá hiệu quả"
+
+#. module: health_incident
+msgid "Start Review"
+msgstr "Bắt đầu xem xét"
+
+#. module: health_incident
+msgid "Start Investigation"
+msgstr "Bắt đầu điều tra"
+
+#. module: health_incident
+msgid "Assign Actions"
+msgstr "Giao hành động"
+
+#. module: health_incident
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_incident
+msgid "Fast-Close (Minor)"
+msgstr "Đóng nhanh (nhẹ)"
+
+#. module: health_incident
+msgid "Reopen"
+msgstr "Mở lại"
+
+#. module: health_incident
+msgid "Start"
+msgstr "Bắt đầu"
+
+#. module: health_incident
+msgid "Mark Done"
+msgstr "Đánh dấu hoàn thành"
+
+#. module: health_incident
+msgid "Cancel Action"
+msgstr "Hủy hành động"
+
+#. module: health_incident
+msgid "My Actions"
+msgstr "Hành động của tôi"
+
+#. module: health_incident
+msgid "Overdue"
+msgstr "Quá hạn"
+
+#. module: health_incident
+msgid "Overdue Actions"
+msgstr "Hành động quá hạn"
+
+#. module: health_incident
+msgid "Severe"
+msgstr "Nghiêm trọng"
+
+#. module: health_incident
+msgid "Falls"
+msgstr "Té ngã"
+
+#. module: health_incident
+msgid "Medication Errors"
+msgstr "Sai sót thuốc"
+
+#. module: health_incident
+msgid "This Month"
+msgstr "Tháng này"
+
+#. module: health_incident
+msgid "Severe incident reported: %s"
+msgstr "Đã báo cáo sự cố nghiêm trọng: %s"
+
+#. module: health_incident
+msgid "Reassess fall risk (Morse): %s"
+msgstr "Đánh giá lại nguy cơ té ngã (Morse): %s"
+
+#. module: health_incident
+msgid "Corrective action due: %s"
+msgstr "Hạn hành động khắc phục: %s"
+
+#. module: health_incident
+msgid "Only a reported incident can be put under review."
+msgstr "Chỉ sự cố đã báo cáo mới có thể được đưa vào xem xét."
+
+#. module: health_incident
+msgid "Only an incident under review can move to investigation."
+msgstr "Chỉ sự cố đang xem xét mới có thể chuyển sang điều tra."
+
+#. module: health_incident
+msgid "Assign an investigator before starting the investigation."
+msgstr "Chỉ định người điều tra trước khi bắt đầu điều tra."
+
+#. module: health_incident
+msgid "Record the root cause before assigning corrective actions."
+msgstr "Ghi nhận nguyên nhân gốc trước khi giao hành động khắc phục."
+
+#. module: health_incident
+msgid "Add at least one open corrective action before moving to actions assigned."
+msgstr "Thêm ít nhất một hành động khắc phục đang mở trước khi chuyển sang đã giao hành động."
+
+#. module: health_incident
+msgid "This incident cannot be closed: %(count)s corrective action(s) are still open."
+msgstr "Không thể đóng sự cố này: còn %(count)s hành động khắc phục đang mở."
+
+#. module: health_incident
+msgid "This incident is notifiable: record the notified authority and notification date before closing (compliance evidence)."
+msgstr "Sự cố này phải báo cáo cơ quan chức năng: ghi nhận cơ quan đã báo cáo và ngày báo cáo trước khi đóng (bằng chứng tuân thủ)."
+
+#. module: health_incident
+msgid "Fast-close is only available for severity 1-2 incidents."
+msgstr "Đóng nhanh chỉ áp dụng cho sự cố mức độ 1-2."
+
+#. module: health_incident
+msgid "Fast-close is only available from Reported or Under Review."
+msgstr "Đóng nhanh chỉ áp dụng từ trạng thái Đã báo cáo hoặc Đang xem xét."
+
+#. module: health_incident
+msgid "Only a closed incident can be reopened."
+msgstr "Chỉ sự cố đã đóng mới có thể được mở lại."
+
+#. module: health_incident
+msgid "Only managers may reopen a closed incident."
+msgstr "Chỉ quản lý mới có thể mở lại sự cố đã đóng."
+
+#. module: health_incident
+msgid "Only an open action can be started."
+msgstr "Chỉ hành động đang mở mới có thể bắt đầu."
+
+#. module: health_incident
+msgid "Only an open or in-progress action can be marked done."
+msgstr "Chỉ hành động đang mở hoặc đang thực hiện mới có thể đánh dấu hoàn thành."
+
+#. module: health_incident
+msgid "A completed action cannot be cancelled."
+msgstr "Hành động đã hoàn thành không thể bị hủy."
+
+#. module: health_incident
+msgid "no client"
+msgstr "không có khách hàng"
+
+#. module: health_incident
+msgid "none on record"
+msgstr "chưa có hồ sơ"
+
+#. module: health_incident
+msgid "New"
+msgstr "Mới"
+
+#. module: health_incident
+msgid "Access denied"
+msgstr "Từ chối truy cập"
+
+#. module: health_incident
+msgid "Invalid JSON body"
+msgstr "Nội dung JSON không hợp lệ"
+
+#. module: health_incident
+msgid "Client not found"
+msgstr "Không tìm thấy khách hàng"
+
+#. module: health_incident
+msgid "Order not found"
+msgstr "Không tìm thấy lượt thăm khám"
+
+#. module: health_incident
+msgid "incident_type and description are required"
+msgstr "Bắt buộc phải có loại sự cố và mô tả"
+
+#. module: health_incident
+msgid "Incident already recorded (duplicate mutation ignored)"
+msgstr "Sự cố đã được ghi nhận (bỏ qua bản trùng lặp)"
+
+#. module: health_incident
+msgid "Report an incident"
+msgstr "Báo cáo sự cố"

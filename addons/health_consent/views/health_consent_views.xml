@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         Form (spec §6.5)
+         ================================================================ -->
+    <record id="view_health_consent_form" model="ir.ui.view">
+        <field name="name">health.consent.form</field>
+        <field name="model">health.consent</field>
+        <field name="arch" type="xml">
+            <form string="Consent">
+                <header>
+                    <button name="action_grant" type="object"
+                            string="Grant" class="btn-primary"
+                            invisible="state != 'draft'"
+                            groups="health_base.group_healthcare_receptionist,health_base.group_healthcare_nurse,health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                    <button name="action_withdraw" type="object"
+                            string="Withdraw"
+                            invisible="state != 'active'"
+                            confirm="Withdraw this consent? Provide the withdrawal reason on the record first."
+                            groups="health_base.group_healthcare_receptionist,health_base.group_healthcare_nurse,health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,withdrawn,expired"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="client_id"
+                                   readonly="state != 'draft'"/>
+                            <field name="consent_type"
+                                   readonly="state != 'draft'"/>
+                            <field name="scope_note"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="self_granted"
+                                   readonly="state != 'draft'"/>
+                            <field name="granted_by_relation_id"
+                                   invisible="self_granted"
+                                   required="not self_granted"
+                                   readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <field name="granted_by_partner_id"
+                                   invisible="self_granted"/>
+                            <field name="granted_by_role"
+                                   invisible="self_granted"/>
+                            <field name="method"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <group string="Evidence" name="evidence">
+                        <group>
+                            <field name="signature" widget="image"
+                                   invisible="method != 'digital_signature'"
+                                   readonly="state != 'draft'"/>
+                            <field name="verbal_witness_id"
+                                   invisible="method != 'verbal'"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="evidence_attachment_ids"
+                                   widget="many2many_binary"
+                                   invisible="method != 'written'"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <group string="Validity" name="dates">
+                        <group>
+                            <field name="effective_date"
+                                   readonly="state != 'draft'"/>
+                            <field name="expiry_date"/>
+                        </group>
+                        <group>
+                            <field name="withdrawal_reason"
+                                   invisible="state not in ('active', 'withdrawn')"
+                                   readonly="state == 'withdrawn'"/>
+                            <field name="withdrawal_date"
+                                   invisible="state != 'withdrawn'"/>
+                            <field name="withdrawn_by_id"
+                                   invisible="state != 'withdrawn'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                        <field name="catchment_province_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         List (spec §6.5)
+         ================================================================ -->
+    <record id="view_health_consent_list" model="ir.ui.view">
+        <field name="name">health.consent.list</field>
+        <field name="model">health.consent</field>
+        <field name="arch" type="xml">
+            <list default_order="create_date desc">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="consent_type"/>
+                <field name="method"/>
+                <field name="self_granted" optional="hide"/>
+                <field name="granted_by_partner_id"
+                       string="Granted By" optional="show"/>
+                <field name="effective_date"/>
+                <field name="expiry_date"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'expired'"
+                       decoration-danger="state == 'withdrawn'"
+                       decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Search (spec §6.5): Active, Expiring ≤30d, Withdrawn, by-type,
+         group by client/type/state.
+         ================================================================ -->
+    <record id="view_health_consent_search" model="ir.ui.view">
+        <field name="name">health.consent.search</field>
+        <field name="model">health.consent</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="granted_by_partner_id"/>
+                <filter name="filter_active" string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="filter_expiring" string="Expiring ≤30d"
+                        domain="[('state', '=', 'active'), ('expiry_date', '!=', False), ('expiry_date', '&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_withdrawn" string="Withdrawn"
+                        domain="[('state', '=', 'withdrawn')]"/>
+                <separator/>
+                <filter name="filter_service" string="Service Delivery"
+                        domain="[('consent_type', '=', 'service')]"/>
+                <filter name="filter_data_sharing" string="Data Sharing"
+                        domain="[('consent_type', '=', 'data_sharing')]"/>
+                <filter name="filter_photography" string="Photography/Media"
+                        domain="[('consent_type', '=', 'photography')]"/>
+                <filter name="filter_emergency" string="Emergency Treatment"
+                        domain="[('consent_type', '=', 'emergency_treatment')]"/>
+                <filter name="filter_marketing" string="Marketing"
+                        domain="[('consent_type', '=', 'marketing')]"/>
+                <separator/>
+                <filter name="group_by_client" string="Client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter name="group_by_type" string="Consent Type"
+                        context="{'group_by': 'consent_type'}"/>
+                <filter name="group_by_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Check log (read-only compliance evidence)
+         ================================================================ -->
+    <record id="view_health_consent_check_log_list" model="ir.ui.view">
+        <field name="name">health.consent.check.log.list</field>
+        <field name="model">health.consent.check.log</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false"
+                  default_order="create_date desc">
+                <field name="create_date"/>
+                <field name="client_id"/>
+                <field name="consent_type"/>
+                <field name="scope" optional="hide"/>
+                <field name="result" widget="boolean"/>
+                <field name="consent_id" optional="show"/>
+                <field name="user_id"/>
+                <field name="source" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_consent_check_log_search" model="ir.ui.view">
+        <field name="name">health.consent.check.log.search</field>
+        <field name="model">health.consent.check.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="client_id"/>
+                <field name="consent_type"/>
+                <filter name="filter_denied" string="Denied"
+                        domain="[('result', '=', False)]"/>
+                <separator/>
+                <filter name="group_by_client" string="Client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter name="group_by_type" string="Consent Type"
+                        context="{'group_by': 'consent_type'}"/>
+                <filter name="group_by_result" string="Result"
+                        context="{'group_by': 'result'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         Actions
+         ================================================================ -->
+    <record id="action_health_consent" model="ir.actions.act_window">
+        <field name="name">Consents</field>
+        <field name="res_model">health.consent</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_consent_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Record a client consent
+            </p>
+            <p>
+                Capture service, data sharing, photography, emergency
+                treatment and marketing consents — verbal, written or
+                digitally signed.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_health_consent_expiring" model="ir.actions.act_window">
+        <field name="name">Expiring Consents</field>
+        <field name="res_model">health.consent</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_consent_search"/>
+        <field name="context">{'search_default_filter_expiring': 1}</field>
+    </record>
+
+    <record id="action_health_consent_check_log" model="ir.actions.act_window">
+        <field name="name">Consent Check Log</field>
+        <field name="res_model">health.consent.check.log</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id"
+               ref="view_health_consent_check_log_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data noupdate="1">
+
+    <!-- Daily 01:00: expire past-due consents + renewal to-do 14 days
+         ahead of expiry (spec §6.4). -->
+    <record id="ir_cron_consent_expiry" model="ir.cron" forcecreate="True">
+        <field name="name">Consent: Expiry lifecycle</field>
+        <field name="model_id" ref="model_health_consent"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_expire_consents()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 01:00:00')"/>
+    </record>
+
+</data></odoo>

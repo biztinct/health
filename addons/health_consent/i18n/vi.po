@@ -1,0 +1,275 @@
+# Vietnamese translation for health_consent
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_consent\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_consent
+msgid "Client Consent"
+msgstr "Đồng ý của khách hàng"
+
+#. module: health_consent
+msgid "Consent"
+msgstr "Đồng ý"
+
+#. module: health_consent
+msgid "Consents"
+msgstr "Đồng ý điều trị"
+
+#. module: health_consent
+msgid "Consent Check Log"
+msgstr "Nhật ký kiểm tra đồng ý"
+
+#. module: health_consent
+msgid "Expiring Consents"
+msgstr "Đồng ý sắp hết hạn"
+
+#. module: health_consent
+msgid "Service Delivery"
+msgstr "Cung cấp dịch vụ"
+
+#. module: health_consent
+msgid "Data Sharing"
+msgstr "Chia sẻ dữ liệu"
+
+#. module: health_consent
+msgid "Photography/Media"
+msgstr "Chụp ảnh/Truyền thông"
+
+#. module: health_consent
+msgid "Emergency Treatment"
+msgstr "Điều trị khẩn cấp"
+
+#. module: health_consent
+msgid "Marketing Communications"
+msgstr "Truyền thông tiếp thị"
+
+#. module: health_consent
+msgid "Verbal"
+msgstr "Bằng lời"
+
+#. module: health_consent
+msgid "Written (paper)"
+msgstr "Văn bản (giấy)"
+
+#. module: health_consent
+msgid "Digital Signature"
+msgstr "Chữ ký điện tử"
+
+#. module: health_consent
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_consent
+msgid "Active"
+msgstr "Hiệu lực"
+
+#. module: health_consent
+msgid "Withdrawn"
+msgstr "Đã thu hồi"
+
+#. module: health_consent
+msgid "Expired"
+msgstr "Hết hạn"
+
+#. module: health_consent
+msgid "Grant"
+msgstr "Ghi nhận đồng ý"
+
+#. module: health_consent
+msgid "Withdraw"
+msgstr "Thu hồi"
+
+#. module: health_consent
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_consent
+msgid "Reference"
+msgstr "Mã tham chiếu"
+
+#. module: health_consent
+msgid "Scope / Limitations"
+msgstr "Phạm vi / giới hạn"
+
+#. module: health_consent
+msgid "Granted by Client"
+msgstr "Do khách hàng đồng ý"
+
+#. module: health_consent
+msgid "Granted By (Relation)"
+msgstr "Người đồng ý thay (quan hệ)"
+
+#. module: health_consent
+msgid "Grantor"
+msgstr "Người đồng ý thay"
+
+#. module: health_consent
+msgid "Grantor Role"
+msgstr "Vai trò người đồng ý"
+
+#. module: health_consent
+msgid "Verbal Witness"
+msgstr "Nhân chứng lời nói"
+
+#. module: health_consent
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_consent
+msgid "Validity"
+msgstr "Hiệu lực"
+
+#. module: health_consent
+msgid "Granted By"
+msgstr "Người đồng ý"
+
+#. module: health_consent
+msgid "Matched Consent"
+msgstr "Đồng ý khớp"
+
+#. module: health_consent
+msgid "Checked By"
+msgstr "Người kiểm tra"
+
+#. module: health_consent
+msgid "Catchment Area"
+msgstr "Khu vực phục vụ"
+
+#. module: health_consent
+msgid "Superseded"
+msgstr "Đã bị thay thế"
+
+#. module: health_consent
+msgid "Superseded by %s."
+msgstr "Đã bị thay thế bởi %s."
+
+#. module: health_consent
+msgid "Supersedes %s."
+msgstr "Thay thế %s."
+
+#. module: health_consent
+msgid "Consent granted"
+msgstr "Đã ghi nhận đồng ý"
+
+#. module: health_consent
+msgid "Only a draft consent can be granted."
+msgstr "Chỉ có thể ghi nhận đồng ý ở trạng thái nháp."
+
+#. module: health_consent
+msgid "Only an active consent can be withdrawn."
+msgstr "Chỉ có thể thu hồi đồng ý đang hiệu lực."
+
+#. module: health_consent
+msgid "Provide a withdrawal reason before withdrawing the consent."
+msgstr "Vui lòng nhập lý do thu hồi trước khi thu hồi đồng ý."
+
+#. module: health_consent
+msgid "Verbal consent requires a witness (staff who heard the consent)."
+msgstr "Đồng ý bằng lời cần có nhân chứng (nhân viên đã nghe sự đồng ý)."
+
+#. module: health_consent
+msgid "Written consent requires at least one evidence attachment (scanned form or photo)."
+msgstr "Đồng ý bằng văn bản cần ít nhất một tệp bằng chứng (bản quét hoặc ảnh)."
+
+#. module: health_consent
+msgid "Digital signature consent requires a signature image."
+msgstr "Đồng ý bằng chữ ký điện tử cần có hình ảnh chữ ký."
+
+#. module: health_consent
+msgid "Expiry must be after effective date."
+msgstr "Ngày hết hạn phải sau ngày hiệu lực."
+
+#. module: health_consent
+msgid "A consent not granted by the client personally requires a grantor relation."
+msgstr "Đồng ý không do khách hàng trực tiếp đưa ra cần có người đồng ý thay."
+
+#. module: health_consent
+msgid "The grantor relation must belong to the consent client."
+msgstr "Quan hệ người đồng ý thay phải thuộc về khách hàng của đồng ý này."
+
+#. module: health_consent
+msgid "The grantor relation is archived — only active relations may grant consent."
+msgstr "Quan hệ người đồng ý thay đã lưu trữ — chỉ quan hệ đang hoạt động mới được đồng ý thay."
+
+#. module: health_consent
+msgid "Only front-line healthcare staff may capture or withdraw consents."
+msgstr "Chỉ nhân viên y tế tuyến đầu mới được ghi nhận hoặc thu hồi đồng ý."
+
+#. module: health_consent
+msgid "Consent expired automatically (expiry %s)."
+msgstr "Đồng ý đã tự động hết hạn (ngày hết hạn %s)."
+
+#. module: health_consent
+msgid "Withdrawal reason is required"
+msgstr "Cần có lý do thu hồi"
+
+#. module: health_consent
+msgid "Consent check logs are append-only compliance evidence and can never be modified or deleted."
+msgstr "Nhật ký kiểm tra đồng ý là bằng chứng tuân thủ chỉ ghi thêm, không thể sửa hoặc xóa."
+
+#. module: health_consent
+msgid "Access denied"
+msgstr "Truy cập bị từ chối"
+
+#. module: health_consent
+msgid "Patient not found"
+msgstr "Không tìm thấy bệnh nhân"
+
+#. module: health_consent
+msgid "Consent not found"
+msgstr "Không tìm thấy đồng ý"
+
+#. module: health_consent
+msgid "Invalid JSON body"
+msgstr "Nội dung JSON không hợp lệ"
+
+#. module: health_consent
+msgid "Consent already recorded (idempotent replay)"
+msgstr "Đồng ý đã được ghi nhận (phát lại idempotent)"
+
+#. module: health_consent
+msgid "Record a client consent"
+msgstr "Ghi nhận đồng ý của khách hàng"
+
+#. module: health_consent
+msgid "Capture service, data sharing, photography, emergency treatment and marketing consents — verbal, written or digitally signed."
+msgstr "Ghi nhận đồng ý về dịch vụ, chia sẻ dữ liệu, chụp ảnh, điều trị khẩn cấp và tiếp thị — bằng lời, văn bản hoặc chữ ký điện tử."
+
+#. module: health_consent
+msgid "Active Consents"
+msgstr "Đồng ý đang hiệu lực"
+
+#. module: health_consent
+msgid "Denied"
+msgstr "Bị từ chối"
+
+#. module: health_consent
+msgid "Consent Type"
+msgstr "Loại đồng ý"
+
+#. module: health_consent
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_consent
+msgid "Method"
+msgstr "Phương thức"
+
+#. module: health_consent
+msgid "Expiring ≤30d"
+msgstr "Hết hạn ≤30 ngày"
+
+#. module: health_consent
+msgid "Marketing"
+msgstr "Tiếp thị"
+
+#. module: health_consent
+msgid "New"
+msgstr "Mới"

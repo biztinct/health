@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject the Consent PWA scripts into the app shell without
+         touching health_pwa's template body (health_evv /
+         health_careplan pattern). consent-service.js owns the API
+         client + offline capture queue used by consent-components.js,
+         so order matters. -->
+    <template id="app_shell_consent" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Consent Scripts">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_consent/static/src/js/consent-service.js?v=#{pwa_asset_version}"></script>
+            <script t-attf-src="/health_consent/static/src/js/consent-components.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

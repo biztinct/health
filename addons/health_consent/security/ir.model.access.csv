@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_consent_receptionist,health.consent receptionist,model_health_consent,health_base.group_healthcare_receptionist,1,1,1,0
+access_health_consent_nurse,health.consent nurse,model_health_consent,health_base.group_healthcare_nurse,1,1,1,0
+access_health_consent_head_nurse,health.consent head_nurse,model_health_consent,health_base.group_healthcare_head_nurse,1,1,1,0
+access_health_consent_doctor,health.consent doctor,model_health_consent,health_base.group_healthcare_doctor,1,1,1,0
+access_health_consent_operations_manager,health.consent operations_manager,model_health_consent,health_base.group_healthcare_operations_manager,1,1,1,0
+access_health_consent_finance,health.consent finance,model_health_consent,health_base.group_healthcare_finance,1,0,0,0
+access_health_consent_manager,health.consent manager,model_health_consent,health_base.group_healthcare_manager,1,1,1,0
+access_health_consent_admin,health.consent admin,model_health_consent,health_base.group_healthcare_admin,1,1,1,0
+access_health_consent_owner,health.consent owner,model_health_consent,health_base.group_healthcare_owner,1,1,1,1
+access_health_consent_check_log_operations_manager,health.consent.check.log operations_manager,model_health_consent_check_log,health_base.group_healthcare_operations_manager,1,0,0,0
+access_health_consent_check_log_manager,health.consent.check.log manager,model_health_consent_check_log,health_base.group_healthcare_manager,1,0,0,0
+access_health_consent_check_log_admin,health.consent.check.log admin,model_health_consent_check_log,health_base.group_healthcare_admin,1,0,0,0
+access_health_consent_check_log_owner,health.consent.check.log owner,model_health_consent_check_log,health_base.group_healthcare_owner,1,0,0,0

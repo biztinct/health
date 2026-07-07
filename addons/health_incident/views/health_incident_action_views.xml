@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form -->
+    <record id="view_health_incident_action_form" model="ir.ui.view">
+        <field name="name">health.incident.action.form</field>
+        <field name="model">health.incident.action</field>
+        <field name="arch" type="xml">
+            <form string="Corrective Action">
+                <header>
+                    <button name="action_start" type="object"
+                            string="Start" class="btn-primary"
+                            invisible="state != 'open'"/>
+                    <button name="action_done" type="object"
+                            string="Mark Done" class="btn-primary"
+                            invisible="state not in ('open', 'in_progress')"/>
+                    <button name="action_cancel_action" type="object"
+                            string="Cancel Action"
+                            invisible="state in ('done', 'cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="open,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"
+                                   placeholder="Action summary..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="incident_id"/>
+                            <field name="assignee_id"/>
+                            <field name="due_date"/>
+                        </group>
+                        <group>
+                            <field name="completed_date"/>
+                            <field name="catchment_province_id"/>
+                        </group>
+                    </group>
+                    <group string="Detail">
+                        <field name="description" nolabel="1" colspan="2"/>
+                    </group>
+                    <group string="Effectiveness Review">
+                        <field name="effectiveness_review" nolabel="1"
+                               colspan="2"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List (spec §5.5: own menu for "my corrective actions") -->
+    <record id="view_health_incident_action_list" model="ir.ui.view">
+        <field name="name">health.incident.action.list</field>
+        <field name="model">health.incident.action</field>
+        <field name="arch" type="xml">
+            <list string="Corrective Actions"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-success="state == 'done'">
+                <field name="name"/>
+                <field name="incident_id"/>
+                <field name="assignee_id"/>
+                <field name="due_date"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'open'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_health_incident_action_search" model="ir.ui.view">
+        <field name="name">health.incident.action.search</field>
+        <field name="model">health.incident.action</field>
+        <field name="arch" type="xml">
+            <search string="Corrective Actions">
+                <field name="name"/>
+                <field name="incident_id"/>
+                <field name="assignee_id"/>
+                <filter string="My Actions" name="my_actions"
+                        domain="[('assignee_id', '=', uid)]"/>
+                <filter string="Overdue" name="overdue"
+                        domain="[('due_date', '&lt;', context_today().strftime('%Y-%m-%d')), ('state', 'in', ('open', 'in_progress'))]"/>
+                <separator/>
+                <filter string="Open" name="open"
+                        domain="[('state', 'in', ('open', 'in_progress'))]"/>
+                <filter string="Assignee" name="group_assignee"
+                        context="{'group_by': 'assignee_id'}"/>
+                <filter string="Status" name="group_state"
+                        context="{'group_by': 'state'}"/>
+                <filter string="Incident" name="group_incident"
+                        context="{'group_by': 'incident_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_health_incident_action" model="ir.actions.act_window">
+        <field name="name">Corrective Actions</field>
+        <field name="res_model">health.incident.action</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id"
+               ref="view_health_incident_action_search"/>
+        <field name="context">{'search_default_my_actions': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No corrective actions
+            </p>
+            <p>
+                Corrective actions assigned from incident
+                investigations, with due dates and deadline activities.
+            </p>
+        </field>
+    </record>
+
+</odoo>

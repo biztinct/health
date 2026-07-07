@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Health client form (health_base): Consents smart button +
+         Consents page with per-type status glance (spec §6.5). -->
+    <record id="view_health_patient_form_consent" model="ir.ui.view">
+        <field name="name">res.partner.health.patient.form.consent</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_consents" type="object"
+                        class="oe_stat_button" icon="fa-check-square-o">
+                    <field name="consent_count" widget="statinfo"
+                           string="Consents"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Consents" name="consents"
+                      groups="health_base.group_healthcare_base">
+                    <group>
+                        <field name="consent_summary" readonly="1"
+                               string="Active Consents"/>
+                    </group>
+                    <field name="consent_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="consent_type"/>
+                            <field name="method"/>
+                            <field name="granted_by_partner_id"
+                                   string="Granted By"/>
+                            <field name="effective_date"/>
+                            <field name="expiry_date"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'active'"
+                                   decoration-warning="state == 'expired'"
+                                   decoration-danger="state == 'withdrawn'"
+                                   decoration-info="state == 'draft'"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

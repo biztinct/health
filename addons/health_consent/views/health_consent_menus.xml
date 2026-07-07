@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Consents under Client Management (spec §6.5, sequence 30). -->
+    <menuitem id="menu_health_consent"
+              name="Consents"
+              parent="health_base.menu_healthcare_patients"
+              action="action_health_consent"
+              sequence="30"/>
+
+    <!-- Expiring Consents filter-action child (manager+). -->
+    <menuitem id="menu_health_consent_expiring"
+              name="Expiring Consents"
+              parent="menu_health_consent"
+              action="action_health_consent_expiring"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="10"/>
+
+    <!-- Append-only compliance evidence (manager+). -->
+    <menuitem id="menu_health_consent_check_log"
+              name="Consent Check Log"
+              parent="menu_health_consent"
+              action="action_health_consent_check_log"
+              groups="health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="20"/>
+
+</odoo>

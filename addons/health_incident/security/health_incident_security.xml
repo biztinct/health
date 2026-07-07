@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         Record rules (spec §5.6, catchment pattern §0.3).
+
+         health.incident: the plain catchment rule applies to
+         head_nurse/doctor/ops_manager/manager; for nurse/receptionist
+         it is REPLACED by the own-reports rule (reporter can always
+         read own reports — staff-only incidents may have no
+         catchment).
+         ===================================================================== -->
+
+    <record id="rule_health_incident_catchment" model="ir.rule">
+        <field name="name">Incident: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_incident"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_incident_own_reports" model="ir.rule">
+        <field name="name">Incident: Reporters see own reports + own catchment</field>
+        <field name="model_id" ref="model_health_incident"/>
+        <field name="domain_force">['|', ('reporter_id', '=', user.id), '&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_receptionist')), (4, ref('health_base.group_healthcare_nurse'))]"/>
+    </record>
+    <record id="rule_health_incident_owner" model="ir.rule">
+        <field name="name">Incident: Owner sees all</field>
+        <field name="model_id" ref="model_health_incident"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+    <!-- =====================================================================
+         health.incident.action — catchment rule covers read/create/
+         unlink only; WRITE is granted separately so that nurses can
+         only write on actions assigned to them (spec §5.6:
+         rule_incident_action_assignee_write) while head_nurse+ keep
+         catchment-wide write (group rules OR per operation, and
+         head_nurse implies nurse).
+         ===================================================================== -->
+
+    <record id="rule_health_incident_action_catchment" model="ir.rule">
+        <field name="name">Corrective Action: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_incident_action"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+    <record id="rule_incident_action_assignee_write" model="ir.rule">
+        <field name="name">Corrective Action: Nurses write own assigned actions</field>
+        <field name="model_id" ref="model_health_incident_action"/>
+        <field name="domain_force">[('assignee_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_health_incident_action_write_clinical" model="ir.rule">
+        <field name="name">Corrective Action: Clinical leads write own catchment</field>
+        <field name="model_id" ref="model_health_incident_action"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_health_incident_action_owner" model="ir.rule">
+        <field name="name">Corrective Action: Owner sees all</field>
+        <field name="model_id" ref="model_health_incident_action"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>

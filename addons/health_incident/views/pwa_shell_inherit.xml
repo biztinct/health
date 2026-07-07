@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject the incident-reporting PWA scripts into the app shell
+         without touching health_pwa's template body (health_evv /
+         health_vitals / health_careplan pattern). incident-service.js
+         owns the API client + offline queue used by
+         incident-components.js, so order matters. -->
+    <template id="app_shell_incident" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Incident Scripts">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_incident/static/src/js/incident-service.js?v=#{pwa_asset_version}"></script>
+            <script t-attf-src="/health_incident/static/src/js/incident-components.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

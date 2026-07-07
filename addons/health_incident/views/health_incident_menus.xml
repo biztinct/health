@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Incidents root under Healthcare (spec §5.5, sequence 28) -->
+    <menuitem id="menu_health_incident_root"
+              name="Incidents"
+              parent="health_base.menu_healthcare_root"
+              groups="health_base.group_healthcare_base"
+              sequence="28"/>
+
+    <!-- Incident Register — all healthcare users -->
+    <menuitem id="menu_health_incident_register"
+              name="Incident Register"
+              parent="menu_health_incident_root"
+              action="action_health_incident"
+              sequence="10"/>
+
+    <!-- Corrective Actions — nurse+ -->
+    <menuitem id="menu_health_incident_actions"
+              name="Corrective Actions"
+              parent="menu_health_incident_root"
+              action="action_health_incident_action"
+              groups="health_base.group_healthcare_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="20"/>
+
+    <!-- Analysis — manager+ -->
+    <menuitem id="menu_health_incident_analysis"
+              name="Analysis"
+              parent="menu_health_incident_root"
+              action="action_health_incident_analysis"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="30"/>
+
+</odoo>

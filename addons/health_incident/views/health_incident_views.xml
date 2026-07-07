@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form (spec §5.5) -->
+    <record id="view_health_incident_form" model="ir.ui.view">
+        <field name="name">health.incident.form</field>
+        <field name="model">health.incident</field>
+        <field name="arch" type="xml">
+            <form string="Incident">
+                <header>
+                    <button name="action_start_review" type="object"
+                            string="Start Review" class="btn-primary"
+                            invisible="state != 'reported'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager"/>
+                    <button name="action_start_investigation" type="object"
+                            string="Start Investigation" class="btn-primary"
+                            invisible="state != 'under_review'"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager"/>
+                    <button name="action_assign_actions" type="object"
+                            string="Assign Actions" class="btn-primary"
+                            invisible="state != 'investigation'"/>
+                    <button name="action_close" type="object"
+                            string="Close" class="btn-primary"
+                            confirm="Close this incident? All corrective actions must be done or cancelled."
+                            invisible="state != 'actions_assigned'"
+                            groups="health_base.group_healthcare_manager"/>
+                    <button name="action_close_minor" type="object"
+                            string="Fast-Close (Minor)"
+                            confirm="Fast-close this minor incident?"
+                            invisible="state not in ('reported', 'under_review') or severity not in ('1', '2')"
+                            groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_manager"/>
+                    <button name="action_reopen" type="object"
+                            string="Reopen"
+                            invisible="state != 'closed'"
+                            groups="health_base.group_healthcare_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="reported,under_review,investigation,actions_assigned,closed"/>
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_view_actions" type="object"
+                                class="oe_stat_button" icon="fa-wrench"
+                                invisible="action_count == 0">
+                            <field name="action_count" widget="statinfo"
+                                   string="Actions"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="NOTIFIABLE"
+                            bg_color="text-bg-danger"
+                            invisible="not notifiable"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Event">
+                            <field name="incident_type"
+                                   readonly="state == 'closed'"/>
+                            <field name="severity"
+                                   readonly="state == 'closed'"/>
+                            <field name="incident_datetime"
+                                   readonly="state == 'closed'"/>
+                            <field name="location"
+                                   readonly="state == 'closed'"/>
+                            <field name="witnesses"
+                                   readonly="state == 'closed'"/>
+                        </group>
+                        <group string="Context">
+                            <field name="client_id"
+                                   readonly="state == 'closed'"/>
+                            <field name="order_id"
+                                   readonly="state == 'closed'"/>
+                            <field name="facility_id"
+                                   readonly="state == 'closed'"/>
+                            <field name="reporter_id"/>
+                            <field name="reported_datetime"/>
+                            <field name="catchment_province_id"/>
+                            <field name="fall_risk_reassessment_triggered"
+                                   invisible="incident_type != 'fall'"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" colspan="2"
+                               placeholder="What happened..."
+                               readonly="state == 'closed'"/>
+                    </group>
+                    <group string="Immediate Actions">
+                        <field name="immediate_actions" nolabel="1" colspan="2"
+                               placeholder="First response taken..."
+                               readonly="state == 'closed'"/>
+                    </group>
+                    <notebook>
+                        <page string="Investigation" name="investigation">
+                            <group>
+                                <group>
+                                    <field name="investigator_id"
+                                           readonly="state == 'closed'"/>
+                                    <field name="outcome"
+                                           readonly="state == 'closed'"/>
+                                </group>
+                            </group>
+                            <group string="Findings">
+                                <field name="investigation_notes" nolabel="1"
+                                       colspan="2"
+                                       readonly="state == 'closed'"/>
+                            </group>
+                            <group>
+                                <field name="root_cause"
+                                       readonly="state == 'closed'"/>
+                                <field name="contributing_factors"
+                                       readonly="state == 'closed'"/>
+                            </group>
+                        </page>
+                        <page string="Corrective Actions" name="actions">
+                            <field name="action_ids"
+                                   readonly="state == 'closed'">
+                                <list editable="bottom" open_form_view="1">
+                                    <field name="name"/>
+                                    <field name="assignee_id"/>
+                                    <field name="due_date"/>
+                                    <field name="state"/>
+                                    <field name="completed_date"/>
+                                </list>
+                            </field>
+                            <field name="open_action_count" invisible="1"/>
+                        </page>
+                        <page string="Notification" name="notification">
+                            <group>
+                                <group>
+                                    <field name="notifiable"/>
+                                    <field name="notified_authority"
+                                           readonly="state == 'closed'"/>
+                                    <field name="notified_date"
+                                           readonly="state == 'closed'"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Evidence" name="evidence">
+                            <field name="attachment_ids"
+                                   widget="many2many_binary"
+                                   readonly="state == 'closed'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List — the incident register (spec §5.5) -->
+    <record id="view_health_incident_list" model="ir.ui.view">
+        <field name="name">health.incident.list</field>
+        <field name="model">health.incident</field>
+        <field name="arch" type="xml">
+            <list string="Incident Register"
+                  default_order="incident_datetime desc">
+                <field name="name"/>
+                <field name="incident_datetime"/>
+                <field name="incident_type"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity in ('4', '5')"
+                       decoration-warning="severity == '3'"/>
+                <field name="client_id"/>
+                <field name="facility_id"/>
+                <field name="notifiable" widget="boolean"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'reported'"
+                       decoration-warning="state in ('under_review', 'investigation', 'actions_assigned')"
+                       decoration-success="state == 'closed'"/>
+                <field name="open_action_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban grouped by state -->
+    <record id="view_health_incident_kanban" model="ir.ui.view">
+        <field name="name">health.incident.kanban</field>
+        <field name="model">health.incident</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="severity"/>
+                <field name="notifiable"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="p-2">
+                            <div class="fw-bold">
+                                <field name="name"/>
+                                <span t-if="record.notifiable.raw_value"
+                                      class="badge text-bg-danger ms-2">NOTIFIABLE</span>
+                            </div>
+                            <div class="text-muted">
+                                <field name="incident_type"/>
+                                — <field name="severity"/>
+                            </div>
+                            <div>
+                                <field name="client_id"/>
+                            </div>
+                            <div class="text-muted">
+                                <field name="incident_datetime"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Graph: count by type / month -->
+    <record id="view_health_incident_graph" model="ir.ui.view">
+        <field name="name">health.incident.graph</field>
+        <field name="model">health.incident</field>
+        <field name="arch" type="xml">
+            <graph string="Incidents" type="bar">
+                <field name="incident_datetime" interval="month" type="row"/>
+                <field name="incident_type" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Pivot: type × severity × facility -->
+    <record id="view_health_incident_pivot" model="ir.ui.view">
+        <field name="name">health.incident.pivot</field>
+        <field name="model">health.incident</field>
+        <field name="arch" type="xml">
+            <pivot string="Incident Analysis">
+                <field name="incident_type" type="row"/>
+                <field name="severity" type="col"/>
+                <field name="facility_id" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search (Odoo 19: group-by filters directly in <search>) -->
+    <record id="view_health_incident_search" model="ir.ui.view">
+        <field name="name">health.incident.search</field>
+        <field name="model">health.incident</field>
+        <field name="arch" type="xml">
+            <search string="Incidents">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="facility_id"/>
+                <field name="reporter_id"/>
+                <field name="investigator_id"/>
+                <filter string="Notifiable" name="notifiable"
+                        domain="[('notifiable', '=', True)]"/>
+                <filter string="Severe" name="severe"
+                        domain="[('severity', 'in', ('4', '5'))]"/>
+                <filter string="Open" name="open"
+                        domain="[('state', '!=', 'closed')]"/>
+                <separator/>
+                <filter string="Falls" name="falls"
+                        domain="[('incident_type', '=', 'fall')]"/>
+                <filter string="Medication Errors" name="medication_errors"
+                        domain="[('incident_type', '=', 'medication_error')]"/>
+                <separator/>
+                <filter string="This Month" name="this_month"
+                        domain="[('incident_datetime', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+                <filter string="Overdue Actions" name="overdue_actions"
+                        domain="[('action_ids.due_date', '&lt;', context_today().strftime('%Y-%m-%d')), ('action_ids.state', '!=', 'done')]"/>
+                <separator/>
+                <filter string="Archived" name="archived"
+                        domain="[('active', '=', False)]"/>
+                <filter string="Type" name="group_type"
+                        context="{'group_by': 'incident_type'}"/>
+                <filter string="Severity" name="group_severity"
+                        context="{'group_by': 'severity'}"/>
+                <filter string="Facility" name="group_facility"
+                        context="{'group_by': 'facility_id'}"/>
+                <filter string="Status" name="group_state"
+                        context="{'group_by': 'state'}"/>
+                <filter string="Month" name="group_month"
+                        context="{'group_by': 'incident_datetime:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Register action -->
+    <record id="action_health_incident" model="ir.actions.act_window">
+        <field name="name">Incident Register</field>
+        <field name="res_model">health.incident</field>
+        <field name="view_mode">list,kanban,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_health_incident_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Report an incident
+            </p>
+            <p>
+                Adverse-event capture with an investigation workflow,
+                corrective actions and a regulatory-notifiable register.
+            </p>
+        </field>
+    </record>
+
+    <!-- Analysis action (graph/pivot, manager+) -->
+    <record id="action_health_incident_analysis" model="ir.actions.act_window">
+        <field name="name">Incident Analysis</field>
+        <field name="res_model">health.incident</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="search_view_id" ref="view_health_incident_search"/>
+    </record>
+
+</odoo>
