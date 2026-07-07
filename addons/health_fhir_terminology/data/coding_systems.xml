@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="system_icd10" model="medical.coding.system">
+        <field name="name">ICD-10 (WHO + MOH VN)</field>
+        <field name="uri">http://hl7.org/fhir/sid/icd-10</field>
+        <field name="code">icd10</field>
+        <field name="version">2019</field>
+        <field name="description">International Classification of Diseases,
+            10th revision — WHO English with the Vietnam MOH translation.</field>
+    </record>
+
+    <record id="system_loinc" model="medical.coding.system">
+        <field name="name">LOINC</field>
+        <field name="uri">http://loinc.org</field>
+        <field name="code">loinc</field>
+        <field name="description">Logical Observation Identifiers Names and
+            Codes — observations, vital signs, labs.</field>
+    </record>
+
+    <record id="system_ucum" model="medical.coding.system">
+        <field name="name">UCUM</field>
+        <field name="uri">http://unitsofmeasure.org</field>
+        <field name="code">ucum</field>
+        <field name="description">Unified Code for Units of Measure.</field>
+    </record>
+
+    <record id="system_rxnorm" model="medical.coding.system">
+        <field name="name">RxNorm</field>
+        <field name="uri">http://www.nlm.nih.gov/research/umls/rxnorm</field>
+        <field name="code">rxnorm</field>
+        <field name="description">Normalized names for clinical drugs.</field>
+    </record>
+
+    <record id="system_snomed" model="medical.coding.system">
+        <field name="name">SNOMED CT</field>
+        <field name="uri">http://snomed.info/sct</field>
+        <field name="code">snomed</field>
+        <field name="active" eval="False"/>
+        <field name="description">SNOMED CT — seeded inactive (Vietnam is
+            not currently a SNOMED International member).</field>
+    </record>
+
+    <record id="system_health19_services" model="medical.coding.system">
+        <field name="name">health19 Services</field>
+        <field name="uri">urn:health19:services</field>
+        <field name="code">health19-services</field>
+        <field name="description">Local home-care service catalog codes.</field>
+    </record>
+
+</odoo>

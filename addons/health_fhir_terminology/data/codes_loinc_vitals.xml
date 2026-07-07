@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- LOINC vital-signs core (architecture-interop.md §2.2), Vietnamese
+         displays from the MOH translation. -->
+
+    <record id="loinc_85354_9" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">85354-9</field>
+        <field name="display">Blood pressure panel</field>
+        <field name="display_vi">Huyết áp</field>
+    </record>
+
+    <record id="loinc_8480_6" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">8480-6</field>
+        <field name="display">Systolic blood pressure</field>
+        <field name="display_vi">Huyết áp tâm thu</field>
+    </record>
+
+    <record id="loinc_8462_4" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">8462-4</field>
+        <field name="display">Diastolic blood pressure</field>
+        <field name="display_vi">Huyết áp tâm trương</field>
+    </record>
+
+    <record id="loinc_8867_4" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">8867-4</field>
+        <field name="display">Heart rate</field>
+        <field name="display_vi">Nhịp tim</field>
+    </record>
+
+    <record id="loinc_9279_1" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">9279-1</field>
+        <field name="display">Respiratory rate</field>
+        <field name="display_vi">Nhịp thở</field>
+    </record>
+
+    <record id="loinc_8310_5" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">8310-5</field>
+        <field name="display">Body temperature</field>
+        <field name="display_vi">Nhiệt độ cơ thể</field>
+    </record>
+
+    <record id="loinc_2708_6" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">2708-6</field>
+        <field name="display">Oxygen saturation in Arterial blood</field>
+        <field name="display_vi">Độ bão hòa oxy máu động mạch</field>
+    </record>
+
+    <record id="loinc_59408_5" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">59408-5</field>
+        <field name="display">Oxygen saturation by Pulse oximetry</field>
+        <field name="display_vi">Độ bão hòa oxy (SpO2)</field>
+    </record>
+
+    <record id="loinc_29463_7" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">29463-7</field>
+        <field name="display">Body weight</field>
+        <field name="display_vi">Cân nặng</field>
+    </record>
+
+    <record id="loinc_8302_2" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">8302-2</field>
+        <field name="display">Body height</field>
+        <field name="display_vi">Chiều cao</field>
+    </record>
+
+    <record id="loinc_39156_5" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">39156-5</field>
+        <field name="display">Body mass index (BMI)</field>
+        <field name="display_vi">Chỉ số khối cơ thể (BMI)</field>
+    </record>
+
+    <record id="loinc_15074_8" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">15074-8</field>
+        <field name="display">Glucose [Moles/volume] in Blood</field>
+        <field name="display_vi">Đường huyết</field>
+    </record>
+
+    <record id="loinc_72514_3" model="medical.code">
+        <field name="system_id" ref="system_loinc"/>
+        <field name="code">72514-3</field>
+        <field name="display">Pain severity - 0-10 verbal numeric rating</field>
+        <field name="display_vi">Mức độ đau (thang điểm 0-10)</field>
+    </record>
+
+</odoo>

@@ -67,13 +67,14 @@ class TestFHIRPhase2(TransactionCase):
             self.skipTest('fhir.resources is not installed in this environment')
 
     # ------------------------------------------------------------------
-    # CapabilityStatement — 19 resources
+    # CapabilityStatement — Phase 2 adds 11 resources (>=19; downstream
+    # modules such as health_fhir_terminology register more, e.g. CodeSystem)
     # ------------------------------------------------------------------
-    def test_capability_lists_19_resources(self):
+    def test_capability_lists_phase2_resources(self):
         clear_capability_cache()
         statement = build_capability(self.env)
         listed = [r['type'] for r in statement['rest'][0]['resource']]
-        self.assertEqual(len(listed), 19)
+        self.assertGreaterEqual(len(listed), 19)
         for rtype in NEW_RESOURCES:
             self.assertIn(rtype, listed)
         # each new resource mirrors its registry search-param table

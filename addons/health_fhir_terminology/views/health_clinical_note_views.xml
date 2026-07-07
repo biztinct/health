@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Coding sidecar: add the ICD-10 coded-diagnoses tags next to the
+         free-text diagnosis (non-destructive — the free-text field stays). -->
+    <record id="view_health_clinical_note_form_terminology" model="ir.ui.view">
+        <field name="name">health.clinical.note.form.terminology</field>
+        <field name="model">health.clinical.note</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_clinical_note_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='diagnosis']" position="after">
+                <field name="condition_code_ids" widget="many2many_tags"
+                       options="{'no_create': True}"
+                       placeholder="Search ICD-10 (Vietnamese or English)…"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

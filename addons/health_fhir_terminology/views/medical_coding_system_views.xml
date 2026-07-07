@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_medical_coding_system_list" model="ir.ui.view">
+        <field name="name">medical.coding.system.list</field>
+        <field name="model">medical.coding.system</field>
+        <field name="arch" type="xml">
+            <list string="Coding Systems">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="uri"/>
+                <field name="version"/>
+                <field name="code_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_medical_coding_system_form" model="ir.ui.view">
+        <field name="name">medical.coding.system.form</field>
+        <field name="model">medical.coding.system</field>
+        <field name="arch" type="xml">
+            <form string="Coding System">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="ICD-10 (WHO + MOH VN)"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code" placeholder="icd10"/>
+                            <field name="uri" placeholder="http://hl7.org/fhir/sid/icd-10"/>
+                            <field name="version" placeholder="2019"/>
+                        </group>
+                        <group>
+                            <field name="code_count"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_medical_coding_system_search" model="ir.ui.view">
+        <field name="name">medical.coding.system.search</field>
+        <field name="model">medical.coding.system</field>
+        <field name="arch" type="xml">
+            <search string="Coding Systems">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="uri"/>
+                <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                <filter name="inactive" string="Archived" domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_medical_coding_system" model="ir.actions.act_window">
+        <field name="name">Coding Systems</field>
+        <field name="res_model">medical.coding.system</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+
+</odoo>

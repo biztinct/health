@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_medical_coding_system_base,medical.coding.system base,model_medical_coding_system,health_base.group_healthcare_base,1,0,0,0
+access_medical_coding_system_manager,medical.coding.system manager,model_medical_coding_system,health_base.group_healthcare_manager,1,1,1,0
+access_medical_coding_system_admin,medical.coding.system admin,model_medical_coding_system,health_base.group_healthcare_admin,1,1,1,1
+access_medical_coding_system_owner,medical.coding.system owner,model_medical_coding_system,health_base.group_healthcare_owner,1,1,1,1
+access_medical_code_base,medical.code base,model_medical_code,health_base.group_healthcare_base,1,0,0,0
+access_medical_code_manager,medical.code manager,model_medical_code,health_base.group_healthcare_manager,1,1,1,0
+access_medical_code_admin,medical.code admin,model_medical_code,health_base.group_healthcare_admin,1,1,1,1
+access_medical_code_owner,medical.code owner,model_medical_code,health_base.group_healthcare_owner,1,1,1,1
+access_medical_code_import_manager,medical.code.import manager,model_medical_code_import,health_base.group_healthcare_manager,1,1,1,1
+access_medical_code_import_admin,medical.code.import admin,model_medical_code_import,health_base.group_healthcare_admin,1,1,1,1
+access_medical_code_import_owner,medical.code.import owner,model_medical_code_import,health_base.group_healthcare_owner,1,1,1,1

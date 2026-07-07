@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Terminology under the existing Healthcare → Configuration tree. -->
+    <menuitem id="menu_terminology_root"
+              name="Terminology"
+              parent="health_base.menu_healthcare_lookups"
+              sequence="40"/>
+
+    <menuitem id="menu_medical_code"
+              name="Medical Codes"
+              parent="menu_terminology_root"
+              action="action_medical_code"
+              sequence="10"/>
+
+    <menuitem id="menu_medical_coding_system"
+              name="Coding Systems"
+              parent="menu_terminology_root"
+              action="action_medical_coding_system"
+              sequence="20"/>
+
+    <menuitem id="menu_medical_code_import"
+              name="Import Codes"
+              parent="menu_terminology_root"
+              action="action_medical_code_import"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="30"/>
+
+</odoo>

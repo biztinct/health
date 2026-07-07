@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_medical_code_list" model="ir.ui.view">
+        <field name="name">medical.code.list</field>
+        <field name="model">medical.code</field>
+        <field name="arch" type="xml">
+            <list string="Medical Codes">
+                <field name="system_id"/>
+                <field name="code"/>
+                <field name="display"/>
+                <field name="display_vi"/>
+                <field name="parent_id" optional="hide"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_medical_code_form" model="ir.ui.view">
+        <field name="name">medical.code.form</field>
+        <field name="model">medical.code</field>
+        <field name="arch" type="xml">
+            <form string="Medical Code">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="system_id"/>
+                            <field name="code"/>
+                            <field name="parent_id"/>
+                        </group>
+                        <group>
+                            <field name="display"/>
+                            <field name="display_vi"/>
+                            <field name="synonyms"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_medical_code_search" model="ir.ui.view">
+        <field name="name">medical.code.search</field>
+        <field name="model">medical.code</field>
+        <field name="arch" type="xml">
+            <search string="Medical Codes">
+                <field name="code"/>
+                <field name="display"/>
+                <field name="display_vi"/>
+                <field name="synonyms"/>
+                <field name="system_id"/>
+                <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                <filter name="inactive" string="Archived" domain="[('active','=',False)]"/>
+                <filter name="group_system" string="Coding System"
+                        context="{'group_by': 'system_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_medical_code" model="ir.actions.act_window">
+        <field name="name">Medical Codes</field>
+        <field name="res_model">medical.code</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_medical_code_search"/>
+    </record>
+
+</odoo>

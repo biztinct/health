@@ -1,0 +1,127 @@
+# Vietnamese translation for health_fhir_terminology
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_fhir_terminology\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_fhir_terminology
+msgid "Terminology"
+msgstr "Danh mục mã hóa"
+
+#. module: health_fhir_terminology
+msgid "Medical Codes"
+msgstr "Mã y tế"
+
+#. module: health_fhir_terminology
+msgid "Medical Code"
+msgstr "Mã y tế"
+
+#. module: health_fhir_terminology
+msgid "Coding Systems"
+msgstr "Hệ thống mã hóa"
+
+#. module: health_fhir_terminology
+msgid "Coding System"
+msgstr "Hệ thống mã hóa"
+
+#. module: health_fhir_terminology
+msgid "Medical Coding System"
+msgstr "Hệ thống mã hóa y tế"
+
+#. module: health_fhir_terminology
+msgid "Import Codes"
+msgstr "Nhập mã"
+
+#. module: health_fhir_terminology
+msgid "Import Medical Codes"
+msgstr "Nhập mã y tế"
+
+#. module: health_fhir_terminology
+msgid "Medical Code Import"
+msgstr "Nhập mã y tế"
+
+#. module: health_fhir_terminology
+msgid "Codes"
+msgstr "Số lượng mã"
+
+#. module: health_fhir_terminology
+msgid "Vietnamese Display"
+msgstr "Tên hiển thị tiếng Việt"
+
+#. module: health_fhir_terminology
+msgid "Parent"
+msgstr "Mã cha"
+
+#. module: health_fhir_terminology
+msgid "English display."
+msgstr "Tên hiển thị tiếng Anh."
+
+#. module: health_fhir_terminology
+msgid "MOH translation."
+msgstr "Bản dịch của Bộ Y tế."
+
+#. module: health_fhir_terminology
+msgid "CSV File"
+msgstr "Tệp CSV"
+
+#. module: health_fhir_terminology
+msgid "File Has Header Row"
+msgstr "Tệp có dòng tiêu đề"
+
+#. module: health_fhir_terminology
+msgid "CSV field delimiter."
+msgstr "Ký tự phân tách trường CSV."
+
+#. module: health_fhir_terminology
+msgid "Errors"
+msgstr "Lỗi"
+
+#. module: health_fhir_terminology
+msgid "Result"
+msgstr "Kết quả"
+
+#. module: health_fhir_terminology
+msgid "Import"
+msgstr "Nhập"
+
+#. module: health_fhir_terminology
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_fhir_terminology
+msgid "Coded Diagnoses (ICD-10)"
+msgstr "Chẩn đoán được mã hóa (ICD-10)"
+
+#. module: health_fhir_terminology
+msgid "Description"
+msgstr "Mô tả"
+
+#. module: health_fhir_terminology
+msgid "A coding system with URI \"%s\" already exists."
+msgstr "Hệ thống mã hóa với URI \"%s\" đã tồn tại."
+
+#. module: health_fhir_terminology
+msgid "A coding system with code \"%s\" already exists."
+msgstr "Hệ thống mã hóa với mã \"%s\" đã tồn tại."
+
+#. module: health_fhir_terminology
+msgid "Code \"%s\" already exists in this coding system."
+msgstr "Mã \"%s\" đã tồn tại trong hệ thống mã hóa này."
+
+#. module: health_fhir_terminology
+msgid "Row %s: missing code or display."
+msgstr "Dòng %s: thiếu mã hoặc tên hiển thị."
+
+#. module: health_fhir_terminology
+msgid "Row %s: duplicate code \"%s\" in file."
+msgstr "Dòng %s: mã trùng lặp \"%s\" trong tệp."
+
+#. module: health_fhir_terminology
+msgid "Code \"%s\": unknown parent_code \"%s\"."
+msgstr "Mã \"%s\": không tìm thấy mã cha \"%s\"."

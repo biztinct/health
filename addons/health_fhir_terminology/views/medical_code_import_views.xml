@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_medical_code_import_form" model="ir.ui.view">
+        <field name="name">medical.code.import.form</field>
+        <field name="model">medical.code.import</field>
+        <field name="arch" type="xml">
+            <form string="Import Medical Codes">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        CSV columns (fixed order):
+                        <strong>code,display,display_vi,parent_code,synonyms</strong>.
+                        Only <strong>code</strong> and <strong>display</strong>
+                        are mandatory per row. Import is idempotent — re-running
+                        updates existing codes instead of duplicating them.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="system_id"/>
+                            <field name="file" filename="filename"/>
+                            <field name="filename" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="delimiter"/>
+                            <field name="has_header"/>
+                        </group>
+                    </group>
+                    <group string="Result"
+                           invisible="not created_count and not updated_count and not skipped_count and not error_text">
+                        <group>
+                            <field name="created_count"/>
+                            <field name="updated_count"/>
+                            <field name="skipped_count"/>
+                        </group>
+                        <group>
+                            <field name="error_text"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_import" type="object" string="Import"
+                            class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_medical_code_import" model="ir.actions.act_window">
+        <field name="name">Import Medical Codes</field>
+        <field name="res_model">medical.code.import</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

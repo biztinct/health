@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ~30 common home-care / geriatric ICD-10 codes (WHO English + MOH
+         Vietnamese). Enough for demo + tests; full 14k load via the CSV
+         importer (see the module README / phase report for data sources). -->
+
+    <record id="icd10_I10" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">I10</field>
+        <field name="display">Essential (primary) hypertension</field>
+        <field name="display_vi">Tăng huyết áp vô căn (nguyên phát)</field>
+        <field name="synonyms">HTN;high blood pressure</field>
+    </record>
+
+    <record id="icd10_I11" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">I11</field>
+        <field name="display">Hypertensive heart disease</field>
+        <field name="display_vi">Bệnh tim do tăng huyết áp</field>
+    </record>
+
+    <record id="icd10_I25" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">I25</field>
+        <field name="display">Chronic ischaemic heart disease</field>
+        <field name="display_vi">Bệnh tim thiếu máu cục bộ mạn tính</field>
+    </record>
+
+    <record id="icd10_I48" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">I48</field>
+        <field name="display">Atrial fibrillation and flutter</field>
+        <field name="display_vi">Rung nhĩ và cuồng nhĩ</field>
+    </record>
+
+    <record id="icd10_I50" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">I50</field>
+        <field name="display">Heart failure</field>
+        <field name="display_vi">Suy tim</field>
+    </record>
+
+    <record id="icd10_I63" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">I63</field>
+        <field name="display">Cerebral infarction</field>
+        <field name="display_vi">Nhồi máu não</field>
+    </record>
+
+    <record id="icd10_I69_3" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">I69.3</field>
+        <field name="display">Sequelae of cerebral infarction</field>
+        <field name="display_vi">Di chứng nhồi máu não</field>
+    </record>
+
+    <record id="icd10_E03" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">E03</field>
+        <field name="display">Other hypothyroidism</field>
+        <field name="display_vi">Suy giáp khác</field>
+    </record>
+
+    <record id="icd10_E11" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">E11</field>
+        <field name="display">Type 2 diabetes mellitus</field>
+        <field name="display_vi">Đái tháo đường típ 2</field>
+        <field name="synonyms">T2DM;diabetes</field>
+    </record>
+
+    <record id="icd10_E78" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">E78</field>
+        <field name="display">Disorders of lipoprotein metabolism</field>
+        <field name="display_vi">Rối loạn chuyển hóa lipoprotein</field>
+    </record>
+
+    <record id="icd10_E86" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">E86</field>
+        <field name="display">Volume depletion</field>
+        <field name="display_vi">Giảm thể tích (mất nước)</field>
+    </record>
+
+    <record id="icd10_F03" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">F03</field>
+        <field name="display">Unspecified dementia</field>
+        <field name="display_vi">Sa sút trí tuệ không đặc hiệu</field>
+    </record>
+
+    <record id="icd10_F32" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">F32</field>
+        <field name="display">Depressive episode</field>
+        <field name="display_vi">Giai đoạn trầm cảm</field>
+    </record>
+
+    <record id="icd10_G20" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">G20</field>
+        <field name="display">Parkinson disease</field>
+        <field name="display_vi">Bệnh Parkinson</field>
+    </record>
+
+    <record id="icd10_G30" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">G30</field>
+        <field name="display">Alzheimer disease</field>
+        <field name="display_vi">Bệnh Alzheimer</field>
+    </record>
+
+    <record id="icd10_J18" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">J18</field>
+        <field name="display">Pneumonia, unspecified organism</field>
+        <field name="display_vi">Viêm phổi không xác định tác nhân</field>
+    </record>
+
+    <record id="icd10_J44" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">J44</field>
+        <field name="display">Chronic obstructive pulmonary disease</field>
+        <field name="display_vi">Bệnh phổi tắc nghẽn mạn tính (COPD)</field>
+    </record>
+
+    <record id="icd10_J45" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">J45</field>
+        <field name="display">Asthma</field>
+        <field name="display_vi">Hen phế quản</field>
+    </record>
+
+    <record id="icd10_M17" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">M17</field>
+        <field name="display">Gonarthrosis [osteoarthritis of knee]</field>
+        <field name="display_vi">Thoái hóa khớp gối</field>
+    </record>
+
+    <record id="icd10_M19" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">M19</field>
+        <field name="display">Other and unspecified osteoarthritis</field>
+        <field name="display_vi">Thoái hóa khớp khác</field>
+    </record>
+
+    <record id="icd10_M54" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">M54</field>
+        <field name="display">Dorsalgia</field>
+        <field name="display_vi">Đau lưng</field>
+    </record>
+
+    <record id="icd10_M81" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">M81</field>
+        <field name="display">Osteoporosis without pathological fracture</field>
+        <field name="display_vi">Loãng xương không kèm gãy xương bệnh lý</field>
+    </record>
+
+    <record id="icd10_N18" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">N18</field>
+        <field name="display">Chronic kidney disease</field>
+        <field name="display_vi">Bệnh thận mạn</field>
+    </record>
+
+    <record id="icd10_N39_0" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">N39.0</field>
+        <field name="display">Urinary tract infection, site not specified</field>
+        <field name="display_vi">Nhiễm khuẩn đường tiết niệu</field>
+        <field name="synonyms">UTI</field>
+    </record>
+
+    <record id="icd10_K59_0" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">K59.0</field>
+        <field name="display">Constipation</field>
+        <field name="display_vi">Táo bón</field>
+    </record>
+
+    <record id="icd10_L89" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">L89</field>
+        <field name="display">Pressure ulcer</field>
+        <field name="display_vi">Loét tì đè</field>
+        <field name="synonyms">bedsore;decubitus ulcer</field>
+    </record>
+
+    <record id="icd10_R26" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">R26</field>
+        <field name="display">Abnormalities of gait and mobility</field>
+        <field name="display_vi">Bất thường dáng đi và vận động</field>
+    </record>
+
+    <record id="icd10_R32" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">R32</field>
+        <field name="display">Unspecified urinary incontinence</field>
+        <field name="display_vi">Tiểu không tự chủ không đặc hiệu</field>
+    </record>
+
+    <record id="icd10_R53" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">R53</field>
+        <field name="display">Malaise and fatigue</field>
+        <field name="display_vi">Mệt mỏi và suy nhược</field>
+    </record>
+
+    <record id="icd10_S72" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">S72</field>
+        <field name="display">Fracture of femur</field>
+        <field name="display_vi">Gãy xương đùi</field>
+    </record>
+
+    <record id="icd10_Z74_0" model="medical.code">
+        <field name="system_id" ref="system_icd10"/>
+        <field name="code">Z74.0</field>
+        <field name="display">Reduced mobility</field>
+        <field name="display_vi">Giảm khả năng vận động</field>
+    </record>
+
+</odoo>
