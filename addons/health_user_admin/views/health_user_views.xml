@@ -17,6 +17,7 @@
                 <field name="login" string="Email"/>
                 <field name="phone" optional="show"/>
                 <field name="access_role_id" string="Access Role"/>
+                <field name="catchment_province_id" string="Catchment Area" optional="show"/>
                 <field name="company_id" string="Company" groups="base.group_multi_company"/>
                 <field name="active" string="Status" widget="boolean_toggle"/>
             </list>
@@ -103,8 +104,12 @@
                 <field name="name"/>
                 <field name="login"/>
                 <field name="access_role_id"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
                 <filter name="active_users" string="Active" domain="[('active', '=', True)]"/>
                 <filter name="inactive_users" string="Inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="group_catchment" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
             </search>
         </field>
     </record>

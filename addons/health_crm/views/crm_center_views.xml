@@ -13,8 +13,9 @@
                   decoration-muted="contact_status == 'spam'"
                   decoration-danger="contact_status == 'lost_booking'"
                   decoration-success="contact_status == 'booking'">
-                <field name="unique_contact_code" string="Code" optional="show"/>
+                <field name="unique_contact_code" string="Client ID" optional="show"/>
                 <field name="name" string="Contact"/>
+                <field name="related_client_name" string="Client Name"/>
                 <field name="phone" string="Phone" widget="phone"/>
                 <field name="catchment_province_id" string="Area" optional="show"/>
                 <field name="contact_status" string="Status"
@@ -172,7 +173,7 @@
                 <field name="name" string="Contact"/>
                 <field name="phone"/>
                 <field name="email_from" string="Email"/>
-                <field name="unique_contact_code" string="Code"/>
+                <field name="unique_contact_code" string="Client ID"/>
                 <field name="catchment_province_id" string="Area"/>
                 <field name="user_id" string="Agent"/>
                 <separator/>
@@ -270,7 +271,7 @@
                   decoration-warning="calendar_color == 2"
                   decoration-info="calendar_color == 4"
                   decoration-success="calendar_color == 5">
-                <field name="unique_contact_code" string="Code" optional="show"/>
+                <field name="unique_contact_code" string="Client ID" optional="show"/>
                 <field name="calendar_display_name" string="Activity"/>
                 <field name="phone" string="Phone" widget="phone"/>
                 <field name="calendar_date" string="Date" widget="datetime"/>
@@ -371,7 +372,7 @@
                   decoration-danger="calendar_color == 1"
                   decoration-warning="calendar_color == 2">
                 <field name="calendar_color" column_invisible="1"/>
-                <field name="unique_contact_code" string="Code" optional="show"/>
+                <field name="unique_contact_code" string="Client ID" optional="show"/>
                 <field name="name" string="Contact"/>
                 <field name="phone" string="Phone" widget="phone"/>
                 <field name="activity_ids" widget="list_activity"/>
@@ -482,7 +483,7 @@
         <field name="arch" type="xml">
             <list string="Bookings" default_order="create_date desc"
                   decoration-success="contact_status == 'booking'">
-                <field name="unique_contact_code" string="Code" optional="show"/>
+                <field name="unique_contact_code" string="Client ID" optional="show"/>
                 <field name="name" string="Contact"/>
                 <field name="phone" string="Phone" widget="phone"/>
                 <field name="catchment_province_id" string="Area" optional="show"/>

@@ -149,6 +149,16 @@ class HealthLead(models.Model):
         help='client (when you are not the client yourself)'
     )
 
+    # Display-only: the client this contact belongs to. If the contact is the
+    # client themselves -> their own name; otherwise (payer/caregiver/guardian…)
+    # the linked client resolved from patient_id or health.client.relation.
+    related_client_name = fields.Char(
+        string='Client Name',
+        compute='_compute_related_client_name',
+        help='The client this contact belongs to — themselves if they are the '
+             'client, otherwise the linked client (payer/caregiver/guardian…).'
+    )
+
     # Healthcare relationships
     patient_id = fields.Many2one(
         'res.partner', 
@@ -772,6 +782,26 @@ class HealthLead(models.Model):
         for record in self:
             if record.patient_id and not record.client_name:
                 record.client_name = record.patient_id.name
+
+    @api.depends('patient_id', 'contact_relationship_type', 'name', 'client_name', 'partner_id')
+    def _compute_related_client_name(self):
+        """Resolve the client this contact belongs to, for list display.
+        1. patient_id set (converted)  -> authoritative client name
+        2. contact IS the client       -> their own name
+        3. representative (payer/…)     -> client via health.client.relation
+        4. fallback                     -> free-text client_name captured at intake
+        """
+        Relation = self.env['health.client.relation']
+        for lead in self:
+            if lead.patient_id:
+                lead.related_client_name = lead.patient_id.name
+            elif lead.contact_relationship_type == 'client':
+                lead.related_client_name = lead.name or (lead.partner_id.name or False)
+            else:
+                rel = Relation.search(
+                    [('representative_id', '=', lead.partner_id.id)], limit=1
+                ) if lead.partner_id else False
+                lead.related_client_name = (rel.client_id.name if rel else False) or lead.client_name or False
 
     @api.depends('create_date')
     def _compute_days_open(self):
@@ -2578,6 +2608,7 @@ class HealthLead(models.Model):
 
         period_start_dt = fields.Datetime.to_string(dt.combine(period_start, dt_time.min))
         today_start_dt = fields.Datetime.to_string(dt.combine(today, dt_time.min))
+        tomorrow_start_dt = fields.Datetime.to_string(dt.combine(today + timedelta(days=1), dt_time.min))
         week_start_dt = fields.Datetime.to_string(dt.combine(week_start, dt_time.min))
 
         # Reusable create_date clause applied to period-scoped aggregates.
@@ -2597,10 +2628,12 @@ class HealthLead(models.Model):
 
         # --- KPIs ---
         contacts_today = Lead.search_count([('create_date', '>=', today_start_dt)])
+        # Pending follow-ups = actions required for the current day: a follow-up
+        # is scheduled on or before end-of-today (today + not-yet-actioned overdue).
         pending_followups = Lead.search_count([
             ('contact_status', '=', 'lead'),
-            '|', ('next_follow_up_date', '<=', fields.Datetime.to_string(now)),
-            ('next_follow_up_date', '=', False),
+            ('next_follow_up_date', '!=', False),
+            ('next_follow_up_date', '<', tomorrow_start_dt),
         ])
         active_leads = Lead.search_count([('contact_status', '=', 'lead')])
         bookings_this_week = Lead.search_count([

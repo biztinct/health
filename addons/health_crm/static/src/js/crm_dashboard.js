@@ -419,6 +419,9 @@ class CrmDashboard extends Component {
     onKpiClick(key) {
         const today = new Date();
         const todayStr = today.toISOString().slice(0, 10) + " 00:00:00";
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().slice(0, 10) + " 00:00:00";
         const weekStart = new Date(today);
         weekStart.setDate(today.getDate() - today.getDay() + 1);
         const weekStr = weekStart.toISOString().slice(0, 10) + " 00:00:00";
@@ -431,7 +434,9 @@ class CrmDashboard extends Component {
             },
             pending_followups: {
                 name: _t("Pending Follow-ups"),
-                domain: [["contact_status", "=", "lead"]],
+                domain: [["contact_status", "=", "lead"],
+                         ["next_follow_up_date", "!=", false],
+                         ["next_follow_up_date", "<", tomorrowStr]],
             },
             active_leads: {
                 name: _t("Active Leads"),
