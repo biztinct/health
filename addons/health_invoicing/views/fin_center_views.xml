@@ -23,6 +23,11 @@
                        decoration-info="payment_state == 'in_payment'"/>
                 <field name="state" column_invisible="True"/>
                 <field name="invoice_date_due" column_invisible="True"/>
+                <button name="action_register_payment" type="object"
+                        string="Receive Payment" icon="fa-money"
+                        class="fin-cl-pay-btn"
+                        title="Receive payment for this invoice"
+                        invisible="state != 'posted' or payment_state not in ('not_paid', 'partial')"/>
             </list>
         </field>
     </record>

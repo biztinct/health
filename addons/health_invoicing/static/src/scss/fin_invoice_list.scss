@@ -56,6 +56,36 @@
     &:hover { background: $fin-primary-light; }
 }
 
+// Bulk "Receive Payment" button — green to read as an inbound-money action,
+// shown only when invoices are selected.
+.fin-cl-pay-bulk-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    background: #1B8A5A;
+    color: #fff;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+    margin-right: 8px;
+
+    &:hover { background: #146E47; }
+}
+
+// Per-row "Receive Payment" button in the invoices list.
+.fin-cl-pay-btn.btn,
+.fin-cl-pay-btn {
+    color: #1B8A5A !important;
+    font-weight: 600;
+
+    &:hover { color: #146E47 !important; }
+}
+
 .fin-cl-date-filters {
     display: flex;
     gap: 6px;

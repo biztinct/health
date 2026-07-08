@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Rename the standard Register Payment wizard's confirm button
+         "Create Payment(s)" -> "Receive Payment(s)". -->
+    <record id="view_account_payment_register_form_receive" model="ir.ui.view">
+        <field name="name">account.payment.register.form.receive-payment</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_create_payments'][@invisible='total_payments_amount == 1']"
+                   position="attributes">
+                <attribute name="string">Receive Payments</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_create_payments'][@invisible='total_payments_amount != 1']"
+                   position="attributes">
+                <attribute name="string">Receive Payment</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

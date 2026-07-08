@@ -159,8 +159,33 @@
         <field name="inherit_id" ref="health_fieldservice.view_health_patient_form_ops"/>
         <field name="arch" type="xml">
 
-            <!-- Active Packages tab: replace placeholder with kanban + gauges -->
+            <!-- Active Packages tab: replace placeholder with the package
+                 financial metrics (mirrored from Financial Summary) + kanban. -->
             <xpath expr="//page[@name='active_packages']//p[contains(@class,'text-muted')]" position="replace">
+                <div class="bj-journey-stats mb-3"
+                     invisible="active_packages_count == 0">
+                    <div class="bj-jstat">
+                        <i class="fa fa-gift"/>
+                        <div class="bj-jstat-info">
+                            <span class="bj-jstat-val"><field name="active_packages_count" nolabel="1" class="d-inline"/></span>
+                            <span class="bj-jstat-lbl">Active Packages</span>
+                        </div>
+                    </div>
+                    <div class="bj-jstat">
+                        <i class="fa fa-money text-success"/>
+                        <div class="bj-jstat-info">
+                            <span class="bj-jstat-val"><field name="total_prepaid_value" nolabel="1" class="d-inline" widget="monetary"/></span>
+                            <span class="bj-jstat-lbl">Total Prepaid</span>
+                        </div>
+                    </div>
+                    <div class="bj-jstat">
+                        <i class="fa fa-check-circle text-info"/>
+                        <div class="bj-jstat-info">
+                            <span class="bj-jstat-val"><field name="remaining_prepaid_value" nolabel="1" class="d-inline" widget="monetary"/></span>
+                            <span class="bj-jstat-lbl">Remaining Value</span>
+                        </div>
+                    </div>
+                </div>
                 <widget name="vu_active_packages"/>
             </xpath>
 

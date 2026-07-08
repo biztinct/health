@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare Invoicing Integration',
-    'version': '19.0.1.1.3',
+    'version': '19.0.1.1.4',
     'category': 'Healthcare/Accounting',
     'summary': 'Healthcare invoicing integration inheriting from standard Odoo accounting',
     'description': """
@@ -120,6 +120,9 @@
         # Finance Center
         'views/fin_center_views.xml',
         'views/fin_center_menus.xml',
+
+        # Register Payment wizard tweaks (rename Create -> Receive Payment)
+        'views/account_payment_register_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

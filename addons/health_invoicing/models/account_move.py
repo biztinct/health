@@ -1044,6 +1044,32 @@ class HealthcareInvoice(models.Model):
             }
         }
 
+    @api.model
+    def action_register_payment_bulk(self, invoice_ids):
+        """Open the standard Register Payment wizard for several invoices at once.
+
+        Bulk payment is restricted to invoices of a SINGLE client (commercial
+        partner) so the register wizard cannot misallocate one payment across
+        different clients' receivables.
+        """
+        moves = self.browse(invoice_ids).exists()
+        payable = moves.filtered(
+            lambda m: m.state == 'posted' and m.payment_state in ('not_paid', 'partial'))
+        if not payable:
+            raise UserError(_('None of the selected invoices are awaiting payment.'))
+        clients = payable.mapped('commercial_partner_id')
+        if len(clients) > 1:
+            raise UserError(_(
+                'Bulk payment is only allowed for invoices of the same client, '
+                'to prevent payment allocation errors.\n\n'
+                'The selection spans %(count)s clients: %(names)s.',
+                count=len(clients),
+                names=', '.join(clients.mapped('name')),
+            ))
+        # Delegate to Odoo's standard flow (opens account.payment.register with
+        # active_ids = the payable invoices, all for one client).
+        return payable.action_register_payment()
+
     def action_post(self):
         """Override to check CRMv2 hard accounting rules (warning only)."""
         result = super().action_post()

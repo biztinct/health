@@ -13,6 +13,10 @@
                     </button>
                 </t>
                 <div class="fin-cl-tabs-spacer"/>
+                <button class="fin-cl-pay-bulk-btn" t-if="selectedCount &gt; 0"
+                        t-on-click="onBulkReceivePayment">
+                    <i class="fa fa-money"/> Receive Payment (<t t-esc="selectedCount"/>)
+                </button>
                 <button class="fin-cl-new-btn" t-on-click="openNewInvoice">
                     <i class="fa fa-plus"/> New Invoice
                 </button>

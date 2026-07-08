@@ -13,6 +13,8 @@ export class FinInvoiceListController extends ListController {
     setup() {
         super.setup(...arguments);
         this.actionService = useService("action");
+        this.orm = useService("orm");
+        this.notification = useService("notification");
         this.tabState = useState({
             activeTab: "all",
             dateFilter: "all_dates",
@@ -164,6 +166,26 @@ export class FinInvoiceListController extends ListController {
             views: [[false, "form"]],
             target: "current",
             context: { default_move_type: "out_invoice" },
+        });
+    }
+
+    // Number of currently selected invoices (drives the bulk button).
+    get selectedCount() {
+        return this.model.root.selection.length;
+    }
+
+    // Bulk "Receive Payment": open the standard Register Payment wizard for all
+    // selected invoices. The server enforces a single-client selection.
+    async onBulkReceivePayment() {
+        const records = this.model.root.selection;
+        if (!records.length) {
+            this.notification.add(_t("Select one or more invoices first."), { type: "warning" });
+            return;
+        }
+        const ids = records.map((r) => r.resId);
+        const action = await this.orm.call("account.move", "action_register_payment_bulk", [ids]);
+        this.actionService.doAction(action, {
+            onClose: () => this.model.root.load(),
         });
     }
 }
