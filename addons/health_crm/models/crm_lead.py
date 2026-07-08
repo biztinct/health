@@ -159,6 +159,14 @@ class HealthLead(models.Model):
              'client, otherwise the linked client (payer/caregiver/guardian…).'
     )
 
+    # Display-only Patient ID for outreach screens: the converted client's
+    # patient_code, falling back to this contact's unique_contact_code (Client ID).
+    patient_display_id = fields.Char(
+        string='Patient ID',
+        compute='_compute_patient_display_id',
+        help='Client patient code once converted; otherwise the contact Client ID.'
+    )
+
     # Healthcare relationships
     patient_id = fields.Many2one(
         'res.partner', 
@@ -802,6 +810,16 @@ class HealthLead(models.Model):
                     [('representative_id', '=', lead.partner_id.id)], limit=1
                 ) if lead.partner_id else False
                 lead.related_client_name = (rel.client_id.name if rel else False) or lead.client_name or False
+
+    @api.depends('patient_id.patient_code', 'unique_contact_code')
+    def _compute_patient_display_id(self):
+        """Patient ID for outreach: converted client's patient_code, else the
+        contact's own unique_contact_code (Client ID)."""
+        for lead in self:
+            lead.patient_display_id = (
+                (lead.patient_id.patient_code if lead.patient_id else False)
+                or lead.unique_contact_code or ''
+            )
 
     @api.depends('create_date')
     def _compute_days_open(self):

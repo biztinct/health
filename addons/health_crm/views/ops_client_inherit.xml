@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================================
+         Clients LIST (health_fieldservice.view_health_client_list_ops):
+         add a "Log Activity" button before "Book". Logs an activity against
+         the client's originating CRM contact so it surfaces in Activities.
+         =================================================================== -->
+    <record id="view_health_client_list_ops_crm_logactivity" model="ir.ui.view">
+        <field name="name">res.partner.list.ops.client.log-activity</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_client_list_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_create_fso']" position="before">
+                <button name="action_log_activity_client" type="object"
+                        string="Log Activity" icon="fa-clock-o"
+                        title="Log Activity for this client's main contact"
+                        class="ops-cl-btn ops-cl-btn--lead"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ===================================================================
+         Client PROFILE (health_fieldservice.view_health_patient_form_ops):
+         show an editable "Main Contact" (+ phone) top-right of the sheet.
+         =================================================================== -->
+    <record id="view_health_patient_form_ops_crm_maincontact" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.client.main-contact</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div[@class='alert alert-danger']" position="before">
+                <field name="allowed_main_contact_ids" invisible="1"/>
+                <div class="ops-main-contact float-end text-end mb-2">
+                    <div class="text-muted small fw-bold">Main Contact</div>
+                    <field name="main_contact_id" nolabel="1"
+                           domain="[('id', 'in', allowed_main_contact_ids)]"
+                           options="{'no_create': True}"
+                           placeholder="Select main contact"/>
+                    <div class="text-muted small" invisible="not main_contact_phone">
+                        <field name="main_contact_phone" widget="phone" nolabel="1" readonly="1"/>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

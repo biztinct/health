@@ -129,6 +129,99 @@ class HealthContact(models.Model):
         help='Auto-computed: This person is a client representative (based on health.client.relation)'
     )
 
+    # ========================================================================
+    # MAIN CONTACT — the primary caller the booking was created from
+    # ========================================================================
+    lead_ids = fields.One2many(
+        'crm.lead', 'patient_id',
+        string='Originating Contacts',
+        help='CRM contacts/leads whose linked client is this record.'
+    )
+
+    main_contact_id = fields.Many2one(
+        'res.partner', string='Main Contact',
+        compute='_compute_main_contact_id', store=True, readonly=False,
+        help='Primary point of contact — the person who first contacted us and '
+             'from whom the booking was created (the client themselves or a '
+             'payer/caregiver/guardian). Defaults to the first caller; editable.'
+    )
+
+    allowed_main_contact_ids = fields.Many2many(
+        'res.partner',
+        compute='_compute_allowed_main_contact_ids',
+        string='Allowed Main Contacts',
+        help='The client plus their representatives — constrains the Main Contact selector.'
+    )
+
+    main_contact_phone = fields.Char(
+        string='Main Contact Phone',
+        compute='_compute_main_contact_phone',
+        help='Phone of the selected Main Contact (phone, or mobile as fallback).'
+    )
+
+    @api.depends('is_patient', 'lead_ids', 'lead_ids.partner_id', 'lead_ids.create_date',
+                 'patient_relation_ids', 'patient_relation_ids.is_primary',
+                 'patient_relation_ids.priority_order',
+                 'patient_relation_ids.representative_id')
+    def _compute_main_contact_id(self):
+        for partner in self:
+            # Only clients carry a main contact; avoid self-referencing every partner.
+            if not partner.is_patient:
+                partner.main_contact_id = False
+                continue
+            # Preserve a manual selection / previously resolved value.
+            if partner.main_contact_id:
+                continue
+            contact = False
+            # 1) Person who first contacted us = caller on the earliest lead.
+            if partner.lead_ids:
+                earliest = partner.lead_ids.sorted('create_date')[:1]
+                contact = earliest.partner_id
+            # 2) Else the primary representative (is_primary, then priority_order).
+            if not contact and partner.patient_relation_ids:
+                rel = partner.patient_relation_ids.filtered('is_primary').sorted('priority_order')[:1] \
+                    or partner.patient_relation_ids.sorted('priority_order')[:1]
+                contact = rel.representative_id
+            # 3) Else the client themselves.
+            partner.main_contact_id = contact or partner
+
+    @api.depends('patient_relation_ids', 'patient_relation_ids.representative_id')
+    def _compute_allowed_main_contact_ids(self):
+        for partner in self:
+            reps = partner.patient_relation_ids.mapped('representative_id')
+            partner.allowed_main_contact_ids = reps | partner
+
+    @api.depends('main_contact_id', 'main_contact_id.phone', 'main_contact_id.mobile')
+    def _compute_main_contact_phone(self):
+        for partner in self:
+            c = partner.main_contact_id
+            partner.main_contact_phone = (c.phone or c.mobile) if c else False
+
+    def action_log_activity_client(self):
+        """Log an activity against this client's originating CRM contact (earliest
+        lead whose patient_id = this client) so it surfaces in the Activities
+        overview. Falls back to the client's own chatter if no lead exists."""
+        self.ensure_one()
+        lead = self.env['crm.lead'].search(
+            [('patient_id', '=', self.id)], order='create_date asc', limit=1)
+        ctx_model, ctx_id = ('crm.lead', lead.id) if lead else ('res.partner', self.id)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Log Activity for: %s') % self.name,
+            'res_model': 'mail.activity.schedule',
+            'view_mode': 'form',
+            'views': [[False, 'form']],
+            'target': 'new',
+            'context': {
+                'active_model': ctx_model,
+                'active_id': ctx_id,
+                'active_ids': [ctx_id],
+                'default_res_model': ctx_model,
+                'default_res_ids': [ctx_id],
+                'dialog_size': 'medium',
+            },
+        }
+
     # Visual role tags - for display in form view
     healthcare_role_tags = fields.Html(
         string='Healthcare Roles',

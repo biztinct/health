@@ -347,9 +347,15 @@
             <activity string="Activities" js_class="crm_activity_view">
                 <field name="name"/>
                 <field name="contact_status"/>
+                <field name="related_client_name"/>
+                <field name="patient_display_id"/>
                 <templates>
                     <div t-name="activity-box">
                         <field name="name" display="full" class="o_text_block"/>
+                        <div class="text-muted small" t-if="record.related_client_name.value or record.patient_display_id.value">
+                            <span t-if="record.related_client_name.value" t-esc="record.related_client_name.value"/>
+                            <span t-if="record.patient_display_id.value"> · <t t-esc="record.patient_display_id.value"/></span>
+                        </div>
                         <field name="contact_status" widget="badge"
                                decoration-info="contact_status == 'active'"
                                decoration-success="contact_status == 'booking'"

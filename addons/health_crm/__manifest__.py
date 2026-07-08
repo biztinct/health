@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare CRM Integration',
-    'version': '19.0.1.5.5',
+    'version': '19.0.1.5.6',
     'category': 'Healthcare/CRM',
     'summary': 'Healthcare CRM integration inheriting from standard Odoo CRM',
     'description': """
@@ -89,6 +89,9 @@
         # CRM Center
         'views/crm_center_views.xml',
         'views/crm_center_menus.xml',
+
+        # Ops Clients screens (inherit health_fieldservice views)
+        'views/ops_client_inherit.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -138,6 +141,7 @@
             'health_crm/static/src/xml/crm_activity_list.xml',
             'health_crm/static/src/scss/crm_activity_list.scss',
             'health_crm/static/src/scss/crm_activity_view.scss',
+            'health_crm/static/src/scss/ops_client_list_ext.scss',
             # Contact Timeline widget
             'health_crm/static/src/js/contact_timeline.js',
             'health_crm/static/src/xml/contact_timeline.xml',

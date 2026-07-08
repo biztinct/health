@@ -1,0 +1,19 @@
+// Log Activity button on the Ops Clients list (added by health_crm).
+// Distinct teal so it reads apart from the adjacent blue "Book" button.
+.ops-cl-btn--lead {
+    background: rgba(#00695C, 0.08) !important;
+    color: #00695C !important;
+    border-color: rgba(#00695C, 0.2) !important;
+
+    &:hover {
+        background: #00695C !important;
+        color: #fff !important;
+    }
+}
+
+// Main Contact block, top-right of the Client Profile sheet.
+.ops-main-contact {
+    min-width: 220px;
+
+    .o_field_widget { display: inline-block; }
+}
