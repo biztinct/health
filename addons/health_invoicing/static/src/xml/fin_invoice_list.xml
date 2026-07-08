@@ -42,4 +42,16 @@
         </xpath>
     </t>
 
+    <!-- Outstanding Invoices list: bulk "Receive Payment" button only. -->
+    <t t-name="health_invoicing.ClientPayListView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+            <div class="fin-cl-tabs" t-if="selectedCount &gt; 0">
+                <div class="fin-cl-tabs-spacer"/>
+                <button class="fin-cl-pay-bulk-btn" t-on-click="onBulkReceivePayment">
+                    <i class="fa fa-money"/> Receive Payment (<t t-esc="selectedCount"/>)
+                </button>
+            </div>
+        </xpath>
+    </t>
+
 </templates>

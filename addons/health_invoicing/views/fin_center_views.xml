@@ -32,6 +32,38 @@
         </field>
     </record>
 
+    <!-- Client "Outstanding Invoices" list (opened from the client Payment
+         button) — single-client, carries the same bulk "Receive Payment"
+         button + per-row Receive Payment buttons. -->
+    <record id="view_client_pay_invoice_list" model="ir.ui.view">
+        <field name="name">client.pay.invoice.list</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <list string="Outstanding Invoices" js_class="client_pay_list_view"
+                  decoration-danger="payment_state == 'not_paid' and invoice_date_due and invoice_date_due &lt; current_date"
+                  decoration-muted="state == 'cancel'">
+                <field name="name" string="Invoice Number"/>
+                <field name="partner_id" string="Client"/>
+                <field name="invoice_date" string="Invoice/Bill Date"/>
+                <field name="invoice_date_due" string="Due Date"/>
+                <field name="amount_total" string="Total" sum="Total"/>
+                <field name="amount_residual" string="Amount Due" sum="Due"/>
+                <field name="payment_state" string="Payment Status" widget="badge"
+                       decoration-success="payment_state == 'paid'"
+                       decoration-warning="payment_state == 'partial'"
+                       decoration-danger="payment_state == 'not_paid'"
+                       decoration-info="payment_state == 'in_payment'"/>
+                <field name="invoice_origin" string="Source Document" optional="show"/>
+                <field name="state" column_invisible="True"/>
+                <button name="action_register_payment" type="object"
+                        string="Receive Payment" icon="fa-money"
+                        class="fin-cl-pay-btn"
+                        title="Receive payment for this invoice"
+                        invisible="state != 'posted' or payment_state not in ('not_paid', 'partial')"/>
+            </list>
+        </field>
+    </record>
+
     <record id="view_fin_invoice_search" model="ir.ui.view">
         <field name="name">fin.invoice.search</field>
         <field name="model">account.move</field>

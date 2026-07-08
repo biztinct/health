@@ -196,3 +196,16 @@ export const finInvoiceListView = {
 };
 
 registry.category("views").add("fin_invoice_list_view", finInvoiceListView);
+
+// Focused list used by the client "Outstanding Invoices" screen: same bulk
+// "Receive Payment" behaviour, without the status/date filter tabs.
+export class ClientPayListController extends FinInvoiceListController {
+    static template = "health_invoicing.ClientPayListView";
+}
+
+export const clientPayListView = {
+    ...listView,
+    Controller: ClientPayListController,
+};
+
+registry.category("views").add("client_pay_list_view", clientPayListView);

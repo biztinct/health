@@ -190,6 +190,22 @@ class Partner(models.Model):
             }
         }
 
+    def action_register_client_payment(self):
+        """Route the client 'Outstanding Invoices' list (from health_fieldservice)
+        through our focused list view so it carries the bulk 'Receive Payment'
+        button + per-row Receive Payment buttons. The single-invoice branch
+        (which returns the register wizard directly) is left untouched."""
+        action = super().action_register_client_payment()
+        if (isinstance(action, dict)
+                and action.get('res_model') == 'account.move'
+                and action.get('view_mode') == 'list,form'):
+            list_view = self.env.ref(
+                'health_invoicing.view_client_pay_invoice_list', raise_if_not_found=False)
+            if list_view:
+                action['views'] = [(list_view.id, 'list'), (False, 'form')]
+                action.pop('view_mode', None)
+        return action
+
     def action_view_invoices(self):
         """View all invoices for this patient"""
         self.ensure_one()
