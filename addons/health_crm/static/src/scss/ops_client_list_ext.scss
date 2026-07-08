@@ -11,9 +11,46 @@
     }
 }
 
-// Main Contact block, top-right of the Client Profile sheet.
-.ops-main-contact {
-    min-width: 220px;
+// Main Contact block in the Client Profile identity row (right, before icons).
+.ph-main-contact {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+    text-align: right;
+    padding: 0 4px;
 
-    .o_field_widget { display: inline-block; }
+    .ph-mc__label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+    }
+
+    .ph-mc__field {
+        min-width: 170px;
+
+        .o_field_widget { width: 100%; }
+        // Compact the many2one so it reads as a header control, not a form input.
+        .o_input { font-size: 13px; font-weight: 600; }
+    }
+
+    .ph-mc__phone {
+        font-size: 12px;
+        font-weight: 600;
+        color: #1565C0;
+
+        .fa { font-size: 10px; margin-right: 3px; }
+    }
+}
+
+@media (max-width: 768px) {
+    .ph-main-contact {
+        align-items: flex-start;
+        text-align: left;
+        width: 100%;
+    }
 }

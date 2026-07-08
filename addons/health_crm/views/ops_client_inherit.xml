@@ -22,7 +22,10 @@
 
     <!-- ===================================================================
          Client PROFILE (health_fieldservice.view_health_patient_form_ops):
-         show an editable "Main Contact" (+ phone) top-right of the sheet.
+         Load the Main Contact fields onto the form record so the custom
+         profile header (OWL) can render an editable Main Contact + phone in
+         the identity row. The fields are invisible here — the visible,
+         editable widget lives in the header (see ops_client_profile_header.*).
          =================================================================== -->
     <record id="view_health_patient_form_ops_crm_maincontact" model="ir.ui.view">
         <field name="name">res.partner.form.ops.client.main-contact</field>
@@ -30,16 +33,15 @@
         <field name="inherit_id" ref="health_fieldservice.view_health_patient_form_ops"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet/div[@class='alert alert-danger']" position="before">
-                <field name="allowed_main_contact_ids" invisible="1"/>
-                <div class="ops-main-contact float-end text-end mb-2">
-                    <div class="text-muted small fw-bold">Main Contact</div>
+                <!-- Kept as real (not invisible) fields so the m2o display_name
+                     loads for the header widget; hidden in the body via CSS.
+                     An `invisible` m2o would only load its id -> "Unnamed". -->
+                <div class="d-none">
+                    <field name="allowed_main_contact_ids"/>
+                    <field name="main_contact_phone"/>
                     <field name="main_contact_id" nolabel="1"
                            domain="[('id', 'in', allowed_main_contact_ids)]"
-                           options="{'no_create': True}"
-                           placeholder="Select main contact"/>
-                    <div class="text-muted small" invisible="not main_contact_phone">
-                        <field name="main_contact_phone" widget="phone" nolabel="1" readonly="1"/>
-                    </div>
+                           options="{'no_create': True}"/>
                 </div>
             </xpath>
         </field>

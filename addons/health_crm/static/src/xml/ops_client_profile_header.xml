@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Inject an editable "Main Contact" (+ phone) into the Client Profile
+         identity row, right-aligned just before the call/SMS/email icons. -->
+    <t t-inherit="health_fieldservice.OpsClientProfileFormView" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('ph-actions')]" position="before">
+            <div class="ph-main-contact">
+                <span class="ph-mc__label">Main Contact</span>
+                <div class="ph-mc__field">
+                    <Field name="'main_contact_id'" record="model.root"/>
+                </div>
+                <div class="ph-mc__phone" t-if="model.root.data.main_contact_phone">
+                    <i class="fa fa-phone"/>
+                    <span t-esc="model.root.data.main_contact_phone"/>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>
