@@ -1,0 +1,146 @@
+# Vietnamese translation for health_self_booking
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_self_booking\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_self_booking
+msgid "Client Self-Booking Invite"
+msgstr "Lời mời tự đặt lịch của khách hàng"
+
+#. module: health_self_booking
+msgid "Self-Booking Invite"
+msgstr "Lời mời tự đặt lịch"
+
+#. module: health_self_booking
+msgid "Self-Booking Invites"
+msgstr "Lời mời tự đặt lịch"
+
+#. module: health_self_booking
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_self_booking
+msgid "Booked Visit"
+msgstr "Lịch đã đặt"
+
+#. module: health_self_booking
+msgid "Prepaid Package"
+msgstr "Gói trả trước"
+
+#. module: health_self_booking
+msgid "Service Product"
+msgstr "Sản phẩm dịch vụ"
+
+#. module: health_self_booking
+msgid "Proposed Slots"
+msgstr "Khung giờ đề xuất"
+
+#. module: health_self_booking
+msgid "Invite Message"
+msgstr "Tin nhắn lời mời"
+
+#. module: health_self_booking
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_self_booking
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_self_booking
+msgid "Booked"
+msgstr "Đã đặt lịch"
+
+#. module: health_self_booking
+msgid "Revoked"
+msgstr "Đã thu hồi"
+
+#. module: health_self_booking
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_self_booking
+msgid "Rebook invite: %(patient)s"
+msgstr "Lời mời đặt lại lịch: %(patient)s"
+
+#. module: health_self_booking
+msgid "Rebook invite"
+msgstr "Lời mời đặt lại lịch"
+
+#. module: health_self_booking
+msgid "gói của bạn (your package)"
+msgstr "gói của bạn"
+
+#. module: health_self_booking
+msgid "dịch vụ (service)"
+msgstr "dịch vụ"
+
+#. module: health_self_booking
+msgid "Booking link ready"
+msgstr "Đã tạo link đặt lịch"
+
+#. module: health_self_booking
+msgid "A self-booking link has been prepared for %s."
+msgstr "Đã chuẩn bị link tự đặt lịch cho %s."
+
+#. module: health_self_booking
+msgid "Booking links can only be sent to patients."
+msgstr "Chỉ có thể gửi link đặt lịch cho bệnh nhân."
+
+#. module: health_self_booking
+msgid "No patient to send a booking link to."
+msgstr "Không có bệnh nhân để gửi link đặt lịch."
+
+#. module: health_self_booking
+msgid ""
+"Cannot create a booking link: this client has no active package, no previous "
+"booked service, and no fallback service product is configured."
+msgstr ""
+"Không thể tạo link đặt lịch: khách hàng này không có gói đang hoạt động, chưa "
+"từng đặt dịch vụ, và chưa cấu hình dịch vụ mặc định."
+
+#. module: health_self_booking
+msgid "No usable phone for the patient."
+msgstr "Không có số điện thoại hợp lệ cho bệnh nhân."
+
+#. module: health_self_booking
+msgid ""
+"Khung giờ này không còn trống — vui lòng chọn giờ khác. (That time is no "
+"longer available — please pick another.)"
+msgstr ""
+"Khung giờ này không còn trống — vui lòng chọn giờ khác."
+
+#. module: health_self_booking
+msgid "Auto-send Rebook Link After Visit"
+msgstr "Tự động gửi link đặt lại lịch sau khi thăm khám"
+
+#. module: health_self_booking
+msgid "Self-Booking ZNS Template ID"
+msgstr "Mã mẫu ZNS tự đặt lịch"
+
+#. module: health_self_booking
+msgid "Fallback Rebook Service"
+msgstr "Dịch vụ đặt lại mặc định"
+
+#. module: health_self_booking
+msgid "Rebook Slots Offered"
+msgstr "Số khung giờ đề xuất"
+
+#. module: health_self_booking
+msgid "Rebook Slot Horizon (days)"
+msgstr "Phạm vi tìm khung giờ (ngày)"
+
+#. module: health_self_booking
+msgid "Rebook Link Lifetime (days)"
+msgstr "Thời hạn link đặt lịch (ngày)"
+
+#. module: health_self_booking
+msgid "Client Self-Booking (Rebook)"
+msgstr "Khách hàng tự đặt lịch (đặt lại)"

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Standalone, self-contained mobile pages (no website/backend assets).
+         Flat mono colors, no gradients, inlined currentColor SVG icons.
+         No emoji. vi-first with an en gloss. Renders on a phone. -->
+    <template id="selfbook_styles" name="Self-Booking Styles">
+        <style>
+            * { box-sizing: border-box; }
+            body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+                   background: #f4f5f7; color: #1f2733; -webkit-text-size-adjust: 100%; }
+            .sb-wrap { max-width: 480px; margin: 0 auto; padding: 24px 18px 48px; }
+            .sb-card { background: #ffffff; border: 1px solid #e3e6ea; border-radius: 14px;
+                       padding: 22px 20px; }
+            .sb-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; color: #0b6b5a; }
+            .sb-brand svg { width: 26px; height: 26px; }
+            .sb-brand span { font-weight: 700; font-size: 17px; letter-spacing: .2px; }
+            .sb-h1 { font-size: 20px; font-weight: 700; margin: 6px 0 4px; }
+            .sb-sub { color: #5b6572; font-size: 14px; margin: 0 0 18px; }
+            .sb-status { display: inline-block; padding: 5px 12px; border-radius: 999px;
+                         font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+            .sb-status.sent { background: #e6f4f1; color: #0b6b5a; }
+            .sb-status.booked { background: #ecf6ec; color: #256b2b; }
+            .sb-notice { background: #fdf2e6; border: 1px solid #f2d9b8; color: #8a5a1a;
+                         border-radius: 10px; padding: 12px 14px; font-size: 14px; margin-bottom: 16px; }
+            .sb-slot-form { margin: 0 0 12px; }
+            .sb-slot { display: flex; align-items: center; gap: 14px; width: 100%;
+                       background: #ffffff; border: 1px solid #d7dbe0; border-radius: 12px;
+                       padding: 14px 16px; font-size: 16px; text-align: left; cursor: pointer;
+                       color: #1f2733; font-family: inherit; }
+            .sb-slot:hover { border-color: #0b6b5a; }
+            .sb-slot svg { width: 22px; height: 22px; flex: 0 0 auto; color: #0b6b5a; }
+            .sb-slot .sb-slot-main { flex: 1 1 auto; }
+            .sb-slot .sb-slot-date { font-weight: 700; }
+            .sb-slot .sb-slot-meta { display: block; font-size: 13px; color: #8a94a1; margin-top: 2px; }
+            .sb-slot .sb-chev { color: #b3bac2; }
+            .sb-row { display: flex; align-items: center; gap: 12px; padding: 12px 0;
+                      border-top: 1px solid #eef0f2; font-size: 16px; }
+            .sb-row:first-of-type { border-top: none; }
+            .sb-row svg { width: 20px; height: 20px; flex: 0 0 auto; color: #0b6b5a; }
+            .sb-row .sb-label { display: block; font-size: 12px; font-weight: 500; color: #8a94a1; }
+            .sb-row .sb-val { font-weight: 600; }
+            .sb-note { font-size: 13px; color: #8a94a1; margin-top: 16px; text-align: center; }
+        </style>
+    </template>
+
+    <!-- Shared brand header -->
+    <template id="selfbook_brand" name="Self-Booking Brand">
+        <div class="sb-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-7-4.35-9.5-8.5A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6.5C19 16.65 12 21 12 21z"/>
+            </svg>
+            <span>Viet Uc Health</span>
+        </div>
+    </template>
+
+    <!-- Neutral page: invalid / expired / revoked / over-limit -->
+    <template id="selfbook_neutral" name="Self-Booking Unavailable">
+        <t t-name="health_self_booking.selfbook_neutral">
+            <html lang="vi">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                    <title>Đặt lịch</title>
+                    <t t-call="health_self_booking.selfbook_styles"/>
+                </head>
+                <body>
+                    <div class="sb-wrap">
+                        <div class="sb-card">
+                            <t t-call="health_self_booking.selfbook_brand"/>
+                            <div class="sb-h1">Không có thông tin để hiển thị</div>
+                            <p class="sb-sub">Liên kết này không còn hiệu lực hoặc chưa có thông tin.
+                               Vui lòng liên hệ với chúng tôi nếu cần hỗ trợ.
+                               <br/>(This link is no longer available. Please contact us if you need help.)</p>
+                            <p class="sb-note">Viet Uc Health</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        </t>
+    </template>
+
+    <!-- Live page: sent (slot list / call-us) / booked (summary) -->
+    <template id="selfbook_page" name="Self-Booking Page">
+        <t t-name="health_self_booking.selfbook_page">
+            <html lang="vi">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                    <title>Đặt lịch thăm khám</title>
+                    <t t-call="health_self_booking.selfbook_styles"/>
+                </head>
+                <body>
+                    <div class="sb-wrap">
+                        <div class="sb-card">
+                            <t t-call="health_self_booking.selfbook_brand"/>
+
+                            <!-- Sent: pick a slot -->
+                            <t t-if="mode == 'sent'">
+                                <span class="sb-status sent">Đặt lịch (Book again)</span>
+                                <div class="sb-h1">Xin chào <t t-esc="patient_name"/></div>
+                                <p class="sb-sub">Đặt lịch lần tới cho <t t-esc="service_label"/>.
+                                   Chọn một khung giờ bên dưới.
+                                   (Book your next visit — pick a time below.)</p>
+
+                                <t t-if="notice">
+                                    <div class="sb-notice"><t t-esc="notice"/></div>
+                                </t>
+
+                                <t t-if="slots">
+                                    <t t-foreach="slots" t-as="slot">
+                                        <form class="sb-slot-form" method="post"
+                                              t-attf-action="/booking/self/#{token}/accept/#{slot['index']}">
+                                            <button type="submit" class="sb-slot">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                     stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                                    <path d="M16 2v4M8 2v4M3 10h18"/>
+                                                </svg>
+                                                <span class="sb-slot-main">
+                                                    <span class="sb-slot-date"><t t-esc="slot['date_label']"/>
+                                                        · <t t-esc="slot['time_label']"/></span>
+                                                    <span class="sb-slot-meta" t-if="slot['staff_name']">
+                                                        Điều dưỡng (Nurse): <t t-esc="slot['staff_name']"/></span>
+                                                </span>
+                                                <svg class="sb-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M9 18l6-6-6-6"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </t>
+                                    <p class="sb-note" t-if="facility_phone">
+                                        Cần hỗ trợ? Gọi <t t-esc="facility_phone"/>.
+                                        (Need help? Call <t t-esc="facility_phone"/>.)</p>
+                                </t>
+                                <t t-else="">
+                                    <!-- Zero feasible slots -> call-us body (no dead end). -->
+                                    <p class="sb-sub">Hiện chưa có khung giờ trống phù hợp.
+                                       <t t-if="facility_phone">Vui lòng gọi <t t-esc="facility_phone"/> để được
+                                       xếp lịch.</t>
+                                       (No open times right now<t t-if="facility_phone"> — please call
+                                       <t t-esc="facility_phone"/> to schedule</t>.)</p>
+                                </t>
+                            </t>
+
+                            <!-- Booked: confirmation summary -->
+                            <t t-if="mode == 'booked'">
+                                <span class="sb-status booked">Đã đặt lịch (Booked)</span>
+                                <div class="sb-h1">Đã đặt lịch cho <t t-esc="patient_name"/></div>
+                                <p class="sb-sub">Cảm ơn bạn! Lịch thăm khám của bạn đã được xác nhận.
+                                   (Thank you — your visit is confirmed.)</p>
+                                <div class="sb-row" t-if="visit_date">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                        <path d="M16 2v4M8 2v4M3 10h18"/>
+                                    </svg>
+                                    <span><span class="sb-label">Ngày (Date)</span>
+                                          <span class="sb-val"><t t-esc="visit_date"/></span></span>
+                                </div>
+                                <div class="sb-row" t-if="time_window">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+                                    </svg>
+                                    <span><span class="sb-label">Khung giờ (Time)</span>
+                                          <span class="sb-val"><t t-esc="time_window"/></span></span>
+                                </div>
+                                <div class="sb-row" t-if="staff_name">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <span><span class="sb-label">Điều dưỡng (Nurse)</span>
+                                          <span class="sb-val"><t t-esc="staff_name"/></span></span>
+                                </div>
+                                <p class="sb-note" t-if="facility_phone">
+                                    Cần thay đổi? Gọi <t t-esc="facility_phone"/>.
+                                    (Need to change? Call <t t-esc="facility_phone"/>.)</p>
+                            </t>
+
+                            <p class="sb-note">Viet Uc Health</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        </t>
+    </template>
+
+</odoo>

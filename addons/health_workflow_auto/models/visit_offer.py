@@ -109,8 +109,24 @@ class HealthVisitOffer(models.Model):
     @api.model
     def _propose_first_visit_slots(self, lead, count=3, horizon_days=7):
         """Return up to `count` earliest feasible {date, start_time, staff_id,
-        staff_name, confidence} slots for a lead's first visit."""
+        staff_name, confidence} slots for a lead's first visit.
+
+        Thin wrapper over ``_propose_slots_for_partner`` (extracted for the
+        self-booking phase, A1): resolves the lead's partner and delegates.
+        The lead path is byte-identical to the pre-refactor behavior.
+        """
         partner = lead.patient_id or lead.partner_id
+        return self._propose_slots_for_partner(
+            partner, count=count, horizon_days=horizon_days)
+
+    @api.model
+    def _propose_slots_for_partner(self, partner, count=3, horizon_days=7):
+        """Return up to `count` earliest feasible {date, start_time, staff_id,
+        staff_name, confidence} slots for a partner's visit.
+
+        Partner-level core of the slot proposer — needs NO crm.lead, so
+        both the first-visit offer and the client self-booking invite share
+        it (self-booking handover A1)."""
         if not partner:
             return []
         facility = partner.primary_facility_id

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_self_booking" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.self.booking</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Client Self-Booking (Rebook)" name="health_self_booking_settings">
+                    <setting id="sb_auto_invite_setting" string="Auto-send rebook link after visit"
+                             help="SAFETY: off by default. When on, completing a visit sends the patient a rebook link. Rides the messaging enabled/dry-run switches.">
+                        <field name="sb_auto_invite_after_completion"/>
+                    </setting>
+                    <setting id="sb_template_setting" string="Self-booking ZNS template"
+                             help="Zalo ZNS template ID for the rebook invite. Rides the messaging enabled/dry-run switches. Empty = ZNS step skipped (invite still created).">
+                        <field name="sb_zns_template_invite"/>
+                    </setting>
+                    <setting id="sb_fallback_product_setting" string="Fallback rebook service"
+                             help="Billable service used when a client has no active package and no previous booked service to rebook. Empty = the manual button errors and auto-invite silently skips for such clients.">
+                        <field name="sb_fallback_service_product_id"/>
+                    </setting>
+                    <setting id="sb_slot_count_setting" string="Rebook slots offered"
+                             help="How many proposed time slots the rebook page shows.">
+                        <field name="sb_slot_count"/>
+                    </setting>
+                    <setting id="sb_horizon_setting" string="Rebook slot horizon (days)"
+                             help="How far ahead to look for open slots.">
+                        <field name="sb_horizon_days"/>
+                    </setting>
+                    <setting id="sb_ttl_setting" string="Rebook link lifetime (days)"
+                             help="How long a rebook link stays valid before it expires.">
+                        <field name="sb_invite_ttl_days"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_selfbook_invite_nurse,health.selfbook.invite.nurse,model_health_selfbook_invite,health_base.group_healthcare_nurse,1,0,0,0
+access_selfbook_invite_head_nurse,health.selfbook.invite.head_nurse,model_health_selfbook_invite,health_base.group_healthcare_head_nurse,1,0,0,0
+access_selfbook_invite_doctor,health.selfbook.invite.doctor,model_health_selfbook_invite,health_base.group_healthcare_doctor,1,0,0,0
+access_selfbook_invite_ops,health.selfbook.invite.ops,model_health_selfbook_invite,health_base.group_healthcare_operations_manager,1,1,1,0
+access_selfbook_invite_manager,health.selfbook.invite.manager,model_health_selfbook_invite,health_base.group_healthcare_manager,1,1,1,1
+access_selfbook_invite_admin,health.selfbook.invite.admin,model_health_selfbook_invite,health_base.group_healthcare_admin,1,1,1,1
+access_selfbook_invite_owner,health.selfbook.invite.owner,model_health_selfbook_invite,health_base.group_healthcare_owner,1,1,1,1

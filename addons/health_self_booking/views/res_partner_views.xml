@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- A6 — "Send booking link" button on the patient form's primary action
+         card (same anchor as health_fieldservice's New Booking button).
+         ops/manager groups; only for patients. -->
+    <record id="view_partner_form_selfbook_button" model="ir.ui.view">
+        <field name="name">res.partner.form.selfbook.button</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_fieldservice.view_partner_form_fso_buttons"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='primary_action_buttons']" position="inside">
+                <button name="action_send_selfbook_link"
+                        type="object"
+                        class="vu-action-btn"
+                        invisible="not is_patient"
+                        groups="health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner">
+                    <i class="fa fa-paper-plane-o"/> Gửi link đặt lịch (Send booking link)
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

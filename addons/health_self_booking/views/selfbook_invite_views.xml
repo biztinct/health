@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_selfbook_invite_list" model="ir.ui.view">
+        <field name="name">health.selfbook.invite.list</field>
+        <field name="model">health.selfbook.invite</field>
+        <field name="arch" type="xml">
+            <list string="Self-Booking Invites" create="false">
+                <field name="create_date"/>
+                <field name="patient_id"/>
+                <field name="state"/>
+                <field name="package_id" optional="hide"/>
+                <field name="service_product_id" optional="hide"/>
+                <field name="expires_at"/>
+                <field name="fso_id" optional="show"/>
+                <field name="outbound_message_id" optional="hide"/>
+                <field name="catchment_province_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_selfbook_invite_form" model="ir.ui.view">
+        <field name="name">health.selfbook.invite.form</field>
+        <field name="model">health.selfbook.invite</field>
+        <field name="arch" type="xml">
+            <form string="Self-Booking Invite" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="state"/>
+                            <field name="package_id"/>
+                            <field name="service_product_id"/>
+                            <field name="service_type"/>
+                        </group>
+                        <group>
+                            <field name="expires_at"/>
+                            <field name="fso_id"/>
+                            <field name="outbound_message_id"/>
+                            <field name="catchment_province_id"/>
+                            <field name="fso_timezone"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_selfbook_invite_search" model="ir.ui.view">
+        <field name="name">health.selfbook.invite.search</field>
+        <field name="model">health.selfbook.invite</field>
+        <field name="arch" type="xml">
+            <search string="Search Self-Booking Invites">
+                <field name="patient_id"/>
+                <field name="fso_id"/>
+                <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
+                <filter name="booked" string="Booked" domain="[('state', '=', 'booked')]"/>
+                <filter name="revoked" string="Revoked" domain="[('state', '=', 'revoked')]"/>
+                <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_by_catchment" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_selfbook_invite" model="ir.actions.act_window">
+        <field name="name">Self-Booking Invites</field>
+        <field name="res_model">health.selfbook.invite</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_selfbook_invite_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No self-booking invites yet.
+            </p>
+            <p>
+                Send a booking link from a patient's form (Send booking link), or
+                enable auto-invite after visit completion in Settings.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_selfbook_invite"
+              name="Self-Booking Invites"
+              parent="health_base.menu_healthcare_root"
+              action="action_selfbook_invite"
+              groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="31"/>
+
+</odoo>

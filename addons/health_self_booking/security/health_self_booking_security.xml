@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- A7 — catchment province record-rule pair (mirrors
+         health_family_link/security/health_family_link_security.xml). Invites
+         are created with sudo() by the button / auto hook; internal read is
+         nurse+ scoped to their catchment, owner sees all. -->
+    <record id="rule_selfbook_invite_catchment" model="ir.rule">
+        <field name="name">Self-booking invite: healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_selfbook_invite"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_selfbook_invite_owner" model="ir.rule">
+        <field name="name">Self-booking invite: owner sees all</field>
+        <field name="model_id" ref="model_health_selfbook_invite"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Defaults. noupdate so a live operator value is never reset on upgrade.
+         zns_template_invite empty => the invite ZNS row is silently NOT created
+         (no phantom send) until an operator configures the template
+         (family-link precedent). auto_invite_after_completion False => installing
+         changes nothing until a human opts in. -->
+    <data noupdate="1">
+        <record id="param_invite_ttl_days" model="ir.config_parameter">
+            <field name="key">health_self_booking.invite_ttl_days</field>
+            <field name="value">14</field>
+        </record>
+        <record id="param_slot_count" model="ir.config_parameter">
+            <field name="key">health_self_booking.slot_count</field>
+            <field name="value">6</field>
+        </record>
+        <record id="param_horizon_days" model="ir.config_parameter">
+            <field name="key">health_self_booking.horizon_days</field>
+            <field name="value">10</field>
+        </record>
+        <record id="param_auto_invite" model="ir.config_parameter">
+            <field name="key">health_self_booking.auto_invite_after_completion</field>
+            <field name="value">False</field>
+        </record>
+        <record id="param_zns_template_invite" model="ir.config_parameter">
+            <field name="key">health_self_booking.zns_template_invite</field>
+            <field name="value"></field>
+        </record>
+    </data>
+</odoo>
