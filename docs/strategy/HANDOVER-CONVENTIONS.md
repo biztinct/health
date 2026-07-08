@@ -156,6 +156,19 @@ injects JS into the shell requires bumping `health_pwa`:
     one — pass `patient_id` (already resolved) and OMIT `lead_id`.
     FSO `action_confirm_booking` requires a quote line or prepaid
     package, so any programmatic booking must attach `product_lines`.
+17. `selection_add` with `ondelete: cascade` on a model whose
+    `unlink()` raises unconditionally (e.g. `health.evv.event` — its
+    append-only guard has no `MODULE_UNINSTALL_FLAG` escape) makes the
+    EXTENDING module un-uninstallable once rows with the new selection
+    value exist: uninstall tries to cascade-delete them and crashes.
+    Live example: health_pwa_daystrip's travel events. Either accept
+    it (append-only chains SHOULD resist deletion — document it in the
+    manifest) or add the uninstall-flag escape to the base unlink.
+    Also: matrix/live-data test isolation — vietuat's
+    `health.staff.availability.matrix` carries live rows including
+    NULL-province ones that match every patient; tests touching the
+    slot proposer must create their own province+facility+staff and
+    locate their own slots by (staff, date, time), never index 0.
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 

@@ -71,8 +71,13 @@ class HealthFamilyLink(models.Model):
         if not event or event.event_type != 'travel_start':
             return ctx
         # Staleness guard — a forgotten tap must not show "on the way" all
-        # day. Freshness is measured from the tap (event_datetime, UTC).
+        # day. event_datetime is the tap time but comes from the DEVICE
+        # clock; clamp with server-side create_date so a future-skewed
+        # phone can't hold the page in "on the way" past the window
+        # (offline sync keeps working: min() picks the earlier tap time).
         started = event.event_datetime
+        if started and event.create_date:
+            started = min(started, event.create_date)
         if not started or started < (
                 fields.Datetime.now() - timedelta(hours=_TRAVEL_FRESH_HOURS)):
             return ctx
