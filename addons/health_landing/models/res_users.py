@@ -75,6 +75,54 @@ class ResUsers(models.Model):
         }
 
     @api.model
+    def get_cancelled_bookings_stats(self, period='month', date_from=False, date_to=False):
+        """Cancelled-booking oversight for the Admin Dashboard: total count in
+        the selected period + a breakdown by cancellation reason.
+        Ranges filter on health.fieldservice.order.cancellation_date."""
+        from datetime import datetime as dt, timedelta, time as dt_time
+
+        today = Date.context_today(self)
+        week_start = today - timedelta(days=today.weekday())
+        month_start = today.replace(day=1)
+
+        def _dt(d):
+            return dt.combine(d, dt_time.min).strftime('%Y-%m-%d %H:%M:%S')
+
+        domain = [('state', '=', 'cancelled')]
+        if period == 'today':
+            domain.append(('cancellation_date', '>=', _dt(today)))
+        elif period == 'week':
+            domain.append(('cancellation_date', '>=', _dt(week_start)))
+        elif period == 'month':
+            domain.append(('cancellation_date', '>=', _dt(month_start)))
+        elif period == 'custom':
+            try:
+                if date_from:
+                    domain.append(('cancellation_date', '>=', _dt(dt.strptime(date_from, '%Y-%m-%d').date())))
+                if date_to:
+                    domain.append(('cancellation_date', '<',
+                        _dt(dt.strptime(date_to, '%Y-%m-%d').date() + timedelta(days=1))))
+            except (ValueError, TypeError):
+                pass
+        # 'all' => no date bound
+
+        # Include archived (active=False) cancelled bookings so oversight
+        # reflects every cancellation, not just the still-active ones.
+        Order = self.env['health.fieldservice.order'].with_context(active_test=False)
+        count = Order.search_count(domain)
+
+        by_reason = []
+        groups = Order.read_group(domain, ['cancellation_reason_id'], ['cancellation_reason_id'])
+        for g in groups:
+            reason = g.get('cancellation_reason_id')
+            label = reason[1] if reason else 'Unspecified'
+            cnt = g.get('__count', g.get('cancellation_reason_id_count', 0))
+            by_reason.append({'reason': label, 'count': cnt})
+        by_reason.sort(key=lambda r: r['count'], reverse=True)
+
+        return {'count': count, 'by_reason': by_reason, 'period': period}
+
+    @api.model
     def _format_time_ago(self, dt):
         if not dt:
             return ""

@@ -61,6 +61,45 @@
                     </div>
                 </div>
 
+                <!-- Cancelled Bookings oversight -->
+                <div class="admin-dash-panel admin-cancel-panel">
+                    <div class="admin-cancel-head">
+                        <h3 class="admin-panel-title"><i class="fa fa-ban text-danger"/> Cancelled Bookings</h3>
+                        <div class="admin-cancel-filters">
+                            <t t-foreach="cancelPeriods" t-as="p" t-key="p.id">
+                                <button t-attf-class="admin-cancel-btn #{state.cancelPeriod === p.id ? 'active' : ''}"
+                                        t-on-click="() => this.onCancelPeriodChange(p.id)">
+                                    <t t-esc="p.label"/>
+                                </button>
+                            </t>
+                            <t t-if="state.cancelPeriod === 'custom'">
+                                <input type="date" class="admin-cancel-date" t-att-value="state.cancelFrom"
+                                       t-on-change="(ev) => this.onCancelDateChange('from', ev.target.value)" title="From"/>
+                                <span class="admin-cancel-dash">–</span>
+                                <input type="date" class="admin-cancel-date" t-att-value="state.cancelTo"
+                                       t-on-change="(ev) => this.onCancelDateChange('to', ev.target.value)" title="To"/>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="admin-cancel-body">
+                        <div class="admin-cancel-total">
+                            <div class="admin-cancel-total-value"><t t-esc="state.cancelStats.count || 0"/></div>
+                            <div class="admin-cancel-total-label">Cancelled in period</div>
+                        </div>
+                        <div class="admin-cancel-reasons">
+                            <t t-if="state.cancelStats.by_reason.length === 0">
+                                <div class="admin-cancel-empty">No cancellations in this period.</div>
+                            </t>
+                            <t t-else="">
+                                <div class="admin-cancel-reason-row" t-foreach="state.cancelStats.by_reason" t-as="r" t-key="r_index">
+                                    <span class="admin-cancel-reason-label"><t t-esc="r.reason"/></span>
+                                    <span class="admin-cancel-reason-count"><t t-esc="r.count"/></span>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Two-column layout: Quick Actions + Recent Activity -->
                 <div class="admin-dash-columns">
                     <!-- Quick Actions -->

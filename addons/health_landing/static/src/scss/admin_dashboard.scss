@@ -1,5 +1,80 @@
 // Admin Center — inline shared variables (Odoo forbids @import)
 
+// Cancelled Bookings oversight panel
+.admin-cancel-panel {
+    margin-bottom: 16px;
+
+    .admin-cancel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    .admin-cancel-filters {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .admin-cancel-btn {
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 1px solid #E0E0E0;
+        background: #fff;
+        color: #546E7A;
+        cursor: pointer;
+        transition: all 150ms;
+
+        &:hover { background: #F5F5F5; }
+        &.active { background: #1565C0; color: #fff; border-color: #1565C0; }
+    }
+    .admin-cancel-date {
+        padding: 4px 8px;
+        font-size: 12px;
+        border: 1px solid #E0E0E0;
+        border-radius: 6px;
+    }
+    .admin-cancel-dash { color: #90A4AE; }
+
+    .admin-cancel-body {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+    .admin-cancel-total {
+        min-width: 150px;
+        padding: 16px 20px;
+        background: #FFEBEE;
+        border: 1px solid #FFCDD2;
+        border-radius: 12px;
+        text-align: center;
+
+        .admin-cancel-total-value { font-size: 34px; font-weight: 800; color: #C62828; line-height: 1; }
+        .admin-cancel-total-label { font-size: 12px; color: #B71C1C; margin-top: 6px; }
+    }
+    .admin-cancel-reasons {
+        flex: 1;
+        min-width: 220px;
+    }
+    .admin-cancel-reason-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-bottom: 1px solid #ECEFF1;
+        font-size: 13px;
+
+        .admin-cancel-reason-label { color: #37474F; }
+        .admin-cancel-reason-count { font-weight: 700; color: #263238; }
+    }
+    .admin-cancel-empty { color: #90A4AE; font-size: 13px; padding: 12px; }
+}
+
+
 .admin-dashboard {
     padding: 24px 32px;
     max-width: 1400px;

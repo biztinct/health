@@ -92,3 +92,6 @@ access_res_partner_patient_owner,res.partner patient owner,base.model_res_partne
 access_health_audit_log_view_admin,health.audit.log.view admin,model_health_audit_log_view,group_healthcare_admin,1,0,0,0
 access_health_audit_log_view_owner,health.audit.log.view owner,model_health_audit_log_view,group_healthcare_owner,1,0,0,0
 access_res_users_healthcare_owner,res.users healthcare owner,base.model_res_users,group_healthcare_owner,1,1,1,1
+access_health_archive_log_admin,health.archive.log admin,model_health_archive_log,group_healthcare_admin,1,0,0,0
+access_health_archive_log_owner,health.archive.log owner,model_health_archive_log,group_healthcare_owner,1,0,0,0
+access_health_archive_reason_wizard_base,health.archive.reason.wizard base,model_health_archive_reason_wizard,group_healthcare_base,1,1,1,1
