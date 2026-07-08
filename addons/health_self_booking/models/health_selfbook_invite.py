@@ -401,17 +401,31 @@ class HealthSelfbookInvite(models.Model):
     # ------------------------------------------------------------------
     # Accept (row-locked, race-safe) — called by the public controller (A5)
     # ------------------------------------------------------------------
-    def _slot_feasible(self, staff_id, day):
+    def _slot_feasible(self, staff_id, day, start_time):
         """Re-validate a snapshotted slot against the live availability
-        matrix (a link can be opened days after the slots were proposed)."""
+        matrix at the EXACT hour (a link can be opened days after the slots
+        were proposed; staff+day alone can pass on a different open window
+        while the chosen hour is gone -> staff double-booked)."""
         self.ensure_one()
+        hour = float(start_time or 0.0)
         return bool(self.env['health.staff.availability.matrix'].sudo().search_count([
             ('staff_id', '=', staff_id),
             ('availability_date', '=', day),
+            ('start_time', '<=', hour),
+            ('end_time', '>', hour),
             ('status', '=', 'available'),
             ('remaining_capacity', '>', 0),
             ('conflict_detected', '=', False),
         ]))
+
+    def _refresh_slots(self):
+        """Stale accept -> re-propose so the re-rendered page offers times
+        that can actually be booked (empty -> the call-us body)."""
+        self.ensure_one()
+        try:
+            self.write({'slots_json': self._snapshot_slots(self.patient_id)})
+        except Exception as exc:  # noqa: BLE001 — refresh is best-effort
+            _logger.warning('Self-booking: slot refresh failed: %s', exc)
 
     def accept_slot(self, slot_index):
         """Book the chosen slot: create + confirm an FSO for the patient.
@@ -440,7 +454,8 @@ class HealthSelfbookInvite(models.Model):
 
         staff_id = slot.get('staff_id')
         day = datetime.strptime(slot['date'], '%Y-%m-%d').date()
-        if not staff_id or not self._slot_feasible(staff_id, day):
+        if not staff_id or not self._slot_feasible(staff_id, day, slot.get('start_time')):
+            self._refresh_slots()
             return {'ok': False, 'reason': 'infeasible'}
 
         # Re-validate the snapshotted booking source under the lock. A package
@@ -469,22 +484,26 @@ class HealthSelfbookInvite(models.Model):
         if not use_package and use_product:
             vals['product_lines'] = [{'product_id': self.service_product_id.id, 'qty': 1}]
 
-        create_res = FSO.action_create_from_quick_booking_owl(vals)
-        if not create_res.get('success'):
-            return {'ok': False, 'reason': 'create_failed',
-                    'detail': create_res.get('error')}
-        fso = FSO.browse(create_res['booking_id'])
-
-        if use_package:
-            try:
-                fso.write({'package_ids': [(4, self.package_id.id)]})
-            except Exception as exc:  # noqa: BLE001
-                _logger.warning('Self-booking: could not attach package: %s', exc)
-
-        # Assign the slot staff (draft -> assigned) so the confirmation staff
-        # gate is satisfied, then confirm.
-        fso.action_assign_staff_to_fso(staff_id, assignment_role='lead')
-        fso.action_confirm_booking()
+        # Savepoint around the whole create->confirm pipeline: an unexpected
+        # raise (assign/confirm/package write) must roll back to zero — no
+        # dangling draft — and surface as a friendly page, never a public 500.
+        try:
+            with self.env.cr.savepoint():
+                create_res = FSO.action_create_from_quick_booking_owl(vals)
+                if not create_res.get('success'):
+                    return {'ok': False, 'reason': 'create_failed',
+                            'detail': create_res.get('error')}
+                fso = FSO.browse(create_res['booking_id'])
+                if use_package:
+                    fso.write({'package_ids': [(4, self.package_id.id)]})
+                # Assign the slot staff (draft -> assigned) so the confirmation
+                # staff gate is satisfied, then confirm.
+                fso.action_assign_staff_to_fso(staff_id, assignment_role='lead')
+                fso.action_confirm_booking()
+        except Exception:  # noqa: BLE001
+            _logger.exception(
+                'Self-booking: accept pipeline failed for invite %s', self.id)
+            return {'ok': False, 'reason': 'create_failed'}
 
         # Reserve the slot on the availability matrix (best-effort).
         try:

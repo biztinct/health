@@ -66,14 +66,35 @@ class HealthSoftDeleteGuard(models.AbstractModel):
                 and self._health_owner_only_delete_model()
                 and not (ctx.get('archive_reason') or '').strip()):
             raise UserError(_('A reason is required to archive this record.'))
-        res = super().action_archive()
-        self._health_log_archive('archive')
+        recs = self.with_context(health_archive_via_action=True)
+        res = super(HealthSoftDeleteGuard, recs).action_archive()
+        recs._health_log_archive('archive')
         return res
 
     def action_unarchive(self):
-        res = super().action_unarchive()
-        self._health_log_archive('unarchive')
+        recs = self.with_context(health_archive_via_action=True)
+        res = super(HealthSoftDeleteGuard, recs).action_unarchive()
+        recs._health_log_archive('unarchive')
         return res
+
+    def write(self, vals):
+        # A plain write({'active': ...}) — boolean_toggle widgets, imports,
+        # code paths that skip action_archive — must still reach the archive
+        # log, or the log is not trustworthy as a compliance record. The
+        # context flag prevents double-logging when the write comes from
+        # action_archive/unarchive (which call write internally).
+        if (
+            'active' in vals
+            and 'active' in self._fields
+            and not self.env.context.get('health_archive_via_action')
+            and self._health_owner_only_delete_model()
+        ):
+            target = bool(vals['active'])
+            changed = self.filtered(lambda r: bool(r.active) != target)
+            res = super().write(vals)
+            changed._health_log_archive('unarchive' if target else 'archive')
+            return res
+        return super().write(vals)
 
     def _health_log_archive(self, action):
         """Write an append-only archive-log row (+ chatter) for business records."""

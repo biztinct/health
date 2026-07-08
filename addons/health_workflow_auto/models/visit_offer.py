@@ -307,12 +307,17 @@ class HealthVisitOffer(models.Model):
     # Acceptance (row-locked, race-safe) — called by the public controller
     # ------------------------------------------------------------------
     def _slot_feasible(self, slot):
-        """Re-validate a slot against the live availability matrix."""
+        """Re-validate a slot against the live availability matrix at the
+        EXACT hour — staff+day alone can pass on a different open window
+        while the offered hour is gone (staff double-booked)."""
         self.ensure_one()
         Matrix = self.env['health.staff.availability.matrix']
+        hour = float(slot.start_time or 0.0)
         return bool(Matrix.search_count([
             ('staff_id', '=', slot.staff_id.id),
             ('availability_date', '=', slot.slot_date),
+            ('start_time', '<=', hour),
+            ('end_time', '>', hour),
             ('status', '=', 'available'),
             ('remaining_capacity', '>', 0),
             ('conflict_detected', '=', False),

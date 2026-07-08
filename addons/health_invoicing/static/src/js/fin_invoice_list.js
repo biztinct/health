@@ -177,16 +177,26 @@ export class FinInvoiceListController extends ListController {
     // Bulk "Receive Payment": open the standard Register Payment wizard for all
     // selected invoices. The server enforces a single-client selection.
     async onBulkReceivePayment() {
+        // In-flight guard: a double-click must not stack two pre-filled
+        // wizards (confirming the stale one would post a second payment).
+        if (this._bulkPaymentInFlight) {
+            return;
+        }
         const records = this.model.root.selection;
         if (!records.length) {
             this.notification.add(_t("Select one or more invoices first."), { type: "warning" });
             return;
         }
-        const ids = records.map((r) => r.resId);
-        const action = await this.orm.call("account.move", "action_register_payment_bulk", [ids]);
-        this.actionService.doAction(action, {
-            onClose: () => this.model.root.load(),
-        });
+        this._bulkPaymentInFlight = true;
+        try {
+            const ids = records.map((r) => r.resId);
+            const action = await this.orm.call("account.move", "action_register_payment_bulk", [ids]);
+            await this.actionService.doAction(action, {
+                onClose: () => this.model.root.load(),
+            });
+        } finally {
+            this._bulkPaymentInFlight = false;
+        }
     }
 }
 
