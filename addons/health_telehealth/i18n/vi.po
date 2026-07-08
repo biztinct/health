@@ -1,0 +1,87 @@
+# Vietnamese translation for health_telehealth
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_telehealth\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_telehealth
+msgid "Health Telehealth (Video Visits)"
+msgstr "Khám trực tuyến (Video)"
+
+#. module: health_telehealth
+msgid "Telehealth Video Session"
+msgstr "Phiên khám trực tuyến"
+
+#. module: health_telehealth
+msgid "Telehealth Sessions"
+msgstr "Phiên khám trực tuyến"
+
+#. module: health_telehealth
+msgid "Telehealth Session"
+msgstr "Phiên khám trực tuyến"
+
+#. module: health_telehealth
+msgid "Telehealth Join Link"
+msgstr "Liên kết vào phòng khám trực tuyến"
+
+#. module: health_telehealth
+msgid "Join Video"
+msgstr "Vào video"
+
+#. module: health_telehealth
+msgid "Visit"
+msgstr "Lịch khám"
+
+#. module: health_telehealth
+msgid "Pending"
+msgstr "Chờ"
+
+#. module: health_telehealth
+msgid "Open"
+msgstr "Đang diễn ra"
+
+#. module: health_telehealth
+msgid "Closed"
+msgstr "Đã kết thúc"
+
+#. module: health_telehealth
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_telehealth
+msgid "Video Session State"
+msgstr "Trạng thái phiên video"
+
+#. module: health_telehealth
+msgid "Join Message"
+msgstr "Tin nhắn mời vào phòng khám"
+
+#. module: health_telehealth
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_telehealth
+msgid "Enable Telehealth Sessions"
+msgstr "Bật phiên khám trực tuyến"
+
+#. module: health_telehealth
+msgid "Telehealth Video Base URL"
+msgstr "URL gốc cho video khám trực tuyến"
+
+#. module: health_telehealth
+msgid "Telehealth Join ZNS Template ID"
+msgstr "Mã mẫu ZNS mời vào phòng khám"
+
+#. module: health_telehealth
+msgid "The video room is not available yet. It opens when the visit is confirmed and you are assigned to it."
+msgstr "Phòng khám chưa sẵn sàng. Phòng sẽ mở khi lịch khám được xác nhận và bạn được phân công."
+
+#. module: health_telehealth
+msgid "No usable phone for the patient."
+msgstr "Không có số điện thoại hợp lệ cho bệnh nhân."

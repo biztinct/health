@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- telehealth.css after health.css so the cascade wins without specificity
+         hacks (daystrip/ergo precedent). Styles ONLY its own .tele-* elements.
+         ?v cache-busts on the shared PWA asset version. -->
+    <template id="app_shell_telehealth_head" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Telehealth (head)">
+        <xpath expr="//link[contains(@t-attf-href, 'css/health.css')]"
+               position="after">
+            <link t-attf-href="/health_telehealth/static/src/css/telehealth.css?v=#{pwa_asset_version}"
+                  rel="stylesheet" type="text/css"/>
+        </xpath>
+    </template>
+
+    <!-- telehealth.js after router.js (daystrip/ergo precedent). Plain IIFE,
+         window.healthTelehealth global, no app.js hooks. Injects a "Vào video
+         (Join video)" action into the daystrip card reveal row for cards whose
+         today payload location === 'online'. -->
+    <template id="app_shell_telehealth_scripts" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Telehealth (scripts)">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_telehealth/static/src/js/telehealth.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

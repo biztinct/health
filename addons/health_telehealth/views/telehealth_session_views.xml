@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_telehealth_session_list" model="ir.ui.view">
+        <field name="name">health.telehealth.session.list</field>
+        <field name="model">health.telehealth.session</field>
+        <field name="arch" type="xml">
+            <list string="Telehealth Sessions" create="false">
+                <field name="create_date"/>
+                <field name="fso_id"/>
+                <field name="state"/>
+                <field name="opened_at" optional="show"/>
+                <field name="closed_at" optional="hide"/>
+                <field name="expires_at" optional="hide"/>
+                <field name="outbound_message_id" optional="hide"/>
+                <field name="catchment_province_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_telehealth_session_form" model="ir.ui.view">
+        <field name="name">health.telehealth.session.form</field>
+        <field name="model">health.telehealth.session</field>
+        <field name="arch" type="xml">
+            <form string="Telehealth Session" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="fso_id"/>
+                            <field name="state"/>
+                            <field name="opened_at"/>
+                            <field name="closed_at"/>
+                        </group>
+                        <group>
+                            <field name="expires_at"/>
+                            <field name="outbound_message_id"/>
+                            <field name="catchment_province_id"/>
+                            <!-- Room URL is a capability URL; shown to internal
+                                 staff only, never rendered on a public page except
+                                 the live waiting room. -->
+                            <field name="room_url" widget="url"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_telehealth_session_search" model="ir.ui.view">
+        <field name="name">health.telehealth.session.search</field>
+        <field name="model">health.telehealth.session</field>
+        <field name="arch" type="xml">
+            <search string="Search Telehealth Sessions">
+                <field name="fso_id"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="open" string="Live" domain="[('state', '=', 'open')]"/>
+                <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_by_catchment" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_telehealth_session" model="ir.actions.act_window">
+        <field name="name">Telehealth Sessions</field>
+        <field name="res_model">health.telehealth.session</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_telehealth_session_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No telehealth sessions yet.
+            </p>
+            <p>
+                A session is created automatically when an online (telemedicine)
+                booking is confirmed.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_telehealth_session"
+              name="Telehealth Sessions"
+              parent="health_base.menu_healthcare_root"
+              action="action_telehealth_session"
+              groups="health_base.group_healthcare_head_nurse,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="32"/>
+
+</odoo>

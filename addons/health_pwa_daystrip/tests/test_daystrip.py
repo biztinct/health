@@ -289,23 +289,23 @@ class TestPublicOnTheWay(HttpCase, DaystripMixin):
 
 
 # =====================================================================
-# 5 — Shell HttpCase: daystrip assets + version 1.7.0, ergo still served
+# 5 — Shell HttpCase: daystrip assets + version 1.8.0, ergo still served
 # =====================================================================
 @tagged('post_install', '-at_install')
 class TestShellAssets(HttpCase):
 
-    def test_shell_serves_daystrip_at_1_7_0(self):
+    def test_shell_serves_daystrip_at_1_8_0(self):
         user = new_test_user(
             self.env, login='ds_shell_user', groups='base.group_user')
         self.authenticate(user.login, user.login)
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('daystrip.css?v=1.7.0', body)
-        self.assertIn('daystrip.js?v=1.7.0', body)
-        self.assertIn('1.7.0', body)
+        self.assertIn('daystrip.css?v=1.8.0', body)
+        self.assertIn('daystrip.js?v=1.8.0', body)
+        self.assertIn('1.8.0', body)
         # Co-resident ergo assets must still be served after the bump.
-        self.assertIn('ergo.css?v=1.7.0', body)
+        self.assertIn('ergo.css?v=1.8.0', body)
 
 
 # =====================================================================

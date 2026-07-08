@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Defaults. noupdate so a live operator value is never reset on upgrade.
+         zns_template_join empty => the join ZNS row is silently NOT created
+         (no phantom send) until an operator configures the template
+         (family-link precedent). enabled True => session creation is inert
+         paperwork; sends still ride health_messaging.enabled/dry_run. -->
+    <data noupdate="1">
+        <record id="param_video_base_url" model="ir.config_parameter">
+            <field name="key">health_telehealth.video_base_url</field>
+            <field name="value">https://meet.jit.si</field>
+        </record>
+        <record id="param_zns_template_join" model="ir.config_parameter">
+            <field name="key">health_telehealth.zns_template_join</field>
+            <field name="value"></field>
+        </record>
+        <record id="param_enabled" model="ir.config_parameter">
+            <field name="key">health_telehealth.enabled</field>
+            <field name="value">True</field>
+        </record>
+    </data>
+</odoo>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health PWA - Mobile Progressive Web Application',
-    'version': '19.0.1.0.20',
+    'version': '19.0.1.0.21',
     'category': 'Healthcare/Mobile',
     'summary': 'Progressive Web Application for Healthcare Field Workers with Offline Capabilities',
     'description': """

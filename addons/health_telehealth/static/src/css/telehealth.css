@@ -1,0 +1,65 @@
+/* =====================================================================
+ * Health Telehealth — telehealth.css
+ * Loaded AFTER health.css. Styles ONLY its own .tele-* elements, so it never
+ * collides with app / ergo / daystrip rules. Flat mono colors only (no
+ * gradients). Explicit html.vu-glove / html.vu-sunlight sections for ergo
+ * compatibility (daystrip precedent).
+ *
+ * The Join button is normally appended into daystrip's .daystrip-actions
+ * reveal row (so it inherits .daystrip-act sizing); .tele-join only sets its
+ * flat fill. .tele-actions is the standalone fallback when daystrip is absent.
+ * ===================================================================== */
+
+.tele-join { background: #5b3fd1; }        /* flat indigo, distinct from call/go */
+.tele-join:active { filter: brightness(0.92); }
+
+/* Standalone fallback row (no daystrip): a right-aligned action strip. */
+.tele-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0 0;
+}
+.tele-actions .tele-join {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 96px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tele-actions .tele-join svg { width: 22px; height: 22px; }
+
+/* Persistent "online visit" cue on the card face. */
+.tele-card { position: relative; }
+
+/* =====================================================================
+ * GLOVE MODE (html.vu-glove) — bigger targets via --touch-target.
+ * ===================================================================== */
+html.vu-glove .tele-actions .tele-join {
+  min-width: var(--touch-target, 64px);
+  min-height: var(--touch-target, 64px);
+  font-size: 1rem;
+  padding: 0 16px;
+}
+html.vu-glove .tele-actions .tele-join svg { width: 28px; height: 28px; }
+
+/* =====================================================================
+ * SUNLIGHT MODE (html.vu-sunlight) — pure black/white, 2px borders, no
+ * color-carried meaning.
+ * ===================================================================== */
+html.vu-sunlight .tele-join {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-left: 2px solid #ffffff;
+}
+html.vu-sunlight .tele-actions .tele-join {
+  border: 2px solid #000000;
+}

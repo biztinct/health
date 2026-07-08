@@ -184,7 +184,21 @@ class SaleOrder(models.Model):
                 order.fso_distance = fso.travel_distance or 0.0
                 order.fso_appointment_time = fso.scheduled_datetime
                 order.fso_service_type = fso.service_type
-                order.fso_service_location = fso.service_location
+                # Map FSO service_location values onto this field's Selection.
+                # The FSO enum ('online', 'nursing_home', 'office', ...) is
+                # wider than this pricing Selection (home/clinic/hospital/
+                # care_facility/remote); an unmapped value makes this stored
+                # compute raise on flush (a latent crash for online/telemedicine
+                # bookings, which health_telehealth relies on). 'remote' is the
+                # field's own "Remote/Online" bucket.
+                _loc_map = {
+                    'online': 'remote',
+                    'nursing_home': 'care_facility',
+                    'office': 'clinic',
+                }
+                _valid_locs = {'home', 'clinic', 'hospital', 'care_facility', 'remote'}
+                _loc = _loc_map.get(fso.service_location, fso.service_location)
+                order.fso_service_location = _loc if _loc in _valid_locs else False
                 # Map urgency levels (FSO uses different values than sale order)
                 try:
                     urgency_mapping = {

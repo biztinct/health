@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Catchment province record-rule pair (family-link template). Sessions
+         are created with sudo() by the visit-lifecycle hooks; internal read is
+         nurse+ scoped to their catchment, owner sees all. -->
+    <record id="rule_telehealth_session_catchment" model="ir.rule">
+        <field name="name">Telehealth session: healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_telehealth_session"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_telehealth_session_owner" model="ir.rule">
+        <field name="name">Telehealth session: owner sees all</field>
+        <field name="model_id" ref="model_health_telehealth_session"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>

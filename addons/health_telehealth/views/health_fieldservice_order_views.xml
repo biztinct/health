@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- "Join Video" header button — visible only while the session is live
+         (state open). Uses the related telehealth_session_state so no extra
+         server round-trip. Access is re-checked server-side in
+         _tele_join_url (assigned staff or manager). -->
+    <record id="view_fso_form_telehealth" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.telehealth</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="telehealth_session_state" invisible="1"/>
+                <button name="action_tele_join" type="object"
+                        string="Join Video" icon="fa-video-camera"
+                        class="oe_highlight"
+                        invisible="telehealth_session_state != 'open'"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

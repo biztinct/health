@@ -10,26 +10,26 @@ class TestPwaErgo(HttpCase):
     """Front-end phase — the Python surface is the shell render + a CSS pin."""
 
     def test_01_shell_injects_ergo_assets(self):
-        """The PWA shell serves ergo.css/ergo.js at 1.7.0 + the boot marker."""
+        """The PWA shell serves ergo.css/ergo.js at 1.8.0 + the boot marker."""
         user = new_test_user(
             self.env, login='ergo_shell_user', groups='base.group_user')
         self.authenticate(user.login, user.login)
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('ergo.css?v=1.7.0', body)
-        self.assertIn('ergo.js?v=1.7.0', body)
+        self.assertIn('ergo.css?v=1.8.0', body)
+        self.assertIn('ergo.js?v=1.8.0', body)
         # No-FOUC boot script reads localStorage.vu_ergo_modes in <head>.
         self.assertIn('vu_ergo_modes', body)
 
-    def test_02_shell_version_is_1_7_0(self):
+    def test_02_shell_version_is_1_8_0(self):
         """Guards the 5-place version bump (shared PWA asset version)."""
         user = new_test_user(
             self.env, login='ergo_ver_user', groups='base.group_user')
         self.authenticate(user.login, user.login)
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
-        self.assertIn('1.7.0', res.text)
+        self.assertIn('1.8.0', res.text)
 
     def test_03_glove_touch_target_pinned(self):
         """Static sanity: glove mode sets --touch-target: 64px."""

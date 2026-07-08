@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_telehealth_session_nurse,health.telehealth.session.nurse,model_health_telehealth_session,health_base.group_healthcare_nurse,1,0,0,0
+access_telehealth_session_head_nurse,health.telehealth.session.head_nurse,model_health_telehealth_session,health_base.group_healthcare_head_nurse,1,0,0,0
+access_telehealth_session_doctor,health.telehealth.session.doctor,model_health_telehealth_session,health_base.group_healthcare_doctor,1,0,0,0
+access_telehealth_session_ops,health.telehealth.session.ops,model_health_telehealth_session,health_base.group_healthcare_operations_manager,1,0,0,0
+access_telehealth_session_manager,health.telehealth.session.manager,model_health_telehealth_session,health_base.group_healthcare_manager,1,1,1,1
+access_telehealth_session_admin,health.telehealth.session.admin,model_health_telehealth_session,health_base.group_healthcare_admin,1,1,1,1
+access_telehealth_session_owner,health.telehealth.session.owner,model_health_telehealth_session,health_base.group_healthcare_owner,1,1,1,1
