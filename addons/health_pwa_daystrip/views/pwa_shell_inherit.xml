@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- daystrip.css after health.css so the cascade wins without specificity
+         hacks (ergo precedent). daystrip styles ONLY its own .daystrip-*
+         elements, so it never collides with ergo.css's app-element rules
+         regardless of relative load order. ?v cache-busts on the shared PWA
+         asset version. -->
+    <template id="app_shell_daystrip_head" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Day-Strip (head)">
+        <xpath expr="//link[contains(@t-attf-href, 'css/health.css')]"
+               position="after">
+            <link t-attf-href="/health_pwa_daystrip/static/src/css/daystrip.css?v=#{pwa_asset_version}"
+                  rel="stylesheet" type="text/css"/>
+        </xpath>
+    </template>
+
+    <!-- daystrip.js after router.js (ergo/consent precedent). Plain IIFE,
+         window.healthDaystrip global, no app.js hooks. -->
+    <template id="app_shell_daystrip_scripts" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Day-Strip (scripts)">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_pwa_daystrip/static/src/js/daystrip.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

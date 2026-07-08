@@ -1,0 +1,163 @@
+/* =====================================================================
+ * Health PWA Day-Strip + "On My Way" — daystrip.css
+ * Loaded AFTER health.css. Styles ONLY its own .daystrip-* elements, so it
+ * never collides with ergo.css's app-element rules. Flat mono colors only
+ * (no gradients). Explicit html.vu-glove (bigger gloved-hand targets) and
+ * html.vu-sunlight (pure #000/#fff, 2px borders, no shadows) sections for
+ * every element — ergo compatibility (handover §2.3).
+ * ===================================================================== */
+
+/* ---- Day-strip header ------------------------------------------------ */
+.daystrip-strip {
+  margin: 6px 0 12px;
+  padding: 8px 10px 4px;
+  background: #ffffff;
+  border: 1px solid #e3e6ea;
+  border-radius: 12px;
+}
+.daystrip-track {
+  position: relative;
+  height: 40px;
+  margin-top: 14px;
+  border-radius: 8px;
+  background: #f1f3f5;
+}
+.daystrip-tick {
+  position: absolute;
+  top: -14px;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed #d4d9de;
+  transform: translateX(-0.5px);
+}
+.daystrip-tick > span {
+  position: absolute;
+  top: -2px;
+  left: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8a94a1;
+  white-space: nowrap;
+}
+.daystrip-block {
+  position: absolute;
+  top: 8px;
+  height: 24px;
+  min-width: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
+  transition: transform 0.08s ease;
+}
+.daystrip-block:active { transform: scale(0.94); }
+.daystrip-now {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: #e53935;
+  transform: translateX(-1px);
+  z-index: 2;
+}
+.daystrip-now::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e53935;
+}
+
+/* ---- Swipe-to-reveal action row -------------------------------------- */
+.daystrip-card { position: relative; overflow: hidden; }
+.daystrip-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  transform: translateX(100%);
+  transition: transform 0.18s ease;
+  z-index: 3;
+}
+.daystrip-act {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 76px;
+  padding: 0 12px;
+  border: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.daystrip-act svg { width: 22px; height: 22px; }
+.daystrip-act--call { background: #0b6b5a; }
+.daystrip-act--go { background: #1565c0; }
+.daystrip-act--go.is-active { background: #e53935; }
+.daystrip-act:active { filter: brightness(0.92); }
+
+/* Persistent "traveling" cue on the card face (no injected node). */
+.daystrip-card--go { box-shadow: inset 3px 0 0 0 #1565c0; }
+
+/* Tap-from-strip highlight pulse. */
+.daystrip-hi { outline: 2px solid #1565c0; outline-offset: 2px; }
+
+/* =====================================================================
+ * GLOVE MODE (html.vu-glove) — bigger targets; reveal row height grows via
+ * --touch-target (handover: gloved-hand accidental swipes -> doubled row).
+ * ===================================================================== */
+html.vu-glove .daystrip-track { height: 52px; }
+html.vu-glove .daystrip-block { height: 32px; top: 10px; min-width: 12px; }
+html.vu-glove .daystrip-act {
+  min-width: var(--touch-target, 64px);
+  min-height: var(--touch-target, 64px);
+  font-size: 1rem;
+  padding: 0 16px;
+}
+html.vu-glove .daystrip-act svg { width: 28px; height: 28px; }
+html.vu-glove .daystrip-strip { padding: 12px 12px 6px; }
+
+/* =====================================================================
+ * SUNLIGHT MODE (html.vu-sunlight) — pure black/white, 2px borders, no
+ * shadows, no color-carried meaning. Inline block colors are overridden
+ * with !important to a mono fill; time position now carries meaning.
+ * ===================================================================== */
+html.vu-sunlight .daystrip-strip {
+  background: #ffffff;
+  border: 2px solid #000000;
+}
+html.vu-sunlight .daystrip-track {
+  background: #ffffff;
+  border: 2px solid #000000;
+}
+html.vu-sunlight .daystrip-tick { border-left-color: #000000; }
+html.vu-sunlight .daystrip-tick > span { color: #000000; font-weight: 700; }
+html.vu-sunlight .daystrip-block {
+  background: #000000 !important;
+  border: 2px solid #000000;
+  box-shadow: none;
+}
+html.vu-sunlight .daystrip-now,
+html.vu-sunlight .daystrip-now::before { background: #000000; }
+html.vu-sunlight .daystrip-act {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-left: 2px solid #ffffff;
+}
+html.vu-sunlight .daystrip-act--go.is-active {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000;
+}
+html.vu-sunlight .daystrip-card--go { box-shadow: inset 4px 0 0 0 #000000; }
+html.vu-sunlight .daystrip-hi { outline-color: #000000; }

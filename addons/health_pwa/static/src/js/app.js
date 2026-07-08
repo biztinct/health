@@ -3024,7 +3024,7 @@ window.healthPWA = {
             </div>
 
             <div v-else class="bookings-list">
-              <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card" :style="{ '--ac': statusAccent(booking) }" @click="toggleBookingDetail(booking.fso_id)">
+              <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card" :data-fso-id="booking.fso_id" :data-fso-status="booking.status" :style="{ '--ac': statusAccent(booking) }" @click="toggleBookingDetail(booking.fso_id)">
                   <!-- Header with time and status -->
                   <div class="booking-card-header">
                     <div class="booking-time-badge">

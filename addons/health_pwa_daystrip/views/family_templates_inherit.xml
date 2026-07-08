@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Family page "on the way" state (handover §2.2).
+         An UPCOMING visit with a fresh travel_start renders a block styled
+         like the "arrived" block. ONLY in this mode we inject a
+         <meta http-equiv="refresh"> so the family's open, JS-free tab
+         updates itself. The style is self-contained (the public page cannot
+         load backend theme CSS), flat mono, no gradients. -->
+    <template id="family_page_on_the_way"
+              inherit_id="health_family_link.family_page"
+              name="Family Page — On The Way">
+
+        <!-- HEAD: self-refresh only while on the way + block styling. -->
+        <xpath expr="//head" position="inside">
+            <t t-if="mode == 'on_the_way'">
+                <meta http-equiv="refresh" content="120"/>
+            </t>
+            <style>
+                .fl-status.ontheway { background: #eaf1fb; color: #1b4f9c; }
+                .fl-eta { display: inline-block; margin: 4px 0 8px;
+                          padding: 10px 16px; background: #eaf1fb; color: #1b4f9c;
+                          border-radius: 12px; font-weight: 700; font-size: 16px; }
+                .fl-eta svg { width: 18px; height: 18px; vertical-align: -3px;
+                              margin-right: 6px; }
+            </style>
+        </xpath>
+
+        <!-- BODY: the on-the-way block, inserted after all existing mode
+             blocks and before the brand footer note. -->
+        <xpath expr="//div[hasclass('fl-card')]/p[hasclass('fl-note')]"
+               position="before">
+            <t t-if="mode == 'on_the_way'">
+                <span class="fl-status ontheway">Đang trên đường (On the way)</span>
+                <div class="fl-h1">Điều dưỡng đang trên đường</div>
+                <p class="fl-sub">Điều dưỡng đang di chuyển đến chỗ <t t-esc="patient_name"/>.
+                   (Your nurse is on the way to <t t-esc="patient_name"/>.)</p>
+                <div class="fl-eta" t-if="eta_text">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+                    </svg>Dự kiến đến sau <t t-esc="eta_text"/></div>
+                <div class="fl-row" t-if="staff_name">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span><span class="fl-label">Nhân viên (Staff)</span>
+                          <span class="fl-val"><t t-esc="staff_role"/> <t t-esc="staff_name"/></span></span>
+                </div>
+                <p class="fl-note" t-if="facility_phone">
+                    Cần hỗ trợ? Gọi <t t-esc="facility_phone"/>.
+                    (Need help? Call <t t-esc="facility_phone"/>.)</p>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
