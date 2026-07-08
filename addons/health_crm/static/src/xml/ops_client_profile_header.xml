@@ -8,7 +8,7 @@
             <div class="ph-main-contact">
                 <span class="ph-mc__label">Main Contact</span>
                 <div class="ph-mc__field">
-                    <Field name="'main_contact_id'" record="model.root"/>
+                    <Field name="'main_contact_id'" record="model.root" fieldInfo="mainContactFieldInfo"/>
                 </div>
                 <div class="ph-mc__phone" t-if="model.root.data.main_contact_phone">
                     <i class="fa fa-phone"/>

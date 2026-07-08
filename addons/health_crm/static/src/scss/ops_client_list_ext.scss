@@ -16,10 +16,12 @@
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    // Left-align contents so the label + phone line up with the m2o value
+    // ("Client Jun25") rather than hugging the right edge near the icons.
+    align-items: flex-start;
     justify-content: center;
     gap: 3px;
-    text-align: right;
+    text-align: left;
     padding: 0 4px;
 
     .ph-mc__label {
