@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_family_link_nurse,health.family.link.nurse,model_health_family_link,health_base.group_healthcare_nurse,1,0,0,0
+access_family_link_head_nurse,health.family.link.head_nurse,model_health_family_link,health_base.group_healthcare_head_nurse,1,0,0,0
+access_family_link_doctor,health.family.link.doctor,model_health_family_link,health_base.group_healthcare_doctor,1,0,0,0
+access_family_link_ops,health.family.link.ops,model_health_family_link,health_base.group_healthcare_operations_manager,1,0,0,0
+access_family_link_manager,health.family.link.manager,model_health_family_link,health_base.group_healthcare_manager,1,1,1,1
+access_family_link_admin,health.family.link.admin,model_health_family_link,health_base.group_healthcare_admin,1,1,1,1
+access_family_link_owner,health.family.link.owner,model_health_family_link,health_base.group_healthcare_owner,1,1,1,1

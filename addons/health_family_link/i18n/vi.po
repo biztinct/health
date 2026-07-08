@@ -1,0 +1,83 @@
+# Vietnamese translation for health_family_link
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_family_link\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_family_link
+msgid "Family Visit Link"
+msgstr "Liên kết thăm khám cho gia đình"
+
+#. module: health_family_link
+msgid "Family Visit Links"
+msgstr "Liên kết thăm khám cho gia đình"
+
+#. module: health_family_link
+msgid "Family Relation"
+msgstr "Quan hệ gia đình"
+
+#. module: health_family_link
+msgid "Receives Visit Updates"
+msgstr "Nhận thông báo thăm khám"
+
+#. module: health_family_link
+msgid "Recipient"
+msgstr "Người nhận"
+
+#. module: health_family_link
+msgid "Visit"
+msgstr "Lượt thăm khám"
+
+#. module: health_family_link
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_family_link
+msgid "Revoked"
+msgstr "Đã thu hồi"
+
+#. module: health_family_link
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_family_link
+msgid "Catchment Area"
+msgstr "Khu vực quản lý"
+
+#. module: health_family_link
+msgid "Visit-Link Message"
+msgstr "Tin nhắn liên kết thăm khám"
+
+#. module: health_family_link
+msgid "Snapshot Message"
+msgstr "Tin nhắn tóm tắt sau thăm khám"
+
+#. module: health_family_link
+msgid "Family Visit Link"
+msgstr "Liên kết thăm khám cho gia đình"
+
+#. module: health_family_link
+msgid "Family Post-Visit Snapshot"
+msgstr "Tóm tắt sau thăm khám cho gia đình"
+
+#. module: health_family_link
+msgid "y tá"
+msgstr "y tá"
+
+#. module: health_family_link
+msgid "No usable phone for the recipient."
+msgstr "Không có số điện thoại hợp lệ cho người nhận."
+
+#. module: health_family_link
+msgid "Family link"
+msgstr "Liên kết gia đình"
+
+#. module: health_family_link
+msgid "Family link: %(patient)s -> %(rep)s"
+msgstr "Liên kết gia đình: %(patient)s -> %(rep)s"

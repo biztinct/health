@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Standalone, self-contained mobile pages (no website/backend assets).
+         Flat mono colors, no gradients, inlined currentColor SVG icons (the
+         public page cannot load the backend theme's hf-wt-ico mask CSS).
+         No emoji. vi-first with an en gloss. Renders on a phone. -->
+    <template id="family_styles" name="Family Link Styles">
+        <style>
+            * { box-sizing: border-box; }
+            body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+                   background: #f4f5f7; color: #1f2733; -webkit-text-size-adjust: 100%; }
+            .fl-wrap { max-width: 480px; margin: 0 auto; padding: 24px 18px 48px; }
+            .fl-card { background: #ffffff; border: 1px solid #e3e6ea; border-radius: 14px;
+                       padding: 22px 20px; }
+            .fl-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; color: #0b6b5a; }
+            .fl-brand svg { width: 26px; height: 26px; }
+            .fl-brand span { font-weight: 700; font-size: 17px; letter-spacing: .2px; }
+            .fl-h1 { font-size: 20px; font-weight: 700; margin: 6px 0 4px; }
+            .fl-sub { color: #5b6572; font-size: 14px; margin: 0 0 18px; }
+            .fl-row { display: flex; align-items: center; gap: 12px; padding: 12px 0;
+                      border-top: 1px solid #eef0f2; font-size: 16px; }
+            .fl-row:first-of-type { border-top: none; }
+            .fl-row svg { width: 20px; height: 20px; flex: 0 0 auto; color: #0b6b5a; }
+            .fl-row .fl-label { display: block; font-size: 12px; font-weight: 500; color: #8a94a1; }
+            .fl-row .fl-val { font-weight: 600; }
+            .fl-status { display: inline-block; padding: 5px 12px; border-radius: 999px;
+                         font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+            .fl-status.upcoming { background: #e6f4f1; color: #0b6b5a; }
+            .fl-status.arrived { background: #eaf1fb; color: #1b4f9c; }
+            .fl-status.completed { background: #ecf6ec; color: #256b2b; }
+            .fl-summary { background: #f7f9f9; border: 1px solid #e3e6ea; border-radius: 10px;
+                          padding: 14px 16px; font-size: 15px; line-height: 1.5; margin-top: 8px;
+                          white-space: pre-wrap; }
+            .fl-note { font-size: 13px; color: #8a94a1; margin-top: 16px; text-align: center; }
+        </style>
+    </template>
+
+    <!-- Shared brand header -->
+    <template id="family_brand" name="Family Link Brand">
+        <div class="fl-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-7-4.35-9.5-8.5A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6.5C19 16.65 12 21 12 21z"/>
+            </svg>
+            <span>Viet Uc Health</span>
+        </div>
+    </template>
+
+    <!-- Neutral page: invalid / expired / revoked / cancelled / consent-gone -->
+    <template id="family_neutral" name="Family Link Unavailable">
+        <t t-name="health_family_link.family_neutral">
+            <html lang="vi">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                    <title>Thông tin thăm khám</title>
+                    <t t-call="health_family_link.family_styles"/>
+                </head>
+                <body>
+                    <div class="fl-wrap">
+                        <div class="fl-card">
+                            <t t-call="health_family_link.family_brand"/>
+                            <div class="fl-h1">Không có thông tin để hiển thị</div>
+                            <p class="fl-sub">Liên kết này không còn hiệu lực hoặc chưa có thông tin.
+                               Vui lòng liên hệ với chúng tôi nếu cần hỗ trợ.
+                               <br/>(This link is no longer available. Please contact us if you need help.)</p>
+                            <p class="fl-note">Viet Uc Health</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        </t>
+    </template>
+
+    <!-- Live page: upcoming / arrived / completed -->
+    <template id="family_page" name="Family Visit Page">
+        <t t-name="health_family_link.family_page">
+            <html lang="vi">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+                    <title>Thông tin thăm khám</title>
+                    <t t-call="health_family_link.family_styles"/>
+                </head>
+                <body>
+                    <div class="fl-wrap">
+                        <div class="fl-card">
+                            <t t-call="health_family_link.family_brand"/>
+
+                            <!-- Upcoming -->
+                            <t t-if="mode == 'upcoming'">
+                                <span class="fl-status upcoming">Sắp diễn ra (Upcoming)</span>
+                                <div class="fl-h1">Lịch thăm khám của <t t-esc="patient_name"/></div>
+                                <p class="fl-sub">Điều dưỡng sẽ đến theo lịch dưới đây.
+                                   (Your nurse will visit at the time below.)</p>
+                                <div class="fl-row">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                        <path d="M16 2v4M8 2v4M3 10h18"/>
+                                    </svg>
+                                    <span><span class="fl-label">Ngày (Date)</span>
+                                          <span class="fl-val"><t t-esc="visit_date"/></span></span>
+                                </div>
+                                <div class="fl-row" t-if="time_window">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+                                    </svg>
+                                    <span><span class="fl-label">Khung giờ (Time)</span>
+                                          <span class="fl-val"><t t-esc="time_window"/></span></span>
+                                </div>
+                                <div class="fl-row" t-if="staff_name">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <span><span class="fl-label">Nhân viên (Staff)</span>
+                                          <span class="fl-val"><t t-esc="staff_role"/> <t t-esc="staff_name"/></span></span>
+                                </div>
+                                <p class="fl-note" t-if="facility_phone">
+                                    Cần thay đổi lịch? Gọi <t t-esc="facility_phone"/>.
+                                    (Need to change? Call <t t-esc="facility_phone"/>.)</p>
+                            </t>
+
+                            <!-- Arrived -->
+                            <t t-if="mode == 'arrived'">
+                                <span class="fl-status arrived">Đang thăm khám (In progress)</span>
+                                <div class="fl-h1">Điều dưỡng đã đến</div>
+                                <p class="fl-sub">
+                                    <t t-if="arrived_time">Điều dưỡng đã đến lúc <t t-esc="arrived_time"/>.
+                                       (Your nurse arrived at <t t-esc="arrived_time"/>.)</t>
+                                    <t t-else="">Điều dưỡng đang thực hiện thăm khám. (Visit in progress.)</t>
+                                </p>
+                                <div class="fl-row" t-if="staff_name">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <span><span class="fl-label">Nhân viên (Staff)</span>
+                                          <span class="fl-val"><t t-esc="staff_role"/> <t t-esc="staff_name"/></span></span>
+                                </div>
+                            </t>
+
+                            <!-- Completed -->
+                            <t t-if="mode == 'completed'">
+                                <span class="fl-status completed">Đã hoàn thành (Completed)</span>
+                                <div class="fl-h1">Kết thúc thăm khám cho <t t-esc="patient_name"/></div>
+                                <div class="fl-row" t-if="visit_date">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                        <path d="M16 2v4M8 2v4M3 10h18"/>
+                                    </svg>
+                                    <span><span class="fl-label">Ngày (Date)</span>
+                                          <span class="fl-val"><t t-esc="visit_date"/></span></span>
+                                </div>
+                                <div class="fl-row" t-if="staff_name">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <span><span class="fl-label">Nhân viên (Staff)</span>
+                                          <span class="fl-val"><t t-esc="staff_role"/> <t t-esc="staff_name"/></span></span>
+                                </div>
+                                <p class="fl-sub" style="margin-top:16px;">Tóm tắt tình trạng (Summary):</p>
+                                <div class="fl-summary" t-if="summary"><t t-esc="summary"/></div>
+                                <div class="fl-summary" t-else="">Thăm khám đã hoàn thành. (Visit completed.)</div>
+                            </t>
+
+                            <p class="fl-note">Viet Uc Health</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        </t>
+    </template>
+
+</odoo>

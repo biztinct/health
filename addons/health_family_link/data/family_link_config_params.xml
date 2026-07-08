@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- A1 — ZNS template ids. Empty default => that purpose is silently NOT
+         sent (no phantom row) until an operator configures the template.
+         noupdate so a live operator value is never reset on upgrade. -->
+    <data noupdate="1">
+        <record id="param_zns_template_family_link" model="ir.config_parameter">
+            <field name="key">health_family_link.zns_template_family_link</field>
+            <field name="value"></field>
+        </record>
+        <record id="param_zns_template_family_snapshot" model="ir.config_parameter">
+            <field name="key">health_family_link.zns_template_family_snapshot</field>
+            <field name="value"></field>
+        </record>
+    </data>
+</odoo>

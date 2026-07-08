@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- A2 cond 1 — expose the opt-in on the relation form + list. -->
+    <record id="view_health_client_relation_form_family" model="ir.ui.view">
+        <field name="name">health.client.relation.form.family.link</field>
+        <field name="model">health.client.relation</field>
+        <field name="inherit_id" ref="health_crm.view_health_client_relation_form"/>
+        <field name="arch" type="xml">
+            <field name="can_receive_medical_info" position="after">
+                <field name="receives_visit_updates"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_health_client_relation_tree_family" model="ir.ui.view">
+        <field name="name">health.client.relation.list.family.link</field>
+        <field name="model">health.client.relation</field>
+        <field name="inherit_id" ref="health_crm.view_health_client_relation_tree"/>
+        <field name="arch" type="xml">
+            <field name="can_make_medical_decisions" position="after">
+                <field name="receives_visit_updates" widget="boolean_toggle" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Catchment province record-rule pair (spec §0.3 template, mirrors
+         health_consent/security/health_consent_security.xml). Rows are
+         created with sudo() by the visit-lifecycle hooks; internal read is
+         nurse+ scoped to their catchment, owner sees all. -->
+    <record id="rule_family_link_catchment" model="ir.rule">
+        <field name="name">Family link: healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_family_link"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_family_link_owner" model="ir.rule">
+        <field name="name">Family link: owner sees all</field>
+        <field name="model_id" ref="model_health_family_link"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>
