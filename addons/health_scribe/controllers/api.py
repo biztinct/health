@@ -67,8 +67,13 @@ class HealthScribeController(http.Controller):
 
             note_id = kwargs.get('note_id') or \
                 request.httprequest.form.get('note_id')
-            note = request.env['health.clinical.note'].browse(int(note_id)) \
-                if note_id else request.env['health.clinical.note']
+            try:
+                note = request.env['health.clinical.note'].browse(
+                    int(note_id)) if note_id \
+                    else request.env['health.clinical.note']
+            except (TypeError, ValueError):
+                return self._prepare_json_response(
+                    error=_('Invalid note id'), status_code=400)
             if not note.exists() or note.order_id.id != order.id:
                 return self._prepare_json_response(
                     error=_('Clinical note not found for this order'),

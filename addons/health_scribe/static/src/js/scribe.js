@@ -147,6 +147,14 @@
       mediaRecorder.start();
       render('recording', 0);
       timer = setInterval(function () {
+        // Privacy guard: if the note modal was closed mid-recording the UI
+        // is gone but MediaRecorder + the mic track would keep running
+        // until the hard stop — kill the recording when our box left the DOM.
+        if (!box || !document.contains(box)) {
+          stopRecording();
+          pendingAudio = null;
+          return;
+        }
         render('recording', Math.floor((Date.now() - startMs) / 1000));
       }, 500);
       hardStop = setTimeout(stopRecording, MAX_SECONDS * 1000);

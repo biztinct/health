@@ -193,7 +193,11 @@ class HealthScribeJob(models.Model):
         files = {'file': (filename or 'audio.webm', audio_bytes)}
         data = {'model': _STT_MODEL, 'language': language or 'vi',
                 'response_format': 'json'}
-        resp = requests.post(endpoint, files=files, data=data, timeout=timeout)
+        # allow_redirects=False: a "private" endpoint answering 307/308 would
+        # otherwise re-POST the audio body to an arbitrary public host,
+        # silently bypassing the allow_cloud sovereignty gate.
+        resp = requests.post(endpoint, files=files, data=data, timeout=timeout,
+                             allow_redirects=False)
         resp.raise_for_status()
         payload = resp.json() or {}
         return payload.get('text', '') or ''
