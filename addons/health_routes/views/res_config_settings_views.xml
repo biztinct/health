@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_routes" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.routes</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Travel-Feasible Days (Routes)" name="health_routes_settings">
+                    <setting id="rt_enabled_setting" string="Travel-feasibility warnings"
+                             help="Passive warnings only: the nightly sweep, the timeline drop note and the slot guard. Nothing here ever blocks a booking or moves an assignment.">
+                        <field name="rt_enabled"/>
+                    </setting>
+                    <setting id="rt_buffer_setting" string="Travel buffer (minutes)"
+                             help="Slack added on top of travel time before a transition is considered comfortably feasible.">
+                        <field name="rt_buffer_minutes"/>
+                    </setting>
+                    <setting id="rt_horizon_setting" string="Sweep horizon (days)"
+                             help="How many days ahead the nightly feasibility sweep checks.">
+                        <field name="rt_horizon_days"/>
+                    </setting>
+                    <setting id="rt_ttl_setting" string="Distance cache TTL (days)"
+                             help="Cached leg distances older than this are recomputed on next lookup.">
+                        <field name="rt_leg_ttl_days"/>
+                    </setting>
+                    <setting id="rt_external_setting" string="Use external router (Google/OSRM)"
+                             help="Off by default: distances use the local straight-line approximation (no network). Leave off unless a Google key is configured.">
+                        <field name="rt_use_external_router"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

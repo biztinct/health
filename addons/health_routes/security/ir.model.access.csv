@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_route_leg_nurse,health.route.leg.nurse,model_health_route_leg,health_base.group_healthcare_nurse,1,0,0,0
+access_route_leg_ops,health.route.leg.ops,model_health_route_leg,health_base.group_healthcare_operations_manager,1,1,1,0
+access_route_leg_manager,health.route.leg.manager,model_health_route_leg,health_base.group_healthcare_manager,1,1,1,1
+access_route_leg_owner,health.route.leg.owner,model_health_route_leg,health_base.group_healthcare_owner,1,1,1,1
+access_route_transition_nurse,health.route.transition.nurse,model_health_route_transition,health_base.group_healthcare_nurse,1,0,0,0
+access_route_transition_head_nurse,health.route.transition.head_nurse,model_health_route_transition,health_base.group_healthcare_head_nurse,1,0,0,0
+access_route_transition_doctor,health.route.transition.doctor,model_health_route_transition,health_base.group_healthcare_doctor,1,0,0,0
+access_route_transition_ops,health.route.transition.ops,model_health_route_transition,health_base.group_healthcare_operations_manager,1,1,1,0
+access_route_transition_manager,health.route.transition.manager,model_health_route_transition,health_base.group_healthcare_manager,1,1,1,1
+access_route_transition_owner,health.route.transition.owner,model_health_route_transition,health_base.group_healthcare_owner,1,1,1,1

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ Route transitions ============ -->
+    <record id="view_route_transition_list" model="ir.ui.view">
+        <field name="name">health.route.transition.list</field>
+        <field name="model">health.route.transition</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="status == 'critical'" decoration-warning="status == 'warn'">
+                <field name="date"/>
+                <field name="staff_id"/>
+                <field name="prev_fso_id"/>
+                <field name="next_fso_id"/>
+                <field name="gap_min"/>
+                <field name="travel_min"/>
+                <field name="buffer_min"/>
+                <field name="method"/>
+                <field name="status"/>
+                <field name="sweep_batch"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_route_transition_search" model="ir.ui.view">
+        <field name="name">health.route.transition.search</field>
+        <field name="model">health.route.transition</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="staff_id"/>
+                <field name="date"/>
+                <filter name="critical" string="Critical" domain="[('status', '=', 'critical')]"/>
+                <filter name="warn" string="Warning" domain="[('status', '=', 'warn')]"/>
+                <filter name="staff_group" string="Staff" context="{'group_by': 'staff_id'}"/>
+                <filter name="date_group" string="Date" context="{'group_by': 'date'}"/>
+                <filter name="status_group" string="Status" context="{'group_by': 'status'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_route_transition" model="ir.actions.act_window">
+        <field name="name">Route Feasibility</field>
+        <field name="res_model">health.route.transition</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============ Distance cache ============ -->
+    <record id="view_route_leg_list" model="ir.ui.view">
+        <field name="name">health.route.leg.list</field>
+        <field name="model">health.route.leg</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="o_lat"/>
+                <field name="o_lng"/>
+                <field name="d_lat"/>
+                <field name="d_lng"/>
+                <field name="km"/>
+                <field name="minutes"/>
+                <field name="method"/>
+                <field name="computed_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_route_leg" model="ir.actions.act_window">
+        <field name="name">Distance Cache</field>
+        <field name="res_model">health.route.leg</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============ Menu ============ -->
+    <menuitem id="menu_routes_root" name="Routes"
+              parent="health_base.menu_healthcare_root" sequence="34"/>
+    <menuitem id="menu_route_transition" name="Route Feasibility"
+              parent="menu_routes_root" action="action_route_transition"
+              sequence="10"/>
+    <menuitem id="menu_route_leg" name="Distance Cache"
+              parent="menu_routes_root" action="action_route_leg"
+              sequence="20"/>
+
+</odoo>

@@ -1,0 +1,127 @@
+# Vietnamese translation for health_routes
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_routes\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_routes
+msgid "Cần ~%(t)s phút di chuyển, chỉ còn %(g)s phút (needs ~%(t)s min travel, only %(g)s min gap)"
+msgstr "Cần ~%(t)s phút di chuyển, chỉ còn %(g)s phút"
+
+#. module: health_routes
+msgid "Infeasible route"
+msgstr "Lịch trình không khả thi"
+
+#. module: health_routes
+msgid "%(staff)s — infeasible route on %(date)s (%(n)s critical transition(s))"
+msgstr "%(staff)s — lịch trình không khả thi ngày %(date)s (%(n)s chuyển tiếp nghiêm trọng)"
+
+#. module: health_routes
+msgid "%(a)s → %(b)s: needs ~%(t)s min travel, only %(g)s min gap"
+msgstr "%(a)s → %(b)s: cần ~%(t)s phút di chuyển, chỉ còn %(g)s phút"
+
+#. module: health_routes
+msgid "Route Feasibility"
+msgstr "Khả thi lịch trình"
+
+#. module: health_routes
+msgid "Route Transition Feasibility"
+msgstr "Khả thi chuyển tiếp lịch trình"
+
+#. module: health_routes
+msgid "Route Leg Distance Cache"
+msgstr "Bộ nhớ đệm khoảng cách chặng"
+
+#. module: health_routes
+msgid "Distance Cache"
+msgstr "Bộ nhớ đệm khoảng cách"
+
+#. module: health_routes
+msgid "Routes"
+msgstr "Lịch trình di chuyển"
+
+#. module: health_routes
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: health_routes
+msgid "Date"
+msgstr "Ngày"
+
+#. module: health_routes
+msgid "From Visit"
+msgstr "Từ lượt khám"
+
+#. module: health_routes
+msgid "To Visit"
+msgstr "Đến lượt khám"
+
+#. module: health_routes
+msgid "Gap (min)"
+msgstr "Khoảng trống (phút)"
+
+#. module: health_routes
+msgid "Travel (min)"
+msgstr "Di chuyển (phút)"
+
+#. module: health_routes
+msgid "Buffer (min)"
+msgstr "Đệm (phút)"
+
+#. module: health_routes
+msgid "Travel Method"
+msgstr "Phương pháp tính"
+
+#. module: health_routes
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_routes
+msgid "Warning (tight)"
+msgstr "Cảnh báo (sát giờ)"
+
+#. module: health_routes
+msgid "Critical (infeasible)"
+msgstr "Nghiêm trọng (không khả thi)"
+
+#. module: health_routes
+msgid "Critical"
+msgstr "Nghiêm trọng"
+
+#. module: health_routes
+msgid "Warning"
+msgstr "Cảnh báo"
+
+#. module: health_routes
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_routes
+msgid "Travel-Feasible Days (Routes)"
+msgstr "Ngày làm việc khả thi (Lịch trình)"
+
+#. module: health_routes
+msgid "Enable Travel-Feasibility Warnings"
+msgstr "Bật cảnh báo khả thi lịch trình"
+
+#. module: health_routes
+msgid "Travel Buffer (minutes)"
+msgstr "Thời gian đệm di chuyển (phút)"
+
+#. module: health_routes
+msgid "Feasibility Sweep Horizon (days)"
+msgstr "Phạm vi quét khả thi (ngày)"
+
+#. module: health_routes
+msgid "Distance Cache TTL (days)"
+msgstr "Thời hạn bộ nhớ đệm khoảng cách (ngày)"
+
+#. module: health_routes
+msgid "Use External Router (Google/OSRM)"
+msgstr "Dùng bộ định tuyến bên ngoài (Google/OSRM)"
