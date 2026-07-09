@@ -1,0 +1,175 @@
+# Vietnamese translation for health_scribe
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_scribe\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_scribe
+msgid "Voice Recordings"
+msgstr "Ghi âm giọng nói"
+
+#. module: health_scribe
+msgid "Scribe Jobs"
+msgstr "Công việc ghi âm"
+
+#. module: health_scribe
+msgid "Scribe Job"
+msgstr "Công việc ghi âm"
+
+#. module: health_scribe
+msgid "Ambient Scribe Transcription Job"
+msgstr "Công việc chuyển giọng nói thành văn bản"
+
+#. module: health_scribe
+msgid "Clinical Note"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_scribe
+msgid "Service Order"
+msgstr "Đơn dịch vụ"
+
+#. module: health_scribe
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_scribe
+msgid "Catchment Province"
+msgstr "Tỉnh phụ trách"
+
+#. module: health_scribe
+msgid "Audio"
+msgstr "Âm thanh"
+
+#. module: health_scribe
+msgid "Scribe Recordings"
+msgstr "Bản ghi âm"
+
+#. module: health_scribe
+msgid "Audio SHA-256"
+msgstr "SHA-256 của âm thanh"
+
+#. module: health_scribe
+msgid "Duration (s)"
+msgstr "Thời lượng (giây)"
+
+#. module: health_scribe
+msgid "Seconds"
+msgstr "Giây"
+
+#. module: health_scribe
+msgid "Pending"
+msgstr "Chờ xử lý"
+
+#. module: health_scribe
+msgid "Done"
+msgstr "Hoàn tất"
+
+#. module: health_scribe
+msgid "Failed"
+msgstr "Thất bại"
+
+#. module: health_scribe
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_scribe
+msgid "Attempts"
+msgstr "Số lần thử"
+
+#. module: health_scribe
+msgid "Last Attempt"
+msgstr "Lần thử gần nhất"
+
+#. module: health_scribe
+msgid "Transcript"
+msgstr "Bản chép lời"
+
+#. module: health_scribe
+msgid "Last Error"
+msgstr "Lỗi gần nhất"
+
+#. module: health_scribe
+msgid "Uploaded"
+msgstr "Đã tải lên"
+
+#. module: health_scribe
+msgid "Transcribe now"
+msgstr "Chép lời ngay"
+
+#. module: health_scribe
+msgid "Pending Recordings"
+msgstr "Bản ghi chờ xử lý"
+
+#. module: health_scribe
+msgid "No scribe recordings yet"
+msgstr "Chưa có bản ghi âm nào"
+
+#. module: health_scribe
+msgid "Enable Ambient Scribe"
+msgstr "Bật ghi âm hỗ trợ"
+
+#. module: health_scribe
+msgid "STT Endpoint (OpenAI-compatible)"
+msgstr "Điểm cuối STT (tương thích OpenAI)"
+
+#. module: health_scribe
+msgid "Allow Cloud STT"
+msgstr "Cho phép STT đám mây"
+
+#. module: health_scribe
+msgid "STT Language"
+msgstr "Ngôn ngữ STT"
+
+#. module: health_scribe
+msgid "Max Recording Seconds"
+msgstr "Số giây ghi âm tối đa"
+
+#. module: health_scribe
+msgid "Max Audio Bytes"
+msgstr "Số byte âm thanh tối đa"
+
+#. module: health_scribe
+msgid "Recordings per Sweep"
+msgstr "Số bản ghi mỗi lần quét"
+
+#. module: health_scribe
+msgid "STT Timeout (s)"
+msgstr "Thời gian chờ STT (giây)"
+
+#. module: health_scribe
+msgid "Max Attempts per Recording"
+msgstr "Số lần thử tối đa mỗi bản ghi"
+
+#. module: health_scribe
+msgid "Ambient Scribe (Voice → Note)"
+msgstr "Ghi âm hỗ trợ (Giọng nói → Ghi chú)"
+
+#. module: health_scribe
+msgid "Voice Recordings"
+msgstr "Ghi âm giọng nói"
+
+#. module: health_scribe
+msgid "Uploaded file is not audio."
+msgstr "Tệp tải lên không phải âm thanh."
+
+#. module: health_scribe
+msgid "No audio provided"
+msgstr "Không có âm thanh"
+
+#. module: health_scribe
+msgid "Clinical note not found for this order"
+msgstr "Không tìm thấy ghi chú lâm sàng cho đơn này"
+
+#. module: health_scribe
+msgid "Only a manager may run or delete scribe transcription jobs."
+msgstr "Chỉ quản lý mới có thể chạy hoặc xóa công việc chép lời."
+
+#. module: health_scribe
+msgid "Only a manager may run scribe transcription jobs."
+msgstr "Chỉ quản lý mới có thể chạy công việc chép lời."

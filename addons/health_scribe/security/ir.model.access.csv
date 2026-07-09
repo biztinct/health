@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_scribe_job_manager,scribe.job manager,model_health_scribe_job,health_base.group_healthcare_manager,1,1,1,1
+access_scribe_job_admin,scribe.job admin,model_health_scribe_job,health_base.group_healthcare_admin,1,1,1,1
+access_scribe_job_owner,scribe.job owner,model_health_scribe_job,health_base.group_healthcare_owner,1,1,1,1

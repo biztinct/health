@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Catchment record rule on scribe jobs (spec §0.3 template). Jobs are
+         manager-read-only (ACL); a manager sees only their own catchment,
+         owner/admin see all. Jobs are created with sudo() by the upload
+         controller. -->
+    <record id="rule_scribe_job_catchment" model="ir.rule">
+        <field name="name">Scribe jobs: manager sees own catchment</field>
+        <field name="model_id" ref="model_health_scribe_job"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_scribe_job_all" model="ir.rule">
+        <field name="name">Scribe jobs: admin/owner see all</field>
+        <field name="model_id" ref="model_health_scribe_job"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_admin')), (4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>

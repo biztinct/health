@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_scribe_jobs"
+              name="Voice Recordings"
+              parent="health_base.menu_healthcare_clinical"
+              action="action_scribe_job"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="45"/>
+
+</odoo>

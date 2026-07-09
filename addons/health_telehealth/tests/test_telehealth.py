@@ -446,11 +446,11 @@ class TestEndpointAndShell(HttpCase, TeleMixin):
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('telehealth.css?v=1.8.0', body)
-        self.assertIn('telehealth.js?v=1.8.0', body)
+        self.assertIn('telehealth.css?v=1.9.0', body)
+        self.assertIn('telehealth.js?v=1.9.0', body)
         # Co-resident daystrip + ergo assets must still be served after the bump.
-        self.assertIn('daystrip.js?v=1.8.0', body)
-        self.assertIn('ergo.css?v=1.8.0', body)
+        self.assertIn('daystrip.js?v=1.9.0', body)
+        self.assertIn('ergo.css?v=1.9.0', body)
 
 
 # =====================================================================

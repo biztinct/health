@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- scribe.css after health.css so the cascade wins (daystrip/ergo/
+         telehealth precedent). Styles ONLY its own .scribe-* elements.
+         ?v cache-busts on the shared PWA asset version (now 1.9.0). -->
+    <template id="app_shell_scribe_head" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Scribe (head)">
+        <xpath expr="//link[contains(@t-attf-href, 'css/health.css')]"
+               position="after">
+            <link t-attf-href="/health_scribe/static/src/css/scribe.css?v=#{pwa_asset_version}"
+                  rel="stylesheet" type="text/css"/>
+        </xpath>
+    </template>
+
+    <!-- scribe.js after router.js (precedent). Plain IIFE, window.healthScribe
+         global, no app.js hooks — MutationObserver injects the mic block and a
+         fetch wrapper uploads the recording on note save. -->
+    <template id="app_shell_scribe_scripts" inherit_id="health_pwa.app_shell"
+              name="Health PWA App Shell — Scribe (scripts)">
+        <xpath expr="//script[contains(@t-attf-src, 'js/router.js')]"
+               position="after">
+            <script t-attf-src="/health_scribe/static/src/js/scribe.js?v=#{pwa_asset_version}"></script>
+        </xpath>
+    </template>
+
+</odoo>

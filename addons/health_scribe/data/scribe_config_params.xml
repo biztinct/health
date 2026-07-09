@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Capture ships ENABLED (harmless, the sweep is inert without an
+         endpoint); cloud STT ships OFF (a non-private host is refused).
+         noupdate so a later upgrade never resets an operator's choice. -->
+    <data noupdate="1">
+        <record id="param_scribe_enabled" model="ir.config_parameter">
+            <field name="key">health_scribe.enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_scribe_stt_endpoint" model="ir.config_parameter">
+            <field name="key">health_scribe.stt_endpoint</field>
+            <field name="value"></field>
+        </record>
+        <record id="param_scribe_allow_cloud" model="ir.config_parameter">
+            <field name="key">health_scribe.allow_cloud</field>
+            <field name="value">False</field>
+        </record>
+        <record id="param_scribe_language" model="ir.config_parameter">
+            <field name="key">health_scribe.language</field>
+            <field name="value">vi</field>
+        </record>
+        <record id="param_scribe_max_seconds" model="ir.config_parameter">
+            <field name="key">health_scribe.max_seconds</field>
+            <field name="value">300</field>
+        </record>
+        <record id="param_scribe_max_bytes" model="ir.config_parameter">
+            <field name="key">health_scribe.max_bytes</field>
+            <field name="value">15728640</field>
+        </record>
+        <record id="param_scribe_max_attempts" model="ir.config_parameter">
+            <field name="key">health_scribe.max_attempts</field>
+            <field name="value">3</field>
+        </record>
+        <record id="param_scribe_batch_cap" model="ir.config_parameter">
+            <field name="key">health_scribe.batch_cap</field>
+            <field name="value">10</field>
+        </record>
+        <record id="param_scribe_stt_timeout_s" model="ir.config_parameter">
+            <field name="key">health_scribe.stt_timeout_s</field>
+            <field name="value">120</field>
+        </record>
+    </data>
+</odoo>

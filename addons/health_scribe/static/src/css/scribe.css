@@ -1,0 +1,91 @@
+/* Health Ambient Scribe — mic block in the clinical-note modal.
+   Flat mono colors only (no gradients). Ergo-compatible: touch targets honor
+   the ergo --touch-target var (glove mode → 64px); sunlight mode inherits the
+   high-contrast neutrals. Styles ONLY .scribe-* elements. */
+
+.scribe-container {
+  margin-top: 12px;
+}
+
+.scribe-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.scribe-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch-target, 44px);
+  padding: 8px 14px;
+  border: 1px solid #c8ccd4;
+  border-radius: 8px;
+  background: #f4f5f7;
+  color: #1f2733;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.scribe-btn:hover {
+  background: #e9ebef;
+}
+
+.scribe-btn svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.scribe-record svg {
+  color: #1f2733;
+}
+
+.scribe-recording {
+  color: #b3261e;
+}
+
+.scribe-stop {
+  border-color: #b3261e;
+  color: #b3261e;
+  background: #fbeceb;
+}
+
+.scribe-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #b3261e;
+  flex: 0 0 auto;
+  animation: scribe-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes scribe-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.scribe-timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 15px;
+  min-width: 44px;
+}
+
+.scribe-ok {
+  color: #1e7a46;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Glove mode: bigger tap targets + icons (mirrors ergo's intent). */
+html.vu-glove .scribe-btn {
+  padding: 12px 18px;
+  font-size: 16px;
+}
+html.vu-glove .scribe-btn svg {
+  width: 22px;
+  height: 22px;
+}

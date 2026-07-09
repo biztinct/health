@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_scribe_job_list" model="ir.ui.view">
+        <field name="name">health.scribe.job.list</field>
+        <field name="model">health.scribe.job</field>
+        <field name="arch" type="xml">
+            <list string="Scribe Jobs" create="0"
+                  decoration-danger="state == 'failed'"
+                  decoration-muted="state == 'done'">
+                <field name="create_date" string="Uploaded"/>
+                <field name="patient_id"/>
+                <field name="note_id"/>
+                <field name="duration_s" string="Seconds"/>
+                <field name="state"/>
+                <field name="attempts"/>
+                <field name="error" optional="show"/>
+                <button name="action_transcribe_now" type="object"
+                        string="Transcribe now" icon="fa-language"
+                        invisible="state != 'pending'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_scribe_job_form" model="ir.ui.view">
+        <field name="name">health.scribe.job.form</field>
+        <field name="model">health.scribe.job</field>
+        <field name="arch" type="xml">
+            <form string="Scribe Job" create="0">
+                <header>
+                    <button name="action_transcribe_now" type="object"
+                            string="Transcribe now" class="btn-primary"
+                            invisible="state != 'pending'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,done,failed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="note_id" readonly="1"/>
+                            <field name="attachment_id" readonly="1"/>
+                            <field name="duration_s" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="audio_sha256" readonly="1"/>
+                            <field name="attempts" readonly="1"/>
+                            <field name="last_attempt" readonly="1"/>
+                            <field name="error" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Transcript (raw, unencrypted — verify in the note)">
+                        <field name="transcript" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_scribe_job_search" model="ir.ui.view">
+        <field name="name">health.scribe.job.search</field>
+        <field name="model">health.scribe.job</field>
+        <field name="arch" type="xml">
+            <search string="Scribe Jobs">
+                <field name="patient_id"/>
+                <field name="note_id"/>
+                <filter name="pending" string="Pending"
+                        domain="[('state', '=', 'pending')]"/>
+                <filter name="failed" string="Failed"
+                        domain="[('state', '=', 'failed')]"/>
+                <filter name="done" string="Done"
+                        domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+                <filter name="group_patient" string="Patient"
+                        context="{'group_by': 'patient_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_scribe_job" model="ir.actions.act_window">
+        <field name="name">Scribe Jobs</field>
+        <field name="res_model">health.scribe.job</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_scribe_job_search"/>
+        <field name="context">{'search_default_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No scribe recordings yet</p>
+            <p>Recordings captured in the PWA clinical-note form queue here and
+               are transcribed by the 30-minute sweep.</p>
+        </field>
+    </record>
+
+</odoo>

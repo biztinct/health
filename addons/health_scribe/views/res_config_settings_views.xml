@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_scribe" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.scribe</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Ambient Scribe (Voice → Note)" name="health_scribe_settings">
+                    <setting id="scribe_enabled_setting" string="Enable ambient scribe"
+                             help="On by default. Nurses can record voice notes in the PWA; the sweep transcribes them into the note text. Inert without an STT endpoint.">
+                        <field name="scribe_enabled"/>
+                    </setting>
+                    <setting id="scribe_endpoint_setting" string="STT endpoint (OpenAI-compatible)"
+                             help="e.g. http://127.0.0.1:8123/v1/audio/transcriptions. Empty → recordings queue and wait. Must be a private host unless cloud STT is allowed.">
+                        <field name="scribe_stt_endpoint"/>
+                    </setting>
+                    <setting id="scribe_allow_cloud_setting" string="Allow cloud STT"
+                             help="Off by default (data sovereignty): only a private-host endpoint (localhost / RFC-1918) is called; a public host is refused.">
+                        <field name="scribe_allow_cloud"/>
+                    </setting>
+                    <setting id="scribe_language_setting" string="STT language"
+                             help="Language hint sent to the transcription backend (default vi).">
+                        <field name="scribe_language"/>
+                    </setting>
+                    <setting id="scribe_max_seconds_setting" string="Max recording seconds"
+                             help="Client-side hard stop for a single recording.">
+                        <field name="scribe_max_seconds"/>
+                    </setting>
+                    <setting id="scribe_max_bytes_setting" string="Max audio bytes"
+                             help="Server-side upload size cap (the real safety gate).">
+                        <field name="scribe_max_bytes"/>
+                    </setting>
+                    <setting id="scribe_batch_cap_setting" string="Recordings per sweep"
+                             help="Maximum recordings transcribed per 30-minute run.">
+                        <field name="scribe_batch_cap"/>
+                    </setting>
+                    <setting id="scribe_timeout_setting" string="STT timeout (s)"
+                             help="Per-request timeout for the transcription call.">
+                        <field name="scribe_stt_timeout_s"/>
+                    </setting>
+                    <setting id="scribe_attempts_setting" string="Max attempts per recording"
+                             help="After this many failed sweeps a recording is marked failed.">
+                        <field name="scribe_max_attempts"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Audio recordings + a manager-only "Transcribe now" retry on the note
+         form (handover §2.5). -->
+    <record id="view_health_clinical_note_form_scribe" model="ir.ui.view">
+        <field name="name">health.clinical.note.form.scribe</field>
+        <field name="model">health.clinical.note</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_clinical_note_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Voice Recordings" name="scribe"
+                      invisible="not audio_ids and scribe_pending_count == 0">
+                    <button name="action_transcribe_audio" type="object"
+                            string="Transcribe now" icon="fa-language"
+                            class="btn-secondary"
+                            groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+                            invisible="scribe_pending_count == 0"/>
+                    <field name="scribe_pending_count" invisible="1"/>
+                    <field name="audio_ids" widget="many2many_binary" nolabel="1"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
