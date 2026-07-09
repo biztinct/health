@@ -179,6 +179,20 @@ injects JS into the shell requires bumping `health_pwa`:
     guard (unknown → False). Corollary: when overriding an
     `@api.depends` compute you must re-declare the FULL decorator
     (plus your additions) or the field silently loses dependencies.
+19. **PHI-encrypted fields are NON-STORED computes** — once
+    `health_phi_encryption` is installed, `health.clinical.note`'s
+    `diagnosis` / `clinical_notes` / `treatment_performed` / etc. are
+    compute fields (no `store=True`) backed by stored `*_enc` Text
+    columns. You CANNOT filter the plaintext field in an ORM domain
+    (`('diagnosis','!=',False)` raises / can't be searched). Filter the
+    stored backing column instead — `('diagnosis_enc','!=',False)` is
+    non-empty iff the plaintext was non-empty (the inverse writes
+    `enc = encrypt(v) if v else False`). Gate on
+    `'diagnosis_enc' in Model._fields` so the module still works where
+    encryption is not installed. Also: an append-only log that a note can
+    cascade-delete must use `ondelete='set null'` on its `note_id`, NOT
+    cascade — a DB-level SET NULL bypasses the ORM `unlink` guard, whereas
+    a cascade would fire the guard and make notes undeletable (§17 class).
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
