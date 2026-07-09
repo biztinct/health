@@ -1,0 +1,122 @@
+# Vietnamese translation for health_schedule_drag
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_schedule_drag\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_schedule_drag
+msgid "Booking Rescheduled"
+msgstr "Đã đổi lịch hẹn"
+
+#. module: health_schedule_drag
+msgid "Reschedule-by-Drag"
+msgstr "Đổi lịch bằng kéo thả"
+
+#. module: health_schedule_drag
+msgid "Reschedule ZNS Template"
+msgstr "Mẫu ZNS đổi lịch"
+
+#. module: health_schedule_drag
+msgid "Reschedule ZNS template"
+msgstr "Mẫu ZNS đổi lịch"
+
+#. module: health_schedule_drag
+msgid "Unknown assignment."
+msgstr "Không tìm thấy phân công."
+
+#. module: health_schedule_drag
+msgid "This block has no booking to reschedule."
+msgstr "Khối này không có lịch hẹn để đổi."
+
+#. module: health_schedule_drag
+msgid ""
+"Only confirmed or assigned bookings can be rescheduled by dragging. This one "
+"is %s."
+msgstr ""
+"Chỉ có thể đổi lịch bằng kéo thả cho lịch hẹn đã xác nhận hoặc đã phân công. "
+"Lịch này đang ở trạng thái %s."
+
+#. module: health_schedule_drag
+msgid ""
+"Rescheduling is an operations decision — ask an operations manager or head "
+"nurse."
+msgstr ""
+"Đổi lịch là quyết định của vận hành — vui lòng nhờ quản lý vận hành hoặc điều "
+"dưỡng trưởng."
+
+#. module: health_schedule_drag
+msgid "Drop the block on a staff member."
+msgstr "Thả khối vào một nhân viên."
+
+#. module: health_schedule_drag
+msgid ""
+"Cross-facility moves are not allowed — pick a staff member in the same "
+"facility."
+msgstr ""
+"Không cho phép chuyển giữa các cơ sở — hãy chọn nhân viên cùng cơ sở."
+
+#. module: health_schedule_drag
+msgid "Invalid time."
+msgstr "Thời gian không hợp lệ."
+
+#. module: health_schedule_drag
+msgid "That change isn't allowed."
+msgstr "Không cho phép thay đổi này."
+
+#. module: health_schedule_drag
+msgid "%(who)s moved to %(staff)s — %(when)s."
+msgstr "%(who)s được chuyển sang %(staff)s — %(when)s."
+
+#. module: health_schedule_drag
+msgid "%(who)s rescheduled to %(when)s."
+msgstr "%(who)s đã đổi lịch sang %(when)s."
+
+#. module: health_schedule_drag
+msgid "booking"
+msgstr "lịch hẹn"
+
+#. module: health_schedule_drag
+msgid "No usable phone for the patient."
+msgstr "Không có số điện thoại hợp lệ cho bệnh nhân."
+
+#. module: health_schedule_drag
+msgid "Drop the assignment on a staff member's row."
+msgstr "Thả phân công vào dòng của một nhân viên."
+
+#. module: health_schedule_drag
+msgid "Could not reschedule the booking."
+msgstr "Không thể đổi lịch hẹn."
+
+#. module: health_schedule_drag
+msgid "Blocked"
+msgstr "Bị chặn"
+
+#. module: health_schedule_drag
+msgid "Confirm reschedule"
+msgstr "Xác nhận đổi lịch"
+
+#. module: health_schedule_drag
+msgid "Reschedule this booking?"
+msgstr "Đổi lịch hẹn này?"
+
+#. module: health_schedule_drag
+msgid "Confirm"
+msgstr "Xác nhận"
+
+#. module: health_schedule_drag
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_schedule_drag
+msgid "Could not save the change."
+msgstr "Không thể lưu thay đổi."
+
+#. module: health_schedule_drag
+msgid "Rescheduled."
+msgstr "Đã đổi lịch."

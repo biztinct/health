@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Empty by default → no patient reschedule ZNS is queued until ops
+         configures a template. noupdate so an operator's choice survives. -->
+    <data noupdate="1">
+        <record id="param_zns_template_rescheduled" model="ir.config_parameter">
+            <field name="key">health_schedule_drag.zns_template_rescheduled</field>
+            <field name="value"></field>
+        </record>
+    </data>
+</odoo>

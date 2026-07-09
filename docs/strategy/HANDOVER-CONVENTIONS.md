@@ -222,6 +222,23 @@ injects JS into the shell requires bumping `health_pwa`:
     hard. Corollary for the biz_bi platform: an sql_view-rooted `bi.dataset`
     SKIPS `_check_company_gate` (it returns for non-`odoo_model` roots), so
     `company_field_id` is optional there.
+24. **Reading ANY hr.employee field as a non-HR user trips the public-profile
+    guard.** hr_employee `_check_private_fields` fires on the batched FETCH:
+    even asking only for `healthcare_facility_id` or `name` on an
+    `operations_manager`/nurse user raises `AccessError` ("fields
+    access_role_id,is_duty_doctor,is_head_nurse,is_om_role … not available for
+    employee public profiles") because the prefetch pulls the private fields
+    into the same SQL read. In a server method already gated by a group check,
+    `.sudo()` the employee records (and the FSO write that fires the staff
+    notifications) — guard by group, then sudo the reads/writes (ai_coding
+    precedent). Flaky-looking: the first read may hit cache and pass, a later
+    one re-fetches and raises.
+25. **`fields.Datetime(tracking=True)` is NOT a guarantee of a chatter
+    message.** `health.fieldservice.order.scheduled_datetime` is `tracking=True`
+    yet a write produces ZERO `mail.tracking.value` rows and NO chatter message
+    (the FSO write override suppresses tracking). Don't rely on "tracking=True
+    ⇒ free chatter/audit" — verify with a `mail.tracking.value` search_count and
+    post an explicit `message_post` when you need the audit trail on the record.
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
