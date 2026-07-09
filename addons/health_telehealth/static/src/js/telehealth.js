@@ -62,8 +62,15 @@
   function joinTele(fsoId) {
     // Open the window synchronously (in the click handler) so the popup
     // blocker allows it, then point it at the URL when the API answers.
+    // NOTE: 'noopener' in the features string makes window.open return
+    // null BY SPEC — that defeated the pre-open trick and left the async
+    // open to be popup-blocked (iOS Safari). Open plain, sever opener by
+    // hand.
     var win = null;
-    try { win = window.open('', '_blank', 'noopener'); } catch (e) { win = null; }
+    try {
+      win = window.open('', '_blank');
+      if (win) { win.opener = null; }
+    } catch (e) { win = null; }
     fetch(apiBase() + '/health_pwa/api/fso/' + fsoId + '/tele/join', {
       method: 'GET',
       credentials: 'same-origin',

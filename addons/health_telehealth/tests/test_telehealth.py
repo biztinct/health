@@ -372,6 +372,34 @@ class TestWaitingRoom(HttpCase, TeleMixin):
         self.assertIn('Không có thông tin', resp4.text)
         self.assertNotIn(slug, resp4.text)
 
+    def test_cancelled_and_expired_render_neutral_over_http(self):
+        """Spec §4.4: cancelled + expired must be proven through the HTTP
+        render path, not just the state flags (the family-phase lesson)."""
+        fso = self._make_fso(online=True)
+        self._confirm(fso)
+        session = self.env['health.telehealth.session'].search(
+            [('fso_id', '=', fso.id)])
+        token, slug = session.patient_token, session.room_slug
+        session.write({'state': 'cancelled'})
+        resp = self.url_open('/tele/visit/%s' % token)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('Không có thông tin', resp.text)
+        self.assertNotIn(slug, resp.text)
+
+        # Expired while OPEN — the strongest case: without the expiry
+        # check the page would be serving the live room URL.
+        fso2 = self._make_fso(online=True)
+        self._confirm(fso2)
+        session2 = self.env['health.telehealth.session'].search(
+            [('fso_id', '=', fso2.id)])
+        fso2.action_start_service()
+        session2.write(
+            {'expires_at': fields.Datetime.now() - timedelta(days=1)})
+        resp2 = self.url_open('/tele/visit/%s' % session2.patient_token)
+        self.assertEqual(resp2.status_code, 200)
+        self.assertIn('Không có thông tin', resp2.text)
+        self.assertNotIn(session2.room_slug, resp2.text)
+
 
 # =====================================================================
 # 10 — Join endpoint (HTTP) + shell asset/version pins
