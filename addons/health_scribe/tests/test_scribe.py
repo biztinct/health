@@ -317,8 +317,12 @@ class TestRobustness(TransactionCase, ScribeCommon):
 
     def test_consent_false_fails_zero_calls(self):
         job = self._make_job()   # no data_sharing consent
+        # Scope to this job via _run_jobs (not the global cron): the cron scans
+        # ALL pending jobs, which on a live DB includes rows whose patient DOES
+        # have consent — that would call the mock and defeat the assertion
+        # (ledger §5.17 live-data isolation).
         with patch(_STT_PATH, self._mock_stt()) as m:
-            self.Job.cron_scribe_transcribe()
+            self.Job._run_jobs(job)
         self.assertFalse(m.called)
         self.assertEqual(job.state, 'failed')
         self.assertEqual(job.error, 'consent')
