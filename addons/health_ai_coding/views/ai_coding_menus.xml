@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_ai_coding_root"
+              name="AI Coding"
+              parent="health_base.menu_healthcare_clinical"
+              sequence="40"/>
+
+    <menuitem id="menu_ai_code_suggestion"
+              name="AI Code Suggestions"
+              parent="menu_ai_coding_root"
+              action="action_ai_code_suggestion"
+              sequence="10"/>
+
+    <menuitem id="menu_ai_coding_log"
+              name="AI Call Log"
+              parent="menu_ai_coding_root"
+              action="action_ai_coding_log"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_owner"
+              sequence="20"/>
+
+</odoo>

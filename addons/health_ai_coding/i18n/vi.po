@@ -1,0 +1,227 @@
+# Vietnamese translation for health_ai_coding
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_ai_coding\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_ai_coding
+msgid "AI Coding"
+msgstr "Mã hóa AI"
+
+#. module: health_ai_coding
+msgid "AI Code Suggestions"
+msgstr "Đề xuất mã AI"
+
+#. module: health_ai_coding
+msgid "AI Code Suggestion"
+msgstr "Đề xuất mã AI"
+
+#. module: health_ai_coding
+msgid "AI ICD-10 Code Suggestion"
+msgstr "Đề xuất mã ICD-10 của AI"
+
+#. module: health_ai_coding
+msgid "AI Call Log"
+msgstr "Nhật ký gọi AI"
+
+#. module: health_ai_coding
+msgid "AI Coding Call Log"
+msgstr "Nhật ký gọi mã hóa AI"
+
+#. module: health_ai_coding
+msgid "Clinical Note"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_ai_coding
+msgid "Service Order"
+msgstr "Đơn dịch vụ"
+
+#. module: health_ai_coding
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_ai_coding
+msgid "Catchment Province"
+msgstr "Tỉnh phụ trách"
+
+#. module: health_ai_coding
+msgid "ICD-10 Code"
+msgstr "Mã ICD-10"
+
+#. module: health_ai_coding
+msgid "Code"
+msgstr "Mã"
+
+#. module: health_ai_coding
+msgid "Confidence"
+msgstr "Độ tin cậy"
+
+#. module: health_ai_coding
+msgid "Confidence %"
+msgstr "Độ tin cậy %"
+
+#. module: health_ai_coding
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_ai_coding
+msgid "Suggested"
+msgstr "Đã đề xuất"
+
+#. module: health_ai_coding
+msgid "Approved"
+msgstr "Đã duyệt"
+
+#. module: health_ai_coding
+msgid "Rejected"
+msgstr "Đã từ chối"
+
+#. module: health_ai_coding
+msgid "Pending"
+msgstr "Chờ duyệt"
+
+#. module: health_ai_coding
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_ai_coding
+msgid "Reviewed By"
+msgstr "Người duyệt"
+
+#. module: health_ai_coding
+msgid "Reviewed At"
+msgstr "Thời điểm duyệt"
+
+#. module: health_ai_coding
+msgid "Approve"
+msgstr "Duyệt"
+
+#. module: health_ai_coding
+msgid "Reject"
+msgstr "Từ chối"
+
+#. module: health_ai_coding
+msgid "Approve selected"
+msgstr "Duyệt các mục đã chọn"
+
+#. module: health_ai_coding
+msgid "Reject selected"
+msgstr "Từ chối các mục đã chọn"
+
+#. module: health_ai_coding
+msgid "Diagnosis"
+msgstr "Chẩn đoán"
+
+#. module: health_ai_coding
+msgid "Clinical Notes"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_ai_coding
+msgid "Note Date"
+msgstr "Ngày ghi chú"
+
+#. module: health_ai_coding
+msgid "Source Note (read-only)"
+msgstr "Ghi chú nguồn (chỉ đọc)"
+
+#. module: health_ai_coding
+msgid "Proposed Code"
+msgstr "Mã được đề xuất"
+
+#. module: health_ai_coding
+msgid "Context"
+msgstr "Bối cảnh"
+
+#. module: health_ai_coding
+msgid "AI codes"
+msgstr "Mã AI"
+
+#. module: health_ai_coding
+msgid "Pending AI Codes"
+msgstr "Mã AI chờ duyệt"
+
+#. module: health_ai_coding
+msgid "AI Code Suggestions"
+msgstr "Đề xuất mã AI"
+
+#. module: health_ai_coding
+msgid "AI Provider"
+msgstr "Nhà cung cấp AI"
+
+#. module: health_ai_coding
+msgid "Duration (ms)"
+msgstr "Thời lượng (ms)"
+
+#. module: health_ai_coding
+msgid "Suggestions Created"
+msgstr "Số đề xuất đã tạo"
+
+#. module: health_ai_coding
+msgid "Dropped Codes"
+msgstr "Mã bị loại"
+
+#. module: health_ai_coding
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_ai_coding
+msgid "Request (redacted)"
+msgstr "Yêu cầu (đã ẩn danh)"
+
+#. module: health_ai_coding
+msgid "Raw Response"
+msgstr "Phản hồi thô"
+
+#. module: health_ai_coding
+msgid "Created At"
+msgstr "Thời điểm tạo"
+
+#. module: health_ai_coding
+msgid "Enable AI Retro-Coding"
+msgstr "Bật mã hóa hồi cứu bằng AI"
+
+#. module: health_ai_coding
+msgid "Allow Cloud AI Providers"
+msgstr "Cho phép nhà cung cấp AI đám mây"
+
+#. module: health_ai_coding
+msgid "Notes per Sweep"
+msgstr "Số ghi chú mỗi lần quét"
+
+#. module: health_ai_coding
+msgid "Max Prompt Characters"
+msgstr "Số ký tự tối đa của prompt"
+
+#. module: health_ai_coding
+msgid "Max Attempts per Note"
+msgstr "Số lần thử tối đa mỗi ghi chú"
+
+#. module: health_ai_coding
+msgid "AI Retro-Coding (ICD-10)"
+msgstr "Mã hóa hồi cứu bằng AI (ICD-10)"
+
+#. module: health_ai_coding
+msgid "No AI code suggestions yet"
+msgstr "Chưa có đề xuất mã AI nào"
+
+#. module: health_ai_coding
+msgid ""
+"Only a doctor, head nurse, or manager may approve or reject AI code "
+"suggestions."
+msgstr ""
+"Chỉ bác sĩ, điều dưỡng trưởng hoặc quản lý mới có thể duyệt hoặc từ chối đề "
+"xuất mã AI."
+
+#. module: health_ai_coding
+msgid "AI coding log entries are append-only and cannot be modified."
+msgstr "Các mục nhật ký mã hóa AI chỉ được thêm và không thể chỉnh sửa."
+
+#. module: health_ai_coding
+msgid "AI coding log entries are append-only and cannot be deleted."
+msgstr "Các mục nhật ký mã hóa AI chỉ được thêm và không thể xóa."

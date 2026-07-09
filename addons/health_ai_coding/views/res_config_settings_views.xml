@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_ai_coding" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ai.coding</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="AI Retro-Coding (ICD-10)" name="health_ai_coding_settings">
+                    <setting id="ai_coding_enabled_setting" string="Enable AI retro-coding"
+                             help="Off by default. When on, a nightly sweep proposes ICD-10 codes for un-coded clinical notes into a review queue. The AI only ever suggests — a clinician click is the only thing that writes a code.">
+                        <field name="ai_coding_enabled"/>
+                    </setting>
+                    <setting id="ai_coding_allow_cloud_setting" string="Allow cloud AI providers"
+                             help="Off by default (data sovereignty): only an Ollama (local) provider is called. A cloud provider is refused unless this is on.">
+                        <field name="ai_coding_allow_cloud"/>
+                    </setting>
+                    <setting id="ai_coding_provider_setting" string="AI provider"
+                             help="The bi.ai.provider used by the sweep. Ollama (local) is the sovereignty path.">
+                        <field name="ai_coding_provider_id"/>
+                    </setting>
+                    <setting id="ai_coding_batch_cap_setting" string="Notes per sweep"
+                             help="Maximum un-coded notes processed per nightly run.">
+                        <field name="ai_coding_batch_cap"/>
+                    </setting>
+                    <setting id="ai_coding_prompt_chars_setting" string="Max prompt characters"
+                             help="Redacted note text is truncated to this length before it is sent to the model.">
+                        <field name="ai_coding_max_prompt_chars"/>
+                    </setting>
+                    <setting id="ai_coding_attempts_setting" string="Max attempts per note"
+                             help="After this many failed/empty sweeps a note is left alone.">
+                        <field name="ai_coding_max_attempts"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

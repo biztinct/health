@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Smart button: "AI codes: N" pending on the clinical note form. -->
+    <record id="view_health_clinical_note_form_ai_coding" model="ir.ui.view">
+        <field name="name">health.clinical.note.form.ai.coding</field>
+        <field name="model">health.clinical.note</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_clinical_note_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_title']" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" type="object"
+                            name="action_open_ai_suggestions"
+                            icon="fa-stethoscope"
+                            invisible="ai_pending_count == 0">
+                        <field name="ai_pending_count" widget="statinfo"
+                               string="AI codes"/>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Catchment province record-rule pair on the suggestion queue (spec
+         §0.3 template, mirrors health_consent/health_family_link security).
+         Suggestions are created with sudo() by the sweep; internal read is
+         nurse+ scoped to their catchment, owner sees all. The log carries no
+         catchment scoping (manager-only ACL). -->
+    <record id="rule_ai_code_suggestion_catchment" model="ir.rule">
+        <field name="name">AI coding: healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_ai_code_suggestion"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_ai_code_suggestion_owner" model="ir.rule">
+        <field name="name">AI coding: owner sees all</field>
+        <field name="model_id" ref="model_health_ai_code_suggestion"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>

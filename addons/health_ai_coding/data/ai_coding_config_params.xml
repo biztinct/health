@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sovereignty defaults: enabled + allow_cloud both OFF. Installing
+         changes nothing until ops flips them (handover §2.4). noupdate so a
+         later upgrade never resets an operator's choice. -->
+    <data noupdate="1">
+        <record id="param_ai_coding_enabled" model="ir.config_parameter">
+            <field name="key">health_ai_coding.enabled</field>
+            <field name="value">False</field>
+        </record>
+        <record id="param_ai_coding_allow_cloud" model="ir.config_parameter">
+            <field name="key">health_ai_coding.allow_cloud</field>
+            <field name="value">False</field>
+        </record>
+        <record id="param_ai_coding_batch_cap" model="ir.config_parameter">
+            <field name="key">health_ai_coding.batch_cap</field>
+            <field name="value">25</field>
+        </record>
+        <record id="param_ai_coding_max_prompt_chars" model="ir.config_parameter">
+            <field name="key">health_ai_coding.max_prompt_chars</field>
+            <field name="value">4000</field>
+        </record>
+        <record id="param_ai_coding_max_attempts" model="ir.config_parameter">
+            <field name="key">health_ai_coding.max_attempts</field>
+            <field name="value">3</field>
+        </record>
+    </data>
+</odoo>

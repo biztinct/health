@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_code_suggestion_nurse,ai.code.suggestion nurse,model_health_ai_code_suggestion,health_base.group_healthcare_nurse,1,0,0,0
+access_ai_code_suggestion_head_nurse,ai.code.suggestion head nurse,model_health_ai_code_suggestion,health_base.group_healthcare_head_nurse,1,1,0,0
+access_ai_code_suggestion_doctor,ai.code.suggestion doctor,model_health_ai_code_suggestion,health_base.group_healthcare_doctor,1,1,0,0
+access_ai_code_suggestion_ops,ai.code.suggestion ops manager,model_health_ai_code_suggestion,health_base.group_healthcare_operations_manager,1,0,0,0
+access_ai_code_suggestion_manager,ai.code.suggestion manager,model_health_ai_code_suggestion,health_base.group_healthcare_manager,1,1,1,1
+access_ai_code_suggestion_owner,ai.code.suggestion owner,model_health_ai_code_suggestion,health_base.group_healthcare_owner,1,1,1,1
+access_ai_coding_log_manager,ai.coding.log manager,model_health_ai_coding_log,health_base.group_healthcare_manager,1,0,0,0
+access_ai_coding_log_owner,ai.coding.log owner,model_health_ai_coding_log,health_base.group_healthcare_owner,1,0,0,0
