@@ -193,6 +193,18 @@ injects JS into the shell requires bumping `health_pwa`:
     cascade-delete must use `ondelete='set null'` on its `note_id`, NOT
     cascade — a DB-level SET NULL bypasses the ORM `unlink` guard, whereas
     a cascade would fire the guard and make notes undeletable (§17 class).
+20. **Appending to an Html field ESCAPES a str RHS.** Reading an Html field
+    (e.g. `clinical_notes`) yields a `markupsafe.Markup`; `Markup + str`
+    escapes the str, so `note.clinical_notes = note.clinical_notes + '<p>x</p>'`
+    stores `&lt;p&gt;x&lt;/p&gt;` and the tags render as literal text. Build
+    the appended fragment as `Markup('...<p>%s</p>') % text` (the `%` escapes
+    the interpolated value for you) so `Markup + Markup` stays raw. Compounds
+    §5.19 for any transcript/notes append.
+21. **`@string` is not a valid view-inheritance xpath selector** in Odoo 19 —
+    `<xpath expr="//page[@string='Images']">` fails install with "View
+    inheritance may not use attribute 'string' as a selector" (string is
+    translatable). Select by `@name` (add one if the base page lacks it) or a
+    structural node (`//notebook` position="inside", `//field[@name='x']`).
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
