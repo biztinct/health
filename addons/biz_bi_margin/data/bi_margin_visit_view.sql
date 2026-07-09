@@ -31,9 +31,13 @@ WITH cfg AS (
 ),
 -- Per-visit attendance: summed minutes, plus cost at each worker's own rate.
 att AS (
+    -- GREATEST(…, 0): a corrected/buggy attendance row with check_out
+    -- before check_in must not produce NEGATIVE labor minutes/cost.
     SELECT a.fso_id,
-           SUM(EXTRACT(EPOCH FROM (a.check_out - a.check_in)) / 60.0) AS minutes,
-           SUM((EXTRACT(EPOCH FROM (a.check_out - a.check_in)) / 3600.0)
+           SUM(GREATEST(EXTRACT(EPOCH FROM (a.check_out - a.check_in)), 0)
+               / 60.0) AS minutes,
+           SUM((GREATEST(EXTRACT(EPOCH FROM (a.check_out - a.check_in)), 0)
+                / 3600.0)
                * COALESCE(
                    (SELECT v.wage FROM hr_version v
                     WHERE v.employee_id = a.employee_id AND v.active
