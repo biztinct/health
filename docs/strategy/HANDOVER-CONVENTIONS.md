@@ -169,6 +169,16 @@ injects JS into the shell requires bumping `health_pwa`:
     NULL-province ones that match every patient; tests touching the
     slot proposer must create their own province+facility+staff and
     locate their own slots by (staff, date, time), never index 0.
+18. Stored computes that COPY a Selection value from another model
+    must VALUE-MAP, not copy — `advanced_pricing.sale_order.
+    fso_service_location` had a narrower Selection than FSO
+    `service_location`, so any online/telemedicine booking with a
+    quote was a latent `Value 'online' not in selection` crash at the
+    NEXT `flush_all` (not at create — store-field crashes hide until
+    something flushes). Fixed with an explicit map + valid-value
+    guard (unknown → False). Corollary: when overriding an
+    `@api.depends` compute you must re-declare the FULL decorator
+    (plus your additions) or the field silently loses dependencies.
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 

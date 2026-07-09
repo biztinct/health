@@ -1,7 +1,7 @@
 # Handover: Travel-Feasible Days — `health_routes`
 
 Read `docs/strategy/HANDOVER-CONVENTIONS.md` FIRST (definition of done =
-its §8; gotcha ledger 17 entries — read all). This is Tier 4's
+its §8; gotcha ledger 18 entries — read all). This is Tier 4's
 `health_routes` in its v1 shape: make nurse days TRAVEL-FEASIBLE.
 Today the platform schedules back-to-back visits across town as if
 teleporting: nothing checks the gap between consecutive visits against
