@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_margin" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.margin</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Visit Margin — Costing Assumptions" name="biz_bi_margin_settings">
+                    <setting id="margin_hourly_setting" string="Default hourly labor cost (VND)"
+                             help="ASSUMPTION. Used when a staff member has no wage on file. Margin quality depends on this — the per-employee active hr.version wage overrides it when present.">
+                        <field name="margin_default_hourly_cost_vnd"/>
+                    </setting>
+                    <setting id="margin_hours_setting" string="Monthly working hours"
+                             help="ASSUMPTION. Divides a monthly wage into an hourly rate (default 208 = ~26 days × 8h).">
+                        <field name="margin_monthly_hours"/>
+                    </setting>
+                    <setting id="margin_km_setting" string="Travel cost per km (VND)"
+                             help="ASSUMPTION. Per-km vehicle/fuel cost; travel time is additionally costed at the staff's hourly rate. Changes apply to the margin view on the next query — no rebuild.">
+                        <field name="margin_cost_per_km_vnd"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

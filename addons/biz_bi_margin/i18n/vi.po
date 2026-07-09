@@ -1,0 +1,67 @@
+# Vietnamese translation for biz_bi_margin
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 biz_bi_margin\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: biz_bi_margin
+msgid "Visit Margin — Costing Assumptions"
+msgstr "Lợi nhuận theo lượt thăm — Giả định chi phí"
+
+#. module: biz_bi_margin
+msgid "Default Hourly Labor Cost (VND)"
+msgstr "Chi phí nhân công theo giờ mặc định (VND)"
+
+#. module: biz_bi_margin
+msgid "Default hourly labor cost (VND)"
+msgstr "Chi phí nhân công theo giờ mặc định (VND)"
+
+#. module: biz_bi_margin
+msgid "Monthly Working Hours"
+msgstr "Số giờ làm việc hàng tháng"
+
+#. module: biz_bi_margin
+msgid "Monthly working hours"
+msgstr "Số giờ làm việc hàng tháng"
+
+#. module: biz_bi_margin
+msgid "Travel Cost per km (VND)"
+msgstr "Chi phí di chuyển mỗi km (VND)"
+
+#. module: biz_bi_margin
+msgid "Travel cost per km (VND)"
+msgstr "Chi phí di chuyển mỗi km (VND)"
+
+#. module: biz_bi_margin
+msgid ""
+"ASSUMPTION. Used when a staff member has no wage on file. Margin quality "
+"depends on this — the per-employee active hr.version wage overrides it when "
+"present."
+msgstr ""
+"GIẢ ĐỊNH. Dùng khi nhân viên chưa có lương trong hồ sơ. Chất lượng lợi nhuận "
+"phụ thuộc vào giá trị này — lương của phiên bản hr.version đang hoạt động của "
+"từng nhân viên sẽ được ưu tiên khi có."
+
+#. module: biz_bi_margin
+msgid ""
+"ASSUMPTION. Divides a monthly wage into an hourly rate (default 208 = ~26 "
+"days × 8h)."
+msgstr ""
+"GIẢ ĐỊNH. Chia lương tháng thành đơn giá theo giờ (mặc định 208 = ~26 ngày × "
+"8 giờ)."
+
+#. module: biz_bi_margin
+msgid ""
+"ASSUMPTION. Per-km vehicle/fuel cost; travel time is additionally costed at "
+"the staff's hourly rate. Changes apply to the margin view on the next query "
+"— no rebuild."
+msgstr ""
+"GIẢ ĐỊNH. Chi phí xe/nhiên liệu mỗi km; thời gian di chuyển còn được tính "
+"theo đơn giá giờ của nhân viên. Thay đổi áp dụng cho khung nhìn lợi nhuận ở "
+"lần truy vấn tiếp theo — không cần tạo lại."

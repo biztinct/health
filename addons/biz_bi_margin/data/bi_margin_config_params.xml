@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- COSTING ASSUMPTIONS. The margin view reads these live (scalar
+         subqueries with COALESCE defaults), so a change is reflected on the
+         next query — no rebuild. noupdate so an operator's tuning survives
+         upgrades. -->
+    <data noupdate="1">
+        <record id="param_default_hourly_cost" model="ir.config_parameter">
+            <field name="key">health_bi_margin.default_hourly_cost_vnd</field>
+            <field name="value">45000</field>
+        </record>
+        <record id="param_monthly_hours" model="ir.config_parameter">
+            <field name="key">health_bi_margin.monthly_hours</field>
+            <field name="value">208</field>
+        </record>
+        <record id="param_cost_per_km" model="ir.config_parameter">
+            <field name="key">health_bi_margin.cost_per_km_vnd</field>
+            <field name="value">3000</field>
+        </record>
+    </data>
+</odoo>

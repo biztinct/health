@@ -205,6 +205,23 @@ injects JS into the shell requires bumping `health_pwa`:
     inheritance may not use attribute 'string' as a selector" (string is
     translatable). Select by `@name` (add one if the base page lacks it) or a
     structural node (`//notebook` position="inside", `//field[@name='x']`).
+22. **`hr.contract` does NOT exist in Odoo 19** — employment/wage data moved to
+    `hr.version` (columns `employee_id`, `wage` (monthly, numeric, nullable —
+    ~0 default on auto-created versions), `contract_date_start/‑end`, `active`).
+    hr.employee auto-creates one version on create. For an SQL per-employee
+    rate: pick the active wage-bearing version
+    (`WHERE employee_id=… AND active AND wage>0 AND (contract_date_end IS NULL
+    OR >= CURRENT_DATE) ORDER BY contract_date_start DESC LIMIT 1`), COALESCE to
+    a default. Also: FSO has **no `company_id`**, `sale.order.line` taxes are
+    `tax_ids` (not `tax_id`), and `health_fieldservice_order.lead_staff_id` is a
+    NON-STORED compute (use stored `primary_nurse_id` in SQL).
+23. **Postgres `round(x, n)` requires `numeric`** — `round(double precision, int)`
+    does not exist and fails view creation. Any division/`EXTRACT(EPOCH …)`
+    yields double precision; cast the WHOLE argument
+    (`round(expr::numeric, 2)`) before the 2-arg round. Bit finance/BI SQL views
+    hard. Corollary for the biz_bi platform: an sql_view-rooted `bi.dataset`
+    SKIPS `_check_company_gate` (it returns for non-`odoo_model` roots), so
+    `company_field_id` is optional there.
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
