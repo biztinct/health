@@ -102,9 +102,14 @@ class HealthRouteTransition(models.Model):
         ad, bd = a[2], b[2]
         if ad and bd:
             if ad.id == bd.id:
-                return float(ad.average_travel_time or 0), 'district'
-            return (float(max(ad.average_travel_time or 0,
-                              bd.average_travel_time or 0)), 'district')
+                avg = float(ad.average_travel_time or 0)
+            else:
+                avg = float(max(ad.average_travel_time or 0,
+                                bd.average_travel_time or 0))
+            # A falsy district average is missing data, not zero travel —
+            # returning 0 would classify a teleport pair as 'ok'.
+            if avg > 0:
+                return avg, 'district'
         return None, 'unknown'
 
     # ------------------------------------------------------------------
@@ -190,7 +195,15 @@ class HealthRouteTransition(models.Model):
 
     @api.model
     def _sweep_day(self, day, batch):
-        day_start = datetime.combine(day, time.min)
+        # Clear the WHOLE day up front: a staff whose visits were all
+        # cancelled since the last sweep never reaches _sweep_staff_day,
+        # and their stale warn/critical rows would otherwise survive.
+        self.sudo().search([('date', '=', day)]).unlink()
+        # Bucket by LOCAL (ICT, UTC+7) midnight, not UTC midnight — a
+        # 06:30→08:00 local pair straddles the UTC boundary and would
+        # never be zipped. VN deployment is single-timezone; revisit if
+        # multi-country.
+        day_start = datetime.combine(day, time.min) - timedelta(hours=7)
         day_end = day_start + timedelta(days=1)
         fsos = self.env['health.fieldservice.order'].sudo().search([
             ('scheduled_datetime', '>=', day_start),

@@ -120,11 +120,15 @@ class HealthRouteLeg(models.Model):
             'km': res.get('km'), 'minutes': res.get('minutes'),
             'method': res.get('method'), 'computed_at': now,
         }
+        # Savepoint: two concurrent cold lookups for the same pair race on
+        # the unique index; without it the losing INSERT aborts the whole
+        # transaction and a public self-booking request 500s (ledger §5.3).
         try:
-            if row:
-                row.sudo().write(vals)   # TTL refresh
-            else:
-                self.sudo().create(vals)
+            with self.env.cr.savepoint():
+                if row:
+                    row.sudo().write(vals)   # TTL refresh
+                else:
+                    self.sudo().create(vals)
         except Exception as exc:  # noqa: BLE001 — a cache write must never break a lookup
             _logger.warning('route.leg: could not cache %s: %s', key, exc)
         return res
