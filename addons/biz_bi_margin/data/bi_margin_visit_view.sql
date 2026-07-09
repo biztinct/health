@@ -94,8 +94,12 @@ calc AS (
         CASE WHEN b.att_minutes IS NOT NULL THEN b.att_minutes
              WHEN b.actual_start_datetime IS NOT NULL
                   AND b.actual_end_datetime IS NOT NULL
-                  THEN EXTRACT(EPOCH FROM (b.actual_end_datetime
-                                           - b.actual_start_datetime)) / 60.0
+                  -- Actuals are untrusted timestamps (a forgotten stop can
+                  -- span weeks): cap at 16h, the platform's orphan-attendance
+                  -- auto-close threshold (health_workflow_auto precedent).
+                  THEN LEAST(GREATEST(EXTRACT(EPOCH FROM (b.actual_end_datetime
+                                              - b.actual_start_datetime)), 0)
+                             / 60.0, 960)
              ELSE COALESCE(b.scheduled_duration, 0) END AS labor_minutes,
         CASE WHEN b.att_minutes IS NOT NULL THEN 'attendance'
              WHEN b.actual_start_datetime IS NOT NULL
