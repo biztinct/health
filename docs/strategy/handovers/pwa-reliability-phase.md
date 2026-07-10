@@ -20,10 +20,18 @@ review dug up with live evidence. Every fact in §1 was verified on
    with the caller's ACL, so a minimal nurse gets errors instead of data.
 4. Small polish while in there: "UNKNOWN" status chips in the orders
    lists; log the 500-order sync cap instead of silently truncating.
+5. **Wire the orphaned one-tap completion into the shared modal.** The
+   ops-quickwins phase shipped `window.healthOnetap` (API + endpoints +
+   settings toggle) but NO code ever calls it — the button the handover
+   specified was never rendered anywhere (audit 2026-07-11). While
+   wiring it, scope+sudo its two endpoints the same way as §2.3 — today
+   they are an unscoped money path (§1).
 
 **Non-goals (binding):** reviving the order-detail SCREEN (the modal IS
 the interface — the corpse gets deleted, not resurrected); router
-rewrite; offline-first redesign; new features of any kind; touching
+rewrite; offline-first redesign; new features of any kind (wiring the
+already-shipped one-tap API per §2.5 is a repair, not a new feature —
+do not extend it beyond the button + endpoint hardening); touching
 health_pwa_family's panel logic (it must keep working UNCHANGED — see the
 binding constraint in §2.1); Vue upgrade; the deprecated
 `check_access_rights` cleanup (platform-wide, later).
@@ -80,6 +88,29 @@ binding constraint in §2.1); Vue upgrade; the deprecated
 - **Sync cap**: the orders pull stores at most 500 rows ("Updated 500
   orders records locally") — do not redesign; just `console.warn` when
   the cap is hit so truncation is visible.
+- **One-tap completion (orphaned feature, verified 2026-07-11)**:
+  `health_workflow_auto/static/src/js/onetap-service.js:69-74` exposes
+  `window.healthOnetap = {checkEligible, complete, isOnline}` (loaded
+  into the shell via that module's `pwa_shell_inherit.xml`) — grep
+  confirms ZERO callers repo-wide. `checkEligible(orderId)` GETs
+  `/health_pwa/api/fso/<id>/onetap_eligible` → `{eligible, reason}`
+  (reason: ok/disabled/not_in_progress/no_quote/needs_review/offline/
+  error); `complete(orderId, {serviceNotes, paymentChoice,
+  paymentMethod})` POSTs `/health_pwa/api/fso/<id>/complete_onetap` →
+  `{completed:true, state, verified_quote, message}` on success or
+  `{completed:false, needs_review:true, changed}` when the quote drifted
+  (caller must route to the existing quote/complete flow). Server gate:
+  `onetap_eligibility()` (health_workflow_auto/models/fso_onetap.py:93)
+  checks `health_workflow_auto.onetap_enabled` (default True), state
+  `in_progress`, sale order present, quote unchanged vs snapshot.
+  **Endpoint hole**: both routes (health_workflow_auto/controllers/
+  onetap_api.py:53,:68) only run `_check_api_access` (partner-read) then
+  `browse(order_id)` with the CALLER's ACL — no assignment scope (any
+  internal user can one-tap-complete ANY order: confirms the sale order,
+  creates+posts the invoice :115-122, creates a payment transaction
+  :124-145) and no sudo (a minimal field nurse would blow up on
+  account.move create rights). Same disease as `api_fso_detail`, but on
+  a WRITE money path.
 - **SW push clicks**: `notificationclick` handler in
   health_pwa/views/pwa_templates.xml:1153 — accept/decline actions post
   to the assignments API; check the default-click branch (it opens/
@@ -107,7 +138,8 @@ binding constraint in §2.1); Vue upgrade; the deprecated
   component (§2.1), deletion of the `/* LEGACY */ order-detail-view`
   comment block, the shared status-label helper (§2.4), restoring the
   bell card's "Xem (View)" button, re-pointing `viewOrder`/route
-  handling at the shared modal.
+  handling at the shared modal, the guarded one-tap footer button
+  (§2.5).
 - `health_pwa/static/src/js/utils/sync-manager.js` — the
   `saveSyncMetadata` `_rev` fix + the 500-cap warn (§2.2, §2.4).
 - `health_pwa/controllers/api.py` — `api_fso_detail` scope-check + sudo
@@ -115,6 +147,11 @@ binding constraint in §2.1); Vue upgrade; the deprecated
 - `health_pwa/views/pwa_templates.xml` — the SW `notificationclick`
   family_message branch (§2.1) + the 1.11.0 bump (5 spots).
 - `health_pwa/__manifest__.py` — version bump.
+- `health_workflow_auto/controllers/onetap_api.py` — assignment-scope
+  check + sudo on the two one-tap endpoints ONLY (§2.5); response
+  shapes unchanged.
+- `health_workflow_auto/tests/` — new scope/sudo tests for those two
+  endpoints (§3).
 - Pin tests: `health_pwa_daystrip/tests/test_daystrip.py`,
   `health_scribe/tests/test_scribe.py`,
   `health_pwa_family/tests/test_pwa_family.py` — version strings only.
@@ -176,6 +213,30 @@ past-bookings (superset of today-view's map; VN-first labels as today).
 `console.warn('health_pwa sync: order cap hit (500) — older orders not
 cached offline')` when the pull returns the cap.
 
+### 2.5 One-tap completion wiring (repairing the orphan)
+
+- **Modal side (app.js, inside the §2.1 shared component)**: when the
+  detail loads with `state == 'in_progress'` AND `window.healthOnetap`
+  exists (guard — the module may be uninstalled; absence must be
+  silent), call `window.healthOnetap.checkEligible(id)`; on
+  `eligible:true` render a "Hoàn tất nhanh" one-tap button in
+  `.modal-footer` next to the existing complete-service button. On tap:
+  `complete(id)` → `completed:true` ⇒ success toast
+  (`window.healthPWA.showNotification` with the server `message`),
+  refresh the detail (re-fetch) so state/buttons update;
+  `needs_review:true` ⇒ open the modal's EXISTING quote/complete-service
+  flow (do not build a diff UI — the `changed` payload is ignored in
+  v1); any error ⇒ error toast, button stays. Never render the button
+  offline (`checkEligible` already returns `{eligible:false,
+  reason:'offline'}` — trust it). Defaults: `payment_choice:'pay_later'`
+  (the service's default) — no payment sub-UI in this phase.
+- **Endpoint side (onetap_api.py)**: clone the §2.3 `_scoped_order`
+  pattern onto BOTH routes — resolve employee via sudo `user_id` search,
+  require a non-cancelled assignment on the order, THEN sudo the reads
+  and the completion/invoice tail. Response shapes stay byte-identical.
+  This closes the any-user-can-complete-any-order hole (§1) and makes
+  the invoice tail actually work for minimal nurses.
+
 ## 3. Tests
 
 Server-side (`/health_pwa_family` + pin suites must stay green; add to
@@ -184,33 +245,44 @@ health_pwa's own test file if one exists, else the pin suites):
 2. `api_fso_detail`: assigned nurse (minimal groups, NO sale-order ACL)
    gets 200 + data; unassigned nurse refused; response keys unchanged
    (snapshot the current key set in the test).
-3. The full existing suites: `-u health_pwa,health_pwa_family,
-   health_pwa_daystrip,health_scribe --test-tags /health_pwa_family,
-   /health_pwa_daystrip,/health_scribe` (HttpCase ⇒ NO --no-http).
+3. One-tap endpoints (health_workflow_auto tests): assigned nurse on an
+   `in_progress` order with unchanged quote → eligible + complete
+   succeeds (invoice posted) WITHOUT sale/account ACLs; UNASSIGNED
+   internal user → 403 on both routes (this is the regression test for
+   the hole); `onetap_enabled=False` → `reason:'disabled'`.
+4. The full existing suites: `-u health_pwa,health_pwa_family,
+   health_pwa_daystrip,health_scribe,health_workflow_auto --test-tags
+   /health_pwa_family,/health_pwa_daystrip,/health_scribe,
+   /health_workflow_auto` (HttpCase ⇒ NO --no-http).
 
 **Browser QA REQUIRED with committed evidence** (real nurse session,
 phone viewport, care.biztinct.com):
-4. Today → tap booking → modal opens (unchanged behavior), Start
+5. Today → tap booking → modal opens (unchanged behavior), Start
    Service/EVV buttons present.
-5. Orders list → tap row → modal opens over the list (was a blank page).
+6. Orders list → tap row → modal opens over the list (was a blank page).
    Past bookings same.
-6. `#/order/<id>` deep link cold-load → today + modal auto-open (was
+7. `#/order/<id>` deep link cold-load → today + modal auto-open (was
    blank).
-7. Bell family_message card → View → modal opens (temporarily enable
+8. Bell family_message card → View → modal opens (temporarily enable
    messaging for one QA thread like the 5c9e4e91 review did — create via
    shell, clean up after, re-darken, report counts).
-8. Family panel still injects into the shared modal (the §2.1 binding
+9. Family panel still injects into the shared modal (the §2.1 binding
    constraint) — with messaging enabled, thread visible + reply works.
-9. Console: NO "Failed to save sync metadata"; second sync pulls a
-   delta, not 735.
-10. No "UNKNOWN" chips on the orders list for normal states.
+10. One-tap: on a QA in_progress booking with unchanged quote, the
+    "Hoàn tất nhanh" button appears in the modal footer and completes
+    the visit end-to-end (then revert the QA order's state + delete any
+    QA invoice/transaction, report counts); on a not-in_progress booking
+    no button renders.
+11. Console: NO "Failed to save sync metadata"; second sync pulls a
+    delta, not 735.
+12. No "UNKNOWN" chips on the orders list for normal states.
 
 ## 4. Deploy & verify
 
 - Standard flow; `-u health_pwa,health_pwa_family,health_pwa_daystrip,
-  health_scribe` (pwa_templates.xml arch changes REQUIRE the upgrade);
-  port-wait; results from the server logfile with YOUR timestamp;
-  login 200.
+  health_scribe,health_workflow_auto` (pwa_templates.xml arch changes
+  REQUIRE the upgrade); port-wait; results from the server logfile with
+  YOUR timestamp; login 200.
 - PWA 1.11.0 greps (5 spots) + all three pin tests updated.
 - `health_family_messages.enabled` back to False after QA; params pasted.
 - vi.po if any new user-facing strings; conventions §8; commit+push 19.0.
@@ -224,4 +296,6 @@ delta-sync console evidence (before/after lines); (d) who can call
 `api_fso_detail` now vs before; (e) the deleted-corpse line count and
 that `app._context.components` still lists all views; (f) any new
 ledger-grade gotcha (explicitly flagged); (g) live QA data cleanup
-counts + params re-darkened.
+counts + params re-darkened; (h) one-tap: who could call the two
+endpoints before vs after, and the QA evidence of the button
+end-to-end.
