@@ -24,6 +24,13 @@ still goes in the new module.
    fetch, overlay thinning (the hiddenDates synergy), month-view
    clustering, parallel RPCs. Targets: Week paint < 1.5 s, Month
    < 3 s on vietuat data — measure before/after and report numbers.
+4. **Retire the template-assignment side channel**
+   (`web_timeline` core one-liner + `health_fieldservice` cleanup):
+   the assign-from-booking flow smuggles the booking id into the
+   new-assignment dialog via a hidden `state='template'` DB row and a
+   globally-leaking `default_get` override. Fix the root cause (the
+   dialog never receives the action context) and delete the whole
+   template mechanism. See §2.4.
 
 **No PWA change ⇒ NO PWA bump.**
 
@@ -81,6 +88,43 @@ are too coarse to pick a time honestly); recurring-series creation.
   hours; `_check_emp_slot`/overlay derive per-staff working intervals —
   the hiddenDates windows must come from THE SAME source the overlay
   shades, or the two will disagree on screen.
+- **The template mechanism (§2.4 target), fully traced**:
+  - Root cause: `_onAdd` builds the dialog context as
+    `makeContext([context], this.env.searchModel.context)`
+    (timeline_controller.esm.js:255) — the second arg is only an
+    EVALUATION context, never merged, so the action's
+    `default_fso_id` NEVER reaches the FormViewDialog. The view arch
+    even tries to forward it (assignment_web_timeline_views.xml:22,
+    comment "fso_id listed first to ensure context works") — dead end
+    for the same reason.
+  - Workaround built instead: `action_manual_assign_staff`
+    (health_fieldservice_order.py:3526-3617, template create at
+    3539-3562) and `action_open_staff_timeline_modal` (3720-3772,
+    create at 3729-3742) create one `state='template'` assignment per
+    booking (staff_id=False); a `default_get` override
+    (health_staff_assignment.py:707-754) then searches the MOST
+    RECENT template GLOBALLY (no fso/context/user scoping) and
+    force-overwrites `fso_id` + `assignment_date` in the defaults.
+  - Consequences: any leftover template row silently pre-fills a
+    stale booking into EVERY new-assignment form anywhere in the
+    system; two ops assigning different bookings concurrently get
+    whichever template is newest; templates are deleted only on FSO
+    completion (order.py:1821-1828), NOT on cancellation
+    (cancel_with_reason filters them out at 3021-3053) and NOT on
+    dialog close — orphans accumulate; ~46 domain filters
+    (`state != 'template'`) exist purely to hide them; the override
+    also spams walls of INFO-level emoji logging on a hot path.
+  - The assign-from-booking timeline view
+    (health_staff_assignment_timeline_view,
+    assignment_web_timeline_views.xml:5) has NO js_class — it uses
+    the STOCK web_timeline controller, a different surface from the
+    staff schedule (js_class staff_schedule_timeline). The §2.1
+    canvas patch therefore does NOT fire there; no collision.
+  - Nothing else consumes template rows: `assign_booking`
+    (health_staff_assignment.py:1761-1779), the drag gate, and all
+    views exclude them. `create()` with staff_id auto-transitions
+    draft→assigned (779-781) and forces planned times from the FSO
+    (765-810) — untouched by this phase.
 
 ## 2. Architecture
 
@@ -168,16 +212,55 @@ and Month on vietuat data, before and after, in the report. If (a)
 alone gets Month under target with (b), skip (c) and say so —
 complexity budget is real.
 
+### 2.4 Retire the template-assignment side channel
+
+The template row is a DB-row-as-global-variable reimplementing what
+Odoo's `default_*` context does natively — kill it at the root:
+
+1. **web_timeline core (one line)**: in `_onAdd`, merge the search
+   context INTO the dialog context instead of using it only for
+   evaluation: `makeContext([this.env.searchModel.context, context])`
+   — search/action context first so the item-specific
+   `default_planned_*`/`default_staff_id` win on conflict. This is
+   how core calendar/gantt dialogs behave; note it in the
+   web_timeline README as a fork divergence.
+2. **Delete the workaround** (all in health_fieldservice):
+   - the template-create blocks in `action_manual_assign_staff`
+     (3539-3562) and `action_open_staff_timeline_modal` (3729-3742);
+   - the entire `default_get` override
+     (health_staff_assignment.py:707-754) — super() already honors
+     `default_fso_id`/`default_assignment_date` from context, and
+     the action context applies to the action's form view too, so
+     list/form creates inside the assign action keep working;
+   - the completion-time template unlink (order.py:1821-1828) — dead
+     once nothing creates templates.
+3. **Keep** the `'template'` value in the state Selection (removing a
+   Selection value with historical rows is a §5.18-class trap) and
+   keep the existing `state != 'template'` filters — they become
+   harmless armor. Do NOT add new ones.
+4. **Cleanup of existing rows**: `health_schedule_canvas`
+   post_init_hook unlinks all `state='template'` assignments
+   (canvas depends on health_fieldservice so it runs after upgrade);
+   log the count. Report the number deleted on vietuat.
+5. **Verify the replacement actually works** (browser QA, binding):
+   open the assign timeline from a booking → click an empty slot on
+   a staff lane → the stock dialog opens with THAT booking
+   pre-filled; save → assignment lands at the FSO's time (create()
+   forces planned times — the drawn time being ignored here is
+   correct and expected for assign mode).
+
 ## 3. Module skeleton
 
 `health_schedule_canvas` depends `['health_fieldservice',
 'health_schedule_drag']` (controller patch layering: canvas patches
 must compose with drag's `_onMove` patch — patch() chains, verify
 both live together). web_timeline edits: ONLY timeline_model /
-timeline_controller / timeline_arch_parser for `dynamic_range`
-(+ its README note), nothing schedule-specific in there. No new
+timeline_controller / timeline_arch_parser for `dynamic_range` and
+the §2.4 context merge (+ README notes), nothing schedule-specific
+in there. health_fieldservice edits: ONLY the §2.4 deletions. No new
 models (one optional @api.model rights helper + optional overlay
-wrapper). Config: none (the toggle is per-user localStorage). vi.po.
+wrapper + the §2.4 post_init cleanup). Config: none (the toggle is
+per-user localStorage). vi.po.
 
 ## 4. Tests (`tests/test_schedule_canvas.py` + web_timeline sanity)
 
@@ -198,6 +281,12 @@ Server-side (JS behavior is browser-QA'd):
 5. hiddenDates builder (ship it as a small pure JS function + mirror
    the exemption logic server-side ONLY if you put it in Python —
    otherwise test via browser QA and say so).
+6. Template retirement (§2.4): (a) `action_manual_assign_staff` no
+   longer creates a `state='template'` row; (b) `default_get` WITH
+   `default_fso_id` in context returns that fso_id; (c) regression
+   pin for the old leak — seed one leftover template row, call
+   `default_get` with NO context defaults → `fso_id` NOT set;
+   (d) the post_init cleanup unlinks seeded template rows.
 
 **Browser QA on action 1536 REQUIRED with committed evidence**
 (screenshots or exact-description doc): double-click → pre-filled
@@ -208,10 +297,11 @@ toggle revealing everything; Week/Month before/after timings; drag
 
 ## 5. Deploy & verify
 
-- `-i health_schedule_canvas -u web_timeline --test-tags
-  /health_schedule_canvas,/health_schedule_drag,/health_routes`.
-  Port-wait loop; logfile results; YOUR timestamp. web_timeline is a
-  static-asset-heavy change — hard-refresh/clear assets in QA.
+- `-i health_schedule_canvas -u web_timeline,health_fieldservice
+  --test-tags /health_schedule_canvas,/health_schedule_drag,
+  /health_routes`. Port-wait loop; logfile results; YOUR timestamp.
+  web_timeline is a static-asset-heavy change — hard-refresh/clear
+  assets in QA.
 - Live demo: create a booking by double-click on a demo staff lane
   (clients 861-864), show it on the timeline + the FSO record; show
   an off-hours booking forcing its window visible; paste the
@@ -227,4 +317,6 @@ behavior on the live data (how many hidden windows got exempted);
 (d) confirmation the drag patch and canvas patch compose (both
 features exercised in one session); (e) any web_timeline upstream
 divergence worth noting in its README; (f) any new ledger-grade
-gotcha (explicitly flagged).
+gotcha (explicitly flagged); (g) how many orphan template rows the
+§2.4 cleanup deleted on vietuat, and the assign-from-booking QA
+evidence (dialog pre-filled with the right booking).
