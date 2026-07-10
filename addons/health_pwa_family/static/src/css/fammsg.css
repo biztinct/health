@@ -1,0 +1,146 @@
+/* Health PWA Family Messaging — flat mono colors (no gradients), own
+ * .fammsg-* namespace + the family_message bell card classes. Glove/sunlight
+ * sections mirror daystrip.css. Loaded after health.css so the cascade wins. */
+
+/* ---- bell card (the sanctioned app.js family_message template) ---------- */
+.notif-card--family_message { border-left: 4px solid #0b6b5a; }
+.notif-badge-family {
+  background: #e6f4f1 !important;
+  color: #0b6b5a !important;
+}
+.notif-btn-view {
+  background: #0b6b5a !important;
+  color: #ffffff !important;
+}
+.notif-btn-view:active:not(:disabled) { background: #094f43 !important; }
+
+/* ---- visit-context panel ----------------------------------------------- */
+.fammsg-panel {
+  margin: 14px 0;
+  border: 1px solid #e3e6ea;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+.fammsg-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 15px;
+  cursor: pointer;
+  color: #0b6b5a;
+  user-select: none;
+}
+.fammsg-head-icon { display: inline-flex; }
+.fammsg-head-icon svg { width: 20px; height: 20px; }
+.fammsg-title { font-weight: 700; font-size: 15px; flex: 1 1 auto; }
+.fammsg-caret {
+  width: 0; height: 0;
+  border-left: 5px solid #8a94a1;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transform: rotate(90deg);
+  transition: transform .15s ease;
+}
+.fammsg-collapsed .fammsg-caret { transform: rotate(0deg); }
+.fammsg-body { padding: 4px 15px 15px; }
+.fammsg-collapsed .fammsg-body { display: none; }
+
+.fammsg-empty { color: #8a94a1; font-size: 14px; padding: 6px 0 10px; }
+
+.fammsg-thread { border-top: 1px solid #eef0f2; padding-top: 12px; margin-top: 10px; }
+.fammsg-thread:first-child { border-top: none; margin-top: 0; }
+.fammsg-relation { font-size: 12px; font-weight: 600; color: #8a94a1; margin-bottom: 8px; }
+
+.fammsg-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.fammsg-msg {
+  max-width: 88%;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.fammsg-msg--out { align-self: flex-end; background: #e6f4f1; color: #0b3f36;
+                   border-bottom-right-radius: 4px; }
+.fammsg-msg--in { align-self: flex-start; background: #f1f3f5; color: #1f2733;
+                  border-bottom-left-radius: 4px; }
+.fammsg-meta { font-size: 11px; color: #8a94a1; margin-top: 4px; }
+
+.fammsg-compose { display: flex; gap: 8px; align-items: flex-end; }
+.fammsg-input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 44px;
+  resize: vertical;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid #d5d9de;
+  border-radius: 10px;
+  color: #1f2733;
+}
+.fammsg-input:focus { outline: none; border-color: #0b6b5a; }
+.fammsg-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  background: #0b6b5a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 44px;
+}
+.fammsg-send:disabled { opacity: .6; }
+.fammsg-send svg { width: 16px; height: 16px; }
+
+/* ---- FB-047 update ------------------------------------------------------ */
+.fammsg-update { border-top: 1px solid #eef0f2; padding-top: 12px; margin-top: 12px; }
+.fammsg-update-title { font-weight: 700; font-size: 14px; margin-bottom: 10px; color: #1f2733; }
+.fammsg-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.fammsg-chip {
+  background: #f1f3f5;
+  color: #1f2733;
+  border: 1px solid #d5d9de;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+.fammsg-chip:active { background: #e6f4f1; border-color: #0b6b5a; }
+.fammsg-update .fammsg-input { margin-bottom: 10px; }
+.fammsg-send--update { width: 100%; justify-content: center; }
+
+/* ---- GLOVE MODE (html.vu-glove) — bigger targets ----------------------- */
+html.vu-glove .fammsg-head { padding: 16px 15px; }
+html.vu-glove .fammsg-send,
+html.vu-glove .fammsg-chip {
+  min-height: var(--touch-target, 56px);
+}
+html.vu-glove .fammsg-input { min-height: var(--touch-target, 56px); }
+
+/* ---- SUNLIGHT MODE (html.vu-sunlight) — pure b/w, 2px borders ----------- */
+html.vu-sunlight .fammsg-panel { border: 2px solid #000000; }
+html.vu-sunlight .fammsg-head { color: #000000; }
+html.vu-sunlight .fammsg-title { color: #000000; }
+html.vu-sunlight .fammsg-msg--out,
+html.vu-sunlight .fammsg-msg--in {
+  background: #ffffff; color: #000000; border: 2px solid #000000;
+}
+html.vu-sunlight .fammsg-input { border: 2px solid #000000; color: #000000; }
+html.vu-sunlight .fammsg-send,
+html.vu-sunlight .notif-btn-view {
+  background: #000000 !important; color: #ffffff !important;
+}
+html.vu-sunlight .fammsg-chip { border: 2px solid #000000; color: #000000; }
+html.vu-sunlight .notif-badge-family {
+  background: #ffffff !important; color: #000000 !important;
+  border: 2px solid #000000;
+}

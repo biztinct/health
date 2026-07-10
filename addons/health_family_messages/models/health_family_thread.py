@@ -305,9 +305,39 @@ class HealthFamilyThread(models.Model):
             ]).write({'is_read': True})
         return True
 
+    def _post_team_reply(self, body, author_user, fso=None, send_zns=True):
+        """Shared team → family OUTBOUND core: create the 'out' message, refresh
+        last_message_at, and `action_mark_read` (which ALSO clears the
+        family_message PWA bell rows). For a reply (`send_zns=True`) it fires the
+        `family_message_reply` ZNS ping. Used by the ops inbox
+        (`action_send_reply`) and the PWA nurse reply endpoint; FB-047 passes
+        `send_zns=False` and sends its own `family_update` ping. Returns the
+        created message; raises on an empty/over-cap body (shared `_sanitize_body`)."""
+        self.ensure_one()
+        text = self.env['health.family.message']._sanitize_body(body)
+        if not text:
+            raise UserError(_('Message is empty.'))
+        if fso is None:
+            fso = self._latest_open_fso()
+        message = self.env['health.family.message'].create({
+            'thread_id': self.id,
+            'direction': 'out',
+            'body': text,
+            'author_user_id': author_user.id,
+            'author_label': author_user.name,
+            'fso_id': fso.id if fso else False,
+        })
+        self.write({'last_message_at': fields.Datetime.now()})
+        self.action_mark_read()
+        if send_zns:
+            try:
+                self._send_reply_zns(message)
+            except Exception:  # noqa: BLE001 — a send must never break the reply
+                _logger.exception('Family reply ZNS failed (thread %s)', self.id)
+        return message
+
     def action_send_reply(self):
-        """Ops reply: append an outbound message + ZNS "you have a reply" ping
-        through the shipped rails."""
+        """Ops inbox reply — thin wrapper over `_post_team_reply`."""
         self.ensure_one()
         if not self.messaging_enabled:
             # The form banner promises "read-only until enabled"; enforce it
@@ -318,24 +348,8 @@ class HealthFamilyThread(models.Model):
         body = (self.reply_text or '').strip()
         if not body:
             raise UserError(_('Please type a reply first.'))
-        fso = self._latest_open_fso()
-        message = self.env['health.family.message'].create({
-            'thread_id': self.id,
-            'direction': 'out',
-            'body': body,
-            'author_user_id': self.env.uid,
-            'author_label': self.env.user.name,
-            'fso_id': fso.id if fso else False,
-        })
-        self.write({
-            'reply_text': False,
-            'last_message_at': fields.Datetime.now(),
-        })
-        self.action_mark_read()
-        try:
-            self._send_reply_zns(message)
-        except Exception:  # noqa: BLE001 — a send must never break the reply
-            _logger.exception('Family reply ZNS failed (thread %s)', self.id)
+        self.write({'reply_text': False})
+        self._post_team_reply(body, self.env.user)
         return True
 
     # ------------------------------------------------------------------

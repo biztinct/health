@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- FB-047 post-visit update ZNS template id — empty by default so no
+             update ping is ever created until a template is configured (the
+             standing no-phantom posture). Messaging itself stays gated by
+             health_family_messages.enabled (no new master switch, §0). -->
+        <record id="param_pwa_family_zns_template_update" model="ir.config_parameter">
+            <field name="key">health_pwa_family.zns_template_update</field>
+            <field name="value"></field>
+        </record>
+    </data>
+</odoo>

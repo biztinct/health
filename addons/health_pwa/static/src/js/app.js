@@ -605,6 +605,26 @@ window.healthPWA = {
                       </div>
                     </template>
 
+                    <!-- FAMILY MESSAGE notification (health_pwa_family) -->
+                    <template v-else-if="notif.type === 'family_message'">
+                      <div class="notif-card-header">
+                        <span class="notif-type-badge notif-badge-family">{{ t('Tin nhắn gia đình', 'Family message') }}</span>
+                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" :title="_t('Dismiss')">&times;</button>
+                      </div>
+                      <div class="notif-card-body">
+                        <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
+                        <div v-if="notif.message" class="notif-detail notif-message">{{ notif.message }}</div>
+                      </div>
+                      <div class="notif-card-actions">
+                        <button v-if="notif.fso_id" class="notif-btn notif-btn-view" @click="navigate('order', { id: notif.fso_id })">
+                          <i class="material-icons">visibility</i> {{ t('Xem', 'View') }}
+                        </button>
+                        <button class="notif-btn notif-btn-ok" @click="dismissNotification(notif.id)" :disabled="state.notifRespondingId === notif.id">
+                          <i class="material-icons">done</i> OK
+                        </button>
+                      </div>
+                    </template>
+
                   </div>
                 </div>
               </div>
