@@ -240,6 +240,14 @@ injects JS into the shell requires bumping `health_pwa`:
     ⇒ free chatter/audit" — verify with a `mail.tracking.value` search_count and
     post an explicit `message_post` when you need the audit trail on the record.
 
+26. **`hr.employee.working_hours_<day>` Char fields are only a FALLBACK** —
+    `_working_intervals_for` prefers `resource_calendar_id`, and every
+    employee gets the company default calendar (8-17) on create, so
+    writing the char fields does NOTHING until you clear
+    `resource_calendar_id = False`. Test fixtures that "restrict"
+    working hours via the char fields silently test the default
+    calendar instead (hit live in the schedule-drag suite).
+
 27. **`search()` silently skips ARCHIVED rows — a data-cleanup hook must pass
     `active_test=False`.** health_schedule_canvas's post_init unlinked orphan
     `state='template'` assignments via `search([('state','=','template')])` and
@@ -259,17 +267,10 @@ injects JS into the shell requires bumping `health_pwa`:
     the thread is blocked — a `.o_loading` spinner sits up the whole time). Never
     hand vis an unbounded background set: filter to the visible range, drop
     backgrounds that fall inside hidden (`hiddenDates`) columns, and hard-cap the
-    remainder (health_schedule_canvas `OFF_BG_CAP=300`, dropping decorative 'off'
-    shading beyond it). Diagnose with a `setInterval` main-thread-block detector, not
-    the network panel.
-
-26. `hr.employee.working_hours_<day>` Char fields are only a FALLBACK —
-    `_working_intervals_for` prefers `resource_calendar_id`, and every
-    employee gets the company default calendar (8-17) on create, so
-    writing the char fields does NOTHING until you clear
-    `resource_calendar_id = False`. Test fixtures that "restrict"
-    working hours via the char fields silently test the default
-    calendar instead (hit live in the schedule-drag suite).
+    remainder (health_schedule_canvas `OFF_BG_CAP=300`; past the cap ALL decorative
+    'off' shading is dropped — partial shading would read as "the unshaded staff
+    are on duty" — while 'leave' is always kept, with a console.warn). Diagnose
+    with a `setInterval` main-thread-block detector, not the network panel.
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 

@@ -1,7 +1,15 @@
 # health_schedule_canvas — Live verification (vietuat / care.biztinct.com)
 
-Backend-timeline module (no PWA). The four features are proven by 21 module
-tests (0 failed) plus the live evidence below. Simulating a real vis.js
+Backend-timeline module (no PWA). The four features are proven by 14 module
+tests (0 failed) plus the live evidence below.
+
+**Nurse ACL decision (review follow-up, spec §2.1):** `can_schedule_create` is
+UX-only — a nurse invoking `action_create_from_quick_booking_owl` by direct RPC
+IS allowed to create the FSO, because `group_healthcare_nurse` holds `create=1`
+on `health.fieldservice.order` in the base ACL (nurses create bookings through
+other shipped surfaces by design). The canvas therefore adds NO new server-side
+exposure; gating the shared builder would break those legitimate flows. Accepted
+and documented rather than "fixed". Simulating a real vis.js
 double-click / mouse-drag through DevTools is impractical (same constraint noted
 in health_schedule_drag), so the browser QA exercises the exact server gates the
 patched controller/renderer invoke, and a shell demo drives the full create.

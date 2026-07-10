@@ -193,6 +193,19 @@ class TestTemplateRetirement(CanvasBase):
         self.assertEqual(after, before,
                          "action_manual_assign_staff must not create a template row")
 
+    def test_timeline_modal_creates_no_template(self):
+        # The SECOND retired create-block (action_open_staff_timeline_modal)
+        # must be pinned too — it had its own copy of the template workaround.
+        fso = self._fso()
+        before = self.env['health.staff.assignment'].search_count(
+            [('state', '=', 'template')])
+        fso.action_open_staff_timeline_modal()
+        after = self.env['health.staff.assignment'].search_count(
+            [('state', '=', 'template')])
+        self.assertEqual(
+            after, before,
+            "action_open_staff_timeline_modal must not create a template row")
+
     def test_default_get_honours_context_fso(self):
         fso = self._fso()
         defaults = self.env['health.staff.assignment'].with_context(

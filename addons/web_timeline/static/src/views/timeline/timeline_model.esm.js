@@ -3,6 +3,7 @@
  * License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
  */
 import {serializeDate, serializeDateTime} from "@web/core/l10n/dates";
+import {Domain} from "@web/core/domain";
 import {KanbanCompiler} from "@web/views/kanban/kanban_compiler";
 import {KeepLast} from "@web/core/utils/concurrency";
 import {Model} from "@web/model/model";
@@ -108,12 +109,15 @@ export class TimelineModel extends Model {
         const lo = start.minus({milliseconds: margin});
         const hi = end.plus({milliseconds: margin});
         const stopField = this.date_stop || this.date_start;
-        const clause = [
-            "&",
-            [this.date_start, "<", this.serializeDate(this.date_start, hi)],
-            [stopField, ">", this.serializeDate(stopField, lo)],
-        ];
-        return ["&", ...(domain || []), ...clause];
+        // Domain.and normalizes both sides — manual "&"-prefixing breaks on an
+        // empty or multi-leaf (implicit-AND) search domain.
+        return Domain.and([
+            domain || [],
+            [
+                [this.date_start, "<", this.serializeDate(this.date_start, hi)],
+                [stopField, ">", this.serializeDate(stopField, lo)],
+            ],
+        ]).toList();
     }
     /**
      * Transform Odoo event object to timeline event object.

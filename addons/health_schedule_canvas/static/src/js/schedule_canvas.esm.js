@@ -183,12 +183,17 @@ patch(StaffScheduleRenderer.prototype, {
             return false;
         }
         const [start, end] = this._windowAsLocal();
-        const gran = this.mode.data === "month" ? "month" : null;
+        // 'off' backgrounds are per-day noise at month scale and above.
+        const gran = ["month", "year"].includes(this.mode.data) ? "month" : null;
         const key = `${start}|${end}|${this._facilityId || ""}|${gran || ""}`;
         if (key === this._lastWinKey && this._overlay) {
             return false;
         }
         this._lastWinKey = key;
+        // Overlay inputs changed → the cached hidden ranges are void. (_reloadAll
+        // resets _lastWinKey to null and refetches the SAME key string, so keying
+        // the hidden cache off _lastWinKey alone never invalidates on reload.)
+        this._hiddenCacheKey = null;
         try {
             this._overlay = await this.orm.call(
                 "health.staff.assignment",
@@ -204,6 +209,14 @@ patch(StaffScheduleRenderer.prototype, {
     async on_data_loaded(records, adjust_window) {
         await super.on_data_loaded(records, adjust_window);
         try {
+            // super computed the backgrounds (and the exemption scan inside
+            // _hiddenRanges) BEFORE setItems — from the PREVIOUS dataset, empty
+            // on first paint. Items are current only now: recompute exemptions
+            // and swap the 'off' backgrounds, or a booking created/loaded in an
+            // off-hours window stays invisible (the exact failure §2.2's
+            // balance rule exists to prevent).
+            this._hiddenCacheKey = null;
+            this._rebuildBackgroundItems();
             this._applyCanvasView();
         } catch {
             // never break the paint on a compression hiccup
@@ -258,9 +271,33 @@ patch(StaffScheduleRenderer.prototype, {
             }
         }
         if (offs.length > OFF_BG_CAP) {
-            return leaves; // protect the main thread — shading is decorative
+            // ALL 'off' shading dropped (not just the excess — partial shading
+            // reads as "the unshaded staff are on duty", which is worse than
+            // none). 'leave' is always kept; degradation is logged, not silent.
+            console.warn(
+                `schedule_canvas: ${offs.length} 'off' backgrounds > cap ` +
+                    `${OFF_BG_CAP} — off-hours shading dropped for this window ` +
+                    `(leave segments kept).`
+            );
+            return leaves;
         }
         return leaves.concat(offs);
+    },
+
+    /** Swap the background items in place from the cached overlay (used by the
+     *  toggle and after every data load — never refetches). */
+    _rebuildBackgroundItems() {
+        if (!this.timeline) {
+            return;
+        }
+        const data = this.timeline.itemsData;
+        const old = data
+            .get({filter: (it) => it.type === "background"})
+            .map((it) => it.id);
+        if (old.length) {
+            data.remove(old);
+        }
+        data.add(this._backgroundItems());
     },
 
     /** Cached hidden ranges for the current window (recomputed per overlay key). */
@@ -393,19 +430,9 @@ patch(StaffScheduleRenderer.prototype, {
             }
             paint();
             try {
-                // Rebuild the background items in place: hidden→shown must re-add the
-                // 'off' segments that the synergy filtered out (and vice-versa). No
-                // refetch — reuse the cached overlay.
-                if (this.timeline) {
-                    const data = this.timeline.itemsData;
-                    const old = data
-                        .get({filter: (it) => it.type === "background"})
-                        .map((it) => it.id);
-                    if (old.length) {
-                        data.remove(old);
-                    }
-                    data.add(this._backgroundItems());
-                }
+                // Hidden→shown must re-add the 'off' segments the synergy
+                // filtered out (and vice-versa). No refetch — cached overlay.
+                this._rebuildBackgroundItems();
                 this._applyCanvasView();
             } catch {
                 // non-fatal
