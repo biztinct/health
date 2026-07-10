@@ -326,6 +326,55 @@ class PwaFamilyBase(HttpCase):
         with self.assertRaises(UserError):
             msg.body = 'tampered'
 
+    # =================================================================
+    # Review fixes — route-keyed seam context + closed threads + unread
+    # =================================================================
+    def test_get_returns_order_context(self):
+        # The order screen is offline-first (ledger §31): the panel JS gets
+        # the order id/state from THIS endpoint, not the base FSO GET.
+        self._grant_consent()
+        self._thread()
+        self._auth_nurse()
+        res = self._get(self.fso.id)
+        self.assertEqual(res['data']['order_id'], self.fso.id)
+        self.assertEqual(res['data']['order_state'], self.fso.state)
+
+    def test_reply_to_closed_thread_refused(self):
+        self._grant_consent()
+        thread = self._thread()
+        thread.sudo().write({'state': 'closed'})
+        self._auth_nurse()
+        res = self._post(self.fso.id, 'reply',
+                         {'thread_id': thread.id, 'body': 'anyone?'})
+        self.assertFalse(res['success'])
+        self.assertEqual(len(self._out_msgs(thread)), 0)
+
+    def test_update_skips_closed_thread(self):
+        self._grant_consent()
+        thread = self._thread()
+        thread.sudo().write({'state': 'closed'})
+        self._auth_nurse()
+        res = self._post(self.fso.id, 'update', {'body': 'All done today.'})
+        self.assertTrue(res['success'])
+        self.assertEqual(res['data']['sent'], 0)
+        self.assertEqual(len(self._out_msgs(thread)), 0)
+
+    def test_update_preserves_unread_state(self):
+        # A one-tap update is not the nurse reading the thread — the ops
+        # inbox unread count and the bell rows must survive it.
+        self._grant_consent()
+        thread = self._thread()
+        thread.post_family_message('unanswered question', fso=self.fso)
+        self.assertEqual(thread.unread_ops_count, 1)
+        self._auth_nurse()
+        res = self._post(self.fso.id, 'update', {'body': 'Visit went well.'})
+        self.assertTrue(res['success'])
+        self.assertEqual(res['data']['sent'], 1)
+        self.assertEqual(len(self._out_msgs(thread)), 1)
+        self.assertEqual(thread.unread_ops_count, 1)
+        inbound = thread.message_ids.filtered(lambda m: m.direction == 'in')
+        self.assertFalse(inbound.read_by_ops)
+
 
 # =====================================================================
 # 3b — action_send_reply still works after the _post_team_reply refactor
@@ -356,7 +405,7 @@ class TestOpsReplyRefactor(HttpCase):
 
 
 # =====================================================================
-# 8 — Shell HttpCase: fammsg assets served at 1.10.0
+# 8 — Shell HttpCase: fammsg assets served at 1.10.3
 # =====================================================================
 @tagged('post_install', '-at_install')
 class TestShellAssets(HttpCase):
@@ -368,8 +417,8 @@ class TestShellAssets(HttpCase):
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('fammsg.css?v=1.10.0', body)
-        self.assertIn('fammsg.js?v=1.10.0', body)
-        self.assertIn('1.10.0', body)
+        self.assertIn('fammsg.css?v=1.10.3', body)
+        self.assertIn('fammsg.js?v=1.10.3', body)
+        self.assertIn('1.10.3', body)
         # Co-resident PWA layers still served after the bump.
-        self.assertIn('daystrip.js?v=1.10.0', body)
+        self.assertIn('daystrip.js?v=1.10.3', body)

@@ -61,9 +61,11 @@ class PwaFamilyController(http.Controller):
 
     def _scoped_order(self, order_id):
         """Return the order IFF the caller's employee is assigned to it (any
-        assignment state but cancelled), else None. Resolve the employee via the
-        user link, then sudo the assignment read (§5.24)."""
-        employee = request.env.user.employee_id
+        assignment state but cancelled), else None. Resolve the employee by
+        user_id search (the api.py:2075 precedent — user.employee_id is
+        company-context dependent), then sudo the assignment read (§5.24)."""
+        employee = request.env['hr.employee'].sudo().search(
+            [('user_id', '=', request.env.user.id)], limit=1)
         if not employee:
             return None
         order = request.env['health.fieldservice.order'].sudo().browse(order_id)
@@ -126,12 +128,17 @@ class PwaFamilyController(http.Controller):
             return self._prepare_json_response(data={
                 'enabled': enabled,
                 'can_update': bool(eligible),
+                # The order-detail screen is offline-first (ledger §31) — the
+                # panel JS gets the order context from HERE, not the FSO GET.
+                'order_id': order.id,
+                'order_state': order.state or '',
                 'threads': [self._thread_dict(t) for t in threads],
             })
         except Exception as exc:  # noqa: BLE001
-            _logger.error('Family messages GET failed for order %s: %s',
-                          order_id, exc)
-            return self._prepare_json_response(error=str(exc), status_code=500)
+            _logger.exception('Family messages GET failed for order %s: %s',
+                              order_id, exc)
+            return self._prepare_json_response(
+                error=_('Internal error'), status_code=500)
 
     # ------------------------------------------------------------------
     # POST — nurse reply to one thread
@@ -164,8 +171,7 @@ class PwaFamilyController(http.Controller):
                 return self._prepare_json_response(
                     error=_('Thread not found for this visit'), status_code=403)
             try:
-                message = thread._post_team_reply(
-                    body, request.env.user, fso=order)
+                thread._post_team_reply(body, request.env.user, fso=order)
             except (UserError, ValidationError) as exc:
                 return self._prepare_json_response(
                     error=str(exc), status_code=400)
@@ -174,9 +180,10 @@ class PwaFamilyController(http.Controller):
                 'message': self._thread_dict(thread)['messages'][-1],
             })
         except Exception as exc:  # noqa: BLE001
-            _logger.error('Family reply POST failed for order %s: %s',
-                          order_id, exc)
-            return self._prepare_json_response(error=str(exc), status_code=500)
+            _logger.exception('Family reply POST failed for order %s: %s',
+                              order_id, exc)
+            return self._prepare_json_response(
+                error=_('Internal error'), status_code=500)
 
     # ------------------------------------------------------------------
     # POST — FB-047 one-tap post-visit family update (fan-out)
@@ -220,8 +227,15 @@ class PwaFamilyController(http.Controller):
             sent = 0
             for relation in relations:
                 thread = Thread._get_or_create(order.patient_id, relation)
+                if thread.state != 'active':
+                    # Ops closed this channel — skip it, don't abort the fan-out.
+                    continue
+                # mark_read=False: a one-tap update is NOT the nurse reading the
+                # thread — it must not drain the ops inbox unread state or the
+                # other nurses' bell rows.
                 message = thread._post_team_reply(
-                    text, request.env.user, fso=order, send_zns=False)
+                    text, request.env.user, fso=order,
+                    send_zns=False, mark_read=False)
                 thread._send_update_zns(message, relation, order)
                 sent += 1
             return self._prepare_json_response(data={
@@ -229,6 +243,7 @@ class PwaFamilyController(http.Controller):
                 'message': _('Update sent to %s family recipient(s).') % sent,
             })
         except Exception as exc:  # noqa: BLE001
-            _logger.error('Family update POST failed for order %s: %s',
-                          order_id, exc)
-            return self._prepare_json_response(error=str(exc), status_code=500)
+            _logger.exception('Family update POST failed for order %s: %s',
+                              order_id, exc)
+            return self._prepare_json_response(
+                error=_('Internal error'), status_code=500)

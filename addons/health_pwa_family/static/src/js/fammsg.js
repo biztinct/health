@@ -7,12 +7,17 @@
 //   2. FB-047: at visit completion, send a short human update fanned out to
 //      every eligible family relation.
 //
-// Data seam (report point b): window.fetch is wrapped for the
-// GET /health_pwa/api/fso/<id> response the order screen already loads — that
-// tells us the current order id + patient + state. We then call our own
-// /family_messages endpoint (nurse-scoped, sudo server-side) and inject the
-// panel. Chosen over MutationObserver-only because reusing the real payload
-// gives us the order state for free and keys the panel to the exact visit.
+// Data seam (review fix, ledger §31): the #/order/<id> "order screen" is DEAD
+// CODE — app.js's order-detail-view component has been commented out since
+// Nov 2025 ("the Booking List Modal View is the active interface"), so that
+// route renders a blank page. The nurse's real visit surface is the
+// booking-detail MODAL on the today screen, which fetches the bare
+// GET /health_pwa/api/fso/<id> on every open. The panel therefore keys on
+// that fetch (id from the request URL) and injects into the OPEN modal
+// (.booking-detail-modal-content, before .modal-footer). The modal re-fetches
+// on every open, so the tracked order is always the visible one; our own
+// /family_messages responses are dropped when they arrive late for a
+// previously-open booking (wrong-visit guard).
 //
 // SECURITY: family bodies are attacker-adjacent — every family/message text
 // node is set via textContent (never innerHTML). Everything goes dark when
@@ -44,8 +49,8 @@
   };
   var COLLAPSE_KEY = 'vu_fammsg_collapsed';
 
-  var currentOrder = null;   // {id, patientId, state}
-  var lastData = null;       // {enabled, can_update, threads}
+  var currentOrder = null;   // {id, state} — the booking of the LAST-OPENED modal
+  var lastData = null;       // {enabled, can_update, threads, order_state}
   var box = null;            // the injected .fammsg-panel element
   var observer = null;
   var renderPending = false;
@@ -64,7 +69,10 @@
     }
   }
 
-  // ---- fetch-wrap data seam ---------------------------------------------
+  // ---- modal-keyed data seam (ledger §31) --------------------------------
+  // The booking modal fetches GET /health_pwa/api/fso/<id> on every open —
+  // wrap it to learn which booking the modal is showing. The response is
+  // cloned, never consumed.
   (function wrapFetch() {
     if (!window.fetch || window.__fammsgFetchWrapped) { return; }
     window.__fammsgFetchWrapped = true;
@@ -72,37 +80,52 @@
     window.fetch = function (input, init) {
       var url = (typeof input === 'string') ? input : (input && input.url) || '';
       var promise = orig(input, init);
-      // Only the bare order-detail GET: /health_pwa/api/fso/<id>  (id at end
-      // or followed by ?query) — NOT the sub-routes like .../family_messages.
+      // Only the bare per-id GET (id at end or before ?) — NOT our sub-routes.
       var m = url.match(/\/health_pwa\/api\/fso\/(\d+)(?:\?|$)/);
       var method = (init && init.method ? init.method : 'GET').toUpperCase();
       if (m && method === 'GET') {
-        promise.then(function (resp) {
-          resp.clone().json().then(function (json) {
-            if (json && json.success && json.data && json.data.id) {
-              currentOrder = {
-                id: json.data.id,
-                patientId: (json.data.patient && json.data.patient.id) || null,
-                state: json.data.state || '',
-              };
-              loadMessages();
-            }
-          }).catch(function () { /* non-JSON — ignore */ });
-        }).catch(function () { /* network error — ignore */ });
+        var id = parseInt(m[1], 10);
+        if (!currentOrder || currentOrder.id !== id) {
+          // New booking — reset FIRST so a late family_messages response for
+          // the previous one is dropped.
+          currentOrder = { id: id, state: '' };
+          lastData = null;
+          removePanel();
+        }
+        loadMessages();
       }
       return promise;
     };
   })();
 
+  function syncContext() {
+    var modal = document.querySelector('.booking-detail-modal-content');
+    if (!modal) {
+      // Modal closed — Vue removed our panel with it; just drop the ref.
+      box = null;
+      return;
+    }
+    if (currentOrder && lastData && lastData.enabled &&
+        !document.querySelector('.fammsg-panel')) {
+      // Modal open (it re-fetched on open, so currentOrder IS this booking)
+      // and a Vue re-render wiped the panel — re-inject.
+      scheduleRender();
+    }
+  }
+
   // ---- data load --------------------------------------------------------
   function loadMessages() {
     if (!currentOrder) { return; }
-    fetch('/health_pwa/api/fso/' + currentOrder.id + '/family_messages',
+    var reqOrderId = currentOrder.id;
+    fetch('/health_pwa/api/fso/' + reqOrderId + '/family_messages',
           { headers: { 'Accept': 'application/json' } })
       .then(function (r) { return r.json(); })
       .then(function (j) {
+        // Drop late responses after the route moved on (wrong-visit guard).
+        if (!currentOrder || currentOrder.id !== reqOrderId) { return; }
         if (j && j.success && j.data) {
           lastData = j.data;
+          currentOrder.state = j.data.order_state || '';
           scheduleRender();
         } else {
           lastData = null;
@@ -113,14 +136,18 @@
 
   // ---- injection (idempotent; render only via scheduleRender) -----------
   function ensurePanel() {
-    var host = document.querySelector('.order-details');
-    var anchor = host && host.querySelector('.order-actions');
-    if (!host || !anchor) { box = null; return null; }
+    var host = document.querySelector('.booking-detail-modal-content');
+    if (!host) { box = null; return null; }
     var existing = host.querySelector('.fammsg-panel');
     if (existing) { box = existing; return box; }
     box = document.createElement('div');
     box.className = 'fammsg-panel';
-    anchor.parentNode.insertBefore(box, anchor.nextSibling);
+    var footer = host.querySelector('.modal-footer');
+    if (footer) {
+      footer.parentNode.insertBefore(box, footer);
+    } else {
+      host.appendChild(box);
+    }
     return box;
   }
 
@@ -304,16 +331,15 @@
     });
   }
 
-  // ---- observer: re-inject if a Vue re-render wipes our panel -----------
+  // ---- observer: modal watcher + re-inject after Vue re-renders ---------
+  // The modal's open/close and every Vue re-render are DOM mutations, so one
+  // MutationObserver covers both "modal appeared, inject" and "re-render
+  // wiped the panel, re-inject".
   function initObserver() {
     if (observer) { return; }
-    observer = new MutationObserver(function () {
-      if (lastData && lastData.enabled &&
-          !document.querySelector('.fammsg-panel')) {
-        scheduleRender();
-      }
-    });
+    observer = new MutationObserver(syncContext);
     observer.observe(document.body, { childList: true, subtree: true });
+    syncContext();
   }
 
   if (document.readyState === 'loading') {
@@ -322,5 +348,5 @@
     initObserver();
   }
 
-  window.healthFamMsg = { _reload: loadMessages, _render: renderNow };
+  window.healthFamMsg = { _reload: loadMessages, _render: renderNow, _sync: syncContext };
 })();

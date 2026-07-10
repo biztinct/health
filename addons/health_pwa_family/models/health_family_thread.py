@@ -7,7 +7,7 @@ no-phantom posture); dedup ``famupd-<fso>-<relation>``.
 """
 import logging
 
-from odoo import fields, models
+from odoo import _, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class HealthFamilyThread(models.Model):
         })
         if not phone:
             msg.write({'state': 'skipped',
-                       'error_text': 'No usable phone for the recipient.'})
+                       'error_text': _('No usable phone for the recipient.')})
             return msg
         if not enabled:
             msg.state = 'skipped'

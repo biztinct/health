@@ -305,15 +305,22 @@ class HealthFamilyThread(models.Model):
             ]).write({'is_read': True})
         return True
 
-    def _post_team_reply(self, body, author_user, fso=None, send_zns=True):
+    def _post_team_reply(self, body, author_user, fso=None, send_zns=True,
+                         mark_read=True):
         """Shared team → family OUTBOUND core: create the 'out' message, refresh
-        last_message_at, and `action_mark_read` (which ALSO clears the
-        family_message PWA bell rows). For a reply (`send_zns=True`) it fires the
-        `family_message_reply` ZNS ping. Used by the ops inbox
-        (`action_send_reply`) and the PWA nurse reply endpoint; FB-047 passes
-        `send_zns=False` and sends its own `family_update` ping. Returns the
-        created message; raises on an empty/over-cap body (shared `_sanitize_body`)."""
+        last_message_at, and (``mark_read=True``) `action_mark_read` — which
+        ALSO clears the family_message PWA bell rows. For a reply
+        (`send_zns=True`) it fires the `family_message_reply` ZNS ping. Used by
+        the ops inbox (`action_send_reply`) and the PWA nurse reply endpoint;
+        FB-047 passes `send_zns=False, mark_read=False` (a one-tap update is not
+        the sender reading the thread) and sends its own `family_update` ping.
+        Returns the created message; raises on an empty/over-cap body (shared
+        `_sanitize_body`) or a closed thread."""
         self.ensure_one()
+        if self.state != 'active':
+            # Mirror of the inbound gate: a closed channel takes no new
+            # messages from either side (history stays readable).
+            raise UserError(_('This family message thread is closed.'))
         text = self.env['health.family.message']._sanitize_body(body)
         if not text:
             raise UserError(_('Message is empty.'))
@@ -328,7 +335,8 @@ class HealthFamilyThread(models.Model):
             'fso_id': fso.id if fso else False,
         })
         self.write({'last_message_at': fields.Datetime.now()})
-        self.action_mark_read()
+        if mark_read:
+            self.action_mark_read()
         if send_zns:
             try:
                 self._send_reply_zns(message)

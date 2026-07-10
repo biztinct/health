@@ -1,5 +1,31 @@
 # health_pwa_family — Live verification (vietuat / care.biztinct.com)
 
+> **Review addendum (2026-07-10, Fable auto-review): the original panel QA
+> below was NOT organic** — the panel was proven on an injected scaffold, and
+> the deeper dig showed why nothing organic was possible: **the `#/order/<id>`
+> screen the handover targeted is DEAD CODE** — app.js's `order-detail-view`
+> component (with the `.order-details`/`.order-actions` anchors) has been
+> commented out since 2025-11-09; the route renders a blank page and the
+> nurse's real visit surface is the **booking-detail modal** on the today
+> screen (ledger §31 — the wrong "verified fact" was the handover's, not the
+> implementer's). **Fixed (modal-keyed seam)**: the panel now keys on the
+> bare `GET /health_pwa/api/fso/<id>` the modal fires on every open
+> (response cloned, id from the URL, stale/late responses dropped) and
+> injects into `.booking-detail-modal-content` before `.modal-footer`; the
+> GET endpoint returns `order_id`/`order_state` so FB-047 gating needs no
+> other source; the bell card's "Xem (View)" button was REMOVED (it navigated
+> to the dead route — blank screen). Also fixed in the same pass: closed
+> threads refuse team replies (400) and are skipped in the FB-047 fan-out;
+> the one-tap update no longer marks the thread read (`mark_read=False` —
+> ops unread + other bell rows survive it); employee resolution uses the
+> sudo user_id-search precedent; 500 handlers return a generic message;
+> and a pre-existing P1 in health_pwa found during the dig: `parseOdooDateTime`
+> was closure-local to today-view while orders-view/past-bookings-view call
+> it → both list screens crashed since Nov 2025 ("Failed to load orders") —
+> hoisted to top-level, both screens render again. PWA bumped **1.10.3**
+> (assets changed ⇒ bump discipline; all 5 spots + daystrip/scribe/own pin
+> tests). Organic re-QA below the original sections.
+
 PWA family messaging for the field nurse (FB-044 loop close + FB-047). Proven by
 **72 module tests (0 failed)** across `/health_pwa_family` (15) +
 `/health_family_messages` + `/health_pwa_daystrip` + `/health_scribe`, plus the

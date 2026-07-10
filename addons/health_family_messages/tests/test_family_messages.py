@@ -327,6 +327,17 @@ class TestClosedThread(FamilyMessagesBase):
         self.assertEqual(self.Message.search_count(
             [('thread_id', '=', thread.id)]), 0)
 
+    def test_closed_thread_refuses_team_reply(self):
+        # Mirror of the inbound gate: _post_team_reply (ops inbox + PWA nurse
+        # reply) refuses a closed channel too.
+        relation = self._relation()
+        thread = self.Thread._get_or_create(self.patient, relation)
+        thread.sudo().write({'state': 'closed'})
+        with self.assertRaises(UserError):
+            thread._post_team_reply('final word', self.env.user)
+        self.assertEqual(self.Message.search_count(
+            [('thread_id', '=', thread.id)]), 0)
+
 
 # =====================================================================
 # Thread deletion — the cascade must not bypass message append-only

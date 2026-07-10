@@ -42,6 +42,36 @@ const getPWALocale = () => (
   window.healthPWAConfig?.user_lang?.startsWith('vi') ? 'vi-VN' : 'en-US'
 );
 
+// Parse an Odoo datetime ("YYYY-MM-DD HH:MM:SS" assumed UTC, or ISO) into a
+// local-timezone Date. Top-level on purpose: orders-view and
+// past-bookings-view call this too — it used to live inside today-view's
+// setup() closure, which made every other caller throw ReferenceError and
+// broke those screens outright ("Failed to load orders").
+const parseOdooDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return new Date();
+  if (dateTimeStr.includes('T')) {
+    let isoString = dateTimeStr;
+    if (!isoString.endsWith('Z') && !isoString.includes('+') && !isoString.includes('-', isoString.indexOf('T'))) {
+      isoString += 'Z';
+    }
+    return new Date(isoString);
+  }
+  const parts = dateTimeStr.split(' ');
+  if (parts.length >= 2) {
+    const dateParts = parts[0].split('-');
+    const timeParts = parts[1].split(':');
+    if (dateParts.length === 3 && timeParts.length >= 2) {
+      return new Date(Date.UTC(
+        parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]),
+        parseInt(timeParts[0]), parseInt(timeParts[1]), parseInt(timeParts[2]) || 0));
+    }
+  }
+  if (!dateTimeStr.includes('Z') && !dateTimeStr.includes('+') && !dateTimeStr.includes('GMT')) {
+    return new Date(dateTimeStr + 'Z');
+  }
+  return new Date(dateTimeStr);
+};
+
 const cleanDisplayValue = (value, fallback = '') => {
   if (window.PWAUtils?.i18n?.clean) {
     return window.PWAUtils.i18n.clean(value, { fallback });
@@ -616,9 +646,6 @@ window.healthPWA = {
                         <div v-if="notif.message" class="notif-detail notif-message">{{ notif.message }}</div>
                       </div>
                       <div class="notif-card-actions">
-                        <button v-if="notif.fso_id" class="notif-btn notif-btn-view" @click="navigate('order', { id: notif.fso_id })">
-                          <i class="material-icons">visibility</i> {{ t('Xem', 'View') }}
-                        </button>
                         <button class="notif-btn notif-btn-ok" @click="dismissNotification(notif.id)" :disabled="state.notifRespondingId === notif.id">
                           <i class="material-icons">done</i> OK
                         </button>
@@ -914,51 +941,6 @@ window.healthPWA = {
         const isFutureBookingsOpen = ref(false);
         const futureBookingsByDate = ref({});
         const loadingFutureBookings = ref(false);
-
-        // Helper function to parse datetime from API (Odoo returns UTC datetimes)
-        // Convert UTC datetime string to local timezone Date object
-        const parseOdooDateTime = (dateTimeStr) => {
-          if (!dateTimeStr) return new Date();
-
-          // Handle ISO format (with or without Z suffix)
-          // ISO format: YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ
-          if (dateTimeStr.includes('T')) {
-            // If it's ISO format but missing Z suffix, append it to force UTC parsing
-            let isoString = dateTimeStr;
-            if (!isoString.endsWith('Z') && !isoString.includes('+') && !isoString.includes('-', isoString.indexOf('T'))) {
-              isoString += 'Z';
-            }
-            return new Date(isoString);
-          }
-
-          // Handle format: "2025-01-15 15:00:00" (Odoo format, assumed UTC)
-          // Split datetime and parse
-          const parts = dateTimeStr.split(' ');
-          if (parts.length >= 2) {
-            const dateParts = parts[0].split('-'); // YYYY-MM-DD
-            const timeParts = parts[1].split(':'); // HH:MM:SS
-
-            if (dateParts.length === 3 && timeParts.length >= 2) {
-              const year = parseInt(dateParts[0]);
-              const month = parseInt(dateParts[1]) - 1; // JS months are 0-indexed
-              const day = parseInt(dateParts[2]);
-              const hours = parseInt(timeParts[0]);
-              const minutes = parseInt(timeParts[1]);
-              const seconds = parseInt(timeParts[2]) || 0;
-
-              // Create UTC date
-              const utcDate = new Date(Date.UTC(year, month, day, hours, minutes, seconds));
-              return utcDate;
-            }
-          }
-
-          // Fallback to standard parsing (as UTC if possible)
-          // Try to interpret as UTC by appending Z if it doesn't have timezone info
-          if (!dateTimeStr.includes('Z') && !dateTimeStr.includes('+') && !dateTimeStr.includes('GMT')) {
-            return new Date(dateTimeStr + 'Z');
-          }
-          return new Date(dateTimeStr);
-        };
 
         // Convert local date and time to ISO format with timezone for API submission
         // Takes local date (YYYY-MM-DD), local time (HH:MM), and user timezone

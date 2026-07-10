@@ -296,6 +296,31 @@ injects JS into the shell requires bumping `health_pwa`:
     `perm_unlink=0`. When auditing an append-only model, grep for every
     `Many2one` pointing at it AND every cascade FK it points out through.
 
+31. **The PWA `#/order/<id>` "order screen" is DEAD CODE — the nurse's real
+    visit surface is the booking-detail MODAL on the today screen.** The whole
+    `order-detail-view` component (~1,600 lines incl. its `.order-details` /
+    `.order-actions` markup) has been wrapped in a `/* LEGACY CODE */` block
+    comment since 2025-11-09 ("the Booking List Modal View is the active
+    interface"), but the route, `navigate('order', …)` callers (orders /
+    past-bookings lists) and the component markup were all left in place — so
+    grep "finds" the screen while Vue renders a blank page (unresolved
+    `<order-detail-view>` tag; check `app._context.components` to see what is
+    actually registered). Three review lessons paid for in full: (a) verify a
+    UI seam by DRIVING the real screen and watching the network panel, never
+    by grepping components — grep cannot see block comments, and
+    `Function.prototype.toString()` shows commented-out code too; (b) when
+    probing "does this code run", use `window.__flag = 1` side effects, not
+    console.log, and suspect comments/strings when linear code "skips"; (c)
+    the definitive tool is the AST statement list (acorn) — a swallowed
+    region belongs to NO statement. Augmentation JS for the visit surface
+    keys on the modal: wrap the bare `GET /health_pwa/api/fso/<id>` (fired on
+    every modal open — clone the response, never consume) and inject into
+    `.booking-detail-modal-content` before `.modal-footer`. Also from the same
+    dig: `parseOdooDateTime` lived inside today-view's setup() closure while
+    orders-view/past-bookings-view called it → ReferenceError, both list
+    screens dead since Nov ("Failed to load orders") — helpers shared across
+    components belong at file top-level.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
