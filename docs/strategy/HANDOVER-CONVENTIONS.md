@@ -240,6 +240,17 @@ injects JS into the shell requires bumping `health_pwa`:
     ⇒ free chatter/audit" — verify with a `mail.tracking.value` search_count and
     post an explicit `message_post` when you need the audit trail on the record.
 
+27. **`search()` silently skips ARCHIVED rows — a data-cleanup hook must pass
+    `active_test=False`.** health_schedule_canvas's post_init unlinked orphan
+    `state='template'` assignments via `search([('state','=','template')])` and
+    removed only **3** — but 47 more existed, all `active=False`. Any model with an
+    `active` field has an implicit `('active','=',True)` added to every `search`,
+    so archived rows are invisible to a naive cleanup (and to any migration/GC that
+    means "ALL rows matching X"). Use
+    `env[model].with_context(active_test=False).search(domain)`. Corollary: a
+    `search_count`/`unlink` sweep that reports "N removed" can be silently
+    incomplete — verify with a raw `active_test=False` count afterwards.
+
 26. `hr.employee.working_hours_<day>` Char fields are only a FALLBACK —
     `_working_intervals_for` prefers `resource_calendar_id`, and every
     employee gets the company default calendar (8-17) on create, so

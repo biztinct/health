@@ -37,9 +37,41 @@ export class TimelineController extends Component {
         this.debouncedInternalMove = useDebounced(this.internalMove, 0);
         this.dialogService = useService("dialog");
         this.actionService = useService("action");
+        // Fork divergence (health19): windowed-fetch bookkeeping. _fetchedSpan is
+        // the [lo, hi] range currently loaded (window ± one margin); we only
+        // refetch when the visible window leaves it. Debounced so a scroll/zoom
+        // gesture issues one RPC, not dozens.
+        this._fetchedSpan = null;
+        this.debouncedRangeRefetch = useDebounced(this._refetchForRange.bind(this), 300);
+        // Window the FIRST fetch too (not just post-rangechanged), from the arch
+        // mode — otherwise the initial paint would still search_read everything.
+        if (this.model.dynamic_range) {
+            const now = DateTime.now();
+            const mode = this.props.modelParams && this.props.modelParams.mode;
+            let start = false;
+            let end = false;
+            if (mode === "day") {
+                start = now.startOf("day");
+                end = now.endOf("day");
+            } else if (mode === "week") {
+                start = now.startOf("week");
+                end = now.endOf("week");
+            } else if (mode === "month") {
+                start = now.startOf("month");
+                end = now.endOf("month");
+            }
+            if (start && end) {
+                this.model.setVisibleWindow(start, end);
+                const margin = end.diff(start).milliseconds || 0;
+                this._fetchedSpan = {
+                    lo: start.minus({milliseconds: margin}),
+                    hi: end.plus({milliseconds: margin}),
+                };
+            }
+        }
     }
     get rendererProps() {
-        return {
+        const props = {
             model: this.model,
             onAdd: this._onAdd.bind(this),
             onGroupClick: this._onGroupClick.bind(this),
@@ -48,6 +80,46 @@ export class TimelineController extends Component {
             onRemove: this._onRemove.bind(this),
             onUpdate: this._onUpdate.bind(this),
         };
+        if (this.model.dynamic_range) {
+            props.onRangeChanged = this._onRangeChanged.bind(this);
+        }
+        return props;
+    }
+    /**
+     * vis 'rangechanged' hook (dynamic_range only). Stores the pending window and
+     * debounces the refetch decision.
+     * @param {Object} range {start: Date, end: Date}
+     */
+    _onRangeChanged(range) {
+        this._pendingRange = range;
+        this.debouncedRangeRefetch();
+    }
+    /**
+     * Refetch iff the visible window has left the fetched span. Widens the model
+     * window (± one margin) and reloads once.
+     */
+    async _refetchForRange() {
+        const range = this._pendingRange;
+        if (!range || !range.start || !range.end) {
+            return;
+        }
+        const start = DateTime.fromJSDate(range.start);
+        const end = DateTime.fromJSDate(range.end);
+        if (
+            this._fetchedSpan &&
+            start >= this._fetchedSpan.lo &&
+            end <= this._fetchedSpan.hi
+        ) {
+            return; // still inside the loaded span — no fetch
+        }
+        const margin = end.diff(start).milliseconds || 0;
+        this._fetchedSpan = {
+            lo: start.minus({milliseconds: margin}),
+            hi: end.plus({milliseconds: margin}),
+        };
+        this.model.setVisibleWindow(start, end);
+        await this.model.load(this.getSearchProps());
+        this.render();
     }
     getSearchProps() {
         const {comparision, context, domain, groupBy, orderBy} = this.env.searchModel;
@@ -252,7 +324,14 @@ export class TimelineController extends Component {
             FormViewDialog,
             {
                 resId: false,
-                context: makeContext([context], this.env.searchModel.context),
+                // Merge the search/action context INTO the dialog context (search
+                // first so item-specific default_* win on conflict) — this is how
+                // core calendar/gantt dialogs behave. Passing it only as the second
+                // (evaluation) arg — the historical behaviour — meant an action's
+                // default_fso_id never reached the FormViewDialog, which is what the
+                // health_fieldservice "template assignment" DB-row hack worked around.
+                // Fork divergence from upstream OCA web_timeline (see README).
+                context: makeContext([this.env.searchModel.context, context]),
                 onRecordSaved: async (record) => {
                     recordSaved = true;
                     // IMPORTANT: Cancel the phantom item that vis-timeline created

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_schedule_canvas.QuickCreateDialog">
+        <Dialog title="title" size="'md'">
+            <div class="hf-qc">
+                <!-- Pre-filled slot summary (staff · date · time) -->
+                <div class="hf-qc-slot">
+                    <span class="hf-wt-ico hf-ico-user hf-qc-slot-ico"/>
+                    <span class="hf-qc-slot-staff" t-esc="props.staffName || ''"/>
+                    <span class="hf-qc-slot-sep">·</span>
+                    <span class="hf-qc-slot-when">
+                        <t t-esc="props.dateLabel || props.date"/> <t t-esc="props.timeLabel || ''"/>
+                    </span>
+                    <span class="hf-qc-slot-fac" t-if="props.facilityName" t-esc="props.facilityName"/>
+                </div>
+
+                <!-- Off-hours notice (creating off-hours is allowed, just flagged) -->
+                <div class="hf-qc-warn" t-if="props.warning">
+                    <span class="hf-wt-ico hf-ico-clock hf-qc-warn-ico"/>
+                    <span t-esc="props.warning"/>
+                    <span class="hf-qc-warn-ask"> — <t>continuing anyway.</t></span>
+                </div>
+
+                <!-- Client picker -->
+                <div class="hf-qc-field">
+                    <label class="hf-qc-label">Client</label>
+                    <div class="hf-qc-client">
+                        <input type="text" class="form-control hf-qc-search"
+                               placeholder="Search name / phone / code…"
+                               t-att-value="state.query"
+                               t-on-input="onSearchInput"/>
+                        <button class="btn btn-link hf-qc-clear" t-if="state.patientId"
+                                t-on-click="clearPatient" title="Clear">×</button>
+                    </div>
+                    <div class="hf-qc-results" t-if="state.results.length and !state.patientId">
+                        <div class="hf-qc-result" t-foreach="state.results" t-as="p" t-key="p.id"
+                             t-on-click="() => this.pickPatient(p)">
+                            <span class="hf-qc-result-name" t-esc="p.name"/>
+                            <span class="hf-qc-result-meta">
+                                <t t-if="p.patient_code"><t t-esc="p.patient_code"/> · </t>
+                                <t t-esc="p.mobile or ''"/>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="hf-qc-hint" t-if="state.searching">Searching…</div>
+                </div>
+
+                <!-- Service + duration -->
+                <div class="hf-qc-row">
+                    <div class="hf-qc-field hf-qc-field--grow">
+                        <label class="hf-qc-label">Service</label>
+                        <select class="form-select" t-model="state.serviceType">
+                            <option t-foreach="serviceTypes" t-as="s" t-key="s.value"
+                                    t-att-value="s.value" t-esc="s.label"/>
+                        </select>
+                    </div>
+                    <div class="hf-qc-field">
+                        <label class="hf-qc-label">Duration (h)</label>
+                        <input type="number" min="0.25" step="0.25" class="form-control hf-qc-dur"
+                               t-model.number="state.durationHours"/>
+                    </div>
+                </div>
+
+                <div class="hf-qc-field">
+                    <label class="hf-qc-label">Notes</label>
+                    <textarea class="form-control hf-qc-notes" rows="2"
+                              t-model="state.notes"/>
+                </div>
+            </div>
+
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-att-disabled="!canCreate"
+                        t-on-click="create">
+                    <t t-if="state.saving">Creating…</t>
+                    <t t-else="">Create booking</t>
+                </button>
+                <button class="btn btn-secondary" t-on-click="cancel">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Turn the unified Staff Schedule into a "canvas":
+         - create="true"      → vis double-tap fires onAdd (draw-to-create; the
+           StaffScheduleController._onAdd patch routes it to the quick-booking dialog)
+         - dynamic_range="1"  → windowed fetch (web_timeline fork feature) so Week/
+           Month load only the visible span (± one margin), not all assignments. -->
+    <record id="view_staff_schedule_timeline_canvas" model="ir.ui.view">
+        <field name="name">Staff Schedule Timeline (canvas)</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="inherit_id" ref="health_fieldservice.view_staff_schedule_timeline"/>
+        <field name="arch" type="xml">
+            <xpath expr="//timeline" position="attributes">
+                <attribute name="create">true</attribute>
+                <attribute name="dynamic_range">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

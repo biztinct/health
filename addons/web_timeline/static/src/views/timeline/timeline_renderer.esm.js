@@ -227,6 +227,15 @@ export class TimelineRenderer extends Component {
             this.draw_canvas();
             this.load_initial_data();
         });
+        // Fork divergence (health19): windowed fetch. On range change, hand the
+        // new visible window to the controller, which refetches when the window
+        // leaves the fetched span. Guarded by the arch flag so other views are
+        // untouched. Debounced by the controller side.
+        if (this.model.dynamic_range && this.props.onRangeChanged) {
+            this.timeline.on("rangechanged", (ev) => {
+                this.props.onRangeChanged({start: ev.start, end: ev.end});
+            });
+        }
     }
     /**
      * Returns the XSS whitelist for the timeline library.
@@ -507,4 +516,5 @@ TimelineRenderer.props = {
     onMove: Function,
     onRemove: Function,
     onUpdate: Function,
+    onRangeChanged: {type: Function, optional: true},
 };

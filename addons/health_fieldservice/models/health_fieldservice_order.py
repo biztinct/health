@@ -1818,14 +1818,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 record._update_patient_next_visit_date()
                 # Send completion notifications
                 record._send_completion_notifications()
-                # Delete the template assignment for this booking
-                template_assignment = self.env['health.staff.assignment'].search([
-                    ('state', '=', 'template'),
-                    ('fso_id', '=', record.id)
-                ])
-                if template_assignment:
-                    _logger.info("🗑️ DELETING TEMPLATE ASSIGNMENT for completed booking: %s (Template ID: %s)", record.name, template_assignment.id)
-                    template_assignment.unlink()
+                # (template-assignment cleanup removed — health_schedule_canvas §2.4
+                # retired the template mechanism; nothing creates template rows now.)
                 # Note: Invoice creation is now manual per Invoicing.md workflow
             
             elif new_state == 'closed':
@@ -3535,31 +3529,10 @@ class HealthFieldServiceOrderUnified(models.Model):
         _logger.info("Scheduled DateTime: %s", self.scheduled_datetime)
         _logger.info("=" * 100)
 
-        # Check if template exists for this booking
-        existing_template = self.env['health.staff.assignment'].search([
-            ('state', '=', 'template'),
-            ('fso_id', '=', self.id)
-        ], limit=1)
-
-        if not existing_template:
-            # Create new template for this booking
-            template = self.env['health.staff.assignment'].create({
-                'fso_id': self.id,
-                'staff_id': False,
-                'assignment_date': self.scheduled_datetime or fields.Datetime.now(),
-                # planned_start_time and planned_end_time are auto-computed from FSO
-                'assignment_status': 'assigned',
-                'state': 'template',
-                'assignment_type': self._get_assignment_type(),
-                'priority': self.priority or '1',
-            })
-            _logger.info("📌 CREATED NEW TEMPLATE ASSIGNMENT:")
-            _logger.info("   Template ID: %s", template.id)
-            _logger.info("   FSO ID: %s", self.id)
-            _logger.info("   Scheduled DateTime: %s", self.scheduled_datetime)
-        else:
-            _logger.info("📌 REUSING EXISTING TEMPLATE:")
-            _logger.info("   Template ID: %s", existing_template.id)
+        # The "template assignment" DB-row hack was removed (health_schedule_canvas
+        # §2.4). default_fso_id / default_assignment_date in the action context
+        # below now reach the create dialog directly (web_timeline _onAdd context
+        # merge), so no placeholder row is needed.
 
         # Open timeline view focused on appointment date with DAY view
         # Convert UTC datetime to user timezone for proper timeline focus
@@ -3726,20 +3699,8 @@ class HealthFieldServiceOrderUnified(models.Model):
         appointment_datetime_local = pytz.UTC.localize(appointment_datetime_utc).astimezone(user_tz)
         appointment_date = appointment_datetime_local.strftime('%Y-%m-%d')
 
-        existing_template = self.env['health.staff.assignment'].search([
-            ('state', '=', 'template'),
-            ('fso_id', '=', self.id)
-        ], limit=1)
-        if not existing_template:
-            self.env['health.staff.assignment'].create({
-                'fso_id': self.id,
-                'staff_id': False,
-                'assignment_date': self.scheduled_datetime or fields.Datetime.now(),
-                'assignment_status': 'assigned',
-                'state': 'template',
-                'assignment_type': self._get_assignment_type(),
-                'priority': self.priority or '1',
-            })
+        # Template-row hack removed (health_schedule_canvas §2.4) — the context
+        # defaults below reach the create dialog directly now.
 
         timeline_view = self.env.ref('health_fieldservice.health_staff_assignment_timeline_view', raise_if_not_found=False)
         list_view = self.env.ref('health_fieldservice.view_health_staff_assignment_list', raise_if_not_found=False)

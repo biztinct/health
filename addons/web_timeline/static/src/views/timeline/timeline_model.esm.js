@@ -25,6 +25,12 @@ export class TimelineModel extends Model {
         this.date_stop = this.params.date_stop;
         this.date_delay = this.params.date_delay;
         this.colors = this.params.colors;
+        // Fork divergence (health19): opt-in windowed fetch. When dynamic_range is
+        // set on the arch, load() appends a [date_start < end+margin,
+        // date_stop > start-margin] clause built from _visibleWindow (set by the
+        // controller on rangechanged). Null window ⇒ no clause ⇒ legacy behaviour.
+        this.dynamic_range = this.params.dynamic_range || false;
+        this._visibleWindow = null;
         this.last_group_bys = this.params.default_group_by.split(",");
         const templates = useViewCompiler(KanbanCompiler, this.params.templateDocs);
         this.recordTemplate = templates["timeline-item"];
@@ -71,12 +77,43 @@ export class TimelineModel extends Model {
         this.data = await this.keepLast.add(
             this.orm.call(this.model_name, "search_read", [], {
                 fields: fields,
-                domain: searchParams.domain,
+                domain: this._applyRangeDomain(searchParams.domain),
                 order: field_to_order,
                 context: searchParams.context,
             })
         );
         this.notify();
+    }
+    /**
+     * Set the visible window used by the windowed-fetch clause (dynamic_range).
+     * @param {DateTime} start
+     * @param {DateTime} end
+     */
+    setVisibleWindow(start, end) {
+        this._visibleWindow = start && end ? {start, end} : null;
+    }
+    /**
+     * Append the dynamic_range clause to the search domain. No-op unless
+     * dynamic_range is on AND a window has been set. The margin (one window
+     * width on each side) means small pans don't refetch.
+     * @param {Array} domain
+     * @returns {Array}
+     */
+    _applyRangeDomain(domain) {
+        if (!this.dynamic_range || !this._visibleWindow || !this.date_start) {
+            return domain;
+        }
+        const {start, end} = this._visibleWindow;
+        const margin = end.diff(start).milliseconds || 0;
+        const lo = start.minus({milliseconds: margin});
+        const hi = end.plus({milliseconds: margin});
+        const stopField = this.date_stop || this.date_start;
+        const clause = [
+            "&",
+            [this.date_start, "<", this.serializeDate(this.date_start, hi)],
+            [stopField, ">", this.serializeDate(stopField, lo)],
+        ];
+        return ["&", ...(domain || []), ...clause];
     }
     /**
      * Transform Odoo event object to timeline event object.

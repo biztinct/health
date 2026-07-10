@@ -106,6 +106,16 @@ export class TimelineArchParser {
                             true
                         );
                     }
+                    // Fork divergence (health19): opt-in windowed fetch. When set,
+                    // the model appends a visible-range clause to the search domain
+                    // and the controller refetches on rangechanged. Default OFF, so
+                    // every other timeline view behaves byte-identically.
+                    if (node.hasAttribute("dynamic_range")) {
+                        archInfo.dynamic_range = exprToBoolean(
+                            node.getAttribute("dynamic_range"),
+                            false
+                        );
+                    }
                     if (node.hasAttribute("edit")) {
                         archInfo.canUpdate = exprToBoolean(
                             node.getAttribute("edit"),

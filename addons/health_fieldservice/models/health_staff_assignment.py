@@ -703,55 +703,13 @@ class HealthStaffAssignment(models.Model):
     # CRUD Overrides
     # ============================================================================
 
-    @api.model
-    def default_get(self, fields_list):
-        """Override to auto-populate FSO and assignment_date from template record"""
-        defaults = super().default_get(fields_list)
-
-        _logger.info("=" * 100)
-        _logger.info("🔍 DEFAULT_GET CALLED - AUTO-POPULATING FROM TEMPLATE")
-        _logger.info("=" * 100)
-
-        # Find the most recent template record (created by action_manual_assign_staff)
-        template = self.search(
-            [('state', '=', 'template')],
-            order='create_date desc',
-            limit=1
-        )
-
-        _logger.info("🔍 DEBUG - Template search results:")
-        _logger.info("   All templates in DB: %s", self.search([('state', '=', 'template')]).mapped('id'))
-        _logger.info("   Most recent template: %s", template.id if template else "NONE")
-
-        if template:
-            _logger.info("=" * 100)
-            _logger.info("✅ TEMPLATE FOUND - Using it to populate assignment")
-            _logger.info("=" * 100)
-            _logger.info("   Template ID: %s", template.id)
-            _logger.info("   FSO ID: %s", template.fso_id.id)
-            _logger.info("   FSO Name: %s", template.fso_id.name)
-            _logger.info("   Assignment DateTime: %s", template.assignment_date)
-
-            # Auto-populate FSO from template
-            if 'fso_id' in fields_list:
-                defaults['fso_id'] = template.fso_id.id
-                _logger.info("   ✅ fso_id populated: %s", template.fso_id.id)
-
-            # Auto-populate assignment_date from template
-            if 'assignment_date' in fields_list:
-                defaults['assignment_date'] = template.assignment_date
-                _logger.info("   ✅ assignment_date populated: %s", template.assignment_date)
-
-            _logger.info("=" * 100)
-        else:
-            _logger.info("❌ No template found in database - new assignment will be empty")
-
-        _logger.info("=" * 100)
-        _logger.info("🏁 DEFAULT_GET COMPLETE")
-        _logger.info("=" * 100)
-        _logger.info("Returned defaults: %s", defaults)
-        _logger.info("=" * 100)
-        return defaults
+    # NOTE: the former default_get() override that force-populated fso_id /
+    # assignment_date from the "most recent template GLOBALLY" was removed
+    # (health_schedule_canvas §2.4). super().default_get() already honours
+    # default_fso_id / default_assignment_date from the action context, which now
+    # reaches the create dialog after the web_timeline _onAdd context-merge fix.
+    # The old override leaked a stale booking into every new-assignment form
+    # system-wide.
 
     @api.model_create_multi
     def create(self, vals_list):

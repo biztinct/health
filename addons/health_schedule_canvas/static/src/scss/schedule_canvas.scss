@@ -1,0 +1,142 @@
+// health_schedule_canvas — off-hours toggle + quick-create dialog.
+// Flat mono colors only (no gradients), hf-wt-ico CSS-mask icons.
+
+.hf-offhours-toggle {
+    margin-left: 8px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #475569;
+    font-weight: 500;
+    border-radius: 6px;
+
+    &.is-hidden {
+        background: #1e293b;
+        border-color: #1e293b;
+        color: #fff;
+    }
+}
+
+// ---- Quick-create dialog ----
+.hf-qc {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .hf-qc-slot {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 10px;
+        background: #f1f5f9;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #334155;
+
+        .hf-qc-slot-staff {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .hf-qc-slot-sep {
+            color: #94a3b8;
+        }
+        .hf-qc-slot-fac {
+            margin-left: auto;
+            color: #64748b;
+            font-size: 12px;
+        }
+        .hf-qc-slot-ico {
+            background-color: #64748b;
+        }
+    }
+
+    .hf-qc-warn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        background: #fef3c7;
+        border: 1px solid #fcd34d;
+        border-radius: 6px;
+        color: #92400e;
+        font-size: 12px;
+
+        .hf-qc-warn-ico {
+            background-color: #b45309;
+        }
+    }
+
+    .hf-qc-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        &--grow {
+            flex: 1;
+        }
+    }
+
+    .hf-qc-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        margin: 0;
+    }
+
+    .hf-qc-row {
+        display: flex;
+        gap: 10px;
+
+        .hf-qc-dur {
+            width: 90px;
+        }
+    }
+
+    .hf-qc-client {
+        position: relative;
+
+        .hf-qc-clear {
+            position: absolute;
+            right: 4px;
+            top: 2px;
+            padding: 0 8px;
+            color: #94a3b8;
+            text-decoration: none;
+        }
+    }
+
+    .hf-qc-results {
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        margin-top: 2px;
+        max-height: 220px;
+        overflow-y: auto;
+
+        .hf-qc-result {
+            display: flex;
+            flex-direction: column;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+
+            &:last-child {
+                border-bottom: 0;
+            }
+            &:hover {
+                background: #f8fafc;
+            }
+            .hf-qc-result-name {
+                font-weight: 500;
+                color: #1e293b;
+            }
+            .hf-qc-result-meta {
+                font-size: 12px;
+                color: #64748b;
+            }
+        }
+    }
+
+    .hf-qc-hint {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+}
