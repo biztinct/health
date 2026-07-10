@@ -27,11 +27,24 @@ class HealthSyncManager {
   
   async saveSyncMetadata() {
     try {
-      await this.db.sync.put({
+      // PouchDB upsert: a put without the current _rev 409s on every run
+      // after the first, so lastSyncTime never persists and every sync does a
+      // full pull. Read the existing doc first and carry its _rev.
+      const doc = {
         _id: 'sync_metadata',
         lastSyncTime: this.lastSyncTime,
         updatedAt: new Date().toISOString()
-      });
+      };
+      try {
+        const existing = await this.db.sync.get('sync_metadata');
+        doc._rev = existing._rev;
+      } catch (getErr) {
+        // 404 on first write is expected — leave _rev unset so put creates it.
+        if (getErr && getErr.status !== 404) {
+          throw getErr;
+        }
+      }
+      await this.db.sync.put(doc);
     } catch (error) {
       console.error('Failed to save sync metadata:', error);
     }
@@ -191,6 +204,11 @@ class HealthSyncManager {
     
     // Apply field service orders changes
     if (changes.field_service_orders && changes.field_service_orders.records.length > 0) {
+      // The server caps the orders pull at 500 rows; make the truncation
+      // visible instead of silently caching a partial working set offline.
+      if (changes.field_service_orders.records.length >= 500) {
+        console.warn('health_pwa sync: order cap hit (500) — older orders not cached offline');
+      }
       await this.updateLocalData('orders', changes.field_service_orders.records);
     }
     

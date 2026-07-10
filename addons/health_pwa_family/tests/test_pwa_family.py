@@ -405,7 +405,7 @@ class TestOpsReplyRefactor(HttpCase):
 
 
 # =====================================================================
-# 8 — Shell HttpCase: fammsg assets served at 1.10.3
+# 8 — Shell HttpCase: fammsg assets served at 1.11.0
 # =====================================================================
 @tagged('post_install', '-at_install')
 class TestShellAssets(HttpCase):
@@ -417,8 +417,49 @@ class TestShellAssets(HttpCase):
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('fammsg.css?v=1.10.3', body)
-        self.assertIn('fammsg.js?v=1.10.3', body)
-        self.assertIn('1.10.3', body)
+        self.assertIn('fammsg.css?v=1.11.0', body)
+        self.assertIn('fammsg.js?v=1.11.0', body)
+        self.assertIn('1.11.0', body)
         # Co-resident PWA layers still served after the bump.
-        self.assertIn('daystrip.js?v=1.10.3', body)
+        self.assertIn('daystrip.js?v=1.11.0', body)
+
+
+# =====================================================================
+# 9 — health_pwa api_fso_detail scope + sudo (PWA reliability phase §2.3)
+#     Lives here (health_pwa has no tests/ dir) because this base already
+#     builds an assigned nurse + FSO fixture; conventions §3 authorises
+#     placing health_pwa tests in a pin suite.
+# =====================================================================
+@tagged('post_install', '-at_install')
+class TestFsoDetailScope(PwaFamilyBase):
+
+    # The response contract the booking modal + fammsg.js consume — snapshot
+    # the key set so a future refactor that drops a key fails loudly.
+    EXPECTED_KEYS = {
+        'id', 'name', 'patient_name', 'state', 'patient', 'primary_contact',
+        'quote_items', 'scheduled_datetime', 'scheduled_duration',
+        'confirmation_requirements',
+    }
+
+    def _detail(self, order_id):
+        return self.url_open('/health_pwa/api/fso/%s' % order_id).json()
+
+    def test_assigned_nurse_gets_detail(self):
+        # The assigned nurse has NO catchment / sale.order ACL, yet the
+        # scope-check + sudo must still return their own visit (200 + data).
+        self._auth_nurse()
+        res = self._detail(self.fso.id)
+        self.assertTrue(res['success'], res)
+        self.assertEqual(res['data']['id'], self.fso.id)
+        # Response keys unchanged by the sudo refactor.
+        self.assertTrue(
+            self.EXPECTED_KEYS.issubset(set(res['data'].keys())),
+            'missing keys: %s' % (self.EXPECTED_KEYS - set(res['data'].keys())))
+
+    def test_unassigned_nurse_refused(self):
+        # A visit the nurse is NOT assigned to and cannot read by rule → 403.
+        other = self._make_fso(self.patient, assign=False)
+        self._auth_nurse()
+        res = self._detail(other.id)
+        self.assertFalse(res['success'], res)
+        self.assertIn('error', res)

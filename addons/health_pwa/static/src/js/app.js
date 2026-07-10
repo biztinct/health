@@ -72,6 +72,27 @@ const parseOdooDateTime = (dateTimeStr) => {
   return new Date(dateTimeStr);
 };
 
+// Shared booking status → label map. Top-level (parseOdooDateTime precedent,
+// ledger §31 tail) so today-view, orders-view and past-bookings-view all use
+// ONE superset map — the orders lists' local map missed 'confirmed',
+// 'completed_pending_invoice' and 'closed' and rendered "UNKNOWN" chips for
+// real states. VN-first labels resolve via _t. Falls back to the raw state
+// (never the misleading "Unknown") for anything genuinely unmapped.
+const getBookingStatusLabel = (state) => {
+  const s = String(state || '');
+  const labels = {
+    'draft': _t('Booked'),
+    'confirmed': _t('Confirmed'),
+    'assigned': _t('Assigned'),
+    'in_progress': _t('In Progress'),
+    'completed': _t('Completed'),
+    'completed_pending_invoice': _t('Pending Invoice'),
+    'closed': _t('Closed'),
+    'cancelled': _t('Cancelled'),
+  };
+  return labels[s] || s || _t('Unknown');
+};
+
 const cleanDisplayValue = (value, fallback = '') => {
   if (window.PWAUtils?.i18n?.clean) {
     return window.PWAUtils.i18n.clean(value, { fallback });
@@ -232,6 +253,11 @@ window.healthPWA = {
           pendingAssignments: [],
           notifPanelOpen: false,
           notifRespondingId: null, // ID of assignment being responded to
+          // Shared booking modal: set by openBooking() to hand a fso id (and
+          // the route to return to on close) down to today-view, which owns
+          // the modal. This is how orders/past-bookings/the bell/deep links
+          // all reach the ONE modal (see openBooking below).
+          pendingBooking: null,
         });
         
         // Computed properties
@@ -242,8 +268,34 @@ window.healthPWA = {
         const getLang = () => localStorage.getItem('pwa_preferred_language') || 'vi';
         const t = (vi, en) => getLang() === 'en' ? en : vi;
         
+        // Open the shared booking-detail modal for a given FSO id, from ANY
+        // route. The modal lives inside today-view (it drags along the
+        // Start/EVV/clinical-notes/invoice/next-visit flows and the family
+        // panel's DOM seam), so we land on today-view and hand it the id via
+        // state.pendingBooking; today-view opens the modal and returns to the
+        // origin route when it is closed. All the old dead ends
+        // (orders/past-bookings rows, the bell card, #/order/<id> deep links,
+        // push taps) funnel through here instead of the deleted order screen.
+        const openBooking = (fsoId) => {
+          const id = parseInt(fsoId);
+          if (!id) return;
+          const origin = state.currentRoute;
+          const returnRoute = (origin && origin !== 'order' && origin !== 'today') ? origin : null;
+          state.pendingBooking = { id, returnRoute };
+          // Route to today-view (force a remount if already there so the
+          // freshly-mounted view consumes pendingBooking on mount).
+          navigate('today');
+        };
+
         // Navigation methods
         const navigate = (route, params = {}) => {
+          // The order-detail SCREEN is dead code (ledger §31): every request to
+          // view an order becomes an open of the shared modal on today-view.
+          if (route === 'order') {
+            openBooking(params.id);
+            return;
+          }
+
           // If navigating to the same route, increment viewKey to force component refresh
           // This clears any open modals or pending states
           if (state.currentRoute === route) {
@@ -460,7 +512,13 @@ window.healthPWA = {
           const hash = window.location.hash.slice(1);
           if (hash) {
             const parts = hash.split('/');
-            state.currentRoute = parts[1] || 'today';
+            const route = parts[1] || 'today';
+            // #/order/<id> is the dead screen — resolve it to the shared modal.
+            if (route === 'order') {
+              openBooking(parts[2]);
+              return;
+            }
+            state.currentRoute = route;
           }
         });
         
@@ -498,6 +556,7 @@ window.healthPWA = {
           isAuthenticated,
           hasNotifications,
           navigate,
+          openBooking,
           goBack,
           showNotification,
           removeNotification,
@@ -646,6 +705,9 @@ window.healthPWA = {
                         <div v-if="notif.message" class="notif-detail notif-message">{{ notif.message }}</div>
                       </div>
                       <div class="notif-card-actions">
+                        <button v-if="notif.fso_id" class="notif-btn notif-btn-view" @click="state.notifPanelOpen = false; openBooking(notif.fso_id)">
+                          <i class="material-icons">visibility</i> {{ t('Xem', 'View') }}
+                        </button>
                         <button class="notif-btn notif-btn-ok" @click="dismissNotification(notif.id)" :disabled="state.notifRespondingId === notif.id">
                           <i class="material-icons">done</i> OK
                         </button>
@@ -664,6 +726,8 @@ window.healthPWA = {
                 :key="state.viewKey"
                 :user="state.user"
                 :is-online="state.isOnline"
+                :pending-booking="state.pendingBooking"
+                @consume-booking="state.pendingBooking = null"
                 @navigate="navigate"
                 @sync="syncData">
               </today-view>
@@ -693,13 +757,10 @@ window.healthPWA = {
                 @navigate="navigate">
               </past-bookings-view>
 
-              <!-- Order Detail -->
-              <order-detail-view v-else-if="state.currentRoute === 'order'"
-                :order-id="getCurrentRouteId()"
-                :is-online="state.isOnline"
-                @navigate="navigate">
-              </order-detail-view>
-              
+              <!-- Order Detail screen removed (ledger §31): the booking-detail
+                   modal on today-view is the visit surface. Reaching an order
+                   opens that modal via openBooking()/navigate('order'). -->
+
               <!-- Teams -->
               <teams-view v-else-if="state.currentRoute === 'teams'"
                 :is-online="state.isOnline"
@@ -910,8 +971,8 @@ window.healthPWA = {
 
     // Booking view - shows field service order bookings with date navigation and calendar picker
     app.component('today-view', {
-      props: ['user', 'isOnline'],
-      emits: ['navigate', 'sync'],
+      props: ['user', 'isOnline', 'pendingBooking'],
+      emits: ['navigate', 'sync', 'consume-booking'],
       setup(props, { emit }) {
         const { ref, onMounted, onUnmounted, computed } = Vue;
 
@@ -1550,17 +1611,7 @@ window.healthPWA = {
 
           // Support both 'status' (old) and 'state' (new API) properties
           const status = booking.status || booking.state || '';
-          const displayMap = {
-            'draft': _t('Booked'),
-            'confirmed': _t('Confirmed'),
-            'assigned': _t('Assigned'),
-            'in_progress': _t('In Progress'),
-            'completed': _t('Completed'),
-            'completed_pending_invoice': _t('Pending Invoice'),
-            'closed': _t('Closed'),
-            'cancelled': _t('Cancelled')
-          };
-          return displayMap[status] || status || _t('Unknown');
+          return getBookingStatusLabel(status);
         };
 
         // --- Brand status palette for redesigned cards (tint + accent + text) ---
@@ -1641,6 +1692,11 @@ window.healthPWA = {
         const selectedBookingDetail = ref(null);
         const isLoadingDetail = ref(false);
         const detailError = ref(null);
+        // When the modal is opened from another route (orders/past-bookings/the
+        // bell/a deep link, via the root openBooking() bridge), remember where
+        // to return so closing the modal feels like an in-place overlay rather
+        // than stranding the nurse on today-view. Null for a normal today tap.
+        const modalReturnRoute = ref(null);
 
         // Fetch full booking details for inline expansion
         const fetchBookingDetail = async (bookingId) => {
@@ -1678,10 +1734,37 @@ window.healthPWA = {
             selectedBookingId.value = null;
             selectedBookingDetail.value = null;
             clinicalNotesText.value = '';
+            // If this modal was opened from another screen, go back to it.
+            const rr = modalReturnRoute.value;
+            modalReturnRoute.value = null;
+            if (rr) {
+              emit('navigate', rr);
+            }
           } else {
-            // Open and fetch details
+            // Open and fetch details (a direct today tap — clear any stale
+            // return route so closing stays on today).
+            modalReturnRoute.value = null;
             selectedBookingId.value = bookingId;
             await fetchBookingDetail(bookingId);
+          }
+        };
+
+        // Open the modal for a booking handed down by the root openBooking()
+        // bridge (orders/past-bookings/the bell/a deep link). Same fetch as a
+        // today tap — the GET /health_pwa/api/fso/<id> the family panel keys on
+        // still fires — but remembers the origin route for close.
+        const openBookingFromRoute = async (bookingId, returnRoute) => {
+          modalReturnRoute.value = returnRoute || null;
+          selectedBookingId.value = bookingId;
+          await fetchBookingDetail(bookingId);
+        };
+
+        // Consume a pending booking the root handed down (on mount / remount).
+        const consumePendingBooking = () => {
+          const pb = props.pendingBooking;
+          if (pb && pb.id) {
+            emit('consume-booking');
+            openBookingFromRoute(pb.id, pb.returnRoute);
           }
         };
 
@@ -2809,6 +2892,8 @@ window.healthPWA = {
           loadBookingsForDate(currentDate.value);
           loadMonthBookings(currentDate.value); // Load current month bookings
           loadCurrentUser(); // Load current user info
+          // If the root handed us a booking to open (from another route), do it.
+          consumePendingBooking();
         });
 
         onUnmounted(() => {
@@ -4849,16 +4934,7 @@ window.healthPWA = {
           }
         };
         
-        const getStatusLabel = (state) => {
-          switch (state) {
-            case 'draft': return _t('Draft');
-            case 'assigned': return _t('Assigned');
-            case 'in_progress': return _t('In Progress');
-            case 'completed': return _t('Completed');
-            case 'cancelled': return _t('Cancelled');
-            default: return _t('Unknown');
-          }
-        };
+        const getStatusLabel = (state) => getBookingStatusLabel(state);
         
         const viewOrder = (orderId) => {
           emit('navigate', 'order', { id: orderId });
@@ -5012,16 +5088,7 @@ window.healthPWA = {
           }
         };
 
-        const getStatusLabel = (state) => {
-          switch (state) {
-            case 'draft': return _t('Draft');
-            case 'assigned': return _t('Assigned');
-            case 'in_progress': return _t('In Progress');
-            case 'completed': return _t('Completed');
-            case 'cancelled': return _t('Cancelled');
-            default: return _t('Unknown');
-          }
-        };
+        const getStatusLabel = (state) => getBookingStatusLabel(state);
 
         const viewOrder = (orderId) => {
           emit('navigate', 'order', { id: orderId });
@@ -5105,1638 +5172,6 @@ window.healthPWA = {
       `
     });
 
-    /* ========================================
-       LEGACY CODE - Order Detail View Component
-       This component is no longer used - the Booking List Modal View is the active interface
-       Commented out to eliminate duplicate code and reduce confusion
-       ======================================== */
-    /*
-    app.component('order-detail-view', {
-      props: ['orderId', 'isOnline'],
-      emits: ['navigate'],
-      setup(props, { emit }) {
-        console.log('=== order-detail-view COMPONENT SETUP CALLED ===');
-        const { ref, onMounted, computed, watch } = Vue;
-
-        const order = ref(null);
-        const isLoading = ref(true);
-        const error = ref(null);
-        const timerInterval = ref(null);
-        const currentTime = ref(new Date());
-        const showClinicalNotes = ref(false);
-        const showInvoice = ref(false);
-
-        // Add a watcher to log when showInvoice changes
-        watch(showInvoice, (newVal) => {
-          console.log('showInvoice changed to:', newVal);
-        });
-
-        const clinicalNotesData = ref({
-          clinical_notes: '',
-          diagnosis: '',
-          treatment_performed: '',
-          medications_prescribed: '',
-          vital_signs: '',
-          injection_count: 1,
-          medication_count: 1,
-          wound_count: 1,
-          iv_fluid_count: 0,
-        });
-        const capturedImages = ref([]);
-        const quoteData = ref(null);
-        const showPaymentWizard = ref(false);
-
-        // Add a watcher to log when showPaymentWizard changes
-        watch(showPaymentWizard, (newVal) => {
-          console.log('showPaymentWizard changed to:', newVal);
-          console.log('Current showPaymentWizard.value:', showPaymentWizard.value);
-        });
-
-        const paymentWizardData = ref({
-          payment_choice: 'pay_now',
-          payment_method: 'cash',
-          service_notes: '',
-          create_invoice_now: true
-        });
-
-        // Quote verification tracking
-        const quoteVerified = ref(false);
-        const quoteComments = ref('');
-
-        // Next Visit Modal State Management
-        const showNextVisitModalA = ref(false);  // Modal for "No next visit scheduled"
-        const showNextVisitModalB = ref(false);  // Modal for "Schedule next visit"
-        const nextVisitData = ref({
-          has_next_visit: false,
-          patient_name: '',
-          next_visit_date: null,
-          next_fso_id: null,
-          quote_items: [],
-          assigned_nurse_id: null,
-          assigned_nurse_name: '',
-          assigned_staff: []
-        });
-        const nextVisitFormData = ref({
-          scheduled_date: null,
-          scheduled_time: null,
-          quote_items: [],
-          assigned_nurse_id: null,
-          no_future_visit_reason: '',
-          other_reason_text: '',
-          need_follow_up: false
-        });
-        const showNoFutureVisitDropdown = ref(false);
-        const noFutureVisitReasons = [
-          { value: 'patient_died', label: 'Patient died' },
-          { value: 'improved', label: 'Patient improved/recovered' },
-          { value: 'hospital', label: 'Patient admitted to hospital' },
-          { value: 'declined', label: 'Patient declined further visits' },
-          { value: 'moved', label: 'Patient moved/relocated' },
-          { value: 'referral', label: 'Referred to another provider' },
-          { value: 'other', label: 'Other' }
-        ];
-
-        // Computed elapsed time for timer
-        const elapsedTime = computed(() => {
-          if (!order.value || !order.value.actual_start_datetime) return '00:00:00';
-
-          const startTime = parseOdooDateTime(order.value.actual_start_datetime);
-          const endTime = order.value.actual_end_datetime ? parseOdooDateTime(order.value.actual_end_datetime) : currentTime.value;
-          const diff = Math.floor((endTime - startTime) / 1000);
-
-          const hours = Math.floor(diff / 3600);
-          const minutes = Math.floor((diff % 3600) / 60);
-          const seconds = diff % 60;
-
-          return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        });
-
-        const loadOrder = async () => {
-          console.log('=== loadOrder called ===');
-          try {
-            isLoading.value = true;
-            error.value = null;
-
-            if (window.healthPWA?.storageManager) {
-              console.log('Retrieving order data from PouchDB for orderId:', props.orderId);
-              const orderData = await window.healthPWA.storageManager.getFieldServiceOrder(props.orderId);
-              console.log('Retrieved order data:', orderData);
-
-              if (orderData) {
-                orderData.goal_of_care = cleanDisplayValue(orderData.goal_of_care);
-                orderData.required_equipment = cleanDisplayValue(orderData.required_equipment);
-                orderData.intake_notes = cleanDisplayValue(orderData.intake_notes);
-                orderData.diagnosis = cleanDisplayValue(orderData.diagnosis);
-                order.value = orderData;
-                console.log('Loaded order details:', orderData);
-
-                // Load clinical notes if available
-                console.log('Processing clinical notes from order...');
-                if (orderData.clinical_notes) {
-                  console.log('Setting clinical_notes:', orderData.clinical_notes);
-                  clinicalNotesData.value.clinical_notes = orderData.clinical_notes;
-                }
-                if (orderData.diagnosis) {
-                  console.log('Setting diagnosis:', orderData.diagnosis);
-                  clinicalNotesData.value.diagnosis = orderData.diagnosis;
-                }
-                if (orderData.treatment_performed) {
-                  console.log('Setting treatment_performed:', orderData.treatment_performed);
-                  clinicalNotesData.value.treatment_performed = orderData.treatment_performed;
-                }
-                if (orderData.medications_prescribed) {
-                  console.log('Setting medications_prescribed:', orderData.medications_prescribed);
-                  clinicalNotesData.value.medications_prescribed = orderData.medications_prescribed;
-                }
-                if (orderData.vital_signs) {
-                  console.log('Setting vital_signs:', orderData.vital_signs);
-                  clinicalNotesData.value.vital_signs = orderData.vital_signs;
-                }
-                // Procedure counts
-                clinicalNotesData.value.injection_count = orderData.injection_count ?? 1;
-                clinicalNotesData.value.medication_count = orderData.medication_count ?? 1;
-                clinicalNotesData.value.wound_count = orderData.wound_count ?? 1;
-                clinicalNotesData.value.iv_fluid_count = orderData.iv_fluid_count ?? 0;
-
-                console.log('Final clinicalNotesData.value:', clinicalNotesData.value);
-
-                // Start timer if service is in progress
-                if (orderData.state === 'in_progress' && orderData.actual_start_datetime && !orderData.actual_end_datetime) {
-                  console.log('Starting timer...');
-                  startTimer();
-                }
-              } else {
-                console.log('❌ Order not found in storage');
-                error.value = 'Order not found';
-              }
-            } else {
-              console.log('❌ Storage manager not available');
-              error.value = 'Storage manager not available';
-            }
-          } catch (err) {
-            console.error('Failed to load order:', err);
-            error.value = err.message;
-          } finally {
-            isLoading.value = false;
-            console.log('=== loadOrder completed ===');
-          }
-        };
-
-        const startTimer = () => {
-          if (timerInterval.value) clearInterval(timerInterval.value);
-          timerInterval.value = setInterval(() => {
-            currentTime.value = new Date();
-          }, 1000);
-        };
-
-        const stopTimer = () => {
-          if (timerInterval.value) {
-            clearInterval(timerInterval.value);
-            timerInterval.value = null;
-          }
-        };
-
-        const handleStartService = async () => {
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot start service while offline'), 'error');
-            return;
-          }
-
-          try {
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/start`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({})
-            });
-
-            const data = await response.json();
-            console.log('Start service response:', data);
-
-            if (data.success && data.data) {
-              order.value.state = data.data.state;
-              order.value.actual_start_datetime = data.data.actual_start_datetime;
-              startTimer();
-              window.healthPWA.showNotification(_t(data.data.message || 'Service started successfully!'), 'success');
-
-              // Reload order data
-              await loadOrder();
-            } else {
-              window.healthPWA.showNotification(_t('Failed to start service: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Start service error:', err);
-            window.healthPWA.showNotification(_t('Error starting service: ') + err.message, 'error');
-          }
-        };
-
-        const openPaymentWizard = () => {
-          console.log('=== openPaymentWizard called ===');
-          console.log('clinicalNotesData.value:', clinicalNotesData.value);
-          console.log('clinicalNotesData.value.clinical_notes:', clinicalNotesData.value.clinical_notes);
-          console.log('showPaymentWizard.value (before):', showPaymentWizard.value);
-
-          // Validate clinical notes are filled before allowing completion
-          // Only clinical_notes text is required (user provided clinical notes text)
-          if (!clinicalNotesData.value.clinical_notes || !clinicalNotesData.value.clinical_notes.trim()) {
-            console.log('❌ Clinical notes validation FAILED');
-            console.log('clinical_notes is empty or whitespace:', !clinicalNotesData.value.clinical_notes || !clinicalNotesData.value.clinical_notes.trim());
-            window.healthPWA.showNotification(
-              _t('Please fill in Clinical Notes before completing the service. Click "Clinical Notes" button to add them.'),
-              'warning',
-              7000
-            );
-            return;
-          }
-
-          console.log('✅ Clinical notes validation PASSED');
-
-          // Load quote data to get calculated amount (but don't show invoice modal)
-          console.log('Calling loadQuote(false)...');
-          loadQuote(false);
-
-          console.log('Setting showPaymentWizard.value = true');
-          showPaymentWizard.value = true;
-          console.log('showPaymentWizard.value (after):', showPaymentWizard.value);
-          console.log('=== openPaymentWizard completed ===');
-        };
-
-        const handleCompleteService = async () => {
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot complete service while offline'), 'error');
-            return;
-          }
-
-          // Validate payment method selection when "Pay Now" is chosen
-          if (paymentWizardData.value.payment_choice === 'pay_now') {
-            if (!paymentWizardData.value.payment_method || paymentWizardData.value.payment_method.trim() === '') {
-              alert(_t('Please select a Payment Method before collecting payment.'));
-              return;
-            }
-          }
-
-          try {
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/complete`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                payment_choice: paymentWizardData.value.payment_choice,
-                payment_method: paymentWizardData.value.payment_method,
-                service_notes: paymentWizardData.value.service_notes,
-                create_invoice_now: paymentWizardData.value.create_invoice_now,
-                clinical_notes: clinicalNotesData.value.clinical_notes
-              })
-            });
-
-            const data = await response.json();
-            console.log('Complete service response:', data);
-
-            if (data.success && data.data) {
-              // Stop timer first
-              stopTimer();
-
-              // Close payment wizard
-              showPaymentWizard.value = false;
-
-              // Show success notification
-              window.healthPWA.showNotification(_t(data.data.message || 'Service completed successfully!'), 'success');
-
-              // Update local order state immediately for UI responsiveness
-              order.value.state = data.data.state;
-              order.value.actual_end_datetime = data.data.actual_end_datetime;
-              order.value.adjusted_end_datetime = data.data.adjusted_end_datetime;
-
-              // Update PouchDB cache with new state
-              if (window.healthPWA?.storageManager) {
-                try {
-                  await window.healthPWA.storageManager.updateFieldServiceOrder(props.orderId, {
-                    state: data.data.state,
-                    actual_end_datetime: data.data.actual_end_datetime,
-                    adjusted_end_datetime: data.data.adjusted_end_datetime
-                  });
-                } catch (dbErr) {
-                  console.error('Failed to update PouchDB:', dbErr);
-                }
-              }
-
-              // Reload full order data from server to get latest information
-              await loadOrder();
-            } else {
-              window.healthPWA.showNotification(_t('Failed to complete service: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Complete service error:', err);
-            window.healthPWA.showNotification(_t('Error completing service: ') + err.message, 'error');
-          }
-        };
-
-        const saveClinicalNotes = async () => {
-          console.log('=== saveClinicalNotes called ===');
-          console.log('clinicalNotesData.value:', clinicalNotesData.value);
-
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot save clinical notes while offline'), 'error');
-            return;
-          }
-
-          try {
-            console.log('Posting clinical notes to server...');
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/clinical_notes`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(clinicalNotesData.value)
-            });
-
-            const data = await response.json();
-            console.log('Clinical notes response:', data);
-
-            if (data.success) {
-              console.log('✅ Clinical notes saved successfully');
-              window.healthPWA.showNotification(_t(data.data.message || 'Clinical notes saved successfully'), 'success');
-              showClinicalNotes.value = false;
-
-              // Update local clinicalNotesData state immediately
-              // This ensures the payment wizard validation can pass without waiting for server reload
-              clinicalNotesData.value = {
-                ...clinicalNotesData.value,
-                // Keep the values the user just saved
-              };
-              console.log('Updated local clinicalNotesData:', clinicalNotesData.value);
-
-              // Reload order data from server to refresh cache
-              // This ensures PouchDB is updated with latest clinical notes
-              try {
-                console.log('Fetching fresh order data from server...');
-                const refreshResponse = await fetch(`/health_pwa/api/fso/${props.orderId}`, {
-                  headers: {
-                    'Content-Type': 'application/json',
-                  }
-                });
-                const refreshData = await refreshResponse.json();
-                console.log('Server refresh response:', refreshData);
-
-                if (refreshData.success && refreshData.data) {
-                  console.log('✅ Server returned fresh order data');
-                  console.log('Server clinical_notes:', refreshData.data.clinical_notes);
-                  // Update PouchDB with latest order data
-                  if (window.healthPWA?.storageManager) {
-                    console.log('Updating PouchDB...');
-                    await window.healthPWA.storageManager.updateFieldServiceOrder(props.orderId, refreshData.data);
-                    console.log('PouchDB updated, calling loadOrder()...');
-                    // Now reload to populate clinicalNotesData from refreshed cache
-                    await loadOrder();
-                    console.log('After loadOrder, clinicalNotesData.value:', clinicalNotesData.value);
-                  }
-                } else {
-                  console.log('❌ Server refresh returned success=false');
-                }
-              } catch (refreshErr) {
-                console.warn('Could not refresh order from server:', refreshErr);
-                console.log('Trying to load from local cache anyway...');
-                // Still try to load from local cache even if refresh fails
-                await loadOrder();
-              }
-            } else {
-              console.log('❌ Clinical notes API returned success=false, error:', data.error);
-              window.healthPWA.showNotification(_t('Failed to save clinical notes: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Save clinical notes error:', err);
-            window.healthPWA.showNotification(_t('Error saving clinical notes: ') + err.message, 'error');
-          }
-          console.log('=== saveClinicalNotes completed ===');
-        };
-
-        const completeServiceWithoutQuote = async () => {
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot complete service while offline'), 'error');
-            return;
-          }
-
-          try {
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/complete_without_quote`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                service_notes: 'Service completed without invoice',
-              })
-            });
-
-            const data = await response.json();
-            console.log('Complete service without quote response:', data);
-
-            if (data.success && data.data) {
-              // Stop timer first
-              stopTimer();
-
-              // Show success notification
-              window.healthPWA.showNotification(_t(data.data.message || 'Service completed successfully!'), 'success');
-
-              // Update local order state immediately for UI responsiveness
-              order.value.state = data.data.state;
-              order.value.actual_end_datetime = data.data.actual_end_datetime;
-
-              // Update PouchDB cache with new state
-              if (window.healthPWA?.storageManager) {
-                try {
-                  await window.healthPWA.storageManager.updateFieldServiceOrder(props.orderId, {
-                    state: data.data.state,
-                    actual_end_datetime: data.data.actual_end_datetime
-                  });
-                } catch (dbErr) {
-                  console.error('Failed to update PouchDB:', dbErr);
-                }
-              }
-
-              // Reload full order data from server to get latest information
-              await loadOrder();
-
-              // Check next visit status and show appropriate modal
-              setTimeout(() => {
-                checkNextVisitAndShowModal();
-              }, 500);
-            } else {
-              window.healthPWA.showNotification(_t('Failed to complete service: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Complete service without quote error:', err);
-            window.healthPWA.showNotification(_t('Error completing service: ') + err.message, 'error');
-          }
-        };
-
-        // API Functions for Next Visit Workflow
-        const checkNextVisitAndShowModal = async () => {
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot check next visit while offline'), 'error');
-            return;
-          }
-
-          try {
-            console.log('Checking next visit status for orderId:', props.orderId);
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/next_visit_status`);
-            const data = await response.json();
-            console.log('Next visit status response:', data);
-
-            if (data.success) {
-              nextVisitData.value = data.data;
-
-              if (data.data.has_next_visit) {
-                // Scenario B: Next visit exists - populate form with existing data
-                const nextDate = new Date(data.data.next_visit_date);
-                // Use local date methods to get the correct local date
-                const year = nextDate.getFullYear();
-                const month = String(nextDate.getMonth() + 1).padStart(2, '0');
-                const day = String(nextDate.getDate()).padStart(2, '0');
-                nextVisitFormData.value.scheduled_date = `${year}-${month}-${day}`;
-                nextVisitFormData.value.scheduled_time = `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}`;
-                nextVisitFormData.value.quote_items = data.data.quote_items || [];
-
-                // Populate assigned nurse with both ID and name from API response
-                if (data.data.assigned_nurse && data.data.assigned_nurse.id) {
-                  nextVisitFormData.value.assigned_nurse_id = data.data.assigned_nurse.id;
-                  nextVisitFormData.value.assigned_nurse_name = data.data.assigned_nurse.name || '';
-                } else {
-                  nextVisitFormData.value.assigned_nurse_id = null;
-                  nextVisitFormData.value.assigned_nurse_name = '';
-                }
-                showNextVisitModalB.value = true;
-              } else {
-                // Scenario A: No next visit scheduled
-                showNextVisitModalA.value = true;
-              }
-            } else {
-              window.healthPWA.showNotification(_t('Failed to check next visit status'), 'error');
-            }
-          } catch (err) {
-            console.error('Check next visit error:', err);
-            window.healthPWA.showNotification(_t('Error checking next visit: ') + err.message, 'error');
-          }
-        };
-
-        const submitNoFutureVisit = async () => {
-          if (!nextVisitFormData.value.no_future_visit_reason) {
-            window.healthPWA.showNotification(_t('Please select a reason'), 'error');
-            return;
-          }
-
-          if (nextVisitFormData.value.no_future_visit_reason === 'other' && !nextVisitFormData.value.other_reason_text) {
-            window.healthPWA.showNotification(_t('Please enter explanation for "Other" reason'), 'error');
-            return;
-          }
-
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot submit while offline'), 'error');
-            return;
-          }
-
-          try {
-            const reasonLabel = noFutureVisitReasons.find(r => r.value === nextVisitFormData.value.no_future_visit_reason)?.label || nextVisitFormData.value.no_future_visit_reason;
-            const finalReason = nextVisitFormData.value.no_future_visit_reason === 'other'
-              ? `Other: ${nextVisitFormData.value.other_reason_text}`
-              : reasonLabel;
-
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/no_future_visit`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                reason: finalReason,
-                need_follow_up: nextVisitFormData.value.need_follow_up || false
-              })
-            });
-
-            const data = await response.json();
-            console.log('No future visit response:', data);
-
-            if (data.success) {
-              window.healthPWA.showNotification(_t('Noted: Patient does not need future visits'), 'success');
-              showNextVisitModalA.value = false;
-              // Reset form
-              nextVisitFormData.value.no_future_visit_reason = '';
-              nextVisitFormData.value.other_reason_text = '';
-              nextVisitFormData.value.need_follow_up = false;
-              // Close modal and navigate back to today's bookings
-              emit('navigate', 'today');
-            } else {
-              window.healthPWA.showNotification(_t('Failed to submit: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Submit no future visit error:', err);
-            window.healthPWA.showNotification(_t('Error submitting: ') + err.message, 'error');
-          }
-        };
-
-        const scheduleNextVisit = async () => {
-          // Validation
-          if (!nextVisitFormData.value.scheduled_date) {
-            window.healthPWA.showNotification(_t('Please select a date'), 'error');
-            return;
-          }
-
-          if (!nextVisitFormData.value.scheduled_time) {
-            window.healthPWA.showNotification(_t('Please select a time'), 'error');
-            return;
-          }
-
-          if (!nextVisitFormData.value.quote_items || nextVisitFormData.value.quote_items.length === 0) {
-            window.healthPWA.showNotification(_t('Please add at least one service'), 'error');
-            return;
-          }
-
-          if (!nextVisitFormData.value.assigned_nurse_id) {
-            window.healthPWA.showNotification(_t('Please assign a nurse'), 'error');
-            return;
-          }
-
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot schedule while offline'), 'error');
-            return;
-          }
-
-          try {
-            const dateTimeStr = `${nextVisitFormData.value.scheduled_date}T${nextVisitFormData.value.scheduled_time}:00`;
-
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/schedule_next_visit`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                scheduled_datetime: dateTimeStr,
-                quote_items: nextVisitFormData.value.quote_items,
-                assigned_nurse_id: nextVisitFormData.value.assigned_nurse_id
-              })
-            });
-
-            const data = await response.json();
-            console.log('Schedule next visit response:', data);
-
-            if (data.success) {
-              window.healthPWA.showNotification(_t('Next visit scheduled successfully!'), 'success');
-              showNextVisitModalB.value = false;
-              // Reset form
-              nextVisitFormData.value = {
-                scheduled_date: null,
-                scheduled_time: null,
-                quote_items: [],
-                assigned_nurse_id: null,
-                no_future_visit_reason: '',
-                other_reason_text: '',
-                need_follow_up: false
-              };
-            } else {
-              window.healthPWA.showNotification(_t('Failed to schedule: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Schedule next visit error:', err);
-            window.healthPWA.showNotification(_t('Error scheduling: ') + err.message, 'error');
-          }
-        };
-
-        const captureImage = () => {
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.accept = 'image/*';
-          input.capture = 'environment'; // Use rear camera on mobile
-
-          input.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (!props.isOnline) {
-              window.healthPWA.showNotification(_t('Cannot upload images while offline'), 'error');
-              return;
-            }
-
-            try {
-              const formData = new FormData();
-              formData.append('image', file);
-
-              const response = await fetch(`/health_pwa/api/fso/${props.orderId}/upload_image`, {
-                method: 'POST',
-                body: formData
-              });
-
-              const data = await response.json();
-
-              if (data.success) {
-                capturedImages.value.push(data.data);
-                window.healthPWA.showNotification(_t('Image uploaded successfully!'), 'success');
-              } else {
-                window.healthPWA.showNotification(_t('Failed to upload image: ') + displayError(data.error), 'error');
-              }
-            } catch (err) {
-              console.error('Image upload error:', err);
-              window.healthPWA.showNotification(_t('Error uploading image: ') + err.message, 'error');
-            }
-          };
-
-          input.click();
-        };
-
-        const showProductCatalog = ref(false);
-        const productCatalog = ref([]);
-        const productSearch = ref('');
-        const editingLine = ref(null);
-        const showMap = ref(false);
-
-        const loadQuote = async (showModal = true) => {
-          console.log('=== loadQuote called with showModal:', showModal, '===');
-
-          if (!props.isOnline) {
-            console.log('❌ loadQuote: Not online');
-            window.healthPWA.showNotification(_t('Cannot load invoice while offline'), 'error');
-            return;
-          }
-
-          try {
-            console.log('Fetching quote from API for orderId:', props.orderId);
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote`);
-            const data = await response.json();
-
-            console.log('Quote API response:', data);
-
-            if (data.success) {
-              console.log('✅ Quote loaded successfully');
-              quoteData.value = data.data;
-              console.log('quoteData.value set to:', quoteData.value);
-              if (showModal) {
-                console.log('showModal is true, setting showInvoice.value = true');
-                showInvoice.value = true;
-              } else {
-                console.log('showModal is false, NOT showing invoice modal');
-              }
-            } else {
-              console.log('❌ Quote API returned success=false, error:', data.error);
-              if (showModal) {
-                window.healthPWA.showNotification(_t('No quote found for this order'), 'warning');
-              }
-            }
-          } catch (err) {
-            console.error('Load quote error:', err);
-            if (showModal) {
-              window.healthPWA.showNotification(_t('Error loading quote: ') + err.message, 'error');
-            }
-          }
-          console.log('=== loadQuote completed ===');
-        };
-
-        const saveQuoteWithComments = async () => {
-          console.log('=== saveQuoteWithComments called ===');
-
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot save quote while offline'), 'error');
-            return;
-          }
-
-          try {
-            console.log('Sending quote save request with comments:', quoteComments.value);
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote/save`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                quote_id: quoteData.value.id,
-                comments: quoteComments.value
-              })
-            });
-
-            const data = await response.json();
-            console.log('Quote save response:', data);
-
-            if (data.success) {
-              console.log('✅ Quote saved successfully with comments');
-              quoteVerified.value = true;
-              showInvoice.value = false;
-              window.healthPWA.showNotification(
-                _t('Invoice verified and saved successfully!'),
-                'success',
-                3000
-              );
-            } else {
-              console.log('❌ Quote save failed:', data.error);
-              window.healthPWA.showNotification(
-                _t('Failed to save quote: ') + displayError(data.error || 'Unknown error'),
-                'error'
-              );
-            }
-          } catch (err) {
-            console.error('Save quote error:', err);
-            window.healthPWA.showNotification(
-              _t('Error saving quote: ') + err.message,
-              'error'
-            );
-          }
-          console.log('=== saveQuoteWithComments completed ===');
-        };
-
-        const loadProductCatalog = async () => {
-          if (!props.isOnline) {
-            window.healthPWA.showNotification(_t('Cannot load catalog while offline'), 'error');
-            return;
-          }
-
-          try {
-            const searchParam = productSearch.value ? `&search=${encodeURIComponent(productSearch.value)}` : '';
-            const response = await fetch(`/health_pwa/api/products/catalog?limit=50${searchParam}`);
-            const data = await response.json();
-
-            if (data.success) {
-              productCatalog.value = data.data.products || [];
-            }
-          } catch (err) {
-            console.error('Load catalog error:', err);
-          }
-        };
-
-        const addProductToQuote = async (product) => {
-          try {
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote/update`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                action: 'add',
-                line_data: {
-                  product_id: product.id,
-                  quantity: 1.0
-                }
-              })
-            });
-
-            const data = await response.json();
-
-            if (data.success && data.data.quote) {
-              quoteData.value = data.data.quote;
-              showProductCatalog.value = false;
-              window.healthPWA.showNotification(_t('Product added successfully!'), 'success');
-            } else {
-              window.healthPWA.showNotification(_t('Failed to add product: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Add product error:', err);
-            window.healthPWA.showNotification(_t('Error adding product: ') + err.message, 'error');
-          }
-        };
-
-        const updateQuoteLine = async (lineId, quantity, price) => {
-          try {
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote/update`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                action: 'update',
-                line_data: {
-                  line_id: lineId,
-                  quantity: quantity,
-                  price: price
-                }
-              })
-            });
-
-            const data = await response.json();
-
-            if (data.success && data.data.quote) {
-              quoteData.value = data.data.quote;
-              editingLine.value = null;
-              window.healthPWA.showNotification(_t('Line updated successfully!'), 'success');
-            } else {
-              window.healthPWA.showNotification(_t('Failed to update line: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Update line error:', err);
-            window.healthPWA.showNotification(_t('Error updating line: ') + err.message, 'error');
-          }
-        };
-
-        const removeQuoteLine = async (lineId) => {
-          if (!confirm('Remove this line from the quote?')) return;
-
-          try {
-            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote/update`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                action: 'remove',
-                line_data: {
-                  line_id: lineId
-                }
-              })
-            });
-
-            const data = await response.json();
-
-            if (data.success && data.data.quote) {
-              quoteData.value = data.data.quote;
-              window.healthPWA.showNotification(_t('Line removed successfully!'), 'success');
-            } else {
-              window.healthPWA.showNotification(_t('Failed to remove line: ') + displayError(data.error || 'Unknown error'), 'error');
-            }
-          } catch (err) {
-            console.error('Remove line error:', err);
-            window.healthPWA.showNotification(_t('Error removing line: ') + err.message, 'error');
-          }
-        };
-
-        const openMapLocation = () => {
-          if (!order.value || !order.value.address) {
-            window.healthPWA.showNotification(_t('No address available'), 'warning');
-            return;
-          }
-
-          // Show embedded map modal
-          showMap.value = true;
-        };
-
-        const formatDateTime = (dateTimeStr) => {
-          if (!dateTimeStr) return _t('Not set');
-          const date = new Date(dateTimeStr);
-          return date.toLocaleString();
-        };
-
-        const getStatusLabel = (state) => {
-          switch (state) {
-            case 'draft': return _t('Draft');
-            case 'confirmed': return _t('Confirmed');
-            case 'assigned': return _t('Assigned');
-            case 'in_progress': return _t('In Progress');
-            case 'completed': return _t('Completed');
-            case 'cancelled': return _t('Cancelled');
-            default: return _t('Unknown');
-          }
-        };
-
-        const getStatusBadgeClass = (state) => {
-          switch (state) {
-            case 'draft': return 'badge badge-secondary';
-            case 'confirmed': return 'badge badge-info';
-            case 'assigned': return 'badge badge-warning';
-            case 'in_progress': return 'badge badge-primary';
-            case 'completed': return 'badge badge-success';
-            case 'cancelled': return 'badge badge-danger';
-            default: return 'badge badge-secondary';
-          }
-        };
-
-        onMounted(() => {
-          console.log('=== order-detail-view MOUNTED ===');
-          console.log('orderId:', props.orderId);
-          console.log('showPaymentWizard ref:', showPaymentWizard);
-          console.log('openPaymentWizard function:', typeof openPaymentWizard);
-          loadOrder();
-        });
-
-        // Cleanup timer on unmount
-        watch(() => order.value, () => {
-          return () => stopTimer();
-        });
-
-        return {
-          order,
-          isLoading,
-          error,
-          elapsedTime,
-          showClinicalNotes,
-          showInvoice,
-          clinicalNotesData,
-          capturedImages,
-          quoteData,
-          showProductCatalog,
-          productCatalog,
-          productSearch,
-          editingLine,
-          showMap,
-          showPaymentWizard,
-          paymentWizardData,
-          handleStartService,
-          openPaymentWizard,
-          handleCompleteService,
-          completeServiceWithoutQuote,
-          saveClinicalNotes,
-          captureImage,
-          loadQuote,
-          loadProductCatalog,
-          addProductToQuote,
-          updateQuoteLine,
-          removeQuoteLine,
-          openMapLocation,
-          formatDateTime,
-          getStatusLabel,
-          getStatusBadgeClass,
-          cleanDisplayValue,
-          displayDbValue,
-          displayError,
-          quoteVerified,
-          quoteComments,
-          saveQuoteWithComments,
-          // Next Visit Modal
-          showNextVisitModalA,
-          showNextVisitModalB,
-          nextVisitData,
-          nextVisitFormData,
-          showNoFutureVisitDropdown,
-          noFutureVisitReasons,
-          checkNextVisitAndShowModal,
-          submitNoFutureVisit,
-          scheduleNextVisit,
-          _t
-        };
-      },
-      template: `
-        <div class="order-detail-view">
-          <!-- Loading State -->
-          <div v-if="isLoading" class="loading-state">
-            <div class="loading-spinner">
-              <div class="spinner"></div>
-            </div>
-            <p>{{ _t('Loading details...') }}</p>
-          </div>
-
-          <!-- Error State -->
-          <div v-else-if="error" class="error-state">
-            <div class="error-icon">
-              <i class="material-icons">error</i>
-            </div>
-            <h3>{{ _t('Error Loading Order') }}</h3>
-            <p>{{ error }}</p>
-            <button @click="$emit('navigate', 'orders')" class="btn btn-primary">{{ _t('Back to Orders') }}</button>
-          </div>
-
-          <!-- Order Details -->
-          <div v-else-if="order" class="order-details">
-            <!-- Client Header - Mobilesample clean design -->
-            <div class="order-client-header">
-              <h2>{{ order.patient?.name || order.patient_name || _t('Unknown Client') }} <span v-if="order.patient_code || order.patient?.patient_code" style="font-weight: 400; font-size: 14px; color: #666;">{{ order.patient_code || order.patient?.patient_code }}</span></h2>
-              <div class="order-client-meta">
-                <span v-if="order.name" class="order-number">
-                  📋 {{ order.name }}
-                </span>
-                <span v-if="order.name && order.state" class="separator">•</span>
-                <span v-if="order.state"
-                      class="badge"
-                      :class="'status-' + order.state.replace('_', '-')">
-                  {{ getStatusLabel(order.state) }}
-                </span>
-              </div>
-            </div>
-
-              <!-- Timer Card - Mobilesample clean design (no icon) -->
-              <div v-if="order.state === 'in_progress' && order.actual_start_datetime"
-                   class="order-timer-card">
-                <!-- Timer Header: Label on left, Live indicator on right -->
-                <div class="timer-header">
-                  <span class="timer-label">{{ _t('Elapsed Time') }}</span>
-                  <div class="timer-status">
-                    <div class="status-indicator"></div>
-                    <span>{{ _t('Live') }}</span>
-                  </div>
-                </div>
-
-                <!-- Timer Display: Large number only -->
-                <div class="timer-display">
-                  <span class="timer-value">{{ elapsedTime }}</span>
-                </div>
-
-                <!-- Started Timestamp: Bottom with divider -->
-                <div v-if="order.actual_start_datetime" class="timer-started">
-                  <div class="timer-started-dot"></div>
-                  <span class="timer-started-text">{{ _t('Started') }} {{ formatDateTime(order.actual_start_datetime) }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="order-actions">
-              <!-- Location Map Button -->
-              <button @click="openMapLocation"
-                      class="btn btn-action btn-location"
-                      :disabled="!order.address">
-                <i class="material-icons">location_on</i>
-                <span>{{ _t('Location Map') }}</span>
-              </button>
-
-              <!-- Start Service Button (only for assigned state) -->
-              <button v-if="order.state === 'assigned' || order.state === 'confirmed'"
-                      @click="handleStartService"
-                      class="btn btn-action btn-start"
-                      :disabled="!isOnline">
-                <i class="material-icons">play_arrow</i>
-                <span>{{ _t('Start Service') }}</span>
-              </button>
-
-              <!-- Clinical Notes Button -->
-              <button @click="showClinicalNotes = true"
-                      class="btn btn-action btn-clinical"
-                      :disabled="order.state !== 'in_progress'">
-                <i class="material-icons">note_add</i>
-                <span>{{ _t('Clinical Notes') }}</span>
-              </button>
-
-              <!-- View Quote Button (renamed from Invoice) -->
-              <button @click="loadQuote(true)"
-                      class="btn btn-action btn-invoice"
-                      :disabled="!isOnline || !order.confirmation_requirements?.has_quote_with_items"
-                      :title="!order.confirmation_requirements?.has_quote_with_items ? _t('No quote associated with this booking') : _t('View Quote')">
-                <i class="material-icons">receipt</i>
-                <span>{{ _t('View Quote') }}</span>
-              </button>
-
-              <!-- Payment Button (appears only after quote is verified) -->
-              <button v-if="quoteVerified && order.state === 'in_progress'"
-                      @click="openPaymentWizard"
-                      class="btn btn-action btn-payment"
-                      :disabled="!isOnline"
-                      :title="_t('Proceed to payment collection')">
-                <i class="material-icons">payment</i>
-                <span>{{ _t('Payment') }}</span>
-              </button>
-
-              <!-- Complete Service Button - No Quote (when no quote exists) -->
-              <button v-if="order.state === 'in_progress' && !order.confirmation_requirements?.has_quote_with_items"
-                      @click="completeServiceWithoutQuote"
-                      class="btn btn-action btn-complete-no-quote"
-                      :disabled="!isOnline">
-                <i class="material-icons">check_circle</i>
-                <span>{{ _t('Complete Service') }}</span>
-              </button>
-            </div>
-
-            <!-- Order Information Sections -->
-            <div class="order-info-sections">
-
-              <!-- Patient Information -->
-              <div class="info-section">
-                <h3>
-                  <i class="material-icons">person</i>
-                  {{ _t('Patient Information') }}
-                </h3>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <label>{{ _t('Name') }}</label>
-                    <span>{{ order.patient_name || _t('Not specified') }} <span v-if="order.patient_code || order.patient?.patient_code" style="font-weight: 600; color: #333;">({{ order.patient_code || order.patient?.patient_code }})</span></span>
-                  </div>
-                  <div class="info-item" v-if="order.patient_details">
-                    <label>{{ _t('Age / Gender') }}</label>
-                    <span>{{ order.patient_details.age || '-' }} / {{ order.patient_details.gender || '-' }}</span>
-                  </div>
-                  <div class="info-item" v-if="order.phone">
-                    <label>{{ _t('Phone') }}</label>
-                    <span>{{ order.phone }}</span>
-                  </div>
-                  <div class="info-item full-width" v-if="order.address">
-                    <label>{{ _t('Address') }}</label>
-                    <span>{{ order.address }}</span>
-                  </div>
-                  <div class="info-item full-width" v-if="order.patient_details && order.patient_details.allergies">
-                    <label>{{ _t('Allergies') }}</label>
-                    <span class="text-danger">{{ order.patient_details.allergies }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Service Information -->
-              <div class="info-section">
-                <h3>
-                  <i class="material-icons">medical_services</i>
-                  {{ _t('Service Information') }}
-                </h3>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <label>{{ _t('Scheduled Time') }}</label>
-                    <span>{{ formatDateTime(order.scheduled_datetime) }}</span>
-                  </div>
-                  <div class="info-item" v-if="order.estimated_duration">
-                    <label>{{ _t('Estimated Duration') }}</label>
-                    <span>{{ order.estimated_duration }} {{ _t('hours') }}</span>
-                  </div>
-                  <div class="info-item" v-if="order.team">
-                    <label>{{ _t('Team') }}</label>
-                    <span>{{ order.team }}</span>
-                  </div>
-                  <div class="info-item" v-if="order.priority">
-                    <label>{{ _t('Priority') }}</label>
-                    <span :class="order.priority === '3' ? 'text-danger' : ''">
-                      {{ order.priority === '3' ? _t('High') : order.priority === '2' ? _t('Medium') : _t('Low') }}
-                    </span>
-                  </div>
-                  <div class="info-item full-width" v-if="order.description">
-                    <label>{{ _t('Description') }}</label>
-                    <span>{{ order.description }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Service Status -->
-              <div class="info-section" v-if="order.actual_start_datetime">
-                <h3>
-                  <i class="material-icons">schedule</i>
-                  {{ _t('Service Status') }}
-                </h3>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <label>{{ _t('Started At') }}</label>
-                    <span>{{ formatDateTime(order.actual_start_datetime) }}</span>
-                  </div>
-                  <div class="info-item" v-if="order.actual_end_datetime">
-                    <label>{{ _t('Completed At') }}</label>
-                    <span>{{ formatDateTime(order.actual_end_datetime) }}</span>
-                  </div>
-                  <div class="info-item" v-if="order.actual_end_datetime">
-                    <label>{{ _t('Duration') }}</label>
-                    <span>{{ order.actual_duration || '0' }} {{ _t('hours') }}</span>
-                  </div>
-                  <div class="info-item" v-else>
-                    <label>{{ _t('Elapsed Time') }}</label>
-                    <span class="text-primary">{{ elapsedTime }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Clinical Notes Modal -->
-            <div v-if="showClinicalNotes" class="modal-overlay" @click.self="showClinicalNotes = false">
-              <div class="modal-content clinical-notes-modal">
-                <div class="modal-header">
-                  <h3>
-                    <i class="material-icons">note_add</i>
-                    {{ _t('Clinical Notes') }}
-                  </h3>
-                  <button @click="showClinicalNotes = false" class="modal-close">
-                    <i class="material-icons">close</i>
-                  </button>
-                </div>
-                <!-- Client Name Banner -->
-                <div v-if="order?.patient_name" class="client-name-banner">
-                  <i class="material-icons">person</i>
-                  <span>{{ order.patient_name }}</span>
-                  <span v-if="order?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ order.patient_code }}</span>
-                </div>
-                <div class="modal-body">
-                  <div class="form-group">
-                    <label>{{ _t('Clinical Observations') }}</label>
-                    <textarea v-model="clinicalNotesData.clinical_notes"
-                              rows="4"
-                              :placeholder="_t('Enter clinical observations and notes...')"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label>{{ _t('Diagnosis') }}</label>
-                    <textarea v-model="clinicalNotesData.diagnosis"
-                              rows="3"
-                              :placeholder="_t('Enter diagnosis...')"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label>{{ _t('Treatment Performed') }}</label>
-                    <textarea v-model="clinicalNotesData.treatment_performed"
-                              rows="3"
-                              :placeholder="_t('Describe treatment provided...')"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label>{{ _t('Medications Prescribed') }}</label>
-                    <textarea v-model="clinicalNotesData.medications_prescribed"
-                              rows="2"
-                              :placeholder="_t('List medications...')"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label>{{ _t('Vital Signs') }}</label>
-                    <textarea v-model="clinicalNotesData.vital_signs"
-                              rows="2"
-                              :placeholder="_t('Blood pressure, temperature, heart rate...')"></textarea>
-                  </div>
-
-                  <!-- Service Procedures -->
-                  <div class="form-group" style="background: #f8f9fa; border-radius: 8px; padding: 12px;">
-                    <label style="font-weight: 600; margin-bottom: 8px; display: block;">{{ _t('Service Procedures') }}</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                      <div>
-                        <label style="font-size: 12px; color: #666;">{{ _t('Injections') }}</label>
-                        <input type="number" v-model.number="clinicalNotesData.injection_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
-                      </div>
-                      <div>
-                        <label style="font-size: 12px; color: #666;">{{ _t('Medications') }}</label>
-                        <input type="number" v-model.number="clinicalNotesData.medication_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
-                      </div>
-                      <div>
-                        <label style="font-size: 12px; color: #666;">{{ _t('Wounds') }}</label>
-                        <input type="number" v-model.number="clinicalNotesData.wound_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
-                      </div>
-                      <div>
-                        <label style="font-size: 12px; color: #666;">{{ _t('IV Fluid Bags') }}</label>
-                        <input type="number" v-model.number="clinicalNotesData.iv_fluid_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Image Capture Section -->
-                  <div class="form-group">
-                    <label>{{ _t('Clinical Images') }}</label>
-                    <button @click="captureImage" class="btn btn-secondary btn-block">
-                      <i class="material-icons">camera_alt</i>
-                      {{ _t('Capture Image') }}
-                    </button>
-
-                    <!-- Captured Images Display -->
-                    <div v-if="capturedImages.length > 0" class="captured-images">
-                      <div v-for="(image, index) in capturedImages" :key="index" class="captured-image">
-                        <img :src="image.url" :alt="image.filename" />
-                        <span>{{ image.filename }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button @click="showClinicalNotes = false" class="btn btn-secondary">{{ _t('Cancel') }}</button>
-                  <button @click="saveClinicalNotes" class="btn btn-primary" :disabled="!isOnline">
-                    <i class="material-icons">save</i>
-                    {{ _t('Save Notes') }}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Invoice Modal -->
-            <div v-if="showInvoice" class="modal-overlay" @click.self="showInvoice = false">
-              <div class="modal-content invoice-modal">
-                <div class="modal-header">
-                  <h3>
-                    <i class="material-icons">receipt</i>
-                    {{ _t('Invoice / Quote') }} <span v-if="quoteData" style="font-weight: 400; font-size: 14px; color: #666; margin-left: 4px;">{{ quoteData.name }}</span>
-                  </h3>
-                  <button @click="showInvoice = false" class="modal-close">
-                    <i class="material-icons">close</i>
-                  </button>
-                </div>
-                <!-- Client Name Banner -->
-                <div v-if="order?.patient_name" class="client-name-banner">
-                  <i class="material-icons">person</i>
-                  <span>{{ order.patient_name }}</span>
-                  <span v-if="order?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ order.patient_code }}</span>
-                </div>
-                <div class="modal-body" v-if="quoteData">
-                  <div class="invoice-header">
-                    <div class="invoice-info">
-                      <span :class="'badge badge-' + (quoteData.state === 'sale' ? 'success' : 'info')">
-                        {{ quoteData.state }}
-                      </span>
-                    </div>
-                    <button @click="showProductCatalog = true; loadProductCatalog()" class="btn btn-sm btn-primary">
-                      <i class="material-icons">add_shopping_cart</i>
-                      {{ _t('Add Product') }}
-                    </button>
-                  </div>
-
-                  <div class="invoice-lines">
-                    <table class="invoice-table">
-                      <thead>
-                        <tr>
-                          <th>{{ _t('Product') }}</th>
-                          <th>{{ _t('Qty') }}</th>
-                          <th>{{ _t('Price') }}</th>
-                          <th>{{ _t('Total') }}</th>
-                          <th>{{ _t('Actions') }}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="line in quoteData.order_lines" :key="line.id">
-                          <td>{{ line.product_name }}</td>
-                          <td>
-                            <input v-if="editingLine === line.id"
-                                   type="number"
-                                   :value="line.quantity"
-                                   @change="line._newQty = $event.target.value"
-                                   class="input-sm"
-                                   min="0.01"
-                                   step="0.01" />
-                            <span v-else>{{ line.quantity }}</span>
-                          </td>
-                          <td>
-                            <input v-if="editingLine === line.id"
-                                   type="number"
-                                   :value="line.unit_price"
-                                   @change="line._newPrice = $event.target.value"
-                                   class="input-sm"
-                                   min="0"
-                                   step="0.01" />
-                            <span v-else>{{ line.unit_price.toLocaleString() }}</span>
-                          </td>
-                          <td>{{ line.total.toLocaleString() }}</td>
-                          <td>
-                            <div class="btn-group-sm">
-                              <button v-if="editingLine === line.id"
-                                      @click="updateQuoteLine(line.id, line._newQty || line.quantity, line._newPrice || line.unit_price)"
-                                      class="btn btn-xs btn-success"
-                                      title="Save">
-                                <i class="material-icons">check</i>
-                              </button>
-                              <button v-if="editingLine === line.id"
-                                      @click="editingLine = null"
-                                      class="btn btn-xs btn-secondary"
-                                      title="Cancel">
-                                <i class="material-icons">close</i>
-                              </button>
-                              <button v-if="editingLine !== line.id"
-                                      @click="editingLine = line.id"
-                                      class="btn btn-xs btn-info"
-                                      title="Edit">
-                                <i class="material-icons">edit</i>
-                              </button>
-                              <button @click="removeQuoteLine(line.id)"
-                                      class="btn btn-xs btn-danger"
-                                      title="Delete">
-                                <i class="material-icons">delete</i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                      <tfoot>
-                        <tr>
-                          <td colspan="4">{{ _t('Subtotal') }}</td>
-                          <td>{{ quoteData.amount_untaxed.toLocaleString() }}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="4">{{ _t('Tax') }}</td>
-                          <td>{{ quoteData.amount_tax.toLocaleString() }}</td>
-                        </tr>
-                        <tr class="total-row">
-                          <td colspan="4"><strong>{{ _t('Total') }}</strong></td>
-                          <td><strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong></td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
-
-                  <!-- Invoice Comments Section -->
-                  <div class="form-section" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
-                    <h4 style="font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">📝 Invoice Comments</h4>
-                    <div class="form-group">
-                      <textarea v-model="quoteComments"
-                                rows="3"
-                                placeholder="Add any comments or notes about this invoice (optional)..."
-                                style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14%;"></textarea>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="modal-footer">
-                  <button @click="showInvoice = false" class="btn btn-secondary">Cancel</button>
-                  <button @click="saveQuoteWithComments" class="btn btn-primary" title="Save invoice with comments">
-                    <i class="material-icons">save</i>
-                    Save Quote
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Product Catalog Modal -->
-            <div v-if="showProductCatalog" class="modal-overlay" @click.self="showProductCatalog = false">
-              <div class="modal-content catalog-modal">
-                <div class="modal-header">
-                  <h3>
-                    <i class="material-icons">shopping_cart</i>
-                    {{ _t('Product Catalog') }}
-                  </h3>
-                  <button @click="showProductCatalog = false" class="modal-close">
-                    <i class="material-icons">close</i>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <!-- Search Box -->
-                  <div class="search-container mb-3">
-                    <div class="search-icon">
-                      <i class="material-icons">search</i>
-                    </div>
-                    <input
-                      type="text"
-                      class="search-input"
-                      :placeholder="_t('Search products...')"
-                      v-model="productSearch"
-                      @input="loadProductCatalog">
-                  </div>
-
-                  <!-- Product List -->
-                  <div class="product-list">
-                    <div v-for="product in productCatalog"
-                         :key="product.id"
-                         class="product-item"
-                         @click="addProductToQuote(product)">
-                      <div class="product-info">
-                        <h4>{{ product.name }}</h4>
-                        <p v-if="product.code">{{ _t('Code:') }} {{ product.code }}</p>
-                        <p class="product-price">{{ product.price.toLocaleString() }} {{ product.currency }}</p>
-                      </div>
-                      <button class="btn btn-sm btn-primary">
-                        <i class="material-icons">add</i>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div v-if="productCatalog.length === 0" class="empty-state">
-                    <i class="material-icons">inventory_2</i>
-                    <p>{{ _t('No products found') }}</p>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button @click="showProductCatalog = false" class="btn btn-secondary">{{ _t('Close') }}</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Map Modal -->
-            <div v-if="showMap" class="modal-overlay" @click.self="showMap = false">
-              <div class="modal-content map-modal">
-                <div class="modal-header">
-                  <h3>
-                    <i class="material-icons">map</i>
-                    {{ _t('Location Map') }}
-                  </h3>
-                  <button @click="showMap = false" class="modal-close">
-                    <i class="material-icons">close</i>
-                  </button>
-                </div>
-                <div class="modal-body map-container">
-                  <div class="address-display">
-                    <i class="material-icons">place</i>
-                    <span>{{ order.address }}</span>
-                  </div>
-                  <iframe
-                    :src="'https://www.google.com/maps?q=' + encodeURIComponent(order.address) + '&output=embed'"
-                    width="100%"
-                    height="400"
-                    style="border:0;"
-                    allowfullscreen=""
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
-                  </iframe>
-                  <div class="map-actions">
-                    <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(order.address)"
-                       target="_blank"
-                       class="btn btn-primary">
-                      <i class="material-icons">directions</i>
-                      Get Directions
-                    </a>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button @click="showMap = false" class="btn btn-secondary">{{ _t('Close') }}</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Payment Wizard Modal -->
-            <div v-if="showPaymentWizard" class="modal-overlay" @click.self="showPaymentWizard = false">
-              <div class="modal-content payment-wizard-modal" style="max-width: 600px;">
-                <div class="modal-header">
-                  <h3>
-                    <i class="material-icons">payment</i>
-                    Complete Service - Payment Collection
-                  </h3>
-                  <button @click="showPaymentWizard = false" class="modal-close">
-                    <i class="material-icons">close</i>
-                  </button>
-                </div>
-                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-                  <!-- Service Summary -->
-                  <div class="form-section">
-                    <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">Service Summary</h4>
-                    <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                      <div class="info-item">
-                        <label style="font-size: 12px; color: #999;">Booking</label>
-                        <span style="font-size: 14px; color: #333;">{{ order.name }}</span>
-                      </div>
-                      <div class="info-item">
-                        <label style="font-size: 12px; color: #999;">Patient</label>
-                        <span style="font-size: 14px; color: #333;">{{ order.patient_name }} <span v-if="order.patient_code" style="font-weight: 600;">{{ order.patient_code }}</span></span>
-                      </div>
-                      <div class="info-item">
-                        <label style="font-size: 12px; color: #999;">Calculated Invoice Amount</label>
-                        <span style="font-size: 14px; color: #333;">{{ quoteData ? quoteData.amount_total.toLocaleString() + ' ' + quoteData.currency : 'N/A' }}</span>
-                      </div>
-                      <div class="info-item">
-                        <label style="font-size: 12px; color: #999;">Final Invoice Amount</label>
-                        <span style="font-size: 14px; font-weight: 600; color: #667eea;">{{ quoteData ? quoteData.amount_total.toLocaleString() + ' ' + quoteData.currency : 'N/A' }}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Payment Collection -->
-                  <div class="form-section" style="margin-top: 20px;">
-                    <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">💰 Payment Collection</h4>
-                    <div class="form-group">
-                      <label style="display: flex; align-items: center; padding: 12px; border: 2px solid #e1e8ed; border-radius: 8px; margin-bottom: 8px; cursor: pointer;">
-                        <input type="radio" v-model="paymentWizardData.payment_choice" value="pay_now" style="margin-right: 10px;">
-                        <span style="font-weight: 500;">Pay Now - Collect Payment Immediately</span>
-                      </label>
-                      <label style="display: flex; align-items: center; padding: 12px; border: 2px solid #e1e8ed; border-radius: 8px; cursor: pointer;">
-                        <input type="radio" v-model="paymentWizardData.payment_choice" value="pay_later" style="margin-right: 10px;">
-                        <span style="font-weight: 500;">Pay Later - Send Invoice for Later Collection</span>
-                      </label>
-                    </div>
-
-                    <!-- Payment Method (shown only for Pay Now) -->
-                    <div v-if="paymentWizardData.payment_choice === 'pay_now'" class="form-group" style="margin-top: 16px;">
-                      <label style="font-size: 12px; font-weight: 600; color: #333; margin-bottom: 8px; display: block;">Payment Method</label>
-                      <select v-model="paymentWizardData.payment_method" class="form-control" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
-                        <option value="cash">Cash</option>
-                        <option value="bank_transfer">Bank Transfer</option>
-                        <option value="credit_card">Credit Card</option>
-                        <option value="qr_code">QR Code Payment</option>
-                        <option value="prepaid">Prepaid Service Package</option>
-                        <option value="other">Other Method</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <!-- Service Notes -->
-                  <div class="form-section" style="margin-top: 20px;">
-                    <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">📝 Service Notes</h4>
-                    <div class="form-group">
-                      <textarea v-model="paymentWizardData.service_notes"
-                                rows="3"
-                                placeholder="Additional notes about service delivery, patient condition, payment collection, etc."
-                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;"></textarea>
-                    </div>
-                  </div>
-
-                  <!-- Invoice Processing -->
-                  <div class="form-section" style="margin-top: 20px;">
-                    <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">📋 Invoice Processing</h4>
-                    <div class="form-group">
-                      <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" v-model="paymentWizardData.create_invoice_now" checked style="margin-right: 10px;">
-                        <span style="font-weight: 500;">Create Invoice Now</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button @click="showPaymentWizard = false" class="btn btn-secondary">Cancel</button>
-                  <button @click="handleCompleteService" class="btn btn-primary" :disabled="!isOnline">
-                    <i class="material-icons">check_circle</i>
-                    Complete Service
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `
-    });
-    */
-    /* END OF LEGACY ORDER-DETAIL-VIEW COMPONENT */
 
     app.component('teams-view', {
       props: ['isOnline'],

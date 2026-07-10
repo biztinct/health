@@ -5,7 +5,7 @@ import logging
 from datetime import datetime, timedelta
 from odoo import http, fields, _
 from odoo.http import request
-from odoo.exceptions import ValidationError, UserError
+from odoo.exceptions import ValidationError, UserError, AccessError
 
 _logger = logging.getLogger(__name__)
 
@@ -62,6 +62,35 @@ class HealthPWAAPIController(http.Controller):
             status=status_code
         )
     
+    def _can_access_order_detail(self, order):
+        """Authorize the caller for a booking-detail read.
+
+        The detail modal is the assigned nurse's own visit, so an assignment
+        on THIS order (any state but cancelled) is the primary grant — checked
+        with sudo so a minimal nurse without catchment / sale.order ACL still
+        gets their own visit (the reads that follow all run sudo). To avoid
+        NARROWING the prior audience (managers/ops with catchment could read it
+        before), fall back to the caller's own ACL: if their record rules would
+        let them read the order, allow. Resolve the employee via user_id search
+        (§5.24 — user.employee_id is company-context dependent; also the
+        employee read must be sudo or the public-profile guard trips).
+        """
+        user = request.env.user
+        employee = request.env['hr.employee'].sudo().search(
+            [('user_id', '=', user.id)], limit=1)
+        if employee and request.env['health.staff.assignment'].sudo().search_count([
+            ('fso_id', '=', order.id),
+            ('staff_id', '=', employee.id),
+            ('state', '!=', 'cancelled'),
+        ]):
+            return True
+        # Not assigned — preserve the pre-existing broader audience.
+        try:
+            order.with_user(user).read(['id'])
+            return True
+        except AccessError:
+            return False
+
     def _create_follow_up_activity(self, order, patient, reason_note):
         """Create a follow-up activity on the patient for the operations manager of the patient's primary facility."""
         try:
@@ -398,16 +427,24 @@ class HealthPWAAPIController(http.Controller):
             return self._prepare_json_response(error=_('Access denied'), status_code=403)
         
         try:
-            order = request.env['health.fieldservice.order'].browse(order_id)
-            
+            # Read sudo AFTER an explicit scope check (§2.3): the base ACL read
+            # made a minimal nurse without catchment / sale.order rights fail on
+            # their OWN visit. Resolve + authorize first, then read with sudo.
+            order = request.env['health.fieldservice.order'].sudo().browse(order_id)
+
             if not order.exists():
                 return self._prepare_json_response(error=_('Order not found'), status_code=404)
-            
+
+            if not self._can_access_order_detail(order):
+                return self._prepare_json_response(error=_('Access denied'), status_code=403)
+
             # Get primary contact from patient relations
             primary_contact = None
             if order.patient_id:
-                # Look for emergency contact marked as primary
-                contacts = request.env['health.client.relation'].search([
+                # Look for emergency contact marked as primary (sudo: order is
+                # already sudo-scoped above, keep the relation read consistent
+                # so a minimal nurse doesn't 500 on health.client.relation ACL).
+                contacts = request.env['health.client.relation'].sudo().search([
                     ('client_id', '=', order.patient_id.id),
                     ('role', '=', 'emergency_contact'),
                     ('is_primary', '=', True)
