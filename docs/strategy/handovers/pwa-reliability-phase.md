@@ -100,6 +100,25 @@ binding constraint in §2.1); Vue upgrade; the deprecated
 
 ## 2. Architecture
 
+**Sanctioned edits (exhaustive — conventions §4; nothing else in
+`health_pwa` or any other shared module may change):**
+
+- `health_pwa/static/src/js/app.js` — modal extraction to a shared root
+  component (§2.1), deletion of the `/* LEGACY */ order-detail-view`
+  comment block, the shared status-label helper (§2.4), restoring the
+  bell card's "Xem (View)" button, re-pointing `viewOrder`/route
+  handling at the shared modal.
+- `health_pwa/static/src/js/utils/sync-manager.js` — the
+  `saveSyncMetadata` `_rev` fix + the 500-cap warn (§2.2, §2.4).
+- `health_pwa/controllers/api.py` — `api_fso_detail` scope-check + sudo
+  ONLY (§2.3); no other endpoint changes.
+- `health_pwa/views/pwa_templates.xml` — the SW `notificationclick`
+  family_message branch (§2.1) + the 1.11.0 bump (5 spots).
+- `health_pwa/__manifest__.py` — version bump.
+- Pin tests: `health_pwa_daystrip/tests/test_daystrip.py`,
+  `health_scribe/tests/test_scribe.py`,
+  `health_pwa_family/tests/test_pwa_family.py` — version strings only.
+
 ### 2.1 Shared booking modal
 
 - Extract the modal (template block at app.js:3192 + its state/handlers:

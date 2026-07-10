@@ -58,17 +58,27 @@ injects JS into the shell requires bumping `health_pwa`:
   **5 times** (`pwa_asset_version` t-set, `version:`, `PWA_SW_VERSION`,
   the SW comment line, `CACHE_VERSION`). `sed` all occurrences.
 - `health_pwa/__manifest__.py` — bump the last version segment.
-- Current as of spine completion: **1.4.0** / `19.0.1.0.17`. Next: 1.5.0 / .18.
+- Read the CURRENT version from `pwa_templates.xml` (never trust a doc's
+  hardcoded value). Co-resident PIN TESTS hard-assert it and MUST be
+  bumped in the same change: `health_pwa_daystrip/tests/test_daystrip.py`,
+  `health_scribe/tests/test_scribe.py`,
+  `health_pwa_family/tests/test_pwa_family.py`.
 - Deploy health_pwa alongside (add `-u health_pwa` to the upgrade).
 
 ## 4. Module structure conventions
 
-- New modules NEVER edit `health_pwa` files (except the version bump
-  above). Each module ships its own JS in `<mod>/static/src/js/`
-  (plain `window.*` globals, no module system) injected via QWeb
-  inheritance of `health_pwa.app_shell` in `views/pwa_shell_inherit.xml`,
-  with `?v=#{pwa_asset_version}` cache-busting. Add `health_pwa` to
-  `depends` when you do this.
+- **A phase edits ONLY the modules/files its handover doc explicitly
+  sanctions** (each sanctioned edit named: module + file + what may
+  change). Absent a sanction, shared modules (`health_pwa`,
+  `health_fieldservice`, `web_timeline`, `health_messaging`, …) are
+  READ-ONLY — except the §3 version bump, which is always required when
+  PWA assets change. Precedents: pwa-family (sanctioned bell card in
+  app.js), schedule-canvas (sanctioned web_timeline + health_fieldservice
+  edits). Satellite modules keep the pattern: each ships its own JS in
+  `<mod>/static/src/js/` (plain `window.*` globals, no module system)
+  injected via QWeb inheritance of `health_pwa.app_shell` in
+  `views/pwa_shell_inherit.xml`, with `?v=#{pwa_asset_version}`
+  cache-busting. Add `health_pwa` to `depends` when you do this.
 - PWA API endpoints: routes under `/health_pwa/api/...`, `type='http'`,
   `auth='user'`, `csrf=False`, manual `json.loads(request.httprequest.data)`.
   Duplicate the `_check_api_access()` + `_prepare_json_response(data,
@@ -355,6 +365,10 @@ injects JS into the shell requires bumping `health_pwa`:
   client → `res.partner.primary_facility_id`.
 
 ## 8. Definition of done (EVERY phase — no exceptions)
+
+Implementation sessions are kicked off with the canonical prompt in
+`docs/strategy/KICKOFF-TEMPLATE.md` — keep that file and this section in
+sync when either changes.
 
 1. All new/changed module tests pass on **vietuat**: the log shows
    `0 failed, 0 error(s)` for your test tags, AND the earlier-module
