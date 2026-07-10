@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Master switch: messaging is DARK on install. Go-live is a manual
+             param flip (§2.4). When off: the token page shows no composer and
+             the POST route returns the neutral page. -->
+        <record id="param_family_messages_enabled" model="ir.config_parameter">
+            <field name="key">health_family_messages.enabled</field>
+            <field name="value">False</field>
+        </record>
+        <!-- Reply ZNS template id — empty by default so no reply ping is ever
+             created until a template is configured (no-phantom rule). -->
+        <record id="param_family_messages_zns_template_reply" model="ir.config_parameter">
+            <field name="key">health_family_messages.zns_template_reply</field>
+            <field name="value"></field>
+        </record>
+        <!-- Per-thread inbound rate cap (rolling hour). -->
+        <record id="param_family_messages_max_per_hour" model="ir.config_parameter">
+            <field name="key">health_family_messages.max_per_hour</field>
+            <field name="value">10</field>
+        </record>
+    </data>
+</odoo>

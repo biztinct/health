@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend the standalone family visit page with a two-way message
+         section. xpath-inherit into the standalone t-name template (report
+         point a): QWeb inheritance applies to request.render'd templates.
+         Injected at the end of the card, guarded by messaging_enabled so the
+         page stays byte-identical when the module master switch is off. All
+         family-supplied text is escaped by t-esc at render. -->
+    <template id="family_page_messages"
+              inherit_id="health_family_link.family_page"
+              name="Family Visit Page — Message Section">
+        <xpath expr="//div[hasclass('fl-card')]" position="inside">
+            <t t-if="messaging_enabled">
+                <style>
+                    .fm-sec { border-top: 1px solid #eef0f2; margin-top: 18px; padding-top: 16px; }
+                    .fm-h2 { font-size: 16px; font-weight: 700; margin: 0 0 4px; color: #1f2733; }
+                    .fm-hint { font-size: 13px; color: #8a94a1; margin: 0 0 14px; }
+                    .fm-thread { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+                    .fm-empty { font-size: 14px; color: #8a94a1; padding: 8px 0; }
+                    .fm-msg { max-width: 85%; padding: 10px 13px; border-radius: 12px; font-size: 15px;
+                              line-height: 1.45; white-space: pre-wrap; word-wrap: break-word; }
+                    .fm-msg--in { align-self: flex-end; background: #e6f4f1; color: #0b3f36;
+                                  border-bottom-right-radius: 4px; }
+                    .fm-msg--out { align-self: flex-start; background: #f1f3f5; color: #1f2733;
+                                   border-bottom-left-radius: 4px; }
+                    .fm-meta { font-size: 11px; color: #8a94a1; margin-top: 4px; }
+                    .fm-form { display: flex; flex-direction: column; gap: 10px; }
+                    .fm-form textarea { width: 100%; min-height: 76px; resize: vertical; padding: 11px 12px;
+                                        font-size: 15px; font-family: inherit; border: 1px solid #d5d9de;
+                                        border-radius: 10px; color: #1f2733; }
+                    .fm-form textarea:focus { outline: none; border-color: #0b6b5a; }
+                    .fm-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+                              background: #0b6b5a; color: #ffffff; border: none; border-radius: 10px;
+                              padding: 12px 16px; font-size: 15px; font-weight: 700; cursor: pointer; }
+                    .fm-btn svg { width: 18px; height: 18px; }
+                    .fm-window { font-size: 12px; color: #8a94a1; margin-top: 14px; text-align: center; }
+                </style>
+                <div class="fm-sec">
+                    <div class="fm-h2">Nhắn tin với đội chăm sóc (Message the care team)</div>
+                    <p class="fm-hint">Gửi câu hỏi hoặc lưu ý cho điều dưỡng.
+                       (Send a question or note to your nurse.)</p>
+
+                    <div class="fm-thread">
+                        <t t-if="messages">
+                            <t t-foreach="messages" t-as="m">
+                                <div t-attf-class="fm-msg fm-msg--#{m['direction']}">
+                                    <div class="fm-msg-body"><t t-esc="m['body']"/></div>
+                                    <div class="fm-meta">
+                                        <t t-esc="m['author']"/>
+                                        <t t-if="m['when']"> · <t t-esc="m['when']"/></t>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <div class="fm-empty">Chưa có tin nhắn. (No messages yet.)</div>
+                        </t>
+                    </div>
+
+                    <form class="fm-form" method="post"
+                          t-attf-action="/family/visit/#{msg_token}/message">
+                        <textarea name="body" maxlength="2000" required="required"
+                                  placeholder="Nhập tin nhắn... (Type a message...)"/>
+                        <button type="submit" class="fm-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9z"/>
+                            </svg>
+                            Gửi (Send)
+                        </button>
+                    </form>
+
+                    <p class="fm-window">Kênh nhắn tin mở trong 24 giờ quanh mỗi lượt thăm khám.
+                       (This channel is open for 24 hours around each visit.)</p>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

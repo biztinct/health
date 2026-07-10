@@ -272,6 +272,19 @@ injects JS into the shell requires bumping `health_pwa`:
     are on duty" — while 'leave' is always kept, with a console.warn). Diagnose
     with a `setInterval` main-thread-block detector, not the network panel.
 
+29. **A hand-written `i18n/vi.po` MUST give every entry a `#. module: <name>`
+    extracted-comment line, or registry load CRASHES.** Odoo's PO importer
+    (`odoo/tools/translate.py` `__iter__`) does `match = re.match(r"(module[s]?):
+    (\w+)", entry.comment); _, module = match.groups()` on EVERY entry — with no
+    `#. module:` comment, `entry.comment` is empty, `match` is `None`, and it dies
+    with `AttributeError: 'NoneType' object has no attribute 'groups'` inside
+    `_update_translations` (the last step of `load_module_graph`). This is NOT a
+    test failure — it's a `CRITICAL Failed to initialize database`, and every data
+    file loaded fine first, so the traceback points at translation load, not your
+    code. Copy a real module's body format (e.g. health_careplan/i18n/vi.po):
+    each entry is `#. module: <module>\nmsgid "…"\nmsgstr "…"`. The header block
+    alone is not enough.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing

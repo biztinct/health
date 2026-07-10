@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Facility-scoped access, cloned from
+         health_consent/security/health_consent_security.xml (report point d):
+         healthcare users see only their own catchment; owner sees all. The
+         thread carries a stored catchment_province_id; messages inherit it via
+         thread_id. Scoping on catchment_province_id (the field the user record
+         actually carries) rather than raw facility_id gives the same facility
+         partitioning through the proven rule pattern. -->
+
+    <record id="rule_family_thread_catchment" model="ir.rule">
+        <field name="name">Family Threads: healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_family_thread"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_family_thread_owner" model="ir.rule">
+        <field name="name">Family Threads: owner/admin see all</field>
+        <field name="model_id" ref="model_health_family_thread"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner')), (4, ref('health_base.group_healthcare_admin'))]"/>
+    </record>
+
+    <record id="rule_family_message_catchment" model="ir.rule">
+        <field name="name">Family Messages: healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_family_message"/>
+        <field name="domain_force">['&amp;', ('thread_id.catchment_province_id', '=', user.catchment_province_id.id), ('thread_id.catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_family_message_owner" model="ir.rule">
+        <field name="name">Family Messages: owner/admin see all</field>
+        <field name="model_id" ref="model_health_family_message"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner')), (4, ref('health_base.group_healthcare_admin'))]"/>
+    </record>
+</odoo>

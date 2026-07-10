@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ Thread list (inbox) ============ -->
+    <record id="view_family_thread_list" model="ir.ui.view">
+        <field name="name">health.family.thread.list</field>
+        <field name="model">health.family.thread</field>
+        <field name="arch" type="xml">
+            <list string="Family Messages" default_order="last_message_at desc">
+                <field name="patient_id"/>
+                <field name="relation_id"/>
+                <field name="facility_id"/>
+                <field name="last_message_at"/>
+                <field name="unread_ops_count" string="Unread"
+                       decoration-bf="unread_ops_count &gt; 0"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============ Thread form (read history + reply) ============ -->
+    <record id="view_family_thread_form" model="ir.ui.view">
+        <field name="name">health.family.thread.form</field>
+        <field name="model">health.family.thread</field>
+        <field name="arch" type="xml">
+            <form string="Family Message Thread">
+                <header>
+                    <button name="action_send_reply" type="object"
+                            string="Send reply" class="btn-primary"
+                            invisible="not reply_text"/>
+                    <button name="action_mark_read" type="object"
+                            string="Mark read"
+                            invisible="unread_ops_count == 0"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="active,closed"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="messaging_enabled">
+                        Secure family messaging is currently disabled
+                        (health_family_messages.enabled = False). Existing
+                        threads are read-only until it is enabled.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="relation_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="facility_id" readonly="1"/>
+                            <field name="last_message_at" readonly="1"/>
+                            <field name="unread_ops_count" readonly="1"/>
+                            <field name="messaging_enabled" invisible="1"/>
+                        </group>
+                    </group>
+                    <separator string="Conversation"/>
+                    <field name="message_ids" readonly="1">
+                        <list string="Messages" create="false" edit="false"
+                              delete="false" default_order="create_date asc">
+                            <field name="create_date" string="When"/>
+                            <field name="direction"/>
+                            <field name="author_label" string="From"/>
+                            <field name="body"/>
+                            <field name="fso_id" string="Visit"/>
+                            <field name="read_by_family" string="Seen"/>
+                        </list>
+                    </field>
+                    <separator string="Reply"/>
+                    <field name="reply_text"
+                           placeholder="Type a reply to the family…"
+                           readonly="not messaging_enabled"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============ Search ============ -->
+    <record id="view_family_thread_search" model="ir.ui.view">
+        <field name="name">health.family.thread.search</field>
+        <field name="model">health.family.thread</field>
+        <field name="arch" type="xml">
+            <search string="Family Messages">
+                <field name="patient_id"/>
+                <field name="relation_id"/>
+                <field name="facility_id"/>
+                <filter name="unread" string="Unread"
+                        domain="[('unread_ops_count', '&gt;', 0)]"/>
+                <filter name="active_threads" string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="closed_threads" string="Closed"
+                        domain="[('state', '=', 'closed')]"/>
+                <filter name="by_facility" string="Facility"
+                        context="{'group_by': 'facility_id'}"/>
+                <filter name="by_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============ Action ============ -->
+    <record id="action_family_messages" model="ir.actions.act_window">
+        <field name="name">Family Messages</field>
+        <field name="res_model">health.family.thread</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_family_thread_search"/>
+        <field name="context">{'search_default_active_threads': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No family messages yet</p>
+            <p>Threads appear here when a family member sends a message from
+               the visit page.</p>
+        </field>
+    </record>
+
+    <!-- ============ Menu (Operations Center, sibling of Staff Schedule) ============ -->
+    <menuitem id="menu_ops_family_messages"
+              name="Family Messages"
+              parent="health_fieldservice.menu_ops_center_root"
+              action="action_family_messages"
+              sequence="45"/>
+
+</odoo>
