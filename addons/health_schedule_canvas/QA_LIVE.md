@@ -75,7 +75,25 @@ background items / drag gate. Full parallelization (d) deferred: the schedule's
 facility-filter derives the allowed rows from the overlay, so items can't paint
 strictly before it without decoupling that filter (noted, not done).
 
-## Compose check (§6d)
+## Week-switch freeze — found & fixed (post-review browser QA)
+
+User report: Day→Week switches visually, then a spinner runs "for a second" with
+no further change. Measured on care.biztinct.com (main-thread block detector):
+
+    BEFORE:  single 18,562 ms main-thread FREEZE on Day→Week; spinner up ~17.4 s
+    CAUSE:   the overlay returns ~900 'off' background segments for a 7-day × 60-staff
+             window; vis-timeline's background layout is super-linear → an ~18 s
+             synchronous render. (Server overlay RPC itself was only ~600 ms — the
+             XHR just looked slow because the main thread was frozen.) Day (120 bg)
+             never froze. I had thinned only at MONTH and skipped the §2.2 "filter
+             backgrounds to visible time" synergy.
+    FIX:     _backgroundItems() now (a) in hidden mode drops 'off' segments that sit
+             inside a hidden column (invisible anyway — the synergy), and (b) hard-caps
+             'off' at 300, dropping them beyond that (shading is decorative). The
+             off-hours toggle rebuilds backgrounds in place (no refetch).
+    AFTER:   Day→Week freeze 18,562 ms → 289 ms (hidden) / 0 ms (shown); spinner
+             17.4 s → ~0.5 s. Month: 0 ms freeze (granularity thinning). Week axis
+             Fri 10→17 correct in all cases.
 
 Both StaffScheduleController.prototype patches live together: health_schedule_drag
 `_onMove` (reschedule-by-drag) and health_schedule_canvas `_onAdd` (draw-create).

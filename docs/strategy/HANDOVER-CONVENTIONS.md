@@ -251,6 +251,18 @@ injects JS into the shell requires bumping `health_pwa`:
     `search_count`/`unlink` sweep that reports "N removed" can be silently
     incomplete — verify with a raw `active_test=False` count afterwards.
 
+28. **vis-timeline background-item layout is super-linear — cap it.** Feeding vis
+    ~900 `type:'background'` items (a 7-day × 60-staff off-hours overlay) froze the
+    main thread ~18 s on a Day→Week switch (measured live); the server RPC returning
+    them was only ~600 ms, so it *looks* like a slow network call but it's a
+    synchronous render freeze (the pending XHR's `loadend` just fires late because
+    the thread is blocked — a `.o_loading` spinner sits up the whole time). Never
+    hand vis an unbounded background set: filter to the visible range, drop
+    backgrounds that fall inside hidden (`hiddenDates`) columns, and hard-cap the
+    remainder (health_schedule_canvas `OFF_BG_CAP=300`, dropping decorative 'off'
+    shading beyond it). Diagnose with a `setInterval` main-thread-block detector, not
+    the network panel.
+
 26. `hr.employee.working_hours_<day>` Char fields are only a FALLBACK —
     `_working_intervals_for` prefers `resource_calendar_id`, and every
     employee gets the company default calendar (8-17) on create, so

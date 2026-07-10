@@ -113,6 +113,11 @@ const OFFHOURS_KEY = "vu_sched_offhours"; // 'hidden' (default) | 'shown'
 // clusters don't compose cleanly with the custom background items / drag gate.
 // Flip to true only if measurement shows Month is still over budget.
 const ENABLE_MONTH_CLUSTER = false;
+// vis-timeline renders/lay-out of background items is super-linear — a Week with
+// ~900 'off' segments froze the main thread ~18 s (measured on vietuat). Beyond
+// this many 'off' backgrounds we drop them entirely (keep 'leave'); off-hours
+// shading is decorative and the hidden-mode synergy already removes most.
+const OFF_BG_CAP = 300;
 
 function offHoursHidden() {
     try {
@@ -214,6 +219,60 @@ patch(StaffScheduleRenderer.prototype, {
         }
     },
 
+    /** Background items for vis — with the §2.2 synergy + a hard safety cap so a
+     *  dense Week/Month never freezes the main thread. Overrides the shipped
+     *  builder (kept byte-compatible: same id/className) but:
+     *   - always keeps 'leave' segments;
+     *   - in hidden mode, drops 'off' segments that fall inside a hidden column
+     *     (they are invisible anyway — the synergy the handover asked for);
+     *   - if 'off' still exceeds OFF_BG_CAP (e.g. off-hours SHOWN on a busy Week,
+     *     or staff calendars don't intersect), drops 'off' entirely. */
+    _backgroundItems() {
+        const bgs = (this._overlay && this._overlay.backgrounds) || [];
+        const isMonth = this.mode.data === "month";
+        const hidden = !isMonth && offHoursHidden() ? this._hiddenRanges() : [];
+        const leaves = [];
+        const offs = [];
+        for (const bg of bgs) {
+            const s = this._sqlToDate(bg.start);
+            const e = this._sqlToDate(bg.end);
+            const item = {
+                id: `bg_${bg.staff_id}_${bg.start}_${bg.kind}`,
+                group: bg.staff_id,
+                start: s,
+                end: e,
+                type: "background",
+                className: `hf-av hf-av--${bg.kind}`,
+            };
+            if (bg.kind === "leave") {
+                leaves.push(item);
+                continue;
+            }
+            const st = s.getTime();
+            const et = e.getTime();
+            const insideHidden = hidden.some(
+                (h) => h.start.getTime() <= st && et <= h.end.getTime()
+            );
+            if (!insideHidden) {
+                offs.push(item);
+            }
+        }
+        if (offs.length > OFF_BG_CAP) {
+            return leaves; // protect the main thread — shading is decorative
+        }
+        return leaves.concat(offs);
+    },
+
+    /** Cached hidden ranges for the current window (recomputed per overlay key). */
+    _hiddenRanges() {
+        if (this._hiddenCacheKey === this._lastWinKey && this._hiddenCache) {
+            return this._hiddenCache;
+        }
+        this._hiddenCache = this._computeHiddenDates();
+        this._hiddenCacheKey = this._lastWinKey;
+        return this._hiddenCache;
+    },
+
     /** Apply hiddenDates (day/week, toggle-honoring) + optional month cluster. */
     _applyCanvasView() {
         if (!this.timeline) {
@@ -222,7 +281,7 @@ patch(StaffScheduleRenderer.prototype, {
         const isMonth = this.mode.data === "month";
         let hidden = [];
         if (!isMonth && offHoursHidden()) {
-            hidden = this._computeHiddenDates();
+            hidden = this._hiddenRanges();
         }
         try {
             this.timeline.setOptions({hiddenDates: hidden});
@@ -334,6 +393,19 @@ patch(StaffScheduleRenderer.prototype, {
             }
             paint();
             try {
+                // Rebuild the background items in place: hidden→shown must re-add the
+                // 'off' segments that the synergy filtered out (and vice-versa). No
+                // refetch — reuse the cached overlay.
+                if (this.timeline) {
+                    const data = this.timeline.itemsData;
+                    const old = data
+                        .get({filter: (it) => it.type === "background"})
+                        .map((it) => it.id);
+                    if (old.length) {
+                        data.remove(old);
+                    }
+                    data.add(this._backgroundItems());
+                }
                 this._applyCanvasView();
             } catch {
                 // non-fatal
