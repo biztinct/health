@@ -68,6 +68,11 @@ class ScheduleDragBase(TransactionCase):
         emp = self.env['hr.employee'].create({
             'name': 'Drag Staff', 'user_id': user.id,
             'healthcare_facility_id': (facility or self.facility).id})
+        # working_hours_* char fields are only the FALLBACK —
+        # resource_calendar_id (auto-set to the company default calendar)
+        # takes precedence in _working_intervals_for, silently ignoring the
+        # hours param. Clear it so the requested hours actually apply.
+        emp.write({'resource_calendar_id': False})
         emp.write({'working_hours_%s' % d: hours for d in _DAYS})
         return emp
 
@@ -349,3 +354,51 @@ class TestChatter(ScheduleDragBase):
         self.env.flush_all()
         fso.invalidate_recordset(['message_ids'])
         self.assertGreater(len(fso.message_ids), before)
+
+
+# =====================================================================
+# 12 — The legacy side door is gated (review fix)
+# =====================================================================
+@tagged('post_install', '-at_install')
+class TestLegacyEndpointGated(ScheduleDragBase):
+
+    def test_apply_timeline_change_routes_through_gate(self):
+        """The shipped apply_timeline_change had NO guards and wrote
+        scheduled_duration; it must now obey the gate: non-ops refused,
+        duration immune."""
+        staff = self._staff()
+        staff.user_id = self.nurse
+        fso = self._fso()
+        a = self._assign(fso, staff)
+        old_dt = fso.scheduled_datetime
+        old_dur = fso.scheduled_duration
+        target = BASE + timedelta(hours=3)
+        # Non-ops caller (the assignment's own nurse) → refused, nothing written.
+        res = self.env['health.staff.assignment'].with_user(
+            self.nurse).apply_timeline_change(
+                a.id, _iso(target), _iso(target + timedelta(hours=5)), 0)
+        self.assertFalse(res['ok'])
+        self.assertEqual(fso.scheduled_datetime, old_dt)
+        self.assertEqual(fso.scheduled_duration, old_dur)
+        # Ops caller → applies, but the 5h client end is IGNORED (immunity).
+        res2 = self.env['health.staff.assignment'].with_user(
+            self.ops).apply_timeline_change(
+                a.id, _iso(target), _iso(target + timedelta(hours=5)), 0)
+        self.assertTrue(res2['ok'])
+        self.assertEqual(fso.scheduled_datetime, target)
+        self.assertEqual(fso.scheduled_duration, old_dur)
+
+    def test_sibling_hard_conflict_refused(self):
+        """Superseded-flow parity: the whole booking moves, so a sibling
+        staff outside HER working hours at the target must hard-refuse even
+        though the dragged staff is available."""
+        s1 = self._staff()                       # works 00:00-23:59
+        s2 = self._staff(hours='08:00-11:00')    # mornings only (ICT)
+        fso = self._fso()
+        a1 = self._assign(fso, s1, role='lead')
+        self._assign(fso, s2, role='support')
+        target = BASE + timedelta(hours=5)       # 14:00 ICT — s2 off duty
+        res = self._resched(a1, target, confirmed=True)
+        self.assertEqual(res['status'], 'refused')
+        self.assertIn(s2.name, res['message'])
+        self.assertNotEqual(fso.scheduled_datetime, target)

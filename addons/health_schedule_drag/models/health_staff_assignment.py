@@ -94,6 +94,17 @@ class HealthStaffAssignment(models.Model):
             return refused(_(
                 'Rescheduling is an operations decision — ask an operations '
                 'manager or head nurse.'))
+        # Dispatch guard (the superseded validate_timeline_change had this):
+        # once anyone is en route / on site, the visit must not move under
+        # them even while fso.state is still 'assigned'.
+        dispatched = fso.assignment_ids.filtered(
+            lambda x: x.state not in ('cancelled', 'template')
+            and getattr(x, 'assignment_status', '') in (
+                'en_route', 'arrived', 'in_progress'))
+        if dispatched:
+            return refused(_(
+                'Staff are already en route or on site for this visit — it '
+                'can no longer be rescheduled by dragging.'))
 
         # sudo the employee records: reading any hr.employee field as a non-HR
         # ops user trips the public-profile prefetch guard (access_role_id etc.).
@@ -128,7 +139,26 @@ class HealthStaffAssignment(models.Model):
                                  self._dt_to_iso(eff_end), assignment_id)
         if res.get('hard_block'):
             return refused(res.get('message') or _("That change isn't allowed."))
+        # Sibling guard (superseded-flow parity): the whole booking moves, so
+        # EVERY other assigned staff must be free at the new window too —
+        # hard reasons (leave/off-hours) refuse; soft overlaps join the
+        # confirm warning.
+        conflicts, sib_warnings = [], []
+        for sib in fso.assignment_ids.filtered(
+                lambda x: x.id != a.id
+                and x.state not in ('cancelled', 'template') and x.staff_id):
+            r = self._check_emp_slot(sib.staff_id.sudo(), eff_start, eff_end,
+                                     exclude_assignment_id=sib.id)
+            if r.get('hard'):
+                conflicts.append('%s (%s)' % (sib.staff_id.name,
+                                              r.get('message')))
+            elif r.get('overlap') and r.get('message'):
+                sib_warnings.append(r['message'])
+        if conflicts:
+            return refused(_('Cannot reschedule — ') + '; '.join(conflicts))
         warning = res.get('message')   # overlap / travel warnings when ok
+        if sib_warnings:
+            warning = ' '.join(filter(None, [warning] + sib_warnings))
         if warning and not confirmed:
             return {'status': 'needs_confirm', 'message': warning,
                     'fso_id': fso.id}
@@ -171,6 +201,25 @@ class HealthStaffAssignment(models.Model):
         return {'status': 'ok', 'fso_id': fso.id,
                 'message': self._reschedule_ok_text(fso, new_staff, eff_start,
                                                     staff_changed)}
+
+    # ------------------------------------------------------------------
+    # Close the legacy side door
+    # ------------------------------------------------------------------
+    @api.model
+    def apply_timeline_change(self, assignment_id, new_start_iso, new_end_iso,
+                              new_staff_id, mode='day'):
+        """The shipped endpoint has NO ops/state/facility guards and writes
+        scheduled_duration (duration-immunity bypass). The UI no longer calls
+        it, but it stays RPC-callable by anyone with assignment write rights —
+        route it through the gate so a direct RPC obeys the same rules.
+        confirmed=True preserves the legacy 'apply' semantics (its callers
+        validated separately); every HARD guard still applies."""
+        res = self.reschedule_from_drag(
+            assignment_id, new_start_iso, new_end_iso, new_staff_id,
+            confirmed=True, mode=mode)
+        ok = res.get('status') in ('ok', 'noop')
+        return {'ok': ok, 'message': res.get('message', ''),
+                'status': res.get('status')}
 
     def _reschedule_ok_text(self, fso, new_staff, eff_start, staff_changed):
         try:

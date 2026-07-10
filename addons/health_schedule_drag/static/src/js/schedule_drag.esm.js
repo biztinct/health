@@ -67,7 +67,10 @@ patch(StaffScheduleController.prototype, {
             return;
         }
         if (res.status === "noop") {
-            callback(item); // dropped back where it was — nothing to do
+            // Snap back rather than accept: a pure RESIZE also lands here
+            // (same start, server ignores the end) and accepting the item
+            // would leave a visually stretched block until the next reload.
+            callback(null);
             return;
         }
 

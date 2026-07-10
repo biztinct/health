@@ -240,6 +240,14 @@ injects JS into the shell requires bumping `health_pwa`:
     ⇒ free chatter/audit" — verify with a `mail.tracking.value` search_count and
     post an explicit `message_post` when you need the audit trail on the record.
 
+26. `hr.employee.working_hours_<day>` Char fields are only a FALLBACK —
+    `_working_intervals_for` prefers `resource_calendar_id`, and every
+    employee gets the company default calendar (8-17) on create, so
+    writing the char fields does NOTHING until you clear
+    `resource_calendar_id = False`. Test fixtures that "restrict"
+    working hours via the char fields silently test the default
+    calendar instead (hit live in the schedule-drag suite).
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
