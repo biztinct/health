@@ -17,3 +17,9 @@ class PwaStaffNotification(models.Model):
     notification_type = fields.Selection(
         selection_add=[('family_message', 'Family Message')],
         ondelete={'family_message': 'cascade'})
+    family_thread_id = fields.Many2one(
+        'health.family.thread', string='Family Thread', index=True,
+        ondelete='cascade',
+        help='Backlink so handling the thread (mark read / reply) clears the '
+             'bell rows — today\'s app shell has no dismiss button for this '
+             'type, so the backend lifecycle is the only way to clear them.')

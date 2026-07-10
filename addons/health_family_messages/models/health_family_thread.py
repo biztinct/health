@@ -112,6 +112,16 @@ class HealthFamilyThread(models.Model):
                     'family relation.'))
         return super().create(vals_list)
 
+    def unlink(self):
+        # Deleting a thread would SQL-cascade its messages, silently bypassing
+        # the message-level append-only unlink guard — so the parent carries
+        # the same guard (system admin only; uninstall runs as superuser).
+        if not self.env.user.has_group('base.group_system'):
+            raise UserError(_(
+                'Family threads hold append-only patient-record messages and '
+                'cannot be deleted.'))
+        return super().unlink()
+
     @api.model
     def _get_or_create(self, patient, relation):
         """Idempotent get-or-create for one (patient, relation) channel."""
@@ -157,6 +167,11 @@ class HealthFamilyThread(models.Model):
         cap / empty body). Runs sudo from the public controller."""
         self.ensure_one()
         Message = self.env['health.family.message'].sudo()
+        if self.state != 'active':
+            # Ops closed the channel — history stays visible on the token page
+            # but no new inbound is accepted.
+            _logger.info('Family thread %s is closed; message refused.', self.id)
+            return Message
         text = Message._sanitize_body(body)
         if not text:
             return Message
@@ -222,6 +237,7 @@ class HealthFamilyThread(models.Model):
                 Notif.create({
                     'user_id': user.id,
                     'fso_id': fso.id if fso else False,
+                    'family_thread_id': self.id,
                     'notification_type': 'family_message',
                     'patient_name': patient_name,
                     'fso_name': fso.name if fso else '',
@@ -278,12 +294,27 @@ class HealthFamilyThread(models.Model):
                 lambda m: m.direction == 'in' and not m.read_by_ops
             ).write({'read_by_ops': True})
             thread.unread_ops_count = 0
+            # Clear the staff bell rows for this thread. Today's app shell has
+            # no render/dismiss case for the family_message type, so without
+            # this the badge count would stay inflated forever once a family
+            # message arrives — handling the thread is the dismissal.
+            self.env['health.pwa.staff.notification'].sudo().search([
+                ('family_thread_id', '=', thread.id),
+                ('notification_type', '=', 'family_message'),
+                ('is_read', '=', False),
+            ]).write({'is_read': True})
         return True
 
     def action_send_reply(self):
         """Ops reply: append an outbound message + ZNS "you have a reply" ping
         through the shipped rails."""
         self.ensure_one()
+        if not self.messaging_enabled:
+            # The form banner promises "read-only until enabled"; enforce it
+            # at the ORM level too, not just the readonly attr on reply_text.
+            raise UserError(_(
+                'Secure family messaging is disabled '
+                '(health_family_messages.enabled).'))
         body = (self.reply_text or '').strip()
         if not body:
             raise UserError(_('Please type a reply first.'))

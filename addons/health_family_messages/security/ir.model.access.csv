@@ -3,7 +3,7 @@ access_family_thread_operations_manager,health.family.thread operations_manager,
 access_family_thread_head_nurse,health.family.thread head_nurse,model_health_family_thread,health_base.group_healthcare_head_nurse,1,1,1,0
 access_family_thread_manager,health.family.thread manager,model_health_family_thread,health_base.group_healthcare_manager,1,1,1,0
 access_family_thread_admin,health.family.thread admin,model_health_family_thread,health_base.group_healthcare_admin,1,1,1,0
-access_family_thread_owner,health.family.thread owner,model_health_family_thread,health_base.group_healthcare_owner,1,1,1,1
+access_family_thread_owner,health.family.thread owner,model_health_family_thread,health_base.group_healthcare_owner,1,1,1,0
 access_family_message_operations_manager,health.family.message operations_manager,model_health_family_message,health_base.group_healthcare_operations_manager,1,1,1,0
 access_family_message_head_nurse,health.family.message head_nurse,model_health_family_message,health_base.group_healthcare_head_nurse,1,1,1,0
 access_family_message_manager,health.family.message manager,model_health_family_message,health_base.group_healthcare_manager,1,1,1,0

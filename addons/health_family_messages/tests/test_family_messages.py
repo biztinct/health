@@ -287,6 +287,93 @@ class TestNotify(FamilyMessagesBase):
         self.assertTrue(msg)
         self.assertEqual(msg.direction, 'in')
 
+    def test_mark_read_clears_bell_rows(self):
+        # Today's PWA shell has no render/dismiss case for the family_message
+        # type, so handling the thread must be what clears the bell rows —
+        # otherwise the badge count stays inflated forever.
+        mgr_user = self._manager_user()
+        relation = self._relation()
+        fso = self._make_fso()
+        self._confirm(fso)
+        fso.primary_nurse_id = self.staff.id
+        thread = self.Thread._get_or_create(self.patient, relation)
+        thread.post_family_message('Please call me', fso=fso)
+        Notif = self.env['health.pwa.staff.notification']
+        unread_domain = [
+            ('family_thread_id', '=', thread.id),
+            ('notification_type', '=', 'family_message'),
+            ('is_read', '=', False)]
+        self.assertEqual(Notif.search_count(unread_domain), 2)
+        self.assertEqual(Notif.search(unread_domain).mapped('user_id'),
+                         self.staff.user_id | mgr_user)
+        thread.action_mark_read()
+        self.assertEqual(Notif.search_count(unread_domain), 0)
+
+
+# =====================================================================
+# Closed thread — no new inbound accepted
+# =====================================================================
+@tagged('post_install', '-at_install')
+class TestClosedThread(FamilyMessagesBase):
+
+    def test_closed_thread_refuses_inbound(self):
+        relation = self._relation()
+        fso = self._make_fso()
+        self._confirm(fso)
+        thread = self.Thread._get_or_create(self.patient, relation)
+        thread.sudo().write({'state': 'closed'})
+        msg = thread.post_family_message('anyone there?', fso=fso)
+        self.assertFalse(msg)
+        self.assertEqual(self.Message.search_count(
+            [('thread_id', '=', thread.id)]), 0)
+
+
+# =====================================================================
+# Thread deletion — the cascade must not bypass message append-only
+# =====================================================================
+@tagged('post_install', '-at_install')
+class TestThreadUnlinkGuard(FamilyMessagesBase):
+
+    def test_thread_unlink_below_system_raises(self):
+        relation = self._relation()
+        thread = self.Thread._get_or_create(self.patient, relation)
+        thread.sudo().message_ids.create({
+            'thread_id': thread.id, 'direction': 'in', 'body': 'keep me'})
+        owner_user = self.env['res.users'].create({
+            'name': 'FM Owner', 'login': 'fm_owner_%s' % uuid.uuid4().hex[:8],
+            'group_ids': [(4, self.env.ref(
+                'health_base.group_healthcare_owner').id)],
+        })
+        # The model guard fires before super()'s ACL check, so UserError is
+        # the deterministic barrier (the CSV perm_unlink=0 backs it up).
+        with self.assertRaises(UserError):
+            thread.with_user(owner_user).unlink()
+        self.assertTrue(thread.exists())
+        self.assertEqual(self.Message.sudo().search_count(
+            [('thread_id', '=', thread.id)]), 1)
+
+
+# =====================================================================
+# Master switch gates the ops reply too (not just the family side)
+# =====================================================================
+@tagged('post_install', '-at_install')
+class TestReplyMasterSwitch(FamilyMessagesBase):
+
+    def test_reply_refused_when_disabled(self):
+        relation = self._relation()
+        thread = self.Thread._get_or_create(self.patient, relation)
+        thread.reply_text = 'we hear you'
+        self.env['ir.config_parameter'].sudo().set_param(
+            'health_family_messages.enabled', 'False')
+        try:
+            with self.assertRaises(UserError):
+                thread.action_send_reply()
+            self.assertEqual(self.Message.sudo().search_count(
+                [('thread_id', '=', thread.id)]), 0)
+        finally:
+            self.env['ir.config_parameter'].sudo().set_param(
+                'health_family_messages.enabled', 'True')
+
 
 # =====================================================================
 # 8 / 11 — Reply flow + rails matrix for the new purpose
@@ -480,6 +567,7 @@ class TestPublicMessaging(HttpCase):
         self.assertEqual(msgs.direction, 'in')
         self.assertEqual(msgs.fso_id, fso)
         self.assertIn('English speaker', msgs.body)
+        self.assertEqual(msgs.author_label, relation.display_name)
 
     def test_neutral_and_disabled_paths_create_no_row(self):
         # expired token

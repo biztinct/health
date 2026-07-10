@@ -62,6 +62,43 @@ the **VAPID push** (own title/body, not subject to the type switch) plus the
 `mail.activity`. We touched NO PWA asset (§3/§4). This is the handover's
 "reuse-or-report" fallback, reported rather than shipping a misleading badge.
 
+## Review fixes (2026-07-10, Fable auto-review — PASS-with-concerns, 6 fixes)
+
+Re-run after fixes: **0 failed, 0 error(s) of 50 tests** (05:45:47 server log,
+24 module + family_link + messaging suites), login 200, fake-token GET/POST
+still neutral with no composer.
+
+1. **Thread-unlink cascade closed** (review MAJOR): owner-level `perm_unlink`
+   on the thread + `ondelete='cascade'` on `message.thread_id` meant deleting a
+   thread removed the whole append-only message history at the SQL layer —
+   the message-level `unlink()` guard never runs on an FK cascade (ledger §30).
+   Fixed: thread `unlink()` guarded to system admin (mirror of the message
+   guard) + CSV owner `perm_unlink=0`.
+2. **Bell-row lifecycle** (review MAJOR ratified with a fix): the empty-card
+   fallback is accepted — reusing `cancelled`/`rescheduled` would mislabel
+   clinical UI — but the rows were undismissable (no dismiss button renders
+   for an unmatched type, nothing flipped `is_read`), permanently inflating
+   the nurse's badge. Fixed: bell rows carry `family_thread_id` and are
+   cleared by `action_mark_read` (also called by `action_send_reply`) —
+   handling the thread is the dismissal. The render case ships with the next
+   PWA-versioned phase.
+3. **Master switch now gates the ops reply server-side** (review MAJOR):
+   `action_send_reply` raises when `health_family_messages.enabled` is off —
+   the form's readonly attr was the only barrier before.
+4. **Closed threads refuse new inbound**: `post_family_message` now checks
+   `state == 'active'`; history stays readable on the token page.
+5. **`@http.route()` on the `family_page` override** — silences the
+   auto-decorate WARNING that fired on every registry load.
+6. **Test-4 `author_label` assertion added** (spec gap) + 4 new tests pinning
+   fixes 1-4 (20 → 24 module tests).
+
+Recorded, not fixed (accepted/minor): plaintext 120-char preview in the bell
+row + push payload (the notification must be readable; same posture as every
+other notification type); `reply_text` typed-but-not-sent residue is plaintext
+on the thread row; `mail.activity` assignee is the lead nurse when one exists
+(spec said facility manager — nurse-first is who actually replies); record
+rules scope on catchment (documented deviation, coarser than facility).
+
 ## QA cleanup (report-back e)
 
 Live records created for QA: 1 thread + 2 messages (1 in, 1 out) + 1 family link

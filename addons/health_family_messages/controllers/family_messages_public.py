@@ -49,6 +49,7 @@ class FamilyMessagesPublicController(FamilyPublicController):
         return link
 
     # --- GET (override — augments the page with the message section) ------
+    @http.route()  # bare: inherit the parent binding, silence the auto-decorate warning
     def family_page(self, token, **kwargs):
         if self._rate_limited():
             return self._neutral()

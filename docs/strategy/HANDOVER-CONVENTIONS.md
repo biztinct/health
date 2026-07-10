@@ -285,6 +285,17 @@ injects JS into the shell requires bumping `health_pwa`:
     each entry is `#. module: <module>\nmsgid "…"\nmsgstr "…"`. The header block
     alone is not enough.
 
+30. **`ondelete='cascade'` deletes children at the SQL layer — the child's
+    Python `unlink()` guard never runs.** The FK's `ON DELETE CASCADE` lives in
+    PostgreSQL (no cascade handling exists in `odoo/orm/models.py`), so an
+    append-only child model (EVV events, family messages) is only protected if
+    EVERY cascade parent carries the same unlink guard too — or the FK uses
+    `ondelete='restrict'`. Hit live in health_family_messages review: owner-level
+    `perm_unlink` on `health.family.thread` would have silently cascade-deleted
+    the whole append-only message history; fixed with a parent-level guard +
+    `perm_unlink=0`. When auditing an append-only model, grep for every
+    `Many2one` pointing at it AND every cascade FK it points out through.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
