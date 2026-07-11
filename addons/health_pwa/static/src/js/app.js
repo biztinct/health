@@ -6,6 +6,9 @@ const APP_VI_FALLBACK_TRANSLATIONS = {
   'No upcoming bookings scheduled': 'Chưa có lịch hẹn sắp tới',
   'Quick Complete': 'Hoàn tất nhanh',
   'Completing...': 'Đang hoàn tất...',
+  'Complete this visit in one tap': 'Hoàn tất lượt thăm khám này trong một chạm',
+  'One-tap completion failed': 'Hoàn tất nhanh không thành công',
+  'Service completed': 'Đã hoàn tất dịch vụ',
 };
 
 // Lightweight translation helper: use PWAUtils.i18n for reactive language switching

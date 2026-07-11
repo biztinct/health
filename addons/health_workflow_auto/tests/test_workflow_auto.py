@@ -498,21 +498,21 @@ class TestOneTapEndpointScope(HttpCase):
         self.env['hr.employee'].create(
             {'name': 'WA Other Emp', 'user_id': self.other_user.id})
         ICP = self.env['ir.config_parameter'].sudo()
+        # addCleanup (not tearDown): runs even if setUp fails past this point,
+        # and restores the ORIGINAL value (False when the param was unset,
+        # which set_param maps back to "absent").
+        self.addCleanup(ICP.set_param, 'health_workflow_auto.onetap_enabled',
+                        ICP.get_param('health_workflow_auto.onetap_enabled'))
         ICP.set_param('health_workflow_auto.onetap_enabled', 'True')
         # This is an HttpCase: the completed visit it drives COMMITS an
         # hr.attendance for `today`, which would poison TestTimecardSync's
         # cron_reconcile_timecards(for_date=today) (isolation-verified). We
         # don't assert on attendance here, so switch the E.4 timecard hook off
-        # for the duration so no polluting attendance is ever created.
-        self._orig_timecard_sync = ICP.get_param(
-            'health_workflow_auto.timecard_sync_enabled', 'True')
+        # for the duration so no polluting attendance is ever created (§5.32).
+        self.addCleanup(ICP.set_param, 'health_workflow_auto.timecard_sync_enabled',
+                        ICP.get_param('health_workflow_auto.timecard_sync_enabled'))
         ICP.set_param('health_workflow_auto.timecard_sync_enabled', 'False')
         self.fso = self._inprogress_fso()
-
-    def tearDown(self):
-        self.env['ir.config_parameter'].sudo().set_param(
-            'health_workflow_auto.timecard_sync_enabled', self._orig_timecard_sync)
-        super().tearDown()
 
     def _inprogress_fso(self):
         fso = self.env['health.fieldservice.order'].create({
@@ -570,6 +570,8 @@ class TestOneTapEndpointScope(HttpCase):
         self.assertEqual(self.fso.sudo().state, 'in_progress')
 
     def test_disabled_switch_reports_disabled(self):
+        # No inline restore needed: setUp's addCleanup restores the original
+        # value even if an assertion below raises.
         self.env['ir.config_parameter'].sudo().set_param(
             'health_workflow_auto.onetap_enabled', 'False')
         self.authenticate(self.nurse_user.login, 'wanursepw')
@@ -577,5 +579,3 @@ class TestOneTapEndpointScope(HttpCase):
         self.assertTrue(elig['success'], elig)
         self.assertFalse(elig['data']['eligible'])
         self.assertEqual(elig['data']['reason'], 'disabled')
-        self.env['ir.config_parameter'].sudo().set_param(
-            'health_workflow_auto.onetap_enabled', 'True')
