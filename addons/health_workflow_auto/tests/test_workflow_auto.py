@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import json
 import uuid
 from datetime import timedelta
 from unittest.mock import patch
 
 from odoo import fields
 from odoo.exceptions import UserError
-from odoo.tests import TransactionCase, tagged
+from odoo.tests import TransactionCase, HttpCase, tagged, new_test_user
 
 
 def _fixture(env):
@@ -461,3 +462,120 @@ class TestVisitOffer(WorkflowAutoBase):
             # wrapped so it never blocks qualification. Assert directly instead.
             lead._launch_first_visit_offer()
         self.assertTrue(lead.visit_offer_ids)
+
+
+# =====================================================================
+# E.2b — one-tap ENDPOINT scope + sudo (PWA reliability phase §2.5)
+#     Regression cover for the any-user-can-complete-any-order hole and
+#     the minimal-nurse sudo path. HttpCase: drives the real routes.
+# =====================================================================
+@tagged('post_install', '-at_install')
+class TestOneTapEndpointScope(HttpCase):
+
+    def setUp(self):
+        super().setUp()
+        (self.province, self.facility, self.patient,
+         self.staff, self.product) = _fixture(self.env)
+        Stage = self.env['health.fieldservice.stage']
+        for st in ('confirmed', 'assigned', 'in_progress', 'completed'):
+            if not Stage.search([('state', '=', st), ('active', '=', True)], limit=1):
+                Stage.create({'name': st.title(), 'state': st})
+        if not self.env.user.employee_id:
+            self.env['hr.employee'].create(
+                {'name': 'WA Admin Emp', 'user_id': self.env.user.id})
+            self.env.user.invalidate_recordset()
+        # The assigned nurse = the fixture staff's user. Minimal groups (nurse
+        # only, NO sale/account ACLs) + a known password to authenticate.
+        self.nurse_user = self.staff.user_id
+        self.nurse_user.write({
+            'password': 'wanursepw',
+            'group_ids': [(4, self.env.ref('health_base.group_healthcare_nurse').id)],
+        })
+        # An UNASSIGNED internal user (also a nurse) — the hole's attacker.
+        self.other_user = new_test_user(
+            self.env, login='wa_other_%s' % uuid.uuid4().hex[:6],
+            groups='base.group_user,health_base.group_healthcare_nurse')
+        self.env['hr.employee'].create(
+            {'name': 'WA Other Emp', 'user_id': self.other_user.id})
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_param('health_workflow_auto.onetap_enabled', 'True')
+        # This is an HttpCase: the completed visit it drives COMMITS an
+        # hr.attendance for `today`, which would poison TestTimecardSync's
+        # cron_reconcile_timecards(for_date=today) (isolation-verified). We
+        # don't assert on attendance here, so switch the E.4 timecard hook off
+        # for the duration so no polluting attendance is ever created.
+        self._orig_timecard_sync = ICP.get_param(
+            'health_workflow_auto.timecard_sync_enabled', 'True')
+        ICP.set_param('health_workflow_auto.timecard_sync_enabled', 'False')
+        self.fso = self._inprogress_fso()
+
+    def tearDown(self):
+        self.env['ir.config_parameter'].sudo().set_param(
+            'health_workflow_auto.timecard_sync_enabled', self._orig_timecard_sync)
+        super().tearDown()
+
+    def _inprogress_fso(self):
+        fso = self.env['health.fieldservice.order'].create({
+            'patient_id': self.patient.id, 'facility_id': self.facility.id,
+            'scheduled_datetime': fields.Datetime.now() + timedelta(days=1),
+            'scheduled_duration': 120, 'service_type': 'home_visit'})
+        so = self.env['sale.order'].create({
+            'partner_id': self.patient.id, 'fso_id': fso.id,
+            'order_line': [(0, 0, {'product_id': self.product.id,
+                                   'product_uom_qty': 1, 'price_unit': 200.0})]})
+        fso.sale_order_id = so.id
+        fso.action_assign_staff_to_fso(self.staff.id, assignment_role='lead')
+        fso.action_confirm_booking()
+        fso.action_start_service()
+        return fso
+
+    def _get_eligible(self, order_id):
+        return self.url_open(
+            '/health_pwa/api/fso/%s/onetap_eligible' % order_id).json()
+
+    def _post_complete(self, order_id):
+        return self.url_open(
+            '/health_pwa/api/fso/%s/complete_onetap' % order_id,
+            data=json.dumps({'payment_choice': 'pay_later'}),
+            headers={'Content-Type': 'application/json'}).json()
+
+    def test_assigned_nurse_eligible_and_completes_without_acls(self):
+        # The assigned nurse has NO sale/account ACL, yet scope+sudo lets them
+        # one-tap-complete their own in_progress visit and post the invoice.
+        self.assertEqual(self.fso.state, 'in_progress')
+        self.authenticate(self.nurse_user.login, 'wanursepw')
+        elig = self._get_eligible(self.fso.id)
+        self.assertTrue(elig['success'], elig)
+        self.assertTrue(elig['data']['eligible'], elig['data'])
+        res = self._post_complete(self.fso.id)
+        self.assertTrue(res['success'], res)
+        self.assertTrue(res['data']['completed'], res['data'])
+        self.fso.invalidate_recordset()
+        self.assertIn(self.fso.sudo().state,
+                      ('completed', 'completed_pending_invoice', 'closed'))
+        # Invoice posted (amount > 0) — proves the sudo tail worked for a
+        # nurse without account.move create rights.
+        self.assertTrue(self.fso.sudo().invoice_id)
+        self.assertEqual(self.fso.sudo().invoice_id.state, 'posted')
+
+    def test_unassigned_user_refused_both_routes(self):
+        # The hole's regression: an internal user NOT assigned to the order
+        # must be refused on BOTH routes and must not complete anything.
+        self.authenticate(self.other_user.login, self.other_user.login)
+        elig = self._get_eligible(self.fso.id)
+        self.assertFalse(elig['success'], elig)
+        comp = self._post_complete(self.fso.id)
+        self.assertFalse(comp['success'], comp)
+        self.fso.invalidate_recordset()
+        self.assertEqual(self.fso.sudo().state, 'in_progress')
+
+    def test_disabled_switch_reports_disabled(self):
+        self.env['ir.config_parameter'].sudo().set_param(
+            'health_workflow_auto.onetap_enabled', 'False')
+        self.authenticate(self.nurse_user.login, 'wanursepw')
+        elig = self._get_eligible(self.fso.id)
+        self.assertTrue(elig['success'], elig)
+        self.assertFalse(elig['data']['eligible'])
+        self.assertEqual(elig['data']['reason'], 'disabled')
+        self.env['ir.config_parameter'].sudo().set_param(
+            'health_workflow_auto.onetap_enabled', 'True')

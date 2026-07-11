@@ -49,15 +49,43 @@ class OneTapController(http.Controller):
             status=status_code,
         )
 
+    # -- scope helper ---------------------------------------------------------
+    def _employee_assigned_to(self, order):
+        """Return the caller's employee IFF assigned to THIS order (any state
+        but cancelled), else None. Mirrors the health_pwa_family `_scoped_order`
+        / api_fso_detail (§2.3) pattern: resolve the employee via sudo user_id
+        search (§5.24 — user.employee_id is company-context dependent and reads
+        trip the public-profile guard), then sudo the assignment read.
+
+        This is a WRITE money path (confirms the SO, posts an invoice, may
+        create a payment transaction), so there is NO ACL fallback: assignment
+        is REQUIRED. Before this, both routes ran only `_check_api_access`
+        (partner-read) then browsed with the caller's ACL, so ANY internal user
+        could one-tap-complete ANY order — the hole this closes."""
+        employee = request.env['hr.employee'].sudo().search(
+            [('user_id', '=', request.env.user.id)], limit=1)
+        if not employee:
+            return None
+        assigned = request.env['health.staff.assignment'].sudo().search_count([
+            ('fso_id', '=', order.id),
+            ('staff_id', '=', employee.id),
+            ('state', '!=', 'cancelled'),
+        ])
+        return employee if assigned else None
+
     # -- GET eligibility ------------------------------------------------------
     @http.route('/health_pwa/api/fso/<int:order_id>/onetap_eligible',
                 type='http', auth='user', methods=['GET'], csrf=False)
     def onetap_eligible(self, order_id, **kwargs):
         if not self._check_api_access():
             return self._prepare_json_response(error='Access denied', status_code=403)
-        order = request.env['health.fieldservice.order'].browse(order_id)
+        # Scope + sudo (§2.5): read sudo AFTER an explicit assignment check so a
+        # minimal nurse gets their own visit and non-assignees are refused.
+        order = request.env['health.fieldservice.order'].sudo().browse(order_id)
         if not order.exists():
             return self._prepare_json_response(error='Order not found', status_code=404)
+        if not self._employee_assigned_to(order):
+            return self._prepare_json_response(error='Access denied', status_code=403)
         elig = order.onetap_eligibility()
         return self._prepare_json_response(data={
             'eligible': elig['eligible'],
@@ -78,9 +106,15 @@ class OneTapController(http.Controller):
         payment_choice = body.get('payment_choice', 'pay_later')
         payment_method = body.get('payment_method')
 
-        order = request.env['health.fieldservice.order'].browse(order_id)
+        # Scope + sudo (§2.5): assignment required, then the completion +
+        # invoice/payment tail all run on the sudo order so a minimal nurse
+        # (no sale/account rights) can actually complete their own visit.
+        order = request.env['health.fieldservice.order'].sudo().browse(order_id)
         if not order.exists():
             return self._prepare_json_response(error='Order not found', status_code=404)
+        employee = self._employee_assigned_to(order)
+        if not employee:
+            return self._prepare_json_response(error='Access denied', status_code=403)
 
         elig = order.onetap_eligibility()
         if not elig['eligible']:
@@ -131,12 +165,12 @@ class OneTapController(http.Controller):
                     'payment_method': payment_method,
                     'transaction_type': 'immediate',
                     'status': 'collected' if payment_method != 'cash' else 'pending_delivery',
-                    'collected_by_id': request.env.user.employee_id.id if request.env.user.employee_id else False,
+                    'collected_by_id': employee.id,
                     'transaction_notes': service_notes or (
                         'Payment collected on one-tap completion - %s' % payment_method),
                 }
                 if 'health.payment.transaction' in request.env:
-                    request.env['health.payment.transaction'].create(transaction_vals)
+                    request.env['health.payment.transaction'].sudo().create(transaction_vals)
                     message = _('Service completed - %s payment collected') % payment_method.replace("_", " ").title()
                 else:
                     message = _('Service completed - %s payment noted') % payment_method.replace("_", " ").title()

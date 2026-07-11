@@ -4,6 +4,8 @@ const APP_VI_FALLBACK_TRANSLATIONS = {
   'Close': 'Đóng',
   'Upcoming Bookings': 'Lịch hẹn sắp tới',
   'No upcoming bookings scheduled': 'Chưa có lịch hẹn sắp tới',
+  'Quick Complete': 'Hoàn tất nhanh',
+  'Completing...': 'Đang hoàn tất...',
 };
 
 // Lightweight translation helper: use PWAUtils.i18n for reactive language switching
@@ -1697,12 +1699,18 @@ window.healthPWA = {
         // to return so closing the modal feels like an in-place overlay rather
         // than stranding the nurse on today-view. Null for a normal today tap.
         const modalReturnRoute = ref(null);
+        // One-tap quick-complete (health_workflow_auto §2.5). onetapEligible
+        // gates the footer button; set only after the live eligibility GET says
+        // yes. onetapSubmitting disables the button during completion.
+        const onetapEligible = ref(false);
+        const onetapSubmitting = ref(false);
 
         // Fetch full booking details for inline expansion
         const fetchBookingDetail = async (bookingId) => {
           try {
             isLoadingDetail.value = true;
             detailError.value = null;
+            onetapEligible.value = false;
 
             const response = await fetch(`/health_pwa/api/fso/${bookingId}`);
             const result = await response.json();
@@ -1715,6 +1723,8 @@ window.healthPWA = {
               result.data.intake_notes = cleanDisplayValue(result.data.intake_notes);
               selectedBookingDetail.value = result.data;
               console.log('Loaded booking detail:', result.data);
+              // One-tap eligibility (§2.5): re-check on every detail load.
+              checkOnetapEligibility(bookingId, result.data.state);
             } else {
               detailError.value = result.error || 'Failed to load booking details';
               console.error('Error loading detail:', detailError.value);
@@ -1727,6 +1737,56 @@ window.healthPWA = {
           }
         };
 
+        // One-tap quick-complete (§2.5). Guarded on window.healthOnetap so an
+        // uninstalled health_workflow_auto stays silent. Eligibility is a live
+        // GET, so the button never appears offline (server returns eligible:false
+        // reason:'offline'). Re-checked on every detail (re)load.
+        const checkOnetapEligibility = async (bookingId, state) => {
+          onetapEligible.value = false;
+          if (!window.healthOnetap || state !== 'in_progress') return;
+          try {
+            const res = await window.healthOnetap.checkEligible(bookingId);
+            // Guard against a late response flipping the button for a booking
+            // the nurse has since navigated away from.
+            if (selectedBookingId.value === bookingId && res && res.eligible) {
+              onetapEligible.value = true;
+            }
+          } catch (err) {
+            console.warn('One-tap eligibility check failed:', err);
+          }
+        };
+
+        const runOneTap = async () => {
+          const bookingId = selectedBookingId.value;
+          if (!bookingId || !window.healthOnetap) return;
+          onetapSubmitting.value = true;
+          try {
+            const res = await window.healthOnetap.complete(bookingId);
+            if (res && res.completed) {
+              onetapEligible.value = false;
+              if (window.healthPWA && window.healthPWA.showNotification) {
+                window.healthPWA.showNotification(res.message || _t('Service completed'), 'success');
+              }
+              // Refresh the modal (state/buttons) and the day list.
+              await fetchBookingDetail(bookingId);
+              loadBookingsForDate(currentDate.value);
+            } else if (res && res.needs_review) {
+              // Quote drifted vs the booking snapshot — hand off to the existing
+              // quote/complete flow (no diff UI in v1; the `changed` payload is
+              // ignored per §2.5).
+              onetapEligible.value = false;
+              await openInvoiceModal();
+            }
+          } catch (err) {
+            console.error('One-tap completion failed:', err);
+            if (window.healthPWA && window.healthPWA.showNotification) {
+              window.healthPWA.showNotification(_t('One-tap completion failed'), 'error');
+            }
+          } finally {
+            onetapSubmitting.value = false;
+          }
+        };
+
         // Toggle booking detail expansion
         const toggleBookingDetail = async (bookingId) => {
           if (selectedBookingId.value === bookingId) {
@@ -1734,6 +1794,7 @@ window.healthPWA = {
             selectedBookingId.value = null;
             selectedBookingDetail.value = null;
             clinicalNotesText.value = '';
+            onetapEligible.value = false;
             // If this modal was opened from another screen, go back to it.
             const rr = modalReturnRoute.value;
             modalReturnRoute.value = null;
@@ -2963,6 +3024,9 @@ window.healthPWA = {
           toggleIntakeSummaryModal,
           // Service start and clinical notes
           serviceStartedForBooking,
+          onetapEligible,
+          onetapSubmitting,
+          runOneTap,
           showClinicalNotesModal,
           showClinicalNoteForm,
           viewingClinicalNote,
@@ -3396,6 +3460,18 @@ window.healthPWA = {
                           :title="!isClinicalNotesComplete ? _t('Please fill in the clinical notes or take image of the notes to Complete this service') : _t('Complete Service')">
                     <i class="material-icons">check_circle</i>
                     <span>{{ _t('Complete Service') }}</span>
+                  </button>
+                  <!-- One-tap quick complete (health_workflow_auto §2.5) — only
+                       when window.healthOnetap reports the visit eligible (quote
+                       unchanged vs booking snapshot). Guarded: an uninstalled
+                       module leaves onetapEligible false, so nothing renders. -->
+                  <button v-if="onetapEligible"
+                          @click="runOneTap"
+                          :disabled="onetapSubmitting"
+                          class="btn btn-success btn-onetap-complete"
+                          :title="_t('Complete this visit in one tap')">
+                    <i class="material-icons">bolt</i>
+                    <span>{{ onetapSubmitting ? _t('Completing...') : _t('Quick Complete') }}</span>
                   </button>
                 </div>
               </div>
