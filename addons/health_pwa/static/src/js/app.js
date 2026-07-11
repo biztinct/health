@@ -1734,6 +1734,12 @@ window.healthPWA = {
           refreshPendingActions();
           const sm = window.healthPWA && window.healthPWA.syncManager;
           const rejected = (sm && sm.lastRejectedActionFsoIds) || [];
+          // Consume the rejected set: an empty-queue sync skips
+          // clearPushedChanges entirely, so without this reset the same
+          // rejection re-toasts on every later sync (review fix).
+          if (sm) {
+            sm.lastRejectedActionFsoIds = [];
+          }
           if (rejected.length) {
             window.healthPWA.showNotification(
               _t('Could not sync offline action — refreshed'), 'error');
@@ -3287,7 +3293,8 @@ window.healthPWA = {
                       {{ getStatusDisplay(booking) }}
                     </div>
                     <!-- Pending offline-action badge (pwa-offline-actions §2.5,
-                         flat mono amber, inline SVG icon, no emoji/gradient) -->
+                         flat mono amber, material-icons glyph per PWA idiom,
+                         no emoji/gradient) -->
                     <span v-if="hasPendingAction(booking.fso_id)" class="status-badge"
                           :title="_t('Pending sync')"
                           style="background:#d97706;color:#fff;display:inline-flex;align-items:center;gap:2px;">

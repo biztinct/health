@@ -732,6 +732,10 @@ class HealthPWASyncController(http.Controller):
             res = {}
         if not isinstance(res, dict):
             res = {}
+        # Drop the ORIGINAL device's stored ref before applying this call's —
+        # a replay that carries no client_ref must not clear another device's
+        # queued doc (review fix).
+        res.pop('client_ref', None)
         return self._with_ref(res, client_ref)
 
     def _process_actions(self, actions):

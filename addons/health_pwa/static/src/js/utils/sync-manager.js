@@ -419,8 +419,8 @@ class HealthSyncManager {
     // Ref-based acknowledgement (pwa-offline-actions §2.4): map each queued doc
     // to its result by client_ref (server results interleave models, so the
     // old index-based mapping misaligns). Clear a doc iff its result succeeded
-    // OR it is a terminal rejected action (state_conflict / Access denied — a
-    // receipt makes retrying pointless; app.js surfaces a toast + refetch).
+    // OR it is terminally rejected (state_conflict / Access denied / Order not
+    // found — retrying can never succeed; app.js surfaces a toast + refetch).
     const hasRefs = resultList.some(
       (r) => r && r.client_ref !== undefined && r.client_ref !== null);
 
@@ -439,7 +439,8 @@ class HealthSyncManager {
         const result = byRef[change.clientRef];
         if (!result) continue;
         const rejectedAction = result.success === false &&
-          (result.error === 'state_conflict' || result.error === 'Access denied');
+          (result.error === 'state_conflict' || result.error === 'Access denied'
+           || result.error === 'Order not found');
         if (result.success || rejectedAction) {
           try {
             await this.db.sync.remove(change);
@@ -590,9 +591,15 @@ class HealthSyncManager {
     if (!this.isOnline || this.syncInProgress) {
       return;
     }
-    
+
     try {
       await this.performSync();
+      // The reconnect/visibility/queue drains all route through here, and the
+      // root shell only dispatches this event from its own syncData() — so a
+      // background drain must announce itself too, or the "Pending sync" badge
+      // and rejected-action toast never fire until a manual sync or reload
+      // (pwa-offline-actions review fix).
+      window.dispatchEvent(new CustomEvent('health-pwa-sync-completed'));
     } catch (error) {
       console.error('Background sync failed:', error);
       // Don't throw error for background sync failures

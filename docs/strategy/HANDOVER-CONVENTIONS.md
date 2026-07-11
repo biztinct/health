@@ -369,6 +369,22 @@ injects JS into the shell requires bumping `health_pwa`:
     feed (`@api.depends` does not equal "bumps write_date"; only actual
     stored-compute WRITES do, and only for the fields that recompute).
 
+34. **`odoo-bin shell` fed via piped stdin can silently discard writes even
+    after `cr.commit()` printed success.** During pwa-offline-actions browser
+    QA, a fixture `create()` printed a new id and called `cr.commit()`, yet a
+    later shell showed the row absent — the piped console's transaction
+    lifecycle rolled it back around the commit. Reliable recipe: create →
+    `env.flush_all()` → `env.cr.commit()`, then confirm in a SEPARATE
+    `ssh … odoo-bin shell` (or psql) invocation before trusting the state.
+    Also `odoo.registry` / `odoo.api` are not shell globals — use
+    `odoo.modules.registry.Registry` / `odoo.api.Environment`, or just
+    re-search in `env` after the commit. Symptom when violated: a
+    "persisted" record vanishes and downstream calls fail with spurious
+    Access denied / missing-record errors. Corollary for QA state changes:
+    ALWAYS re-verify the revert in a fresh cursor too — this phase's QA
+    left an FSO `in_progress` + an orphan clinical note behind because the
+    revert was trusted from the same shell that made it.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
