@@ -330,6 +330,27 @@ injects JS into the shell requires bumping `health_pwa`:
     orders-view/past-bookings-view called it → ReferenceError, both list
     screens dead since Nov ("Failed to load orders") — helpers shared across
     components belong at file top-level.
+    *(Postscript, pwa-reliability phase 64d8c602: the corpse is now DELETED
+    and `#/order/<id>` / `navigate('order', …)` resolve to the shared
+    booking modal via the root `openBooking()` bridge. The review lessons
+    above still stand; the modal seam contract is unchanged.)*
+
+32. **An HttpCase that triggers config-gated side-effects can poison LATER
+    TransactionCase suites in the same test run.** HttpCase endpoint calls
+    run against a separate cursor, so records they create do not roll back
+    with the later suite's expectations — `TestOneTapEndpointScope`
+    completing a visit created an `hr.attendance` for *today* (the E.4
+    timecard hook), which broke `TestTimecardSync`'s
+    `cron_reconcile_timecards(for_date=today)` when the suites ran in one
+    run (each passed alone; isolation-verified). Non-transactional
+    `ir.config_parameter` ORMCACHE compounds the confusion. Fix pattern:
+    in the HttpCase `setUp`, pin OFF the config switch gating any
+    side-effect you don't assert on, restore it in `tearDown` (see
+    `TestOneTapEndpointScope.setUp` — `timecard_sync_enabled`). Corollary:
+    any test asserting on "today's" data is exposed to every earlier
+    HttpCase in the same run. Second corollary (QA, not tests): changing
+    JS content while keeping the same `?v=` means SW/HTTP caches serve the
+    OLD file — bump the version per content change, even mid-QA iteration.
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
