@@ -405,7 +405,7 @@ class TestOpsReplyRefactor(HttpCase):
 
 
 # =====================================================================
-# 8 — Shell HttpCase: fammsg assets served at 1.11.1
+# 8 — Shell HttpCase: fammsg assets served at 1.12.0
 # =====================================================================
 @tagged('post_install', '-at_install')
 class TestShellAssets(HttpCase):
@@ -417,11 +417,11 @@ class TestShellAssets(HttpCase):
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('fammsg.css?v=1.11.1', body)
-        self.assertIn('fammsg.js?v=1.11.1', body)
-        self.assertIn('1.11.1', body)
+        self.assertIn('fammsg.css?v=1.12.0', body)
+        self.assertIn('fammsg.js?v=1.12.0', body)
+        self.assertIn('1.12.0', body)
         # Co-resident PWA layers still served after the bump.
-        self.assertIn('daystrip.js?v=1.11.1', body)
+        self.assertIn('daystrip.js?v=1.12.0', body)
 
 
 # =====================================================================

@@ -9,9 +9,10 @@ class HealthSyncManager {
     this.lastSyncTime = null;
     this.syncQueue = [];
     
-    // Load last sync time from storage
-    this.loadSyncMetadata();
-    
+    // Load last sync time from storage, THEN run the one-time scope-purge
+    // migration (pwa-sync-delta phase) once metadata is available.
+    this.loadSyncMetadata().then(() => this.runScopePurgeMigration());
+
     console.log('Health Sync Manager initialized');
   }
   
@@ -69,12 +70,13 @@ class HealthSyncManager {
       await this.pushPendingChanges();
       
       // Step 2: Pull changes from server
-      await this.pullServerChanges();
-      
-      // Step 3: Update sync timestamp
-      this.lastSyncTime = new Date().toISOString();
+      const pullResult = await this.pullServerChanges();
+
+      // Step 3: Update sync timestamp — prefer the server-authoritative
+      // watermark over the (drifting) device clock; fall back for old servers.
+      this.lastSyncTime = (pullResult && pullResult.watermark) || new Date().toISOString();
       await this.saveSyncMetadata();
-      
+
       console.log('Sync completed successfully');
       
     } catch (error) {
@@ -104,12 +106,12 @@ class HealthSyncManager {
       await this.pushPendingChanges();
       
       // Step 2: Pull ALL changes from server (force full sync)
-      await this.pullServerChanges(true); // Pass true for force full
-      
-      // Step 3: Update sync timestamp
-      this.lastSyncTime = new Date().toISOString();
+      const pullResult = await this.pullServerChanges(true); // Pass true for force full
+
+      // Step 3: Update sync timestamp — prefer the server watermark.
+      this.lastSyncTime = (pullResult && pullResult.watermark) || new Date().toISOString();
       await this.saveSyncMetadata();
-      
+
       console.log('Full sync completed successfully');
       
     } catch (error) {
@@ -189,10 +191,53 @@ class HealthSyncManager {
       
       // Apply changes to local databases
       await this.applyServerChanges(changes);
-      
+
+      // Return the parsed body so the caller can adopt the server watermark.
+      return data;
+
     } catch (error) {
       console.error('Failed to pull server changes:', error);
       throw error;
+    }
+  }
+
+  async runScopePurgeMigration() {
+    // One-time cache purge for the sync-scope cutover (pwa-sync-delta phase).
+    // Pre-scope devices cached EVERY patient (allergies / medical_history) and
+    // every order; wipe orders + patients ONCE so the next pull re-populates
+    // only the caller's scoped set. This purge is the actual field privacy
+    // remediation for legacy caches.
+    try {
+      if (localStorage.getItem('health_pwa_scope_v') === '2') {
+        return;
+      }
+
+      for (const dbName of ['orders', 'patients']) {
+        const db = this.db[dbName];
+        if (!db) {
+          continue;
+        }
+        // allDocs -> remove loop. Do NOT db.destroy() — the handles are shared
+        // with app.js and destroy() would invalidate them (fact 9).
+        const all = await db.allDocs();
+        for (const row of all.rows) {
+          try {
+            await db.remove(row.id, row.value.rev);
+          } catch (removeErr) {
+            // Ignore per-doc conflicts; the flag stays unset on a hard throw
+            // so the whole migration retries next load.
+          }
+        }
+      }
+
+      // Force a full scoped re-pull on the next sync.
+      this.lastSyncTime = null;
+      await this.saveSyncMetadata();
+      localStorage.setItem('health_pwa_scope_v', '2');
+      console.log('health_pwa sync: scope-purge migration complete (orders + patients wiped)');
+    } catch (error) {
+      // Do NOT set the flag on failure — retry on the next app load.
+      console.error('health_pwa sync: scope-purge migration failed, will retry', error);
     }
   }
   
