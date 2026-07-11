@@ -9,6 +9,10 @@ const APP_VI_FALLBACK_TRANSLATIONS = {
   'Complete this visit in one tap': 'Hoàn tất lượt thăm khám này trong một chạm',
   'One-tap completion failed': 'Hoàn tất nhanh không thành công',
   'Service completed': 'Đã hoàn tất dịch vụ',
+  // Offline visit actions (pwa-offline-actions §2.5) — VN-first fallback.
+  'Saved offline — will sync when online': 'Đã lưu ngoại tuyến — sẽ đồng bộ khi có mạng',
+  'Could not sync offline action — refreshed': 'Không thể đồng bộ thao tác ngoại tuyến — đã làm mới',
+  'Pending sync': 'Chờ đồng bộ',
 };
 
 // Lightweight translation helper: use PWAUtils.i18n for reactive language switching
@@ -1708,6 +1712,38 @@ window.healthPWA = {
         const onetapEligible = ref(false);
         const onetapSubmitting = ref(false);
 
+        // Offline visit actions (pwa-offline-actions §2.5): the set of FSO ids
+        // that currently have a queued (unsynced) Start/notes action, driving
+        // the "Chờ đồng bộ / Pending sync" badge on the card + modal header.
+        const pendingActionFsoIds = ref(new Set());
+        const hasPendingAction = (fsoId) => pendingActionFsoIds.value.has(fsoId);
+        const refreshPendingActions = async () => {
+          try {
+            const sm = window.healthPWA && window.healthPWA.syncManager;
+            if (sm && typeof sm.getPendingActionFsoIds === 'function') {
+              pendingActionFsoIds.value = new Set(await sm.getPendingActionFsoIds());
+            }
+          } catch (e) {
+            // Non-fatal: the badge just stays as-is.
+          }
+        };
+        // After a sync resolves, the queue drains → recompute the badge set and
+        // surface any rejected offline action (state conflict / access denied)
+        // as a toast + detail refetch for the affected booking.
+        const onSyncCompleted = () => {
+          refreshPendingActions();
+          const sm = window.healthPWA && window.healthPWA.syncManager;
+          const rejected = (sm && sm.lastRejectedActionFsoIds) || [];
+          if (rejected.length) {
+            window.healthPWA.showNotification(
+              _t('Could not sync offline action — refreshed'), 'error');
+            if (selectedBookingId.value && rejected.includes(selectedBookingId.value)) {
+              fetchBookingDetail(selectedBookingId.value);
+            }
+            loadBookingsForDate(currentDate.value);
+          }
+        };
+
         // Fetch full booking details for inline expansion
         const fetchBookingDetail = async (bookingId) => {
           try {
@@ -2445,6 +2481,37 @@ window.healthPWA = {
         // Start service
         const startService = async () => {
           if (selectedBookingId.value) {
+            // Offline: queue an idempotent Start action (client uuid + claimed
+            // timestamp), optimistically mark the visit in-progress locally and
+            // replay at the next sync (pwa-offline-actions §2.5). Uses the same
+            // online signal the modal already reads (the is-online prop).
+            if (!props.isOnline || !navigator.onLine) {
+              const bookingId = selectedBookingId.value;
+              try {
+                const sm = window.healthPWA && window.healthPWA.syncManager;
+                if (sm && typeof sm.queueAction === 'function') {
+                  await sm.queueAction('start_service', bookingId, {});
+                  await sm.patchLocalOrder(bookingId, {
+                    state: 'in_progress', pendingSync: true,
+                    actual_start_datetime: new Date().toISOString(),
+                  });
+                }
+                serviceStartedForBooking.value = bookingId;
+                if (selectedBookingDetail.value) {
+                  selectedBookingDetail.value.state = 'in_progress';
+                  selectedBookingDetail.value.actual_start_datetime = new Date().toISOString();
+                }
+                pendingActionFsoIds.value = new Set([...pendingActionFsoIds.value, bookingId]);
+                startTimer();
+                window.healthPWA.showNotification(
+                  _t('Saved offline — will sync when online'), 'success');
+              } catch (err) {
+                console.error('Failed to queue offline start:', err);
+                window.healthPWA.showNotification(
+                  _t('Error starting service: ') + err.message, 'error');
+              }
+              return;
+            }
             try {
               console.log('Starting service for booking:', selectedBookingId.value);
               console.log('Current booking state:', selectedBookingDetail.value?.state);
@@ -2576,6 +2643,33 @@ window.healthPWA = {
 
             if (!hasNotes && !hasPhoto) {
               alert(_t('Please provide clinical notes or take a photo before saving'));
+              return;
+            }
+
+            // Offline: queue the note payload (text fields only — photos stay
+            // online-only, phase non-goal) and replay as a clinical.note create
+            // at the next sync (pwa-offline-actions §2.5). Keep the text in the
+            // form state; show the pending badge + the same toast.
+            if (!props.isOnline || !navigator.onLine) {
+              const bookingId = selectedBookingId.value;
+              if (!hasNotes) {
+                alert(_t('Please provide clinical notes or take a photo before saving'));
+                return;
+              }
+              try {
+                const sm = window.healthPWA && window.healthPWA.syncManager;
+                if (sm && typeof sm.queueAction === 'function') {
+                  await sm.queueAction('save_clinical_notes', bookingId, requestData);
+                }
+                pendingActionFsoIds.value = new Set([...pendingActionFsoIds.value, bookingId]);
+                window.healthPWA.showNotification(
+                  _t('Saved offline — will sync when online'), 'success');
+                showClinicalNoteForm.value = false;
+                viewingClinicalNote.value = null;
+              } catch (err) {
+                console.error('Failed to queue offline clinical note:', err);
+                alert(_t('Error saving clinical note:') + ' ' + err.message);
+              }
               return;
             }
 
@@ -2958,11 +3052,15 @@ window.healthPWA = {
           loadCurrentUser(); // Load current user info
           // If the root handed us a booking to open (from another route), do it.
           consumePendingBooking();
+          // Offline-action badge: seed the set and refresh it after every sync.
+          refreshPendingActions();
+          window.addEventListener('health-pwa-sync-completed', onSyncCompleted);
         });
 
         onUnmounted(() => {
           // Cleanup timer on unmount
           stopTimer();
+          window.removeEventListener('health-pwa-sync-completed', onSyncCompleted);
         });
 
         return {
@@ -3020,6 +3118,7 @@ window.healthPWA = {
           detailError,
           fetchBookingDetail,
           toggleBookingDetail,
+          hasPendingAction,
           formattedScheduledDateTime,
           // Intake summary modal
           showIntakeSummaryModal,
@@ -3187,6 +3286,13 @@ window.healthPWA = {
                     <div class="status-badge" :style="statusChip(booking)">
                       {{ getStatusDisplay(booking) }}
                     </div>
+                    <!-- Pending offline-action badge (pwa-offline-actions §2.5,
+                         flat mono amber, inline SVG icon, no emoji/gradient) -->
+                    <span v-if="hasPendingAction(booking.fso_id)" class="status-badge"
+                          :title="_t('Pending sync')"
+                          style="background:#d97706;color:#fff;display:inline-flex;align-items:center;gap:2px;">
+                      <i class="material-icons" style="font-size:13px;">sync</i>{{ _t('Pending sync') }}
+                    </span>
                   </div>
 
                   <!-- Patient info -->
@@ -3358,6 +3464,12 @@ window.healthPWA = {
                 <div class="header-content">
                   <h3 class="modal-title">{{ _t('Booking Details') }}</h3>
                   <span class="status-badge sheet-status" :style="statusChip(selectedBookingDetail)">{{ getStatusDisplay(selectedBookingDetail) }}</span>
+                  <!-- Pending offline-action badge (pwa-offline-actions §2.5) -->
+                  <span v-if="hasPendingAction(selectedBookingId)" class="status-badge sheet-status"
+                        :title="_t('Pending sync')"
+                        style="background:#d97706;color:#fff;display:inline-flex;align-items:center;gap:2px;">
+                    <i class="material-icons" style="font-size:13px;">sync</i>{{ _t('Pending sync') }}
+                  </span>
                   <!-- Timer Display when service is in progress -->
                   <div v-if="serviceStartedForBooking === selectedBookingId" class="timer-badge">
                     <i class="material-icons">schedule</i>

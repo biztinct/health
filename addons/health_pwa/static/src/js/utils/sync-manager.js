@@ -8,6 +8,10 @@ class HealthSyncManager {
     this.syncInProgress = false;
     this.lastSyncTime = null;
     this.syncQueue = [];
+    // FSO ids whose offline action was rejected in the last push (state
+    // conflict / access denied) — app.js reads this after sync to toast +
+    // refetch (pwa-offline-actions §2.5).
+    this.lastRejectedActionFsoIds = [];
     
     // Load last sync time from storage, THEN run the one-time scope-purge
     // migration (pwa-sync-delta phase) once metadata is available. Keep the
@@ -363,36 +367,100 @@ class HealthSyncManager {
       for (const row of queueDocs.rows) {
         pendingChanges.push(row.doc);
       }
-      
+
+      // allDocs returns docs in KEY order, not time order (fact 8). Actions
+      // must replay before the field writes that follow them in real time and
+      // before the pull, so sort the combined list by `timestamp` ascending.
+      pendingChanges.sort((a, b) => {
+        const ta = (a && a.timestamp) || '';
+        const tb = (b && b.timestamp) || '';
+        return ta < tb ? -1 : ta > tb ? 1 : 0;
+      });
+
     } catch (error) {
       console.error('Failed to get pending changes:', error);
     }
-    
+
     return pendingChanges;
   }
-  
+
   groupChangesByModel(changes) {
     const grouped = {
       field_service_orders: [],
-      patients: []
+      patients: [],
+      // Offline visit actions (pwa-offline-actions §2.2). Additive key; an old
+      // server ignores it, a new one processes it FIRST.
+      actions: []
     };
-    
+
     for (const change of changes) {
-      if (change.model === 'health.fieldservice.order') {
-        grouped.field_service_orders.push(change.data);
+      if (change.model === 'health.pwa.action') {
+        grouped.actions.push({
+          action_type: change.actionType,
+          fso_id: change.recordId,
+          client_action_uuid: change.clientActionUuid,
+          client_ref: change.clientRef,
+          claimed_at: change.claimedAt,
+          payload: change.data || {}
+        });
+      } else if (change.model === 'health.fieldservice.order') {
+        // Pass client_ref through (§2.4 — additive; server echoes it back).
+        grouped.field_service_orders.push({ ...change.data, client_ref: change.clientRef });
       } else if (change.model === 'res.partner' && change.data.is_patient) {
-        grouped.patients.push(change.data);
+        grouped.patients.push({ ...change.data, client_ref: change.clientRef });
       }
     }
-    
+
     return grouped;
   }
-  
+
   async clearPushedChanges(changes, results) {
+    const resultList = results || [];
+    // Ref-based acknowledgement (pwa-offline-actions §2.4): map each queued doc
+    // to its result by client_ref (server results interleave models, so the
+    // old index-based mapping misaligns). Clear a doc iff its result succeeded
+    // OR it is a terminal rejected action (state_conflict / Access denied — a
+    // receipt makes retrying pointless; app.js surfaces a toast + refetch).
+    const hasRefs = resultList.some(
+      (r) => r && r.client_ref !== undefined && r.client_ref !== null);
+
+    if (hasRefs) {
+      // Surfaced to app.js after 'health-pwa-sync-completed' so a rejected
+      // offline action toasts + refetches the affected booking (§2.5). Reset
+      // each batch.
+      this.lastRejectedActionFsoIds = [];
+      const byRef = {};
+      for (const r of resultList) {
+        if (r && r.client_ref !== undefined && r.client_ref !== null) {
+          byRef[r.client_ref] = r;
+        }
+      }
+      for (const change of changes) {
+        const result = byRef[change.clientRef];
+        if (!result) continue;
+        const rejectedAction = result.success === false &&
+          (result.error === 'state_conflict' || result.error === 'Access denied');
+        if (result.success || rejectedAction) {
+          try {
+            await this.db.sync.remove(change);
+            if (rejectedAction && change.model === 'health.pwa.action'
+                && change.recordId != null) {
+              this.lastRejectedActionFsoIds.push(change.recordId);
+            }
+          } catch (error) {
+            console.error('Failed to clear pushed change:', error);
+          }
+        }
+      }
+      return;
+    }
+
+    // Legacy fallback: no result carried a client_ref (old server) — clear by
+    // index, success-only, exactly as before.
     for (let i = 0; i < changes.length; i++) {
       const change = changes[i];
-      const result = results[i];
-      
+      const result = resultList[i];
+
       if (result && result.success) {
         try {
           await this.db.sync.remove(change);
@@ -403,28 +471,118 @@ class HealthSyncManager {
     }
   }
   
+  // Generate a UUID for offline-action idempotency / client_ref (crypto when
+  // available, else an RFC-4122-ish fallback so old WebViews still work).
+  _genUuid() {
+    try {
+      if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+      }
+    } catch (e) { /* fall through */ }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
   async queueChange(model, recordId, data, operation = 'update') {
     try {
+      // Every queued doc carries a clientRef == its _id so the server can echo
+      // it back per-result (pwa-offline-actions §2.4) — the client then clears
+      // exactly the docs that succeeded, regardless of result order.
+      const id = `pending_${model}_${recordId}_${Date.now()}`;
       const changeDoc = {
-        _id: `pending_${model}_${recordId}_${Date.now()}`,
+        _id: id,
         model: model,
         recordId: recordId,
         operation: operation, // create, update, delete
         data: data,
+        clientRef: id,
         timestamp: new Date().toISOString(),
         retryCount: 0
       };
-      
+
       await this.db.sync.put(changeDoc);
       console.log(`Queued ${operation} for ${model} ${recordId}`);
-      
+
       // Try to sync immediately if online
       if (this.isOnline && !this.syncInProgress) {
         setTimeout(() => this.backgroundSync(), 1000);
       }
-      
+
     } catch (error) {
       console.error('Failed to queue change:', error);
+    }
+  }
+
+  // Queue an offline VISIT ACTION (pwa-offline-actions §2.5). Clones the
+  // health_evv offline pattern: a client-side idempotency uuid + the device's
+  // claimed timestamp, replayed idempotently by /health_pwa/sync/push. Returns
+  // the queued doc _id (also the clientRef) so the caller can track it.
+  async queueAction(actionType, fsoId, payload) {
+    try {
+      const id = `pending_action_${Date.now()}_${this._genUuid()}`;
+      const changeDoc = {
+        _id: id,
+        model: 'health.pwa.action',
+        actionType: actionType,
+        recordId: fsoId,
+        clientActionUuid: this._genUuid(),
+        clientRef: id,
+        claimedAt: new Date().toISOString(),
+        data: payload || {},
+        timestamp: new Date().toISOString(),
+        retryCount: 0
+      };
+
+      await this.db.sync.put(changeDoc);
+      console.log(`Queued action ${actionType} for FSO ${fsoId}`);
+
+      if (this.isOnline && !this.syncInProgress) {
+        setTimeout(() => this.backgroundSync(), 1000);
+      }
+
+      return id;
+    } catch (error) {
+      console.error('Failed to queue action:', error);
+    }
+  }
+
+  // Return the set of FSO ids that currently have a queued (unsynced) action
+  // (pwa-offline-actions §2.5 — drives the "Pending sync" badge). Cleared
+  // naturally as clearPushedChanges removes the docs post-sync.
+  async getPendingActionFsoIds() {
+    const ids = new Set();
+    try {
+      const rows = await this.db.sync.allDocs({
+        startkey: 'pending_action_',
+        endkey: 'pending_action_\ufff0',
+        include_docs: true
+      });
+      for (const row of rows.rows) {
+        if (row.doc && row.doc.recordId != null) {
+          ids.add(row.doc.recordId);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to read pending actions:', error);
+    }
+    return ids;
+  }
+
+  // Optimistically patch a locally-cached order doc (pwa-offline-actions §2.5).
+  // Reuses updateLocalData's _rev-preserving put so a reopen offline keeps the
+  // optimistic state. Non-fatal: a missing doc is simply skipped.
+  async patchLocalOrder(fsoId, patch) {
+    try {
+      const db = this.db.orders;
+      if (!db) return;
+      const docId = String(fsoId);
+      const existing = await db.get(docId);
+      await db.put({ ...existing, ...patch, _id: docId, _rev: existing._rev });
+    } catch (error) {
+      // Order not cached locally (offline-only device) — skip silently.
     }
   }
   

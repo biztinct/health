@@ -9,6 +9,19 @@ from odoo.http import request
 
 _logger = logging.getLogger(__name__)
 
+# Offline action replay (pwa-offline-actions phase) --------------------------
+# The two visit actions that may replay from the offline queue. COMPLETE is
+# deliberately absent (money tail + clinical_notes/invoice gates, phase fact 4).
+KNOWN_ACTION_TYPES = ('start_service', 'save_clinical_notes')
+# Whitelist for the queued clinical-note payload — EXACTLY the online endpoint's
+# field set (api.py:1004-1016, duplicated per the A4 convention; api.py stays
+# READ-ONLY). Unknown keys are ignored silently.
+NOTE_TEXT_FIELDS = ('clinical_notes', 'diagnosis', 'treatment_performed',
+                    'medications_prescribed', 'vital_signs',
+                    'patient_condition_before', 'patient_condition_after')
+NOTE_COUNT_FIELDS = ('injection_count', 'medication_count', 'wound_count',
+                     'iv_fluid_count')
+
 
 def _selection_labels(record, field_name):
     return dict(record._fields[field_name]._description_selection(record.env))
@@ -631,6 +644,14 @@ class HealthPWASyncController(http.Controller):
             scope = self._sync_scope()
             results = []
 
+            # Process offline action replays FIRST (before the field-write
+            # updates) so a queued Start lands before any same-batch field
+            # write, and the pull that follows already reflects the new state
+            # (pwa-offline-actions §2.2). Appended to the same `results` list —
+            # the statistics keys count them too (shapes unchanged).
+            if 'actions' in changes:
+                results.extend(self._process_actions(changes.get('actions') or []))
+
             # Process FSO updates
             if 'field_service_orders' in changes:
                 fso_results = self._process_fso_updates(changes['field_service_orders'])
@@ -659,40 +680,265 @@ class HealthPWASyncController(http.Controller):
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
+    # ------------------------------------------------------------------
+    # Offline action replay (pwa-offline-actions phase)
+    # ------------------------------------------------------------------
+    def _with_ref(self, result, client_ref):
+        """Echo the incoming item's client_ref on its per-item result (§2.4 —
+        additive key). Lets the client map each result back to the exact queued
+        doc regardless of order, replacing the fragile index-based mapping."""
+        if client_ref is not None:
+            result['client_ref'] = client_ref
+        return result
+
+    def _parse_client_datetime(self, raw):
+        """Parse a client's JS ISO datetime (from `new Date().toISOString()`)
+        into a naive-UTC datetime, or None on absence/garbage. Mirrors
+        `_parse_since`'s hardening (Z suffix, T separator, millis, tz offset)
+        but returns None instead of a fallback so the caller can clamp to the
+        server time. JS toISOString is always UTC, so the parsed naive value is
+        directly comparable to `fields.Datetime.now()`."""
+        if not raw or not isinstance(raw, str):
+            return None
+        try:
+            value = raw
+            if value.endswith('Z'):
+                value = value[:-1] + '+00:00'
+            value = value.replace('T', ' ').split('+')[0].split('.')[0].strip()
+            return fields.Datetime.from_string(value) or None
+        except Exception:
+            return None
+
+    def _action_error(self, action_type, fso_id, client_ref, message):
+        """A per-item action error. `message` is a RAW (non-translated) machine
+        string for the values the client keys on ('Access denied',
+        'state_conflict') — the client renders its own localized toast, and a
+        translated string here would break the JS clear/refetch match."""
+        return self._with_ref({
+            'type': 'action',
+            'action_type': action_type,
+            'id': fso_id,
+            'success': False,
+            'error': message,
+        }, client_ref)
+
+    def _receipt_result(self, receipt, client_ref):
+        """Replay a stored receipt's exact per-item result verbatim (idempotent
+        replay, fact 5). The current call's client_ref overrides the stored one
+        so THIS device clears the right queued doc."""
+        try:
+            res = json.loads(receipt.result_json) if receipt.result_json else {}
+        except Exception:
+            res = {}
+        if not isinstance(res, dict):
+            res = {}
+        return self._with_ref(res, client_ref)
+
+    def _process_actions(self, actions):
+        """Replay queued offline visit actions idempotently (§2.2).
+
+        Each item is isolated in its OWN savepoint so one bad action cannot
+        poison the batch (§2.2, batch isolation). Idempotency clones the
+        health_evv append_event seam (fact 5): search the receipt ledger by
+        (fso, type, uuid) first; a hit replays the stored result verbatim
+        (applied AND rejected replays both return as-is). G1 assignment is
+        required BEFORE any receipt is created so an unauthorized caller can
+        never squat a uuid (§2.2.3)."""
+        results = []
+        Receipt = request.env['health.pwa.action.receipt'].sudo()
+        Order = request.env['health.fieldservice.order'].sudo()
+
+        for action in actions:
+            client_ref = action.get('client_ref')
+            action_type = action.get('action_type')
+            fso_id = action.get('fso_id')
+            client_action_uuid = (action.get('client_action_uuid') or '').strip()
+            try:
+                with request.env.cr.savepoint():
+                    # 1. Validate action_type + uuid.
+                    if action_type not in KNOWN_ACTION_TYPES:
+                        results.append(self._action_error(
+                            action_type, fso_id, client_ref, 'Unknown action type'))
+                        continue
+                    if not client_action_uuid or len(client_action_uuid) > 64:
+                        results.append(self._action_error(
+                            action_type, fso_id, client_ref,
+                            'Invalid client_action_uuid'))
+                        continue
+
+                    # 2. Resolve order sudo; must exist.
+                    order = Order.browse(fso_id) if fso_id else Order.browse()
+                    if not fso_id or not order.exists():
+                        results.append(self._action_error(
+                            action_type, fso_id, client_ref, 'Order not found'))
+                        continue
+
+                    # 3. G1 required — no receipt for an unauthorized caller.
+                    employee = self._employee_assigned_to(order)
+                    if not employee:
+                        results.append(self._action_error(
+                            action_type, fso_id, client_ref, 'Access denied'))
+                        continue
+
+                    # 4. Idempotent replay — a hit returns the stored result.
+                    domain = [
+                        ('fso_id', '=', order.id),
+                        ('action_type', '=', action_type),
+                        ('client_action_uuid', '=', client_action_uuid),
+                    ]
+                    existing = Receipt.search(domain, limit=1)
+                    if existing:
+                        results.append(self._receipt_result(existing, client_ref))
+                        continue
+
+                    # Serialize replays per visit (clone fact 5's FOR UPDATE +
+                    # re-search under the lock).
+                    request.env.cr.execute(
+                        "SELECT id FROM health_fieldservice_order "
+                        "WHERE id = %s FOR UPDATE", (order.id,))
+                    existing = Receipt.search(domain, limit=1)
+                    if existing:
+                        results.append(self._receipt_result(existing, client_ref))
+                        continue
+
+                    if action_type == 'start_service':
+                        results.append(self._replay_start_service(
+                            order, employee, action, client_action_uuid, client_ref))
+                    else:
+                        results.append(self._replay_save_clinical_notes(
+                            order, employee, action, client_action_uuid, client_ref))
+            except Exception as e:
+                results.append(self._action_error(
+                    action_type, fso_id, client_ref, str(e)))
+
+        return results
+
+    def _replay_start_service(self, order, employee, action, client_action_uuid, client_ref):
+        """Replay a queued Start. State guard mirrors the online endpoint
+        (api.py:721 / fact 1,3): only assigned/confirmed → in_progress. On
+        conflict, record a REJECTED receipt so the same uuid stays rejected on
+        every future replay (§2.2.5)."""
+        Receipt = request.env['health.pwa.action.receipt'].sudo()
+        claimed_at = self._parse_client_datetime(action.get('claimed_at'))
+
+        if order.state not in ('assigned', 'confirmed'):
+            result = self._with_ref({
+                'type': 'action', 'action_type': 'start_service', 'id': order.id,
+                'success': False, 'error': 'state_conflict', 'state': order.state,
+            }, client_ref)
+            Receipt.create({
+                'fso_id': order.id, 'action_type': 'start_service',
+                'client_action_uuid': client_action_uuid,
+                'claimed_at': claimed_at, 'staff_id': employee.id,
+                'state': 'rejected', 'reject_reason': 'state_conflict',
+                'result_json': json.dumps(result, default=str),
+            })
+            return result
+
+        # Apply the SAME transition as the online button (fact 1). This writes
+        # state='in_progress' + actual_start_datetime=now() and fires the
+        # timecard hook — expected and correct (§2.3).
+        order.sudo().action_start_service()
+
+        # Honor the CLAIMED start time (clamped) so timecards/EVV stay honest.
+        now = fields.Datetime.now()
+        clamped = False
+        if (claimed_at and (now - timedelta(hours=48)) <= claimed_at
+                <= (now + timedelta(minutes=5))):
+            order.sudo().write({'actual_start_datetime': claimed_at})
+        else:
+            # Keep the server time action_start_service already wrote.
+            clamped = True
+
+        result = self._with_ref({
+            'type': 'action', 'action_type': 'start_service', 'id': order.id,
+            'success': True, 'state': 'in_progress',
+        }, client_ref)
+        if clamped:
+            result['claimed_at_clamped'] = True
+
+        Receipt.create({
+            'fso_id': order.id, 'action_type': 'start_service',
+            'client_action_uuid': client_action_uuid,
+            'claimed_at': claimed_at, 'staff_id': employee.id,
+            'state': 'applied',
+            'result_json': json.dumps(result, default=str),
+        })
+        return result
+
+    def _replay_save_clinical_notes(self, order, employee, action, client_action_uuid, client_ref):
+        """Replay a queued clinical note as a health.clinical.note create. No
+        state guard beyond order existence + G1 (mirrors the online endpoint,
+        fact 2). Payload whitelisted to the fact-2 field set; unknown keys
+        ignored. Note-create body duplicated from api.py:1002-1018 (A4)."""
+        Receipt = request.env['health.pwa.action.receipt'].sudo()
+        payload = action.get('payload') or {}
+
+        note_vals = {'order_id': order.id}
+        for field in NOTE_TEXT_FIELDS:
+            val = payload.get(field, '')
+            if val:
+                note_vals[field] = val
+        for count_field in NOTE_COUNT_FIELDS:
+            if count_field in payload and payload[count_field] is not None:
+                try:
+                    note_vals[count_field] = int(payload[count_field])
+                except (ValueError, TypeError):
+                    pass
+
+        note = request.env['health.clinical.note'].sudo().create(note_vals)
+
+        result = self._with_ref({
+            'type': 'action', 'action_type': 'save_clinical_notes', 'id': order.id,
+            'success': True, 'note_id': note.id,
+            'clinical_notes_submitted': order.clinical_notes_submitted,
+            'clinical_note_count': order.clinical_note_count,
+        }, client_ref)
+
+        Receipt.create({
+            'fso_id': order.id, 'action_type': 'save_clinical_notes',
+            'client_action_uuid': client_action_uuid,
+            'claimed_at': self._parse_client_datetime(action.get('claimed_at')),
+            'staff_id': employee.id, 'state': 'applied',
+            'result_json': json.dumps(result, default=str),
+        })
+        return result
+
     def _process_fso_updates(self, fso_changes):
         """Process field service order updates from mobile (assignment-scoped)."""
         results = []
 
         for change in fso_changes:
+            client_ref = change.get('client_ref')
             try:
                 order_id = change.get('id')
                 if not order_id:
-                    results.append({
+                    results.append(self._with_ref({
                         'type': 'field_service_order',
                         'id': None,
                         'success': False,
                         'error': _('Missing order ID')
-                    })
+                    }, client_ref))
                     continue
 
                 order = request.env['health.fieldservice.order'].sudo().browse(order_id)
                 if not order.exists():
-                    results.append({
+                    results.append(self._with_ref({
                         'type': 'field_service_order',
                         'id': order_id,
                         'success': False,
                         'error': _('Order not found')
-                    })
+                    }, client_ref))
                     continue
 
                 # G1 assignment required — no ACL fallback (write path).
                 if not self._employee_assigned_to(order):
-                    results.append({
+                    results.append(self._with_ref({
                         'type': 'field_service_order',
                         'id': order_id,
                         'success': False,
                         'error': _('Access denied')
-                    })
+                    }, client_ref))
                     continue
 
                 # Only allow updating specific fields from mobile. `stage_id`
@@ -715,20 +961,20 @@ class HealthPWASyncController(http.Controller):
                 if update_vals:
                     order.sudo().write(update_vals)
 
-                results.append({
+                results.append(self._with_ref({
                     'type': 'field_service_order',
                     'id': order_id,
                     'success': True,
                     'updated_fields': list(update_vals.keys())
-                })
+                }, client_ref))
 
             except Exception as e:
-                results.append({
+                results.append(self._with_ref({
                     'type': 'field_service_order',
                     'id': change.get('id'),
                     'success': False,
                     'error': str(e)
-                })
+                }, client_ref))
 
         return results
 
@@ -738,35 +984,36 @@ class HealthPWASyncController(http.Controller):
         patient_scope_ids = scope['patient_scope_ids']
 
         for change in patient_changes:
+            client_ref = change.get('client_ref')
             try:
                 patient_id = change.get('id')
                 if not patient_id:
-                    results.append({
+                    results.append(self._with_ref({
                         'type': 'patient',
                         'id': None,
                         'success': False,
                         'error': _('Missing patient ID')
-                    })
+                    }, client_ref))
                     continue
 
                 patient = request.env['res.partner'].sudo().browse(patient_id)
                 if not patient.exists() or not patient.is_patient:
-                    results.append({
+                    results.append(self._with_ref({
                         'type': 'patient',
                         'id': patient_id,
                         'success': False,
                         'error': _('Patient not found')
-                    })
+                    }, client_ref))
                     continue
 
                 # Scope: only patients in the caller's order horizon.
                 if patient_id not in patient_scope_ids:
-                    results.append({
+                    results.append(self._with_ref({
                         'type': 'patient',
                         'id': patient_id,
                         'success': False,
                         'error': _('Access denied')
-                    })
+                    }, client_ref))
                     continue
 
                 # Only allow updating limited fields from mobile for security
@@ -784,20 +1031,20 @@ class HealthPWASyncController(http.Controller):
                 if update_vals:
                     patient.sudo().write(update_vals)
 
-                results.append({
+                results.append(self._with_ref({
                     'type': 'patient',
                     'id': patient_id,
                     'success': True,
                     'updated_fields': list(update_vals.keys())
-                })
+                }, client_ref))
 
             except Exception as e:
-                results.append({
+                results.append(self._with_ref({
                     'type': 'patient',
                     'id': change.get('id'),
                     'success': False,
                     'error': str(e)
-                })
+                }, client_ref))
 
         return results
 

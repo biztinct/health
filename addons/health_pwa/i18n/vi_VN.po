@@ -1432,3 +1432,21 @@ msgstr "Hôm qua"
 #: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
 msgid "✓ Template Rendering Works"
 msgstr "✓ Kết xuất mẫu hoạt động"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Saved offline — will sync when online"
+msgstr "Đã lưu ngoại tuyến — sẽ đồng bộ khi có mạng"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Could not sync offline action — refreshed"
+msgstr "Không thể đồng bộ thao tác ngoại tuyến — đã làm mới"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Pending sync"
+msgstr "Chờ đồng bộ"
