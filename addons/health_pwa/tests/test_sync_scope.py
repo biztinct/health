@@ -277,6 +277,51 @@ class TestRemovals(SyncScopeBase):
         resp = self._changes(since=self._far_past())
         self.assertIn(doomed_id, self._removal_ids(resp, 'field_service_orders'))
 
+    def _backdate(self, order, days=2, assignments=True):
+        """Push an order (and optionally its assignments) out of the delta
+        window via raw SQL — write_date is ORM-managed and can't be written
+        normally."""
+        self.env.cr.execute(
+            "UPDATE health_fieldservice_order"
+            " SET write_date = write_date - interval '%s days',"
+            "     create_date = create_date - interval '%s days'"
+            " WHERE id = %s", (days, days, order.id))
+        if assignments:
+            self.env.cr.execute(
+                "UPDATE health_staff_assignment"
+                " SET write_date = write_date - interval '%s days',"
+                "     create_date = create_date - interval '%s days'"
+                " WHERE fso_id = %s", (days, days, order.id))
+        self.env.invalidate_all()
+
+    def test_descope_via_assignment_only_write_emits_removal(self):
+        # Cancelling an assignment writes only the ASSIGNMENT row (no stored
+        # compute on the order depends on assignment state), so the order's
+        # write_date never enters the delta window. The assignment-window
+        # candidate source must still produce the removal.
+        self.authenticate(self.nurse_user.login, 'syncnursepw')
+        self._backdate(self.order_a)
+        since = _iso(fields.Datetime.now() - timedelta(hours=1))
+        self.order_a.assignment_ids.write({'state': 'cancelled'})
+        resp = self._changes(since=since)
+        self.assertIn(self.order_a.id, self._removal_ids(resp, 'field_service_orders'))
+        self.assertNotIn(self.order_a.id, self._data_ids(resp, 'field_service_orders'))
+
+    def test_new_assignment_on_stale_order_appears(self):
+        # Mirror image: assigning the nurse to an order whose ROW is outside
+        # the delta window must still upsert the order (and its patient) into
+        # the nurse's delta via the assignment-window candidates.
+        self.authenticate(self.nurse_user.login, 'syncnursepw')
+        since = _iso(fields.Datetime.now() - timedelta(hours=1))
+        self._assign(self.order_b, self.nurse_staff)
+        # Assigning may bump the ORDER row via stored computes — re-backdate
+        # the row (keep the fresh assignment) so ONLY the assignment window
+        # can put B in the candidate set. Strict proof of the fix.
+        self._backdate(self.order_b, assignments=False)
+        resp = self._changes(since=since)
+        self.assertIn(self.order_b.id, self._data_ids(resp, 'field_service_orders'))
+        self.assertIn(self.patient_b.id, self._data_ids(resp, 'patients'))
+
 
 # =====================================================================
 # 6 — push scope

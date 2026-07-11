@@ -352,6 +352,23 @@ injects JS into the shell requires bumping `health_pwa`:
     JS content while keeping the same `?v=` means SW/HTTP caches serve the
     OLD file — bump the version per content change, even mid-QA iteration.
 
+33. **Child-row writes do NOT bump the parent's `write_date` — a delta feed
+    keyed on the parent's `write_date` misses every child-driven change.**
+    Cancelling a `health.staff.assignment` (state write) leaves the parent
+    FSO's `write_date` untouched (the FSO's stored computes depend on
+    `assignment_ids.staff_id`/`assignment_role`, NOT `.state`), so the
+    pwa-sync-delta feed emitted no removal when a nurse was de-assigned —
+    and, mirror image, a new assignment on an old order never upserted into
+    the nurse's delta. Fix pattern: feed the candidate set from BOTH windows
+    (parent changed-since ∪ parents-of-children-changed-since,
+    sync.py `_get_fso_changes`). Test pattern: raw-SQL-backdate the parent
+    row (write_date is ORM-managed) so ONLY the child window can produce the
+    candidate — a far-past `since` in tests recaptures everything via
+    `create_date` and MASKS this whole class (that is exactly how it slipped
+    through review the first time). Same trap awaits any future incremental
+    feed (`@api.depends` does not equal "bumps write_date"; only actual
+    stored-compute WRITES do, and only for the fields that recompute).
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing

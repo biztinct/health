@@ -343,14 +343,20 @@ class HealthPWASyncController(http.Controller):
         Partner = request.env['res.partner'].sudo()
         patient_scope_ids = scope['patient_scope_ids']
 
-        domain = [
-            ('is_patient', '=', True),
-            '|',
-            ('write_date', '>=', since_datetime),
-            ('create_date', '>=', since_datetime),
-        ]
-        changed = Partner.search(domain, limit=500)
-        changed_in_scope = changed.filtered(lambda p: p.id in patient_scope_ids)
+        # Scope INSIDE the domain: a global changed-partner search with a 500
+        # cap could crowd an in-scope patient out of the window with unrelated
+        # partner churn before the scope filter even ran.
+        if patient_scope_ids:
+            domain = [
+                ('id', 'in', list(patient_scope_ids)),
+                ('is_patient', '=', True),
+                '|',
+                ('write_date', '>=', since_datetime),
+                ('create_date', '>=', since_datetime),
+            ]
+            changed_in_scope = Partner.search(domain, limit=500)
+        else:
+            changed_in_scope = Partner.browse()
 
         union_ids = set(changed_in_scope.ids) | set(in_scope_orders.mapped('patient_id').ids)
         patients = Partner.browse(sorted(union_ids))
@@ -426,6 +432,20 @@ class HealthPWASyncController(http.Controller):
         ]
         candidates = Order.with_context(active_test=False).search(
             candidate_domain, order='write_date desc', limit=2000)
+
+        # Scope changes ride the ASSIGNMENT row, not the order: cancelling an
+        # assignment (state write) bumps no stored compute on the order, so the
+        # order row's write_date stays put. Orders whose assignments changed in
+        # the window therefore join the candidate set for a scope re-check —
+        # both directions: a newly assigned old order upserts into the nurse's
+        # delta, a de-assigned order emits its removal.
+        assign_fso_ids = set(request.env['health.staff.assignment'].sudo().search(
+            [('write_date', '>=', since_datetime)],
+            order='write_date desc', limit=4000).mapped('fso_id').ids)
+        extra_ids = assign_fso_ids - set(candidates.ids)
+        if extra_ids:
+            candidates |= Order.with_context(active_test=False).browse(
+                sorted(extra_ids)).exists()
 
         # in-scope AND active partition — ONE batch search over the candidate
         # ids against the caller's grant domain (no per-record queries).

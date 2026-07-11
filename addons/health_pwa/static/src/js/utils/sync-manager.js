@@ -10,8 +10,11 @@ class HealthSyncManager {
     this.syncQueue = [];
     
     // Load last sync time from storage, THEN run the one-time scope-purge
-    // migration (pwa-sync-delta phase) once metadata is available.
-    this.loadSyncMetadata().then(() => this.runScopePurgeMigration());
+    // migration (pwa-sync-delta phase) once metadata is available. Keep the
+    // promise: syncs must await it, or the shell's ~1s auto-sync can race the
+    // purge (a delta finishing AFTER the purge would persist its watermark
+    // over the nulled lastSyncTime and the full scoped re-pull never happens).
+    this.migrationDone = this.loadSyncMetadata().then(() => this.runScopePurgeMigration());
 
     console.log('Health Sync Manager initialized');
   }
@@ -62,10 +65,17 @@ class HealthSyncManager {
     }
     
     this.syncInProgress = true;
-    
+
     try {
+      // One-time scope purge first: never let a delta interleave with (or
+      // outlive) the migration — syncInProgress is already set, so no other
+      // caller can slip in while we wait.
+      if (this.migrationDone) {
+        await this.migrationDone;
+      }
+
       console.log('Starting full data sync...');
-      
+
       // Step 1: Push pending changes to server
       await this.pushPendingChanges();
       
@@ -98,8 +108,13 @@ class HealthSyncManager {
     }
     
     this.syncInProgress = true;
-    
+
     try {
+      // Same migration gate as performSync (see comment there).
+      if (this.migrationDone) {
+        await this.migrationDone;
+      }
+
       console.log('Starting FULL data sync (ignoring timestamps)...');
       
       // Step 1: Push pending changes to server
@@ -134,19 +149,26 @@ class HealthSyncManager {
         return;
       }
       
-      // Send changes to server
+      // Send changes to server. The route is type='jsonrpc': the payload MUST
+      // ride the JSON-RPC params envelope or the server sees empty kwargs and
+      // the push silently no-ops.
       const response = await fetch('/health_pwa/sync/push', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          changes: this.groupChangesByModel(pendingChanges)
+          jsonrpc: '2.0',
+          method: 'call',
+          params: {
+            changes: this.groupChangesByModel(pendingChanges)
+          }
         })
       });
-      
-      const result = await response.json();
-      
+
+      const rpc = await response.json();
+      const result = rpc.result || rpc;
+
       if (result.success) {
         console.log(`Pushed ${pendingChanges.length} changes to server`);
         // Clear successfully pushed changes
@@ -249,9 +271,12 @@ class HealthSyncManager {
     
     // Apply field service orders changes
     if (changes.field_service_orders && changes.field_service_orders.records.length > 0) {
-      // The server caps the orders pull at 500 rows; make the truncation
-      // visible instead of silently caching a partial working set offline.
-      if (changes.field_service_orders.records.length >= 500) {
+      // The server caps DATA upserts at 500 rows; count only those (the
+      // records list also carries id-only is_deleted removals, which are
+      // uncapped and must not trip a spurious warning).
+      const upsertCount = changes.field_service_orders.records.filter(
+        (r) => !r.is_deleted).length;
+      if (upsertCount >= 500) {
         console.warn('health_pwa sync: order cap hit (500) — older orders not cached offline');
       }
       await this.updateLocalData('orders', changes.field_service_orders.records);
