@@ -96,7 +96,9 @@ injects JS into the shell requires bumping `health_pwa`:
   (see health_consent/security/health_consent_security.xml for the
   template) plus an owner sees-all rule.
 - Every module ships `i18n/vi.po` (copy header format from
-  health_careplan/i18n/vi.po).
+  health_careplan/i18n/vi.po). If the module ALREADY ships a Vietnamese
+  catalog under another name (e.g. health_pwa's `vi_VN.po`), extend that
+  file — never create a competing second catalog.
 - UI: flat mono colors only (NO gradients/dual-tone), `hf-wt-ico`
   CSS-mask SVG icons (NEVER emoji or font-awesome), form chatter at
   bottom full-width (never side column).
@@ -433,7 +435,7 @@ sync when either changes.
 4. `vi.po` present and covering user-visible strings.
 5. All code committed on branch `19.0` and **pushed**, message format
    `feat(<area>): <summary>` with body, ending:
-   `Co-Authored-By: <your model name> <noreply@anthropic.com>`.
+   `Co-Authored-By: <your model name> <noreply@carejiox.com>`.
 6. Final report states: what was built (file list), every deviation from
    the handover design with reasoning, test results verbatim
    (x/x passed), anything deferred, and any new gotcha discovered
