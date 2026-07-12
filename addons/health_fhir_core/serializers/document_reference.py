@@ -79,7 +79,36 @@ class DocumentReferenceSerializer(FHIRSerializer):
         author = self._author(note)
         if author:
             resource['author'] = [author]
+        # EMR record-spine reflection (health_emr — optional module). Read the
+        # fields defensively so health_fhir_core never depends on health_emr,
+        # exactly like the `'employee_id' in user._fields` guard in _author.
+        if 'emr_state' in note._fields:
+            resource['docStatus'] = (
+                'final' if note.emr_state == 'final' else 'preliminary')
+            authenticator = self._authenticator(note)
+            if authenticator:
+                resource['authenticator'] = authenticator
+            if note.amends_note_id:
+                resource['relatesTo'] = [{
+                    'code': 'appends',
+                    'target': self.reference(
+                        'DocumentReference', note.amends_note_id.id),
+                }]
         return resource
+
+    def _authenticator(self, note):
+        """The clinician who signed the finalized note (DocumentReference.
+        authenticator). Mirrors _author's Practitioner resolution."""
+        user = note.signed_by_id
+        if not user:
+            return None
+        employee = user.employee_id if 'employee_id' in user._fields else False
+        if employee and employee.healthcare_facility_id:
+            return self.reference('Practitioner', employee.id,
+                                  display=employee.name)
+        if user.name:
+            return {'display': user.name}
+        return None
 
     def _author(self, note):
         user = note.author_id

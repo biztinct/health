@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Clinical Note form: finalize/sign header, locked banner, integrity page, chatter -->
+    <record id="view_health_clinical_note_form_emr" model="ir.ui.view">
+        <field name="name">health.clinical.note.form.emr</field>
+        <field name="model">health.clinical.note</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_clinical_note_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_finalize" type="object"
+                            string="Finalize &amp; Sign" class="btn-primary"
+                            invisible="emr_state == 'final'"
+                            confirm="Finalize and sign this clinical note? Once signed it becomes a locked, permanent medical record and can no longer be edited — corrections must be added as an addendum."/>
+                    <field name="emr_state" widget="statusbar" statusbar_visible="draft,final"/>
+                </header>
+            </xpath>
+
+            <xpath expr="//div[@class='oe_title']" position="before">
+                <div class="alert alert-success" role="alert" invisible="emr_state != 'final'">
+                    <strong>Signed medical record — locked.</strong>
+                    Signed by <field name="signed_by_id" readonly="1" class="oe_inline"/>
+                    (<field name="signed_role" readonly="1" class="oe_inline"/>)
+                    on <field name="signed_datetime" readonly="1" class="oe_inline"/>.
+                </div>
+                <div class="alert alert-info" role="alert" invisible="not amends_note_id">
+                    <strong>Addendum.</strong> This note amends
+                    <field name="amends_note_id" readonly="1" class="oe_inline"/>.
+                </div>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Record Integrity" invisible="emr_state != 'final'">
+                    <group string="Tamper-Evident Seal">
+                        <field name="content_hash" readonly="1"/>
+                        <field name="hash_version" readonly="1"/>
+                        <field name="signature_ref" readonly="1"/>
+                    </group>
+                    <group string="Addenda" invisible="not amendment_ids">
+                        <field name="amendment_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="display_name"/>
+                                <field name="emr_state"/>
+                                <field name="signed_datetime"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+
+            <xpath expr="//sheet" position="after">
+                <chatter/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- List: surface EMR status -->
+    <record id="view_health_clinical_note_list_emr" model="ir.ui.view">
+        <field name="name">health.clinical.note.list.emr</field>
+        <field name="model">health.clinical.note</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_clinical_note_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='author_role']" position="after">
+                <field name="emr_state" string="EMR"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

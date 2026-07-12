@@ -60,12 +60,13 @@ A NEW module **`health_emr`** that `_inherit`s `health.clinical.note` and adds:
 6. **Backend UI** — finalize button + signed banner on the note form;
    finalized notes render content read-only. Ops list shows an
    EMR-status column.
-7. **PWA** — the field nurse gets an explicit **"Finalize & sign"** affordance
-   on a saved note; finalized notes render read-only with a signed chip.
-   **Finalization is ONLINE-ONLY** (like offline-COMPLETE was kept online):
-   offline you save/edit drafts; signing + hashing happen online. This avoids
-   offline-signature/hash-replay complexity and keeps the legal act
-   server-authoritative. PWA version bump per §3.
+7. **PWA — SPLIT to Phase 1.5 (NOT this phase).** Scope refinement: the
+   point-of-care "Finalize & sign" affordance (endpoint + app.js UI + read-only
+   render + PWA version bump + browser QA) is its own immediate follow-up so the
+   security-critical backend lands and is reviewed on its own, and the complex
+   app.js change gets a dedicated careful pass. Finalization will be
+   ONLINE-ONLY there (offline edits drafts; signing is server-authoritative).
+   **Phase 1 ships NO health_pwa change and needs NO PWA version bump.**
 
 ### §0.2 Binding NON-goals
 - NO VNPT-CA / Viettel-CA digital signature yet (Phase 3) — the `content_hash`
@@ -148,11 +149,12 @@ A NEW module **`health_emr`** that `_inherit`s `health.clinical.note` and adds:
 |---|---|
 | `health_emr/` (NEW module) | manifest (depends health_fieldservice, health_base; version 19.0.1.0.0), models/health_clinical_note.py (`_inherit`, all new fields + state machine + write/unlink guards + hash + action_finalize + addendum), security/ir.model.access.csv (+ record rule reuse), views (form inherit: finalize button/banner/read-only, list column), i18n/vi.po, tests/ |
 | `health_fhir_core/serializers/document_reference.py` | ADD defensive `docStatus` + `relatesTo` (addenda) + `authenticator` (signer) — guarded by `'emr_state' in note._fields`. Nothing else. |
-| `health_fhir_core/tests/` | +1 test: DocumentReference docStatus reflects finalized note (guarded) |
-| `health_pwa/static/src/js/app.js` | Finalize-&-sign affordance on saved note (ONLINE-only branch), signed read-only rendering, VN fallback strings |
-| `health_pwa/controllers/api.py` | ONE new endpoint `POST /health_pwa/api/fso/<id>/clinical_notes/<note_id>/finalize` (G1-assigned, sudo after check, calls `note.action_finalize()`), or extend the notes controller — narrowest addition |
-| `health_pwa/views/pwa_templates.xml`, `health_pwa/__manifest__.py` | version bump → 1.15.0 / .32 |
-| 3 PWA pin-suite test files | version assert bump |
+| `health_emr/tests/test_emr.py` | FHIR reflection test (guarded + lazy-import — coupling lives with health_emr; health_fhir_core stays independent) |
+
+**Phase 1.5 (deferred, NOT this phase):** `health_pwa/controllers/api.py`
+(finalize endpoint), `health_pwa/static/src/js/app.js` (affordance + read-only
+render + VN strings), `pwa_templates.xml`/`__manifest__.py` + pin suites
+(version bump). No health_pwa change in Phase 1.
 
 Everything else READ-ONLY. health_fieldservice's note model file is NOT edited
 (health_emr inherits it). health_phi_encryption untouched (its computes serve
@@ -210,12 +212,13 @@ note in the PWA → signed chip + read-only; version 1.15.0 served; console clea
 
 ## §4 Deploy
 
-Conventions §2. New module: `-i health_emr` alongside
-`-u health_fhir_core,health_pwa,health_pwa_daystrip,health_scribe,health_pwa_family`.
-Test tags `/health_emr,/health_fhir_core,/health_pwa,/health_pwa_daystrip,/health_scribe,/health_pwa_family`.
-HttpCase present ⇒ NO `--no-http`. Result line from the log (§ grep -a),
-matched to my timestamp. Restart + login 200. **Safety rails (fact-11) remain
-binding.**
+Conventions §2. New module: `-i health_emr -u health_fhir_core`.
+Test tags `/health_emr,/health_fhir_core`. Also upgrade the modules that
+create notes so their suites exercise the model with mail.thread + emr_state
+added: add `-u health_fieldservice,health_pwa` and their tags to catch any
+regression from the mixin. HttpCase present ⇒ NO `--no-http`. Result line from
+the log (`grep -a`), matched to my timestamp. Restart + login 200.
+**Safety rails (fact-11) remain binding. No PWA version bump this phase.**
 
 ## §5 Report-back (self-review agent)
 
