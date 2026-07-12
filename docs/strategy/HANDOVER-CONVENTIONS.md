@@ -387,6 +387,27 @@ injects JS into the shell requires bumping `health_pwa`:
     left an FSO `in_progress` + an orphan clinical note behind because the
     revert was trusted from the same shell that made it.
 
+35. **A tamper-evident content hash that includes a timestamp set in the SAME
+    write reproduces on reload ONLY because Odoo truncates datetimes to the
+    second.** `fields.Datetime.now()` returns `datetime.now().replace(
+    microsecond=0)` and PostgreSQL stores that second-precision value, so a
+    hash computed at finalize (over the in-memory `now()`) equals a re-hash
+    over the reloaded stored value — `fields.Datetime.to_string` emits
+    `%Y-%m-%d %H:%M:%S` in both paths. If you ever hash a raw
+    `datetime.datetime.now()` (with microseconds) while storing the truncated
+    value, the seal will NEVER verify after reload — a silent, total failure
+    of the integrity check. Rules for any integrity/audit hash: canonicalize
+    with `json.dumps(sort_keys=True, separators=(',',':'))`; read PHI through
+    the ORM (it decrypts transparently — the plaintext hashes deterministically
+    while ciphertext would not); cover attachment bytes via
+    `ir.attachment.checksum` (filter out falsy checksums before `sorted()`);
+    and store an explicit `hash_version` so the scheme can change without
+    re-sealing history (health_emr `_compute_content_hash`). Also §5.30
+    applies: an `ondelete='cascade'` child (clinical note → FSO) is deleted at
+    the DB level and NEVER fires its Python `unlink()` guard, so an
+    immutability/retention guarantee on the child must ALSO be enforced by a
+    parent-model `unlink()` override (health_emr `health_fieldservice_order`).
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
