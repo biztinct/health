@@ -13,6 +13,18 @@ const APP_VI_FALLBACK_TRANSLATIONS = {
   'Saved offline — will sync when online': 'Đã lưu ngoại tuyến — sẽ đồng bộ khi có mạng',
   'Could not sync offline action — refreshed': 'Không thể đồng bộ thao tác ngoại tuyến — đã làm mới',
   'Pending sync': 'Chờ đồng bộ',
+  // EMR point-of-care finalize (emr-record-spine phase 1.5) — VN-first fallback.
+  'Signed': 'Đã ký',
+  'Draft': 'Nháp',
+  'Finalize & Sign': 'Hoàn tất & Ký',
+  'Signing…': 'Đang ký…',
+  'Signed medical record — locked': 'Hồ sơ bệnh án đã ký — đã khóa',
+  'Signed by': 'Ký bởi',
+  'Clinical note finalized and signed': 'Ghi chú lâm sàng đã hoàn tất và ký',
+  'Finalization failed': 'Hoàn tất không thành công',
+  'Requires an internet connection.': 'Cần kết nối internet.',
+  'Connect to the internet to finalize & sign this note.': 'Kết nối internet để hoàn tất & ký ghi chú này.',
+  'Finalize and sign this clinical note? Once signed it becomes a permanent, locked medical record and cannot be edited.': 'Hoàn tất và ký ghi chú lâm sàng này? Sau khi ký, ghi chú trở thành hồ sơ bệnh án cố định, bị khóa và không thể chỉnh sửa.',
 };
 
 // Lightweight translation helper: use PWAUtils.i18n for reactive language switching
@@ -2586,6 +2598,50 @@ window.healthPWA = {
           viewingClinicalNote.value = null;
         };
 
+        // EMR point-of-care finalize (emr-record-spine phase 1.5). Signs the
+        // note as THIS nurse via the online-only endpoint; the server attributes
+        // the signature to her and locks the record. Online-only (the legal
+        // signing act is server-authoritative — no offline queue), so a draft
+        // note stays fully editable offline until the nurse signs it online.
+        const finalizingNote = ref(false);
+        const finalizeNote = async (note) => {
+          if (!note || note.emr_state === 'final') return;
+          if (!props.isOnline && !navigator.onLine) {
+            window.healthPWA.showNotification(
+              _t('Connect to the internet to finalize & sign this note.'), 'warning');
+            return;
+          }
+          if (!window.confirm(_t('Finalize and sign this clinical note? Once signed it becomes a permanent, locked medical record and cannot be edited.'))) {
+            return;
+          }
+          finalizingNote.value = true;
+          try {
+            const bookingId = selectedBookingId.value;
+            const response = await fetch(
+              `/health_pwa/api/fso/${bookingId}/clinical_notes/${note.id}/finalize`,
+              { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({}) });
+            const result = await response.json();
+            if (result.success && result.data) {
+              window.healthPWA.showNotification(
+                _t('Clinical note finalized and signed'), 'success');
+              // Refetch so the note (and its list chip) reflect the signed
+              // state; re-point the open note at the refreshed record.
+              await fetchBookingDetail(bookingId);
+              const list = selectedBookingDetail.value?.clinical_notes_list || [];
+              viewingClinicalNote.value = list.find((n) => n.id === note.id) || null;
+            } else {
+              window.healthPWA.showNotification(
+                result.error || _t('Finalization failed'), 'error');
+            }
+          } catch (err) {
+            window.healthPWA.showNotification(
+              _t('Finalization failed') + ': ' + err.message, 'error');
+          } finally {
+            finalizingNote.value = false;
+          }
+        };
+
         const closeClinicalNotesModal = () => {
           showClinicalNotesModal.value = false;
           showClinicalNoteForm.value = false;
@@ -3155,6 +3211,8 @@ window.healthPWA = {
           openNewClinicalNoteForm,
           viewExistingNote,
           backToNotesList,
+          finalizeNote,
+          finalizingNote,
           capturePhoto,
           saveClinicalNotes,
           completeServiceWithoutQuoteInTodayView,
@@ -3761,7 +3819,11 @@ window.healthPWA = {
                      @click="viewExistingNote(note)"
                      style="background:#fff; border:1px solid #e0e0e0; border-radius:10px; padding:12px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <strong style="font-size:14px;">{{ note.author }}</strong>
+                    <span style="display:flex; align-items:center; gap:6px;">
+                      <strong style="font-size:14px;">{{ note.author }}</strong>
+                      <span v-if="note.emr_state === 'final'" style="font-size:10px; font-weight:600; background:#e8f5e9; color:#2e7d32; padding:2px 6px; border-radius:10px;">{{ _t('Signed') }}</span>
+                      <span v-else-if="note.emr_state === 'draft'" style="font-size:10px; font-weight:600; background:#fff3e0; color:#e65100; padding:2px 6px; border-radius:10px;">{{ _t('Draft') }}</span>
+                    </span>
                     <small style="color:#999; font-size:11px;">{{ new Date(note.date).toLocaleString() }}</small>
                   </div>
                   <div style="font-size:12px; color:#1565C0; margin-bottom:4px;">{{ note.author_role }}</div>
@@ -3792,6 +3854,24 @@ window.healthPWA = {
                 </div>
                 <div style="font-size:12px; color:#1565C0;">{{ viewingClinicalNote.author_role }}</div>
               </div>
+
+              <!-- EMR finalize (emr-record-spine phase 1.5): signed banner or sign action -->
+              <div v-if="viewingClinicalNote.emr_state === 'final'" style="background:#e8f5e9; border:1px solid #a5d6a7; border-radius:8px; padding:10px 12px; margin-bottom:12px;">
+                <div style="font-weight:600; color:#2e7d32; font-size:13px; display:flex; align-items:center; gap:4px;">
+                  <i class="material-icons" style="font-size:16px;">lock</i>{{ _t('Signed medical record — locked') }}
+                </div>
+                <div v-if="viewingClinicalNote.signed_by" style="font-size:12px; color:#555; margin-top:2px;">
+                  {{ _t('Signed by') }} {{ viewingClinicalNote.signed_by }}<span v-if="viewingClinicalNote.signed_datetime"> · {{ new Date(viewingClinicalNote.signed_datetime).toLocaleString() }}</span>
+                </div>
+              </div>
+              <div v-else-if="viewingClinicalNote.emr_state === 'draft'" style="margin-bottom:12px;">
+                <button @click="finalizeNote(viewingClinicalNote)" :disabled="finalizingNote" class="btn btn-primary" style="width:100%;">
+                  <i class="material-icons" style="vertical-align:middle; margin-right:4px;">verified</i>
+                  {{ finalizingNote ? _t('Signing…') : _t('Finalize & Sign') }}
+                </button>
+                <div style="font-size:11px; color:#999; text-align:center; margin-top:4px;">{{ _t('Requires an internet connection.') }}</div>
+              </div>
+
               <div v-if="viewingClinicalNote.clinical_notes" class="clinical-form-group">
                 <label class="clinical-form-label">{{ _t('Clinical Notes') }}</label>
                 <div style="padding:8px 12px; background:#fff; border:1px solid #e0e0e0; border-radius:8px; white-space:pre-line; font-size:14px;" v-html="viewingClinicalNote.clinical_notes"></div>

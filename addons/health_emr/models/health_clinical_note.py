@@ -158,8 +158,13 @@ class HealthClinicalNote(models.Model):
                 'hash_version': HASH_VERSION,
             }
             # Seal over the about-to-be-final content + signature values (the
-            # signed_datetime in vals, not the unset field).
-            vals['content_hash'] = note._compute_content_hash(vals)
+            # signed_datetime in vals, not the unset field). Computed sudo: the
+            # hash traverses order_id.patient_id, and FSO read is catchment-
+            # gated by record rule — a point-of-care nurse signing her own note
+            # is not necessarily in that catchment. Authorization is already
+            # settled by _ensure_can_finalize (author/head-nurse) above; the
+            # signer stays the REAL user.
+            vals['content_hash'] = note.sudo()._compute_content_hash(vals)
             # Guard passes: the record is still draft at guard-check time.
             note.sudo().write(vals)
             note.sudo().message_post(body=_(

@@ -134,7 +134,7 @@ class HealthPWAAPIController(http.Controller):
         notes = []
         if hasattr(order, 'clinical_note_ids'):
             for note in order.clinical_note_ids:
-                notes.append({
+                note_data = {
                     'id': note.id,
                     'author': note.author_id.name if note.author_id else 'Unknown',
                     'author_role': note.author_role or 'Staff',
@@ -154,7 +154,17 @@ class HealthPWAAPIController(http.Controller):
                         {'id': att.id, 'filename': att.name, 'url': f'/web/content/{att.id}'}
                         for att in note.image_ids
                     ],
-                })
+                }
+                # EMR finalization state (health_emr — optional module). Read
+                # defensively so health_pwa keeps no hard dependency on it.
+                if 'emr_state' in note._fields:
+                    note_data['emr_state'] = note.emr_state
+                    note_data['signed_by'] = (
+                        note.signed_by_id.name if note.signed_by_id else None)
+                    note_data['signed_datetime'] = (
+                        note.signed_datetime.isoformat()
+                        if note.signed_datetime else None)
+                notes.append(note_data)
         return notes
 
     @http.route('/health_pwa/api/patients', type='http', auth='user', methods=['GET'], csrf=False)
@@ -1024,6 +1034,52 @@ class HealthPWAAPIController(http.Controller):
                 'message': _('Clinical note created successfully')
             })
 
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/clinical_notes/<int:note_id>/finalize',
+                type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_finalize_clinical_note(self, order_id, note_id, **kwargs):
+        """Finalize & sign a clinical note (point-of-care, ONLINE-only).
+
+        Runs as the authenticated nurse (NOT sudo) so the signature is
+        attributed to her; health_emr.action_finalize() enforces
+        author-or-head-nurse and performs the locked write via its own internal
+        sudo. Idempotent: an already-finalized note returns its signed state."""
+        if not self._check_api_access():
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
+        try:
+            # Read the note + its order sudo (FSO read is catchment-gated by
+            # record rule; a point-of-care nurse is not necessarily in it).
+            # Authorization is enforced by action_finalize (author/head-nurse).
+            note_sudo = request.env['health.clinical.note'].sudo().browse(note_id)
+            if not note_sudo.exists() or note_sudo.order_id.id != order_id:
+                return self._prepare_json_response(
+                    error=_('Clinical note not found'), status_code=404)
+            if 'emr_state' not in note_sudo._fields:
+                return self._prepare_json_response(
+                    error=_('EMR finalization is not available.'), status_code=400)
+
+            if note_sudo.emr_state != 'final':
+                # Finalize as the REAL nurse so the signature attributes to her;
+                # action_finalize sudo's its own heavy reads/writes internally.
+                request.env['health.clinical.note'].browse(note_id).action_finalize()
+                note_sudo.invalidate_recordset()
+
+            return self._prepare_json_response(data={
+                'note_id': note_sudo.id,
+                'emr_state': note_sudo.emr_state,
+                'signed_by': note_sudo.signed_by_id.name if note_sudo.signed_by_id else None,
+                'signed_datetime': (note_sudo.signed_datetime.isoformat()
+                                    if note_sudo.signed_datetime else None),
+                'clinical_notes_submitted': note_sudo.order_id.clinical_notes_submitted,
+                'message': _('Clinical note finalized and signed'),
+            })
+        except (UserError, ValidationError, AccessError) as e:
+            # Authorization / empty-note / guard failures — a 403 the client
+            # surfaces as a toast (not a 500).
+            return self._prepare_json_response(
+                error=str(e), status_code=403)
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
 
