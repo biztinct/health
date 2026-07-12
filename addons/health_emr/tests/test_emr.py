@@ -220,6 +220,32 @@ class TestAddendum(EmrBase):
 
 
 @tagged('post_install', '-at_install')
+class TestCascadeProtection(EmrBase):
+    """Deleting an FSO must NOT cascade-delete finalized notes (ondelete=
+    cascade would bypass the note's own unlink guard — §5.30)."""
+
+    def test_fso_delete_blocked_with_finalized_note(self):
+        note = self._note()
+        note.action_finalize()
+        with self.assertRaises(UserError):
+            self.order.unlink()
+
+    def test_fso_delete_no_su_escape(self):
+        note = self._note()
+        note.action_finalize()
+        with self.assertRaises(UserError):
+            self.order.with_user(SUPERUSER_ID).unlink()
+
+    def test_fso_delete_ok_with_only_draft_notes(self):
+        order = self._make_order(self.patient)
+        self._note(order=order)  # draft note — cascades away, allowed
+        order_id = order.id
+        order.unlink()
+        self.assertFalse(
+            self.env['health.fieldservice.order'].browse(order_id).exists())
+
+
+@tagged('post_install', '-at_install')
 class TestFhirReflection(EmrBase):
     """The FHIR DocumentReference reflects EMR status — verified from here so
     the coupling lives with health_emr (health_fhir_core stays independent).
@@ -233,6 +259,16 @@ class TestFhirReflection(EmrBase):
         from odoo.addons.health_fhir_core.serializers import REGISTRY
         return REGISTRY['DocumentReference']
 
+    def _validate(self, resource_dict):
+        # Round-trip the serialized resource through fhir.resources so the
+        # finalized-branch additions (docStatus/authenticator/relatesTo) are
+        # proven valid R4, not just asserted as dict keys.
+        from odoo.addons.health_fhir_core.serializers.base import validate_resource
+        try:
+            return validate_resource(resource_dict)
+        except ImportError:
+            self.skipTest('fhir.resources not installed')
+
     def test_docstatus_reflects_finalization(self):
         serializer = self._serializer()
         note = self._note()
@@ -241,6 +277,10 @@ class TestFhirReflection(EmrBase):
         note.invalidate_recordset()
         res = serializer.to_fhir(note)
         self.assertEqual(res['docStatus'], 'final')
+        # authenticator (the signer) present and the whole finalized resource
+        # is valid FHIR.
+        self.assertIn('authenticator', res)
+        self._validate(res)
 
     def test_addendum_relatesto(self):
         serializer = self._serializer()
@@ -252,3 +292,4 @@ class TestFhirReflection(EmrBase):
         self.assertEqual(
             res['relatesTo'][0]['target']['reference'],
             'DocumentReference/%s' % original.id)
+        self._validate(res)

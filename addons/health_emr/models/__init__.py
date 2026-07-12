@@ -1,2 +1,3 @@
 # -*- coding: utf-8 -*-
 from . import health_clinical_note
+from . import health_fieldservice_order
