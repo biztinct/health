@@ -3,6 +3,6 @@ access_health_pwa_user,Health PWA User Access,base.model_res_partner,base.group_
 access_health_pwa_config,Health PWA Config Access,model_health_pwa_config,base.group_system,1,1,1,1
 access_health_pwa_config_user,Health PWA Config User,model_health_pwa_config,base.group_user,1,0,0,0
 access_health_pwa_push_sub,Health PWA Push Subscription,model_health_pwa_push_subscription,base.group_user,1,1,1,1
-access_health_pwa_staff_notif,Health PWA Staff Notification,model_health_pwa_staff_notification,base.group_user,1,1,1,1
+access_health_pwa_staff_notif,Health PWA Staff Notification,model_health_pwa_staff_notification,base.group_system,1,1,1,1
 access_health_pwa_sync_tombstone,Health PWA Sync Tombstone,model_health_pwa_sync_tombstone,base.group_system,1,1,1,1
 access_health_pwa_action_receipt,Health PWA Action Receipt,model_health_pwa_action_receipt,base.group_system,1,1,1,1

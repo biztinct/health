@@ -86,6 +86,11 @@ class HealthSyncManager {
       // Step 2: Pull changes from server
       const pullResult = await this.pullServerChanges();
 
+      // Step 2b: GC orphan patient docs (pwa-cache-hygiene). Runs AFTER
+      // applyServerChanges succeeded (inside pullServerChanges). Skips itself on
+      // a capped pull — order absence is not proof of de-scope when truncated.
+      await this.gcOrphanPatients(this._pullWasCapped(pullResult));
+
       // Step 3: Update sync timestamp — prefer the server-authoritative
       // watermark over the (drifting) device clock; fall back for old servers.
       this.lastSyncTime = (pullResult && pullResult.watermark) || new Date().toISOString();
@@ -126,6 +131,11 @@ class HealthSyncManager {
       
       // Step 2: Pull ALL changes from server (force full sync)
       const pullResult = await this.pullServerChanges(true); // Pass true for force full
+
+      // Step 2b: GC orphan patient docs (pwa-cache-hygiene). Same skip-when-
+      // capped interlock as performSync — a force-full pull for an owner/ops
+      // device (scope = all orders) trips the cap and must NOT GC.
+      await this.gcOrphanPatients(this._pullWasCapped(pullResult));
 
       // Step 3: Update sync timestamp — prefer the server watermark.
       this.lastSyncTime = (pullResult && pullResult.watermark) || new Date().toISOString();
@@ -275,12 +285,14 @@ class HealthSyncManager {
     
     // Apply field service orders changes
     if (changes.field_service_orders && changes.field_service_orders.records.length > 0) {
-      // The server caps DATA upserts at 500 rows; count only those (the
+      // The server caps DATA upserts at 500 rows and now says so authoritatively
+      // via the additive `capped` flag (pwa-cache-hygiene). Fall back to the
+      // upsert-row count for an old server that never sends the flag. The
       // records list also carries id-only is_deleted removals, which are
-      // uncapped and must not trip a spurious warning).
+      // uncapped and must not trip a spurious warning.
       const upsertCount = changes.field_service_orders.records.filter(
         (r) => !r.is_deleted).length;
-      if (upsertCount >= 500) {
+      if (changes.field_service_orders.capped || upsertCount >= 500) {
         console.warn('health_pwa sync: order cap hit (500) — older orders not cached offline');
       }
       await this.updateLocalData('orders', changes.field_service_orders.records);
@@ -302,6 +314,72 @@ class HealthSyncManager {
     }
   }
   
+  _pullWasCapped(pullResult) {
+    // True iff the server truncated the FSO upsert set (additive `capped`
+    // flag from _get_fso_changes). An old server never sends it -> falsy.
+    return !!(pullResult && pullResult.changes
+      && pullResult.changes.field_service_orders
+      && pullResult.changes.field_service_orders.capped);
+  }
+
+  async gcOrphanPatients(wasCapped) {
+    // Client-side patient GC (pwa-cache-hygiene phase). A cached patient doc
+    // whose id is no longer referenced by ANY cached order is deleted after a
+    // successful, NON-capped sync. This is the actual fix for de-scoped
+    // PATIENTS lingering on devices: server-side de-scoping happens with no
+    // patient-row write (a nurse is de-assigned, an order ages past the 90-day
+    // horizon), so no write-window feed could catch it — but the order cache
+    // IS authoritative (orders get correct G-scoped removals), so patients
+    // follow it referentially. Never throws: a GC failure must not fail sync.
+    try {
+      // Interlock (§0 item 3, BINDING): a capped pull truncated the order set,
+      // so order absence is NOT proof of de-scope. Skipping GC here is what
+      // keeps owner/ops devices (scope = all orders -> cap fires) from deleting
+      // valid patients.
+      if (wasCapped) {
+        console.log('health_pwa sync: GC skipped (capped) — order pull truncated, patient set not authoritative');
+        return;
+      }
+
+      const patientsDb = this.db.patients;
+      const ordersDb = this.db.orders;
+      if (!patientsDb || !ordersDb) {
+        return;
+      }
+
+      // referenced = the set of patient_id integers across all cached orders.
+      const referenced = new Set();
+      const orderRows = await ordersDb.allDocs({ include_docs: true });
+      for (const row of orderRows.rows) {
+        const pid = row.doc && row.doc.patient_id;
+        if (pid !== null && pid !== undefined) {
+          referenced.add(Number(pid));
+        }
+      }
+
+      // Remove every cached patient whose id is no longer referenced. Per-doc
+      // try/catch keeps a single conflict (a concurrent write bumped _rev) from
+      // aborting the sweep; the next GC pass retries it.
+      let removed = 0;
+      const patientRows = await patientsDb.allDocs();
+      for (const row of patientRows.rows) {
+        if (referenced.has(Number(row.id))) {
+          continue;
+        }
+        try {
+          await patientsDb.remove(row.id, row.value.rev);
+          removed += 1;
+        } catch (removeErr) {
+          // conflict-safe: skip and let the next sweep retry.
+        }
+      }
+      console.log(`health_pwa sync: patient GC removed ${removed} orphan doc(s)`);
+    } catch (error) {
+      // A GC failure must NEVER fail the sync (§0 item 3 / design item 4).
+      console.error('health_pwa sync: patient GC failed (non-fatal)', error);
+    }
+  }
+
   async updateLocalData(dbName, records) {
     try {
       const db = this.db[dbName];

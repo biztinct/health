@@ -431,7 +431,7 @@ class HealthPWAController(http.Controller):
         """Check if user has access to health modules"""
         try:
             # Check if user can access health models
-            request.env['res.partner'].check_access_rights('read')
+            request.env['res.partner'].check_access('read')
             return True
         except:
             return False

@@ -2,7 +2,7 @@
 
 import json
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from odoo import http, fields, _
 from odoo.http import request
@@ -21,6 +21,15 @@ NOTE_TEXT_FIELDS = ('clinical_notes', 'diagnosis', 'treatment_performed',
                     'patient_condition_before', 'patient_condition_after')
 NOTE_COUNT_FIELDS = ('injection_count', 'medication_count', 'wound_count',
                      'iv_fluid_count')
+
+# Delta-feed cap literals (pwa-cache-hygiene phase). Extracted into module
+# constants so the honest-cap tests can monkeypatch FSO_UPSERT_CAP to force the
+# capped path deterministically (methods reference these as module globals, so
+# a monkeypatch.setattr on the module takes effect at call time). Values are
+# unchanged from the pre-phase inline literals — this phase does NOT change the
+# cap magnitudes.
+FSO_CANDIDATE_LIMIT = 2000
+FSO_UPSERT_CAP = 500
 
 
 def _selection_labels(record, field_name):
@@ -45,7 +54,7 @@ class HealthPWASyncController(http.Controller):
             return False
 
         try:
-            request.env['res.partner'].check_access_rights('read')
+            request.env['res.partner'].check_access('read')
             return True
         except Exception:
             return False
@@ -444,7 +453,7 @@ class HealthPWASyncController(http.Controller):
             ('create_date', '>=', since_datetime),
         ]
         candidates = Order.with_context(active_test=False).search(
-            candidate_domain, order='write_date desc', limit=2000)
+            candidate_domain, order='write_date desc', limit=FSO_CANDIDATE_LIMIT)
 
         # Scope changes ride the ASSIGNMENT row, not the order: cancelling an
         # assignment (state write) bumps no stored compute on the order, so the
@@ -474,16 +483,30 @@ class HealthPWASyncController(http.Controller):
 
         records = []
         removed_ids = set()
-        upsert_count = 0
+
+        # Removals first (UNCAPPED, unsorted): every changed candidate that is
+        # NOT active-and-in-scope emits an id-only tombstone (§2.3 — never leak
+        # the fields of an out-of-scope order). Removals must never be dropped
+        # by the upsert cap, or a de-scoped order would linger on the device.
         for order in candidates:
-            if order.id in in_scope_ids:
-                if upsert_count >= 500:
-                    continue  # cap the data-bearing upserts (client warns at 500)
-                records.append(self._fso_record(order))
-                upsert_count += 1
-            else:
+            if order.id not in in_scope_ids:
                 records.append({'id': order.id, 'is_deleted': True})
                 removed_ids.add(order.id)
+
+        # Upserts (CAPPED at FSO_UPSERT_CAP): when the caller's in-scope set
+        # exceeds the cap we keep the LATEST orders by scheduled_datetime rather
+        # than the write_date order the candidate query happened to return — a
+        # nurse cares about upcoming/recent visits, not whichever rows were most
+        # recently touched. Sort ONLY the in-scope upsert candidates; the
+        # candidate WINDOW queries above (both §5.33 write-date windows) stay
+        # untouched. `capped` is surfaced additively so the client SKIPS patient
+        # GC on a truncated pull (order absence is not proof of de-scope).
+        in_scope_sorted = in_scope_active.sorted(
+            key=lambda o: o.scheduled_datetime or datetime.min, reverse=True)
+        capped = len(in_scope_sorted) > FSO_UPSERT_CAP
+        for order in in_scope_sorted[:FSO_UPSERT_CAP]:
+            records.append(self._fso_record(order))
+        upsert_count = min(len(in_scope_sorted), FSO_UPSERT_CAP)
 
         # Hard-delete tombstones (§2.3). On the 30-day fallback window use a
         # now-30d stamp floor (idempotent, harmless); otherwise `since`.
@@ -500,13 +523,17 @@ class HealthPWASyncController(http.Controller):
                 removed_ids.add(tomb.res_id)
 
         _logger.info(
-            "Sync: %s FSO records (%s upserts, %s removals)",
-            len(records), upsert_count, len(removed_ids))
-        return ({
+            "Sync: %s FSO records (%s upserts, %s removals, capped=%s)",
+            len(records), upsert_count, len(removed_ids), capped)
+        fso_changes = {
             'model': 'health.fieldservice.order',
             'count': len(records),
             'records': records,
-        }, in_scope_active)
+        }
+        if capped:
+            # Additive key — old clients ignore it, new clients skip patient GC.
+            fso_changes['capped'] = True
+        return (fso_changes, in_scope_active)
 
     def _get_team_changes(self, since_datetime, scope):
         """Get team changes since last sync (already member-scoped)."""
