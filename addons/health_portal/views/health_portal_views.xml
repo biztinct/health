@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_portal_access_list" model="ir.ui.view">
+        <field name="name">health.portal.access.list</field>
+        <field name="model">health.portal.access</field>
+        <field name="arch" type="xml">
+            <list string="My Care Access">
+                <field name="patient_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-muted="state == 'revoked'"/>
+                <field name="last_access_datetime"/>
+                <field name="access_count"/>
+                <field name="expires_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_portal_access_form" model="ir.ui.view">
+        <field name="name">health.portal.access.form</field>
+        <field name="model">health.portal.access</field>
+        <field name="arch" type="xml">
+            <form string="My Care Access">
+                <header>
+                    <button name="action_rotate_token" type="object"
+                            string="Rotate Token" class="btn-secondary"
+                            confirm="Rotate the token? The current My Care link will stop working immediately."
+                            invisible="state != 'active'"/>
+                    <button name="action_revoke" type="object"
+                            string="Revoke" class="btn-secondary"
+                            confirm="Revoke access? The My Care link will stop working."
+                            invisible="state != 'active'"/>
+                    <button name="action_reactivate" type="object"
+                            string="Reactivate" class="btn-primary"
+                            invisible="state != 'revoked'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="active,revoked"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="patient_id"
+                                   options="{'no_create': True}"/>
+                            <field name="expires_at"/>
+                        </group>
+                        <group>
+                            <field name="last_access_datetime"/>
+                            <field name="access_count"/>
+                        </group>
+                    </group>
+                    <group string="My Care Link (share with the patient)">
+                        <field name="portal_url" widget="CopyClipboardChar" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_portal_access" model="ir.actions.act_window">
+        <field name="name">My Care Portal Access</field>
+        <field name="res_model">health.portal.access</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Issue a My Care link.</p>
+            <p>Create an access record for a patient to generate their standing
+               /my/care link. Rotate or revoke it any time.</p>
+        </field>
+    </record>
+
+    <record id="view_portal_access_log_list" model="ir.ui.view">
+        <field name="name">health.portal.access.log.list</field>
+        <field name="model">health.portal.access.log</field>
+        <field name="arch" type="xml">
+            <list string="My Care Access Log" create="false" edit="false">
+                <field name="ts"/>
+                <field name="patient_id"/>
+                <field name="section"/>
+                <field name="ip"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_portal_access_log" model="ir.actions.act_window">
+        <field name="name">My Care Access Log</field>
+        <field name="res_model">health.portal.access.log</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <menuitem id="menu_portal_access"
+              name="My Care Portal"
+              parent="health_base.menu_healthcare_patients"
+              action="action_portal_access"
+              sequence="40"/>
+    <menuitem id="menu_portal_access_log"
+              name="My Care Access Log"
+              parent="health_base.menu_healthcare_patients"
+              action="action_portal_access_log"
+              sequence="41"/>
+
+</odoo>

@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_portal_access_nurse,health.portal.access nurse,model_health_portal_access,health_base.group_healthcare_nurse,1,0,0,0
+access_portal_access_ops,health.portal.access ops,model_health_portal_access,health_base.group_healthcare_operations_manager,1,1,1,0
+access_portal_access_manager,health.portal.access manager,model_health_portal_access,health_base.group_healthcare_manager,1,1,1,1
+access_portal_access_admin,health.portal.access admin,model_health_portal_access,health_base.group_healthcare_admin,1,1,1,1
+access_portal_access_owner,health.portal.access owner,model_health_portal_access,health_base.group_healthcare_owner,1,1,1,1
+access_portal_access_log_ops,health.portal.access.log ops,model_health_portal_access_log,health_base.group_healthcare_operations_manager,1,0,0,0
+access_portal_access_log_manager,health.portal.access.log manager,model_health_portal_access_log,health_base.group_healthcare_manager,1,0,0,0
+access_portal_access_log_admin,health.portal.access.log admin,model_health_portal_access_log,health_base.group_healthcare_admin,1,0,0,0
+access_portal_access_log_owner,health.portal.access.log owner,model_health_portal_access_log,health_base.group_healthcare_owner,1,0,0,0

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Self-contained styles (no website/backend assets); flat mono palette. -->
+    <template id="portal_styles" name="My Care Styles">
+        <style>
+            :root { --ink:#1f2933; --muted:#66707a; --line:#e4e7eb;
+                    --accent:#0b6e6e; --bg:#f5f7f8; --card:#ffffff; }
+            * { box-sizing:border-box; }
+            body { margin:0; background:var(--bg); color:var(--ink);
+                   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+                   font-size:15px; line-height:1.45; -webkit-text-size-adjust:100%; }
+            .wrap { max-width:560px; margin:0 auto; padding:16px 14px 40px; }
+            .brand { display:flex; align-items:center; gap:8px; padding:6px 0 6px; }
+            .brand .dot { width:10px; height:10px; border-radius:50%; background:var(--accent); }
+            .brand h1 { font-size:18px; margin:0; font-weight:700; }
+            .who { color:var(--muted); font-size:13px; margin:2px 0 16px; }
+            .sec { font-size:13px; font-weight:700; text-transform:uppercase;
+                   letter-spacing:.04em; color:var(--muted); margin:20px 0 8px; }
+            .card { background:var(--card); border:1px solid var(--line);
+                    border-radius:12px; padding:12px 14px; margin-bottom:10px; }
+            .row1 { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+            .svc { font-weight:600; }
+            .when { color:var(--accent); font-weight:600; white-space:nowrap; }
+            .meta { color:var(--muted); font-size:13px; margin-top:2px; }
+            .chip { display:inline-block; font-size:11px; font-weight:700;
+                    padding:2px 8px; border-radius:20px; background:#eef2f2; color:var(--accent); }
+            .empty { color:var(--muted); font-size:14px; padding:14px 2px; }
+            .foot { color:var(--muted); font-size:12px; text-align:center; margin-top:26px; }
+        </style>
+    </template>
+
+    <!-- Shared page shell; section content is injected as t-out="0". -->
+    <template id="portal_layout" name="My Care Layout">
+        <html lang="vi">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="robots" content="noindex, nofollow"/>
+                <title>Chăm sóc của tôi</title>
+                <t t-call="health_portal.portal_styles"/>
+            </head>
+            <body>
+                <div class="wrap">
+                    <div class="brand"><span class="dot"/><h1>Chăm sóc của tôi</h1></div>
+                    <t t-out="0"/>
+                    <div class="foot">Trang này chỉ dành cho bạn. Vui lòng không chia sẻ liên kết.</div>
+                </div>
+            </body>
+        </html>
+    </template>
+
+    <!-- Hub: patient name + upcoming + history visits (Phase 4A). -->
+    <template id="portal_hub" name="My Care Hub">
+        <t t-call="health_portal.portal_layout">
+            <div class="who">
+                <t t-esc="patient_name"/>
+                <t t-if="patient_code"> · <t t-esc="patient_code"/></t>
+            </div>
+
+            <div class="sec">Lịch hẹn sắp tới</div>
+            <t t-if="upcoming">
+                <t t-foreach="upcoming" t-as="v">
+                    <div class="card">
+                        <div class="row1">
+                            <span class="svc"><t t-esc="v['service']"/></span>
+                            <span class="when"><t t-esc="v['when']"/></span>
+                        </div>
+                        <div class="meta">
+                            <t t-if="v['staff']">Điều dưỡng: <t t-esc="v['staff']"/> · </t>
+                            <span class="chip"><t t-esc="v['state_label']"/></span>
+                        </div>
+                        <t t-if="v['facility_phone']">
+                            <div class="meta">ĐT cơ sở: <t t-esc="v['facility_phone']"/></div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+            <t t-else="">
+                <div class="empty">Chưa có lịch hẹn sắp tới.</div>
+            </t>
+
+            <div class="sec">Lịch sử thăm khám</div>
+            <t t-if="history">
+                <t t-foreach="history" t-as="v">
+                    <div class="card">
+                        <div class="row1">
+                            <span class="svc"><t t-esc="v['service']"/></span>
+                            <span class="when"><t t-esc="v['when']"/></span>
+                        </div>
+                        <div class="meta">
+                            <t t-if="v['staff']">Điều dưỡng: <t t-esc="v['staff']"/> · </t>
+                            <span class="chip"><t t-esc="v['state_label']"/></span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+            <t t-else="">
+                <div class="empty">Chưa có lịch sử thăm khám.</div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Neutral page: invalid / revoked / expired / unknown (no oracle). -->
+    <template id="portal_neutral" name="My Care Unavailable">
+        <t t-call="health_portal.portal_layout">
+            <div class="card">
+                <div class="svc">Liên kết không khả dụng</div>
+                <div class="meta">Liên kết này không còn hiệu lực hoặc không đúng.
+                    Vui lòng liên hệ cơ sở chăm sóc của bạn để được cấp liên kết mới.</div>
+            </div>
+        </t>
+    </template>
+
+</odoo>
