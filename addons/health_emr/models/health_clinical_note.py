@@ -32,6 +32,10 @@ _logger = logging.getLogger(__name__)
 # change can be versioned without re-sealing historical records.
 HASH_VERSION = 'v1'
 
+# Per-run cap for the nightly unsigned-notes cron. A large backlog drains over
+# several runs (oldest-first) rather than one giant transaction.
+CRON_BATCH_LIMIT = 500
+
 # Fields frozen once the note is finalized. Signature/state/seal fields are
 # included: they are SET by the finalizing write (which passes the guard
 # because the record is still draft at guard time) and locked forever after.
@@ -304,7 +308,7 @@ class HealthClinicalNote(models.Model):
             drafts = self.sudo().search([
                 ('emr_state', '=', 'draft'),
                 ('write_date', '<=', fields.Datetime.to_string(cutoff)),
-            ])
+            ], order='write_date asc', limit=CRON_BATCH_LIMIT)
             drafts._create_sign_reminder()
 
         if self._param_true('health_emr.auto_finalize_enabled', 'False'):
@@ -313,7 +317,7 @@ class HealthClinicalNote(models.Model):
             stale = self.sudo().search([
                 ('emr_state', '=', 'draft'),
                 ('write_date', '<=', fields.Datetime.to_string(cutoff)),
-            ])
+            ], order='write_date asc', limit=CRON_BATCH_LIMIT)
             stale._auto_finalize()
         return True
 
@@ -329,12 +333,20 @@ class HealthClinicalNote(models.Model):
                 and (not todo_type or a.activity_type_id == todo_type))
             if already:
                 continue
-            note.activity_schedule(
-                'mail.mail_activity_data_todo',
-                user_id=note.author_id.id,
-                summary=_('Sign this clinical note'),
-                note=_('This clinical note is still a draft. Finalize & sign '
-                       'it to make it a permanent medical record.'))
+            # Per-note savepoint: one bad note (e.g. an inactive author) must
+            # not abort the nightly run for every other note.
+            try:
+                with self.env.cr.savepoint():
+                    note.activity_schedule(
+                        'mail.mail_activity_data_todo',
+                        user_id=note.author_id.id,
+                        summary=_('Sign this clinical note'),
+                        note=_('This clinical note is still a draft. Finalize '
+                               '& sign it to make it a permanent medical '
+                               'record.'))
+            except Exception:
+                _logger.exception(
+                    'EMR sign-reminder failed for clinical note %s', note.id)
         return True
 
     def _auto_finalize(self):
@@ -347,24 +359,32 @@ class HealthClinicalNote(models.Model):
         for note in self.sudo():
             if note.emr_state != 'draft' or not note._has_content():
                 continue
-            author = note.author_id
-            vals = {
-                'emr_state': 'final',
-                'signed_by_id': author.id if author else False,
-                'signed_role': note._role_name_of(author) if author else 'System',
-                'signed_datetime': fields.Datetime.now(),
-                'signed_method': 'auto',
-                'hash_version': HASH_VERSION,
-            }
-            vals['content_hash'] = note._compute_content_hash(vals)
-            note.write(vals)  # already sudo; guard passes (draft at check time)
-            note.message_post(body=_(
-                'Auto-authenticated by the system backstop after the signing '
-                'grace period. Recorded against the author %(author)s. This is '
-                'a content lock, not a clinician signature.',
-                author=author.name if author else 'System'))
-            # The reminder is moot once locked.
-            note.activity_unlink(['mail.mail_activity_data_todo'])
+            # Per-note savepoint: one bad note must not abort the whole batch.
+            try:
+                with self.env.cr.savepoint():
+                    author = note.author_id
+                    vals = {
+                        'emr_state': 'final',
+                        'signed_by_id': author.id if author else False,
+                        'signed_role': (note._role_name_of(author)
+                                        if author else 'System'),
+                        'signed_datetime': fields.Datetime.now(),
+                        'signed_method': 'auto',
+                        'hash_version': HASH_VERSION,
+                    }
+                    vals['content_hash'] = note._compute_content_hash(vals)
+                    note.write(vals)  # sudo; guard passes (draft at check time)
+                    note.message_post(body=_(
+                        'Auto-authenticated by the system backstop after the '
+                        'signing grace period. Recorded against the author '
+                        '%(author)s. This is a content lock, not a clinician '
+                        'signature.',
+                        author=author.name if author else 'System'))
+                    # The reminder is moot once locked.
+                    note.activity_unlink(['mail.mail_activity_data_todo'])
+            except Exception:
+                _logger.exception(
+                    'EMR auto-finalize failed for clinical note %s', note.id)
         return True
 
     # ------------------------------------------------------------------
