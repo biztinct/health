@@ -250,3 +250,79 @@ class TestPortalRecords(TransactionCase, PortalFixtures):
     def test_cannot_view_draft_note(self):
         draft = self._note(self.order)
         self.assertFalse(self.access._note_or_false(draft.id))
+
+
+# A valid 1x1 transparent PNG (signature evidence; the field image-validates).
+_SIG_B64 = ('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8'
+            'z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')
+
+
+@tagged('post_install', '-at_install')
+class TestPortalConsents(TransactionCase, PortalFixtures):
+    """Phase 4C — view + withdraw + grant-with-signature."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._setup()
+        cls.patient = cls._patient('PP Consent Patient')
+        cls.access = cls.env['health.portal.access'].create(
+            {'patient_id': cls.patient.id})
+        cls.Consent = cls.env['health.consent']
+
+    def _active(self, ctype):
+        return self.Consent.check_consent(self.patient, ctype)
+
+    def test_grant_then_withdraw(self):
+        self.assertFalse(self._active('data_sharing'))
+        self.assertTrue(self.access._portal_grant('data_sharing', _SIG_B64))
+        self.assertTrue(self._active('data_sharing'))
+        self.access._portal_withdraw('data_sharing')
+        self.assertFalse(self._active('data_sharing'))
+
+    def test_grant_requires_signature(self):
+        self.assertFalse(self.access._portal_grant('marketing', ''))
+        self.assertFalse(self._active('marketing'))
+
+    def test_grant_rejects_unmanaged_type(self):
+        # 'service' is a care-delivery consent — not patient-toggleable.
+        self.assertFalse(self.access._portal_grant('service', _SIG_B64))
+        self.assertFalse(self.access._portal_withdraw('service'))
+
+    def test_consents_ctx_status(self):
+        self.access._portal_grant('photography', _SIG_B64)
+        rows = {r['type']: r['active'] for r in self.access._consents_ctx()['consents']}
+        self.assertTrue(rows['photography'])
+        self.assertFalse(rows['data_sharing'])
+        self.assertIn('marketing', rows)
+
+
+@tagged('post_install', '-at_install')
+class TestPortalConsentsHttp(HttpCase, PortalFixtures):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._setup()
+        cls.patient = cls._patient('PP Consent Http')
+        cls.access = cls.env['health.portal.access'].create(
+            {'patient_id': cls.patient.id})
+
+    def test_consent_flow_over_http(self):
+        base = '/my/care/%s' % self.access.token
+        page = self.url_open(base + '/consents')
+        self.assertEqual(page.status_code, 200)
+        self.assertIn('Chưa đồng ý', page.text)
+        # grant form renders
+        gf = self.url_open(base + '/consents/data_sharing/grant')
+        self.assertEqual(gf.status_code, 200)
+        self.assertIn('pad', gf.text)  # signature canvas
+        # grant POST with a signature -> active
+        self.url_open(base + '/consents/data_sharing/grant',
+                      data={'signature': 'data:image/png;base64,' + _SIG_B64})
+        self.assertTrue(
+            self.env['health.consent'].check_consent(self.patient, 'data_sharing'))
+        # withdraw POST -> inactive (non-empty data so url_open sends POST)
+        self.url_open(base + '/consents/data_sharing/withdraw', data={'ok': '1'})
+        self.assertFalse(
+            self.env['health.consent'].check_consent(self.patient, 'data_sharing'))

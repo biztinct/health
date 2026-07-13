@@ -9,12 +9,15 @@ authentication. Security model in docs/strategy/handovers/patient-portal-phase.m
 expiry, dual rate-limit at the controller, append-only access log, every read
 sudo but scoped to this one patient_id.
 """
+import logging
 import secrets
 from datetime import timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import html2plaintext
+
+_logger = logging.getLogger(__name__)
 
 # Vietnam is UTC+7 with no DST — naive-UTC datetimes shift by a fixed offset for
 # wall-clock display (matches the family-link page convention).
@@ -257,6 +260,73 @@ class HealthPortalAccess(models.Model):
             lines.append(val)
             lines.append('')
         return '\n'.join(lines)
+
+
+    # -- My Consents (4C): patient view + withdraw + grant-with-signature ----
+    # Only the patient-controllable preferences; care-delivery consents
+    # (service, emergency_treatment) are captured by staff at intake, never
+    # portal-toggled.
+    MANAGED_CONSENT_TYPES = (
+        ('data_sharing', 'Chia sẻ dữ liệu y tế'),
+        ('photography', 'Chụp ảnh / quay phim'),
+        ('marketing', 'Nhận thông tin tiếp thị'),
+    )
+
+    def _consents_ctx(self):
+        self.ensure_one()
+        Consent = self.env['health.consent'].sudo()
+        rows = []
+        for ctype, label in self.MANAGED_CONSENT_TYPES:
+            active = bool(Consent._find_active_consent(self.patient_id.id, ctype))
+            rows.append({'type': ctype, 'label': label, 'active': active})
+        return {'token': self.token, 'patient_name': self.patient_id.name or '',
+                'consents': rows}
+
+    def _consent_label(self, ctype):
+        return dict(self.MANAGED_CONSENT_TYPES).get(ctype)
+
+    def _portal_withdraw(self, ctype):
+        """Withdraw the patient's active consent of `ctype`. Feeds the Phase-2
+        FHIR consent gate (withdraw data_sharing → external sharing stops)."""
+        self.ensure_one()
+        if ctype not in dict(self.MANAGED_CONSENT_TYPES):
+            return False
+        Consent = self.env['health.consent'].sudo()
+        active = Consent._find_active_consent(self.patient_id.id, ctype)
+        if active:
+            active.with_context(
+                withdrawal_reason='Bệnh nhân thu hồi qua cổng My Care'
+            ).action_withdraw()
+        return True
+
+    def _portal_grant(self, ctype, signature_b64):
+        """Grant `ctype` with the patient's on-screen signature (digital_
+        signature evidence). No-op if already active. Returns True on success,
+        False on a bad type / missing signature."""
+        self.ensure_one()
+        if ctype not in dict(self.MANAGED_CONSENT_TYPES) or not signature_b64:
+            return False
+        Consent = self.env['health.consent'].sudo()
+        if Consent._find_active_consent(self.patient_id.id, ctype):
+            return True  # already active
+        # Savepoint so a malformed signature (image validation raises) rolls
+        # back cleanly and the public page shows an error, never a 500.
+        try:
+            with self.env.cr.savepoint():
+                consent = Consent.create({
+                    'client_id': self.patient_id.id,
+                    'consent_type': ctype,
+                    'self_granted': True,
+                    'method': 'digital_signature',
+                    'signature': signature_b64,
+                    'scope_note': 'Granted by the patient via the My Care portal.',
+                })
+                consent.action_grant()
+        except Exception:
+            _logger.warning('Portal consent grant failed (patient %s, type %s)',
+                            self.patient_id.id, ctype)
+            return False
+        return True
 
 
 class HealthPortalAccessLog(models.Model):

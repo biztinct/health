@@ -97,3 +97,49 @@ class MyCarePortalController(http.Controller):
             ('Content-Disposition',
              'attachment; filename="ho-so-benh-an-%s.txt"' % note_id),
         ])
+
+    # -- My Consents (4C) ----------------------------------------------------
+    @http.route('/my/care/<string:token>/consents', type='http', auth='public',
+                website=False, methods=['GET'], csrf=False)
+    def portal_consents(self, token, **kwargs):
+        access, resp = self._guard(token)
+        if resp:
+            return resp
+        access._record_access('consents', request.httprequest.remote_addr)
+        return request.render('health_portal.portal_consents',
+                              access._consents_ctx())
+
+    @http.route('/my/care/<string:token>/consents/<string:ctype>/withdraw',
+                type='http', auth='public', website=False, methods=['POST'],
+                csrf=False)
+    def portal_consent_withdraw(self, token, ctype, **kwargs):
+        access, resp = self._guard(token)
+        if resp:
+            return resp
+        access._portal_withdraw(ctype)
+        access._record_access('withdraw:%s' % ctype,
+                              request.httprequest.remote_addr)
+        return request.redirect('/my/care/%s/consents' % token)
+
+    @http.route('/my/care/<string:token>/consents/<string:ctype>/grant',
+                type='http', auth='public', website=False,
+                methods=['GET', 'POST'], csrf=False)
+    def portal_consent_grant(self, token, ctype, **kwargs):
+        access, resp = self._guard(token)
+        if resp:
+            return resp
+        label = access._consent_label(ctype)
+        if not label:
+            return self._neutral()  # not a patient-managed type
+        if request.httprequest.method == 'POST':
+            sig = kwargs.get('signature') or ''
+            b64 = sig.split(',', 1)[1] if ',' in sig else sig
+            if access._portal_grant(ctype, b64.strip()):
+                access._record_access('grant:%s' % ctype,
+                                      request.httprequest.remote_addr)
+                return request.redirect('/my/care/%s/consents' % token)
+            # Missing/blank signature — re-render with an error.
+            return request.render('health_portal.portal_consent_grant', {
+                'token': token, 'ctype': ctype, 'label': label, 'error': True})
+        return request.render('health_portal.portal_consent_grant', {
+            'token': token, 'ctype': ctype, 'label': label, 'error': False})

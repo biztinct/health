@@ -38,6 +38,17 @@
             .nsec .lbl { font-size:12px; font-weight:700; text-transform:uppercase;
                          letter-spacing:.03em; color:var(--muted); margin-bottom:3px; }
             .nsec .val { white-space:pre-line; }
+            .crow { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+            .crow .lbl2 { font-weight:600; }
+            .on { color:#1b7a3d; font-weight:700; font-size:13px; }
+            .off { color:var(--muted); font-weight:600; font-size:13px; }
+            form.inline { margin:0; }
+            .btn-sm { font-size:13px; font-weight:600; padding:7px 12px; border-radius:9px;
+                      border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer; text-decoration:none; }
+            .btn-sm.warn { border-color:#e2c9c9; color:#a13b3b; }
+            #pad { border:1px solid var(--line); border-radius:10px; background:#fff;
+                   width:100%; height:180px; touch-action:none; display:block; }
+            .err { color:#a13b3b; font-size:13px; margin:8px 0; }
         </style>
     </template>
 
@@ -68,7 +79,8 @@
                 <t t-esc="patient_name"/>
                 <t t-if="patient_code"> · <t t-esc="patient_code"/></t>
             </div>
-            <a class="nav" t-attf-href="/my/care/#{token}/records">Hồ sơ bệnh án của tôi →</a>
+            <a class="nav" t-attf-href="/my/care/#{token}/records">Hồ sơ bệnh án của tôi →</a><br/>
+            <a class="nav" t-attf-href="/my/care/#{token}/consents">Đồng ý &amp; quyền riêng tư →</a>
 
             <div class="sec">Lịch hẹn sắp tới</div>
             <t t-if="upcoming">
@@ -166,6 +178,77 @@
                 </t>
             </div>
             <a class="btn" t-attf-href="/my/care/#{token}/records/#{note_id}/download">Tải xuống (.txt)</a>
+        </t>
+    </template>
+
+    <!-- My Consents: view + withdraw + grant (Phase 4C). -->
+    <template id="portal_consents" name="My Care Consents">
+        <t t-call="health_portal.portal_layout">
+            <a class="back" t-attf-href="/my/care/#{token}">← Quay lại</a>
+            <div class="sec">Đồng ý &amp; quyền riêng tư</div>
+            <t t-foreach="consents" t-as="c">
+                <div class="card">
+                    <div class="crow">
+                        <div>
+                            <div class="lbl2"><t t-esc="c['label']"/></div>
+                            <t t-if="c['active']"><span class="on">Đã đồng ý</span></t>
+                            <t t-else=""><span class="off">Chưa đồng ý</span></t>
+                        </div>
+                        <t t-if="c['active']">
+                            <form class="inline" method="post"
+                                  t-attf-action="/my/care/#{token}/consents/#{c['type']}/withdraw">
+                                <button type="submit" class="btn-sm warn">Thu hồi</button>
+                            </form>
+                        </t>
+                        <t t-else="">
+                            <a class="btn-sm" t-attf-href="/my/care/#{token}/consents/#{c['type']}/grant">Đồng ý</a>
+                        </t>
+                    </div>
+                </div>
+            </t>
+            <div class="meta" style="margin-top:8px;">Thu hồi “Chia sẻ dữ liệu y tế” sẽ dừng việc chia sẻ hồ sơ của bạn ra bên ngoài.</div>
+        </t>
+    </template>
+
+    <!-- Grant with on-screen signature (Phase 4C). -->
+    <template id="portal_consent_grant" name="My Care Consent Grant">
+        <t t-call="health_portal.portal_layout">
+            <a class="back" t-attf-href="/my/care/#{token}/consents">← Quay lại</a>
+            <div class="sec">Đồng ý: <t t-esc="label"/></div>
+            <div class="card">
+                <div class="meta">Vui lòng ký tên vào ô bên dưới để xác nhận đồng ý.</div>
+                <t t-if="error"><div class="err">Vui lòng ký trước khi gửi.</div></t>
+                <form id="sform" method="post"
+                      t-attf-action="/my/care/#{token}/consents/#{ctype}/grant">
+                    <canvas id="pad"/>
+                    <input type="hidden" name="signature" id="sigdata"/>
+                    <div style="display:flex; gap:8px; margin-top:10px;">
+                        <button type="button" class="btn-sm" onclick="clearPad()">Xóa</button>
+                        <button type="submit" class="btn">Xác nhận đồng ý</button>
+                    </div>
+                </form>
+            </div>
+            <script>
+                (function(){
+                  var c=document.getElementById('pad');
+                  var ctx=c.getContext('2d'); var drawing=false; var has=false;
+                  function size(){ c.width=c.offsetWidth; c.height=180;
+                    ctx.lineWidth=2; ctx.lineCap='round'; ctx.strokeStyle='#1f2933'; }
+                  window.addEventListener('load', size);
+                  function pos(e){ var r=c.getBoundingClientRect();
+                    return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+                  c.addEventListener('pointerdown', function(e){ drawing=true;
+                    var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); });
+                  c.addEventListener('pointermove', function(e){ if(!drawing) return;
+                    var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); has=true; e.preventDefault(); });
+                  window.addEventListener('pointerup', function(){ drawing=false; });
+                  window.clearPad=function(){ ctx.clearRect(0,0,c.width,c.height); has=false; };
+                  document.getElementById('sform').addEventListener('submit', function(ev){
+                    if(!has){ ev.preventDefault(); alert('Vui lòng ký trước khi gửi.'); return; }
+                    document.getElementById('sigdata').value=c.toDataURL('image/png');
+                  });
+                })();
+            </script>
         </t>
     </template>
 
