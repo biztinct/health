@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""EMR-readiness checklist (Circular 54 areas) — handover §4.
+"""EMR-readiness checklist (Circular 13/2025 areas) — handover §4.
 
 FIXED checklist rows/statuses (no invented compliance claims) plus a LIVE,
 computed coding-density figure and per-facility MOH-code presence."""
@@ -25,14 +25,23 @@ CHECKLIST = [
      'FHIR R4 facade, 20 resources + terminology ops', 'met'),
     ('EMR export (hồ sơ bệnh án điện tử)',
      "this module's patient bundle export", 'met'),
+    ('Legally-valid, immutable medical records (finalize + sign-off)',
+     'health_emr: clinician finalize/sign-off, post-sign immutability, '
+     'tamper-evident SHA-256 seal, addenda',
+     'met (auto-authenticated backstop optional)'),
+    ('Consent-based data sharing (Consent before external release)',
+     'health_consent + FHIR facade data_sharing gate (§6.6), '
+     'append-only consent check log',
+     'met (deny-by-default enforcement config-gated)'),
     ('PHI protection at rest',
      'health_phi_encryption (AES-GCM field level)', 'met'),
     ('Patient identity (CCCD/VNeID linkage)',
      'national_id/cccd + vneid_verified capture',
      'partial (VNeID OIDC not integrated)'),
-    ('Digital signature on clinical documents',
-     'consent digital signature only',
-     'gap (VNPT-CA/Viettel-CA integration planned)'),
+    ('Digital signature on clinical documents (chữ ký số)',
+     'health_emr integrity seal is the signing anchor',
+     'partial (finalize/seal live; VNPT-CA/Viettel-CA legal e-signature '
+     'planned)'),
     ('BHYT claims interface (Decision 4210 XML)',
      '—', 'gap (planned adapter phase)'),
     ('Backup & retention procedures',
@@ -97,7 +106,7 @@ class VnEmrReadiness(models.TransientModel):
         facilities = self._facility_moh_lines()
         return (
             '<div>'
-            '<h3 style="margin-bottom:4px;">EMR Readiness — Circular 54</h3>'
+            '<h3 style="margin-bottom:4px;">EMR Readiness — Circular 13/2025</h3>'
             '<p style="color:#5A5A5A;margin-top:0;">Scope: %s</p>'
             '<table style="border-collapse:collapse;width:100%%;">'
             '<thead><tr>'

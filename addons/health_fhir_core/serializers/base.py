@@ -218,6 +218,45 @@ def validation_enabled(env):
         return False
 
 
+# Consent-aware access (architecture §6.6). The FHIR facade must not serve a
+# patient's PHI to an external system without an active `data_sharing` consent.
+# Independent flag (separate from `health_consent.enforce`) so the facade can be
+# gated on its own: default OFF = LOG-ONLY (every check is written to
+# health.consent.check.log for the audit trail, but nothing is withheld);
+# ON = deny-by-default (un-consented patients' resources are filtered/hidden).
+CONSENT_SHARING_TYPE = 'data_sharing'
+
+
+def consent_enforced(env):
+    try:
+        value = env['ir.config_parameter'].sudo().get_param(
+            'health_fhir_core.consent_enforced')
+        return str(value).lower() in ('1', 'true', 'yes', 'on')
+    except Exception:  # pragma: no cover
+        return False
+
+
+def consent_allowed_records(env, serializer, records, enforced):
+    """Return the subset of `records` whose patient(s) have active
+    `data_sharing` consent. ALWAYS runs the per-patient check (each writes a
+    health.consent.check.log row — the audit trail of what was/would-be shared).
+    In log-only mode (`enforced=False`) returns `records` unchanged. Non-PHI
+    resources (patient_ids_of == []) are never gated. A record is kept only if
+    EVERY patient it carries is consented (deny-by-default)."""
+    all_pids = set(serializer.patient_ids_of(records))
+    if not all_pids:
+        return records  # non-PHI resource — never consent-gated
+    Consent = env['health.consent'].with_context(
+        consent_check_source='fhir_facade')
+    consented = {
+        pid for pid in all_pids
+        if Consent.check_consent(pid, CONSENT_SHARING_TYPE)}
+    if not enforced or consented == all_pids:
+        return records
+    return records.filtered(
+        lambda r: set(serializer.patient_ids_of(r)) <= consented)
+
+
 # ---------------------------------------------------------------------------
 # Base serializer
 # ---------------------------------------------------------------------------
@@ -347,9 +386,17 @@ class FHIRSerializer:
         return env[self.odoo_model].search(
             self.base_domain(env) + [('id', '=', rid)], limit=1)
 
-    def search_bundle(self, env, params, base_url=''):
-        """Full searchset Bundle for the controller (and tests)."""
+    def search_bundle(self, env, params, base_url='', record_filter=None):
+        """Full searchset Bundle for the controller (and tests). `record_filter`
+        (the consent gate, when the controller passes one) is applied to the
+        fetched page BEFORE serialization; `total` is adjusted down by whatever
+        it dropped on this page (approximate across pages, but never over-counts
+        what is actually returned — safe for a deny-by-default filter)."""
         records, total, next_cursor = self.search_records(env, params)
+        if record_filter is not None:
+            kept = record_filter(records)
+            total = max(0, total - (len(records) - len(kept)))
+            records = kept
         resources = self.serialize_batch(records)
         self_url = self._page_url(base_url, params, None)
         bundle = {

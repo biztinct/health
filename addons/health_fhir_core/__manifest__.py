@@ -2,7 +2,7 @@
 {
     'name': 'Health FHIR R4 Facade (read-only)',
     'summary': 'Read-only FHIR R4 facade over health19 clinical/operational models',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Healthcare',
     'author': 'health19',
     'depends': [
@@ -12,7 +12,7 @@
         'health_incident', 'health_consent',
     ],
     'external_dependencies': {'python': ['fhir.resources']},  # pip: fhir.resources (R4B, pydantic v2)
-    'data': ['security/ir.model.access.csv'],
+    'data': ['security/ir.model.access.csv', 'data/fhir_data.xml'],
     'installable': True,
     'application': False,
     'license': 'LGPL-3',

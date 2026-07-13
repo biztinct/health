@@ -138,7 +138,7 @@ class TestVnAdapter(TransactionCase):
         self.assertEqual(wizard.notes_total, 2)
         self.assertEqual(wizard.notes_coded, 1)
         self.assertEqual(wizard.coding_density, 50.0)
-        self.assertIn('Circular 54', wizard.report_html)
+        self.assertIn('Circular 13/2025', wizard.report_html)
 
     # ------------------------------------------------------------------
     # 6. VNeID mirror (create path)

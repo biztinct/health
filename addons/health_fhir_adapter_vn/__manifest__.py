@@ -3,7 +3,7 @@
     'name': 'Health FHIR Adapter — Vietnam',
     'summary': 'Vietnam EMR export (Circular 13/2025): patient FHIR bundle, '
                'ICD-10 Conditions, VN profile validation, readiness report',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare',
     'author': 'health19',
     'depends': [

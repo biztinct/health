@@ -8,5 +8,5 @@ class HealthFacility(models.Model):
     moh_facility_code = fields.Char(
         string='MOH Facility Code (mã cơ sở KCB)',
         help='Ministry of Health facility registration code (mã cơ sở khám '
-             'chữa bệnh) — required for Circular 54 EMR export and future '
+             'chữa bệnh) — required for Circular 13/2025 EMR export and future '
              'LGSP submission.')

@@ -23,6 +23,7 @@ from ..capability import build_capability
 from ..serializers import REGISTRY
 from ..serializers.base import (
     FHIRError, FHIRForbidden, FHIRNotFound, FHIRUnauthorized,
+    consent_allowed_records, consent_enforced,
     validate_resource, validation_enabled,
 )
 
@@ -53,8 +54,14 @@ class HealthFHIRController(http.Controller):
             user = self._authenticate(serializer)
             env = request.env(user=user.id)  # record rules apply
             params = self._query_params()
+            # Consent gate (architecture §6.6): drop un-consented patients'
+            # resources from the page before serialization (log-only unless
+            # health_fhir_core.consent_enforced). Every check is audited.
+            enforced = consent_enforced(env)
             bundle, records = serializer.search_bundle(
-                env, params, self._base_url())
+                env, params, self._base_url(),
+                record_filter=lambda recs: consent_allowed_records(
+                    env, serializer, recs, enforced))
             if validation_enabled(env):
                 self._runtime_validate(bundle)
             self._audit(env, user, serializer, records, status=200)
@@ -71,6 +78,13 @@ class HealthFHIRController(http.Controller):
             env = request.env(user=user.id)  # record rules apply
             record = serializer.read_record(env, rid)
             if not record:
+                raise FHIRNotFound(
+                    'No %s resource with id %s' % (rtype, rid))
+            # Consent gate: if enforced and the record's patient has no active
+            # data_sharing consent, deny as 404 (do not reveal the resource
+            # exists). Always audited; a no-op for non-PHI resources.
+            if not consent_allowed_records(
+                    env, serializer, record, consent_enforced(env)):
                 raise FHIRNotFound(
                     'No %s resource with id %s' % (rtype, rid))
             resource = serializer.serialize_batch(record)[0]

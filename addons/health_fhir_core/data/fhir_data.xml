@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Consent-aware FHIR access (architecture §6.6). Default OFF =
+             LOG-ONLY: every FHIR read/search still runs the per-patient
+             data_sharing consent check (audited to health.consent.check.log)
+             but nothing is withheld. Set True to deny-by-default: un-consented
+             patients' resources are hidden from the external facade. Editable
+             in Settings > Technical > System Parameters. -->
+        <record id="param_consent_enforced" model="ir.config_parameter">
+            <field name="key">health_fhir_core.consent_enforced</field>
+            <field name="value">False</field>
+        </record>
+    </data>
+</odoo>
