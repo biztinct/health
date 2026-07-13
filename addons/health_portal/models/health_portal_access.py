@@ -14,6 +14,7 @@ from datetime import timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import html2plaintext
 
 # Vietnam is UTC+7 with no DST — naive-UTC datetimes shift by a fixed offset for
 # wall-clock display (matches the family-link page convention).
@@ -147,11 +148,17 @@ class HealthPortalAccess(models.Model):
         return [self._visit_row(o)
                 for o in Order.search(domain, order=order, limit=50)]
 
+    @staticmethod
+    def _given_name(name):
+        # VN given name = last whitespace token; safe on blank/whitespace names.
+        parts = (name or '').split()
+        return parts[-1] if parts else ''
+
     def _visit_row(self, order):
-        # Given-name-only for staff privacy (VN given name = last token); NO
-        # clinical PHI on the visits list (that's the records section, 4B).
-        staff = order.lead_staff_id
-        given = (staff.name or '').split()[-1] if staff and staff.name else ''
+        # Given-name-only for staff privacy; NO clinical PHI on the visits list
+        # (that's the records section, 4B).
+        given = self._given_name(order.lead_staff_id.name
+                                 if order.lead_staff_id else '')
         when = order.scheduled_datetime
         return {
             'ref': order.name or '',
@@ -164,6 +171,92 @@ class HealthPortalAccess(models.Model):
             'state_label': dict(order._fields['state']._description_selection(
                 self.env)).get(order.state, order.state or ''),
         }
+
+    # -- My Records (4B): the patient's OWN finalized medical records ---------
+    # A patient accessing their own record is their right — NOT gated by
+    # data_sharing consent (that governs EXTERNAL sharing). Only emr_state=final
+    # notes are shown (drafts are work-in-progress, never the legal record).
+    def _records(self):
+        self.ensure_one()
+        Note = self.env['health.clinical.note'].sudo()
+        if 'emr_state' not in Note._fields:
+            return Note.browse()  # health_emr not installed → no finalized records
+        return Note.search([
+            ('order_id.patient_id', '=', self.patient_id.id),
+            ('emr_state', '=', 'final'),
+        ], order='signed_datetime desc, id desc', limit=100)
+
+    def _records_ctx(self):
+        self.ensure_one()
+        rows = []
+        for note in self._records():
+            when = note.signed_datetime
+            rows.append({
+                'id': note.id,
+                'when': (when + _VN_OFFSET).strftime('%d/%m/%Y') if when else '',
+                'visit': note.order_id.name or '',
+                'signer': self._given_name(note.signed_by_id.name
+                                           if note.signed_by_id else ''),
+            })
+        return {'patient_name': self.patient_id.name or '', 'token': self.token,
+                'records': rows}
+
+    def _note_or_false(self, note_id):
+        """The note IFF it is this patient's own finalized record."""
+        self.ensure_one()
+        Note = self.env['health.clinical.note'].sudo()
+        if 'emr_state' not in Note._fields:
+            return Note.browse()
+        note = Note.browse(int(note_id)).exists()
+        if (not note or note.emr_state != 'final'
+                or note.order_id.patient_id.id != self.patient_id.id):
+            return Note.browse()
+        return note
+
+    def _note_sections(self, note):
+        secs = []
+        for label, fname, is_html in (
+                ('Ghi chú lâm sàng', 'clinical_notes', True),
+                ('Chẩn đoán', 'diagnosis', False),
+                ('Điều trị đã thực hiện', 'treatment_performed', False),
+                ('Thuốc đã kê', 'medications_prescribed', False),
+                ('Sinh hiệu', 'vital_signs', False),
+                ('Tình trạng trước', 'patient_condition_before', False),
+                ('Tình trạng sau', 'patient_condition_after', False)):
+            val = note[fname]
+            if is_html:
+                val = html2plaintext(val or '')
+            val = (val or '').strip()
+            if val:
+                secs.append((label, val))
+        return secs
+
+    def _note_ctx(self, note):
+        when = note.signed_datetime
+        return {
+            'token': self.token,
+            'note_id': note.id,
+            'when': (when + _VN_OFFSET).strftime('%d/%m/%Y %H:%M') if when else '',
+            'visit': note.order_id.name or '',
+            'signer': self._given_name(note.signed_by_id.name
+                                       if note.signed_by_id else ''),
+            'sections': self._note_sections(note),
+        }
+
+    def _note_text(self, note):
+        when = note.signed_datetime
+        lines = [
+            'HO SO BENH AN / MEDICAL RECORD',
+            'Benh nhan: %s' % (self.patient_id.name or ''),
+            'Ngay ky: %s' % ((when + _VN_OFFSET).strftime('%d/%m/%Y %H:%M')
+                             if when else ''),
+            '',
+        ]
+        for label, val in self._note_sections(note):
+            lines.append('%s:' % label)
+            lines.append(val)
+            lines.append('')
+        return '\n'.join(lines)
 
 
 class HealthPortalAccessLog(models.Model):

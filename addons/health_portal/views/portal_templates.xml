@@ -27,6 +27,17 @@
                     padding:2px 8px; border-radius:20px; background:#eef2f2; color:var(--accent); }
             .empty { color:var(--muted); font-size:14px; padding:14px 2px; }
             .foot { color:var(--muted); font-size:12px; text-align:center; margin-top:26px; }
+            a.nav, a.back { color:var(--accent); text-decoration:none; font-weight:600; font-size:14px; }
+            a.nav { display:inline-block; margin:2px 0 4px; }
+            a.back { display:inline-block; margin-bottom:12px; }
+            a.card-link { text-decoration:none; color:inherit; display:block; }
+            .btn { display:inline-block; background:var(--accent); color:#fff;
+                   text-decoration:none; font-weight:600; font-size:14px;
+                   padding:10px 16px; border-radius:10px; margin-top:8px; }
+            .nsec { margin:14px 0; }
+            .nsec .lbl { font-size:12px; font-weight:700; text-transform:uppercase;
+                         letter-spacing:.03em; color:var(--muted); margin-bottom:3px; }
+            .nsec .val { white-space:pre-line; }
         </style>
     </template>
 
@@ -57,6 +68,7 @@
                 <t t-esc="patient_name"/>
                 <t t-if="patient_code"> · <t t-esc="patient_code"/></t>
             </div>
+            <a class="nav" t-attf-href="/my/care/#{token}/records">Hồ sơ bệnh án của tôi →</a>
 
             <div class="sec">Lịch hẹn sắp tới</div>
             <t t-if="upcoming">
@@ -98,6 +110,62 @@
             <t t-else="">
                 <div class="empty">Chưa có lịch sử thăm khám.</div>
             </t>
+        </t>
+    </template>
+
+    <!-- My Records: list of finalized medical records (Phase 4B). -->
+    <template id="portal_records" name="My Care Records">
+        <t t-call="health_portal.portal_layout">
+            <a class="back" t-attf-href="/my/care/#{token}">← Quay lại</a>
+            <div class="sec">Hồ sơ bệnh án của tôi</div>
+            <t t-if="records">
+                <t t-foreach="records" t-as="r">
+                    <a class="card-link" t-attf-href="/my/care/#{token}/records/#{r['id']}">
+                        <div class="card">
+                            <div class="row1">
+                                <span class="svc">Ghi chú thăm khám</span>
+                                <span class="when"><t t-esc="r['when']"/></span>
+                            </div>
+                            <div class="meta">
+                                <t t-if="r['visit']"><t t-esc="r['visit']"/> · </t>
+                                <t t-if="r['signer']">Ký bởi: <t t-esc="r['signer']"/></t>
+                            </div>
+                        </div>
+                    </a>
+                </t>
+            </t>
+            <t t-else="">
+                <div class="empty">Chưa có hồ sơ đã hoàn tất.</div>
+            </t>
+        </t>
+    </template>
+
+    <!-- My Record detail: one finalized note (Phase 4B). -->
+    <template id="portal_record" name="My Care Record">
+        <t t-call="health_portal.portal_layout">
+            <a class="back" t-attf-href="/my/care/#{token}/records">← Hồ sơ bệnh án</a>
+            <div class="card">
+                <div class="row1">
+                    <span class="svc">Ghi chú thăm khám</span>
+                    <span class="when"><t t-esc="when"/></span>
+                </div>
+                <div class="meta">
+                    <t t-if="visit"><t t-esc="visit"/> · </t>
+                    <t t-if="signer">Ký bởi: <t t-esc="signer"/></t>
+                </div>
+                <t t-if="sections">
+                    <t t-foreach="sections" t-as="s">
+                        <div class="nsec">
+                            <div class="lbl"><t t-esc="s[0]"/></div>
+                            <div class="val"><t t-esc="s[1]"/></div>
+                        </div>
+                    </t>
+                </t>
+                <t t-else="">
+                    <div class="empty">Không có nội dung.</div>
+                </t>
+            </div>
+            <a class="btn" t-attf-href="/my/care/#{token}/records/#{note_id}/download">Tải xuống (.txt)</a>
         </t>
     </template>
 

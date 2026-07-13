@@ -37,13 +37,63 @@ class MyCarePortalController(http.Controller):
             return None
         return access
 
+    def _guard(self, token):
+        """(access, None) on success; (None, neutral_response) otherwise."""
+        if self._rate_limited(token):
+            return None, self._neutral()
+        access = self._resolve(token)
+        if not access:
+            return None, self._neutral()
+        return access, None
+
     @http.route('/my/care/<string:token>', type='http', auth='public',
                 website=False, methods=['GET'], csrf=False)
     def portal_hub(self, token, **kwargs):
-        if self._rate_limited(token):
-            return self._neutral()
-        access = self._resolve(token)
-        if not access:
-            return self._neutral()
+        access, resp = self._guard(token)
+        if resp:
+            return resp
         access._record_access('hub', request.httprequest.remote_addr)
         return request.render('health_portal.portal_hub', access._hub_context())
+
+    @http.route('/my/care/<string:token>/records', type='http', auth='public',
+                website=False, methods=['GET'], csrf=False)
+    def portal_records(self, token, **kwargs):
+        access, resp = self._guard(token)
+        if resp:
+            return resp
+        access._record_access('records', request.httprequest.remote_addr)
+        return request.render('health_portal.portal_records',
+                              access._records_ctx())
+
+    @http.route('/my/care/<string:token>/records/<int:note_id>', type='http',
+                auth='public', website=False, methods=['GET'], csrf=False)
+    def portal_record(self, token, note_id, **kwargs):
+        access, resp = self._guard(token)
+        if resp:
+            return resp
+        note = access._note_or_false(note_id)
+        if not note:
+            return self._neutral()
+        access._record_access('record:%s' % note_id,
+                              request.httprequest.remote_addr)
+        return request.render('health_portal.portal_record',
+                              access._note_ctx(note))
+
+    @http.route('/my/care/<string:token>/records/<int:note_id>/download',
+                type='http', auth='public', website=False, methods=['GET'],
+                csrf=False)
+    def portal_record_download(self, token, note_id, **kwargs):
+        access, resp = self._guard(token)
+        if resp:
+            return resp
+        note = access._note_or_false(note_id)
+        if not note:
+            return self._neutral()
+        access._record_access('download:%s' % note_id,
+                              request.httprequest.remote_addr)
+        text = access._note_text(note)
+        return request.make_response(text, headers=[
+            ('Content-Type', 'text/plain; charset=utf-8'),
+            ('Content-Disposition',
+             'attachment; filename="ho-so-benh-an-%s.txt"' % note_id),
+        ])

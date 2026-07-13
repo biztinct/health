@@ -160,3 +160,93 @@ class TestPortalPublic(HttpCase, PortalFixtures):
         r = self._get(self.access.token)
         self.assertIn('không khả dụng', r.text)
         self.access.expires_at = False
+
+
+@tagged('post_install', '-at_install')
+class TestPortalRecordsHttp(HttpCase, PortalFixtures):
+    """Phase 4B — records routes over real HTTP."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._setup()
+        cls.patient = cls._patient('PP RecHttp Patient')
+        cls.access = cls.env['health.portal.access'].create(
+            {'patient_id': cls.patient.id})
+        cls.order = cls._order(
+            cls.patient, fields.Datetime.now() - timedelta(days=1), 'completed')
+        cls.note = cls.env['health.clinical.note'].create({
+            'order_id': cls.order.id, 'clinical_notes': '<p>BP stable</p>',
+            'diagnosis': 'Routine review'})
+        cls.note.action_finalize()
+
+    def test_records_list_and_detail_and_download(self):
+        base = '/my/care/%s' % self.access.token
+        lst = self.url_open(base + '/records')
+        self.assertEqual(lst.status_code, 200)
+        self.assertIn('Hồ sơ', lst.text)
+        det = self.url_open('%s/records/%s' % (base, self.note.id))
+        self.assertEqual(det.status_code, 200)
+        self.assertIn('Routine review', det.text)  # patient sees their record
+        dl = self.url_open('%s/records/%s/download' % (base, self.note.id))
+        self.assertEqual(dl.status_code, 200)
+        self.assertIn('text/plain', dl.headers.get('Content-Type', ''))
+        self.assertIn('Routine review', dl.text)
+
+    def test_record_bad_id_neutral(self):
+        r = self.url_open('/my/care/%s/records/999999999' % self.access.token)
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('không khả dụng', r.text)  # neutral, not the note
+
+
+@tagged('post_install', '-at_install')
+class TestPortalRecords(TransactionCase, PortalFixtures):
+    """Phase 4B — My Records: finalized-only, patient-scoped."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._setup()
+        cls.patient = cls._patient('PP Rec Patient')
+        cls.access = cls.env['health.portal.access'].create(
+            {'patient_id': cls.patient.id})
+        cls.order = cls._order(
+            cls.patient, fields.Datetime.now() - timedelta(days=1), 'completed')
+
+    def _note(self, order, **kw):
+        vals = {'order_id': order.id, 'clinical_notes': '<p>BP stable</p>',
+                'diagnosis': 'Routine review'}
+        vals.update(kw)
+        return self.env['health.clinical.note'].create(vals)
+
+    def test_only_finalized_notes_listed(self):
+        draft = self._note(self.order)
+        final = self._note(self.order)
+        final.action_finalize()
+        ids = [r['id'] for r in self.access._records_ctx()['records']]
+        self.assertIn(final.id, ids)
+        self.assertNotIn(draft.id, ids)
+
+    def test_note_scope_and_content(self):
+        final = self._note(self.order)
+        final.action_finalize()
+        note = self.access._note_or_false(final.id)
+        self.assertEqual(note, final)
+        ctx = self.access._note_ctx(note)
+        labels = [s[0] for s in ctx['sections']]
+        values = [s[1] for s in ctx['sections']]
+        self.assertIn('Chẩn đoán', labels)
+        self.assertIn('Routine review', values)
+        self.assertIn('Routine review', self.access._note_text(note))
+
+    def test_cannot_view_other_patients_note(self):
+        other_p = self._patient('PP Rec Other')
+        other_o = self._order(other_p, fields.Datetime.now(), 'completed')
+        other_note = self._note(other_o)
+        other_note.action_finalize()
+        # This patient's token must not resolve another patient's note.
+        self.assertFalse(self.access._note_or_false(other_note.id))
+
+    def test_cannot_view_draft_note(self):
+        draft = self._note(self.order)
+        self.assertFalse(self.access._note_or_false(draft.id))
