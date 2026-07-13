@@ -34,6 +34,7 @@
             <xpath expr="//notebook" position="inside">
                 <page string="Record Integrity" invisible="emr_state != 'final'">
                     <group string="Tamper-Evident Seal">
+                        <field name="signed_method" readonly="1"/>
                         <field name="content_hash" readonly="1"/>
                         <field name="hash_version" readonly="1"/>
                         <field name="signature_ref" readonly="1"/>
@@ -65,8 +66,51 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='author_role']" position="after">
                 <field name="emr_state" string="EMR"/>
+                <field name="signed_by_id" optional="hide"/>
+                <field name="signed_datetime" optional="hide"/>
             </xpath>
         </field>
     </record>
+
+    <!-- Worklist: unsigned clinical notes (ops chase unsigned records) -->
+    <record id="view_health_clinical_note_search_emr" model="ir.ui.view">
+        <field name="name">health.clinical.note.search.emr</field>
+        <field name="model">health.clinical.note</field>
+        <field name="arch" type="xml">
+            <search string="Clinical Notes">
+                <field name="author_name"/>
+                <field name="order_id"/>
+                <filter name="emr_draft" string="Draft (unsigned)"
+                        domain="[('emr_state', '=', 'draft')]"/>
+                <filter name="emr_signed" string="Signed"
+                        domain="[('emr_state', '=', 'final')]"/>
+                <filter name="emr_auto" string="Auto-authenticated"
+                        domain="[('signed_method', '=', 'auto')]"/>
+                <separator/>
+                <filter name="grp_state" string="EMR Status"
+                        context="{'group_by': 'emr_state'}"/>
+                <filter name="grp_author" string="Author"
+                        context="{'group_by': 'author_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_unsigned_clinical_notes" model="ir.actions.act_window">
+        <field name="name">Unsigned Clinical Notes</field>
+        <field name="res_model">health.clinical.note</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_clinical_note_search_emr"/>
+        <field name="context">{'search_default_emr_draft': 1, 'search_default_grp_author': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No unsigned clinical notes.</p>
+            <p>Draft clinical notes still need a clinician to finalize &amp; sign them.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_unsigned_clinical_notes"
+              name="Unsigned Clinical Notes"
+              parent="health_base.menu_healthcare_clinical"
+              action="action_unsigned_clinical_notes"
+              sequence="30"/>
 
 </odoo>

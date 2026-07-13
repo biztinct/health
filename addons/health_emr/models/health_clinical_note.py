@@ -20,6 +20,7 @@ raw SQL).
 import hashlib
 import json
 import logging
+from datetime import timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
@@ -50,7 +51,7 @@ EMR_LOCKED_FIELDS = (
     'injection_count', 'medication_count', 'wound_count', 'iv_fluid_count',
     'image_ids',
     'emr_state', 'signed_by_id', 'signed_role', 'signed_datetime',
-    'content_hash', 'hash_version', 'amends_note_id',
+    'signed_method', 'content_hash', 'hash_version', 'amends_note_id',
 )
 
 # Content fields that make up the sealed medical record, in the FIXED order the
@@ -86,6 +87,12 @@ class HealthClinicalNote(models.Model):
         help='Snapshot of the signer role at the moment of finalization.')
     signed_datetime = fields.Datetime(
         string='Signed On', readonly=True, copy=False, tracking=True)
+    signed_method = fields.Selection(
+        [('manual', 'Clinician-signed'), ('auto', 'Auto-authenticated')],
+        string='Signature Method', readonly=True, copy=False,
+        help='Manual = a clinician explicitly signed. Auto-authenticated = the '
+             'system backstop locked an unsigned draft after the grace period '
+             '(attributed to the author; NOT a legal digital signature).')
     content_hash = fields.Char(
         string='Integrity Seal (SHA-256)', readonly=True, copy=False,
         help='Tamper-evident hash of the sealed content, computed at '
@@ -155,6 +162,7 @@ class HealthClinicalNote(models.Model):
                 'signed_by_id': signer.id,
                 'signed_role': note._role_name_of(signer),
                 'signed_datetime': fields.Datetime.now(),
+                'signed_method': 'manual',
                 'hash_version': HASH_VERSION,
             }
             # Seal over the about-to-be-final content + signature values (the
@@ -269,6 +277,95 @@ class HealthClinicalNote(models.Model):
         if self.emr_state != 'final' or not self.content_hash:
             return True
         return self._compute_content_hash() == self.content_hash
+
+    # ------------------------------------------------------------------
+    # Automation (phase 1.6): reminders + auto-finalize backstop
+    # ------------------------------------------------------------------
+    def _param_true(self, key, default):
+        val = self.env['ir.config_parameter'].sudo().get_param(key, default)
+        return str(val).strip().lower() in ('1', 'true', 'yes', 'on')
+
+    def _param_int(self, key, default):
+        try:
+            return int(self.env['ir.config_parameter'].sudo().get_param(key, default))
+        except (ValueError, TypeError):
+            return int(default)
+
+    @api.model
+    def _cron_process_unsigned_notes(self):
+        """Nightly: nudge aging drafts (author reminder) and, if the org has
+        opted in, lock notes still unsigned past the grace window as a system
+        backstop. Idempotent — safe to run repeatedly."""
+        now = fields.Datetime.now()
+
+        if self._param_true('health_emr.reminder_enabled', 'True'):
+            hours = self._param_int('health_emr.reminder_hours', '24')
+            cutoff = now - timedelta(hours=hours)
+            drafts = self.sudo().search([
+                ('emr_state', '=', 'draft'),
+                ('write_date', '<=', fields.Datetime.to_string(cutoff)),
+            ])
+            drafts._create_sign_reminder()
+
+        if self._param_true('health_emr.auto_finalize_enabled', 'False'):
+            days = self._param_int('health_emr.auto_finalize_days', '3')
+            cutoff = now - timedelta(days=days)
+            stale = self.sudo().search([
+                ('emr_state', '=', 'draft'),
+                ('write_date', '<=', fields.Datetime.to_string(cutoff)),
+            ])
+            stale._auto_finalize()
+        return True
+
+    def _create_sign_reminder(self):
+        """Schedule a one-per-note 'sign this note' activity for the author.
+        Deduped: skips a note that already has an open reminder for its author."""
+        todo_type = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+        for note in self.sudo():
+            if note.emr_state != 'draft' or not note.author_id:
+                continue
+            already = note.activity_ids.filtered(
+                lambda a: a.user_id == note.author_id
+                and (not todo_type or a.activity_type_id == todo_type))
+            if already:
+                continue
+            note.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=note.author_id.id,
+                summary=_('Sign this clinical note'),
+                note=_('This clinical note is still a draft. Finalize & sign '
+                       'it to make it a permanent medical record.'))
+        return True
+
+    def _auto_finalize(self):
+        """System backstop: lock aging unsigned drafts as AUTO-AUTHENTICATED.
+        Attributed to the note's AUTHOR (the responsible clinician), never the
+        cron user; `signed_method='auto'` marks it as a system lock — NOT a
+        clinician attestation and NEVER a CA digital signature (that stays a
+        deliberate human act, phase 3). Bypasses the interactive author gate by
+        design (the cron user is neither author nor head-nurse)."""
+        for note in self.sudo():
+            if note.emr_state != 'draft' or not note._has_content():
+                continue
+            author = note.author_id
+            vals = {
+                'emr_state': 'final',
+                'signed_by_id': author.id if author else False,
+                'signed_role': note._role_name_of(author) if author else 'System',
+                'signed_datetime': fields.Datetime.now(),
+                'signed_method': 'auto',
+                'hash_version': HASH_VERSION,
+            }
+            vals['content_hash'] = note._compute_content_hash(vals)
+            note.write(vals)  # already sudo; guard passes (draft at check time)
+            note.message_post(body=_(
+                'Auto-authenticated by the system backstop after the signing '
+                'grace period. Recorded against the author %(author)s. This is '
+                'a content lock, not a clinician signature.',
+                author=author.name if author else 'System'))
+            # The reminder is moot once locked.
+            note.activity_unlink(['mail.mail_activity_data_todo'])
+        return True
 
     # ------------------------------------------------------------------
     # Immutability guards (clone of health.consent evidence-lock)

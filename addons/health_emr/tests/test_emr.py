@@ -6,6 +6,7 @@ whose signed records can be silently altered is worse than none. Every guard
 is tested for the su path too.
 """
 import uuid
+from datetime import timedelta
 
 from odoo import SUPERUSER_ID, fields
 from odoo.exceptions import UserError, ValidationError
@@ -243,6 +244,104 @@ class TestCascadeProtection(EmrBase):
         order.unlink()
         self.assertFalse(
             self.env['health.fieldservice.order'].browse(order_id).exists())
+
+
+@tagged('post_install', '-at_install')
+class TestAutomation(EmrBase):
+    """Phase 1.6: sign-reminders + auto-finalize backstop."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.nurse = new_test_user(
+            cls.env, login='auto_nurse_%s' % uuid.uuid4().hex[:6],
+            groups='base.group_user,health_base.group_healthcare_nurse')
+
+    def _authored_note(self, **kw):
+        vals = {'order_id': self.order.id, 'author_id': self.nurse.id,
+                'clinical_notes': '<p>Auto test note</p>'}
+        vals.update(kw)
+        return self.env['health.clinical.note'].create(vals)
+
+    def _backdate(self, note, days=5):
+        self.env.flush_all()
+        self.env.cr.execute(
+            "UPDATE health_clinical_note SET write_date = %s WHERE id = %s",
+            (fields.Datetime.now() - timedelta(days=days), note.id))
+        self.env.invalidate_all()
+
+    def _set(self, key, value):
+        ICP = self.env['ir.config_parameter'].sudo()
+        self.addCleanup(ICP.set_param, key, ICP.get_param(key))
+        ICP.set_param(key, value)
+
+    # -- manual vs auto ------------------------------------------------------
+    def test_manual_finalize_sets_method_manual(self):
+        note = self._note()
+        note.action_finalize()
+        self.assertEqual(note.signed_method, 'manual')
+
+    def test_auto_finalize_attributes_to_author(self):
+        note = self._authored_note()
+        note._auto_finalize()
+        self.assertEqual(note.emr_state, 'final')
+        self.assertEqual(note.signed_method, 'auto')
+        self.assertEqual(note.signed_by_id, self.nurse)  # author, not cron user
+        self.assertTrue(note.content_hash)
+        self.assertTrue(note.verify_integrity())
+
+    def test_auto_finalize_then_immutable(self):
+        note = self._authored_note()
+        note._auto_finalize()
+        with self.assertRaises(UserError):
+            note.write({'diagnosis': 'x'})
+
+    def test_auto_finalize_skips_empty(self):
+        note = self._authored_note(clinical_notes=False, diagnosis=False)
+        note._auto_finalize()
+        self.assertEqual(note.emr_state, 'draft')
+
+    # -- reminders -----------------------------------------------------------
+    def test_reminder_creates_and_dedups(self):
+        note = self._authored_note()
+        note._create_sign_reminder()
+        acts = note.activity_ids.filtered(lambda a: a.user_id == self.nurse)
+        self.assertEqual(len(acts), 1)
+        note._create_sign_reminder()  # again -> no duplicate
+        acts = note.activity_ids.filtered(lambda a: a.user_id == self.nurse)
+        self.assertEqual(len(acts), 1)
+
+    # -- cron: gating + thresholds ------------------------------------------
+    def test_cron_autofinalize_off_by_default(self):
+        note = self._authored_note()
+        self._backdate(note, days=5)
+        # default auto_finalize_enabled is False
+        self._set('health_emr.auto_finalize_enabled', 'False')
+        self.env['health.clinical.note']._cron_process_unsigned_notes()
+        note.invalidate_recordset()
+        self.assertEqual(note.emr_state, 'draft')
+
+    def test_cron_autofinalize_on_locks_stale(self):
+        note = self._authored_note()
+        self._backdate(note, days=5)
+        self._set('health_emr.auto_finalize_enabled', 'True')
+        self._set('health_emr.auto_finalize_days', '3')
+        self.env['health.clinical.note']._cron_process_unsigned_notes()
+        note.invalidate_recordset()
+        self.assertEqual(note.emr_state, 'final')
+        self.assertEqual(note.signed_method, 'auto')
+
+    def test_cron_reminder_on_stale_draft(self):
+        note = self._authored_note()
+        self._backdate(note, days=2)
+        self._set('health_emr.reminder_enabled', 'True')
+        self._set('health_emr.reminder_hours', '24')
+        # keep auto-finalize off so the note stays draft with its reminder
+        self._set('health_emr.auto_finalize_enabled', 'False')
+        self.env['health.clinical.note']._cron_process_unsigned_notes()
+        note.invalidate_recordset()
+        acts = note.activity_ids.filtered(lambda a: a.user_id == self.nurse)
+        self.assertEqual(len(acts), 1)
 
 
 @tagged('post_install', '-at_install')
