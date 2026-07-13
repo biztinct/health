@@ -9,6 +9,7 @@ authentication. Security model in docs/strategy/handovers/patient-portal-phase.m
 expiry, dual rate-limit at the controller, append-only access log, every read
 sudo but scoped to this one patient_id.
 """
+import base64
 import logging
 import secrets
 from datetime import timedelta
@@ -129,7 +130,32 @@ class HealthPortalAccess(models.Model):
             'token': self.token,
             'upcoming': self._visits(upcoming=True),
             'history': self._visits(upcoming=False),
+            'packages': self._packages(),
+            'rebook': self._rebook(),
         }
+
+    # -- Balance + Book/rebook (4D) — surface existing packages + self-booking.
+    def _packages(self):
+        self.ensure_one()
+        Pkg = self.env['health.service.package'].sudo()
+        pkgs = Pkg.search([('patient_id', '=', self.patient_id.id),
+                           ('state', '=', 'active')], order='id desc')
+        return [{'name': p.name or '', 'remaining': p.remaining_services,
+                 'total': p.total_services}
+                for p in pkgs if p.remaining_services]
+
+    def _rebook(self):
+        self.ensure_one()
+        Invite = self.env['health.selfbook.invite'].sudo()
+        invite = Invite.search([('patient_id', '=', self.patient_id.id),
+                                ('state', '=', 'sent')], order='id desc', limit=1)
+        token = ''
+        if invite and not (invite.expires_at
+                           and fields.Datetime.now() > invite.expires_at):
+            token = invite.token
+        facility = self.patient_id.primary_facility_id
+        return {'invite_token': token,
+                'facility_phone': (facility.phone or '') if facility else ''}
 
     def _visits(self, upcoming):
         self.ensure_one()
@@ -305,6 +331,14 @@ class HealthPortalAccess(models.Model):
         False on a bad type / missing signature."""
         self.ensure_one()
         if ctype not in dict(self.MANAGED_CONSENT_TYPES) or not signature_b64:
+            return False
+        # Signature is legal evidence — require a real PNG (the canvas produces
+        # one); reject a valid-base64 non-image so nonsense can't be stored.
+        try:
+            raw = base64.b64decode(signature_b64, validate=True)
+        except Exception:
+            return False
+        if not raw.startswith(b'\x89PNG\r\n\x1a\n'):
             return False
         Consent = self.env['health.consent'].sudo()
         if Consent._find_active_consent(self.patient_id.id, ctype):

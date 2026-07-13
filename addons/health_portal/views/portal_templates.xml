@@ -122,6 +122,31 @@
             <t t-else="">
                 <div class="empty">Chưa có lịch sử thăm khám.</div>
             </t>
+
+            <t t-if="packages">
+                <div class="sec">Số buổi còn lại</div>
+                <t t-foreach="packages" t-as="p">
+                    <div class="card">
+                        <div class="row1">
+                            <span class="svc"><t t-esc="p['name']"/></span>
+                            <span class="when"><t t-esc="p['remaining']"/> / <t t-esc="p['total']"/></span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+
+            <div class="sec">Đặt lịch &amp; liên hệ</div>
+            <div class="card">
+                <t t-if="rebook['invite_token']">
+                    <a class="btn" t-attf-href="/booking/self/#{rebook['invite_token']}">Đặt lịch hẹn</a>
+                </t>
+                <t t-if="rebook['facility_phone']">
+                    <div class="meta" t-attf-style="margin-top:#{rebook['invite_token'] and '10px' or '0'};">Liên hệ đội chăm sóc: <t t-esc="rebook['facility_phone']"/></div>
+                </t>
+                <t t-if="not rebook['invite_token'] and not rebook['facility_phone']">
+                    <div class="meta">Vui lòng liên hệ cơ sở chăm sóc của bạn để đặt lịch hẹn.</div>
+                </t>
+            </div>
         </t>
     </template>
 

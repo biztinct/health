@@ -110,6 +110,14 @@ class TestPortalModel(TransactionCase, PortalFixtures):
         row = [r for r in ctx['upcoming'] if r['ref'] == order.name][0]
         self.assertEqual(row['facility_phone'], '')
 
+    def test_hub_has_balance_and_rebook(self):
+        # 4D: hub carries package balance + rebook keys; empty/graceful with none.
+        ctx = self.access._hub_context()
+        self.assertEqual(ctx['packages'], [])  # patient has no package
+        self.assertIn('invite_token', ctx['rebook'])
+        self.assertEqual(ctx['rebook']['invite_token'], '')  # no sent invite
+        self.assertEqual(ctx['rebook']['facility_phone'], '02499999999')  # fixture
+
     def test_log_append_only(self):
         self.access._record_access('hub', '1.2.3.4')
         log = self.env['health.portal.access.log'].search(
