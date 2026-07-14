@@ -464,6 +464,33 @@ injects JS into the shell requires bumping `health_pwa`:
     → `in_progress` flip; also intercept the `POST …/fso/<id>/start` response
     (health_vitals vitals-FAB rider).
 
+39. **A model-level Python `write()`/`unlink()` guard fires BEFORE the ACL,
+    so a `perm_write=0` group gets `UserError`, not `AccessError`.** For an
+    engine-only model whose writes are all sudo (e.g. `health.twin.risk`,
+    `health.ews.score`), the unconditional guard (§5.4) that raises
+    `UserError('… system-generated …')` runs before Odoo reaches
+    `check_access`, so a non-privileged user's direct write raises the guard's
+    UserError. Only the UN-guarded path (`create`, if you don't override it)
+    surfaces the raw ACL `AccessError`. Test consequence: assert `UserError`
+    for guarded write/unlink and `AccessError` for create — asserting
+    AccessError on a guarded write fails (health_twin `test_12_acl`; this
+    tripped its first run). Not a bug — know which exception each path raises.
+
+40. **A composite *weighted-average* score dilutes a single strong signal —
+    band it with hard clinical FLOORS, not the average alone.** health_twin's
+    risk score is a weighted average of four components; under the shipped
+    weights a *lone open critical alert* (alert component 100, everything else
+    0) scores only `100·0.35 ≈ 35` → 'moderate', so the one signal the
+    deterioration worklist exists to surface ranked mid-list and fell below the
+    High+Critical default filter (handover D1). Fix pattern: after computing the
+    weighted score, apply a `clinical_floor(score, open_critical, thresholds)`
+    that raises it to the critical threshold when a critical alarm is open —
+    the average still ranks patients ABOVE the floor when signals stack, so
+    in-band order is preserved and the raw components stay in `factors_json`
+    for transparency. General rule for any triage score: a weighted average is
+    for RANKING; a clinically-critical single input needs a floor so it can't
+    be averaged away.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing

@@ -209,6 +209,18 @@ def composite(components, weights):
     return int(round(total / wsum))
 
 
+def clinical_floor(score, open_critical, thresholds):
+    """An OPEN CRITICAL deterioration alert IS critical by definition — the
+    weighted average must never bury it below the critical band. A lone
+    critical alert scores only ~35 under typical weights (a weighted average
+    dilutes one strong signal). Applied AFTER `composite`: floor at the
+    critical threshold when a critical alert is open; a higher weighted score
+    (more signals stacked) still ranks above the floor, preserving order."""
+    if open_critical >= 1:
+        return max(int(round(score)), int(thresholds['critical']))
+    return int(round(score))
+
+
 def band_for(score, thresholds):
     """(score, {'critical':c,'high':h,'moderate':m}) → band code.
     thresholds are inclusive lower bounds; below 'moderate' → 'low'."""
@@ -220,6 +232,13 @@ def band_for(score, thresholds):
         return 'moderate'
     return 'low'
 ```
+
+Engine applies the floor between `composite` and `band_for`:
+`score = clinical_floor(composite(components, weights), open_critical,
+thresholds)` — so an open critical alert always bands critical (fixes the
+weighted-average dilution where a lone critical alarm scored only ~35 →
+'moderate'). The raw weighted components remain in `factors_json` for
+transparency.
 
 ### 2.3 Recompute engine (models/health_twin_risk.py)
 

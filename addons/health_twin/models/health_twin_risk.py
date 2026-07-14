@@ -318,6 +318,11 @@ class HealthTwinRisk(models.Model):
                 days, cfg['staleness_threshold']),
         }
         score_val = twin_score.composite(components, cfg['weights'])
+        # An open CRITICAL alert floors the score at the critical band — a
+        # weighted average alone ranks a lone critical alarm only 'moderate'
+        # (handover D1). Other stacked signals still push it above the floor.
+        score_val = twin_score.clinical_floor(
+            score_val, crit, cfg['thresholds'])
         band = twin_score.band_for(score_val, cfg['thresholds'])
 
         factors = {

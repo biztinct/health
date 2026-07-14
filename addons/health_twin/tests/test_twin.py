@@ -200,10 +200,13 @@ class TestTwinEngine(TransactionCase):
         self.assertEqual(row.alert_points, 100)
         self.assertEqual(row.open_critical_count, 1)
         self.assertEqual(row.news2_total, 0)
-        # The alert component drives the score off 'low'. NOTE: under the
-        # specified 0.35 alert weight a lone critical alert yields composite
-        # ~35-40 → 'moderate' (see report deviation D1), NOT 'high'.
-        self.assertNotEqual(row.risk_band, 'low')
+        # Clinical floor (fix for handover D1): an OPEN CRITICAL alert must
+        # land in the critical band — a weighted average alone would rank a
+        # lone critical alarm 'moderate' (~35). The floor escalates it while
+        # the raw weighted score (alert_points 100 · 0.35 ≈ 35) is preserved
+        # in factors_json for transparency.
+        self.assertEqual(row.risk_band, 'critical')
+        self.assertGreaterEqual(row.composite_score, 75)
 
     # -- 4: no signals → composite ~0 / band low ----------------------
     def test_04_no_signals(self):
