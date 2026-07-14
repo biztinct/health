@@ -491,6 +491,31 @@ injects JS into the shell requires bumping `health_pwa`:
     for RANKING; a clinically-critical single input needs a floor so it can't
     be averaged away.
 
+41. **The user-facing patient form on vietuat is the STANDALONE ops profile
+    view, NOT `health_base.view_health_patient_form`.** The CMS/ops surface
+    opens a client via `doAction` with
+    `context: {form_view_ref: 'health_fieldservice.view_health_patient_form_ops'}`
+    (`health_fieldservice/static/src/js/ops_client_list.js:212`,
+    `ops_client_list_view.js:143`) — a separate primary view (priority 0,
+    `js_class="ops_client_profile_form"`) with its OWN `<notebook>`; it does
+    NOT `inherit_id` the standard patient form. Its custom OWL template
+    (`OpsClientProfileFormView`, `ops_client_profile_form.xml:154`) still
+    renders that view's arch via `<t t-component="props.Renderer" …
+    archInfo="archInfo"/>`, so a `<page>`/`<widget>` added by inheriting the
+    OPS view DOES render — but a page added to the STANDARD form appears only
+    in that view's `get_view()` and never on the user's screen (health_twin's
+    Trends tab shipped invisible until it also inherited
+    `view_health_patient_form_ops`; the pre-existing health_vitals
+    Vitals/Alert-Thresholds tabs are still masked for the same reason). Rule:
+    to add a tab/field to the client chart users actually use, inherit
+    `health_fieldservice.view_health_patient_form_ops` (in addition to the
+    standard form if you want both surfaces). Verify by which view renders on
+    the CMS profile, NOT by `get_view()`. Sibling discoverability trap: the
+    clinical-intelligence MENUS (telemonitoring + twin) live under the /odoo
+    "Clinical Intelligence" menu but are NOT in the /bizapp CMS sidebar — that
+    sidebar is a separate seed (see the noupdate-seed-cutover note). Minor:
+    Odoo 19 `res.users` groups write field is `group_ids`, not `groups_id`.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing

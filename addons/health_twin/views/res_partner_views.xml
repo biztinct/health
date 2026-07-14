@@ -18,4 +18,25 @@
         </field>
     </record>
 
+    <!-- The REAL patient surface on vietuat is the standalone OPS profile
+         view (health_fieldservice.view_health_patient_form_ops, priority 0,
+         js_class ops_client_profile_form) — a custom OWL template that still
+         renders the standard arch via props.Renderer, so a notebook page
+         added HERE surfaces on the CMS client profile. The standard-form
+         inherit above alone never renders on it (ledger §5.41). -->
+    <record id="view_health_patient_form_ops_twin_trends" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.client.profile.twin.trends</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Trends" name="twin_trends_ops"
+                      groups="health_base.group_healthcare_nurse">
+                    <widget name="twin_trend_charts"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
