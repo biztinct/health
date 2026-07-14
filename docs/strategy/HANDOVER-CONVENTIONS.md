@@ -516,6 +516,23 @@ injects JS into the shell requires bumping `health_pwa`:
     sidebar is a separate seed (see the noupdate-seed-cutover note). Minor:
     Odoo 19 `res.users` groups write field is `group_ids`, not `groups_id`.
 
+42. **`get_view()['arch']` STRIPS group-gated `<page groups="…">` nodes for a
+    caller who isn't a member of the group — so a correctly-merged tab looks
+    absent in a test.** `get_view()` runs the post-processing that removes
+    nodes the current user's groups exclude; in a TransactionCase the caller is
+    SUPERUSER_ID, which is NOT a member of `health_base.group_healthcare_nurse`
+    etc., so a `<page groups="…healthcare_nurse">` you correctly added via
+    inherit is stripped from the returned arch and an
+    `assertIn('name="my_page"', get_view()['arch'])` FAILS despite the view
+    being right (health_cms_clinical `test_cms_clinical` — 1 failed on the
+    first run). Assert view COMPOSITION with
+    `view.get_combined_arch()` (applies inheritance/xpath but does NOT do the
+    group node-removal), and prove per-ROLE rendering via the browser evidence
+    pack (a real group member sees the tab). Companion to §5.41: §5.41 is
+    "which view renders", §5.42 is "get_view lies about group-gated nodes in
+    tests". (An `su`/admin caller in tests is a member of NOTHING group-wise
+    unless explicitly added — do not assume SUPERUSER sees group-gated nodes.)
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
