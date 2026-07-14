@@ -343,10 +343,17 @@ register a device against a real patient.
 Conventions §2. `-i` nothing (module exists): `-u health_telemonitoring,
 health_vitals,health_pwa,health_pwa_daystrip,health_scribe,health_pwa_family`
 with matching test-tags; HttpCase present ⇒ `--workers 0`, NO `--no-http`.
-§5.1 smoke-check (browser, go/no-go): modal FAB appears on an in-progress
-visit from the Today flow, sheet opens, NEWS2 chip still works; plus one
-curl-level ingestion round-trip against a QA device (create → POST → verify
-→ delete, fresh-cursor verified).
+
+**Browser evidence pack (DoD item 5, conventions §8):** commit to
+`docs/strategy/reports/telemonitoring-phase2-evidence/`. The rider MUST be
+driven from the REAL user path — start on the Today view, tap the visit
+card to open the booking modal, Start Service, then confirm the "Record
+Vitals" FAB appears ON the modal and opens the sheet (do NOT navigate to
+`#/orders/<id>` — that deep link is exactly the path that hid the Phase-1
+FAB bug). Screenshot each state, capture the console log, and note whether
+the FAB z-index clears the modal backdrop. Plus one curl-level ingestion
+round-trip against a QA device (create → POST → verify rows → delete,
+fresh-cursor verified) with request+response envelopes captured.
 
 ## 7. Report back
 

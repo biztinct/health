@@ -485,12 +485,38 @@ sync when either changes.
 3. PWA version bumped per §3 if anything PWA-facing changed; verify the
    served shell shows the new version.
 4. `vi.po` present and covering user-visible strings.
-5. All code committed on branch `19.0` and **pushed**, message format
+5. If anything user-facing changed: a **browser evidence pack** committed
+   to `docs/strategy/reports/<phase>-evidence/` — the exact real-user
+   navigation path (click by click, from the normal entry point, NOT a
+   deep link that skips the flow), a screenshot per key state, the full
+   console log per screen (pre-existing errors flagged), and the
+   server-side rows the action created. QA fixtures deleted + fresh-cursor
+   verified (§5.34).
+6. All code committed on branch `19.0` and **pushed**, message format
    `feat(<area>): <summary>` with body, ending:
    `Co-Authored-By: <your model name> <noreply@carejiox.com>`.
-6. Final report states: what was built (file list), every deviation from
+7. Final report states: what was built (file list), every deviation from
    the handover design with reasoning, test results verbatim
    (x/x passed), anything deferred, and any new gotcha discovered
    (so it can be added to §5). The full report is COMMITTED to
    `docs/strategy/reports/<phase>-report.md` alongside the change (the
    reviewer reads it from the repo) and also pasted in the reply.
+
+### 8.1 Reviewer browser pass — selective, not additive (token economy)
+
+The implementer's browser evidence pack (DoD item 5) exists so the
+**reviewer does not re-drive the whole UI** — driving the browser is
+token- and image-heavy, and it belongs on the cheaper model. The reviewer:
+1. READS the evidence pack (cheap: a few images + logs) and, critically,
+   checks that the stated navigation path is the one a **real user takes** —
+   the classic implementer blind spot is testing via a working deep link
+   that skips the buggy flow (that is exactly how the Phase-1 telemonitoring
+   vitals-FAB-unreachable bug hid from Opus's own green smoke-check).
+2. Re-drives the browser **only selectively** — risky/ambiguous surfaces,
+   money/PHI/security paths, or when the pack looks off or the path looks
+   evasive.
+Do NOT re-run a full independent drive on top of the pack — that pays the
+expensive-model browser cost twice and erases the saving. The saving only
+exists if the reviewer's pass is review-of-evidence + targeted re-drive.
+For a backend-only phase the pack is trivial/absent and this whole step is
+a no-op.

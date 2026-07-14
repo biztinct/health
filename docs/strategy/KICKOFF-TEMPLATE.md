@@ -44,8 +44,21 @@ DEFINITION OF DONE — do not report success until ALL of these are true:
    co-resident version PIN TESTS updated in the same change, and
    health_pwa included in the upgrade.
 4. i18n/vi.po exists and covers user-visible strings.
-5. All work committed on branch 19.0 and pushed.
-6. Final report includes: file list, deviations + reasons, verbatim test
+5. If anything user-facing (PWA or backend UI) changed: produce a BROWSER
+   EVIDENCE PACK via chrome-devtools MCP on care.biztinct.com and put it in
+   docs/strategy/reports/<PHASE>-evidence/ (committed). It MUST contain:
+   (a) the EXACT navigation path you drove, click by click, starting from
+   the normal entry point a real user takes — NOT a deep link that skips
+   the flow (e.g. "Today → tap visit card → Start Service → tap Record
+   Vitals", not "navigated to #/orders/123"); (b) a screenshot of each key
+   state; (c) the full console log (list_console_messages) for each screen,
+   flagging any error/warn and whether it is pre-existing; (d) the
+   server-side result of the action (the row(s) it created, by id). Any QA
+   fixtures you create for this are deleted and re-verified in a fresh
+   cursor (§5.34, §6). This pack is EVIDENCE for the reviewer's selective
+   pass, not a substitute for it — so make the path honest and complete.
+6. All work committed on branch 19.0 and pushed.
+7. Final report includes: file list, deviations + reasons, verbatim test
    results, anything deferred, and any NEW Odoo 19 gotcha you discovered
    (flag it explicitly so it can be added to the conventions ledger).
    WRITE the full report to docs/strategy/reports/<PHASE>-report.md and
