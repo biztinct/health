@@ -4,5 +4,7 @@ from . import tm_config
 from . import res_partner
 from . import health_ews_score
 from . import health_monitor_alert
+from . import health_monitor_device
+from . import health_device_receipt
 from . import health_observation
 from . import res_config_settings

@@ -15,6 +15,29 @@
                     <field name="news2_spo2_scale2"/>
                 </group>
             </xpath>
+            <!-- Home-device registry tab (Phase 2). -->
+            <xpath expr="//page[@name='vitals_thresholds']" position="after">
+                <page name="monitor_devices" string="Monitoring Devices"
+                      invisible="not is_patient">
+                    <field name="monitor_device_ids"
+                           context="{'default_client_id': id}">
+                        <list string="Monitoring Devices"
+                              decoration-muted="state == 'retired'"
+                              decoration-warning="state == 'suspended'">
+                            <field name="name"/>
+                            <field name="device_type" widget="badge"/>
+                            <field name="external_id"/>
+                            <field name="vendor" optional="hide"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'active'"
+                                   decoration-warning="state == 'suspended'"
+                                   decoration-muted="state == 'retired'"/>
+                            <field name="last_reading_at"/>
+                            <field name="reading_count"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
         </field>
     </record>
 

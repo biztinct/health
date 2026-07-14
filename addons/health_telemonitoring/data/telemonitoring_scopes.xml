@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Gateway scope for the device-ingestion endpoint. A plain data row
+         (api.key.scope) — no health_api_gateway code edit is needed; clients
+         pick it up via allowed_scope_ids, API keys via apikeys.scope_ids. -->
+    <data noupdate="1">
+        <record id="scope_telemonitoring_ingest" model="api.key.scope">
+            <field name="code">telemonitoring.ingest</field>
+            <field name="name">Telemonitoring: ingest device readings</field>
+            <field name="description">Post home-monitoring device readings to
+                the telemonitoring ingestion endpoint.</field>
+        </record>
+    </data>
+</odoo>

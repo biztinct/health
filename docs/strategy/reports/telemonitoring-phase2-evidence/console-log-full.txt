@@ -1,0 +1,22 @@
+Console log — telemonitoring Phase 2 rider browser smoke-check
+Page: https://care.biztinct.com/health_pwa#/today  (user: ds_qa_nurse, healthcare_nurse)
+Captured during the real-path drive: Booking tab → card → modal → Start Service → FAB → sheet.
+
+[log] Loaded bookings for 2026-07-14 : 1
+[log] Loaded month bookings: [proxy Object]
+[log] [PWA] Checking for updates...
+[log] Loaded booking detail: [object Object]          <- modal open → GET /health_pwa/api/fso/5906 (fetch-wrap sees it)
+[log] [PWA] Checking for updates...
+[log] Starting service for booking: 5906              <- Start Service tapped in the modal
+[log] Current booking state: assigned
+[log] API Response: [object Object]
+[log] Response Status: 200                            <- POST /health_pwa/api/fso/5906/start (fetch-wrap sees state → in_progress)
+[log] Service started successfully
+[log] Service started for booking: 5906
+[log] [PWA] Checking for updates...
+[issue] No label associated with a form field (count: 10)   <- PRE-EXISTING a11y hint (vitals sheet inputs); not an error
+[issue] A form field element should have an id or name attribute (count: 9)  <- PRE-EXISTING a11y hint
+[log] [PWA] Checking for updates...
+
+NO JavaScript errors or warnings. The two [issue] rows are Chrome a11y advisories on
+form fields that pre-date this change (the vitals sheet inputs), flagged here for honesty.

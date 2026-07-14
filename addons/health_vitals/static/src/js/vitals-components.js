@@ -472,8 +472,76 @@
     return match ? parseInt(match[1], 10) : null;
   }
 
+  // ---------------------------------------------------------------
+  // Modal seam (ledger §31 / handover §6). The modal-first Today flow keeps
+  // the hash at #/today, so the hash rule above never fires there — the
+  // vitals FAB was unreachable from a modal-opened visit (Phase-1 review
+  // finding). Learn which booking the shared booking-detail modal is showing,
+  // and its status, by watching the fso requests the modal itself makes, then
+  // show the FAB while that visit is in progress. Cloned from
+  // health_pwa_family/static/src/js/fammsg.js (fetch-wrap :76-99 + observer
+  // :338-342). Detail endpoint: GET /health_pwa/api/fso/<id>; status field:
+  // data.state ('in_progress' when a visit is running). Start-service updates
+  // the modal's state LOCALLY without a detail re-fetch, so its POST is
+  // intercepted too, to catch the → in_progress flip.
+  // ---------------------------------------------------------------
+  let modalFsoId = null;
+  let modalFsoState = '';
+
+  function modalIsOpen() {
+    return !!document.querySelector('.booking-detail-modal-content');
+  }
+
+  function noteFsoState(id, state) {
+    modalFsoId = id;
+    modalFsoState = state || '';
+    scheduleFabSync();
+  }
+
+  (function wrapFetch() {
+    if (!window.fetch || window.__vitalsFabFetchWrapped) { return; }
+    window.__vitalsFabFetchWrapped = true;
+    const orig = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+      const url = (typeof input === 'string') ? input : (input && input.url) || '';
+      const method = (init && init.method ? init.method : 'GET').toUpperCase();
+      const promise = orig(input, init);
+      // Bare detail GET (id at end or before ?) — NOT the /start /update sub-routes.
+      const detail = url.match(/\/health_pwa\/api\/fso\/(\d+)(?:\?|$)/);
+      const start = url.match(/\/health_pwa\/api\/fso\/(\d+)\/start(?:\?|$)/);
+      if (detail && method === 'GET') {
+        const id = parseInt(detail[1], 10);
+        // Reset FIRST when switching bookings so a stale in-progress state
+        // from the previous modal can't flash the FAB on the new one.
+        if (modalFsoId !== id) { modalFsoId = id; modalFsoState = ''; scheduleFabSync(); }
+        promise.then(function (resp) {
+          try {
+            resp.clone().json().then(function (j) {
+              noteFsoState(id, j && j.data ? j.data.state : '');
+            }).catch(function () {});
+          } catch (e) { /* non-JSON — ignore */ }
+        });
+      } else if (start && method === 'POST') {
+        const id = parseInt(start[1], 10);
+        promise.then(function (resp) {
+          try {
+            resp.clone().json().then(function (j) {
+              if (j && j.success && j.data) { noteFsoState(id, j.data.state); }
+            }).catch(function () {});
+          } catch (e) { /* ignore */ }
+        });
+      }
+      return promise;
+    };
+  })();
+
   function syncFab() {
-    const fsoId = currentFsoId();
+    const hashId = currentFsoId();
+    // Modal path: no hash context, the modal is open, and its visit is in
+    // progress — gate the FAB exactly as the modal's own action buttons do.
+    const modalActive = !hashId && modalIsOpen()
+      && modalFsoId && modalFsoState === 'in_progress';
+    const fsoId = hashId || (modalActive ? modalFsoId : null);
     let fab = document.getElementById('vitals-fab');
     if (!fsoId) {
       if (fab) fab.remove();
@@ -494,8 +562,33 @@
     fab.onclick = function () { VitalsEntrySheet.open(fsoId); };
   }
 
+  // The modal open/close and each Start-service state flip are DOM mutations;
+  // one debounced observer re-syncs the FAB for all of them (rAF-coalesced so
+  // a chatty subtree doesn't thrash — ledger §28 spirit).
+  let fabSyncScheduled = false;
+  function scheduleFabSync() {
+    if (fabSyncScheduled) { return; }
+    fabSyncScheduled = true;
+    window.requestAnimationFrame(function () {
+      fabSyncScheduled = false;
+      syncFab();
+    });
+  }
+
+  function initFabObserver() {
+    if (window.__vitalsFabObserver) { return; }
+    window.__vitalsFabObserver = new MutationObserver(scheduleFabSync);
+    window.__vitalsFabObserver.observe(document.body,
+      { childList: true, subtree: true });
+    syncFab();
+  }
+
   window.addEventListener('hashchange', syncFab);
-  document.addEventListener('DOMContentLoaded', syncFab);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFabObserver);
+  } else {
+    initFabObserver();
+  }
 
   window.healthVitals = {
     entrySheet: VitalsEntrySheet,

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== Device registry ===================== -->
+    <record id="view_health_monitor_device_list" model="ir.ui.view">
+        <field name="name">health.monitor.device.list</field>
+        <field name="model">health.monitor.device</field>
+        <field name="arch" type="xml">
+            <list string="Monitoring Devices"
+                  decoration-muted="state == 'retired'"
+                  decoration-warning="state == 'suspended'">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="device_type" widget="badge"/>
+                <field name="external_id"/>
+                <field name="vendor" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'suspended'"
+                       decoration-muted="state == 'retired'"/>
+                <field name="last_reading_at"/>
+                <field name="reading_count" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_monitor_device_form" model="ir.ui.view">
+        <field name="name">health.monitor.device.form</field>
+        <field name="model">health.monitor.device</field>
+        <field name="arch" type="xml">
+            <form string="Monitoring Device">
+                <header>
+                    <button name="action_suspend" type="object"
+                            string="Suspend" invisible="state != 'active'"/>
+                    <button name="action_reactivate" type="object"
+                            string="Reactivate" class="btn-primary"
+                            invisible="state == 'active'"/>
+                    <button name="action_retire" type="object"
+                            string="Retire"
+                            invisible="state == 'retired'"
+                            confirm="Retire this device? It will stop accepting readings."/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="active,suspended,retired"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_readings" type="object"
+                                class="oe_stat_button" icon="fa-heartbeat">
+                            <field name="reading_count" widget="statinfo"
+                                   string="Readings"/>
+                        </button>
+                        <button name="action_view_receipts" type="object"
+                                class="oe_stat_button" icon="fa-inbox"
+                                string="Receipts"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Omron X5 — bà Lan"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="client_id"/>
+                            <field name="device_type"/>
+                            <field name="external_id"/>
+                        </group>
+                        <group>
+                            <field name="vendor"/>
+                            <field name="model"/>
+                            <field name="last_reading_at"/>
+                            <field name="catchment_province_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes" nolabel="1" placeholder="Notes…"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_monitor_device_search" model="ir.ui.view">
+        <field name="name">health.monitor.device.search</field>
+        <field name="model">health.monitor.device</field>
+        <field name="arch" type="xml">
+            <search string="Monitoring Devices">
+                <field name="name"/>
+                <field name="client_id"/>
+                <field name="external_id"/>
+                <field name="vendor"/>
+                <filter name="active" string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="suspended" string="Suspended"
+                        domain="[('state', '=', 'suspended')]"/>
+                <filter name="retired" string="Retired"
+                        domain="[('state', '=', 'retired')]"/>
+                <separator/>
+                <filter name="group_client" string="Client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter name="group_type" string="Device Type"
+                        context="{'group_by': 'device_type'}"/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_monitor_device" model="ir.actions.act_window">
+        <field name="name">Monitoring Devices</field>
+        <field name="res_model">health.monitor.device</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_monitor_device_search"/>
+        <field name="context">{'search_default_active': 1,
+                               'search_default_group_client': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No monitoring devices registered</p>
+            <p>Register a home device (BP monitor, pulse oximeter, glucometer,
+               scale) here so its readings flow into the patient's vitals and
+               deterioration engines.</p>
+        </field>
+    </record>
+
+    <!-- ===================== Receipts (readonly) ===================== -->
+    <record id="view_health_device_receipt_list" model="ir.ui.view">
+        <field name="name">health.device.receipt.list</field>
+        <field name="model">health.device.receipt</field>
+        <field name="arch" type="xml">
+            <list string="Ingestion Receipts" create="0" edit="0"
+                  decoration-success="state == 'applied'"
+                  decoration-warning="state == 'partial'"
+                  decoration-danger="state == 'rejected'">
+                <field name="create_date"/>
+                <field name="device_id"/>
+                <field name="client_batch_uuid"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'applied'"
+                       decoration-warning="state == 'partial'"
+                       decoration-danger="state == 'rejected'"/>
+                <field name="received_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_device_receipt_form" model="ir.ui.view">
+        <field name="name">health.device.receipt.form</field>
+        <field name="model">health.device.receipt</field>
+        <field name="arch" type="xml">
+            <form string="Ingestion Receipt" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="device_id"/>
+                            <field name="client_batch_uuid"/>
+                        </group>
+                        <group>
+                            <field name="state"/>
+                            <field name="received_at"/>
+                        </group>
+                    </group>
+                    <separator string="Result"/>
+                    <field name="result_json" nolabel="1" readonly="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

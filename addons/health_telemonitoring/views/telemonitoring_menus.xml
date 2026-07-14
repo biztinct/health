@@ -18,4 +18,10 @@
               action="action_health_ews_score"
               sequence="20"/>
 
+    <menuitem id="menu_health_monitor_device"
+              name="Monitoring Devices"
+              parent="menu_telemonitoring_root"
+              action="action_health_monitor_device"
+              sequence="30"/>
+
 </odoo>

@@ -45,5 +45,23 @@
             <field name="key">health_telemonitoring.weight_loss_pct_per_week</field>
             <field name="value">2.0</field>
         </record>
+
+        <!-- Phase 2 — device ingestion caps / retention -->
+        <record id="param_ingest_max_batch" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.ingest_max_batch</field>
+            <field name="value">50</field>
+        </record>
+        <record id="param_ingest_daily_cap_per_device" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.ingest_daily_cap_per_device</field>
+            <field name="value">288</field>
+        </record>
+        <record id="param_ingest_max_age_days" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.ingest_max_age_days</field>
+            <field name="value">7</field>
+        </record>
+        <record id="param_receipt_retention_days" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.receipt_retention_days</field>
+            <field name="value">90</field>
+        </record>
     </data>
 </odoo>

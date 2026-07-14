@@ -277,3 +277,155 @@ msgstr "Mức độ ý thức (ACVPU)"
 #. module: health_telemonitoring
 msgid "Supplemental oxygen flow rate"
 msgstr "Lưu lượng oxy hỗ trợ"
+
+#. module: health_telemonitoring
+msgid "Monitoring Devices"
+msgstr "Thiết bị theo dõi"
+
+#. module: health_telemonitoring
+msgid "Monitoring Device"
+msgstr "Thiết bị theo dõi"
+
+#. module: health_telemonitoring
+msgid "Home Monitoring Device"
+msgstr "Thiết bị theo dõi tại nhà"
+
+#. module: health_telemonitoring
+msgid "Device Name"
+msgstr "Tên thiết bị"
+
+#. module: health_telemonitoring
+msgid "Device Type"
+msgstr "Loại thiết bị"
+
+#. module: health_telemonitoring
+msgid "Blood-pressure monitor"
+msgstr "Máy đo huyết áp"
+
+#. module: health_telemonitoring
+msgid "Pulse oximeter"
+msgstr "Máy đo SpO₂"
+
+#. module: health_telemonitoring
+msgid "Thermometer"
+msgstr "Nhiệt kế"
+
+#. module: health_telemonitoring
+msgid "Glucometer"
+msgstr "Máy đo đường huyết"
+
+#. module: health_telemonitoring
+msgid "Weighing scale"
+msgstr "Cân sức khỏe"
+
+#. module: health_telemonitoring
+msgid "Wearable"
+msgstr "Thiết bị đeo"
+
+#. module: health_telemonitoring
+msgid "Other"
+msgstr "Khác"
+
+#. module: health_telemonitoring
+msgid "External ID"
+msgstr "Mã thiết bị (bên ngoài)"
+
+#. module: health_telemonitoring
+msgid "Vendor"
+msgstr "Nhà cung cấp"
+
+#. module: health_telemonitoring
+msgid "Model"
+msgstr "Kiểu máy"
+
+#. module: health_telemonitoring
+msgid "Notes"
+msgstr "Ghi chú"
+
+#. module: health_telemonitoring
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: health_telemonitoring
+msgid "Suspended"
+msgstr "Tạm ngưng"
+
+#. module: health_telemonitoring
+msgid "Retired"
+msgstr "Ngừng sử dụng"
+
+#. module: health_telemonitoring
+msgid "Readings"
+msgstr "Số lần đo"
+
+#. module: health_telemonitoring
+msgid "Last Reading"
+msgstr "Lần đo gần nhất"
+
+#. module: health_telemonitoring
+msgid "Suspend"
+msgstr "Tạm ngưng"
+
+#. module: health_telemonitoring
+msgid "Reactivate"
+msgstr "Kích hoạt lại"
+
+#. module: health_telemonitoring
+msgid "Retire"
+msgstr "Ngừng sử dụng"
+
+#. module: health_telemonitoring
+msgid "Receipts"
+msgstr "Biên nhận"
+
+#. module: health_telemonitoring
+msgid "Ingestion Receipts"
+msgstr "Biên nhận tiếp nhận dữ liệu"
+
+#. module: health_telemonitoring
+msgid "Ingestion Receipt"
+msgstr "Biên nhận tiếp nhận dữ liệu"
+
+#. module: health_telemonitoring
+msgid "Device Ingestion Receipt"
+msgstr "Biên nhận tiếp nhận dữ liệu thiết bị"
+
+#. module: health_telemonitoring
+msgid "Applied"
+msgstr "Đã áp dụng"
+
+#. module: health_telemonitoring
+msgid "Partial"
+msgstr "Một phần"
+
+#. module: health_telemonitoring
+msgid "Rejected"
+msgstr "Bị từ chối"
+
+#. module: health_telemonitoring
+msgid "Device ingestion receipts are immutable."
+msgstr "Biên nhận tiếp nhận dữ liệu thiết bị không thể chỉnh sửa."
+
+#. module: health_telemonitoring
+msgid "Device not found"
+msgstr "Không tìm thấy thiết bị"
+
+#. module: health_telemonitoring
+msgid "Device is not active"
+msgstr "Thiết bị không hoạt động"
+
+#. module: health_telemonitoring
+msgid "Daily reading cap reached for this device"
+msgstr "Thiết bị đã đạt giới hạn số lần đo trong ngày"
+
+#. module: health_telemonitoring
+msgid "readings must be a non-empty list"
+msgstr "danh sách chỉ số không được để trống"
+
+#. module: health_telemonitoring
+msgid "Retire this device? It will stop accepting readings."
+msgstr "Ngừng sử dụng thiết bị này? Thiết bị sẽ không nhận chỉ số nữa."
+
+#. module: health_telemonitoring
+msgid "No monitoring devices registered"
+msgstr "Chưa đăng ký thiết bị theo dõi nào"

@@ -439,6 +439,31 @@ injects JS into the shell requires bumping `health_pwa`:
     (health_telemonitoring `health_monitor_alert.py`), else a direct RPC
     `write({'state': …})` bypasses the group gates.
 
+38. **The gateway `@api_route` decorator swallows Odoo 19's readonly-cursor
+    retry signal — do NOT build a WRITE endpoint on it.** Odoo 17.3+ runs each
+    HTTP request on a **readonly cursor first** and retries on a read/write
+    cursor only if `psycopg2.errors.ReadOnlySqlTransaction` propagates up to
+    `service.model.retrying`. `health_api_gateway`'s `api_route` decorator wraps
+    the handler in `try: … except Exception: return 500-envelope`, which
+    **catches** that error, so the retry never fires and the FIRST write in ANY
+    decorated endpoint dies as a generic 500. Reads work; `/oauth/token` works
+    because it is NOT decorated (the error propagates, retry runs). Symptom under
+    HttpCase: a POST returns an ERROR envelope with no `data` key → downstream
+    `r.json()['data']` raises `KeyError: 'data'` (telemonitoring Phase-2 ingest:
+    6 failed / 5 error before the fix). Fix for a gateway-fronted WRITE endpoint:
+    do NOT use `@api_route`; declare
+    `@http.route(type='http', auth='public', csrf=False, methods=['POST'],
+    readonly=False)` (R/W cursor from the start) and IMPORT the gateway helpers
+    `_gateway_authenticate` / `_scopes_satisfied` / `_envelope_response`
+    (documented interface — no gateway edit). The existing `booking.write` routes
+    only survive in production via the framework retry that the decorator + tests
+    defeat. Corollary (modal seam, ledger §31): the PWA booking modal fires
+    `GET /health_pwa/api/fso/<id>` on open with status in `data.state`, but
+    **Start Service updates the modal's state LOCALLY** (`app.js:2551`) with no
+    detail re-fetch — a fetch-wrap watching only the detail GET misses the
+    → `in_progress` flip; also intercept the `POST …/fso/<id>/start` response
+    (health_vitals vitals-FAB rider).
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
