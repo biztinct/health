@@ -2,3 +2,4 @@
 from . import test_twin
 from . import test_twin_charts
 from . import test_twin_history
+from . import test_twin_forecast

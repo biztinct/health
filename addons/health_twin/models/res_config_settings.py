@@ -14,6 +14,9 @@ class ResConfigSettings(models.TransientModel):
     twin_history_enabled = fields.Boolean(
         string='Risk Trajectory History',
         config_parameter='health_twin.history_enabled', default=True)
+    twin_forecast_enabled = fields.Boolean(
+        string='Deterioration Forecast',
+        config_parameter='health_twin.forecast_enabled', default=True)
 
     def set_values(self):
         # §5.36: core set_param() UNLINKS a parameter whose value is falsy,
@@ -28,3 +31,5 @@ class ResConfigSettings(models.TransientModel):
                       'True' if self.twin_sweep_enabled else 'False')
         icp.set_param('health_twin.history_enabled',
                       'True' if self.twin_history_enabled else 'False')
+        icp.set_param('health_twin.forecast_enabled',
+                      'True' if self.twin_forecast_enabled else 'False')

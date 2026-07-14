@@ -73,6 +73,32 @@
             <field name="value">365</field>
         </record>
 
+        <!-- Deterioration forecast (twin-phase4) — additive/advisory only -->
+        <record id="param_twin_forecast_enabled" model="ir.config_parameter">
+            <field name="key">health_twin.forecast_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_twin_forecast_horizon_days" model="ir.config_parameter">
+            <field name="key">health_twin.forecast_horizon_days</field>
+            <field name="value">3</field>
+        </record>
+        <record id="param_twin_forecast_min_points" model="ir.config_parameter">
+            <field name="key">health_twin.forecast_min_points</field>
+            <field name="value">4</field>
+        </record>
+        <record id="param_twin_forecast_lookback_days" model="ir.config_parameter">
+            <field name="key">health_twin.forecast_lookback_days</field>
+            <field name="value">14</field>
+        </record>
+        <record id="param_twin_forecast_min_r2" model="ir.config_parameter">
+            <field name="key">health_twin.forecast_min_r2</field>
+            <field name="value">0.3</field>
+        </record>
+        <record id="param_twin_forecast_min_slope" model="ir.config_parameter">
+            <field name="key">health_twin.forecast_min_slope</field>
+            <field name="value">1.0</field>
+        </record>
+
         <!-- Band thresholds (inclusive lower bounds) -->
         <record id="param_twin_band_moderate" model="ir.config_parameter">
             <field name="key">health_twin.band_moderate</field>

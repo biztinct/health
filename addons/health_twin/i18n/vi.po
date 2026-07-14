@@ -269,3 +269,55 @@ msgstr "Lịch sử diễn tiến nguy cơ"
 #. module: health_twin
 msgid "Risk Trajectory History"
 msgstr "Lịch sử diễn tiến nguy cơ"
+
+#. module: health_twin
+msgid "Forecast"
+msgstr "Dự báo"
+
+#. module: health_twin
+msgid "Forecast Score"
+msgstr "Điểm dự báo"
+
+#. module: health_twin
+msgid "Forecast Band"
+msgstr "Mức dự báo"
+
+#. module: health_twin
+msgid "Forecast Slope"
+msgstr "Độ dốc dự báo"
+
+#. module: health_twin
+msgid "Forecast Confidence"
+msgstr "Độ tin cậy dự báo"
+
+#. module: health_twin
+msgid "Forecast Horizon (days)"
+msgstr "Tầm dự báo (ngày)"
+
+#. module: health_twin
+msgid "ETA to Next Band (days)"
+msgstr "Thời gian đến mức kế tiếp (ngày)"
+
+#. module: health_twin
+msgid "Rising"
+msgstr "Đang tăng"
+
+#. module: health_twin
+msgid "Forecast (machine)"
+msgstr "Dự báo (máy)"
+
+#. module: health_twin
+msgid "None"
+msgstr "Không"
+
+#. module: health_twin
+msgid "Medium"
+msgstr "Trung bình"
+
+#. module: health_twin
+msgid "Deterioration Forecast"
+msgstr "Dự báo diễn tiến xấu"
+
+#. module: health_twin
+msgid "Deterioration forecast"
+msgstr "Dự báo diễn tiến xấu"

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Digital Twin (Deterioration Worklist)',
-    'version': '19.0.3.0.0',
+    'version': '19.0.4.0.0',
     'category': 'Healthcare/Clinical',
     'summary': 'One ranked, cross-patient "clients trending down" worklist for '
                'care managers — a transparent, explainable per-client risk '

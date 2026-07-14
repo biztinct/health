@@ -20,6 +20,10 @@
                              help="Keep an append-only trail of each client's risk score over time (the worklist trend arrows and the Risk Score trajectory chart). Turn off to stop appending new history points; existing points and the trend arrows still show.">
                         <field name="twin_history_enabled"/>
                     </setting>
+                    <setting id="twin_forecast_setting" string="Deterioration forecast"
+                             help="Project each client's risk trajectory forward with a transparent least-squares trend line (the worklist 'Rising' filter and the Risk Score forecast segment). Advisory only: it can raise attention but never lowers a current band. Turn off to stop projecting.">
+                        <field name="twin_forecast_enabled"/>
+                    </setting>
                 </block>
             </xpath>
         </field>

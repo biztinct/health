@@ -22,6 +22,7 @@ from odoo.exceptions import AccessError, UserError
 
 from . import twin_config
 from . import twin_score
+from . import twin_forecast
 
 _logger = logging.getLogger(__name__)
 
@@ -30,6 +31,13 @@ _COMPLETED_STATES = ('completed', 'completed_pending_invoice', 'closed')
 # Sentinel "days since last visit" when the client has no completed visit —
 # large but kept low-weight by the staleness weight so it never dominates.
 _NO_VISIT_SENTINEL = 999
+
+# Band order for the forecast "strictly above the current band" test
+# (twin-phase4 §1). low < moderate < high < critical.
+_BAND_IX = {'low': 0, 'moderate': 1, 'high': 2, 'critical': 3}
+# The band one step ABOVE each band — used for the ETA target threshold
+# (moderate→high threshold, etc.). 'critical' has no next band up.
+_NEXT_BAND = {'low': 'moderate', 'moderate': 'high', 'high': 'critical'}
 
 
 class HealthTwinRisk(models.Model):
@@ -99,6 +107,46 @@ class HealthTwinRisk(models.Model):
         help='New composite score minus the previous one (0 for a new row).')
     previous_score = fields.Integer(string='Previous Score')
     previous_computed_at = fields.Datetime(string='Previous Computed At')
+
+    # --- Deterioration forecast (twin-phase4) — additive/advisory projection.
+    # A transparent OLS extrapolation of the recent risk history; it can RAISE
+    # attention (`will_escalate`) but NEVER lowers the current band or the
+    # worklist sort (report IF-016; same spirit as the Phase-1 clinical floor).
+    forecast_score = fields.Integer(
+        string='Forecast Score',
+        help='Projected composite risk score at the forecast horizon.')
+    forecast_band = fields.Selection([
+        ('low', 'Low'),
+        ('moderate', 'Moderate'),
+        ('high', 'High'),
+        ('critical', 'Critical'),
+    ], string='Forecast Band', index=True)
+    forecast_slope = fields.Float(
+        string='Forecast Slope', digits=(6, 2),
+        help='Trend slope in risk-score points per day (from the OLS fit). '
+             'Positive = rising.')
+    forecast_confidence = fields.Selection([
+        ('none', 'None'),
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+    ], string='Forecast Confidence', index=True,
+        help="Trust in the projection ('none' = no usable trend).")
+    forecast_horizon_days = fields.Integer(
+        string='Forecast Horizon (days)',
+        help='How far ahead the projection looks (config echo, for display).')
+    forecast_eta_days = fields.Float(
+        string='ETA to Next Band (days)', digits=(6, 2),
+        help='Projected days until a rising trend crosses into the next band '
+             'up (0 when not rising into a higher band).')
+    will_escalate = fields.Boolean(
+        string='Rising', index=True,
+        help='The forecast projects this patient into a HIGHER risk band soon '
+             '(advisory — it never lowers the current band or worklist sort).')
+    forecast_json = fields.Text(
+        string='Forecast (machine)',
+        help='Transparent forecast blob (points used, slope, r2, confidence, '
+             'method) for auditability/explainability.')
 
     catchment_province_id = fields.Many2one(
         'health.catchment.province', string='Catchment Area',
@@ -355,9 +403,29 @@ class HealthTwinRisk(models.Model):
         risk_points = [
             [fields.Datetime.to_string(h.computed_at), h.composite_score]
             for h in hist if h.computed_at]
+        risk_series = [{'name': _('Risk'), 'points': risk_points}]
+
+        # --- Forward forecast segment (twin-phase4 §2.5): now → now+horizon.
+        # Read the snapshot under the CALLER's env (catchment-gated, non-sudo —
+        # same PHI-safe contract as the panel above). Draw the projection as a
+        # SECOND series only when the snapshot carries a real forecast
+        # (confidence != 'none'); a no-forecast patient keeps a single series.
+        snap = self.search([('patient_id', '=', pid)], limit=1)
+        if (snap and snap.forecast_confidence
+                and snap.forecast_confidence != 'none'
+                and snap.computed_at and snap.forecast_horizon_days):
+            anchor = snap.computed_at
+            end = anchor + timedelta(days=snap.forecast_horizon_days)
+            risk_series.append({
+                'name': _('Forecast'),
+                'points': [
+                    [fields.Datetime.to_string(anchor), snap.composite_score],
+                    [fields.Datetime.to_string(end), snap.forecast_score],
+                ],
+            })
         result['panels'].append({
             'key': 'risk', 'title': _('Risk Score'), 'unit': '',
-            'series': [{'name': _('Risk'), 'points': risk_points}],
+            'series': risk_series,
             'bands': [],
             'band_zones': [[0, band_moderate - 1, 'success'],
                            [band_moderate, band_high - 1, 'warning'],
@@ -408,6 +476,17 @@ class HealthTwinRisk(models.Model):
             },
             'decay_hours': gf(env, 'news2_decay_hours', 336.0),
             'staleness_threshold': gi(env, 'staleness_threshold_days', 10),
+            # Deterioration forecast (twin-phase4 §2.6). `enabled`, `min_slope`
+            # and `lookback_days` are used by the model; the rest ride into the
+            # pure kernel (twin_forecast.project / confidence).
+            'forecast': {
+                'enabled': twin_config.get_bool(env, 'forecast_enabled', True),
+                'horizon_days': gi(env, 'forecast_horizon_days', 3),
+                'min_points': gi(env, 'forecast_min_points', 4),
+                'lookback_days': gi(env, 'forecast_lookback_days', 14),
+                'min_r2': gf(env, 'forecast_min_r2', 0.3),
+                'min_slope': gf(env, 'forecast_min_slope', 1.0),
+            },
         }
 
     def _gather_signals(self, ids):
@@ -505,6 +584,19 @@ class HealthTwinRisk(models.Model):
             score_val, crit, cfg['thresholds'])
         band = twin_score.band_for(score_val, cfg['thresholds'])
 
+        # --- Deterioration forecast (twin-phase4 §2.3) — additive/advisory.
+        # Computed AFTER score_val/band are known and folded into `vals` so it
+        # persists in the SAME write. Wrapped never-block: a bad point series
+        # must fall back to a clean no-forecast, never abort the snapshot.
+        fc_vals = self._empty_forecast_vals(score_val, band, cfg)
+        if cfg['forecast']['enabled']:
+            try:
+                fc_vals = self._compute_forecast(
+                    pid, score_val, band, cfg, now)
+            except Exception as exc:  # noqa: BLE001 — never abort the snapshot
+                _logger.warning(
+                    'Twin forecast failed for patient %s: %s', pid, exc)
+
         factors = {
             'components': {k: round(v, 2) for k, v in components.items()},
             'weights': cfg['weights'],
@@ -540,6 +632,7 @@ class HealthTwinRisk(models.Model):
             'factors_json': json.dumps(factors, sort_keys=True),
             'computed_at': now,
         }
+        vals.update(fc_vals)          # forecast fields (twin-phase4 §2.3)
         existing = self.sudo().search([('patient_id', '=', pid)], limit=1)
 
         # --- Trajectory (twin-phase3 §2.3) — compute BEFORE the write, while
@@ -579,6 +672,98 @@ class HealthTwinRisk(models.Model):
                 _logger.warning(
                     'Twin history append failed for patient %s: %s', pid, exc)
         return row
+
+    # ==================================================================
+    # Deterioration forecast (twin-phase4 §2.3) — additive/advisory only.
+    # ==================================================================
+    def _empty_forecast_vals(self, score_val, band, cfg):
+        """A self-consistent NO-forecast row: the projection echoes the current
+        state and nothing escalates (handover §2.3). Used as the default before
+        the compute and as the fallback when forecasting is disabled or fails,
+        so a row without a usable trend never claims a spurious forecast."""
+        return {
+            'forecast_score': score_val,
+            'forecast_band': band,
+            'forecast_slope': 0.0,
+            'forecast_confidence': 'none',
+            'forecast_horizon_days': cfg['forecast']['horizon_days'],
+            'forecast_eta_days': 0.0,
+            'will_escalate': False,
+            'forecast_json': '{}',
+        }
+
+    def _compute_forecast(self, pid, score_val, band, cfg, now):
+        """Fit a transparent OLS trend over the recent risk-history points plus
+        the live anchor and project it forward (handover §2.3).
+
+        ADDITIVE ONLY: ``will_escalate`` is True IFF the projection lands
+        STRICTLY ABOVE the current band with medium/high confidence and a
+        rising slope — a flat or falling trajectory NEVER escalates, NEVER
+        lowers the current band and NEVER touches the worklist sort."""
+        fcfg = cfg['forecast']
+        horizon = fcfg['horizon_days']
+        lookback = fcfg['lookback_days']
+        history = self.env['health.twin.risk.history'].sudo()
+        # History points in the lookback window, STRICTLY BEFORE `now` so the
+        # live point (appended below) is never double-counted.
+        hist = history.search(
+            [('patient_id', '=', pid),
+             ('computed_at', '>=', now - timedelta(days=lookback)),
+             ('computed_at', '<', now)],
+            order='computed_at')
+        # Time-ascending points relative to now (x < 0 = past). Append the live
+        # composite LAST so the current value is always the newest point, even
+        # when no history row was written this recompute.
+        points = []
+        for h in hist:
+            if not h.computed_at:
+                continue
+            x_days = -(now - h.computed_at).total_seconds() / 86400.0
+            points.append((x_days, float(h.composite_score)))
+        points.append((0.0, float(score_val)))
+
+        res = twin_forecast.project(points, fcfg)
+        fb = twin_score.band_for(res['score'], cfg['thresholds'])
+        escalate = bool(
+            res['has_forecast']
+            and res['confidence'] in ('medium', 'high')
+            and res['slope'] >= fcfg['min_slope']
+            and _BAND_IX.get(fb, 0) > _BAND_IX.get(band, 0))
+        if escalate:
+            next_band = _NEXT_BAND.get(band)
+            eta = twin_forecast.eta_days(
+                score_val, res['slope'], cfg['thresholds'][next_band]
+            ) if next_band else None
+            eta = eta if eta is not None else 0.0
+        else:
+            eta = 0.0
+
+        fc_json = {
+            'method': 'ols',
+            'horizon_days': horizon,
+            'lookback_days': lookback,
+            'n_points': res['n'],
+            'first_point': list(points[0]),
+            'last_point': list(points[-1]),
+            'slope_per_day': round(res['slope'], 4),
+            'r2': round(res['r2'], 4),
+            'confidence': res['confidence'],
+            'has_forecast': res['has_forecast'],
+            'current_band': band,
+            'forecast_band': fb,
+            'projected_score': res['score'],
+            'will_escalate': escalate,
+        }
+        return {
+            'forecast_score': res['score'],
+            'forecast_band': fb,
+            'forecast_slope': round(res['slope'], 2),
+            'forecast_confidence': res['confidence'],
+            'forecast_horizon_days': horizon,
+            'forecast_eta_days': round(eta, 2),
+            'will_escalate': escalate,
+            'forecast_json': json.dumps(fc_json, sort_keys=True),
+        }
 
     # ------------------------------------------------------------------
     # Cron sweep (handover §2.3)
