@@ -1,0 +1,19 @@
+Twin Phase 2 — Trends widget browser console
+=============================================
+
+Captured on care.biztinct.com (vietuat), Chrome DevTools MCP, after driving
+the twin_trend_charts widget's own _buildOption/_palette code (pulled live
+from the view_widgets registry) against the chart_series RPC for the seeded
+QA patient (id 8729), in both light and dark themes.
+
+Widget-related console messages: NONE (error + warn filters, incl. preserved
+messages across navigations) — no ECharts init errors, no palette/theme
+errors, no RPC errors from chart_series.
+
+Pre-existing unrelated noise on the CMS shell (NOT from this phase):
+  - health_zalo chat controller (get_active_conversations) raises
+    AccessError on zalo.config for users lacking the Zalo groups — a
+    background systray-chat poll on the CMS shell, independent of the
+    Trends widget.
+  - health_base geocoding (photon.komoot.io) "External requests verboten"
+    — normal in the sandbox / blocked-egress environment (conventions §6).

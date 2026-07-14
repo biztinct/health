@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_twin.TwinTrendCharts">
+    <div class="twin-trends" t-ref="container">
+        <!-- Header: title + range selector -->
+        <div class="twin-trends__header">
+            <span class="twin-trends__title">Vitals &amp; NEWS2 Trends</span>
+            <div class="twin-trends__ranges" role="group">
+                <button type="button"
+                        class="btn btn-sm twin-range-btn"
+                        t-att-class="state.days === 7 ? 'btn-primary' : 'btn-secondary'"
+                        t-on-click="() => this.setDays(7)">7d</button>
+                <button type="button"
+                        class="btn btn-sm twin-range-btn"
+                        t-att-class="state.days === 30 ? 'btn-primary' : 'btn-secondary'"
+                        t-on-click="() => this.setDays(30)">30d</button>
+                <button type="button"
+                        class="btn btn-sm twin-range-btn"
+                        t-att-class="state.days === 90 ? 'btn-primary' : 'btn-secondary'"
+                        t-on-click="() => this.setDays(90)">90d</button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="twin-trends__loading" t-if="state.loading">
+            <span class="fa fa-spinner fa-spin"/> Loading trends…
+        </div>
+
+        <!-- No patient / no panels -->
+        <div class="twin-trends__empty" t-elif="!state.panels.length">
+            <span class="fa fa-line-chart twin-trends__empty-icon"/>
+            <span>No trend data available.</span>
+        </div>
+
+        <!-- Small-multiples grid -->
+        <div class="twin-trends__grid" t-else="">
+            <t t-foreach="state.panels" t-as="panel" t-key="panel.key">
+                <div class="twin-panel">
+                    <div class="twin-panel__head">
+                        <span class="twin-panel__title" t-esc="panel.title"/>
+                        <span class="twin-panel__unit" t-if="panel.unit"
+                              t-esc="panel.unit"/>
+                    </div>
+                    <!-- Empty state per panel -->
+                    <div class="twin-panel__empty" t-if="isEmptyPanel(panel)">
+                        <span class="fa fa-inbox twin-panel__empty-icon"/>
+                        <span>No readings yet</span>
+                    </div>
+                    <!-- ECharts host -->
+                    <div t-else="" class="twin-chart-host"
+                         t-att-data-key="panel.key"/>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

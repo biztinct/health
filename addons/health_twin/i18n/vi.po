@@ -165,3 +165,43 @@ msgstr "Ảnh chụp nguy cơ do hệ thống tạo và không thể xóa."
 #. module: health_twin
 msgid "Deterioration Worklist settings"
 msgstr "Cài đặt danh sách theo dõi diễn tiến xấu"
+
+#. module: health_twin
+msgid "Trends"
+msgstr "Diễn biến"
+
+#. module: health_twin
+msgid "Vitals & NEWS2 Trends"
+msgstr "Diễn biến sinh hiệu & NEWS2"
+
+#. module: health_twin
+msgid "Loading trends…"
+msgstr "Đang tải diễn biến…"
+
+#. module: health_twin
+msgid "No trend data available."
+msgstr "Không có dữ liệu diễn biến."
+
+#. module: health_twin
+msgid "No readings yet"
+msgstr "Chưa có dữ liệu đo"
+
+#. module: health_twin
+msgid "Blood Pressure"
+msgstr "Huyết áp"
+
+#. module: health_twin
+msgid "Heart Rate"
+msgstr "Nhịp tim"
+
+#. module: health_twin
+msgid "Temperature"
+msgstr "Nhiệt độ"
+
+#. module: health_twin
+msgid "Weight"
+msgstr "Cân nặng"
+
+#. module: health_twin
+msgid "Blood Glucose"
+msgstr "Đường huyết"

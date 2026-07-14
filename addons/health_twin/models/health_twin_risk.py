@@ -18,7 +18,7 @@ from collections import defaultdict
 from datetime import timedelta
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 
 from . import twin_config
 from . import twin_score
@@ -184,6 +184,149 @@ class HealthTwinRisk(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+
+    # ==================================================================
+    # Trend charts data facade (handover twin-phase2 §2.1)
+    # ==================================================================
+    # One panel spec: (key, title, unit fallback, [(vitals_code, series_name)]).
+    # The core panels are always emitted (empty state in the UI); `glucose`
+    # is only emitted when the patient has ever recorded a glucose reading.
+    _CHART_PANELS = [
+        ('bp', 'Blood Pressure', 'mmHg',
+         [('bp_sys', 'Systolic'), ('bp_dia', 'Diastolic')]),
+        ('hr', 'Heart Rate', 'bpm', [('hr', 'Heart Rate')]),
+        # SpO₂ union: pulse-oximeter (spo2_po) + generic (spo2) into one series.
+        ('spo2', 'SpO₂', '%', [('spo2_po', 'SpO₂'), ('spo2', 'SpO₂')]),
+        ('temp', 'Temperature', '°C', [('temp', 'Temperature')]),
+        ('weight', 'Weight', 'kg', [('weight', 'Weight')]),
+    ]
+    _GLUCOSE_PANEL = ('glucose', 'Blood Glucose', 'mmol/L',
+                      [('glucose', 'Glucose')])
+    # NEWS2 total zones (score axis, not time): [lo, hi, severity].
+    _NEWS2_BAND_ZONES = [[0, 4, 'success'], [5, 6, 'warning'], [7, 20, 'danger']]
+    _CHART_RANGE_DAYS = (7, 30, 90)
+
+    @api.model
+    def _clamp_range_days(self, days):
+        """Snap an arbitrary `days` to one of {7,30,90} (default 30)."""
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            return 30
+        if days in self._CHART_RANGE_DAYS:
+            return days
+        if days < 7:
+            return 7
+        if days > 90:
+            return 90
+        # Between the anchors but not exact — snap to the nearest.
+        return min(self._CHART_RANGE_DAYS, key=lambda a: abs(a - days))
+
+    @api.model
+    def chart_series(self, patient_id, days=30):
+        """Return every trend series for one patient's chart tab in a SINGLE
+        call (handover twin-phase2 §2.1): per-vitals-type trends + NEWS2
+        history + this client's alert-threshold bands.
+
+        Runs under the CALLING USER's env (NOT sudo) so observation / score /
+        threshold record-rules gate which patients' data a user can chart —
+        an out-of-catchment user simply gets empty series, no PHI leaks.
+        """
+        days = self._clamp_range_days(days)
+        result = {'range_days': days, 'panels': []}
+        if not patient_id:
+            return result
+        patient = self.env['res.partner'].browse(int(patient_id))
+        # Under the user env a cross-catchment partner read raises AccessError
+        # (res.partner is catchment-scoped); treat "can't see the patient" as
+        # an empty chart — no crash, no leak (handover §3 safety rail).
+        try:
+            if not patient.exists() or not patient.is_patient:
+                return result
+        except AccessError:
+            return result
+
+        Obs = self.env['health.observation']
+        VType = self.env['health.vitals.type']
+        Threshold = self.env['health.vitals.threshold']
+        date_from = fields.Datetime.now() - timedelta(days=days)
+        pid = patient.id
+
+        # Resolve every needed vitals code → type in ONE search (handover:
+        # single catalog lookup, no per-type round-trips).
+        panel_specs = list(self._CHART_PANELS)
+        all_codes = {code for _k, _t, _u, members in panel_specs
+                     for code, _n in members}
+        all_codes |= {c for c, _n in self._GLUCOSE_PANEL[3]}
+        types = VType.search(['|', ('code', 'in', list(all_codes)),
+                              ('loinc_code', 'in', list(all_codes))])
+        type_by_code = {}
+        for t in types:
+            if t.code:
+                type_by_code[t.code] = t
+            if t.loinc_code:
+                type_by_code.setdefault(t.loinc_code, t)
+
+        # Glucose panel only when the patient has ever recorded one.
+        glucose_type = type_by_code.get('glucose')
+        if glucose_type and Obs.search_count(
+                [('client_id', '=', pid),
+                 ('vitals_type_id', '=', glucose_type.id)], limit=1):
+            panel_specs = panel_specs + [self._GLUCOSE_PANEL]
+
+        for key, title, unit_fallback, members in panel_specs:
+            unit = unit_fallback
+            series = []
+            band_type_ids = []
+            for code, name in members:
+                vtype = type_by_code.get(code)
+                if not vtype:
+                    continue
+                if vtype.unit_display:
+                    unit = vtype.unit_display
+                band_type_ids.append(vtype.id)
+                points = Obs.get_trend(
+                    pid, vtype.id, date_from=date_from, limit=500)
+                pts = [[p['datetime'], p['value']] for p in points]
+                if key == 'spo2':
+                    # Union both SpO₂ codes into a SINGLE time-ordered series.
+                    existing = next(
+                        (s for s in series if s['name'] == name), None)
+                    if existing:
+                        existing['points'] = sorted(
+                            existing['points'] + pts, key=lambda x: x[0])
+                        continue
+                series.append({'name': name, 'points': pts})
+            # Per-client threshold bands for this panel's vitals type(s).
+            bands = []
+            if band_type_ids:
+                for th in Threshold.search(
+                        [('client_id', '=', pid),
+                         ('vitals_type_id', 'in', band_type_ids)]):
+                    bands.append({
+                        'severity': th.severity,
+                        'min': th.min_value,
+                        'max': th.max_value,
+                        'type': th.vitals_type_id.code,
+                    })
+            result['panels'].append({
+                'key': key, 'title': _(title), 'unit': unit,
+                'series': series, 'bands': bands,
+            })
+
+        # NEWS2 history — ALL rows incl. superseded ARE the history.
+        scores = self.env['health.ews.score'].search(
+            [('client_id', '=', pid)], order='score_datetime')
+        news2_points = [
+            [fields.Datetime.to_string(s.score_datetime), s.total]
+            for s in scores if s.score_datetime]
+        result['panels'].append({
+            'key': 'news2', 'title': 'NEWS2', 'unit': '',
+            'series': [{'name': 'NEWS2', 'points': news2_points}],
+            'bands': [],
+            'band_zones': self._NEWS2_BAND_ZONES,
+        })
+        return result
 
     # ==================================================================
     # Recompute engine (handover §2.3) — sudo, engine-only.
