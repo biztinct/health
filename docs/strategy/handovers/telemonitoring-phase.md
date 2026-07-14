@@ -639,12 +639,34 @@ needed; do NOT confuse with the §5.33 write_date trap).
   `sudo grep -a 'odoo.tests.result'`; restart; curl `/web/login` → 200.
 - Verify served PWA shell shows the new asset version.
 
+### 5.1 PWA browser smoke-check (part of your DoD)
+
+This repo's chrome-devtools MCP is project-scoped, so it is available to you.
+Do a SMOKE check only — not an adversarial pass (that stays on the reviewer's
+side of the gate). On care.biztinct.com, confirm the entry-sheet edits render
+and wire up without console errors:
+1. Load the PWA (hard-reload / bump `?v=` already handled by §3) and confirm
+   the served asset version matches the new one.
+2. Open a nurse's visit → open the vitals entry sheet. Confirm BOTH new
+   controls render: the ACVPU segmented row (A/C/V/P/U) and the "Đang thở oxy"
+   O₂ toggle revealing a flow input. No layout break, no console error on open.
+3. Enter a full deteriorating set (e.g. RR 26, SpO₂ 90, SBP 88, HR 122,
+   temp 39.2, ACVPU V, O₂ on) and Save. Confirm the post-save banner shows a
+   NEWS2 band chip with a plausible total, ABOVE any threshold alert.
+4. Capture a screenshot of the sheet + the banner and confirm no errors in
+   `list_console_messages`.
+This is a go/no-go gross-breakage gate: if a control fails to render or Save
+throws, fix before reporting done. Leave the pixel/UX judgement to review.
+DELETE any QA observation/score/alert rows you create, and re-verify the
+deletion in a fresh cursor (§5.34) — vietuat has real patient data.
+
 ## 6. Report back
 
 Standard §8 items, plus: (a) the current→new PWA version numbers, (b) the
 one non-superseded score count for your QA patient BEFORE you clean up,
 (c) confirmation QA fixtures were deleted and re-verified in a fresh cursor
-(§5.34), (d) any place the entry-sheet DOM made the ACVPU/O₂ controls
-awkward (I will browser-QA the sheet on care.biztinct.com at review).
+(§5.34), (d) the §5.1 smoke-check result + screenshot, and any place the
+entry-sheet DOM made the ACVPU/O₂ controls awkward (I still run the
+independent adversarial browser-QA at review).
 
 Kickoff line: `Implement the phase specified in docs/strategy/handovers/telemonitoring-phase.md.`
