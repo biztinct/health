@@ -533,6 +533,27 @@ injects JS into the shell requires bumping `health_pwa`:
     tests". (An `su`/admin caller in tests is a member of NOTHING group-wise
     unless explicitly added — do not assume SUPERUSER sees group-gated nodes.)
 
+- **§5.43 — the twin staleness sentinel gives every patient with NO completed
+    visit a constant +5 baseline composite; a twin test that expects a
+    "no-signal" patient to score 0 (or that adds a few signals and asserts an
+    absolute band) is wrong.** `_upsert_one` (`health_twin_risk.py`) sets
+    `days_since_last_visit = _NO_VISIT_SENTINEL` (999) when a patient has no
+    completed FSO, and `twin_score.staleness_component(999, threshold) = 100`,
+    which at the default `0.05` staleness weight contributes
+    `round(100 × 0.05) = 5` to the composite — so a signal-less patient lands
+    at score **5 / band low**, not 0, and small added signals cross band
+    boundaries ~5 points "early" (e.g. 3 warnings ≈ 21 → +5 = 26 tips into
+    `moderate`). This bit `test_02`/`test_05` of `test_twin_history` RED→green
+    on the first run (the ENGINE was correct; the test asserts were naïve). Fix
+    the FIXTURE, not the engine: either give the patient a recent completed
+    visit to zero staleness — `_recent_visit()` helper: create an FSO then
+    `UPDATE health_fieldservice_order SET state='completed'` via raw SQL (§5.9),
+    which drives `staleness_component → 0` — OR capture the first score
+    dynamically (`first_score = row.composite_score`) and assert relative to it
+    instead of a literal 0. The sentinel is an intentional low-weight
+    attention-nudge (a long-unseen patient deserves a glance); know it perturbs
+    band math in any fixture that drives absolute scores.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
