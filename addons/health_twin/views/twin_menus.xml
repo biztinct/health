@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_health_twin_worklist"
+              name="Deterioration Worklist"
+              parent="health_base.menu_healthcare_clinical"
+              action="action_health_twin_risk"
+              sequence="40"/>
+
+</odoo>

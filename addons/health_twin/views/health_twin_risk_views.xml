@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =================================================================
+         Worklist list — ranked by composite risk, band-coloured.
+         ================================================================= -->
+    <record id="view_health_twin_risk_list" model="ir.ui.view">
+        <field name="name">health.twin.risk.list</field>
+        <field name="model">health.twin.risk</field>
+        <field name="arch" type="xml">
+            <list string="Deterioration Worklist" create="0" edit="0"
+                  default_order="composite_score desc, id desc"
+                  decoration-danger="risk_band == 'critical'"
+                  decoration-warning="risk_band == 'high'"
+                  decoration-muted="risk_band == 'low'">
+                <field name="patient_id"/>
+                <field name="risk_band" widget="badge"
+                       decoration-danger="risk_band == 'critical'"
+                       decoration-warning="risk_band == 'high'"
+                       decoration-info="risk_band == 'moderate'"
+                       decoration-muted="risk_band == 'low'"/>
+                <field name="composite_score" widget="progressbar"/>
+                <field name="news2_total"/>
+                <field name="news2_band" optional="show"/>
+                <field name="open_alert_count"/>
+                <field name="open_critical_count"/>
+                <field name="trend_alert_count" optional="hide"/>
+                <field name="days_since_last_visit"/>
+                <field name="catchment_province_id" optional="hide"/>
+                <field name="computed_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- =================================================================
+         Risk form — readonly snapshot + factor breakdown + smart buttons.
+         ================================================================= -->
+    <record id="view_health_twin_risk_form" model="ir.ui.view">
+        <field name="name">health.twin.risk.form</field>
+        <field name="model">health.twin.risk</field>
+        <field name="arch" type="xml">
+            <form string="Deterioration Risk" create="0" edit="0">
+                <header/>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_patient" type="object"
+                                class="oe_stat_button" icon="fa-user">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Patient</span>
+                            </div>
+                        </button>
+                        <button name="action_open_alerts" type="object"
+                                class="oe_stat_button" icon="fa-bell">
+                            <field name="open_alert_count" widget="statinfo"
+                                   string="Open Alerts"/>
+                        </button>
+                        <button name="action_open_news2" type="object"
+                                class="oe_stat_button" icon="fa-heartbeat"
+                                invisible="not ews_score_id">
+                            <div class="o_stat_info">
+                                <field name="news2_total" class="o_stat_value"/>
+                                <span class="o_stat_text">NEWS2</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="patient_id"/>
+                        <h1><field name="patient_id" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Risk">
+                            <field name="composite_score" widget="progressbar"/>
+                            <field name="risk_band" widget="badge"
+                                   decoration-danger="risk_band == 'critical'"
+                                   decoration-warning="risk_band == 'high'"
+                                   decoration-info="risk_band == 'moderate'"
+                                   decoration-muted="risk_band == 'low'"/>
+                            <field name="catchment_province_id"/>
+                            <field name="computed_at"/>
+                        </group>
+                        <group string="Signals">
+                            <field name="news2_total"/>
+                            <field name="news2_band"/>
+                            <field name="news2_at"/>
+                            <field name="open_alert_count"/>
+                            <field name="open_critical_count"/>
+                            <field name="trend_alert_count"/>
+                            <field name="days_since_last_visit"/>
+                            <field name="last_visit_at"/>
+                        </group>
+                    </group>
+                    <group string="Factor breakdown (points → weighted contribution)">
+                        <group>
+                            <label for="news2_points" string="NEWS2"/>
+                            <div>
+                                <field name="news2_points" class="oe_inline"/>
+                                <span> / 100 pts</span>
+                            </div>
+                            <label for="alert_points" string="Open Alerts"/>
+                            <div>
+                                <field name="alert_points" class="oe_inline"/>
+                                <span> / 100 pts</span>
+                            </div>
+                        </group>
+                        <group>
+                            <label for="trend_points" string="Trend"/>
+                            <div>
+                                <field name="trend_points" class="oe_inline"/>
+                                <span> / 100 pts</span>
+                            </div>
+                            <label for="staleness_points" string="Staleness"/>
+                            <div>
+                                <field name="staleness_points" class="oe_inline"/>
+                                <span> / 100 pts</span>
+                            </div>
+                        </group>
+                    </group>
+                    <group string="Machine breakdown (debug)" name="debug">
+                        <field name="factors_json" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- =================================================================
+         Search — the "trending down this morning" default is high+critical.
+         ================================================================= -->
+    <record id="view_health_twin_risk_search" model="ir.ui.view">
+        <field name="name">health.twin.risk.search</field>
+        <field name="model">health.twin.risk</field>
+        <field name="arch" type="xml">
+            <search string="Deterioration Worklist">
+                <field name="patient_id"/>
+                <filter name="critical" string="Critical"
+                        domain="[('risk_band', '=', 'critical')]"/>
+                <filter name="high" string="High"
+                        domain="[('risk_band', '=', 'high')]"/>
+                <separator/>
+                <filter name="has_open_critical" string="Has open critical"
+                        domain="[('open_critical_count', '&gt;', 0)]"/>
+                <filter name="has_open_alert" string="Has open alert"
+                        domain="[('open_alert_count', '&gt;', 0)]"/>
+                <filter name="stale" string="Stale &gt; 10d"
+                        domain="[('days_since_last_visit', '&gt;', 10)]"/>
+                <separator/>
+                <filter name="group_band" string="Risk Band"
+                        context="{'group_by': 'risk_band'}"/>
+                <filter name="group_catchment" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_twin_risk" model="ir.actions.act_window">
+        <field name="name">Deterioration Worklist</field>
+        <field name="res_model">health.twin.risk</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_twin_risk_search"/>
+        <field name="context">{'search_default_high': 1,
+                               'search_default_critical': 1,
+                               'search_default_group_band': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No clients trending down</p>
+            <p>This worklist ranks clients by a transparent deterioration-risk
+               score derived from their current NEWS2 band, open alerts,
+               trend signals and visit recency. It is recomputed automatically
+               whenever a new score or alert lands, and by a periodic sweep.</p>
+        </field>
+    </record>
+
+</odoo>

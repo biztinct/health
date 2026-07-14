@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cron_twin_sweep" model="ir.cron">
+            <field name="name">Digital Twin: recompute deterioration risk worklist</field>
+            <field name="model_id" ref="model_health_twin_risk"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_twin_sweep()</field>
+            <field name="interval_number">6</field>
+            <field name="interval_type">hours</field>
+            <field name="active" eval="True"/>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=5, minute=0, second=0, microsecond=0))"/>
+        </record>
+    </data>
+</odoo>

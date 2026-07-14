@@ -1,0 +1,167 @@
+# Vietnamese translation for health_twin
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_twin\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_twin
+msgid "Deterioration Worklist"
+msgstr "Danh sách theo dõi diễn tiến xấu"
+
+#. module: health_twin
+msgid "Deterioration Risk"
+msgstr "Nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+msgid "Deterioration Risk Snapshot"
+msgstr "Ảnh chụp nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_twin
+msgid "Risk Score"
+msgstr "Điểm nguy cơ"
+
+#. module: health_twin
+msgid "Risk Band"
+msgstr "Mức nguy cơ"
+
+#. module: health_twin
+msgid "Risk"
+msgstr "Nguy cơ"
+
+#. module: health_twin
+msgid "Signals"
+msgstr "Tín hiệu"
+
+#. module: health_twin
+msgid "Low"
+msgstr "Thấp"
+
+#. module: health_twin
+msgid "Moderate"
+msgstr "Trung bình"
+
+#. module: health_twin
+msgid "High"
+msgstr "Cao"
+
+#. module: health_twin
+msgid "Critical"
+msgstr "Nguy kịch"
+
+#. module: health_twin
+msgid "NEWS2 Total"
+msgstr "Tổng điểm NEWS2"
+
+#. module: health_twin
+msgid "NEWS2 Band"
+msgstr "Mức NEWS2"
+
+#. module: health_twin
+msgid "NEWS2 Time"
+msgstr "Thời điểm NEWS2"
+
+#. module: health_twin
+msgid "NEWS2 Points"
+msgstr "Điểm thành phần NEWS2"
+
+#. module: health_twin
+msgid "Latest NEWS2"
+msgstr "NEWS2 mới nhất"
+
+#. module: health_twin
+msgid "Open Alerts"
+msgstr "Cảnh báo đang mở"
+
+#. module: health_twin
+msgid "Open Critical"
+msgstr "Cảnh báo nguy kịch đang mở"
+
+#. module: health_twin
+msgid "Open Trend Alerts"
+msgstr "Cảnh báo xu hướng đang mở"
+
+#. module: health_twin
+msgid "Alert Points"
+msgstr "Điểm thành phần cảnh báo"
+
+#. module: health_twin
+msgid "Trend Points"
+msgstr "Điểm thành phần xu hướng"
+
+#. module: health_twin
+msgid "Trend"
+msgstr "Xu hướng"
+
+#. module: health_twin
+msgid "Staleness Points"
+msgstr "Điểm thành phần lâu ngày"
+
+#. module: health_twin
+msgid "Days Since Last Visit"
+msgstr "Số ngày kể từ lần thăm khám gần nhất"
+
+#. module: health_twin
+msgid "Last Completed Visit"
+msgstr "Lần thăm khám hoàn tất gần nhất"
+
+#. module: health_twin
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_twin
+msgid "Computed At"
+msgstr "Thời điểm tính toán"
+
+#. module: health_twin
+msgid "Factors (machine)"
+msgstr "Yếu tố (dạng máy)"
+
+#. module: health_twin
+msgid "Deterioration Risk Engine"
+msgstr "Bộ tính nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+msgid "Nightly Risk Sweep"
+msgstr "Quét nguy cơ định kỳ"
+
+#. module: health_twin
+msgid "Deterioration risk engine"
+msgstr "Bộ tính nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+msgid "Periodic risk sweep"
+msgstr "Quét nguy cơ định kỳ"
+
+#. module: health_twin
+msgid "Has open critical"
+msgstr "Có cảnh báo nguy kịch đang mở"
+
+#. module: health_twin
+msgid "Has open alert"
+msgstr "Có cảnh báo đang mở"
+
+#. module: health_twin
+msgid "No clients trending down"
+msgstr "Không có khách hàng đang diễn tiến xấu"
+
+#. module: health_twin
+msgid "Deterioration risk snapshots are system-generated and cannot be edited."
+msgstr "Ảnh chụp nguy cơ do hệ thống tạo và không thể chỉnh sửa."
+
+#. module: health_twin
+msgid "Deterioration risk snapshots are system-generated and cannot be deleted."
+msgstr "Ảnh chụp nguy cơ do hệ thống tạo và không thể xóa."
+
+#. module: health_twin
+msgid "Deterioration Worklist settings"
+msgstr "Cài đặt danh sách theo dõi diễn tiến xấu"

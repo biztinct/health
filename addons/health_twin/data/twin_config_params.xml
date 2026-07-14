@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Feature switches, scoring weights and band thresholds. noupdate so a
+         live operator toggle / tuned weight is never reset by an upgrade. -->
+    <data noupdate="1">
+        <!-- Feature switches -->
+        <record id="param_twin_enabled" model="ir.config_parameter">
+            <field name="key">health_twin.twin_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_twin_sweep_enabled" model="ir.config_parameter">
+            <field name="key">health_twin.twin_sweep_enabled</field>
+            <field name="value">True</field>
+        </record>
+
+        <!-- Sweep sizing -->
+        <record id="param_twin_sweep_batch_cap" model="ir.config_parameter">
+            <field name="key">health_twin.twin_sweep_batch_cap</field>
+            <field name="value">500</field>
+        </record>
+        <record id="param_twin_stale_horizon_days" model="ir.config_parameter">
+            <field name="key">health_twin.twin_stale_horizon_days</field>
+            <field name="value">30</field>
+        </record>
+
+        <!-- Kernel tuning -->
+        <record id="param_twin_news2_decay_hours" model="ir.config_parameter">
+            <field name="key">health_twin.news2_decay_hours</field>
+            <field name="value">336</field>
+        </record>
+        <record id="param_twin_staleness_threshold_days" model="ir.config_parameter">
+            <field name="key">health_twin.staleness_threshold_days</field>
+            <field name="value">10</field>
+        </record>
+
+        <!-- Component weights (normalized in the kernel) -->
+        <record id="param_twin_w_news2" model="ir.config_parameter">
+            <field name="key">health_twin.w_news2</field>
+            <field name="value">0.5</field>
+        </record>
+        <record id="param_twin_w_alert" model="ir.config_parameter">
+            <field name="key">health_twin.w_alert</field>
+            <field name="value">0.35</field>
+        </record>
+        <record id="param_twin_w_trend" model="ir.config_parameter">
+            <field name="key">health_twin.w_trend</field>
+            <field name="value">0.1</field>
+        </record>
+        <record id="param_twin_w_staleness" model="ir.config_parameter">
+            <field name="key">health_twin.w_staleness</field>
+            <field name="value">0.05</field>
+        </record>
+
+        <!-- Band thresholds (inclusive lower bounds) -->
+        <record id="param_twin_band_moderate" model="ir.config_parameter">
+            <field name="key">health_twin.band_moderate</field>
+            <field name="value">25</field>
+        </record>
+        <record id="param_twin_band_high" model="ir.config_parameter">
+            <field name="key">health_twin.band_high</field>
+            <field name="value">50</field>
+        </record>
+        <record id="param_twin_band_critical" model="ir.config_parameter">
+            <field name="key">health_twin.band_critical</field>
+            <field name="value">75</field>
+        </record>
+    </data>
+</odoo>

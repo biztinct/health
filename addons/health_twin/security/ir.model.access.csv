@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_twin_risk_nurse,health.twin.risk nurse,model_health_twin_risk,health_base.group_healthcare_nurse,1,0,0,0
+access_health_twin_risk_head_nurse,health.twin.risk head_nurse,model_health_twin_risk,health_base.group_healthcare_head_nurse,1,0,0,0
+access_health_twin_risk_doctor,health.twin.risk doctor,model_health_twin_risk,health_base.group_healthcare_doctor,1,0,0,0
+access_health_twin_risk_operations_manager,health.twin.risk operations_manager,model_health_twin_risk,health_base.group_healthcare_operations_manager,1,0,0,0
+access_health_twin_risk_manager,health.twin.risk manager,model_health_twin_risk,health_base.group_healthcare_manager,1,0,0,0
+access_health_twin_risk_admin,health.twin.risk admin,model_health_twin_risk,health_base.group_healthcare_admin,1,1,1,1
+access_health_twin_risk_owner,health.twin.risk owner,model_health_twin_risk,health_base.group_healthcare_owner,1,1,1,1

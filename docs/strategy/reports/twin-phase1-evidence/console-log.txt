@@ -1,0 +1,14 @@
+health_twin Phase 1 — browser console capture (chrome-devtools MCP)
+vietuat / care.biztinct.com, user twin_qa_owner, 2026-07-14
+
+Screens driven:
+  - Clinical Intelligence menu (00-menu-path.png)
+  - Deterioration Worklist ranked list (01-worklist-ranked-list.png)
+  - Risk form + factor breakdown (02-risk-form-breakdown.png)
+  - Open Alerts smart-button target (03-smart-button-open-alerts.png)
+
+list_console_messages (types=error,warn):  <no console messages found>
+list_console_messages (all types):          <no console messages found>
+
+Result: CLEAN — zero errors, zero warnings across every screen. No
+pre-existing noise observed on the worklist or risk-form surfaces.
