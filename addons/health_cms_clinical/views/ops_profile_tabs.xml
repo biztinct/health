@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- The REAL client chart on vietuat is the standalone OPS profile view
+         (health_fieldservice.view_health_patient_form_ops, priority 0,
+         js_class ops_client_profile_form) — a custom OWL template that still
+         renders the standard arch via props.Renderer, so a notebook page
+         added HERE surfaces on the CMS client profile (ledger §5.41; the twin
+         Trends tab is the precedent). These two tabs already exist on the
+         STANDARD patient form (health_vitals / health_consent), but that form
+         is not the one the ops surface renders, so they were masked. Content
+         reproduced verbatim from the source pages so the ops tab matches. -->
+    <record id="view_ops_profile_clinical_tabs" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.clinical.tabs</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <!-- Alert Thresholds — reproduced from
+                     health_vitals/views/res_partner_views.xml -->
+                <page string="Alert Thresholds" name="vitals_thresholds_ops"
+                      groups="health_base.group_healthcare_nurse">
+                    <field name="vitals_threshold_ids">
+                        <list editable="bottom">
+                            <field name="vitals_type_id"/>
+                            <field name="severity" widget="badge"
+                                   decoration-danger="severity == 'critical'"
+                                   decoration-warning="severity == 'warning'"/>
+                            <field name="min_value"/>
+                            <field name="max_value"/>
+                            <field name="escalation_action"/>
+                            <field name="notes" optional="show"/>
+                            <field name="active" optional="hide"/>
+                        </list>
+                    </field>
+                </page>
+                <!-- Consents — reproduced from
+                     health_consent/views/res_partner_views.xml -->
+                <page string="Consents" name="consents_ops"
+                      groups="health_base.group_healthcare_base">
+                    <group>
+                        <field name="consent_summary" readonly="1"
+                               string="Active Consents"/>
+                    </group>
+                    <field name="consent_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="consent_type"/>
+                            <field name="method"/>
+                            <field name="granted_by_partner_id"
+                                   string="Granted By"/>
+                            <field name="effective_date"/>
+                            <field name="expiry_date"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'active'"
+                                   decoration-warning="state == 'expired'"
+                                   decoration-danger="state == 'withdrawn'"
+                                   decoration-info="state == 'draft'"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

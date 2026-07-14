@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- =====================================================================
+         "Care Intelligence" expander group under the existing CLINICAL
+         section, surfacing the telemonitoring + twin backend actions on the
+         /bizapp CMS sidebar (they existed only under the /odoo menus).
+         Cloned from the sibling expander pattern in
+         health_cms_sidebar/data/cms_sidebar_items_clinical.xml (Vitals &
+         Observations). Ungated (no role_ids) like the siblings — the
+         underlying action/model ACLs still gate the records.
+         Sequence 15 sits between Vitals (10) and Care Plans (20).
+         ===================================================================== -->
+
+    <record id="item_clin_care_intel" model="cms.sidebar.item">
+        <field name="name">Care Intelligence</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="sequence">15</field>
+        <field name="icon">fa fa-line-chart</field>
+        <!-- no action_xmlid → expander -->
+    </record>
+
+    <record id="item_clin_worklist" model="cms.sidebar.item">
+        <field name="name">Deterioration Worklist</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="parent_id" ref="item_clin_care_intel"/>
+        <field name="sequence">16</field>
+        <field name="icon">fa fa-line-chart</field>
+        <field name="action_xmlid">health_twin.action_health_twin_risk</field>
+        <field name="match_action_xmlids">health_twin.action_health_twin_risk</field>
+        <field name="match_models">health.twin.risk</field>
+    </record>
+
+    <record id="item_clin_alerts" model="cms.sidebar.item">
+        <field name="name">Deterioration Alerts</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="parent_id" ref="item_clin_care_intel"/>
+        <field name="sequence">17</field>
+        <field name="icon">fa fa-exclamation-triangle</field>
+        <field name="action_xmlid">health_telemonitoring.action_health_monitor_alert</field>
+        <field name="match_action_xmlids">health_telemonitoring.action_health_monitor_alert</field>
+        <field name="match_models">health.monitor.alert</field>
+    </record>
+
+    <record id="item_clin_devices" model="cms.sidebar.item">
+        <field name="name">Monitoring Devices</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="parent_id" ref="item_clin_care_intel"/>
+        <field name="sequence">18</field>
+        <field name="icon">fa fa-heartbeat</field>
+        <field name="action_xmlid">health_telemonitoring.action_health_monitor_device</field>
+        <field name="match_action_xmlids">health_telemonitoring.action_health_monitor_device</field>
+        <field name="match_models">health.monitor.device</field>
+    </record>
+
+    <record id="item_clin_news2" model="cms.sidebar.item">
+        <field name="name">NEWS2 Scores</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="parent_id" ref="item_clin_care_intel"/>
+        <field name="sequence">19</field>
+        <field name="icon">fa fa-heartbeat</field>
+        <field name="action_xmlid">health_telemonitoring.action_health_ews_score</field>
+        <field name="match_action_xmlids">health_telemonitoring.action_health_ews_score</field>
+        <field name="match_models">health.ews.score</field>
+    </record>
+
+</odoo>
