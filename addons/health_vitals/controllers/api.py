@@ -196,12 +196,28 @@ class HealthVitalsPWAController(http.Controller):
                 created |= panel
                 created |= panel.child_ids
 
+            # NEWS2 score (telemonitoring). Registry guard keeps
+            # health_vitals installable without health_telemonitoring.
+            ews_payload = None
+            if 'health.ews.score' in request.env and created:
+                score = request.env['health.ews.score'].sudo().search(
+                    [('observation_ids', 'in', created.ids),
+                     ('superseded', '=', False)],
+                    order='id desc', limit=1)
+                if score:
+                    ews_payload = {
+                        'total': score.total,
+                        'band': score.band,
+                        'defaulted_consciousness': score.defaulted_consciousness,
+                    }
+
             return self._prepare_json_response(data={
                 'created_ids': created.ids,
                 'alerts': [
                     self._serialize_alert(observation)
                     for observation in created
                     if observation.alert_level != 'none'],
+                'ews': ews_payload,
             })
         except (UserError, ValidationError) as exc:
             return self._prepare_json_response(

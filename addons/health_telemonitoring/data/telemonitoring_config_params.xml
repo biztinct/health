@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Feature switches + trend thresholds. noupdate so a live operator
+         toggle / tuned threshold is never reset by a module upgrade. -->
+    <data noupdate="1">
+        <record id="param_ews_enabled" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.ews_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_ews_window_minutes" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.ews_window_minutes</field>
+            <field name="value">60</field>
+        </record>
+        <record id="param_activity_on_critical" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.activity_on_critical</field>
+            <field name="value">True</field>
+        </record>
+
+        <!-- Nightly trend sweep -->
+        <record id="param_trend_enabled" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.trend_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_trend_batch_cap" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.trend_batch_cap</field>
+            <field name="value">200</field>
+        </record>
+        <record id="param_trend_min_points" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.trend_min_points</field>
+            <field name="value">5</field>
+        </record>
+        <record id="param_hr_drift_bpm" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.hr_drift_bpm</field>
+            <field name="value">15</field>
+        </record>
+        <record id="param_sbp_drift_mmhg" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.sbp_drift_mmhg</field>
+            <field name="value">20</field>
+        </record>
+        <record id="param_spo2_drop_pp" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.spo2_drop_pp</field>
+            <field name="value">3</field>
+        </record>
+        <record id="param_weight_loss_pct_per_week" model="ir.config_parameter">
+            <field name="key">health_telemonitoring.weight_loss_pct_per_week</field>
+            <field name="value">2.0</field>
+        </record>
+    </data>
+</odoo>

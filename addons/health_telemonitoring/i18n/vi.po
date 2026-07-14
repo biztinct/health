@@ -1,0 +1,279 @@
+# Vietnamese translation for health_telemonitoring
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_telemonitoring\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_telemonitoring
+msgid "Telemonitoring"
+msgstr "Theo dõi từ xa"
+
+#. module: health_telemonitoring
+msgid "Deterioration Alerts"
+msgstr "Cảnh báo diễn tiến xấu"
+
+#. module: health_telemonitoring
+msgid "Deterioration Alert"
+msgstr "Cảnh báo diễn tiến xấu"
+
+#. module: health_telemonitoring
+msgid "NEWS2 Scores"
+msgstr "Điểm NEWS2"
+
+#. module: health_telemonitoring
+msgid "NEWS2 Score"
+msgstr "Điểm NEWS2"
+
+#. module: health_telemonitoring
+msgid "NEWS2 Early-Warning Score"
+msgstr "Điểm cảnh báo sớm NEWS2"
+
+#. module: health_telemonitoring
+msgid "NEWS2 total"
+msgstr "Tổng điểm NEWS2"
+
+#. module: health_telemonitoring
+msgid "Band"
+msgstr "Mức"
+
+#. module: health_telemonitoring
+msgid "Low"
+msgstr "Thấp"
+
+#. module: health_telemonitoring
+msgid "Low-Medium"
+msgstr "Thấp-Trung bình"
+
+#. module: health_telemonitoring
+msgid "Medium"
+msgstr "Trung bình"
+
+#. module: health_telemonitoring
+msgid "High"
+msgstr "Cao"
+
+#. module: health_telemonitoring
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_telemonitoring
+msgid "Visit"
+msgstr "Lần khám"
+
+#. module: health_telemonitoring
+msgid "Score Time"
+msgstr "Thời điểm chấm điểm"
+
+#. module: health_telemonitoring
+msgid "Respiratory rate"
+msgstr "Nhịp thở"
+
+#. module: health_telemonitoring
+msgid "SpO₂"
+msgstr "SpO₂"
+
+#. module: health_telemonitoring
+msgid "Systolic BP"
+msgstr "Huyết áp tâm thu"
+
+#. module: health_telemonitoring
+msgid "Heart rate"
+msgstr "Nhịp tim"
+
+#. module: health_telemonitoring
+msgid "Temperature"
+msgstr "Nhiệt độ"
+
+#. module: health_telemonitoring
+msgid "ACVPU"
+msgstr "ACVPU"
+
+#. module: health_telemonitoring
+msgid "On oxygen"
+msgstr "Đang thở oxy"
+
+#. module: health_telemonitoring
+msgid "Oxygen"
+msgstr "Oxy"
+
+#. module: health_telemonitoring
+msgid "Consciousness (ACVPU)"
+msgstr "Ý thức (ACVPU)"
+
+#. module: health_telemonitoring
+msgid "Superseded"
+msgstr "Đã thay thế"
+
+#. module: health_telemonitoring
+msgid "Consciousness defaulted (A)"
+msgstr "Ý thức mặc định (A)"
+
+#. module: health_telemonitoring
+msgid "Evidence observations"
+msgstr "Quan sát bằng chứng"
+
+#. module: health_telemonitoring
+msgid "Rule"
+msgstr "Quy tắc"
+
+#. module: health_telemonitoring
+msgid "Severity"
+msgstr "Mức độ"
+
+#. module: health_telemonitoring
+msgid "Warning"
+msgstr "Cảnh báo"
+
+#. module: health_telemonitoring
+msgid "Critical"
+msgstr "Nghiêm trọng"
+
+#. module: health_telemonitoring
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_telemonitoring
+msgid "New"
+msgstr "Mới"
+
+#. module: health_telemonitoring
+msgid "Acknowledged"
+msgstr "Đã ghi nhận"
+
+#. module: health_telemonitoring
+msgid "Resolved"
+msgstr "Đã xử lý"
+
+#. module: health_telemonitoring
+msgid "Dismissed"
+msgstr "Đã bỏ qua"
+
+#. module: health_telemonitoring
+msgid "Title"
+msgstr "Tiêu đề"
+
+#. module: health_telemonitoring
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_telemonitoring
+msgid "Closing note"
+msgstr "Ghi chú kết thúc"
+
+#. module: health_telemonitoring
+msgid "Closing"
+msgstr "Kết thúc"
+
+#. module: health_telemonitoring
+msgid "Acknowledge"
+msgstr "Ghi nhận"
+
+#. module: health_telemonitoring
+msgid "Resolve"
+msgstr "Xử lý"
+
+#. module: health_telemonitoring
+msgid "Dismiss"
+msgstr "Bỏ qua"
+
+#. module: health_telemonitoring
+msgid "NEWS2 high"
+msgstr "NEWS2 cao"
+
+#. module: health_telemonitoring
+msgid "NEWS2 medium"
+msgstr "NEWS2 trung bình"
+
+#. module: health_telemonitoring
+msgid "NEWS2 single-parameter 3"
+msgstr "NEWS2 một thông số = 3"
+
+#. module: health_telemonitoring
+msgid "Threshold breach"
+msgstr "Vượt ngưỡng"
+
+#. module: health_telemonitoring
+msgid "Resting HR drift"
+msgstr "Nhịp tim nghỉ tăng"
+
+#. module: health_telemonitoring
+msgid "Systolic BP drift"
+msgstr "Huyết áp tâm thu thay đổi"
+
+#. module: health_telemonitoring
+msgid "SpO2 decline"
+msgstr "SpO₂ giảm"
+
+#. module: health_telemonitoring
+msgid "Weight loss"
+msgstr "Sụt cân"
+
+#. module: health_telemonitoring
+msgid "NEWS2 SpO₂ Scale 2 (hypercapnic)"
+msgstr "NEWS2 SpO₂ Thang 2 (tăng CO₂)"
+
+#. module: health_telemonitoring
+msgid "NEWS2 scoring"
+msgstr "Chấm điểm NEWS2"
+
+#. module: health_telemonitoring
+msgid "Scoring window (minutes)"
+msgstr "Cửa sổ chấm điểm (phút)"
+
+#. module: health_telemonitoring
+msgid "Activity on critical alert"
+msgstr "Hoạt động khi cảnh báo nghiêm trọng"
+
+#. module: health_telemonitoring
+msgid "Nightly trend sweep"
+msgstr "Quét xu hướng hằng đêm"
+
+#. module: health_telemonitoring
+msgid "Only a new alert can be acknowledged."
+msgstr "Chỉ có thể ghi nhận cảnh báo mới."
+
+#. module: health_telemonitoring
+msgid "Only an open alert can be resolved."
+msgstr "Chỉ có thể xử lý cảnh báo đang mở."
+
+#. module: health_telemonitoring
+msgid "Only an open alert can be dismissed."
+msgstr "Chỉ có thể bỏ qua cảnh báo đang mở."
+
+#. module: health_telemonitoring
+msgid "A closing note is required to dismiss an alert."
+msgstr "Cần có ghi chú kết thúc để bỏ qua cảnh báo."
+
+#. module: health_telemonitoring
+msgid "You are not allowed to acknowledge deterioration alerts."
+msgstr "Bạn không được phép ghi nhận cảnh báo diễn tiến xấu."
+
+#. module: health_telemonitoring
+msgid "Only a head nurse, doctor, or manager may resolve alerts."
+msgstr "Chỉ điều dưỡng trưởng, bác sĩ hoặc quản lý mới được xử lý cảnh báo."
+
+#. module: health_telemonitoring
+msgid "Only a head nurse, doctor, or manager may dismiss alerts."
+msgstr "Chỉ điều dưỡng trưởng, bác sĩ hoặc quản lý mới được bỏ qua cảnh báo."
+
+#. module: health_telemonitoring
+msgid "NEWS2 scores are system-generated and append-only; only the superseded flag may change."
+msgstr "Điểm NEWS2 do hệ thống tạo và chỉ ghi thêm; chỉ cờ đã-thay-thế có thể thay đổi."
+
+#. module: health_telemonitoring
+msgid "NEWS2 scores are append-only and cannot be deleted."
+msgstr "Điểm NEWS2 chỉ ghi thêm và không thể xóa."
+
+#. module: health_telemonitoring
+msgid "Level of consciousness (ACVPU)"
+msgstr "Mức độ ý thức (ACVPU)"
+
+#. module: health_telemonitoring
+msgid "Supplemental oxygen flow rate"
+msgstr "Lưu lượng oxy hỗ trợ"

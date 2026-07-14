@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_monitor_alert_list" model="ir.ui.view">
+        <field name="name">health.monitor.alert.list</field>
+        <field name="model">health.monitor.alert</field>
+        <field name="arch" type="xml">
+            <list string="Deterioration Alerts" create="0"
+                  decoration-danger="severity == 'critical' and state in ('new', 'acknowledged')"
+                  decoration-muted="state in ('resolved', 'dismissed')">
+                <field name="create_date"/>
+                <field name="client_id"/>
+                <field name="title"/>
+                <field name="rule" widget="badge"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'warning'"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'new'"
+                       decoration-success="state == 'resolved'"
+                       decoration-muted="state == 'dismissed'"/>
+                <field name="vitals_type_id" optional="hide"/>
+                <field name="ack_user_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_monitor_alert_form" model="ir.ui.view">
+        <field name="name">health.monitor.alert.form</field>
+        <field name="model">health.monitor.alert</field>
+        <field name="arch" type="xml">
+            <form string="Deterioration Alert" create="0">
+                <header>
+                    <button name="action_acknowledge" type="object"
+                            string="Acknowledge" class="btn-primary"
+                            invisible="state != 'new'"/>
+                    <button name="action_resolve" type="object"
+                            string="Resolve" class="btn-primary"
+                            invisible="state not in ('new', 'acknowledged')"/>
+                    <button name="action_dismiss" type="object"
+                            string="Dismiss"
+                            invisible="state not in ('new', 'acknowledged')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,acknowledged,resolved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="title" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="client_id" readonly="1"/>
+                            <field name="rule" readonly="1"/>
+                            <field name="severity" readonly="1"/>
+                            <field name="vitals_type_id" readonly="1"
+                                   invisible="not vitals_type_id"/>
+                            <field name="order_id" readonly="1"
+                                   invisible="not order_id"/>
+                        </group>
+                        <group>
+                            <field name="ews_score_id" readonly="1"
+                                   invisible="not ews_score_id"/>
+                            <field name="ack_user_id" readonly="1"
+                                   invisible="not ack_user_id"/>
+                            <field name="ack_date" readonly="1"
+                                   invisible="not ack_date"/>
+                            <field name="closed_user_id" readonly="1"
+                                   invisible="not closed_user_id"/>
+                            <field name="closed_date" readonly="1"
+                                   invisible="not closed_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Evidence" name="evidence">
+                            <field name="body" readonly="1" nolabel="1"/>
+                            <separator string="Observations"/>
+                            <field name="observation_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="effective_datetime"/>
+                                    <field name="vitals_type_id"/>
+                                    <field name="value_quantity"/>
+                                    <field name="value_text"/>
+                                    <field name="alert_level"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Closing" name="closing">
+                            <field name="close_note"
+                                   placeholder="Required to dismiss an alert."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_monitor_alert_search" model="ir.ui.view">
+        <field name="name">health.monitor.alert.search</field>
+        <field name="model">health.monitor.alert</field>
+        <field name="arch" type="xml">
+            <search string="Deterioration Alerts">
+                <field name="client_id"/>
+                <field name="rule"/>
+                <filter name="state_new" string="New"
+                        domain="[('state', '=', 'new')]"/>
+                <filter name="acknowledged" string="Acknowledged"
+                        domain="[('state', '=', 'acknowledged')]"/>
+                <filter name="open" string="Open"
+                        domain="[('state', 'in', ('new', 'acknowledged'))]"/>
+                <separator/>
+                <filter name="critical" string="Critical"
+                        domain="[('severity', '=', 'critical')]"/>
+                <separator/>
+                <filter name="group_client" string="Client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter name="group_rule" string="Rule"
+                        context="{'group_by': 'rule'}"/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_monitor_alert" model="ir.actions.act_window">
+        <field name="name">Deterioration Alerts</field>
+        <field name="res_model">health.monitor.alert</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_monitor_alert_search"/>
+        <field name="context">{'search_default_state_new': 1,
+                               'search_default_group_client': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No deterioration alerts</p>
+            <p>Alerts surface here when a NEWS2 band, a vitals threshold, or
+               a nightly trend rule flags a patient for review.</p>
+        </field>
+    </record>
+
+</odoo>

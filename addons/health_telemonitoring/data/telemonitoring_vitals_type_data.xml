@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Two new vital-sign catalog types for NEWS2 (regular data — same
+         style as health_vitals catalog seeds). -->
+
+    <record id="vitals_type_acvpu" model="health.vitals.type">
+        <field name="name">Level of consciousness (ACVPU)</field>
+        <field name="name_vi">Mức độ ý thức (ACVPU)</field>
+        <field name="code">acvpu</field>
+        <field name="loinc_code">67775-7</field>
+        <field name="value_type">string</field>
+        <field name="is_fhir_vital_sign" eval="False"/>
+        <field name="sequence">90</field>
+    </record>
+
+    <record id="vitals_type_o2_flow" model="health.vitals.type">
+        <field name="name">Supplemental oxygen flow rate</field>
+        <field name="name_vi">Lưu lượng oxy hỗ trợ</field>
+        <field name="code">o2_flow</field>
+        <field name="loinc_code">3151-8</field>
+        <field name="ucum_unit">L/min</field>
+        <field name="unit_display">L/min</field>
+        <field name="value_type">quantity</field>
+        <field name="decimals">1</field>
+        <field name="plausible_min">0</field>
+        <field name="plausible_max">60</field>
+        <field name="is_fhir_vital_sign" eval="False"/>
+        <field name="sequence">91</field>
+    </record>
+
+</odoo>

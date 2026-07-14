@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- NEWS2 SpO₂ Scale 2 flag on the patient form, inside the
+         health_vitals "Alert Thresholds" page (its group gating applies). -->
+    <record id="view_health_patient_form_telemonitoring" model="ir.ui.view">
+        <field name="name">res.partner.health.patient.form.telemonitoring</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_vitals.view_health_patient_form_vitals"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='vitals_thresholds']/field[@name='vitals_threshold_ids']"
+                   position="before">
+                <group>
+                    <field name="news2_spo2_scale2"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

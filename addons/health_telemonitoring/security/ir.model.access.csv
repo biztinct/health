@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_ews_score_base,health.ews.score base,model_health_ews_score,health_base.group_healthcare_base,1,0,0,0
+access_health_ews_score_admin,health.ews.score admin,model_health_ews_score,health_base.group_healthcare_admin,1,1,1,1
+access_health_ews_score_owner,health.ews.score owner,model_health_ews_score,health_base.group_healthcare_owner,1,1,1,1
+access_health_monitor_alert_nurse,health.monitor.alert nurse,model_health_monitor_alert,health_base.group_healthcare_nurse,1,1,0,0
+access_health_monitor_alert_head_nurse,health.monitor.alert head_nurse,model_health_monitor_alert,health_base.group_healthcare_head_nurse,1,1,0,0
+access_health_monitor_alert_doctor,health.monitor.alert doctor,model_health_monitor_alert,health_base.group_healthcare_doctor,1,1,0,0
+access_health_monitor_alert_operations_manager,health.monitor.alert operations_manager,model_health_monitor_alert,health_base.group_healthcare_operations_manager,1,1,0,0
+access_health_monitor_alert_manager,health.monitor.alert manager,model_health_monitor_alert,health_base.group_healthcare_manager,1,1,0,0
+access_health_monitor_alert_admin,health.monitor.alert admin,model_health_monitor_alert,health_base.group_healthcare_admin,1,1,1,1
+access_health_monitor_alert_owner,health.monitor.alert owner,model_health_monitor_alert,health_base.group_healthcare_owner,1,1,1,1

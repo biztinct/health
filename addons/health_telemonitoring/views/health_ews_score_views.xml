@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_ews_score_list" model="ir.ui.view">
+        <field name="name">health.ews.score.list</field>
+        <field name="model">health.ews.score</field>
+        <field name="arch" type="xml">
+            <list string="NEWS2 Scores" create="0" edit="0"
+                  decoration-danger="band == 'high'"
+                  decoration-warning="band in ('medium', 'low_medium')"
+                  decoration-muted="superseded">
+                <field name="score_datetime"/>
+                <field name="client_id"/>
+                <field name="total"/>
+                <field name="band" widget="badge"
+                       decoration-danger="band == 'high'"
+                       decoration-warning="band in ('medium', 'low_medium')"
+                       decoration-success="band == 'low'"/>
+                <field name="defaulted_consciousness" widget="boolean_toggle"
+                       readonly="1" string="A def."/>
+                <field name="on_oxygen" optional="hide"/>
+                <field name="spo2_scale" optional="hide"/>
+                <field name="order_id" optional="hide"/>
+                <field name="superseded" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_ews_score_form" model="ir.ui.view">
+        <field name="name">health.ews.score.form</field>
+        <field name="model">health.ews.score</field>
+        <field name="arch" type="xml">
+            <form string="NEWS2 Score" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group string="Score">
+                            <field name="client_id"/>
+                            <field name="score_datetime"/>
+                            <field name="total"/>
+                            <field name="band" widget="badge"
+                                   decoration-danger="band == 'high'"
+                                   decoration-warning="band in ('medium', 'low_medium')"
+                                   decoration-success="band == 'low'"/>
+                            <field name="defaulted_consciousness"/>
+                            <field name="superseded"/>
+                            <field name="order_id"/>
+                        </group>
+                        <group string="Assembly">
+                            <field name="spo2_scale"/>
+                            <field name="on_oxygen"/>
+                        </group>
+                    </group>
+                    <group string="Components">
+                        <group>
+                            <label for="rr_value" string="Respiratory rate"/>
+                            <div>
+                                <field name="rr_value" class="oe_inline"/>
+                                (<field name="rr_score" class="oe_inline"/>)
+                            </div>
+                            <label for="spo2_value" string="SpO₂"/>
+                            <div>
+                                <field name="spo2_value" class="oe_inline"/>
+                                (<field name="spo2_score" class="oe_inline"/>)
+                            </div>
+                            <label for="o2_score" string="Oxygen"/>
+                            <div>
+                                <field name="on_oxygen" class="oe_inline"/>
+                                (<field name="o2_score" class="oe_inline"/>)
+                            </div>
+                            <label for="sbp_value" string="Systolic BP"/>
+                            <div>
+                                <field name="sbp_value" class="oe_inline"/>
+                                (<field name="bp_score" class="oe_inline"/>)
+                            </div>
+                        </group>
+                        <group>
+                            <label for="hr_value" string="Heart rate"/>
+                            <div>
+                                <field name="hr_value" class="oe_inline"/>
+                                (<field name="hr_score" class="oe_inline"/>)
+                            </div>
+                            <label for="temp_value" string="Temperature"/>
+                            <div>
+                                <field name="temp_value" class="oe_inline"/>
+                                (<field name="temp_score" class="oe_inline"/>)
+                            </div>
+                            <label for="acvpu_value" string="Consciousness (ACVPU)"/>
+                            <div>
+                                <field name="acvpu_value" class="oe_inline"/>
+                                (<field name="consciousness_score" class="oe_inline"/>)
+                            </div>
+                        </group>
+                    </group>
+                    <group string="Evidence observations">
+                        <field name="observation_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="effective_datetime"/>
+                                <field name="vitals_type_id"/>
+                                <field name="value_quantity"/>
+                                <field name="value_text"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_ews_score_search" model="ir.ui.view">
+        <field name="name">health.ews.score.search</field>
+        <field name="model">health.ews.score</field>
+        <field name="arch" type="xml">
+            <search string="NEWS2 Scores">
+                <field name="client_id"/>
+                <filter name="band_high" string="High"
+                        domain="[('band', '=', 'high')]"/>
+                <filter name="band_medium" string="Medium"
+                        domain="[('band', '=', 'medium')]"/>
+                <filter name="band_low_medium" string="Low-Medium"
+                        domain="[('band', '=', 'low_medium')]"/>
+                <separator/>
+                <filter name="current" string="Current"
+                        domain="[('superseded', '=', False)]"/>
+                <separator/>
+                <filter name="group_client" string="Client"
+                        context="{'group_by': 'client_id'}"/>
+                <filter name="group_band" string="Band"
+                        context="{'group_by': 'band'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_ews_score" model="ir.actions.act_window">
+        <field name="name">NEWS2 Scores</field>
+        <field name="res_model">health.ews.score</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_ews_score_search"/>
+        <field name="context">{'search_default_current': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No NEWS2 scores yet</p>
+            <p>A NEWS2 score is computed automatically whenever a complete
+               vital-sign set is captured at a visit.</p>
+        </field>
+    </record>
+
+</odoo>

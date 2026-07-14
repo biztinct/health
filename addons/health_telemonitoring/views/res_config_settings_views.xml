@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_telemonitoring" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.telemonitoring</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Telemonitoring" name="health_telemonitoring_settings">
+                    <setting id="tm_ews_setting" string="NEWS2 scoring"
+                             help="Compute a NEWS2 early-warning score automatically at every complete vitals capture.">
+                        <field name="tm_ews_enabled"/>
+                    </setting>
+                    <setting id="tm_window_setting" string="Scoring window (minutes)"
+                             help="Vitals recorded within this many minutes of the anchor observation are assembled into one NEWS2 score.">
+                        <field name="tm_ews_window_minutes"/>
+                    </setting>
+                    <setting id="tm_activity_setting" string="Activity on critical alert"
+                             help="Schedule a to-do activity for the facility manager when a critical deterioration alert is raised.">
+                        <field name="tm_activity_on_critical"/>
+                    </setting>
+                    <setting id="tm_trend_setting" string="Nightly trend sweep"
+                             help="Run the nightly statistical baseline/trend sweep (HR drift, SBP drift, SpO2 decline, weight loss).">
+                        <field name="tm_trend_enabled"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

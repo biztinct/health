@@ -30,6 +30,18 @@
     'Enter both systolic and diastolic': 'Nhập cả tâm thu và tâm trương',
     'Threshold alert': 'Cảnh báo ngưỡng',
     'Error': 'Lỗi',
+    'Ý thức (ACVPU)': 'Ý thức (ACVPU)',
+    'Đang thở oxy': 'Đang thở oxy',
+    'Lưu lượng (L/phút)': 'Lưu lượng (L/phút)',
+    '(ý thức mặc định A)': '(ý thức mặc định A)',
+  };
+
+  // NEWS2 band labels (Vietnamese-first, matching the sheet).
+  const BAND_LABELS = {
+    low: 'Thấp',
+    low_medium: 'Thấp-Trung bình',
+    medium: 'Trung bình',
+    high: 'Cao',
   };
 
   function _t(text) {
@@ -121,6 +133,27 @@
       '.vitals-spark{display:block;width:100%;height:48px;}',
       '.vitals-spark polyline{fill:none;stroke:' + COLORS.primary + ';stroke-width:2;}',
       '.vitals-spark circle{fill:' + COLORS.primary + ';}',
+      // ACVPU segmented row + O2 toggle (telemonitoring).
+      '.vitals-seg{grid-column:1 / -1;display:flex;flex-direction:column;gap:4px;}',
+      '.vitals-seg > label{font-size:12px;color:' + COLORS.muted + ';}',
+      '.vitals-seg-row{display:flex;gap:6px;}',
+      '.vitals-seg-btn{flex:1;padding:10px;border:1px solid ' + COLORS.border + ';',
+      'border-radius:6px;background:' + COLORS.field + ';color:' + COLORS.text + ';',
+      'font-size:15px;font-weight:600;cursor:pointer;}',
+      '.vitals-seg-btn.vitals-seg-on{background:' + COLORS.primary + ';color:#fff;',
+      'border-color:' + COLORS.primary + ';}',
+      '.vitals-o2{grid-column:1 / -1;display:flex;flex-direction:column;gap:6px;}',
+      '.vitals-o2-toggle{display:flex;align-items:center;gap:8px;font-size:14px;',
+      'color:' + COLORS.text + ';}',
+      '.vitals-o2-flow{display:none;}',
+      '.vitals-o2-flow.vitals-o2-flow-on{display:flex;}',
+      // NEWS2 band chip (flat mono, one color per band).
+      '.vitals-news2{margin-top:10px;padding:10px 12px;border-radius:6px;',
+      'font-size:14px;font-weight:700;color:#fff;}',
+      '.vitals-news2--low{background:' + COLORS.success + ';}',
+      '.vitals-news2--low_medium{background:#f9a825;}',
+      '.vitals-news2--medium{background:' + COLORS.warning + ';}',
+      '.vitals-news2--high{background:' + COLORS.danger + ';}',
     ].join('');
     document.head.appendChild(style);
   }
@@ -158,6 +191,25 @@
           if (err) err.remove();
         });
       });
+      // ACVPU segmented picker — single-select, re-click clears.
+      sheet.querySelectorAll('[data-acvpu]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const wasOn = btn.classList.contains('vitals-seg-on');
+          sheet.querySelectorAll('[data-acvpu]').forEach((b) =>
+            b.classList.remove('vitals-seg-on'));
+          if (!wasOn) btn.classList.add('vitals-seg-on');
+        });
+      });
+      // O2 toggle reveals the flow input.
+      const o2Toggle = sheet.querySelector('[data-o2-toggle]');
+      if (o2Toggle) {
+        o2Toggle.addEventListener('change', () => {
+          const wrap = sheet.querySelector('[data-o2-flow-wrap]');
+          if (wrap) {
+            wrap.classList.toggle('vitals-o2-flow-on', o2Toggle.checked);
+          }
+        });
+      }
     },
 
     close() {
@@ -196,6 +248,32 @@
         const type = window.healthVitalsService.getTypeByCode(types, code);
         if (type) html += this._fieldHtml(type, code);
       });
+      // Telemonitoring controls — rendered only when the catalog carries
+      // the codes (graceful when health_telemonitoring is not installed).
+      const acvpuType =
+        window.healthVitalsService.getTypeByCode(types, 'acvpu');
+      if (acvpuType) {
+        html += '<div class="vitals-seg">'
+          + '<label>' + _t('Ý thức (ACVPU)') + '</label>'
+          + '<div class="vitals-seg-row">'
+          + ['A', 'C', 'V', 'P', 'U'].map((letter) =>
+            '<button type="button" class="vitals-seg-btn" data-acvpu="'
+            + letter + '">' + letter + '</button>').join('')
+          + '</div></div>';
+      }
+      const o2Type =
+        window.healthVitalsService.getTypeByCode(types, 'o2_flow');
+      if (o2Type) {
+        html += '<div class="vitals-o2">'
+          + '<label class="vitals-o2-toggle">'
+          + '<input type="checkbox" data-o2-toggle="1"/> '
+          + _t('Đang thở oxy') + '</label>'
+          + '<div class="vitals-field vitals-o2-flow" data-o2-flow-wrap="1">'
+          + '<label>' + _t('Lưu lượng (L/phút)') + '</label>'
+          + '<input type="number" inputmode="decimal" step="0.5" min="0.5"'
+          + ' max="60" value="2" data-o2-flow="1"/>'
+          + '</div></div>';
+      }
       html += '</div>'
         + '<div class="vitals-alerts"></div>'
         + '<div class="vitals-actions">'
@@ -244,6 +322,34 @@
           effective_datetime: now,
         });
       });
+
+      // ACVPU (optional — untouched sends nothing).
+      const acvpuBtn = sheet.querySelector('[data-acvpu].vitals-seg-on');
+      if (acvpuBtn) {
+        payload.observations.push({
+          code: 'acvpu',
+          value: acvpuBtn.getAttribute('data-acvpu'),
+          effective_datetime: now,
+        });
+      }
+      // Supplemental O2 (optional — only when the toggle is on).
+      const o2Toggle = sheet.querySelector('[data-o2-toggle]');
+      if (o2Toggle && o2Toggle.checked) {
+        const flowInput = sheet.querySelector('[data-o2-flow]');
+        const flow = flowInput ? Number(flowInput.value) : NaN;
+        if (isNaN(flow) || flow <= 0 || flow > 60) {
+          hasInvalid = true;
+          if (flowInput) {
+            this._markInvalid(flowInput, _t('Value outside plausible range'));
+          }
+        } else {
+          payload.observations.push({
+            code: 'o2_flow',
+            value: flow,
+            effective_datetime: now,
+          });
+        }
+      }
       if (hasInvalid) return;
 
       if (sysValue !== null || diaValue !== null) {
@@ -269,10 +375,14 @@
           this.close();
           return;
         }
-        if (result.alerts && result.alerts.length) {
-          this._showAlerts(result.alerts);
+        const ews = result.ews;
+        const alerts = result.alerts || [];
+        const hasEws = ews
+          && ews.total !== null && ews.total !== undefined;
+        if (hasEws || alerts.length) {
+          this._showResult(ews, alerts);
           notify(_t('Vitals saved'), 'success');
-          return; // keep the sheet open so the alert banner is seen
+          return; // keep the sheet open so the NEWS2/alert banner is seen
         }
         notify(_t('Vitals saved'), 'success');
         this.close();
@@ -281,12 +391,24 @@
       }
     },
 
-    _showAlerts(alerts) {
+    _showResult(ews, alerts) {
       const container = this.element
         && this.element.querySelector('.vitals-alerts');
       if (!container) return;
       container.innerHTML = '';
-      alerts.forEach((alert) => {
+      // NEWS2 band chip ABOVE any threshold alert.
+      if (ews && ews.total !== null && ews.total !== undefined) {
+        const chip = document.createElement('div');
+        chip.className = 'vitals-news2 vitals-news2--' + (ews.band || 'low');
+        let text = 'NEWS2: ' + ews.total + ' — '
+          + (BAND_LABELS[ews.band] || ews.band || '');
+        if (ews.defaulted_consciousness) {
+          text += ' ' + _t('(ý thức mặc định A)');
+        }
+        chip.textContent = text;
+        container.appendChild(chip);
+      }
+      (alerts || []).forEach((alert) => {
         const banner = document.createElement('div');
         banner.className = 'vitals-alert vitals-alert--'
           + (alert.alert_level === 'critical' ? 'critical' : 'warning');

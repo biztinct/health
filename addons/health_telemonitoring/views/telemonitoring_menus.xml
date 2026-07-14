@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_telemonitoring_root"
+              name="Telemonitoring"
+              parent="health_base.menu_healthcare_clinical"
+              sequence="45"/>
+
+    <menuitem id="menu_health_monitor_alert"
+              name="Deterioration Alerts"
+              parent="menu_telemonitoring_root"
+              action="action_health_monitor_alert"
+              sequence="10"/>
+
+    <menuitem id="menu_health_ews_score"
+              name="NEWS2 Scores"
+              parent="menu_telemonitoring_root"
+              action="action_health_ews_score"
+              sequence="20"/>
+
+</odoo>
