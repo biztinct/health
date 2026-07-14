@@ -92,6 +92,28 @@ class HealthMonitorAlert(models.Model):
                 if rec.client_id else False)
 
     # ------------------------------------------------------------------
+    # Lifecycle-field integrity
+    # ------------------------------------------------------------------
+    # The lifecycle actions below write via self.sudo(), so end users never
+    # need direct write access to state/stamps — without this guard a user
+    # holding the model write ACL could bypass the group gates with a plain
+    # RPC write({'state': 'resolved'}).
+    # message_main_attachment_id: chatter may set it as the posting user.
+    _USER_WRITABLE = frozenset(('close_note', 'message_main_attachment_id'))
+
+    def write(self, vals):
+        allowed = (
+            self.env.su
+            or self.env.user._is_admin()
+            or self.env.user.has_group('health_base.group_healthcare_admin')
+            or self.env.user.has_group('health_base.group_healthcare_owner'))
+        if not allowed and set(vals) - self._USER_WRITABLE:
+            raise UserError(_(
+                'Deterioration alerts are managed through the Acknowledge / '
+                'Resolve / Dismiss actions.'))
+        return super().write(vals)
+
+    # ------------------------------------------------------------------
     # Dedup helper (handover §2.7 — verbatim)
     # ------------------------------------------------------------------
     def _open_exists(self, client_id, rule, vitals_type_id=False):

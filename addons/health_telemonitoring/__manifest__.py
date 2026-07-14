@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Telemonitoring (NEWS2 + Deterioration Triage)',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Healthcare/Clinical',
     'summary': 'NEWS2 early-warning scoring at every vitals capture + a '
                'deterioration triage inbox (NEWS2 bands, threshold mirror, '

@@ -48,3 +48,6 @@ DEFINITION OF DONE — do not report success until ALL of these are true:
 6. Final report includes: file list, deviations + reasons, verbatim test
    results, anything deferred, and any NEW Odoo 19 gotcha you discovered
    (flag it explicitly so it can be added to the conventions ledger).
+   WRITE the full report to docs/strategy/reports/<PHASE>-report.md and
+   commit it with your change (the reviewer reads it from the repo); also
+   paste it in your reply.

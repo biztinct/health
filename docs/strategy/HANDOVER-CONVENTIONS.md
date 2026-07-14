@@ -408,6 +408,37 @@ injects JS into the shell requires bumping `health_pwa`:
     immutability/retention guarantee on the child must ALSO be enforced by a
     parent-model `unlink()` override (health_emr `health_fieldservice_order`).
 
+36. **A default-True Boolean settings toggle backed by `config_parameter`
+    can NEVER be switched off from the Settings UI.** Core `set_values()`
+    passes raw `False` to `ir.config_parameter.set_param()`, which UNLINKS
+    the parameter for falsy values; a `get_param`-with-default helper then
+    falls back to the hardcoded default (True) and `get_values()` re-shows
+    the field default — the checkbox silently snaps back on. Kill-switches
+    for clinical engines were inert (telemonitoring review HIGH-1). Tests
+    mask it when they `set_param('False')` directly (a string is truthy —
+    that path works). Fix pattern: override `set_values()` to persist
+    explicit `'True'/'False'` strings (health_telemonitoring
+    `res_config_settings.py`); same trap for Integer 0 (param unlinked →
+    default returns — clamp or stringify). `health_workflow_auto` never hit
+    it because its gates default False.
+
+37. **The PWA vitals POST requires the nurse to be ASSIGNED to the FSO —
+    and an Odoo 19 `AccessError` subclasses `UserError`, so a record-rule
+    denial surfaces as HTTP 400, not 500.** `…/fso/<id>/vitals` reads
+    `order.patient_id` as the authenticated user; the FSO record rule is
+    assignment-based, so an in-catchment-but-unassigned nurse trips the
+    rule on that read → AccessError → caught by
+    `except (UserError, ValidationError)` → a 400 with the generic
+    "top-secret records" message that LOOKS like bad input. Diagnose
+    HTTP-only 400s by replaying the auth'd request and reading the error
+    string. Fixture rule: HttpCase nurses must be assigned via
+    `action_assign_staff_to_fso` (conventions §6). Corollary (method-gate
+    integrity): if lifecycle actions write via `self.sudo().write()`, do
+    NOT also grant users model-level write on those fields — add a
+    `write()` guard restricting non-su writes to the user-editable fields
+    (health_telemonitoring `health_monitor_alert.py`), else a direct RPC
+    `write({'state': …})` bypasses the group gates.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
@@ -460,4 +491,6 @@ sync when either changes.
 6. Final report states: what was built (file list), every deviation from
    the handover design with reasoning, test results verbatim
    (x/x passed), anything deferred, and any new gotcha discovered
-   (so it can be added to §5).
+   (so it can be added to §5). The full report is COMMITTED to
+   `docs/strategy/reports/<phase>-report.md` alongside the change (the
+   reviewer reads it from the repo) and also pasted in the reply.

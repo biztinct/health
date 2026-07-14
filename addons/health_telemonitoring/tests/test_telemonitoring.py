@@ -7,6 +7,7 @@ from odoo import fields
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import HttpCase, TransactionCase, new_test_user, tagged
 
+from odoo.addons.health_telemonitoring.models import tm_config
 from odoo.addons.health_telemonitoring.models.news2 import (
     news2_band, news2_component_scores)
 
@@ -396,6 +397,55 @@ class TestTelemonitoring(TransactionCase):
         # Head nurse resolves.
         alert.with_user(self.head_nurse).action_resolve()
         self.assertEqual(alert.state, 'resolved')
+
+    # -- 24: settings kill-switch roundtrip (review fix HIGH-1) --------
+    def test_24_settings_toggle_off_roundtrip(self):
+        """Saving a default-True Boolean as False must persist: core
+        set_param() unlinks falsy values and tm_config would fall back to
+        the True default — the set_values override stores explicit
+        strings."""
+        settings = self.env['res.config.settings'].create({
+            'tm_ews_enabled': False,
+            'tm_trend_enabled': False,
+            'tm_activity_on_critical': False,
+            'tm_ews_window_minutes': 0,
+        })
+        settings.set_values()
+        self.assertFalse(tm_config.get_bool(self.env, 'ews_enabled', True))
+        self.assertFalse(tm_config.get_bool(self.env, 'trend_enabled', True))
+        self.assertFalse(
+            tm_config.get_bool(self.env, 'activity_on_critical', True))
+        # Zero window clamps back to the default rather than unlinking.
+        self.assertEqual(
+            tm_config.get_int(self.env, 'ews_window_minutes', 60), 60)
+        # And the engine actually honours the persisted OFF switch.
+        fso = self._make_fso()
+        self._capture(fso, rr=30, spo2=90, sbp=88, hr=70, temp=36.5)
+        self.assertFalse(self._current())
+        # Toggle back on via the same path.
+        settings = self.env['res.config.settings'].create({
+            'tm_ews_enabled': True, 'tm_trend_enabled': True,
+            'tm_activity_on_critical': True, 'tm_ews_window_minutes': 60})
+        settings.set_values()
+        self.assertTrue(tm_config.get_bool(self.env, 'ews_enabled', False))
+
+    # -- 25: lifecycle gates not bypassable by direct write ------------
+    def test_25_direct_write_bypass_blocked(self):
+        fso = self._make_fso()
+        self._capture(fso, rr=30, spo2=90, sbp=88, hr=70, temp=36.5)
+        alert = self.Alert.search([
+            ('client_id', '=', self.patient.id), ('rule', '=', 'ews_high')],
+            limit=1)
+        # A nurse holding the model write ACL cannot flip lifecycle fields.
+        with self.assertRaises(UserError):
+            alert.with_user(self.nurse).write({'state': 'resolved'})
+        with self.assertRaises(UserError):
+            alert.with_user(self.head_nurse).write({'state': 'dismissed'})
+        self.assertEqual(alert.state, 'new')
+        # close_note stays user-writable (needed before dismiss).
+        alert.with_user(self.head_nurse).write({'close_note': 'duplicate'})
+        alert.with_user(self.head_nurse).action_dismiss()
+        self.assertEqual(alert.state, 'dismissed')
 
 
 # =====================================================================

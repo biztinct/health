@@ -26,6 +26,10 @@ class HealthEwsScore(models.Model):
     _name = 'health.ews.score'
     _description = 'NEWS2 Early-Warning Score'
     _order = 'score_datetime desc, id desc'
+    _rec_names_search = ['client_id.name']
+
+    display_name = fields.Char(
+        compute='_compute_display_name')
 
     client_id = fields.Many2one(
         'res.partner', string='Client', required=True, index=True,
@@ -88,6 +92,15 @@ class HealthEwsScore(models.Model):
     # ------------------------------------------------------------------
     # Computes
     # ------------------------------------------------------------------
+    @api.depends('total', 'client_id.name', 'score_datetime')
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = _(
+                'NEWS2 %(total)s — %(name)s — %(when)s',
+                total=rec.total,
+                name=rec.client_id.name or '',
+                when=fields.Datetime.to_string(rec.score_datetime) or '')
+
     @api.depends('client_id.catchment_province_id',
                  'client_id.primary_facility_id.catchment_province_id')
     def _compute_catchment_province_id(self):
