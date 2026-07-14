@@ -21,4 +21,20 @@
         <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
     </record>
 
+    <!-- Same catchment/owner scoping for the append-only history trail
+         (twin-phase3): the chart_series risk panel reads it under the caller's
+         env, so these rules gate which patients' trajectory a user can chart. -->
+    <record id="rule_health_twin_risk_history_catchment" model="ir.rule">
+        <field name="name">Deterioration Risk History: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_twin_risk_history"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+    <record id="rule_health_twin_risk_history_owner" model="ir.rule">
+        <field name="name">Deterioration Risk History: Owner sees all</field>
+        <field name="model_id" ref="model_health_twin_risk_history"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
 </odoo>

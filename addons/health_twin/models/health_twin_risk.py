@@ -84,6 +84,22 @@ class HealthTwinRisk(models.Model):
              'auditability/debugging.')
     computed_at = fields.Datetime(string='Computed At', index=True)
 
+    # --- Trajectory (twin-phase3): is this patient rising or falling? ---
+    # Filled in _upsert_one by comparing the new score to the prior snapshot.
+    trend_direction = fields.Selection([
+        ('worsening', 'Worsening'),
+        ('improving', 'Improving'),
+        ('stable', 'Stable'),
+        ('new', 'New'),
+    ], string='Trend', index=True,
+        help='Direction of the composite risk score versus the previous '
+             'recompute (worsening = score rose beyond the noise band).')
+    score_delta = fields.Integer(
+        string='Score Δ',
+        help='New composite score minus the previous one (0 for a new row).')
+    previous_score = fields.Integer(string='Previous Score')
+    previous_computed_at = fields.Datetime(string='Previous Computed At')
+
     catchment_province_id = fields.Many2one(
         'health.catchment.province', string='Catchment Area',
         compute='_compute_catchment_province_id', store=True,
@@ -326,6 +342,27 @@ class HealthTwinRisk(models.Model):
             'bands': [],
             'band_zones': self._NEWS2_BAND_ZONES,
         })
+
+        # --- Risk Score trajectory (twin-phase3 §2.5) — the OBSERVED composite
+        # over the window, band-zone coloured to match the worklist bands.
+        # Runs under the caller's env (NOT sudo): the history model is
+        # catchment-scoped, so an out-of-catchment user simply sees no points.
+        band_moderate = twin_config.get_int(self.env, 'band_moderate', 25)
+        band_high = twin_config.get_int(self.env, 'band_high', 50)
+        hist = self.env['health.twin.risk.history'].search(
+            [('patient_id', '=', pid), ('computed_at', '>=', date_from)],
+            order='computed_at')
+        risk_points = [
+            [fields.Datetime.to_string(h.computed_at), h.composite_score]
+            for h in hist if h.computed_at]
+        result['panels'].append({
+            'key': 'risk', 'title': _('Risk Score'), 'unit': '',
+            'series': [{'name': _('Risk'), 'points': risk_points}],
+            'bands': [],
+            'band_zones': [[0, band_moderate - 1, 'success'],
+                           [band_moderate, band_high - 1, 'warning'],
+                           [band_high, 100, 'danger']],
+        })
         return result
 
     # ==================================================================
@@ -504,10 +541,44 @@ class HealthTwinRisk(models.Model):
             'computed_at': now,
         }
         existing = self.sudo().search([('patient_id', '=', pid)], limit=1)
+
+        # --- Trajectory (twin-phase3 §2.3) — compute BEFORE the write, while
+        # `existing` still holds the OLD score/band. ----------------------
+        prev_score = existing.composite_score if existing else None
+        if prev_score is None:
+            direction, delta, prev_at = 'new', 0, False
+        else:
+            delta = score_val - prev_score
+            thr = twin_config.get_int(env, 'history_stable_band', 3)
+            direction = ('worsening' if delta > thr else
+                         'improving' if delta < -thr else 'stable')
+            prev_at = existing.computed_at
+        vals.update({
+            'trend_direction': direction,
+            'score_delta': delta,
+            'previous_score': prev_score or 0,
+            'previous_computed_at': prev_at,
+        })
+
         if existing:
             existing.write(vals)
-            return existing
-        return self.sudo().create(vals)
+            row = existing
+        else:
+            row = self.sudo().create(vals)
+
+        # --- Append a trajectory point (change-point + daily cap). Best
+        # effort in its OWN savepoint so a history failure can NEVER roll back
+        # or abort the snapshot write above (handover §3 safety rail; §5.3 —
+        # a poisoned cursor would otherwise abort the whole per-patient body).
+        if twin_config.get_bool(env, 'history_enabled', True):
+            try:
+                with env.cr.savepoint():
+                    env['health.twin.risk.history'].sudo()._maybe_append(
+                        pid, score_val, band, components, existing, now)
+            except Exception as exc:  # noqa: BLE001 — never abort the snapshot
+                _logger.warning(
+                    'Twin history append failed for patient %s: %s', pid, exc)
+        return row
 
     # ------------------------------------------------------------------
     # Cron sweep (handover §2.3)

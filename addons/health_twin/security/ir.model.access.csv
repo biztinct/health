@@ -6,3 +6,10 @@ access_health_twin_risk_operations_manager,health.twin.risk operations_manager,m
 access_health_twin_risk_manager,health.twin.risk manager,model_health_twin_risk,health_base.group_healthcare_manager,1,0,0,0
 access_health_twin_risk_admin,health.twin.risk admin,model_health_twin_risk,health_base.group_healthcare_admin,1,1,1,1
 access_health_twin_risk_owner,health.twin.risk owner,model_health_twin_risk,health_base.group_healthcare_owner,1,1,1,1
+access_health_twin_risk_history_nurse,health.twin.risk.history nurse,model_health_twin_risk_history,health_base.group_healthcare_nurse,1,0,0,0
+access_health_twin_risk_history_head_nurse,health.twin.risk.history head_nurse,model_health_twin_risk_history,health_base.group_healthcare_head_nurse,1,0,0,0
+access_health_twin_risk_history_doctor,health.twin.risk.history doctor,model_health_twin_risk_history,health_base.group_healthcare_doctor,1,0,0,0
+access_health_twin_risk_history_operations_manager,health.twin.risk.history operations_manager,model_health_twin_risk_history,health_base.group_healthcare_operations_manager,1,0,0,0
+access_health_twin_risk_history_manager,health.twin.risk.history manager,model_health_twin_risk_history,health_base.group_healthcare_manager,1,0,0,0
+access_health_twin_risk_history_admin,health.twin.risk.history admin,model_health_twin_risk_history,health_base.group_healthcare_admin,1,1,1,1
+access_health_twin_risk_history_owner,health.twin.risk.history owner,model_health_twin_risk_history,health_base.group_healthcare_owner,1,1,1,1

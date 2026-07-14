@@ -51,6 +51,28 @@
             <field name="value">0.05</field>
         </record>
 
+        <!-- Trajectory / history (twin-phase3) -->
+        <record id="param_twin_history_enabled" model="ir.config_parameter">
+            <field name="key">health_twin.history_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_twin_history_gc_enabled" model="ir.config_parameter">
+            <field name="key">health_twin.history_gc_enabled</field>
+            <field name="value">True</field>
+        </record>
+        <record id="param_twin_history_min_delta" model="ir.config_parameter">
+            <field name="key">health_twin.history_min_delta</field>
+            <field name="value">8</field>
+        </record>
+        <record id="param_twin_history_stable_band" model="ir.config_parameter">
+            <field name="key">health_twin.history_stable_band</field>
+            <field name="value">3</field>
+        </record>
+        <record id="param_twin_history_retention_days" model="ir.config_parameter">
+            <field name="key">health_twin.history_retention_days</field>
+            <field name="value">365</field>
+        </record>
+
         <!-- Band thresholds (inclusive lower bounds) -->
         <record id="param_twin_band_moderate" model="ir.config_parameter">
             <field name="key">health_twin.band_moderate</field>

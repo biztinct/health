@@ -16,6 +16,10 @@
                              help="Run the periodic sweep that refreshes the whole worklist and prunes stale snapshots. Event-driven recomputes still run when the engine is enabled.">
                         <field name="twin_sweep_enabled"/>
                     </setting>
+                    <setting id="twin_history_setting" string="Risk trajectory history"
+                             help="Keep an append-only trail of each client's risk score over time (the worklist trend arrows and the Risk Score trajectory chart). Turn off to stop appending new history points; existing points and the trend arrows still show.">
+                        <field name="twin_history_enabled"/>
+                    </setting>
                 </block>
             </xpath>
         </field>

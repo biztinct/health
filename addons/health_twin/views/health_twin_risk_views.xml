@@ -20,6 +20,14 @@
                        decoration-info="risk_band == 'moderate'"
                        decoration-muted="risk_band == 'low'"/>
                 <field name="composite_score" widget="progressbar"/>
+                <field name="trend_direction" widget="badge"
+                       decoration-danger="trend_direction == 'worsening'"
+                       decoration-success="trend_direction == 'improving'"
+                       decoration-muted="trend_direction in ('stable', 'new')"/>
+                <field name="score_delta"
+                       decoration-danger="score_delta &gt; 0"
+                       decoration-success="score_delta &lt; 0"
+                       optional="show"/>
                 <field name="news2_total"/>
                 <field name="news2_band" optional="show"/>
                 <field name="open_alert_count"/>
@@ -75,6 +83,13 @@
                                    decoration-warning="risk_band == 'high'"
                                    decoration-info="risk_band == 'moderate'"
                                    decoration-muted="risk_band == 'low'"/>
+                            <field name="trend_direction" widget="badge"
+                                   decoration-danger="trend_direction == 'worsening'"
+                                   decoration-success="trend_direction == 'improving'"
+                                   decoration-muted="trend_direction in ('stable', 'new')"/>
+                            <field name="score_delta"/>
+                            <field name="previous_score"/>
+                            <field name="previous_computed_at"/>
                             <field name="catchment_province_id"/>
                             <field name="computed_at"/>
                         </group>
@@ -132,6 +147,9 @@
         <field name="arch" type="xml">
             <search string="Deterioration Worklist">
                 <field name="patient_id"/>
+                <filter name="worsening" string="Worsening"
+                        domain="[('trend_direction', '=', 'worsening')]"/>
+                <separator/>
                 <filter name="critical" string="Critical"
                         domain="[('risk_band', '=', 'critical')]"/>
                 <filter name="high" string="High"
