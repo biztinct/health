@@ -25,6 +25,10 @@ const APP_VI_FALLBACK_TRANSLATIONS = {
   'Requires an internet connection.': 'Cần kết nối internet.',
   'Connect to the internet to finalize & sign this note.': 'Kết nối internet để hoàn tất & ký ghi chú này.',
   'Finalize and sign this clinical note? Once signed it becomes a permanent, locked medical record and cannot be edited.': 'Hoàn tất và ký ghi chú lâm sàng này? Sau khi ký, ghi chú trở thành hồ sơ bệnh án cố định, bị khóa và không thể chỉnh sửa.',
+  // EMR "Notes to sign" home card (emr-record-spine phase 1.7) — VN-first fallback.
+  'Notes to sign': 'Ghi chú cần ký',
+  'overdue': 'quá hạn',
+  'Patient': 'Bệnh nhân',
 };
 
 // Lightweight translation helper: use PWAUtils.i18n for reactive language switching
@@ -2598,6 +2602,47 @@ window.healthPWA = {
           viewingClinicalNote.value = null;
         };
 
+        // EMR "Notes to sign" home card (emr-record-spine phase 1.7). A
+        // read-only, ONLINE-only nudge: lists the nurse's OWN unsigned draft
+        // notes so aging drafts don't pile up invisibly (Phase-1.6 raises a
+        // backend mail.activity she never sees in the PWA). Each row deep-links
+        // to the booking modal's existing Finalize & Sign button — this card
+        // finalizes nothing itself.
+        const unsignedNotes = ref([]);
+        const unsignedCount = computed(() => unsignedNotes.value.length);
+        const overdueNotesCount = computed(
+          () => unsignedNotes.value.filter((n) => n.overdue).length);
+
+        const loadUnsignedNotes = async () => {
+          if (!props.isOnline && !navigator.onLine) return;
+          try {
+            const resp = await fetch('/health_pwa/api/clinical_notes/unsigned');
+            const result = await resp.json();
+            if (result.success && result.data) {
+              unsignedNotes.value = result.data.notes || [];
+            }
+          } catch (err) {
+            console.warn('[NotesToSign] Failed to fetch:', err);
+          }
+        };
+
+        // Relative age label (VN-first, no catalog pluralization) from age_hours.
+        const noteAgeLabel = (row) => {
+          const h = row.age_hours || 0;
+          const vi = (window.healthPWAConfig?.user_lang || 'vi').startsWith('vi');
+          if (h < 1) return vi ? 'vừa xong' : 'just now';
+          if (h < 24) return vi ? `${h} giờ trước` : `${h} hour${h === 1 ? '' : 's'} ago`;
+          const d = Math.floor(h / 24);
+          return vi ? `${d} ngày trước` : `${d} day${d === 1 ? '' : 's'} ago`;
+        };
+
+        // Row tap → open the shared booking modal (openBooking bridge via
+        // navigate('order', …)) where the finalize button already lives.
+        const openUnsignedNote = (row) => {
+          if (!row || !row.order_id) return;
+          emit('navigate', 'order', { id: row.order_id });
+        };
+
         // EMR point-of-care finalize (emr-record-spine phase 1.5). Signs the
         // note as THIS nurse via the online-only endpoint; the server attributes
         // the signature to her and locks the record. Online-only (the legal
@@ -2630,6 +2675,8 @@ window.healthPWA = {
               await fetchBookingDetail(bookingId);
               const list = selectedBookingDetail.value?.clinical_notes_list || [];
               viewingClinicalNote.value = list.find((n) => n.id === note.id) || null;
+              // Re-fetch the "Notes to sign" card so the just-signed note drops off.
+              loadUnsignedNotes();
             } else {
               window.healthPWA.showNotification(
                 result.error || _t('Finalization failed'), 'error');
@@ -3114,6 +3161,8 @@ window.healthPWA = {
           loadCurrentUser(); // Load current user info
           // If the root handed us a booking to open (from another route), do it.
           consumePendingBooking();
+          // "Notes to sign" home card (emr phase 1.7): seed on mount.
+          loadUnsignedNotes();
           // Offline-action badge: seed the set and refresh it after every sync.
           refreshPendingActions();
           window.addEventListener('health-pwa-sync-completed', onSyncCompleted);
@@ -3213,6 +3262,13 @@ window.healthPWA = {
           backToNotesList,
           finalizeNote,
           finalizingNote,
+          // "Notes to sign" home card (emr phase 1.7)
+          unsignedNotes,
+          unsignedCount,
+          overdueNotesCount,
+          loadUnsignedNotes,
+          noteAgeLabel,
+          openUnsignedNote,
           capturePhoto,
           saveClinicalNotes,
           completeServiceWithoutQuoteInTodayView,
@@ -3311,6 +3367,41 @@ window.healthPWA = {
               <button @click="setViewMode('day')" :class="{ on: viewMode === 'day' }">{{ _t('Day') }}</button>
               <button @click="setViewMode('week')" :class="{ on: viewMode === 'week' }">{{ _t('Week') }}</button>
               <button @click="setViewMode('month')" :class="{ on: viewMode === 'month' }">{{ _t('Month') }}</button>
+            </div>
+          </div>
+
+          <!-- Notes to sign (emr-record-spine phase 1.7): the nurse's OWN
+               unsigned drafts, deep-linking to the booking modal's existing
+               Finalize & Sign button. Hidden entirely when empty. Read-only
+               nudge — flat mono, no gradient (feedback_mono_colors). -->
+          <div v-if="unsignedCount > 0" class="notes-to-sign-card"
+               style="margin:12px;border:1px solid #E0E0E0;border-radius:12px;background:#FFFFFF;overflow:hidden;">
+            <div class="nts-header"
+                 style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #F0F0F0;">
+              <div style="display:flex;align-items:center;gap:8px;font-weight:600;color:#263238;">
+                <i class="material-icons" style="color:#1565C0;font-size:20px;">edit_note</i>
+                <span>{{ _t('Notes to sign') }}</span>
+                <span style="background:#1565C0;color:#FFFFFF;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:600;">{{ unsignedCount }}</span>
+              </div>
+              <span v-if="overdueNotesCount > 0"
+                    style="display:flex;align-items:center;gap:4px;color:#FB8C00;font-size:12px;font-weight:600;">
+                <i class="material-icons" style="font-size:16px;">schedule</i>
+                {{ overdueNotesCount }} {{ _t('overdue') }}
+              </span>
+            </div>
+            <div class="nts-list">
+              <div v-for="row in unsignedNotes" :key="row.note_id"
+                   @click="openUnsignedNote(row)"
+                   style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-top:1px solid #F5F5F5;cursor:pointer;">
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:6px;font-weight:500;color:#37474F;">
+                    <i v-if="row.overdue" class="material-icons" style="color:#FB8C00;font-size:18px;">warning</i>
+                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ row.patient_name || _t('Patient') }}</span>
+                  </div>
+                  <div style="font-size:12px;color:#90A4A4;">{{ noteAgeLabel(row) }}</div>
+                </div>
+                <i class="material-icons" style="color:#B0BEC5;flex-shrink:0;">chevron_right</i>
+              </div>
             </div>
           </div>
 

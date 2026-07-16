@@ -1083,6 +1083,78 @@ class HealthPWAAPIController(http.Controller):
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
 
+    @http.route('/health_pwa/api/clinical_notes/unsigned',
+                type='http', auth='user', methods=['GET'], csrf=False)
+    def api_clinical_notes_unsigned(self, **kwargs):
+        """List the logged-in nurse's OWN unsigned (draft) clinical notes as a
+        home-screen sign reminder (emr-record-spine phase 1.7).
+
+        READ-ONLY nudge, ONLINE-only — this endpoint writes nothing and cannot
+        finalize; the signing act stays on the unchanged Phase-1.5
+        finalize endpoint. Author-scoped: the domain pins
+        author_id = request.env.user.id, so the sudo read can only ever return
+        the caller's OWN drafts (she authored them → already saw the patient).
+        NEVER widen this domain to other authors or drop the author filter.
+        Returns navigation context ONLY (patient name + visit date + age) — NO
+        note CONTENT/PHI body. Defensive: empty list when health_emr is absent
+        (health_pwa keeps no hard dep on it — clones the Phase-1.5 guard)."""
+        if not self._check_api_access():
+            return self._prepare_json_response(error=_('Access denied'), status_code=403)
+        try:
+            Note = request.env['health.clinical.note'].sudo()
+            if 'emr_state' not in Note._fields:
+                return self._prepare_json_response(
+                    data={'notes': [], 'count': 0, 'overdue_count': 0})
+
+            # Overdue threshold — reuse the Phase-1.6 config (default 24h),
+            # read defensively (health_emr may be absent → default).
+            try:
+                reminder_hours = int(request.env['ir.config_parameter'].sudo().get_param(
+                    'health_emr.reminder_hours', '24'))
+            except (ValueError, TypeError):
+                reminder_hours = 24
+
+            # Author-scoped read: pinned to the caller so a sudo search can only
+            # surface her own drafts. Cap defensively (a nurse won't realistically
+            # have this many unsigned drafts).
+            drafts = Note.search([
+                ('author_id', '=', request.env.user.id),
+                ('emr_state', '=', 'draft'),
+            ], limit=100)
+            if len(drafts) >= 100:
+                _logger.warning(
+                    'unsigned-notes list capped at 100 for user %s',
+                    request.env.user.id)
+
+            now = fields.Datetime.now()
+            notes = []
+            for note in drafts:
+                order = note.order_id
+                wd = note.write_date or note.create_date or now
+                age_hours = int((now - wd).total_seconds() // 3600)
+                notes.append({
+                    'note_id': note.id,
+                    'order_id': order.id if order else None,
+                    'patient_name': order.patient_id.name if (order and order.patient_id) else '',
+                    'scheduled_datetime': (order.scheduled_datetime.isoformat()
+                                           if (order and order.scheduled_datetime) else None),
+                    'age_hours': age_hours,
+                    'overdue': age_hours >= reminder_hours,
+                    '_write_date': wd,  # sort key only — stripped before return
+                })
+            # Overdue-first, then oldest write_date first (most-overdue on top).
+            notes.sort(key=lambda n: (not n['overdue'], n['_write_date']))
+            for n in notes:
+                n.pop('_write_date', None)
+
+            return self._prepare_json_response(data={
+                'notes': notes,
+                'count': len(notes),
+                'overdue_count': sum(1 for n in notes if n['overdue']),
+            })
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
     @http.route('/health_pwa/api/fso/<int:order_id>/intake_notes', type='http', auth='user', methods=['POST'], csrf=False)
     def api_fso_save_intake_notes(self, order_id, **kwargs):
         """Save intake notes for FSO from mobile app"""
