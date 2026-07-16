@@ -554,6 +554,19 @@ injects JS into the shell requires bumping `health_pwa`:
     attention-nudge (a long-unseen patient deserves a glance); know it perturbs
     band math in any fixture that drives absolute scores.
 
+- **§5.44 — an Odoo 19 `auth='user'` HTTP route answers an UNAUTHENTICATED
+    request with a 303 (See Other) login redirect, not 302.** A test that proves
+    an endpoint "requires auth" by checking the deny status must include 303:
+    `self.assertIn(resp.status_code, (302, 303, 401, 403))` (with
+    `url_open(url, allow_redirects=False)` so the raw redirect status is visible,
+    not the followed 200 login page). The framework redirects unauthenticated
+    `type='http'` requests to `/web/login` with **303**; asserting only 302
+    RED-lights a correctly-gated endpoint (hit live in
+    `health_pwa/tests/test_pwa_sign_reminder.test_07`, first run). For an
+    authenticated-but-unprivileged deny (`_check_api_access` failing on a logged-in
+    non-health user) the same endpoint returns a JSON 403 envelope instead — the
+    303 is specifically the not-logged-in case.
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
