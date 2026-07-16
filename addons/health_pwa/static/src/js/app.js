@@ -2577,6 +2577,25 @@ window.healthPWA = {
           viewingClinicalNote.value = null;
         };
 
+        // Keep the finalize path reachable AFTER the visit is delivered
+        // (emr-record-spine phase 1.7 fix). The "Clinical Notes" footer button
+        // above only renders for in_progress / just-started visits, but an
+        // OVERDUE unsigned draft — the exact population the "Notes to sign" card
+        // surfaces — lives on a visit that is already completed/closed. Without
+        // this the card row deep-links to a modal with no way to reach the
+        // Finalize & Sign button. Show ONLY the notes button (never the
+        // completion actions), and ONLY for a delivered visit that still has an
+        // unsigned draft (so it never duplicates the in_progress button and
+        // never appears on a fully-signed completed visit).
+        const hasUnsignedDraftToSign = computed(() => {
+          const d = selectedBookingDetail.value;
+          if (!d) return false;
+          const delivered = ['completed', 'completed_pending_invoice', 'closed']
+            .includes(d.state);
+          if (!delivered) return false;
+          return (d.clinical_notes_list || []).some((n) => n.emr_state === 'draft');
+        });
+
         const openNewClinicalNoteForm = () => {
           showClinicalNoteForm.value = true;
           viewingClinicalNote.value = null;
@@ -3256,6 +3275,7 @@ window.healthPWA = {
           startService,
           cancelVisit,
           openClinicalNotesModal,
+          hasUnsignedDraftToSign,
           closeClinicalNotesModal,
           openNewClinicalNoteForm,
           viewExistingNote,
@@ -3743,6 +3763,18 @@ window.healthPWA = {
                           :title="_t('Complete this visit in one tap')">
                     <i class="material-icons">bolt</i>
                     <span>{{ onetapSubmitting ? _t('Completing...') : _t('Quick Complete') }}</span>
+                  </button>
+                </div>
+
+                <!-- Sign an aging draft after the visit is delivered (emr phase
+                     1.7 fix): the finalize path must stay reachable for
+                     completed/closed visits — exactly where the "Notes to sign"
+                     card's overdue drafts live. Only the notes button, only when
+                     an unsigned draft remains (no completion actions here). -->
+                <div v-if="hasUnsignedDraftToSign" class="modal-footer-content">
+                  <button @click="openClinicalNotesModal" class="btn btn-clinical-notes">
+                    <i class="material-icons">description</i>
+                    <span>{{ _t('Clinical Notes') }}</span>
                   </button>
                 </div>
               </div>

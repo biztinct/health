@@ -4,7 +4,7 @@
         <!-- PWA Configuration Data -->
         <record id="pwa_config_data" model="ir.config_parameter">
             <field name="key">health_pwa.version</field>
-            <field name="value">1.0.97</field>
+            <field name="value">1.0.98</field>
         </record>
     
         <record id="pwa_config_theme" model="ir.config_parameter">
@@ -44,5 +44,5 @@
 
     <!-- Version must advance on every module upgrade even though settings are protected. -->
     <function model="ir.config_parameter" name="set_param"
-              eval="('health_pwa.version', '1.0.97')"/>
+              eval="('health_pwa.version', '1.0.98')"/>
 </odoo>
