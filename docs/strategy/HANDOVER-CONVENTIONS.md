@@ -567,6 +567,25 @@ injects JS into the shell requires bumping `health_pwa`:
     non-health user) the same endpoint returns a JSON 403 envelope instead — the
     303 is specifically the not-logged-in case.
 
+- **§5.45 — NEVER start a second `odoo-bin` process (e.g. `odoo-bin shell`)
+    against `vietuat` while a `-u`/`-i` upgrade run is in flight — it poisons
+    the upgrade's registry load and the whole run rolls back with EXIT:255.**
+    The deploy in §2 stops the HTTP service and runs a standalone
+    `odoo-bin … --stop-after-init` that holds the database. Launching a
+    concurrent `odoo-bin shell` (e.g. to clean up a QA fixture mid-deploy)
+    races that process: the symptom is a burst of `odoo.sql_db: bad query` on
+    internal tables (`filter_registry`, `ir_module_module`) followed by
+    `odoo.registry: Failed to load registry` + `CRITICAL … Failed to initialize
+    database` and the run exits 255 — even though `service start` afterwards
+    brings the server back up at HTTP 200 (masking it if you only check the
+    curl). Confusingly, module *data* that committed before the crash (a
+    version bump, config params) may still show applied, but the TEST phase
+    never reports a result line. Fix: do all DB-touching cleanup (QA-fixture
+    unlink, shell pokes) either BEFORE stopping the server or AFTER the deploy
+    run fully returns; keep exactly ONE odoo process on the DB during a deploy.
+    Always confirm the deploy by the `odoo.tests.result` line + `EXIT:0`, not
+    just HTTP:200. (Hit live during the emr-phase1.7 reachability fix deploy.)
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
