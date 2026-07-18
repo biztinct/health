@@ -33,8 +33,12 @@ def coverage_split(eligible_amount, coverage_rate, round_to=1,
         return (0, total)
     rate = min(100.0, max(0.0, coverage_rate))
     covered = _round(eligible_amount * rate / 100.0, round_to)
-    if covered > total:
-        covered = total
+    # Clamp covered into [0, total]. Upper: coverage can never exceed the
+    # eligible total. Lower: a negative eligible (a credit-note / adjustment
+    # line) must NOT yield a negative "covered" — that would understate what is
+    # billed to BHYT and overcharge the patient while the sum still nets to the
+    # clamped total. Clamping to 0 makes a non-positive line net (0, 0).
+    covered = max(0, min(covered, total))
     return (covered, total - covered)
 
 

@@ -169,8 +169,10 @@ def coverage_split(eligible_amount, coverage_rate, round_to=1,
         return (0, total)
     rate = min(100.0, max(0.0, coverage_rate))
     covered = _round(eligible_amount * rate / 100.0, round_to)
-    if covered > total:
-        covered = total
+    # Clamp covered into [0, total]: coverage never exceeds the eligible total,
+    # and a negative eligible (credit-note/adjustment line) nets (0, 0) rather
+    # than emitting a negative "covered" that would understate the BHYT bill.
+    covered = max(0, min(covered, total))
     return (covered, total - covered)
 
 

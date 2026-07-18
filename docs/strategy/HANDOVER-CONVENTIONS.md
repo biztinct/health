@@ -598,11 +598,16 @@ injects JS into the shell requires bumping `health_pwa`:
     bhyt-phase1 handover's own worked-vector said `(-500,80)→(0,0)`, which is
     what a naïve reader EXPECTS but NOT what the verbatim kernel does — the test
     must assert the true behavior (`sum(cs(-500,80))==0` AND `==(-400,400)`) so a
-    real transcription slip is still caught. If a future phase feeds a negative
-    (credit-note line, discount adjustment), add `max(0.0, eligible_amount)` to
-    the `covered` computation too. General rule: a "clamp" that guards only the
-    aggregate (`total`) does not protect the per-component split — clamp each
-    component that a sign-flip can corrupt. (Caught in bhyt-phase1 design review.)
+    real transcription slip is still caught. **RESOLVED at review (Fable, kernel
+    owner):** rather than wait for Phase 2, `covered` is now clamped into
+    `[0, total]` (`covered = max(0, min(covered, total))`), so a negative /
+    credit-note / adjustment line nets `(0, 0)` and the split can never
+    understate the BHYT bill or overcharge the patient. The §2.2 handover block +
+    the kernel test now assert `(-500,80)→(0,0)`. General rule (the lasting
+    lesson): a "clamp" that guards only the aggregate (`total`) does not protect
+    the per-component split — clamp EACH component a sign-flip can corrupt, and
+    when a worked-vector and the kernel code disagree, fix the code to match the
+    documented intent, not the test to match the buggy code. (bhyt-phase1 review.)
 
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 

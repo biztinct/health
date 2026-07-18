@@ -61,14 +61,12 @@ class TestBhytKernel(TransactionCase):
         # 12345 @ 80%: covered round(9876.0)=9876, copay remainder 2469
         self.assertEqual(cs(12345, 80), (9876, 2469))
         self.assertEqual(cs(0, 80), (0, 0))
-        # Negative eligible: the VERBATIM kernel clamps `total` (max(0,·)) but
-        # computes `covered` from the raw value, so the split is (-400, 400) —
-        # NOT (0,0) as the handover's §2.2 vector line claims. The invariant
-        # (covered+copay == clamped total == 0) still holds. Faithful to the
-        # copied kernel; flagged in the report (eligible is always ≥0 in real
-        # generation, so this edge never fires).
+        # Negative eligible (a credit-note / adjustment line): `covered` is
+        # clamped into [0, total] so a non-positive line nets (0, 0) — the
+        # kernel never emits a negative "covered" that would understate the
+        # BHYT bill and overcharge the patient (ledger §5.46, hardened).
+        self.assertEqual(cs(-500, 80), (0, 0))
         self.assertEqual(sum(cs(-500, 80)), 0)
-        self.assertEqual(cs(-500, 80), (-400, 400))
 
     def test_02_rounding_invariant(self):
         """covered + copay == _round(eligible) for a spread — no đồng lost."""
