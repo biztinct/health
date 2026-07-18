@@ -586,6 +586,24 @@ injects JS into the shell requires bumping `health_pwa`:
     Always confirm the deploy by the `odoo.tests.result` line + `EXIT:0`, not
     just HTTP:200. (Hit live during the emr-phase1.7 reachability fix deploy.)
 
+- **§5.46 — the BHYT §2.2 coverage kernel clamps only `total` for a negative
+    eligible amount, NOT `covered` — so `coverage_split(-500, 80)` returns
+    `(-400, 400)`, not `(0, 0)`.** `coverage_split` computes
+    `total = _round(max(0, eligible))` but `covered = _round(eligible*rate/100)`
+    from the RAW (un-clamped) eligible, so a negative input yields a negative
+    `covered` and a compensating positive `copay`. The money invariant
+    (`covered + copay == clamped total == 0`) still holds, so downstream totals
+    never leak đồng — but the split is nonsensical for a negative. Harmless in
+    Phase 1: `eligible_amount` is always an invoice `price_subtotal ≥ 0`. The
+    bhyt-phase1 handover's own worked-vector said `(-500,80)→(0,0)`, which is
+    what a naïve reader EXPECTS but NOT what the verbatim kernel does — the test
+    must assert the true behavior (`sum(cs(-500,80))==0` AND `==(-400,400)`) so a
+    real transcription slip is still caught. If a future phase feeds a negative
+    (credit-note line, discount adjustment), add `max(0.0, eligible_amount)` to
+    the `covered` computation too. General rule: a "clamp" that guards only the
+    aggregate (`total`) does not protect the per-component split — clamp each
+    component that a sign-flip can corrupt. (Caught in bhyt-phase1 design review.)
+
 ## 6. Test fixture requirements (or your tests fail on vietuat)
 
 - Patient partners REQUIRE `catchment_province_id` (search existing
