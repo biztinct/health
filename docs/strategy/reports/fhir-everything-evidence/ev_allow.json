@@ -1,0 +1,447 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "total": 9,
+  "link": [
+    {
+      "relation": "self",
+      "url": "http://localhost:8069/fhir/r4/Patient/9765/$everything"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/Patient/9765",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "9765",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "active": true,
+        "identifier": [
+          {
+            "system": "urn:health19:partner",
+            "value": "9765"
+          },
+          {
+            "system": "urn:health19:patient-code",
+            "value": "99 000122026"
+          }
+        ],
+        "name": [
+          {
+            "text": "QA Everything Patient"
+          }
+        ],
+        "address": [
+          {
+            "text": "EV-QA Province, Vietnam",
+            "city": "EV-QA Province",
+            "state": "EV-QA Province",
+            "country": "VN"
+          }
+        ],
+        "managingOrganization": {
+          "reference": "Organization/1091",
+          "display": "EV-QA Facility"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/Appointment/6394",
+      "resource": {
+        "resourceType": "Appointment",
+        "id": "6394",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "identifier": [
+          {
+            "system": "urn:health19:fso",
+            "value": "New Booking"
+          }
+        ],
+        "status": "booked",
+        "participant": [
+          {
+            "actor": {
+              "reference": "Patient/9765",
+              "display": "QA Everything Patient"
+            },
+            "required": "required",
+            "status": "accepted"
+          },
+          {
+            "actor": {
+              "reference": "Practitioner/3656",
+              "display": "QA Nurse EV"
+            },
+            "status": "accepted",
+            "type": [
+              {
+                "text": "Lead Staff"
+              }
+            ]
+          }
+        ],
+        "start": "2026-07-15T02:00:00+00:00",
+        "end": "2026-07-15T03:00:00+00:00",
+        "serviceType": [
+          {
+            "text": "Home Visit"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/CarePlan/108",
+      "resource": {
+        "resourceType": "CarePlan",
+        "id": "108",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "status": "draft",
+        "intent": "plan",
+        "subject": {
+          "reference": "Patient/9765",
+          "display": "QA Everything Patient"
+        },
+        "title": "QA BP control",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "urn:health19:careplan-category",
+                "code": "chronic"
+              }
+            ]
+          }
+        ],
+        "period": {
+          "start": "2026-07-01"
+        },
+        "author": {
+          "display": "Viet Uc Care"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/Consent/1058",
+      "resource": {
+        "resourceType": "Consent",
+        "id": "1058",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "status": "active",
+        "scope": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/consentscope",
+              "code": "patient-privacy"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "urn:health19:consent-types",
+                "code": "data_sharing"
+              }
+            ]
+          }
+        ],
+        "patient": {
+          "reference": "Patient/9765",
+          "display": "QA Everything Patient"
+        },
+        "dateTime": "2026-07-18",
+        "performer": [
+          {
+            "display": "Viet Uc Care"
+          }
+        ],
+        "provision": {
+          "period": {
+            "start": "2026-07-18"
+          }
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/DocumentReference/1525",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "1525",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "status": "current",
+        "type": {
+          "text": "Clinical visit note"
+        },
+        "subject": {
+          "reference": "Patient/9765",
+          "display": "QA Everything Patient"
+        },
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/6394"
+            }
+          ]
+        },
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/plain; charset=utf-8",
+              "data": "Q2xpbmljYWwgTm90ZXM6ClFBIHdvdW5kIGNhcmUKCkRpYWdub3NpczoKUUEgcHJlc3N1cmUgdWxjZXIgc3RhZ2UgSUk=",
+              "title": "Viet Uc Care - 18/07/2026 13:30"
+            }
+          }
+        ],
+        "date": "2026-07-18T13:30:59+00:00",
+        "author": [
+          {
+            "display": "Viet Uc Care"
+          }
+        ],
+        "docStatus": "preliminary"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/Encounter/6394",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "6394",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "identifier": [
+          {
+            "system": "urn:health19:fso",
+            "value": "New Booking"
+          }
+        ],
+        "status": "planned",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "HH",
+          "display": "home health"
+        },
+        "subject": {
+          "reference": "Patient/9765",
+          "display": "QA Everything Patient"
+        },
+        "appointment": [
+          {
+            "reference": "Appointment/6394"
+          }
+        ],
+        "period": {
+          "start": "2026-07-15T02:00:00+00:00",
+          "end": "2026-07-15T03:00:00+00:00"
+        },
+        "participant": [
+          {
+            "individual": {
+              "reference": "Practitioner/3656",
+              "display": "QA Nurse EV"
+            },
+            "type": [
+              {
+                "text": "Lead Staff"
+              }
+            ]
+          }
+        ],
+        "serviceProvider": {
+          "reference": "Organization/1091",
+          "display": "EV-QA Facility"
+        },
+        "extension": [
+          {
+            "url": "urn:health19:evv-verified",
+            "valueBoolean": false
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/Observation/2170",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "2170",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "8867-4",
+              "display": "Heart rate"
+            }
+          ],
+          "text": "Heart rate"
+        },
+        "subject": {
+          "reference": "Patient/9765",
+          "display": "QA Everything Patient"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "vital-signs",
+                "display": "Vital Signs"
+              }
+            ]
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/6394"
+        },
+        "effectiveDateTime": "2026-07-18T13:31:06+00:00",
+        "performer": [
+          {
+            "display": "Viet Uc Care"
+          }
+        ],
+        "valueQuantity": {
+          "value": 72.0,
+          "unit": "bpm",
+          "system": "http://unitsofmeasure.org",
+          "code": "/min"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/Observation/2171",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "2171",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "8310-5",
+              "display": "Body temperature"
+            }
+          ],
+          "text": "Body temperature"
+        },
+        "subject": {
+          "reference": "Patient/9765",
+          "display": "QA Everything Patient"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "vital-signs",
+                "display": "Vital Signs"
+              }
+            ]
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/6394"
+        },
+        "effectiveDateTime": "2026-07-18T13:31:06+00:00",
+        "performer": [
+          {
+            "display": "Viet Uc Care"
+          }
+        ],
+        "valueQuantity": {
+          "value": 37.0,
+          "unit": "°C",
+          "system": "http://unitsofmeasure.org",
+          "code": "Cel"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8069/fhir/r4/ServiceRequest/6394",
+      "resource": {
+        "resourceType": "ServiceRequest",
+        "id": "6394",
+        "meta": {
+          "lastUpdated": "2026-07-18T13:30:59+00:00"
+        },
+        "identifier": [
+          {
+            "system": "urn:health19:fso",
+            "value": "New Booking"
+          }
+        ],
+        "status": "active",
+        "intent": "order",
+        "subject": {
+          "reference": "Patient/9765",
+          "display": "QA Everything Patient"
+        },
+        "code": {
+          "text": "Home Visit"
+        },
+        "encounter": {
+          "reference": "Encounter/6394"
+        },
+        "authoredOn": "2026-07-18T13:30:59+00:00",
+        "occurrenceDateTime": "2026-07-15T02:00:00+00:00"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "OperationOutcome",
+        "issue": [
+          {
+            "severity": "warning",
+            "code": "suppressed",
+            "diagnostics": "This $everything response OMITS resource types the caller is not authorized to read (Flag). The record may be incomplete for this consumer — no data was leaked, but a complete export requires broader read authorization."
+          }
+        ]
+      },
+      "search": {
+        "mode": "outcome"
+      }
+    }
+  ]
+}

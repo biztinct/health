@@ -32,11 +32,19 @@ def build_capability(env, base_url=''):
         ]
         search_params.append({'name': '_lastUpdated', 'type': 'date'})
         search_params.append({'name': '_count', 'type': 'number'})
-        resources.append({
+        resource = {
             'type': resource_type,
             'interaction': [{'code': 'read'}, {'code': 'search-type'}],
             'searchParam': search_params,
-        })
+        }
+        if resource_type == 'Patient':
+            # Whole-record clinical export (compartment pull, single consent).
+            resource['operation'] = [{
+                'name': 'everything',
+                'definition': ('http://hl7.org/fhir/OperationDefinition/'
+                               'Patient-everything'),
+            }]
+        resources.append(resource)
 
     statement = {
         'resourceType': 'CapabilityStatement',

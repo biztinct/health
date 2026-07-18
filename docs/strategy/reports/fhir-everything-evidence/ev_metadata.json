@@ -1,0 +1,675 @@
+{
+  "resourceType": "CapabilityStatement",
+  "status": "active",
+  "date": "2026-07-18T13:41:31+00:00",
+  "kind": "instance",
+  "name": "Health19FHIRFacade",
+  "title": "health19 FHIR R4 Facade (read-only, Phase 1)",
+  "description": "Read-only FHIR R4 facade over the health19 home-care platform. Auth: API gateway tokens with system/<Resource>.read scopes. Note: DocumentReference image content[].attachment.url entries point at Odoo /web/content endpoints which require separate Odoo authentication.",
+  "publisher": "health19",
+  "fhirVersion": "4.0.1",
+  "format": [
+    "application/fhir+json"
+  ],
+  "implementation": {
+    "description": "health19 FHIR R4 facade",
+    "url": "http://localhost:8069/fhir/r4"
+  },
+  "rest": [
+    {
+      "mode": "server",
+      "security": {
+        "service": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/restful-security-service",
+                "code": "OAuth"
+              }
+            ]
+          }
+        ]
+      },
+      "resource": [
+        {
+          "type": "AdverseEvent",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "severity",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Appointment",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "CarePlan",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "CodeSystem",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "name",
+              "type": "token"
+            },
+            {
+              "name": "url",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Consent",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "DocumentReference",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "name": "encounter",
+              "type": "reference"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Encounter",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Flag",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Goal",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "lifecycle-status",
+              "type": "token"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Location",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "organization",
+              "type": "reference"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "MedicationAdministration",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "MedicationRequest",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Observation",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "code",
+              "type": "token"
+            },
+            {
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Organization",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "identifier",
+              "type": "token"
+            },
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Patient",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "birthdate",
+              "type": "date"
+            },
+            {
+              "name": "identifier",
+              "type": "token"
+            },
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "phone",
+              "type": "token"
+            },
+            {
+              "name": "telecom",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ],
+          "operation": [
+            {
+              "name": "everything",
+              "definition": "http://hl7.org/fhir/OperationDefinition/Patient-everything"
+            }
+          ]
+        },
+        {
+          "type": "Practitioner",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "identifier",
+              "type": "token"
+            },
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Questionnaire",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "name",
+              "type": "token"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "QuestionnaireResponse",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "authored",
+              "type": "date"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "questionnaire",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "ServiceRequest",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "Task",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "encounter",
+              "type": "reference"
+            },
+            {
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            },
+            {
+              "name": "_count",
+              "type": "number"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

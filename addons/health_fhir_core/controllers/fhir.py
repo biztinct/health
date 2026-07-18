@@ -26,6 +26,7 @@ from ..serializers.base import (
     consent_allowed_records, consent_enforced,
     validate_resource, validation_enabled,
 )
+from ..serializers.everything import build_everything_bundle
 
 _logger = logging.getLogger(__name__)
 
@@ -68,6 +69,28 @@ class HealthFHIRController(http.Controller):
             return self._fhir_response(bundle)
         except FHIRError as error:
             return self._error_response(error, rtype=rtype)
+
+    @http.route('/fhir/r4/Patient/<int:rid>/$everything', type='http',
+                auth='none', methods=['GET'], csrf=False)
+    def fhir_patient_everything(self, rid, **kwargs):
+        """Patient/$everything — the whole clinical record in ONE
+        consent-gated searchset Bundle (Patient first, then the patient's
+        compartment). Composes the existing serializers; runs under the
+        caller's env (record rules) with a single whole-record data_sharing
+        consent decision. See serializers/everything.py."""
+        try:
+            serializer = self._serializer_or_404('Patient')
+            user = self._authenticate(serializer)
+            env = request.env(user=user.id)  # record rules apply
+            params = self._query_params()
+            bundle, patient_record = build_everything_bundle(
+                env, rid, params, self._base_url())
+            if validation_enabled(env):
+                self._runtime_validate(bundle)
+            self._audit(env, user, serializer, patient_record, status=200)
+            return self._fhir_response(bundle)
+        except FHIRError as error:
+            return self._error_response(error, rtype='Patient')
 
     @http.route('/fhir/r4/<string:rtype>/<int:rid>', type='http', auth='none',
                 methods=['GET'], csrf=False)
