@@ -690,3 +690,26 @@ expensive-model browser cost twice and erases the saving. The saving only
 exists if the reviewer's pass is review-of-evidence + targeted re-drive.
 For a backend-only phase the pack is trivial/absent and this whole step is
 a no-op.
+
+- **§5.47 — a multi-model export is fragile to any ONE compartment model with a
+    missing/absent `ir.model.access`: the whole operation 403s even with zero
+    rows.** Hit live in fhir-everything: `health.fall.risk` (FHIR Flag) ships
+    with NO ACL for any group, so `search_count` raised `AccessError` and would
+    have killed the entire `$everything` bundle. Pattern for any operation that
+    composes reads across N models (exports, bundles, dashboards): wrap the
+    per-model read in `except AccessError` (ONLY AccessError — never blanket
+    `Exception`), OMIT that model, and DECLARE the omission to the consumer
+    (in FHIR: an OperationOutcome `warning/suppressed` entry) — the authz
+    counterpart of "no silent truncation". Corollary flagged (not yet fixed):
+    the Patient serializer bulk-reads group-gated `res.partner` fields
+    (`credit_limit`, `signup_type`), so a token whose service user lacks the
+    accounting group can 403 on ANY Patient serialization — a pre-existing
+    facade quirk; catch it if a non-admin-grouped service user is ever issued.
+
+- **§5.48 — an `ir.config_parameter` set from a separate `odoo-bin shell` is
+    NOT seen by the running HTTP workers until a restart** — the param is read
+    through a per-worker `ormcache`, and a write from another process does not
+    invalidate the workers' caches. For QA that toggles a param (e.g.
+    `consent_enforced`): set it via the shell, RESTART (or reload) the server,
+    run the probe, set it back, restart again. Sibling of §5.32/§5.45 —
+    cross-process state on a live server is never seen "for free".
