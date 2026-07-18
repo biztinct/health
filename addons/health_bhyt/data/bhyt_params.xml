@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- noupdate so a live operator toggle is never reset by an upgrade. -->
+    <data noupdate="1">
+        <!-- Batch generation is OFF by default (opt-in): the button is the
+             primary path; the cron is for facilities that want automatic
+             backfill. -->
+        <record id="param_bhyt_generate_enabled" model="ir.config_parameter">
+            <field name="key">bhyt.generate_enabled</field>
+            <field name="value">False</field>
+        </record>
+        <record id="param_bhyt_generate_batch_cap" model="ir.config_parameter">
+            <field name="key">bhyt.generate_batch_cap</field>
+            <field name="value">500</field>
+        </record>
+        <!-- Whether a generated line is BHYT-covered by default (the referral /
+             out-of-list refinement is a later phase). -->
+        <record id="param_bhyt_default_covered" model="ir.config_parameter">
+            <field name="key">bhyt.default_covered</field>
+            <field name="value">True</field>
+        </record>
+    </data>
+</odoo>

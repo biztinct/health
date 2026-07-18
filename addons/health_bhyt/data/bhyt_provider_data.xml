@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Seed the BHYT (Vietnam social health insurance) scheme record. noupdate
+         so a live edit (e.g. a tuned default rate) survives an upgrade. -->
+    <data noupdate="1">
+        <record id="provider_bhyt" model="health.insurance.provider">
+            <field name="name">BHYT — Bảo hiểm y tế (Social Health Insurance)</field>
+            <field name="code">BHYT</field>
+            <field name="coverage_percentage">80.0</field>
+            <field name="covers_home_visits" eval="True"/>
+            <field name="covers_clinic_visits" eval="True"/>
+            <field name="notes">Vietnam Social Security (VSS/BHXH) social health
+                insurance scheme. The default coverage % here seeds a patient's
+                BHYT coverage rate; the beneficiary-category refinement (95/100%
+                groups, đúng/trái tuyến) arrives with the Decision-4210 schema
+                in Phase 2.</field>
+        </record>
+    </data>
+</odoo>

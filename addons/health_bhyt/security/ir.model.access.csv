@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bhyt_claim_finance,bhyt.claim finance,model_bhyt_claim,health_base.group_healthcare_finance,1,1,1,0
+access_bhyt_claim_admin,bhyt.claim admin,model_bhyt_claim,health_base.group_healthcare_admin,1,1,1,1
+access_bhyt_claim_owner,bhyt.claim owner,model_bhyt_claim,health_base.group_healthcare_owner,1,1,1,1
+access_bhyt_claim_line_finance,bhyt.claim.line finance,model_bhyt_claim_line,health_base.group_healthcare_finance,1,1,1,1
+access_bhyt_claim_line_admin,bhyt.claim.line admin,model_bhyt_claim_line,health_base.group_healthcare_admin,1,1,1,1
+access_bhyt_claim_line_owner,bhyt.claim.line owner,model_bhyt_claim_line,health_base.group_healthcare_owner,1,1,1,1
+access_bhyt_claim_event_finance,bhyt.claim.event finance,model_bhyt_claim_event,health_base.group_healthcare_finance,1,0,0,0
+access_bhyt_claim_event_admin,bhyt.claim.event admin,model_bhyt_claim_event,health_base.group_healthcare_admin,1,0,0,0
+access_bhyt_claim_event_owner,bhyt.claim.event owner,model_bhyt_claim_event,health_base.group_healthcare_owner,1,0,0,0

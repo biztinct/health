@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         Catchment-scoped record rules for BHYT claims (clone of the
+         health_invoicing client-scoped financial trio: finance users see
+         their own catchment; owner sees all). Deletion is state-guarded in
+         the model (draft/cancelled only) regardless of these perms.
+         ============================================================ -->
+
+    <!-- bhyt.claim -->
+    <record id="rule_bhyt_claim_finance" model="ir.rule">
+        <field name="name">BHYT Claim: Finance Own Catchment</field>
+        <field name="model_id" ref="model_bhyt_claim"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_finance'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_bhyt_claim_owner" model="ir.rule">
+        <field name="name">BHYT Claim: Owner Full Access</field>
+        <field name="model_id" ref="model_bhyt_claim"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- bhyt.claim.line (catchment via the parent claim) -->
+    <record id="rule_bhyt_claim_line_finance" model="ir.rule">
+        <field name="name">BHYT Claim Line: Finance Own Catchment</field>
+        <field name="model_id" ref="model_bhyt_claim_line"/>
+        <field name="domain_force">['&amp;', ('claim_id.catchment_province_id', '=', user.catchment_province_id.id), ('claim_id.catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_finance'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_bhyt_claim_line_owner" model="ir.rule">
+        <field name="name">BHYT Claim Line: Owner Full Access</field>
+        <field name="model_id" ref="model_bhyt_claim_line"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- bhyt.claim.event (catchment via the parent claim) -->
+    <record id="rule_bhyt_claim_event_finance" model="ir.rule">
+        <field name="name">BHYT Claim Event: Finance Own Catchment</field>
+        <field name="model_id" ref="model_bhyt_claim_event"/>
+        <field name="domain_force">['&amp;', ('claim_id.catchment_province_id', '=', user.catchment_province_id.id), ('claim_id.catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_finance'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_bhyt_claim_event_owner" model="ir.rule">
+        <field name="name">BHYT Claim Event: Owner Full Access</field>
+        <field name="model_id" ref="model_bhyt_claim_event"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

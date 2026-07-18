@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- BHYT fields on the STANDARD patient form. A new notebook page keeps the
+         scheme/card/rate together. -->
+    <record id="view_health_patient_form_bhyt" model="ir.ui.view">
+        <field name="name">res.partner.health.patient.form.bhyt</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="BHYT" name="bhyt"
+                      groups="health_base.group_healthcare_base">
+                    <group>
+                        <group string="BHYT Coverage">
+                            <field name="bhyt_provider_id"/>
+                            <field name="bhyt_coverage_rate"/>
+                            <field name="bhyt_beneficiary_code"/>
+                            <field name="bhyt_registered_facility"/>
+                            <field name="bhyt_valid"/>
+                        </group>
+                        <group string="BHYT Card">
+                            <field name="insurance_number" string="BHYT Card No."/>
+                            <field name="insurance_expiry"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- The REAL user-facing surface on vietuat is the standalone OPS profile
+         view (ledger §5.41) — a page added ONLY to the standard form never
+         renders on the CMS client profile, so inherit the ops view too. -->
+    <record id="view_health_patient_form_ops_bhyt" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.client.profile.bhyt</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="BHYT" name="bhyt_ops"
+                      groups="health_base.group_healthcare_base">
+                    <group>
+                        <group string="BHYT Coverage">
+                            <field name="bhyt_provider_id"/>
+                            <field name="bhyt_coverage_rate"/>
+                            <field name="bhyt_beneficiary_code"/>
+                            <field name="bhyt_registered_facility"/>
+                            <field name="bhyt_valid"/>
+                        </group>
+                        <group string="BHYT Card">
+                            <field name="insurance_number" string="BHYT Card No."/>
+                            <field name="insurance_expiry"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

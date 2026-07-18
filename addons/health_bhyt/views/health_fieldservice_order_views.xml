@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- "Generate BHYT Claim" on a completed + invoiced visit. Finance-gated;
+         all logic in bhyt.claim._build_claim_for (handover §2.5, §2.8). -->
+    <record id="view_health_fieldservice_order_form_bhyt" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.bhyt</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="is_invoiced" invisible="1"/>
+                <button name="action_generate_bhyt_claim" type="object"
+                        string="Generate BHYT Claim" icon="fa-shield"
+                        invisible="state not in ('completed', 'completed_pending_invoice', 'closed') or not is_invoiced"
+                        groups="health_base.group_healthcare_finance"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

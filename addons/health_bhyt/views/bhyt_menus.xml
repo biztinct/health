@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dedicated top-level "BHYT Claims" menu gated to the claim audience
+         (group_healthcare_finance). The natural home would be the Finance
+         Center, but that root is gated to group_health_invoicing_user which
+         the healthcare finance/manager/owner ladder does NOT imply — nesting
+         there would hide the worklist from its own audience. -->
+    <menuitem id="menu_bhyt_root"
+              name="BHYT Claims"
+              groups="health_base.group_healthcare_finance"
+              sequence="14"/>
+
+    <menuitem id="menu_bhyt_claims"
+              name="Claims"
+              parent="menu_bhyt_root"
+              action="action_bhyt_claim"
+              sequence="10"/>
+</odoo>

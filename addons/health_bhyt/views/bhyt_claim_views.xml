@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== LIST ===================== -->
+    <record id="view_bhyt_claim_list" model="ir.ui.view">
+        <field name="name">bhyt.claim.list</field>
+        <field name="model">bhyt.claim</field>
+        <field name="arch" type="xml">
+            <list string="BHYT Claims" decoration-muted="state == 'cancelled'"
+                  decoration-info="state == 'ready'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="service_date"/>
+                <field name="provider_id" optional="show"/>
+                <field name="bhyt_card_no" optional="hide"/>
+                <field name="bhyt_coverage_rate" optional="hide"/>
+                <field name="total_amount" sum="Total"/>
+                <field name="bhyt_amount" sum="BHYT Covered"/>
+                <field name="patient_amount" sum="Patient Copay"/>
+                <field name="catchment_province_id" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'ready'"
+                       decoration-success="state == 'acked'"
+                       decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================== FORM ===================== -->
+    <record id="view_bhyt_claim_form" model="ir.ui.view">
+        <field name="name">bhyt.claim.form</field>
+        <field name="model">bhyt.claim</field>
+        <field name="arch" type="xml">
+            <form string="BHYT Claim">
+                <header>
+                    <button name="action_mark_ready" type="object"
+                            string="Mark Ready" class="oe_highlight"
+                            invisible="state != 'draft'"
+                            groups="health_base.group_healthcare_finance"/>
+                    <button name="action_reset_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state not in ('ready', 'cancelled')"
+                            groups="health_base.group_healthcare_finance"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel"
+                            invisible="state not in ('draft', 'ready')"
+                            groups="health_base.group_healthcare_finance"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,ready"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Visit &amp; Invoice">
+                            <field name="patient_id" readonly="1"/>
+                            <field name="fso_id" readonly="1"/>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="service_date" readonly="1"/>
+                            <field name="catchment_province_id" readonly="1"/>
+                        </group>
+                        <group string="BHYT Snapshot">
+                            <field name="provider_id" readonly="1"/>
+                            <field name="bhyt_card_no" readonly="1"/>
+                            <field name="bhyt_coverage_rate" readonly="1"/>
+                            <field name="bhyt_beneficiary_code" readonly="1"/>
+                            <field name="bhyt_registered_facility" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Coverage Split" name="lines">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="product_id" optional="hide"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price"/>
+                                    <field name="eligible_amount"/>
+                                    <field name="covered_service"/>
+                                    <field name="bhyt_amount" readonly="1"/>
+                                    <field name="patient_amount" readonly="1"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer" colspan="2">
+                                <field name="total_amount"/>
+                                <field name="bhyt_amount"/>
+                                <field name="patient_amount"/>
+                            </group>
+                        </page>
+                        <page string="Audit Trail" name="events">
+                            <field name="event_ids" readonly="1">
+                                <list string="Audit Trail">
+                                    <field name="create_date" string="When"/>
+                                    <field name="event"/>
+                                    <field name="user_id"/>
+                                    <field name="amount_snapshot"/>
+                                    <field name="note"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===================== SEARCH ===================== -->
+    <record id="view_bhyt_claim_search" model="ir.ui.view">
+        <field name="name">bhyt.claim.search</field>
+        <field name="model">bhyt.claim</field>
+        <field name="arch" type="xml">
+            <search string="BHYT Claims">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="bhyt_card_no" string="BHYT Card"/>
+                <field name="provider_id"/>
+                <filter name="draft" string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="ready" string="Ready"
+                        domain="[('state', '=', 'ready')]"/>
+                <filter name="open" string="Draft or Ready"
+                        domain="[('state', 'in', ('draft', 'ready'))]"/>
+                <separator/>
+                <filter name="cancelled" string="Cancelled"
+                        domain="[('state', '=', 'cancelled')]"/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by': 'state'}"/>
+                <filter name="group_provider" string="Scheme"
+                        context="{'group_by': 'provider_id'}"/>
+                <filter name="group_catchment" string="Catchment"
+                        context="{'group_by': 'catchment_province_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ===================== ACTION ===================== -->
+    <record id="action_bhyt_claim" model="ir.actions.act_window">
+        <field name="name">BHYT Claims</field>
+        <field name="res_model">bhyt.claim</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_bhyt_claim_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">No BHYT claims yet</p>
+            <p>Generate a claim from a completed, invoiced visit whose patient
+               holds a valid BHYT card.</p>
+        </field>
+    </record>
+
+</odoo>
