@@ -1,0 +1,133 @@
+# Vietnamese translation for health_condition
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_condition\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_condition
+msgid "Diagnoses"
+msgstr "Chẩn đoán"
+
+#. module: health_condition
+msgid "Diagnosis"
+msgstr "Chẩn đoán"
+
+#. module: health_condition
+msgid "Condition / Diagnosis (Problem List)"
+msgstr "Chẩn đoán (Danh sách vấn đề)"
+
+#. module: health_condition
+msgid "Problem List"
+msgstr "Danh sách vấn đề"
+
+#. module: health_condition
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_condition
+msgid "ICD-10 Code"
+msgstr "Mã ICD-10"
+
+#. module: health_condition
+msgid "Clinical Status"
+msgstr "Trạng thái lâm sàng"
+
+#. module: health_condition
+msgid "Verification Status"
+msgstr "Trạng thái xác minh"
+
+#. module: health_condition
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: health_condition
+msgid "Inactive"
+msgstr "Không hoạt động"
+
+#. module: health_condition
+msgid "Resolved"
+msgstr "Đã khỏi"
+
+#. module: health_condition
+msgid "Provisional"
+msgstr "Tạm thời"
+
+#. module: health_condition
+msgid "Confirmed"
+msgstr "Đã xác nhận"
+
+#. module: health_condition
+msgid "Recorded Date"
+msgstr "Ngày ghi nhận"
+
+#. module: health_condition
+msgid "Last Asserted"
+msgstr "Khẳng định gần nhất"
+
+#. module: health_condition
+msgid "Evidence Notes"
+msgstr "Ghi chú bằng chứng"
+
+#. module: health_condition
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_condition
+msgid "Recorder"
+msgstr "Người ghi nhận"
+
+#. module: health_condition
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_condition
+msgid "Provenance"
+msgstr "Nguồn gốc"
+
+#. module: health_condition
+msgid "Mark Resolved"
+msgstr "Đánh dấu đã khỏi"
+
+#. module: health_condition
+msgid "Mark Inactive"
+msgstr "Đánh dấu không hoạt động"
+
+#. module: health_condition
+msgid "Reactivate"
+msgstr "Kích hoạt lại"
+
+#. module: health_condition
+msgid "Diagnosis marked resolved."
+msgstr "Chẩn đoán được đánh dấu đã khỏi."
+
+#. module: health_condition
+msgid "Diagnosis marked inactive."
+msgstr "Chẩn đoán được đánh dấu không hoạt động."
+
+#. module: health_condition
+msgid "Diagnosis reactivated."
+msgstr "Chẩn đoán được kích hoạt lại."
+
+#. module: health_condition
+msgid "No diagnoses yet"
+msgstr "Chưa có chẩn đoán"
+
+#. module: health_condition
+msgid "Archived"
+msgstr "Đã lưu trữ"
+
+#. module: health_condition
+msgid ""
+"This patient already has a problem-list entry for this ICD-10 code."
+msgstr "Bệnh nhân này đã có mục danh sách vấn đề cho mã ICD-10 này."
+
+#. module: health_condition
+msgid ""
+"Only a doctor, head nurse or manager may change a diagnosis status."
+msgstr "Chỉ bác sĩ, điều dưỡng trưởng hoặc quản lý mới có thể thay đổi trạng thái chẩn đoán."

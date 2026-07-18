@@ -713,3 +713,21 @@ a no-op.
     `consent_enforced`): set it via the shell, RESTART (or reload) the server,
     run the probe, set it back, restart again. Sibling of §5.32/§5.45 —
     cross-process state on a live server is never seen "for free".
+
+- **§5.49 — a downstream module registering a new serializer into
+    health_fhir_core's shared REGISTRY breaks any test that hard-asserts an
+    EXACT capability/facade resource COUNT — and one such test lives OUTSIDE
+    health_fhir_core.** The compartment/capability machinery is registry-driven
+    and correct (adding a serializer is a legitimate +1), but a cross-module
+    `assertEqual(len(listed), N)` is brittle coupling. health_condition's
+    Condition registration took the CapabilityStatement 20 → 21 and RED-lit
+    `health_fhir_terminology.tests.test_terminology.
+    test_codesystem_serializer_and_capability` (`assertEqual(len(listed), 20)`)
+    — NOT a health_fhir_core test, so a grep scoped to fhir_core misses it
+    (the condition-spine handover §1 claimed "no test asserts an exact count",
+    grep-verified only in fhir_core). Rule: when a phase adds a serializer,
+    grep EVERY module's tests for an exact facade/capability count
+    (`len(listed)`, `== <N>` near `build_capability`/REGISTRY) and relax them to
+    `>=`. Editing that one test line is a FORCED sanction-list deviation —
+    declare it; there is no way to register a resource without the count moving.
+    (Hit live in condition-spine; fixed 20 → `assertGreaterEqual(…, 20)`.)

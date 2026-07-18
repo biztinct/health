@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         Record rules (catchment pattern, cloned from health_incident).
+
+         Every condition has a patient, hence a catchment: one plain
+         catchment rule for all non-owner healthcare groups, plus an
+         owner-sees-all rule. healthcare_admin is intentionally left
+         un-ruled (restrictive rules are additive-permissive: a group with
+         NO matching rule is unrestricted) so admin sees all — mirrors
+         health_incident.
+         ===================================================================== -->
+
+    <record id="rule_health_condition_catchment" model="ir.rule">
+        <field name="name">Condition: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_condition"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_receptionist')), (4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+    </record>
+
+    <record id="rule_health_condition_owner" model="ir.rule">
+        <field name="name">Condition: Owner sees all</field>
+        <field name="model_id" ref="model_health_condition"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+</odoo>

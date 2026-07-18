@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Diagnoses / Chẩn đoán under Healthcare (sequence 29, nurse+) -->
+    <menuitem id="menu_health_condition"
+              name="Diagnoses"
+              parent="health_base.menu_healthcare_root"
+              action="action_health_condition"
+              groups="health_base.group_healthcare_nurse,health_base.group_healthcare_head_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_operations_manager,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"
+              sequence="29"/>
+
+</odoo>

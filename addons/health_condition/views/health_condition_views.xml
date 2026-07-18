@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form -->
+    <record id="view_health_condition_form" model="ir.ui.view">
+        <field name="name">health.condition.form</field>
+        <field name="model">health.condition</field>
+        <field name="arch" type="xml">
+            <form string="Diagnosis">
+                <header>
+                    <button name="action_mark_resolved" type="object"
+                            string="Mark Resolved" class="btn-primary"
+                            invisible="clinical_status == 'resolved'"
+                            groups="health_base.group_healthcare_doctor,health_base.group_healthcare_head_nurse,health_base.group_healthcare_manager"/>
+                    <button name="action_mark_inactive" type="object"
+                            string="Mark Inactive"
+                            invisible="clinical_status != 'active'"
+                            groups="health_base.group_healthcare_doctor,health_base.group_healthcare_head_nurse,health_base.group_healthcare_manager"/>
+                    <button name="action_reactivate" type="object"
+                            string="Reactivate"
+                            invisible="clinical_status == 'active' and active"
+                            groups="health_base.group_healthcare_doctor,health_base.group_healthcare_head_nurse,health_base.group_healthcare_manager"/>
+                    <field name="clinical_status" widget="statusbar"
+                           statusbar_visible="active,inactive,resolved"/>
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_view_evidence" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="note_count == 0">
+                            <field name="note_count" widget="statinfo"
+                                   string="Evidence"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived"
+                            bg_color="text-bg-secondary"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="display_name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Diagnosis">
+                            <field name="patient_id"/>
+                            <field name="code_id"/>
+                            <field name="verification_status"/>
+                        </group>
+                        <group string="Provenance">
+                            <field name="recorded_date"/>
+                            <field name="last_asserted_date"/>
+                            <field name="recorder_id"/>
+                            <field name="catchment_province_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Evidence Notes" name="evidence">
+                            <field name="note_ids" readonly="1">
+                                <list string="Evidence Notes">
+                                    <field name="create_date"/>
+                                    <field name="author_id"/>
+                                    <field name="order_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List — the problem list -->
+    <record id="view_health_condition_list" model="ir.ui.view">
+        <field name="name">health.condition.list</field>
+        <field name="model">health.condition</field>
+        <field name="arch" type="xml">
+            <list string="Problem List"
+                  default_order="recorded_date desc">
+                <field name="patient_id"/>
+                <field name="code_id"/>
+                <field name="clinical_status" widget="badge"
+                       decoration-success="clinical_status == 'active'"
+                       decoration-muted="clinical_status in ('inactive', 'resolved')"/>
+                <field name="verification_status"/>
+                <field name="recorded_date"/>
+                <field name="last_asserted_date"/>
+                <field name="note_count" string="Evidence"/>
+                <field name="catchment_province_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search (Odoo 19: group-by filters directly in <search>) -->
+    <record id="view_health_condition_search" model="ir.ui.view">
+        <field name="name">health.condition.search</field>
+        <field name="model">health.condition</field>
+        <field name="arch" type="xml">
+            <search string="Diagnoses">
+                <field name="patient_id"/>
+                <field name="code_id"/>
+                <filter string="Active" name="active_status"
+                        domain="[('clinical_status', '=', 'active')]"/>
+                <filter string="Resolved" name="resolved"
+                        domain="[('clinical_status', '=', 'resolved')]"/>
+                <filter string="Inactive" name="inactive"
+                        domain="[('clinical_status', '=', 'inactive')]"/>
+                <separator/>
+                <filter string="Archived" name="archived"
+                        domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Patient" name="group_patient"
+                        context="{'group_by': 'patient_id'}"/>
+                <filter string="ICD-10 Code" name="group_code"
+                        context="{'group_by': 'code_id'}"/>
+                <filter string="Clinical Status" name="group_status"
+                        context="{'group_by': 'clinical_status'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_health_condition" model="ir.actions.act_window">
+        <field name="name">Diagnoses</field>
+        <field name="res_model">health.condition</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_condition_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No diagnoses yet
+            </p>
+            <p>
+                The per-patient problem list — one entry per (patient, ICD-10
+                code), built additively from the coded-diagnosis sidecar on
+                clinical notes.
+            </p>
+        </field>
+    </record>
+
+</odoo>

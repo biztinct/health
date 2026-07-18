@@ -168,7 +168,10 @@ class TestTerminology(TransactionCase):
         statement = build_capability(self.env)
         listed = [r['type'] for r in statement['rest'][0]['resource']]
         self.assertIn('CodeSystem', listed)
-        self.assertEqual(len(listed), 20)
+        # >= (not ==): downstream modules register more resources into the
+        # shared REGISTRY (health_condition adds Condition → 21). An exact
+        # count is a brittle cross-module coupling.
+        self.assertGreaterEqual(len(listed), 20)
 
     # ------------------------------------------------------------------
     # 7. $lookup / $expand helpers

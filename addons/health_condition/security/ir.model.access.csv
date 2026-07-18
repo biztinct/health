@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_condition_receptionist,health.condition receptionist,model_health_condition,health_base.group_healthcare_receptionist,1,0,0,0
+access_health_condition_nurse,health.condition nurse,model_health_condition,health_base.group_healthcare_nurse,1,0,0,0
+access_health_condition_head_nurse,health.condition head_nurse,model_health_condition,health_base.group_healthcare_head_nurse,1,1,1,0
+access_health_condition_doctor,health.condition doctor,model_health_condition,health_base.group_healthcare_doctor,1,1,1,0
+access_health_condition_operations_manager,health.condition operations_manager,model_health_condition,health_base.group_healthcare_operations_manager,1,0,0,0
+access_health_condition_manager,health.condition manager,model_health_condition,health_base.group_healthcare_manager,1,1,1,0
+access_health_condition_admin,health.condition admin,model_health_condition,health_base.group_healthcare_admin,1,1,1,0
+access_health_condition_owner,health.condition owner,model_health_condition,health_base.group_healthcare_owner,1,1,1,1
