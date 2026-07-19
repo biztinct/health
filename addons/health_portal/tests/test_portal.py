@@ -464,6 +464,26 @@ class TestPortalHealth(TransactionCase, PortalFixtures):
         # children must not appear as their own rows
         self.assertNotIn('Tâm thu', [r['label'] for r in rows])
 
+    def test_05b_panel_child_states_and_childless_panel(self):
+        when = datetime(2026, 1, 15, 3, 0, 0)
+        panel = self._obs(self.patient, self.vt_bp, 0, when)
+        self._obs(self.patient, self.vt_sys, 120, when, parent=panel)
+        self._obs(self.patient, self.vt_dia, 80, when, parent=panel)
+        # a retracted component must not reach the patient
+        self._obs(self.patient, self.vt_sys, 999, when, parent=panel,
+                  state='entered_in_error')
+        rows = self.access._vitals_rows()
+        self.assertEqual(rows[0]['value'], '120/80')  # eie child excluded
+        # a panel whose components are all invalid is skipped entirely
+        empty_panel = self._obs(self.patient, self.vt_bp, 0, when)
+        self._obs(self.patient, self.vt_sys, 130, when, parent=empty_panel,
+                  state='preliminary')
+        labels_values = [(r['label'], r['value'])
+                         for r in self.access._vitals_rows()]
+        self.assertNotIn(('Huyết áp', '0'), labels_values)
+        self.assertEqual(len([lv for lv in labels_values
+                              if lv[0] == 'Huyết áp']), 1)
+
     def test_06_no_risk_keys_anywhere(self):
         when = datetime(2026, 1, 15, 3, 0, 0)
         self._condition(self.patient, self.i10)

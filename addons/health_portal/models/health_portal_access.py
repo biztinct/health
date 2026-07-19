@@ -417,10 +417,15 @@ class HealthPortalAccess(models.Model):
         for obs in self._vitals():
             vtype = obs.vitals_type_id
             unit = vtype.unit_display or ''
-            if obs.child_ids:
+            # Children inherit the top-level clinical-validity filter:
+            # preliminary / entered_in_error (retracted) components must not
+            # reach the patient either.
+            children = obs.child_ids.filtered(
+                lambda c: c.state in ('final', 'amended'))
+            if children:
                 # Deterministic component order (creation order = sys then dia
                 # for BP); model _order is datetime desc which would flip it.
-                children = obs.child_ids.sorted('id')
+                children = children.sorted('id')
                 child_units = {(c.vitals_type_id.unit_display or '')
                                for c in children}
                 if len(child_units) == 1:
@@ -436,6 +441,10 @@ class HealthPortalAccess(models.Model):
                             c.vitals_type_id.unit_display or '')).strip()
                         for c in children)
                     unit = ''
+            elif vtype.value_type == 'panel':
+                # A panel with no (valid) components carries no value of its
+                # own — skip it rather than render a bogus "0".
+                continue
             else:
                 value = self._vital_value(obs)
             when = obs.effective_datetime
