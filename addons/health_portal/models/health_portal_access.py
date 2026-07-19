@@ -362,6 +362,101 @@ class HealthPortalAccess(models.Model):
             return False
         return True
 
+    # -- My Health (4E): active problem list + recent vital-sign readings ----
+    # Same doctrine as 4B: a patient reading their OWN diagnoses and vitals is
+    # their right (NOT data_sharing-gated — that governs EXTERNAL sharing).
+    # Every read is sudo BUT hard-scoped to self.patient_id in the search
+    # domain — no browse-by-id from request params, no post-filtering. Risk
+    # interpretation (is_abnormal / alert_level / NEWS2) is NEVER surfaced to
+    # the patient: raw values + units only (§3 rail).
+    def _conditions(self):
+        self.ensure_one()
+        # active_test drops archived (removed) rows; the status filter keeps
+        # the working problem list only (resolved / inactive not shown v1).
+        return self.env['health.condition'].sudo().search([
+            ('patient_id', '=', self.patient_id.id),
+            ('clinical_status', '=', 'active'),
+        ], order='recorded_date desc, id desc')
+
+    def _conditions_rows(self):
+        self.ensure_one()
+        rows = []
+        for cond in self._conditions():
+            code = cond.code_id
+            label = (code.display_vi or code.display or '') if code else ''
+            since = cond.recorded_date  # Date (no tz) — format as-is
+            rows.append({
+                'code': code.code if code else '',
+                'label': label,
+                'since': since.strftime('%d/%m/%Y') if since else '',
+            })
+        return rows
+
+    def _vitals(self):
+        self.ensure_one()
+        # Top-level rows only (panels' children are rendered inline); only
+        # clinically-valid states — preliminary / entered_in_error excluded.
+        return self.env['health.observation'].sudo().search([
+            ('client_id', '=', self.patient_id.id),
+            ('state', 'in', ('final', 'amended')),
+            ('parent_id', '=', False),
+        ], order='effective_datetime desc, id desc', limit=20)
+
+    @staticmethod
+    def _vital_value(obs):
+        """Numeric value formatted to the type's decimals; text as-is."""
+        vtype = obs.vitals_type_id
+        if vtype.value_type == 'string':
+            return obs.value_text or ''
+        decimals = max(vtype.decimals or 0, 0)
+        return '%.*f' % (decimals, obs.value_quantity or 0.0)
+
+    def _vitals_rows(self):
+        self.ensure_one()
+        rows = []
+        for obs in self._vitals():
+            vtype = obs.vitals_type_id
+            unit = vtype.unit_display or ''
+            if obs.child_ids:
+                # Deterministic component order (creation order = sys then dia
+                # for BP); model _order is datetime desc which would flip it.
+                children = obs.child_ids.sorted('id')
+                child_units = {(c.vitals_type_id.unit_display or '')
+                               for c in children}
+                if len(child_units) == 1:
+                    # Shared unit → slash-join e.g. 120/80 mmHg.
+                    value = '/'.join(self._vital_value(c) for c in children)
+                    unit = child_units.pop()
+                else:
+                    # Mixed units → "label value unit" pairs, ; -joined.
+                    value = '; '.join(
+                        ('%s %s %s' % (
+                            c.vitals_type_id.name_vi or c.vitals_type_id.name
+                            or '', self._vital_value(c),
+                            c.vitals_type_id.unit_display or '')).strip()
+                        for c in children)
+                    unit = ''
+            else:
+                value = self._vital_value(obs)
+            when = obs.effective_datetime
+            rows.append({
+                'label': vtype.name_vi or vtype.name or '',
+                'value': value,
+                'unit': unit,
+                'when': ((when + _VN_OFFSET).strftime('%d/%m/%Y %H:%M')
+                         if when else ''),
+            })
+        return rows
+
+    def _health_ctx(self):
+        self.ensure_one()
+        return {
+            'patient_name': self.patient_id.name or '',
+            'token': self.token,
+            'conditions': self._conditions_rows(),
+            'vitals': self._vitals_rows(),
+        }
+
 
 class HealthPortalAccessLog(models.Model):
     _name = 'health.portal.access.log'

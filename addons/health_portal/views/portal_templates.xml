@@ -79,6 +79,7 @@
                 <t t-esc="patient_name"/>
                 <t t-if="patient_code"> · <t t-esc="patient_code"/></t>
             </div>
+            <a class="nav" t-attf-href="/my/care/#{token}/health">Sức khỏe của tôi →</a><br/>
             <a class="nav" t-attf-href="/my/care/#{token}/records">Hồ sơ bệnh án của tôi →</a><br/>
             <a class="nav" t-attf-href="/my/care/#{token}/consents">Đồng ý &amp; quyền riêng tư →</a>
 
@@ -147,6 +148,49 @@
                     <div class="meta">Vui lòng liên hệ cơ sở chăm sóc của bạn để đặt lịch hẹn.</div>
                 </t>
             </div>
+        </t>
+    </template>
+
+    <!-- My Health: active problem list + recent vitals (Phase 4E). -->
+    <template id="portal_health" name="My Care Health">
+        <t t-call="health_portal.portal_layout">
+            <a class="back" t-attf-href="/my/care/#{token}">← Quay lại</a>
+
+            <div class="sec">Chẩn đoán đang theo dõi</div>
+            <t t-if="conditions">
+                <t t-foreach="conditions" t-as="c">
+                    <div class="card">
+                        <div class="row1">
+                            <span class="svc"><t t-esc="c['label']"/></span>
+                            <t t-if="c['code']"><span class="chip"><t t-esc="c['code']"/></span></t>
+                        </div>
+                        <t t-if="c['since']">
+                            <div class="meta">từ <t t-esc="c['since']"/></div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+            <t t-else="">
+                <div class="empty">Chưa có chẩn đoán được ghi nhận.</div>
+            </t>
+
+            <div class="sec">Sinh hiệu gần đây</div>
+            <t t-if="vitals">
+                <t t-foreach="vitals" t-as="v">
+                    <div class="card">
+                        <div class="row1">
+                            <span class="svc"><t t-esc="v['label']"/></span>
+                            <span class="when"><t t-esc="v['value']"/><t t-if="v['unit']"> <t t-esc="v['unit']"/></t></span>
+                        </div>
+                        <t t-if="v['when']">
+                            <div class="meta"><t t-esc="v['when']"/></div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+            <t t-else="">
+                <div class="empty">Chưa có sinh hiệu được ghi nhận.</div>
+            </t>
         </t>
     </template>
 

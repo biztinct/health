@@ -65,6 +65,16 @@ class MyCarePortalController(http.Controller):
         return request.render('health_portal.portal_records',
                               access._records_ctx())
 
+    @http.route('/my/care/<string:token>/health', type='http', auth='public',
+                website=False, methods=['GET'], csrf=False)
+    def portal_health(self, token, **kwargs):
+        access, resp = self._guard(token)
+        if resp:
+            return resp
+        access._record_access('health', request.httprequest.remote_addr)
+        return request.render('health_portal.portal_health',
+                              access._health_ctx())
+
     @http.route('/my/care/<string:token>/records/<int:note_id>', type='http',
                 auth='public', website=False, methods=['GET'], csrf=False)
     def portal_record(self, token, note_id, **kwargs):
