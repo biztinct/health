@@ -731,3 +731,16 @@ a no-op.
     `>=`. Editing that one test line is a FORCED sanction-list deviation —
     declare it; there is no way to register a resource without the count moving.
     (Hit live in condition-spine; fixed 20 → `assertGreaterEqual(…, 20)`.)
+
+- **§5.50 — a test fixture that reuses a real SEEDED record inherits its live
+    field values; assert on stable identifiers, never on mutable display
+    text.** Portal-4E's fixture called the get-or-create ICD-10 helper, which
+    on vietuat returned the SEEDED I10 whose `display_vi` is "Tăng huyết áp vô
+    căn (nguyên phát)" — not the fixture's own literal — so
+    `assertEqual(label, 'Tăng huyết áp vô căn')` red-lit on the server while
+    passing on any fresh DB. Same family as the condition-spine test_09 first-
+    run red. Rule: when a fixture may resolve to seeded/live data (any
+    `.get()`/search-or-create helper), assert the stable code plus a substring
+    of the display, never exact display text; and never overwrite the seed's
+    text from a fixture. (Hit live in portal-my-health test_01, relaxed to
+    code + substring.)
