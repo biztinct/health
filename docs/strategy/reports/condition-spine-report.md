@@ -72,7 +72,9 @@ views/menu, and all §3 safety rails match the handover.
 
 ## 3. Test results (verbatim: `0 failed, 0 error(s) of 73 tests`)
 
-`health_condition: 15 tests` (13 numbered + framework), all green:
+health_condition 13 numbered tests, all green (the 73 total spans the four
+tagged suites in the run; the per-suite split below was mis-stated as
+15+54+11+7 in the first draft — corrected in review):
 
 1. ✅ Sidecar write on a note creates the condition (patient/code/recorded_date=
    note create date/recorder=author/evidence linked/active+confirmed).
@@ -97,8 +99,12 @@ views/menu, and all §3 safety rails match the handover.
     excluded from facade search (working problem list).
 13. ✅ Record rules — cross-catchment head-nurse sees nothing; owner sees all.
 
-Earlier suites re-run green: health_fhir_core 54, health_fhir_terminology 11,
-health_fhir_adapter_vn 7.
+Earlier suites (health_fhir_core, health_fhir_terminology,
+health_fhir_adapter_vn) re-ran green in the same 73-test run.
+
+**Review addendum (Fable):** test 13 `recorded-date` facade search (ge/eq on
+the Date column — handover §2.4) was missing from the shipped suite; added in
+the review-fix commit (record-rules test renumbered to 14).
 
 **First run caught 2 reds, both fixed:** (a) test_09 asserted a hardcoded vi
 literal but vietuat's seeded I10 carries `Tăng huyết áp vô căn (nguyên phát)` —

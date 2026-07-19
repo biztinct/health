@@ -319,9 +319,30 @@ class TestCondition(TransactionCase):
         self.assertNotIn(cond, recs_after)
 
     # ==================================================================
-    # 13. record rules: cross-catchment head-nurse sees nothing; owner all
+    # 13. recorded-date search param — the Date-column-vs-datetime-literal
+    # concern (§2.4): ge/eq prefixes must filter a fields.Date correctly
     # ==================================================================
-    def test_13_record_rules(self):
+    def test_13_recorded_date_search(self):
+        self._make_note(codes=[self.code_i10])
+        cond = self._cond(self.patient, self.code_i10)
+        serializer = ConditionSerializer()
+        recs, _t, _c = serializer.search_records(
+            self.env,
+            {'recorded-date': ['ge%s' % cond.recorded_date.isoformat()]})
+        self.assertIn(cond, recs)
+        recs_future, _t, _c = serializer.search_records(
+            self.env, {'recorded-date': ['ge2099-01-01']})
+        self.assertNotIn(cond, recs_future)
+        # bare eq day form (expands to >= day AND < day+1)
+        recs_eq, _t, _c = serializer.search_records(
+            self.env,
+            {'recorded-date': [cond.recorded_date.isoformat()]})
+        self.assertIn(cond, recs_eq)
+
+    # ==================================================================
+    # 14. record rules: cross-catchment head-nurse sees nothing; owner all
+    # ==================================================================
+    def test_14_record_rules(self):
         self._make_note(codes=[self.code_i10])
         cond = self._cond(self.patient, self.code_i10)
         # a head nurse in the OTHER catchment sees nothing of province A
