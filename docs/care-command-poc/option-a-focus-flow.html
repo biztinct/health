@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Health19 Care Command — Option A: Focus Flow</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { overflow: hidden; }
+    .app { height: 100vh; display: grid; grid-template-columns: 76px 332px minmax(480px, 1fr) 350px; grid-template-rows: 64px minmax(0, 1fr); background: #f7f8fc; }
+    .topbar { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 0 18px; color: #fff; background: var(--navy); box-shadow: 0 1px 0 rgba(255,255,255,.08); z-index: 5; }
+    .topbar .brand { width: 248px; }
+    .workspace-title { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+    .workspace-title strong { font-size: 15px; }
+    .workspace-title span { font-size: 11px; opacity: .64; }
+    .global-search { flex: 1; max-width: 520px; position: relative; }
+    .global-search input { width: 100%; height: 38px; padding: 0 42px 0 14px; color: #fff; border: 1px solid rgba(255,255,255,.18); border-radius: 9px; background: rgba(255,255,255,.09); }
+    .global-search input::placeholder { color: rgba(255,255,255,.62); }
+    .global-search kbd { position: absolute; right: 9px; top: 9px; padding: 3px 6px; border-radius: 5px; background: rgba(255,255,255,.13); font-size: 10px; }
+    .top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .presence { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 11px; border: 1px solid rgba(255,255,255,.17); border-radius: 9px; background: rgba(255,255,255,.08); font-size: 12px; font-weight: 700; }
+
+    .rail { grid-row: 2; color: #d9dcff; background: var(--navy); border-top: 1px solid rgba(255,255,255,.05); padding: 12px 8px 84px; overflow-y: auto; }
+    .rail nav { display: grid; gap: 7px; }
+    .rail-item { min-height: 52px; display: grid; place-items: center; gap: 3px; padding: 6px 3px; color: #d9dcff; text-decoration: none; border-radius: 9px; font-size: 9px; font-weight: 700; text-align: center; }
+    .rail-item .ri { font-size: 18px; line-height: 1; }
+    .rail-item.active { color: #fff; background: rgba(255,255,255,.13); box-shadow: inset 3px 0 var(--orange-2); }
+    .rail-item:hover { background: rgba(255,255,255,.08); }
+
+    .queue { grid-row: 2; min-width: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: #fff; }
+    .queue-head { padding: 15px 14px 12px; border-bottom: 1px solid var(--line); }
+    .queue-heading { display: flex; align-items: center; justify-content: space-between; }
+    .queue-heading h1 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
+    .queue-tabs { display: flex; gap: 4px; padding-top: 12px; }
+    .queue-tab { min-height: 32px; padding: 0 9px; border: 0; border-radius: 7px; color: #667085; background: transparent; font-size: 11px; font-weight: 800; }
+    .queue-tab.active { color: var(--navy); background: #eef0ff; }
+    .queue-tools { display: flex; gap: 7px; padding-top: 10px; }
+    .queue-tools input { width: 100%; min-width: 0; height: 36px; padding: 0 11px; border: 1px solid var(--line-2); border-radius: 8px; background: #f9fafb; }
+    .queue-list { min-height: 0; overflow: auto; padding: 7px; }
+    .queue-item { position: relative; display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 10px; padding: 11px 9px; border: 1px solid transparent; border-radius: 10px; cursor: pointer; }
+    .queue-item:hover { background: #f9fafb; }
+    .queue-item.active { border-color: #c7d2fe; background: #f1f3ff; box-shadow: inset 3px 0 var(--orange); }
+    .queue-item.urgent::after { content: ""; position: absolute; right: 7px; top: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); }
+    .qi-main { min-width: 0; }
+    .qi-row { display: flex; align-items: center; min-width: 0; gap: 6px; }
+    .qi-name { min-width: 0; font-size: 12px; font-weight: 800; }
+    .qi-preview { margin-top: 5px; color: #667085; font-size: 11px; }
+    .qi-meta { display: flex; gap: 6px; margin-top: 7px; }
+    .qi-time { padding-top: 1px; color: #667085; font-size: 10px; font-weight: 700; white-space: nowrap; }
+
+    .conversation { grid-row: 2; min-width: 0; display: flex; flex-direction: column; background: #fff; }
+    .conversation-head { min-height: 70px; display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+    .person { min-width: 0; }
+    .person-title { display: flex; align-items: center; gap: 7px; }
+    .person-title h2 { margin: 0; font-size: 15px; letter-spacing: -.01em; }
+    .person-sub { margin-top: 4px; color: #667085; font-size: 11px; }
+    .head-actions { margin-left: auto; display: flex; gap: 7px; }
+    .conversation-scroll { min-height: 0; flex: 1; overflow: auto; padding: 14px 18px 18px; background: linear-gradient(180deg, #fff 0, #fbfcff 100%); }
+    .brief-card { max-width: 780px; margin: 0 auto 18px; }
+    .timeline { max-width: 760px; margin: auto; }
+    .day { display: flex; align-items: center; gap: 10px; margin: 16px 0; color: #98a2b3; font-size: 10px; font-weight: 800; }
+    .day::before, .day::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+    .message-row { display: flex; gap: 9px; margin: 12px 0; align-items: flex-end; }
+    .message-row.out { justify-content: flex-end; }
+    .message { max-width: 72%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px 12px 12px 4px; background: #fff; box-shadow: 0 1px 1px rgba(16,24,40,.03); font-size: 13px; line-height: 1.45; }
+    .out .message { color: #182230; border-color: #c7d2fe; border-radius: 12px 12px 4px 12px; background: #eef0ff; }
+    .msg-meta { margin-top: 6px; color: #98a2b3; font-size: 9px; }
+    .event { display: flex; align-items: center; gap: 9px; margin: 12px 0; padding: 9px 11px; border: 1px solid #dbeafe; border-radius: 9px; color: #344054; background: #f8fbff; font-size: 11px; }
+    .event strong { color: #1d4ed8; }
+    .composer { padding: 10px 14px 12px; border-top: 1px solid var(--line); background: #fff; }
+    .composer-mode { display: flex; align-items: center; gap: 4px; margin-bottom: 7px; }
+    .mode { min-height: 28px; padding: 0 8px; border: 0; border-radius: 6px; color: #667085; background: transparent; font-size: 11px; font-weight: 800; }
+    .mode.active { color: var(--navy); background: #eef0ff; }
+    .composer-box { display: grid; grid-template-columns: 1fr auto; gap: 8px; border: 1px solid var(--line-2); border-radius: 10px; padding: 8px; }
+    .composer-box textarea { min-height: 48px; resize: none; border: 0; outline: 0; color: #344054; }
+    .composer-actions { display: flex; align-items: flex-end; gap: 6px; }
+    .constraint-line { display: flex; align-items: center; gap: 7px; margin-top: 7px; color: #667085; font-size: 10px; }
+
+    .context { grid-row: 2; min-width: 0; border-left: 1px solid var(--line); background: #fbfcfe; overflow: auto; padding: 12px; }
+    .context-tabs { display: grid; grid-template-columns: repeat(3,1fr); gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+    .context-tab { min-height: 32px; border: 0; border-radius: 6px; color: #667085; background: transparent; font-size: 10px; font-weight: 800; }
+    .context-tab.active { color: var(--navy); background: #eef0ff; }
+    .context-card { margin-top: 10px; padding: 13px; border: 1px solid var(--line); border-radius: 11px; background: #fff; box-shadow: var(--shadow); }
+    .context-card h3 { margin: 0 0 10px; font-size: 12px; }
+    .relationship { display: grid; grid-template-columns: 1fr 24px 1fr; align-items: center; text-align: center; }
+    .relation-person { padding: 9px 6px; border: 1px solid var(--line); border-radius: 9px; background: #fafafa; }
+    .relation-person strong { display: block; margin-top: 4px; font-size: 11px; }
+    .relation-person span { color: #667085; font-size: 9px; }
+    .relation-link { height: 2px; background: #fdba74; position: relative; }
+    .relation-link::after { content: "›"; position: absolute; right: -2px; top: -9px; color: var(--orange); font-weight: 900; }
+    .info-list { display: grid; gap: 9px; }
+    .info-row { display: grid; grid-template-columns: 86px 1fr; gap: 8px; font-size: 11px; }
+    .info-row span:first-child { color: #667085; }
+    .info-row span:last-child { color: #1d2939; font-weight: 700; }
+    .next-action { margin-top: 10px; padding: 11px; border-radius: 9px; background: #fff8e1; border: 1px solid #fed7aa; }
+    .next-action strong { display: block; color: #9a3412; font-size: 11px; }
+    .next-action p { margin: 5px 0 9px; color: #7c2d12; font-size: 11px; line-height: 1.42; }
+
+    .call-drawer { position: fixed; z-index: 20; left: 424px; right: 348px; bottom: 82px; display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid #a7f3d0; border-radius: 14px; color: #064e3b; background: rgba(236,253,245,.97); box-shadow: var(--shadow-lg); }
+    .call-wave { display: flex; align-items: center; gap: 2px; height: 26px; }
+    .call-wave i { width: 3px; border-radius: 2px; background: var(--green); }
+    .call-wave i:nth-child(1), .call-wave i:nth-child(5) { height: 7px; }
+    .call-wave i:nth-child(2), .call-wave i:nth-child(4) { height: 15px; }
+    .call-wave i:nth-child(3) { height: 24px; }
+    .call-copy { min-width: 0; }
+    .call-copy strong { display: block; font-size: 12px; }
+    .call-copy span { display: block; margin-top: 2px; font-size: 10px; color: #047857; }
+    .call-controls { margin-left: auto; display: flex; gap: 7px; }
+
+    @media (max-width: 1240px) { .app { grid-template-columns: 70px 310px minmax(440px,1fr); } .context { display: none; } .call-drawer { right: 16px; left: 400px; } }
+    @media (max-width: 850px) { body { overflow: auto; } .app { min-width: 0; height: auto; min-height: 100vh; grid-template-columns: 62px minmax(0,1fr); grid-template-rows: 58px 300px minmax(620px,1fr); } .topbar { position: sticky; top: 0; } .topbar .brand-copy, .workspace-title span, .global-search { display: none; } .rail { grid-row: 2 / 4; } .queue { grid-column: 2; grid-row: 2; } .queue-list { display: flex; overflow-x: auto; overflow-y: hidden; } .queue-item { min-width: 265px; } .conversation { grid-column: 2; grid-row: 3; } .head-actions .ghost-btn { display: none; } .call-drawer { left: 74px; right: 12px; bottom: 78px; } }
+  </style>
+</head>
+<body>
+  <main class="app" aria-label="Health19 Care Command Focus Flow prototype">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">H19</div><div class="brand-copy"><div class="brand-name">VIET UC</div><div class="brand-sub">CRM Center</div></div></div>
+      <div class="workspace-title"><strong>Care Command</strong><span>Agent focus workspace</span></div>
+      <label class="global-search"><span class="sr-only">Search</span><input placeholder="Search patient, phone, Zalo UID or booking…"><kbd>⌘ K</kbd></label>
+      <div class="top-actions"><button class="presence"><span class="dot"></span> Available · 2/5</button><button class="icon-btn" aria-label="Notifications" style="color:#fff;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)">●</button><div class="avatar orange">AG</div></div>
+    </header>
+
+    <aside class="rail"><nav aria-label="Care Command navigation">
+      <a class="rail-item active" href="#"><span class="ri">◫</span><span>My work</span></a>
+      <a class="rail-item" href="#"><span class="ri">↗</span><span>Calls</span></a>
+      <a class="rail-item" href="#"><span class="ri">✉</span><span>Messages</span></a>
+      <a class="rail-item" href="#"><span class="ri">↻</span><span>Callbacks</span></a>
+      <a class="rail-item" href="#"><span class="ri">⚑</span><span>Risk</span></a>
+      <a class="rail-item" href="#"><span class="ri">✓</span><span>Follow-up</span></a>
+      <a class="rail-item" href="#"><span class="ri">▦</span><span>Supervisor</span></a>
+    </nav></aside>
+
+    <section class="queue">
+      <div class="queue-head">
+        <div class="queue-heading"><h1>My work</h1><span class="badge blue">18 open</span></div>
+        <div class="queue-tabs"><button class="queue-tab active">Priority</button><button class="queue-tab">Newest</button><button class="queue-tab">SLA</button><button class="queue-tab">Mine</button></div>
+        <div class="queue-tools"><input aria-label="Filter queue" placeholder="Filter conversations"><button class="icon-btn" aria-label="Queue filters">≡</button></div>
+      </div>
+      <div class="queue-list" data-select-group>
+        <article class="queue-item urgent active" data-selectable data-name="Lan Nguyen"><div class="avatar red">LN</div><div class="qi-main"><div class="qi-row"><span class="channel zalo">Z</span><span class="qi-name truncate">Lan Nguyen → Minh Tran</span></div><div class="qi-preview truncate">Dad’s dizziness is much worse this morning…</div><div class="qi-meta"><span class="badge red">Safety signal</span><span class="badge amber">03:12 SLA</span></div></div><time class="qi-time">Now</time></article>
+        <article class="queue-item" data-selectable data-name="Anh Pham"><div class="avatar green">AP</div><div class="qi-main"><div class="qi-row"><span class="channel phone">☎</span><span class="qi-name truncate">Anh Pham</span></div><div class="qi-preview truncate">Missed call · returning about tomorrow’s visit</div><div class="qi-meta"><span class="badge blue">Callback</span><span class="badge gray">09:40</span></div></div><time class="qi-time">4m</time></article>
+        <article class="queue-item" data-selectable data-name="Mai Hoang"><div class="avatar orange">MH</div><div class="qi-main"><div class="qi-row"><span class="channel whatsapp">W</span><span class="qi-name truncate">Mai Hoang</span></div><div class="qi-preview truncate">Can the nurse arrive after 3 PM instead?</div><div class="qi-meta"><span class="badge green">Booking</span><span class="badge gray">15:20</span></div></div><time class="qi-time">8m</time></article>
+        <article class="queue-item" data-selectable data-name="Unknown caller"><div class="avatar">?</div><div class="qi-main"><div class="qi-row"><span class="channel phone">☎</span><span class="qi-name truncate">Unknown caller</span></div><div class="qi-preview truncate">2 possible household matches · identity review</div><div class="qi-meta"><span class="badge purple">Identity conflict</span></div></div><time class="qi-time">13m</time></article>
+        <article class="queue-item" data-selectable data-name="Thuy Le"><div class="avatar">TL</div><div class="qi-main"><div class="qi-row"><span class="channel email">@</span><span class="qi-name truncate">Thuy Le</span></div><div class="qi-preview truncate">Referral documents attached for review</div><div class="qi-meta"><span class="badge gray">Referral</span></div></div><time class="qi-time">24m</time></article>
+        <article class="queue-item" data-selectable data-name="Huy Vo"><div class="avatar orange">HV</div><div class="qi-main"><div class="qi-row"><span class="channel web">◉</span><span class="qi-name truncate">Huy Vo</span></div><div class="qi-preview truncate">New enquiry · home nursing in District 7</div><div class="qi-meta"><span class="badge blue">New lead</span></div></div><time class="qi-time">31m</time></article>
+      </div>
+    </section>
+
+    <section class="conversation">
+      <header class="conversation-head"><div class="avatar red">LN</div><div class="person"><div class="person-title"><h2 data-selected-name>Lan Nguyen</h2><span class="badge green">Verified caregiver</span></div><div class="person-sub">Speaking for Minh Tran · Zalo OA · Vietnamese preferred</div></div><div class="head-actions"><button class="soft-btn" data-toggle="#callDrawer" aria-expanded="false">☎ Call</button><button class="ghost-btn" data-toast="Conversation assigned to you">Assign to me</button><button class="icon-btn" aria-label="More actions">•••</button></div></header>
+      <div class="conversation-scroll">
+        <section class="brief-card" aria-label="AI Continuity Brief"><div class="brief-top"><div class="ai-glyph">✦</div><div class="brief-title">Five-second Continuity Brief</div><span class="badge green">Fresh · 18 sec</span><a class="source-link" href="#" style="margin-left:auto">6 sources</a></div><div class="brief-body"><strong>Lan is contacting Health19 for her father, Minh</strong> (caregiver relationship verified). She requested a nurse visit yesterday for dizziness. A booking exists tomorrow at 10:30 AM. Her latest message says the dizziness is worse. <strong>No clinical escalation has been recorded.</strong></div><div class="brief-meta"><span class="chip">Reason now · worsening</span><span class="chip">Booking · tomorrow 10:30</span><span class="chip">Consent · discuss care ✓</span></div></section>
+        <div class="risk-ribbon"><span>⚠</span><div><strong>Safety Shield detected approved red-flag language.</strong> Confirm current symptoms using the approved script. Escalate if any trigger is positive. AI has not assigned clinical severity.</div></div>
+        <div class="timeline"><div class="day">YESTERDAY · 18 JULY</div><div class="message-row"><div class="avatar red">LN</div><div class="message">My father Minh has felt dizzy since yesterday. Can a nurse visit him?<div class="msg-meta">Lan · Zalo · 09:12 · Delivered</div></div></div><div class="message-row out"><div class="message">I can help arrange that. I have reserved tomorrow at 10:30 AM. Please reply YES to confirm.<div class="msg-meta">An Nguyen · Zalo · 09:18 · Read</div></div></div><div class="event"><span>▣</span><div><strong>Booking created</strong> · Home nursing assessment · 20 July, 10:30 AM · District 7</div></div><div class="day">TODAY · 19 JULY</div><div class="message-row"><div class="avatar red">LN</div><div class="message">Yes. But this morning the dizziness is much worse and he cannot stand properly.<div class="msg-meta">Lan · Zalo · 10:04</div></div></div></div>
+      </div>
+      <footer class="composer"><div class="composer-mode"><button class="mode active">Reply</button><button class="mode">Internal note</button><button class="mode">Care action</button><span class="badge green" style="margin-left:auto">Zalo window open · 21h</span></div><div class="composer-box"><textarea aria-label="Reply message" placeholder="Reply in Vietnamese…"></textarea><div class="composer-actions"><button class="icon-btn" aria-label="AI draft" data-toast="Bilingual draft prepared for review">✦</button><button class="primary-btn" data-toast="Prototype only — message reviewed but not sent">Review & send</button></div></div><div class="constraint-line"><span>✓</span> Consent valid for this topic <span>·</span> <span>Vietnamese</span> <span>·</span> <span>No sensitive attachment</span></div></footer>
+    </section>
+
+    <aside class="context" data-tabs-root>
+      <div class="context-tabs" data-tablist><button class="context-tab active" data-tab="care">Care</button><button class="context-tab" data-tab="history">History</button><button class="context-tab" data-tab="ai">AI trace</button></div>
+      <div data-tab-panel="care"><section class="context-card"><h3>Caller ↔ patient relationship</h3><div class="relationship"><div class="relation-person"><div class="avatar red" style="margin:auto">LN</div><strong>Lan Nguyen</strong><span>Verified caregiver</span></div><div class="relation-link"></div><div class="relation-person"><div class="avatar green" style="margin:auto">MT</div><strong>Minh Tran</strong><span>Patient · H19-10428</span></div></div></section><section class="context-card"><h3>Care snapshot</h3><div class="info-list"><div class="info-row"><span>Service</span><span>Home nursing assessment</span></div><div class="info-row"><span>Booking</span><span>Tomorrow · 10:30 AM</span></div><div class="info-row"><span>Location</span><span>District 7, HCMC</span></div><div class="info-row"><span>Coordinator</span><span>Thu Ha · South team</span></div><div class="info-row"><span>Consent</span><span style="color:#067647">Discuss care with Lan ✓</span></div></div><div class="next-action"><strong>Recommended next action</strong><p>Open the approved dizziness safety script, record answers, then route to the clinical queue if any trigger is positive.</p><button class="primary-btn" data-toast="Safety checklist opened">Open safety checklist</button></div></section><section class="context-card"><h3>Commitment ledger</h3><div class="risk-ribbon safe-ribbon"><span>✓</span><div><strong>Tomorrow, 10:30</strong><br>Home nurse visit · Owner: South Nursing</div></div></section></div>
+      <div class="hidden" data-tab-panel="history"><section class="context-card"><h3>Contact history</h3><div class="info-list"><div class="info-row"><span>Yesterday</span><span>Zalo · visit requested</span></div><div class="info-row"><span>12 Jul</span><span>Call · medication question</span></div><div class="info-row"><span>03 Jun</span><span>Home visit completed</span></div></div></section></div>
+      <div class="hidden" data-tab-panel="ai"><section class="context-card"><h3>AI evidence trace</h3><div class="info-list"><div class="info-row"><span>Sources</span><span>4 messages · 1 booking · 1 relationship</span></div><div class="info-row"><span>Unknown</span><span>Current symptom onset, fall status</span></div><div class="info-row"><span>Model</span><span>Approved summariser v2.3</span></div><div class="info-row"><span>Human review</span><span>Not yet reviewed</span></div></div></section></div>
+    </aside>
+  </main>
+
+  <section id="callDrawer" class="call-drawer hidden" aria-label="Active call controls"><span class="channel phone">☎</span><div class="call-wave"><i></i><i></i><i></i><i></i><i></i></div><div class="call-copy"><strong>Calling Lan Nguyen · 00:08</strong><span>Recording paused until verbal consent is captured</span></div><div class="call-controls"><button class="ghost-btn" data-toast="Microphone muted">Mute</button><button class="ghost-btn" data-toast="Safety checklist opened">Checklist</button><button class="danger-btn" data-toggle="#callDrawer">End</button></div></section>
+  <nav class="prototype-note" aria-label="Prototype options"><strong>Option A · Focus Flow</strong><span>Best for agent speed and context without tab-hunting</span><div class="prototype-links"><a class="active" href="option-a-focus-flow.html">A</a><a href="option-b-care-canvas.html">B</a><a href="option-c-signal-command.html">C</a><a href="index.html">Compare</a></div></nav>
+  <script src="shared.js"></script>
+</body>
+</html>

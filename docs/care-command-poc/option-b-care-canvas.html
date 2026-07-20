@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Health19 Care Command — Option B: Care Canvas</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { min-width: 1120px; overflow: hidden; background: #f3f5fa; }
+    .shell { height: 100vh; display: grid; grid-template-columns: 224px minmax(0,1fr); }
+    .side { color: #fff; background: linear-gradient(180deg, var(--navy) 0%, #121858 100%); padding: 18px 14px 88px; overflow: auto; }
+    .side .brand { padding: 2px 6px 22px; }
+    .side .section-label { margin: 15px 10px 7px; color: rgba(255,255,255,.42); }
+    .side-nav { display: grid; gap: 4px; }
+    .side-link { min-height: 42px; display: flex; align-items: center; gap: 10px; padding: 0 11px; border-radius: 9px; color: rgba(255,255,255,.72); text-decoration: none; font-size: 12px; font-weight: 700; }
+    .side-link b { width: 22px; font-size: 15px; text-align: center; }
+    .side-link span:last-child { margin-left: auto; font-size: 10px; opacity: .64; }
+    .side-link:hover { background: rgba(255,255,255,.07); }
+    .side-link.active { color: #fff; background: rgba(255,255,255,.13); box-shadow: inset 3px 0 var(--orange-2); }
+    .side-status { margin: 22px 5px 0; padding: 12px; border: 1px solid rgba(255,255,255,.12); border-radius: 11px; background: rgba(255,255,255,.06); }
+    .side-status .row { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; }
+    .side-status p { margin: 7px 0 0; color: rgba(255,255,255,.5); font-size: 10px; line-height: 1.42; }
+
+    .main { min-width: 0; display: grid; grid-template-rows: 70px minmax(0,1fr); }
+    .bar { display: flex; align-items: center; gap: 16px; padding: 0 22px; border-bottom: 1px solid var(--line); background: #fff; }
+    .bar-title h1 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
+    .bar-title p { margin: 3px 0 0; color: #667085; font-size: 10px; }
+    .bar .search { width: min(400px, 34vw); margin-left: 24px; }
+    .bar .search input { width: 100%; height: 38px; border: 1px solid var(--line-2); border-radius: 9px; padding: 0 12px; background: #f9fafb; }
+    .bar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+    .stage { min-height: 0; display: grid; grid-template-columns: 280px minmax(520px,1fr) 312px; gap: 14px; padding: 14px 14px 82px; overflow: hidden; }
+    .work-stack, .action-stack, .canvas { min-height: 0; overflow: auto; }
+    .work-stack { display: flex; flex-direction: column; gap: 10px; }
+    .work-head { padding: 14px; }
+    .work-head h2 { margin: 0; font-size: 14px; }
+    .work-head p { margin: 4px 0 12px; color: #667085; font-size: 10px; }
+    .view-switch { display: grid; grid-template-columns: repeat(3,1fr); padding: 3px; border: 1px solid var(--line); border-radius: 8px; background: #f9fafb; }
+    .view-switch button { min-height: 30px; border: 0; border-radius: 6px; color: #667085; background: transparent; font-size: 10px; font-weight: 800; }
+    .view-switch .active { color: var(--navy); background: #fff; box-shadow: var(--shadow); }
+    .care-work { position: relative; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: var(--shadow); cursor: pointer; }
+    .care-work:hover { border-color: #c7d2fe; }
+    .care-work.active { border-color: #a5b4fc; background: #fafaff; box-shadow: inset 3px 0 var(--orange), var(--shadow); }
+    .care-work .top { display: flex; gap: 9px; }
+    .care-work .copy { min-width: 0; }
+    .care-work h3 { margin: 1px 0 3px; font-size: 12px; }
+    .care-work p { margin: 0; color: #667085; font-size: 10px; line-height: 1.38; }
+    .care-work .foot { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+    .care-work .time { margin-left: auto; color: #667085; font-size: 9px; font-weight: 800; }
+
+    .canvas { border: 1px solid var(--line); border-radius: 14px; background: #fff; box-shadow: var(--shadow); }
+    .canvas-hero { padding: 18px 18px 14px; color: #fff; background: linear-gradient(120deg, var(--navy) 0%, #283593 55%, #3949ab 100%); }
+    .hero-top { display: flex; align-items: flex-start; gap: 12px; }
+    .hero-person { min-width: 0; }
+    .hero-person .eyebrow { color: #c7d2fe; }
+    .hero-person h2 { margin: 4px 0 3px; font-size: 20px; letter-spacing: -.03em; }
+    .hero-person p { margin: 0; color: rgba(255,255,255,.67); font-size: 11px; }
+    .hero-actions { margin-left: auto; display: flex; gap: 7px; }
+    .hero-actions button { color: #fff; border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.1); }
+    .relationship-line { display: grid; grid-template-columns: 1fr 72px 1fr; align-items: center; margin-top: 16px; }
+    .hero-node { display: flex; align-items: center; gap: 9px; padding: 9px; border: 1px solid rgba(255,255,255,.16); border-radius: 10px; background: rgba(255,255,255,.08); }
+    .hero-node strong { display: block; font-size: 11px; }
+    .hero-node span { display: block; margin-top: 2px; color: rgba(255,255,255,.6); font-size: 9px; }
+    .hero-link { height: 2px; position: relative; background: var(--orange-2); }
+    .hero-link::before { content: "Caregiver"; position: absolute; left: 50%; top: -17px; transform: translateX(-50%); color: #ffd19a; font-size: 8px; font-weight: 800; }
+
+    .canvas-body { padding: 16px 18px 24px; }
+    .brief-card { margin-bottom: 14px; }
+    .canvas-grid { display: grid; grid-template-columns: minmax(0,1fr) 190px; gap: 14px; align-items: start; }
+    .journey { position: relative; padding-left: 30px; }
+    .journey::before { content: ""; position: absolute; left: 10px; top: 10px; bottom: 8px; width: 2px; background: #e0e7ff; }
+    .journey-item { position: relative; margin-bottom: 13px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .journey-item::before { content: ""; position: absolute; left: -27px; top: 16px; width: 12px; height: 12px; border: 3px solid #fff; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 2px #bfdbfe; }
+    .journey-item.risk::before { background: var(--red); box-shadow: 0 0 0 2px #fecdd3; }
+    .journey-item.done::before { background: var(--green); box-shadow: 0 0 0 2px #bbf7d0; }
+    .journey-time { color: #667085; font-size: 9px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .journey-title { display: flex; align-items: center; gap: 7px; margin-top: 5px; font-size: 11px; font-weight: 800; }
+    .journey-copy { margin-top: 5px; color: #475467; font-size: 11px; line-height: 1.42; }
+    .journey-source { margin-top: 8px; color: #667085; font-size: 9px; }
+    .care-track { display: grid; gap: 9px; }
+    .track-card { padding: 11px; border: 1px solid var(--line); border-radius: 10px; background: #f9fafb; }
+    .track-card strong { display: block; font-size: 10px; }
+    .track-card .value { margin-top: 5px; color: #1d2939; font-size: 12px; font-weight: 800; line-height: 1.3; }
+    .track-card .sub { margin-top: 4px; color: #667085; font-size: 9px; line-height: 1.35; }
+    .track-card.risk { border-color: #fecdd3; background: #fff5f6; }
+    .track-card.risk strong { color: #b42318; }
+    .track-card.ok { border-color: #bbf7d0; background: #f0fdf4; }
+    .track-card.ok strong { color: #067647; }
+
+    .action-stack { display: flex; flex-direction: column; gap: 10px; }
+    .action-card { padding: 13px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: var(--shadow); }
+    .action-card h3 { margin: 0 0 9px; font-size: 12px; }
+    .primary-action { border-top: 3px solid var(--orange); }
+    .action-step { display: flex; gap: 9px; padding: 9px 0; border-top: 1px solid var(--line); }
+    .action-step:first-of-type { border-top: 0; }
+    .step-num { width: 22px; height: 22px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 7px; color: #fff; background: var(--navy); font-size: 9px; font-weight: 900; }
+    .action-step strong { display: block; font-size: 10px; }
+    .action-step p { margin: 3px 0 0; color: #667085; font-size: 9px; line-height: 1.4; }
+    .action-card .full { width: 100%; margin-top: 10px; }
+    .contact-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+    .contact-tabs button { min-height: 30px; padding: 0 8px; border: 0; border-radius: 7px; color: #667085; background: transparent; font-size: 10px; font-weight: 800; }
+    .contact-tabs .active { color: var(--navy); background: #eef0ff; }
+    .reply { min-height: 86px; width: 100%; resize: none; padding: 10px; border: 1px solid var(--line-2); border-radius: 9px; color: #344054; }
+    .quick { display: grid; grid-template-columns: repeat(2,1fr); gap: 7px; }
+    .quick button { min-height: 42px; border: 1px solid var(--line); border-radius: 9px; color: #344054; background: #fff; font-size: 10px; font-weight: 800; }
+    .quick button:hover { border-color: #a5b4fc; background: #fafaff; }
+
+    @media (max-width: 1240px) { .stage { grid-template-columns: 260px minmax(520px,1fr); } .action-stack { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand"><div class="brand-mark">H19</div><div class="brand-copy"><div class="brand-name">VIET UC</div><div class="brand-sub">CRM Center</div></div></div>
+      <div class="section-label">Care Command</div><nav class="side-nav"><a class="side-link active" href="#"><b>◎</b>Care canvas<span>18</span></a><a class="side-link" href="#"><b>☎</b>Live calls<span>2</span></a><a class="side-link" href="#"><b>✉</b>Messages<span>11</span></a><a class="side-link" href="#"><b>↻</b>Callbacks<span>5</span></a><a class="side-link" href="#"><b>⚑</b>Risk & escalation<span>3</span></a></nav>
+      <div class="section-label">CRM Center</div><nav class="side-nav"><a class="side-link" href="#"><b>▦</b>Dashboard</a><a class="side-link" href="#"><b>♙</b>Contacts</a><a class="side-link" href="#"><b>♧</b>Clients</a><a class="side-link" href="#"><b>□</b>Bookings</a></nav>
+      <div class="side-status"><div class="row"><span class="dot"></span>Available for work</div><p>Voice 0/1 · Messaging 2/5<br>South care team</p></div>
+    </aside>
+
+    <main class="main">
+      <header class="bar"><div class="bar-title"><h1>Care Canvas</h1><p>One care relationship, every channel and commitment</p></div><label class="search"><span class="sr-only">Search</span><input placeholder="Find person, family, conversation or booking…"></label><div class="bar-actions"><button class="soft-btn" data-toast="New outbound call ready">＋ New interaction</button><button class="icon-btn" aria-label="Notifications">●</button><div class="avatar orange">AG</div></div></header>
+      <div class="stage">
+        <aside class="work-stack" data-select-group>
+          <section class="panel work-head"><h2>Needs attention</h2><p>Ordered by safety, continuity, SLA and workload</p><div class="view-switch"><button class="active">Priority</button><button>Today</button><button>Mine</button></div></section>
+          <article class="care-work active" data-selectable data-name="Minh Tran"><div class="top"><div class="avatar red">MT</div><div class="copy"><h3>Minh Tran</h3><p>Lan Nguyen is speaking for him · verified caregiver</p></div></div><div class="foot"><span class="channel zalo">Z</span><span class="badge red">Worsening</span><span class="time">Now · 03:12 SLA</span></div></article>
+          <article class="care-work" data-selectable data-name="Anh Pham"><div class="top"><div class="avatar green">AP</div><div class="copy"><h3>Anh Pham</h3><p>Returning a missed call about tomorrow’s service</p></div></div><div class="foot"><span class="channel phone">☎</span><span class="badge blue">Callback</span><span class="time">4 min</span></div></article>
+          <article class="care-work" data-selectable data-name="Mai Hoang"><div class="top"><div class="avatar orange">MH</div><div class="copy"><h3>Mai Hoang</h3><p>Wants to move today’s nurse arrival after 3 PM</p></div></div><div class="foot"><span class="channel whatsapp">W</span><span class="badge green">Booking</span><span class="time">8 min</span></div></article>
+          <article class="care-work" data-selectable data-name="Household identity review"><div class="top"><div class="avatar">?</div><div class="copy"><h3>Household identity review</h3><p>Shared mobile number matches two existing patients</p></div></div><div class="foot"><span class="channel phone">☎</span><span class="badge purple">Conflict</span><span class="time">13 min</span></div></article>
+          <article class="care-work" data-selectable data-name="Thuy Le"><div class="top"><div class="avatar">TL</div><div class="copy"><h3>Thuy Le</h3><p>Referral documents attached; booking not yet created</p></div></div><div class="foot"><span class="channel email">@</span><span class="badge amber">Commitment due</span><span class="time">24 min</span></div></article>
+        </aside>
+
+        <section class="canvas">
+          <header class="canvas-hero"><div class="hero-top"><div class="avatar green">MT</div><div class="hero-person"><div class="eyebrow">Selected care relationship</div><h2 data-selected-name>Minh Tran</h2><p>H19-10428 · District 7 · Home nursing · Vietnamese</p></div><div class="hero-actions"><button class="ghost-btn" data-toast="Calling Lan Nguyen">☎ Call Lan</button><button class="ghost-btn" data-toast="Booking workspace opened">□ Booking</button><button class="icon-btn" aria-label="More">•••</button></div></div><div class="relationship-line"><div class="hero-node"><div class="avatar red">LN</div><div><strong>Lan Nguyen</strong><span>Caller · identity verified</span></div></div><div class="hero-link"></div><div class="hero-node"><div class="avatar green">MT</div><div><strong>Minh Tran</strong><span>Patient · consent active</span></div></div></div></header>
+          <div class="canvas-body">
+            <section class="brief-card"><div class="brief-top"><div class="ai-glyph">✦</div><div class="brief-title">Continuity Brief</div><span class="badge green">Source-grounded</span><a class="source-link" href="#" style="margin-left:auto">Inspect 6 sources</a></div><div class="brief-body">Lan requested a nurse visit yesterday for Minh’s dizziness. A visit is booked tomorrow at 10:30 AM. Today she reports he is worse and cannot stand properly. No escalation is open.</div><div class="brief-meta"><span class="chip">Speaker ↔ patient verified</span><span class="chip">What changed · worsened today</span><span class="chip">Unknown · fall status</span></div></section>
+            <div class="canvas-grid"><div class="journey"><article class="journey-item risk"><div class="journey-time">Today · 10:04</div><div class="journey-title"><span class="channel zalo">Z</span>Worsening symptoms reported</div><div class="journey-copy">“This morning the dizziness is much worse and he cannot stand properly.”</div><div class="journey-source">Lan Nguyen · Zalo OA · message source available</div></article><article class="journey-item done"><div class="journey-time">Yesterday · 09:20</div><div class="journey-title"><span>▣</span>Home nurse visit reserved</div><div class="journey-copy">Tomorrow, 10:30 AM · South Nursing · District 7.</div><div class="journey-source">Booking BK-2026-1049 · owner Thu Ha</div></article><article class="journey-item"><div class="journey-time">Yesterday · 09:12</div><div class="journey-title"><span class="channel zalo">Z</span>Caregiver requested visit</div><div class="journey-copy">Lan said Minh had felt dizzy since the previous day and asked for a nurse.</div><div class="journey-source">Relationship and permission to discuss care verified</div></article><article class="journey-item done"><div class="journey-time">03 June · 14:30</div><div class="journey-title"><span>✓</span>Previous home visit completed</div><div class="journey-copy">Standard nursing visit completed; no unresolved admin commitments.</div></article></div><aside class="care-track"><div class="track-card risk"><strong>Safety state</strong><div class="value">Escalation not open</div><div class="sub">Approved trigger detected · requires human checklist</div></div><div class="track-card ok"><strong>Consent state</strong><div class="value">Active</div><div class="sub">Lan may discuss Minh’s current care and booking</div></div><div class="track-card"><strong>Next service</strong><div class="value">Tomorrow<br>10:30 AM</div><div class="sub">Home nursing assessment · South team</div></div><div class="track-card"><strong>Commitments</strong><div class="value">1 open</div><div class="sub">Confirm safety disposition before conversation closes</div></div></aside></div>
+          </div>
+        </section>
+
+        <aside class="action-stack">
+          <section class="action-card primary-action"><div class="eyebrow">Safest next action</div><h3>Run the approved dizziness check</h3><div class="action-step"><span class="step-num">1</span><div><strong>Confirm immediate red flags</strong><p>Use the approved non-diagnostic question set.</p></div></div><div class="action-step"><span class="step-num">2</span><div><strong>Record a structured outcome</strong><p>Responses and timestamp become an auditable event.</p></div></div><div class="action-step"><span class="step-num">3</span><div><strong>Escalate if triggered</strong><p>Route to clinical queue; AI does not score severity.</p></div></div><button class="primary-btn full" data-toast="Approved safety flow opened">Start guided check</button></section>
+          <section class="action-card"><div class="contact-tabs"><button class="active">Reply</button><button>Note</button><button>Call</button></div><textarea class="reply" aria-label="Reply" placeholder="Reply to Lan in Vietnamese…"></textarea><div style="display:flex;gap:7px;margin-top:8px"><button class="soft-btn" data-toast="Bilingual reply drafted">✦ Draft</button><button class="primary-btn" style="flex:1" data-toast="Prototype only — ready for review">Review & send</button></div><div class="micro muted" style="margin-top:8px">Zalo window open · consent valid · Vietnamese</div></section>
+          <section class="action-card"><h3>Quick care actions</h3><div class="quick"><button data-toast="Booking workspace opened">□ Booking</button><button data-toast="Callback scheduled">↻ Callback</button><button data-toast="Internal note opened">✎ Note</button><button data-toast="Relationship drawer opened">♧ Relationship</button></div></section>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <nav class="prototype-note" aria-label="Prototype options"><strong>Option B · Care Canvas</strong><span>Best for relationship-aware care continuity</span><div class="prototype-links"><a href="option-a-focus-flow.html">A</a><a class="active" href="option-b-care-canvas.html">B</a><a href="option-c-signal-command.html">C</a><a href="index.html">Compare</a></div></nav>
+  <script src="shared.js"></script>
+</body>
+</html>

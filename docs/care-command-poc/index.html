@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Health19 Care Command — Choose a UX Direction</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { min-height: 100vh; background: radial-gradient(circle at 85% 8%, #e8eaff 0, transparent 28%), radial-gradient(circle at 8% 88%, #fff0e3 0, transparent 25%), #f7f8fc; }
+    .hero { color: #fff; background: linear-gradient(120deg, #111858, var(--navy) 52%, #303f9f); padding: 24px clamp(20px,5vw,76px) 68px; }
+    .hero-nav { display: flex; align-items: center; justify-content: space-between; }
+    .hero-pill { padding: 8px 12px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; background: rgba(255,255,255,.08); font-size: 11px; font-weight: 800; }
+    .hero-copy { max-width: 850px; margin: 72px auto 0; text-align: center; }
+    .hero-copy .eyebrow { color: #ffca8a; }
+    .hero-copy h1 { margin: 12px 0; font-size: clamp(34px,5vw,60px); line-height: 1.02; letter-spacing: -.055em; }
+    .hero-copy p { max-width: 720px; margin: 0 auto; color: rgba(255,255,255,.7); font-size: 15px; line-height: 1.65; }
+    .north-star { max-width: 920px; margin: -36px auto 0; padding: 18px 20px; display: flex; align-items: center; gap: 14px; border: 1px solid #d6d9ff; border-top: 3px solid var(--orange); border-radius: 14px; background: #fff; box-shadow: var(--shadow-lg); }
+    .north-star .ai-glyph { width: 40px; height: 40px; flex: 0 0 auto; }
+    .north-star strong { display: block; font-size: 13px; }
+    .north-star span { display: block; margin-top: 4px; color: #667085; font-size: 12px; line-height: 1.45; }
+    .content { max-width: 1240px; margin: 34px auto 0; padding: 0 24px 64px; }
+    .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+    .section-head h2 { margin: 0; font-size: 23px; letter-spacing: -.03em; }
+    .section-head p { margin: 5px 0 0; color: #667085; font-size: 12px; }
+    .evidence { color: #475467; font-size: 10px; font-weight: 700; }
+    .options { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; }
+    .option { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: var(--shadow); transition: .2s ease; }
+    .option:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: #c7d2fe; }
+    .preview { height: 238px; position: relative; overflow: hidden; background: #f1f3f9; border-bottom: 1px solid var(--line); }
+    .mini-a { display: grid; grid-template-columns: 26px 82px 1fr 78px; grid-template-rows: 26px 1fr; height: 100%; }
+    .mini-a .m-top { grid-column: 1/-1; background: var(--navy); }
+    .mini-a .m-rail { background: var(--navy); }
+    .mini-a .m-queue { background: #fff; border-right: 1px solid #d0d5dd; padding: 7px 5px; }
+    .mini-a .m-thread { padding: 8px; background: #fff; }
+    .mini-a .m-context { padding: 7px 5px; border-left: 1px solid #d0d5dd; background: #fafbfe; }
+    .mini-line { height: 7px; margin-bottom: 6px; border-radius: 4px; background: #e4e7ec; }
+    .mini-line.navy { background: #c7d2fe; }
+    .mini-card { height: 28px; margin-bottom: 6px; border: 1px solid #e4e7ec; border-radius: 5px; background: #fff; }
+    .mini-card.active { border-left: 3px solid var(--orange); background: #f1f3ff; }
+    .mini-brief { height: 58px; margin-bottom: 8px; border: 1px solid #badbd7; border-left: 3px solid var(--teal); border-radius: 6px; background: #eef9f7; }
+    .mini-b { height: 100%; display: grid; grid-template-columns: 64px 78px 1fr 84px; grid-template-rows: 25px 1fr; }
+    .mini-b .m-side { grid-row: 1/-1; background: var(--navy); }
+    .mini-b .m-bar { grid-column: 2/-1; background: #fff; border-bottom: 1px solid #d0d5dd; }
+    .mini-b .m-work { padding: 7px 5px; }
+    .mini-b .m-canvas { margin: 7px 0; border-radius: 7px; background: #fff; border: 1px solid #d0d5dd; overflow: hidden; }
+    .mini-b .m-hero { height: 50px; background: linear-gradient(120deg, var(--navy), var(--navy-3)); }
+    .mini-b .m-journey { padding: 8px 10px 0 20px; position: relative; }
+    .mini-b .m-journey::before { content:""; position:absolute; left:10px; top:8px; bottom:8px; width:2px; background:#c7d2fe; }
+    .mini-b .m-action { margin: 7px 5px; padding: 6px; border: 1px solid #e4e7ec; border-top: 3px solid var(--orange); border-radius: 6px; background:#fff; }
+    .mini-c { height: 100%; display: grid; grid-template-rows: 28px 48px 1fr; }
+    .mini-c .m-nav { background: var(--navy); }
+    .mini-c .m-kpis { display:grid; grid-template-columns:repeat(6,1fr); gap:4px; padding:5px 7px; }
+    .mini-c .m-kpis i { border:1px solid #e4e7ec; border-top:2px solid var(--navy); border-radius:4px; background:#fff; }
+    .mini-c .m-grid { display:grid; grid-template-columns:1.4fr .8fr; gap:6px; padding:2px 7px 8px; }
+    .mini-c .m-table, .mini-c .m-radar { border:1px solid #e4e7ec; border-radius:6px; background:#fff; padding:6px; }
+    .mini-c .m-row { display:grid; grid-template-columns:1.2fr .8fr .4fr; gap:4px; height:19px; border-bottom:1px solid #eef0f3; }
+    .mini-c .m-signal { height:33px; margin-bottom:5px; border-radius:4px; background:#f9fafb; border-left:3px solid var(--red); }
+    .option-copy { padding: 18px; }
+    .option-tag { display: flex; align-items: center; gap: 8px; color: var(--navy); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .07em; }
+    .option-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
+    .option h3 { margin: 9px 0 6px; font-size: 20px; letter-spacing: -.03em; }
+    .option p { min-height: 54px; margin: 0; color: #667085; font-size: 12px; line-height: 1.48; }
+    .fit { margin: 15px 0; padding: 10px; border-radius: 9px; background: #f8f9fc; color: #344054; font-size: 11px; line-height: 1.4; }
+    .fit strong { color: #1d2939; }
+    .feature-list { display: grid; gap: 7px; margin: 0 0 16px; padding: 0; list-style: none; }
+    .feature-list li { display: flex; gap: 7px; color: #475467; font-size: 11px; }
+    .feature-list li::before { content: "✓"; color: var(--green); font-weight: 900; }
+    .open { width: 100%; min-height: 44px; text-decoration: none; }
+    .recommended { position: absolute; right: 12px; top: 12px; z-index: 3; color: #fff; background: var(--orange); padding: 7px 9px; border-radius: 999px; box-shadow: 0 6px 14px rgba(255,111,0,.25); font-size: 9px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+    .comparison { margin-top: 28px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #fff; box-shadow: var(--shadow); }
+    .comparison table { width: 100%; border-collapse: collapse; }
+    .comparison th, .comparison td { padding: 12px 15px; border-bottom: 1px solid var(--line); font-size: 11px; text-align: left; }
+    .comparison th { color: #fff; background: var(--navy); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
+    .comparison tr:last-child td { border-bottom: 0; }
+    .comparison td:first-child { font-weight: 800; }
+    @media (max-width: 940px) { .options { grid-template-columns: 1fr; } .option p { min-height: 0; } .hero-copy { margin-top: 48px; } .comparison { overflow-x:auto; } .comparison table { min-width: 800px; } }
+  </style>
+</head>
+<body>
+  <header class="hero"><nav class="hero-nav"><div class="brand"><div class="brand-mark">H19</div><div class="brand-copy"><div class="brand-name">VIET UC</div><div class="brand-sub">CRM Center</div></div></div><span class="hero-pill">Care Command · UX proof of concept</span></nav><div class="hero-copy"><div class="eyebrow">Three implementation-ready directions</div><h1>Choose how Health19 should feel at the moment care gets complicated.</h1><p>Each prototype uses the existing Health19 visual language and the same evidence-based product foundations. The decision is which operating model should lead: agent focus, care continuity or manager intelligence.</p></div></header>
+  <section class="north-star"><div class="ai-glyph">✦</div><div><strong>Shared North Star across all three options</strong><span>Within five seconds, an authorised user understands who is speaking, for whom, why now, what is booked, what may be risky, what consent applies and the safest next action—with evidence.</span></div></section>
+  <main class="content"><div class="section-head"><div><h2>Explore the three directions</h2><p>Open each interactive HTML prototype in a separate tab and compare the same care scenario.</p></div><span class="evidence">Built from the 17-platform competitor study and current Health19 design tokens</span></div>
+    <section class="options">
+      <article class="option"><div class="preview"><span class="recommended">Recommended starting point</span><div class="mini-a"><div class="m-top"></div><div class="m-rail"></div><div class="m-queue"><div class="mini-line navy"></div><div class="mini-card active"></div><div class="mini-card"></div><div class="mini-card"></div><div class="mini-card"></div></div><div class="m-thread"><div class="mini-brief"></div><div class="mini-line"></div><div class="mini-card" style="width:68%"></div><div class="mini-card" style="width:58%;margin-left:auto;background:#eef0ff"></div><div class="mini-line"></div></div><div class="m-context"><div class="mini-line navy"></div><div class="mini-card" style="height:54px"></div><div class="mini-card" style="height:72px"></div></div></div></div><div class="option-copy"><div class="option-tag"><i></i>Option A</div><h3>Focus Flow</h3><p>A fast four-zone workspace combining queue, mixed-channel conversation, AI brief and care context without tab-hunting.</p><div class="fit"><strong>Best fit:</strong> the safest Phase 1 evolution from the existing CRM Center and the strongest everyday agent workspace.</div><ul class="feature-list"><li>Intercom-like reading speed</li><li>Zendesk-like queue discipline</li><li>Healthcare relationship and safety rail</li></ul><a class="primary-btn open" href="option-a-focus-flow.html">Open Focus Flow →</a></div></article>
+      <article class="option"><div class="preview"><div class="mini-b"><div class="m-side"></div><div class="m-bar"></div><div class="m-work"><div class="mini-card active"></div><div class="mini-card"></div><div class="mini-card"></div><div class="mini-card"></div></div><div class="m-canvas"><div class="m-hero"></div><div class="m-journey"><div class="mini-brief"></div><div class="mini-card"></div><div class="mini-card"></div><div class="mini-card"></div></div></div><div class="m-action"><div class="mini-line navy"></div><div class="mini-card" style="height:48px"></div><div class="mini-card" style="height:42px"></div></div></div></div><div class="option-copy"><div class="option-tag"><i></i>Option B</div><h3>Care Canvas</h3><p>A relationship-first workspace that makes the patient, representative, care journey, booking and commitments the centre of gravity.</p><div class="fit"><strong>Best fit:</strong> maximum product differentiation and teams handling complex caregiver, payer and referrer relationships.</div><ul class="feature-list"><li>Kustomer-style journey continuity</li><li>Caller ↔ patient relationship made explicit</li><li>Guided next-action workspace</li></ul><a class="primary-btn open" href="option-b-care-canvas.html">Open Care Canvas →</a></div></article>
+      <article class="option"><div class="preview"><div class="mini-c"><div class="m-nav"></div><div class="m-kpis"><i></i><i style="border-top-color:#c62828"></i><i></i><i style="border-top-color:#2e7d32"></i><i style="border-top-color:#ff6f00"></i><i></i></div><div class="m-grid"><div class="m-table"><div class="mini-line navy"></div><div class="m-row"></div><div class="m-row"></div><div class="m-row"></div><div class="m-row"></div><div class="mini-line"></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"><div class="mini-card" style="height:65px"></div><div class="mini-card" style="height:65px"></div><div class="mini-card" style="height:65px"></div><div class="mini-card" style="height:65px"></div></div></div><div class="m-radar"><div class="mini-line navy"></div><div class="m-signal"></div><div class="m-signal" style="border-left-color:#ff6f00"></div><div class="m-signal" style="border-left-color:#0f6d66"></div></div></div></div></div><div class="option-copy"><div class="option-tag"><i></i>Option C</div><h3>Signal Command</h3><p>A live manager control room for routing, risk, capacity, channel health, interventions and inspectable AI governance.</p><div class="fit"><strong>Best fit:</strong> Sales Admins and Managers supervising multi-channel operations, surge conditions and safety exceptions.</div><ul class="feature-list"><li>Genesys/NICE operational depth</li><li>Explainable priority and routing</li><li>AI coverage, overrides and kill switches</li></ul><a class="primary-btn open" href="option-c-signal-command.html">Open Signal Command →</a></div></article>
+    </section>
+    <section class="comparison"><table><thead><tr><th>Decision</th><th>Option A · Focus Flow</th><th>Option B · Care Canvas</th><th>Option C · Signal Command</th></tr></thead><tbody><tr><td>Primary user</td><td>Sales admin / agent</td><td>Care coordinator / complex-case agent</td><td>Manager / supervisor</td></tr><tr><td>Main object</td><td>Interaction and queue</td><td>Care relationship and journey</td><td>Operating signal and intervention</td></tr><tr><td>Strongest advantage</td><td>Fastest learning and delivery path</td><td>Most differentiated healthcare UX</td><td>Best operational control</td></tr><tr><td>Recommended role</td><td>Base everyday workspace</td><td>Selected-record deep-focus mode</td><td>Manager-only supervisory view</td></tr><tr><td>Health19 implementation fit</td><td>Direct extension of CRM Center</td><td>Uses relationship and booking foundations</td><td>Uses shared canonical event/routing layer</td></tr></tbody></table></section>
+  </main>
+</body>
+</html>

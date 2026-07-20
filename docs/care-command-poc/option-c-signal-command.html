@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Health19 Care Command — Option C: Signal Command</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { min-width: 1160px; overflow: hidden; background: #f4f6fb; }
+    .command { height: 100vh; display: grid; grid-template-rows: 68px minmax(0,1fr); }
+    .nav { display: flex; align-items: center; gap: 18px; padding: 0 20px; color: #fff; background: var(--navy); }
+    .nav .brand { width: 200px; }
+    .nav-links { display: flex; align-self: stretch; gap: 3px; }
+    .nav-link { min-width: 92px; height: 100%; display: grid; place-items: center; position: relative; color: rgba(255,255,255,.66); text-decoration: none; font-size: 11px; font-weight: 800; }
+    .nav-link.active { color: #fff; background: rgba(255,255,255,.08); }
+    .nav-link.active::after { content: ""; position: absolute; left: 17px; right: 17px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--orange-2); }
+    .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .nav button { color: #fff; border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.08); }
+
+    .body { min-height: 0; padding: 15px 18px 82px; overflow: auto; }
+    .command-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .command-head h1 { margin: 0; font-size: 20px; letter-spacing: -.03em; }
+    .command-head p { margin: 4px 0 0; color: #667085; font-size: 11px; }
+    .live { margin-left: auto; display: flex; align-items: center; gap: 7px; color: #067647; font-size: 11px; font-weight: 800; }
+    .live .dot { animation: pulseRing 2s infinite; }
+    .head-actions { display: flex; gap: 7px; }
+
+    .kpis { display: grid; grid-template-columns: repeat(6,1fr); gap: 9px; }
+    .kpi { min-width: 0; padding: 12px 13px; border: 1px solid var(--line); border-top: 3px solid var(--navy); border-radius: 11px; background: #fff; box-shadow: var(--shadow); }
+    .kpi.risk { border-top-color: var(--red); }
+    .kpi.warn { border-top-color: var(--orange); }
+    .kpi.good { border-top-color: var(--green); }
+    .kpi-head { display: flex; align-items: center; justify-content: space-between; color: #667085; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+    .kpi strong { display: block; margin-top: 6px; font-size: 22px; letter-spacing: -.04em; }
+    .kpi-foot { margin-top: 4px; color: #667085; font-size: 9px; }
+    .kpi-foot b { color: #b42318; }
+
+    .grid { display: grid; grid-template-columns: minmax(620px,1.45fr) minmax(380px,.85fr); gap: 11px; margin-top: 11px; }
+    .left, .right { min-width: 0; display: grid; gap: 11px; align-content: start; }
+    .panel { overflow: hidden; }
+    .panel-head { min-height: 48px; display: flex; align-items: center; gap: 9px; padding: 0 13px; border-bottom: 1px solid var(--line); }
+    .panel-head h2 { margin: 0; font-size: 13px; }
+    .panel-head p { margin: 3px 0 0; color: #667085; font-size: 9px; }
+    .panel-head .right-actions { margin-left: auto; display: flex; gap: 6px; }
+    .panel-head button { min-height: 32px; font-size: 10px; }
+
+    .risk-table { width: 100%; border-collapse: collapse; }
+    .risk-table th { padding: 8px 10px; color: #667085; background: #f9fafb; border-bottom: 1px solid var(--line); font-size: 9px; text-align: left; text-transform: uppercase; letter-spacing: .05em; }
+    .risk-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); font-size: 10px; vertical-align: middle; }
+    .risk-table tr:last-child td { border-bottom: 0; }
+    .risk-table tbody tr { cursor: pointer; }
+    .risk-table tbody tr:hover, .risk-table tbody tr.active { background: #fafaff; }
+    .risk-table tbody tr.active { box-shadow: inset 3px 0 var(--orange); }
+    .who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .who strong { display: block; font-size: 10px; }
+    .who span { display: block; margin-top: 2px; color: #667085; font-size: 9px; }
+    .sla { font-variant-numeric: tabular-nums; font-weight: 800; color: #b42318; }
+    .explain { color: #1d4ed8; font-weight: 800; text-decoration: none; }
+
+    .lane-wrap { display: grid; grid-template-columns: repeat(4,1fr); gap: 9px; padding: 11px; background: #fafbff; }
+    .lane { min-width: 0; padding: 9px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .lane-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .lane-head strong { font-size: 10px; }
+    .lane-head span { color: #667085; font-size: 9px; }
+    .lane-item { padding: 8px; margin-top: 6px; border: 1px solid var(--line); border-radius: 8px; background: #f9fafb; }
+    .lane-item:first-of-type { margin-top: 0; }
+    .lane-item .top { display: flex; align-items: center; gap: 6px; }
+    .lane-item strong { min-width: 0; font-size: 9px; }
+    .lane-item p { margin: 5px 0 0; color: #667085; font-size: 8px; line-height: 1.3; }
+    .lane-item.risk { border-color: #fecdd3; background: #fff5f6; }
+
+    .agent-board { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; padding: 11px; }
+    .agent { padding: 9px; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+    .agent-top { display: flex; align-items: center; gap: 7px; }
+    .agent-name { min-width: 0; font-size: 9px; font-weight: 800; }
+    .agent-state { margin-top: 2px; color: #667085; font-size: 8px; }
+    .load { height: 5px; margin-top: 8px; border-radius: 999px; overflow: hidden; background: #e4e7ec; }
+    .load span { display: block; height: 100%; border-radius: inherit; background: var(--green); }
+    .agent.over .load span { background: var(--red); }
+    .agent.warn .load span { background: var(--orange); }
+
+    .signal-list { display: grid; gap: 0; }
+    .signal { display: grid; grid-template-columns: 34px 1fr auto; gap: 9px; padding: 10px 12px; border-top: 1px solid var(--line); }
+    .signal:first-child { border-top: 0; }
+    .signal-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; color: #fff; background: var(--navy); font-weight: 900; }
+    .signal-icon.red { background: var(--red); }
+    .signal-icon.orange { background: var(--orange); }
+    .signal-icon.teal { background: var(--teal); }
+    .signal strong { display: block; font-size: 10px; }
+    .signal p { margin: 3px 0 0; color: #667085; font-size: 9px; line-height: 1.35; }
+    .signal time { color: #667085; font-size: 8px; }
+
+    .ai-board { padding: 11px; }
+    .ai-score { display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: center; }
+    .coverage-ring { width: 82px; height: 82px; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--teal) 0 82%, #e4e7ec 82%); position: relative; }
+    .coverage-ring::after { content: ""; position: absolute; inset: 9px; border-radius: 50%; background: #fff; }
+    .coverage-ring strong { position: relative; z-index: 1; font-size: 18px; }
+    .coverage-copy h3 { margin: 0; font-size: 11px; }
+    .coverage-copy p { margin: 5px 0 0; color: #667085; font-size: 9px; line-height: 1.4; }
+    .governance-row { display: grid; grid-template-columns: 1fr auto; gap: 9px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+    .governance-row:first-of-type { margin-top: 10px; }
+    .governance-row strong { display: block; font-size: 9px; }
+    .governance-row span { color: #667085; font-size: 8px; }
+
+    .selected-drawer { position: fixed; z-index: 20; left: 18px; right: 18px; bottom: 74px; min-height: 94px; display: grid; grid-template-columns: 260px minmax(320px,1fr) 290px auto; gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid #c7d2fe; border-radius: 14px; background: rgba(255,255,255,.97); box-shadow: var(--shadow-lg); backdrop-filter: blur(14px); }
+    .drawer-person { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .drawer-person strong { display: block; font-size: 11px; }
+    .drawer-person span { display: block; margin-top: 3px; color: #667085; font-size: 9px; }
+    .drawer-brief { min-width: 0; padding: 9px 11px; border-left: 3px solid var(--teal); border-radius: 8px; background: var(--teal-soft); color: #234e4a; font-size: 10px; line-height: 1.4; }
+    .drawer-action strong { display: block; color: #9a3412; font-size: 9px; }
+    .drawer-action p { margin: 3px 0 0; color: #7c2d12; font-size: 9px; line-height: 1.35; }
+    .drawer-buttons { display: flex; gap: 7px; }
+
+    @media (max-width: 1320px) { .kpis { grid-template-columns: repeat(3,1fr); } .grid { grid-template-columns: 1fr; } .right { grid-template-columns: repeat(2,1fr); } .selected-drawer { grid-template-columns: 220px 1fr auto; } .drawer-action { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="command">
+    <header class="nav"><div class="brand"><div class="brand-mark">H19</div><div class="brand-copy"><div class="brand-name">VIET UC</div><div class="brand-sub">CRM Center</div></div></div><nav class="nav-links"><a class="nav-link" href="#">Dashboard</a><a class="nav-link active" href="#">Care Command</a><a class="nav-link" href="#">Contacts</a><a class="nav-link" href="#">Bookings</a><a class="nav-link" href="#">Reports</a></nav><div class="nav-actions"><button class="ghost-btn">Manager view ▾</button><button class="icon-btn" aria-label="Notifications">●</button><div class="avatar orange">AM</div></div></header>
+    <main class="body">
+      <div class="command-head"><div><h1>Signal Command</h1><p>Live operations, safe interventions and inspectable AI across every channel</p></div><div class="live"><span class="dot"></span>Live · updated 6 sec ago</div><div class="head-actions"><button class="ghost-btn" data-toast="Surge policy simulator opened">Simulate surge</button><button class="primary-btn" data-toast="Overflow route opened for review">Open overflow</button></div></div>
+      <section class="kpis" aria-label="Live operating metrics"><article class="kpi risk"><div class="kpi-head">SLA at risk<span>⚠</span></div><strong>7</strong><div class="kpi-foot"><b>+3</b> in last 15 min</div></article><article class="kpi warn"><div class="kpi-head">Oldest wait<span>◷</span></div><strong>08:42</strong><div class="kpi-foot">Zalo · South queue</div></article><article class="kpi"><div class="kpi-head">Active now<span>◎</span></div><strong>24</strong><div class="kpi-foot">6 calls · 18 messaging</div></article><article class="kpi good"><div class="kpi-head">Capacity<span>◒</span></div><strong>71%</strong><div class="kpi-foot">4 agents available</div></article><article class="kpi risk"><div class="kpi-head">Safety queue<span>⚑</span></div><strong>3</strong><div class="kpi-foot"><b>1 unacknowledged</b></div></article><article class="kpi warn"><div class="kpi-head">Channel health<span>⌁</span></div><strong>1</strong><div class="kpi-foot">VoIP jitter elevated</div></article></section>
+
+      <div class="grid">
+        <div class="left">
+          <section class="panel"><header class="panel-head"><div><h2>Priority intelligence</h2><p>Safety → continuity → SLA → capacity; click any row to inspect</p></div><div class="right-actions"><button class="ghost-btn">Filters</button><button class="ghost-btn">Why this order?</button></div></header><table class="risk-table"><thead><tr><th>Person / relationship</th><th>Signal</th><th>Channel</th><th>Owner</th><th>SLA</th><th>Reason</th></tr></thead><tbody data-select-group><tr class="active" data-selectable data-name="Minh Tran"><td><div class="who"><div class="avatar red">MT</div><div><strong>Minh Tran</strong><span>Lan · verified caregiver</span></div></div></td><td><span class="badge red">Worsening</span></td><td><span class="channel zalo">Z</span></td><td>Unassigned</td><td class="sla">03:12</td><td><a class="explain" href="#">Safety + no owner</a></td></tr><tr data-selectable data-name="Unknown caller"><td><div class="who"><div class="avatar">?</div><div><strong>Unknown caller</strong><span>2 household matches</span></div></div></td><td><span class="badge purple">Identity conflict</span></td><td><span class="channel phone">☎</span></td><td>Quang D.</td><td class="sla">05:06</td><td><a class="explain" href="#">Unsafe match</a></td></tr><tr data-selectable data-name="Anh Pham"><td><div class="who"><div class="avatar green">AP</div><div><strong>Anh Pham</strong><span>Current client</span></div></div></td><td><span class="badge blue">Missed care</span></td><td><span class="channel phone">☎</span></td><td>Mai T.</td><td class="sla">06:51</td><td><a class="explain" href="#">Visit tomorrow</a></td></tr><tr data-selectable data-name="Thuy Le"><td><div class="who"><div class="avatar orange">TL</div><div><strong>Thuy Le</strong><span>Referrer</span></div></div></td><td><span class="badge amber">Commitment due</span></td><td><span class="channel email">@</span></td><td>An N.</td><td>12:10</td><td><a class="explain" href="#">Booking missing</a></td></tr><tr data-selectable data-name="Mai Hoang"><td><div class="who"><div class="avatar">MH</div><div><strong>Mai Hoang</strong><span>Current client</span></div></div></td><td><span class="badge green">Booking change</span></td><td><span class="channel whatsapp">W</span></td><td>An N.</td><td>15:20</td><td><a class="explain" href="#">Continuity owner</a></td></tr></tbody></table></section>
+
+          <section class="panel"><header class="panel-head"><div><h2>Queue flow</h2><p>Operational work state — not a ticket kanban</p></div><div class="right-actions"><button class="ghost-btn" data-toast="Routing policy opened">Routing policy</button></div></header><div class="lane-wrap"><div class="lane"><div class="lane-head"><strong>Needs owner</strong><span>6</span></div><div class="lane-item risk"><div class="top"><span class="channel zalo">Z</span><strong class="truncate">Minh Tran</strong><span class="badge red">03:12</span></div><p>Worsening language · caregiver</p></div><div class="lane-item"><div class="top"><span class="channel web">◉</span><strong class="truncate">Huy Vo</strong></div><p>New home nursing enquiry</p></div></div><div class="lane"><div class="lane-head"><strong>In progress</strong><span>14</span></div><div class="lane-item"><div class="top"><span class="channel phone">☎</span><strong class="truncate">Anh Pham</strong></div><p>Callback · Mai T. · 01:08</p></div><div class="lane-item"><div class="top"><span class="channel email">@</span><strong class="truncate">Thuy Le</strong></div><p>Referral documents review</p></div></div><div class="lane"><div class="lane-head"><strong>Waiting</strong><span>9</span></div><div class="lane-item"><div class="top"><span class="channel whatsapp">W</span><strong class="truncate">Mai Hoang</strong></div><p>Awaiting service team reply</p></div><div class="lane-item"><div class="top"><span class="channel zalo">Z</span><strong class="truncate">Khanh Vu</strong></div><p>Template window closed</p></div></div><div class="lane"><div class="lane-head"><strong>Follow-up due</strong><span>5</span></div><div class="lane-item"><div class="top"><span class="channel phone">☎</span><strong class="truncate">Bao Le</strong></div><p>Promise: call by 11:30</p></div><div class="lane-item"><div class="top"><span class="channel email">@</span><strong class="truncate">Clinic 24</strong></div><p>Referral outcome overdue</p></div></div></div></section>
+
+          <section class="panel"><header class="panel-head"><div><h2>Agent focus & capacity</h2><p>Voice consumes full real-time capacity; asynchronous work is weighted</p></div><div class="right-actions"><button class="ghost-btn">Manage presence</button></div></header><div class="agent-board"><article class="agent over"><div class="agent-top"><div class="avatar red">AN</div><div><div class="agent-name">An Nguyen</div><div class="agent-state">Call · 5 weighted</div></div></div><div class="load"><span style="width:100%"></span></div></article><article class="agent warn"><div class="agent-top"><div class="avatar orange">MT</div><div><div class="agent-name">Mai Tran</div><div class="agent-state">Messaging · 4/5</div></div></div><div class="load"><span style="width:80%"></span></div></article><article class="agent"><div class="agent-top"><div class="avatar green">QD</div><div><div class="agent-name">Quang Do</div><div class="agent-state">Available · 2/5</div></div></div><div class="load"><span style="width:40%"></span></div></article><article class="agent"><div class="agent-top"><div class="avatar">TL</div><div><div class="agent-name">Thuy Le</div><div class="agent-state">Wrap-up · 1/5</div></div></div><div class="load"><span style="width:22%"></span></div></article></div></section>
+        </div>
+
+        <aside class="right">
+          <section class="panel"><header class="panel-head"><div><h2>Supervisor radar</h2><p>Exceptions requiring intervention</p></div><span class="badge red">5 open</span></header><div class="signal-list"><article class="signal"><div class="signal-icon red">!</div><div><strong>Escalation unacknowledged</strong><p>Minh Tran · no clinical queue owner after 2:18</p></div><time>Now</time></article><article class="signal"><div class="signal-icon orange">↗</div><div><strong>South queue demand spike</strong><p>Predicted SLA breach in 11 minutes at current staffing</p></div><time>2m</time></article><article class="signal"><div class="signal-icon teal">✦</div><div><strong>AI source coverage drop</strong><p>3 briefs exclude delayed booking events from provider</p></div><time>5m</time></article><article class="signal"><div class="signal-icon">⌁</div><div><strong>VoIP quality degraded</strong><p>Jitter above target for two South-team agents</p></div><time>8m</time></article></div></section>
+
+          <section class="panel"><header class="panel-head"><div><h2>AI governance</h2><p>Inspectable assistance, never covert scoring</p></div><button class="ghost-btn">Review queue</button></header><div class="ai-board"><div class="ai-score"><div class="coverage-ring"><strong>82%</strong></div><div class="coverage-copy"><h3>Source coverage</h3><p>Material brief claims linked to inspectable source events. Unknowns remain explicit.</p></div></div><div class="governance-row"><div><strong>Briefs awaiting human review</strong><span>12 of 41 generated today</span></div><span class="badge amber">12</span></div><div class="governance-row"><div><strong>Agent edits after generation</strong><span>Healthy feedback signal</span></div><span class="badge blue">18%</span></div><div class="governance-row"><div><strong>Unsupported-output flags</strong><span>All blocked before send</span></div><span class="badge green">0 sent</span></div><div class="governance-row"><div><strong>Capability kill switches</strong><span>4 approved features enabled</span></div><button class="ghost-btn" style="min-height:30px">Manage</button></div></div></section>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <section class="selected-drawer"><div class="drawer-person"><div class="avatar red">MT</div><div><strong data-selected-name>Minh Tran</strong><span>Lan Nguyen · verified caregiver · Zalo</span><div style="margin-top:5px"><span class="badge red">Safety signal</span> <span class="badge amber">03:12 SLA</span></div></div></div><div class="drawer-brief"><strong>AI brief:</strong> tomorrow’s nurse visit is booked; the latest message reports worsening dizziness and inability to stand. No escalation is open. <a class="source-link" href="#">6 sources</a></div><div class="drawer-action"><strong>Recommended intervention</strong><p>Assign a permitted Vietnamese-speaking agent and open the approved safety checklist.</p></div><div class="drawer-buttons"><button class="ghost-btn" data-toast="Routing explanation opened">Why routed?</button><button class="primary-btn" data-toast="Assigned to Quang Do with reason logged">Assign & join</button></div></section>
+  <nav class="prototype-note" aria-label="Prototype options"><strong>Option C · Signal Command</strong><span>Best for manager control, safe intervention and AI governance</span><div class="prototype-links"><a href="option-a-focus-flow.html">A</a><a href="option-b-care-canvas.html">B</a><a class="active" href="option-c-signal-command.html">C</a><a href="index.html">Compare</a></div></nav>
+  <script src="shared.js"></script>
+</body>
+</html>
