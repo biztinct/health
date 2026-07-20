@@ -623,9 +623,15 @@ class CareConversation(models.Model):
         # Email cards (inbound emails + our posted replies) via mail.message
         model, rid = self._mail_target()
         if model:
+            # comments are only real outbound replies (mt_comment) — internal
+            # notes (mt_note) on the lead/partner must never render as a
+            # message the customer received
+            mt_comment_id = self.env.ref("mail.mt_comment").id
             for m in self.env["mail.message"].sudo().search(
                 [("model", "=", model), ("res_id", "=", rid),
-                 ("message_type", "in", ("email", "comment"))],
+                 "|", ("message_type", "=", "email"),
+                 "&", ("message_type", "=", "comment"),
+                 ("subtype_id", "=", mt_comment_id)],
                 order="date asc", limit=100,
             ):
                 # direction rule (§4): email = inbound; comment authored by an
@@ -884,8 +890,12 @@ class CareConversation(models.Model):
         if not model or not recipient:
             raise UserError(_("This conversation has no email recipient."))
         record = self.env[model].sudo().browse(rid)
-        # Ensure a recipient partner exists so Odoo actually sends the email.
+        # Ensure a recipient partner exists so Odoo actually sends the email —
+        # and that its address IS the one the guard validated (an anchored
+        # partner whose email differs from the lead's must not silently win).
         partner = rec.partner_id
+        if partner and (partner.email or "").strip().lower() != recipient.lower():
+            partner = partner.browse()
         if not partner:
             partner = self.env["res.partner"].sudo().search(
                 [("email", "=ilike", recipient)], limit=1)

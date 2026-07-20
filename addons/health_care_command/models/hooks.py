@@ -6,6 +6,11 @@ then feed Care Command inside a try/except so a bug here can NEVER break a
 Zalo webhook, a call log, a lead create or a mail delivery (§5.4, tested by
 T13). No host field is written; we only read the freshly-created row and
 upsert our own ``care.conversation``.
+
+Each ingest runs inside ``cr.savepoint()``: a database-level error (e.g. the
+partial unique index firing on concurrent webhook double-delivery) would
+otherwise leave the host transaction aborted even though the exception is
+caught, failing every later statement in the host flow.
 """
 
 import logging
@@ -23,7 +28,8 @@ class ZaloMessageHook(models.Model):
         messages = super().create(vals_list)
         for msg in messages:
             try:
-                self._care_ingest_zalo(msg)
+                with self.env.cr.savepoint():
+                    self._care_ingest_zalo(msg)
             except Exception:
                 _logger.exception("care_command: zalo.message ingest failed (msg %s)", msg.id)
         return messages
@@ -75,7 +81,8 @@ class CrmLeadHook(models.Model):
         leads = super().create(vals_list)
         for lead in leads:
             try:
-                self._care_ingest_lead(lead)
+                with self.env.cr.savepoint():
+                    self._care_ingest_lead(lead)
             except Exception:
                 _logger.exception("care_command: crm.lead ingest failed (lead %s)", lead.id)
         return leads
@@ -107,7 +114,8 @@ class MailMessageHook(models.Model):
             if vals.get("model") not in ("crm.lead", "res.partner"):
                 continue
             try:
-                self._care_ingest_email(msg)
+                with self.env.cr.savepoint():
+                    self._care_ingest_email(msg)
             except Exception:
                 _logger.exception("care_command: mail.message ingest failed (msg %s)", msg.id)
         return messages
@@ -141,7 +149,8 @@ class FieldserviceOrderHook(models.Model):
         orders = super().create(vals_list)
         for order in orders:
             try:
-                self._care_sync_booking(order)
+                with self.env.cr.savepoint():
+                    self._care_sync_booking(order)
             except Exception:
                 _logger.exception("care_command: fso create sync failed (fso %s)", order.id)
         return orders
@@ -151,7 +160,8 @@ class FieldserviceOrderHook(models.Model):
         if "scheduled_datetime" in vals or "state" in vals:
             for order in self:
                 try:
-                    self._care_sync_booking(order)
+                    with self.env.cr.savepoint():
+                        self._care_sync_booking(order)
                 except Exception:
                     _logger.exception("care_command: fso write sync failed (fso %s)", order.id)
         return res

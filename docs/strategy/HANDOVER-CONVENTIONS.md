@@ -744,3 +744,43 @@ a no-op.
     of the display, never exact display text; and never overwrite the seed's
     text from a fixture. (Hit live in portal-my-health test_01, relaxed to
     code + substring.)
+
+- **§5.51 — Odoo's libsass mangles data-URI `url()` mask icons in `.scss`;
+    ship them in a plain `.css` file.** A `.scss` full of
+    `--m:url("data:image/svg+xml,...")` compiles under dart-sass but Odoo's
+    libsass fails with "Style compilation failed" and the whole page renders
+    unstyled. Put the `.ic-*{--m:url(...)}` rules in `static/src/css/*.css`
+    loaded before the `.scss`; keep only nesting/tokens in scss
+    (advanced_pricing already follows this split). (Hit live in
+    health_care_command — shipped unstyled until the split.)
+
+- **§5.52 — a full-screen OWL client action must NOT use
+    `position:absolute; inset:0` on its root.** Under the /bizapp CMS shell
+    the action host is not a positioned ancestor, so `inset:0` escapes to the
+    viewport and the left edge hides behind the CMS sidebar. Use
+    `display:flex; width:100%; height:100%` and flow in the content area
+    (crm_dashboard does). (Hit live in health_care_command.)
+
+- **§5.53 — `crm.lead.action_mark_spam()` / `action_log_as_lead()` call
+    `self.env.cr.commit()`, which Odoo 19's test cursor forbids**
+    (`AssertionError: Cannot commit ... inside a test`). Any test that reuses
+    these CRM actions must wrap the call in
+    `with patch.object(self.env.cr, 'commit'):`. (Hit in care_command T5/T8.)
+
+- **§5.54 — `zalo.message.action_send_message()` is upstream-broken: it
+    references the unregistered model `self.env['zalo.api.client']`**
+    (only the plain `ZaloAPIClient` class + `get_api_client(env)` exist —
+    zalo_message.py:166, zalo_config.py:288). Any real text send KeyErrors.
+    Consumers must mock `action_send_message` itself in tests, and outbound
+    Zalo cannot work in production until health_zalo is fixed. (Found by
+    care_command Phase 1; fix belongs in health_zalo.)
+
+- **§5.55 — `try/except` around a create() does NOT protect the host
+    transaction from a database-level error: wrap ingest hooks in
+    `cr.savepoint()`.** If the caught exception is an IntegrityError (e.g. a
+    unique index firing on concurrent double-delivery), the PostgreSQL
+    transaction is already aborted — every later statement in the host flow
+    (the webhook's own commit included) then fails with "current transaction
+    is aborted" even though Python caught the exception. Exception-isolated
+    hooks must run the guarded body inside `with self.env.cr.savepoint():`
+    inside the try. (Care-command Phase-1 review finding, fixed pre-emptively.)

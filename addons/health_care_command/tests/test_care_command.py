@@ -446,11 +446,13 @@ class TestCareCommand(TransactionCase):
     # ======================================================================
     def test_17_hot_path_guard(self):
         before = self.Care.search_count([])
-        # a plain chatter note on an unrelated record must NOT touch care_command
-        with patch.object(type(self.Care), "_find_or_create_for",
-                          side_effect=RuntimeError("must not be called")):
+        # a plain chatter note on an unrelated record must NOT touch care_command.
+        # No side_effect: the hook's own try/except would swallow a raise and
+        # the test would pass even without the guard — assert the mock instead.
+        with patch.object(type(self.Care), "_find_or_create_for") as upsert_mock:
             self.patient.message_post(body="just an internal note",
                                       message_type="comment",
                                       subtype_xmlid="mail.mt_note")
+        upsert_mock.assert_not_called()
         after = self.Care.search_count([])
         self.assertEqual(before, after, "no conversation created for a chatter note")
