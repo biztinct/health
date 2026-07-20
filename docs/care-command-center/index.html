@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care Command Center — Three Design Directions</title>
+<style>
+:root{
+  --navy:#1e2a5e; --bg:#f2f4f9; --card:#fff; --ink:#1b2340; --mut:#6a7189; --faint:#98a0b6;
+  --line:#e3e7f0; --line-2:#d3d9e7; --accent:#3451d1; --accent-soft:#eaeefb;
+  --ok:#188554; --ok-soft:#e7f4ec; --warn:#b76e00; --warn-soft:#fdf3e2;
+  --danger:#c62839; --ai:#6d28d9; --ai-soft:#f2ecfd;
+  --sh:0 1px 2px rgba(27,35,64,.06),0 4px 14px rgba(27,35,64,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+.wrap{max-width:1060px;margin:0 auto;padding:40px 28px 80px}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent)}
+h1{font-size:30px;font-weight:800;letter-spacing:-.5px;margin:6px 0 10px}
+.lede{font-size:15px;color:var(--mut);max-width:760px}
+.north{margin:26px 0 34px;background:var(--navy);color:#fff;border-radius:16px;padding:22px 26px}
+.north .nlab{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#9fb0e8;margin-bottom:6px}
+.north p{font-size:15.5px;line-height:1.65}
+.north b{color:#ffd9de}
+
+h2{font-size:20px;font-weight:800;margin:38px 0 6px}
+.h2sub{color:var(--mut);margin-bottom:18px}
+
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.opts{grid-template-columns:1fr}}
+.opt{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh);
+  display:flex;flex-direction:column}
+.opt .band{height:6px}
+.opt .obody{padding:18px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.opt .onum{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--faint)}
+.opt h3{font-size:18px;font-weight:800;letter-spacing:-.2px}
+.opt .tag{font-size:12.5px;font-weight:700;color:var(--mut);font-style:italic}
+.opt p{font-size:13px;color:var(--mut)}
+.opt ul{list-style:none;display:flex;flex-direction:column;gap:6px;margin:4px 0}
+.opt li{font-size:12.5px;padding-left:18px;position:relative;color:var(--ink)}
+.opt li::before{content:"";position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:2px;background:var(--oc)}
+.opt .risk{font-size:12px;color:var(--mut);border-top:1px dashed var(--line);padding-top:9px}
+.opt .risk b{color:var(--warn)}
+.opt .go{margin-top:auto;display:inline-flex;align-items:center;gap:6px;background:var(--oc);color:#fff;font-weight:700;
+  font-size:13px;border-radius:9px;padding:10px 16px;justify-content:center}
+.opt .go:hover{opacity:.92}
+.o1{--oc:#0f766e}.o2{--oc:#6d28d9}.o3{--oc:#3451d1}
+.o1 .band{background:#0f766e}.o2 .band{background:#6d28d9}.o3 .band{background:#3451d1}
+.pill{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:2px}
+.pill.reco{background:var(--ai-soft);color:var(--ai)}
+
+.tblwrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--faint);background:#fafbfd}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:700;white-space:nowrap}
+.good{color:var(--ok);font-weight:700}
+.mid{color:var(--warn);font-weight:700}
+.low{color:var(--danger);font-weight:700}
+
+.rec{margin-top:38px;background:var(--card);border:2px solid var(--ai);border-radius:16px;padding:24px 28px}
+.rec .rlab{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ai);margin-bottom:8px}
+.rec h3{font-size:19px;font-weight:800;margin-bottom:10px}
+.rec p{color:var(--ink);margin-bottom:10px}
+.rec p b{font-weight:800}
+.rec .why{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 6px}
+@media(max-width:900px){.rec .why{grid-template-columns:1fr}}
+.rec .wcard{background:var(--ai-soft);border-radius:11px;padding:12px 15px;font-size:12.5px}
+.rec .wcard b{display:block;margin-bottom:3px;color:var(--ai)}
+.foot{margin-top:34px;font-size:12.5px;color:var(--faint)}
+.foot b{color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Health19 · CRM Center · design study v2 — 20 Jul 2026</div>
+  <h1>Care Command Center — three design directions</h1>
+  <p class="lede">One intelligent entry point for Sales to monitor and answer <b>Zalo, VoIP24h, WhatsApp, Facebook Messenger, Telegram, web chat, ZNS and email</b> — knowing who is talking, what they've booked, and what to do next — and to create leads, clients and bookings or clear junk from the same surface. Three deliberately different paradigms; same cast of mock customers in each so you can compare like-for-like.</p>
+
+  <div class="north">
+    <div class="nlab">North star</div>
+    <p>Within five seconds of anything arriving on any channel, a sales person knows <b>who this is</b>, <b>who they're speaking for</b>, <b>what's booked</b>, <b>why they're contacting us now</b> and <b>the safest next action</b> — and can take that action without leaving the screen. Nothing is ever sent to a customer without a human tap.</p>
+  </div>
+
+  <div class="rec" style="margin-top:0;margin-bottom:34px;border-color:var(--ok)">
+    <div class="rlab" style="color:var(--ok)">Chosen direction — v3 combined POC (20 Jul 2026)</div>
+    <h3>Live Wall + Messenger Zero merged, with AI as a config-gated layer</h3>
+    <p>After review, the direction chosen is a <b>zoomable single surface</b>: the Wall for awareness &amp; triage, which opens into the full Messenger workplace — plus a <b>channel filter dock</b>, <b>claim flows</b> everywhere, and an <b>AI Assist configuration</b> (Ollama-first) that gates every AI feature. With AI off, the tool runs fully on deterministic rules: identity matching, watchlist phrases, templates, junk rules, all CRM actions.</p>
+    <p style="margin-bottom:0"><a class="go" style="display:inline-flex;background:var(--ok);padding:10px 18px;border-radius:9px;color:#fff;font-weight:700" href="care-command-combined.html">Open the combined POC →</a></p>
+  </div>
+
+  <h2>The three paradigms (original study)</h2>
+  <p class="h2sub">Each answers "what <i>is</i> this tool?" differently. All three share the CMS light theme, flat colors, and the full job set (respond · identify · book · lead · client · junk · supervisor peek).</p>
+
+  <div class="opts">
+    <div class="opt o1">
+      <div class="band"></div>
+      <div class="obody">
+        <div class="onum">Option 1</div>
+        <h3>Live Wall</h3>
+        <div class="tag">"The tool is a living situation room."</div>
+        <p>Every open conversation is a breathing tile on a heat wall — size = urgency × value, edge = channel. A ringing call literally swells until answered. Click a tile and it blooms into the full merged conversation; Esc collapses it back.</p>
+        <ul>
+          <li>Demand pressure is <b>visible</b>, not counted — hot things are bigger</li>
+          <li>Live now-ticker of events across every channel</li>
+          <li>Incoming-call context bloom: identity + bookings before you answer</li>
+          <li>"Everyone" toggle = inherent supervisor view (ownership rings, unclaimed zone)</li>
+        </ul>
+        <div class="risk"><b>Trade-off:</b> boldest departure from list-based work; spatial layout needs discipline at 200+ live conversations (clustering, filters).</div>
+        <a class="go" href="option-1-live-wall.html">Open Live Wall →</a>
+      </div>
+    </div>
+
+    <div class="opt o2">
+      <div class="band"></div>
+      <div class="obody">
+        <div class="onum">Option 2 <span class="pill reco">Recommended</span></div>
+        <h3>AI Teammate</h3>
+        <div class="tag">"You don't work messages. You approve decisions."</div>
+        <p>An AI colleague has already read every channel overnight: replies drafted as real Zalo bubbles, bookings proposed with live nurse slots, identities matched with evidence, junk batched. The UI is its handover — a feed of decision cards you approve, edit or reject.</p>
+        <ul>
+          <li>80% of the day staged before you arrive; the job becomes judgment</li>
+          <li>Every card shows <b>why</b> + source events — nothing is a black box</li>
+          <li>Zero auto-send by design; approve-all only for the routine band</li>
+          <li>AI ledger: approval/edit/override rates + capability kill-switches</li>
+        </ul>
+        <div class="risk"><b>Trade-off:</b> depends on draft quality; needs the full-inbox escape hatch (built in) and honest confidence honesty to earn trust.</div>
+        <a class="go" href="option-2-ai-teammate.html">Open AI Teammate →</a>
+      </div>
+    </div>
+
+    <div class="opt o3">
+      <div class="band"></div>
+      <div class="obody">
+        <div class="onum">Option 3</div>
+        <h3>Messenger Zero</h3>
+        <div class="tag">"The CRM dissolves into a chat app they already know."</div>
+        <p>A premium messenger — one chat per <b>person</b>, channels merged. The CRM melts into the thread: booking widgets with live slots materialise in-chat, identity cards slide under unknown numbers, /commands and hover actions do everything without leaving the conversation.</p>
+        <ul>
+          <li>Zero learning curve — it's the Zalo muscle memory sales staff already have</li>
+          <li>Rich in-thread cards: booking proposals the family can confirm</li>
+          <li>Header flips into the client profile — context one tap away, no third pane</li>
+          <li>Team tab: colleagues' loads + unclaimed pool (supervisor peek)</li>
+        </ul>
+        <div class="risk"><b>Trade-off:</b> chat-paced; weaker at cross-customer triage ("what's most urgent across 80 chats?") — leans on the smart sections to compensate.</div>
+        <a class="go" href="option-3-messenger-zero.html">Open Messenger Zero →</a>
+      </div>
+    </div>
+  </div>
+
+  <h2>Side-by-side</h2>
+  <p class="h2sub">Judged for the daily reality: 2–5 sales staff, Zalo-heavy volume, VoIP24h calls, growing WhatsApp/Messenger, one shared junk firehose.</p>
+  <div class="tblwrap">
+    <table>
+      <tr><th>Dimension</th><th>1 · Live Wall</th><th>2 · AI Teammate</th><th>3 · Messenger Zero</th></tr>
+      <tr><td>Wow factor</td><td class="good">Very high — cinematic</td><td class="good">Very high — feels like magic staffing</td><td class="mid">High — quiet, convenience wow</td></tr>
+      <tr><td>Adoption risk</td><td class="mid">Medium — new mental model</td><td class="mid">Medium — trust must be earned</td><td class="good">Lowest — it's just chat</td></tr>
+      <tr><td>Throughput per agent</td><td class="mid">Good — great triage, manual replies</td><td class="good">Highest — reading &amp; typing pre-done</td><td class="mid">Good — fast in-thread, manual pace</td></tr>
+      <tr><td>Urgency triage across all contacts</td><td class="good">Best — it's the whole point</td><td class="good">Strong — feed is pre-ranked</td><td class="low">Weakest — list sections only</td></tr>
+      <tr><td>Deep single-conversation work</td><td class="mid">Good (expanded view)</td><td class="mid">Good (thread slide-over)</td><td class="good">Best — thread is the workplace</td></tr>
+      <tr><td>Supervisor value</td><td class="good">Inherent (Everyone toggle)</td><td class="good">Strong (AI ledger + team strip)</td><td class="mid">Basic (team tab)</td></tr>
+      <tr><td>AI dependence day-1</td><td class="good">Low — works with zero AI</td><td class="low">High — AI is the paradigm</td><td class="good">Low — widgets are additive</td></tr>
+      <tr><td>Maps onto existing rails*</td><td class="good">Direct</td><td class="good">Direct + needs draft/propose services</td><td class="good">Direct</td></tr>
+      <tr><td>Phase-1 build size</td><td class="mid">Medium</td><td class="mid">Medium-large (AI services)</td><td class="good">Smallest</td></tr>
+    </table>
+  </div>
+  <p class="foot">* Existing rails verified in the repo: <b>zalo.conversation / zalo.message</b> + webhook, <b>voip.call.log</b> + webhook + click-to-dial, <b>crm.lead</b> statuses &amp; Book/Escalate/Spam actions, <b>health.client.relation</b> caregiver links, <b>health.fieldservice.order</b> bookings, ZNS cascade, CMS sidebar registry. WhatsApp/Messenger/Telegram arrive later as adapters into the same canonical conversation layer.</p>
+
+  <div class="rec">
+    <div class="rlab">Fable's recommendation</div>
+    <h3>Build Option 2 (AI Teammate) as the paradigm — with Option 3's thread as its drill-down, and Option 1's wall as the team wallboard later.</h3>
+    <p>These three compose rather than compete. The <b>decision feed</b> is the category-defining move — nothing in the Pancake / Intercom / Zendesk class inverts the inbox this way, and it attacks the real cost: agent reading-and-typing time. But every "Open thread" click needs a world-class conversation surface — that's exactly <b>Messenger Zero</b>, so we build it as the level below the feed. The <b>Live Wall</b> becomes the manager's screen (and the office TV) in a later phase, feeding off the same canonical data.</p>
+    <div class="why">
+      <div class="wcard"><b>Why not 3 alone?</b> It makes agents faster at chatting but keeps them reading everything. The leverage is in pre-staged judgment, not faster typing.</div>
+      <div class="wcard"><b>Why not 1 alone?</b> Spectacular awareness, but awareness isn't the bottleneck for 2–5 agents — handling time is. The wall shines as a shared/supervisor surface.</div>
+      <div class="wcard"><b>De-risked path</b> Phase A ships the merged person-thread + identity + in-thread booking (Option 3 core, no AI needed). Phase B layers the decision feed on top as drafts mature. Wall last.</div>
+    </div>
+    <p style="margin-bottom:0"><b>Safety stance in all options:</b> nothing auto-sends, identity never merges silently, symptom phrases only <i>point</i> (humans escalate), and every AI claim links to its source events.</p>
+  </div>
+
+  <div class="foot" style="margin-top:26px">Mock cast shared across all three: Lan Nguyễn (Zalo caregiver of client Minh Trần, visit tomorrow, worsening-symptom flag) · ringing/missed VoIP24h call from client Vũ Đình Phúc · new Messenger lead Hương Giang · WhatsApp expat David Miller · web-chat lead Ngọc Ánh (weekend vaccination) · Telegram junk. All data fictional; all interactions front-end mock only.</div>
+</div>
+</body>
+</html>

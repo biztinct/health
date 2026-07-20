@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care Command — Combined (Wall + Messenger, AI-optional)</title>
+<style>
+/* ============ tokens (Viet UC CMS light, flat mono) ============ */
+:root{
+  --navy:#1e2a5e; --navy-2:#28356e; --navy-3:#333f7d;
+  --bg:#f2f4f9; --card:#ffffff; --ink:#1b2340; --mut:#6a7189; --faint:#98a0b6;
+  --line:#e3e7f0; --line-2:#d3d9e7;
+  --accent:#3451d1; --accent-soft:#eaeefb;
+  --ok:#188554; --ok-soft:#e7f4ec;
+  --warn:#b76e00; --warn-soft:#fdf3e2;
+  --danger:#c62839; --danger-soft:#fbebed;
+  --ai:#6d28d9; --ai-soft:#f2ecfd; --ai-line:#e2d6fb;
+  --ch-zalo:#0068ff; --ch-call:#0f766e; --ch-wa:#16a34a; --ch-fb:#7c3aed;
+  --ch-tg:#0e9adf; --ch-web:#64748b; --ch-zns:#0a58c9; --ch-email:#b45309;
+  --r:10px; --r-lg:14px;
+  --sh:0 1px 2px rgba(27,35,64,.06),0 4px 14px rgba(27,35,64,.06);
+  --sh-lg:0 8px 40px rgba(27,35,64,.22);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;overflow:hidden}
+button{font:inherit;border:none;background:none;cursor:pointer;color:inherit}
+input,textarea{font:inherit;color:inherit;border:none;outline:none;background:none}
+
+/* ============ icons ============ */
+.ic{display:inline-block;width:16px;height:16px;flex:none;background:currentColor;
+  -webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;vertical-align:-3px}
+.ic-chat{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/%3E%3C/svg%3E")}
+.ic-phone{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E")}
+.ic-cal{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E")}
+.ic-user{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E")}
+.ic-users{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E")}
+.ic-spark{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z'/%3E%3C/svg%3E")}
+.ic-check{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E")}
+.ic-x{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M18 6L6 18M6 6l12 12'/%3E%3C/svg%3E")}
+.ic-search{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E")}
+.ic-send{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 2L11 13M22 2l-7 20-4-9-9-4z'/%3E%3C/svg%3E")}
+.ic-bolt{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/%3E%3C/svg%3E")}
+.ic-clock{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 3'/%3E%3C/svg%3E")}
+.ic-shield{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E")}
+.ic-warn{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E")}
+.ic-grid{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Crect x='3' y='3' width='7' height='7' rx='1'/%3E%3Crect x='14' y='3' width='7' height='7' rx='1'/%3E%3Crect x='3' y='14' width='7' height='7' rx='1'/%3E%3Crect x='14' y='14' width='7' height='7' rx='1'/%3E%3C/svg%3E")}
+.ic-chart{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M7 15l4-6 4 3 5-8'/%3E%3C/svg%3E")}
+.ic-ban{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M5.6 5.6l12.8 12.8'/%3E%3C/svg%3E")}
+.ic-note{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 2v6h6M9 13h6M9 17h6'/%3E%3C/svg%3E")}
+.ic-back{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5M12 19l-7-7 7-7'/%3E%3C/svg%3E")}
+.ic-clip{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48'/%3E%3C/svg%3E")}
+.ic-hand{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8'/%3E%3Cpath d='M18 8a2 2 0 0 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15'/%3E%3C/svg%3E")}
+.ic-set{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'/%3E%3C/svg%3E")}
+.ic-mail{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='4' width='20' height='16' rx='2'/%3E%3Cpath d='M22 7l-10 6L2 7'/%3E%3C/svg%3E")}
+.ic-globe{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18'/%3E%3C/svg%3E")}
+.ic-slash{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Crect x='3' y='3' width='18' height='18' rx='4'/%3E%3Cpath d='M14.5 6.5l-5 11'/%3E%3C/svg%3E")}
+.ic-layers{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/%3E%3C/svg%3E")}
+.ic-bell{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9'/%3E%3Cpath d='M13.7 21a2 2 0 0 1-3.4 0'/%3E%3C/svg%3E")}
+.ic-tag{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.59 13.41L12 22 2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z'/%3E%3Ccircle cx='7' cy='7' r='1.5'/%3E%3C/svg%3E")}
+
+/* ============ app frame ============ */
+.app{display:flex;height:100vh}
+.rail{width:60px;background:var(--navy);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:6px;flex:none}
+.rail .logo{width:36px;height:36px;border-radius:10px;background:#e0344a;color:#fff;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:12.5px;margin-bottom:8px}
+.rail button{width:40px;height:40px;border-radius:10px;color:#aab3d6;display:flex;align-items:center;justify-content:center}
+.rail button .ic{width:18px;height:18px}
+.rail button:hover{background:var(--navy-2);color:#fff}
+.rail button.on{background:var(--navy-3);color:#fff;position:relative}
+.rail button.on::before{content:"";position:absolute;left:-10px;top:9px;bottom:9px;width:3px;border-radius:2px;background:#e0344a}
+.rail .spacer{flex:1}
+.rail .me{width:32px;height:32px;border-radius:50%;background:#4a5aa8;color:#fff;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:11.5px}
+
+/* channel dock (filter panel) */
+.chdock{width:74px;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;
+  align-items:center;padding:12px 0;gap:4px;flex:none;overflow-y:auto}
+.chdock .dk-t{font-size:9px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.chbtn{width:60px;border-radius:11px;padding:7px 0 6px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:var(--mut);position:relative;border:1px solid transparent}
+.chbtn .bub{width:30px;height:30px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;
+  color:var(--cv,var(--mut))}
+.chbtn .bub .ic{width:15px;height:15px}
+.chbtn .lb{font-size:9px;font-weight:800;letter-spacing:.2px}
+.chbtn .ct{position:absolute;top:2px;right:5px;min-width:16px;height:16px;border-radius:8px;background:var(--line-2);
+  color:var(--ink);font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.chbtn .ct.hot{background:var(--danger);color:#fff}
+.chbtn:hover{background:var(--bg)}
+.chbtn.on{background:var(--accent-soft);border-color:#cdd7f6;color:var(--accent)}
+.chbtn.on .bub{background:var(--cv,var(--accent));color:#fff}
+.chdock hr{width:44px;border:none;border-top:1px solid var(--line);margin:6px 0}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* ============ top bar ============ */
+.top{height:56px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;
+  padding:0 16px;flex:none}
+.backbtn{display:none;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--mut);border:1px solid var(--line);
+  border-radius:8px;padding:7px 12px}
+.backbtn:hover{color:var(--accent);border-color:var(--accent)}
+body.state-chat .backbtn{display:inline-flex}
+.title{display:flex;align-items:baseline;gap:9px;flex:none}
+.title h1{font-size:14.5px;font-weight:800}
+.title .sub{font-size:10.5px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:5px;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.ticker{flex:1;min-width:0;overflow:hidden;position:relative;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.ticker-track{display:flex;gap:8px;align-items:center;height:100%;padding:0 10px;width:max-content;animation:tick 46s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mut);background:var(--card);border:1px solid var(--line);
+  border-radius:7px;padding:2px 9px;white-space:nowrap;cursor:pointer}
+.tk:hover{border-color:var(--line-2);color:var(--ink)}
+.tk .ic{width:11px;height:11px}
+.tk b{color:var(--ink);font-weight:600}
+.tk.hot{border-color:var(--danger);color:var(--danger)}
+.tk.hot b{color:var(--danger)}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px;flex:none}
+.seg button{padding:5px 11px;border-radius:6px;font-size:11.5px;font-weight:700;color:var(--mut);display:flex;gap:6px;align-items:center}
+.seg button .ic{width:12px;height:12px}
+.seg button.on{background:var(--navy);color:#fff}
+.aipill{flex:none;display:flex;align-items:center;gap:7px;border:1px solid var(--ai-line);background:var(--ai-soft);
+  color:var(--ai);font-weight:800;font-size:11.5px;padding:7px 12px;border-radius:8px}
+.aipill .ic{width:13px;height:13px}
+.aipill:hover{border-color:var(--ai)}
+body.ai-off .aipill{background:var(--bg);border-color:var(--line-2);color:var(--mut)}
+.newbtn{flex:none;display:flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-weight:700;
+  font-size:12px;padding:8px 13px;border-radius:8px}
+.newbtn:hover{background:#2a44b4}
+.newbtn .ic{width:12px;height:12px}
+
+/* ============ AI gating ============ */
+body.ai-off .ai-only{display:none!important}
+body.ai-on .ai-alt{display:none!important}
+
+/* ============ WALL state ============ */
+.content{flex:1;min-height:0;display:flex;flex-direction:column}
+.wallwrap{flex:1;overflow-y:auto;padding:14px 16px 8px;display:none}
+body.state-wall .wallwrap{display:block}
+.wall-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.wall-head h2{font-size:11.5px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.8px}
+.wall-head .hint{font-size:11px;color:var(--faint)}
+.wall-head .clr{margin-left:auto;font-size:11px;font-weight:700;color:var(--accent);display:none}
+.wall-head .clr.on{display:block}
+.wall{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:122px;gap:11px}
+@media(max-width:1280px){.wall{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:11px 13px;position:relative;
+  cursor:pointer;display:flex;flex-direction:column;gap:6px;overflow:hidden;box-shadow:var(--sh);
+  transition:transform .15s,box-shadow .15s}
+.tile:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(27,35,64,.14)}
+.tile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cv,var(--line-2))}
+.t-hero{grid-column:span 2;grid-row:span 2}
+.t-lg{grid-column:span 2;grid-row:span 2}
+.tile:not(.t-hero):not(.t-lg) .snippet{display:none}
+.tile.dim{opacity:.62;box-shadow:none}
+.tile.dim:hover{opacity:1}
+.tile.unclaimed{outline:2px dashed var(--warn);outline-offset:-2px}
+.t-top{display:flex;align-items:center;gap:8px;min-width:0}
+.ava{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:11.5px;color:#fff;background:var(--av,#7f8ab3)}
+.t-hero .ava,.t-lg .ava{width:38px;height:38px;font-size:13px}
+.t-who{min-width:0;flex:1}
+.t-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-hero .t-name,.t-lg .t-name{font-size:14.5px}
+.t-sub{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chan{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;color:var(--cv);flex:none}
+.chan .ic{width:12px;height:12px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.chip .ic{width:10px;height:10px}
+.chip.client{background:var(--ok-soft);color:var(--ok)}
+.chip.lead{background:var(--warn-soft);color:var(--warn)}
+.chip.new{background:var(--accent-soft);color:var(--accent)}
+.chip.junk{background:#eef0f5;color:var(--faint)}
+.chip.risk{background:var(--danger-soft);color:var(--danger)}
+.chip.ai{background:var(--ai-soft);color:var(--ai)}
+.reason{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700}
+.reason .ic{width:12px;height:12px;color:var(--mut)}
+.reason.hot{color:var(--danger)}
+.reason.hot .ic{color:var(--danger)}
+.snippet{font-size:12px;color:var(--mut);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.facts{border-top:1px dashed var(--line);margin-top:auto;padding-top:7px;display:flex;flex-direction:column;gap:4px}
+.facts .fl{display:flex;gap:7px;align-items:center;font-size:11px;color:var(--mut)}
+.facts .fl .ic{width:11px;height:11px;color:var(--faint)}
+.facts .fl b{color:var(--ink);font-weight:600}
+.facts .fl.aif{color:var(--ai)}
+.facts .fl.aif .ic{color:var(--ai)}
+.facts .fl.aif b{color:var(--ai)}
+.t-foot{display:flex;align-items:center;gap:7px;margin-top:auto}
+.tile.t-hero .t-foot,.tile.t-lg .t-foot{margin-top:2px}
+.t-time{font-size:10.5px;color:var(--faint);margin-left:auto;font-variant-numeric:tabular-nums}
+.owner{display:none;align-items:center;gap:4px;font-size:10px;font-weight:800;color:var(--mut)}
+.owner i{width:17px;height:17px;border-radius:50%;background:var(--navy-2);color:#fff;font-style:normal;
+  display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:800}
+body.view-all .owner{display:inline-flex}
+.claimbtn{display:inline-flex;align-items:center;gap:5px;background:var(--warn);color:#fff;font-size:11px;font-weight:800;
+  border-radius:7px;padding:4px 10px}
+.claimbtn .ic{width:11px;height:11px}
+.claimbtn:hover{background:#9c5e00}
+.typing{display:inline-flex;gap:3px;align-items:center;margin-left:6px}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--ch-zalo);animation:ty 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes ty{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.tile.ringing{border-color:var(--ok);animation:ringswell 1.6s ease-in-out infinite}
+@keyframes ringswell{0%,100%{box-shadow:0 0 0 0 rgba(24,133,84,.32),var(--sh)}50%{box-shadow:0 0 0 12px rgba(24,133,84,0),var(--sh)}}
+.ringbar{display:flex;gap:8px}
+.rb-ans{background:var(--ok);color:#fff;font-weight:800;font-size:12px;border-radius:8px;padding:7px 14px;
+  display:inline-flex;align-items:center;gap:6px}
+.rb-ans:hover{background:#106b44}
+.rb-dec{background:var(--danger-soft);color:var(--danger);font-weight:800;font-size:12px;border-radius:8px;padding:7px 12px}
+
+/* ============ CHAT state ============ */
+.chatwrap{flex:1;min-height:0;display:none}
+body.state-chat .chatwrap{display:flex}
+.clist{width:324px;flex:none;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.clist-h{padding:10px 12px;border-bottom:1px solid var(--line)}
+.searchbox{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  padding:7px 11px;color:var(--faint)}
+.searchbox input{flex:1;font-size:12px;color:var(--ink)}
+.searchbox .ic{width:13px;height:13px}
+.chats{flex:1;overflow-y:auto;padding:4px 8px 14px}
+.chats>*{flex:none}
+.sec{font-size:9.5px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.8px;padding:11px 8px 4px;
+  display:flex;align-items:center;gap:6px}
+.sec .ic{width:10px;height:10px}
+.chatrow{display:flex;gap:9px;padding:8px 9px;border-radius:11px;cursor:pointer;align-items:flex-start;position:relative}
+.chatrow:hover{background:var(--bg)}
+.chatrow.on{background:var(--accent-soft)}
+.avwrap{position:relative;flex:none}
+.avwrap .ava{width:37px;height:37px}
+.chglyph{position:absolute;right:-3px;bottom:-3px;width:16px;height:16px;border-radius:50%;background:var(--cv);
+  border:2px solid var(--card);display:flex;align-items:center;justify-content:center;color:#fff}
+.chatrow.on .chglyph{border-color:var(--accent-soft)}
+.chglyph .ic{width:8px;height:8px}
+.c-main{flex:1;min-width:0}
+.c-top{display:flex;align-items:baseline;gap:6px}
+.c-nm{font-weight:700;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-time{margin-left:auto;font-size:10px;color:var(--faint);flex:none;font-variant-numeric:tabular-nums}
+.c-prev{font-size:11.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.c-tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center}
+.mtag{font-size:9px;font-weight:800;border-radius:5px;padding:1.5px 6px}
+.mtag.client{background:var(--ok-soft);color:var(--ok)}
+.mtag.lead{background:var(--warn-soft);color:var(--warn)}
+.mtag.new{background:var(--accent-soft);color:var(--accent)}
+.mtag.risk{background:var(--danger-soft);color:var(--danger)}
+.mtag.junk{background:#eef0f5;color:var(--faint)}
+.unreadb{min-width:16px;height:16px;border-radius:8px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;padding:0 4px;margin-left:auto}
+.rowclaim{font-size:10px;font-weight:800;color:var(--warn);border:1px solid var(--warn);border-radius:6px;padding:2px 8px}
+.rowclaim:hover{background:var(--warn);color:#fff}
+
+/* thread */
+.threadpane{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--bg)}
+.th-head{background:var(--card);border-bottom:1px solid var(--line);flex:none}
+.th-bar{display:flex;align-items:center;gap:11px;padding:9px 16px;cursor:pointer}
+.th-bar:hover{background:#fafbfd}
+.th-bar .ava{width:37px;height:37px}
+.th-id{flex:1;min-width:0}
+.th-nm{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.th-nm .flip{font-size:10px;color:var(--accent);font-weight:700}
+.th-sub{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.th-actions{display:flex;gap:5px}
+.iconbtn{width:34px;height:34px;border-radius:9px;color:var(--mut);display:flex;align-items:center;justify-content:center;
+  border:1px solid transparent}
+.iconbtn:hover{background:var(--bg);color:var(--ink);border-color:var(--line)}
+.peek{display:none;border-top:1px solid var(--line);padding:11px 16px;background:#fafbfd}
+.peek.on{display:block}
+.peek .prow{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:9px}
+.peek .pk{font-size:10px;color:var(--faint);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.peek .pv{font-size:12.5px;font-weight:700;margin-top:1px}
+.peek .pv.ok{color:var(--ok)}
+.peekact{display:flex;gap:6px;flex-wrap:wrap}
+.pbtn{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;border-radius:8px;
+  padding:6px 11px;border:1px solid var(--line);background:var(--card)}
+.pbtn .ic{width:12px;height:12px}
+.pbtn:hover{border-color:var(--accent);color:var(--accent)}
+.pbtn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.pbtn.pri:hover{background:#2a44b4;color:#fff}
+.pbtn.warn:hover{border-color:var(--danger);color:var(--danger)}
+.claimbanner{display:flex;align-items:center;gap:10px;background:var(--warn-soft);border-bottom:1px solid #efd9b1;
+  padding:8px 16px;font-size:12px;font-weight:600;color:var(--warn)}
+.claimbanner .ic{width:13px;height:13px}
+.claimbanner .claimbtn{margin-left:auto}
+
+.msgs{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.msgs>*{flex:none}
+.day{align-self:center;font-size:10px;font-weight:800;color:var(--faint);background:var(--card);border:1px solid var(--line);
+  border-radius:20px;padding:2px 12px;text-transform:uppercase;letter-spacing:.6px;margin:3px 0}
+.brow{display:flex;flex-direction:column;max-width:64%;gap:3px;position:relative}
+.brow.in{align-self:flex-start}
+.brow.out{align-self:flex-end;align-items:flex-end}
+.bub{padding:9px 13px;border-radius:14px;font-size:13px;background:var(--card);border:1px solid var(--line)}
+.brow.in .bub{border-bottom-left-radius:5px}
+.brow.out .bub{background:var(--accent);color:#fff;border-color:var(--accent);border-bottom-right-radius:5px}
+.bmeta{font-size:10px;color:var(--faint);display:flex;gap:5px;align-items:center}
+.bmeta .ic{width:10px;height:10px}
+.qact{position:absolute;left:calc(100% + 8px);top:2px;display:none;gap:4px;background:var(--card);border:1px solid var(--line);
+  border-radius:9px;padding:3px;box-shadow:var(--sh);z-index:5}
+.brow.in:hover .qact{display:flex}
+.qact button{width:27px;height:27px;border-radius:7px;color:var(--mut);display:flex;align-items:center;justify-content:center}
+.qact button:hover{background:var(--accent-soft);color:var(--accent)}
+.qact button .ic{width:12px;height:12px}
+.evt{align-self:stretch;max-width:540px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cv,var(--line-2));
+  border-radius:11px;padding:9px 12px;display:flex;gap:10px;align-items:center;font-size:12px}
+.evt .ic{width:14px;height:14px;color:var(--cv,var(--mut));flex:none}
+.evt .ev-t{font-weight:700}
+.evt .ev-s{color:var(--mut);font-size:11px}
+.evt .play{margin-left:auto;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:6px;
+  padding:3px 9px;flex:none}
+.widget{align-self:flex-start;max-width:540px;width:100%;background:var(--card);border:1px solid var(--ai-line);
+  border-radius:13px;overflow:hidden;box-shadow:var(--sh)}
+.widget.safety{border-color:#f3c8ce}
+.widget.idw{border-color:#cdd7f6}
+.w-h{display:flex;align-items:center;gap:7px;background:var(--ai-soft);color:var(--ai);font-size:10.5px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.5px;padding:7px 12px}
+.widget.safety .w-h{background:var(--danger-soft);color:var(--danger)}
+.widget.idw .w-h{background:var(--accent-soft);color:var(--accent)}
+.w-h .ic{width:12px;height:12px}
+.w-h .dism{margin-left:auto;opacity:.75;cursor:pointer;text-transform:none;letter-spacing:0}
+.w-h .dism:hover{opacity:1}
+.w-b{padding:10px 12px}
+.w-b p{font-size:12.5px;margin-bottom:9px}
+.slotrow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.slot{border:1px solid var(--line-2);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.slot.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.slot:hover:not(.on){border-color:var(--accent);color:var(--accent)}
+.wact{display:flex;gap:7px;flex-wrap:wrap}
+.richcard{border:1px solid var(--line-2);border-radius:12px;overflow:hidden;background:var(--card);min-width:270px}
+.rc-h{background:var(--accent);color:#fff;font-size:10.5px;font-weight:800;padding:6px 12px;display:flex;gap:6px;
+  align-items:center;text-transform:uppercase;letter-spacing:.5px}
+.rc-h .ic{width:11px;height:11px}
+.rc-b{padding:9px 12px;font-size:12.5px}
+.rc-b .r{display:flex;justify-content:space-between;gap:14px;padding:2px 0}
+.rc-b .k{color:var(--mut)}
+.rc-b .v{font-weight:700}
+.rc-f{border-top:1px solid var(--line);padding:7px 12px;font-size:11px;font-weight:700;color:var(--ok);display:flex;gap:5px;align-items:center}
+.rc-f .ic{width:11px;height:11px}
+.callbar{display:flex;align-items:center;gap:12px;background:var(--ok-soft);border-bottom:1px solid #bfe3cf;padding:9px 16px;
+  font-size:12.5px;font-weight:700;color:var(--ok)}
+.callbar .ic{width:14px;height:14px}
+.callbar .cbtn{border:1px solid var(--ok);border-radius:7px;padding:4px 11px;font-size:11.5px;font-weight:800;color:var(--ok)}
+.callbar .cbtn.end{border-color:var(--danger);color:var(--danger);margin-left:auto}
+
+/* suggestion chips */
+.sugrow{display:flex;gap:7px;padding:0 20px 8px;flex-wrap:wrap;align-items:center}
+.sugrow .lab{font-size:10px;font-weight:800;display:flex;gap:5px;align-items:center;text-transform:uppercase;letter-spacing:.5px}
+.sugrow .lab .ic{width:11px;height:11px}
+.sugrow.ai-only .lab{color:var(--ai)}
+.sugrow.ai-alt .lab{color:var(--mut)}
+.sug{border:1px solid var(--ai-line);background:var(--ai-soft);border-radius:16px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer}
+.sug:hover{border-color:var(--ai);color:var(--ai)}
+.sug.tpl{border-color:var(--line-2);background:var(--card);color:var(--ink)}
+.sug.tpl:hover{border-color:var(--accent);color:var(--accent)}
+
+/* composer */
+.comp{flex:none;background:var(--card);border-top:1px solid var(--line);padding:9px 20px 10px;position:relative}
+.comp-row{display:flex;gap:9px;align-items:flex-end}
+.comp-box{flex:1;border:1.5px solid var(--line-2);border-radius:22px;padding:8px 15px;font-size:13px;min-height:38px;
+  display:flex;align-items:center;gap:8px}
+.comp-box:focus-within{border-color:var(--accent)}
+.comp-box input{flex:1;font-size:13px}
+.comp-box .ic{color:var(--faint);width:16px;height:16px;cursor:pointer}
+.comp-box .ic:hover{color:var(--accent)}
+.sendbtn{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;
+  justify-content:center;flex:none}
+.sendbtn:hover{background:#2a44b4}
+.comp-meta{display:flex;gap:10px;font-size:10px;color:var(--faint);padding:6px 3px 0;align-items:center;flex-wrap:wrap}
+.comp-meta .via{display:inline-flex;gap:4px;align-items:center;font-weight:800;color:var(--cv,var(--ch-zalo))}
+.comp-meta .via .ic{width:11px;height:11px}
+.slashmenu{position:absolute;bottom:72px;left:20px;width:300px;background:var(--card);border:1px solid var(--line);
+  border-radius:13px;box-shadow:var(--sh-lg);display:none;overflow:hidden;z-index:20}
+.slashmenu.on{display:block}
+.sm-h{font-size:10px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.6px;padding:9px 14px 5px}
+.sm-i{display:flex;gap:10px;align-items:center;padding:8px 14px;cursor:pointer;font-size:12.5px}
+.sm-i:hover{background:var(--accent-soft)}
+.sm-i .ic{width:13px;height:13px;color:var(--accent)}
+.sm-i b{font-weight:800}
+.sm-i span{color:var(--mut)}
+
+/* ============ bottom dock ============ */
+.dock{flex:none;background:var(--card);border-top:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;gap:14px}
+.dock .dk-lab{font-size:10px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.7px;flex:none}
+.dockchips{display:flex;gap:8px;flex:1;min-width:0;overflow-x:auto}
+.dchip{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:8px;padding:4px 10px;
+  font-size:11.5px;font-weight:600;white-space:nowrap;cursor:pointer;background:var(--bg)}
+.dchip:hover{border-color:var(--accent);color:var(--accent)}
+.dchip .dot{width:7px;height:7px;border-radius:50%;background:var(--cv)}
+.teambar{display:flex;gap:11px;align-items:center;flex:none;border-left:1px solid var(--line);padding-left:14px}
+.tb{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mut)}
+.tb i{width:19px;height:19px;border-radius:50%;background:var(--navy-2);color:#fff;font-style:normal;font-weight:800;
+  font-size:8.5px;display:flex;align-items:center;justify-content:center}
+.tb .load{width:40px;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.tb .load span{display:block;height:100%;background:var(--ok)}
+.tb.hi .load span{background:var(--danger)}
+
+/* ============ AI settings drawer ============ */
+.scrim{position:fixed;inset:0;background:rgba(20,26,52,.35);z-index:55;display:none}
+.scrim.on{display:block}
+.drawer{position:fixed;top:0;right:-440px;bottom:0;width:min(440px,94vw);background:var(--card);z-index:60;
+  box-shadow:var(--sh-lg);display:flex;flex-direction:column;transition:right .25s ease}
+.drawer.open{right:0}
+.dr-h{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dr-h .t{font-weight:800;font-size:15px;flex:1}
+.dr-h .xclose{width:32px;height:32px;border-radius:8px;color:var(--mut);display:flex;align-items:center;justify-content:center}
+.dr-h .xclose:hover{background:var(--bg);color:var(--ink)}
+.dr-b{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.dr-b>*{flex:none}
+.dcard{border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.dcard h4{font-size:10.5px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;
+  display:flex;gap:6px;align-items:center}
+.dcard h4 .ic{width:12px;height:12px}
+.master{display:flex;align-items:center;gap:12px}
+.master .mt{flex:1}
+.master .mt b{font-size:13.5px;display:block}
+.master .mt span{font-size:11.5px;color:var(--mut)}
+.tgl{width:40px;height:22px;border-radius:13px;background:var(--line-2);position:relative;cursor:pointer;flex:none;transition:background .15s}
+.tgl::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s}
+.tgl.on{background:var(--ok)}
+.tgl.on::after{left:21px}
+.radio{display:flex;flex-direction:column;gap:8px}
+.ropt{display:flex;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;align-items:flex-start}
+.ropt.on{border-color:var(--ai);background:var(--ai-soft)}
+.ropt .dotr{width:15px;height:15px;border-radius:50%;border:2px solid var(--line-2);margin-top:2px;flex:none}
+.ropt.on .dotr{border-color:var(--ai);background:var(--ai)}
+.ropt b{font-size:12.5px;display:block}
+.ropt span{font-size:11px;color:var(--mut)}
+.krow{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:6px 0}
+.krow span:first-child{color:var(--ink)}
+.krow .sub{display:block;font-size:10.5px;color:var(--faint)}
+.krow .tgl{width:34px;height:19px}
+.krow .tgl::after{width:13px;height:13px}
+.krow .tgl.on::after{left:18px}
+.dnote{font-size:11px;color:var(--mut);line-height:1.55;background:var(--bg);border-radius:9px;padding:9px 12px}
+.dnote b{color:var(--ink)}
+
+/* ============ care rail (right context panel) ============ */
+.crail{width:302px;flex:none;background:var(--card);border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.crail-tabs{display:flex;border-bottom:1px solid var(--line);flex:none}
+.crail-tabs button{flex:1;padding:9px 4px;font-size:10.5px;font-weight:800;color:var(--mut);border-bottom:2px solid transparent;
+  text-transform:uppercase;letter-spacing:.5px}
+.crail-tabs button.on{color:var(--accent);border-color:var(--accent)}
+.crail-b{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:11px}
+.crail-b>*{flex:none}
+.rcard{border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.rcard h4{font-size:10px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;
+  display:flex;gap:6px;align-items:center}
+.rcard h4 .ic{width:11px;height:11px}
+.rcard h4 .fresh{margin-left:auto;color:var(--ok);text-transform:none;letter-spacing:0;font-weight:700}
+.briefcard{border-color:var(--ai-line);background:var(--ai-soft)}
+.briefcard h4{color:var(--ai)}
+.briefcard p{font-size:12px;line-height:1.55}
+.briefcard .src{font-size:10.5px;font-weight:800;color:var(--ai);cursor:pointer;margin-top:6px;display:inline-block}
+.briefcard .src:hover{text-decoration:underline}
+.relrow{display:grid;grid-template-columns:1fr 24px 1fr;gap:6px;align-items:center}
+.relbox{border:1px solid var(--line-2);border-radius:10px;padding:9px 6px;text-align:center}
+.relbox .ava{margin:0 auto 5px;width:32px;height:32px}
+.relbox b{font-size:11.5px;display:block;line-height:1.3}
+.relbox span{font-size:10px;color:var(--mut)}
+.relmid{display:flex;justify-content:center;color:var(--warn)}
+.relmid .ic{width:14px;height:14px}
+.relmid.ver{color:var(--ok)}
+.rkv{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;padding:2.5px 0}
+.rkv .k{color:var(--mut)}
+.rkv .v{font-weight:700;text-align:right}
+.rkv .v.ok{color:var(--ok)}
+.nextact{border-color:#efd9b1;background:var(--warn-soft)}
+.nextact h4{color:var(--warn)}
+.nextact p{font-size:11.5px;margin-bottom:8px;line-height:1.5}
+.bigbtn{width:100%;background:var(--navy);color:#fff;font-weight:800;font-size:12px;border-radius:9px;padding:9px 10px;
+  display:flex;gap:7px;align-items:center;justify-content:center}
+.bigbtn .ic{width:13px;height:13px}
+.bigbtn:hover{background:var(--navy-2)}
+.commit{display:flex;gap:8px;align-items:flex-start;background:var(--ok-soft);border-radius:9px;padding:8px 10px;font-size:11.5px}
+.commit .ic{width:12px;height:12px;color:var(--ok);margin-top:2px;flex:none}
+.commit b{color:var(--ok);display:block}
+.bk{display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:11.5px;align-items:center}
+.bk:first-of-type{border-top:none}
+.bk .ic{width:12px;height:12px;color:var(--mut);flex:none}
+.bk .b-t{font-weight:700}
+.bk .b-s{color:var(--mut);font-size:10.5px}
+.bk .st{margin-left:auto;font-size:9px;font-weight:800;border-radius:5px;padding:2px 6px;flex:none}
+.st.done{background:var(--ok-soft);color:var(--ok)}
+.st.next{background:var(--accent-soft);color:var(--accent)}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.qbtn{display:flex;gap:7px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;
+  padding:9px 6px;font-size:11.5px;font-weight:700;background:var(--card)}
+.qbtn .ic{width:13px;height:13px;color:var(--mut)}
+.qbtn:hover{border-color:var(--accent);color:var(--accent)}
+.qbtn:hover .ic{color:var(--accent)}
+.qbtn.warn:hover{border-color:var(--danger);color:var(--danger)}
+.qbtn.warn:hover .ic{color:var(--danger)}
+.tr-row{display:flex;gap:8px;font-size:11px;padding:6px 0;border-top:1px solid var(--line);align-items:flex-start}
+.tr-row:first-of-type{border-top:none}
+.tr-row .ic{width:11px;height:11px;color:var(--ai);margin-top:2px;flex:none}
+.tr-row b{display:block;font-size:11.5px}
+.tr-row span{color:var(--mut)}
+.hnote{font-size:11px;color:var(--mut);line-height:1.5;background:var(--bg);border-radius:9px;padding:9px 11px}
+@media(max-width:1280px){.crail{display:none}}
+
+/* thread header action row */
+.th-act2{display:flex;gap:6px;padding:0 16px 10px;flex-wrap:wrap;border-bottom:1px solid var(--line);align-items:center}
+.adiv{width:1px;align-self:stretch;background:var(--line);margin:2px 3px}
+.abtn{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;border-radius:8px;
+  padding:6px 11px;border:1px solid var(--line);background:var(--card)}
+.abtn .ic{width:12px;height:12px}
+.abtn:hover{border-color:var(--accent);color:var(--accent)}
+.abtn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.abtn.pri:hover{background:#2a44b4;color:#fff}
+.abtn.gray{color:var(--mut)}
+.abtn.gray:hover{border-color:var(--danger);color:var(--danger)}
+
+/* toast */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);
+  color:#fff;font-size:12.5px;font-weight:600;border-radius:10px;padding:10px 18px;z-index:99;opacity:0;
+  transition:all .25s;display:flex;gap:8px;align-items:center;box-shadow:var(--sh-lg);max-width:70vw}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.toast .ic{width:14px;height:14px;color:#7ee2ae;flex:none}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body class="state-wall ai-on">
+<div class="app">
+  <!-- CMS rail -->
+  <aside class="rail">
+    <div class="logo">VU</div>
+    <button title="Dashboard"><span class="ic ic-grid"></span></button>
+    <button class="on" title="Care Command"><span class="ic ic-bolt"></span></button>
+    <button title="Bookings"><span class="ic ic-cal"></span></button>
+    <button title="Clients"><span class="ic ic-users"></span></button>
+    <button title="Reports"><span class="ic ic-chart"></span></button>
+    <div class="spacer"></div>
+    <div class="me" title="Vy — online">VY</div>
+  </aside>
+
+  <!-- channel filter dock -->
+  <aside class="chdock" id="chdock"></aside>
+
+  <div class="main">
+    <!-- top bar -->
+    <header class="top">
+      <button class="backbtn" onclick="toWall()"><span class="ic ic-back"></span>Wall</button>
+      <div class="title">
+        <h1><span class="live-dot"></span>Care Command</h1>
+        <span class="sub" id="stateLbl">Wall</span>
+      </div>
+      <div class="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+      <div class="seg" id="viewSeg">
+        <button class="on" data-view="mine"><span class="ic ic-user"></span>Mine</button>
+        <button data-view="all"><span class="ic ic-users"></span>Everyone</button>
+      </div>
+      <button class="aipill" id="aipill" onclick="openDrawer()">
+        <span class="ic ic-spark"></span><span id="aipillTxt">AI On · Ollama (local)</span>
+      </button>
+      <button class="newbtn" onclick="toast('New Contact form would open (existing CRM flow)')"><span class="ic ic-user"></span>New Contact</button>
+    </header>
+
+    <div class="content">
+      <!-- WALL -->
+      <div class="wallwrap">
+        <div class="wall-head">
+          <h2 id="wallCount">Now on the wall</h2>
+          <span class="hint">Tile size = urgency × value · click a tile to open the conversation · amber dashed = unclaimed</span>
+          <button class="clr" id="clrFilter" onclick="setFilter(null)">Clear channel filter ×</button>
+        </div>
+        <div class="wall" id="wall"></div>
+      </div>
+
+      <!-- CHAT -->
+      <div class="chatwrap">
+        <section class="clist">
+          <div class="clist-h">
+            <div class="searchbox"><span class="ic ic-search"></span><input placeholder="Search people, phones, messages…"></div>
+          </div>
+          <div class="chats" id="chatlist"></div>
+        </section>
+        <section class="threadpane" id="threadpane"></section>
+        <aside class="crail" id="crail"></aside>
+      </div>
+    </div>
+
+    <!-- bottom dock -->
+    <footer class="dock">
+      <span class="dk-lab">My dock</span>
+      <div class="dockchips" id="dockchips"></div>
+      <div class="teambar" title="Team load (supervisor peek)">
+        <span class="tb"><i>VY</i>me<span class="load"><span style="width:62%"></span></span></span>
+        <span class="tb"><i>QU</i>Quang<span class="load"><span style="width:38%"></span></span></span>
+        <span class="tb hi"><i>MA</i>Mai<span class="load"><span style="width:91%"></span></span></span>
+        <span class="tb"><i>TH</i>Thu<span class="load"><span style="width:22%"></span></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- AI settings drawer -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="dr-h">
+    <span class="ic ic-spark" style="color:var(--ai);width:18px;height:18px"></span>
+    <span class="t">AI Assist — configuration</span>
+    <button class="xclose" onclick="closeDrawer()"><span class="ic ic-x"></span></button>
+  </div>
+  <div class="dr-b">
+    <div class="dcard">
+      <div class="master">
+        <div class="mt"><b>Enable AI Assist</b><span>Master switch. Off = Care Command runs fully on deterministic rules — nothing breaks, nothing is hidden except AI suggestions.</span></div>
+        <span class="tgl on" id="masterTgl" onclick="toggleAI()"></span>
+      </div>
+    </div>
+    <div class="dcard">
+      <h4><span class="ic ic-set"></span>Provider &amp; model</h4>
+      <div class="radio">
+        <div class="ropt on" onclick="toast('Sovereign default — PHI never leaves the server')">
+          <span class="dotr"></span>
+          <div><b>Ollama · on-premise (recommended)</b><span>qwen2.5:14b-instruct · runs on the vietuat host · no data leaves the network</span></div>
+        </div>
+        <div class="ropt" onclick="toast('Cloud provider requires DPA sign-off + PHI redaction — org policy gate')">
+          <span class="dotr"></span>
+          <div><b>Cloud API (requires approval)</b><span>Anthropic / other · blocked until legal &amp; privacy sign-off recorded here</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="dcard">
+      <h4><span class="ic ic-layers"></span>Capabilities (each separately switchable)</h4>
+      <div class="krow"><span>Reply drafts &amp; suggestion chips<span class="sub">Bilingual VN/EN, approved tone</span></span><span class="tgl on" onclick="this.classList.toggle('on')"></span></div>
+      <div class="krow"><span>Intent detection &amp; smart widgets<span class="sub">e.g. reschedule detected → slot picker in thread</span></span><span class="tgl on" onclick="this.classList.toggle('on')"></span></div>
+      <div class="krow"><span>Junk scoring<span class="sub">Adds % confidence on top of deterministic rules</span></span><span class="tgl on" onclick="this.classList.toggle('on')"></span></div>
+      <div class="krow"><span>Conversation summaries<span class="sub">Context line on tiles &amp; profile</span></span><span class="tgl on" onclick="this.classList.toggle('on')"></span></div>
+      <div class="krow"><span>Auto-send anything<span class="sub">Permanently unavailable — org policy</span></span><span class="tgl" style="opacity:.4;pointer-events:none"></span></div>
+    </div>
+    <div class="dnote">
+      <b>Always on, with or without AI (deterministic):</b> identity matching by phone/Zalo UID against clients &amp; caregivers · booking facts &amp; history · safety <b>watchlist phrases</b> (rule-based list, never severity-judging) · junk rules (repeated broadcast, link farms) · channel windows &amp; consent checks.<br><br>
+      <b>When AI is on:</b> every suggestion shows its evidence, nothing sends without a tap, and every draft/accept/edit is logged for review.
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="ic ic-check"></span><span id="toastTxt"></span></div>
+
+<script>
+/* ================= data ================= */
+const CH = {
+  zalo:{label:'Zalo', short:'ZALO', v:'var(--ch-zalo)', ic:'ic-chat'},
+  call:{label:'Calls', short:'CALLS', v:'var(--ch-call)', ic:'ic-phone'},
+  wa:{label:'WhatsApp', short:'WHATSAPP', v:'var(--ch-wa)', ic:'ic-chat'},
+  fb:{label:'Messenger', short:'FB MSGR', v:'var(--ch-fb)', ic:'ic-chat'},
+  tg:{label:'Telegram', short:'TELEGRAM', v:'var(--ch-tg)', ic:'ic-chat'},
+  web:{label:'Web chat', short:'WEB CHAT', v:'var(--ch-web)', ic:'ic-globe'},
+  zns:{label:'ZNS', short:'ZNS', v:'var(--ch-zns)', ic:'ic-send'},
+  email:{label:'Email', short:'EMAIL', v:'var(--ch-email)', ic:'ic-mail'},
+};
+const AGENTS={VY:'Vy',QU:'Quang',MA:'Mai',TH:'Thu'};
+
+/* conv.status: needs|waiting|junk ; owner: 'VY'|null */
+const DATA = [
+ {id:'phuc-ring', ch:'call', av:'#0f766e', init:'VP', name:'Vũ Đình Phúc', size:'t-hero', ringing:true,
+  chip:['client','Client · KH-0117'], sub:'0912 883 220 · matched automatically', owner:null, status:'needs', time:'now',
+  reason:['ic-phone','Incoming call — ringing now','hot'],
+  facts:[['ic-user','Client since 2024 · <b>8 bookings</b> · Quận 3'],['ic-cal','Last visit: <b>physio · last Tue</b> (Y tá Hạnh)'],['ic-clock','Missed earlier today at <b>10:42</b>']],
+  aifacts:[['ic-spark','<b>Likely reason:</b> reschedule — Thursday slot clashes with the public holiday']],
+  prev:'Incoming call — ringing…', unread:0},
+
+ {id:'lan', ch:'zalo', av:'#3451d1', init:'LN', name:'Lan Nguyễn', size:'t-lg', typing:true,
+  chip:['client','Caregiver of KH-0203'], sub:'Daughter of Minh Trần · verified', owner:'VY', status:'needs', time:'2m',
+  reason:['ic-warn','Booking in 18h · symptom flag','hot'],
+  snippet:'“Bố tôi hôm nay chóng mặt nhiều hơn hôm qua. Mai y tá đến sớm hơn được không chị?”',
+  facts:[['ic-cal','Next: <b>tomorrow 09:30 · Y tá Hương</b>'],['ic-warn','Watchlist: “chóng mặt nhiều hơn” · no escalation open']],
+  aifacts:[['ic-spark','<b>Intent:</b> move tomorrow\'s visit earlier']],
+  prev:'Mai y tá đến sớm hơn được không chị?', unread:2},
+
+ {id:'giang', ch:'fb', av:'#7c3aed', init:'H', name:'Hương Giang', size:'t-lg',
+  chip:['new','New — not in system'], sub:'via Page “Việt Úc Care”', owner:null, status:'needs', time:'4m',
+  reason:['ic-bolt','New lead · first message · SLA 12m'],
+  snippet:'“Cho mình hỏi giá gói chăm sóc mẹ sau sinh ở Quận 7 với ạ. Bé nhà mình được 2 tuần.”',
+  facts:[['ic-user','No phone yet — identity re-checks when she shares one']],
+  aifacts:[['ic-spark','<b>Intent:</b> post-natal package · Quận 7 · price inquiry']],
+  prev:'Cho mình hỏi giá gói chăm sóc mẹ sau sinh…', unread:1},
+
+ {id:'ngocanh', ch:'web', av:'#64748b', init:'NA', name:'Ngọc Ánh', size:'t-lg',
+  chip:['lead','Lead · 01 020452…'], sub:'Website chatbox · asked twice this week', owner:'VY', status:'needs', time:'9m',
+  reason:['ic-cal','Booking intent — vaccination for baby'],
+  snippet:'“Bên mình có tiêm chủng tại nhà cho bé 6 tháng không? Cuối tuần này được không?”',
+  facts:[['ic-cal','Free weekend slots: <b>Sat 09:00 · Sat 15:30 · Sun 10:00</b>']],
+  aifacts:[],
+  prev:'Bé nhà mình 6 tháng. Cuối tuần này được không?', unread:1},
+
+ {id:'david', ch:'wa', av:'#16a34a', init:'DM', name:'David Miller', size:'',
+  chip:['new','New — English'], sub:'+61 4xx via WhatsApp', owner:null, status:'needs', time:'21m',
+  reason:['ic-chat','Awaiting first reply · 21m'],
+  facts:[], aifacts:[['ic-spark','<b>Intent:</b> at-home physio · District 2 · English']],
+  prev:'Hi — do you provide at-home physiotherapy…', unread:1},
+
+ {id:'phuc', ch:'call', av:'#0f766e', init:'VP', name:'Vũ Đình Phúc', size:'',
+  chip:['client','Client · KH-0117'], sub:'Missed call 10:42', owner:'VY', status:'needs', time:'34m',
+  reason:['ic-clock','Callback promised 11:30'],
+  facts:[], aifacts:[], prev:'Missed call · rang 28s · callback 11:30', unread:0},
+
+ {id:'tuyet', ch:'zalo', av:'#3451d1', init:'BT', name:'Bà Tuyết', size:'',
+  chip:['client','Client · KH-0089'], sub:'Re-confirmed tomorrow 14:00', owner:'MA', status:'waiting', time:'48m',
+  reason:['ic-check','Waiting on us — send invoice'],
+  facts:[], aifacts:[], prev:'Chuyển khoản rồi nhé, chị kiểm tra giúp tôi.', unread:0},
+
+ {id:'duc', ch:'zalo', av:'#0e9adf', init:'MĐ', name:'Minh Đức (new number)', size:'',
+  chip:['new','Identity match?'], sub:'“Tôi là con trai bà Tuyết…”', owner:null, status:'needs', time:'52m',
+  reason:['ic-user','Matches KH-0089 emergency contact'],
+  facts:[], aifacts:[], prev:'Tôi là con trai bà Tuyết, mẹ tôi nhờ hỏi lịch tuần sau', unread:1},
+
+ {id:'thanh', ch:'tg', av:'#0e9adf', init:'T', name:'Thanh', size:'',
+  chip:['lead','Lead'], sub:'Elderly day-care inquiry', owner:'QU', status:'waiting', time:'2h',
+  reason:['ic-chat','Waiting on customer · 2h'],
+  facts:[], aifacts:[], prev:'You: [price list PDF] ✓', unread:0},
+
+ {id:'khho', ch:'zalo', av:'#3451d1', init:'KH', name:'KH Ho', size:'t-sm',
+  chip:['lead','Lead'], sub:'', owner:'QU', status:'waiting', time:'3h',
+  reason:['ic-clock','Follow-up due today'], facts:[], aifacts:[], prev:'Follow-up due today', unread:0},
+
+ {id:'doan', ch:'email', av:'#b45309', init:'Đ', name:'Đoàn', size:'t-sm',
+  chip:['lead','Lead'], sub:'', owner:null, status:'needs', time:'2h',
+  reason:['ic-mail','Email — needs reply'], facts:[], aifacts:[], prev:'Email: asking about rehab packages', unread:1},
+
+ {id:'hoang', ch:'zalo', av:'#3451d1', init:'H', name:'Hoàng', size:'t-sm',
+  chip:['client','Booking'], sub:'', owner:'QU', status:'waiting', time:'1h', dim:true,
+  reason:['ic-check','Confirmed Fri 15:00'], facts:[], aifacts:[], prev:'Đã xác nhận lịch thứ 6 15:00 ✓', unread:0},
+
+ {id:'zns1', ch:'zns', av:'#0a58c9', init:'Z', name:'ZNS batch · reminders', size:'t-sm', system:true,
+  chip:['ai','Automated'], sub:'', owner:'VY', status:'waiting', time:'5m', dim:true,
+  reason:['ic-send','12 delivered · 1 failed → retry email'], facts:[], aifacts:[], prev:'12 delivered · 1 failed → retry email', unread:0},
+
+ {id:'junk1', ch:'tg', av:'#98a0b6', init:'?', name:'“Crypto VIP signals”', size:'t-sm', dim:true,
+  chip:['junk','Junk'], sub:'', owner:null, status:'junk', time:'6h',
+  reason:['ic-ban','Rule: repeated broadcast'], aireason:['ic-ban','Junk 96% — rule + AI pattern'],
+  facts:[], aifacts:[], prev:'🚀 x100 profit guaranteed…', unread:0},
+
+ {id:'junk2', ch:'wa', av:'#98a0b6', init:'?', name:'+84 90 645 8190', size:'t-sm', dim:true,
+  chip:['junk','Junk'], sub:'', owner:null, status:'junk', time:'8h',
+  reason:['ic-ban','Rule: ad template'], aireason:['ic-ban','Junk 91% — rule + AI pattern'],
+  facts:[], aifacts:[], prev:'Ưu đãi đặc biệt hôm nay…', unread:0},
+];
+
+/* threads (lan fully scripted; others generated) */
+const THREADS = {
+ lan:[
+  {day:'Yesterday'},
+  {evt:'call', t:'Call · 4m 32s · answered by you', s:'16:05 · VoIP24h · recording', play:'▶ 4:32'},
+  {evt:'zns', t:'ZNS confirmation delivered ✓', s:'16:12 · “Home care visit — tomorrow 09:30, Y tá Hương”'},
+  {day:'Today'},
+  {in:'Chào chị, bố tôi hôm nay chóng mặt nhiều hơn hôm qua.', m:'08:40 · Zalo'},
+  {in:'Mai y tá đến sớm hơn được không chị?', m:'08:41 · Zalo'},
+  {widget:'resched'},
+  {widget:'safety'},
+ ],
+ duc:[
+  {day:'Today'},
+  {in:'Chào chị, tôi là con trai bà Tuyết. Mẹ tôi nhờ hỏi lịch chăm sóc tuần sau.', m:'10:05 · Zalo'},
+  {widget:'identity'},
+ ],
+ 'phuc-ring':[
+  {day:'Today'},
+  {evt:'call', t:'Missed call · rang 28s', s:'10:42 · no answer — callback promised 11:30'},
+  {evt:'call', t:'Incoming call — ringing now', s:'Live · answer to talk'},
+ ],
+};
+
+/* per-conv peek profile */
+const PEEK = {
+ lan:{rows:[['Patient','Minh Trần · 74 · Quận 7'],['Status','Active client',1],['Bookings','12 lifetime · 41.5M ₫'],['Next visit','Tomorrow 09:30 · Y tá Hương'],['Consent','Zalo ✓ · Family updates ✓',1]]},
+ 'phuc-ring':{rows:[['Client','Vũ Đình Phúc · KH-0117'],['Status','Active client',1],['Bookings','8 lifetime · 18.2M ₫'],['Next visit','Physio · Thu 15:00 · Y tá Hạnh'],['Preferred','Phone · Vietnamese']]},
+ phuc:{rows:[['Client','Vũ Đình Phúc · KH-0117'],['Status','Active client',1],['Bookings','8 lifetime · 18.2M ₫'],['Next visit','Physio · Thu 15:00 · Y tá Hạnh'],['Preferred','Phone · Vietnamese']]},
+ giang:{rows:[['Status','Unknown — not in system'],['Channel','Messenger · Page “Việt Úc Care”'],['Phone','— none yet'],['Suggested','Create Lead once qualified']]},
+ duc:{rows:[['Claims','Son of Bà Tuyết (KH-0089)'],['Match signal','Emergency contact “Minh Đức (con trai)” — no phone on file'],['Rule','Deterministic match — confirm or keep separate']]},
+};
+
+const TICKS = [
+  ['ic-phone','<b>Ringing</b> · 0912 883 220 → Vũ Đình Phúc (KH-0117)','hot','phuc-ring'],
+  ['ic-chat','Lan Nguyễn is <b>typing</b> on Zalo…','','lan'],
+  ['ic-check','<b>Booking confirmed</b> · Bà Tuyết · tomorrow 14:00','','tuyet'],
+  ['ic-send','ZNS reminders <b>delivered</b> · 12 of 13','','zns1'],
+  ['ic-bolt','<b>New lead</b> · Messenger · “gói chăm sóc mẹ sau sinh”','','giang'],
+  ['ic-warn','Watchlist phrase · <b>“chóng mặt nhiều hơn”</b> · KH-0203','hot','lan'],
+  ['ic-user','<b>Identity match?</b> · new Zalo number ↔ KH-0089 son','','duc'],
+];
+
+/* ================= state ================= */
+let AI = true;
+let filter = null;          // channel key or null
+let selected = null;        // conv id in chat state
+let sentProposal = false;
+
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/</g,'&lt;');
+function conv(id){return DATA.find(c=>c.id===id)}
+function chipHTML([cls,txt]){return `<span class="chip ${cls}">${txt}</span>`}
+
+/* ================= channel dock ================= */
+function renderDock(){
+  const counts={};
+  DATA.forEach(c=>{counts[c.ch]=(counts[c.ch]||0)+1});
+  const needs={};
+  DATA.forEach(c=>{if(c.status==='needs')needs[c.ch]=(needs[c.ch]||0)+1});
+  let html=`<div class="dk-t">Channels</div>
+    <button class="chbtn ${filter===null?'on':''}" onclick="setFilter(null)" style="--cv:var(--navy)">
+      <span class="bub"><span class="ic ic-layers"></span></span><span class="lb">ALL</span>
+      <span class="ct ${Object.values(needs).reduce((a,b)=>a+b,0)?'hot':''}">${DATA.length}</span>
+    </button><hr>`;
+  Object.entries(CH).forEach(([k,ch])=>{
+    html+=`<button class="chbtn ${filter===k?'on':''}" onclick="setFilter('${k}')" style="--cv:${ch.v}" title="${ch.label}">
+      <span class="bub"><span class="ic ${ch.ic}"></span></span><span class="lb">${ch.short}</span>
+      ${counts[k]?`<span class="ct ${needs[k]?'hot':''}">${counts[k]}</span>`:''}
+    </button>`;
+  });
+  $('chdock').innerHTML=html;
+}
+function setFilter(k){
+  filter = (filter===k)?null:k;
+  renderAll();
+  $('clrFilter').classList.toggle('on', !!filter);
+  if(filter) toast(`Filtered to ${CH[filter].label} — click again or “Clear” to reset`);
+}
+
+/* ================= wall ================= */
+function visible(){ return DATA.filter(c=>!filter||c.ch===filter) }
+function renderWall(){
+  const vis=visible();
+  $('wallCount').textContent=`Now on the wall · ${vis.length} conversation${vis.length>1?'s':''}${filter?' · '+CH[filter].label:''}`;
+  $('wall').innerHTML=vis.map(t=>{
+    const ch=CH[t.ch];
+    const reason=(AI&&t.aireason)?t.aireason:t.reason;
+    const facts=[...(t.facts||[]), ...((AI&&t.aifacts)?t.aifacts.map(f=>[...f,'aif']):[])];
+    return `<div class="tile ${t.size||''} ${t.ringing?'ringing':''} ${t.dim?'dim':''} ${!t.owner&&t.status!=='junk'&&!t.system?'unclaimed':''}"
+      style="--cv:${ch.v}" onclick="openChat('${t.id}')">
+      <div class="t-top">
+        <span class="ava" style="--av:${t.av}">${t.init}</span>
+        <div class="t-who">
+          <div class="t-name">${t.name}${t.typing?'<span class="typing"><i></i><i></i><i></i></span>':''}</div>
+          ${t.sub?`<div class="t-sub">${t.sub}</div>`:''}
+        </div>
+        <span class="chan" style="--cv:${ch.v}"><span class="ic ${ch.ic}"></span>${ch.label}</span>
+      </div>
+      <div class="reason ${reason[2]||''}"><span class="ic ${reason[0]}"></span>${reason[1]}</div>
+      ${t.snippet&&!t.ringing?`<div class="snippet">${t.snippet}</div>`:''}
+      ${facts.length&&(t.size==='t-hero'||t.size==='t-lg')?`<div class="facts">${facts.map(f=>`<div class="fl ${f[3]||''} ${f[2]==='aif'||f[3]==='aif'?'aif ai-only':''}"><span class="ic ${f[0]}"></span><span>${f[1]}</span></div>`).join('')}</div>`:''}
+      ${t.ringing?`<div class="ringbar">
+        <button class="rb-ans" onclick="event.stopPropagation();answerCall('${t.id}')"><span class="ic ic-phone"></span>Answer</button>
+        <button class="rb-dec" onclick="event.stopPropagation();toast('Sent to voicemail + callback task created')">Voicemail</button></div>`:''}
+      <div class="t-foot">
+        ${chipHTML(t.chip)}
+        ${!t.owner&&t.status!=='junk'&&!t.system?`<button class="claimbtn" onclick="event.stopPropagation();claim('${t.id}')"><span class="ic ic-hand"></span>Claim</button>`:''}
+        <span class="owner">${t.owner?`<i>${t.owner}</i>${AGENTS[t.owner]}`:''}</span>
+        <span class="t-time">${t.time}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ================= chat list ================= */
+function renderList(){
+  const vis=visible();
+  const secs=[
+    ['needs-mine','Needs reply — mine','ic-bolt', c=>c.status==='needs'&&c.owner==='VY'],
+    ['needs-un','Unclaimed — anyone can take','ic-warn', c=>c.status==='needs'&&!c.owner],
+    ['needs-other','With teammates','ic-users', c=>c.status==='needs'&&c.owner&&c.owner!=='VY'],
+    ['waiting','Waiting / done for now','ic-clock', c=>c.status==='waiting'],
+    ['junk','Junk — confirm to archive','ic-ban', c=>c.status==='junk'],
+  ];
+  let html='';
+  secs.forEach(([key,label,icon,fn])=>{
+    const rows=vis.filter(fn);
+    if(!rows.length) return;
+    html+=`<div class="sec"><span class="ic ${icon}"></span>${label} · ${rows.length}</div>`;
+    rows.forEach(c=>{
+      const ch=CH[c.ch];
+      html+=`<div class="chatrow ${selected===c.id?'on':''}" onclick="selectConv('${c.id}')">
+        <div class="avwrap"><span class="ava" style="--av:${c.av}">${c.init}</span>
+          <span class="chglyph" style="--cv:${ch.v}"><span class="ic ${ch.ic}"></span></span></div>
+        <div class="c-main">
+          <div class="c-top"><span class="c-nm">${c.name}</span><span class="c-time">${c.time}</span></div>
+          <div class="c-prev">${c.typing?'<span class="typing"><i></i><i></i><i></i></span>&nbsp;typing…':esc(c.prev||'')}</div>
+          <div class="c-tags">${chipHTML(c.chip).replace('chip','mtag')}
+            ${key==='needs-un'?`<button class="rowclaim" onclick="event.stopPropagation();claim('${c.id}')">CLAIM</button>`:''}
+            ${key==='junk'?`<button class="rowclaim" style="border-color:var(--faint);color:var(--faint)" onclick="event.stopPropagation();confirmJunk('${c.id}')">CONFIRM JUNK</button>`:''}
+            ${c.unread?`<span class="unreadb">${c.unread}</span>`:''}
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+  $('chatlist').innerHTML=html;
+}
+
+/* ================= thread ================= */
+const TEMPLATES=['Dạ chào chị, em là Vy từ Việt Úc Care ạ','Dạ em kiểm tra và phản hồi ngay ạ','Bảng giá dịch vụ đây ạ 📎 [price card]'];
+function threadFor(c){
+  if(THREADS[c.id]) return THREADS[c.id];
+  return [{day:'Today'},{in:c.prev||'…', m:c.time+' · '+CH[c.ch].label}];
+}
+function widgetHTML(kind){
+  if(kind==='resched') return `
+    <div class="widget ai-only" id="wResched" ${sentProposal?'style="display:none"':''}>
+      <div class="w-h"><span class="ic ic-spark"></span>Reschedule detected — tomorrow's visit
+        <span class="dism" onclick="this.closest('.widget').style.display='none';toast('Dismissed — nothing changed')">dismiss</span></div>
+      <div class="w-b">
+        <p>She's asking to move <b>tomorrow 09:30 · Y tá Hương</b> earlier. Free earlier slots:</p>
+        <div class="slotrow" id="wslots">
+          <span class="slot on" onclick="pickSlot(this)">07:30</span>
+          <span class="slot" onclick="pickSlot(this)">08:00</span>
+          <span class="slot" onclick="pickSlot(this)">08:30</span>
+        </div>
+        <div class="wact">
+          <button class="pbtn pri" onclick="sendProposal()"><span class="ic ic-send"></span>Send proposal in chat</button>
+          <button class="pbtn" onclick="toast('Full booking wizard opens pre-filled')"><span class="ic ic-cal"></span>Open wizard</button>
+        </div>
+      </div>
+    </div>`;
+  if(kind==='safety') return `
+    <div class="widget safety">
+      <div class="w-h"><span class="ic ic-warn"></span>Watchlist phrase — your call
+        <span class="dism" onclick="toast('Stays in thread history for audit')">keep</span></div>
+      <div class="w-b">
+        <p><b>“chóng mặt nhiều hơn”</b> matches the worsening-symptom watchlist <i>(rule-based — works with AI off)</i>. No escalation is open for Minh Trần.</p>
+        <div class="wact">
+          <button class="pbtn warn" style="border-color:var(--danger);color:var(--danger)" onclick="toast('Escalation opened — clinical queue notified, thread linked as evidence')"><span class="ic ic-warn"></span>Escalate to clinical</button>
+          <button class="pbtn" onclick="toast('Snoozed — resurfaces if she messages again')">Not needed</button>
+        </div>
+      </div>
+    </div>`;
+  if(kind==='identity') return `
+    <div class="widget idw">
+      <div class="w-h"><span class="ic ic-user"></span>Identity match — deterministic, confirm to link</div>
+      <div class="w-b">
+        <p>This number's Zalo name is <b>“Minh Đức”</b>. Client <b>KH-0089 (Bà Tuyết)</b> lists emergency contact <b>“Minh Đức (con trai)”</b> with no phone on file. Never linked silently — your call.</p>
+        <div class="wact">
+          <button class="pbtn pri" onclick="toast('Linked as caregiver of KH-0089 (health.client.relation) — audited')"><span class="ic ic-check"></span>Confirm link</button>
+          <button class="pbtn" onclick="toast('Kept as separate new contact')">Keep separate</button>
+          <button class="pbtn" onclick="toast('Client record KH-0089 opens for comparison')">Open KH-0089</button>
+        </div>
+      </div>
+    </div>`;
+  return '';
+}
+function renderThread(){
+  const c=conv(selected);
+  if(!c){$('threadpane').innerHTML='';return}
+  const ch=CH[c.ch];
+  const peek=PEEK[c.id];
+  const msgs=threadFor(c).map(m=>{
+    if(m.day) return `<div class="day">${m.day}</div>`;
+    if(m.evt){const ec=CH[m.evt];return `<div class="evt" style="--cv:${ec.v}"><span class="ic ${ec.ic}"></span>
+      <div><div class="ev-t">${m.t}</div><div class="ev-s">${m.s}</div></div>
+      ${m.play?`<button class="play" onclick="toast('Recording would play inline')">${m.play}</button>`:''}</div>`;}
+    if(m.widget) return widgetHTML(m.widget);
+    if(m.in) return `<div class="brow in"><div class="bub">${m.in}</div><div class="bmeta">${m.m}</div>
+      <div class="qact">
+        <button title="Book from this" onclick="toast('Booking widget from this message')"><span class="ic ic-cal"></span></button>
+        <button title="Escalate" onclick="toast('Escalation wizard — message attached as evidence')"><span class="ic ic-warn"></span></button>
+        <button title="Internal note" onclick="toast('Internal note composer opens')"><span class="ic ic-note"></span></button>
+      </div></div>`;
+    return `<div class="brow out"><div class="bub">${m.out}</div><div class="bmeta"><span class="ic ic-check"></span>${m.m}</div></div>`;
+  }).join('');
+  const aiSugs = c.id==='lan'
+    ? ['Dạ em đổi lịch sang 8:00 sáng mai nhé chị?','Em ghi nhận, nếu bác mệt hơn chị gọi hotline ngay ạ']
+    : c.id==='giang' ? ['Chào chị! Gói mẹ & bé sau sinh từ 1.2M ₫/buổi — em gửi bảng chi tiết nhé?']
+    : c.id==='david' ? ['Hi David! Yes — we cover District 2. Which condition would we support?']
+    : ['Dạ em kiểm tra và phản hồi ngay ạ'];
+  $('threadpane').innerHTML=`
+    <header class="th-head">
+      ${c.ringing?`<div class="callbar"><span class="ic ic-phone"></span>Live call · 00:12 · recording consent played
+        <button class="cbtn" onclick="toast('Muted (mock)')">Mute</button>
+        <button class="cbtn" onclick="toast('Internal note during call')">Note</button>
+        <button class="cbtn end" onclick="toast('Call ended → wrap-up: outcome + follow-up in 2 taps')">End call</button></div>`:''}
+      ${!c.owner&&c.status!=='junk'&&!c.system?`<div class="claimbanner"><span class="ic ic-warn"></span>Unclaimed — reply or claim to own this conversation
+        <button class="claimbtn" onclick="claim('${c.id}')"><span class="ic ic-hand"></span>Claim</button></div>`:''}
+      <div class="th-bar" onclick="toast('Full record would open (res.partner / crm.lead)')" title="Open full record">
+        <span class="ava" style="--av:${c.av}">${c.init}</span>
+        <div class="th-id">
+          <div class="th-nm">${c.name} ${chipHTML(c.chip)}</div>
+          <div class="th-sub">${c.sub||CH[c.ch].label}${c.owner?` · owned by ${AGENTS[c.owner]}`:' · unclaimed'}</div>
+        </div>
+        <div class="th-actions" onclick="event.stopPropagation()">
+          <button class="abtn pri" onclick="toast('Click-to-call via VoIP24h — call joins this same thread')"><span class="ic ic-phone"></span>Call</button>
+          ${c.owner!=='VY'?`<button class="abtn" onclick="claim('${c.id}')"><span class="ic ic-hand"></span>${c.owner?'Take over':'Assign to me'}</button>`:''}
+        </div>
+      </div>
+      <div class="th-act2">${actionStrip(c)}</div>
+    </header>
+    <div class="msgs" id="msgs">${msgs}</div>
+    <div class="sugrow ai-only"><span class="lab"><span class="ic ic-spark"></span>AI draft</span>
+      ${aiSugs.map(s=>`<span class="sug" onclick="useSug(this)">${s}</span>`).join('')}
+    </div>
+    <div class="sugrow ai-alt"><span class="lab"><span class="ic ic-note"></span>Templates</span>
+      ${TEMPLATES.map(s=>`<span class="sug tpl" onclick="useSug(this)">${s}</span>`).join('')}
+    </div>
+    <div class="comp">
+      <div class="slashmenu" id="slashmenu">
+        <div class="sm-h">Commands — always available, AI or not</div>
+        <div class="sm-i" onclick="slashPick('book')"><span class="ic ic-cal"></span><b>/book</b><span>booking widget in-thread</span></div>
+        <div class="sm-i" onclick="slashPick('client')"><span class="ic ic-user"></span><b>/client</b><span>create client from this chat</span></div>
+        <div class="sm-i" onclick="slashPick('lead')"><span class="ic ic-bolt"></span><b>/lead</b><span>create lead</span></div>
+        <div class="sm-i" onclick="slashPick('price')"><span class="ic ic-note"></span><b>/price</b><span>send price card</span></div>
+        <div class="sm-i" onclick="slashPick('note')"><span class="ic ic-note"></span><b>/note</b><span>internal note (never sent)</span></div>
+        <div class="sm-i" onclick="slashPick('junk')"><span class="ic ic-ban"></span><b>/junk</b><span>mark junk</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-box">
+          <span class="ic ic-clip" title="Attach" onclick="toast('Attachment picker')"></span>
+          <input id="cinput" placeholder='Message ${c.name.split(' ')[0]} — or type "/" for commands…' autocomplete="off">
+          <span class="ic ic-slash" title="Commands" onclick="toggleSlash(true)"></span>
+        </div>
+        <button class="sendbtn" onclick="sendMsg()"><span class="ic ic-send"></span></button>
+      </div>
+      <div class="comp-meta">
+        <span class="via" style="--cv:${ch.v}"><span class="ic ${ch.ic}"></span>Sends via ${ch.label}</span>
+        <span>Falls back to ZNS/call cascade if they go quiet</span>
+        <span style="margin-left:auto;display:inline-flex;gap:5px;align-items:center"><span class="ic ic-shield" style="width:11px;height:11px"></span>Consent ✓ · PHI check on send</span>
+      </div>
+    </div>`;
+  const ci=$('cinput');
+  ci.addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
+  ci.addEventListener('input',e=>toggleSlash(e.target.value.startsWith('/')));
+  const m=$('msgs'); m.scrollTop=m.scrollHeight;
+  renderRail();
+}
+
+/* ================= unified action strip (header) ================= */
+function actionStrip(c){
+  const isClient = c.chip[0]==='client';
+  const b=(ic,label,msg,cls='')=>`<button class="abtn ${cls}" title="${msg}" onclick="toast('${msg}')"><span class="ic ${ic}"></span>${label}</button>`;
+  let s='';
+  /* schedule */
+  s+=b('ic-cal','Book','Booking wizard opens pre-filled (health.fieldservice.order)');
+  s+=b('ic-clock','Callback','Callback task scheduled with reminder');
+  s+=b('ic-bell','Reminder','ZNS reminder queued (cascade: ZNS → email → call task)');
+  s+='<span class="adiv"></span>';
+  /* send & record */
+  s+=b('ic-tag','Price card','Price card sent as rich message in this chat');
+  s+=b('ic-note','Note','Internal note — never sent to the family');
+  s+=b('ic-chart','Log','Activity logged (mail.activity)');
+  s+='<span class="adiv"></span>';
+  /* care (clients) vs convert (leads/new) */
+  if(isClient){
+    s+=b('ic-users','Relationship','Link caregiver / payer (health.client.relation)');
+    s+=b('ic-shield','Consent','Consent record opens — view or capture consent');
+  }else{
+    s+=b('ic-bolt','Lead','Lead created (crm.lead) — assigned to you');
+    s+=b('ic-user','Client','Client created (res.partner is_patient)');
+  }
+  s+='<span class="adiv"></span>';
+  /* risk */
+  s+=b('ic-warn','Escalate','Escalation wizard opens');
+  s+=b('ic-ban','Junk','Marked junk (contact_status = spam) — reversible',' gray');
+  return s;
+}
+
+/* ================= care rail ================= */
+let railTab='care';
+function setRailTab(t){railTab=t;renderRail()}
+const RAILS = {
+ lan:{
+  brief:'Lan is contacting Health19 <b>for her father Minh Trần</b> (caregiver verified). A visit is booked <b>tomorrow 09:30</b>. Her latest message says the dizziness is <b>worse</b>. No clinical escalation has been recorded.',
+  sources:'6 sources',
+  rel:{a:['LN','Lan Nguyễn','Verified caregiver','#3451d1'], b:['MT','Minh Trần','Patient · KH-0203','#0f766e'], ver:true},
+  snap:[['Service','Home nursing care'],['Booking','Tomorrow · 09:30'],['Location','Quận 7, HCMC'],['Coordinator','Y tá Hương · South'],['Consent','Discuss care with Lan ✓','ok']],
+  next:{t:'Open the approved dizziness safety script, record answers, then route to the clinical queue if any trigger is positive. Rule-based — no AI severity judgment.',btn:'Open safety checklist'},
+  commits:[['Tomorrow 09:30','Home nurse visit · Owner: South Nursing']],
+  bookings:[['ic-cal','Home care · tomorrow 09:30','Y tá Hương · recurring','next'],['ic-check','Home care · last Fri','Completed · no issues','done'],['ic-check','Physio assessment · 02 Jul','Completed','done']],
+  hist:'12 lifetime bookings · 41.5M ₫',
+  history:[['ic-phone','Call · 4m 32s · answered by Vy','Yesterday 16:05'],['ic-send','ZNS confirmation delivered','Yesterday 16:12'],['ic-cal','Booking created · tomorrow 09:30','Yesterday 16:10'],['ic-chat','2 Zalo messages — symptom update','Today 08:40']],
+  trace:[['Intent classified: reschedule-earlier','Evidence: Zalo msg 08:41 · confidence 0.91'],['Watchlist match: “chóng mặt nhiều hơn”','Deterministic rule — not AI'],['Draft reply generated (VN)','qwen2.5:14b · on-prem · 0 data left the server'],['Nothing auto-sent','All suggestions await human tap']],
+ },
+ 'phuc-ring':{
+  rel:{a:['VP','Vũ Đình Phúc','Calling now','#0f766e'], b:['VP','Vũ Đình Phúc','Client · KH-0117','#0f766e'], ver:true, self:true},
+  snap:[['Client','KH-0117 · since 2024'],['Area','Quận 3, HCMC'],['Next visit','Physio · Thu 15:00 · Hạnh'],['Preferred','Phone · Vietnamese'],['Payer','Self']],
+  commits:[['Today 11:30','Callback promised · Owner: Vy']],
+  bookings:[['ic-cal','Physio · Thu 15:00','Y tá Hạnh · weekly','next'],['ic-check','Physio · last Tue','Completed','done']],
+  hist:'8 lifetime bookings · 18.2M ₫',
+  briefAlt:'He usually calls about rescheduling. His Thursday physio clashes with next week\'s public holiday — Hạnh is free Wed 14:00 or Fri 09:00.',
+ },
+ giang:{
+  snap:[['Status','Unknown — not in system'],['Channel','Messenger · “Việt Úc Care”'],['Phone','— none yet'],['Area (stated)','Quận 7']],
+  idnote:'No match on Messenger ID. The moment she shares a phone number, identity re-checks against clients & caregivers automatically (deterministic).',
+  brief:'First contact. Asking the price of the post-natal mother & baby package for a 2-week-old, Quận 7. Classic warm lead — answer price, ask for a phone number, create Lead.',
+  sources:'1 source',
+ },
+ duc:{
+  rel:{a:['MĐ','Minh Đức','Claims: son','#0e9adf'], b:['BT','Bà Tuyết','Client · KH-0089','#3451d1'], ver:false},
+  snap:[['Zalo name','Minh Đức'],['Phone','0934 221 570'],['KH-0089 lists','“Minh Đức (con trai)”'],['His phone on file','— none']],
+  idnote:'Deterministic match signals only — never linked silently. Confirm in the thread widget or here.',
+ },
+ ngocanh:{
+  snap:[['Status','Lead — pending follow-up'],['Interest','Infant vaccination · 6mo'],['Area','Quận 2'],['Agent','Vy']],
+  brief:'Second inquiry this week. She asked “Cuối tuần này được không?” — free weekend vaccination slots in Quận 2: Sat 09:00 · Sat 15:30 · Sun 10:00.',
+  sources:'2 sources',
+  commits:[],
+ },
+};
+RAILS.phuc = RAILS['phuc-ring'];
+function railCardKV(title,icon,rows){
+  return `<div class="rcard"><h4><span class="ic ${icon}"></span>${title}</h4>
+    ${rows.map(r=>`<div class="rkv"><span class="k">${r[0]}</span><span class="v ${r[2]||''}">${r[1]}</span></div>`).join('')}</div>`;
+}
+function renderRail(){
+  const el=$('crail'); if(!el) return;
+  const c=conv(selected);
+  if(!c){el.innerHTML='';return}
+  const r=RAILS[c.id]||{};
+  const tabs=`<div class="crail-tabs">
+    <button class="${railTab==='care'?'on':''}" onclick="setRailTab('care')">Care</button>
+    <button class="${railTab==='history'?'on':''}" onclick="setRailTab('history')">History</button>
+    <button class="${railTab==='trace'?'on':''}" onclick="setRailTab('trace')">AI trace</button>
+  </div>`;
+  let body='';
+  if(railTab==='care'){
+    if(r.brief) body+=`<div class="rcard briefcard ai-only"><h4><span class="ic ic-spark"></span>Continuity brief<span class="fresh">fresh · 18s</span></h4>
+      <p>${r.brief}</p><span class="src" onclick="toast('Each claim opens its source event — unsupported facts stay Unknown')">${r.sources||'sources'} ›</span></div>`;
+    if(r.briefAlt) body+=`<div class="rcard briefcard ai-only"><h4><span class="ic ic-spark"></span>Context<span class="fresh">fresh</span></h4><p>${r.briefAlt}</p></div>`;
+    if(r.rel&&!r.rel.self) body+=`<div class="rcard"><h4><span class="ic ic-users"></span>Caller ↔ patient relationship</h4>
+      <div class="relrow">
+        <div class="relbox"><span class="ava" style="--av:${r.rel.a[3]}">${r.rel.a[0]}</span><b>${r.rel.a[1]}</b><span>${r.rel.a[2]}</span></div>
+        <div class="relmid ${r.rel.ver?'ver':''}">${r.rel.ver?'<span class="ic ic-check"></span>':'<span class="ic ic-warn"></span>'}</div>
+        <div class="relbox"><span class="ava" style="--av:${r.rel.b[3]}">${r.rel.b[0]}</span><b>${r.rel.b[1]}</b><span>${r.rel.b[2]}</span></div>
+      </div>
+      ${r.rel.ver?'':'<div class="rkv" style="margin-top:6px"><span class="k">Unverified</span><span class="v" style="color:var(--warn)">confirm in thread</span></div>'}</div>`;
+    if(r.snap) body+=railCardKV(c.chip[0][0]==='n'?'Contact':'Care snapshot','ic-user',r.snap);
+    if(!r.snap&&PEEK[c.id]) body+=railCardKV('Contact','ic-user',PEEK[c.id].rows);
+    if(r.idnote) body+=`<div class="rcard"><h4><span class="ic ic-shield"></span>Identity</h4><p style="font-size:11.5px;line-height:1.5">${r.idnote}</p></div>`;
+    if(r.next) body+=`<div class="rcard nextact"><h4><span class="ic ic-warn"></span>Recommended next action</h4>
+      <p>${r.next.t}</p><button class="bigbtn" onclick="toast('Approved script opens — answers recorded, escalates if any trigger positive')"><span class="ic ic-shield"></span>${r.next.btn}</button></div>`;
+    if(r.commits&&r.commits.length) body+=`<div class="rcard"><h4><span class="ic ic-check"></span>Commitment ledger</h4>
+      ${r.commits.map(cm=>`<div class="commit"><span class="ic ic-check"></span><div><b>${cm[0]}</b>${cm[1]}</div></div>`).join('')}</div>`;
+    if(r.bookings) body+=`<div class="rcard"><h4><span class="ic ic-cal"></span>Bookings</h4>
+      ${r.bookings.map(b=>`<div class="bk"><span class="ic ${b[0]}"></span><div><div class="b-t">${b[1]}</div><div class="b-s">${b[2]}</div></div><span class="st ${b[3]}">${b[3]==='next'?'NEXT':'DONE'}</span></div>`).join('')}
+      ${r.hist?`<div class="rkv" style="border-top:1px solid var(--line);margin-top:4px;padding-top:8px"><span class="k">History</span><span class="v">${r.hist}</span></div>`:''}</div>`;
+  } else if(railTab==='history'){
+    const rows=r.history||[['ic-chat','First contact','·  '+c.time+' ago']];
+    body+=`<div class="rcard"><h4><span class="ic ic-clock"></span>All interactions · every channel</h4>
+      ${rows.map(h=>`<div class="bk"><span class="ic ${h[0]}"></span><div><div class="b-t">${h[1]}</div><div class="b-s">${h[2]}</div></div></div>`).join('')}</div>
+      <div class="hnote">The full timeline mixes calls, recordings, Zalo/WhatsApp/Messenger messages, ZNS deliveries, bookings and notes — one chronology per person, whatever the channel.</div>`;
+  } else {
+    if(AI){
+      const rows=r.trace||[['No AI activity yet on this conversation','Suggestions will appear here with their evidence']];
+      body+=`<div class="rcard"><h4><span class="ic ic-spark"></span>AI trace — inspectable</h4>
+        ${rows.map(t=>`<div class="tr-row"><span class="ic ic-spark"></span><div><b>${t[0]}</b><span>${t[1]}</span></div></div>`).join('')}</div>
+        <div class="hnote"><b>Every</b> AI artefact logs its sources, model version and your accept/edit/reject — reviewable by managers in the AI ledger.</div>`;
+    } else {
+      body+=`<div class="hnote"><b>AI Assist is off.</b> No AI has touched this conversation. Identity matching, watchlist flags and templates on this screen are deterministic rules.</div>`;
+    }
+  }
+  el.innerHTML=tabs+`<div class="crail-b">${body}</div>`;
+}
+
+/* ================= actions ================= */
+function renderAll(){renderDock();renderWall();renderList();renderThread();renderDockChips()}
+function renderDockChips(){
+  const mine=DATA.filter(c=>c.owner==='VY'&&c.status!=='junk'&&!c.system).slice(0,4);
+  $('dockchips').innerHTML=mine.map(c=>`<div class="dchip" style="--cv:${CH[c.ch].v}" onclick="openChat('${c.id}')">
+    <span class="dot"></span>${c.name} · ${c.reason[1].toLowerCase().slice(0,26)}</div>`).join('');
+}
+function openChat(id){
+  selected=id; document.body.classList.remove('state-wall'); document.body.classList.add('state-chat');
+  $('stateLbl').textContent='Conversation';
+  renderList(); renderThread();
+}
+function toWall(){
+  document.body.classList.remove('state-chat'); document.body.classList.add('state-wall');
+  $('stateLbl').textContent='Wall'; selected=null; renderWall();
+}
+function selectConv(id){selected=id;renderList();renderThread()}
+function claim(id){
+  const c=conv(id); c.owner='VY';
+  toast(`${c.name} claimed — it's yours now (team sees ownership instantly)`);
+  renderAll();
+}
+function confirmJunk(id){
+  const i=DATA.findIndex(c=>c.id===id);
+  if(i>-1){const nm=DATA[i].name; DATA.splice(i,1); toast(`${nm} archived as junk (contact_status = spam) — reversible`);}
+  renderAll();
+}
+function answerCall(id){
+  openChat(id);
+  toast('Call answered — live call bar on top, wrap-up on hang-up');
+}
+let chosenSlot='07:30';
+function pickSlot(el){document.querySelectorAll('#wslots .slot').forEach(s=>s.classList.remove('on'));el.classList.add('on');chosenSlot=el.textContent}
+function sendProposal(){
+  sentProposal=true;
+  const m=$('msgs'); const w=$('wResched'); if(w)w.style.display='none';
+  const d=document.createElement('div'); d.className='brow out';
+  d.innerHTML=`<div class="richcard">
+    <div class="rc-h"><span class="ic ic-cal"></span>Đề xuất đổi lịch</div>
+    <div class="rc-b">
+      <div class="r"><span class="k">Khách</span><span class="v">Minh Trần (KH-0203)</span></div>
+      <div class="r"><span class="k">Thời gian mới</span><span class="v">Ngày mai ${chosenSlot}</span></div>
+      <div class="r"><span class="k">Y tá</span><span class="v">Hương (không đổi)</span></div>
+    </div>
+    <div class="rc-f"><span class="ic ic-check"></span>Chị Lan bấm xác nhận là lịch tự cập nhật</div></div>
+    <div class="bmeta"><span class="ic ic-check"></span>Sent · booking stays draft until she confirms</div>`;
+  m.appendChild(d); m.scrollTop=m.scrollHeight;
+  toast('Proposal sent as rich card — draft reschedule behind it');
+}
+function useSug(el){$('cinput').value=el.textContent;$('cinput').focus();toast('Inserted — edit freely, nothing sends until you tap send')}
+function sendMsg(){
+  const i=$('cinput'); if(!i.value.trim()){toast('Type a message or pick a chip');return}
+  const m=$('msgs'); const d=document.createElement('div'); d.className='brow out';
+  d.innerHTML=`<div class="bub">${esc(i.value)}</div><div class="bmeta"><span class="ic ic-check"></span>now · via ${CH[conv(selected).ch].label}</div>`;
+  m.appendChild(d); m.scrollTop=m.scrollHeight; i.value=''; toggleSlash(false);
+}
+function toggleSlash(on){const s=$('slashmenu'); if(s)s.classList.toggle('on',on)}
+function slashPick(cmd){
+  toggleSlash(false); $('cinput').value='';
+  const map={book:'Booking widget inserted in-thread',client:'Client created (res.partner)',lead:'Lead created (crm.lead)',
+    price:'Price card sent as rich message',note:'Internal note mode — never sent to family',junk:'Marked junk (contact_status = spam)'};
+  toast(map[cmd]||cmd);
+}
+
+/* view toggle */
+$('viewSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  document.querySelectorAll('#viewSeg button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.body.classList.toggle('view-all',b.dataset.view==='all');
+  toast(b.dataset.view==='all'?'Everyone view — ownership shown on every tile (supervisor peek)':'Back to my view');
+});
+
+/* ================= AI toggle + drawer ================= */
+function toggleAI(){
+  AI=!AI;
+  $('masterTgl').classList.toggle('on',AI);
+  document.body.classList.toggle('ai-on',AI);
+  document.body.classList.toggle('ai-off',!AI);
+  $('aipillTxt').textContent = AI ? 'AI On · Ollama (local)' : 'AI Off · rule-based mode';
+  renderAll();
+  toast(AI?'AI Assist ON — drafts, intent widgets & summaries active (evidence-linked, never auto-send)'
+          :'AI Assist OFF — deterministic mode: identity matching, watchlist, templates & all actions still work');
+}
+function openDrawer(){$('drawer').classList.add('open');$('scrim').classList.add('on')}
+function closeDrawer(){$('drawer').classList.remove('open');$('scrim').classList.remove('on')}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if($('drawer').classList.contains('open')) closeDrawer();
+    else if(document.body.classList.contains('state-chat')) toWall();
+  }
+});
+
+/* ticker */
+const tks=[...TICKS,...TICKS];
+$('tickerTrack').innerHTML=tks.map(k=>`<span class="tk ${k[2]}" onclick="openChat('${k[3]}')"><span class="ic ${k[0]}"></span><span>${k[1]}</span></span>`).join('');
+
+/* toast */
+let toastTimer;
+function toast(msg){
+  $('toastTxt').textContent=msg; const t=$('toast');
+  t.classList.add('on'); clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('on'),3000);
+}
+
+renderAll();
+</script>
+</body>
+</html>

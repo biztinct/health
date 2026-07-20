@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care Command · Option 2 — AI Teammate</title>
+<style>
+/* ============ tokens (Viet UC CMS light, flat mono) ============ */
+:root{
+  --navy:#1e2a5e; --navy-2:#28356e; --navy-3:#333f7d;
+  --bg:#f2f4f9; --card:#ffffff; --ink:#1b2340; --mut:#6a7189; --faint:#98a0b6;
+  --line:#e3e7f0; --line-2:#d3d9e7;
+  --accent:#3451d1; --accent-soft:#eaeefb;
+  --ok:#188554; --ok-soft:#e7f4ec;
+  --warn:#b76e00; --warn-soft:#fdf3e2;
+  --danger:#c62839; --danger-soft:#fbebed;
+  --ai:#6d28d9; --ai-soft:#f2ecfd; --ai-line:#e2d6fb;
+  --ch-zalo:#0068ff; --ch-call:#0f766e; --ch-wa:#16a34a; --ch-fb:#7c3aed;
+  --ch-tg:#0e9adf; --ch-web:#64748b; --ch-email:#b45309;
+  --r:10px; --r-lg:14px;
+  --sh:0 1px 2px rgba(27,35,64,.06),0 4px 14px rgba(27,35,64,.06);
+  --sh-lg:0 8px 40px rgba(27,35,64,.22);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;overflow:hidden}
+button{font:inherit;border:none;background:none;cursor:pointer;color:inherit}
+textarea{font:inherit;color:inherit}
+
+/* icons */
+.ic{display:inline-block;width:16px;height:16px;flex:none;background:currentColor;
+  -webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;vertical-align:-3px}
+.ic-chat{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/%3E%3C/svg%3E")}
+.ic-phone{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E")}
+.ic-cal{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E")}
+.ic-user{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E")}
+.ic-users{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E")}
+.ic-spark{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z'/%3E%3C/svg%3E")}
+.ic-check{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E")}
+.ic-x{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M18 6L6 18M6 6l12 12'/%3E%3C/svg%3E")}
+.ic-send{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 2L11 13M22 2l-7 20-4-9-9-4z'/%3E%3C/svg%3E")}
+.ic-bolt{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/%3E%3C/svg%3E")}
+.ic-clock{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 3'/%3E%3C/svg%3E")}
+.ic-shield{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E")}
+.ic-warn{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E")}
+.ic-grid{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Crect x='3' y='3' width='7' height='7' rx='1'/%3E%3Crect x='14' y='3' width='7' height='7' rx='1'/%3E%3Crect x='3' y='14' width='7' height='7' rx='1'/%3E%3Crect x='14' y='14' width='7' height='7' rx='1'/%3E%3C/svg%3E")}
+.ic-chart{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M7 15l4-6 4 3 5-8'/%3E%3C/svg%3E")}
+.ic-ban{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M5.6 5.6l12.8 12.8'/%3E%3C/svg%3E")}
+.ic-note{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 2v6h6M9 13h6M9 17h6'/%3E%3C/svg%3E")}
+.ic-edit{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2.83 2.83 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z'/%3E%3C/svg%3E")}
+.ic-eye{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")}
+.ic-link{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7'/%3E%3C/svg%3E")}
+.ic-bolt2{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/%3E%3C/svg%3E")}
+.ic-down{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")}
+
+/* ============ frame ============ */
+.app{display:flex;height:100vh}
+.rail{width:64px;background:var(--navy);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:6px;flex:none}
+.rail .logo{width:38px;height:38px;border-radius:10px;background:#e0344a;color:#fff;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:13px;margin-bottom:10px}
+.rail button{width:42px;height:42px;border-radius:10px;color:#aab3d6;display:flex;align-items:center;justify-content:center}
+.rail button .ic{width:19px;height:19px}
+.rail button:hover{background:var(--navy-2);color:#fff}
+.rail button.on{background:var(--navy-3);color:#fff;position:relative}
+.rail button.on::before{content:"";position:absolute;left:-11px;top:9px;bottom:9px;width:3px;border-radius:2px;background:#e0344a}
+.rail .spacer{flex:1}
+.rail .me{width:34px;height:34px;border-radius:50%;background:#4a5aa8;color:#fff;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:12px}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* ============ morning brief header ============ */
+.brief{flex:none;background:var(--card);border-bottom:1px solid var(--line);padding:16px 26px 14px}
+.brief-top{display:flex;align-items:center;gap:14px;max-width:1180px;margin:0 auto}
+.vi{width:44px;height:44px;border-radius:12px;background:var(--ai);color:#fff;display:flex;align-items:center;
+  justify-content:center;flex:none}
+.vi .ic{width:22px;height:22px}
+.brief-txt{flex:1;min-width:0}
+.brief-txt h1{font-size:16px;font-weight:800}
+.brief-txt p{font-size:12.5px;color:var(--mut);margin-top:1px}
+.brief-txt p b{color:var(--ink)}
+.progress{display:flex;align-items:center;gap:10px;flex:none}
+.pbar{width:170px;height:8px;border-radius:5px;background:var(--line);overflow:hidden}
+.pbar span{display:block;height:100%;width:0;background:var(--ok);transition:width .4s}
+.pnum{font-size:12px;font-weight:700;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+.brief-stats{display:flex;gap:8px;margin:12px auto 0;max-width:1180px;flex-wrap:wrap}
+.bstat{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:9px;padding:7px 12px;
+  font-size:12px;font-weight:600;color:var(--mut);background:var(--bg);cursor:pointer}
+.bstat:hover{border-color:var(--line-2);color:var(--ink)}
+.bstat b{color:var(--ink);font-size:13px}
+.bstat .ic{width:13px;height:13px}
+.bstat.needs{border-color:#f0c4ca;background:var(--danger-soft);color:var(--danger)}
+.bstat.needs b{color:var(--danger)}
+.bstat.ai{border-color:var(--ai-line);background:var(--ai-soft);color:var(--ai)}
+.bstat.ai b{color:var(--ai)}
+
+/* ============ body: feed + ledger ============ */
+.body{flex:1;min-height:0;display:flex;justify-content:center;gap:20px;padding:18px 26px;overflow:hidden}
+.feed{width:min(760px,100%);overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-bottom:40px}
+.feed>*{flex:none}
+.feed::-webkit-scrollbar{width:8px}
+.feed::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
+
+.sechead{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:var(--faint);
+  text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
+.sechead .ic{width:12px;height:12px}
+.sechead .n{background:var(--danger);color:#fff;border-radius:10px;padding:1px 8px;font-size:10.5px}
+.sechead.safe .n{background:var(--ok)}
+
+/* decision card */
+.dc{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh);
+  overflow:hidden;transition:opacity .3s, transform .3s}
+.dc.done{opacity:.55}
+.dc-head{display:flex;align-items:center;gap:10px;padding:12px 16px 0}
+.ava{width:34px;height:34px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:12px;color:#fff;background:var(--av,#7f8ab3)}
+.dc-who{flex:1;min-width:0}
+.dc-nm{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.dc-sub{font-size:11.5px;color:var(--mut)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;border-radius:6px;padding:2px 7px}
+.chip .ic{width:11px;height:11px}
+.chip.client{background:var(--ok-soft);color:var(--ok)}
+.chip.lead{background:var(--warn-soft);color:var(--warn)}
+.chip.new{background:var(--accent-soft);color:var(--accent)}
+.chip.risk{background:var(--danger-soft);color:var(--danger)}
+.chip.ai{background:var(--ai-soft);color:var(--ai)}
+.chan{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--chv);flex:none}
+.chan .ic{width:12px;height:12px}
+.conf{flex:none;font-size:10.5px;font-weight:700;color:var(--mut);display:flex;align-items:center;gap:5px}
+.confbar{width:52px;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.confbar i{display:block;height:100%;background:var(--ok)}
+.conf.med .confbar i{background:var(--warn)}
+
+/* why strip */
+.why{display:flex;gap:8px;align-items:flex-start;margin:10px 16px 0;padding:8px 11px;background:var(--ai-soft);
+  border:1px solid var(--ai-line);border-radius:9px;font-size:12px;color:var(--ink)}
+.why .ic{width:13px;height:13px;color:var(--ai);margin-top:2px}
+.why b{font-weight:700}
+.why .src{color:var(--ai);font-weight:700;cursor:pointer;white-space:nowrap}
+.why .src:hover{text-decoration:underline}
+
+/* proposal previews */
+.prop{margin:10px 16px}
+.pv-label{font-size:10.5px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;
+  display:flex;align-items:center;gap:6px}
+.pv-label .ic{width:11px;height:11px}
+.zbub{max-width:86%;background:var(--accent);color:#fff;border-radius:12px;border-bottom-right-radius:4px;
+  padding:9px 13px;font-size:13px;margin-left:auto;position:relative}
+.zbub.editing{display:none}
+.zmeta{font-size:10.5px;color:var(--faint);text-align:right;margin-top:4px;display:flex;gap:5px;justify-content:flex-end;align-items:center}
+.zmeta .ic{width:10px;height:10px}
+.editbox{display:none;width:100%;border:1.5px solid var(--accent);border-radius:10px;padding:9px 12px;font-size:13px;
+  min-height:74px;resize:vertical;background:var(--card)}
+.dc.edit .zbub{display:none}
+.dc.edit .editbox{display:block}
+
+.bkcard{border:1px solid var(--line-2);border-radius:11px;overflow:hidden}
+.bkcard .bk-h{background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:11px;padding:6px 12px;
+  display:flex;gap:6px;align-items:center;text-transform:uppercase;letter-spacing:.5px}
+.bkcard .bk-h .ic{width:12px;height:12px}
+.bk-b{display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;padding:10px 12px;font-size:12.5px}
+.bk-b .k{color:var(--mut);font-size:11px}
+.bk-b .v{font-weight:700}
+.slotrow{display:flex;gap:6px;padding:0 12px 11px;flex-wrap:wrap}
+.slot{border:1px solid var(--line-2);border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer}
+.slot.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.slot:hover:not(.on){border-color:var(--accent);color:var(--accent)}
+
+/* identity compare */
+.idgrid{display:grid;grid-template-columns:1fr 26px 1fr;gap:6px;align-items:stretch}
+.idcol{border:1px solid var(--line-2);border-radius:10px;padding:9px 11px;font-size:12px}
+.idcol h5{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);margin-bottom:5px}
+.idcol .r{display:flex;justify-content:space-between;padding:2px 0;gap:8px}
+.idcol .r .k{color:var(--mut)}
+.idcol .r .v{font-weight:600;text-align:right}
+.idcol .r .v.hit{color:var(--ok)}
+.idmid{display:flex;align-items:center;justify-content:center;color:var(--faint)}
+
+/* junk batch */
+.junklist{margin:10px 16px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.jrow{display:flex;align-items:center;gap:9px;padding:7px 12px;font-size:12px;border-top:1px solid var(--line)}
+.jrow:first-child{border-top:none}
+.jrow .ic{width:12px;height:12px;color:var(--chv,var(--faint))}
+.jrow .jn{font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jrow .jr{color:var(--faint);font-size:11px;white-space:nowrap}
+.jmore{padding:7px 12px;font-size:11.5px;font-weight:700;color:var(--accent);border-top:1px solid var(--line);cursor:pointer}
+.jmore:hover{background:var(--accent-soft)}
+
+/* card actions */
+.dc-act{display:flex;gap:8px;align-items:center;padding:12px 16px 14px;border-top:1px solid var(--line);margin-top:12px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;border-radius:9px;
+  padding:8px 14px;border:1px solid var(--line);background:var(--card)}
+.btn .ic{width:13px;height:13px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.ok:hover{background:#106b44;color:#fff}
+.btn.gray{color:var(--mut);border-color:transparent}
+.btn.gray:hover{color:var(--danger);border-color:transparent}
+.dc-act .sp{flex:1}
+.kbd{font-size:10px;font-weight:800;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;
+  padding:1px 5px;color:var(--faint);background:var(--bg)}
+
+/* done state */
+.dc .donebar{display:none;align-items:center;gap:8px;padding:11px 16px;font-size:12.5px;font-weight:700;color:var(--ok)}
+.dc .donebar .ic{width:15px;height:15px}
+.dc.done .dc-bodywrap{display:none}
+.dc.done .donebar{display:flex}
+.dc.done.rejected .donebar{color:var(--mut)}
+
+/* high-confidence band */
+.band{border:1px solid var(--ok-soft);background:var(--ok-soft);border-radius:var(--r-lg);padding:13px 16px}
+.band .b-top{display:flex;align-items:center;gap:10px}
+.band .ic-wrap{width:34px;height:34px;border-radius:9px;background:var(--ok);color:#fff;display:flex;
+  align-items:center;justify-content:center;flex:none}
+.band h3{font-size:13.5px;font-weight:800;color:var(--ink)}
+.band p{font-size:12px;color:var(--mut)}
+.band .btn{margin-left:auto}
+.bandlist{display:none;margin-top:10px;border-top:1px solid #cde6d7;padding-top:8px}
+.band.open .bandlist{display:block}
+.bl-row{display:flex;gap:9px;align-items:center;font-size:12px;padding:5px 0}
+.bl-row .ic{width:12px;height:12px;color:var(--chv)}
+.bl-row .n{font-weight:700;white-space:nowrap}
+.bl-row .p{color:var(--mut);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
+.bl-row .peek{font-size:11px;font-weight:700;color:var(--accent);cursor:pointer;white-space:nowrap}
+
+/* ============ ledger (supervisor peek) ============ */
+.ledger{width:270px;flex:none;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.lcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:13px 15px;box-shadow:var(--sh)}
+.lcard h4{font-size:10.5px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.8px;
+  margin-bottom:10px;display:flex;gap:6px;align-items:center}
+.lcard h4 .ic{width:12px;height:12px}
+.lrow{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:4px 0}
+.lrow .k{color:var(--mut)}
+.lrow .v{font-weight:700;font-variant-numeric:tabular-nums}
+.lrow .v.ok{color:var(--ok)}
+.lrow .v.warn{color:var(--warn)}
+.ring{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.ringviz{width:62px;height:62px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  background:conic-gradient(var(--ai) 0 331deg, var(--line) 331deg 360deg);position:relative}
+.ringviz::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--card)}
+.ringviz b{position:relative;font-size:13px}
+.ring p{font-size:11.5px;color:var(--mut)}
+.kswitch{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0}
+.kswitch .tgl{width:34px;height:19px;border-radius:12px;background:var(--ok);position:relative;cursor:pointer;flex:none}
+.kswitch .tgl::after{content:"";position:absolute;right:2.5px;top:2.5px;width:14px;height:14px;border-radius:50%;background:#fff}
+.kswitch.off .tgl{background:var(--line-2)}
+.kswitch.off .tgl::after{right:auto;left:2.5px}
+.lnote{font-size:11px;color:var(--faint);line-height:1.5;margin-top:6px}
+
+/* ============ thread slide-over ============ */
+.sheet{position:fixed;top:0;right:-560px;bottom:0;width:min(560px,94vw);background:var(--card);z-index:60;
+  box-shadow:var(--sh-lg);display:flex;flex-direction:column;transition:right .25s ease}
+.sheet.open{right:0}
+.sheet-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.sheet-h .t{font-weight:800;font-size:14px;flex:1}
+.sheet-h .xclose{width:32px;height:32px;border-radius:8px;color:var(--mut);display:flex;align-items:center;justify-content:center}
+.sheet-h .xclose:hover{background:var(--bg);color:var(--ink)}
+.sheet-b{flex:1;overflow-y:auto;padding:16px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.sheet-b>*{flex:none}
+.day{align-self:center;font-size:10.5px;font-weight:700;color:var(--faint);background:var(--card);border:1px solid var(--line);
+  border-radius:20px;padding:2px 12px;text-transform:uppercase;letter-spacing:.6px;margin:4px 0}
+.brow{display:flex;flex-direction:column;max-width:78%;gap:3px}
+.brow.in{align-self:flex-start}
+.brow.out{align-self:flex-end;align-items:flex-end}
+.bub{padding:8px 12px;border-radius:12px;font-size:13px;background:var(--card);border:1px solid var(--line)}
+.brow.in .bub{border-bottom-left-radius:4px}
+.brow.out .bub{background:var(--accent);color:#fff;border-color:var(--accent);border-bottom-right-radius:4px}
+.bmeta{font-size:10.5px;color:var(--faint)}
+.evt{align-self:stretch;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--chv,var(--line-2));
+  border-radius:10px;padding:9px 12px;display:flex;gap:10px;align-items:center;font-size:12px}
+.evt .ic{width:15px;height:15px;color:var(--chv,var(--mut));flex:none}
+.evt .ev-t{font-weight:700}
+.evt .ev-s{color:var(--mut);font-size:11.5px}
+.scrim{position:fixed;inset:0;background:rgba(20,26,52,.35);z-index:55;display:none}
+.scrim.on{display:block}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);
+  color:#fff;font-size:12.5px;font-weight:600;border-radius:10px;padding:10px 18px;z-index:99;opacity:0;
+  transition:all .25s;display:flex;gap:8px;align-items:center;box-shadow:var(--sh-lg)}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.toast .ic{width:14px;height:14px;color:#7ee2ae}
+
+@media(max-width:1180px){.ledger{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <div class="logo">VU</div>
+    <button title="Dashboard"><span class="ic ic-grid"></span></button>
+    <button class="on" title="Care Command"><span class="ic ic-spark"></span></button>
+    <button title="Bookings"><span class="ic ic-cal"></span></button>
+    <button title="Clients"><span class="ic ic-users"></span></button>
+    <button title="Reports"><span class="ic ic-chart"></span></button>
+    <div class="spacer"></div>
+    <div class="me">VY</div>
+  </aside>
+
+  <div class="main">
+    <!-- morning brief -->
+    <header class="brief">
+      <div class="brief-top">
+        <div class="vi"><span class="ic ic-spark"></span></div>
+        <div class="brief-txt">
+          <h1>Good morning, Vy — I've prepared your channels.</h1>
+          <p>Overnight across <b>Zalo · VoIP24h · WhatsApp · Messenger · Telegram · web chat</b>: I read <b>31 conversations</b>, drafted <b>23 replies</b>, proposed <b>4 bookings</b>, matched <b>2 identities</b> and queued <b>9 junk</b>. Nothing has been sent — every action below waits for you.</p>
+        </div>
+        <div class="progress">
+          <span class="pnum" id="pnum">0 / 7 decisions</span>
+          <div class="pbar"><span id="pfill"></span></div>
+        </div>
+      </div>
+      <div class="brief-stats">
+        <div class="bstat needs"><span class="ic ic-warn"></span><b>7</b> need your judgment</div>
+        <div class="bstat ai"><span class="ic ic-spark"></span><b>12</b> routine replies ready</div>
+        <div class="bstat"><span class="ic ic-cal"></span><b>4</b> bookings proposed</div>
+        <div class="bstat"><span class="ic ic-ban"></span><b>9</b> junk queued</div>
+        <div class="bstat"><span class="ic ic-phone"></span><b>1</b> callback due 11:30</div>
+        <div class="bstat" onclick="toast('Full classic inbox is one click away — the feed is a layer, not a cage')"><span class="ic ic-chat"></span>Open full inbox</div>
+      </div>
+    </header>
+
+    <div class="body">
+      <!-- ============ decision feed ============ -->
+      <div class="feed" id="feed">
+
+        <div class="sechead"><span class="ic ic-warn"></span>Needs your judgment <span class="n">7</span></div>
+
+        <!-- 1. safety escalation -->
+        <div class="dc" id="dc1">
+          <div class="dc-bodywrap">
+          <div class="dc-head">
+            <span class="ava" style="--av:#3451d1">LN</span>
+            <div class="dc-who">
+              <div class="dc-nm">Lan Nguyễn <span class="chip client">Caregiver of KH-0203</span> <span class="chip risk"><span class="ic ic-warn"></span>Safety first</span></div>
+              <div class="dc-sub">Daughter of Minh Trần (74 · Quận 7) · booking tomorrow 09:30</div>
+            </div>
+            <span class="chan" style="--chv:var(--ch-zalo)"><span class="ic ic-chat"></span>Zalo OA</span>
+          </div>
+          <div class="why"><span class="ic ic-spark"></span>
+            <span><b>Why this is first:</b> her 08:40 message says <b>“chóng mặt nhiều hơn”</b> — a worsening-symptom phrase on my approved watchlist. A visit is already booked for tomorrow 09:30. I drafted a reply that moves the nurse earlier <b>and</b> I recommend opening a clinical escalation. I never decide severity — you do. <span class="src" onclick="openSheet()">3 source events ›</span></span>
+          </div>
+          <div class="prop">
+            <div class="pv-label"><span class="ic ic-chat"></span>Reply as it will appear in Zalo</div>
+            <div class="zbub" id="zb1">Dạ chào chị Lan, em ghi nhận bác bị chóng mặt nhiều hơn. Em đề xuất đổi lịch y tá Hương sang <b>8:00 sáng mai</b> — chị xác nhận giúp em nhé. Nếu hôm nay bác mệt hơn, chị gọi ngay hotline 1900 xxxx để bên em hỗ trợ ạ. 🙏</div>
+            <textarea class="editbox" id="ed1">Dạ chào chị Lan, em ghi nhận bác bị chóng mặt nhiều hơn. Em đề xuất đổi lịch y tá Hương sang 8:00 sáng mai — chị xác nhận giúp em nhé. Nếu hôm nay bác mệt hơn, chị gọi ngay hotline 1900 xxxx để bên em hỗ trợ ạ.</textarea>
+            <div class="zmeta"><span class="ic ic-shield"></span>Consent OK · template-safe · sends only when you approve</div>
+          </div>
+          <div class="dc-act">
+            <button class="btn ok" onclick="approve('dc1','Reply sent via Zalo + visit moved to 08:00')"><span class="ic ic-check"></span>Approve &amp; send</button>
+            <button class="btn" onclick="toggleEdit('dc1')"><span class="ic ic-edit"></span>Edit</button>
+            <button class="btn" onclick="toast('Escalation opened — clinical queue notified, thread linked')"><span class="ic ic-warn"></span>Also escalate</button>
+            <button class="btn" onclick="openSheet()"><span class="ic ic-eye"></span>Open thread</button>
+            <span class="sp"></span>
+            <button class="btn gray" onclick="reject('dc1')">Dismiss</button>
+            <span class="kbd">A</span>
+          </div>
+          </div>
+          <div class="donebar"><span class="ic ic-check"></span><span class="dtxt">Done</span></div>
+        </div>
+
+        <!-- 2. booking proposal -->
+        <div class="dc" id="dc2">
+          <div class="dc-bodywrap">
+          <div class="dc-head">
+            <span class="ava" style="--av:#64748b">NA</span>
+            <div class="dc-who">
+              <div class="dc-nm">Ngọc Ánh <span class="chip lead">Lead · 01 020452…</span></div>
+              <div class="dc-sub">Asked twice this week about home vaccination for her 6-month-old</div>
+            </div>
+            <span class="chan" style="--chv:var(--ch-web)"><span class="ic ic-chat"></span>Web chat</span>
+            <span class="conf"><span>92%</span><span class="confbar"><i style="width:92%"></i></span></span>
+          </div>
+          <div class="why"><span class="ic ic-spark"></span>
+            <span><b>Why:</b> she wrote <b>“Cuối tuần này được không?”</b> this morning. I checked real nurse availability for infant vaccination in her area (Quận 2) and drafted a booking. Slot chips are live — pick a different one and the message updates. <span class="src" onclick="toast('Sources: web chat 09:12 today + Tue 20:15 + availability engine')">2 source events ›</span></span>
+          </div>
+          <div class="prop">
+            <div class="pv-label"><span class="ic ic-cal"></span>Booking it will create (health.fieldservice.order — draft)</div>
+            <div class="bkcard">
+              <div class="bk-h"><span class="ic ic-cal"></span>Vaccination · home visit</div>
+              <div class="bk-b">
+                <div><div class="k">Client</div><div class="v">Ngọc Ánh (bé 6 tháng)</div></div>
+                <div><div class="k">Nurse</div><div class="v">Y tá Trâm (pediatric)</div></div>
+                <div><div class="k">When</div><div class="v" id="slotV">Sat 09:00</div></div>
+                <div><div class="k">Est. price</div><div class="v">850.000 ₫</div></div>
+              </div>
+              <div class="slotrow" id="slots">
+                <span class="slot on" onclick="pickSlot(this,'Sat 09:00')">Sat 09:00</span>
+                <span class="slot" onclick="pickSlot(this,'Sat 15:30')">Sat 15:30</span>
+                <span class="slot" onclick="pickSlot(this,'Sun 10:00')">Sun 10:00</span>
+              </div>
+            </div>
+          </div>
+          <div class="dc-act">
+            <button class="btn ok" onclick="approve('dc2','Proposal sent + draft booking created for Sat')"><span class="ic ic-check"></span>Approve — send proposal</button>
+            <button class="btn" onclick="toast('Booking wizard would open pre-filled')"><span class="ic ic-edit"></span>Adjust booking</button>
+            <button class="btn" onclick="openSheet()"><span class="ic ic-eye"></span>Open thread</button>
+            <span class="sp"></span>
+            <button class="btn gray" onclick="reject('dc2')">Dismiss</button>
+          </div>
+          </div>
+          <div class="donebar"><span class="ic ic-check"></span><span class="dtxt">Done</span></div>
+        </div>
+
+        <!-- 3. identity link -->
+        <div class="dc" id="dc3">
+          <div class="dc-bodywrap">
+          <div class="dc-head">
+            <span class="ava" style="--av:#0e9adf">?</span>
+            <div class="dc-who">
+              <div class="dc-nm">New Zalo number · 0934 221 570 <span class="chip new">Identity match?</span></div>
+              <div class="dc-sub">Wrote: “Tôi là con trai bà Tuyết, mẹ tôi nhờ hỏi lịch tuần sau”</div>
+            </div>
+            <span class="chan" style="--chv:var(--ch-zalo)"><span class="ic ic-chat"></span>Zalo OA</span>
+            <span class="conf med"><span>78%</span><span class="confbar"><i style="width:78%"></i></span></span>
+          </div>
+          <div class="why"><span class="ic ic-spark"></span>
+            <span><b>Why I think this is Bà Tuyết's son:</b> he named her, the number's Zalo profile says “Minh Đức”, and KH-0089's emergency contact is “Minh Đức (con trai)” with no phone on file. I <b>never merge silently</b> — confirm or keep separate. <span class="src" onclick="toast('Sources: Zalo msg 10:05 + KH-0089 relationship record')">2 sources ›</span></span>
+          </div>
+          <div class="prop">
+            <div class="pv-label"><span class="ic ic-link"></span>Proposed link (no data is merged — just linked)</div>
+            <div class="idgrid">
+              <div class="idcol">
+                <h5>New contact</h5>
+                <div class="r"><span class="k">Zalo name</span><span class="v hit">Minh Đức</span></div>
+                <div class="r"><span class="k">Phone</span><span class="v">0934 221 570</span></div>
+                <div class="r"><span class="k">Claims</span><span class="v hit">son of Bà Tuyết</span></div>
+              </div>
+              <div class="idmid"><span class="ic ic-link"></span></div>
+              <div class="idcol">
+                <h5>Existing · KH-0089</h5>
+                <div class="r"><span class="k">Client</span><span class="v">Bà Tuyết (81)</span></div>
+                <div class="r"><span class="k">Emerg. contact</span><span class="v hit">Minh Đức (con trai)</span></div>
+                <div class="r"><span class="k">His phone</span><span class="v">— none on file</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dc-act">
+            <button class="btn ok" onclick="approve('dc3','Linked as caregiver of KH-0089 (health.client.relation)')"><span class="ic ic-check"></span>Confirm link</button>
+            <button class="btn" onclick="approve('dc3','Kept as separate new contact'); this.closest('.dc').classList.add('rejected')"><span class="ic ic-user"></span>Keep separate</button>
+            <button class="btn" onclick="openSheet()"><span class="ic ic-eye"></span>Open thread</button>
+            <span class="sp"></span>
+            <button class="btn gray" onclick="reject('dc3')">Dismiss</button>
+          </div>
+          </div>
+          <div class="donebar"><span class="ic ic-check"></span><span class="dtxt">Done</span></div>
+        </div>
+
+        <!-- 4. new lead reply -->
+        <div class="dc" id="dc4">
+          <div class="dc-bodywrap">
+          <div class="dc-head">
+            <span class="ava" style="--av:#7c3aed">H</span>
+            <div class="dc-who">
+              <div class="dc-nm">Hương Giang <span class="chip new">New — Messenger</span></div>
+              <div class="dc-sub">Page “Việt Úc Care” · asking price for post-natal package · Quận 7</div>
+            </div>
+            <span class="chan" style="--chv:var(--ch-fb)"><span class="ic ic-chat"></span>Messenger</span>
+            <span class="conf"><span>90%</span><span class="confbar"><i style="width:90%"></i></span></span>
+          </div>
+          <div class="why"><span class="ic ic-spark"></span>
+            <span><b>Why:</b> classic price inquiry — I drafted the approved price answer + a phone ask, and staged a <b>Lead</b> (interest: post-natal · area: Quận 7) that is created only if you approve. <span class="src" onclick="toast('Source: Messenger 11:02 + price book v12')">1 source ›</span></span>
+          </div>
+          <div class="prop">
+            <div class="pv-label"><span class="ic ic-chat"></span>Reply + lead it will create</div>
+            <div class="zbub" style="background:var(--ch-fb);border-color:var(--ch-fb)">Chào chị! Gói chăm sóc mẹ &amp; bé sau sinh tại Quận 7 bắt đầu từ <b>1.2M ₫/buổi</b> (điều dưỡng nhi đến nhà). Em gửi bảng chi tiết ngay nhé. Chị cho em xin số điện thoại để tư vấn nhanh hơn ạ?</div>
+            <div class="zmeta"><span class="ic ic-bolt2"></span>+ creates Lead “Hương Giang · post-natal · Q7” assigned to you</div>
+          </div>
+          <div class="dc-act">
+            <button class="btn ok" onclick="approve('dc4','Reply sent + Lead created')"><span class="ic ic-check"></span>Approve both</button>
+            <button class="btn" onclick="toggleEdit('dc4')"><span class="ic ic-edit"></span>Edit</button>
+            <button class="btn" onclick="openSheet()"><span class="ic ic-eye"></span>Open thread</button>
+            <span class="sp"></span>
+            <button class="btn gray" onclick="reject('dc4')">Dismiss</button>
+          </div>
+          </div>
+          <div class="donebar"><span class="ic ic-check"></span><span class="dtxt">Done</span></div>
+        </div>
+
+        <!-- 5. callback -->
+        <div class="dc" id="dc5">
+          <div class="dc-bodywrap">
+          <div class="dc-head">
+            <span class="ava" style="--av:#0f766e">VP</span>
+            <div class="dc-who">
+              <div class="dc-nm">Vũ Đình Phúc <span class="chip client">Client · KH-0117</span></div>
+              <div class="dc-sub">Missed call 10:42 (rang 28s) · 8 bookings · physio weekly</div>
+            </div>
+            <span class="chan" style="--chv:var(--ch-call)"><span class="ic ic-phone"></span>VoIP24h</span>
+          </div>
+          <div class="why"><span class="ic ic-spark"></span>
+            <span><b>Why:</b> he calls about rescheduling 80% of the time. His Thursday physio clashes with a public holiday next week. I suggest calling back before <b>11:30</b> and offering Wed 14:00 or Fri 09:00 — both free for Y tá Hạnh. <span class="src" onclick="toast('Sources: voip.call.log 10:42 + booking history + holiday calendar')">3 sources ›</span></span>
+          </div>
+          <div class="dc-act">
+            <button class="btn ok" onclick="approve('dc5','Click-to-call started — talking points on screen')"><span class="ic ic-phone"></span>Call now</button>
+            <button class="btn" onclick="toast('Callback scheduled 11:30 with reminder')"><span class="ic ic-clock"></span>Schedule 11:30</button>
+            <button class="btn" onclick="openSheet()"><span class="ic ic-eye"></span>History</button>
+            <span class="sp"></span>
+            <button class="btn gray" onclick="reject('dc5')">Dismiss</button>
+          </div>
+          </div>
+          <div class="donebar"><span class="ic ic-check"></span><span class="dtxt">Done</span></div>
+        </div>
+
+        <!-- 6. english reply -->
+        <div class="dc" id="dc6">
+          <div class="dc-bodywrap">
+          <div class="dc-head">
+            <span class="ava" style="--av:#16a34a">DM</span>
+            <div class="dc-who">
+              <div class="dc-nm">David Miller <span class="chip new">New — English</span></div>
+              <div class="dc-sub">WhatsApp · at-home physiotherapy · District 2</div>
+            </div>
+            <span class="chan" style="--chv:var(--ch-wa)"><span class="ic ic-chat"></span>WhatsApp</span>
+            <span class="conf"><span>88%</span><span class="confbar"><i style="width:88%"></i></span></span>
+          </div>
+          <div class="why"><span class="ic ic-spark"></span>
+            <span><b>Why:</b> English speaker — I drafted in English (we cover District 2 with 2 physio nurses). Staged as Lead. <span class="src" onclick="toast('Source: WhatsApp 10:51')">1 source ›</span></span>
+          </div>
+          <div class="prop">
+            <div class="pv-label"><span class="ic ic-chat"></span>Reply (English)</div>
+            <div class="zbub" style="background:var(--ch-wa);border-color:var(--ch-wa)">Hi David! Yes — we provide at-home physiotherapy in District 2 (Thảo Điền &amp; An Phú). Sessions from 950k ₫, English-speaking coordinator available. Could I ask what condition we'd be supporting, so I match the right therapist?</div>
+          </div>
+          <div class="dc-act">
+            <button class="btn ok" onclick="approve('dc6','Reply sent via WhatsApp + Lead created')"><span class="ic ic-check"></span>Approve &amp; send</button>
+            <button class="btn" onclick="toggleEdit('dc6')"><span class="ic ic-edit"></span>Edit</button>
+            <span class="sp"></span>
+            <button class="btn gray" onclick="reject('dc6')">Dismiss</button>
+          </div>
+          </div>
+          <div class="donebar"><span class="ic ic-check"></span><span class="dtxt">Done</span></div>
+        </div>
+
+        <!-- 7. junk batch -->
+        <div class="dc" id="dc7">
+          <div class="dc-bodywrap">
+          <div class="dc-head">
+            <span class="ava" style="--av:#98a0b6"><span class="ic ic-ban" style="width:15px;height:15px"></span></span>
+            <div class="dc-who">
+              <div class="dc-nm">Junk batch <span class="chip junk" style="background:#eef0f5;color:var(--faint)">9 conversations</span></div>
+              <div class="dc-sub">Spam patterns · ad broadcasts · crypto — nothing archived until you confirm</div>
+            </div>
+          </div>
+          <div class="junklist">
+            <div class="jrow" style="--chv:var(--ch-tg)"><span class="ic ic-chat"></span><span class="jn">“Crypto VIP signals”</span><span class="jr">Telegram · repeated broadcast · 96%</span></div>
+            <div class="jrow" style="--chv:var(--ch-wa)"><span class="ic ic-chat"></span><span class="jn">+84 90 645 8190</span><span class="jr">WhatsApp · ad template · 91%</span></div>
+            <div class="jrow" style="--chv:var(--ch-fb)"><span class="ic ic-chat"></span><span class="jn">“Giảm cân cấp tốc 7 ngày”</span><span class="jr">Messenger · link farm · 95%</span></div>
+            <div class="jmore" onclick="toast('6 more junk-likely rows would expand')">Show 6 more…</div>
+          </div>
+          <div class="dc-act">
+            <button class="btn ok" onclick="approve('dc7','9 marked junk (contact_status = spam) — reversible from Spam tab')"><span class="ic ic-check"></span>Confirm all 9</button>
+            <button class="btn" onclick="toast('Review mode: step through each junk candidate')"><span class="ic ic-eye"></span>Review one by one</button>
+            <span class="sp"></span>
+            <button class="btn gray" onclick="reject('dc7')">Not now</button>
+          </div>
+          </div>
+          <div class="donebar"><span class="ic ic-check"></span><span class="dtxt">Done</span></div>
+        </div>
+
+        <div class="sechead safe" style="margin-top:14px"><span class="ic ic-check"></span>Routine — high confidence <span class="n">12</span></div>
+
+        <!-- high-confidence band -->
+        <div class="band" id="band">
+          <div class="b-top">
+            <div class="ic-wrap"><span class="ic ic-check"></span></div>
+            <div>
+              <h3>12 routine replies ready — greetings, price cards, directions, confirmations</h3>
+              <p>All use approved templates, all consent-checked. Tap a row to preview any of them first.</p>
+            </div>
+            <button class="btn ok" onclick="approve12()"><span class="ic ic-check"></span>Approve all 12</button>
+            <button class="btn" onclick="document.getElementById('band').classList.toggle('open')"><span class="ic ic-down"></span></button>
+          </div>
+          <div class="bandlist">
+            <div class="bl-row" style="--chv:var(--ch-zalo)"><span class="ic ic-chat"></span><span class="n">Phương</span><span class="p">“Cảm ơn chị đã quan tâm, bảng giá đây ạ…”</span><span class="peek" onclick="toast('Preview would open')">preview</span></div>
+            <div class="bl-row" style="--chv:var(--ch-zalo)"><span class="ic ic-chat"></span><span class="n">Đoàn</span><span class="p">“Dạ văn phòng em ở 233 Nguyễn Văn Cừ…”</span><span class="peek" onclick="toast('Preview would open')">preview</span></div>
+            <div class="bl-row" style="--chv:var(--ch-fb)"><span class="ic ic-chat"></span><span class="n">KH Ho</span><span class="p">“Dạ lịch của mình được xác nhận ngày mai…”</span><span class="peek" onclick="toast('Preview would open')">preview</span></div>
+            <div class="bl-row" style="--chv:var(--ch-wa)"><span class="ic ic-chat"></span><span class="n">Hoàng</span><span class="p">“Giờ làm việc của bên em từ 7:30–20:00…”</span><span class="peek" onclick="toast('Preview would open')">preview</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============ AI ledger (supervisor peek) ============ -->
+      <aside class="ledger">
+        <div class="lcard">
+          <h4><span class="ic ic-shield"></span>AI ledger — today</h4>
+          <div class="ring">
+            <div class="ringviz"><b>92%</b></div>
+            <p><b>Source coverage.</b> 92% of drafted claims cite an inspectable event; the rest are marked “Unknown”, never guessed.</p>
+          </div>
+          <div class="lrow"><span class="k">Drafts approved as-is</span><span class="v ok">74%</span></div>
+          <div class="lrow"><span class="k">Approved after edit</span><span class="v">21%</span></div>
+          <div class="lrow"><span class="k">Rejected</span><span class="v warn">5%</span></div>
+          <div class="lrow"><span class="k">Sent without human</span><span class="v ok">0 — by design</span></div>
+        </div>
+        <div class="lcard">
+          <h4><span class="ic ic-users"></span>Team (supervisor peek)</h4>
+          <div class="lrow"><span class="k">Vy (you)</span><span class="v">7 pending</span></div>
+          <div class="lrow"><span class="k">Quang</span><span class="v">3 pending</span></div>
+          <div class="lrow"><span class="k">Mai</span><span class="v warn">14 pending · aging</span></div>
+          <div class="lrow"><span class="k">Unassigned pool</span><span class="v warn">4 · oldest 26m</span></div>
+        </div>
+        <div class="lcard">
+          <h4><span class="ic ic-bolt2"></span>Capability switches</h4>
+          <div class="kswitch"><span>Draft replies</span><span class="tgl" onclick="toast('Manager-only in real build')"></span></div>
+          <div class="kswitch"><span>Propose bookings</span><span class="tgl" onclick="toast('Manager-only in real build')"></span></div>
+          <div class="kswitch"><span>Identity suggestions</span><span class="tgl" onclick="toast('Manager-only in real build')"></span></div>
+          <div class="kswitch off"><span>Auto-send greetings</span><span class="tgl" onclick="toast('Off — org policy: nothing auto-sends')"></span></div>
+          <div class="lnote">The AI declined to draft on 2 threads today (payment dispute, clinical complaint) — routed straight to humans.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- thread slide-over -->
+<div class="scrim" id="scrim" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-h">
+    <span class="ava" style="--av:#3451d1">LN</span>
+    <span class="t">Lan Nguyễn — full thread (all channels)</span>
+    <button class="xclose" onclick="closeSheet()"><span class="ic ic-x"></span></button>
+  </div>
+  <div class="sheet-b">
+    <div class="day">Yesterday</div>
+    <div class="evt" style="--chv:var(--ch-call)"><span class="ic ic-phone"></span>
+      <div><div class="ev-t">Incoming call · 4m 32s · answered by Vy</div><div class="ev-s">16:05 · recording available</div></div></div>
+    <div class="evt" style="--chv:var(--ch-zalo)"><span class="ic ic-send"></span>
+      <div><div class="ev-t">ZNS confirmation delivered</div><div class="ev-s">16:12 · “Home care visit — tomorrow 09:30, Y tá Hương”</div></div></div>
+    <div class="day">Today</div>
+    <div class="brow in"><div class="bub">Chào chị, bố tôi hôm nay chóng mặt nhiều hơn hôm qua.</div><div class="bmeta">08:40 · Zalo</div></div>
+    <div class="brow in"><div class="bub">Mai y tá đến sớm hơn được không chị?</div><div class="bmeta">08:41 · Zalo</div></div>
+    <div class="evt" style="--chv:var(--ai)"><span class="ic ic-spark"></span>
+      <div><div class="ev-t">AI flagged “chóng mặt nhiều hơn” — watchlist phrase</div><div class="ev-s">08:41 · escalation recommended, awaiting human decision</div></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="ic ic-check"></span><span id="toastTxt"></span></div>
+
+<script>
+let done=0, total=7;
+function bump(){
+  document.getElementById('pnum').textContent=`${done} / ${total} decisions`;
+  document.getElementById('pfill').style.width=(done/total*100)+'%';
+  if(done===total) toast('Feed clear. 31 conversations handled in a few minutes — nothing sent without you.');
+}
+function approve(id,msg){
+  const c=document.getElementById(id);
+  if(!c.classList.contains('done')){c.classList.add('done');done++;bump();}
+  c.querySelector('.dtxt').textContent=msg;
+  toast(msg);
+}
+function reject(id){
+  const c=document.getElementById(id);
+  if(!c.classList.contains('done')){c.classList.add('done','rejected');c.classList.add('rejected');done++;bump();}
+  c.querySelector('.dtxt').textContent='Dismissed — thread stays in your inbox';
+}
+function toggleEdit(id){
+  const c=document.getElementById(id);
+  c.classList.toggle('edit');
+  toast(c.classList.contains('edit')?'Editing the draft — your words, AI stands back':'Edit closed');
+}
+function pickSlot(el,val){
+  document.querySelectorAll('#slots .slot').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('slotV').textContent=val;
+  toast('Proposal message updated to '+val);
+}
+function approve12(){toast('12 routine replies sent across Zalo, Messenger, WhatsApp — all logged with your approval stamp')}
+function openSheet(){document.getElementById('sheet').classList.add('open');document.getElementById('scrim').classList.add('on')}
+function closeSheet(){document.getElementById('sheet').classList.remove('open');document.getElementById('scrim').classList.remove('on')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastTxt').textContent=msg;
+  t.classList.add('on');clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('on'),2800);
+}
+</script>
+</body>
+</html>

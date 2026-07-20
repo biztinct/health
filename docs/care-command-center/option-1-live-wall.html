@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care Command · Option 1 — Live Wall</title>
+<style>
+/* ============ tokens (Viet UC CMS light, flat mono) ============ */
+:root{
+  --navy:#1e2a5e; --navy-2:#28356e; --navy-3:#333f7d;
+  --bg:#f2f4f9; --card:#ffffff; --ink:#1b2340; --mut:#6a7189; --faint:#98a0b6;
+  --line:#e3e7f0; --line-2:#d3d9e7;
+  --accent:#3451d1; --accent-soft:#eaeefb;
+  --ok:#188554; --ok-soft:#e7f4ec;
+  --warn:#b76e00; --warn-soft:#fdf3e2;
+  --danger:#c62839; --danger-soft:#fbebed;
+  --ai:#6d28d9; --ai-soft:#f2ecfd;
+  --ch-zalo:#0068ff; --ch-call:#0f766e; --ch-wa:#16a34a; --ch-fb:#7c3aed;
+  --ch-tg:#0e9adf; --ch-web:#64748b; --ch-zns:#0068ff; --ch-email:#b45309;
+  --r:10px; --r-lg:14px;
+  --sh:0 1px 2px rgba(27,35,64,.06),0 4px 14px rgba(27,35,64,.06);
+  --sh-lg:0 8px 40px rgba(27,35,64,.22);
+  font-size:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--ink);font-size:13px;line-height:1.45;overflow:hidden}
+button{font:inherit;border:none;background:none;cursor:pointer;color:inherit}
+input{font:inherit;color:inherit}
+
+/* ============ icons (CSS-mask SVG, currentColor) ============ */
+.ic{display:inline-block;width:16px;height:16px;flex:none;background:currentColor;
+  -webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;vertical-align:-3px}
+.ic-chat{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/%3E%3C/svg%3E")}
+.ic-phone{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E")}
+.ic-cal{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E")}
+.ic-user{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E")}
+.ic-users{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E")}
+.ic-spark{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z'/%3E%3C/svg%3E")}
+.ic-check{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E")}
+.ic-x{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M18 6L6 18M6 6l12 12'/%3E%3C/svg%3E")}
+.ic-search{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E")}
+.ic-send{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 2L11 13M22 2l-7 20-4-9-9-4z'/%3E%3C/svg%3E")}
+.ic-bolt{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/%3E%3C/svg%3E")}
+.ic-clock{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 3'/%3E%3C/svg%3E")}
+.ic-shield{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E")}
+.ic-warn{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E")}
+.ic-grid{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Crect x='3' y='3' width='7' height='7' rx='1'/%3E%3Crect x='14' y='3' width='7' height='7' rx='1'/%3E%3Crect x='3' y='14' width='7' height='7' rx='1'/%3E%3Crect x='14' y='14' width='7' height='7' rx='1'/%3E%3C/svg%3E")}
+.ic-chart{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M7 15l4-6 4 3 5-8'/%3E%3C/svg%3E")}
+.ic-ban{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M5.6 5.6l12.8 12.8'/%3E%3C/svg%3E")}
+.ic-note{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 2v6h6M9 13h6M9 17h6'/%3E%3C/svg%3E")}
+.ic-mic{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='2' width='6' height='12' rx='3'/%3E%3Cpath d='M5 10v1a7 7 0 0 0 14 0v-1M12 18v4'/%3E%3C/svg%3E")}
+.ic-arrow{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M12 5l7 7-7 7'/%3E%3C/svg%3E")}
+.ic-eye{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")}
+.ic-plus{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E")}
+
+/* ============ app frame ============ */
+.app{display:flex;height:100vh}
+.rail{width:64px;background:var(--navy);display:flex;flex-direction:column;align-items:center;
+  padding:12px 0;gap:6px;flex:none}
+.rail .logo{width:38px;height:38px;border-radius:10px;background:#e0344a;color:#fff;display:flex;
+  align-items:center;justify-content:center;font-weight:800;font-size:13px;letter-spacing:.5px;margin-bottom:10px}
+.rail button{width:42px;height:42px;border-radius:10px;color:#aab3d6;display:flex;align-items:center;justify-content:center}
+.rail button .ic{width:19px;height:19px}
+.rail button:hover{background:var(--navy-2);color:#fff}
+.rail button.on{background:var(--navy-3);color:#fff;position:relative}
+.rail button.on::before{content:"";position:absolute;left:-11px;top:9px;bottom:9px;width:3px;border-radius:2px;background:#e0344a}
+.rail .spacer{flex:1}
+.rail .me{width:34px;height:34px;border-radius:50%;background:#4a5aa8;color:#fff;display:flex;
+  align-items:center;justify-content:center;font-weight:700;font-size:12px}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* ============ top bar ============ */
+.top{height:58px;background:var(--card);border-bottom:1px solid var(--line);display:flex;
+  align-items:center;gap:16px;padding:0 18px;flex:none}
+.top .title{display:flex;align-items:baseline;gap:10px;flex:none}
+.top .title h1{font-size:15px;font-weight:700}
+.top .title .sub{font-size:11px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:5px;
+  animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* now-ticker */
+.ticker{flex:1;min-width:0;overflow:hidden;position:relative;height:34px;border:1px solid var(--line);
+  border-radius:8px;background:var(--bg)}
+.ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:26px;z-index:2;pointer-events:none}
+.ticker::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.ticker::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent)}
+.ticker-track{display:flex;gap:8px;align-items:center;height:100%;padding:0 10px;width:max-content;
+  animation:tick 46s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--mut);background:var(--card);
+  border:1px solid var(--line);border-radius:7px;padding:3px 9px;white-space:nowrap;cursor:pointer}
+.tk:hover{border-color:var(--line-2);color:var(--ink)}
+.tk .ic{width:12px;height:12px}
+.tk b{color:var(--ink);font-weight:600}
+.tk.hot{border-color:var(--danger);color:var(--danger)}
+.tk.hot b{color:var(--danger)}
+
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px;flex:none}
+.seg button{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;color:var(--mut);display:flex;gap:6px;align-items:center}
+.seg button .ic{width:13px;height:13px}
+.seg button.on{background:var(--navy);color:#fff}
+.newbtn{flex:none;display:flex;align-items:center;gap:7px;background:var(--accent);color:#fff;font-weight:600;
+  font-size:12.5px;padding:8px 14px;border-radius:8px}
+.newbtn:hover{background:#2a44b4}
+.newbtn .ic{width:13px;height:13px}
+
+/* ============ wall ============ */
+.wallwrap{flex:1;overflow:auto;padding:16px 18px 8px}
+.wall-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.wall-head h2{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.8px}
+.wall-head .hint{font-size:11.5px;color:var(--faint)}
+.wall{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:126px;gap:12px}
+@media(max-width:1280px){.wall{grid-template-columns:repeat(4,1fr)}}
+
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;
+  position:relative;cursor:pointer;display:flex;flex-direction:column;gap:6px;overflow:hidden;
+  box-shadow:var(--sh);transition:transform .15s,box-shadow .15s,border-color .15s}
+.tile:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(27,35,64,.14);border-color:var(--line-2)}
+.tile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ch,var(--line-2))}
+.t-hero{grid-column:span 2;grid-row:span 2}
+.t-lg{grid-column:span 2;grid-row:span 2}
+.tile:not(.t-hero):not(.t-lg) .snippet{display:none}
+.tile.dim{opacity:.62;box-shadow:none}
+.tile.dim:hover{opacity:1}
+
+.t-top{display:flex;align-items:center;gap:8px;min-width:0}
+.ava{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:11.5px;color:#fff;background:var(--av,#7f8ab3)}
+.t-hero .ava{width:40px;height:40px;font-size:14px}
+.t-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-hero .t-name{font-size:15px}
+.t-who{min-width:0;flex:1}
+.t-sub{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;border-radius:6px;
+  padding:2px 7px;white-space:nowrap}
+.chip .ic{width:11px;height:11px}
+.chip.client{background:var(--ok-soft);color:var(--ok)}
+.chip.lead{background:var(--warn-soft);color:var(--warn)}
+.chip.new{background:var(--accent-soft);color:var(--accent)}
+.chip.junk{background:#eef0f5;color:var(--faint)}
+.chip.risk{background:var(--danger-soft);color:var(--danger)}
+.chip.ai{background:var(--ai-soft);color:var(--ai)}
+.chan{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--ch);flex:none}
+.chan .ic{width:12px;height:12px}
+.reason{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--ink)}
+.reason .ic{width:12px;height:12px;color:var(--mut)}
+.reason.hot{color:var(--danger)}
+.reason.hot .ic{color:var(--danger)}
+.snippet{font-size:12px;color:var(--mut);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;flex:1}
+.t-hero .snippet{-webkit-line-clamp:3;font-size:12.5px}
+.t-foot{display:flex;align-items:center;gap:8px;margin-top:auto}
+.t-time{font-size:11px;color:var(--faint);margin-left:auto;font-variant-numeric:tabular-nums}
+.owner{display:none;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--mut)}
+.owner i{width:18px;height:18px;border-radius:50%;background:var(--navy-2);color:#fff;font-style:normal;
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800}
+body.view-all .owner{display:inline-flex}
+body.view-all .tile.unclaimed{outline:2px dashed var(--warn);outline-offset:-2px}
+body.view-all .tile.unclaimed .owner{color:var(--warn)}
+
+/* typing dots */
+.typing{display:inline-flex;gap:3px;align-items:center;margin-left:6px}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--ch-zalo);animation:ty 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes ty{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+/* ringing tile */
+.tile.ringing{border-color:var(--ok);animation:ringswell 1.6s ease-in-out infinite}
+@keyframes ringswell{0%,100%{box-shadow:0 0 0 0 rgba(24,133,84,.32),var(--sh)}50%{box-shadow:0 0 0 12px rgba(24,133,84,0),var(--sh)}}
+.ringbar{display:flex;align-items:center;gap:8px}
+.ringbar .rb-ans{background:var(--ok);color:#fff;font-weight:700;font-size:12px;border-radius:8px;
+  padding:7px 14px;display:inline-flex;align-items:center;gap:6px}
+.ringbar .rb-ans:hover{background:#106b44}
+.ringbar .rb-dec{background:var(--danger-soft);color:var(--danger);font-weight:700;font-size:12px;
+  border-radius:8px;padding:7px 12px}
+.bloom{border-top:1px dashed var(--line);margin-top:2px;padding-top:8px;display:flex;flex-direction:column;gap:5px}
+.bloom .bl{display:flex;gap:7px;align-items:center;font-size:11.5px;color:var(--mut)}
+.bloom .bl .ic{width:12px;height:12px;color:var(--faint)}
+.bloom .bl b{color:var(--ink);font-weight:600}
+.pulse-ic{animation:shake 1.1s infinite}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(11deg)}60%{transform:rotate(-7deg)}80%{transform:rotate(4deg)}}
+
+/* junk zone */
+.junklab{grid-column:span 2;display:flex;align-items:center;gap:8px;color:var(--faint);font-size:11px;
+  font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding-left:2px;align-self:end}
+.junklab .ic{width:12px;height:12px}
+
+/* ============ dock ============ */
+.dock{flex:none;background:var(--card);border-top:1px solid var(--line);padding:9px 18px;display:flex;
+  align-items:center;gap:14px}
+.dock .dk-lab{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.7px;flex:none}
+.dockchips{display:flex;gap:8px;flex:1;min-width:0;overflow-x:auto}
+.dchip{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:8px;padding:5px 10px;
+  font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;background:var(--bg)}
+.dchip:hover{border-color:var(--accent);color:var(--accent)}
+.dchip .dot{width:7px;height:7px;border-radius:50%;background:var(--ch)}
+.teambar{display:flex;gap:12px;align-items:center;flex:none;border-left:1px solid var(--line);padding-left:14px}
+.tb{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mut)}
+.tb i{width:20px;height:20px;border-radius:50%;background:var(--navy-2);color:#fff;font-style:normal;font-weight:800;
+  font-size:9px;display:flex;align-items:center;justify-content:center}
+.tb .load{width:44px;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.tb .load span{display:block;height:100%;background:var(--ok)}
+.tb.hi .load span{background:var(--danger)}
+
+/* ============ expanded overlay ============ */
+.ovl{position:fixed;inset:0;background:rgba(20,26,52,.45);display:none;z-index:50;
+  align-items:center;justify-content:center;padding:26px}
+.ovl.open{display:flex}
+.exp{background:var(--card);border-radius:16px;box-shadow:var(--sh-lg);width:min(1120px,100%);
+  height:min(720px,100%);display:flex;flex-direction:column;overflow:hidden;animation:pop .18s ease}
+@keyframes pop{from{transform:scale(.97);opacity:0}to{transform:scale(1);opacity:1}}
+.exp-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);flex:none}
+.exp-head .ava{width:40px;height:40px;font-size:14px}
+.exp-title{flex:1;min-width:0}
+.exp-title .nm{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.exp-title .rel{font-size:12px;color:var(--mut);margin-top:2px}
+.exp-title .rel b{color:var(--ink)}
+.actrow{display:flex;gap:7px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.abtn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:8px;
+  padding:7px 12px;border:1px solid var(--line);color:var(--ink);background:var(--card)}
+.abtn .ic{width:13px;height:13px}
+.abtn:hover{border-color:var(--accent);color:var(--accent)}
+.abtn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.abtn.pri:hover{background:#2a44b4;color:#fff}
+.abtn.gray{color:var(--mut)}
+.abtn.gray:hover{border-color:var(--faint);color:var(--mut)}
+.xclose{width:34px;height:34px;border-radius:8px;color:var(--mut);display:flex;align-items:center;justify-content:center;flex:none}
+.xclose:hover{background:var(--bg);color:var(--ink)}
+
+.exp-body{flex:1;display:flex;min-height:0}
+.thread{flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line)}
+.msgs{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.msgs>*{flex:none}
+.day{align-self:center;font-size:10.5px;font-weight:700;color:var(--faint);background:var(--card);
+  border:1px solid var(--line);border-radius:20px;padding:2px 12px;text-transform:uppercase;letter-spacing:.6px;margin:4px 0}
+.brow{display:flex;flex-direction:column;max-width:72%;gap:3px}
+.brow.in{align-self:flex-start}
+.brow.out{align-self:flex-end;align-items:flex-end}
+.bub{padding:8px 12px;border-radius:12px;font-size:13px;background:var(--card);border:1px solid var(--line)}
+.brow.in .bub{border-bottom-left-radius:4px}
+.brow.out .bub{background:var(--accent);color:#fff;border-color:var(--accent);border-bottom-right-radius:4px}
+.bmeta{font-size:10.5px;color:var(--faint);display:flex;gap:6px;align-items:center}
+.bmeta .ic{width:10px;height:10px}
+.evt{align-self:stretch;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--ch,var(--line-2));
+  border-radius:10px;padding:9px 12px;display:flex;gap:10px;align-items:center;font-size:12px}
+.evt .ic{width:15px;height:15px;color:var(--ch,var(--mut));flex:none}
+.evt .ev-main{flex:1;min-width:0}
+.evt .ev-t{font-weight:700}
+.evt .ev-s{color:var(--mut);font-size:11.5px}
+.evt .play{font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent-soft);
+  background:var(--accent-soft);border-radius:6px;padding:3px 9px;flex:none}
+
+/* composer */
+.comp{flex:none;border-top:1px solid var(--line);padding:10px 14px;display:flex;flex-direction:column;gap:8px;background:var(--card)}
+.aisug{display:flex;gap:8px;align-items:flex-start;background:var(--ai-soft);border:1px solid #e2d6fb;
+  border-radius:10px;padding:8px 11px;font-size:12px}
+.aisug .ic{color:var(--ai);width:14px;height:14px;margin-top:1px}
+.aisug .txt{flex:1;color:var(--ink)}
+.aisug .use{font-size:11px;font-weight:700;color:var(--ai);flex:none}
+.aisug .use:hover{text-decoration:underline}
+.comp-row{display:flex;gap:8px;align-items:flex-end}
+.comp-box{flex:1;border:1px solid var(--line-2);border-radius:10px;padding:8px 12px;min-height:38px;font-size:13px;
+  color:var(--faint);display:flex;align-items:center;cursor:text}
+.comp-box:focus-within,.comp-box:hover{border-color:var(--accent)}
+.sendbtn{width:38px;height:38px;border-radius:10px;background:var(--accent);color:#fff;display:flex;
+  align-items:center;justify-content:center;flex:none}
+.sendbtn:hover{background:#2a44b4}
+.comp-meta{display:flex;gap:10px;align-items:center;font-size:11px;color:var(--mut)}
+.comp-meta .via{display:inline-flex;gap:5px;align-items:center;font-weight:700;color:var(--ch-zalo)}
+.comp-meta .via .ic{width:12px;height:12px}
+.comp-meta .lock{display:inline-flex;gap:4px;align-items:center}
+.comp-meta .lock .ic{width:11px;height:11px}
+
+/* context col */
+.ctx{width:312px;flex:none;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.card{border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.card h4{font-size:10.5px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;
+  display:flex;align-items:center;gap:6px}
+.card h4 .ic{width:12px;height:12px}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:3px 0}
+.kv .k{color:var(--mut)}
+.kv .v{font-weight:600;text-align:right}
+.bk{display:flex;gap:9px;padding:7px 0;border-top:1px solid var(--line);font-size:12px;align-items:center}
+.bk:first-of-type{border-top:none}
+.bk .ic{width:13px;height:13px;color:var(--mut);flex:none}
+.bk .b-t{font-weight:600}
+.bk .b-s{color:var(--mut);font-size:11px}
+.bk .st{margin-left:auto;font-size:10px;font-weight:800;border-radius:5px;padding:2px 6px}
+.st.done{background:var(--ok-soft);color:var(--ok)}
+.st.next{background:var(--accent-soft);color:var(--accent)}
+.riskcard{border-color:#f3c8ce;background:var(--danger-soft)}
+.riskcard h4{color:var(--danger)}
+.riskcard p{font-size:12px;color:var(--ink)}
+.riskcard .abtn{margin-top:8px;border-color:var(--danger);color:var(--danger);font-size:11.5px;padding:5px 10px}
+.idcard{border-color:#cdd7f6;background:var(--accent-soft)}
+.idcard p{font-size:12px;margin-bottom:8px}
+.idrow{display:flex;gap:6px;flex-wrap:wrap}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);
+  color:#fff;font-size:12.5px;font-weight:600;border-radius:10px;padding:10px 18px;z-index:99;opacity:0;
+  transition:all .25s;display:flex;gap:8px;align-items:center;box-shadow:var(--sh-lg)}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.toast .ic{width:14px;height:14px;color:#7ee2ae}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- CMS icon rail -->
+  <aside class="rail">
+    <div class="logo">VU</div>
+    <button title="Dashboard"><span class="ic ic-grid"></span></button>
+    <button class="on" title="Care Command"><span class="ic ic-bolt"></span></button>
+    <button title="Bookings"><span class="ic ic-cal"></span></button>
+    <button title="Clients"><span class="ic ic-users"></span></button>
+    <button title="Reports"><span class="ic ic-chart"></span></button>
+    <div class="spacer"></div>
+    <div class="me" title="Vy — online">VY</div>
+  </aside>
+
+  <div class="main">
+    <!-- top bar -->
+    <header class="top">
+      <div class="title">
+        <h1><span class="live-dot"></span>Care Command</h1>
+        <span class="sub">Live Wall</span>
+      </div>
+
+      <div class="ticker" title="Live events — click to jump">
+        <div class="ticker-track" id="tickerTrack"></div>
+      </div>
+
+      <div class="seg" id="viewSeg">
+        <button class="on" data-view="mine"><span class="ic ic-user"></span>My wall</button>
+        <button data-view="all"><span class="ic ic-users"></span>Everyone</button>
+      </div>
+      <button class="newbtn" onclick="toast('New Contact form would open (existing CRM flow)')"><span class="ic ic-plus"></span>New Contact</button>
+    </header>
+
+    <!-- wall -->
+    <div class="wallwrap">
+      <div class="wall-head">
+        <h2>Now on the wall · 18 conversations</h2>
+        <span class="hint">Tile size = urgency × value · it reorganises itself live · click a tile to work it</span>
+      </div>
+      <div class="wall" id="wall"></div>
+    </div>
+
+    <!-- dock -->
+    <footer class="dock">
+      <span class="dk-lab">My dock</span>
+      <div class="dockchips">
+        <div class="dchip" style="--ch:var(--ch-zalo)" onclick="openConv('lan')"><span class="dot"></span>Lan Nguyễn · replying</div>
+        <div class="dchip" style="--ch:var(--ch-call)" onclick="openConv('phuc')"><span class="dot"></span>Vũ Đình Phúc · callback 11:30</div>
+        <div class="dchip" style="--ch:var(--ch-web)" onclick="openConv('ngocanh')"><span class="dot"></span>Ngọc Ánh · booking draft</div>
+      </div>
+      <div class="teambar" title="Team load (supervisor peek)">
+        <span class="tb"><i>VY</i>me<span class="load"><span style="width:62%"></span></span></span>
+        <span class="tb"><i>QU</i>Quang<span class="load"><span style="width:38%"></span></span></span>
+        <span class="tb hi"><i>MA</i>Mai<span class="load"><span style="width:91%"></span></span></span>
+        <span class="tb"><i>TH</i>Thu<span class="load"><span style="width:22%"></span></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- expanded conversation overlay -->
+<div class="ovl" id="ovl" onclick="if(event.target===this)closeConv()">
+  <div class="exp" id="exp"></div>
+</div>
+
+<div class="toast" id="toast"><span class="ic ic-check"></span><span id="toastTxt"></span></div>
+
+<script>
+/* ---------------- mock data ---------------- */
+const CH = {
+  zalo:{label:'Zalo OA', v:'var(--ch-zalo)', ic:'ic-chat'},
+  call:{label:'VoIP24h', v:'var(--ch-call)', ic:'ic-phone'},
+  wa:{label:'WhatsApp', v:'var(--ch-wa)', ic:'ic-chat'},
+  fb:{label:'Messenger', v:'var(--ch-fb)', ic:'ic-chat'},
+  tg:{label:'Telegram', v:'var(--ch-tg)', ic:'ic-chat'},
+  web:{label:'Web chat', v:'var(--ch-web)', ic:'ic-chat'},
+  zns:{label:'ZNS', v:'var(--ch-zns)', ic:'ic-send'},
+  email:{label:'Email', v:'var(--ch-email)', ic:'ic-note'},
+};
+
+const TILES = [
+  {id:'ringing', size:'t-hero', ch:'call', ringing:true, av:'#0f766e', init:'VP',
+   name:'Vũ Đình Phúc', chip:['client','Client · KH-0117'],
+   sub:'0912 883 220 · matched automatically',
+   reason:['ic-phone','Incoming call — ringing now','hot'],
+   bloom:[
+     ['ic-user','Client since 2024 · <b>8 bookings</b> · Quận 3'],
+     ['ic-cal','Last visit: <b>physio · last Tue</b> (Y tá Hạnh)'],
+     ['ic-clock','Called and missed earlier today at <b>10:42</b>'],
+   ],
+   owner:'—', unclaimed:true, time:'now'},
+
+  {id:'lan', size:'t-lg', ch:'zalo', av:'#3451d1', init:'LN',
+   name:'Lan Nguyễn', chip:['client','Caregiver of KH-0203'], typing:true,
+   sub:'Daughter of Minh Trần · verified',
+   reason:['ic-warn','Booking in 18h · symptom worse','hot'],
+   snippet:'“Bố tôi hôm nay chóng mặt nhiều hơn hôm qua. Mai y tá đến sớm hơn được không chị?”',
+   bloom:[
+     ['ic-cal','Next: <b>tomorrow 09:30 · Y tá Hương</b> (home care)'],
+     ['ic-user','Patient: <b>Minh Trần · 74 · Quận 7</b> · 12 bookings'],
+     ['ic-warn','Watchlist phrase “chóng mặt nhiều hơn” — no escalation open'],
+   ],
+   owner:'VY', time:'2m'},
+
+  {id:'fb-lead', size:'t-lg', ch:'fb', av:'#7c3aed', init:'H',
+   name:'Hương Giang', chip:['new','New — not in system'],
+   sub:'via Facebook Page “Việt Úc Care”',
+   reason:['ic-bolt','New lead · first message · SLA 12m'],
+   snippet:'“Cho mình hỏi giá gói chăm sóc mẹ sau sinh ở Quận 7 với ạ. Bé nhà mình được 2 tuần.”',
+   bloom:[
+     ['ic-user','No phone yet — identity re-checks once she shares one'],
+     ['ic-bolt','Intent: <b>post-natal package · Quận 7</b>'],
+     ['ic-spark','AI: price-card reply drafted — open tile to review'],
+   ],
+   owner:'—', unclaimed:true, time:'4m'},
+
+  {id:'ngocanh', size:'t-lg', ch:'web', av:'#64748b', init:'NA',
+   name:'Ngọc Ánh', chip:['lead','Lead · 01 020452…'],
+   sub:'Website chatbox · asked twice this week',
+   reason:['ic-cal','Booking intent — vaccination for baby'],
+   snippet:'“Bên mình có tiêm chủng tại nhà cho bé 6 tháng không? Cuối tuần này được không?”',
+   bloom:[
+     ['ic-cal','Free weekend slots: <b>Sat 09:00 · Sat 15:30 · Sun 10:00</b>'],
+     ['ic-user','2nd inquiry this week — warm lead, assigned to you'],
+   ],
+   owner:'VY', time:'9m'},
+
+  {id:'david', size:'', ch:'wa', av:'#16a34a', init:'DM',
+   name:'David Miller', chip:['new','New — English'],
+   sub:'+61 4xx via WhatsApp',
+   reason:['ic-chat','Awaiting first reply · 21m'],
+   snippet:'“Hi — do you provide at-home physiotherapy in District 2?”',
+   owner:'—', unclaimed:true, time:'21m'},
+
+  {id:'phuc', size:'', ch:'call', av:'#0f766e', init:'VP',
+   name:'Vũ Đình Phúc', chip:['client','Client · KH-0117'],
+   sub:'Missed call 10:42',
+   reason:['ic-clock','Callback promised 11:30'],
+   snippet:'Auto-matched from 0912 883 220 · recording of last call attached.',
+   owner:'VY', time:'34m'},
+
+  {id:'tuyet', size:'', ch:'zalo', av:'#3451d1', init:'BT',
+   name:'Bà Tuyết', chip:['client','Client · KH-0089'],
+   sub:'Re-confirmed tomorrow 14:00',
+   reason:['ic-check','Waiting on us — send invoice'],
+   snippet:'“Chuyển khoản rồi nhé, chị kiểm tra giúp tôi.”',
+   owner:'MA', time:'48m'},
+
+  {id:'thanh', size:'', ch:'tg', av:'#0e9adf', init:'T',
+   name:'Thanh (Telegram)', chip:['lead','Lead'],
+   sub:'Asked about elderly day-care',
+   reason:['ic-chat','Waiting on customer · 2h'],
+   snippet:'Sent price list yesterday — no reply yet.',
+   owner:'QU', time:'2h'},
+
+  {id:'zns1', size:'t-sm', ch:'zns', av:'#0068ff', init:'Z',
+   name:'ZNS batch · reminders', chip:['ai','Automated'],
+   sub:'',
+   reason:['ic-send','12 delivered · 1 failed → retry email'],
+   owner:'—', time:'5m', dim:true},
+
+  {id:'khho', size:'t-sm', ch:'zalo', av:'#3451d1', init:'KH',
+   name:'KH Ho', chip:['lead','Lead'],
+   sub:'',
+   reason:['ic-clock','Follow-up due today'],
+   owner:'QU', time:'3h'},
+
+  {id:'satur', size:'t-sm', ch:'fb', av:'#7c3aed', init:'S',
+   name:'Satur', chip:['lead','Lead'],
+   sub:'',
+   reason:['ic-chat','Waiting on customer · 1d'],
+   owner:'MA', time:'1d', dim:true},
+
+  {id:'junk1', size:'t-sm', ch:'tg', av:'#98a0b6', init:'?',
+   name:'“Crypto VIP signals”', chip:['junk','Junk? 96%'],
+   sub:'',
+   reason:['ic-ban','AI: spam pattern — confirm'],
+   owner:'—', time:'6h', dim:true, junk:true},
+
+  {id:'phuong', size:'t-sm', ch:'zalo', av:'#3451d1', init:'P',
+   name:'Phương', chip:['lead','Lead'],
+   sub:'',
+   reason:['ic-chat','Asked for price list'],
+   owner:'VY', time:'42m'},
+
+  {id:'hoang', size:'t-sm', ch:'zalo', av:'#3451d1', init:'H',
+   name:'Hoàng', chip:['client','Booking'],
+   sub:'',
+   reason:['ic-check','Confirmed Fri 15:00'],
+   owner:'QU', time:'1h', dim:true},
+
+  {id:'doan', size:'t-sm', ch:'email', av:'#b45309', init:'Đ',
+   name:'Đoàn', chip:['lead','Lead'],
+   sub:'',
+   reason:['ic-chat','Email — needs reply'],
+   owner:'—', unclaimed:true, time:'2h'},
+
+  {id:'hoki', size:'t-sm', ch:'fb', av:'#7c3aed', init:'HK',
+   name:'Hồ Ki', chip:['client','Booking'],
+   sub:'',
+   reason:['ic-clock','Reschedule requested'],
+   owner:'MA', time:'3h'},
+
+  {id:'ladip', size:'t-sm', ch:'web', av:'#64748b', init:'L',
+   name:'Ladip', chip:['lead','Lead'],
+   sub:'',
+   reason:['ic-chat','Waiting on customer'],
+   owner:'MA', time:'1d', dim:true},
+
+  {id:'junk2', size:'t-sm', ch:'wa', av:'#98a0b6', init:'?',
+   name:'+84 90 645 8190', chip:['junk','Junk? 91%'],
+   sub:'',
+   reason:['ic-ban','Repeated ad broadcast'],
+   owner:'—', time:'8h', dim:true, junk:true},
+];
+
+const TICKS = [
+  ['ic-phone','<b>Ringing</b> · 0912 883 220 → Vũ Đình Phúc (KH-0117)','hot','ringing'],
+  ['ic-chat','Lan Nguyễn is <b>typing</b> on Zalo…','','lan'],
+  ['ic-check','<b>Booking confirmed</b> · Bà Tuyết · tomorrow 14:00','','tuyet'],
+  ['ic-send','ZNS reminder <b>delivered</b> · 12 of 13','','zns1'],
+  ['ic-bolt','<b>New lead</b> · Messenger · “gói chăm sóc mẹ sau sinh”','','fb-lead'],
+  ['ic-clock','Callback due <b>11:30</b> · Vũ Đình Phúc','','phuc'],
+  ['ic-warn','Symptom flag · <b>“chóng mặt nhiều hơn”</b> · KH-0203','hot','lan'],
+];
+
+/* ---------------- conversation payloads ---------------- */
+const CONVS = {
+  lan:{
+    init:'LN', av:'#3451d1', name:'Lan Nguyễn',
+    chips:[['client','Caregiver'],['ai','Verified daughter of Minh Trần · KH-0203']],
+    rel:'Speaking <b>for her father Minh Trần</b> (74 · Quận 7) — she is not the patient.',
+    msgs:[
+      {day:'Yesterday'},
+      {evt:'call', t:'Incoming call · 4m 32s · answered by Vy', s:'16:05 · recording available', play:true},
+      {evt:'zns', t:'ZNS booking confirmation delivered', s:'16:12 · “Home care visit — tomorrow 09:30, Y tá Hương”'},
+      {day:'Today'},
+      {in:'Chào chị, bố tôi hôm nay chóng mặt nhiều hơn hôm qua.', m:'08:40 · Zalo'},
+      {in:'Mai y tá đến sớm hơn được không chị?', m:'08:41 · Zalo'},
+    ],
+    ai:'Suggested (VN): “Dạ chào chị Lan, em đã ghi nhận tình trạng của bác. Em có thể đổi lịch y tá Hương sang <b>8:00 sáng mai</b> — chị xác nhận giúp em nhé. Nếu bác chóng mặt nặng hơn hôm nay, chị gọi ngay hotline để bên em hỗ trợ ạ.”',
+    ctx:[
+      {type:'risk', title:'Safety signal', body:'“chóng mặt nhiều hơn” — worsening-symptom phrase detected. No escalation open.', btn:'Escalate to clinical queue'},
+      {type:'kv', title:'Patient — Minh Trần', rows:[['Code','KH-0203'],['Age · Area','74 · Quận 7'],['Consent','Zalo ✓ · Family updates ✓'],['Caregiver','Lan (daughter, verified)']]},
+      {type:'bk', title:'Bookings', rows:[
+        ['ic-cal','Home care · tomorrow 09:30','Y tá Hương · recurring','next'],
+        ['ic-check','Home care · last Fri','Completed · no issues','done'],
+        ['ic-check','Physio assessment · 02 Jul','Completed','done'],
+      ], foot:'12 lifetime bookings · 41.5M ₫'},
+    ],
+    via:'zalo'
+  },
+  ringing:{
+    init:'VP', av:'#0f766e', name:'Vũ Đình Phúc',
+    chips:[['client','Client · KH-0117'],['risk','Ringing — 00:07']],
+    rel:'Calling from <b>0912 883 220</b> — his registered mobile. Second call today (missed 10:42).',
+    msgs:[
+      {day:'Today'},
+      {evt:'call', t:'Missed call · rang 28s', s:'10:42 · no answer — callback promised 11:30'},
+      {evt:'call', t:'Incoming call — ringing now', s:'Live · pick up to talk', play:false},
+    ],
+    ai:'Context bloom: he usually calls about rescheduling physio. Last visit last Tue went well; invoice fully paid. If he asks to move this week’s visit, Thu slots free: Wed 14:00 · Fri 09:00.',
+    ctx:[
+      {type:'kv', title:'Client', rows:[['Code','KH-0117'],['Area','Quận 3'],['Preferred','Phone · Vietnamese'],['Payer','Self']]},
+      {type:'bk', title:'Bookings', rows:[
+        ['ic-cal','Physio · Thu 15:00','Y tá Hạnh · weekly','next'],
+        ['ic-check','Physio · last Tue','Completed','done'],
+      ], foot:'8 lifetime bookings · 18.2M ₫'},
+    ],
+    via:'call'
+  },
+  'fb-lead':{
+    init:'H', av:'#7c3aed', name:'Hương Giang',
+    chips:[['new','Not in system'],['lead','Messenger lead']],
+    rel:'First contact via Facebook Page <b>“Việt Úc Care”</b>. No phone number yet.',
+    msgs:[
+      {day:'Today'},
+      {in:'Cho mình hỏi giá gói chăm sóc mẹ sau sinh ở Quận 7 với ạ. Bé nhà mình được 2 tuần.', m:'11:02 · Messenger'},
+    ],
+    ai:'Suggested (VN): “Chào chị! Gói chăm sóc mẹ & bé sau sinh tại Quận 7 bắt đầu từ <b>1.2M ₫/buổi</b> (điều dưỡng nhi). Em gửi bảng chi tiết nhé — chị cho em xin số điện thoại để tư vấn nhanh hơn ạ?” · Also: ask for phone → convert to Lead.',
+    ctx:[
+      {type:'id', title:'Identity', body:'No match on Messenger PSID. When she shares a phone number, Care Command will re-check against clients & caregivers automatically.'},
+      {type:'kv', title:'Suggested classification', rows:[['Intent','Post-natal care package'],['Area','Quận 7'],['Language','Vietnamese'],['Next step','Create Lead + send price card']]},
+    ],
+    via:'fb'
+  },
+  ngocanh:{
+    init:'NA', av:'#64748b', name:'Ngọc Ánh',
+    chips:[['lead','Lead · 01 020452…']],
+    rel:'Website chatbox · asked about home vaccination <b>twice this week</b>.',
+    msgs:[
+      {day:'Tue'},
+      {in:'Bên mình có tiêm chủng tại nhà không ạ?', m:'Tue 20:15 · Web chat'},
+      {out:'Dạ có ạ! Bên em có gói tiêm chủng tại nhà cho bé. Chị cho em xin tuổi của bé nhé?', m:'Tue 20:20 · Vy'},
+      {day:'Today'},
+      {in:'Bé nhà mình 6 tháng. Cuối tuần này được không?', m:'09:12 · Web chat'},
+    ],
+    ai:'Booking intent detected. Free weekend nurse slots (vaccination, Quận 2 area): <b>Sat 09:00 · Sat 15:30 · Sun 10:00</b>. Draft a booking proposal?',
+    ctx:[
+      {type:'kv', title:'Lead', rows:[['Status','Lead — pending follow-up'],['Interest','Infant vaccination · 6mo'],['Channel','Web chat'],['Agent','Vy']]},
+    ],
+    via:'web'
+  },
+  generic:{
+    init:'—', av:'#7f8ab3', name:'Conversation',
+    chips:[['lead','Lead']],
+    rel:'Cross-channel history for this contact.',
+    msgs:[{day:'Today'},{in:'…', m:'earlier'}],
+    ai:'AI context brief appears here.',
+    ctx:[{type:'kv', title:'Contact', rows:[['Status','Lead'],['Channel','—']]}],
+    via:'zalo'
+  }
+};
+
+/* ---------------- render wall ---------------- */
+const wall = document.getElementById('wall');
+function chipHTML([cls,txt]){return `<span class="chip ${cls}">${txt}</span>`}
+function renderWall(){
+  let html='';
+  TILES.forEach(t=>{
+    if(t.junkHeaderBefore) html+='';
+    const ch=CH[t.ch];
+    html+=`<div class="tile ${t.size||''} ${t.ringing?'ringing':''} ${t.dim?'dim':''} ${t.unclaimed?'unclaimed':''}"
+      style="--ch:${ch.v}" onclick="openConv('${CONVS[t.id]?t.id:'generic'}')">
+      <div class="t-top">
+        <span class="ava" style="--av:${t.av}">${t.init}</span>
+        <div class="t-who">
+          <div class="t-name">${t.name}${t.typing?'<span class="typing"><i></i><i></i><i></i></span>':''}</div>
+          ${t.sub?`<div class="t-sub">${t.sub}</div>`:''}
+        </div>
+        <span class="chan" style="--ch:${ch.v}"><span class="ic ${ch.ic} ${t.ringing?'pulse-ic':''}"></span>${ch.label}</span>
+      </div>
+      <div class="reason ${t.reason[2]||''}"><span class="ic ${t.reason[0]}"></span>${t.reason[1]}</div>
+      ${t.snippet?`<div class="snippet">${t.snippet}</div>`:''}
+      ${t.bloom?`<div class="bloom">${t.bloom.map(b=>`<div class="bl"><span class="ic ${b[0]}"></span><span>${b[1]}</span></div>`).join('')}</div>`:''}
+      ${t.ringing?`<div class="ringbar">
+          <button class="rb-ans" onclick="event.stopPropagation();toast('Call answered — calm mode would engage')"><span class="ic ic-phone"></span>Answer</button>
+          <button class="rb-dec" onclick="event.stopPropagation();toast('Sent to voicemail + callback task created')">Voicemail</button>
+        </div>`:''}
+      <div class="t-foot">
+        ${chipHTML(t.chip)}
+        <span class="owner">${t.owner==='—'?'<span class="ic ic-warn" style="width:11px;height:11px"></span> unclaimed':`<i>${t.owner}</i>`}</span>
+        <span class="t-time">${t.time}</span>
+      </div>
+    </div>`;
+  });
+  wall.innerHTML=html;
+}
+renderWall();
+
+/* ---------------- ticker ---------------- */
+const tt=document.getElementById('tickerTrack');
+const tks=[...TICKS,...TICKS]; // loop
+tt.innerHTML=tks.map(k=>`<span class="tk ${k[2]}" onclick="openConv('${CONVS[k[3]]?k[3]:'generic'}')"><span class="ic ${k[0]}"></span><span>${k[1]}</span></span>`).join('');
+
+/* ---------------- view toggle ---------------- */
+document.getElementById('viewSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#viewSeg button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.body.classList.toggle('view-all', b.dataset.view==='all');
+  toast(b.dataset.view==='all' ? 'Everyone view — ownership rings + unclaimed zone (supervisor peek)' : 'Back to my wall');
+});
+
+/* ---------------- expanded conversation ---------------- */
+const ovl=document.getElementById('ovl'), exp=document.getElementById('exp');
+function openConv(id){
+  const c=CONVS[id]||CONVS.generic;
+  const ch=CH[c.via];
+  exp.innerHTML=`
+    <div class="exp-head">
+      <span class="ava" style="--av:${c.av}">${c.init}</span>
+      <div class="exp-title">
+        <div class="nm">${c.name} ${c.chips.map(chipHTML).join('')}</div>
+        <div class="rel">${c.rel}</div>
+      </div>
+      <div class="actrow">
+        <button class="abtn pri" onclick="toast('Booking wizard would open (health.fieldservice.order)')"><span class="ic ic-cal"></span>Book</button>
+        <button class="abtn" onclick="toast('Lead created in CRM (crm.lead)')"><span class="ic ic-bolt"></span>Lead</button>
+        <button class="abtn" onclick="toast('Client record created (res.partner is_patient)')"><span class="ic ic-user"></span>Client</button>
+        <button class="abtn" onclick="toast('Activity logged (mail.activity)')"><span class="ic ic-note"></span>Log</button>
+        <button class="abtn" onclick="toast('Escalation wizard would open')"><span class="ic ic-warn"></span>Escalate</button>
+        <button class="abtn gray" onclick="toast('Marked as junk (contact_status = spam)')"><span class="ic ic-ban"></span>Junk</button>
+        <button class="xclose" onclick="closeConv()"><span class="ic ic-x"></span></button>
+      </div>
+    </div>
+    <div class="exp-body">
+      <div class="thread">
+        <div class="msgs">
+          ${c.msgs.map(m=>{
+            if(m.day) return `<div class="day">${m.day}</div>`;
+            if(m.evt){const ec=CH[m.evt];return `<div class="evt" style="--ch:${ec.v}">
+              <span class="ic ${ec.ic}"></span>
+              <div class="ev-main"><div class="ev-t">${m.t}</div><div class="ev-s">${m.s}</div></div>
+              ${m.play?'<button class="play" onclick="toast(\'Recording would play\')">▶ 4:32</button>':''}
+            </div>`;}
+            if(m.in) return `<div class="brow in"><div class="bub">${m.in}</div><div class="bmeta">${m.m}</div></div>`;
+            return `<div class="brow out"><div class="bub">${m.out}</div><div class="bmeta"><span class="ic ic-check"></span>${m.m}</div></div>`;
+          }).join('')}
+        </div>
+        <div class="comp">
+          <div class="aisug"><span class="ic ic-spark"></span><span class="txt">${c.ai}</span>
+            <button class="use" onclick="toast('Draft inserted into composer — edit before send')">Use draft</button></div>
+          <div class="comp-row">
+            <div class="comp-box" onclick="toast('Composer focused (mock)')">Reply to ${c.name.split(' ')[0]}…</div>
+            <button class="sendbtn" onclick="toast('Nothing sends without your tap — reply sent via ' + '${ch.label}')"><span class="ic ic-send"></span></button>
+          </div>
+          <div class="comp-meta">
+            <span class="via" style="--ch-zalo:${ch.v}"><span class="ic ${ch.ic}"></span>Replies via ${ch.label}</span>
+            <span class="lock"><span class="ic ic-shield"></span>Consent OK · PHI-safe template check on send</span>
+          </div>
+        </div>
+      </div>
+      <div class="ctx">
+        ${c.ctx.map(card=>{
+          if(card.type==='risk') return `<div class="card riskcard"><h4><span class="ic ic-warn"></span>${card.title}</h4><p>${card.body}</p><button class="abtn" onclick="toast('Escalation opened — clinical queue notified')"><span class="ic ic-warn"></span>${card.btn}</button></div>`;
+          if(card.type==='id') return `<div class="card idcard"><h4><span class="ic ic-user"></span>${card.title}</h4><p>${card.body}</p><div class="idrow"><button class="abtn" onclick="toast('Lead created')">Create Lead</button><button class="abtn gray" onclick="toast('Kept as unknown')">Keep unknown</button></div></div>`;
+          if(card.type==='bk') return `<div class="card"><h4><span class="ic ic-cal"></span>${card.title}</h4>
+            ${card.rows.map(r=>`<div class="bk"><span class="ic ${r[0]}"></span><div><div class="b-t">${r[1]}</div><div class="b-s">${r[2]}</div></div><span class="st ${r[3]}">${r[3]==='next'?'NEXT':'DONE'}</span></div>`).join('')}
+            ${card.foot?`<div class="kv" style="border-top:1px solid var(--line);margin-top:4px;padding-top:8px"><span class="k">History</span><span class="v">${card.foot}</span></div>`:''}</div>`;
+          return `<div class="card"><h4><span class="ic ic-user"></span>${card.title}</h4>
+            ${card.rows.map(r=>`<div class="kv"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('')}</div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  ovl.classList.add('open');
+}
+function closeConv(){ovl.classList.remove('open')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeConv()});
+
+/* ---------------- toast ---------------- */
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastTxt').textContent=msg;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('on'),2600);
+}
+</script>
+</body>
+</html>
