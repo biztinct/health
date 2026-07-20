@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NO noupdate: the sidebar item stays updatable on upgrade (ledger
+     noupdate-seed-cutover). Ungated (no role_ids) like the sibling CRM
+     Dashboard item — the client-action service methods group-gate the data. -->
+<odoo>
+
+    <record id="item_care_command" model="cms.sidebar.item">
+        <field name="name">Care Command</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">11</field>
+        <field name="icon">fa fa-bolt</field>
+        <field name="action_xmlid">health_care_command.action_care_command</field>
+        <field name="action_tag">care_command</field>
+        <field name="match_action_tags">care_command</field>
+    </record>
+
+</odoo>

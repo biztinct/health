@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- OWL client action (clones the crm_dashboard registration chain) -->
+    <record id="action_care_command" model="ir.actions.client">
+        <field name="name">Care Command</field>
+        <field name="tag">care_command</field>
+        <field name="target">current</field>
+        <field name="context">{'active_center': 'crm_center'}</field>
+    </record>
+
+    <!-- Discoverable under the /odoo CRM Center menu too, right after the
+         Dashboard (the CMS sidebar entry lives in data/). -->
+    <menuitem id="menu_care_command"
+              name="Care Command"
+              parent="health_crm.menu_crm_center_root"
+              action="action_care_command"
+              sequence="12"/>
+
+</odoo>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Company scoping. The service methods already company-scope every
+         search via sudo(); this rule is belt-and-suspenders so any direct
+         (non-sudo) read stays within the user's allowed companies. -->
+    <record id="care_conversation_company_rule" model="ir.rule">
+        <field name="name">Care Conversation: multi-company</field>
+        <field name="model_id" ref="model_care_conversation"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+</odoo>

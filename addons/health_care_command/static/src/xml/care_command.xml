@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_care_command.CareCommand">
+  <div class="o_care_command"
+       t-att-class="{ 'state-wall': state.view === 'wall', 'state-chat': state.view === 'chat', 'view-all': !state.mineOnly }">
+
+    <!-- ===== channel dock ===== -->
+    <aside class="chdock">
+      <div class="dk-t">Channels</div>
+      <button class="chbtn" t-att-class="{ on: state.filter === null }"
+              style="--cv:var(--navy)" t-on-click="() => this.clearFilter()">
+        <span class="bub"><span class="ic ic-layers"/></span>
+        <span class="lb">ALL</span>
+        <t t-set="allc" t-value="channelCounts.all"/>
+        <span t-if="allc" class="ct" t-att-class="{ hot: allc.needs }" t-esc="allc.total"/>
+      </button>
+      <hr/>
+      <t t-foreach="CHANNELS" t-as="ch" t-key="ch.key">
+        <button class="chbtn"
+                t-att-class="{ on: state.filter === ch.key, disabled: !ch.active }"
+                t-att-style="'--cv:' + ch.cv"
+                t-att-title="ch.active ? ch.label : ch.label + ' — coming soon'"
+                t-on-click="() => ch.active and this.setFilter(ch.key)">
+          <span class="bub"><span class="ic" t-att-class="ch.ic"/></span>
+          <span class="lb" t-esc="ch.short"/>
+          <t t-if="ch.active">
+            <span t-if="channelCount(ch.key)" class="ct"
+                  t-att-class="{ hot: channelNeeds(ch.key) }" t-esc="channelCount(ch.key)"/>
+          </t>
+        </button>
+      </t>
+    </aside>
+
+    <!-- ===== main ===== -->
+    <div class="main">
+      <header class="top">
+        <button class="backbtn" t-on-click="() => this.toWall()"><span class="ic ic-back"/>Wall</button>
+        <div class="title">
+          <h1><span class="live-dot"/>Care Command</h1>
+          <span class="sub" t-esc="state.view === 'chat' ? 'Conversation' : 'Wall'"/>
+        </div>
+        <div class="seg">
+          <button t-att-class="{ on: state.mineOnly }" t-on-click="() => this.setMine(true)">
+            <span class="ic ic-user"/>Mine</button>
+          <button t-att-class="{ on: !state.mineOnly }" t-on-click="() => this.setMine(false)">
+            <span class="ic ic-users"/>Everyone</button>
+        </div>
+        <button class="newbtn" t-on-click="() => this.newContact()"><span class="ic ic-user"/>New Contact</button>
+      </header>
+
+      <div class="content">
+
+        <!-- ========== WALL ========== -->
+        <div class="wallwrap">
+          <div class="wall-head">
+            <h2>
+              Now on the wall · <t t-esc="conversations.length"/> conversation<t t-if="conversations.length !== 1">s</t>
+              <t t-if="state.filter"> · <t t-esc="chan(state.filter).label"/></t>
+            </h2>
+            <span class="hint">Tile size = urgency · click a tile to open · amber dashed = unclaimed</span>
+            <button t-if="state.filter" class="clr" t-on-click="() => this.clearFilter()">Clear channel filter ×</button>
+          </div>
+
+          <div t-if="state.loading" class="cc-empty"><span class="cc-spinner"/><span>Loading…</span></div>
+          <div t-elif="state.error" class="cc-empty cc-err"><span class="ic ic-warn"/><span t-esc="state.error"/></div>
+          <div t-elif="!conversations.length" class="cc-empty">
+            <span class="ic ic-layers"/><span>No open conversations<t t-if="state.filter"> on this channel</t>.</span>
+          </div>
+          <div t-else="" class="wall">
+            <div t-foreach="conversations" t-as="c" t-key="c.id"
+                 t-att-class="tileClass(c)" t-att-style="'--cv:' + chan(c.channel).cv"
+                 t-on-click="() => this.openChat(c.id)">
+              <div class="t-top">
+                <span class="ava" t-esc="c.initials"/>
+                <div class="t-who">
+                  <div class="t-name" t-esc="c.name"/>
+                </div>
+                <span class="chan" t-att-style="'--cv:' + chan(c.channel).cv">
+                  <span class="ic" t-att-class="chan(c.channel).ic"/><t t-esc="chan(c.channel).label"/>
+                </span>
+              </div>
+              <div class="reason" t-att-class="{ hot: c.reason.hot }">
+                <span class="ic ic-clock"/><t t-esc="c.reason.text"/>
+              </div>
+              <div t-if="c.snippet and c.tier === 'large'" class="snippet" t-esc="c.snippet"/>
+              <div class="t-foot">
+                <span t-if="c.chips.length" class="chip" t-att-class="c.chips[0].kind">
+                  <t t-esc="c.chips[0].label"/></span>
+                <button t-if="!c.owner and c.status !== 'junk_suspect'" class="claimbtn"
+                        t-on-click.stop="() => this.claim(c.id)"><span class="ic ic-hand"/>Claim</button>
+                <span class="owner" t-if="c.owner"><i t-esc="c.owner.initials"/><t t-esc="c.owner.name"/></span>
+                <span class="t-time" t-esc="relTime(c.last_event_at)"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== CHAT ========== -->
+        <div class="chatwrap">
+
+          <!-- list -->
+          <section class="clist">
+            <div class="clist-h">
+              <div class="searchbox"><span class="ic ic-search"/>
+                <input placeholder="Search people, phones, messages…" disabled="1"/></div>
+            </div>
+            <div class="chats">
+              <t t-foreach="LIST_SECTIONS" t-as="sec" t-key="sec.key">
+                <t t-set="rows" t-value="sectionRows(sec.key)"/>
+                <t t-if="rows.length">
+                  <div class="sec"><span class="ic" t-att-class="sec.ic"/><t t-esc="sec.label"/> · <t t-esc="rows.length"/></div>
+                  <div t-foreach="rows" t-as="c" t-key="c.id" class="chatrow"
+                       t-att-class="{ on: state.selected === c.id }"
+                       t-on-click="() => this.selectConv(c.id)">
+                    <div class="avwrap">
+                      <span class="ava" t-esc="c.initials"/>
+                      <span class="chglyph" t-att-style="'--cv:' + chan(c.channel).cv">
+                        <span class="ic" t-att-class="chan(c.channel).ic"/></span>
+                    </div>
+                    <div class="c-main">
+                      <div class="c-top"><span class="c-nm" t-esc="c.name"/>
+                        <span class="c-time" t-esc="relTime(c.last_event_at)"/></div>
+                      <div class="c-prev" t-esc="c.snippet || c.reason.text"/>
+                      <div class="c-tags">
+                        <span t-if="c.chips.length" class="mtag" t-att-class="c.chips[0].kind" t-esc="c.chips[0].label"/>
+                        <button t-if="sec.key === 'needs_un'" class="rowclaim"
+                                t-on-click.stop="() => this.claim(c.id)">CLAIM</button>
+                        <button t-if="sec.key === 'junk'" class="rowclaim"
+                                style="border-color:var(--faint);color:var(--faint)"
+                                t-on-click.stop="() => this.setStatus(c.id, 'closed')">ARCHIVE</button>
+                        <span t-if="c.unread" class="unreadb" t-esc="c.unread"/>
+                      </div>
+                    </div>
+                  </div>
+                </t>
+              </t>
+              <div t-if="!conversations.length" class="cc-empty"><span>No conversations.</span></div>
+            </div>
+          </section>
+
+          <!-- thread -->
+          <section class="threadpane">
+            <t t-if="state.detailLoading"><div class="cc-empty"><span class="cc-spinner"/><span>Loading…</span></div></t>
+            <t t-elif="state.detailError"><div class="cc-empty cc-err"><span class="ic ic-warn"/><span t-esc="state.detailError"/></div></t>
+            <t t-elif="!state.detail"><div class="cc-empty"><span class="ic ic-chat"/><span>Pick a conversation.</span></div></t>
+            <t t-else="">
+              <t t-set="h" t-value="state.detail.header"/>
+              <header class="th-head">
+                <div t-if="!h.owner and h.status !== 'junk_suspect'" class="claimbanner">
+                  <span class="ic ic-warn"/>Unclaimed — reply or claim to own this conversation
+                  <button class="claimbtn" t-on-click="() => this.claim(state.selected)"><span class="ic ic-hand"/>Claim</button>
+                </div>
+                <div class="th-bar">
+                  <span class="ava" t-esc="h.initials"/>
+                  <div class="th-id">
+                    <div class="th-nm"><t t-esc="h.name"/>
+                      <span t-if="h.chips.length" class="chip" t-att-class="h.chips[0].kind" t-esc="h.chips[0].label"/>
+                    </div>
+                    <div class="th-sub">
+                      <t t-if="h.relation"><t t-esc="h.relation"/> · </t>
+                      <t t-esc="chan(h.channel).label"/>
+                      <t t-if="h.owner"> · owned by <t t-esc="h.owner.name"/></t>
+                      <t t-else=""> · unclaimed</t>
+                    </div>
+                  </div>
+                  <div class="th-actions">
+                    <button class="abtn pri" t-on-click="() => this.doCall()"><span class="ic ic-phone"/>Call</button>
+                    <button t-if="h.owner and h.owner.id === me.id" class="abtn"
+                            t-on-click="() => this.release(state.selected)"><span class="ic ic-hand"/>Release</button>
+                    <button t-elif="h.owner and me.is_manager" class="abtn"
+                            t-on-click="() => this.takeOver(state.selected)"><span class="ic ic-hand"/>Take over</button>
+                    <button t-elif="!h.owner" class="abtn"
+                            t-on-click="() => this.claim(state.selected)"><span class="ic ic-hand"/>Assign to me</button>
+                  </div>
+                </div>
+                <!-- header action strip (Phase-1 set) -->
+                <div class="th-act2">
+                  <button class="abtn" t-on-click="() => this.doBook()"><span class="ic ic-cal"/>Book</button>
+                  <button class="abtn" t-on-click="() => this.doCallback()"><span class="ic ic-clock"/>Callback</button>
+                  <button class="abtn" t-on-click="() => this.doNote()"><span class="ic ic-note"/>Note</button>
+                  <span class="adiv"/>
+                  <button t-if="h.has_lead" class="abtn" t-on-click="() => this.doLog()"><span class="ic ic-chart"/>Log</button>
+                  <button t-if="!h.has_lead" class="abtn" t-on-click="() => this.doLead()"><span class="ic ic-bolt"/>Lead</button>
+                  <button t-if="!h.is_client" class="abtn" t-on-click="() => this.doClient()"><span class="ic ic-user"/>Client</button>
+                  <span class="adiv"/>
+                  <button t-if="h.has_lead" class="abtn" t-on-click="() => this.doEscalate()"><span class="ic ic-warn"/>Escalate</button>
+                  <button class="abtn gray" t-on-click="() => this.doJunk()"><span class="ic ic-ban"/>Junk</button>
+                </div>
+              </header>
+
+              <!-- timeline -->
+              <div class="msgs">
+                <div t-if="!state.detail.timeline.length" class="cc-empty"><span>No messages yet.</span></div>
+                <t t-foreach="state.detail.timeline" t-as="ev" t-key="ev_index">
+                  <t t-if="ev.kind === 'zalo' || ev.kind === 'email'">
+                    <div class="brow" t-att-class="ev.direction === 'out' ? 'out' : 'in'">
+                      <div class="bub">
+                        <div t-if="ev.subject" class="bsubject" t-esc="ev.subject"/>
+                        <t t-esc="ev.text"/>
+                      </div>
+                      <div class="bmeta">
+                        <span t-if="ev.direction === 'out'" class="ic ic-check"/>
+                        <t t-esc="clockTime(ev.ts)"/> · <t t-esc="ev.kind === 'email' ? 'Email' : 'Zalo'"/>
+                      </div>
+                    </div>
+                  </t>
+                  <t t-elif="ev.kind === 'note'">
+                    <div class="evt" style="--cv:var(--mut)"><span class="ic ic-note"/>
+                      <div><div class="ev-t">Internal note</div><div class="ev-s" t-esc="ev.text"/></div></div>
+                  </t>
+                  <t t-elif="ev.kind === 'call'">
+                    <div class="evt" style="--cv:var(--ch-call)"><span class="ic ic-phone"/>
+                      <div>
+                        <div class="ev-t">
+                          <t t-esc="ev.direction === 'out' ? 'Outgoing call' : 'Incoming call'"/>
+                          · <t t-esc="ev.call_type"/><t t-if="ev.duration"> · <t t-esc="ev.duration"/>s</t>
+                        </div>
+                        <div class="ev-s"><t t-esc="clockTime(ev.ts)"/><t t-if="ev.has_recording"> · recording available</t></div>
+                      </div>
+                    </div>
+                  </t>
+                  <t t-elif="ev.kind === 'zns'">
+                    <div class="evt" style="--cv:var(--ch-zns)"><span class="ic ic-send"/>
+                      <div><div class="ev-t">ZNS notification</div><div class="ev-s"><t t-esc="clockTime(ev.ts)"/> · <t t-esc="ev.text"/></div></div></div>
+                  </t>
+                  <t t-elif="ev.kind === 'booking'">
+                    <div class="evt" style="--cv:var(--accent)"><span class="ic ic-cal"/>
+                      <div><div class="ev-t">Booking · <t t-esc="ev.state"/></div>
+                        <div class="ev-s"><t t-esc="ev.service"/> · <t t-esc="clockTime(ev.ts)"/></div></div></div>
+                  </t>
+                </t>
+              </div>
+
+              <!-- composer -->
+              <div class="comp">
+                <div class="comp-row">
+                  <div class="comp-box" t-att-class="{ disabled: !canReply }">
+                    <span class="ic ic-clip"/>
+                    <input t-if="canReply" type="text" t-att-value="state.composer"
+                           t-on-input="(ev) => this.onComposerInput(ev)"
+                           t-on-keydown="(ev) => this.onComposerKeydown(ev)"
+                           t-att-placeholder="'Message ' + h.name.split(' ')[0] + '…'"/>
+                    <input t-else="" type="text" disabled="1"
+                           placeholder="Replies for this channel arrive in Phase 2 — use Call"/>
+                  </div>
+                  <button class="sendbtn" t-att-class="{ disabled: !canReply || state.sending }"
+                          t-on-click="() => this.sendMessage()"><span class="ic ic-send"/></button>
+                </div>
+                <div class="comp-meta">
+                  <span t-if="sendChannel" class="via" t-att-style="'--cv:' + chan(sendChannel).cv">
+                    <span class="ic" t-att-class="chan(sendChannel).ic"/>Sends via <t t-esc="chan(sendChannel).label"/></span>
+                  <span t-else="">This channel is read-only in Phase 1.</span>
+                </div>
+              </div>
+            </t>
+          </section>
+
+          <!-- care rail -->
+          <aside class="crail">
+            <t t-if="state.detail">
+              <t t-set="ctx" t-value="state.detail.context"/>
+              <div class="crail-tabs">
+                <button t-att-class="{ on: state.railTab === 'care' }" t-on-click="() => this.setRailTab('care')">Care</button>
+                <button t-att-class="{ on: state.railTab === 'history' }" t-on-click="() => this.setRailTab('history')">History</button>
+              </div>
+              <div class="crail-b">
+                <t t-if="state.railTab === 'care'">
+                  <!-- relationship -->
+                  <div t-if="ctx.relations and ctx.relations.length" class="rcard">
+                    <h4><span class="ic ic-users"/>Relationships</h4>
+                    <t t-foreach="ctx.relations" t-as="r" t-key="r_index">
+                      <div class="rkv"><span class="k"><t t-esc="r.role"/></span>
+                        <span class="v"><t t-esc="r.representative"/> → <t t-esc="r.client"/></span></div>
+                    </t>
+                  </div>
+                  <!-- snapshot -->
+                  <div t-if="ctx.patient" class="rcard">
+                    <h4><span class="ic ic-user"/>Care snapshot</h4>
+                    <div t-if="ctx.patient.patient_code" class="rkv"><span class="k">Client</span><span class="v" t-esc="ctx.patient.patient_code"/></div>
+                    <div t-if="ctx.patient.age" class="rkv"><span class="k">Age</span><span class="v" t-esc="ctx.patient.age"/></div>
+                    <div t-if="ctx.patient.area" class="rkv"><span class="k">Area</span><span class="v" t-esc="ctx.patient.area"/></div>
+                  </div>
+                  <div t-if="ctx.lead" class="rcard">
+                    <h4><span class="ic ic-bolt"/>Lead</h4>
+                    <div class="rkv"><span class="k">Status</span><span class="v" t-esc="ctx.lead.contact_status"/></div>
+                    <div t-if="ctx.lead.code" class="rkv"><span class="k">Code</span><span class="v" t-esc="ctx.lead.code"/></div>
+                  </div>
+                  <!-- bookings -->
+                  <div t-if="ctx.bookings" class="rcard">
+                    <h4><span class="ic ic-cal"/>Bookings</h4>
+                    <div t-if="ctx.bookings.next" class="bk"><span class="ic ic-cal"/>
+                      <div><div class="b-t" t-esc="ctx.bookings.next.service || 'Visit'"/>
+                        <div class="b-s" t-esc="clockTime(ctx.bookings.next.scheduled)"/></div>
+                      <span class="st next">NEXT</span></div>
+                    <div t-foreach="ctx.bookings.recent" t-as="b" t-key="b_index" class="bk"><span class="ic ic-check"/>
+                      <div><div class="b-t" t-esc="b.service || 'Visit'"/><div class="b-s" t-esc="b.state"/></div>
+                      <span class="st done">DONE</span></div>
+                    <div class="rkv" style="border-top:1px solid var(--line);margin-top:4px;padding-top:8px">
+                      <span class="k">Lifetime</span><span class="v"><t t-esc="ctx.bookings.lifetime"/> bookings</span></div>
+                  </div>
+                  <div t-if="!ctx.patient and !ctx.lead" class="hnote">No identity linked yet — matches once a phone/email is shared.</div>
+                </t>
+                <t t-else="">
+                  <div class="rcard">
+                    <h4><span class="ic ic-clock"/>All interactions · every channel</h4>
+                    <div t-if="!state.detail.timeline.length" class="hnote">No history yet.</div>
+                    <t t-foreach="state.detail.timeline.slice().reverse()" t-as="ev" t-key="ev_index">
+                      <div class="bk">
+                        <span class="ic" t-att-class="ev.kind === 'call' ? 'ic-phone' : ev.kind === 'email' ? 'ic-mail' : ev.kind === 'booking' ? 'ic-cal' : ev.kind === 'zns' ? 'ic-send' : ev.kind === 'note' ? 'ic-note' : 'ic-chat'"/>
+                        <div>
+                          <div class="b-t" t-esc="ev.kind === 'zalo' ? 'Zalo message' : ev.kind === 'email' ? 'Email' : ev.kind === 'call' ? 'Call' : ev.kind === 'booking' ? 'Booking' : ev.kind === 'zns' ? 'ZNS' : 'Note'"/>
+                          <div class="b-s" t-esc="clockTime(ev.ts)"/>
+                        </div>
+                      </div>
+                    </t>
+                  </div>
+                </t>
+              </div>
+            </t>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- toast -->
+    <div class="cc-toast" t-att-class="{ on: state.toast }"><span class="ic ic-check"/><span t-esc="state.toast"/></div>
+  </div>
+</t>
+
+</templates>
