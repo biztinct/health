@@ -837,3 +837,19 @@ a no-op.
     a code local `context` unless it IS an Odoo context dict; call prompt/body
     text `prompt`/`body`/`user_message`. (Fixed by renaming to `prompt`;
     care_ai.py.)
+
+- **§5.61 — the Zalo webhook is a TRAP precedent; clone the voip24h webhook
+    posture instead.** Three latent defects found during care-command Phase-6
+    design (2026-07-22, all pre-existing in health_zalo, none repaired yet):
+    (a) `/zalo/webhook` **fails OPEN** — no configured secret → events accepted
+    (health_zalo/controllers/webhook.py:130-140), the exact bug we fixed in
+    voip24h; (b) it is a `type='jsonrpc'` route, so the HMAC is computed over
+    RE-SERIALIZED JSON — providers (Meta especially) sign the **raw request
+    bytes**, which only a `type='http'` route + `request.httprequest.get_data()`
+    preserves; (c) it calls `.with_delay()` (webhook.py:46) but **no queue_job
+    addon exists in ./addons** — the call would crash if that path were ever
+    reached. Rule for any new inbound webhook: raw `http` route, fail-closed
+    `hmac.compare_digest` verifier on raw bytes (clone
+    health_voip24h/models/voip_config.py:422-442), inline cheap processing
+    inside `cr.savepoint()` — never with_delay, never jsonrpc, never
+    fail-open.
