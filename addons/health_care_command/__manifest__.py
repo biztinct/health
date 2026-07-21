@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Unified Work Layer',
-    'version': '19.0.3.0.0',
+    'version': '19.0.3.0.1',
     'category': 'Healthcare/CRM',
     'summary': 'Omnichannel triage wall + messenger thread over Zalo, Calls, Email and ZNS',
     'description': """

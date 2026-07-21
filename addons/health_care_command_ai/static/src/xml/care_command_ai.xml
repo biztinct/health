@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <!-- Extend the core Care Command action with the .ai-only affordances.
+         Every node is gated on the runtime flags (aiCanDraft / aiCanBrief), so
+         AI OFF renders nothing and the wall is byte-for-byte Phase 3. -->
+    <t t-inherit="health_care_command.CareCommand" t-inherit-mode="extension">
+
+        <!-- 1. Composer "Draft" button (before the send button) -->
+        <xpath expr="//button[hasclass('sendbtn')]" position="before">
+            <button t-if="aiCanDraft" class="ai-draft ai-only"
+                    t-att-class="{ busy: ai.drafting }"
+                    t-att-disabled="ai.drafting ? 'disabled' : false"
+                    t-on-click="() => this.aiDraft()"
+                    title="AI draft — review before sending">
+                <span class="ic ic-bolt"/>
+                <span class="lbl"><t t-if="ai.drafting">Drafting…</t><t t-else="">Draft</t></span>
+            </button>
+        </xpath>
+
+        <!-- 2. Continuity brief "AI" card at the top of the care rail -->
+        <xpath expr="//div[hasclass('crail-tabs')]" position="before">
+            <div t-if="aiCanBrief" class="ai-card ai-only">
+                <div class="ai-card-h">
+                    <span class="ic ic-bolt"/>
+                    <span class="ai-card-t">AI assist</span>
+                    <span class="ai-badge">AI</span>
+                </div>
+                <t t-if="!aiBriefShown">
+                    <button class="ai-brief-btn" t-att-class="{ busy: ai.briefing }"
+                            t-att-disabled="ai.briefing ? 'disabled' : false"
+                            t-on-click="() => this.aiBrief()">
+                        <span class="ic ic-note"/>
+                        <t t-if="ai.briefing">Generating…</t><t t-else="">Generate brief</t>
+                    </button>
+                </t>
+                <t t-else="">
+                    <ul class="ai-bullets">
+                        <li t-foreach="ai.briefText" t-as="b" t-key="b_index" t-esc="b"/>
+                    </ul>
+                    <div class="ai-stamp">
+                        <span class="ai-stamp-t" t-esc="ai.briefStamp"/>
+                        <button class="ai-x" t-on-click="() => this.dismissBrief()"
+                                title="Dismiss">×</button>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+
+    </t>
+
+</templates>

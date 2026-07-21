@@ -784,3 +784,16 @@ msgstr "Hồ sơ đồng ý không khả dụng trên máy chủ này."
 #. odoo-python
 msgid "This conversation has no client to show consent for."
 msgstr "Cuộc hội thoại này không có khách hàng để xem hồ sơ đồng ý."
+# ---------------------------------------------------------------------------
+# Phase-4 core touch: the two Phase-3 gear-button tooltips (QWeb title=)
+# were missing from this catalog (declared one-line i18n touch, §7).
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-javascript
+msgid "Manage reply templates"
+msgstr "Quản lý mẫu trả lời"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Manage watchlist phrases"
+msgstr "Quản lý cụm từ theo dõi"

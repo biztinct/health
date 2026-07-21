@@ -819,3 +819,21 @@ a no-op.
     handover names a foreign field, grep the model first and declare the
     deviation if it's wrong (as Opus correctly did here). Designers: cite
     file:line for every cross-module field, same as for methods.
+
+- **§5.60 — a local variable named `context` that holds a non-dict breaks
+    Odoo 19's `_()` with `AttributeError: 'str' object has no attribute
+    'get'`.** `odoo/tools/translate.py`'s `get_text_alias` → `_get_lang(frame)`
+    walks the CALLER's frame locals looking for a language: it reads
+    `local_context.get('lang')` where `local_context` is whatever local is
+    named `context` (the idiom being a `self.env.context`-style dict). If your
+    method has a local/param named `context` bound to a plain string (e.g. a
+    built LLM prompt), the very next `_("…")` in that scope calls `.get('lang')`
+    on the string and raises — NOT at the string's creation, but at the
+    translation call, so the traceback points at an innocent `_()` (or a
+    `UserError(_( … ))`, masking the real error path entirely — hit live in
+    care-command Phase-4 where `_complete`'s failure branch raised
+    `AttributeError` instead of the intended `UserError`, and `ai_brief`'s
+    stamp `_("Generated just now by %s", provider.name)` died). Rule: never name
+    a code local `context` unless it IS an Odoo context dict; call prompt/body
+    text `prompt`/`body`/`user_message`. (Fixed by renaming to `prompt`;
+    care_ai.py.)

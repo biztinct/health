@@ -1,0 +1,114 @@
+// Care Command — AI Assist affordances (.ai-only). Flat mono, reuses the core
+// design tokens (--accent / --line / --mut / --card / --ink). No gradients, no
+// data-URI mask icons here (§5.51 — those stay in the core's plain .css; we
+// only reuse existing ic-* classes).
+
+.o_care_command {
+
+    // --- composer "Draft" button ------------------------------------------
+    .ai-draft {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--accent);
+        border-radius: 10px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+
+        .ic { width: 14px; height: 14px; }
+
+        &:hover { background: var(--accent); color: #fff; }
+        &.busy, &:disabled { opacity: .6; cursor: default; }
+        &.busy:hover, &:disabled:hover { background: var(--accent-soft); color: var(--accent); }
+    }
+
+    // --- continuity brief "AI" card (top of the care rail) ----------------
+    .ai-card {
+        margin: 0 0 12px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        background: var(--card);
+
+        .ai-card-h {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+
+            .ic { width: 14px; height: 14px; color: var(--accent); }
+            .ai-card-t { font-size: 13px; font-weight: 700; color: var(--ink); }
+            .ai-badge {
+                margin-left: auto;
+                padding: 1px 7px;
+                border-radius: 999px;
+                border: 1px solid var(--accent);
+                background: var(--accent-soft);
+                color: var(--accent);
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: .04em;
+            }
+        }
+
+        .ai-brief-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            height: 34px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+
+            .ic { width: 13px; height: 13px; color: var(--mut); }
+            &:hover { border-color: var(--accent); color: var(--accent); }
+            &:hover .ic { color: var(--accent); }
+            &.busy, &:disabled { opacity: .6; cursor: default; }
+        }
+
+        .ai-bullets {
+            margin: 0 0 8px;
+            padding-left: 18px;
+
+            li {
+                font-size: 12.5px;
+                line-height: 1.5;
+                color: var(--ink);
+                margin-bottom: 4px;
+            }
+        }
+
+        .ai-stamp {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10.5px;
+            color: var(--mut);
+            font-style: italic;
+
+            .ai-stamp-t { flex: 1; }
+            .ai-x {
+                border: 0;
+                background: transparent;
+                color: var(--mut);
+                font-size: 16px;
+                line-height: 1;
+                cursor: pointer;
+                padding: 0 2px;
+                &:hover { color: var(--danger); }
+            }
+        }
+    }
+}

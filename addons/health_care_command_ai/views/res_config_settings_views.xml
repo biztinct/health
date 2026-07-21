@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_care_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.care.ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Care Command AI Assist" name="health_care_command_ai_settings"
+                       groups="health_crm.group_health_crm_manager">
+                    <setting id="care_ai_enabled_setting" string="Enable Care Command AI"
+                             help="Off by default. When on, the Care Command wall gains an optional 'Draft' button and a continuity 'AI' card. The AI only ever fills the composer or a card — it never sends.">
+                        <field name="care_ai_enabled"/>
+                    </setting>
+                    <setting id="care_ai_allow_cloud_setting" string="Allow cloud AI providers"
+                             help="Off by default (data sovereignty): only an Ollama (local) provider is called. A cloud provider is refused unless this is on.">
+                        <field name="care_ai_allow_cloud"/>
+                    </setting>
+                    <setting id="care_ai_provider_setting" string="AI provider"
+                             help="The bi.ai.provider used for drafts and briefs. Ollama (local) is the sovereignty path.">
+                        <field name="care_ai_provider_id"/>
+                    </setting>
+                    <setting id="care_ai_drafts_setting" string="AI reply drafts"
+                             help="Show the composer 'Draft' button (only when the master switch above is on).">
+                        <field name="care_ai_drafts"/>
+                    </setting>
+                    <setting id="care_ai_brief_setting" string="AI continuity brief"
+                             help="Show the on-demand 'AI' summary card (only when the master switch above is on).">
+                        <field name="care_ai_brief"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

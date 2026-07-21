@@ -1,0 +1,104 @@
+# Vietnamese translation for health_care_command_ai
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_care_command_ai\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+# ---------------------------------------------------------------------------
+# Python — service messages
+# ---------------------------------------------------------------------------
+#. module: health_care_command_ai
+#. odoo-python
+msgid "AI is unavailable — continue manually."
+msgstr "AI hiện không khả dụng — vui lòng tiếp tục thủ công."
+
+#. module: health_care_command_ai
+#. odoo-python
+msgid "AI drafting is not enabled."
+msgstr "Soạn thảo bằng AI chưa được bật."
+
+#. module: health_care_command_ai
+#. odoo-python
+msgid "AI briefing is not enabled."
+msgstr "Tóm tắt bằng AI chưa được bật."
+
+#. module: health_care_command_ai
+#. odoo-python
+msgid "Generated just now by %s"
+msgstr "Vừa được tạo bởi %s"
+
+# ---------------------------------------------------------------------------
+# JS + QWeb — the .ai-only affordances
+# ---------------------------------------------------------------------------
+#. module: health_care_command_ai
+#. odoo-javascript
+msgid "AI draft — review before sending"
+msgstr "Bản nháp AI — hãy xem lại trước khi gửi"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+msgid "The AI returned nothing — continue manually."
+msgstr "AI không trả về nội dung — vui lòng tiếp tục thủ công."
+
+#. module: health_care_command_ai
+#. odoo-javascript
+msgid "Draft"
+msgstr "Soạn nháp"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+msgid "Drafting…"
+msgstr "Đang soạn…"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+msgid "AI assist"
+msgstr "Trợ lý AI"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+msgid "Generate brief"
+msgstr "Tạo tóm tắt"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+msgid "Generating…"
+msgstr "Đang tạo…"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+msgid "Dismiss"
+msgstr "Đóng"
+
+# ---------------------------------------------------------------------------
+# Settings (view terms)
+# ---------------------------------------------------------------------------
+#. module: health_care_command_ai
+msgid "Care Command AI Assist"
+msgstr "Trợ lý AI Care Command"
+
+#. module: health_care_command_ai
+msgid "Enable Care Command AI"
+msgstr "Bật Trợ lý AI Care Command"
+
+#. module: health_care_command_ai
+msgid "Allow cloud AI providers"
+msgstr "Cho phép nhà cung cấp AI đám mây"
+
+#. module: health_care_command_ai
+msgid "AI provider"
+msgstr "Nhà cung cấp AI"
+
+#. module: health_care_command_ai
+msgid "AI reply drafts"
+msgstr "Bản nháp trả lời bằng AI"
+
+#. module: health_care_command_ai
+msgid "AI continuity brief"
+msgstr "Tóm tắt bàn giao bằng AI"
