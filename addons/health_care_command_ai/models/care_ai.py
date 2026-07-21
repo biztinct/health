@@ -255,11 +255,15 @@ class CareAiAssist(models.AbstractModel):
                 "[EMAIL]")
             for pf in ("phone", "mobile"):
                 add(getattr(src, pf, None), "[SĐT]")
-            nm = (getattr(src, "name", None) or getattr(src, "contact_name", None)
-                  or getattr(src, "partner_name", None))
-            add(nm, "[BN]")
-            if nm:
-                names.append(nm)
+            # ALL name-ish fields independently — never a first-truthy chain:
+            # crm.lead.name is the required lead TITLE, so an `or` chain would
+            # leave contact_name/partner_name (the person's actual identity,
+            # cf. core _compute_display_name_c) permanently unredacted.
+            for nf in ("name", "contact_name", "partner_name"):
+                nm = getattr(src, nf, None)
+                add(nm, "[BN]")
+                if nm and isinstance(nm, str) and nm.strip():
+                    names.append(nm)
         add(rec.email_normalized, "[EMAIL]")
         add(rec.phone_normalized, "[SĐT]")
 

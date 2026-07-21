@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Care Command — AI Assist",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Healthcare/CRM",
     "summary": "Optional, config-gated AI drafts + continuity brief over Care "
                "Command — Ollama-first, never auto-send",

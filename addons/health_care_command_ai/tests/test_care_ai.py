@@ -175,6 +175,33 @@ class TestCareCommandAi(TransactionCase):
         self.assertNotIn(email, user, "raw email must be redacted")
         self.assertNotIn(name, user, "raw name must be redacted")
 
+        # -- lead-anchored conversation: contact_name/partner_name carry the
+        # person's identity (crm.lead.name is just the required TITLE) — every
+        # name field must be redacted independently, not first-truthy
+        lead = self.env["crm.lead"].create({
+            "name": "Website inquiry #77",
+            "contact_name": "Trần Thị LeadRedact",
+            "partner_name": "Công ty LeadRedactCo",
+            "phone": "0907654321",
+        })
+        lconv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        if not lconv:
+            lconv = self.Care._find_or_create_for(
+                {"lead_id": lead.id, "phone_normalized": "0907654321"},
+                {"inbound": True, "set_status": "needs_reply",
+                 "event_at": fields.Datetime.now()})
+        lconv.message_post(
+            body="Chị Trần Thị LeadRedact của Công ty LeadRedactCo hỏi giá.",
+            message_type="comment", subtype_xmlid="mail.mt_comment")
+        with patch.object(type(ollama), "_complete", fake):
+            self.AI.ai_draft_reply(lconv.id)
+        luser = captured["user"]
+        self.assertNotIn("LeadRedact", luser,
+                         "lead contact_name must be redacted")
+        self.assertNotIn("LeadRedactCo", luser,
+                         "lead partner_name must be redacted")
+        self.assertIn("[BN]", luser)
+
     # ======================================================================
     # T36 — brief returns bullets; ONE audit row with capability + provider
     # ======================================================================
