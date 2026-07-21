@@ -5,6 +5,8 @@ from odoo.exceptions import UserError
 import logging
 import json
 
+from ..services.zalo_api import get_api_client
+
 _logger = logging.getLogger(__name__)
 
 
@@ -162,8 +164,9 @@ class ZaloMessage(models.Model):
         try:
             self.write({'state': 'sending'})
 
-            # Get API service
-            api_service = self.env['zalo.api.client']
+            # Get API service (the real seam is the ZaloAPIClient factory —
+            # `self.env['zalo.api.client']` is NOT a registered model, §5.54).
+            api_service = get_api_client(self.env)
 
             # Prepare message data
             message_data = {

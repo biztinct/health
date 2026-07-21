@@ -14,6 +14,9 @@ msgstr ""
 msgid "Care Command"
 msgstr "Care Command"
 
+# ---------------------------------------------------------------------------
+# Status values
+# ---------------------------------------------------------------------------
 #. module: health_care_command
 msgid "Needs reply"
 msgstr "Cần trả lời"
@@ -30,22 +33,103 @@ msgstr "Rác?"
 msgid "Closed"
 msgstr "Đã đóng"
 
+# ---------------------------------------------------------------------------
+# Channel labels + short (dock) forms
+# ---------------------------------------------------------------------------
 #. module: health_care_command
 msgid "Zalo"
 msgstr "Zalo"
+
+#. module: health_care_command
+msgid "ZALO"
+msgstr "ZALO"
 
 #. module: health_care_command
 msgid "Calls"
 msgstr "Cuộc gọi"
 
 #. module: health_care_command
+msgid "CALLS"
+msgstr "CUỘC GỌI"
+
+#. module: health_care_command
 msgid "Email"
 msgstr "Email"
+
+#. module: health_care_command
+msgid "EMAIL"
+msgstr "EMAIL"
 
 #. module: health_care_command
 msgid "ZNS"
 msgstr "ZNS"
 
+#. module: health_care_command
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+#. module: health_care_command
+msgid "WHATSAPP"
+msgstr "WHATSAPP"
+
+#. module: health_care_command
+msgid "Messenger"
+msgstr "Messenger"
+
+#. module: health_care_command
+msgid "FB MSGR"
+msgstr "FB MSGR"
+
+#. module: health_care_command
+msgid "Telegram"
+msgstr "Telegram"
+
+#. module: health_care_command
+msgid "TELEGRAM"
+msgstr "TELEGRAM"
+
+#. module: health_care_command
+msgid "Web chat"
+msgstr "Chat web"
+
+#. module: health_care_command
+msgid "WEB CHAT"
+msgstr "CHAT WEB"
+
+#. module: health_care_command
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_care_command
+msgid "CONTACT"
+msgstr "LIÊN HỆ"
+
+# ---------------------------------------------------------------------------
+# Chat-list section headers
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+msgid "Needs reply — mine"
+msgstr "Cần trả lời — của tôi"
+
+#. module: health_care_command
+msgid "Unclaimed — anyone can take"
+msgstr "Chưa ai nhận — ai cũng có thể nhận"
+
+#. module: health_care_command
+msgid "With teammates"
+msgstr "Đồng nghiệp đang xử lý"
+
+#. module: health_care_command
+msgid "Waiting / done for now"
+msgstr "Đang chờ / tạm xong"
+
+#. module: health_care_command
+msgid "Junk — confirm to archive"
+msgstr "Rác — xác nhận để lưu trữ"
+
+# ---------------------------------------------------------------------------
+# Wall reason lines + snippets
+# ---------------------------------------------------------------------------
 #. module: health_care_command
 msgid "New"
 msgstr "Mới"
@@ -86,6 +170,76 @@ msgstr "Đã ghi nhận cuộc gọi"
 msgid "Unknown contact"
 msgstr "Liên hệ chưa xác định"
 
+# ---------------------------------------------------------------------------
+# Header-strip actions + care rail (Python service results)
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+msgid "%(role)s of %(client)s"
+msgstr "%(role)s của %(client)s"
+
+#. module: health_care_command
+msgid "Quick Booking"
+msgstr "Đặt lịch nhanh"
+
+#. module: health_care_command
+msgid "No client or lead on this conversation to book."
+msgstr "Cuộc hội thoại này không có khách hàng hay lead để đặt lịch."
+
+#. module: health_care_command
+msgid "Callback — Care Command"
+msgstr "Gọi lại — Care Command"
+
+#. module: health_care_command
+msgid "Callback scheduled for today."
+msgstr "Đã lên lịch gọi lại hôm nay."
+
+#. module: health_care_command
+msgid "No lead or contact to schedule a callback on."
+msgstr "Không có lead hay liên hệ để lên lịch gọi lại."
+
+#. module: health_care_command
+msgid "Internal note logged."
+msgstr "Đã ghi chú nội bộ."
+
+#. module: health_care_command
+msgid "The note is empty."
+msgstr "Ghi chú trống."
+
+#. module: health_care_command
+msgid "Care Command lead"
+msgstr "Lead từ Care Command"
+
+#. module: health_care_command
+msgid "Lead created and linked."
+msgstr "Đã tạo và liên kết lead."
+
+#. module: health_care_command
+msgid "This conversation already has a lead."
+msgstr "Cuộc hội thoại này đã có lead."
+
+#. module: health_care_command
+msgid "Only a lead-anchored conversation can be logged."
+msgstr "Chỉ cuộc hội thoại gắn với lead mới có thể ghi nhận."
+
+#. module: health_care_command
+msgid "New Client"
+msgstr "Khách hàng mới"
+
+#. module: health_care_command
+msgid "Escalation needs a lead anchor."
+msgstr "Việc chuyển tiếp cần gắn với một lead."
+
+#. module: health_care_command
+msgid "Unsupported status."
+msgstr "Trạng thái không được hỗ trợ."
+
+#. module: health_care_command
+msgid "Notification"
+msgstr "Thông báo"
+
+# ---------------------------------------------------------------------------
+# Access / validation errors (Python)
+# ---------------------------------------------------------------------------
 #. module: health_care_command
 msgid "Care Command is restricted to CRM staff."
 msgstr "Care Command chỉ dành cho nhân viên CRM."
@@ -114,6 +268,258 @@ msgstr "Chỉ chủ sở hữu hoặc quản lý mới có thể nhả cuộc h�
 msgid "Only a CRM manager can take over an owned conversation."
 msgstr "Chỉ quản lý CRM mới có thể tiếp quản cuộc hội thoại đã có chủ."
 
+# ---------------------------------------------------------------------------
+# JS toasts + loading/error copy
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+msgid "Could not load Care Command."
+msgstr "Không thể tải Care Command."
+
+#. module: health_care_command
+msgid "Could not load the conversation."
+msgstr "Không thể tải cuộc hội thoại."
+
+#. module: health_care_command
+msgid "Something went wrong."
+msgstr "Đã có lỗi xảy ra."
+
+#. module: health_care_command
+msgid "now"
+msgstr "vừa xong"
+
+#. module: health_care_command
+msgid "Claimed — it's yours now."
+msgstr "Đã nhận — giờ là của bạn."
+
+#. module: health_care_command
+msgid "someone"
+msgstr "người khác"
+
 #. module: health_care_command
 msgid "Already claimed by %s"
 msgstr "Đã được %s nhận"
+
+#. module: health_care_command
+msgid "Released."
+msgstr "Đã nhả."
+
+#. module: health_care_command
+msgid "Taken over."
+msgstr "Đã tiếp quản."
+
+#. module: health_care_command
+msgid "Marked as junk (reversible)."
+msgstr "Đã đánh dấu rác (có thể hoàn tác)."
+
+#. module: health_care_command
+msgid "Updated."
+msgstr "Đã cập nhật."
+
+#. module: health_care_command
+msgid "Type the note in the message box, then tap Note."
+msgstr "Nhập ghi chú vào ô tin nhắn, rồi bấm Ghi chú."
+
+#. module: health_care_command
+msgid "No phone number on this conversation."
+msgstr "Cuộc hội thoại này không có số điện thoại."
+
+# ---------------------------------------------------------------------------
+# QWeb chrome (workspace shell)
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+msgid "Channels"
+msgstr "Kênh"
+
+#. module: health_care_command
+msgid "ALL"
+msgstr "TẤT CẢ"
+
+#. module: health_care_command
+msgid "Wall"
+msgstr "Bảng tin"
+
+#. module: health_care_command
+msgid "Conversation"
+msgstr "Hội thoại"
+
+#. module: health_care_command
+msgid "Mine"
+msgstr "Của tôi"
+
+#. module: health_care_command
+msgid "Everyone"
+msgstr "Mọi người"
+
+#. module: health_care_command
+msgid "New Contact"
+msgstr "Liên hệ mới"
+
+#. module: health_care_command
+msgid "Loading…"
+msgstr "Đang tải…"
+
+#. module: health_care_command
+msgid "No open conversations"
+msgstr "Không có cuộc hội thoại đang mở"
+
+#. module: health_care_command
+msgid "No conversations."
+msgstr "Không có cuộc hội thoại."
+
+#. module: health_care_command
+msgid "Tile size = urgency · click a tile to open · amber dashed = unclaimed"
+msgstr "Kích thước ô = độ khẩn · bấm vào ô để mở · viền vàng đứt = chưa ai nhận"
+
+#. module: health_care_command
+msgid "Clear channel filter ×"
+msgstr "Xóa bộ lọc kênh ×"
+
+#. module: health_care_command
+msgid "Search people, phones, messages…"
+msgstr "Tìm người, số điện thoại, tin nhắn…"
+
+#. module: health_care_command
+msgid "CLAIM"
+msgstr "NHẬN"
+
+#. module: health_care_command
+msgid "Claim"
+msgstr "Nhận"
+
+#. module: health_care_command
+msgid "ARCHIVE"
+msgstr "LƯU TRỮ"
+
+#. module: health_care_command
+msgid "Pick a conversation."
+msgstr "Chọn một cuộc hội thoại."
+
+#. module: health_care_command
+msgid "Assign to me"
+msgstr "Giao cho tôi"
+
+#. module: health_care_command
+msgid "Take over"
+msgstr "Tiếp quản"
+
+#. module: health_care_command
+msgid "Release"
+msgstr "Nhả"
+
+#. module: health_care_command
+msgid "Call"
+msgstr "Gọi"
+
+# ---- header action strip ----
+#. module: health_care_command
+msgid "Book"
+msgstr "Đặt lịch"
+
+#. module: health_care_command
+msgid "Callback"
+msgstr "Gọi lại"
+
+#. module: health_care_command
+msgid "Note"
+msgstr "Ghi chú"
+
+#. module: health_care_command
+msgid "Log"
+msgstr "Ghi nhận"
+
+#. module: health_care_command
+msgid "Lead"
+msgstr "Lead"
+
+#. module: health_care_command
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_care_command
+msgid "Escalate"
+msgstr "Chuyển tiếp"
+
+#. module: health_care_command
+msgid "Junk"
+msgstr "Rác"
+
+# ---- care rail ----
+#. module: health_care_command
+msgid "Care"
+msgstr "Chăm sóc"
+
+#. module: health_care_command
+msgid "History"
+msgstr "Lịch sử"
+
+#. module: health_care_command
+msgid "Care snapshot"
+msgstr "Tổng quan chăm sóc"
+
+#. module: health_care_command
+msgid "Relationships"
+msgstr "Quan hệ"
+
+#. module: health_care_command
+msgid "No identity linked yet — matches once a phone/email is shared."
+msgstr "Chưa liên kết danh tính — sẽ khớp khi có số điện thoại/email."
+
+#. module: health_care_command
+msgid "Bookings"
+msgstr "Lịch hẹn"
+
+#. module: health_care_command
+msgid "NEXT"
+msgstr "KẾ TIẾP"
+
+#. module: health_care_command
+msgid "DONE"
+msgstr "ĐÃ XONG"
+
+#. module: health_care_command
+msgid "Lifetime"
+msgstr "Trọn đời"
+
+#. module: health_care_command
+msgid "Code"
+msgstr "Mã"
+
+#. module: health_care_command
+msgid "Age"
+msgstr "Tuổi"
+
+#. module: health_care_command
+msgid "Area"
+msgstr "Khu vực"
+
+#. module: health_care_command
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_care_command
+msgid "All interactions · every channel"
+msgstr "Mọi tương tác · mọi kênh"
+
+#. module: health_care_command
+msgid "No history yet."
+msgstr "Chưa có lịch sử."
+
+#. module: health_care_command
+msgid "No messages yet."
+msgstr "Chưa có tin nhắn."
+
+#. module: health_care_command
+msgid "Internal note"
+msgstr "Ghi chú nội bộ"
+
+#. module: health_care_command
+msgid "ZNS notification"
+msgstr "Thông báo ZNS"
+
+#. module: health_care_command
+msgid "This channel is read-only in Phase 1."
+msgstr "Kênh này chỉ đọc trong Giai đoạn 1."
+
+#. module: health_care_command
+msgid "Replies for this channel arrive in Phase 2 — use Call"
+msgstr "Tính năng trả lời kênh này có ở Giai đoạn 2 — hãy gọi điện"

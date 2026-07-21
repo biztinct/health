@@ -1,0 +1,14 @@
+# Vietnamese translation for health_care_command_voip
+# Copyright (C) 2026
+#
+# This bridge module has no user-visible strings (no views, no user-facing
+# _() terms) — the catalog is intentionally header-only.
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_care_command_voip\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"

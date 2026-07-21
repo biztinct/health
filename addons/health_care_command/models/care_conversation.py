@@ -397,54 +397,81 @@ class CareConversation(models.Model):
         return "small"
 
     # --- 6.1 workspace payload ----------------------------------------
+    # Tile/list payload cap (review LOW-9). Past this the wall is truncated to
+    # the most urgent WORKSPACE_CAP rows (ordered by _order); the counts below
+    # are still EXACT (read_group over the whole open set), and the payload
+    # carries {"capped": true, "total": N} so the UI never lies about coverage
+    # (same honesty rule as the PWA cache-hygiene phase).
+    WORKSPACE_CAP = 400
+
     @api.model
-    def get_workspace_data(self, channel=None, mine_only=False):
+    def get_workspace_data(self, channel=None, mine_only=False, query=None):
         self._ensure_access()
         uid = self.env.user.id
-        domain = self._company_domain() + [("status", "!=", "closed")]
+        open_domain = self._company_domain() + [("status", "!=", "closed")]
+
+        # --- tile/list payload (filtered, capped, ordered by _order) ------
+        list_domain = list(open_domain)
         if channel:
-            domain.append(("channel_primary", "=", channel))
+            list_domain.append(("channel_primary", "=", channel))
         if mine_only:
             # "Mine" = my actionable board: what I own PLUS what's unclaimed and
             # up for grabs (matches the POC, which never shows an empty wall).
-            domain += ["|", ("owner_id", "=", uid), ("owner_id", "=", False)]
-        convs = self.sudo().search(domain, limit=200)  # order = _order
-
+            list_domain += ["|", ("owner_id", "=", uid), ("owner_id", "=", False)]
+        q = (query or "").strip()
+        if q:
+            # search box over name / phone / email / lead name, on top of the
+            # company + status + channel/mine scope (server-side, §5.4)
+            list_domain += [
+                "|", "|", "|",
+                ("display_name_c", "ilike", q),
+                ("phone_normalized", "ilike", q),
+                ("email_normalized", "ilike", q),
+                ("lead_id.name", "ilike", q),
+            ]
+        total_matching = self.sudo().search_count(list_domain)
+        convs = self.sudo().search(list_domain, limit=self.WORKSPACE_CAP)  # _order
         conversations = [c._workspace_row() for c in convs]
 
-        # channel counts across ALL open (ignore the channel filter itself)
-        counts = {}
-        base = self.sudo().search(self._company_domain() + [("status", "!=", "closed")])
-        for ch in ("zalo", "call", "email", "zns"):
-            ch_recs = base.filtered(lambda r, c=ch: r.channel_primary == c)
-            counts[ch] = {
-                "total": len(ch_recs),
-                "needs": len(ch_recs.filtered(lambda r: r.status == "needs_reply")),
-            }
+        # --- channel counts via read_group (one query each, not ORM loops) -
+        counts = {ch: {"total": 0, "needs": 0} for ch in ("zalo", "call", "email", "zns")}
+        for channel_val, cnt in self.sudo()._read_group(
+                open_domain, ["channel_primary"], ["__count"]):
+            if channel_val in counts:
+                counts[channel_val]["total"] = cnt
+        for channel_val, cnt in self.sudo()._read_group(
+                open_domain + [("status", "=", "needs_reply")],
+                ["channel_primary"], ["__count"]):
+            if channel_val in counts:
+                counts[channel_val]["needs"] = cnt
         counts["all"] = {
-            "total": len(base),
-            "needs": len(base.filtered(lambda r: r.status == "needs_reply")),
+            "total": self.sudo().search_count(open_domain),
+            "needs": self.sudo().search_count(
+                open_domain + [("status", "=", "needs_reply")]),
         }
 
-        # team dock strip: per CRM user, open + needs counts
-        team = []
-        by_owner = {}
-        for r in base:
-            if r.owner_id:
-                by_owner.setdefault(r.owner_id, self.env["care.conversation"])
-                by_owner[r.owner_id] |= r
-        for user, recs in by_owner.items():
-            team.append({
-                "id": user.id,
-                "name": user.name,
-                "initials": self._initials(user.name),
-                "open": len(recs),
-                "needs": len(recs.filtered(lambda r: r.status == "needs_reply")),
-            })
-        team.sort(key=lambda t: t["needs"], reverse=True)
+        # --- team dock strip via read_group (per owner: open + needs) ------
+        team_by_id = {}
+        for owner, cnt in self.sudo()._read_group(
+                open_domain + [("owner_id", "!=", False)],
+                ["owner_id"], ["__count"]):
+            team_by_id[owner.id] = {
+                "id": owner.id, "name": owner.name,
+                "initials": self._initials(owner.name),
+                "open": cnt, "needs": 0,
+            }
+        for owner, cnt in self.sudo()._read_group(
+                open_domain + [("owner_id", "!=", False),
+                               ("status", "=", "needs_reply")],
+                ["owner_id"], ["__count"]):
+            if owner.id in team_by_id:
+                team_by_id[owner.id]["needs"] = cnt
+        team = sorted(team_by_id.values(), key=lambda t: t["needs"], reverse=True)
 
         return {
             "conversations": conversations,
+            "capped": total_matching > self.WORKSPACE_CAP,
+            "total": total_matching,
             "channel_counts": counts,
             "team": team,
             "me": {
@@ -770,25 +797,37 @@ class CareConversation(models.Model):
     def action_claim(self, conv_id):
         self._ensure_access()
         uid = self.env.user.id
-        # single guarded write: only claims when currently unowned
         rec = self.sudo().search(
-            self._company_domain() + [("id", "=", conv_id), ("owner_id", "=", False)],
-            limit=1,
+            self._company_domain() + [("id", "=", conv_id)], limit=1)
+        if not rec:
+            return {"claimed": False, "owner": False}
+        # Airtight claim (review LOW-6): lock the row ONLY if it is still
+        # unowned. `FOR UPDATE SKIP LOCKED` means a concurrent claimer that
+        # already holds the lock makes us fall straight through to the
+        # "already claimed" branch instead of blocking — one owner wins, the
+        # loser gets a clean payload, no exception. Flush first so the raw
+        # SELECT sees any pending in-transaction owner write (§5.9).
+        self.env.flush_all()
+        self.env.cr.execute(
+            "SELECT id FROM care_conversation "
+            "WHERE id = %s AND owner_id IS NULL FOR UPDATE SKIP LOCKED",
+            (rec.id,),
         )
-        if rec:
-            rec.write({"owner_id": uid, "claimed_at": fields.Datetime.now()})
-            return {"claimed": True, "owner": {
-                "id": uid, "name": self.env.user.name,
-                "initials": self._initials(self.env.user.name)}}
-        # already owned (or gone) — report who has it, no exception
-        cur = self.sudo().search(self._company_domain() + [("id", "=", conv_id)], limit=1)
-        return {
-            "claimed": False,
-            "owner": {
-                "id": cur.owner_id.id, "name": cur.owner_id.name,
-                "initials": self._initials(cur.owner_id.name),
-            } if cur and cur.owner_id else False,
-        }
+        if not self.env.cr.fetchone():
+            # lost the race, already owned, or locked — report the current owner
+            rec.invalidate_recordset(["owner_id"])
+            return {
+                "claimed": False,
+                "owner": {
+                    "id": rec.owner_id.id, "name": rec.owner_id.name,
+                    "initials": self._initials(rec.owner_id.name),
+                } if rec.owner_id else False,
+            }
+        # won the lock — write via the ORM so chatter/tracking is preserved
+        rec.write({"owner_id": uid, "claimed_at": fields.Datetime.now()})
+        return {"claimed": True, "owner": {
+            "id": uid, "name": self.env.user.name,
+            "initials": self._initials(self.env.user.name)}}
 
     @api.model
     def action_release(self, conv_id):

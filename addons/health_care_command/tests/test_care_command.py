@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
-"""Care Command Phase 1 tests (handover §9, T1–T17).
+"""Care Command tests — Phase 1 (T1–T17) + Phase 2 (T18/T19 zalo send repair,
+T23 airtight claim, T24 workspace search, T25 capped payload).
+
+Phase-2 bridge tests T20–T22 live in health_care_command_voip (that module
+only loads when VoIP is installed, which is the only place voip.call.log
+exists). T18/T19 exercise the zalo.message send path and live here (rather than
+in a new health_zalo test module) because this suite already carries the
+zalo.config / conversation / message fixtures — no extra test-tag needed.
 
 TransactionCase only (no HttpCase → --no-http stays). Assertions key on
 codes/ids/enum values, never display strings (ledger §5.32/§5.50).
 """
 
 from datetime import timedelta
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from odoo import fields
 from odoo.exceptions import AccessError, UserError
@@ -113,6 +120,12 @@ class TestCareCommand(TransactionCase):
 
     def _convs_for_zalo(self, zconv):
         return self.Care.search([("zalo_conversation_id", "=", zconv.id)])
+
+    def _flush_tracking(self):
+        """mail tracking messages post at precommit (Odoo 17+); a
+        TransactionCase never commits, so flush the callbacks explicitly."""
+        self.env.flush_all()
+        self.env.cr.precommit.run()
 
     # ======================================================================
     # T1 — upsert idempotency
@@ -456,3 +469,151 @@ class TestCareCommand(TransactionCase):
         upsert_mock.assert_not_called()
         after = self.Care.search_count([])
         self.assertEqual(before, after, "no conversation created for a chatter note")
+
+    # ======================================================================
+    # T18 — zalo send repair: SUCCESS path (Phase 2, §5.2)
+    # ======================================================================
+    def test_18_zalo_send_success(self):
+        # The real send seam is get_api_client(env) → ZaloAPIClient, whose only
+        # HTTP touchpoint is requests.request inside _make_request. Mock that +
+        # the token retrieval; nothing hits the network. Proves the wiring the
+        # unregistered-model bug (§5.54) had broken.
+        zc = self._zalo_conv(name="send18")
+        msg = self.env["zalo.message"].create({
+            "conversation_id": zc.id, "direction": "outgoing",
+            "message_type": "text", "text": "xin chào", "state": "draft"})
+        resp = MagicMock(status_code=200, text='{"message_id": "zm_18"}')
+        resp.json.return_value = {"message_id": "zm_18"}
+        with patch.object(type(self.env["zalo.config"]), "get_valid_token",
+                          return_value="tok"), \
+                patch("requests.request", return_value=resp) as req, \
+                patch.object(type(self.env["zalo.conversation"]),
+                             "update_last_message") as ulm:
+            msg.action_send_message()
+        self.assertTrue(req.called, "the real API path issued the HTTP request")
+        self.assertTrue(ulm.called, "conversation.update_last_message was called")
+        # state is set on the cache by the success branch
+        self.assertEqual(msg.state, "sent")
+        self.assertEqual(msg.zalo_message_id, "zm_18")
+
+    # ======================================================================
+    # T19 — zalo send repair: FAILURE path + test_connection reaches the API
+    # ======================================================================
+    def test_19_zalo_send_failure(self):
+        zc = self._zalo_conv(name="send19")
+        msg = self.env["zalo.message"].create({
+            "conversation_id": zc.id, "direction": "outgoing",
+            "message_type": "text", "text": "fail", "state": "draft"})
+        resp = MagicMock(status_code=400, text='{"message": "bad token"}')
+        resp.json.return_value = {"message": "bad token"}
+        raised = False
+        # manual try/except (NOT assertRaises) so the state='failed' write is not
+        # rolled back by the assertRaises savepoint (§5.8); read from cache.
+        with patch.object(type(self.env["zalo.config"]), "get_valid_token",
+                          return_value="tok"), \
+                patch("requests.request", return_value=resp):
+            try:
+                msg.action_send_message()
+            except UserError:
+                raised = True
+        self.assertTrue(raised, "a non-200 send raises UserError")
+        self.assertEqual(msg.state, "failed")
+        self.assertTrue(msg.error_message)
+
+        # action_test_connection must reach get_oa_profile without KeyError
+        # (the pre-fix `self.env['zalo.api.client']` lookup raised before this).
+        config = zc.config_id
+        config.write({"access_token": "tok", "state": "draft"})
+        resp2 = MagicMock(status_code=200, text='{"name": "Test OA"}')
+        resp2.json.return_value = {"name": "Test OA"}
+        with patch.object(type(config), "get_valid_token", return_value="tok"), \
+                patch("requests.request", return_value=resp2):
+            config.action_test_connection()
+        self.assertEqual(config.state, "connected")
+
+    # ======================================================================
+    # T23 — airtight claim (Phase 2, review LOW-6)
+    # ======================================================================
+    def test_23_claim_airtight(self):
+        conv = self.Care._find_or_create_for(
+            {"phone_normalized": "0912345623"},
+            {"channel": "zalo", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        # fresh → claimed True, and the owner_id change (tracking=True) logs to
+        # chatter. mail tracking messages post in the PRECOMMIT phase (Odoo
+        # 17+), which a TransactionCase never reaches — flush it explicitly
+        # (the canonical flush_tracking pattern) before counting messages.
+        self._flush_tracking()
+        conv.invalidate_recordset()
+        msgs_before = len(conv.message_ids)
+        res = self.Care.with_user(self.crm_user).action_claim(conv.id)
+        self.assertTrue(res["claimed"])
+        self._flush_tracking()
+        conv.invalidate_recordset()
+        self.assertEqual(conv.owner_id.id, self.crm_user.id)
+        self.assertGreater(len(conv.message_ids), msgs_before,
+                           "owner change recorded in chatter (tracking)")
+        # pre-owned → lost-race path: no exception, reports the current owner
+        res2 = self.Care.with_user(self.crm_user2).action_claim(conv.id)
+        self.assertFalse(res2["claimed"])
+        self.assertEqual(res2["owner"]["id"], self.crm_user.id)
+        conv.invalidate_recordset()
+        self.assertEqual(conv.owner_id.id, self.crm_user.id, "owner unchanged")
+
+    # ======================================================================
+    # T24 — workspace search (Phase 2, review LOW-9 + §5.4)
+    # ======================================================================
+    def test_24_workspace_search(self):
+        lead = self.env["crm.lead"].create({
+            "name": "Zqwlead Special", "phone": "0912340001"})
+        convL = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        convP = self.Care._find_or_create_for(
+            {"phone_normalized": "0912340002"},
+            {"channel": "zalo", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        convE = self.Care._find_or_create_for(
+            {"email_normalized": "findme@example.com", "partner_id": self.patientB.id},
+            {"channel": "email", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        U = self.Care.with_user(self.crm_user)
+
+        def ids(**kw):
+            return [c["id"] for c in U.get_workspace_data(**kw)["conversations"]]
+
+        # by lead name
+        self.assertIn(convL.id, ids(query="Zqwlead"))
+        self.assertNotIn(convP.id, ids(query="Zqwlead"))
+        # by phone
+        self.assertIn(convP.id, ids(query="0912340002"))
+        # by email
+        self.assertIn(convE.id, ids(query="findme@"))
+        # empty query = unfiltered (all three present)
+        allids = ids(query="")
+        for c in (convL, convP, convE):
+            self.assertIn(c.id, allids)
+        # still company-scoped even with a query hit
+        other = self.Care.sudo().create({
+            "phone_normalized": "0912340003", "company_id": self.company2.id,
+            "status": "needs_reply"})
+        self.assertNotIn(other.id, ids(query="0912340003"))
+
+    # ======================================================================
+    # T25 — capped payload: honest cap + exact counts (Phase 2, §5.4)
+    # ======================================================================
+    def test_25_capped_payload(self):
+        cap = self.Care.WORKSPACE_CAP
+        vals = [{
+            "phone_normalized": "09%08d" % i,
+            "company_id": self.company.id,
+            "status": "needs_reply",
+        } for i in range(cap + 1)]
+        self.Care.sudo().create(vals)
+        data = self.Care.with_user(self.crm_user).get_workspace_data()
+        self.assertTrue(data["capped"], "over-cap payload is flagged capped")
+        self.assertGreaterEqual(data["total"], cap + 1)
+        self.assertLessEqual(len(data["conversations"]), cap,
+                             "tile/list payload is truncated to the cap")
+        # counts are EXACT (read_group over the whole set, not the capped list)
+        total_open = self.Care.sudo().search_count([
+            ("company_id", "=", self.company.id), ("status", "!=", "closed")])
+        self.assertEqual(data["channel_counts"]["all"]["total"], total_open)

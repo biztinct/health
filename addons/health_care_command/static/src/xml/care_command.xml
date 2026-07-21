@@ -103,7 +103,8 @@
           <section class="clist">
             <div class="clist-h">
               <div class="searchbox"><span class="ic ic-search"/>
-                <input placeholder="Search people, phones, messages…" disabled="1"/></div>
+                <input type="text" placeholder="Search people, phones, messages…"
+                       t-att-value="state.search" t-on-input="(ev) => this.onSearchInput(ev)"/></div>
             </div>
             <div class="chats">
               <t t-foreach="LIST_SECTIONS" t-as="sec" t-key="sec.key">

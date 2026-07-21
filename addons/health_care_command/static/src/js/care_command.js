@@ -7,24 +7,25 @@ import { _t } from "@web/core/l10n/translation";
 
 // Channel dock definition. Active = zalo/call/email/zns. The rest render
 // disabled ("Coming soon") per the Phase-1 non-goals.
+// Labels go through _t (returns a LazyTranslatedString, safe at module load).
 const CHANNELS = [
-    { key: "zalo", label: "Zalo", short: "ZALO", ic: "ic-chat", cv: "var(--ch-zalo)", active: true },
-    { key: "call", label: "Calls", short: "CALLS", ic: "ic-phone", cv: "var(--ch-call)", active: true },
-    { key: "email", label: "Email", short: "EMAIL", ic: "ic-mail", cv: "var(--ch-email)", active: true },
-    { key: "zns", label: "ZNS", short: "ZNS", ic: "ic-send", cv: "var(--ch-zns)", active: true },
-    { key: "wa", label: "WhatsApp", short: "WHATSAPP", ic: "ic-chat", cv: "var(--ch-wa)", active: false },
-    { key: "fb", label: "Messenger", short: "FB MSGR", ic: "ic-chat", cv: "var(--ch-fb)", active: false },
-    { key: "tg", label: "Telegram", short: "TELEGRAM", ic: "ic-chat", cv: "var(--ch-tg)", active: false },
-    { key: "web", label: "Web chat", short: "WEB CHAT", ic: "ic-globe", cv: "var(--ch-web)", active: false },
+    { key: "zalo", label: _t("Zalo"), short: _t("ZALO"), ic: "ic-chat", cv: "var(--ch-zalo)", active: true },
+    { key: "call", label: _t("Calls"), short: _t("CALLS"), ic: "ic-phone", cv: "var(--ch-call)", active: true },
+    { key: "email", label: _t("Email"), short: _t("EMAIL"), ic: "ic-mail", cv: "var(--ch-email)", active: true },
+    { key: "zns", label: _t("ZNS"), short: _t("ZNS"), ic: "ic-send", cv: "var(--ch-zns)", active: true },
+    { key: "wa", label: _t("WhatsApp"), short: _t("WHATSAPP"), ic: "ic-chat", cv: "var(--ch-wa)", active: false },
+    { key: "fb", label: _t("Messenger"), short: _t("FB MSGR"), ic: "ic-chat", cv: "var(--ch-fb)", active: false },
+    { key: "tg", label: _t("Telegram"), short: _t("TELEGRAM"), ic: "ic-chat", cv: "var(--ch-tg)", active: false },
+    { key: "web", label: _t("Web chat"), short: _t("WEB CHAT"), ic: "ic-globe", cv: "var(--ch-web)", active: false },
 ];
 const CH_MAP = Object.fromEntries(CHANNELS.map((c) => [c.key, c]));
 
 const LIST_SECTIONS = [
-    { key: "needs_mine", label: "Needs reply — mine", ic: "ic-bolt" },
-    { key: "needs_un", label: "Unclaimed — anyone can take", ic: "ic-warn" },
-    { key: "needs_other", label: "With teammates", ic: "ic-users" },
-    { key: "waiting", label: "Waiting / done for now", ic: "ic-clock" },
-    { key: "junk", label: "Junk — confirm to archive", ic: "ic-ban" },
+    { key: "needs_mine", label: _t("Needs reply — mine"), ic: "ic-bolt" },
+    { key: "needs_un", label: _t("Unclaimed — anyone can take"), ic: "ic-warn" },
+    { key: "needs_other", label: _t("With teammates"), ic: "ic-users" },
+    { key: "waiting", label: _t("Waiting / done for now"), ic: "ic-clock" },
+    { key: "junk", label: _t("Junk — confirm to archive"), ic: "ic-ban" },
 ];
 
 export class CareCommand extends Component {
@@ -55,11 +56,13 @@ export class CareCommand extends Component {
             composer: "",
             sending: false,
             toast: null,
+            search: "",              // chat-list search box (server-side filter)
         });
 
         this._busChannel = null;
         this._pollTimer = null;
         this._debounce = null;
+        this._searchDebounce = null;
 
         onWillStart(async () => {
             await this.load();
@@ -71,6 +74,7 @@ export class CareCommand extends Component {
         onWillUnmount(() => {
             if (this._pollTimer) clearInterval(this._pollTimer);
             if (this._debounce) clearTimeout(this._debounce);
+            if (this._searchDebounce) clearTimeout(this._searchDebounce);
             if (this._toastTimer) clearTimeout(this._toastTimer);
             if (this._busChannel) this.busService.deleteChannel(this._busChannel);
             this.busService.unsubscribe?.("care.conversation/update", this._onBus);
@@ -86,6 +90,7 @@ export class CareCommand extends Component {
             const data = await this.orm.call("care.conversation", "get_workspace_data", [], {
                 channel: this.state.filter,
                 mine_only: this.state.mineOnly,
+                query: this.state.search || null,
             });
             this.state.data = data;
             this.state.error = null;
@@ -169,7 +174,7 @@ export class CareCommand extends Component {
         // Unknown / channel-less (e.g. a lead not yet reached) → neutral glyph,
         // never a misleading channel colour.
         return this.CH_MAP[key]
-            || { key: "none", label: "Contact", short: "CONTACT", ic: "ic-user", cv: "var(--navy)", active: false };
+            || { key: "none", label: _t("Contact"), short: _t("CONTACT"), ic: "ic-user", cv: "var(--navy)", active: false };
     }
 
     // ---------------------------------------------------------------
@@ -202,6 +207,12 @@ export class CareCommand extends Component {
     setMine(mineOnly) {
         this.state.mineOnly = mineOnly;
         this.load();
+    }
+    onSearchInput(ev) {
+        // server-side search, debounced 300ms (§5.4)
+        this.state.search = ev.target.value;
+        if (this._searchDebounce) clearTimeout(this._searchDebounce);
+        this._searchDebounce = setTimeout(() => this.load(true), 300);
     }
     setRailTab(t) {
         this.state.railTab = t;

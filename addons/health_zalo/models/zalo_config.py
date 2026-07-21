@@ -6,6 +6,8 @@ import logging
 import json
 from datetime import datetime, timedelta
 
+from ..services.zalo_api import get_api_client
+
 _logger = logging.getLogger(__name__)
 
 
@@ -285,7 +287,9 @@ class ZaloConfig(models.Model):
             raise UserError(_('No access token available. Please connect to Zalo first.'))
 
         try:
-            api_service = self.env['zalo.api.client']
+            # The real seam is the ZaloAPIClient factory — `zalo.api.client`
+            # is NOT a registered model (§5.54).
+            api_service = get_api_client(self.env)
             profile = api_service.get_oa_profile(self)
 
             if profile:
