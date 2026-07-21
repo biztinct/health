@@ -16,6 +16,7 @@ caught, failing every later statement in the host flow.
 import logging
 
 from odoo import api, fields, models
+from odoo.tools import html2plaintext
 
 _logger = logging.getLogger(__name__)
 
@@ -51,6 +52,8 @@ class ZaloMessageHook(models.Model):
                 "event_at": msg.sent_date,
                 "set_status": "needs_reply",
                 "unread": max(1, conv.unread_count or 0),
+                # watchlist runs at ingest, inbound only (§3, deliverable 2)
+                "watch_hits": Care._match_watchlist(msg.text),
             })
         else:  # outgoing (sent by us / an agent, incl. via action_send_zalo)
             Care._find_or_create_for(anchor, {
@@ -138,6 +141,9 @@ class MailMessageHook(models.Model):
             "event_at": msg.date or fields.Datetime.now(),
             "set_status": "needs_reply",
             "unread": 1,
+            # match against subject + a plaintext preview of the body (§3)
+            "watch_hits": Care._match_watchlist(
+                msg.subject, html2plaintext(msg.body or "")[:1000]),
         })
 
 

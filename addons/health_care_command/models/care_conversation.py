@@ -89,6 +89,11 @@ class CareConversation(models.Model):
     # conversation leaves needs_reply. Feeds the +10 urgency term
     # deterministically without a time-dependent stored compute.
     missed_call_unhandled = fields.Boolean(default=False)
+    # Watchlist (Phase 3): set at ingest when an inbound message text matches an
+    # active care.watch.phrase; cleared alongside missed_call when the
+    # conversation leaves needs_reply. Deterministic triage, never severity.
+    watch_flag = fields.Boolean(default=False, index=True)
+    watch_terms = fields.Char(string="Watchlist Matches")
     last_inbound_at = fields.Datetime(string="Last Inbound")
     last_event_at = fields.Datetime(string="Last Event", index=True)
     next_booking_at = fields.Datetime(string="Next Booking")
@@ -159,7 +164,7 @@ class CareConversation(models.Model):
 
     @api.depends(
         "status", "next_booking_at", "unread_count",
-        "last_inbound_at", "missed_call_unhandled",
+        "last_inbound_at", "missed_call_unhandled", "watch_flag",
     )
     def _compute_urgency_score(self):
         """Deterministic triage score (§5.3). Time terms (booking-within-24h,
@@ -181,6 +186,8 @@ class CareConversation(models.Model):
                 score += 15
             if rec.missed_call_unhandled:
                 score += 10
+            if rec.watch_flag:
+                score += 15
             if rec.status == "needs_reply" and rec.last_inbound_at:
                 hours = (now - rec.last_inbound_at).total_seconds() / 3600.0
                 score += min(20, max(0, int(hours)))
@@ -243,6 +250,37 @@ class CareConversation(models.Model):
             return False
         return value.strip().lower()
 
+    @api.model
+    def _match_watchlist(self, *texts):
+        """Deterministic lowercase-substring match of the active watchlist
+        phrases against the given text(s). Returns the sorted list of DISTINCT
+        matched phrases (as stored). No regex, no scoring, no NLP (Phase-3
+        non-goal). One small company-scoped search per call — cheap enough for
+        the ingest hot path (the ingest already does a search for the upsert).
+        A simple search_read (not ormcache) so there is no per-worker staleness
+        surprise (§5.48) when a manager edits the list."""
+        blob = " ".join(t for t in texts if t).lower()
+        if not blob:
+            return []
+        hits = []
+        for row in self.env["care.watch.phrase"].sudo().search_read(
+                [("company_id", "=", self.env.company.id)], ["phrase"]):
+            p = (row["phrase"] or "").strip()
+            if p and p.lower() in blob:
+                hits.append(p)
+        return sorted(set(hits))
+
+    @staticmethod
+    def _merge_terms(existing, new_hits):
+        """Union the stored comma-separated watch_terms with fresh hits,
+        order-stable and de-duplicated (never drop a previously-seen phrase on
+        a later inbound that happens not to repeat it)."""
+        cur = [t.strip() for t in (existing or "").split(",") if t.strip()]
+        for h in new_hits:
+            if h not in cur:
+                cur.append(h)
+        return ", ".join(cur)
+
     # ------------------------------------------------------------------
     # Idempotent upsert (§5.2) — always runs sudo (engine bookkeeping)
     # ------------------------------------------------------------------
@@ -283,6 +321,10 @@ class CareConversation(models.Model):
             vals["status"] = signal.get("set_status") or "needs_reply"
             vals["unread_count"] = self._resolve_unread(signal, 0)
             vals["missed_call_unhandled"] = signal.get("missed_call", False)
+            watch_hits = signal.get("watch_hits") or []
+            if watch_hits:
+                vals["watch_flag"] = True
+                vals["watch_terms"] = ", ".join(watch_hits)
             return Conv.create(vals)
 
         # --- update existing -------------------------------------------
@@ -315,11 +357,20 @@ class CareConversation(models.Model):
             upd["status"] = signal["set_status"]
         if signal.get("missed_call"):
             upd["missed_call_unhandled"] = True
+        # watchlist: set flag + union terms on a hit; NEVER clear on a
+        # non-hit inbound (clearing happens only when status leaves needs_reply)
+        watch_hits = signal.get("watch_hits") or []
+        if watch_hits:
+            upd["watch_flag"] = True
+            upd["watch_terms"] = self._merge_terms(rec.watch_terms, watch_hits)
         upd["unread_count"] = self._resolve_unread(signal, rec.unread_count)
-        # clear the missed-call term once we're no longer waiting on a reply
+        # clear the missed-call + watchlist terms once we're no longer waiting
+        # on a reply (same place the missed-call flag clears)
         target_status = upd.get("status", rec.status)
         if target_status in ("waiting", "closed"):
             upd["missed_call_unhandled"] = False
+            upd["watch_flag"] = False
+            upd["watch_terms"] = False
             if target_status == "waiting":
                 upd["unread_count"] = 0
 
@@ -514,6 +565,8 @@ class CareConversation(models.Model):
             "tier": self._urgency_tier(),
             "reason": self._reason_line(),
             "snippet": self._snippet(),
+            # deterministic watchlist badge (mono, no red alarm styling — triage)
+            "watch": {"terms": self.watch_terms or ""} if self.watch_flag else False,
             "last_event_at": self.last_event_at.isoformat() if self.last_event_at else False,
         }
 
@@ -573,12 +626,34 @@ class CareConversation(models.Model):
             "header": rec._detail_header(),
             "timeline": rec._detail_timeline(),
             "context": rec._detail_context(),
+            # deterministic reply templates for this conversation's channel (§3)
+            "templates": rec._reply_templates(),
             "capabilities": {
                 "can_reply_zalo": bool(rec.zalo_conversation_id),
                 "can_reply_email": bool(rec._recipient_email()),
             },
             "channel_primary": rec.channel_primary or "none",
         }
+
+    # --- 6.1b reply templates (Phase 3, deliverable 1) ----------------
+    def _reply_templates(self):
+        """Active templates for this conversation's channel (its last-inbound
+        channel + "any"), company-scoped, ordered by sequence."""
+        self.ensure_one()
+        ch = self.channel_primary or "any"
+        channels = ["any"] if ch == "any" else ["any", ch]
+        tmpls = self.env["care.reply.template"].sudo().search([
+            ("company_id", "in", self.env.companies.ids),
+            ("channel", "in", channels),
+        ])
+        return [{"id": t.id, "name": t.name, "body": t.body} for t in tmpls]
+
+    @api.model
+    def get_reply_templates(self, conv_id):
+        """User-facing entry (group-gated + company-scoped) — the composer
+        chips call this / read the same list off the detail payload."""
+        rec = self._guarded(conv_id)
+        return rec._reply_templates()
 
     def _detail_header(self):
         self.ensure_one()
@@ -603,6 +678,12 @@ class CareConversation(models.Model):
             "relation": relation,
             "is_client": bool(self.partner_id and self.partner_id.is_patient),
             "has_lead": bool(self.lead_id),
+            "watch": row["watch"],
+            # header-strip capability flags (Phase 3, deliverable 5)
+            "can_reminder": bool(self.lead_id or self.partner_id),
+            # SOFT consent dependency: button shows only when the consent module
+            # is installed AND this conversation has a client partner (§3)
+            "can_consent": bool(self.partner_id) and "health.consent" in self.env,
             "phone": self.phone_normalized or (self.partner_id.phone if self.partner_id else False)
             or (self.lead_id.phone if self.lead_id else False) or False,
         }
@@ -1064,3 +1145,87 @@ class CareConversation(models.Model):
         if not rec.lead_id:
             raise UserError(_("Escalation needs a lead anchor."))
         return rec.lead_id.sudo().action_escalate_contact()  # crm_lead.py:2137
+
+    # ------------------------------------------------------------------
+    # 7.6 Reminder (Phase 3) — schedule a todo activity on the anchor record.
+    # crm.lead and res.partner are both mail.thread/mail.activity.mixin, so
+    # activity_schedule works on either. Gated by _guarded; sudo the write
+    # after the group check (§5.24 pattern — guard by group, then sudo).
+    # ------------------------------------------------------------------
+    @api.model
+    def action_reminder(self, conv_id, days=1, note=None):
+        rec = self._guarded(conv_id)
+        target = rec.lead_id or rec.partner_id
+        if not target:
+            raise UserError(_("No lead or contact to set a reminder on."))
+        try:
+            days = max(0, int(days))
+        except (TypeError, ValueError):
+            days = 1
+        deadline = fields.Date.context_today(self.env.user) + timedelta(days=days)
+        target.sudo().activity_schedule(
+            "mail.mail_activity_data_todo",
+            date_deadline=deadline,
+            summary=_("Care Command reminder"),
+            note=(note or "").strip() or False,
+            user_id=self.env.user.id,
+        )
+        return {"ok": True, "message": _("Reminder scheduled.")}
+
+    # ------------------------------------------------------------------
+    # 7.7 Consent (Phase 3, clients only) — NAVIGATE to the existing backend
+    # consent records for the partner. SOFT dependency: no `depends` on
+    # health_consent, no consent/clinical field rendered inside Care Command;
+    # the backend view enforces its own ACLs. Guarded so a plain user gets a
+    # clean AccessError before we ever look at the module.
+    # ------------------------------------------------------------------
+    @api.model
+    def action_consent(self, conv_id):
+        rec = self._guarded(conv_id)
+        if "health.consent" not in self.env:
+            raise UserError(_("Consent records are not available on this server."))
+        if not rec.partner_id:
+            raise UserError(_("This conversation has no client to show consent for."))
+        # NB: health.consent's patient field is `client_id` (not partner_id).
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Consent records"),
+            "res_model": "health.consent",
+            "view_mode": "list,form",
+            "domain": [("client_id", "=", rec.partner_id.id)],
+            "context": {"default_client_id": rec.partner_id.id},
+            "target": "current",
+        }
+
+    # ------------------------------------------------------------------
+    # 7.8 Live ringing resolver (Phase 3) — map a voip 'voip_incoming_call'
+    # bus payload to an EXISTING open conversation. NEVER creates (the
+    # voip.call.log create-hook upserts the real row); this only resolves so
+    # the ringing hero can open the right thread on click. Gated + scoped.
+    # ------------------------------------------------------------------
+    @api.model
+    def resolve_incoming_call(self, payload):
+        self._ensure_access()
+        payload = payload or {}
+        base = self._company_domain()
+        rec = self.browse()
+        if payload.get("partner_id"):
+            rec = self.sudo().search(
+                base + [("partner_id", "=", payload["partner_id"])],
+                order="last_event_at desc", limit=1)
+        if not rec and payload.get("lead_id"):
+            rec = self.sudo().search(
+                base + [("lead_id", "=", payload["lead_id"])],
+                order="last_event_at desc", limit=1)
+        if not rec:
+            phone = self._safe_phone(payload.get("caller_number"))
+            if phone:
+                rec = self.sudo().search(
+                    base + [("phone_normalized", "=", phone)],
+                    order="last_event_at desc", limit=1)
+        if not rec:
+            return {
+                "conv_id": False,
+                "name": payload.get("partner_name") or payload.get("caller_number") or "",
+            }
+        return {"conv_id": rec.id, "name": rec.display_name_c}

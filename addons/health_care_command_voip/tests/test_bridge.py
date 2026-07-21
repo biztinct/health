@@ -132,6 +132,23 @@ class TestCareCommandVoipBridge(TransactionCase):
         self.assertFalse(trunk, "no conversation keyed to the clinic trunk")
 
     # ======================================================================
+    # T30 — busy / failed / voicemail incoming count as missed-like (Phase 3)
+    # ======================================================================
+    def test_30_missed_like_signals(self):
+        # the customer tried to reach us and didn't get through → needs_reply
+        # + missed-call flag, exactly like a plain missed/abandoned call
+        for ct, phone, patient in (
+                ("busy", "0912345630", self.patient),
+                ("voicemail", "0912345631", self.patientB),
+                ("failed", "0912345632", self.patientC)):
+            self._call(phone, call_type=ct, direction="incoming", partner=patient)
+            conv = self._conv_for_partner(patient)
+            self.assertEqual(len(conv), 1, "one conversation for %s" % ct)
+            self.assertEqual(conv.channel_primary, "call")
+            self.assertEqual(conv.status, "needs_reply", "%s → needs_reply" % ct)
+            self.assertTrue(conv.missed_call_unhandled, "%s sets missed flag" % ct)
+
+    # ======================================================================
     # T22 — hook exception isolation (savepoint in force, mirrors T13)
     # ======================================================================
     def test_22_hook_isolation(self):

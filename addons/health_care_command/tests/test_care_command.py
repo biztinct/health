@@ -617,3 +617,152 @@ class TestCareCommand(TransactionCase):
         total_open = self.Care.sudo().search_count([
             ("company_id", "=", self.company.id), ("status", "!=", "closed")])
         self.assertEqual(data["channel_counts"]["all"]["total"], total_open)
+
+    # ======================================================================
+    # T26 — reply templates: manager-only CRUD + channel-filtered service
+    # ======================================================================
+    def test_26_reply_templates(self):
+        Tpl = self.env["care.reply.template"]
+        t_any = Tpl.create({"name": "T Any", "body": "any body", "channel": "any"})
+        t_zalo = Tpl.create({"name": "T Zalo", "body": "zalo body", "channel": "zalo"})
+        t_email = Tpl.create({"name": "T Email", "body": "email body", "channel": "email"})
+        # a plain CRM user cannot create (perm_create=0 → AccessError)
+        with self.assertRaises(AccessError):
+            Tpl.with_user(self.crm_user).create(
+                {"name": "nope", "body": "x", "channel": "any"})
+        # a zalo conversation sees any + zalo, never email
+        zc = self._zalo_conv(name="tpl26")
+        self._zalo_msg(zc)
+        conv = self._convs_for_zalo(zc)
+        self.assertEqual(conv.channel_primary, "zalo")
+        got = self.Care.with_user(self.crm_user).get_reply_templates(conv.id)
+        ids = {t["id"] for t in got}
+        self.assertIn(t_any.id, ids)
+        self.assertIn(t_zalo.id, ids)
+        self.assertNotIn(t_email.id, ids)
+        # company-scoped: a template in the other company is absent
+        other = Tpl.sudo().create({
+            "name": "other co tpl", "body": "x", "channel": "any",
+            "company_id": self.company2.id})
+        self.assertNotIn(other.id, {t["id"] for t in
+                         self.Care.with_user(self.crm_user).get_reply_templates(conv.id)})
+        # inactive template is excluded
+        t_any.active = False
+        self.assertNotIn(t_any.id, {t["id"] for t in
+                         self.Care.with_user(self.crm_user).get_reply_templates(conv.id)})
+
+    # ======================================================================
+    # T27 — watchlist match on inbound Zalo (case-insensitive, +15, no dup)
+    # ======================================================================
+    def test_27_watchlist_zalo(self):
+        self.env["care.watch.phrase"].create({"phrase": "đau ngực"})
+        zc = self._zalo_conv(name="watch27")
+        self._zalo_msg(zc, text="Bố tôi bị ĐAU NGỰC từ sáng nay")
+        conv = self._convs_for_zalo(zc)
+        self.assertTrue(conv.watch_flag)
+        self.assertIn("đau ngực", (conv.watch_terms or "").lower())
+        # the +15 watch term: clearing the flag drops the score by exactly 15
+        with_watch = conv.urgency_score
+        conv.watch_flag = False
+        self.assertEqual(with_watch - conv.urgency_score, 15)
+        # a clean inbound message never flags
+        zc2 = self._zalo_conv(name="watch27b")
+        self._zalo_msg(zc2, text="chào chị em muốn hỏi giá dịch vụ")
+        conv2 = self._convs_for_zalo(zc2)
+        self.assertFalse(conv2.watch_flag)
+        self.assertFalse(conv2.watch_terms)
+        # replaying the same phrase does not duplicate the stored term
+        self._zalo_msg(zc, text="vẫn còn đau ngực nhiều")
+        conv.invalidate_recordset()
+        terms = [t.strip() for t in (conv.watch_terms or "").split(",") if t.strip()]
+        self.assertEqual(terms.count("đau ngực"), 1)
+
+    # ======================================================================
+    # T28 — watchlist match on inbound email; chatter NOTE never scanned
+    # ======================================================================
+    def test_28_watchlist_email(self):
+        self.env["care.watch.phrase"].create({"phrase": "khó thở"})
+        lead = self.env["crm.lead"].create({
+            "name": "w28", "email_from": "w28@example.com"})
+        self.env["mail.message"].create({
+            "model": "crm.lead", "res_id": lead.id, "message_type": "email",
+            "email_from": "w28@example.com", "subject": "Mẹ tôi KHÓ THỞ",
+            "body": "<p>xin tư vấn giúp</p>", "date": fields.Datetime.now()})
+        conv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        self.assertTrue(conv.watch_flag)
+        self.assertIn("khó thở", (conv.watch_terms or "").lower())
+        # a plain chatter note (T17 guard) is never ingested, never scanned
+        with patch.object(type(self.Care), "_match_watchlist") as mm:
+            self.patient.message_post(
+                body="đau ngực khó thở — ghi chú nội bộ",
+                message_type="comment", subtype_xmlid="mail.mt_note")
+        mm.assert_not_called()
+
+    # ======================================================================
+    # T29 — watchlist flag + terms clear when status leaves needs_reply
+    # ======================================================================
+    def test_29_watchlist_clears(self):
+        self.env["care.watch.phrase"].create({"phrase": "chảy máu"})
+        zc = self._zalo_conv(name="w29")
+        self._zalo_msg(zc, text="bị chảy máu nhiều")
+        conv = self._convs_for_zalo(zc)
+        self.assertTrue(conv.watch_flag)
+        self.assertTrue(conv.watch_terms)
+        # an outgoing reply → status waiting → flag + terms cleared (mirrors
+        # the missed-call clearing). Mock the broken upstream send (§5.54).
+        with patch.object(type(self.env["zalo.message"]),
+                          "action_send_message", return_value=None):
+            self.Care.action_send_zalo(conv.id, "điều dưỡng đến ngay ạ")
+        conv.invalidate_recordset()
+        self.assertEqual(conv.status, "waiting")
+        self.assertFalse(conv.watch_flag)
+        self.assertFalse(conv.watch_terms)
+
+    # ======================================================================
+    # T31 — reminder schedules a todo activity on the anchor, gated
+    # ======================================================================
+    def test_31_reminder(self):
+        Act = self.env["mail.activity"]
+        lead = self.env["crm.lead"].create({"name": "rem31", "phone": "0912345631"})
+        conv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        before = Act.search_count(
+            [("res_model", "=", "crm.lead"), ("res_id", "=", lead.id)])
+        res = self.Care.action_reminder(conv.id, 3, "gọi lại tuần sau")
+        self.assertTrue(res["ok"])
+        acts = Act.search([("res_model", "=", "crm.lead"), ("res_id", "=", lead.id)])
+        self.assertEqual(len(acts) - before, 1)
+        self.assertEqual(acts.sorted("id")[-1].date_deadline,
+                         fields.Date.context_today(self.env.user) + timedelta(days=3))
+        # partner-only conversation → activity lands on the partner
+        pconv = self.Care._find_or_create_for(
+            {"partner_id": self.patientB.id},
+            {"channel": "zalo", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        self.Care.action_reminder(pconv.id, 1, None)
+        self.assertTrue(Act.search_count(
+            [("res_model", "=", "res.partner"), ("res_id", "=", self.patientB.id)]))
+        # gated: a plain (non-CRM) user is denied
+        with self.assertRaises(AccessError):
+            self.Care.with_user(self.plain_user).action_reminder(conv.id, 1, None)
+
+    # ======================================================================
+    # T32 — consent action: partner-scoped act_window (soft dependency)
+    # ======================================================================
+    def test_32_consent_action(self):
+        if "health.consent" not in self.env:
+            self.skipTest("health.consent not installed — soft dependency")
+        conv = self.Care._find_or_create_for(
+            {"partner_id": self.patient.id},
+            {"channel": "zalo", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        action = self.Care.action_consent(conv.id)
+        self.assertEqual(action["res_model"], "health.consent")
+        # health.consent's patient field is client_id (NOT partner_id)
+        self.assertIn(("client_id", "=", self.patient.id), action["domain"])
+        # no partner anchor → clean UserError
+        nore = self.Care._find_or_create_for(
+            {"phone_normalized": "0912345632"},
+            {"channel": "zalo", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        with self.assertRaises(UserError):
+            self.Care.action_consent(nore.id)

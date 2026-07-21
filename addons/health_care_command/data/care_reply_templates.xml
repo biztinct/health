@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Seed reply templates. noupdate="1": managers WILL edit these; an
+         upgrade must never clobber their wording (and, the flip side of the
+         noupdate rule, later edits to this XML won't re-apply on upgrade —
+         change the DB directly for a wording fix). company_id omitted → the
+         model default (env.company) applies at install time. -->
+    <data noupdate="1">
+
+        <record id="reply_tpl_greeting" model="care.reply.template">
+            <field name="name">Chào hỏi</field>
+            <field name="channel">any</field>
+            <field name="sequence">10</field>
+            <field name="body">Dạ em chào anh/chị, em là nhân viên chăm sóc của Việt Úc Care ạ. Em có thể hỗ trợ gì cho mình ạ?</field>
+        </record>
+
+        <record id="reply_tpl_price" model="care.reply.template">
+            <field name="name">Bảng giá dịch vụ</field>
+            <field name="channel">any</field>
+            <field name="sequence">20</field>
+            <field name="body">Dạ em gửi anh/chị bảng giá các gói dịch vụ chăm sóc tại nhà của Việt Úc Care ạ. Anh/chị tham khảo giúp em, có gì em tư vấn thêm nhé ạ.</field>
+        </record>
+
+        <record id="reply_tpl_booking_confirm" model="care.reply.template">
+            <field name="name">Xác nhận lịch hẹn</field>
+            <field name="channel">any</field>
+            <field name="sequence">30</field>
+            <field name="body">Dạ em xác nhận lịch hẹn của mình rồi ạ. Điều dưỡng sẽ đến đúng giờ đã hẹn. Nếu cần thay đổi anh/chị nhắn em trước giúp ạ.</field>
+        </record>
+
+        <record id="reply_tpl_callback" model="care.reply.template">
+            <field name="name">Hẹn gọi lại</field>
+            <field name="channel">any</field>
+            <field name="sequence">40</field>
+            <field name="body">Dạ em đã ghi nhận thông tin. Em sẽ kiểm tra và gọi lại cho anh/chị trong thời gian sớm nhất ạ.</field>
+        </record>
+
+        <record id="reply_tpl_out_of_area" model="care.reply.template">
+            <field name="name">Ngoài khu vực phục vụ</field>
+            <field name="channel">any</field>
+            <field name="sequence">50</field>
+            <field name="body">Dạ hiện khu vực của mình chưa nằm trong phạm vi phục vụ của Việt Úc Care ạ. Em rất tiếc và mong được hỗ trợ anh/chị trong thời gian tới ạ.</field>
+        </record>
+
+        <record id="reply_tpl_close" model="care.reply.template">
+            <field name="name">Cảm ơn &amp; kết thúc</field>
+            <field name="channel">any</field>
+            <field name="sequence">60</field>
+            <field name="body">Dạ em cảm ơn anh/chị đã liên hệ Việt Úc Care ạ. Chúc anh/chị và gia đình nhiều sức khỏe ạ!</field>
+        </record>
+
+        <record id="reply_tpl_ask_phone" model="care.reply.template">
+            <field name="name">Xin số điện thoại (Zalo)</field>
+            <field name="channel">zalo</field>
+            <field name="sequence">70</field>
+            <field name="body">Dạ để hỗ trợ mình nhanh hơn, anh/chị cho em xin số điện thoại và khu vực đang ở với ạ.</field>
+        </record>
+
+        <record id="reply_tpl_email_reply" model="care.reply.template">
+            <field name="name">Phản hồi email</field>
+            <field name="channel">email</field>
+            <field name="sequence">80</field>
+            <field name="body">Kính chào anh/chị,
+
+Cảm ơn anh/chị đã liên hệ Việt Úc Care. Chúng tôi đã tiếp nhận yêu cầu và sẽ phản hồi chi tiết trong thời gian sớm nhất.
+
+Trân trọng,
+Đội ngũ chăm sóc khách hàng Việt Úc Care</field>
+        </record>
+
+    </data>
+</odoo>

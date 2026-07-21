@@ -40,6 +40,17 @@
           <h1><span class="live-dot"/>Care Command</h1>
           <span class="sub" t-esc="state.view === 'chat' ? 'Conversation' : 'Wall'"/>
         </div>
+        <!-- now-ticker: last ~20 live events this session (JS-only ring buffer).
+             Always rendered (flexible spacer); empty = invisible gap. -->
+        <div class="cc-ticker" t-att-class="{ empty: !state.ticks.length }">
+          <div class="cc-ticker-track">
+            <span t-foreach="state.ticks" t-as="tk" t-key="tk_index"
+                  class="tk" t-att-class="{ hot: tk.hot }"
+                  t-on-click="() => this.openTick(tk)">
+              <span class="ic" t-att-class="tk.icon"/><t t-esc="tk.text"/>
+            </span>
+          </div>
+        </div>
         <div class="seg">
           <button t-att-class="{ on: state.mineOnly }" t-on-click="() => this.setMine(true)">
             <span class="ic ic-user"/>Mine</button>
@@ -53,6 +64,21 @@
 
         <!-- ========== WALL ========== -->
         <div class="wallwrap">
+          <!-- live ringing hero(es) — resolve to a conversation, open on click -->
+          <div t-if="state.rings.length" class="ringrow">
+            <div t-foreach="state.rings" t-as="ring" t-key="ring.key"
+                 class="ring-hero" t-on-click="() => this.openRing(ring)">
+              <span class="ic ic-phone"/>
+              <div class="rh-id">
+                <div class="rh-name" t-esc="ring.name"/>
+                <div class="rh-sub">
+                  <t t-if="ring.number"><t t-esc="ring.number"/> · </t>Ringing now…
+                </div>
+              </div>
+              <button class="rh-open" t-on-click.stop="() => this.openRing(ring)">Open</button>
+              <button class="rh-x" t-on-click.stop="() => this._dismissRing(ring.key)"><span class="ic ic-x"/></button>
+            </div>
+          </div>
           <div class="wall-head">
             <h2>
               Now on the wall · <t t-esc="conversations.length"/> conversation<t t-if="conversations.length !== 1">s</t>
@@ -83,6 +109,8 @@
               <div class="reason" t-att-class="{ hot: c.reason.hot }">
                 <span class="ic ic-clock"/><t t-esc="c.reason.text"/>
               </div>
+              <div t-if="c.watch" class="watchflag" t-att-title="c.watch.terms">
+                <span class="ic ic-warn"/><t t-esc="c.watch.terms"/></div>
               <div t-if="c.snippet and c.tier === 'large'" class="snippet" t-esc="c.snippet"/>
               <div class="t-foot">
                 <span t-if="c.chips.length" class="chip" t-att-class="c.chips[0].kind">
@@ -125,6 +153,8 @@
                       <div class="c-prev" t-esc="c.snippet || c.reason.text"/>
                       <div class="c-tags">
                         <span t-if="c.chips.length" class="mtag" t-att-class="c.chips[0].kind" t-esc="c.chips[0].label"/>
+                        <span t-if="c.watch" class="watchflag sm" t-att-title="c.watch.terms">
+                          <span class="ic ic-warn"/><t t-esc="c.watch.terms"/></span>
                         <button t-if="sec.key === 'needs_un'" class="rowclaim"
                                 t-on-click.stop="() => this.claim(c.id)">CLAIM</button>
                         <button t-if="sec.key === 'junk'" class="rowclaim"
@@ -157,6 +187,8 @@
                   <div class="th-id">
                     <div class="th-nm"><t t-esc="h.name"/>
                       <span t-if="h.chips.length" class="chip" t-att-class="h.chips[0].kind" t-esc="h.chips[0].label"/>
+                      <span t-if="h.watch" class="watchflag" t-att-title="h.watch.terms">
+                        <span class="ic ic-warn"/><t t-esc="h.watch.terms"/></span>
                     </div>
                     <div class="th-sub">
                       <t t-if="h.relation"><t t-esc="h.relation"/> · </t>
@@ -175,15 +207,35 @@
                             t-on-click="() => this.claim(state.selected)"><span class="ic ic-hand"/>Assign to me</button>
                   </div>
                 </div>
-                <!-- header action strip (Phase-1 set) -->
+                <!-- header action strip -->
                 <div class="th-act2">
                   <button class="abtn" t-on-click="() => this.doBook()"><span class="ic ic-cal"/>Book</button>
                   <button class="abtn" t-on-click="() => this.doCallback()"><span class="ic ic-clock"/>Callback</button>
+                  <!-- Reminder: schedules a todo activity on the anchor (Phase 3) -->
+                  <div t-if="h.can_reminder" class="rem-wrap">
+                    <button class="abtn" t-att-class="{ 'on': state.reminderOpen }"
+                            t-on-click="() => this.toggleReminder()"><span class="ic ic-bell"/>Reminder</button>
+                    <div t-if="state.reminderOpen" class="cc-pop">
+                      <div class="cc-pop-h">Schedule a reminder</div>
+                      <label class="cc-pop-row">In (days)
+                        <input type="number" min="0" t-att-value="state.reminderDays"
+                               t-on-input="(ev) => this.onReminderDays(ev)"/></label>
+                      <textarea class="cc-pop-note" placeholder="Note (optional)…"
+                                t-att-value="state.reminderNote"
+                                t-on-input="(ev) => this.onReminderNote(ev)"/>
+                      <div class="cc-pop-act">
+                        <button class="abtn" t-on-click="() => this.toggleReminder(false)">Cancel</button>
+                        <button class="abtn pri" t-on-click="() => this.doReminder()"><span class="ic ic-check"/>Schedule</button>
+                      </div>
+                    </div>
+                  </div>
                   <button class="abtn" t-on-click="() => this.doNote()"><span class="ic ic-note"/>Note</button>
                   <span class="adiv"/>
                   <button t-if="h.has_lead" class="abtn" t-on-click="() => this.doLog()"><span class="ic ic-chart"/>Log</button>
                   <button t-if="!h.has_lead" class="abtn" t-on-click="() => this.doLead()"><span class="ic ic-bolt"/>Lead</button>
                   <button t-if="!h.is_client" class="abtn" t-on-click="() => this.doClient()"><span class="ic ic-user"/>Client</button>
+                  <!-- Consent: navigates to the backend consent records (soft dep) -->
+                  <button t-if="h.can_consent" class="abtn" t-on-click="() => this.doConsent()"><span class="ic ic-shield"/>Consent</button>
                   <span class="adiv"/>
                   <button t-if="h.has_lead" class="abtn" t-on-click="() => this.doEscalate()"><span class="ic ic-warn"/>Escalate</button>
                   <button class="abtn gray" t-on-click="() => this.doJunk()"><span class="ic ic-ban"/>Junk</button>
@@ -230,6 +282,21 @@
                       <div><div class="ev-t">Booking · <t t-esc="ev.state"/></div>
                         <div class="ev-s"><t t-esc="ev.service"/> · <t t-esc="clockTime(ev.ts)"/></div></div></div>
                   </t>
+                </t>
+              </div>
+
+              <!-- reply-template chips (insert into composer, never send) -->
+              <div t-if="canReply and (templates.length or me.is_manager)" class="sugrow">
+                <span class="lab"><span class="ic ic-note"/>Quick replies</span>
+                <t t-foreach="templates" t-as="tpl" t-key="tpl.id">
+                  <span class="sug tpl" t-att-title="tpl.body"
+                        t-on-click="() => this.insertTemplate(tpl.body)" t-esc="tpl.name"/>
+                </t>
+                <t t-if="me.is_manager">
+                  <button class="tpl-gear" title="Manage reply templates"
+                          t-on-click="() => this.manageTemplates()"><span class="ic ic-set"/></button>
+                  <button class="tpl-gear" title="Manage watchlist phrases"
+                          t-on-click="() => this.manageWatchlist()"><span class="ic ic-warn"/></button>
                 </t>
               </div>
 

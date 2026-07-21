@@ -1,11 +1,13 @@
 /* Care Command — scoped clone of the approved POC design system
    (docs/care-command-center/care-command-combined.html). Flat mono colours,
    navy family, CSS-mask SVG icons. Everything is scoped under
-   .o_care_command so nothing leaks into the web client. Phase 1 omits the
-   AI drawer/pill/widgets, the ticker and the live-ringing chrome. */
+   .o_care_command so nothing leaks into the web client. The AI drawer/pill/
+   widgets remain out of scope (deterministic assist only); Phase 3 adds the
+   now-ticker, live-ringing hero, watchlist badge and reply-template chips. */
 
 @keyframes cc_ty { 0%,60%,100%{opacity:.25;transform:translateY(0)} 30%{opacity:1;transform:translateY(-3px)} }
 @keyframes cc_spin { to { transform: rotate(360deg); } }
+@keyframes cc_ring { 0%,100%{box-shadow:0 0 0 0 rgba(24,133,84,.30)} 50%{box-shadow:0 0 0 10px rgba(24,133,84,0)} }
 
 .o_care_command {
   --navy:#1e2a5e; --navy-2:#28356e; --navy-3:#333f7d;
@@ -60,7 +62,7 @@
   .backbtn{display:none;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--mut);border:1px solid var(--line);
     border-radius:8px;padding:7px 12px}
   .backbtn:hover{color:var(--accent);border-color:var(--accent)}
-  .title{display:flex;align-items:baseline;gap:9px;flex:none;margin-right:auto}
+  .title{display:flex;align-items:baseline;gap:9px;flex:none}
   .title h1{font-size:14.5px;font-weight:800}
   .title .sub{font-size:10.5px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
   .live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:5px}
@@ -273,6 +275,68 @@
 
   .typing{display:inline-flex;gap:3px;align-items:center;margin-left:6px}
   .typing i{width:5px;height:5px;border-radius:50%;background:var(--ch-zalo);animation:cc_ty 1.2s infinite}
+
+  /* ---------- Phase 3: now-ticker ---------- */
+  /* always rendered as the flexible spacer (flex:1) so the seg/newbtn stay
+     right-aligned; when empty it is an invisible gap (no border/background) */
+  .cc-ticker{flex:1;min-width:0;overflow:hidden;height:32px;border:1px solid var(--line);border-radius:8px;
+    background:var(--bg);display:flex;align-items:center}
+  .cc-ticker.empty{border-color:transparent;background:transparent}
+  .cc-ticker-track{display:flex;gap:8px;align-items:center;height:100%;padding:0 10px;overflow-x:auto;
+    scrollbar-width:none}
+  .cc-ticker-track::-webkit-scrollbar{display:none}
+  .tk{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--mut);background:var(--card);
+    border:1px solid var(--line);border-radius:7px;padding:2px 9px;white-space:nowrap;cursor:pointer;flex:none}
+  .tk:hover{border-color:var(--line-2);color:var(--ink)}
+  .tk .ic{width:11px;height:11px}
+  .tk.hot{border-color:var(--danger);color:var(--danger)}
+
+  /* ---------- Phase 3: live ringing hero ---------- */
+  .ringrow{display:flex;flex-direction:column;gap:9px;margin-bottom:12px}
+  .ring-hero{display:flex;align-items:center;gap:12px;background:var(--ok-soft);border:1px solid #bfe3cf;
+    border-radius:var(--r-lg);padding:11px 14px;cursor:pointer;animation:cc_ring 1.6s ease-in-out infinite}
+  .ring-hero > .ic{width:20px;height:20px;color:var(--ok);flex:none}
+  .ring-hero .rh-id{flex:1;min-width:0}
+  .ring-hero .rh-name{font-weight:800;font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ring-hero .rh-sub{font-size:11.5px;color:var(--ok);font-weight:700}
+  .ring-hero .rh-open{background:var(--ok);color:#fff;font-weight:800;font-size:12px;border-radius:8px;padding:6px 14px;flex:none}
+  .ring-hero .rh-open:hover{background:#106b44}
+  .ring-hero .rh-x{width:28px;height:28px;border-radius:8px;color:var(--mut);display:flex;align-items:center;justify-content:center;flex:none}
+  .ring-hero .rh-x:hover{background:#fff;color:var(--ink)}
+  .ring-hero .rh-x .ic{width:13px;height:13px}
+
+  /* ---------- Phase 3: watchlist badge (mono flat — triage, not alarm) ---------- */
+  .watchflag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--mut);
+    background:var(--bg);border:1px solid var(--line-2);border-radius:6px;padding:2px 7px;max-width:100%;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .watchflag .ic{width:11px;height:11px;color:var(--warn);flex:none}
+  .watchflag.sm{font-size:9px;padding:1.5px 6px}
+  .watchflag.sm .ic{width:9px;height:9px}
+
+  /* ---------- Phase 3: reply-template chips ---------- */
+  .sugrow{display:flex;gap:7px;padding:0 20px 8px;flex-wrap:wrap;align-items:center}
+  .sugrow .lab{font-size:10px;font-weight:800;color:var(--mut);display:flex;gap:5px;align-items:center;
+    text-transform:uppercase;letter-spacing:.5px}
+  .sugrow .lab .ic{width:11px;height:11px}
+  .sug{border:1px solid var(--line-2);background:var(--card);border-radius:16px;padding:5px 12px;font-size:12px;
+    font-weight:600;cursor:pointer;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sug.tpl:hover{border-color:var(--accent);color:var(--accent)}
+  .tpl-gear{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);color:var(--mut);
+    display:inline-flex;align-items:center;justify-content:center}
+  .tpl-gear:hover{border-color:var(--accent);color:var(--accent)}
+  .tpl-gear .ic{width:13px;height:13px}
+
+  /* ---------- Phase 3: reminder popover ---------- */
+  .rem-wrap{position:relative;display:inline-flex}
+  .abtn.on{border-color:var(--accent);color:var(--accent)}
+  .cc-pop{position:absolute;top:calc(100% + 6px);left:0;z-index:30;width:250px;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh-lg);padding:12px;display:flex;flex-direction:column;gap:9px}
+  .cc-pop-h{font-size:11px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.6px}
+  .cc-pop-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;color:var(--ink)}
+  .cc-pop-row input{width:70px;border:1px solid var(--line-2);border-radius:8px;padding:5px 8px;font-size:12px;text-align:right}
+  .cc-pop-note{border:1px solid var(--line-2);border-radius:8px;padding:7px 9px;font-size:12px;min-height:56px;resize:vertical}
+  .cc-pop-row input:focus,.cc-pop-note:focus{border-color:var(--accent)}
+  .cc-pop-act{display:flex;gap:6px;justify-content:flex-end}
 
   /* toast */
   .cc-toast{position:absolute;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);

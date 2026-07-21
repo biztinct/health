@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Seed watchlist phrases (deterministic substring rules, manager-owned).
+         noupdate="1": managers edit/extend this list; upgrades must not clobber
+         it. company_id omitted → model default (env.company). -->
+    <data noupdate="1">
+        <record id="watch_phrase_khan_cap" model="care.watch.phrase">
+            <field name="phrase">khẩn cấp</field>
+        </record>
+        <record id="watch_phrase_nga" model="care.watch.phrase">
+            <field name="phrase">ngã</field>
+        </record>
+        <record id="watch_phrase_dau_nguc" model="care.watch.phrase">
+            <field name="phrase">đau ngực</field>
+        </record>
+        <record id="watch_phrase_kho_tho" model="care.watch.phrase">
+            <field name="phrase">khó thở</field>
+        </record>
+        <record id="watch_phrase_nhap_vien" model="care.watch.phrase">
+            <field name="phrase">nhập viện</field>
+        </record>
+        <record id="watch_phrase_chay_mau" model="care.watch.phrase">
+            <field name="phrase">chảy máu</field>
+        </record>
+    </data>
+</odoo>

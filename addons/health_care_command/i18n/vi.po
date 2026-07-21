@@ -669,3 +669,118 @@ msgstr "Kênh này chỉ đọc trong Giai đoạn 1."
 #. odoo-javascript
 msgid "Replies for this channel arrive in Phase 2 — use Call"
 msgstr "Tính năng trả lời kênh này có ở Giai đoạn 2 — hãy gọi điện"
+
+# ---------------------------------------------------------------------------
+# Phase 3 — reply templates + watchlist + reminder + consent + ringing/ticker
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-javascript
+msgid "Quick replies"
+msgstr "Trả lời nhanh"
+
+#. module: health_care_command
+#. odoo-python
+#. odoo-javascript
+msgid "Reminder"
+msgstr "Nhắc hẹn"
+
+#. module: health_care_command
+#. odoo-python
+#. odoo-javascript
+msgid "Consent"
+msgstr "Đồng ý"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Schedule a reminder"
+msgstr "Lên lịch nhắc hẹn"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "In (days)"
+msgstr "Sau (ngày)"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Note (optional)…"
+msgstr "Ghi chú (không bắt buộc)…"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Schedule"
+msgstr "Lên lịch"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Open"
+msgstr "Mở"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Ringing now…"
+msgstr "Đang đổ chuông…"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Ringing %s"
+msgstr "Đang gọi %s"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Incoming call"
+msgstr "Cuộc gọi đến"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Unknown caller"
+msgstr "Người gọi chưa xác định"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "No open conversation yet for this caller."
+msgstr "Chưa có cuộc hội thoại đang mở cho người gọi này."
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Claimed by %s"
+msgstr "%s đã nhận"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Conversation updated"
+msgstr "Cuộc hội thoại đã cập nhật"
+
+#. module: health_care_command
+#. odoo-python
+msgid "Care Command reminder"
+msgstr "Nhắc hẹn Care Command"
+
+#. module: health_care_command
+#. odoo-python
+msgid "Reminder scheduled."
+msgstr "Đã lên lịch nhắc hẹn."
+
+#. module: health_care_command
+#. odoo-python
+msgid "No lead or contact to set a reminder on."
+msgstr "Không có lead hay liên hệ để đặt nhắc hẹn."
+
+#. module: health_care_command
+#. odoo-python
+msgid "Consent records"
+msgstr "Hồ sơ đồng ý"
+
+#. module: health_care_command
+#. odoo-python
+msgid "Consent records are not available on this server."
+msgstr "Hồ sơ đồng ý không khả dụng trên máy chủ này."
+
+#. module: health_care_command
+#. odoo-python
+msgid "This conversation has no client to show consent for."
+msgstr "Cuộc hội thoại này không có khách hàng để xem hồ sơ đồng ý."

@@ -24,6 +24,11 @@ from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 
+# Incoming call_types where the customer reached out but we never talked to
+# them → treat as a callback-due "missed call" (Phase 3, deliverable 4).
+# `answered` (and `internal`) stay event-only.
+_MISSED_LIKE = ("missed", "abandoned", "busy", "failed", "voicemail")
+
 
 class VoipCallLogHook(models.Model):
     _inherit = "voip.call.log"
@@ -69,8 +74,10 @@ class VoipCallLogHook(models.Model):
                 "set_status": "waiting",
                 "unread": "zero",
             }
-        elif log.direction == "incoming" and log.call_type in ("missed", "abandoned"):
-            # they rang, we didn't pick up → callback due
+        elif log.direction == "incoming" and log.call_type in _MISSED_LIKE:
+            # they tried to reach us and didn't get through → callback due.
+            # missed/abandoned + busy/failed/voicemail (Phase 3): in every one
+            # of these the customer rang and we did not talk to them.
             signal = {
                 "channel": "call",
                 "inbound": True,

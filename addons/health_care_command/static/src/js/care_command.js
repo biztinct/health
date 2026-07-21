@@ -57,12 +57,21 @@ export class CareCommand extends Component {
             sending: false,
             toast: null,
             search: "",              // chat-list search box (server-side filter)
+            // Phase 3 — live layer (JS-only, no persistence)
+            rings: [],               // active ringing hero cards
+            ticks: [],               // now-ticker ring buffer (newest first)
+            reminderOpen: false,     // reminder popover
+            reminderDays: 1,
+            reminderNote: "",
         });
 
         this._busChannel = null;
+        this._voipChannel = "voip_notifications";  // plain (not company-scoped) §4.1
         this._pollTimer = null;
         this._debounce = null;
         this._searchDebounce = null;
+        this._ringTimers = {};       // key → auto-dismiss timeout
+        this.TICK_CAP = 20;
 
         onWillStart(async () => {
             await this.load();
@@ -76,8 +85,11 @@ export class CareCommand extends Component {
             if (this._debounce) clearTimeout(this._debounce);
             if (this._searchDebounce) clearTimeout(this._searchDebounce);
             if (this._toastTimer) clearTimeout(this._toastTimer);
+            Object.values(this._ringTimers).forEach((t) => clearTimeout(t));
             if (this._busChannel) this.busService.deleteChannel(this._busChannel);
+            this.busService.deleteChannel(this._voipChannel);
             this.busService.unsubscribe?.("care.conversation/update", this._onBus);
+            this.busService.unsubscribe?.("voip_incoming_call", this._onRing);
         });
     }
 
@@ -107,7 +119,13 @@ export class CareCommand extends Component {
     }
 
     _subscribeBus() {
-        this._onBus = () => {
+        this._onBus = (payload) => {
+            if (payload && payload.id) {
+                // a matching care event landed → clear any ring resolved to it
+                const r = this.state.rings.find((x) => x.convId === payload.id);
+                if (r) this._dismissRing(r.key);
+                this._pushTick(this._careTick(payload));
+            }
             // debounce bus-triggered refetches (>=2s)
             if (this._debounce) clearTimeout(this._debounce);
             this._debounce = setTimeout(() => {
@@ -116,6 +134,78 @@ export class CareCommand extends Component {
             }, 2000);
         };
         this.busService.subscribe("care.conversation/update", this._onBus);
+
+        // Phase 3: live ringing hero. Subscribe to the EXISTING voip bus
+        // (plain 'voip_notifications' string, §4.1). Ships dark where VoIP is
+        // un-provisioned (no CDR source ever fires the event).
+        this._onRing = (payload) => this._handleRing(payload || {});
+        this.busService.addChannel(this._voipChannel);
+        this.busService.subscribe("voip_incoming_call", this._onRing);
+    }
+
+    // ---------------------------------------------------------------
+    // live ringing hero + now-ticker (JS-only, no persistence)
+    // ---------------------------------------------------------------
+    async _handleRing(payload) {
+        const number = payload.caller_number || "";
+        const key = String(payload.call_id || payload.call_log_id || `${number}-${Date.now()}`);
+        if (this.state.rings.find((r) => r.key === key)) return;  // dedupe
+        let convId = false;
+        let name = payload.partner_name || number || _t("Unknown caller");
+        try {
+            const res = await this.orm.call(
+                "care.conversation", "resolve_incoming_call", [payload]);
+            convId = (res && res.conv_id) || false;
+            if (res && res.name) name = res.name;
+        } catch (e) {
+            // resolution is best-effort — still show the hero with the number
+        }
+        const ring = { key, number, name, convId };
+        this.state.rings = [ring, ...this.state.rings.filter((r) => r.key !== key)].slice(0, 4);
+        this._pushTick({
+            icon: "ic-phone",
+            text: number ? _t("Ringing %s", number) : _t("Incoming call"),
+            hot: true, convId,
+        });
+        this._ringTimers[key] = setTimeout(() => this._dismissRing(key), 45000);
+    }
+
+    _dismissRing(key) {
+        if (this._ringTimers[key]) {
+            clearTimeout(this._ringTimers[key]);
+            delete this._ringTimers[key];
+        }
+        this.state.rings = this.state.rings.filter((r) => r.key !== key);
+    }
+
+    openRing(ring) {
+        this._dismissRing(ring.key);
+        if (ring.convId) {
+            this.openChat(ring.convId);
+        } else {
+            this.toast(_t("No open conversation yet for this caller."));
+        }
+    }
+
+    _pushTick(tick) {
+        if (!tick) return;
+        this.state.ticks = [tick, ...this.state.ticks].slice(0, this.TICK_CAP);
+    }
+
+    _careTick(payload) {
+        // "claimed by X" when we can name the new owner, else generic update
+        if (payload.owner_id) {
+            const t = (this.team || []).find((m) => m.id === payload.owner_id);
+            const nm = (t && t.name) || (this.me.id === payload.owner_id ? this.me.name : null);
+            if (nm) {
+                return { icon: "ic-hand", text: _t("Claimed by %s", nm), convId: payload.id };
+            }
+        }
+        return { icon: "ic-chat", text: _t("Conversation updated"), convId: payload.id };
+    }
+
+    openTick(tick) {
+        if (tick && tick.convId) this.openChat(tick.convId);
     }
 
     // ---------------------------------------------------------------
@@ -132,6 +222,9 @@ export class CareCommand extends Component {
     }
     get team() {
         return (this.state.data && this.state.data.team) || [];
+    }
+    get templates() {
+        return (this.state.detail && this.state.detail.templates) || [];
     }
 
     channelCount(key) {
@@ -383,6 +476,33 @@ export class CareCommand extends Component {
     doClient() { this._runAction("action_open_client"); }
     doEscalate() { this._runAction("action_escalate"); }
     doJunk() { this.setStatus(this.state.selected, "junk_suspect"); }
+    doConsent() { this._runAction("action_consent"); }
+
+    // --- reply templates (insert only — never sends) ---------------
+    insertTemplate(body) {
+        if (!body) return;
+        const cur = this.state.composer || "";
+        this.state.composer = cur ? cur.replace(/\s*$/, "") + "\n" + body : body;
+    }
+    manageTemplates() { this.action.doAction("health_care_command.action_care_reply_template"); }
+    manageWatchlist() { this.action.doAction("health_care_command.action_care_watch_phrase"); }
+
+    // --- reminder popover ------------------------------------------
+    toggleReminder(open) {
+        this.state.reminderOpen = open === undefined ? !this.state.reminderOpen : open;
+    }
+    onReminderDays(ev) { this.state.reminderDays = parseInt(ev.target.value, 10) || 0; }
+    onReminderNote(ev) { this.state.reminderNote = ev.target.value; }
+    async doReminder() {
+        try {
+            const res = await this.orm.call("care.conversation", "action_reminder",
+                [this.state.selected, this.state.reminderDays, this.state.reminderNote]);
+            this.toggleReminder(false);
+            this.state.reminderNote = "";
+            this.state.reminderDays = 1;
+            if (res && res.message) this.toast(res.message);
+        } catch (e) { this._err(e); }
+    }
 
     // Call button: no trivially-invokable click-to-dial exists as a public
     // seam, so Phase 1 ships a tel: fallback + toast (reported in §11).

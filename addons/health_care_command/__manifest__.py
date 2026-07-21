@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Unified Work Layer',
-    'version': '19.0.2.0.1',
+    'version': '19.0.3.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Omnichannel triage wall + messenger thread over Zalo, Calls, Email and ZNS',
     'description': """
@@ -55,6 +55,9 @@ No AI. No clinical content. No new channels beyond Zalo / Calls / Email / ZNS.
         'security/ir.model.access.csv',
         'security/care_command_security.xml',
         'views/care_command_actions.xml',
+        'views/care_command_admin_views.xml',
+        'data/care_reply_templates.xml',
+        'data/care_watch_phrases.xml',
         'data/cms_sidebar_items_care_command.xml',
     ],
     'assets': {

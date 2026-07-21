@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — VoIP Bridge',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare/CRM',
     'summary': 'Live VoIP call ingestion into the Care Command wall',
     'description': """

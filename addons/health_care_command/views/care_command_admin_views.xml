@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ Reply templates ============ -->
+    <record id="view_care_reply_template_list" model="ir.ui.view">
+        <field name="name">care.reply.template.list</field>
+        <field name="model">care.reply.template</field>
+        <field name="arch" type="xml">
+            <list string="Reply Templates" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="channel"/>
+                <field name="body"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_care_reply_template_form" model="ir.ui.view">
+        <field name="name">care.reply.template.form</field>
+        <field name="model">care.reply.template</field>
+        <field name="arch" type="xml">
+            <form string="Reply Template">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="channel"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Message">
+                        <field name="body" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_care_reply_template_search" model="ir.ui.view">
+        <field name="name">care.reply.template.search</field>
+        <field name="model">care.reply.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="body"/>
+                <filter name="channel" string="Channel" context="{'group_by': 'channel'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_care_reply_template" model="ir.actions.act_window">
+        <field name="name">Reply Templates</field>
+        <field name="res_model">care.reply.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_care_reply_template_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a reply template</p>
+            <p>Plain text snippets your team inserts into the Care Command composer.
+               Clicking a chip inserts the body — it never sends by itself.</p>
+        </field>
+    </record>
+
+    <!-- ============ Watchlist phrases ============ -->
+    <record id="view_care_watch_phrase_list" model="ir.ui.view">
+        <field name="name">care.watch.phrase.list</field>
+        <field name="model">care.watch.phrase</field>
+        <field name="arch" type="xml">
+            <list string="Watchlist Phrases" editable="bottom">
+                <field name="phrase"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_care_watch_phrase" model="ir.actions.act_window">
+        <field name="name">Watchlist Phrases</field>
+        <field name="res_model">care.watch.phrase</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a watchlist phrase</p>
+            <p>Deterministic substring rules. An inbound Zalo message or email whose
+               text contains an active phrase is flagged on the wall (+urgency).
+               No severity judgement — a plain phrase list you own.</p>
+        </field>
+    </record>
+
+    <!-- ============ Manager menu (under CRM Center, beside Care Command) ============ -->
+    <menuitem id="menu_care_command_config"
+              name="Care Command Setup"
+              parent="health_crm.menu_crm_center_root"
+              groups="health_crm.group_health_crm_manager"
+              sequence="13"/>
+    <menuitem id="menu_care_reply_template"
+              name="Reply Templates"
+              parent="menu_care_command_config"
+              action="action_care_reply_template"
+              groups="health_crm.group_health_crm_manager"
+              sequence="10"/>
+    <menuitem id="menu_care_watch_phrase"
+              name="Watchlist Phrases"
+              parent="menu_care_command_config"
+              action="action_care_watch_phrase"
+              groups="health_crm.group_health_crm_manager"
+              sequence="20"/>
+
+</odoo>
