@@ -26,7 +26,7 @@ class CRMLead(models.Model):
         store=True,
     )
 
-    @api.depends('voip_call_log_ids')
+    @api.depends('voip_call_log_ids.call_date')
     def _compute_voip_call_count(self):
         for lead in self:
             lead.voip_call_count = len(lead.voip_call_log_ids)
@@ -61,15 +61,12 @@ class CRMLead(models.Model):
             raise UserError(_('Outgoing calls are disabled. Please contact your administrator.'))
 
         # Determine phone number to call
-        phone_to_call = self.mobile or self.phone
+        # NOTE: crm.lead has no `mobile` field in this Odoo 19 build
+        phone_to_call = self.phone or self.partner_id.mobile or self.partner_id.phone
         if not phone_to_call:
             raise UserError(_('No phone number available for this lead.'))
 
-        # TODO: Click-to-dial implementation
-        # Call VoIP24h API to initiate call
-        # from ..services.voip24h_api import VoIP24hAPI
-        # api = VoIP24hAPI(config)
-        # result = api.initiate_call(extension, phone_to_call)
+        config.initiate_user_call(phone_to_call)
 
         return {
             'type': 'ir.actions.client',

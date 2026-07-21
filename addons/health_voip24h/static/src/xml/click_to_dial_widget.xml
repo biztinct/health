@@ -4,15 +4,15 @@
     <t t-name="health_voip24h.ClickToDialWidget">
         <div class="o_field_click_to_dial d-inline-flex align-items-center gap-2">
             <!-- Phone number display -->
-            <span class="o_field_phone" t-esc="props.phoneNumber"/>
+            <a t-if="phoneNumber" class="o_field_phone" t-attf-href="tel:{{phoneNumber}}" t-esc="phoneNumber"/>
 
-            <!-- Dial button (only visible if phone number exists) -->
+            <!-- Dial button (only visible if a phone number exists) -->
             <button
-                t-if="isVisible"
+                t-if="phoneNumber"
                 class="btn btn-sm btn-primary o_voip_dial_btn"
-                t-on-click="onClickDial"
-                t-att-title="this.t('Click to dial')">
-                <i class="fa fa-phone"/> <t t-esc="this.t('Call')"/>
+                t-on-click.prevent="onClickDial"
+                title="Click to dial">
+                <i class="fa fa-phone"/> Call
             </button>
         </div>
     </t>

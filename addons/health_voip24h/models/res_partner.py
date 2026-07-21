@@ -42,7 +42,7 @@ class ResPartner(models.Model):
         help='Flag to prevent outgoing calls',
     )
 
-    @api.depends('voip_call_log_ids')
+    @api.depends('voip_call_log_ids.call_date', 'voip_call_log_ids.talk_duration_seconds')
     def _compute_voip_stats(self):
         for partner in self:
             logs = partner.voip_call_log_ids
@@ -91,11 +91,7 @@ class ResPartner(models.Model):
         if not phone_to_call:
             raise UserError(_('No phone number available for this contact.'))
 
-        # TODO: Implementation for click-to-dial
-        # Call VoIP24h API to initiate call
-        # from ..services.voip24h_api import VoIP24hAPI
-        # api = VoIP24hAPI(config)
-        # result = api.initiate_call(extension, phone_to_call)
+        config.initiate_user_call(phone_to_call)
 
         return {
             'type': 'ir.actions.client',

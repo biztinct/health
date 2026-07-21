@@ -3,48 +3,34 @@
 import { Component, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { _t } from "@web/core/l10n/translation";
 
 /**
- * Call Popup Service
+ * VoIP Call Popup
  *
- * Manages incoming call popups via bus notifications.
- * Listens for 'voip_incoming_call' events and displays popup notifications.
+ * Overlay component (main_components registry) that listens on the
+ * shared "voip_notifications" bus channel and shows a popup for
+ * incoming calls. The server only emits these events when incoming
+ * popups are enabled on the active voip.config.
  */
-export class CallPopupService extends Component {
+export class VoipCallPopup extends Component {
     static template = "health_voip24h.CallPopup";
+    static props = {};
 
     setup() {
         this.state = useState({
             activeCall: null,
-            isVisible: false,
         });
 
-        this.notification = useService("notification");
-        this.orm = useService("orm");
         this.action = useService("action");
-        this.bus = useService("bus_service");
+        this.busService = useService("bus_service");
 
-        // Subscribe to VoIP notifications
-        this.bus.addEventListener("notification", this.onNotification.bind(this));
-        this.bus.addChannel("voip_notifications");
-    }
-
-    t(text) {
-        return _t(text);
-    }
-
-    /**
-     * Handle incoming bus notifications
-     */
-    onNotification({ detail: notifications }) {
-        for (const { type, payload } of notifications) {
-            if (type === "voip_incoming_call") {
-                this.showIncomingCallPopup(payload);
-            } else if (type === "voip_call_ended") {
-                this.hideCallPopup(payload);
-            }
-        }
+        this.busService.addChannel("voip_notifications");
+        this.busService.subscribe("voip_incoming_call", (payload) =>
+            this.showIncomingCallPopup(payload)
+        );
+        this.busService.subscribe("voip_call_ended", (payload) =>
+            this.hideCallPopup(payload)
+        );
     }
 
     /**
@@ -60,10 +46,10 @@ export class CallPopupService extends Component {
             lead_id: callData.lead_id,
             lead_name: callData.lead_name,
         };
-        this.state.isVisible = true;
 
-        // Auto-hide after 30 seconds if not interacted
-        setTimeout(() => {
+        // Auto-hide after 30 seconds if not interacted with
+        clearTimeout(this._autoHideTimer);
+        this._autoHideTimer = setTimeout(() => {
             if (this.state.activeCall?.call_id === callData.call_id) {
                 this.closePopup();
             }
@@ -71,12 +57,11 @@ export class CallPopupService extends Component {
     }
 
     /**
-     * Hide call popup when call ends
+     * Hide call popup when the call ends
      */
     hideCallPopup(callData) {
         if (this.state.activeCall?.call_id === callData.call_id) {
-            this.state.isVisible = false;
-            this.state.activeCall = null;
+            this.closePopup();
         }
     }
 
@@ -84,7 +69,7 @@ export class CallPopupService extends Component {
      * Close popup manually
      */
     closePopup() {
-        this.state.isVisible = false;
+        clearTimeout(this._autoHideTimer);
         this.state.activeCall = null;
     }
 
@@ -92,52 +77,50 @@ export class CallPopupService extends Component {
      * Open partner form
      */
     async openPartner() {
-        if (!this.state.activeCall.partner_id) {
+        const call = this.state.activeCall;
+        if (!call?.partner_id) {
             return;
         }
-
+        this.closePopup();
         await this.action.doAction({
             type: "ir.actions.act_window",
             res_model: "res.partner",
-            res_id: this.state.activeCall.partner_id,
+            res_id: call.partner_id,
             views: [[false, "form"]],
             target: "current",
         });
-
-        this.closePopup();
     }
 
     /**
      * Open lead form
      */
     async openLead() {
-        if (!this.state.activeCall.lead_id) {
+        const call = this.state.activeCall;
+        if (!call?.lead_id) {
             return;
         }
-
+        this.closePopup();
         await this.action.doAction({
             type: "ir.actions.act_window",
             res_model: "crm.lead",
-            res_id: this.state.activeCall.lead_id,
+            res_id: call.lead_id,
             views: [[false, "form"]],
             target: "current",
         });
-
-        this.closePopup();
     }
 
     /**
      * Open call log form
      */
     async openCallLog() {
-        if (!this.state.activeCall.call_log_id) {
+        const call = this.state.activeCall;
+        if (!call?.call_log_id) {
             return;
         }
-
         await this.action.doAction({
             type: "ir.actions.act_window",
             res_model: "voip.call.log",
-            res_id: this.state.activeCall.call_log_id,
+            res_id: call.call_log_id,
             views: [[false, "form"]],
             target: "new",
         });
@@ -148,24 +131,13 @@ export class CallPopupService extends Component {
      */
     get callerDisplay() {
         const call = this.state.activeCall;
-        if (!call) return "";
-
-        if (call.partner_name) {
-            return call.partner_name;
-        } else if (call.lead_name) {
-            return call.lead_name;
-        } else {
-            return call.caller_number;
+        if (!call) {
+            return "";
         }
+        return call.partner_name || call.lead_name || call.caller_number || "";
     }
 }
 
-// Register as a service
-export const callPopupService = {
-    dependencies: ["notification", "orm", "action", "bus_service"],
-    start(env, { notification, orm, action, bus_service }) {
-        return new CallPopupService(env, { notification, orm, action, bus_service });
-    },
-};
-
-registry.category("services").add("call_popup", callPopupService);
+registry
+    .category("main_components")
+    .add("VoipCallPopup", { Component: VoipCallPopup });

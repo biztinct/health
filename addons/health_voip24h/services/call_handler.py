@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import json
-from .cdr_sync import process_call_record, auto_match_call, schedule_recording_download
+from .cdr_sync import (
+    parse_datetime,
+    process_call_record,
+    schedule_recording_download,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -94,7 +97,7 @@ def handle_call_answered(env, config, call_data):
         if call_log:
             call_log.write({
                 'call_type': 'answered',
-                'answer_time': call_data.get('answer_time'),
+                'answer_time': parse_datetime(call_data.get('answer_time')),
             })
 
         return {'status': 'success'}
@@ -116,11 +119,14 @@ def handle_call_ended(env, config, call_data):
 
         if call_log:
             # Update call log with final data
+            call_status = call_data.get('status', 'completed')
+            if call_status not in ('completed', 'no_answer', 'busy', 'failed', 'cancelled'):
+                call_status = 'completed'
             call_log.write({
-                'end_time': call_data.get('end_time'),
+                'end_time': parse_datetime(call_data.get('end_time')),
                 'duration_seconds': call_data.get('duration', 0),
                 'talk_duration_seconds': call_data.get('talk_duration', 0),
-                'call_status': call_data.get('status', 'completed'),
+                'call_status': call_status,
             })
 
             # Send call ended notification
@@ -188,8 +194,7 @@ def send_incoming_call_notification(call_log):
         call_log: voip.call.log record
     """
     try:
-        message = {
-            'type': 'voip_incoming_call',
+        payload = {
             'call_id': call_log.call_id,
             'call_log_id': call_log.id,
             'caller_number': call_log.caller_number,
@@ -199,16 +204,18 @@ def send_incoming_call_notification(call_log):
             'lead_name': call_log.lead_id.name if call_log.lead_id else False,
         }
 
+        # Clone of health_zalo message_handler bus pattern
+        # (services/message_handler.py:256): _sendone(channel, type, payload)
         call_log.env['bus.bus']._sendone(
-            channel='voip_notifications',
-            message_type='notification',
-            message=message
+            'voip_notifications',
+            'voip_incoming_call',
+            payload,
         )
 
-        _logger.info(f'Sent incoming call notification for {call_log.call_id}')
+        _logger.info('Sent incoming call notification for %s', call_log.call_id)
 
     except Exception as e:
-        _logger.error(f'Failed to send incoming call notification: {e}')
+        _logger.error('Failed to send incoming call notification: %s', e)
 
 
 def send_call_ended_notification(call_log):
@@ -219,18 +226,17 @@ def send_call_ended_notification(call_log):
         call_log: voip.call.log record
     """
     try:
-        message = {
-            'type': 'voip_call_ended',
+        payload = {
             'call_id': call_log.call_id,
             'call_log_id': call_log.id,
             'duration_display': call_log.duration_display,
         }
 
         call_log.env['bus.bus']._sendone(
-            channel='voip_notifications',
-            message_type='notification',
-            message=message
+            'voip_notifications',
+            'voip_call_ended',
+            payload,
         )
 
     except Exception as e:
-        _logger.error(f'Failed to send call ended notification: {e}')
+        _logger.error('Failed to send call ended notification: %s', e)

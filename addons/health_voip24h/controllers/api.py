@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from odoo import http
-from odoo.http import request
 import logging
+
+from odoo import http, _
+from odoo.exceptions import UserError
+from odoo.http import request
 
 _logger = logging.getLogger(__name__)
 
@@ -11,10 +13,10 @@ class VoIP24hAPIController(http.Controller):
     """
     Internal API controller for VoIP functionality.
 
-    Provides endpoints for click-to-dial, call logs, and statistics.
+    Provides endpoints for click-to-dial and frontend configuration.
     """
 
-    @http.route('/voip24h/click_to_dial', type='json', auth='user', methods=['POST'])
+    @http.route('/voip24h/click_to_dial', type='jsonrpc', auth='user', methods=['POST'])
     def click_to_dial(self, phone_number, extension_id=None, **kwargs):
         """
         Initiate outbound call via click-to-dial.
@@ -28,54 +30,35 @@ class VoIP24hAPIController(http.Controller):
                   or {'error': 'error message'}
         """
         try:
-            from ..services.voip24h_api import VoIP24hAPI
-
-            # Get active configuration
             config = request.env['voip.config'].get_active_config()
             if not config:
-                return {'error': 'No VoIP configuration found. Please contact your administrator.'}
+                return {'error': _('No VoIP configuration found. Please contact your administrator.')}
 
-            # Check if outgoing calls are enabled
-            if not config.can_make_outgoing_calls():
-                return {'error': 'Outgoing calls are disabled. Please contact your administrator.'}
-
-            # Initialize API client
-            api = VoIP24hAPI(config)
-
-            # Get extension to use
+            extension = None
             if extension_id:
-                extension = request.env['voip.extension'].browse(extension_id)
+                extension = request.env['voip.extension'].browse(int(extension_id)).exists()
                 if not extension or extension.voip_config_id.id != config.id:
-                    return {'error': 'Invalid extension selected'}
-                from_extension = extension.extension_number
-            else:
-                # Use user's default extension
-                user = request.env.user
-                if user.voip_extension_id and user.voip_extension_id.voip_config_id.id == config.id:
-                    from_extension = user.voip_extension_id.extension_number
-                else:
-                    return {'error': 'No extension configured for current user. Please contact your administrator.'}
+                    return {'error': _('Invalid extension selected')}
 
-            # Initiate the call via API
-            result = api.initiate_call(from_extension, phone_number)
+            # initiate_user_call enforces the master/outgoing switches and
+            # falls back to the current user's assigned extension.
+            result = config.initiate_user_call(phone_number, extension=extension)
 
-            if result.get('success'):
-                _logger.info(f'Call initiated from {from_extension} to {phone_number}')
-                return {
-                    'status': 'success',
-                    'call_id': result.get('call_id'),
-                    'message': f'Calling {phone_number}...'
-                }
-            else:
-                return {'error': result.get('error', 'Failed to initiate call')}
+            return {
+                'status': 'success',
+                'call_id': result.get('call_id') if isinstance(result, dict) else None,
+                'message': _('Calling %s...') % phone_number,
+            }
 
-        except Exception as e:
-            _logger.error(f'Click-to-dial error: {e}', exc_info=True)
+        except UserError as e:
             return {'error': str(e)}
+        except Exception as e:
+            _logger.error('Click-to-dial error: %s', e, exc_info=True)
+            return {'error': _('Failed to initiate the call. Please contact your administrator.')}
 
-    @http.route('/voip24h/get_config', type='json', auth='user', methods=['POST'])
+    @http.route('/voip24h/get_config', type='jsonrpc', auth='user', methods=['POST'])
     def get_config(self, **kwargs):
-        """Get VoIP configuration for frontend"""
+        """Get VoIP configuration flags for the frontend"""
         try:
             config = request.env['voip.config'].get_active_config()
 
@@ -89,5 +72,5 @@ class VoIP24hAPIController(http.Controller):
             }
 
         except Exception as e:
-            _logger.error(f'Get config error: {e}', exc_info=True)
+            _logger.error('Get config error: %s', e, exc_info=True)
             return {'error': str(e)}

@@ -7,3 +7,4 @@ access_voip_call_recording_manager,voip.call.recording.manager,model_voip_call_r
 access_voip_call_recording_user,voip.call.recording.user,model_voip_call_recording,group_voip_user,1,0,0,0
 access_voip_extension_manager,voip.extension.manager,model_voip_extension,group_voip_manager,1,1,1,1
 access_voip_extension_user,voip.extension.user,model_voip_extension,group_voip_user,1,0,0,0
+access_voip_sync_wizard_manager,voip.sync.wizard.manager,model_voip_sync_wizard,group_voip_manager,1,1,1,1

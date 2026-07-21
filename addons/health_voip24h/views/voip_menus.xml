@@ -4,7 +4,8 @@
     <!-- Root Menu -->
     <menuitem id="menu_voip24h_root"
               name="VoIP24h"
-              sequence="100"/>
+              sequence="100"
+              groups="health_voip24h.group_voip_user"/>
 
     <!-- Call Logs Menu -->
     <menuitem id="menu_voip24h_call_logs"
@@ -50,5 +51,11 @@
               parent="menu_voip24h_config"
               action="action_voip_config"
               sequence="10"/>
+
+    <menuitem id="menu_voip24h_sync_wizard"
+              name="Sync Call History"
+              parent="menu_voip24h_config"
+              action="action_voip_sync_wizard"
+              sequence="20"/>
 
 </odoo>

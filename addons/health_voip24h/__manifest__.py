@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health VoIP24h Integration',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Healthcare/Telephony',
     'summary': 'VoIP24h call logging, analytics, and telephony integration for VAFHS',
     'description': """
@@ -52,6 +52,9 @@ Master Switch:
         'data/voip24h_data.xml',
         'data/voip24h_cron.xml',
 
+        # Wizards (before views: config form + menus reference the wizard action)
+        'wizard/voip_sync_wizard_views.xml',
+
         # Views
         'views/voip_config_views.xml',
         'views/voip_call_log_views.xml',
@@ -60,9 +63,6 @@ Master Switch:
         'views/res_partner_views.xml',
         'views/crm_lead_views.xml',
         'views/voip_menus.xml',
-
-        # Wizards
-        'wizard/voip_sync_wizard_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -80,7 +80,7 @@ Master Switch:
         ],
     },
     'external_dependencies': {
-        'python': ['requests', 'python-dateutil'],
+        'python': ['requests'],
     },
     'installable': True,
     'application': False,

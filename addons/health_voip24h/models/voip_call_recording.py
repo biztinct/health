@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import base64
+import logging
+
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -90,46 +92,71 @@ class VoIPCallRecording(models.Model):
             rec.name = f"Recording - {rec.call_log_id.call_id or 'Unknown'}"
 
     def action_download_recording(self):
-        """Download recording file from VoIP24h"""
+        """Download recording file from VoIP24h into the Binary field."""
         self.ensure_one()
 
+        if not self.recording_url:
+            raise UserError(_('This recording has no download URL.'))
+
         try:
-            self.state = 'downloading'
-            # TODO: Implement recording download
-            # from ..services.voip24h_api import VoIP24hAPI
-            # api = VoIP24hAPI(self.call_log_id.voip_config_id)
-            # file_data = api.download_recording(self.recording_url)
-            # self.recording_file = file_data
-            # self.is_downloaded = True
-            # self.downloaded_date = fields.Datetime.now()
-            # self.state = 'available'
+            api = self.call_log_id.voip_config_id._get_api_client()
+            file_data = api.download_recording(self.recording_url)
+
+            filename = self.recording_filename or "%s.%s" % (
+                self.call_log_id.call_id or self.recording_id or self.id,
+                self.file_format or 'mp3',
+            )
+            self.write({
+                'recording_file': base64.b64encode(file_data),
+                'recording_filename': filename,
+                'file_size_bytes': len(file_data),
+                'is_downloaded': True,
+                'downloaded_date': fields.Datetime.now(),
+                'download_error': False,
+                'state': 'available',
+            })
+            config = self.call_log_id.voip_config_id.sudo()
+            config.total_recordings_synced += 1
 
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _('Download Started'),
-                    'message': _('Recording download initiated'),
-                    'type': 'info',
+                    'title': _('Recording Downloaded'),
+                    'message': filename,
+                    'type': 'success',
                 }
             }
 
+        except UserError:
+            raise
         except Exception as e:
-            _logger.error(f'Recording download failed: {e}', exc_info=True)
+            _logger.error('Recording download failed: %s', e, exc_info=True)
             self.write({
                 'state': 'error',
                 'download_error': str(e),
             })
-            raise UserError(_('Download failed: %s') % str(e))
+            raise UserError(_('Download failed: %s') % e)
 
     def action_play_recording(self):
-        """Play recording in browser"""
+        """Play/stream the recording in the browser.
+
+        Serves the downloaded attachment when available; falls back to the
+        external VoIP24h URL otherwise.
+        """
         self.ensure_one()
 
-        if not self.is_downloaded and not self.recording_url:
+        if self.is_downloaded and self.recording_file:
+            filename = self.recording_filename or 'recording.mp3'
+            return {
+                'type': 'ir.actions.act_url',
+                'url': f'/web/content/voip.call.recording/{self.id}/recording_file/{filename}',
+                'target': 'new',
+            }
+
+        if not self.recording_url:
             raise UserError(_('Recording not available'))
 
-        # Return action to play audio
         return {
             'type': 'ir.actions.act_url',
             'url': self.recording_url,
@@ -142,10 +169,16 @@ class VoIPCallRecording(models.Model):
         pending_recordings = self.search([
             ('state', '=', 'pending'),
             ('is_downloaded', '=', False),
+            ('recording_url', '!=', False),
         ], limit=50)
 
         for recording in pending_recordings:
             try:
-                recording.action_download_recording()
+                with self.env.cr.savepoint():
+                    recording.action_download_recording()
             except Exception as e:
-                _logger.error(f'Cron download failed for {recording.id}: {e}')
+                # savepoint rolled back the partial write — persist the error
+                # state so the cron does not retry a dead URL forever
+                # (manual retry stays available via the Download button).
+                _logger.error('Cron download failed for recording %s: %s', recording.id, e)
+                recording.write({'state': 'error', 'download_error': str(e)})

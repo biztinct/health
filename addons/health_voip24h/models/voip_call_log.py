@@ -20,6 +20,16 @@ class VoIPCallLog(models.Model):
     _order = 'call_date desc, id desc'
     _rec_name = 'call_id'
 
+    def init(self):
+        # Odoo 19 does not materialize _sql_constraints (conventions §5.1).
+        # One CDR per (call_id, config) — idempotency backstop for webhook +
+        # cron sync racing on the same call.
+        self.env.cr.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS
+                voip_call_log_callid_config_uidx
+            ON voip_call_log (call_id, voip_config_id)
+        """)
+
     # Call Identification
     call_id = fields.Char(
         string='Call ID',
@@ -340,7 +350,12 @@ class VoIPCallLog(models.Model):
 
     @api.model
     def auto_match_contact_from_phone(self, phone_number):
-        """Auto-match contact based on phone number"""
+        """Auto-match contact based on phone number.
+
+        Vietnamese numbers arrive as +84xxx, 84xxx or 0xxx depending on the
+        trunk — fall back to a last-9-digit match when the exact search
+        misses.
+        """
         if not phone_number:
             return False
 
@@ -353,12 +368,13 @@ class VoIPCallLog(models.Model):
             ('phone', '=', phone_number),
         ], limit=1)
 
-        if not partner and normalized:
-            # Try normalized search
+        if not partner and normalized and len(normalized) >= 9:
+            # Try normalized search (last 9 digits covers +84/84/0 prefixes)
+            tail = normalized[-9:]
             partner = self.env['res.partner'].search([
                 '|',
-                ('mobile', 'ilike', normalized[-9:]),  # Last 9 digits
-                ('phone', 'ilike', normalized[-9:]),
+                ('mobile', 'like', tail),
+                ('phone', 'like', tail),
             ], limit=1)
 
         return partner

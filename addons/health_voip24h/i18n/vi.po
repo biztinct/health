@@ -10,441 +10,356 @@ msgstr ""
 "PO-Revision-Date: 2026-02-25 06:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: vi_VN\n"
+"Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_config.py:197
 msgid "Connection Successful"
 msgstr "Kết nối thành công"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_config.py:198
 msgid "Successfully connected to VoIP24h API"
 msgstr "Đã kết nối thành công với API VoIP24h"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_config.py:215
 msgid "Connection Failed"
 msgstr "Kết nối thất bại"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_config.py:227
 msgid "Please configure API credentials first"
 msgstr "Vui lòng cấu hình thông tin API trước"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_config.py:238
 msgid "Sync Started"
 msgstr "Đã bắt đầu đồng bộ"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_config.py:239
 msgid "Call history synchronization has been initiated"
 msgstr "Đã bắt đầu đồng bộ lịch sử cuộc gọi"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_config.py:247
 msgid "Sync failed: %s"
 msgstr "Đồng bộ thất bại: %s"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_log.py:273
 msgid "Match to Contact"
 msgstr "Khớp với liên hệ"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_log.py:296
 msgid "New Lead"
 msgstr "Cơ hội mới"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_log.py:308
 msgid "Please match this call to a contact or lead first"
 msgstr "Vui lòng khớp cuộc gọi này với liên hệ hoặc cơ hội trước"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_log.py:324
 msgid "Activity Created"
 msgstr "Đã tạo hoạt động"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_log.py:336
 msgid "No recording available for this call"
 msgstr "Không có bản ghi âm cho cuộc gọi này"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_recording.py:111
 msgid "Download Started"
 msgstr "Đã bắt đầu tải xuống"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_recording.py:112
 msgid "Recording download initiated"
 msgstr "Đã bắt đầu tải bản ghi âm"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_recording.py:123
 msgid "Download failed: %s"
 msgstr "Tải xuống thất bại: %s"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/voip_call_recording.py:130
 msgid "Recording not available"
 msgstr "Bản ghi âm không khả dụng"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/crm_lead.py:54
 msgid "VoIP is not configured. Please contact your administrator."
 msgstr "VoIP chưa được cấu hình. Vui lòng liên hệ quản trị viên."
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/crm_lead.py:58
 msgid "Call functionality is disabled. Please contact your administrator."
 msgstr "Chức năng gọi điện đã tắt. Vui lòng liên hệ quản trị viên."
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/crm_lead.py:61
 msgid "Outgoing calls are disabled. Please contact your administrator."
 msgstr "Cuộc gọi đi đã tắt. Vui lòng liên hệ quản trị viên."
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/crm_lead.py:66
 msgid "No phone number available for this lead."
 msgstr "Không có số điện thoại cho cơ hội này."
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/crm_lead.py:78
 msgid "Call Initiated"
 msgstr "Đã bắt đầu cuộc gọi"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/crm_lead.py:79
 msgid "Calling %s..."
 msgstr "Đang gọi %s..."
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/res_partner.py:87
 msgid "This contact is marked as \"Do Not Call\"."
 msgstr "Liên hệ này được đánh dấu \"Không gọi\"."
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/models/res_partner.py:92
 msgid "No phone number available for this contact."
 msgstr "Không có số điện thoại cho liên hệ này."
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Call Logs"
 msgstr "Nhật ký cuộc gọi"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Call Log"
 msgstr "Nhật ký cuộc gọi"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Match Contact"
 msgstr "Khớp liên hệ"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Create Lead"
 msgstr "Tạo cơ hội"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Create Activity"
 msgstr "Tạo hoạt động"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Play Recording"
 msgstr "Phát bản ghi âm"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Call Information"
 msgstr "Thông tin cuộc gọi"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Timing"
 msgstr "Thời gian"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Phone Numbers"
 msgstr "Số điện thoại"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "CRM Integration"
 msgstr "Tích hợp CRM"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Recording"
 msgstr "Bản ghi âm"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Activity"
 msgstr "Hoạt động"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Notes &amp; Outcome"
 msgstr "Ghi chú & Kết quả"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Recordings"
 msgstr "Bản ghi âm"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Play"
 msgstr "Phát"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Incoming"
 msgstr "Đến"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Outgoing"
 msgstr "Đi"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Missed"
 msgstr "Nhỡ"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Answered"
 msgstr "Đã nghe"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Has Recording"
 msgstr "Có bản ghi âm"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Today"
 msgstr "Hôm nay"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Group By"
 msgstr "Nhóm theo"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Direction"
 msgstr "Hướng"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Call Type"
 msgstr "Loại cuộc gọi"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Contact"
 msgstr "Liên hệ"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Date"
 msgstr "Ngày"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "VoIP24h Configuration"
 msgstr "Cấu hình VoIP24h"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Test Connection"
 msgstr "Kiểm tra kết nối"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Sync Now"
 msgstr "Đồng bộ ngay"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "API Configuration"
 msgstr "Cấu hình API"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Credentials"
 msgstr "Thông tin xác thực"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "API Settings"
 msgstr "Cài đặt API"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Call Functionality"
 msgstr "Chức năng gọi điện"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Master Control"
 msgstr "Điều khiển chính"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Outgoing Calls"
 msgstr "Cuộc gọi đi"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Incoming Calls"
 msgstr "Cuộc gọi đến"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Webhooks"
 msgstr "Webhook"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Sync Settings"
 msgstr "Cài đặt đồng bộ"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "VoIP24h Configurations"
 msgstr "Cấu hình VoIP24h"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Calls"
 msgstr "Cuộc gọi"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "VoIP"
 msgstr "VoIP"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "VoIP Settings"
 msgstr "Cài đặt VoIP"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Statistics"
 msgstr "Thống kê"
 
 #. module: health_voip24h
-#: model:ir.ui.menu
 msgid "VoIP24h"
 msgstr "VoIP24h"
 
 #. module: health_voip24h
-#: model:ir.ui.menu
 msgid "All Calls"
 msgstr "Tất cả cuộc gọi"
 
 #. module: health_voip24h
-#: model:ir.ui.menu
 msgid "Missed Calls"
 msgstr "Cuộc gọi nhỡ"
 
 #. module: health_voip24h
-#: model:ir.ui.menu
 msgid "Extensions"
 msgstr "Máy nhánh"
 
 #. module: health_voip24h
-#: model:ir.ui.menu
 msgid "Configuration"
 msgstr "Cấu hình"
 
 #. module: health_voip24h
-#: model:ir.ui.menu
 msgid "VoIP Configuration"
 msgstr "Cấu hình VoIP"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "VoIP Extensions"
 msgstr "Máy nhánh VoIP"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Call Recordings"
 msgstr "Bản ghi cuộc gọi"
 
 #. module: health_voip24h
-#: model_terms:ir.ui.view,arch_db:health_voip24h.view
 msgid "Download"
 msgstr "Tải xuống"
 
 #. module: health_voip24h
-#: code:addons/health_voip24h/static/src/js/click_to_dial_widget.js:34
 msgid "No phone number available"
 msgstr "Không có số điện thoại"
 
 #. module: health_voip24h
 #. odoo-javascript
-#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
 msgid "Incoming Call"
 msgstr "Cuộc gọi đến"
 
 #. module: health_voip24h
 #. odoo-javascript
-#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
 msgid "Close"
 msgstr "Đóng"
 
 #. module: health_voip24h
 #. odoo-javascript
-#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
 msgid "View Contact"
 msgstr "Xem liên hệ"
 
 #. module: health_voip24h
 #. odoo-javascript
-#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
 msgid "View Lead"
 msgstr "Xem tiềm năng"
 
 #. module: health_voip24h
 #. odoo-javascript
-#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
 msgid "View Call Log"
 msgstr "Xem nhật ký cuộc gọi"
 
 #. module: health_voip24h
 #. odoo-javascript
-#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
 msgid "Ringing..."
 msgstr "Đang đổ chuông..."
 
 #. module: health_voip24h
 #. odoo-javascript
-#: code:addons/health_voip24h/static/src/xml/click_to_dial_widget.xml:0
 msgid "Click to dial"
 msgstr "Nhấn để gọi"
 
 #. module: health_voip24h
 #. odoo-javascript
-#: code:addons/health_voip24h/static/src/xml/click_to_dial_widget.xml:0
 msgid "Call"
 msgstr "Gọi"

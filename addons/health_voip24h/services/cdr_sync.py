@@ -2,13 +2,13 @@
 
 import logging
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from odoo import fields
 
 _logger = logging.getLogger(__name__)
 
 
-def sync_call_history(config, from_date=None, to_date=None):
+def sync_call_history(config, from_date=None, to_date=None, create_recordings=True):
     """
     Synchronize call history from VoIP24h.
 
@@ -16,6 +16,7 @@ def sync_call_history(config, from_date=None, to_date=None):
         config: voip.config record
         from_date: Start date (defaults to last sync or 30 days ago)
         to_date: End date (defaults to now)
+        create_recordings: also create pending voip.call.recording stubs
 
     Returns:
         dict: Sync results
@@ -25,19 +26,34 @@ def sync_call_history(config, from_date=None, to_date=None):
     try:
         api = VoIP24hAPI(config)
 
-        # Determine date range
+        # Determine date range (naive UTC — Odoo Datetime convention).
+        # Overlap the last sync window by a few minutes so late-written
+        # CDRs on the provider side are not skipped.
         if not from_date:
             if config.last_sync_date:
-                from_date = config.last_sync_date
+                from_date = config.last_sync_date - timedelta(minutes=5)
             else:
-                from_date = datetime.now() - timedelta(days=config.sync_history_days or 30)
+                from_date = datetime.utcnow() - timedelta(days=config.sync_history_days or 30)
 
         if not to_date:
-            to_date = datetime.now()
+            to_date = datetime.utcnow()
 
-        # Fetch call history
-        _logger.info(f'Syncing call history from {from_date} to {to_date}')
-        calls = api.get_call_history(from_date=from_date, to_date=to_date, limit=1000)
+        # Fetch call history with pagination
+        _logger.info('Syncing call history from %s to %s', from_date, to_date)
+        page_size = 500
+        offset = 0
+        calls = []
+        while True:
+            batch = api.get_call_history(
+                from_date=from_date, to_date=to_date,
+                limit=page_size, offset=offset)
+            calls.extend(batch)
+            if len(batch) < page_size:
+                break
+            offset += page_size
+            if offset >= 50000:  # runaway backstop
+                _logger.warning('CDR sync stopped at %s records (backstop)', offset)
+                break
 
         # Process calls in batches
         created_count = 0
@@ -46,7 +62,8 @@ def sync_call_history(config, from_date=None, to_date=None):
 
         for call_data in calls:
             try:
-                result = process_call_record(config, call_data)
+                result = process_call_record(config, call_data,
+                                             create_recordings=create_recordings)
                 if result == 'created':
                     created_count += 1
                 elif result == 'updated':
@@ -76,13 +93,14 @@ def sync_call_history(config, from_date=None, to_date=None):
         raise
 
 
-def process_call_record(config, call_data):
+def process_call_record(config, call_data, create_recordings=True):
     """
     Process a single call record from VoIP24h.
 
     Args:
         config: voip.config record
         call_data: Call data from API
+        create_recordings: create a pending recording stub when advertised
 
     Returns:
         str: 'created', 'updated', or 'skipped'
@@ -111,7 +129,7 @@ def process_call_record(config, call_data):
         auto_match_call(call_log)
 
         # Download recording if available
-        if call_data.get('has_recording'):
+        if create_recordings and call_data.get('has_recording'):
             schedule_recording_download(call_log, call_data)
 
         return 'created'
@@ -128,22 +146,36 @@ def parse_call_data(config, call_data):
     Returns:
         dict: Values for voip.call.log
     """
+    # Clamp API values onto our Selection fields — an unknown value from the
+    # provider must not crash the whole sync batch.
+    direction = call_data.get('direction', 'incoming')
+    if direction not in ('incoming', 'outgoing', 'internal'):
+        direction = 'incoming'
+    call_type = call_data.get('call_type', 'answered')
+    if call_type not in ('answered', 'missed', 'abandoned', 'voicemail', 'failed', 'busy'):
+        call_type = 'answered'
+    call_status = call_data.get('status', 'completed')
+    if call_status not in ('completed', 'no_answer', 'busy', 'failed', 'cancelled'):
+        call_status = 'completed'
+
     return {
         'call_id': call_data.get('call_id'),
         'voip_config_id': config.id,
-        'direction': call_data.get('direction', 'incoming'),
-        'call_type': call_data.get('call_type', 'answered'),
+        'direction': direction,
+        'call_type': call_type,
         'caller_number': call_data.get('caller_number'),
         'called_number': call_data.get('called_number'),
         'extension_number': call_data.get('extension'),
-        'call_date': parse_datetime(call_data.get('call_date')),
+        'call_date': parse_datetime(call_data.get('call_date'))
+                     or parse_datetime(call_data.get('start_time'))
+                     or fields.Datetime.now(),  # field is required
         'start_time': parse_datetime(call_data.get('start_time')),
         'answer_time': parse_datetime(call_data.get('answer_time')),
         'end_time': parse_datetime(call_data.get('end_time')),
         'duration_seconds': call_data.get('duration', 0),
         'talk_duration_seconds': call_data.get('talk_duration', 0),
         'wait_duration_seconds': call_data.get('wait_duration', 0),
-        'call_status': call_data.get('status', 'completed'),
+        'call_status': call_status,
         'hangup_cause': call_data.get('hangup_cause'),
         'has_recording': call_data.get('has_recording', False),
         'raw_data': json.dumps(call_data),
@@ -152,14 +184,22 @@ def parse_call_data(config, call_data):
 
 
 def parse_datetime(date_string):
-    """Parse datetime string from API"""
+    """Parse an ISO datetime string from the API into naive UTC.
+
+    Odoo Datetime fields reject timezone-aware values — convert aware
+    datetimes to UTC and strip the tzinfo.
+    """
     if not date_string:
         return False
 
     try:
-        return datetime.fromisoformat(date_string.replace('Z', '+00:00'))
-    except Exception:
+        dt = datetime.fromisoformat(date_string.replace('Z', '+00:00'))
+    except (ValueError, TypeError):
         return False
+
+    if dt.tzinfo:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    return dt
 
 
 def auto_match_call(call_log):
@@ -187,9 +227,8 @@ def auto_match_call(call_log):
             _logger.info(f'Auto-matched call {call_log.call_id} to partner {partner.name}')
         else:
             # Try to match to lead
+            # NOTE: crm.lead has no `mobile` field in this Odoo 19 build
             lead = call_log.env['crm.lead'].search([
-                '|',
-                ('mobile', '=', phone_number),
                 ('phone', '=', phone_number),
             ], limit=1)
 

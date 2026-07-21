@@ -88,13 +88,15 @@
                                     <field name="name"/>
                                     <field name="duration_seconds"/>
                                     <field name="state"/>
+                                    <field name="is_downloaded" column_invisible="1"/>
                                     <button name="action_play_recording" type="object" string="Play" icon="fa-play"/>
+                                    <button name="action_download_recording" type="object" string="Download" icon="fa-download" invisible="is_downloaded"/>
                                 </list>
                             </field>
                         </page>
                     </notebook>
                 </sheet>
-                <chatter reload_on_follower="True"/>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -105,41 +107,34 @@
         <field name="model">voip.call.log</field>
         <field name="arch" type="xml">
             <kanban>
-                <field name="call_date"/>
                 <field name="direction"/>
                 <field name="call_type"/>
-                <field name="caller_number"/>
-                <field name="called_number"/>
-                <field name="partner_id"/>
-                <field name="duration_display"/>
                 <field name="has_recording"/>
                 <templates>
-                    <t t-name="kanban-box">
-                        <div class="oe_kanban_card">
-                            <div class="oe_kanban_content">
-                                <div class="o_kanban_record_top">
-                                    <div class="o_kanban_record_headings">
-                                        <strong>
-                                            <i t-if="record.direction.raw_value == 'incoming'" class="fa fa-arrow-down text-primary"/>
-                                            <i t-if="record.direction.raw_value == 'outgoing'" class="fa fa-arrow-up text-success"/>
-                                            <field name="partner_id"/>
-                                        </strong>
-                                        <div class="text-muted">
-                                            <field name="caller_number"/> → <field name="called_number"/>
-                                        </div>
-                                    </div>
+                    <t t-name="card">
+                        <div class="d-flex flex-column gap-1 p-1">
+                            <div>
+                                <strong>
+                                    <i t-if="record.direction.raw_value == 'incoming'" class="fa fa-arrow-down text-primary" title="Incoming"/>
+                                    <i t-if="record.direction.raw_value == 'outgoing'" class="fa fa-arrow-up text-success" title="Outgoing"/>
+                                    <field name="partner_id"/>
+                                </strong>
+                                <div class="text-muted">
+                                    <field name="caller_number"/> → <field name="called_number"/>
                                 </div>
-                                <div class="o_kanban_record_bottom">
-                                    <div class="oe_kanban_bottom_left">
-                                        <span class="badge badge-pill" t-att-class="record.call_type.raw_value == 'missed' ? 'badge-danger' : 'badge-success'">
-                                            <field name="call_type"/>
-                                        </span>
-                                        <span><i class="fa fa-clock-o"/> <field name="duration_display"/></span>
-                                    </div>
-                                    <div class="oe_kanban_bottom_right">
-                                        <i t-if="record.has_recording.raw_value" class="fa fa-microphone text-info" title="Has Recording"/>
-                                    </div>
+                                <div class="text-muted small">
+                                    <field name="call_date"/>
                                 </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <span class="badge rounded-pill"
+                                          t-att-class="record.call_type.raw_value == 'missed' ? 'text-bg-danger' : 'text-bg-success'">
+                                        <field name="call_type"/>
+                                    </span>
+                                    <span><i class="fa fa-clock-o" title="Duration"/> <field name="duration_display"/></span>
+                                </div>
+                                <i t-if="record.has_recording.raw_value" class="fa fa-microphone text-info" title="Has Recording"/>
                             </div>
                         </div>
                     </t>
@@ -165,12 +160,11 @@
                 <filter name="answered" string="Answered" domain="[('call_type', '=', 'answered')]"/>
                 <filter name="has_recording" string="Has Recording" domain="[('has_recording', '=', True)]"/>
                 <filter name="today" string="Today" domain="[('call_date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_direction" string="Direction" context="{'group_by': 'direction'}"/>
-                    <filter name="group_call_type" string="Call Type" context="{'group_by': 'call_type'}"/>
-                    <filter name="group_partner" string="Contact" context="{'group_by': 'partner_id'}"/>
-                    <filter name="group_date" string="Date" context="{'group_by': 'call_date:day'}"/>
-                </group>
+                <separator/>
+                <filter name="group_direction" string="Direction" context="{'group_by': 'direction'}"/>
+                <filter name="group_call_type" string="Call Type" context="{'group_by': 'call_type'}"/>
+                <filter name="group_partner" string="Contact" context="{'group_by': 'partner_id'}"/>
+                <filter name="group_date" string="Date" context="{'group_by': 'call_date:day'}"/>
             </search>
         </field>
     </record>

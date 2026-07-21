@@ -10,6 +10,8 @@
                 <header>
                     <button name="action_test_connection" type="object" string="Test Connection" class="oe_highlight"/>
                     <button name="action_sync_call_history" type="object" string="Sync Now"/>
+                    <button name="%(health_voip24h.action_voip_sync_wizard)d" type="action" string="Sync Date Range..."/>
+                    <button name="action_sync_extensions" type="object" string="Sync Extensions"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
                 </header>
                 <sheet>
@@ -18,6 +20,12 @@
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_value"><field name="total_calls_synced"/></span>
                                 <span class="o_stat_text">Calls Synced</span>
+                            </div>
+                        </button>
+                        <button name="action_view_extensions" type="object" class="oe_stat_button" icon="fa-sitemap">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="extension_count"/></span>
+                                <span class="o_stat_text">Extensions</span>
                             </div>
                         </button>
                     </div>
@@ -141,7 +149,7 @@
                         </page>
                     </notebook>
                 </sheet>
-                <chatter reload_on_follower="True"/>
+                <chatter/>
             </form>
         </field>
     </record>

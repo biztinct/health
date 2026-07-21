@@ -5,6 +5,8 @@ import logging
 from datetime import datetime, timedelta
 from odoo.exceptions import UserError
 
+# Odoo Datetime fields store naive UTC — always compare/write naive UTC here.
+
 _logger = logging.getLogger(__name__)
 
 
@@ -63,10 +65,11 @@ class VoIP24hAPI:
 
             data = response.json()
 
-            # Update config with token
+            # Update config with token (naive UTC, minus a 60s safety margin)
             self.config.write({
                 'access_token': data.get('access_token'),
-                'token_expires_at': datetime.now() + timedelta(seconds=data.get('expires_in', 3600)),
+                'token_expires_at': datetime.utcnow() + timedelta(
+                    seconds=max(data.get('expires_in', 3600) - 60, 60)),
                 'token_type': data.get('token_type', 'Bearer'),
                 'state': 'connected',
                 'error_message': False,
@@ -87,7 +90,7 @@ class VoIP24hAPI:
         """Ensure we have a valid access token"""
         if not self.config.access_token:
             self.authenticate()
-        elif self.config.token_expires_at and self.config.token_expires_at < datetime.now():
+        elif self.config.token_expires_at and self.config.token_expires_at < datetime.utcnow():
             # Token expired, re-authenticate
             self.authenticate()
 

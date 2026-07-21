@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import hashlib
+import hmac
+import logging
+
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -37,18 +40,14 @@ class VoIP24hConfig(models.Model):
         tracking=True,
     )
 
-    # API Credentials
+    # API Credentials (never tracked: tracking would log secrets into chatter)
     api_key = fields.Char(
         string='API Key',
-        required=True,
         groups='base.group_system',
-        tracking=True,
     )
     api_secret = fields.Char(
         string='API Secret',
-        required=True,
         groups='base.group_system',
-        tracking=True,
     )
     account_id = fields.Char(
         string='Account ID',
@@ -96,7 +95,7 @@ class VoIP24hConfig(models.Model):
     webhook_secret = fields.Char(
         string='Webhook Secret',
         groups='base.group_system',
-        help='Secret key for webhook signature validation',
+        help='Secret key for webhook signature validation (HMAC-SHA256 of the raw body)',
     )
 
     # Call Functionality Control (Master Switch Feature)
@@ -168,6 +167,15 @@ class VoIP24hConfig(models.Model):
         readonly=True,
     )
 
+    extension_ids = fields.One2many(
+        'voip.extension',
+        'voip_config_id',
+        string='Extensions',
+    )
+    extension_count = fields.Integer(
+        compute='_compute_extension_count',
+    )
+
     @api.depends('company_id')
     def _compute_webhook_url(self):
         """Compute webhook URL for VoIP24h to call"""
@@ -175,20 +183,36 @@ class VoIP24hConfig(models.Model):
         for config in self:
             config.webhook_url = f"{base_url}/voip24h/webhook"
 
+    def _compute_extension_count(self):
+        counts = dict(self.env['voip.extension']._read_group(
+            [('voip_config_id', 'in', self.ids)],
+            groupby=['voip_config_id'],
+            aggregates=['__count'],
+        ))
+        for config in self:
+            config.extension_count = counts.get(config, 0)
+
+    def _check_credentials(self):
+        self.ensure_one()
+        config_sudo = self.sudo()
+        if not config_sudo.api_key or not config_sudo.api_secret:
+            raise UserError(_('Please configure the VoIP24h API credentials first.'))
+
+    def _get_api_client(self):
+        """Return an authenticated-capable API client for this config."""
+        from ..services.voip24h_api import VoIP24hAPI
+        self.ensure_one()
+        self._check_credentials()
+        # sudo: api_key/api_secret/access_token are group_system-protected fields
+        return VoIP24hAPI(self.sudo())
+
     def action_test_connection(self):
         """Test VoIP24h API connection"""
         self.ensure_one()
 
         try:
-            # TODO: Implement API connection test
-            # from ..services.voip24h_api import VoIP24hAPI
-            # api = VoIP24hAPI(self)
-            # api.test_connection()
-
-            self.write({
-                'state': 'connected',
-                'error_message': False,
-            })
+            api = self._get_api_client()
+            api.authenticate()
 
             return {
                 'type': 'ir.actions.client',
@@ -201,9 +225,11 @@ class VoIP24hConfig(models.Model):
                 }
             }
 
+        except UserError:
+            raise
         except Exception as e:
-            _logger.error(f'VoIP24h connection test failed: {e}', exc_info=True)
-            self.write({
+            _logger.error('VoIP24h connection test failed: %s', e, exc_info=True)
+            self.sudo().write({
                 'state': 'error',
                 'error_message': str(e),
             })
@@ -221,63 +247,120 @@ class VoIP24hConfig(models.Model):
 
     def action_sync_call_history(self):
         """Manually trigger call history sync"""
+        from ..services.cdr_sync import sync_call_history
         self.ensure_one()
+        self._check_credentials()
 
-        if not self.api_key or not self.api_secret:
-            raise UserError(_('Please configure API credentials first'))
+        result = sync_call_history(self.sudo())
 
-        try:
-            # TODO: Implement manual sync
-            # from ..services.cdr_sync import sync_call_history
-            # result = sync_call_history(self)
-
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Sync Started'),
-                    'message': _('Call history synchronization has been initiated'),
-                    'type': 'info',
-                    'sticky': False,
-                }
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Sync Completed'),
+                'message': _(
+                    '%(created)s new calls, %(updated)s updated, %(errors)s errors.',
+                    created=result['created'],
+                    updated=result['updated'],
+                    errors=result['errors'],
+                ),
+                'type': 'success' if not result['errors'] else 'warning',
+                'sticky': False,
             }
+        }
 
-        except Exception as e:
-            _logger.error(f'Manual sync failed: {e}', exc_info=True)
-            raise UserError(_('Sync failed: %s') % str(e))
+    def action_sync_extensions(self):
+        """Fetch extensions/lines from VoIP24h and upsert voip.extension records."""
+        self.ensure_one()
+        api = self._get_api_client()
+        extensions = api.get_extensions()
+
+        Extension = self.env['voip.extension']
+        created = updated = 0
+        for ext_data in extensions:
+            number = str(ext_data.get('extension') or ext_data.get('extension_number') or '').strip()
+            if not number:
+                continue
+            vals = {
+                'name': ext_data.get('name') or number,
+                'extension_number': number,
+                'voip_config_id': self.id,
+            }
+            existing = Extension.with_context(active_test=False).search([
+                ('voip_config_id', '=', self.id),
+                ('extension_number', '=', number),
+            ], limit=1)
+            if existing:
+                existing.write(vals)
+                updated += 1
+            else:
+                Extension.create(vals)
+                created += 1
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Extensions Synced'),
+                'message': _(
+                    '%(created)s created, %(updated)s updated.',
+                    created=created, updated=updated,
+                ),
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    def action_view_extensions(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Extensions'),
+            'res_model': 'voip.extension',
+            'view_mode': 'list,form',
+            'domain': [('voip_config_id', '=', self.id)],
+            'context': {'default_voip_config_id': self.id},
+        }
 
     @api.model
     def get_active_config(self):
-        """Get active VoIP24h configuration (singleton pattern)"""
+        """Get active VoIP24h configuration (singleton pattern per company)"""
         return self.search([
-            ('active', '=', True),
             ('company_id', '=', self.env.company.id)
         ], limit=1)
 
     @api.model
     def cron_sync_call_history(self):
         """Cron job to sync call history for all active configurations"""
+        from ..services.cdr_sync import sync_call_history
+
         configs = self.search([
-            ('active', '=', True),
             ('auto_sync_enabled', '=', True),
             ('state', '=', 'connected'),
         ])
 
+        now = fields.Datetime.now()
         for config in configs:
+            # Respect the per-config interval (the cron itself runs frequently)
+            interval = max(config.sync_interval_minutes or 15, 1)
+            if config.last_sync_date and (now - config.last_sync_date).total_seconds() < interval * 60:
+                continue
             try:
-                _logger.info(f'Starting call history sync for config: {config.name}')
-                # TODO: Implement sync
-                # from ..services.cdr_sync import sync_call_history
-                # sync_call_history(config)
-
-                config.last_sync_date = fields.Datetime.now()
-
+                _logger.info('Starting VoIP24h call history sync for config: %s', config.name)
+                sync_call_history(config.sudo())
+                self.env.cr.commit()
             except Exception as e:
-                _logger.error(f'Cron sync failed for {config.name}: {e}', exc_info=True)
-                config.write({
+                _logger.error('Cron sync failed for %s: %s', config.name, e, exc_info=True)
+                self.env.cr.rollback()
+                config.sudo().write({
                     'state': 'error',
                     'error_message': str(e),
                 })
+                self.env.cr.commit()
+
+    # ------------------------------------------------------------------
+    # Call functionality gates
+    # ------------------------------------------------------------------
 
     def is_calling_enabled(self):
         """Check if calling functionality is enabled"""
@@ -293,3 +376,62 @@ class VoIP24hConfig(models.Model):
         """Check if incoming call popups should be shown"""
         self.ensure_one()
         return self.enable_call_functionality and self.enable_incoming_call_popups
+
+    # ------------------------------------------------------------------
+    # Click-to-dial
+    # ------------------------------------------------------------------
+
+    def _get_user_extension(self, user=None):
+        """Extension assigned to the given (or current) user on this config."""
+        self.ensure_one()
+        user = user or self.env.user
+        return self.env['voip.extension'].search([
+            ('voip_config_id', '=', self.id),
+            ('user_id', '=', user.id),
+            ('allow_outgoing', '=', True),
+        ], limit=1)
+
+    def initiate_user_call(self, phone_number, extension=None):
+        """Initiate an outbound call for the current user via VoIP24h.
+
+        Returns the raw API response dict.
+        """
+        self.ensure_one()
+
+        if not self.can_make_outgoing_calls():
+            raise UserError(_('Outgoing calls are disabled. Please contact your administrator.'))
+        if not phone_number:
+            raise UserError(_('No phone number to call.'))
+
+        extension = extension or self._get_user_extension()
+        if not extension:
+            raise UserError(_(
+                'No VoIP extension is assigned to your user. '
+                'Please contact your administrator.'))
+
+        api = self._get_api_client()
+        result = api.initiate_call(extension.extension_number, phone_number)
+        _logger.info('Click-to-dial: user %s ext %s -> %s',
+                     self.env.user.login, extension.extension_number, phone_number)
+        return result
+
+    # ------------------------------------------------------------------
+    # Webhook signature
+    # ------------------------------------------------------------------
+
+    def _verify_webhook_signature(self, raw_body, signature):
+        """Validate the HMAC-SHA256 signature of a webhook payload.
+
+        Returns True when no secret is configured (validation disabled).
+        """
+        self.ensure_one()
+        secret = self.sudo().webhook_secret
+        if not secret:
+            return True
+        if not signature:
+            return False
+        expected = hmac.new(secret.encode(), raw_body or b'', hashlib.sha256).hexdigest()
+        provided = signature.strip().lower()
+        if provided.startswith('sha256='):
+            provided = provided[len('sha256='):]
+        return hmac.compare_digest(expected, provided)

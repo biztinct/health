@@ -112,7 +112,7 @@
 .o_voip_call_log_form {
     .o_voip_call_header {
         padding: 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #667eea; // mono flat color (no gradients)
         color: white;
         border-radius: 0.5rem;
         margin-bottom: 1.5rem;
