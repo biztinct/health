@@ -809,3 +809,13 @@ a no-op.
     pre-existing offender: health_family_messages/i18n/vi.po (fix on next
     touch). (Hit live: care-command Phase-2 vi.po shipped inert; annotated in
     review.)
+
+- **§5.59 — verify the target model's actual field names before writing an
+    act_window domain (or any cross-module field reference) into a handover;
+    never trust prose.** The care-command Phase-3 handover specified a Consent
+    action domain on `health.consent.partner_id` — but the model's patient
+    field is `client_id` (health_consent.py:69); no `partner_id` exists. The
+    literal domain would have opened a broken/empty view. Implementers: when a
+    handover names a foreign field, grep the model first and declare the
+    deviation if it's wrong (as Opus correctly did here). Designers: cite
+    file:line for every cross-module field, same as for methods.
