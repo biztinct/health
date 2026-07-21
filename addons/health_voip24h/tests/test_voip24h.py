@@ -185,9 +185,12 @@ class TestVoip24h(TransactionCase):
     # Webhook signature
     # ------------------------------------------------------------------
 
-    def test_webhook_signature_no_secret_accepts(self):
+    def test_webhook_signature_no_secret_rejects(self):
+        # Fail CLOSED: the route is public + su, so an unconfigured secret
+        # must reject events rather than accept everything.
         body = json.dumps({'event_type': 'call.started'}).encode()
-        self.assertTrue(self.config._verify_webhook_signature(body, None))
+        self.assertFalse(self.config._verify_webhook_signature(body, None))
+        self.assertFalse(self.config._verify_webhook_signature(body, 'sha256=deadbeef'))
 
     def test_webhook_signature_valid_and_invalid(self):
         self.config.sudo().webhook_secret = 'topsecret'

@@ -422,12 +422,17 @@ class VoIP24hConfig(models.Model):
     def _verify_webhook_signature(self, raw_body, signature):
         """Validate the HMAC-SHA256 signature of a webhook payload.
 
-        Returns True when no secret is configured (validation disabled).
+        Fails CLOSED: the webhook route is public and runs su, so an
+        unconfigured secret must reject events, not accept everything —
+        otherwise anyone who guesses the account_id can inject forged calls.
         """
         self.ensure_one()
         secret = self.sudo().webhook_secret
         if not secret:
-            return True
+            _logger.warning(
+                'VoIP24h webhook rejected for %s: no webhook_secret configured '
+                '(signature validation cannot run)', self.name)
+            return False
         if not signature:
             return False
         expected = hmac.new(secret.encode(), raw_body or b'', hashlib.sha256).hexdigest()

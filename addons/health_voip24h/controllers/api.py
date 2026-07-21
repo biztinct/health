@@ -73,4 +73,4 @@ class VoIP24hAPIController(http.Controller):
 
         except Exception as e:
             _logger.error('Get config error: %s', e, exc_info=True)
-            return {'error': str(e)}
+            return {'error': 'Unable to load VoIP configuration'}

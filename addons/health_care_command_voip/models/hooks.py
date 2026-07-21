@@ -42,10 +42,18 @@ class VoipCallLogHook(models.Model):
 
     def _care_ingest_call(self, log):
         Care = self.env["care.conversation"]
+        # The CUSTOMER's number keys the conversation: caller for incoming,
+        # called for outgoing (caller_number on an outgoing CDR is our trunk —
+        # anchoring on it would collapse every outbound call into one
+        # conversation on the clinic's own number).
+        customer_number = (
+            log.called_number_normalized if log.direction == "outgoing"
+            else log.caller_number_normalized
+        )
         anchor = {
             "partner_id": log.partner_id.id or False,
             "lead_id": log.lead_id.id or False,
-            "phone_normalized": Care._safe_phone(log.caller_number_normalized),
+            "phone_normalized": Care._safe_phone(customer_number),
         }
         if not any(anchor.values()):
             # no way to key the conversation — nothing to ingest

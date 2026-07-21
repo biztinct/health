@@ -54,7 +54,10 @@ class TestCareCommandVoipBridge(TransactionCase):
             "call_id": "vb_%s_%s_%s" % (phone, call_type, direction),
             "voip_config_id": self.vconfig.id,
             "direction": direction, "call_type": call_type,
-            "caller_number": phone,
+            # the CUSTOMER is the caller on incoming, the callee on outgoing;
+            # the other side is the clinic trunk
+            "caller_number": phone if direction == "incoming" else "02873001234",
+            "called_number": phone if direction == "outgoing" else "02873001234",
             "call_date": fields.Datetime.now(),
             "partner_id": partner.id if partner else False,
             "talk_duration_seconds": 0 if call_type == "missed" else 30})
@@ -117,6 +120,16 @@ class TestCareCommandVoipBridge(TransactionCase):
         self.assertEqual(convo.status, "waiting")
         self.assertFalse(convo.missed_call_unhandled,
                          "calling back clears the missed-call flag")
+
+        # -- outgoing with no partner/lead → anchors on the CALLED number
+        # (the customer), never the trunk caller_number
+        self._call("0912345624", call_type="answered", direction="outgoing")
+        convn = self.Care.search([("phone_normalized", "=", "0912345624")])
+        self.assertEqual(len(convn), 1,
+                         "outgoing call anchors on the customer's number")
+        self.assertEqual(convn.status, "waiting")
+        trunk = self.Care.search([("phone_normalized", "=", "02873001234")])
+        self.assertFalse(trunk, "no conversation keyed to the clinic trunk")
 
     # ======================================================================
     # T22 — hook exception isolation (savepoint in force, mirrors T13)

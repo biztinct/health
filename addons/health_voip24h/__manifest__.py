@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health VoIP24h Integration',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.0.1',
     'category': 'Healthcare/Telephony',
     'summary': 'VoIP24h call logging, analytics, and telephony integration for VAFHS',
     'description': """

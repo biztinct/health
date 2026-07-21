@@ -784,3 +784,28 @@ a no-op.
     is aborted" even though Python caught the exception. Exception-isolated
     hooks must run the guarded body inside `with self.env.cr.savepoint():`
     inside the try. (Care-command Phase-1 review finding, fixed pre-emptively.)
+
+- **§5.56 — mail tracking messages post at precommit (Odoo 17+); a
+    TransactionCase never commits, so tracking looks silent in tests.** To
+    assert on chatter tracking (e.g. `owner_id`/`status` tracking=True), flush
+    the callbacks explicitly: `self.env.flush_all()` then
+    `self.env.cr.precommit.run()`. (Care-command T23; helper `_flush_tracking`
+    in test_care_command.py.)
+
+- **§5.57 — `_read_group` returns tuples `(group_value, *aggregates)`:**
+    a Selection groupby yields the raw value, a Many2one yields a recordset,
+    counts come via the `["__count"]` aggregate, and NULL groups come back as
+    `False`. Don't expect the old `read_group` dict shape. (Care-command
+    Phase-2 workspace counts.)
+
+- **§5.58 — a hand-written `.po` without `#. odoo-python` /
+    `#. odoo-javascript` markers is silently INERT for code translations on
+    Odoo 19.** The loader (`odoo/tools/translate.py` `_load_python_translations`
+    / `_load_web_translations`) keeps only entries whose comments contain
+    those exact markers — a po with just `#. module:` comments ships, installs
+    without warning, and translates nothing in Python `_()` or JS `_t`/QWeb.
+    Put the right marker(s) above every entry (both when a term appears in
+    both worlds); clone the style from health_voip24h/i18n/vi.po. Known
+    pre-existing offender: health_family_messages/i18n/vi.po (fix on next
+    touch). (Hit live: care-command Phase-2 vi.po shipped inert; annotated in
+    review.)
