@@ -35,6 +35,36 @@ CRM_MANAGER_GROUP = "health_crm.group_health_crm_manager"
 # Bus-notified field set (§6.5)
 _BUS_FIELDS = {"status", "owner_id", "unread_count", "last_event_at"}
 
+# The 8 channels Care Command knows about. channel_primary (last real traffic),
+# channel_declared (how a lead SAID they reached us) and channel_effective
+# (stored compute: traffic ?? declared) all share this Selection. The 4 chat
+# adapters (whatsapp/fb/telegram/webchat) land NOW so Phase 6's adapters need no
+# selection_add. Order is the dock order.
+CHANNEL_SELECTION = [
+    ("zalo", "Zalo"),
+    ("call", "Calls"),
+    ("email", "Email"),
+    ("zns", "ZNS"),
+    ("whatsapp", "WhatsApp"),
+    ("fb", "Messenger"),
+    ("telegram", "Telegram"),
+    ("webchat", "Web chat"),
+]
+
+# crm.lead.mode_of_contact → a declared channel. NEVER faked as traffic:
+# it only ever writes channel_declared, never channel_primary. walk_in (and any
+# unmapped value) has no channel and stays None. Verified selection at
+# health_crm/models/crm_lead.py:69-78.
+MODE_TO_CHANNEL = {
+    "phone": "call",
+    "zalo": "zalo",
+    "email": "email",
+    "facebook": "fb",
+    "website": "webchat",
+    "chatbox": "webchat",
+    # walk_in: no channel — stays None
+}
+
 
 class CareConversation(models.Model):
     _name = "care.conversation"
@@ -60,10 +90,28 @@ class CareConversation(models.Model):
     display_name_c = fields.Char(
         string="Name", compute="_compute_display_name_c", store=True,
     )
+    # channel_primary — last REAL inbound/outbound traffic. Only hooks that
+    # pass a `channel` key in the signal ever write it (zalo/email hooks + the
+    # voip bridge do; the lead hook does NOT — a lead is a declaration, not
+    # traffic). Never written from a lead (Phase-5 binding non-goal).
     channel_primary = fields.Selection(
-        [("zalo", "Zalo"), ("call", "Calls"), ("email", "Email"), ("zns", "ZNS")],
-        string="Last Inbound Channel",
+        CHANNEL_SELECTION, string="Last Inbound Channel",
     )
+    # channel_declared — how the lead SAID they contacted us, derived from
+    # crm.lead.mode_of_contact. Never traffic; fill-never-overwrite.
+    channel_declared = fields.Selection(
+        CHANNEL_SELECTION, string="Declared Channel",
+    )
+    # channel_effective — traffic wins, else the declaration. ALL dock filtering
+    # and channel counts read THIS field (§2.1).
+    channel_effective = fields.Selection(
+        CHANNEL_SELECTION, string="Effective Channel",
+        compute="_compute_channel_effective", store=True, index=True,
+    )
+    # has_channel_activity — True the moment any signal carrying a `channel` key
+    # touches the conversation. THE attention/leads discriminator (not
+    # channel_primary NULL-ness, which the backfill would pollute).
+    has_channel_activity = fields.Boolean(default=False, index=True)
     status = fields.Selection(
         [
             ("needs_reply", "Needs reply"),
@@ -193,6 +241,14 @@ class CareConversation(models.Model):
                 score += min(20, max(0, int(hours)))
             rec.urgency_score = score
 
+    @api.depends("channel_primary", "channel_declared")
+    def _compute_channel_effective(self):
+        """Real traffic wins; else the declared channel; else nothing (§2.1)."""
+        for rec in self:
+            rec.channel_effective = (
+                rec.channel_primary or rec.channel_declared or False
+            )
+
     # ------------------------------------------------------------------
     # Bus (§6.5)
     # ------------------------------------------------------------------
@@ -316,6 +372,9 @@ class CareConversation(models.Model):
             vals["last_event_at"] = event_at
             if channel:
                 vals["channel_primary"] = channel
+                vals["has_channel_activity"] = True
+            if signal.get("declared_channel"):
+                vals["channel_declared"] = signal["declared_channel"]
             if inbound:
                 vals["last_inbound_at"] = event_at
             vals["status"] = signal.get("set_status") or "needs_reply"
@@ -350,6 +409,11 @@ class CareConversation(models.Model):
             upd["last_event_at"] = event_at
         if channel:
             upd["channel_primary"] = channel
+            upd["has_channel_activity"] = True
+        # declared is fill-never-overwrite — a real declaration stands; a later
+        # signal never clobbers it (and traffic never writes it at all).
+        if signal.get("declared_channel") and not rec.channel_declared:
+            upd["channel_declared"] = signal["declared_channel"]
         if inbound:
             if not rec.last_inbound_at or event_at >= rec.last_inbound_at:
                 upd["last_inbound_at"] = event_at
@@ -388,6 +452,31 @@ class CareConversation(models.Model):
         if isinstance(u, int):
             return max(current, u)  # never shrink on an inbound bump
         return current
+
+    @api.model
+    def _backfill_channel_truth(self):
+        """Idempotent backfill of the Phase-5 truth fields (§2.5). Touches ONLY
+        has_channel_activity + channel_declared — never channel_primary, status,
+        unread or owner. Re-running writes nothing new. Returns a summary dict
+        (activity rows flipped + per-channel declared breakdown) for the
+        migration to log."""
+        # 1. real traffic → has_channel_activity
+        activity = self.sudo().search([
+            ("channel_primary", "!=", False),
+            ("has_channel_activity", "=", False),
+        ])
+        activity.write({"has_channel_activity": True})
+        # 2. lead-anchored, no declared channel yet → derive from mode_of_contact
+        declared_counts = {}
+        for conv in self.sudo().search([
+            ("lead_id", "!=", False),
+            ("channel_declared", "=", False),
+        ]):
+            declared = MODE_TO_CHANNEL.get(conv.lead_id.mode_of_contact)
+            if declared:
+                conv.write({"channel_declared": declared})
+                declared_counts[declared] = declared_counts.get(declared, 0) + 1
+        return {"activity_set": len(activity), "declared": declared_counts}
 
     def _sync_next_booking(self):
         """Recompute next_booking_at from the partner's next non-cancelled FSO
@@ -456,15 +545,33 @@ class CareConversation(models.Model):
     WORKSPACE_CAP = 400
 
     @api.model
-    def get_workspace_data(self, channel=None, mine_only=False, query=None):
+    def _channel_keys(self):
+        """The filterable channel set for the dock + counts. Phase 6 overrides
+        this to reflect connected adapter accounts; in Phase 5 all 8 are live."""
+        return ("zalo", "call", "email", "zns",
+                "whatsapp", "fb", "telegram", "webchat")
+
+    @api.model
+    def get_workspace_data(self, channel=None, mine_only=False, query=None,
+                           view="attention"):
         self._ensure_access()
         uid = self.env.user.id
         open_domain = self._company_domain() + [("status", "!=", "closed")]
 
+        # attention-first surface (§2.3): the wall/list shows conversations with
+        # REAL channel activity; dormant leads collapse behind the Leads bucket.
+        # Whitelist the param — never interpolate an unknown value into a domain.
+        if view not in ("attention", "leads", "all"):
+            view = "attention"
+
         # --- tile/list payload (filtered, capped, ordered by _order) ------
         list_domain = list(open_domain)
+        if view == "attention":
+            list_domain.append(("has_channel_activity", "=", True))
+        elif view == "leads":
+            list_domain.append(("has_channel_activity", "=", False))
         if channel:
-            list_domain.append(("channel_primary", "=", channel))
+            list_domain.append(("channel_effective", "=", channel))
         if mine_only:
             # "Mine" = my actionable board: what I own PLUS what's unclaimed and
             # up for grabs (matches the POC, which never shows an empty wall).
@@ -484,21 +591,31 @@ class CareConversation(models.Model):
         convs = self.sudo().search(list_domain, limit=self.WORKSPACE_CAP)  # _order
         conversations = [c._workspace_row() for c in convs]
 
-        # --- channel counts via read_group (one query each, not ORM loops) -
-        counts = {ch: {"total": 0, "needs": 0} for ch in ("zalo", "call", "email", "zns")}
+        # --- channel counts via read_group on channel_effective (§2.3) -----
+        # View-agnostic: computed over the whole open set (the dock badge
+        # answers "how much traffic exists", not "how much is in this view").
+        counts = {ch: {"total": 0, "needs": 0} for ch in self._channel_keys()}
         for channel_val, cnt in self.sudo()._read_group(
-                open_domain, ["channel_primary"], ["__count"]):
+                open_domain, ["channel_effective"], ["__count"]):
             if channel_val in counts:
                 counts[channel_val]["total"] = cnt
         for channel_val, cnt in self.sudo()._read_group(
                 open_domain + [("status", "=", "needs_reply")],
-                ["channel_primary"], ["__count"]):
+                ["channel_effective"], ["__count"]):
             if channel_val in counts:
                 counts[channel_val]["needs"] = cnt
         counts["all"] = {
             "total": self.sudo().search_count(open_domain),
             "needs": self.sudo().search_count(
                 open_domain + [("status", "=", "needs_reply")]),
+        }
+
+        # --- Leads bucket count (dormant, no channel activity yet) ---------
+        leads_domain = open_domain + [("has_channel_activity", "=", False)]
+        leads_count = {
+            "total": self.sudo().search_count(leads_domain),
+            "needs": self.sudo().search_count(
+                leads_domain + [("status", "=", "needs_reply")]),
         }
 
         # --- team dock strip via read_group (per owner: open + needs) ------
@@ -524,6 +641,10 @@ class CareConversation(models.Model):
             "capped": total_matching > self.WORKSPACE_CAP,
             "total": total_matching,
             "channel_counts": counts,
+            # all filterable channels (Phase 6 narrows to connected adapters)
+            "active_channels": list(self._channel_keys()),
+            "leads_count": leads_count,
+            "view": view,  # echo so the UI state can't drift from the server's
             "team": team,
             "me": {
                 "id": uid,
@@ -552,8 +673,12 @@ class CareConversation(models.Model):
             "initials": self._initials(name),
             "chips": chips,
             # NULL channel = a lead/contact not yet reached on any channel;
-            # render neutral, never a misleading channel glyph.
-            "channel": self.channel_primary or "none",
+            # render neutral, never a misleading channel glyph. Effective =
+            # real traffic if any, else the declared channel.
+            "channel": self.channel_effective or "none",
+            # distinguishes real traffic from a declared-only lead → the UI
+            # renders declared-only glyphs muted/hollow (§2.6).
+            "channel_live": bool(self.channel_primary),
             "status": self.status,
             "owner": {
                 "id": self.owner_id.id,
@@ -633,14 +758,16 @@ class CareConversation(models.Model):
                 "can_reply_email": bool(rec._recipient_email()),
             },
             "channel_primary": rec.channel_primary or "none",
+            "channel_effective": rec.channel_effective or "none",
         }
 
     # --- 6.1b reply templates (Phase 3, deliverable 1) ----------------
     def _reply_templates(self):
-        """Active templates for this conversation's channel (its last-inbound
-        channel + "any"), company-scoped, ordered by sequence."""
+        """Active templates for this conversation's channel (its effective
+        channel + "any"), company-scoped, ordered by sequence. Keys off
+        channel_effective so a declared-zalo lead still gets zalo chips (§2.4)."""
         self.ensure_one()
-        ch = self.channel_primary or "any"
+        ch = self.channel_effective or "any"
         channels = ["any"] if ch == "any" else ["any", ch]
         tmpls = self.env["care.reply.template"].sudo().search([
             ("company_id", "in", self.env.companies.ids),

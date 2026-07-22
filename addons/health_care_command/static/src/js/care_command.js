@@ -5,18 +5,22 @@ import { Component, useState, onWillStart, onMounted, onWillUnmount } from "@odo
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 
-// Channel dock definition. Active = zalo/call/email/zns. The rest render
-// disabled ("Coming soon") per the Phase-1 non-goals.
+// Channel dock definition — the STATIC label/icon/colour of all 8 channels.
+// KEYS MUST equal the server-side channel_effective Selection values: the dock
+// key is passed VERBATIM as the channel filter and matched against a row's
+// `channel`. Activation is NOT static any more — it derives from the payload's
+// `active_channels` (see the `channels` getter), so Phase 6 can narrow the dock
+// to connected adapters without a JS change. In Phase 5 all 8 are active.
 // Labels go through _t (returns a LazyTranslatedString, safe at module load).
 const CHANNELS = [
-    { key: "zalo", label: _t("Zalo"), short: _t("ZALO"), ic: "ic-chat", cv: "var(--ch-zalo)", active: true },
-    { key: "call", label: _t("Calls"), short: _t("CALLS"), ic: "ic-phone", cv: "var(--ch-call)", active: true },
-    { key: "email", label: _t("Email"), short: _t("EMAIL"), ic: "ic-mail", cv: "var(--ch-email)", active: true },
-    { key: "zns", label: _t("ZNS"), short: _t("ZNS"), ic: "ic-send", cv: "var(--ch-zns)", active: true },
-    { key: "wa", label: _t("WhatsApp"), short: _t("WHATSAPP"), ic: "ic-chat", cv: "var(--ch-wa)", active: false },
-    { key: "fb", label: _t("Messenger"), short: _t("FB MSGR"), ic: "ic-chat", cv: "var(--ch-fb)", active: false },
-    { key: "tg", label: _t("Telegram"), short: _t("TELEGRAM"), ic: "ic-chat", cv: "var(--ch-tg)", active: false },
-    { key: "web", label: _t("Web chat"), short: _t("WEB CHAT"), ic: "ic-globe", cv: "var(--ch-web)", active: false },
+    { key: "zalo", label: _t("Zalo"), short: _t("ZALO"), ic: "ic-chat", cv: "var(--ch-zalo)" },
+    { key: "call", label: _t("Calls"), short: _t("CALLS"), ic: "ic-phone", cv: "var(--ch-call)" },
+    { key: "email", label: _t("Email"), short: _t("EMAIL"), ic: "ic-mail", cv: "var(--ch-email)" },
+    { key: "zns", label: _t("ZNS"), short: _t("ZNS"), ic: "ic-send", cv: "var(--ch-zns)" },
+    { key: "whatsapp", label: _t("WhatsApp"), short: _t("WHATSAPP"), ic: "ic-chat", cv: "var(--ch-whatsapp)" },
+    { key: "fb", label: _t("Messenger"), short: _t("FB MSGR"), ic: "ic-chat", cv: "var(--ch-fb)" },
+    { key: "telegram", label: _t("Telegram"), short: _t("TELEGRAM"), ic: "ic-chat", cv: "var(--ch-telegram)" },
+    { key: "webchat", label: _t("Web chat"), short: _t("WEB CHAT"), ic: "ic-globe", cv: "var(--ch-webchat)" },
 ];
 const CH_MAP = Object.fromEntries(CHANNELS.map((c) => [c.key, c]));
 
@@ -44,7 +48,8 @@ export class CareCommand extends Component {
         this.state = useState({
             loading: true,
             error: null,
-            view: "wall",            // 'wall' | 'chat'
+            view: "chat",            // 'wall' | 'chat' — chat-first (§2.6)
+            listView: "attention",   // 'attention' | 'leads' — attention-first
             mineOnly: true,
             filter: null,            // channel key or null
             data: null,              // workspace payload
@@ -75,6 +80,9 @@ export class CareCommand extends Component {
 
         onWillStart(async () => {
             await this.load();
+            // chat-first: open the topmost attention conversation on first load
+            // (not on the 60s poll, not after user actions) — §2.6.
+            await this._autoSelectInitial();
         });
         onMounted(() => {
             this._subscribeBus();
@@ -103,6 +111,7 @@ export class CareCommand extends Component {
                 channel: this.state.filter,
                 mine_only: this.state.mineOnly,
                 query: this.state.search || null,
+                view: this.state.listView,
             });
             this.state.data = data;
             this.state.error = null;
@@ -116,6 +125,15 @@ export class CareCommand extends Component {
         } finally {
             this.state.loading = false;
         }
+    }
+
+    async _autoSelectInitial() {
+        // pick the topmost Needs-reply-mine conversation, else the topmost
+        // unclaimed one. Rows already arrive urgency-desc / last-event-desc, so
+        // index 0 IS the topmost. If both empty, keep the empty state.
+        if (this.state.view !== "chat" || this.state.selected) return;
+        const pick = this.sectionRows("needs_mine")[0] || this.sectionRows("needs_un")[0];
+        if (pick) await this.selectConv(pick.id);
     }
 
     _subscribeBus() {
@@ -226,6 +244,21 @@ export class CareCommand extends Component {
     get templates() {
         return (this.state.detail && this.state.detail.templates) || [];
     }
+    get activeChannels() {
+        return (this.state.data && this.state.data.active_channels) || [];
+    }
+    // dock channels with `active` derived from the payload (Phase 6 narrows the
+    // set to connected adapters). Static label/icon/colour from CHANNELS.
+    get channels() {
+        const active = this.activeChannels;
+        return this.CHANNELS.map((c) => ({ ...c, active: active.includes(c.key) }));
+    }
+    get leadsCount() {
+        return (this.state.data && this.state.data.leads_count) || { total: 0, needs: 0 };
+    }
+    get inLeadsView() {
+        return this.state.listView === "leads";
+    }
 
     channelCount(key) {
         const c = this.channelCounts[key];
@@ -288,6 +321,15 @@ export class CareCommand extends Component {
         this.state.selected = id;
         this.state.railTab = "care";
         await this._loadDetail(id);
+    }
+    // Leads bucket toggle (§2.6). Switching sets clears the current selection
+    // (a leads-view thread is not in the attention list and vice versa).
+    setListView(v) {
+        if (this.state.listView === v) return;
+        this.state.listView = v === "leads" ? "leads" : "attention";
+        this.state.selected = null;
+        this.state.detail = null;
+        this.load();
     }
     setFilter(key) {
         this.state.filter = this.state.filter === key ? null : key;

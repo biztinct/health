@@ -17,8 +17,8 @@
   --ok:#188554; --ok-soft:#e7f4ec;
   --warn:#b76e00; --warn-soft:#fdf3e2;
   --danger:#c62839; --danger-soft:#fbebed;
-  --ch-zalo:#0068ff; --ch-call:#0f766e; --ch-wa:#16a34a; --ch-fb:#7c3aed;
-  --ch-tg:#0e9adf; --ch-web:#64748b; --ch-zns:#0a58c9; --ch-email:#b45309;
+  --ch-zalo:#0068ff; --ch-call:#0f766e; --ch-whatsapp:#16a34a; --ch-fb:#7c3aed;
+  --ch-telegram:#0e9adf; --ch-webchat:#64748b; --ch-zns:#0a58c9; --ch-email:#b45309;
   --r:10px; --r-lg:14px;
   --sh:0 1px 2px rgba(27,35,64,.06),0 4px 14px rgba(27,35,64,.06);
   --sh-lg:0 8px 40px rgba(27,35,64,.22);
@@ -337,6 +337,46 @@
   .cc-pop-note{border:1px solid var(--line-2);border-radius:8px;padding:7px 9px;font-size:12px;min-height:56px;resize:vertical}
   .cc-pop-row input:focus,.cc-pop-note:focus{border-color:var(--accent)}
   .cc-pop-act{display:flex;gap:6px;justify-content:flex-end}
+
+  /* ---------- Phase 5: declared-only channel glyph (muted, hollow) ---------- */
+  /* a lead that declared a channel but has NO real traffic yet — never render
+     it like a live channel. Reduced opacity + hollow ring; mono/flat per the
+     standing rule. Real traffic renders exactly as before. */
+  .chan.ch-declared{opacity:.5;color:var(--faint)}
+  .chglyph.ch-declared{background:transparent;border-color:var(--line-2);color:var(--faint)}
+  .chatrow.on .chglyph.ch-declared{border-color:var(--line-2)}
+
+  /* ---------- Phase 5: Leads bucket (wall) ---------- */
+  .wall-head.leads-head{flex-wrap:wrap}
+  .clr.backleads{margin-left:0;display:inline-flex;align-items:center;gap:5px}
+  .clr.backleads .ic{width:12px;height:12px}
+  .leads-bucket{grid-column:1/-1;display:flex;align-items:center;gap:12px;background:var(--card);
+    border:1px dashed var(--line-2);border-radius:var(--r-lg);padding:14px 18px;cursor:pointer;
+    box-shadow:var(--sh);color:var(--mut);text-align:left;margin-top:2px}
+  .leads-bucket:hover{border-color:var(--accent);color:var(--accent)}
+  .leads-bucket > .ic{width:18px;height:18px;color:var(--faint);flex:none}
+  .leads-bucket:hover > .ic{color:var(--accent)}
+  .leads-bucket .lb-txt{font-weight:800;font-size:13px}
+  .leads-bucket .lb-needs{font-size:11px;font-weight:800;color:var(--warn);background:var(--warn-soft);
+    border-radius:6px;padding:2px 8px}
+  .leads-bucket .lb-hint{margin-left:auto;font-size:11px;color:var(--faint)}
+
+  /* ---------- Phase 5: Leads bucket (chat list) ---------- */
+  .leads-back{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--accent);
+    padding:2px 2px 8px}
+  .leads-back .ic{width:13px;height:13px}
+  .leads-note{font-size:11px;color:var(--mut);line-height:1.5;background:var(--bg);border-radius:9px;
+    padding:8px 11px;margin:8px 8px 0}
+  .leads-row{display:flex;align-items:center;gap:10px;width:calc(100% - 16px);margin:8px 8px 4px;
+    padding:10px 11px;border:1px dashed var(--line-2);border-radius:11px;cursor:pointer;text-align:left;color:var(--mut)}
+  .leads-row:hover{border-color:var(--accent);background:var(--bg)}
+  .leads-row .lr-ic{width:37px;height:37px;border-radius:50%;background:var(--bg);display:flex;
+    align-items:center;justify-content:center;flex:none;color:var(--faint)}
+  .leads-row .lr-ic .ic{width:16px;height:16px}
+  .leads-row .lr-main{flex:1;min-width:0}
+  .leads-row .lr-top{font-weight:800;font-size:12.5px;color:var(--ink);display:flex;align-items:center;gap:6px}
+  .leads-row .lr-chev{margin-left:auto;color:var(--faint);font-weight:800}
+  .leads-row .lr-sub{font-size:11px;color:var(--mut);margin-top:1px}
 
   /* toast */
   .cc-toast{position:absolute;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);

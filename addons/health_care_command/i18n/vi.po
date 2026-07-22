@@ -797,3 +797,61 @@ msgstr "Quản lý mẫu trả lời"
 #. odoo-javascript
 msgid "Manage watchlist phrases"
 msgstr "Quản lý cụm từ theo dõi"
+
+# ---------------------------------------------------------------------------
+# Phase-5 "Surface Truth": channel-truth field labels + Leads bucket / views
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-python
+msgid "Declared Channel"
+msgstr "Kênh khai báo"
+
+#. module: health_care_command
+#. odoo-python
+msgid "Effective Channel"
+msgstr "Kênh hiệu lực"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Leads"
+msgstr "Khách tiềm năng"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Live wall"
+msgstr "Bảng trực tiếp"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Live conversations"
+msgstr "Hội thoại trực tiếp"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "not yet reached on any channel"
+msgstr "chưa liên hệ được qua kênh nào"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Not yet reached on any channel"
+msgstr "Chưa liên hệ được qua kênh nào"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "need reply"
+msgstr "cần trả lời"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "These contacts declared how they'd reach us but no message, call or email has landed yet."
+msgstr "Những liên hệ này đã khai báo cách họ sẽ liên hệ nhưng chưa có tin nhắn, cuộc gọi hay email nào."
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "not yet reached on any channel — open ›"
+msgstr "chưa liên hệ được qua kênh nào — mở ›"
+
+#. module: health_care_command
+#. odoo-javascript
+msgid "Contacts not yet reached on any channel — reply, call or message to move them onto the live wall."
+msgstr "Liên hệ chưa được tiếp cận qua kênh nào — trả lời, gọi hoặc nhắn tin để đưa họ lên bảng trực tiếp."

@@ -18,6 +18,8 @@ import logging
 from odoo import api, fields, models
 from odoo.tools import html2plaintext
 
+from .care_conversation import MODE_TO_CHANNEL
+
 _logger = logging.getLogger(__name__)
 
 
@@ -96,10 +98,14 @@ class CrmLeadHook(models.Model):
         email = Care._safe_email(lead.email_from)
         if not phone and not email:
             return
+        # Derive a DECLARED channel from how the lead said they reached us —
+        # never faked as traffic (no `channel` key → channel_primary stays NULL,
+        # has_channel_activity stays False). walk_in/unmapped → None → skipped.
         Care._find_or_create_for(
             {"lead_id": lead.id, "phone_normalized": phone, "email_normalized": email},
             {"inbound": True, "event_at": lead.create_date, "set_status": "needs_reply",
-             "unread": "keep"},
+             "unread": "keep",
+             "declared_channel": MODE_TO_CHANNEL.get(lead.mode_of_contact)},
         )
 
 

@@ -16,7 +16,7 @@
         <span t-if="allc" class="ct" t-att-class="{ hot: allc.needs }" t-esc="allc.total"/>
       </button>
       <hr/>
-      <t t-foreach="CHANNELS" t-as="ch" t-key="ch.key">
+      <t t-foreach="channels" t-as="ch" t-key="ch.key">
         <button class="chbtn"
                 t-att-class="{ on: state.filter === ch.key, disabled: !ch.active }"
                 t-att-style="'--cv:' + ch.cv"
@@ -79,7 +79,13 @@
               <button class="rh-x" t-on-click.stop="() => this._dismissRing(ring.key)"><span class="ic ic-x"/></button>
             </div>
           </div>
-          <div class="wall-head">
+          <div t-if="inLeadsView" class="wall-head leads-head">
+            <button class="clr backleads" t-on-click="() => this.setListView('attention')">
+              <span class="ic ic-back"/>Live wall</button>
+            <h2>Leads · <t t-esc="conversations.length"/> not yet reached on any channel</h2>
+            <span class="hint">These contacts declared how they'd reach us but no message, call or email has landed yet.</span>
+          </div>
+          <div t-else="" class="wall-head">
             <h2>
               Now on the wall · <t t-esc="conversations.length"/> conversation<t t-if="conversations.length !== 1">s</t>
               <t t-if="state.filter"> · <t t-esc="chan(state.filter).label"/></t>
@@ -102,7 +108,9 @@
                 <div class="t-who">
                   <div class="t-name" t-esc="c.name"/>
                 </div>
-                <span class="chan" t-att-style="'--cv:' + chan(c.channel).cv">
+                <span class="chan" t-att-class="{ 'ch-declared': !c.channel_live }"
+                      t-att-style="'--cv:' + chan(c.channel).cv"
+                      t-att-title="!c.channel_live and c.channel !== 'none' ? chan(c.channel).label + ' — declared, no traffic yet' : chan(c.channel).label">
                   <span class="ic" t-att-class="chan(c.channel).ic"/><t t-esc="chan(c.channel).label"/>
                 </span>
               </div>
@@ -122,6 +130,16 @@
               </div>
             </div>
           </div>
+
+          <!-- collapsed Leads bucket: dormant contacts not yet reached on any
+               channel. Reachable even when the attention wall is empty. -->
+          <button t-if="!inLeadsView and leadsCount.total" class="leads-bucket"
+                  t-on-click="() => this.setListView('leads')">
+            <span class="ic ic-user"/>
+            <span class="lb-txt">Leads · <t t-esc="leadsCount.total"/></span>
+            <span t-if="leadsCount.needs" class="lb-needs" t-esc="leadsCount.needs + ' need reply'"/>
+            <span class="lb-hint">not yet reached on any channel — open ›</span>
+          </button>
         </div>
 
         <!-- ========== CHAT ========== -->
@@ -130,9 +148,14 @@
           <!-- list -->
           <section class="clist">
             <div class="clist-h">
+              <button t-if="inLeadsView" class="leads-back" t-on-click="() => this.setListView('attention')">
+                <span class="ic ic-back"/>Live conversations</button>
               <div class="searchbox"><span class="ic ic-search"/>
                 <input type="text" placeholder="Search people, phones, messages…"
                        t-att-value="state.search" t-on-input="(ev) => this.onSearchInput(ev)"/></div>
+            </div>
+            <div t-if="inLeadsView" class="leads-note">
+              Contacts not yet reached on any channel — reply, call or message to move them onto the live wall.
             </div>
             <div class="chats">
               <t t-foreach="LIST_SECTIONS" t-as="sec" t-key="sec.key">
@@ -144,7 +167,9 @@
                        t-on-click="() => this.selectConv(c.id)">
                     <div class="avwrap">
                       <span class="ava" t-esc="c.initials"/>
-                      <span class="chglyph" t-att-style="'--cv:' + chan(c.channel).cv">
+                      <span class="chglyph" t-att-class="{ 'ch-declared': !c.channel_live }"
+                            t-att-style="'--cv:' + chan(c.channel).cv"
+                            t-att-title="!c.channel_live and c.channel !== 'none' ? chan(c.channel).label + ' — declared, no traffic yet' : chan(c.channel).label">
                         <span class="ic" t-att-class="chan(c.channel).ic"/></span>
                     </div>
                     <div class="c-main">
@@ -167,6 +192,17 @@
                 </t>
               </t>
               <div t-if="!conversations.length" class="cc-empty"><span>No conversations.</span></div>
+
+              <!-- collapsed Leads bucket pinned under the live sections -->
+              <button t-if="!inLeadsView and leadsCount.total" class="leads-row"
+                      t-on-click="() => this.setListView('leads')">
+                <span class="lr-ic"><span class="ic ic-user"/></span>
+                <div class="lr-main">
+                  <div class="lr-top">Leads · <t t-esc="leadsCount.total"/>
+                    <span class="lr-chev">›</span></div>
+                  <div class="lr-sub">Not yet reached on any channel<t t-if="leadsCount.needs"> · <t t-esc="leadsCount.needs"/> need reply</t></div>
+                </div>
+              </button>
             </div>
           </section>
 

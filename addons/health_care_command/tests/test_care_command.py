@@ -391,13 +391,15 @@ class TestCareCommand(TransactionCase):
         counts = data["channel_counts"]
         # counts mirror an authoritative search per channel (robust vs other fixtures)
         active_channels = ("zalo", "email") + (("call",) if self.has_voip else ())
+        # Phase 5: counts read channel_effective (traffic ?? declared), so the
+        # authoritative mirror must too — a declared-only lead lands in these.
         for ch in active_channels:
             total = self.Care.sudo().search_count([
                 ("company_id", "=", self.company.id),
-                ("status", "!=", "closed"), ("channel_primary", "=", ch)])
+                ("status", "!=", "closed"), ("channel_effective", "=", ch)])
             needs = self.Care.sudo().search_count([
                 ("company_id", "=", self.company.id),
-                ("status", "=", "needs_reply"), ("channel_primary", "=", ch)])
+                ("status", "=", "needs_reply"), ("channel_effective", "=", ch)])
             self.assertEqual(counts[ch]["total"], total)
             self.assertEqual(counts[ch]["needs"], needs)
         self.assertGreaterEqual(counts["email"]["total"], 1)
@@ -577,7 +579,11 @@ class TestCareCommand(TransactionCase):
              "event_at": fields.Datetime.now()})
         U = self.Care.with_user(self.crm_user)
 
+        # Phase 5: the default surface is attention-first (activity only), which
+        # hides lead-anchored/dormant rows. Search correctness is what this test
+        # asserts, so query across the full set (view="all").
         def ids(**kw):
+            kw.setdefault("view", "all")
             return [c["id"] for c in U.get_workspace_data(**kw)["conversations"]]
 
         # by lead name
@@ -608,7 +614,10 @@ class TestCareCommand(TransactionCase):
             "status": "needs_reply",
         } for i in range(cap + 1)]
         self.Care.sudo().create(vals)
-        data = self.Care.with_user(self.crm_user).get_workspace_data()
+        # Phase 5: these dormant rows carry no channel activity, so the cap must
+        # be exercised over the full set (view="all"); the attention default
+        # would hide them and the cap would never trip.
+        data = self.Care.with_user(self.crm_user).get_workspace_data(view="all")
         self.assertTrue(data["capped"], "over-cap payload is flagged capped")
         self.assertGreaterEqual(data["total"], cap + 1)
         self.assertLessEqual(len(data["conversations"]), cap,
@@ -766,3 +775,212 @@ class TestCareCommand(TransactionCase):
              "event_at": fields.Datetime.now()})
         with self.assertRaises(UserError):
             self.Care.action_consent(nore.id)
+
+    # ======================================================================
+    # Phase 5 — Surface Truth. Helpers.
+    # ======================================================================
+    def _open_domain(self, user=None):
+        companies = (user or self.env.user).company_ids or self.company
+        return [("company_id", "in", companies.ids), ("status", "!=", "closed")]
+
+    @staticmethod
+    def _row(data, cid):
+        return next((c for c in data["conversations"] if c["id"] == cid), None)
+
+    # ======================================================================
+    # T39 — declared channel derivation from mode_of_contact (no faked traffic)
+    # ======================================================================
+    def test_39_declared_derivation(self):
+        lead = self.env["crm.lead"].create({
+            "name": "fb39", "phone": "0912345639", "mode_of_contact": "facebook"})
+        conv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        self.assertTrue(conv)
+        self.assertEqual(conv.channel_declared, "fb")
+        self.assertEqual(conv.channel_effective, "fb")
+        self.assertFalse(conv.channel_primary, "a lead never sets traffic")
+        self.assertFalse(conv.has_channel_activity, "declared is not activity")
+        # walk_in has no mapped channel → all three channel fields falsy
+        wlead = self.env["crm.lead"].create({
+            "name": "walk39", "phone": "0912345699", "mode_of_contact": "walk_in"})
+        wconv = self.Care.search([("lead_id", "=", wlead.id)], limit=1)
+        self.assertTrue(wconv)
+        self.assertFalse(wconv.channel_declared)
+        self.assertFalse(wconv.channel_effective)
+        self.assertFalse(wconv.channel_primary)
+        self.assertFalse(wconv.has_channel_activity)
+
+    # ======================================================================
+    # T40 — traffic wins over a declaration; declared never overwritten
+    # ======================================================================
+    def test_40_traffic_wins(self):
+        lead = self.env["crm.lead"].create({
+            "name": "fb40", "phone": "0912345640", "mode_of_contact": "facebook"})
+        conv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        self.assertEqual(conv.channel_declared, "fb")
+        self.assertEqual(conv.channel_effective, "fb")
+        # a real zalo inbound lands on the same lead conversation
+        self.Care._find_or_create_for(
+            {"lead_id": lead.id},
+            {"channel": "zalo", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        conv.invalidate_recordset()
+        self.assertEqual(conv.channel_primary, "zalo")
+        self.assertEqual(conv.channel_effective, "zalo", "traffic wins")
+        self.assertTrue(conv.has_channel_activity)
+        self.assertEqual(conv.channel_declared, "fb", "declaration is preserved")
+
+    # ======================================================================
+    # T41 — view domains: attention vs leads vs all; leads_count shape
+    # ======================================================================
+    def test_41_view_domains(self):
+        U = self.Care.with_user(self.crm_user)
+        # a traffic conversation (has activity) …
+        traffic = self.Care._find_or_create_for(
+            {"phone_normalized": "0912340041"},
+            {"channel": "zalo", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        # … and a declared-only lead (no activity)
+        lead = self.env["crm.lead"].create({
+            "name": "lead41", "phone": "0912340042", "mode_of_contact": "website"})
+        lconv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        self.assertTrue(lconv and not lconv.has_channel_activity)
+
+        def ids(**kw):
+            return [c["id"] for c in U.get_workspace_data(**kw)["conversations"]]
+
+        # default = attention → only the traffic one
+        self.assertIn(traffic.id, ids())
+        self.assertNotIn(lconv.id, ids())
+        # leads → only the lead
+        self.assertNotIn(traffic.id, ids(view="leads"))
+        self.assertIn(lconv.id, ids(view="leads"))
+        # all → both
+        allids = ids(view="all")
+        self.assertIn(traffic.id, allids)
+        self.assertIn(lconv.id, allids)
+        # unknown value behaves as attention
+        self.assertNotIn(lconv.id, ids(view="bogus"))
+        self.assertIn(traffic.id, ids(view="bogus"))
+        # leads_count mirrors an authoritative search over the leads domain
+        data = U.get_workspace_data()
+        leads_dom = self._open_domain(self.crm_user) + [("has_channel_activity", "=", False)]
+        self.assertEqual(data["leads_count"]["total"],
+                         self.Care.sudo().search_count(leads_dom))
+        self.assertEqual(data["leads_count"]["needs"],
+                         self.Care.sudo().search_count(
+                             leads_dom + [("status", "=", "needs_reply")]))
+        self.assertGreaterEqual(data["leads_count"]["total"], 1)
+        self.assertEqual(data["view"], "attention", "server echoes the view")
+
+    # ======================================================================
+    # T42 — channel filter reads channel_effective (declared lead is filterable)
+    # ======================================================================
+    def test_42_filter_on_effective(self):
+        U = self.Care.with_user(self.crm_user)
+        lead = self.env["crm.lead"].create({
+            "name": "fb42", "phone": "0912340043", "mode_of_contact": "facebook"})
+        lconv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        # declared-only → visible under the leads/all view, filtered by fb
+        ids = [c["id"] for c in U.get_workspace_data(view="all", channel="fb")["conversations"]]
+        self.assertIn(lconv.id, ids)
+        data = U.get_workspace_data()
+        self.assertGreaterEqual(data["channel_counts"]["fb"]["total"], 1,
+                                "counts read channel_effective")
+
+    # ======================================================================
+    # T43 — payload contract: active_channels, 8-key counts, channel_live
+    # ======================================================================
+    def test_43_payload_contract(self):
+        U = self.Care.with_user(self.crm_user)
+        lead = self.env["crm.lead"].create({
+            "name": "fb43", "phone": "0912340044", "mode_of_contact": "facebook"})
+        lconv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        data = U.get_workspace_data(view="all")
+        expected = ("zalo", "call", "email", "zns",
+                    "whatsapp", "fb", "telegram", "webchat")
+        self.assertEqual(set(data["active_channels"]), set(expected))
+        for ch in expected:
+            self.assertIn(ch, data["channel_counts"])
+        self.assertEqual(data["view"], "all")
+        row = self._row(data, lconv.id)
+        self.assertTrue(row)
+        self.assertEqual(row["channel"], "fb")
+        self.assertFalse(row["channel_live"], "declared-only is not live")
+        # once real traffic lands, channel_live flips true
+        self.Care._find_or_create_for(
+            {"lead_id": lead.id},
+            {"channel": "zalo", "inbound": True, "set_status": "needs_reply",
+             "event_at": fields.Datetime.now()})
+        data2 = U.get_workspace_data()  # now in attention
+        row2 = self._row(data2, lconv.id)
+        self.assertTrue(row2)
+        self.assertTrue(row2["channel_live"])
+
+    # ======================================================================
+    # T44 — backfill: derives declared + sets activity flag; idempotent
+    # ======================================================================
+    def test_44_backfill(self):
+        # legacy lead-anchored conversation with NO declared channel yet
+        llead = self.env["crm.lead"].create({
+            "name": "bf44", "phone": "0912340045", "mode_of_contact": "zalo"})
+        lconv = self.Care.search([("lead_id", "=", llead.id)], limit=1)
+        lconv.write({"channel_declared": False})  # simulate a pre-Phase-5 row
+        # legacy traffic conversation flagged has_channel_activity=False
+        tconv = self.Care.sudo().create({
+            "phone_normalized": "0912340046", "company_id": self.company.id,
+            "status": "needs_reply", "channel_primary": "zalo",
+            "has_channel_activity": False})
+        res = self.Care._backfill_channel_truth()
+        lconv.invalidate_recordset()
+        tconv.invalidate_recordset()
+        self.assertEqual(lconv.channel_declared, "zalo", "derived from mode_of_contact")
+        self.assertEqual(lconv.channel_effective, "zalo")
+        self.assertTrue(tconv.has_channel_activity, "traffic → activity flag set")
+        self.assertGreaterEqual(res["activity_set"], 1)
+        self.assertGreaterEqual(res["declared"].get("zalo", 0), 1)
+        # idempotent: a second run writes nothing new
+        res2 = self.Care._backfill_channel_truth()
+        self.assertEqual(res2["activity_set"], 0)
+        self.assertFalse(res2["declared"])
+
+    # ======================================================================
+    # T45 — reply templates key off channel_effective (declared-zalo → zalo)
+    # ======================================================================
+    def test_45_templates_via_effective(self):
+        Tpl = self.env["care.reply.template"]
+        t_any = Tpl.create({"name": "T45 Any", "body": "b", "channel": "any"})
+        t_zalo = Tpl.create({"name": "T45 Zalo", "body": "b", "channel": "zalo"})
+        t_email = Tpl.create({"name": "T45 Email", "body": "b", "channel": "email"})
+        lead = self.env["crm.lead"].create({
+            "name": "tpl45", "phone": "0912340047", "mode_of_contact": "zalo"})
+        conv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
+        self.assertFalse(conv.channel_primary)
+        self.assertEqual(conv.channel_effective, "zalo")
+        got = {t["id"] for t in
+               self.Care.with_user(self.crm_user).get_reply_templates(conv.id)}
+        self.assertIn(t_any.id, got)
+        self.assertIn(t_zalo.id, got)
+        self.assertNotIn(t_email.id, got)
+
+    # ======================================================================
+    # T46 — cap honesty is per-view (leads set capped independent of attention)
+    # ======================================================================
+    def test_46_cap_per_view(self):
+        # pin a tiny cap for this test only (§5.32-style hygiene)
+        model_cls = type(self.Care)
+        orig = model_cls.WORKSPACE_CAP
+        model_cls.WORKSPACE_CAP = 3
+        self.addCleanup(setattr, model_cls, "WORKSPACE_CAP", orig)
+        # create > cap dormant leads (no channel activity)
+        self.Care.sudo().create([{
+            "phone_normalized": "0912%06d" % (460000 + i),
+            "company_id": self.company.id, "status": "needs_reply",
+            "has_channel_activity": False,
+        } for i in range(model_cls.WORKSPACE_CAP + 2)])
+        U = self.Care.with_user(self.crm_user)
+        leads = U.get_workspace_data(view="leads")
+        self.assertTrue(leads["capped"], "leads view flags capped")
+        self.assertLessEqual(len(leads["conversations"]), model_cls.WORKSPACE_CAP)
+        leads_total = self.Care.sudo().search_count(
+            self._open_domain(self.crm_user) + [("has_channel_activity", "=", False)])
+        self.assertEqual(leads["total"], leads_total, "per-view total is honest")
