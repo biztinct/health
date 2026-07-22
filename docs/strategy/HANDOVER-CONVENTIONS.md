@@ -853,3 +853,21 @@ a no-op.
     health_voip24h/models/voip_config.py:422-442), inline cheap processing
     inside `cr.savepoint()` — never with_delay, never jsonrpc, never
     fail-open.
+
+- **§5.62 — adding a default-narrowing clause to a workspace/list service
+    default SILENTLY breaks every pre-existing test whose fixtures don't satisfy
+    the new default, even tests that never touch the changed field.**
+    Care-command Phase 5 flipped `get_workspace_data`'s default from "all open"
+    to attention-first (`view="attention"` → `has_channel_activity=True`). Two
+    pre-existing tests RED-lit on the first run — NOT the count-shape tests the
+    handover sanctioned, but `test_24_workspace_search` (its lead conv carries no
+    activity) and `test_25_capped_payload` (its cap+1 fixtures are directly
+    created without `has_channel_activity`) — because the new default excluded
+    their rows. Both were correct engine behavior; the fix is in the TEST (pass
+    the explicit `view="all"` that restores the pre-change scope), never the
+    engine. Rule: when a phase adds a default-narrowing domain clause to any
+    workspace/list/search service, grep EVERY existing test that calls it with
+    no explicit scope and confirm its fixtures satisfy the new default — the
+    breakage set is wider than the "assert the counts shape" tests a handover
+    usually names. (Hit live in care-command Phase 5; T24/T25 relaxed to
+    `view="all"`.)
