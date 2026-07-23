@@ -21,7 +21,7 @@
 #############################################################################
 {
     'name': 'Access Roles',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category':'Security',
     'sequence': 1,
     'summary': 'Access Roles for users',
