@@ -164,8 +164,19 @@ class ChannelSpineCase(ChannelHubCase):
     @contextmanager
     def mock_post(self, response=None, status=200, exc=None):
         """Patch the ONE place adapters do HTTP. No test ever leaves the box."""
+        with self._mock_http('post', response, status, exc) as mocked:
+            yield mocked
+
+    @contextmanager
+    def mock_get(self, response=None, status=200, exc=None):
+        """Same, for the credential-validation calls (Telegram ``getMe``)."""
+        with self._mock_http('get', response, status, exc) as mocked:
+            yield mocked
+
+    @contextmanager
+    def _mock_http(self, verb, response=None, status=200, exc=None):
         target = ('odoo.addons.health_care_command_channels.services.'
-                  'adapters.requests.post')
+                  'adapters.requests.%s' % verb)
         if exc is not None:
             with patch(target, side_effect=exc) as mocked:
                 yield mocked

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- The tenant-facing Channel Connection Center (CC-C, architecture §9).
+         An OWL client action, NOT a patch of the Care Command component:
+         connecting a channel and working a conversation are different jobs
+         with different audiences. -->
+    <record id="action_channel_center" model="ir.actions.client">
+        <field name="name">Channel Center</field>
+        <field name="tag">channel_center</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Above the CC-A raw-model menus: a tenant administrator should reach
+         the Center first and the underlying records only if they go looking. -->
+    <menuitem id="menu_channel_center"
+              name="Channel Center"
+              parent="health_care_command.menu_care_command_config"
+              action="action_channel_center"
+              groups="health_user_admin.group_health_user_admin,health_crm.group_health_crm_manager"
+              sequence="10"/>
+
+</odoo>

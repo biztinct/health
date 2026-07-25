@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!--
+  Channel Connection Center — the catalogue (8 cards) and the stepper modal.
+  Every visible string either comes from the server already translated
+  (labels, chips, check names, stepper copy) or goes through _t here; there is
+  no channel knowledge and no state vocabulary in this file.
+-->
+<t t-name="health_care_command_channels.ChannelCenter">
+  <div class="o_channel_center">
+
+    <header class="cc-top">
+      <div class="cc-title">
+        <span class="ic ic-plug"/>
+        <div>
+          <h1>Channel Connection Center</h1>
+          <p>Connect the places your clients already message you from. Everything lands in Care Command.</p>
+        </div>
+      </div>
+      <button class="cc-btn ghost" t-on-click="() => this.load()"
+              t-att-disabled="state.loading">
+        <span class="ic ic-refresh"/><span>Refresh</span>
+      </button>
+    </header>
+
+    <div t-if="state.loading and !state.cards.length" class="cc-empty">Loading…</div>
+    <div t-if="state.error" class="cc-alert bad" role="alert" t-esc="state.error"/>
+
+    <!-- ===================== catalogue ===================== -->
+    <div class="cc-grid">
+      <t t-foreach="cards" t-as="card" t-key="card.channel">
+        <section class="cc-card" t-att-class="'tone-' + tone(card.state)"
+                 t-att-style="'--cv:' + style(card.channel).cv">
+
+          <div class="cc-card-head">
+            <span class="cc-bub"><span class="ic" t-att-class="style(card.channel).ic"/></span>
+            <div class="cc-card-id">
+              <h2 t-esc="card.label"/>
+              <span class="cc-chip" t-att-class="'tone-' + tone(card.state)"
+                    t-esc="card.state_chip"/>
+            </div>
+          </div>
+
+          <p class="cc-res" t-if="card.resource_line" t-esc="card.resource_line"/>
+          <p class="cc-res muted" t-if="!card.resource_line and card.available and card.implemented">
+            Not set up yet
+          </p>
+          <p class="cc-res muted" t-if="!card.available">
+            Health19 is completing provider approval for this channel.
+          </p>
+          <p class="cc-res muted" t-if="card.available and !card.implemented">
+            Available in an upcoming update.
+          </p>
+
+          <div class="cc-traffic" t-if="card.last_inbound_at or card.last_outbound_at">
+            <span t-if="card.last_inbound_at">
+              <span class="ic ic-in"/> Received <t t-esc="since(card.last_inbound_at)"/>
+            </span>
+            <span t-if="card.last_outbound_at">
+              <span class="ic ic-out"/> Sent <t t-esc="since(card.last_outbound_at)"/>
+            </span>
+          </div>
+
+          <div class="cc-checks" t-if="card.checks.length and card.implemented">
+            <div class="cc-dots">
+              <t t-foreach="card.checks" t-as="chk" t-key="chk.key">
+                <span class="cc-dot" t-att-class="'st-' + chk.status"
+                      t-att-title="chk.label"/>
+              </t>
+            </div>
+            <span class="cc-count"><t t-esc="card.checks_done"/>/<t t-esc="card.checks_total"/></span>
+          </div>
+
+          <div class="cc-actions">
+            <button class="cc-btn primary"
+                    t-att-disabled="card.primary_action === 'unavailable' or state.busy"
+                    t-on-click="() => this.onPrimary(card)"
+                    t-esc="card.primary_label"/>
+          </div>
+
+          <!-- ZNS and any other capability-of-a-parent renders inside its parent -->
+          <t t-foreach="subCards(card.channel)" t-as="sub" t-key="sub.channel">
+            <div class="cc-sub">
+              <span class="ic" t-att-class="style(sub.channel).ic"/>
+              <span class="cc-sub-name" t-esc="sub.label"/>
+              <span class="cc-chip small" t-att-class="'tone-' + tone(sub.state)"
+                    t-esc="sub.state_chip"/>
+            </div>
+          </t>
+        </section>
+      </t>
+    </div>
+
+    <!-- ===================== stepper / manage modal ===================== -->
+    <div t-if="state.open" class="cc-modal-wrap" t-on-keydown="onModalKeydown">
+      <div class="cc-backdrop" t-on-click="closeStepper"/>
+      <div class="cc-modal" role="dialog" aria-modal="true"
+           t-att-aria-label="openCard and openCard.label" t-ref="modal">
+
+        <header class="cc-modal-head">
+          <span class="cc-bub" t-att-style="'--cv:' + style(state.open).cv">
+            <span class="ic" t-att-class="style(state.open).ic"/>
+          </span>
+          <div>
+            <h2 t-esc="openCard and openCard.label"/>
+            <span class="cc-chip" t-if="openCard"
+                  t-att-class="'tone-' + tone(openCard.state)"
+                  t-esc="openCard.state_chip"/>
+          </div>
+          <button class="cc-x" t-on-click="closeStepper" aria-label="Close">
+            <span class="ic ic-x"/>
+          </button>
+        </header>
+
+        <!-- ===== manage panel (a connected channel) ===== -->
+        <div t-if="state.manage" class="cc-modal-body">
+          <p class="cc-res" t-if="openCard and openCard.resource_line"
+             t-esc="openCard.resource_line"/>
+
+          <ul class="cc-checklist" t-if="openCard">
+            <t t-foreach="openCard.checks" t-as="chk" t-key="chk.key">
+              <li t-att-class="'st-' + chk.status">
+                <span class="ic" t-att-class="chk.status === 'pass' ? 'ic-check' : (chk.status === 'fail' ? 'ic-x' : 'ic-clock')"/>
+                <span t-esc="chk.label"/>
+              </li>
+            </t>
+          </ul>
+
+          <div class="cc-tech" t-if="openCard">
+            <details>
+              <summary>Technical details</summary>
+              <dl>
+                <dt>Status</dt><dd t-esc="openCard.state"/>
+                <dt>Last received</dt>
+                <dd t-esc="openCard.last_inbound_at or '—'"/>
+                <dt>Last sent</dt>
+                <dd t-esc="openCard.last_outbound_at or '—'"/>
+              </dl>
+            </details>
+          </div>
+
+          <div t-if="state.confirmOff" class="cc-alert warn">
+            <p>New messages will stop arriving in Care Command. Conversation history stays.</p>
+            <div class="cc-row">
+              <button class="cc-btn ghost" t-on-click="cancelDisconnect">Keep it on</button>
+              <button class="cc-btn danger" t-att-disabled="state.busy"
+                      t-on-click="doDisconnect">Turn it off</button>
+            </div>
+          </div>
+        </div>
+
+        <footer t-if="state.manage" class="cc-modal-foot">
+          <button class="cc-btn ghost" t-att-disabled="state.busy"
+                  t-on-click="sendTest">Send a test</button>
+          <button class="cc-btn ghost" t-if="!state.confirmOff"
+                  t-on-click="askDisconnect">Turn off</button>
+          <button class="cc-btn primary" t-on-click="closeStepper">Done</button>
+        </footer>
+
+        <!-- ===== wizard ===== -->
+        <div t-if="!state.manage" class="cc-modal-body">
+
+          <ol class="cc-steps">
+            <t t-foreach="state.steps" t-as="st" t-key="st.key">
+              <li t-att-class="st_index === state.step ? 'on' : (st_index &lt; state.step ? 'done' : '')">
+                <span class="cc-step-n" t-esc="st_index + 1"/>
+                <span class="cc-step-t" t-esc="st.title"/>
+              </li>
+            </t>
+          </ol>
+
+          <div class="cc-step-body">
+            <h3 t-esc="currentStep.title"/>
+            <p t-if="currentStep.body" t-esc="currentStep.body"/>
+            <p t-if="currentStep.link">
+              <a t-att-href="currentStep.link" target="_blank" rel="noopener noreferrer"
+                 class="cc-link" t-esc="currentStep.link_label or currentStep.link"/>
+            </p>
+
+            <!-- ===== Telegram: paste the key ===== -->
+            <t t-if="state.mode === 'guided_secret' and state.step === 1">
+              <label class="cc-label" for="cc_token">Bot key</label>
+              <input id="cc_token" type="password" class="cc-input"
+                     autocomplete="off" spellcheck="false"
+                     placeholder="123456789:AAG…"
+                     t-model="state.token"/>
+              <p class="cc-help">We check the key with Telegram before saving it. It is stored encrypted and never shown again.</p>
+            </t>
+
+            <t t-if="state.mode === 'guided_secret' and state.step === 2 and state.botName">
+              <p class="cc-ok"><span class="ic ic-check"/>
+                 <span>Connected to <t t-esc="state.botName"/></span></p>
+            </t>
+
+            <!-- ===== Telegram: waiting for the first message ===== -->
+            <t t-if="state.mode === 'guided_secret' and state.step === 3">
+              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+                <span class="ic ic-clock"/> Waiting for your first message…
+              </p>
+              <p class="cc-ok"
+                 t-if="openCard and openCard.last_inbound_at and openCard.state !== 'ready'">
+                <span class="ic ic-check"/>
+                <span>We received your message. Send a reply to finish.</span>
+              </p>
+              <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
+                <span class="ic ic-check"/>
+                <span>Telegram is connected. New messages arrive in Care Command.</span>
+              </p>
+            </t>
+
+            <!-- ===== Web chat: origins ===== -->
+            <t t-if="state.mode === 'one_click' and state.step === 0">
+              <label class="cc-label" for="cc_origins">Website addresses</label>
+              <textarea id="cc_origins" class="cc-input area" rows="3"
+                        placeholder="https://vietuc.vn"
+                        t-model="state.origins"/>
+              <p class="cc-help">One per line. Only these websites may show the chat bubble.</p>
+              <label class="cc-label" for="cc_greeting">First message (optional)</label>
+              <input id="cc_greeting" type="text" class="cc-input"
+                     placeholder="Xin chào! Chúng tôi có thể giúp gì?"
+                     t-model="state.greeting"/>
+            </t>
+
+            <!-- ===== Web chat: the snippet ===== -->
+            <t t-if="state.mode === 'one_click' and state.step === 1">
+              <!-- The snippet is TEXT inside the textarea, never markup in the
+                   arch: an escaped <script> written into a template is served
+                   as a live element (ledger §5.64). -->
+              <textarea class="cc-input area mono" rows="3" readonly="readonly"
+                        aria-label="Embed snippet"><t t-esc="state.snippet"/></textarea>
+              <div class="cc-row">
+                <button class="cc-btn ghost" t-on-click="copySnippet">
+                  <span class="ic" t-att-class="state.copied ? 'ic-check' : 'ic-copy'"/>
+                  <span t-if="state.copied">Copied ✓</span>
+                  <span t-if="!state.copied">Copy</span>
+                </button>
+                <a t-if="state.demoUrl" class="cc-link" t-att-href="state.demoUrl"
+                   target="_blank" rel="noopener noreferrer">Open the demo page</a>
+              </div>
+            </t>
+
+            <!-- ===== Web chat: verify installation ===== -->
+            <t t-if="state.mode === 'one_click' and state.step === 2">
+              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+                <span class="ic ic-clock"/> Waiting for the first message…
+              </p>
+              <p class="cc-ok" t-if="openCard and openCard.last_inbound_at">
+                <span class="ic ic-check"/>
+                <span>Web chat is working. Messages appear in Care Command.</span>
+              </p>
+            </t>
+          </div>
+        </div>
+
+        <footer t-if="!state.manage" class="cc-modal-foot">
+          <button class="cc-btn ghost" t-if="state.step &gt; 0"
+                  t-att-disabled="state.busy" t-on-click="back">Back</button>
+
+          <!-- Telegram -->
+          <button t-if="state.mode === 'guided_secret' and state.step === 0"
+                  class="cc-btn primary" t-on-click="next">I have my key</button>
+          <button t-if="state.mode === 'guided_secret' and state.step === 1"
+                  class="cc-btn primary" t-att-disabled="state.busy or !state.token"
+                  t-on-click="validateToken">Check the key</button>
+          <button t-if="state.mode === 'guided_secret' and state.step === 2"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="registerWebhook">Connect</button>
+          <button t-if="state.mode === 'guided_secret' and state.step === 3 and !(openCard and openCard.state === 'ready')"
+                  class="cc-btn primary"
+                  t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
+                  t-on-click="sendTest">Send a reply</button>
+          <button t-if="state.mode === 'guided_secret' and state.step === 3 and openCard and openCard.state === 'ready'"
+                  class="cc-btn primary" t-on-click="closeStepper">Done</button>
+
+          <!-- Web chat -->
+          <button t-if="state.mode === 'one_click' and state.step === 0"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="enableWebchat">Turn on web chat</button>
+          <button t-if="state.mode === 'one_click' and state.step === 1"
+                  class="cc-btn primary" t-on-click="next">Next</button>
+          <button t-if="state.mode === 'one_click' and state.step === 2"
+                  class="cc-btn primary" t-on-click="closeStepper">Done</button>
+        </footer>
+
+        <div t-if="state.toast" class="cc-toast" t-esc="state.toast"/>
+      </div>
+    </div>
+  </div>
+</t>
+
+</templates>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.2.0.0',
+    'version': '19.0.3.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -56,9 +56,33 @@ spine the live channels already use:
   proves outbound, a 401 costs the connection its ``authorization_valid``
   check — which is what the dock, the counts and the composer read.
 
-Non-goals of this phase: no Center UI (CC-C), no Zalo/email/VoIP adapter work
-(CC-D/E/F), no credentials on any server, no media download, no Meta template
-messages, no bus/websocket web chat, no queue, no AI.
+Channel Connection Center — Phase CC-C (the Center itself)
+==========================================================
+
+The tenant-facing Center: one OWL client action with a catalogue of all eight
+channels and a four-step stepper, plus the server endpoints behind it.
+
+- ``center_overview`` / ``center_begin`` / ``center_test`` /
+  ``center_disconnect`` / ``center_reconnect`` — every write through
+  ``sudo()._internal()``, every failure a redacted ``UserError``, and no
+  credential material in any return value.
+- **Web chat is one click**: allowed website addresses, an embed snippet with
+  a ``?v=`` cache stamp, and the first real widget message finishes the setup.
+- **Telegram is a guided wizard**: BotFather → paste the key → validated with
+  ``getMe`` before anything is stored → ``setWebhook`` (https only) → the
+  tenant messages the bot → a synthetic reply proves outbound.
+- Readiness stays DERIVED. Amendment F1 closes the lockout in which the first
+  proving inbound demoted a ``testing`` connection to ``action_required`` —
+  which is not ingestable — and stranded the channel mid-setup.
+- Tenant administrators (``health_user_admin.group_health_user_admin``) get
+  connection read/write/create (never unlink), read on readiness/audit/
+  identity/message, and NOTHING on ``channel.platform.app``: the platform
+  plane stays with the platform operator.
+
+Non-goals of this phase: no OAuth popup or code exchange (CC-D/E), no Meta JS
+SDK, no Zalo repair, no email/VoIP wizard, no bus/websocket, no new public
+routes, no real provider call anywhere in the tests, no credentials on any
+server.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',
@@ -69,6 +93,10 @@ messages, no bus/websocket web chat, no queue, no AI.
         'mail',
         'health_care_command',
         'health_api_gateway',
+        # CC-C: the Center's audience. The tenant-admin ACL rows and the
+        # Center menu both reference health_user_admin.group_health_user_admin,
+        # so the dependency is hard from this phase on (CC-A deferred it).
+        'health_user_admin',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -79,9 +107,20 @@ messages, no bus/websocket web chat, no queue, no AI.
         'views/channel_connection_views.xml',
         'views/channel_message_views.xml',
         'views/res_config_settings_views.xml',
+        'views/channel_center_views.xml',
         'views/menus.xml',
         'data/ir_cron.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            # plain CSS first (data-URI mask icons — libsass mangles them
+            # inside .scss, ledger §5.51)
+            'health_care_command_channels/static/src/center/channel_center.css',
+            'health_care_command_channels/static/src/center/channel_center.scss',
+            'health_care_command_channels/static/src/center/channel_center.js',
+            'health_care_command_channels/static/src/center/channel_center.xml',
+        ],
+    },
     'installable': True,
     'auto_install': False,
     'application': False,

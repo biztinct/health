@@ -56,12 +56,6 @@
         });
     }
 
-    function get(path) {
-        return fetch(ORIGIN + path, { method: "GET", credentials: "omit" })
-            .then(function (r) {
-                return r.ok ? r.json() : Promise.reject(r.status);
-            });
-    }
 
     // ---------------------------------------------------------------
     // DOM
@@ -204,8 +198,10 @@
 
     function poll() {
         if (!state.session) return;
-        get("/care_channels/webchat/poll?session=" + encodeURIComponent(state.session) +
-            "&after_id=" + state.afterId)
+        // POST, not GET: the session id is this visitor's credential for their
+        // own thread, and a query string lands in every proxy access log.
+        post("/care_channels/webchat/poll",
+             { session: state.session, after_id: state.afterId })
             .then(function (data) {
                 var rows = (data && data.messages) || [];
                 rows.forEach(function (row) {

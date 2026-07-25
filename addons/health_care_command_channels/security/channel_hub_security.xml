@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- CC-C note: every rule below is GLOBAL (no `groups` field), so it
+         already applies to the tenant-administrator persona whose ACL rows
+         land in this phase — there is no group list to extend. A global rule
+         is also the stronger posture: a group-bound rule only constrains its
+         own members, and any group without a matching rule would read
+         everything. -->
+
     <!-- Company scoping, cloned from health_care_command's global rules.
          Global (not group-bound) so a direct, non-sudo read from ANY user
          stays inside the user's allowed companies. Belt and suspenders: every

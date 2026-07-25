@@ -95,6 +95,13 @@ CAPABILITY_KEYS = (
     'supports_refresh', 'supports_revoke', 'required_checks', 'guide_steps',
 )
 
+# Optional declarations (CC-C): ``parent_channel`` (zns renders inside zalo's
+# card) and ``platform_providers`` — WHICH channel.platform.app provider(s)
+# would have to exist for a needs_platform_app channel to be offerable at all.
+# The Center reads it to answer "Not available yet" honestly instead of
+# offering a Connect button that could only fail (architecture §4, §9).
+OPTIONAL_CAPABILITY_KEYS = ('parent_channel', 'platform_providers')
+
 
 def register_adapter(key):
     """Class decorator: register an adapter under a care.conversation channel key."""
@@ -194,6 +201,25 @@ class BaseChannelAdapter:
         return (getattr(self.connection, 'api_base_override', '')
                 or default).rstrip('/')
 
+    def _get(self, url, *, params=None, headers=None):
+        """GET with a timeout; same error contract as :meth:`_post`.
+
+        Used by the credential-validation calls the Center makes before it
+        stores anything (Telegram ``getMe``).
+        """
+        try:
+            resp = requests.get(url, params=params, headers=headers,
+                                timeout=HTTP_TIMEOUT)
+        except requests.RequestException as exc:
+            raise ChannelSendError('network error: %s' % exc) from exc
+        if resp.status_code >= 300:
+            raise ChannelSendError('HTTP %s: %s' % (resp.status_code,
+                                                    (resp.text or '')[:300]))
+        try:
+            return resp.json() or {}
+        except ValueError:
+            return {}
+
     def _post(self, url, *, json_body=None, params=None, headers=None):
         """POST with a timeout; raise ``ChannelSendError`` on anything but 2xx.
 
@@ -240,6 +266,7 @@ class WhatsAppAdapter(_StubAdapter):
     _capabilities = {
         'mode': MODE_EMBEDDED_SIGNUP,
         'needs_platform_app': True,
+        'platform_providers': ['meta'],
         'resource_selection': True,      # WABA + phone number picker
         'webhook_auto': True,            # POST /{waba}/subscribed_apps
         'supports_refresh': False,
@@ -337,6 +364,7 @@ class MessengerAdapter(_StubAdapter):
     _capabilities = {
         'mode': MODE_OAUTH_POPUP,
         'needs_platform_app': True,
+        'platform_providers': ['meta'],
         'resource_selection': True,      # Page picker from /me/accounts
         'webhook_auto': True,            # POST /{page}/subscribed_apps
         'supports_refresh': False,
@@ -419,6 +447,7 @@ class ZaloAdapter(_StubAdapter):
     _capabilities = {
         'mode': MODE_OAUTH_POPUP,
         'needs_platform_app': True,
+        'platform_providers': ['zalo'],
         'resource_selection': False,     # the OA is fixed by the grant
         'webhook_auto': False,           # developers.zalo.me portal, one URL/app
         'supports_refresh': True,
@@ -443,6 +472,7 @@ class ZnsAdapter(_StubAdapter):
         'mode': MODE_OAUTH_POPUP,
         'parent_channel': 'zalo',
         'needs_platform_app': True,
+        'platform_providers': ['zalo'],
         'resource_selection': False,
         'webhook_auto': False,
         'supports_refresh': True,
@@ -470,6 +500,60 @@ class TelegramAdapter(_StubAdapter):
                         'channel_hub.guide.telegram.connecting',
                         'channel_hub.guide.telegram.test'],
     }
+
+    # -- guided-secret onboarding (CC-C) --------------------------------
+    def validate_token(self, token):
+        """``getMe`` — the ONLY honest way to know a pasted token is real.
+
+        Takes the token as an ARGUMENT rather than reading the connection:
+        the Center validates before it stores anything, so a token that turns
+        out to be wrong never touches the database.
+
+        Returns ``{'id', 'username', 'first_name'}``; raises
+        ``ChannelSendError`` on refusal, network failure or a reply with no
+        bot identity in it.
+        """
+        token = (token or '').strip()
+        if not token:
+            raise ChannelSendError('telegram token is empty')
+        url = '%s/bot%s/getMe' % (self._api_base(TELEGRAM_BASE), token)
+        data = self._get(url)
+        if not data.get('ok'):
+            raise ChannelSendError('telegram refused: %s'
+                                   % data.get('description'))
+        result = data.get('result') or {}
+        if not result.get('id'):
+            raise ChannelSendError('telegram returned no bot identity')
+        return {
+            'id': str(result['id']),
+            'username': result.get('username') or '',
+            'first_name': result.get('first_name') or '',
+        }
+
+    def register_webhook(self, url=None, secret_token=None):
+        """``setWebhook`` — Telegram is the one channel we can wire ourselves.
+
+        ``allowed_updates`` is narrowed to ``message``: we ingest nothing else,
+        and asking for less is the smaller blast radius. The caller owns the
+        URL (it holds the path secret) and the https check.
+        """
+        token = self.connection._get_secret('provider_secret')
+        if not token:
+            raise ChannelSendError('telegram bot token is not configured')
+        if not url or not secret_token:
+            raise ChannelSendError('telegram webhook url is not configured')
+        api_url = '%s/bot%s/setWebhook' % (self._api_base(TELEGRAM_BASE), token)
+        data = self._post(api_url, json_body={
+            'url': url,
+            'secret_token': secret_token,
+            'allowed_updates': ['message'],
+        })
+        if not data.get('ok', True):
+            raise ChannelSendError('telegram refused: %s'
+                                   % data.get('description'))
+        _logger.info('care_channels: telegram webhook registered on '
+                     'connection %s', self.connection.id)
+        return {'ok': True}
 
     # -- messaging (CC-B) ----------------------------------------------
     def parse_inbound(self, payload):
@@ -542,6 +626,8 @@ class EmailAdapter(_StubAdapter):
     _capabilities = {
         'mode': MODE_OAUTH_POPUP,
         'needs_platform_app': True,
+        # Either provider makes the card offerable; CC-F picks per tenant.
+        'platform_providers': ['google', 'microsoft'],
         'resource_selection': False,     # the mailbox IS the authorizing account
         'webhook_auto': False,           # n/a — IMAP poll
         'supports_refresh': True,

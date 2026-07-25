@@ -86,16 +86,13 @@ class WebChatController(http.Controller):
 
     @staticmethod
     def _widget_version():
-        """Cache-busting stamp for the embeddable widget.
+        """Cache-busting stamp for the embeddable widget (ledger §5.64b).
 
-        Odoo serves ``/<module>/static/…`` with ``max-age=604800`` and no
-        revalidation, so without a ``?v=`` every visitor keeps the old widget
-        for a week after an upgrade. The installed module version changes on
-        every upgrade, which is exactly the cadence we need.
+        ONE implementation, on the model: CC-C's Channel Center hands the same
+        snippet to the tenant, and two copies of a cache-busting rule is how
+        they drift apart.
         """
-        module = request.env['ir.module.module'].sudo().search(
-            [('name', '=', 'health_care_command_channels')], limit=1)
-        return module.latest_version or '1'
+        return request.env['care.channel.connection'].sudo()._widget_version()
 
     def _ip_key(self, suffix):
         return 'webchat:%s:%s' % (
@@ -144,10 +141,21 @@ class WebChatController(http.Controller):
         return self._json({'id': msg.id, 'ok': True}, connection=connection)
 
     @http.route('/care_channels/webchat/poll', type='http', auth='public',
-                methods=['GET'], csrf=False, save_session=False, website=False)
-    def webchat_poll(self, session=None, after_id=0, **kwargs):
+                methods=['POST'], csrf=False, save_session=False, website=False)
+    def webchat_poll(self, **kwargs):
+        """POST, not GET (CC-C, CC-B review LOW-3).
+
+        The session id is the visitor's bearer credential for their own thread.
+        On a GET it lands in every reverse proxy access log, every browser
+        history entry and every Referer header; in a body it does not. Same
+        response shape, same rate keys, still a CORS *simple* request because
+        the widget posts ``text/plain``.
+        """
         Message = request.env['care.channel.message'].sudo()
         connection = Message._webchat_connection()
+        body = self._body()
+        session = (body.get('session') or '').strip()
+        after_id = body.get('after_id') or 0
         if self._rate_limited(self._ip_key('poll')):
             return self._json({'error': 'rate_limited'}, status=429,
                               connection=connection)
@@ -183,10 +191,8 @@ class WebChatController(http.Controller):
                              if connection else ''),
                 'widget_js': '%s?v=%s' % (WIDGET_JS, stamp),
                 'widget_css': '%s?v=%s' % (WIDGET_CSS, stamp),
-                'embed_snippet': (
-                    '<script src="%s%s?v=%s" data-origin="%s"></script>'
-                    % (base, WIDGET_JS, stamp,
-                       base or 'https://your-health19-host')),
+                'embed_snippet': request.env[
+                    'care.channel.connection'].sudo()._webchat_embed_snippet(base),
             })
         # Rendered, not `request.render`, for ONE reason: a QWeb template whose
         # root is <html> is served without a doctype, which puts the browser in

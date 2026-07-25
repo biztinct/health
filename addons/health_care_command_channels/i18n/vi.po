@@ -18,6 +18,7 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_audit.py:0
 msgid ""
 "Channel audit entries are append-only operational evidence and can never be "
 "modified or deleted."
@@ -26,6 +27,7 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
 msgid ""
 "An active platform application already exists for this provider. Archive it "
 "before creating another."
@@ -35,32 +37,38 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
 msgid "Extra configuration must be valid JSON."
 msgstr "Cấu hình bổ sung phải là JSON hợp lệ."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
 msgid "Extra configuration must be a JSON object."
 msgstr "Cấu hình bổ sung phải là một đối tượng JSON."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
 msgid "Only a platform administrator can set a platform application secret."
 msgstr ""
 "Chỉ quản trị viên nền tảng mới được đặt khoá bí mật của ứng dụng nền tảng."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
 msgid "The secret cannot be empty."
 msgstr "Khoá bí mật không được để trống."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
 msgid "Secret stored"
 msgstr "Đã lưu khoá bí mật"
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
 msgid ""
 "The platform application secret is encrypted at rest and will never be "
 "displayed again."
@@ -70,6 +78,7 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid ""
 "Channel connection fields are maintained by the Channel Center, not by direct "
 "edits (%s). Use the connect, test and disconnect actions."
@@ -79,6 +88,7 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid ""
 "This channel already has an active connection for this company. Archive it "
 "before creating another."
@@ -88,47 +98,57 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "Unknown channel connection state."
 msgstr "Trạng thái kết nối kênh không hợp lệ."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "A channel connection cannot move from \"%(old)s\" to \"%(new)s\"."
 msgstr "Kết nối kênh không thể chuyển từ \"%(old)s\" sang \"%(new)s\"."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "Unknown credential field."
 msgstr "Trường thông tin đăng nhập không hợp lệ."
 
 #. module: health_care_command_channels
 #. odoo-python
-msgid "Only a Care Command manager can set channel credentials."
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Only a Care Command manager or a tenant administrator can set up channels."
 msgstr ""
-"Chỉ quản lý Care Command mới được đặt thông tin đăng nhập của kênh."
+"Chỉ quản lý Care Command hoặc quản trị viên đơn vị mới được thiết lập kênh."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "This connection belongs to another company."
 msgstr "Kết nối này thuộc về một công ty khác."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "The credential cannot be empty."
 msgstr "Thông tin đăng nhập không được để trống."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "Health check failed"
 msgstr "Kiểm tra tình trạng thất bại"
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "Channel connection expiring — reconnect needed"
 msgstr "Kết nối kênh sắp hết hạn — cần kết nối lại"
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid ""
 "The %(channel)s connection stops working in %(days)s day(s). Open Care "
 "Command → Channels and reconnect it."
@@ -138,127 +158,167 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_oauth_session.py:0
 msgid "This channel is not connected by signing in with a provider."
 msgstr "Kênh này không kết nối bằng cách đăng nhập với nhà cung cấp."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_oauth_session.py:0
 msgid "That return address is not allowed."
 msgstr "Địa chỉ quay lại này không được phép."
 
 #. module: health_care_command_channels
+#: model:ir.ui.menu,name:health_care_command_channels.menu_channel_connections
 msgid "Channels (setup)"
 msgstr "Kênh (thiết lập)"
 
 #. module: health_care_command_channels
+#: model:ir.ui.menu,name:health_care_command_channels.menu_channel_audit
 msgid "Channel Audit"
 msgstr "Nhật ký kênh"
 
 #. module: health_care_command_channels
+#: model:ir.ui.menu,name:health_care_command_channels.menu_channel_platform_app
 msgid "Platform Applications"
 msgstr "Ứng dụng nền tảng"
 
 #. module: health_care_command_channels
+#: model:ir.actions.act_window,name:health_care_command_channels.action_care_channel_connection
 msgid "Channel Connections"
 msgstr "Kết nối kênh"
 
 #. module: health_care_command_channels
+#. odoo-python
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__state__not_connected
+#: code:addons/health_care_command_channels/models/channel_center.py:0
 msgid "Not connected"
 msgstr "Chưa kết nối"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__state__authorizing
 msgid "Signing in"
 msgstr "Đang đăng nhập"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__state__select_resource
 msgid "Choosing what to connect"
 msgstr "Đang chọn nội dung kết nối"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__state__configuring
 msgid "Setting things up"
 msgstr "Đang thiết lập"
 
 #. module: health_care_command_channels
+#. odoo-python
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__state__ready
+#: code:addons/health_care_command_channels/models/channel_center.py:0
 msgid "Connected"
 msgstr "Đã kết nối"
 
 #. module: health_care_command_channels
+#. odoo-python
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__state__action_required
+#: code:addons/health_care_command_channels/models/channel_center.py:0
 msgid "Action required"
 msgstr "Cần xử lý"
 
 #. module: health_care_command_channels
+#. odoo-python
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__state__expiring
+#: code:addons/health_care_command_channels/models/channel_center.py:0
 msgid "Expiring soon"
 msgstr "Sắp hết hạn"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__state__legacy
 msgid "Legacy (not migrated)"
 msgstr "Cũ (chưa chuyển đổi)"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__authorization_valid
 msgid "Authorization valid"
 msgstr "Uỷ quyền hợp lệ"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__scopes_granted
 msgid "Scopes granted"
 msgstr "Đã cấp quyền truy cập"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__resource_selected
 msgid "Resource selected"
 msgstr "Đã chọn tài nguyên"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__webhook_configured
 msgid "Webhook configured"
 msgstr "Đã cấu hình webhook"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__webhook_verified
 msgid "Webhook verified"
 msgstr "Đã xác minh webhook"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__outbound_ok
 msgid "Outbound proven"
 msgstr "Đã chứng minh gửi đi"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__inbound_ok
 msgid "Inbound proven"
 msgstr "Đã chứng minh nhận vào"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__token_fresh
 msgid "Token fresh"
 msgstr "Mã truy cập còn hạn"
 
 #. module: health_care_command_channels
+#. odoo-python
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_readiness_check__check_key__provider_approvals
+#: code:addons/health_care_command_channels/models/channel_center.py:0
 msgid "Provider approvals"
 msgstr "Phê duyệt từ nhà cung cấp"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__health_status__permission_lost
 msgid "Permission lost"
 msgstr "Mất quyền truy cập"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__health_status__webhook_failing
 msgid "Webhook failing"
 msgstr "Webhook đang lỗi"
 
 #. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__care_channel_connection__health_status__provider_down
 msgid "Provider unavailable"
 msgstr "Nhà cung cấp không phản hồi"
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
 msgid "Message is empty."
 msgstr "Tin nhắn đang trống."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
 msgid "This conversation has no messaging channel."
 msgstr "Hội thoại này không có kênh tin nhắn."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
 msgid "This conversation is not a %s conversation."
 msgstr "Hội thoại này không thuộc kênh %s."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
 msgid ""
 "This channel is not connected right now. Open Care Command → Channels to "
 "reconnect it."
@@ -267,31 +327,37 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
 msgid "The message could not be sent: %s"
 msgstr "Không gửi được tin nhắn: %s"
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
 msgid "unknown error"
 msgstr "lỗi không xác định"
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "Send failed"
 msgstr "Gửi thất bại"
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_message.py:0
 msgid "Delivery failed"
 msgstr "Giao tin nhắn thất bại"
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid "Channel settings must be a mapping."
 msgstr "Cấu hình kênh phải là một tập khoá/giá trị."
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_connection.py:0
 msgid ""
 "Credentials belong in the encrypted columns, not in the channel settings."
 msgstr ""
@@ -300,5 +366,829 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#: code:addons/health_care_command_channels/models/care_channel_message.py:0
 msgid "Web visitor %s"
 msgstr "Khách trên web %s"
+
+# ---------------------------------------------------------------------------
+# CC-C — Channel Connection Center
+# ---------------------------------------------------------------------------
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Zalo notifications (ZNS)"
+msgstr "Thông báo Zalo (ZNS)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Web chat"
+msgstr "Trò chuyện web"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Messenger"
+msgstr "Messenger"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Calls"
+msgstr "Cuộc gọi"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Connecting…"
+msgstr "Đang kết nối…"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Setting up…"
+msgstr "Đang thiết lập…"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Almost there"
+msgstr "Sắp xong"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Turned off"
+msgstr "Đã tắt"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Not migrated"
+msgstr "Chưa chuyển đổi"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Sign-in valid"
+msgstr "Đăng nhập hợp lệ"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Permissions granted"
+msgstr "Đã cấp quyền"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Account chosen"
+msgstr "Đã chọn tài khoản"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Connection set up"
+msgstr "Đã thiết lập kết nối"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Connection confirmed"
+msgstr "Đã xác nhận kết nối"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Sending works"
+msgstr "Gửi tin hoạt động"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Receiving works"
+msgstr "Nhận tin hoạt động"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Sign-in up to date"
+msgstr "Đăng nhập còn hiệu lực"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Create your bot"
+msgstr "Tạo bot của bạn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Open Telegram and message @BotFather. Send /newbot, choose a name, and "
+"BotFather replies with a key."
+msgstr ""
+"Mở Telegram và nhắn cho @BotFather. Gửi /newbot, chọn một tên, BotFather sẽ "
+"trả lời kèm một khoá."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Open BotFather"
+msgstr "Mở BotFather"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Paste the key"
+msgstr "Dán khoá vào đây"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Paste the key BotFather gave you. We check it with Telegram before saving "
+"anything, and you will see your bot name to confirm it is the right one."
+msgstr ""
+"Dán khoá mà BotFather đã gửi. Chúng tôi kiểm tra với Telegram trước khi lưu "
+"bất cứ thứ gì, và bạn sẽ thấy tên bot để xác nhận đúng bot của mình."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We set things up"
+msgstr "Chúng tôi thiết lập giúp bạn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We connect your bot to Health19. Nothing to do here — it takes a moment."
+msgstr ""
+"Chúng tôi kết nối bot của bạn với Health19. Bạn không cần làm gì — chỉ mất "
+"một chút thời gian."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Say hello"
+msgstr "Gửi lời chào"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Open Telegram, find your bot and send it any message — we will answer here."
+msgstr ""
+"Mở Telegram, tìm bot của bạn và gửi một tin nhắn bất kỳ — chúng tôi sẽ trả "
+"lời tại đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Open Telegram, find %s and send it any message — we will answer here."
+msgstr ""
+"Mở Telegram, tìm %s và gửi một tin nhắn bất kỳ — chúng tôi sẽ trả lời tại "
+"đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Turn on web chat"
+msgstr "Bật trò chuyện trên website"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Tell us which website addresses the chat bubble may appear on, for example "
+"https://vietuc.vn."
+msgstr ""
+"Cho chúng tôi biết bong bóng trò chuyện được phép xuất hiện trên những địa "
+"chỉ website nào, ví dụ https://vietuc.vn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Add it to your website"
+msgstr "Thêm vào website của bạn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Copy this one line into your website, just before the closing body tag."
+msgstr ""
+"Sao chép dòng này vào website của bạn, ngay trước thẻ body đóng."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Send a test message"
+msgstr "Gửi một tin nhắn thử"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Open your website, use the chat bubble and send a message. It appears in "
+"Care Command straight away."
+msgstr ""
+"Mở website của bạn, dùng bong bóng trò chuyện và gửi một tin nhắn. Tin sẽ "
+"xuất hiện ngay trong Care Command."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Sign in with Meta"
+msgstr "Đăng nhập bằng Meta"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Choose your number"
+msgstr "Chọn số điện thoại"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Send a test"
+msgstr "Gửi thử"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Sign in with Facebook"
+msgstr "Đăng nhập bằng Facebook"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Choose your Page"
+msgstr "Chọn Trang của bạn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Sign in with Zalo"
+msgstr "Đăng nhập bằng Zalo"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Point Zalo at us"
+msgstr "Trỏ Zalo về Health19"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Wait for confirmation"
+msgstr "Chờ xác nhận"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Message templates"
+msgstr "Mẫu tin nhắn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Sign in to your mailbox"
+msgstr "Đăng nhập hộp thư của bạn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Confirm the mailbox"
+msgstr "Xác nhận hộp thư"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Enter your phone system key"
+msgstr "Nhập khoá tổng đài của bạn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Point your phone system at us"
+msgstr "Trỏ tổng đài về Health19"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Make a test call"
+msgstr "Gọi thử"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Set up"
+msgstr "Thiết lập"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Not available yet"
+msgstr "Chưa khả dụng"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Available in an upcoming update"
+msgstr "Sẽ có trong bản cập nhật tới"
+
+#. module: health_care_command_channels
+#. odoo-python
+#. odoo-javascript
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/views/oauth_templates.xml:0
+msgid "Connect"
+msgstr "Kết nối"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Continue setup"
+msgstr "Tiếp tục thiết lập"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Finish setup"
+msgstr "Hoàn tất thiết lập"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Manage"
+msgstr "Quản lý"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Fix"
+msgstr "Khắc phục"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Reconnect"
+msgstr "Kết nối lại"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Turn back on"
+msgstr "Bật lại"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Upgrade connection"
+msgstr "Nâng cấp kết nối"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Unknown channel."
+msgstr "Kênh không hợp lệ."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This channel is not set up yet."
+msgstr "Kênh này chưa được thiết lập."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This channel is not available yet."
+msgstr "Kênh này chưa khả dụng."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This channel is part of the %s connection — set that up first."
+msgstr "Kênh này thuộc kết nối %s — hãy thiết lập kết nối đó trước."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This is not a Telegram connection."
+msgstr "Đây không phải kết nối Telegram."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"That does not look like a bot key. BotFather sends a line like "
+"123456789:AAG… — copy the whole line."
+msgstr ""
+"Đây không giống một khoá bot. BotFather gửi một dòng dạng 123456789:AAG… — "
+"hãy sao chép trọn dòng đó."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Telegram did not accept that key: %s"
+msgstr "Telegram không chấp nhận khoá này: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Add your bot key first."
+msgstr "Hãy thêm khoá bot trước."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Your Health19 address must start with https:// before Telegram can send "
+"messages to it. Ask your administrator to set the website address, then try "
+"again."
+msgstr ""
+"Địa chỉ Health19 của bạn phải bắt đầu bằng https:// thì Telegram mới gửi tin "
+"về được. Hãy nhờ quản trị viên đặt địa chỉ website, rồi thử lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Telegram could not be connected: %s"
+msgstr "Không kết nối được Telegram: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Use the address of your website, starting with https:// and with nothing "
+"after the domain — for example https://vietuc.vn. We could not use \"%s\"."
+msgstr ""
+"Hãy dùng địa chỉ website của bạn, bắt đầu bằng https:// và không có gì sau "
+"tên miền — ví dụ https://vietuc.vn. Chúng tôi không dùng được \"%s\"."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Add at least one website address."
+msgstr "Hãy thêm ít nhất một địa chỉ website."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "That is more websites than we can enable at once (%s maximum)."
+msgstr "Số website vượt quá mức bật được cùng lúc (tối đa %s)."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This is not a web chat connection."
+msgstr "Đây không phải kết nối trò chuyện web."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Website widget"
+msgstr "Tiện ích trên website"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Health19 connection test — please ignore."
+msgstr "Health19 kiểm tra kết nối — vui lòng bỏ qua."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Testing this channel is not available yet."
+msgstr "Chưa thể kiểm tra kênh này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This channel is turned off right now."
+msgstr "Kênh này đang tắt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Send your bot a message from Telegram first — we can only reply to a "
+"conversation somebody started."
+msgstr ""
+"Hãy nhắn cho bot từ Telegram trước — chúng tôi chỉ có thể trả lời cuộc trò "
+"chuyện do người dùng bắt đầu."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Send a message from the chat bubble on your website first — we can only "
+"reply to a conversation somebody started."
+msgstr ""
+"Hãy gửi một tin từ bong bóng trò chuyện trên website trước — chúng tôi chỉ "
+"có thể trả lời cuộc trò chuyện do người dùng bắt đầu."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "The test message could not be sent: %s"
+msgstr "Không gửi được tin nhắn thử: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#. odoo-javascript
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "Test message sent."
+msgstr "Đã gửi tin nhắn thử."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Turned off."
+msgstr "Đã tắt."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/views/channel_center_views.xml:0
+msgid "Channel Connection Center"
+msgstr "Trung tâm kết nối kênh"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid ""
+"Connect the places your clients already message you from. Everything lands "
+"in Care Command."
+msgstr ""
+"Kết nối những nơi khách hàng đã nhắn tin cho bạn. Tất cả đều về Care Command."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Refresh"
+msgstr "Làm mới"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Loading…"
+msgstr "Đang tải…"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Not set up yet"
+msgstr "Chưa thiết lập"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Health19 is completing provider approval for this channel."
+msgstr "Health19 đang hoàn tất phê duyệt với nhà cung cấp cho kênh này."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Available in an upcoming update."
+msgstr "Sẽ có trong bản cập nhật tới."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Received"
+msgstr "Đã nhận"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Technical details"
+msgstr "Chi tiết kỹ thuật"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/views/channel_connection_views.xml:0
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Last received"
+msgstr "Nhận gần nhất"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Last sent"
+msgstr "Gửi gần nhất"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid ""
+"New messages will stop arriving in Care Command. Conversation history stays."
+msgstr ""
+"Tin nhắn mới sẽ không về Care Command nữa. Lịch sử trò chuyện vẫn được giữ."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Keep it on"
+msgstr "Giữ bật"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Turn it off"
+msgstr "Tắt kênh"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Turn off"
+msgstr "Tắt"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Done"
+msgstr "Xong"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Bot key"
+msgstr "Khoá bot"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid ""
+"We check the key with Telegram before saving it. It is stored encrypted and "
+"never shown again."
+msgstr ""
+"Chúng tôi kiểm tra khoá với Telegram trước khi lưu. Khoá được mã hoá và "
+"không bao giờ hiển thị lại."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Connected to"
+msgstr "Đã kết nối với"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Waiting for your first message…"
+msgstr "Đang chờ tin nhắn đầu tiên của bạn…"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "We received your message. Send a reply to finish."
+msgstr "Chúng tôi đã nhận tin của bạn. Gửi một trả lời để hoàn tất."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Telegram is connected. New messages arrive in Care Command."
+msgstr "Telegram đã kết nối. Tin nhắn mới sẽ về Care Command."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Website addresses"
+msgstr "Địa chỉ website"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "One per line. Only these websites may show the chat bubble."
+msgstr ""
+"Mỗi dòng một địa chỉ. Chỉ những website này được hiện bong bóng trò chuyện."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "First message (optional)"
+msgstr "Lời chào đầu tiên (không bắt buộc)"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Copy"
+msgstr "Sao chép"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Copied ✓"
+msgstr "Đã sao chép ✓"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Open the demo page"
+msgstr "Mở trang minh hoạ"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Waiting for the first message…"
+msgstr "Đang chờ tin nhắn đầu tiên…"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Web chat is working. Messages appear in Care Command."
+msgstr "Trò chuyện web đang hoạt động. Tin nhắn sẽ hiện trong Care Command."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/webchat/widget.js:0
+msgid "Back"
+msgstr "Quay lại"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "I have my key"
+msgstr "Tôi đã có khoá"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Check the key"
+msgstr "Kiểm tra khoá"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Send a reply"
+msgstr "Gửi trả lời"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Next"
+msgstr "Tiếp theo"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/webchat/widget.js:0
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/views/webchat_templates.xml:0
+msgid "Embed snippet"
+msgstr "Đoạn mã nhúng"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "just now"
+msgstr "vừa xong"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "%s min ago"
+msgstr "%s phút trước"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "%s h ago"
+msgstr "%s giờ trước"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "%s d ago"
+msgstr "%s ngày trước"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "Something went wrong. Please try again."
+msgstr "Đã có lỗi xảy ra. Vui lòng thử lại."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "Select the line and copy it manually."
+msgstr "Hãy chọn dòng đó và sao chép thủ công."

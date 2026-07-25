@@ -1,0 +1,55 @@
+=== channel-center CC-C — server-side evidence (vietuat) ===
+
+-- data honesty (active_test=False, ledger 5.27) --
+  channel.platform.app             0
+  care.channel.connection          0
+  care.channel.identity            0
+  care.channel.message             0
+  care.channel.readiness.check     0
+  care.channel.audit               2
+  care.channel.oauth.session       0
+  care.conversation._channel_keys() -> ('zalo', 'call', 'email', 'zns')
+
+-- the Center surface --
+  ir.actions.client: Channel Center | tag: channel_center | id: 1706
+  menu: CRM Center/Care Command Setup/Channel Center | sequence: 10
+  menu groups: ['Healthcare / CRM Manager', 'Healthcare / Healthcare: User Administrator']
+
+-- tenant-admin ACL (health_user_admin.group_health_user_admin) --
+  care.channel.connection        read=1 write=1 create=1 unlink=0
+  care.channel.identity          read=1 write=0 create=0 unlink=0
+  care.channel.message           read=1 write=0 create=0 unlink=0
+  care.channel.audit             read=1 write=0 create=0 unlink=0
+  care.channel.readiness.check   read=1 write=0 create=0 unlink=0
+  channel.platform.app grants for tenant admin: 0 (plane 1 stays base.group_system)
+
+-- catalogue payload (center_overview, no connections) --
+  zalo      Zalo                   state=not_connected  available=False implemented=False action=unavailable
+  call      Calls                  state=not_connected  available=True  implemented=False action=unavailable
+  email     Email                  state=not_connected  available=False implemented=False action=unavailable
+  zns       Zalo notifications (ZNS) state=not_connected  available=False implemented=False action=unavailable
+  whatsapp  WhatsApp               state=not_connected  available=False implemented=False action=unavailable
+  fb        Messenger              state=not_connected  available=False implemented=False action=unavailable
+  telegram  Telegram               state=not_connected  available=True  implemented=True  action=connect
+  webchat   Web chat               state=not_connected  available=True  implemented=True  action=connect
+
+-- no secret material in the payload --
+  bytes: 8947 | contains chs$1$: False | contains provider_secret: False
+
+-- vi translations now load (ledger 5.67) --
+  python entries: 118
+  web entries: 48
+  Connected -> Đã kết nối
+
+-- asset bundle (ledger 5.68) --
+  web.assets_web.min.css bytes: 2189484
+  .o_channel_center .cc-card present: True
+  .o_channel_center .ic-plug present: True
+  sibling control .o_care_command present: True
+
+-- config + crons --
+  web.base.url: http://care.biztinct.com
+  module version: 19.0.3.0.0
+  cron: Channels: connection health | active: True | next: 2026-07-25 23:15:00
+  cron: Channels: purge authorization sessions | active: True | next: 2026-07-26 02:40:00
+  cron: Channels: web-chat session cleanup | active: True | next: 2026-07-26 03:10:00

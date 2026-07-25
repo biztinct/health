@@ -1,0 +1,161 @@
+/* Channel Connection Center — same design system as Care Command: flat mono
+   colours, no gradients, CSS-mask icons (in ../center/channel_center.css —
+   Odoo's libsass mangles data-URI mask() inside .scss, ledger §5.51).
+
+   The root uses `display:flex; width:100%; height:100%`, never
+   `position:absolute; inset:0` — under the /bizapp CMS shell the action host
+   is not a positioned ancestor and inset:0 escapes to the viewport, hiding the
+   left edge behind the sidebar (ledger §5.52). */
+
+.o_channel_center {
+  --navy:#1e2a5e; --bg:#f2f4f9; --card:#ffffff; --ink:#1b2340;
+  --mut:#6a7189; --faint:#98a0b6; --line:#e3e7f0; --line-2:#d3d9e7;
+  --accent:#3451d1; --accent-soft:#eaeefb;
+  --ok:#188554; --ok-soft:#e7f4ec;
+  --warn:#b76e00; --warn-soft:#fdf3e2;
+  --danger:#c62839; --danger-soft:#fbebed;
+  --ch-zalo:#0068ff; --ch-call:#0f766e; --ch-whatsapp:#16a34a; --ch-fb:#7c3aed;
+  --ch-telegram:#0e9adf; --ch-webchat:#64748b; --ch-zns:#0a58c9; --ch-email:#b45309;
+  --r:10px; --r-lg:14px;
+  --sh:0 1px 2px rgba(27,35,64,.06),0 4px 14px rgba(27,35,64,.06);
+
+  display:flex; flex-direction:column; width:100%; height:100%; min-height:0;
+  overflow:auto; background:var(--bg); color:var(--ink);
+  font-size:13px; line-height:1.5;
+
+  * { box-sizing:border-box; }
+  button { font:inherit; border:none; background:none; cursor:pointer; color:inherit; }
+  input,textarea { font:inherit; color:inherit; }
+
+  /* ---------- header ---------- */
+  .cc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+    padding:20px 24px 12px;background:var(--card);border-bottom:1px solid var(--line);flex:none}
+  .cc-title{display:flex;gap:12px;align-items:flex-start}
+  .cc-title .ic{width:22px;height:22px;color:var(--navy);margin-top:2px}
+  .cc-title h1{margin:0;font-size:17px;font-weight:800;letter-spacing:-.2px}
+  .cc-title p{margin:2px 0 0;color:var(--mut);max-width:60ch}
+
+  /* ---------- buttons ---------- */
+  .cc-btn{display:inline-flex;align-items:center;gap:6px;border-radius:var(--r);
+    padding:8px 14px;font-weight:700;font-size:12px;border:1px solid transparent;
+    transition:background .12s,border-color .12s}
+  .cc-btn.primary{background:var(--navy);color:#fff}
+  .cc-btn.primary:hover:not([disabled]){background:var(--accent)}
+  .cc-btn.ghost{background:var(--card);border-color:var(--line-2);color:var(--ink)}
+  .cc-btn.ghost:hover:not([disabled]){background:var(--bg)}
+  .cc-btn.danger{background:var(--danger);color:#fff}
+  .cc-btn[disabled]{opacity:.45;cursor:not-allowed}
+  .cc-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .cc-link{color:var(--accent);font-weight:700;text-decoration:none}
+  .cc-link:hover{text-decoration:underline}
+
+  /* ---------- catalogue ---------- */
+  .cc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:14px;padding:18px 24px 28px}
+  .cc-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--sh)}
+  .cc-card-head{display:flex;gap:11px;align-items:center}
+  .cc-bub{width:34px;height:34px;border-radius:10px;background:var(--bg);flex:none;
+    display:flex;align-items:center;justify-content:center;color:var(--cv,var(--mut))}
+  .cc-card-id{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .cc-card-id h2{margin:0;font-size:14px;font-weight:800}
+  .cc-chip{align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.3px;
+    text-transform:uppercase;border-radius:20px;padding:2px 9px;
+    background:var(--line);color:var(--mut)}
+  .cc-chip.small{font-size:9px;padding:1px 7px}
+  .cc-chip.tone-ok{background:var(--ok-soft);color:var(--ok)}
+  .cc-chip.tone-warn{background:var(--warn-soft);color:var(--warn)}
+  .cc-chip.tone-bad{background:var(--danger-soft);color:var(--danger)}
+  .cc-chip.tone-info{background:var(--accent-soft);color:var(--accent)}
+  .cc-res{margin:0;font-size:12px;font-weight:600;word-break:break-word}
+  .cc-res.muted{color:var(--mut);font-weight:400}
+  .cc-traffic{display:flex;flex-wrap:wrap;gap:12px;color:var(--faint);font-size:11px}
+  .cc-traffic .ic{width:12px;height:12px}
+  .cc-checks{display:flex;align-items:center;gap:9px;margin-top:2px}
+  .cc-dots{display:flex;gap:4px}
+  .cc-dot{width:9px;height:9px;border-radius:50%;background:var(--line-2)}
+  .cc-dot.st-pass{background:var(--ok)}
+  .cc-dot.st-fail{background:var(--danger)}
+  .cc-dot.st-n_a{background:var(--faint)}
+  .cc-count{font-size:11px;color:var(--mut);font-weight:600}
+  .cc-actions{margin-top:auto;padding-top:6px}
+  .cc-actions .cc-btn{width:100%;justify-content:center}
+  .cc-sub{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);
+    padding-top:9px;margin-top:2px;color:var(--mut)}
+  .cc-sub .ic{width:13px;height:13px}
+  .cc-sub-name{font-size:12px;font-weight:600;flex:1;min-width:0}
+
+  .cc-empty{padding:40px 24px;color:var(--mut)}
+  .cc-alert{border-radius:var(--r);padding:11px 13px;margin:0 24px 12px;font-weight:600}
+  .cc-alert.bad{background:var(--danger-soft);color:var(--danger)}
+  .cc-alert.warn{background:var(--warn-soft);color:var(--warn)}
+  .cc-alert p{margin:0 0 8px}
+
+  /* ---------- modal ---------- */
+  .cc-modal-wrap{position:fixed;inset:0;z-index:1055;display:flex;
+    align-items:center;justify-content:center;padding:20px}
+  .cc-backdrop{position:absolute;inset:0;background:rgba(27,35,64,.45)}
+  /* width:100% + max-width, NOT `min(560px, 100%)`: libsass evaluates CSS
+     math functions as SASS functions and dies on "Incompatible units: '%'
+     and 'px'" — which fails the WHOLE bundle's scss compilation, not just
+     this rule, and ships the entire backend unstyled (§5.51 family). */
+  .cc-modal{position:relative;background:var(--card);border-radius:var(--r-lg);
+    width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;
+    box-shadow:0 8px 40px rgba(27,35,64,.28);overflow:hidden}
+  .cc-modal-head{display:flex;align-items:center;gap:11px;padding:16px 18px;
+    border-bottom:1px solid var(--line)}
+  .cc-modal-head h2{margin:0;font-size:15px;font-weight:800}
+  .cc-modal-head > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+  .cc-x{margin-left:auto;color:var(--mut);padding:4px;border-radius:8px}
+  .cc-x:hover{background:var(--bg)}
+  .cc-modal-body{padding:16px 18px;overflow-y:auto}
+  .cc-modal-foot{display:flex;gap:8px;justify-content:flex-end;padding:13px 18px;
+    border-top:1px solid var(--line);background:var(--bg)}
+
+  .cc-steps{list-style:none;display:flex;gap:6px;margin:0 0 16px;padding:0}
+  .cc-steps li{flex:1;display:flex;flex-direction:column;gap:5px;color:var(--faint);
+    font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+  .cc-steps .cc-step-n{width:22px;height:22px;border-radius:50%;display:flex;
+    align-items:center;justify-content:center;background:var(--line);color:var(--mut);
+    font-size:11px}
+  .cc-steps li.on{color:var(--navy)}
+  .cc-steps li.on .cc-step-n{background:var(--navy);color:#fff}
+  .cc-steps li.done .cc-step-n{background:var(--ok-soft);color:var(--ok)}
+  .cc-step-t{line-height:1.3}
+
+  .cc-step-body h3{margin:0 0 6px;font-size:15px;font-weight:800}
+  .cc-step-body p{margin:0 0 12px;color:var(--mut)}
+  .cc-label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.3px;color:var(--faint);margin:12px 0 5px}
+  .cc-input{width:100%;border:1px solid var(--line-2);border-radius:var(--r);
+    padding:9px 11px;background:#fff;outline:none}
+  .cc-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .cc-input.area{resize:vertical;min-height:64px}
+  .cc-input.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px}
+  .cc-help{font-size:11.5px;color:var(--faint);margin:6px 0 0}
+  .cc-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .cc-ok{display:flex;align-items:center;gap:7px;color:var(--ok);font-weight:700}
+  .cc-wait{display:flex;align-items:center;gap:7px;color:var(--warn);font-weight:700}
+
+  .cc-checklist{list-style:none;margin:12px 0 0;padding:0;display:flex;
+    flex-direction:column;gap:7px}
+  .cc-checklist li{display:flex;align-items:center;gap:8px;color:var(--mut);font-weight:600}
+  .cc-checklist li.st-pass{color:var(--ok)}
+  .cc-checklist li.st-fail{color:var(--danger)}
+  .cc-tech{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+  .cc-tech summary{cursor:pointer;font-weight:700;color:var(--mut);font-size:12px}
+  .cc-tech dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0 0;
+    font-size:12px}
+  .cc-tech dt{color:var(--faint);font-weight:700}
+  .cc-tech dd{margin:0}
+
+  .cc-toast{position:absolute;left:18px;right:18px;bottom:64px;background:var(--navy);
+    color:#fff;border-radius:var(--r);padding:9px 12px;font-weight:600;text-align:center}
+
+  @media (max-width:640px){
+    .cc-grid{grid-template-columns:1fr;padding:14px}
+    .cc-top{padding:16px 14px 10px}
+    .cc-modal{width:100%;max-height:100vh;border-radius:0}
+    .cc-modal-wrap{padding:0}
+  }
+}

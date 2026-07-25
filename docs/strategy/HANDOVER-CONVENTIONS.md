@@ -946,3 +946,66 @@ a no-op.
     connection in `configuring`, before pointing a provider at us); the
     alternative — letting `action_required` ingest — reopens the "a disabled
     channel keeps filling the inbox" hole the gate exists to close.
+    **RESOLVED CC-C (amendment F1): `testing` no longer demotes on missing
+    checks.** `_recompute_ready` now separates "a required check FAILED" from
+    "a required check has not happened yet": any `fail` ⇒ `action_required`
+    from every recompute state (unchanged); all pass ⇒ `ready` (unchanged);
+    merely missing/pending/`n_a` ⇒ a `testing` connection STAYS in `testing` —
+    still ingestable, still not sendable — while `ready`/`expiring` keep the
+    old demotion (a required check cannot go missing there except by
+    deletion). The general rule stands: when a state machine both gates an
+    input and is recomputed by that input, walk the loop explicitly, and make
+    sure the state that means "being proven" survives its own evidence
+    arriving. (T96 stages the exact §5.66 sequence.)
+
+- **§5.67 — a hand-written `.po` entry with no `#:` OCCURRENCE line is read by
+    NOTHING; the comment markers of §5.58 are necessary but not sufficient.**
+    Odoo's `PoFileReader.__iter__` yields one row per entry *occurrence*
+    (`for occurrence, line_number in entry.occurrences:` —
+    odoo/tools/translate.py:849) and has no fallback branch: an entry with the
+    right `#. module:` comment (§29) and the right `#. odoo-python` marker
+    (§5.58) but no `#: …` reference produces **zero** rows, so
+    `_load_python_translations` / `_load_web_translations` / the model-term
+    loader never see it. The file installs silently and translates nothing.
+    Hit live in channel-center CC-C: `health_care_command_channels/i18n/vi.po`
+    had 182 entries and **0 occurrences** — the whole CC-A + CC-B Vietnamese
+    catalogue had been inert since it shipped, and the one CC-C test that
+    spot-checked a RUNTIME translation is what exposed it (`_('Connected')`
+    under `lang='vi_VN'` returned `'Connected'`). Required shape per entry:
+    `#. module: <mod>` + the code marker + `#: code:addons/<mod>/<file>.py:0`
+    (Odoo's own `.pot` files use a literal `:0` — the line number is unused for
+    code translations). Model/field/selection/menu labels need a *model*
+    occurrence instead, e.g.
+    `#: model:ir.model.fields.selection,name:<mod>.selection__<model>__<field>__<value>`
+    or `#: model:ir.ui.menu,name:<mod>.<menu_xmlid>` — verify the xmlid exists
+    in `ir_model_data` first. **Every hand-written catalog in this repo is
+    affected** (`grep -c '^#:' addons/*/i18n/*.po` returns 0 for all of them) —
+    fix module by module on next touch. Assert it in tests: every non-header
+    block contains `\n#: `, and every block with a code marker contains
+    `#: code:addons/<mod>/` (health_care_command_channels/tests/test_center.py
+    `test_105`). Verify live with
+    `code_translations.get_python_translations(mod, 'vi_VN')` in a shell — a
+    length of 0 is the symptom (118 python + 48 web after the fix).
+
+- **§5.68 — libsass evaluates CSS math functions as SASS functions, and ONE bad
+    rule fails the WHOLE bundle's scss compilation, shipping every co-bundled
+    module unstyled.** `width: min(560px, 100%)` — ordinary, valid CSS — makes
+    Odoo's libsass raise `Internal Error: Incompatible units: '%' and 'px'`
+    (SASS has its own `min()`), and the failure is NOT scoped to the offending
+    file: `assetsbundle` logs a single WARNING and emits the bundle with **all**
+    scss dropped, so a sibling module's stylesheet disappears too (measured on
+    vietuat: `web.assets_web.min.css` fell from 2.19 MB to 40 KB and
+    `.o_care_command` vanished from it — Care Command rendered unstyled because
+    of a rule in a different addon). Sibling of §5.51 (data-URI `url()` in
+    scss); same remedy family — keep CSS-native constructs out of `.scss`. Use
+    `width:100%; max-width:560px`, or interpolate to hide it from the compiler
+    (`#{"min(560px, 100%)"}`). Grep every new `.scss` for `min(` / `max(` /
+    `clamp(` before deploying, and VERIFY the compile rather than assuming:
+    `python3 -c "import sass; sass.compile(filename='…scss')"` on the server,
+    then regenerate the bundle
+    (`env['ir.attachment'].search([('url','like','/web/assets/%')]).unlink()`
+    then `env['ir.qweb']._get_asset_bundle('web.assets_web', css=True, js=False,
+    assets_params={}).css()`) and assert your selector AND a known-good sibling
+    selector are both present. A green test run does not cover this — nothing
+    in the test suite compiles the asset bundle. (Hit live in channel-center
+    CC-C.)

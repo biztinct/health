@@ -129,6 +129,17 @@ SECRET_FIELDS = {
 USER_WRITABLE = {'active', 'message_main_attachment_id'}
 USER_CREATABLE = {'channel', 'company_id', 'active'}
 
+# Who may operate a connection through the Channel Connection Center: the
+# platform operator, the Care Command manager, and — from CC-C — the tenant
+# administrator, who is the persona the Center was designed for. Membership is
+# checked EXPLICITLY in every method that writes through sudo(): a model ACL
+# cannot gate a method whose writes bypass it (ledger §5.37 corollary).
+CENTER_GROUPS = (
+    'base.group_system',
+    'health_crm.group_health_crm_manager',
+    'health_user_admin.group_health_user_admin',
+)
+
 # Failure backoff for the health cron (handover §7): 30 m → 2 h → 8 h.
 BACKOFF_MINUTES = (30, 120, 480)
 HEALTH_INTERVAL_MINUTES = 30
@@ -364,18 +375,44 @@ class CareChannelConnection(models.Model):
         required — it is only meaningful for checks outside the required set
         (architecture §5.4). Failure never falls to ``error``: ``error`` means
         the framework broke, ``action_required`` means the tenant must act.
+
+        **CC-C amendment F1 (ledger §5.66).** A required check that merely has
+        not happened YET is not the same claim as one that FAILED, and the
+        difference decides whether a channel can finish proving itself:
+
+        * any required check ``fail`` ⇒ ``action_required``, from every
+          recompute state — a broken grant must stop the traffic;
+        * every required check ``pass`` ⇒ ``ready``;
+        * otherwise (some required check missing / pending / ``n_a``) a
+          connection in ``testing`` STAYS in ``testing`` — still ingestable,
+          still not sendable — because ``testing`` is precisely the state in
+          which those checks are being proven, and demoting on the FIRST
+          proving inbound locked the channel out of the traffic that would
+          finish the job. From ``ready``/``expiring`` the demotion stands: a
+          required check cannot go missing there except by deletion.
         """
         for rec in self:
             if rec.state not in RECOMPUTE_STATES:
                 continue
             required = rec._required_checks()
             statuses = {c.check_key: c.status for c in rec.readiness_check_ids}
+            failed = [k for k in required if statuses.get(k) == 'fail']
             unmet = [k for k in required if statuses.get(k) != 'pass']
-            target = 'action_required' if unmet else 'ready'
+            if failed:
+                target = 'action_required'
+                reason = 'failed: %s' % ','.join(failed)
+            elif not unmet:
+                target = 'ready'
+                reason = 'all checks pass'
+            elif rec.state == 'testing':
+                # Still proving itself — no move, no audit noise.
+                target = 'testing'
+                reason = None
+            else:
+                target = 'action_required'
+                reason = 'unmet: %s' % ','.join(unmet)
             if target != rec.state:
-                rec._transition(
-                    target,
-                    reason=('unmet: %s' % ','.join(unmet)) if unmet else 'all checks pass')
+                rec._transition(target, reason=reason)
             if not unmet and rec.health_status in (False, 'action_required'):
                 rec._internal().write({'health_status': 'healthy'})
         return True
@@ -415,20 +452,36 @@ class CareChannelConnection(models.Model):
     # ------------------------------------------------------------------
     # Secrets (architecture §7.2)
     # ------------------------------------------------------------------
+    @api.model
+    def _center_group_ok(self, user=None):
+        """True when ``user`` may operate connections (CENTER_GROUPS)."""
+        user = user or self.env.user
+        return any(user.has_group(xmlid) for xmlid in CENTER_GROUPS)
+
+    def _check_center_access(self):
+        """Group + company gate for every Center action and credential write.
+
+        Raises rather than returns: these methods all write through ``sudo()``,
+        so there is no ACL underneath them to fall back on.
+        """
+        user = self.env.user
+        if not self._center_group_ok(user):
+            raise UserError(_(
+                'Only a Care Command manager or a tenant administrator can '
+                'set up channels.'))
+        for rec in self:
+            if rec.company_id not in user.company_ids and not user.has_group(
+                    'base.group_system'):
+                raise UserError(_('This connection belongs to another company.'))
+        return True
+
     def action_set_secret(self, field_key, secret):
         """Encrypt and store one credential. Group- and company-gated."""
         self.ensure_one()
         column = SECRET_FIELDS.get(field_key)
         if not column:
             raise UserError(_('Unknown credential field.'))
-        user = self.env.user
-        if not (user.has_group('base.group_system')
-                or user.has_group('health_crm.group_health_crm_manager')):
-            raise UserError(_(
-                'Only a Care Command manager can set channel credentials.'))
-        if self.company_id not in user.company_ids and not user.has_group(
-                'base.group_system'):
-            raise UserError(_('This connection belongs to another company.'))
+        self._check_center_access()
         if not secret or not isinstance(secret, str) or not secret.strip():
             raise UserError(_('The credential cannot be empty.'))
         secret = secret.strip()
@@ -469,8 +522,14 @@ class CareChannelConnection(models.Model):
 
         Refuses anything credential-shaped: this column is readable by any CRM
         manager, so a secret must never be routed here by a later adapter.
+
+        Group-gated like every other public writer on this model (CC-C): the
+        write goes through ``sudo()._internal()``, so without an explicit gate
+        any logged-in user who can read a connection could re-point the web
+        chat's allowed origins by RPC.
         """
         self.ensure_one()
+        self._check_center_access()
         if not isinstance(values, dict):
             raise UserError(_('Channel settings must be a mapping.'))
         for key in values:
