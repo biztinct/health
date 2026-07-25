@@ -225,7 +225,15 @@ class CareChannelConnection(models.Model):
     # ------------------------------------------------------------------
     @api.model
     def _is_internal(self):
-        return bool(self.env.context.get(INTERNAL_CTX))
+        # The context flag alone is NOT sufficient: RPC callers control their
+        # own context (call_kw merges the client's dict), so a published flag
+        # would be a forgeable key to the guard. Require the flag AND an
+        # escalated environment — su covers every sanctioned server path
+        # (sudo()/_internal() chains, crons, uid 1), group_system covers an
+        # administrator in a debug shell. (CC-A review finding #1.)
+        if not self.env.context.get(INTERNAL_CTX):
+            return False
+        return self.env.su or self.env.user.has_group('base.group_system')
 
     def _internal(self):
         """Recordset flagged as a sanctioned server write path."""
@@ -405,7 +413,8 @@ class CareChannelConnection(models.Model):
         secret = secret.strip()
         self.sudo()._internal().write({
             column: channel_crypto.encrypt(self.env, secret),
-            'secret_hint': '••••' + secret[-4:],
+            # No tail for short secrets (CC-A review finding #6).
+            'secret_hint': '••••' + (secret[-4:] if len(secret) >= 8 else ''),
         })
         self.env['care.channel.audit']._log(
             'secret_rotated', connection=self, detail='field %s' % field_key)
@@ -588,9 +597,13 @@ class CareChannelConnection(models.Model):
         Activity = self.env['mail.activity'].sudo()
         model_id = self.env['ir.model']._get_id(self._name)
         summary = self._expiry_activity_summary()
+        # Idempotency keys on automated=True, NOT on the summary text: the
+        # summary is translated, so a server language change between cron runs
+        # would duplicate the warning (CC-A review finding #7). This cron is
+        # the only automated-activity creator on this model.
         existing = Activity.search_count([
             ('res_model_id', '=', model_id), ('res_id', '=', self.id),
-            ('summary', '=', summary),
+            ('automated', '=', True),
         ])
         if existing:
             return False
@@ -613,6 +626,7 @@ class CareChannelConnection(models.Model):
             'note': note,
             'user_id': user.id,
             'date_deadline': fields.Date.context_today(self),
+            'automated': True,  # the idempotency key above
         })
         return True
 

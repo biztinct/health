@@ -148,7 +148,9 @@ class ChannelPlatformApp(models.Model):
         secret = secret.strip()
         self.sudo().write({
             'client_secret_enc': channel_crypto.encrypt(self.env, secret),
-            'secret_hint': '••••' + secret[-4:],
+            # No tail for short secrets: '••••' + last4 of a 4-char value IS
+            # the value (CC-A review finding #6).
+            'secret_hint': '••••' + (secret[-4:] if len(secret) >= 8 else ''),
         })
         self.env['care.channel.audit']._log(
             'secret_rotated',

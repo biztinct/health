@@ -115,8 +115,10 @@ class CareChannelOauthSession(models.Model):
             return True
         if not isinstance(url, str):
             return False
-        if url.startswith('//'):
-            # Protocol-relative: an absolute URL wearing a relative disguise.
+        if len(url) > 1 and url[0] == '/' and url[1] in ('/', '\\'):
+            # Protocol-relative ('//host') or its backslash disguise
+            # ('/\host' — browsers normalize \ to /): an absolute URL wearing
+            # a relative costume (CC-A review finding #3).
             return False
         if url.startswith('/'):
             return True

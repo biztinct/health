@@ -127,6 +127,15 @@ class TestChannelFramework(ChannelHubCase):
         with self.assertRaises(UserError):
             conn.write({'granted_scopes': 'everything'})
 
+        # The context flag is NOT a key a client can forge: RPC callers
+        # control their context, so flag-without-escalation must still be
+        # refused (CC-A review finding #1).
+        from ..models.care_channel_connection import INTERNAL_CTX
+        with self.assertRaises(UserError):
+            conn.with_user(self.crm_mgr).with_context(
+                **{INTERNAL_CTX: True}).write({'state': 'ready'})
+        self.assertEqual(conn.state, 'authorizing')
+
         # `active` is the one field a user may touch.
         conn.with_user(self.crm_mgr).write({'active': False})
         self.assertFalse(conn.active)
@@ -232,7 +241,11 @@ class TestChannelFramework(ChannelHubCase):
 
         for probe in ('client_secret: hunter2', 'Authorization: Bearer xyzzy',
                       'api_key=AKIAWHATEVER', 'X-Hub-Signature=deadbeef',
-                      'password=letmein'):
+                      'password=letmein',
+                      # JSON provider bodies — quoted keys/values must not
+                      # break the match (CC-A review finding #2).
+                      '{"access_token": "hunter2", "expires_in": 90000}',
+                      "{'refresh_token': 'xyzzy'}"):
             cleaned = redact(probe)
             for leak in ('hunter2', 'xyzzy', 'AKIAWHATEVER', 'deadbeef',
                          'letmein'):

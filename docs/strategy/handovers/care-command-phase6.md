@@ -1,5 +1,13 @@
 # Care Command — Phase 6 Handover: "Channel Adapters" (WhatsApp · FB Messenger · Telegram · Web Chat)
 
+> **⚠️ SUPERSEDED (2026-07-25) — do not kick off as-is.** The Channel Connection
+> Center design (`channel-center-architecture.md`) replaces this handover's
+> ops-enters-credentials posture with tenant self-service. The adapter/webhook/
+> identity/message spine below is PRESERVED and will be re-issued as **Phase CC-B**
+> (rebased onto `care.channel.connection` from Phase CC-A, which must land first —
+> see `channel-center-phaseA.md`). Line citations into care_conversation.py are
+> STALE post-P5; corrected positions are in channel-center-architecture.md §1.1.
+
 **For:** Opus implementation session (AFTER Phase 5 is live + reviewed — this module
 builds on the Phase-5 Selection values, `_channel_keys()` hook and `active_channels`
 payload) · **Designed/reviewed by:** Fable

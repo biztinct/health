@@ -871,3 +871,26 @@ a no-op.
     breakage set is wider than the "assert the counts shape" tests a handover
     usually names. (Hit live in care-command Phase 5; T24/T25 relaxed to
     `view="all"`.)
+
+- **§5.63 — Odoo opens every DB connection at REPEATABLE READ, so a
+    TransactionCase can never observe another transaction's later commits — a
+    two-worker `FOR UPDATE NOWAIT` contention race is structurally unstageable
+    in one.** A second cursor opened mid-test does not SEE the row the test
+    transaction created (invisible → 0 rows matched → no lock taken → the
+    "success" branch returns), which reads as "the lock doesn't work" when the
+    lock is fine — exactly how channel-center CC-A's T85 first failed. Mirror
+    trap: a fresh-cursor ORM write against a record created INSIDE the test
+    transaction dies with MissingError for the same visibility reason. Also:
+    registry test mode / `TestCursor` is entered by **HttpCase only**, so
+    `Registry(db).cursor()` inside a TransactionCase really is a separate
+    connection, not a savepoint on the test cursor. Test recipes that DO work:
+    (a) prove the NOWAIT statement itself by executing it uncontended on the
+    test cursor and asserting the row comes back; (b) prove the fresh-cursor
+    persist helper end-to-end with a pre-committed row (or one created via a
+    second cursor and cleaned up after); leave true two-worker contention to a
+    live smoke check the first time the code path runs for real (CC-D rider
+    for `_with_refresh_lock`). Corollary: an Odoo context propagates through
+    every derived recordset — a fixture that creates through a bypass/internal
+    context must re-`browse()` the record before exercising the guard under
+    test, or the guard is silently disarmed. (Hit live building channel-center
+    CC-A; recipes in docs/strategy/reports/channel-center-phaseA-report.md.)

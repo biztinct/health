@@ -262,6 +262,9 @@ class TestOauthEngine(ChannelHubCase):
         self.assertTrue(allowed('https://care.biztinct.com/odoo/action-1'))
         self.assertFalse(allowed('https://evil.example.com/steal'))
         self.assertFalse(allowed('//evil.example.com/steal'))
+        # Browsers normalize '/\' to '//' — the backslash disguise must be
+        # refused too (CC-A review finding #3).
+        self.assertFalse(allowed('/\\evil.example.com/steal'))
         self.assertFalse(allowed('javascript:alert(1)'))
         self.assertFalse(allowed(42))
 

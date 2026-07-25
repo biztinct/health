@@ -15,10 +15,12 @@ import re
 
 MAX_LEN = 300
 
-# key=value / key: value pairs whose VALUE is credential-ish.
+# key=value / key: value pairs whose VALUE is credential-ish. Keys and values
+# may be quoted — provider error bodies are JSON ({"access_token": "xyz"}), and
+# the closing quote must not break the match (CC-A review finding #2).
 _KV_RE = re.compile(
-    r'(?i)\b([\w-]*(?:token|secret|key|code|signature|password|authorization)'
-    r'[\w-]*)\s*[=:]\s*\S+')
+    r'(?i)["\']?\b([\w-]*(?:token|secret|key|code|signature|password|authorization)'
+    r'[\w-]*)\b["\']?\s*[=:]\s*["\']?[^\s"\',}]+["\']?')
 
 # Everything after a URL's '?' is opaque and frequently carries code/state.
 _URL_QS_RE = re.compile(r'(?i)\b(https?://\S+?)\?\S*')
