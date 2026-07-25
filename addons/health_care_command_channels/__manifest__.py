@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Healthcare/CRM',
-    'summary': 'Provider-neutral channel connection core: encrypted credentials, '
-               'OAuth engine, readiness model, adapter registry',
+    'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
+               'Telegram / Web chat message spine',
     'description': """
 Channel Connection Center — Phase CC-A (framework core)
 =======================================================
@@ -35,8 +35,30 @@ What ships here:
   — rate-limited, non-oracle, never echoes state/code.
 - Health + session-purge crons.
 
-Non-goals of this phase: no messaging, no provider HTTP, no webhook message
-routes, no Center UI, no migration of the legacy zalo/voip configs.
+Channel Connection Center — Phase CC-B (message spine + 4 adapters)
+===================================================================
+
+The four chat channels become real rails on the SAME ``care.conversation``
+spine the live channels already use:
+
+- ``care.channel.identity`` — the external peer registry (wa_id / PSID /
+  Telegram chat id / web-chat session), and the one anchor a first contact has.
+- ``care.channel.message`` — one message store for all four channels, with a
+  partial unique index on ``(connection_id, external_message_id)`` so a
+  redelivered webhook lands once.
+- ``_ingest_inbound`` — the single funnel: dedupe → identity → message row →
+  conversation upsert inside ``cr.savepoint()`` → readiness wiring.
+- Fail-closed raw-http webhooks for Meta (WhatsApp + Messenger) and Telegram,
+  multi-tenant routed by the resource id in the payload, plus the anonymous
+  web-chat widget on rate-limited public routes.
+- ``action_send_channel`` — the ONE outbound trigger: a human pressing send.
+- Traffic drives truth: an inbound event proves the webhook, a successful send
+  proves outbound, a 401 costs the connection its ``authorization_valid``
+  check — which is what the dock, the counts and the composer read.
+
+Non-goals of this phase: no Center UI (CC-C), no Zalo/email/VoIP adapter work
+(CC-D/E/F), no credentials on any server, no media download, no Meta template
+messages, no bus/websocket web chat, no queue, no AI.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',
@@ -52,8 +74,10 @@ routes, no Center UI, no migration of the legacy zalo/voip configs.
         'security/ir.model.access.csv',
         'security/channel_hub_security.xml',
         'views/oauth_templates.xml',
+        'views/webchat_templates.xml',
         'views/platform_app_views.xml',
         'views/channel_connection_views.xml',
+        'views/channel_message_views.xml',
         'views/res_config_settings_views.xml',
         'views/menus.xml',
         'data/ir_cron.xml',

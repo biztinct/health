@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Read-only operational surfaces for the message spine. The place agents
+         actually read these messages is the Care Command thread; this exists so
+         an operator can answer "did anything arrive at all" without a shell.
+         raw_payload is deliberately NOT in any view: it is provider evidence
+         behind ACLs, not something to browse casually. -->
+
+    <record id="view_care_channel_message_list" model="ir.ui.view">
+        <field name="name">care.channel.message.list</field>
+        <field name="model">care.channel.message</field>
+        <field name="arch" type="xml">
+            <list string="Channel Messages" create="false" edit="false" delete="false">
+                <field name="event_at"/>
+                <field name="channel"/>
+                <field name="direction"/>
+                <field name="identity_id"/>
+                <field name="conversation_id"/>
+                <field name="body"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ('sent', 'delivered', 'read')"
+                       decoration-danger="state == 'failed'"
+                       decoration-muted="state in ('received', 'queued')"/>
+                <field name="error_message" optional="hide"/>
+                <field name="external_message_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_care_channel_message_search" model="ir.ui.view">
+        <field name="name">care.channel.message.search</field>
+        <field name="model">care.channel.message</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="body"/>
+                <field name="identity_id"/>
+                <field name="external_message_id"/>
+                <filter name="incoming" string="Incoming"
+                        domain="[('direction', '=', 'incoming')]"/>
+                <filter name="failed" string="Failed"
+                        domain="[('state', '=', 'failed')]"/>
+                <separator/>
+                <filter name="group_channel" string="Channel" context="{'group_by': 'channel'}"/>
+                <filter name="group_state" string="Delivery" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_care_channel_message" model="ir.actions.act_window">
+        <field name="name">Channel Messages</field>
+        <field name="res_model">care.channel.message</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_care_channel_message_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No channel message yet</p>
+            <p>WhatsApp, Messenger, Telegram and web-chat messages land here as
+               they arrive, and are shown to agents inside the Care Command
+               conversation.</p>
+        </field>
+    </record>
+
+    <record id="view_care_channel_identity_list" model="ir.ui.view">
+        <field name="name">care.channel.identity.list</field>
+        <field name="model">care.channel.identity</field>
+        <field name="arch" type="xml">
+            <list string="Channel Identities" create="false" edit="false" delete="false">
+                <field name="last_seen_at"/>
+                <field name="channel"/>
+                <field name="display_name"/>
+                <field name="external_id"/>
+                <field name="connection_id"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_care_channel_identity" model="ir.actions.act_window">
+        <field name="name">Channel Identities</field>
+        <field name="res_model">care.channel.identity</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

@@ -31,4 +31,20 @@
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 02:40:00')"/>
     </record>
 
+    <!-- Daily 03:10: web-chat sessions that never produced an inbound message
+         are launcher clicks, not conversations. Anything with real traffic —
+         or a conversation someone has since linked to a lead or client — is
+         left alone (CC-B, phase6 §2.6). -->
+    <record id="ir_cron_gc_webchat" model="ir.cron" forcecreate="True">
+        <field name="name">Channels: web-chat session cleanup</field>
+        <field name="model_id" ref="model_care_channel_message"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_gc_webchat()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 03:10:00')"/>
+    </record>
+
 </data></odoo>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Standalone demo host page for the web-chat widget. No `website`
+         dependency (health_family_link precedent): a plain QWeb template
+         rendered by the public controller, embedding the widget exactly the
+         way a tenant embeds it on their own site. -->
+    <template id="webchat_demo_page" name="Web chat demo">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="robots" content="noindex, nofollow"/>
+                <title>Health19 — Web chat demo</title>
+                <link rel="stylesheet" t-att-href="widget_css"/>
+                <style>
+                    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont,
+                           "Segoe UI", Roboto, Arial, sans-serif; color: #16232e;
+                           background: #f6f8fa; }
+                    .demo-wrap { max-width: 720px; margin: 0 auto; padding: 48px 20px; }
+                    h1 { font-size: 22px; margin: 0 0 8px; }
+                    p { line-height: 1.55; color: #40525f; }
+                    code { background: #eef2f5; padding: 2px 6px; border-radius: 4px; }
+                    .off { border-left: 3px solid #0b3a5b; padding: 12px 14px;
+                           background: #fff; }
+                </style>
+            </head>
+            <body>
+                <div class="demo-wrap">
+                    <h1>Web chat — demo page</h1>
+                    <p t-if="enabled">
+                        This page hosts the widget exactly as a tenant site would.
+                        Open the launcher in the bottom-right corner and send a
+                        message; it lands in Care Command as a new conversation.
+                    </p>
+                    <div class="off" t-if="not enabled">
+                        <p>
+                            Web chat is not enabled on this database yet. Enable it
+                            in Care Command → Channels; nothing here is broken.
+                        </p>
+                    </div>
+                    <p>
+                        Embed snippet:
+                        <br/>
+                        <!-- t-out, NOT literal escaped markup: an XML-escaped
+                             <script> inside a template arch is served RAW by
+                             QWeb, which loaded this very widget twice with a
+                             junk data-origin (found in CC-B browser QA).
+                             t-out escapes the value at render time. -->
+                        <code t-out="embed_snippet"/>
+                    </p>
+                </div>
+                <script t-if="enabled" t-att-src="widget_js"/>
+            </body>
+        </html>
+    </template>
+
+</odoo>

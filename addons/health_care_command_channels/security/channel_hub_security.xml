@@ -30,6 +30,22 @@
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
 
+    <!-- CC-B message spine. Both models carry a stored related company_id
+         (from the connection), so the rule is a plain company test. -->
+    <record id="care_channel_identity_company_rule" model="ir.rule">
+        <field name="name">Care Channel Identity: multi-company</field>
+        <field name="model_id" ref="model_care_channel_identity"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="care_channel_message_company_rule" model="ir.rule">
+        <field name="name">Care Channel Message: multi-company</field>
+        <field name="model_id" ref="model_care_channel_message"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
     <record id="care_channel_oauth_session_company_rule" model="ir.rule">
         <field name="name">Channel Authorization Session: multi-company</field>
         <field name="model_id" ref="model_care_channel_oauth_session"/>

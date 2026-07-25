@@ -894,3 +894,55 @@ a no-op.
     context must re-`browse()` the record before exercising the guard under
     test, or the guard is silently disarmed. (Hit live building channel-center
     CC-A; recipes in docs/strategy/reports/channel-center-phaseA-report.md.)
+
+- **§5.64 — an XML-escaped `<script>` (or any markup) written as literal text
+    inside a QWeb template arch is served to the browser RAW, as a live
+    element.** CC-B's web-chat demo page printed its embed snippet as
+    `<code>&lt;script src="…" data-origin="…"&gt;&lt;/script&gt;</code>` and
+    Odoo served an actual `<script>` tag: the widget loaded twice, and the
+    second instance read `data-origin="…"` (a literal ellipsis) and built
+    `/care_channels/webchat/…/widget.css`, which 404'd with a MIME-type console
+    error — the symptom accused the stylesheet, the cause was the snippet. Show
+    markup as text with `t-out`/`t-esc` on a value passed from Python, never as
+    escaped entities in the arch. Corollaries paid for in the same fix: (a) a
+    QWeb template whose root is `<html>` is served with **no doctype**, so the
+    browser renders in quirks mode — prepend one in the controller with
+    `Markup('<!DOCTYPE html>') + html` (`str + Markup` ESCAPES the doctype and
+    ships a literal `&lt;!DOCTYPE html&gt;` — §5.20 again); (b) Odoo serves
+    `/<module>/static/…` with `Cache-Control: max-age=604800` and no
+    revalidation, so any **embeddable** asset needs a `?v=<module version>`
+    stamp or visitor browsers keep the old copy for a week (the §3 PWA rule,
+    generalised); (c) a script third parties embed needs an idempotence guard
+    and must validate its own `data-*` inputs. (Hit live in channel-center CC-B
+    browser QA.)
+
+- **§5.65 — a `UserError` from an RPC rolls back the evidence of the failure it
+    is reporting; write that evidence on an independent cursor FIRST.**
+    `action_send_channel` must both raise (the agent needs a clean error) and
+    remember (failed message row, redacted reason, and for a 401 the
+    `authorization_valid = fail` that drops the connection to
+    `action_required`). In-transaction writes cannot do both — the dispatcher
+    rolls them back with the exception. Pattern (health_emar
+    `_persist_interaction_result`, §5.12): a `_persist_*` helper opens
+    `Registry(db).cursor()`, sets `SET LOCAL lock_timeout = '2s'`, writes,
+    commits and returns True; the caller writes in-transaction ONLY when it
+    returns False. It returns False under `--test-enable` on purpose (§5.63: a
+    second cursor cannot see the test transaction's records), which is what
+    lets the suites assert on the same evidence. Test-side corollary: assert on
+    pre-raise evidence with `try/except UserError`, **never** `assertRaises` —
+    Odoo wraps it in a savepoint and rolls back every write made before the
+    raise (§5.8). (Hit live in channel-center CC-B.)
+
+- **§5.66 — derived readiness plus a state-gated ingest can lock a channel out
+    of the very traffic that would prove it.** CC-B's ingest gate is
+    `{ready, expiring, testing, configuring}`, but `state == 'ready'` is
+    DERIVED from the readiness checks: the first inbound on a `testing`
+    connection whose required checks are not all `pass` flips it to
+    `action_required` — which is not ingestable, so later traffic is dropped
+    until a human finishes setup. Whenever a state machine both (a) gates an
+    input and (b) is recomputed BY that input, walk the loop explicitly. Here
+    the spec's gate was implemented as written and the ordering constraint
+    handed to the UI phase (the stepper must complete its checks, or park the
+    connection in `configuring`, before pointing a provider at us); the
+    alternative — letting `action_required` ingest — reopens the "a disabled
+    channel keeps filling the inbox" hole the gate exists to close.

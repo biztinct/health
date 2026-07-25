@@ -10,12 +10,64 @@ already load-bearing: they drive ``care.channel.connection._required_checks()``
 and therefore the readiness derivation, and they are what the CC-C stepper UI
 will be written against.
 
-Deliberately no provider HTTP anywhere in this file — CC-D/CC-E/CC-F implement
-the real adapters by subclassing/replacing these stubs.
+Phase CC-B fills in ``parse_inbound`` / ``send_message`` for the four chat
+channels (WhatsApp, Messenger, Telegram, Web chat). Everything else — OAuth,
+resource selection, webhook registration, refresh — stays declaration-only
+until CC-D/CC-E/CC-F.
+
+Messaging rules that hold for every adapter here:
+
+* HTTP goes through ``requests`` with an explicit timeout, and ``api_base_override``
+  is honoured so tests and staging never reach a real provider;
+* logging is event types + ids ONLY — never a body, a phone number, a name or a
+  token (no PHI, no credentials, in any log line);
+* ``parse_inbound`` filters the payload down to THIS connection's resource id:
+  one provider webhook can carry entries for several tenants, and an adapter
+  must never ingest another tenant's traffic;
+* a failed send RAISES; the caller turns that into a failed message row, a
+  redacted error and a clean UserError. Silence is never an option.
 """
+import json
 import logging
+import uuid
+from datetime import datetime, timezone
+
+import requests
 
 _logger = logging.getLogger(__name__)
+
+# Every provider call is bounded: a hung provider must not hold a worker.
+HTTP_TIMEOUT = 15
+
+GRAPH_BASE = 'https://graph.facebook.com'
+GRAPH_VERSION = 'v21.0'
+TELEGRAM_BASE = 'https://api.telegram.org'
+
+# Provider message types we map onto our own small set.
+_WA_TYPE_MAP = {'text': 'text', 'image': 'image', 'document': 'file',
+                'audio': 'file', 'video': 'file', 'sticker': 'image',
+                'location': 'location'}
+
+
+def _utc_from_unix(value):
+    """Provider epoch seconds → naive UTC datetime (what fields.Datetime stores).
+
+    Returns None for anything unusable rather than guessing: the ingest funnel
+    then falls back to "now", which is honest, while a silently-wrong 1970
+    timestamp would sort the message to the top of every timeline forever.
+    """
+    if not value:
+        return None
+    try:
+        return datetime.fromtimestamp(int(value), tz=timezone.utc).replace(
+            tzinfo=None)
+    except (TypeError, ValueError, OSError, OverflowError):
+        return None
+
+
+class ChannelSendError(Exception):
+    """A provider refused or failed to accept an outbound message."""
+
 
 # key -> adapter class
 CHANNEL_ADAPTERS = {}
@@ -135,6 +187,34 @@ class BaseChannelAdapter:
     def send_message(self, identity, text) -> dict:
         raise NotImplementedError
 
+    # ------------------------------------------------------------------
+    # Shared HTTP plumbing
+    # ------------------------------------------------------------------
+    def _api_base(self, default):
+        return (getattr(self.connection, 'api_base_override', '')
+                or default).rstrip('/')
+
+    def _post(self, url, *, json_body=None, params=None, headers=None):
+        """POST with a timeout; raise ``ChannelSendError`` on anything but 2xx.
+
+        The error text carries the status code and the provider's own message
+        so the readiness model can tell a 401 (grant lost) from a 500 (provider
+        wobble) — the caller redacts it before it is stored or shown.
+        """
+        try:
+            resp = requests.post(url, json=json_body, params=params,
+                                 headers=headers, timeout=HTTP_TIMEOUT)
+        except requests.RequestException as exc:
+            raise ChannelSendError('network error: %s' % exc) from exc
+        if resp.status_code >= 300:
+            # Body may carry a token in an echoed request — the caller redacts.
+            raise ChannelSendError('HTTP %s: %s' % (resp.status_code,
+                                                    (resp.text or '')[:300]))
+        try:
+            return resp.json() or {}
+        except ValueError:
+            return {}
+
 
 class _StubAdapter(BaseChannelAdapter):
     """Declaration-only adapter: capabilities are real, operations are not."""
@@ -173,6 +253,82 @@ class WhatsAppAdapter(_StubAdapter):
                         'channel_hub.guide.whatsapp.test'],
     }
 
+    # -- messaging (CC-B) ----------------------------------------------
+    def parse_inbound(self, payload):
+        """Cloud API webhook → normalised events for THIS phone number.
+
+        Meta batches: one POST can carry several entries, and on a shared app
+        several tenants' numbers. Everything whose ``phone_number_id`` is not
+        ours is skipped, not ingested.
+        """
+        events = []
+        mine = self.connection.resource_external_id
+        for entry in (payload or {}).get('entry') or []:
+            for change in entry.get('changes') or []:
+                value = change.get('value') or {}
+                metadata = value.get('metadata') or {}
+                if mine and metadata.get('phone_number_id') != mine:
+                    continue
+                names = {}
+                for contact in value.get('contacts') or []:
+                    profile = contact.get('profile') or {}
+                    if contact.get('wa_id'):
+                        names[contact['wa_id']] = profile.get('name')
+                for message in value.get('messages') or []:
+                    wa_id = message.get('from')
+                    mtype = _WA_TYPE_MAP.get(message.get('type'), 'other')
+                    text = (message.get('text') or {}).get('body') or ''
+                    attachment = {}
+                    for key in ('image', 'document', 'audio', 'video'):
+                        media = message.get(key)
+                        if isinstance(media, dict):
+                            attachment = {
+                                'name': media.get('filename') or key,
+                                'mime': media.get('mime_type'),
+                                # Media ids only — v1 downloads nothing.
+                                'url': media.get('id'),
+                            }
+                            text = text or media.get('caption') or ''
+                    events.append({
+                        'kind': 'message',
+                        'external_id': wa_id,
+                        'external_message_id': message.get('id'),
+                        'peer_name': names.get(wa_id),
+                        'message_type': mtype,
+                        'text': text,
+                        'attachment': attachment,
+                        'event_at': _utc_from_unix(message.get('timestamp')),
+                        'raw': message,
+                    })
+                for status in value.get('statuses') or []:
+                    events.append({
+                        'kind': 'status',
+                        'external_message_id': status.get('id'),
+                        'status': status.get('status'),
+                        'error': json.dumps(status.get('errors'))
+                                 if status.get('errors') else None,
+                    })
+        _logger.info('care_channels: whatsapp inbound %s event(s) on connection %s',
+                     len(events), self.connection.id)
+        return events
+
+    def send_message(self, identity, text):
+        conn = self.connection
+        token = conn._get_secret('access_token')
+        if not token or not conn.resource_external_id:
+            raise ChannelSendError('whatsapp connection is not configured')
+        url = '%s/%s/%s/messages' % (self._api_base(GRAPH_BASE), GRAPH_VERSION,
+                                     conn.resource_external_id)
+        data = self._post(url, json_body={
+            'messaging_product': 'whatsapp',
+            'recipient_type': 'individual',
+            'to': identity.external_id,
+            'type': 'text',
+            'text': {'preview_url': False, 'body': text},
+        }, headers={'Authorization': 'Bearer %s' % token})
+        messages = data.get('messages') or [{}]
+        return {'external_message_id': messages[0].get('id'), 'state': 'sent'}
+
 
 @register_adapter('fb')
 class MessengerAdapter(_StubAdapter):
@@ -193,6 +349,65 @@ class MessengerAdapter(_StubAdapter):
                         'channel_hub.guide.fb.connecting',
                         'channel_hub.guide.fb.test'],
     }
+
+    # -- messaging (CC-B) ----------------------------------------------
+    def parse_inbound(self, payload):
+        """Messenger webhook → normalised events for THIS page."""
+        events = []
+        mine = self.connection.resource_external_id
+        for entry in (payload or {}).get('entry') or []:
+            if mine and str(entry.get('id')) != str(mine):
+                continue
+            for item in entry.get('messaging') or []:
+                message = item.get('message') or {}
+                if not message or message.get('is_echo'):
+                    # Echoes are our OWN outbound coming back; ingesting them
+                    # would double every agent reply.
+                    continue
+                sender = (item.get('sender') or {}).get('id')
+                attachment = {}
+                mtype = 'text'
+                for att in message.get('attachments') or []:
+                    mtype = {'image': 'image', 'file': 'file',
+                             'location': 'location'}.get(att.get('type'), 'other')
+                    payload_att = att.get('payload') or {}
+                    attachment = {'url': payload_att.get('url'),
+                                  'name': att.get('type'),
+                                  'mime': None}
+                events.append({
+                    'kind': 'message',
+                    'external_id': sender,
+                    'external_message_id': message.get('mid'),
+                    # Messenger sends no profile name in the webhook; the
+                    # Graph profile call is a CC-E enrichment, not a v1 need.
+                    'peer_name': None,
+                    'message_type': mtype,
+                    'text': message.get('text') or '',
+                    'attachment': attachment,
+                    'event_at': _utc_from_unix(
+                        (item['timestamp'] / 1000) if item.get('timestamp')
+                        else None),
+                    'raw': item,
+                })
+        _logger.info('care_channels: fb inbound %s event(s) on connection %s',
+                     len(events), self.connection.id)
+        return events
+
+    def send_message(self, identity, text):
+        conn = self.connection
+        token = conn._get_secret('access_token')
+        if not token:
+            raise ChannelSendError('messenger connection is not configured')
+        url = '%s/%s/me/messages' % (self._api_base(GRAPH_BASE), GRAPH_VERSION)
+        data = self._post(
+            url,
+            params={'access_token': token},
+            json_body={
+                'recipient': {'id': identity.external_id},
+                'messaging_type': 'RESPONSE',
+                'message': {'text': text},
+            })
+        return {'external_message_id': data.get('message_id'), 'state': 'sent'}
 
 
 @register_adapter('zalo')
@@ -256,6 +471,68 @@ class TelegramAdapter(_StubAdapter):
                         'channel_hub.guide.telegram.test'],
     }
 
+    # -- messaging (CC-B) ----------------------------------------------
+    def parse_inbound(self, payload):
+        """One Telegram ``Update`` → at most one event.
+
+        The connection is already resolved by the URL path secret, so there is
+        no per-tenant filtering to do here.
+        """
+        message = (payload or {}).get('message') or \
+            (payload or {}).get('edited_message') or {}
+        chat = message.get('chat') or {}
+        if not chat.get('id') or not message.get('message_id'):
+            return []
+        sender = message.get('from') or {}
+        name = ' '.join(p for p in (sender.get('first_name'),
+                                    sender.get('last_name')) if p) \
+            or sender.get('username')
+        mtype = 'text'
+        attachment = {}
+        if message.get('photo'):
+            mtype = 'image'
+            attachment = {'name': 'photo', 'url': None, 'mime': None}
+        elif message.get('document'):
+            mtype = 'file'
+            doc = message['document']
+            attachment = {'name': doc.get('file_name'),
+                          'mime': doc.get('mime_type'), 'url': None}
+        elif message.get('location'):
+            mtype = 'location'
+        _logger.info('care_channels: telegram inbound 1 event on connection %s',
+                     self.connection.id)
+        return [{
+            'kind': 'message',
+            'external_id': str(chat['id']),
+            'external_message_id': '%s:%s' % (chat['id'],
+                                              message['message_id']),
+            'peer_name': name,
+            'message_type': mtype,
+            'text': message.get('text') or message.get('caption') or '',
+            'attachment': attachment,
+            'event_at': _utc_from_unix(message.get('date')),
+            'raw': message,
+        }]
+
+    def send_message(self, identity, text):
+        token = self.connection._get_secret('provider_secret')
+        if not token:
+            raise ChannelSendError('telegram bot token is not configured')
+        url = '%s/bot%s/sendMessage' % (self._api_base(TELEGRAM_BASE), token)
+        data = self._post(url, json_body={'chat_id': identity.external_id,
+                                          'text': text})
+        if not data.get('ok', True):
+            raise ChannelSendError('telegram refused: %s'
+                                   % data.get('description'))
+        result = data.get('result') or {}
+        chat_id = (result.get('chat') or {}).get('id', identity.external_id)
+        message_id = result.get('message_id')
+        return {
+            'external_message_id': ('%s:%s' % (chat_id, message_id)
+                                    if message_id else None),
+            'state': 'sent',
+        }
+
 
 @register_adapter('email')
 class EmailAdapter(_StubAdapter):
@@ -314,3 +591,34 @@ class WebChatAdapter(_StubAdapter):
                         'channel_hub.guide.webchat.embed',
                         'channel_hub.guide.webchat.verify'],
     }
+
+    # -- messaging (CC-B) ----------------------------------------------
+    def parse_inbound(self, payload):
+        """The widget posts through our own route, which already normalised
+        the event — this exists so every channel has the same shape."""
+        payload = payload or {}
+        session = (payload.get('session') or '').strip()
+        text = (payload.get('text') or '').strip()
+        if not session or not text:
+            return []
+        return [{
+            'kind': 'message',
+            'external_id': session,
+            'external_message_id': payload.get('external_message_id')
+            or uuid.uuid4().hex,
+            'peer_name': payload.get('peer_name'),
+            'message_type': 'text',
+            'text': text,
+            'attachment': {},
+            'event_at': None,
+            # No raw payload: it is our own request body, and storing it would
+            # duplicate the message text for no benefit.
+            'raw': None,
+        }]
+
+    def send_message(self, identity, text):
+        """No HTTP exists: creating the outgoing row IS delivery. The widget's
+        next poll picks it up."""
+        _logger.info('care_channels: webchat outbound on connection %s',
+                     self.connection.id)
+        return {'external_message_id': uuid.uuid4().hex, 'state': 'sent'}

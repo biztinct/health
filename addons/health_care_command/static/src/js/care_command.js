@@ -445,11 +445,16 @@ export class CareCommand extends Component {
     // ---------------------------------------------------------------
     get canReply() {
         const d = this.state.detail;
-        return d && d.capabilities && (d.capabilities.can_reply_zalo || d.capabilities.can_reply_email);
+        return d && d.capabilities && (d.capabilities.ext_reply_channel
+            || d.capabilities.can_reply_zalo || d.capabilities.can_reply_email);
     }
     get sendChannel() {
         const d = this.state.detail;
         if (!d) return null;
+        // An adapter channel (WhatsApp / Messenger / Telegram / Web chat) is
+        // offered ONLY when the server says the connection can actually send —
+        // the core never names those channels, it just honours the capability.
+        if (d.capabilities.ext_reply_channel) return d.capabilities.ext_reply_channel;
         if (d.channel_primary === "zalo" && d.capabilities.can_reply_zalo) return "zalo";
         if (d.capabilities.can_reply_email) return "email";
         if (d.capabilities.can_reply_zalo) return "zalo";
@@ -470,10 +475,16 @@ export class CareCommand extends Component {
         const ch = this.sendChannel;
         if (!ch) return;
         this.state.sending = true;
-        const method = ch === "zalo" ? "action_send_zalo" : "action_send_email";
+        // zalo/email keep their dedicated server methods; every other channel
+        // goes through the generic adapter send with the channel key.
+        const isCore = ch === "zalo" || ch === "email";
+        const method = isCore
+            ? (ch === "zalo" ? "action_send_zalo" : "action_send_email")
+            : "action_send_channel";
+        const args = isCore ? [this.state.selected, text]
+            : [this.state.selected, ch, text];
         try {
-            const bubble = await this.orm.call(
-                "care.conversation", method, [this.state.selected, text]);
+            const bubble = await this.orm.call("care.conversation", method, args);
             if (this.state.detail && this.state.detail.timeline) {
                 this.state.detail.timeline.push(bubble);
             }

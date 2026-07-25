@@ -192,14 +192,35 @@ class CareChannelOauthSession(models.Model):
         if not state or not isinstance(state, str):
             return None
         digest = hashlib.sha256(state.encode('utf-8')).hexdigest()
-        session = self.sudo().search([('state_hash', '=', digest)], limit=1)
-        if not session or session.used_at:
-            return None
-        if session.expires_at and session.expires_at < fields.Datetime.now():
-            session.write({'outcome': 'expired', 'used_at': fields.Datetime.now()})
-            return None
-        session.write({'used_at': fields.Datetime.now()})
-        return session
+        # Burn the state with ONE atomic statement (CC-A review LOW #4): a
+        # read-then-write pair lets two workers racing the same callback both
+        # observe used_at IS NULL and both proceed. The UPDATE ... RETURNING
+        # makes exactly one of them win, in PostgreSQL rather than in Python.
+        # Flush first / invalidate after: raw SQL and the ORM cache otherwise
+        # disagree about this row (ledger §5.9).
+        self.env.flush_all()
+        self.env.cr.execute("""
+            UPDATE care_channel_oauth_session
+               SET used_at = (now() AT TIME ZONE 'utc')
+             WHERE state_hash = %s
+               AND used_at IS NULL
+               AND expires_at > (now() AT TIME ZONE 'utc')
+         RETURNING id
+        """, (digest,))
+        row = self.env.cr.fetchone()
+        if row:
+            session = self.sudo().browse(row[0])
+            session.invalidate_recordset(['used_at'])
+            return session
+        # Lost the race, unknown, already used — or expired, which still gets
+        # burned and labelled so the purge cron and the audit read true. All
+        # four return None: the caller cannot tell them apart (no oracle).
+        session = self.sudo().search(
+            [('state_hash', '=', digest), ('used_at', '=', False)], limit=1)
+        if session:
+            session.write({'outcome': 'expired',
+                           'used_at': fields.Datetime.now()})
+        return None
 
     def _get_pkce_verifier(self):
         """Server-side only (leading underscore ⇒ not RPC-callable)."""

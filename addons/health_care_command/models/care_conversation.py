@@ -386,7 +386,24 @@ class CareConversation(models.Model):
                 vals["watch_terms"] = ", ".join(watch_hits)
             return Conv.create(vals)
 
-        # --- update existing -------------------------------------------
+        return rec._apply_signal(anchor, signal)
+
+    def _apply_signal(self, anchor, signal):
+        """Apply one ingest signal to an EXISTING conversation.
+
+        Pure extraction of ``_find_or_create_for``'s update branch (Phase 6
+        core touch #1): channel extensions resolve their own records by their
+        own anchor (a channel identity) and then need exactly these semantics —
+        fill-never-overwrite anchors, SET-not-increment unread, watchlist union
+        — without duplicating them. Zero behaviour change.
+        """
+        self.ensure_one()
+        rec = self
+        anchor = {k: v for k, v in (anchor or {}).items() if v}
+        event_at = signal.get("event_at") or fields.Datetime.now()
+        inbound = signal.get("inbound", False)
+        channel = signal.get("channel")
+
         upd = {}
         # fill-not-overwrite anchors (identity changes are human decisions)
         for key in ("partner_id", "lead_id"):
@@ -753,12 +770,23 @@ class CareConversation(models.Model):
             "context": rec._detail_context(),
             # deterministic reply templates for this conversation's channel (§3)
             "templates": rec._reply_templates(),
-            "capabilities": {
-                "can_reply_zalo": bool(rec.zalo_conversation_id),
-                "can_reply_email": bool(rec._recipient_email()),
-            },
+            "capabilities": rec._capabilities(),
             "channel_primary": rec.channel_primary or "none",
             "channel_effective": rec.channel_effective or "none",
+        }
+
+    def _capabilities(self):
+        """What the composer may do with this conversation.
+
+        Extracted from ``get_conversation_detail`` (Phase 6 core touch #2) so a
+        channel extension can add its own key — ``ext_reply_channel`` — without
+        the core ever naming an adapter channel. Absent keys degrade the
+        composer honestly rather than offering a send that cannot work.
+        """
+        self.ensure_one()
+        return {
+            "can_reply_zalo": bool(self.zalo_conversation_id),
+            "can_reply_email": bool(self._recipient_email()),
         }
 
     # --- 6.1b reply templates (Phase 3, deliverable 1) ----------------

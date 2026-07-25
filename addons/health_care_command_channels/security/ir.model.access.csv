@@ -10,3 +10,9 @@ access_care_channel_readiness_check_system,care.channel.readiness.check.system,m
 access_care_channel_audit_manager,care.channel.audit.manager,model_care_channel_audit,health_crm.group_health_crm_manager,1,0,0,0
 access_care_channel_audit_system,care.channel.audit.system,model_care_channel_audit,base.group_system,1,0,0,0
 access_care_channel_oauth_session_system,care.channel.oauth.session.system,model_care_channel_oauth_session,base.group_system,1,1,1,1
+access_care_channel_identity_user,care.channel.identity.user,model_care_channel_identity,health_crm.group_health_crm_user,1,0,0,0
+access_care_channel_identity_manager,care.channel.identity.manager,model_care_channel_identity,health_crm.group_health_crm_manager,1,0,0,0
+access_care_channel_identity_system,care.channel.identity.system,model_care_channel_identity,base.group_system,1,1,1,1
+access_care_channel_message_user,care.channel.message.user,model_care_channel_message,health_crm.group_health_crm_user,1,0,0,0
+access_care_channel_message_manager,care.channel.message.manager,model_care_channel_message,health_crm.group_health_crm_manager,1,0,0,0
+access_care_channel_message_system,care.channel.message.system,model_care_channel_message,base.group_system,1,1,1,1

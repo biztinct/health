@@ -1,0 +1,32 @@
+=== module versions ===
+  health_care_command 19.0.4.1.0 installed
+  health_care_command_channels 19.0.2.0.0 installed
+=== channel framework rows (active_test=False, ledger 5.27) ===
+  channel.platform.app             0
+  care.channel.connection          0
+  care.channel.identity            0
+  care.channel.message             0
+  care.channel.readiness.check     0
+  care.channel.oauth.session       0
+  care.channel.audit (append-only, kept): 2
+=== dock honesty: _channel_keys() with zero connections ===
+  ('zalo', 'call', 'email', 'zns')
+=== new public routes (registered) ===
+   /care_channels/meta/<string:channel>/webhook
+   /care_channels/telegram/webhook/<string:path_secret>
+   /care_channels/webchat/demo
+   /care_channels/webchat/message
+   /care_channels/webchat/poll
+   /care_channels/webchat/start
+=== crons ===
+   Channels: connection health | active: True | next: 2026-07-25 12:45:00
+   Channels: purge authorization sessions | active: True | next: 2026-07-26 02:40:00
+   Channels: web-chat session cleanup | active: True | next: 2026-07-26 03:10:00
+=== reply-template channel selection (selection_add) ===
+  ['any', 'zalo', 'call', 'email', 'zns', 'whatsapp', 'fb', 'telegram', 'webchat']
+=== conversation anchor field ===
+  channel_identity_id -> care.channel.identity | ondelete: set null
+=== dedupe indexes ===
+   care_channel_identity_conn_ext_uniq
+   care_channel_message_conn_extid_uniq
+   care_conversation_channel_identity_uniq

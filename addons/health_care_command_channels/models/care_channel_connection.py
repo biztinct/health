@@ -24,12 +24,13 @@ Three rules shape the whole file:
    :meth:`action_set_secret` and the only reader is ``_get_secret()``, whose
    leading underscore keeps it off the RPC surface.
 """
+import json
 import logging
 from datetime import timedelta
 
 import psycopg2
 
-from odoo import SUPERUSER_ID, _, api, fields, models
+from odoo import SUPERUSER_ID, _, api, fields, models, tools
 from odoo.exceptions import UserError, ValidationError
 from odoo.modules.registry import Registry
 
@@ -84,6 +85,16 @@ TRANSITIONS = {
 # States in which readiness derivation may move the record. A connection that
 # was never authorized can never become Ready by seeding check rows.
 RECOMPUTE_STATES = {'testing', 'ready', 'action_required', 'expiring'}
+
+# CC-B §2.1 — the ONE definition of "this channel may send". `expiring` is
+# included deliberately: a grant that dies in six days still works today, and
+# refusing to reply would be a worse failure than the warning already raised.
+SENDABLE_STATES = {'ready', 'expiring'}
+
+# ...and the ONE definition of "this channel may still receive". A connection
+# mid-setup should collect the traffic that proves it works; a disabled or
+# errored one must NOT keep filling the inbox (CC-B §2.3, declared behaviour).
+INGESTABLE_STATES = SENDABLE_STATES | {'testing', 'configuring'}
 
 WEBHOOK_STATES = [
     ('none', 'None'),
@@ -171,6 +182,16 @@ class CareChannelConnection(models.Model):
     granted_scopes = fields.Char(readonly=True)
     token_expires_at = fields.Datetime(
         readonly=True, help='UTC, as every fields.Datetime is.')
+
+    # -- non-secret per-channel settings (CC-B §2.1) ---------------------
+    # json.dumps dict: webchat allowed_origins / greeting, and whatever a later
+    # adapter needs that is configuration rather than credential. Server-
+    # maintained like every other field here (NOT in USER_WRITABLE): the CC-C
+    # Center writes it through an action, never through a form.
+    settings_json = fields.Text(string='Channel settings (JSON)', readonly=True)
+    api_base_override = fields.Char(
+        string='API base override', readonly=True,
+        help='Test/staging provider endpoint. Empty = the provider default.')
 
     # -- webhook --------------------------------------------------------
     webhook_state = fields.Selection(
@@ -427,6 +448,206 @@ class CareChannelConnection(models.Model):
         if not column:
             raise UserError(_('Unknown credential field.'))
         return channel_crypto.decrypt(self.env, self.sudo()[column] or '')
+
+    # ------------------------------------------------------------------
+    # Non-secret settings + resolution helpers (CC-B)
+    # ------------------------------------------------------------------
+    def get_setting(self, key, default=None):
+        """One non-secret per-channel setting out of ``settings_json``."""
+        self.ensure_one()
+        try:
+            data = json.loads(self.settings_json or '{}') or {}
+        except ValueError:
+            _logger.warning('Connection %s has unparsable settings_json', self.id)
+            return default
+        if not isinstance(data, dict):
+            return default
+        return data.get(key, default)
+
+    def set_settings(self, values):
+        """Merge ``values`` into ``settings_json`` (server path, never a form).
+
+        Refuses anything credential-shaped: this column is readable by any CRM
+        manager, so a secret must never be routed here by a later adapter.
+        """
+        self.ensure_one()
+        if not isinstance(values, dict):
+            raise UserError(_('Channel settings must be a mapping.'))
+        for key in values:
+            low = str(key).lower()
+            if any(bad in low for bad in ('token', 'secret', 'password', 'key')):
+                raise UserError(_(
+                    'Credentials belong in the encrypted columns, not in the '
+                    'channel settings.'))
+        try:
+            current = json.loads(self.settings_json or '{}') or {}
+        except ValueError:
+            current = {}
+        if not isinstance(current, dict):
+            current = {}
+        current.update(values)
+        self.sudo()._internal().write({'settings_json': json.dumps(current)})
+        return True
+
+    @api.model
+    def _find_sendable(self, channel, company_id):
+        """The connection that may SEND on ``channel`` for ``company_id``.
+
+        Empty recordset when the channel is not connected, is still being set
+        up, or was disabled — the composer then degrades honestly instead of
+        offering a send that would fail at the provider.
+        """
+        if not channel or not company_id:
+            return self.browse()
+        return self.sudo().search([
+            ('channel', '=', channel),
+            ('company_id', '=', company_id),
+            ('state', 'in', sorted(SENDABLE_STATES)),
+        ], limit=1)
+
+    @api.model
+    def _find_for_resource(self, channel, resource_external_id):
+        """Route an inbound webhook to its tenant (CC-B §2.3).
+
+        Company-AGNOSTIC on purpose: the provider addresses us by a resource id
+        (phone_number_id / page id), and which company owns it is exactly what
+        we are resolving. Every caller re-enters the tenant's company with
+        ``with_company`` before touching a conversation.
+        """
+        if not channel or not resource_external_id:
+            return self.browse()
+        return self.sudo().search([
+            ('channel', '=', channel),
+            ('resource_external_id', '=', resource_external_id),
+        ], limit=1)
+
+    def _may_ingest(self):
+        self.ensure_one()
+        return self.state in INGESTABLE_STATES
+
+    # ------------------------------------------------------------------
+    # Traffic → truth (CC-B §2.4). Real traffic is the only honest proof that
+    # a webhook works, so ingest and send feed the readiness model directly.
+    # None of these may EVER raise into the caller: an ingest that dies over a
+    # bookkeeping write would drop a real customer message.
+    # ------------------------------------------------------------------
+    def _safe(self, func, what):
+        self.ensure_one()
+        try:
+            with self.env.cr.savepoint():
+                return func()
+        except Exception:  # noqa: BLE001 — bookkeeping never breaks messaging
+            _logger.exception('Channel connection %s: %s failed', self.id, what)
+            return False
+
+    def _note_inbound(self, when=None):
+        """An inbound event arrived: the webhook is verified, inbound proven."""
+        self.ensure_one()
+        now = when or fields.Datetime.now()
+
+        def _run():
+            self.sudo()._internal().write({
+                'last_inbound_at': now,
+                'last_webhook_at': now,
+                'webhook_state': 'verified',
+            })
+            Check = self.env['care.channel.readiness.check']
+            Check.upsert_check(self.sudo(), 'webhook_verified', 'pass')
+            Check.upsert_check(self.sudo(), 'inbound_ok', 'pass')
+            return True
+
+        return self._safe(_run, 'inbound health wiring')
+
+    def _note_outbound(self, when=None):
+        """A message went out and the provider accepted it."""
+        self.ensure_one()
+        now = when or fields.Datetime.now()
+
+        def _run():
+            self.sudo()._internal().write({'last_outbound_at': now})
+            self.env['care.channel.readiness.check'].upsert_check(
+                self.sudo(), 'outbound_ok', 'pass')
+            return True
+
+        return self._safe(_run, 'outbound health wiring')
+
+    def _persist_send_failure(self, identity, text, error, auth_failure=False,
+                              conversation=None):
+        """Record a failed send in an INDEPENDENT cursor, so the evidence
+        survives the ``UserError`` the composer raises.
+
+        An RPC method that raises rolls its whole transaction back — so a
+        failed message row, the redacted reason and (for a 401) the lost
+        ``authorization_valid`` check would all vanish exactly when they matter
+        most. Same idiom as health_emar ``_persist_interaction_result``
+        (ledger §5.12): fresh cursor FIRST, before any same-transaction write
+        to this row, with a bounded ``lock_timeout`` so best-effort bookkeeping
+        can never hang a request.
+
+        Returns True when the evidence was committed. Under ``--test-enable``
+        it returns False without writing: a second cursor cannot see records
+        the test transaction created (ledger §5.63), and the caller then writes
+        the same evidence in-transaction, which is what the suites assert on.
+        """
+        self.ensure_one()
+        if tools.config.get('test_enable') or tools.config.get('test_file'):
+            return False
+        record_id, dbname = self.id, self.env.cr.dbname
+        identity_id = identity.id if identity else False
+        conversation_id = conversation.id if conversation else False
+        detail = redact(error) or _('Send failed')
+        try:
+            with Registry(dbname).cursor() as cr:
+                cr.execute("SET LOCAL lock_timeout = '2s'")
+                env = api.Environment(cr, SUPERUSER_ID, {INTERNAL_CTX: True})
+                conn = env['care.channel.connection'].browse(record_id)
+                if identity_id:
+                    env['care.channel.message'].create({
+                        'connection_id': record_id,
+                        'identity_id': identity_id,
+                        'conversation_id': conversation_id,
+                        'direction': 'outgoing',
+                        'message_type': 'text',
+                        'body': (text or '')[:4000] or False,
+                        'state': 'failed',
+                        'error_message': detail,
+                        'event_at': fields.Datetime.now(),
+                    })
+                conn.write({'last_error_redacted': detail})
+                if auth_failure:
+                    env['care.channel.readiness.check'].upsert_check(
+                        conn, 'authorization_valid', 'fail', detail=error)
+                    conn.write({'health_status': 'permission_lost'})
+                env['care.channel.audit']._log(
+                    'send_failed', connection=conn, detail=error)
+        except Exception:  # noqa: BLE001 — evidence is best effort, never fatal
+            _logger.exception('Failed to persist send failure for connection %s',
+                              record_id)
+            return False
+        self.invalidate_recordset(['last_error_redacted', 'health_status',
+                                   'state'])
+        return True
+
+    def _note_send_failure(self, error, auth_failure=False):
+        """Record a send failure; an authorization failure costs readiness.
+
+        A transient provider error must not tear a working channel down, so
+        only a 401/190-class failure flips ``authorization_valid`` (and through
+        ``_recompute_ready`` the connection into ``action_required``).
+        """
+        self.ensure_one()
+        detail = redact(error)
+
+        def _run():
+            self.sudo()._internal().write({
+                'last_error_redacted': detail or _('Send failed')})
+            if auth_failure:
+                self.env['care.channel.readiness.check'].upsert_check(
+                    self.sudo(), 'authorization_valid', 'fail', detail=error)
+                self.sudo()._internal().write({'health_status': 'permission_lost'})
+            return True
+
+        return self._safe(_run, 'send failure wiring')
 
     # ------------------------------------------------------------------
     # Refresh locking (architecture §7.4) — used for real in CC-D

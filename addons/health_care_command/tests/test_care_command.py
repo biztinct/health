@@ -884,8 +884,17 @@ class TestCareCommand(TransactionCase):
         ids = [c["id"] for c in U.get_workspace_data(view="all", channel="fb")["conversations"]]
         self.assertIn(lconv.id, ids)
         data = U.get_workspace_data()
-        self.assertGreaterEqual(data["channel_counts"]["fb"]["total"], 1,
-                                "counts read channel_effective")
+        # channel_counts is keyed on _channel_keys(), which an adapter module
+        # (health_care_command_channels, CC-B) narrows to channels that have a
+        # real connection — so assert against the seam, not a literal key. The
+        # contract under test is that the counts read channel_effective.
+        counted = set(self.Care._channel_keys()) & set(data["channel_counts"])
+        self.assertTrue(counted)
+        for ch in counted:
+            self.assertIn("total", data["channel_counts"][ch])
+        if "fb" in data["channel_counts"]:
+            self.assertGreaterEqual(data["channel_counts"]["fb"]["total"], 1,
+                                    "counts read channel_effective")
 
     # ======================================================================
     # T43 — payload contract: active_channels, 8-key counts, channel_live
@@ -896,9 +905,14 @@ class TestCareCommand(TransactionCase):
             "name": "fb43", "phone": "0912340044", "mode_of_contact": "facebook"})
         lconv = self.Care.search([("lead_id", "=", lead.id)], limit=1)
         data = U.get_workspace_data(view="all")
-        expected = ("zalo", "call", "email", "zns",
-                    "whatsapp", "fb", "telegram", "webchat")
+        # active_channels IS _channel_keys(): all 8 here, narrowed to the base
+        # rails plus genuinely-connected adapters where CC-B is installed (a
+        # dock icon must not claim a channel nobody connected). The base four
+        # are live rails and always present.
+        expected = self.Care._channel_keys()
         self.assertEqual(set(data["active_channels"]), set(expected))
+        for ch in ("zalo", "call", "email", "zns"):
+            self.assertIn(ch, expected)
         for ch in expected:
             self.assertIn(ch, data["channel_counts"])
         self.assertEqual(data["view"], "all")

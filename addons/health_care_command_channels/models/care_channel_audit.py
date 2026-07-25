@@ -31,6 +31,10 @@ KNOWN_EVENTS = {
     'resource_selected', 'webhook_subscribed', 'test_ok', 'test_fail',
     'reconnect', 'disconnect', 'secret_rotated', 'refresh_ok', 'refresh_fail',
     'health_transition', 'health_check',
+    # CC-B (message spine): a webhook we verified but deliberately dropped
+    # because the connection is not in an ingestable state, and a send that
+    # the provider refused.
+    'webhook_ignored', 'send_failed',
 }
 
 

@@ -241,3 +241,64 @@ msgstr "Webhook đang lỗi"
 #. module: health_care_command_channels
 msgid "Provider unavailable"
 msgstr "Nhà cung cấp không phản hồi"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Message is empty."
+msgstr "Tin nhắn đang trống."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "This conversation has no messaging channel."
+msgstr "Hội thoại này không có kênh tin nhắn."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "This conversation is not a %s conversation."
+msgstr "Hội thoại này không thuộc kênh %s."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid ""
+"This channel is not connected right now. Open Care Command → Channels to "
+"reconnect it."
+msgstr ""
+"Kênh này hiện chưa được kết nối. Mở Care Command → Kênh để kết nối lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "The message could not be sent: %s"
+msgstr "Không gửi được tin nhắn: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "unknown error"
+msgstr "lỗi không xác định"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Send failed"
+msgstr "Gửi thất bại"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Delivery failed"
+msgstr "Giao tin nhắn thất bại"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Channel settings must be a mapping."
+msgstr "Cấu hình kênh phải là một tập khoá/giá trị."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid ""
+"Credentials belong in the encrypted columns, not in the channel settings."
+msgstr ""
+"Thông tin bảo mật phải nằm trong cột đã mã hoá, không nằm trong cấu hình "
+"kênh."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Web visitor %s"
+msgstr "Khách trên web %s"
