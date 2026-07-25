@@ -29,6 +29,11 @@ _URL_QS_RE = re.compile(r'(?i)\b(https?://\S+?)\?\S*')
 # scheme name, the secret is the NEXT word), so it needs its own pass.
 _BEARER_RE = re.compile(r'(?i)\b(?:bearer|basic|token)\s+\S+')
 
+# Telegram carries the bot token in the URL PATH (`/bot<id>:<secret>/method`),
+# so neither the query-string rule nor key=value catches it — and a requests
+# network error stringifies the full URL (CC-B review finding).
+_TG_BOT_RE = re.compile(r'(?i)/bot\d+:[\w-]+')
+
 _REDACTED = '<redacted>'
 
 
@@ -45,6 +50,7 @@ def redact(text):
     # Order matters: the key=value rule would otherwise eat
     # "Authorization: Bearer" and leave the actual token behind.
     text = _URL_QS_RE.sub(r'\1?' + _REDACTED, text)
+    text = _TG_BOT_RE.sub('/bot' + _REDACTED, text)
     text = _BEARER_RE.sub(_REDACTED, text)
     text = _KV_RE.sub(_REDACTED, text)
     if len(text) > MAX_LEN:

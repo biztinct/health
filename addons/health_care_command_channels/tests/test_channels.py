@@ -522,3 +522,35 @@ class TestChannelSpine(ChannelSpineCase):
         self.Message._dispatch_meta(
             'whatsapp', self.wa_status_payload(mid='wamid.NEVER-SEEN'))
         self.assertEqual(self.Message.sudo().search_count([]), before)
+
+    # ==================================================================
+    # T95 — a volunteered web-chat phone NEVER anchors (CC-B review fix)
+    # ==================================================================
+    def test_95_webchat_phone_never_anchors(self):
+        """An anonymous visitor typing a patient's phone into the pre-chat
+        form must NOT be merged onto the patient's thread: the merge would
+        route every ops reply on that thread to the visitor. Only a
+        provider-asserted phone (WhatsApp wa_id) may anchor."""
+        self._wc_conn()
+        phone = self.Care._safe_phone('84901234567')
+        patient_thread = self.Care._find_or_create_for(
+            {'phone_normalized': phone},
+            {'channel': 'call', 'inbound': True,
+             'event_at': fields.Datetime.now(), 'set_status': 'needs_reply'})
+
+        started = self.Message._webchat_start(
+            name='Web visitor', phone='84901234567')
+        msg = self.Message._webchat_ingest(started['session'], 'xin chào')
+        self.assertTrue(msg)
+        conv = msg.conversation_id
+
+        self.assertNotEqual(conv, patient_thread,
+                            'volunteered phone must not merge threads')
+        self.assertFalse(conv.phone_normalized,
+                         'volunteered phone must not become an anchor')
+        self.assertFalse(patient_thread.channel_identity_id,
+                         'the patient thread must not adopt the visitor '
+                         'identity')
+        # The phone is still stored on the identity, display-only for ops.
+        identity = msg.identity_id
+        self.assertEqual(identity.peer_phone, '84901234567')

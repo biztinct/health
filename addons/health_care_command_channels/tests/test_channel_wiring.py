@@ -190,10 +190,14 @@ class TestChannelWiring(ChannelSpineCase):
         # still refused: with no app secret there is nothing to verify against.
         self.assertFalse(verify_meta(app, raw, self.meta_signature(raw)))
 
-        # ...and the ingest funnel is never reached, so nothing lands.
+        # ...and the header variants an attacker actually sends are all
+        # refused too (a TransactionCase cannot drive the controller, so the
+        # verifier IS the gate under test — the live-route 403s are browser/
+        # curl evidence).
         self._wa_conn()
-        before = self.Message.sudo().search_count([])
-        self.assertEqual(self.Message.sudo().search_count([]), before)
+        self.assertFalse(verify_meta(app, raw, None))
+        self.assertFalse(verify_meta(app, raw, 'sha256='))
+        self.assertFalse(verify_meta(app, raw, 'sha256=' + '0' * 64))
 
         # Telegram: a path secret nobody registered resolves to no connection,
         # and no connection means no verification.

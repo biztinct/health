@@ -245,7 +245,14 @@ class TestChannelFramework(ChannelHubCase):
                       # JSON provider bodies — quoted keys/values must not
                       # break the match (CC-A review finding #2).
                       '{"access_token": "hunter2", "expires_in": 90000}',
-                      "{'refresh_token': 'xyzzy'}"):
+                      "{'refresh_token': 'xyzzy'}",
+                      # Telegram carries the bot token in the URL PATH, and a
+                      # requests network error stringifies the full URL
+                      # (CC-B review finding).
+                      "HTTPSConnectionPool(host='api.telegram.org'): Max "
+                      'retries exceeded with url: /bot99:xyzzy/sendMessage',
+                      'network error: https://api.telegram.org/bot99:xyzzy'
+                      '/sendMessage timed out'):
             cleaned = redact(probe)
             for leak in ('hunter2', 'xyzzy', 'AKIAWHATEVER', 'deadbeef',
                          'letmein'):

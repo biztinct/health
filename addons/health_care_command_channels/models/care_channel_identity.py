@@ -48,9 +48,10 @@ class CareChannelIdentity(models.Model):
         help='Whatever the provider volunteered — never trusted as identity.')
     peer_phone = fields.Char(
         string='Volunteered phone',
-        help='Web chat pre-chat form only: the phone a visitor typed, used '
-             'once to merge their thread with an existing phone-anchored '
-             'conversation. Never a provider-asserted identity.')
+        help='Web chat pre-chat form only: the phone a visitor typed. '
+             'DISPLAY-ONLY for ops — never an anchor and never trusted as '
+             'identity: an anonymous visitor claiming a patient\'s number '
+             'must not be merged onto the patient\'s thread (CC-B review).')
     display_name = fields.Char(compute='_compute_display_name', store=True)
     last_seen_at = fields.Datetime()
 

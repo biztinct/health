@@ -173,16 +173,16 @@ class CareChannelMessage(models.Model):
                 CareCo = Care.with_company(connection.company_id)
                 anchor = {'channel_identity_id': ident.id}
                 if connection.channel == 'whatsapp':
-                    # WA is the one channel whose external id IS a phone, so it
-                    # can merge into an existing phone-anchored thread.
+                    # WA is the one channel whose external id IS a phone —
+                    # asserted by the PROVIDER — so it may merge into an
+                    # existing phone-anchored thread. A phone merely typed
+                    # into the webchat pre-chat form must NOT anchor: an
+                    # anonymous visitor claiming a patient's number would be
+                    # merged onto the patient's thread and every ops reply
+                    # there would route to the visitor. The volunteered phone
+                    # stays display-only on the identity.
                     anchor['phone_normalized'] = CareCo._safe_phone(
                         event.get('external_id'))
-                elif ident.peer_phone:
-                    # Web chat: a phone typed into the pre-chat form. Same
-                    # merge, but volunteered by the visitor rather than by the
-                    # provider.
-                    anchor['phone_normalized'] = CareCo._safe_phone(
-                        ident.peer_phone)
                 conv = CareCo._find_or_create_for(anchor, {
                     'channel': connection.channel,
                     'inbound': True,
@@ -209,6 +209,12 @@ class CareChannelMessage(models.Model):
         connection.ensure_one()
         result = result or {}
         state = result.get('state') or ('failed' if error else 'sent')
+        # A provider that re-returns an id we already stored (retried send,
+        # idempotent provider) must not fire the dedupe index into the RPC
+        # transaction (§5.3 posture, same as the inbound funnel).
+        existing = self._existing(connection, result.get('external_message_id'))
+        if existing:
+            return existing
         msg = self.sudo().create({
             'connection_id': connection.id,
             'identity_id': identity.id,
