@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_channel_hub" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.channel.hub</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="health_base.res_config_settings_view_form_health"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='health_base']" position="inside">
+                <block title="Channel Connections" name="channel_hub_settings"
+                       groups="base.group_system">
+                    <setting id="channel_hub_redirect_hosts_setting"
+                             string="Additional return hosts"
+                             help="Comma-separated hostnames an OAuth authorization may return to, in addition to this instance's own base URL. Empty by default — an open redirect on a callback is a phishing primitive, so leave it empty unless the Channel Center is embedded elsewhere.">
+                        <field name="channel_hub_allowed_redirect_hosts"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

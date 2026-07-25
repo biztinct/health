@@ -1,0 +1,243 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_care_command_channels
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-25 08:00+0000\n"
+"PO-Revision-Date: 2026-07-25 08:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid ""
+"Channel audit entries are append-only operational evidence and can never be "
+"modified or deleted."
+msgstr ""
+"Nhật ký kênh là bằng chứng vận hành chỉ ghi thêm, không thể sửa hoặc xoá."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid ""
+"An active platform application already exists for this provider. Archive it "
+"before creating another."
+msgstr ""
+"Đã có ứng dụng nền tảng đang hoạt động cho nhà cung cấp này. Hãy lưu trữ nó "
+"trước khi tạo cái mới."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Extra configuration must be valid JSON."
+msgstr "Cấu hình bổ sung phải là JSON hợp lệ."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Extra configuration must be a JSON object."
+msgstr "Cấu hình bổ sung phải là một đối tượng JSON."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Only a platform administrator can set a platform application secret."
+msgstr ""
+"Chỉ quản trị viên nền tảng mới được đặt khoá bí mật của ứng dụng nền tảng."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "The secret cannot be empty."
+msgstr "Khoá bí mật không được để trống."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Secret stored"
+msgstr "Đã lưu khoá bí mật"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid ""
+"The platform application secret is encrypted at rest and will never be "
+"displayed again."
+msgstr ""
+"Khoá bí mật của ứng dụng nền tảng được mã hoá khi lưu trữ và sẽ không bao giờ "
+"hiển thị lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid ""
+"Channel connection fields are maintained by the Channel Center, not by direct "
+"edits (%s). Use the connect, test and disconnect actions."
+msgstr ""
+"Các trường của kết nối kênh do Trung tâm Kênh quản lý, không sửa trực tiếp "
+"(%s). Hãy dùng các thao tác kết nối, kiểm tra và ngắt kết nối."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid ""
+"This channel already has an active connection for this company. Archive it "
+"before creating another."
+msgstr ""
+"Kênh này đã có một kết nối đang hoạt động cho công ty này. Hãy lưu trữ nó "
+"trước khi tạo cái mới."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Unknown channel connection state."
+msgstr "Trạng thái kết nối kênh không hợp lệ."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "A channel connection cannot move from \"%(old)s\" to \"%(new)s\"."
+msgstr "Kết nối kênh không thể chuyển từ \"%(old)s\" sang \"%(new)s\"."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Unknown credential field."
+msgstr "Trường thông tin đăng nhập không hợp lệ."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Only a Care Command manager can set channel credentials."
+msgstr ""
+"Chỉ quản lý Care Command mới được đặt thông tin đăng nhập của kênh."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "This connection belongs to another company."
+msgstr "Kết nối này thuộc về một công ty khác."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "The credential cannot be empty."
+msgstr "Thông tin đăng nhập không được để trống."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Health check failed"
+msgstr "Kiểm tra tình trạng thất bại"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "Channel connection expiring — reconnect needed"
+msgstr "Kết nối kênh sắp hết hạn — cần kết nối lại"
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid ""
+"The %(channel)s connection stops working in %(days)s day(s). Open Care "
+"Command → Channels and reconnect it."
+msgstr ""
+"Kết nối %(channel)s sẽ ngừng hoạt động sau %(days)s ngày. Mở Care Command → "
+"Kênh và kết nối lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "This channel is not connected by signing in with a provider."
+msgstr "Kênh này không kết nối bằng cách đăng nhập với nhà cung cấp."
+
+#. module: health_care_command_channels
+#. odoo-python
+msgid "That return address is not allowed."
+msgstr "Địa chỉ quay lại này không được phép."
+
+#. module: health_care_command_channels
+msgid "Channels (setup)"
+msgstr "Kênh (thiết lập)"
+
+#. module: health_care_command_channels
+msgid "Channel Audit"
+msgstr "Nhật ký kênh"
+
+#. module: health_care_command_channels
+msgid "Platform Applications"
+msgstr "Ứng dụng nền tảng"
+
+#. module: health_care_command_channels
+msgid "Channel Connections"
+msgstr "Kết nối kênh"
+
+#. module: health_care_command_channels
+msgid "Not connected"
+msgstr "Chưa kết nối"
+
+#. module: health_care_command_channels
+msgid "Signing in"
+msgstr "Đang đăng nhập"
+
+#. module: health_care_command_channels
+msgid "Choosing what to connect"
+msgstr "Đang chọn nội dung kết nối"
+
+#. module: health_care_command_channels
+msgid "Setting things up"
+msgstr "Đang thiết lập"
+
+#. module: health_care_command_channels
+msgid "Connected"
+msgstr "Đã kết nối"
+
+#. module: health_care_command_channels
+msgid "Action required"
+msgstr "Cần xử lý"
+
+#. module: health_care_command_channels
+msgid "Expiring soon"
+msgstr "Sắp hết hạn"
+
+#. module: health_care_command_channels
+msgid "Legacy (not migrated)"
+msgstr "Cũ (chưa chuyển đổi)"
+
+#. module: health_care_command_channels
+msgid "Authorization valid"
+msgstr "Uỷ quyền hợp lệ"
+
+#. module: health_care_command_channels
+msgid "Scopes granted"
+msgstr "Đã cấp quyền truy cập"
+
+#. module: health_care_command_channels
+msgid "Resource selected"
+msgstr "Đã chọn tài nguyên"
+
+#. module: health_care_command_channels
+msgid "Webhook configured"
+msgstr "Đã cấu hình webhook"
+
+#. module: health_care_command_channels
+msgid "Webhook verified"
+msgstr "Đã xác minh webhook"
+
+#. module: health_care_command_channels
+msgid "Outbound proven"
+msgstr "Đã chứng minh gửi đi"
+
+#. module: health_care_command_channels
+msgid "Inbound proven"
+msgstr "Đã chứng minh nhận vào"
+
+#. module: health_care_command_channels
+msgid "Token fresh"
+msgstr "Mã truy cập còn hạn"
+
+#. module: health_care_command_channels
+msgid "Provider approvals"
+msgstr "Phê duyệt từ nhà cung cấp"
+
+#. module: health_care_command_channels
+msgid "Permission lost"
+msgstr "Mất quyền truy cập"
+
+#. module: health_care_command_channels
+msgid "Webhook failing"
+msgstr "Webhook đang lỗi"
+
+#. module: health_care_command_channels
+msgid "Provider unavailable"
+msgstr "Nhà cung cấp không phản hồi"

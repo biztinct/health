@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data noupdate="1">
+
+    <!-- Every 30 minutes: run each due connection's cheap health check, apply
+         the failure backoff (30 m → 2 h → 8 h) and sweep token expiry. In
+         CC-A every adapter raises NotImplementedError, so the sweep is a
+         no-op reschedule — the wiring is proven, the providers land later. -->
+    <record id="ir_cron_channel_health" model="ir.cron" forcecreate="True">
+        <field name="name">Channels: connection health</field>
+        <field name="model_id" ref="model_care_channel_connection"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_channel_health()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(minutes=35)).strftime('%Y-%m-%d %H:%M:00')"/>
+    </record>
+
+    <!-- Daily 02:40: authorization sessions are single-use and expire in 10
+         minutes; anything older than a day is pure residue. -->
+    <record id="ir_cron_purge_oauth_sessions" model="ir.cron" forcecreate="True">
+        <field name="name">Channels: purge authorization sessions</field>
+        <field name="model_id" ref="model_care_channel_oauth_session"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_purge_oauth_sessions()</field>
+        <field name="active" eval="True"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 02:40:00')"/>
+    </record>
+
+</data></odoo>

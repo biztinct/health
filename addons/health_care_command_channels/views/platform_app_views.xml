@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Write-only secret entry. Declared FIRST: the form below references this
+         action with %(...)d, which is resolved as the view record is loaded. -->
+    <record id="view_channel_platform_app_secret_wizard_form" model="ir.ui.view">
+        <field name="name">channel.platform.app.secret.wizard.form</field>
+        <field name="model">channel.platform.app.secret.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Set Platform Secret">
+                <group>
+                    <field name="app_id" readonly="1"/>
+                    <field name="secret" password="True" required="1"/>
+                </group>
+                <p class="text-muted">
+                    Pasted once. It is encrypted immediately and can never be read
+                    back from this screen.
+                </p>
+                <footer>
+                    <button string="Store secret" name="action_apply" type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_channel_platform_app_secret_wizard" model="ir.actions.act_window">
+        <field name="name">Set Platform Secret</field>
+        <field name="res_model">channel.platform.app.secret.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Plane 1 — platform operator only (base.group_system). The secret is
+         NOT a field on this form: it is written by a wizard and never read
+         back. `client_secret_enc` appears in no view, by design. -->
+    <record id="view_channel_platform_app_list" model="ir.ui.view">
+        <field name="name">channel.platform.app.list</field>
+        <field name="model">channel.platform.app</field>
+        <field name="arch" type="xml">
+            <list string="Platform Applications">
+                <field name="provider"/>
+                <field name="client_id"/>
+                <field name="has_secret" widget="boolean_toggle" readonly="1"/>
+                <field name="secret_hint"/>
+                <field name="environment_note"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_channel_platform_app_form" model="ir.ui.view">
+        <field name="name">channel.platform.app.form</field>
+        <field name="model">channel.platform.app</field>
+        <field name="arch" type="xml">
+            <form string="Platform Application">
+                <header>
+                    <button name="%(action_channel_platform_app_secret_wizard)d"
+                            string="Set secret" type="action" class="btn-primary"
+                            context="{'default_app_id': id}"
+                            invisible="not id"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Application">
+                            <field name="provider"/>
+                            <field name="client_id"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Secret">
+                            <field name="has_secret"/>
+                            <field name="secret_hint"/>
+                            <div class="text-muted" colspan="2">
+                                The secret is encrypted at rest and is never displayed
+                                again. Use "Set secret" to replace it.
+                            </div>
+                        </group>
+                    </group>
+                    <group string="Extra configuration (non-secret)">
+                        <field name="extra_json" nolabel="1" placeholder='{"es_config_id": "...", "flb_config_id": "..."}'/>
+                    </group>
+                    <group>
+                        <field name="environment_note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_channel_platform_app" model="ir.actions.act_window">
+        <field name="name">Platform Applications</field>
+        <field name="res_model">channel.platform.app</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register a provider application</p>
+            <p>One record per provider per deployment (Meta, Zalo, Google, Microsoft).
+               Tenants never see these credentials — they only sign in with the
+               provider. A channel with no platform application shows as
+               "Not available yet" rather than as an error.</p>
+        </field>
+    </record>
+
+</odoo>

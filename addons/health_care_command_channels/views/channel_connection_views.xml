@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Plane 2 — the tenant's connections. Backend list/form only: the
+         tenant-facing Channel Connection Center (OWL) lands in CC-C.
+         No *_enc field appears anywhere in this file, by design. -->
+    <record id="view_care_channel_connection_list" model="ir.ui.view">
+        <field name="name">care.channel.connection.list</field>
+        <field name="model">care.channel.connection</field>
+        <field name="arch" type="xml">
+            <list string="Channel Connections">
+                <field name="channel"/>
+                <field name="resource_display_name"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'ready'"
+                       decoration-warning="state in ('action_required', 'expiring')"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state in ('not_connected', 'disabled', 'legacy')"/>
+                <field name="health_status" widget="badge"
+                       decoration-success="health_status == 'healthy'"
+                       decoration-warning="health_status in ('expiring', 'action_required')"
+                       decoration-danger="health_status in ('permission_lost', 'webhook_failing', 'provider_down')"/>
+                <field name="webhook_state"/>
+                <field name="has_credentials" widget="boolean_toggle" readonly="1"/>
+                <field name="last_inbound_at"/>
+                <field name="last_outbound_at"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_care_channel_connection_form" model="ir.ui.view">
+        <field name="name">care.channel.connection.form</field>
+        <field name="model">care.channel.connection</field>
+        <field name="arch" type="xml">
+            <form string="Channel Connection">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="channel" readonly="id"/></h1>
+                        <h3><field name="resource_display_name" readonly="1"
+                                   placeholder="Nothing connected yet"/></h3>
+                    </div>
+                    <group>
+                        <group string="Status">
+                            <field name="state"/>
+                            <field name="health_status"/>
+                            <field name="webhook_state"/>
+                            <field name="consecutive_failures"/>
+                            <field name="last_error_redacted"/>
+                            <field name="next_health_check_at"/>
+                        </group>
+                        <group string="Grant">
+                            <field name="has_credentials"/>
+                            <field name="secret_hint"/>
+                            <field name="granted_scopes"/>
+                            <field name="token_expires_at"/>
+                            <field name="resource_external_id"/>
+                            <field name="resource_secondary_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Traffic">
+                            <field name="last_inbound_at"/>
+                            <field name="last_outbound_at"/>
+                            <field name="last_webhook_at"/>
+                        </group>
+                        <group string="Scope">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Readiness" name="readiness">
+                            <field name="readiness_check_ids" readonly="1">
+                                <list>
+                                    <field name="check_key"/>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status == 'pass'"
+                                           decoration-danger="status == 'fail'"
+                                           decoration-warning="status == 'pending'"
+                                           decoration-muted="status == 'n_a'"/>
+                                    <field name="detail_redacted"/>
+                                    <field name="checked_at"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Audit" name="audit">
+                            <field name="audit_ids" readonly="1">
+                                <list>
+                                    <field name="ts"/>
+                                    <field name="event"/>
+                                    <field name="user_id"/>
+                                    <field name="detail_redacted"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_care_channel_connection_search" model="ir.ui.view">
+        <field name="name">care.channel.connection.search</field>
+        <field name="model">care.channel.connection</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="channel"/>
+                <field name="resource_display_name"/>
+                <filter name="ready" string="Connected" domain="[('state', '=', 'ready')]"/>
+                <filter name="needs_action" string="Needs attention"
+                        domain="[('state', 'in', ('action_required', 'expiring', 'error'))]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <filter name="group_channel" string="Channel" context="{'group_by': 'channel'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_care_channel_connection" model="ir.actions.act_window">
+        <field name="name">Channels</field>
+        <field name="res_model">care.channel.connection</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_care_channel_connection_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No channel connected yet</p>
+            <p>A connection records what a provider (Zalo, WhatsApp, Messenger,
+               Telegram, Email, Calls, Web chat) has actually authorised for this
+               company. "Connected" is derived from the readiness checks — never
+               from the existence of this record.</p>
+        </field>
+    </record>
+
+    <!-- Read-only audit surface for managers -->
+    <record id="view_care_channel_audit_list" model="ir.ui.view">
+        <field name="name">care.channel.audit.list</field>
+        <field name="model">care.channel.audit</field>
+        <field name="arch" type="xml">
+            <list string="Channel Audit" create="false" edit="false" delete="false">
+                <field name="ts"/>
+                <field name="channel"/>
+                <field name="connection_id"/>
+                <field name="event"/>
+                <field name="user_id"/>
+                <field name="detail_redacted"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_care_channel_audit" model="ir.actions.act_window">
+        <field name="name">Channel Audit</field>
+        <field name="res_model">care.channel.audit</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

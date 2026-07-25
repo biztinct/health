@@ -1,0 +1,6 @@
+2026-07-25 09:48:33,271 2015651 INFO vietuat odoo.tests.stats: health_care_command_channels: 26 tests 4.94s 4472 queries 
+2026-07-25 09:48:33,271 2015651 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 20 tests when loading database 'vietuat' 
+2026-07-25 09:49:18,991 2015822 INFO vietuat odoo.tests.stats: health_care_command: 38 tests 7.86s 6465 queries 
+2026-07-25 09:49:18,991 2015822 INFO vietuat odoo.tests.stats: health_care_command_ai: 8 tests 1.72s 1522 queries 
+2026-07-25 09:49:18,991 2015822 INFO vietuat odoo.tests.stats: health_care_command_voip: 6 tests 0.51s 397 queries 
+2026-07-25 09:49:18,991 2015822 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 46 tests when loading database 'vietuat' 

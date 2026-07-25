@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Hung under the existing manager-only "Care Command Setup" menu.
+         Nothing else in Care Command changes: the dock, the wall and the
+         composer are untouched this phase. -->
+    <menuitem id="menu_channel_connections"
+              name="Channels (setup)"
+              parent="health_care_command.menu_care_command_config"
+              action="action_care_channel_connection"
+              groups="health_crm.group_health_crm_manager"
+              sequence="30"/>
+
+    <menuitem id="menu_channel_audit"
+              name="Channel Audit"
+              parent="health_care_command.menu_care_command_config"
+              action="action_care_channel_audit"
+              groups="health_crm.group_health_crm_manager"
+              sequence="40"/>
+
+    <menuitem id="menu_channel_platform_app"
+              name="Platform Applications"
+              parent="health_care_command.menu_care_command_config"
+              action="action_channel_platform_app"
+              groups="base.group_system"
+              sequence="50"/>
+
+</odoo>

@@ -1,0 +1,42 @@
+Channel Center CC-A — post-deploy server state (vietuat, 2026-07-25)
+====================================================================
+Read-only shell probes against the live database after the two green runs.
+
+Module
+------
+MODULE [('installed', '19.0.1.0.0')]
+
+Data honesty — the framework ships EMPTY (installing it changes nothing)
+------------------------------------------------------------------------
+ROWS channel.platform.app          0
+ROWS care.channel.connection       0     (active_test=False — ledger §5.27)
+ROWS care.channel.oauth.session    0
+ROWS care.channel.readiness.check  0
+ROWS care.channel.audit            0
+
+Crons registered and scheduled
+------------------------------
+CRONS [('Channels: connection health', True, '2026-07-25 10:15:00'),
+       ('Channels: purge authorization sessions', True, '2026-07-26 02:40:00')]
+
+Menus + group gating (the two new backend surfaces + audit)
+-----------------------------------------------------------
+MENU CRM Center/Care Command Setup/Channels (setup)     | ['CRM Manager']
+MENU CRM Center/Care Command Setup/Channel Audit        | ['CRM Manager']
+MENU CRM Center/Care Command Setup/Platform Applications| ['Role / Administrator']
+  (= base.group_system; ordinary CRM users see none of the three)
+
+Adapter registry — all 8 channel keys declared
+----------------------------------------------
+ADAPTERS ['call', 'email', 'fb', 'telegram', 'webchat', 'whatsapp', 'zalo', 'zns']
+
+Server health after the final restart
+-------------------------------------
+EXIT:0   HTTP:200 on /web/login
+
+Note: `care.conversation.get_workspace_data()` could not be called from the
+odoo-bin shell — it raises the PRE-EXISTING `_ensure_access()` gate
+("Care Command is restricted to CRM staff") because the shell runs as OdooBot,
+which is not a member of the CRM group. That is unchanged Phase-1 behaviour,
+not a regression; the 46-test care_command regression run (0 failed) is the
+proof that the workspace service is untouched.

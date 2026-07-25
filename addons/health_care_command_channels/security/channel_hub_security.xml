@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Company scoping, cloned from health_care_command's global rules.
+         Global (not group-bound) so a direct, non-sudo read from ANY user
+         stays inside the user's allowed companies. Belt and suspenders: every
+         service method in this module already scopes by company, and the
+         credentials themselves are additionally field-gated to
+         base.group_system. Defect Z4 in health_zalo — a config model with no
+         ir.rule at all — is exactly what this prevents. -->
+
+    <record id="care_channel_connection_company_rule" model="ir.rule">
+        <field name="name">Care Channel Connection: multi-company</field>
+        <field name="model_id" ref="model_care_channel_connection"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="care_channel_readiness_check_company_rule" model="ir.rule">
+        <field name="name">Channel Readiness Check: multi-company</field>
+        <field name="model_id" ref="model_care_channel_readiness_check"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('connection_id.company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="care_channel_audit_company_rule" model="ir.rule">
+        <field name="name">Channel Audit: multi-company</field>
+        <field name="model_id" ref="model_care_channel_audit"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="care_channel_oauth_session_company_rule" model="ir.rule">
+        <field name="name">Channel Authorization Session: multi-company</field>
+        <field name="model_id" ref="model_care_channel_oauth_session"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+</odoo>
