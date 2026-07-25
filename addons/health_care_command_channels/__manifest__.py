@@ -97,6 +97,9 @@ server.
         # Center menu both reference health_user_admin.group_health_user_admin,
         # so the dependency is hard from this phase on (CC-A deferred it).
         'health_user_admin',
+        # CC-C: the CMS shell is where these users actually are, and the
+        # backend menuitem alone is unreachable from it (see the sidebar seed).
+        'health_cms_sidebar',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -110,6 +113,7 @@ server.
         'views/channel_center_views.xml',
         'views/menus.xml',
         'data/ir_cron.xml',
+        'data/cms_sidebar_items_channel_center.xml',
     ],
     'assets': {
         'web.assets_backend': [

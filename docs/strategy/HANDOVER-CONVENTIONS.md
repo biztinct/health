@@ -1009,3 +1009,32 @@ a no-op.
     selector are both present. A green test run does not cover this — nothing
     in the test suite compiles the asset bundle. (Hit live in channel-center
     CC-C.)
+
+- **§5.69 — a backend `menuitem` is NOT a reachable surface for the users who
+    live in the /bizapp CMS shell; seed a `cms.sidebar.item` too, or the feature
+    is deep-link-only.** CC-C shipped its Center as an `ir.actions.client` plus
+    a menuitem under `health_care_command.menu_care_command_config` — correct,
+    group-gated, and **visible to the user server-side** (an `ir.ui.menu` search
+    as that user returns it). It was still unreachable: a real login lands in
+    `/bizapp`, `https://…/odoo` redirects straight back into it, and the shell's
+    app switcher lists only its own apps (on vietuat: *Viet UC CMS* and
+    *Workflow Automations*), so the whole "CRM Center → … → Channel Center"
+    path does not exist for that persona. This is §5.41's sibling trap with a
+    price tag: the phase's entire deliverable was reachable only by deep link,
+    which the DoD explicitly rejects as evidence. Fix = a `cms.sidebar.item`
+    record (clone `health_care_command/data/cms_sidebar_items_care_command.xml`;
+    `health_cms_clinical` is the glue-module precedent). Two traps inside the
+    fix, both found by DRIVING the sidebar rather than reading the model:
+    (a) seeding the new item as a **child** of an existing one silently breaks
+    the parent — `cms_sidebar.js:124` makes any item with children a
+    non-navigating expandable group ("leaves navigate"), so Care Command itself
+    stopped opening; make it a SIBLING with the next `sequence`;
+    (b) **deleting a field from an XML data record does not unset it** — an
+    Odoo data update writes only the fields it names, so dropping `parent_id`
+    left the old value in place and the item stayed a hidden child through a
+    full deploy; write `<field name="parent_id" eval="False"/>` explicitly.
+    General rule for every future phase: if the surface is aimed at CMS-shell
+    users, the sidebar seed is part of "done", and the browser evidence must
+    start from the login page, never from `/odoo/action-<id>`. (Hit live in
+    channel-center CC-C browser QA; the telemonitoring and twin menus are still
+    unreached for the same reason.)

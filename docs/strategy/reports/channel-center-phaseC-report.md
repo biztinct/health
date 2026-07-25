@@ -43,6 +43,9 @@ health_care_command_channels/                        (→ 19.0.3.0.0)
 │                                         delegate to the model (one impl)
 ├── views/channel_center_views.xml   NEW  ir.actions.client + menu (seq 10,
 │                                         tenant-admin + crm-manager)
+├── data/cms_sidebar_items_channel_center.xml  NEW  the CMS-shell entry point
+│                                         (D11 — the backend menu alone is
+│                                         unreachable for these users)
 ├── security/ir.model.access.csv     +    5 tenant-admin rows (connection RWC,
 │                                         no unlink; readiness/audit/identity/
 │                                         message read; platform.app NOTHING)
@@ -156,6 +159,7 @@ ledger.
 | **D8** | T101 "simulated inbound update (controller-level with header secret)" | `_dispatch_connection` + a direct `verify_telegram(conn, secret, secret)` / wrong-header assertion | This module ships **zero HttpCase** by design (§5.32, CC-A/CC-B precedent). The header verifier is asserted directly and the ingest path through the funnel; only the ten-line HTTP shell is not re-driven. |
 | **D9** | (addition) | `center_webchat_settings` | Re-opening an already-enabled web chat has to show the tenant their current origins and snippet; the alternative was making the browser reconstruct them. |
 | **D10** | (addition, forced) | the whole `i18n/vi.po` rewritten with `#:` occurrence lines | See §4 — without them the file is inert, so "vi.po covering user-visible strings" could not be satisfied by adding entries alone. |
+| **D11** | menuitem under `menu_care_command_config` only | that menuitem **plus** a `cms.sidebar.item` (new `data/cms_sidebar_items_channel_center.xml`, new `health_cms_sidebar` dependency) | **Forced by the browser pass.** The backend menuitem is correct and completely unreachable from the CMS shell these users live in (§7.1) — the Center could only be opened by deep link, which the DoD explicitly forbids as evidence. Architecture §9 always specified two entries ("Care Command gear → Channels **+** menuitem"); this is the CMS-shell equivalent of the gear. Ungated like the sibling Care Command item, with the server gate rendering as an honest inline message. |
 
 ---
 
@@ -248,9 +252,13 @@ zero real HTTP, zero credentials.
 Full transcript: `docs/strategy/reports/channel-center-phaseC-evidence/server-state.txt`.
 
 - **0 platform apps, 0 connections, 0 identities, 0 messages, 0 readiness
-  checks, 0 sessions** (counted `active_test=False`, §5.27). The 2
-  `care.channel.audit` rows are CC-B's, unchanged — the table is append-only by
-  design.
+  checks, 0 sessions** (counted `active_test=False`, §5.27, re-verified on a
+  fresh cursor after the browser QA — §5.34). **19 `care.channel.audit` rows**:
+  2 from CC-B plus 17 from this QA pass. That is designed behaviour, not
+  residue — the table is append-only with no `su` escape and `connection_id` is
+  `ondelete='set null'` precisely so deleting a connection cannot erase its
+  history (§5.30). No secret, token fragment or provider payload is in any of
+  them.
 - `_channel_keys()` → `('zalo', 'call', 'email', 'zns')`: the four adapter dock
   icons stay dark for every real user, exactly as before this phase.
 - The live catalogue is honest with itself: **Telegram and Web chat are the only
@@ -264,36 +272,75 @@ Full transcript: `docs/strategy/reports/channel-center-phaseC-evidence/server-st
 - No pip installs. No PWA involvement (backend assets only), so no PWA version
   bump was due.
 
-### Ops blocker for Telegram on vietuat
+### Ops item: `web.base.url` — RESOLVED during this phase
 
-`web.base.url` is still **`http://care.biztinct.com`**. The wizard refuses to
-register a webhook on a non-https base by design, so **Telegram self-service
-cannot complete on vietuat until that parameter is fixed** (it is the same
-mixed-content trap CC-B flagged for the embed snippet — fix the parameter, not
-the code). Web chat is unaffected.
+`web.base.url` was `http://care.biztinct.com`, which the Telegram wizard
+refuses by design (it will not register a non-https webhook) and which made the
+embed snippet a mixed-content trap (CC-B's flag). **The user set it to
+`https://care.biztinct.com` on 2026-07-25 23:19**; verified live from a running
+worker — the demo page now emits an https snippet, and the wizard's guard
+passes. No code change was involved, and none was warranted.
 
 ---
 
-## 7. Browser evidence — not yet taken
+## 7. Browser evidence
 
-**Blocked on a login, as the handover instructed.** The Center is a backend
-client action, so the evidence pack needs an authenticated session on
-care.biztinct.com, and no credential is available to me in this session (the
-same position as CC-A and CC-B). I did not create or reset a privileged account
-to take screenshots.
+Full pack (12 screenshots + click-by-click transcript):
+`docs/strategy/reports/channel-center-phaseC-evidence/navigation.md`.
+Driven as `crm` (a Healthcare CRM Manager, not a system administrator) on
+care.biztinct.com. **Console clean on every screen, both tabs, across all
+navigations.**
 
-What is proven server-side instead, in the evidence pack: the action and menu
-exist with the right gating, the tenant-admin ACL is exactly as designed, the
-catalogue payload is honest and carries no secrets, the Vietnamese catalogue
-loads, and **the asset bundle compiles with both Center stylesheets and the
-sibling control present** (§4.2 — the one thing that genuinely required
-verification beyond the tests).
+Proven live, from the real entry point:
 
-Give me a login and I will drive the full pack in one pass: catalogue → web-chat
-enable → embed → demo-page message → card flips to Connected → dock icon lights
-→ reply from the composer, plus the Telegram stepper screens against a local
-stub `api_base_override` (never a real bot), with fixtures cleaned and
-fresh-cursor verified afterwards (§5.34).
+- **Catalogue** — 8 channels, honest chips: four say "Health19 is completing
+  provider approval", Calls says "Available in an upcoming update", ZNS renders
+  inside Zalo's card, and only Telegram and Web chat offer Connect.
+- **Web chat end to end** — enable → snippet (https, `?v=19.0.3.0.0`,
+  `Copied ✓`) → demo page → visitor message → **card flips to Connected on its
+  own poll** → Care Command's WEB CHAT dock icon lights (the other three stay
+  dark) → reply from the composer → arrives in the visitor's widget. Every
+  widget poll in the network panel is a **POST**.
+- **Telegram end to end against a local stub** (`api_base_override` →
+  `127.0.0.1:8899`; no real bot, nothing left the box): BotFather screen →
+  malformed key refused with the field zeroed and **no network call** → real
+  key validated by `getMe`, bot handle shown, token zeroed, ciphertext in the
+  column → `setWebhook` → **the real public webhook route** (wrong header 403,
+  unknown secret 403, correct 200 + ingested) → synthetic test reply → 4/4
+  Connected.
+- **Amendment F1 proven live**: after the proving inbound the connection stayed
+  in `testing` ("Almost there") instead of being demoted out of ingest.
+- **§5.65 proven by accident**: the first test send hit a stub with no
+  `sendMessage`, and the failed message row, the redacted reason and the
+  `send_failed` audit all survived the `UserError` on the independent cursor —
+  with `authorization_valid` correctly left alone (a transient refusal is not a
+  lost grant).
+- **Manage + disconnect** — readiness checklist in plain words, technical
+  details with no secrets, and the confirmation copy verbatim from §9; the
+  credential survives disconnect so reconnect never re-prompts.
+
+### 7.1 A reachability defect the browser pass found — and fixed
+
+The first attempt could not reach the Center **at all** as a real user. Users
+land in the `/bizapp` CMS shell; `/odoo` redirects back into it; and the
+shell's app switcher offers only *Viet UC CMS* and *Workflow Automations* — so
+"CRM Center → Care Command Setup → Channel Center" is unreachable even though
+the menu is correct and visible to that user server-side. That is the ledger
+§5.41 sibling trap, and it meant **the phase's entire deliverable was
+unreachable for the persona it was built for**. Only a deep link worked.
+
+Fixed with `data/cms_sidebar_items_channel_center.xml` — a `cms.sidebar.item`
+directly after Care Command in the CRM section (declared as deviation D11). Two
+further traps were hit and fixed while doing it, both caught by driving the
+sidebar rather than reading the model:
+
+- seeding it as a **child** of Care Command turned Care Command itself into a
+  non-navigating accordion (`cms_sidebar.js:124` — items with children become
+  expandable groups, only leaves navigate). It is a sibling instead, and Care
+  Command was re-verified as still navigating;
+- **removing `parent_id` from the XML did not unset it** — an Odoo data update
+  only writes the fields it names, so the item stayed a hidden child through a
+  whole deploy. It now carries `<field name="parent_id" eval="False"/>`.
 
 ---
 
@@ -308,6 +355,9 @@ fresh-cursor verified afterwards (§5.34).
 - **The repo-wide `.po` repair (§5.67)**: every other module's hand-written
   Vietnamese catalog is inert for the same reason. Out of this phase's sanction;
   worth a dedicated sweep.
-- `web.base.url` → https on vietuat (ops, above).
+- **The CMS-sidebar reachability gap is wider than this phase** (§7.1): the
+  telemonitoring and twin menus have the same problem (ledger §5.41), and every
+  future backend surface aimed at CMS-shell users needs a sidebar item seeded
+  alongside its menuitem. Worth making it a line in the handover template.
 - No media download, no Meta template messages, no bus/websocket, no new public
   routes, no queue, no AI — all still binding non-goals.

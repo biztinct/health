@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Center's REAL entry point.
+
+     The backend menuitem (views/channel_center_views.xml) hangs under
+     "CRM Center → Care Command Setup", which is correct — and, on vietuat,
+     unreachable: users land in the /bizapp CMS shell, whose app switcher
+     offers only its own apps, and /odoo redirects straight back into it. That
+     is the ledger §5.41 sibling trap (the telemonitoring/twin menus have the
+     same problem), and it was found by driving the real login in CC-C browser
+     QA: the Center could only be opened by deep link.
+
+     So the Center also seeds a CMS sidebar item, directly after Care Command
+     in the same CRM section — connecting a channel belongs next to working the
+     conversations it produces.
+
+     A SIBLING, deliberately not a child: cms_sidebar.js:124 treats "items with
+     children as expandable groups; leaves navigate", so parenting this under
+     Care Command would have turned Care Command itself into a non-navigating
+     accordion — a regression on the existing entry. Caught by driving the real
+     sidebar, not by reading the model.
+
+     NO noupdate: the item stays updatable on upgrade (ledger
+     noupdate-seed-cutover). Ungated (no role_ids) like the sibling Care
+     Command item — `center_overview` group-gates the data server-side and the
+     component renders that refusal as an honest inline message rather than an
+     error dialog. -->
+<odoo>
+
+    <record id="item_channel_center" model="cms.sidebar.item">
+        <field name="name">Channel Center</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <!-- Explicitly FALSE, not merely absent: an XML data update only
+             writes the fields it names, so dropping `parent_id` from this
+             record would have left an earlier value in place (it did — the
+             item stayed a hidden child of Care Command through one deploy). -->
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">12</field>
+        <field name="icon">fa fa-plug</field>
+        <field name="action_xmlid">health_care_command_channels.action_channel_center</field>
+        <field name="action_tag">channel_center</field>
+        <field name="match_action_tags">channel_center</field>
+    </record>
+
+</odoo>
