@@ -332,6 +332,11 @@ refined in the database legitimately wins over the file
 `Là Bệnh nhân`). Demanding equality would fail on correct data and push the
 next person to "fix" the database to match a file.
 
+A test that can pass vacuously is worse than no test, so G2b's breadth was
+measured rather than assumed: it finds a qualifying translated field label in
+**40 catalogues across 40 modules** and checks one per module through the ORM
+under `lang='vi_VN'`. It is not resting on a single lucky entry.
+
 **Three of these five failed on their first run**, which is the point of
 writing them:
 1. G1c caught `health_base/i18n/SAMPLE_TRANSLATION.po` — a real second
