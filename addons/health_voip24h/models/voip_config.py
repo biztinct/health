@@ -438,7 +438,7 @@ class VoIP24hConfig(models.Model):
     # Webhook signature
     # ------------------------------------------------------------------
 
-    def _verify_webhook_signature(self, raw_body, signature):
+    def _verify_webhook_signature(self, raw_body, signature, connection=None):
         """Validate the HMAC-SHA256 signature of a webhook payload.
 
         Fails CLOSED: the webhook route is public and runs su, so an
@@ -451,7 +451,7 @@ class VoIP24hConfig(models.Model):
         posture the rest of the framework was told to clone (ledger §5.61).
         """
         self.ensure_one()
-        secret = self._effective_webhook_secret()
+        secret = self._effective_webhook_secret(connection=connection)
         if not secret:
             _logger.warning(
                 'VoIP24h webhook rejected for %s: no webhook secret configured '
@@ -474,17 +474,46 @@ class VoIP24hConfig(models.Model):
     # every not-yet-migrated deployment looks like.
 
     def _channel_connection(self):
-        """This company's Calls connection, as sudo, or None."""
+        """The Calls connection behind this config, as sudo, or None.
+
+        Resolution order matters, and getting it wrong is a real bug rather
+        than a tidiness point. The webhook router resolves by ``account_id``
+        (company-agnostic — the provider addresses us by account, and whose
+        company it is is exactly what we are working out). If this method
+        resolved *only* by company, the verifier and the ingest gate could end
+        up consulting a DIFFERENT connection than the one the event was routed
+        to: verifying against the wrong secret, or gating on the wrong state.
+        So the account id is tried first, and the company match is only the
+        fallback that keeps a freshly migrated legacy row — which may carry no
+        resource id yet — working. (Found in the CC-F self-review.)
+        """
         self.ensure_one()
         if 'care.channel.connection' not in self.env:
             return None
-        return self.env['care.channel.connection'].sudo().search([
+        Conn = self.env['care.channel.connection'].sudo()
+        if self.account_id:
+            exact = Conn._find_for_resource('call', self.account_id)
+            if exact:
+                return exact
+        fallback = Conn.search([
             ('channel', '=', 'call'),
             ('company_id', '=', (self.company_id or self.env.company).id),
         ], order='id desc', limit=1)
+        if (fallback and self.account_id and fallback.resource_external_id
+                and fallback.resource_external_id != self.account_id):
+            # It has claimed a DIFFERENT account. Standing in for this one
+            # would verify an event with someone else's secret, so answer
+            # "no connection" and let the legacy column decide.
+            return Conn.browse()
+        return fallback
 
-    def _effective_webhook_secret(self):
+    def _effective_webhook_secret(self, connection=None):
         """The webhook secret to verify against, from wherever it really lives.
+
+        ``connection`` is passed in by the webhook route so the secret we
+        verify with belongs to the connection the event was actually routed
+        to. Re-deriving it here would be a second, independent answer to the
+        same question, and two answers to one question eventually disagree.
 
         The connection wins when it has one: there the value is encrypted at
         rest (AES-GCM), while this model's own column is plaintext. The legacy
@@ -492,7 +521,7 @@ class VoIP24hConfig(models.Model):
         working — nothing is deleted by this phase.
         """
         self.ensure_one()
-        conn = self._channel_connection()
+        conn = connection if connection is not None else self._channel_connection()
         if conn:
             try:
                 secret = conn._get_secret('provider_secret')
@@ -568,7 +597,7 @@ class VoIP24hConfig(models.Model):
         config.sudo().write(vals)
         return config
 
-    def _note_channel_event(self, event_type=None):
+    def _note_channel_event(self, event_type=None, connection=None):
         """Framework bookkeeping for an ALREADY-VERIFIED call event.
 
         Returns one of:
@@ -586,7 +615,7 @@ class VoIP24hConfig(models.Model):
         be exactly the §5.66 lockout in a new costume.
         """
         self.ensure_one()
-        conn = self._channel_connection()
+        conn = connection if connection is not None else self._channel_connection()
         if not conn:
             return 'ok'
         governed = conn.state not in ('legacy', 'not_connected')

@@ -23,6 +23,15 @@ def sync_call_history(config, from_date=None, to_date=None, create_recordings=Tr
     """
     from .voip24h_api import VoIP24hAPI
 
+    # FAIL CLOSED before the first byte leaves (CC-F self-review). Both
+    # interactive callers already check, but `cron_sync_call_history` does
+    # NOT — it selects on `auto_sync_enabled` + `state='connected'` and calls
+    # straight through, so a config with no credentials would reach
+    # `authenticate()` and POST to an endpoint nobody has ever verified
+    # (docs/strategy/voip24h-contract-capture.md). Checking here covers every
+    # caller instead of every caller remembering to.
+    config._check_credentials()
+
     try:
         api = VoIP24hAPI(config)
 

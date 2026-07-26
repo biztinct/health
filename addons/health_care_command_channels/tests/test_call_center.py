@@ -120,6 +120,66 @@ class TestCallCenter(ChannelSpineCase):
             config._verify_webhook_signature(
                 raw, _sign('a-stale-plaintext-secret', raw)))
 
+    def test_150c_a_connection_for_another_account_never_lends_its_secret(self):
+        """Self-review finding: two resolutions of one question disagree.
+
+        The webhook router resolves the connection by ``account_id``; the
+        config used to resolve it by COMPANY. When a company's Calls
+        connection has claimed account **Y** and an event arrives for account
+        **X** (a config whose account id was edited, or a second PBX), the
+        company match would hand back the Y connection and verify X's event
+        with Y's secret. It must fall through to the legacy column instead.
+        """
+        if not self.has_voip:
+            self.skipTest('health_voip24h is not installed')
+        other = self._conn('call', company=self.company, state='testing',
+                           resource_external_id='SOME-OTHER-ACCOUNT')
+        other.action_set_secret('provider_secret', 'the-other-accounts-secret')
+        config = self.env['voip.config'].sudo().create({
+            'name': 'Second PBX', 'account_id': VOIP_ACCOUNT,
+            'company_id': self.company.id, 'webhook_secret': VOIP_SECRET,
+            'auto_sync_enabled': False})
+
+        self.assertFalse(config._channel_connection(),
+                         'a connection that owns another account is not this '
+                         "config's connection")
+        raw = json.dumps(self._event()).encode()
+        self.assertTrue(
+            config._verify_webhook_signature(raw, _sign(VOIP_SECRET, raw)),
+            'it must fall through to this config\'s own secret')
+        self.assertFalse(
+            config._verify_webhook_signature(
+                raw, _sign('the-other-accounts-secret', raw)),
+            "another account's secret must never validate this event")
+
+    def test_150d_cdr_sync_refuses_without_credentials(self):
+        """The cron is the ONE path into the unverified API with no gate.
+
+        `action_sync_call_history` and the wizard both call
+        `_check_credentials()` first; `cron_sync_call_history` does not — it
+        selects on auto_sync_enabled + state and calls straight through. A
+        Center-created config is kept out of that domain, but the domain is
+        two editable booleans away from letting it in, so the guard belongs in
+        `sync_call_history` where every caller inherits it.
+        """
+        if not self.has_voip:
+            self.skipTest('health_voip24h is not installed')
+        from odoo.addons.health_voip24h.services.cdr_sync import (
+            sync_call_history,
+        )
+        conn = self._configured()
+        config = self.env['voip.config'].sudo().search(
+            [('account_id', '=', VOIP_ACCOUNT)], limit=1)
+        self.assertFalse(config.api_key)
+        raised = False
+        try:
+            sync_call_history(config)
+        except UserError:
+            raised = True
+        self.assertTrue(raised, 'no credentials must fail closed BEFORE the '
+                                'first byte leaves for an endpoint nobody has '
+                                'verified')
+
     # =================================================================
     # T151 — a verified event routes, proves, and is dropped when disabled
     # =================================================================

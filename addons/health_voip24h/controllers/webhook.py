@@ -101,7 +101,13 @@ class VoIP24hWebhookController(http.Controller):
                 if not connection and not config.webhook_enabled:
                     return self._json_response(
                         {'status': 'ignored', 'message': 'Webhook disabled'})
-                verified = config._verify_webhook_signature(raw_body, signature)
+                # Pass the connection we ROUTED to. Letting the config resolve
+                # its own would be a second, independent answer to "which
+                # connection owns this account", and the two can disagree —
+                # verifying against one connection's secret while gating on
+                # another's state.
+                verified = config._verify_webhook_signature(
+                    raw_body, signature, connection=connection)
             else:
                 secret = connection.sudo()._get_secret('provider_secret')
                 verified = verify_voip_signature(secret, raw_body, signature)
@@ -114,7 +120,9 @@ class VoIP24hWebhookController(http.Controller):
 
             # -- verified from here on --------------------------------------
             if config:
-                if config._note_channel_event(event_data.get('event_type')) == 'ignored':
+                if config._note_channel_event(
+                        event_data.get('event_type'),
+                        connection=connection) == 'ignored':
                     return self._json_response({'status': 'ignored'})
                 result = process_call_event(env, event_data)
                 return self._json_response(result)
