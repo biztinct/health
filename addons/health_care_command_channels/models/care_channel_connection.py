@@ -63,13 +63,18 @@ STATES = [
 # that accepts everything is not a state machine.
 TRANSITIONS = {
     'not_connected': {'authorizing', 'legacy', 'disabled'},
+    # CC-C review (MED-1): `disabled` is the tenant's off switch and must be
+    # reachable from every in-flight state — a tenant who registered a webhook
+    # for the wrong bot cannot be forced to finish proving it before turning
+    # it off. `authorizing` from the mid-setup states is the matching restart.
     'authorizing': {'select_resource', 'configuring', 'testing', 'ready',
-                    'action_required', 'error', 'not_connected'},
+                    'action_required', 'error', 'not_connected', 'disabled'},
     'select_resource': {'configuring', 'testing', 'ready', 'action_required',
-                        'error', 'not_connected'},
+                        'error', 'not_connected', 'authorizing', 'disabled'},
     'configuring': {'testing', 'ready', 'action_required', 'error',
-                    'not_connected'},
-    'testing': {'ready', 'action_required', 'error', 'not_connected'},
+                    'not_connected', 'authorizing', 'disabled'},
+    'testing': {'ready', 'action_required', 'error', 'not_connected',
+                'authorizing', 'disabled'},
     'ready': {'expiring', 'action_required', 'error', 'disabled',
               'authorizing', 'not_connected'},
     'action_required': {'authorizing', 'select_resource', 'configuring',

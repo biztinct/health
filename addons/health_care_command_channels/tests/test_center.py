@@ -485,3 +485,86 @@ class TestChannelCenter(ChannelSpineCase):
             self.assertEqual(
                 steps['channel_hub.guide.webchat.enable']['title'],
                 'Bật trò chuyện trên website')
+
+    # ==================================================================
+    # T106 — the off switch works mid-setup (CC-C review MED-1)
+    # ==================================================================
+    def test_106_disconnect_mid_setup(self):
+        # A tenant who registered a webhook for the wrong bot must be able to
+        # turn the channel off WITHOUT first finishing the setup that would
+        # prove it: `testing` is ingestable, and before this fix it only
+        # exited forward (ready/action_required), never to disabled.
+        conn = self._conn('telegram', state='testing')
+        self.assertTrue(conn._may_ingest())
+        self.Conn.center_disconnect(conn.id)
+        conn.invalidate_recordset()
+        self.assertEqual(conn.state, 'disabled')
+        self.assertFalse(conn._may_ingest())
+
+        # ...and from configuring, the other ingestable mid-setup state.
+        other = self._conn('webchat', state='configuring',
+                           resource_external_id='default')
+        self.Conn.center_disconnect(other.id)
+        other.invalidate_recordset()
+        self.assertEqual(other.state, 'disabled')
+
+        # Restart-setup is the matching backward edge: reconnect from
+        # `testing` goes to authorizing instead of raising a raw
+        # transition-refused error at the tenant.
+        third = self._conn('whatsapp', state='testing',
+                           resource_external_id='PHONE_T106')
+        back = self.Conn.center_reconnect(third.id)
+        self.assertEqual(back['state'], 'authorizing')
+
+        # ...and reconnect on a connection already authorizing is a no-op,
+        # not a self-transition crash.
+        again = self.Conn.center_reconnect(third.id)
+        self.assertEqual(again['state'], 'authorizing')
+
+    # ==================================================================
+    # T107 — a tenant admin cannot reach another company's connection by id
+    # ==================================================================
+    def test_107_cross_company_id_passing(self):
+        conn = self._tg_conn()   # company 1, ready
+        intruder = self._mk_user(
+            'chub_admin_b', ['health_user_admin.group_health_user_admin'],
+            company=self.company2)
+        Conn = self.Conn.with_user(intruder)
+
+        # Every conn_id endpoint refuses at the company gate — including the
+        # ones that would write or send.
+        for name, call in (
+            ('disconnect', lambda: Conn.center_disconnect(conn.id)),
+            ('reconnect', lambda: Conn.center_reconnect(conn.id)),
+            ('test', lambda: Conn.center_test(conn.id)),
+            ('register_webhook',
+             lambda: Conn.center_telegram_register_webhook(conn.id)),
+            ('webchat_settings',
+             lambda: Conn.center_webchat_settings(conn.id)),
+        ):
+            with self.assertRaisesRegex(UserError, 'another company',
+                                        msg=name):
+                call()
+
+        # The direct writers are gated the same way (AccessError when the
+        # record rule hides the row first, UserError from the explicit gate).
+        # try/except, not assertRaises: Odoo's savepoint-wrapping override
+        # calls issubclass() on its argument, so a TUPLE of exception classes
+        # is a TypeError there (unlike stock unittest).
+        for name, call in (
+            ('set_settings',
+             lambda: conn.with_user(intruder).set_settings({'greeting': 'x'})),
+            ('action_set_secret',
+             lambda: conn.with_user(intruder).action_set_secret(
+                 'provider_secret', '999:not-a-real-secret-value')),
+        ):
+            raised = False
+            try:
+                call()
+            except (UserError, AccessError):
+                raised = True
+            self.assertTrue(raised, '%s must refuse a cross-company id' % name)
+
+        # Nothing moved, nothing leaked into a state change.
+        conn.invalidate_recordset()
+        self.assertEqual(conn.state, 'ready')

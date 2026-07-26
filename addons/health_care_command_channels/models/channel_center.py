@@ -512,7 +512,8 @@ class CareChannelConnectionCenter(models.Model):
             if not conn._persist_send_failure(None, None, exc):
                 conn._note_send_failure(exc)
                 self.env['care.channel.audit']._log(
-                    'test_fail', connection=conn, detail='setWebhook: %s' % exc)
+                    'test_fail', connection=conn,
+                    detail='setWebhook: %s' % redact(exc))
             raise UserError(_(
                 'Telegram could not be connected: %s',
                 redact(exc) or _('unknown error'))) from exc
@@ -690,7 +691,7 @@ class CareChannelConnectionCenter(models.Model):
                 Message._record_outbound(conn, identity, body, error=exc)
                 conn._note_send_failure(exc, auth_failure=auth)
             self.env['care.channel.audit']._log(
-                'test_fail', connection=conn, detail=str(exc))
+                'test_fail', connection=conn, detail=redact(exc))
             raise UserError(_(
                 'The test message could not be sent: %s',
                 redact(exc) or _('unknown error'))) from exc
@@ -723,7 +724,7 @@ class CareChannelConnectionCenter(models.Model):
     @api.model
     def center_reconnect(self, conn_id):
         conn = self._center_get(conn_id)
-        if conn.state == 'ready':
+        if conn.state in ('ready', 'authorizing'):
             return {'connection_id': conn.id, 'state': conn.state}
         conn._transition('authorizing', reason='tenant reconnect')
         self.env['care.channel.audit']._log('reconnect', connection=conn)

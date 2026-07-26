@@ -1038,3 +1038,16 @@ a no-op.
     start from the login page, never from `/odoo/action-<id>`. (Hit live in
     channel-center CC-C browser QA; the telemonitoring and twin menus are still
     unreached for the same reason.)
+
+- **§5.70 — Odoo's `assertRaises` cannot take a TUPLE of exception classes.**
+    `odoo.tests.common` overrides `assertRaises` to wrap the block in a
+    savepoint, and its implementation calls `issubclass(exception, AccessError)`
+    on the argument directly — so the stock-unittest idiom
+    `assertRaises((UserError, AccessError))` dies with
+    `TypeError: issubclass() arg 1 must be a class` *inside the context
+    manager*, which surfaces as a test ERROR that looks like a framework bug.
+    When a call may legitimately raise either of two classes (e.g. a record
+    rule hiding the row → `AccessError`, vs the explicit method gate →
+    `UserError`), use the plain `try/except (A, B): raised = True` idiom —
+    which is also the §5.8-safe form when the failure path's side effects must
+    survive to be asserted. (Hit in the CC-C review fixes, T107.)
