@@ -491,13 +491,26 @@ class VoIP24hConfig(models.Model):
         if 'care.channel.connection' not in self.env:
             return None
         Conn = self.env['care.channel.connection'].sudo()
+        company_id = (self.company_id or self.env.company).id
+        # Company-scoped on BOTH branches. The company-agnostic lookup belongs
+        # to the webhook router alone, which is answering "who owns this
+        # account across the deployment"; a config asking "which connection is
+        # MINE" that resolved company-agnostically would happily adopt another
+        # tenant's connection and verify with their secret. (Caught by T150f
+        # after the first attempt at this fix left the account-id branch
+        # unscoped — the guard and its test were written together, and the
+        # test is what found the hole.)
         if self.account_id:
-            exact = Conn._find_for_resource('call', self.account_id)
+            exact = Conn.search([
+                ('channel', '=', 'call'),
+                ('company_id', '=', company_id),
+                ('resource_external_id', '=', self.account_id),
+            ], order='id desc', limit=1)
             if exact:
                 return exact
         fallback = Conn.search([
             ('channel', '=', 'call'),
-            ('company_id', '=', (self.company_id or self.env.company).id),
+            ('company_id', '=', company_id),
         ], order='id desc', limit=1)
         if (fallback and self.account_id and fallback.resource_external_id
                 and fallback.resource_external_id != self.account_id):
@@ -547,6 +560,35 @@ class VoIP24hConfig(models.Model):
             return None
         return self.env['care.channel.connection']._find_for_resource(
             'call', account_id) or None
+
+    @api.model
+    def _route_channel_connection(self, config, account_id):
+        """The connection that may speak for ``account_id`` on the webhook.
+
+        Company-agnostic resolution is correct in itself — the provider
+        addresses us by account id, and whose company that is is exactly what
+        we are working out — but it becomes a company-isolation break the
+        moment two tenants can claim the same id. ``call`` is the one channel
+        whose resource id a tenant TYPES, so that was reachable: typing a
+        neighbour's account name made this lookup return YOUR connection for
+        THEIR event, which skipped their legacy ``webhook_enabled`` off switch
+        and pointed verification at the wrong secret.
+
+        The Center now refuses the claim at source, so a collision cannot be
+        created any more. This is the guard for databases where one already
+        exists: when the resolved connection and the config that owns the
+        account disagree about the company, the connection does not speak —
+        the legacy config keeps its own switch and its own secret.
+        """
+        conn = self._resolve_channel_connection(account_id)
+        if config and conn and conn.company_id != config.company_id:
+            _logger.warning(
+                'VoIP24h webhook: connection %s (company %s) and config %s '
+                '(company %s) disagree about who owns this account; the '
+                'connection does not speak for it',
+                conn.id, conn.company_id.id, config.id, config.company_id.id)
+            return None
+        return conn
 
     @api.model
     def _sync_from_connection(self, connection, account_id=None):

@@ -1308,6 +1308,34 @@ class CareChannelConnectionCenter(models.Model):
         if not account_id or len(account_id) > 128:
             raise UserError(_(
                 'Enter the account name your phone system provider gave you.'))
+        # ONE tenant per account id, deployment-wide (review CRITICAL).
+        #
+        # `call` is the only channel whose resource id a TENANT TYPES — every
+        # other one is issued by the provider (getMe, getoa, Graph). The
+        # webhook router has to resolve company-agnostically, because the
+        # provider addresses us by account and whose company it is is exactly
+        # what we are working out. Those two facts together mean an unchecked
+        # claim lets one company reach into another's routing: typing a
+        # neighbour's account id made `connection` truthy at the route, which
+        # SKIPPED that neighbour's `webhook_enabled` off switch and pointed
+        # verification at the wrong secret. Refusing the claim is what closes
+        # it — the route cannot disambiguate after the fact.
+        #
+        # Deliberately not a DB index: `webchat` uses the literal 'default'
+        # for every company, so a unique (channel, resource_external_id)
+        # constraint would refuse the second tenant's web chat.
+        clash = self.sudo().with_context(active_test=False).search([
+            ('channel', '=', 'call'),
+            ('resource_external_id', '=', account_id),
+            ('id', '!=', conn.id),
+        ], limit=1)
+        if clash:
+            # Says nothing about WHO holds it — the tenant needs to know the
+            # name is taken, not who took it.
+            raise UserError(_(
+                'That account name is already connected to Health19. Check '
+                'the name with your phone system provider, and contact '
+                'support if you believe it is yours.'))
         secret = (webhook_secret or '').strip()
         if secret:
             conn.action_set_secret('provider_secret', secret)

@@ -176,12 +176,49 @@ answer. T150c.
 unverified VoIP24h API had no credential gate.** See the correction in §3.2.
 Fixed by moving `_check_credentials()` into `sync_call_history`. T150d.
 
-An independent review subagent was launched three times; the first two died on
-API-capacity errors (529) and the third was still running when this report was
-written. Its findings, if any, will be applied on top. **That is a real gap in
-this phase's assurance and is stated rather than glossed:** the review that
-found F1 and F2 was the author's own, which is exactly the arrangement the
-methodology exists to avoid.
+**F3 (CRITICAL, found by the independent reviewer — and it is the one that
+mattered).** F1 was the right scent but I traced only the single-company case.
+The reviewer traced the cross-company one: `call` is the **only** channel whose
+resource id a tenant *types* (every other is provider-issued — `getMe`,
+`getoa`, Graph), and nothing stopped two companies typing the same one. The
+webhook router must resolve company-agnostically, so company B claiming
+company A's account name made `connection` truthy at the route for A's
+events — which **skipped A's legacy `webhook_enabled = False` off switch
+entirely** and pointed verification at the wrong secret. A tenant who had
+explicitly turned their phone channel off kept ingesting, because a stranger
+typed their account name into a different tenant's setup form.
+
+Fixed at the source, because the route cannot disambiguate afterwards:
+`center_call_configure` now **refuses** an account id another `call`
+connection already claims (worded so it never reveals who holds it), and
+`_route_channel_connection` refuses to let a connection from another company
+speak for a config on databases where a collision already exists. Deliberately
+a runtime guard and not a unique index: `webchat` uses the literal `'default'`
+for every company, so a `(channel, resource_external_id)` constraint would
+refuse the second tenant's web chat. T150e/T150f.
+
+The reviewer also found that **the controller's own logic had zero test
+coverage** — the suite tests the model methods the route calls, never the
+route. The routing rule therefore moved onto the model
+(`_route_channel_connection`) so a TransactionCase can stage the collision it
+exists to refuse. T150f then immediately earned its keep: it **failed** on the
+first run and caught that my own fix had left the account-id lookup
+company-agnostic. The guard and its test were written together, and the test
+is what found the hole in the guard.
+
+Reviewer findings NOT actioned, with reasons: the kill-switch analysis (Q2) and
+secret-leakage analysis (Q3) came back clean, with T147 confirmed as genuinely
+reaching `ready`. One LOW stands: `EmailAdapter.send_test` re-raises the raw
+SMTP exception text, and redaction is enforced at its single caller rather than
+at the source. Left as-is deliberately — the caller classifies on markers
+(`401`, `invalid_grant`) that redacting at source could remove — and covered by
+T145b. `EmailAdapter.revoke_authorization` is dead code (no caller); left in
+place as the counterpart to a future explicit "disconnect and forget me".
+
+Three attempts were needed to get an independent review at all: the first two
+subagents died on API-capacity errors (529). It was worth the wait — the
+author's own pass found the symptom and the independent one found the actual
+severity.
 
 ## 8. Blocked on a human
 

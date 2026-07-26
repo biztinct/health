@@ -181,6 +181,73 @@ class TestCallCenter(ChannelSpineCase):
                                 'verified')
 
     # =================================================================
+    # T150e/f — the cross-company account-id collision (review CRITICAL)
+    # =================================================================
+    def test_150e_a_second_company_cannot_claim_an_account_id(self):
+        """`call` is the one channel whose resource id a TENANT TYPES.
+
+        The webhook router must resolve company-agnostically (the provider
+        addresses us by account id), so an unchecked claim reaches across
+        tenants: typing a neighbour's account name made the route resolve
+        THEIR event to YOUR connection, which skipped their legacy
+        `webhook_enabled` off switch and pointed verification at the wrong
+        secret. The claim is refused at source, because the route cannot
+        disambiguate afterwards.
+        """
+        first = self._configured()
+        self.assertEqual(first.resource_external_id, VOIP_ACCOUNT)
+
+        # Another company, its own admin, its own Center — same typed name.
+        other = self._conn('call', company=self.company2, state='authorizing')
+        raised = False
+        try:
+            self.Conn.center_call_configure(other.id, VOIP_ACCOUNT, 'their-secret')
+        except UserError as exc:
+            raised = True
+            self.assertIn('already connected', str(exc))
+            # It must not say WHO holds it.
+            self.assertNotIn(self.company.name, str(exc))
+        self.assertTrue(raised, 'a duplicate account id must be refused')
+        other.invalidate_recordset()
+        self.assertFalse(other.resource_external_id,
+                         'a refused claim must store nothing')
+        self.assertFalse(other.sudo().provider_secret_enc,
+                         'and must not store the secret either')
+
+        # Re-configuring your OWN connection with the same id still works.
+        again = self.Conn.center_call_configure(first.id, VOIP_ACCOUNT, VOIP_SECRET)
+        self.assertEqual(again['account_id'], VOIP_ACCOUNT)
+
+    def test_150f_a_foreign_connection_never_speaks_for_a_config(self):
+        """The guard for databases where a collision already exists."""
+        if not self.has_voip:
+            self.skipTest('health_voip24h is not installed')
+        # Company 2 holds the account id; company 1 owns the legacy config.
+        stranger = self._conn('call', company=self.company2, state='testing',
+                              resource_external_id=VOIP_ACCOUNT)
+        stranger.action_set_secret('provider_secret', 'the-strangers-secret')
+        config = self.env['voip.config'].sudo().create({
+            'name': 'Company 1 PBX', 'account_id': VOIP_ACCOUNT,
+            'company_id': self.company.id, 'webhook_secret': VOIP_SECRET,
+            'webhook_enabled': False, 'auto_sync_enabled': False})
+
+        Cfg = self.env['voip.config']
+        self.assertTrue(Cfg._resolve_channel_connection(VOIP_ACCOUNT),
+                        'fixture guard: the stranger IS resolvable by id')
+        self.assertIsNone(
+            Cfg._route_channel_connection(config, VOIP_ACCOUNT),
+            "a connection from another company must not speak for this config "
+            "— that is what skipped the owner's webhook_enabled switch")
+
+        # And the owner's own secret is what verifies, not the stranger's.
+        raw = json.dumps(self._event()).encode()
+        self.assertTrue(
+            config._verify_webhook_signature(raw, _sign(VOIP_SECRET, raw)))
+        self.assertFalse(
+            config._verify_webhook_signature(
+                raw, _sign('the-strangers-secret', raw)))
+
+    # =================================================================
     # T151 — a verified event routes, proves, and is dropped when disabled
     # =================================================================
     def test_151_a_verified_event_proves_the_channel(self):

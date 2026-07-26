@@ -79,7 +79,13 @@ class VoIP24hWebhookController(http.Controller):
             ], limit=1)
             # A tenant who set Calls up in the Channel Center is routable even
             # before a legacy config exists.
-            connection = env['voip.config']._resolve_channel_connection(account_id)
+            # The routing rule lives on the model, not here, so a
+            # TransactionCase can stage the cross-company collision it exists
+            # to refuse — this route is deliberately not covered by an
+            # HttpCase (§5.32), so untestable logic in the controller is
+            # logic nothing checks.
+            connection = env['voip.config']._route_channel_connection(
+                config, account_id)
 
             if not config and not connection:
                 # Do not leak which accounts exist — generic answer, 200 so
