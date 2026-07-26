@@ -313,6 +313,24 @@
                                                 <field name="assignment_count" invisible="1"/>
                                             </group>
                                         </div>
+
+                                        <div class="vu-detail-card">
+                                            <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                            <div class="vu-card__title">
+                                                <span class="vu-section__icon" data-icon="credit-card"/>
+                                                <span>Additional Charges</span>
+                                            </div>
+                                            <group col="2">
+                                                <field name="currency_id" invisible="1"/>
+                                                <field name="base_price"/>
+                                                <field name="travel_charge"/>
+                                                <field name="urgency_charge"/>
+                                                <field name="equipment_charge"/>
+                                                <field name="after_hours_charge"/>
+                                                <field name="parking_charge"/>
+                                                <field name="total_price" readonly="1" class="vu-field--computed"/>
+                                            </group>
+                                        </div>
                                     </div>
                                 </page>
 
@@ -1196,6 +1214,15 @@
                                     <field name="commission_percentage"/>
                                     <field name="commission_duration"/>
                                     <field name="commission_amount" readonly="1"/>
+                                </group>
+                                <group string="Additional Charges">
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="travel_charge"/>
+                                    <field name="urgency_charge"/>
+                                    <field name="equipment_charge"/>
+                                    <field name="after_hours_charge"/>
+                                    <field name="parking_charge"/>
+                                    <field name="total_price" readonly="1"/>
                                 </group>
                             </div>
                         </div>

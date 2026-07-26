@@ -531,8 +531,11 @@ class ResPartner(models.Model):
         # Check if any address field was updated
         address_changed = any(field in vals for field in address_fields)
 
-        # Pre-geocode BEFORE the main write so coordinates are included in the response
-        if address_changed:
+        # Pre-geocode BEFORE the main write so coordinates are included in the response.
+        # Bulk imports pass context `skip_auto_geocode=True` to avoid a synchronous
+        # geocode API call per record (the create path honors the same flag);
+        # coordinates are backfilled separately afterwards via backfill_geo().
+        if address_changed and not self.env.context.get('skip_auto_geocode'):
             # Process each partner individually with its own vals dict copy
             for partner in self:
                 # Only auto-geocode if patient and has sufficient address info

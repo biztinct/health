@@ -1243,16 +1243,18 @@ class HealthFieldServiceOrderUnified(models.Model):
     urgency_charge = fields.Monetary('Urgency Charge', help='Additional charge for urgent services')
     equipment_charge = fields.Monetary('Equipment Charge', help='Charge for special equipment')
     after_hours_charge = fields.Monetary('After Hours Charge', help='Charge for after-hours service')
-    
-    @api.depends('base_price', 'travel_charge', 'urgency_charge', 'equipment_charge', 'after_hours_charge')
+    parking_charge = fields.Monetary('Parking Charge', help='Parking/access fee (gửi xe)')
+
+    @api.depends('base_price', 'travel_charge', 'urgency_charge', 'equipment_charge', 'after_hours_charge', 'parking_charge')
     def _compute_total_price(self):
         for record in self:
             record.total_price = (
-                record.base_price + 
-                record.travel_charge + 
-                record.urgency_charge + 
-                record.equipment_charge + 
-                record.after_hours_charge
+                record.base_price +
+                record.travel_charge +
+                record.urgency_charge +
+                record.equipment_charge +
+                record.after_hours_charge +
+                record.parking_charge
             )
     
     # Payment tracking

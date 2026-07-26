@@ -355,7 +355,19 @@
                                                     string="👤 Use Existing Contact"/>
                                         </div>
                                     </div>
-                                    
+
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>Personal Information</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="gender"/>
+                                            <field name="birth_date"/>
+                                            <field name="national_id" string="National ID (CCCD/CMND)"/>
+                                        </group>
+                                    </div>
+
                                     <div class="vu-card">
                                         <div class="vu-card__title">
                                             <span class="vu-section__icon" data-icon="map-pin"/>

@@ -1,0 +1,304 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2395" height="1004" viewBox="0 0 2395 1004" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="2395" height="1004" fill="#F6F8F9"/>
+<defs>
+<marker id="arw-people" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#2F5496"/></marker>
+<marker id="dot-people" markerWidth="9" markerHeight="9" refX="4" refY="4"><circle cx="4" cy="4" r="3" fill="none" stroke="#2F5496" stroke-width="1.4"/></marker>
+<marker id="arw-booking" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#0E7C7B"/></marker>
+<marker id="dot-booking" markerWidth="9" markerHeight="9" refX="4" refY="4"><circle cx="4" cy="4" r="3" fill="none" stroke="#0E7C7B" stroke-width="1.4"/></marker>
+<marker id="arw-sales" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#7D3C98"/></marker>
+<marker id="dot-sales" markerWidth="9" markerHeight="9" refX="4" refY="4"><circle cx="4" cy="4" r="3" fill="none" stroke="#7D3C98" stroke-width="1.4"/></marker>
+<marker id="arw-product" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#1E6091"/></marker>
+<marker id="dot-product" markerWidth="9" markerHeight="9" refX="4" refY="4"><circle cx="4" cy="4" r="3" fill="none" stroke="#1E6091" stroke-width="1.4"/></marker>
+<marker id="arw-dim" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#5A7D34"/></marker>
+<marker id="dot-dim" markerWidth="9" markerHeight="9" refX="4" refY="4"><circle cx="4" cy="4" r="3" fill="none" stroke="#5A7D34" stroke-width="1.4"/></marker>
+<marker id="arw-lookup" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#9C7F00"/></marker>
+<marker id="dot-lookup" markerWidth="9" markerHeight="9" refX="4" refY="4"><circle cx="4" cy="4" r="3" fill="none" stroke="#9C7F00" stroke-width="1.4"/></marker>
+<marker id="arw-pricing" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#B4530F"/></marker>
+<marker id="dot-pricing" markerWidth="9" markerHeight="9" refX="4" refY="4"><circle cx="4" cy="4" r="3" fill="none" stroke="#B4530F" stroke-width="1.4"/></marker>
+</defs>
+<text x="60" y="56" font-size="30" font-weight="700" fill="#1B2A33">Viet Uc Care — Migration Data Model (ERD)</text>
+<text x="60" y="84" font-size="15" fill="#5A6A72">Migrated business entities and the major reference &amp; pricing tables they connect to · CareJioX. Large tables show key / form-relevant fields only.</text>
+<rect x="60" y="93" width="15" height="15" rx="3" fill="#1F3864"/>
+<text x="81" y="105" font-size="12.5" fill="#39474F">People (migrated)</text>
+<rect x="222.4" y="93" width="15" height="15" rx="3" fill="#0E7C7B"/>
+<text x="243.4" y="105" font-size="12.5" fill="#39474F">Booking core (migrated)</text>
+<rect x="428.0" y="93" width="15" height="15" rx="3" fill="#6C3483"/>
+<text x="449.0" y="105" font-size="12.5" fill="#39474F">Quotes</text>
+<rect x="511.2" y="93" width="15" height="15" rx="3" fill="#1E6091"/>
+<text x="532.2" y="105" font-size="12.5" fill="#39474F">Products / Catalogue</text>
+<rect x="695.2" y="93" width="15" height="15" rx="3" fill="#4B6A2F"/>
+<text x="716.2" y="105" font-size="12.5" fill="#39474F">Dimensions</text>
+<rect x="807.2" y="93" width="15" height="15" rx="3" fill="#7A6300"/>
+<text x="828.2" y="105" font-size="12.5" fill="#39474F">Lookups</text>
+<rect x="897.6" y="93" width="15" height="15" rx="3" fill="#A0410D"/>
+<text x="918.6" y="105" font-size="12.5" fill="#39474F">Pricing rules</text>
+<text x="1041.2" y="105" font-size="12" fill="#7A8890">◆ key   ● foreign key →</text>
+<path d="M310,376 C400,376 400,487 310,487" fill="none" stroke="#2F5496" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-people)" marker-start="url(#dot-people)"/>
+<path d="M310,394 C380,394 395,818 465,818" fill="none" stroke="#2F5496" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-people)" marker-start="url(#dot-people)"/>
+<path d="M310,412 C380,412 395,210 465,210" fill="none" stroke="#2F5496" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-people)" marker-start="url(#dot-people)"/>
+<path d="M310,708 C380,708 395,210 465,210" fill="none" stroke="#2F5496" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-people)" marker-start="url(#dot-people)"/>
+<path d="M310,726 C380,726 395,344 465,344" fill="none" stroke="#2F5496" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-people)" marker-start="url(#dot-people)"/>
+<path d="M715,439 C805,439 805,210 715,210" fill="none" stroke="#5A7D34" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-dim)" marker-start="url(#dot-dim)"/>
+<path d="M870,259 C800,259 380,487 310,487" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M870,277 C800,277 785,344 715,344" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M870,295 C800,295 785,514 715,514" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M870,421 C800,421 785,684 715,684" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M870,403 C800,403 380,801 310,801" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M1120,493 C1190,493 1205,348 1275,348" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M1120,609 C1210,609 1210,200 1120,200" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M870,627 C800,627 380,801 310,801" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M1120,797 C1210,797 1210,200 1120,200" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M870,779 C800,779 380,487 310,487" fill="none" stroke="#0E7C7B" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-booking)" marker-start="url(#dot-booking)"/>
+<path d="M1275,425 C1205,425 380,487 310,487" fill="none" stroke="#7D3C98" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-sales)" marker-start="url(#dot-sales)"/>
+<path d="M1275,443 C1205,443 1190,200 1120,200" fill="none" stroke="#7D3C98" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-sales)" marker-start="url(#dot-sales)"/>
+<path d="M1275,461 C1205,461 785,210 715,210" fill="none" stroke="#7D3C98" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-sales)" marker-start="url(#dot-sales)"/>
+<path d="M1525,613 C1615,613 1615,348 1525,348" fill="none" stroke="#7D3C98" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-sales)" marker-start="url(#dot-sales)"/>
+<path d="M1525,631 C1595,631 1610,384 1680,384" fill="none" stroke="#7D3C98" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-sales)" marker-start="url(#dot-sales)"/>
+<path d="M1930,515 C2020,515 2020,590 1930,590" fill="none" stroke="#1E6091" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-product)" marker-start="url(#dot-product)"/>
+<path d="M2335,533 C2425,533 2425,644 2335,644" fill="none" stroke="#B4530F" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-pricing)" marker-start="url(#dot-pricing)"/>
+<path d="M2085,551 C2015,551 2000,590 1930,590" fill="none" stroke="#B4530F" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-pricing)" marker-start="url(#dot-pricing)"/>
+<path d="M2085,569 C2015,569 2000,384 1930,384" fill="none" stroke="#B4530F" stroke-width="1.6" opacity="0.5" marker-end="url(#arw-pricing)" marker-start="url(#dot-pricing)"/>
+<rect x="63" y="154.0" width="250" height="280" rx="9" fill="#000" opacity="0.06"/>
+<rect x="60" y="150.0" width="250" height="280" rx="9" fill="#FFFFFF" stroke="#B4C6E7" stroke-width="1.4"/>
+<path d="M60,159.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#1F3864"/>
+<text x="73" y="170.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Contact / Lead</text>
+<text x="73" y="187.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">crm.lead</text>
+<text x="73" y="209.0" font-size="11" font-family="Consolas,monospace" fill="#B4530F" font-weight="700">◆ legacy_contact_guid</text>
+<rect x="61" y="215.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="227.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<text x="73" y="245.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">phone</text>
+<rect x="61" y="251.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="263.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">gender</text>
+<text x="73" y="281.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">birth_date</text>
+<rect x="61" y="287.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="299.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">national_id</text>
+<text x="73" y="317.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">contact_status</text>
+<rect x="61" y="323.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="335.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">healthcare_lead_source</text>
+<text x="73" y="353.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">service_interest</text>
+<rect x="61" y="359.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="371.0" font-size="11" font-family="Consolas,monospace" fill="#2F5496" font-weight="600">● partner_id</text>
+<text x="73" y="389.0" font-size="11" font-family="Consolas,monospace" fill="#2F5496" font-weight="600">● lost_reason_id</text>
+<rect x="61" y="395.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="407.0" font-size="11" font-family="Consolas,monospace" fill="#2F5496" font-weight="600">● catchment_province_id</text>
+<rect x="63" y="468.0" width="250" height="280" rx="9" fill="#000" opacity="0.06"/>
+<rect x="60" y="464.0" width="250" height="280" rx="9" fill="#FFFFFF" stroke="#B4C6E7" stroke-width="1.4"/>
+<path d="M60,473.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#1F3864"/>
+<text x="73" y="484.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Client / Patient</text>
+<text x="73" y="501.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">res.partner</text>
+<text x="73" y="523.0" font-size="11" font-family="Consolas,monospace" fill="#B4530F" font-weight="700">◆ legacy_client_code</text>
+<rect x="61" y="529.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="541.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<text x="73" y="559.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">mobile</text>
+<rect x="61" y="565.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="577.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">gender</text>
+<text x="73" y="595.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">birth_date</text>
+<rect x="61" y="601.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="613.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">national_id</text>
+<text x="73" y="631.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">profession</text>
+<rect x="61" y="637.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="649.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">ethnicity</text>
+<text x="73" y="667.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">street</text>
+<rect x="61" y="673.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="685.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">source_type</text>
+<text x="73" y="703.0" font-size="11" font-family="Consolas,monospace" fill="#2F5496" font-weight="600">● catchment_province_id</text>
+<rect x="61" y="709.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="721.0" font-size="11" font-family="Consolas,monospace" fill="#2F5496" font-weight="600">● primary_facility_id</text>
+<rect x="63" y="782.0" width="250" height="136" rx="9" fill="#000" opacity="0.06"/>
+<rect x="60" y="778.0" width="250" height="136" rx="9" fill="#FFFFFF" stroke="#B4C6E7" stroke-width="1.4"/>
+<path d="M60,787.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#1F3864"/>
+<text x="73" y="798.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Staff</text>
+<text x="73" y="815.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">hr.employee</text>
+<text x="73" y="837.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="61" y="843.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="855.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">healthcare_role</text>
+<text x="73" y="873.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">employment_status</text>
+<rect x="61" y="879.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="73" y="891.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">is_healthcare_staff</text>
+<rect x="468" y="191.0" width="250" height="100" rx="9" fill="#000" opacity="0.06"/>
+<rect x="465" y="187.0" width="250" height="100" rx="9" fill="#FFFFFF" stroke="#C6D9AE" stroke-width="1.4"/>
+<path d="M465,196.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#4B6A2F"/>
+<text x="478" y="207.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Province</text>
+<text x="478" y="224.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">health.catchment.province</text>
+<text x="478" y="246.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="466" y="252.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="478" y="264.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">code</text>
+<rect x="468" y="325.0" width="250" height="136" rx="9" fill="#000" opacity="0.06"/>
+<rect x="465" y="321.0" width="250" height="136" rx="9" fill="#FFFFFF" stroke="#C6D9AE" stroke-width="1.4"/>
+<path d="M465,330.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#4B6A2F"/>
+<text x="478" y="341.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Facility</text>
+<text x="478" y="358.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">health.facility</text>
+<text x="478" y="380.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="466" y="386.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="478" y="398.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">code</text>
+<text x="478" y="416.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">facility_type</text>
+<rect x="466" y="422.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="478" y="434.0" font-size="11" font-family="Consolas,monospace" fill="#5A7D34" font-weight="600">● catchment_province_id</text>
+<rect x="468" y="495.0" width="250" height="136" rx="9" fill="#000" opacity="0.06"/>
+<rect x="465" y="491.0" width="250" height="136" rx="9" fill="#FFFFFF" stroke="#C6D9AE" stroke-width="1.4"/>
+<path d="M465,500.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#4B6A2F"/>
+<text x="478" y="511.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Service Type</text>
+<text x="478" y="528.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">health.service.type</text>
+<text x="478" y="550.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="466" y="556.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="478" y="568.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">code</text>
+<text x="478" y="586.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">category</text>
+<rect x="466" y="592.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="478" y="604.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">base_price</text>
+<rect x="468" y="665.0" width="250" height="100" rx="9" fill="#000" opacity="0.06"/>
+<rect x="465" y="661.0" width="250" height="100" rx="9" fill="#FFFFFF" stroke="#E6D48A" stroke-width="1.4"/>
+<path d="M465,670.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#7A6300"/>
+<text x="478" y="681.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Cancellation Reason</text>
+<text x="478" y="698.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">health.booking.cancellation.reason</text>
+<text x="478" y="720.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="466" y="726.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="478" y="738.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">reason_type</text>
+<rect x="468" y="799.0" width="250" height="82" rx="9" fill="#000" opacity="0.06"/>
+<rect x="465" y="795.0" width="250" height="82" rx="9" fill="#FFFFFF" stroke="#E6D48A" stroke-width="1.4"/>
+<path d="M465,804.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#7A6300"/>
+<text x="478" y="815.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Lost / Reject Reason</text>
+<text x="478" y="832.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">crm.lost.reason</text>
+<text x="478" y="854.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="873" y="181.0" width="250" height="334" rx="9" fill="#000" opacity="0.06"/>
+<rect x="870" y="177.0" width="250" height="334" rx="9" fill="#FFFFFF" stroke="#9AD0CE" stroke-width="1.4"/>
+<path d="M870,186.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#0E7C7B"/>
+<text x="883" y="197.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Booking  (Field Service Order)</text>
+<text x="883" y="214.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">health.fieldservice.order</text>
+<text x="883" y="236.0" font-size="11" font-family="Consolas,monospace" fill="#B4530F" font-weight="700">◆ legacy_booking_ref</text>
+<rect x="871" y="242.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="254.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● patient_id</text>
+<text x="883" y="272.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● facility_id</text>
+<rect x="871" y="278.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="290.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● appointment_type_id</text>
+<text x="883" y="308.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">scheduled_datetime</text>
+<rect x="871" y="314.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="326.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">scheduled_duration</text>
+<text x="883" y="344.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">service_location</text>
+<rect x="871" y="350.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="362.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">state</text>
+<text x="883" y="380.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">stage_id</text>
+<rect x="871" y="386.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="398.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● assigned_staff_ids</text>
+<text x="883" y="416.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● cancellation_reason_id</text>
+<rect x="871" y="422.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="434.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">travel_charge</text>
+<text x="883" y="452.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">parking_charge</text>
+<rect x="871" y="458.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="470.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">total_price</text>
+<text x="883" y="488.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● sale_order_id</text>
+<rect x="873" y="549.0" width="250" height="136" rx="9" fill="#000" opacity="0.06"/>
+<rect x="870" y="545.0" width="250" height="136" rx="9" fill="#FFFFFF" stroke="#9AD0CE" stroke-width="1.4"/>
+<path d="M870,554.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#0E7C7B"/>
+<text x="883" y="565.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Staff Assignment</text>
+<text x="883" y="582.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">health.staff.assignment</text>
+<text x="883" y="604.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● fso_id</text>
+<rect x="871" y="610.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="622.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● staff_id</text>
+<text x="883" y="640.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">assignment_role</text>
+<rect x="871" y="646.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="658.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">state</text>
+<rect x="873" y="719.0" width="250" height="172" rx="9" fill="#000" opacity="0.06"/>
+<rect x="870" y="715.0" width="250" height="172" rx="9" fill="#FFFFFF" stroke="#9AD0CE" stroke-width="1.4"/>
+<path d="M870,724.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#0E7C7B"/>
+<text x="883" y="735.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Payment</text>
+<text x="883" y="752.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">health.payment.transaction</text>
+<text x="883" y="774.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● patient_id</text>
+<rect x="871" y="780.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="792.0" font-size="11" font-family="Consolas,monospace" fill="#0E7C7B" font-weight="600">● fso_id</text>
+<text x="883" y="810.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">amount</text>
+<rect x="871" y="816.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="828.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">payment_method</text>
+<text x="883" y="846.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">transaction_date</text>
+<rect x="871" y="852.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="883" y="864.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">status</text>
+<rect x="1278" y="329.0" width="250" height="190" rx="9" fill="#000" opacity="0.06"/>
+<rect x="1275" y="325.0" width="250" height="190" rx="9" fill="#FFFFFF" stroke="#D2B4DE" stroke-width="1.4"/>
+<path d="M1275,334.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#6C3483"/>
+<text x="1288" y="345.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Quote / Sale Order</text>
+<text x="1288" y="362.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">sale.order</text>
+<text x="1288" y="384.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="1276" y="390.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1288" y="402.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">origin</text>
+<text x="1288" y="420.0" font-size="11" font-family="Consolas,monospace" fill="#7D3C98" font-weight="600">● partner_id</text>
+<rect x="1276" y="426.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1288" y="438.0" font-size="11" font-family="Consolas,monospace" fill="#7D3C98" font-weight="600">● fso_id</text>
+<text x="1288" y="456.0" font-size="11" font-family="Consolas,monospace" fill="#7D3C98" font-weight="600">● catchment_province_id</text>
+<rect x="1276" y="462.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1288" y="474.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">amount_total</text>
+<text x="1288" y="492.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">state</text>
+<rect x="1278" y="553.0" width="250" height="190" rx="9" fill="#000" opacity="0.06"/>
+<rect x="1275" y="549.0" width="250" height="190" rx="9" fill="#FFFFFF" stroke="#D2B4DE" stroke-width="1.4"/>
+<path d="M1275,558.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#6C3483"/>
+<text x="1288" y="569.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Quote Line</text>
+<text x="1288" y="586.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">sale.order.line</text>
+<text x="1288" y="608.0" font-size="11" font-family="Consolas,monospace" fill="#7D3C98" font-weight="600">● order_id</text>
+<rect x="1276" y="614.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1288" y="626.0" font-size="11" font-family="Consolas,monospace" fill="#7D3C98" font-weight="600">● product_id</text>
+<text x="1288" y="644.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="1276" y="650.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1288" y="662.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">product_uom_qty</text>
+<text x="1288" y="680.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">price_unit</text>
+<rect x="1276" y="686.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1288" y="698.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">discount</text>
+<text x="1288" y="716.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">base_price</text>
+<rect x="1683" y="365.0" width="250" height="172" rx="9" fill="#000" opacity="0.06"/>
+<rect x="1680" y="361.0" width="250" height="172" rx="9" fill="#FFFFFF" stroke="#AECBE3" stroke-width="1.4"/>
+<path d="M1680,370.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#1E6091"/>
+<text x="1693" y="381.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Service Product</text>
+<text x="1693" y="398.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">product.product</text>
+<text x="1693" y="420.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">default_code</text>
+<rect x="1681" y="426.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1693" y="438.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<text x="1693" y="456.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">list_price</text>
+<rect x="1681" y="462.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1693" y="474.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">active</text>
+<text x="1693" y="492.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">catalog_catchment_area</text>
+<rect x="1681" y="498.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1693" y="510.0" font-size="11" font-family="Consolas,monospace" fill="#1E6091" font-weight="600">● product_tmpl_id</text>
+<rect x="1683" y="571.0" width="250" height="136" rx="9" fill="#000" opacity="0.06"/>
+<rect x="1680" y="567.0" width="250" height="136" rx="9" fill="#FFFFFF" stroke="#AECBE3" stroke-width="1.4"/>
+<path d="M1680,576.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#1E6091"/>
+<text x="1693" y="587.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Product Template</text>
+<text x="1693" y="604.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">product.template</text>
+<text x="1693" y="626.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="1681" y="632.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1693" y="644.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">list_price</text>
+<text x="1693" y="662.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">rounding_rule</text>
+<rect x="1681" y="668.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="1693" y="680.0" font-size="11" font-family="Consolas,monospace" fill="#1E6091" font-weight="600">● categ_id</text>
+<rect x="2088" y="311.0" width="250" height="280" rx="9" fill="#000" opacity="0.06"/>
+<rect x="2085" y="307.0" width="250" height="280" rx="9" fill="#FFFFFF" stroke="#F3C09B" stroke-width="1.4"/>
+<path d="M2085,316.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#A0410D"/>
+<text x="2098" y="327.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Pricing Rule</text>
+<text x="2098" y="344.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">advanced.pricing.rule</text>
+<text x="2098" y="366.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="2086" y="372.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="2098" y="384.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">region</text>
+<text x="2098" y="402.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">item_code</text>
+<rect x="2086" y="408.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="2098" y="420.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">action_type</text>
+<text x="2098" y="438.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">action_value</text>
+<rect x="2086" y="444.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="2098" y="456.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">trigger_source</text>
+<text x="2098" y="474.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">sequence</text>
+<rect x="2086" y="480.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="2098" y="492.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">valid_from</text>
+<text x="2098" y="510.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">valid_to</text>
+<rect x="2086" y="516.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="2098" y="528.0" font-size="11" font-family="Consolas,monospace" fill="#B4530F" font-weight="600">● engine_id</text>
+<text x="2098" y="546.0" font-size="11" font-family="Consolas,monospace" fill="#B4530F" font-weight="600">● product_tmpl_id</text>
+<rect x="2086" y="552.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="2098" y="564.0" font-size="11" font-family="Consolas,monospace" fill="#B4530F" font-weight="600">● product_id</text>
+<rect x="2088" y="625.0" width="250" height="136" rx="9" fill="#000" opacity="0.06"/>
+<rect x="2085" y="621.0" width="250" height="136" rx="9" fill="#FFFFFF" stroke="#F3C09B" stroke-width="1.4"/>
+<path d="M2085,630.0 a9,9 0 0 1 9,-9 h232 a9,9 0 0 1 9,9 v37 h-250 z" fill="#A0410D"/>
+<text x="2098" y="641.0" font-size="13.5" font-weight="700" fill="#FFFFFF">Pricing Engine</text>
+<text x="2098" y="658.0" font-size="10.5" fill="#FFFFFF" opacity="0.82" font-family="Consolas,monospace">advanced.pricing.engine</text>
+<text x="2098" y="680.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">name</text>
+<rect x="2086" y="686.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="2098" y="698.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">sequence</text>
+<text x="2098" y="716.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">active</text>
+<rect x="2086" y="722.0" width="248" height="18" fill="#F4F7F8"/>
+<text x="2098" y="734.0" font-size="11" font-family="Consolas,monospace" fill="#33424B">enable_multi_level</text>
+<text x="60" y="980" font-size="12" fill="#8A98A0">◆ = idempotent migration key (legacy_*)  ·  ● = foreign key (Many2one / Many2many)  ·  arrow points to the referenced (parent) record.  Generated for the Pancake → Viet Uc Care migration.</text>
+</svg>

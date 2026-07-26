@@ -197,6 +197,16 @@ class HealthLead(models.Model):
         ('both', 'Both'),
     ], string='Preferred Language', default='vietnamese')
 
+    # Lead demographic information (captured pre-conversion; mirrors res.partner)
+    gender = fields.Selection([
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+        ('prefer_not_to_say', 'Prefer not to say'),
+    ], string='Gender', help='Lead/client gender (Giới tính)')
+    birth_date = fields.Date('Date of Birth', help='Lead/client date of birth (Năm sinh)')
+    national_id = fields.Char('National ID (CCCD/CMND)', help='Vietnamese national identity number (Số CCCD)')
+
     # Geographic preferences
     preferred_service_area = fields.Many2one(
         'health.service.area',

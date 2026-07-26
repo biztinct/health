@@ -387,6 +387,9 @@
                         <group string="Lead Details">
                             <field name="phone"/>
                             <field name="email_from"/>
+                            <field name="gender"/>
+                            <field name="birth_date"/>
+                            <field name="national_id" string="National ID (CCCD/CMND)"/>
                             <field name="stage_id"/>
                             <field name="user_id"/>
                             <field name="team_id"/>

@@ -47,6 +47,17 @@ CITY_MAP = {
     'tp hcm': 'hcm', 'tphcm': 'hcm',
     'hanoi': 'hn', 'hn': 'hn', 'hà nội': 'hn', 'ha noi': 'hn',
 }
+
+# legacy dân tộc (ethnicity) -> res.partner.ethnicity selection key
+ETHNICITY_MAP = {
+    'kinh': 'kinh', 'tày': 'tay', 'tay': 'tay', 'thái': 'thai', 'thai': 'thai',
+    'mường': 'muong', 'muong': 'muong', 'khmer': 'khmer', 'khơ me': 'khmer',
+    'hoa': 'hoa', 'nùng': 'nung', 'nung': 'nung', "h'mông": 'hmong', 'hmông': 'hmong',
+    'mông': 'hmong', 'dao': 'dao', 'gia rai': 'gia_rai', 'gia-rai': 'gia_rai',
+    'ê đê': 'ede', 'ede': 'ede', 'ba na': 'ba_na', 'xơ đăng': 'sedang',
+    'cơ ho': 'co_ho', 'chăm': 'cham', 'cham': 'cham', 'sán chay': 'san_chay',
+    'khác': 'other', 'other': 'other',
+}
 CATCHMENT_XMLID = {'hcm': 'health_base.catchment_province_hcm',
                    'hn': 'health_base.catchment_province_hanoi'}
 
@@ -99,9 +110,14 @@ class MigrationRunner(models.Model):
 
     # ------------------------------------------------------------ utilities
     def _bulk_ctx(self, model):
+        # skip_auto_geocode + skip_distance_recompute keep the import from making a
+        # synchronous geocode API call per client (which stalls when outbound
+        # requests are blocked). Coordinates + driving distance are backfilled
+        # separately afterwards via backfill_geo() (see the real-export runbook).
         return self.env[model].with_context(
             mail_create_nolog=True, tracking_disable=True,
             mail_notrack=True, skip_notification=True, active_test=False,
+            skip_auto_geocode=True, skip_distance_recompute=True,
         )
 
     def _only_fields(self, model, vals):
@@ -423,6 +439,9 @@ class MigrationRunner(models.Model):
             vals['national_id'] = str(row['so_cccd']).strip()
         if row.get('nghe_nghiep'):
             vals['profession'] = str(row['nghe_nghiep']).strip()
+        eth = ETHNICITY_MAP.get(_norm(row.get('dan_toc')))
+        if eth:
+            vals['ethnicity'] = eth
         addr = str(row.get('Contact_Address') or row.get('Contact_FullAddress') or '').strip()
         if addr:
             vals['street'] = addr
@@ -465,6 +484,9 @@ class MigrationRunner(models.Model):
             vals['patient_notes'] = note
         if _norm(row.get('trang_thai')) in ('huỷ', 'hủy', 'huy') and row.get('ly_do_huy'):
             vals['cancellation_notes'] = str(row['ly_do_huy'])
+        parking = self._money(row.get('gui_xe'))
+        if parking > 0:
+            vals['parking_charge'] = parking
         vals = self._only_fields('health.fieldservice.order', vals)
         try:
             if fso:
@@ -574,6 +596,14 @@ class MigrationRunner(models.Model):
                 vals['description'] = desc
             if row.get('ly_do_tu_choi'):
                 vals['reason_if_rejected'] = str(row['ly_do_tu_choi'])
+            g = GENDER_MAP.get(_norm(row.get('gioi_tinh')))
+            if g:
+                vals['gender'] = g
+            dob = self._parse_dob(row.get('nam_sinh'))
+            if dob:
+                vals['birth_date'] = dob
+            if row.get('so_cccd'):
+                vals['national_id'] = str(row['so_cccd']).strip()
             vals = self._only_fields('crm.lead', vals)
             try:
                 if lead:
