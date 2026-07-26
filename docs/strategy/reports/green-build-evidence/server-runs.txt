@@ -1,0 +1,54 @@
+=== Phase GB — per-module HttpCase runs (corrected procedure) ===
+### biz_debranding 09:58:21
+EXIT:0 MOD:biz_debranding
+odoo.tests.result: 0 failed, 0 error(s) of 7 tests when loading database 'vietuat' 
+### biz_deroute 09:58:38
+EXIT:1 MOD:biz_deroute
+odoo.tests.result: 1 failed, 4 error(s) of 9 tests when loading database 'vietuat' 
+### health_api_gateway 09:58:50
+EXIT:0 MOD:health_api_gateway
+odoo.tests.result: 0 failed, 0 error(s) of 16 tests when loading database 'vietuat' 
+### health_family_link 09:59:24
+EXIT:0 MOD:health_family_link
+odoo.tests.result: 0 failed, 0 error(s) of 17 tests when loading database 'vietuat' 
+### health_family_messages 09:59:54
+EXIT:0 MOD:health_family_messages
+odoo.tests.result: 0 failed, 0 error(s) of 25 tests when loading database 'vietuat' 
+### health_pwa 10:00:28
+EXIT:0 MOD:health_pwa
+odoo.tests.result: 0 failed, 0 error(s) of 40 tests when loading database 'vietuat' 
+### health_pwa_daystrip 10:01:53
+EXIT:0 MOD:health_pwa_daystrip
+odoo.tests.result: 0 failed, 0 error(s) of 13 tests when loading database 'vietuat' 
+### health_pwa_ergo 10:02:17
+EXIT:1 MOD:health_pwa_ergo
+odoo.tests.result: 2 failed, 0 error(s) of 3 tests when loading database 'vietuat' 
+### health_pwa_family 10:02:34
+EXIT:0 MOD:health_pwa_family
+odoo.tests.result: 0 failed, 0 error(s) of 21 tests when loading database 'vietuat' 
+### health_scribe 10:03:10
+EXIT:0 MOD:health_scribe
+odoo.tests.result: 0 failed, 0 error(s) of 20 tests when loading database 'vietuat' 
+### health_self_booking 10:03:32
+EXIT:0 MOD:health_self_booking
+odoo.tests.result: 0 failed, 0 error(s) of 19 tests when loading database 'vietuat' 
+### health_telehealth 10:04:05
+EXIT:0 MOD:health_telehealth
+odoo.tests.result: 0 failed, 0 error(s) of 16 tests when loading database 'vietuat' 
+### health_telemonitoring 10:04:34
+EXIT:0 MOD:health_telemonitoring
+odoo.tests.result: 0 failed, 0 error(s) of 49 tests when loading database 'vietuat' 
+### health_workflow_auto 10:05:08
+EXIT:0 MOD:health_workflow_auto
+odoo.tests.result: 0 failed, 0 error(s) of 24 tests when loading database 'vietuat' 
+
+=== health_portal (run first, separately) ===
+2026-07-26 09:57:49,793 2065071 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 33 tests when loading database 'vietuat' 
+
+=== biz_deroute AFTER fix ===
+2026-07-26 10:25:31,854 2070498 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 9 tests when loading database 'vietuat' 
+
+=== FINAL combined run (35 modules upgraded, tests tagged) ===
+EXIT:0
+HTTP:200
+2026-07-26 10:50:54,188 2076687 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 654 tests when loading database 'vietuat' 

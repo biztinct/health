@@ -11,10 +11,12 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_pwa_daystrip
+#: model:ir.module.module,shortdesc:base.module_health_pwa_daystrip
 msgid "Health PWA Day-Strip + On My Way"
 msgstr "Dải ngày + Đang đến cho ứng dụng PWA"
 
 #. module: health_pwa_daystrip
+#: model:ir.module.module,summary:base.module_health_pwa_daystrip
 msgid ""
 "Day-strip timeline, swipe-to-reveal actions, and an \"On my way\" travel "
 "event that lights up the family page."
@@ -23,11 +25,11 @@ msgstr ""
 "thị trên trang gia đình."
 
 #. module: health_pwa_daystrip
-#. odoo-python
+#: model:ir.model.fields.selection,name:health_pwa_daystrip.selection__health_evv_event__event_type__travel_start
 msgid "Travel Start"
 msgstr "Bắt đầu di chuyển"
 
 #. module: health_pwa_daystrip
-#. odoo-python
+#: model:ir.model.fields.selection,name:health_pwa_daystrip.selection__health_evv_event__event_type__travel_cancel
 msgid "Travel Cancel"
 msgstr "Hủy di chuyển"

@@ -1450,3 +1450,740 @@ msgstr "Không thể đồng bộ thao tác ngoại tuyến — đã làm mới"
 #: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Pending sync"
 msgstr "Chờ đồng bộ"
+
+# ---------------------------------------------------------------
+# Phase GB: merged from i18n/viVNpo.po. That filename is not a language code, so
+# get_po_paths() never yielded it and Odoo never read a line of it —
+# 146 translations, 122 of them strings the PWA still emits, dead since
+# 2025-10-29 (ledger §5.84).
+# ---------------------------------------------------------------
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
+msgid "Access Denied"
+msgstr "Từ chối truy cập"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
+msgid "Back to Main System"
+msgstr "Quay lại hệ thống chính"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Click install"
+msgstr "Nhấp vào cài đặt"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Click the install icon and confirm to install Health Mobile"
+msgstr "Nhấp vào biểu tượng cài đặt và xác nhận để cài đặt Health Di động"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Confirm installation"
+msgstr "Xác nhận cài đặt"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Health Mobile will be available as a desktop application"
+msgstr "Health Di động sẽ khả dụng như một ứng dụng máy tính để bàn"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
+msgid "Install"
+msgstr "Cài đặt"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Install our app for the best mobile experience"
+msgstr "Cài đặt ứng dụng để có trải nghiệm di động tốt nhất"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
+msgid "Later"
+msgstr "Để sau"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Launch the app"
+msgstr "Khởi chạy ứng dụng"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
+msgid "Loading healthcare data..."
+msgstr "Đang tải dữ liệu y tế..."
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Look for the install icon"
+msgstr "Tìm biểu tượng cài đặt"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Look for the share icon at the bottom of your Safari browser"
+msgstr "Tìm biểu tượng chia sẻ ở cuối trình duyệt Safari"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Look for the three dots in the top-right corner of your Chrome browser"
+msgstr "Tìm nút ba chấm ở góc trên bên phải của trình duyệt Chrome"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Open Health Mobile"
+msgstr "Mở Health Di động"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Scroll down in the share menu and tap \\\"Add to Home Screen\\\""
+msgstr "Cuộn xuống trong trình đơn chia sẻ và chạm \\\"Thêm vào Màn hình chính\\\""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Select \\\"Add to Home Screen\\\""
+msgstr "Chọn \\\"Thêm vào Màn hình chính\\\""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Select \\\"Add to Home screen\\\""
+msgstr "Chọn \\\"Thêm vào màn hình chính\\\""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Tap \\\"Add\\\" to install Health Mobile on your home screen"
+msgstr "Chạm \\\"Thêm\\\" để cài Health Di động lên màn hình chính"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Tap \\\"Install\\\" to add Health Mobile to your home screen"
+msgstr "Chạm \\\"Cài đặt\\\" để thêm Health Di động vào màn hình chính"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Tap the Share button"
+msgstr "Chạm nút Chia sẻ"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Tap the menu button"
+msgstr "Chạm nút trình đơn"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
+msgid "Try Again"
+msgstr "Thử lại"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "You should see an install icon in your browser's address bar"
+msgstr "Bạn sẽ thấy biểu tượng cài đặt trên thanh địa chỉ của trình duyệt"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
+msgid "You're Offline"
+msgstr "Bạn đang ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/controllers/pwa.py:20
+msgid "Health PWA Controller is working!"
+msgstr "Bộ điều khiển Health PWA đang hoạt động!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/controllers/pwa.py:83
+msgid "Healthcare Mobile Application for Field Workers"
+msgstr "Ứng dụng di động chăm sóc sức khỏe cho nhân viên hiện trường"
+
+#. module: health_pwa
+#: code:addons/health_pwa/controllers/pwa.py:87
+#: code:addons/health_pwa/static/manifest.json:3
+msgid "Health Mobile - Progressive Web Application"
+msgstr "Health Di động - Ứng dụng web lũy tiến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/controllers/pwa.py:96
+#: code:addons/health_pwa/static/manifest.json:32
+msgid "Field Orders"
+msgstr "Lệnh dịch vụ hiện trường"
+
+#. module: health_pwa
+#: code:addons/health_pwa/controllers/pwa.py:90
+#: code:addons/health_pwa/static/manifest.json:25
+msgid "View patient list"
+msgstr "Xem danh sách bệnh nhân"
+
+#. module: health_pwa
+#: code:addons/health_pwa/controllers/pwa.py:97
+#: code:addons/health_pwa/static/manifest.json:33
+msgid "Manage field service orders"
+msgstr "Quản lý lệnh dịch vụ hiện trường"
+
+#. module: health_pwa
+#: code:addons/health_pwa/controllers/api.py:573
+msgid "Cannot start service in {order.state} state"
+msgstr "Không thể bắt đầu dịch vụ khi trạng thái là {thứ tự.trạng thái}"
+
+#. module: health_pwa
+#: code:addons/health_pwa/controllers/api.py:785
+msgid "Clinical notes saved successfully"
+msgstr "Đã lưu ghi chú lâm sàng thành công"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:176
+msgid "Using cached user data (offline)"
+msgstr "Đang dùng dữ liệu người dùng đã lưu (ngoại tuyến)"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:186
+msgid "Syncing data..."
+msgstr "Đang đồng bộ dữ liệu..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:195
+msgid "Data synced successfully"
+msgstr "Đồng bộ dữ liệu thành công"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:202
+msgid "Sync failed: "
+msgstr "Đồng bộ thất bại: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:455
+msgid "Cannot start service while offline"
+msgstr "Không thể bắt đầu dịch vụ khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:459
+msgid "Service started successfully!"
+msgstr "Bắt đầu dịch vụ thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:464
+msgid "Failed to start service: "
+msgstr "Không thể bắt đầu dịch vụ: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4613
+msgid "Cannot complete service while offline"
+msgstr "Không thể hoàn tất dịch vụ khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4616
+msgid "Please select a Payment Method before collecting payment."
+msgstr "Vui lòng chọn phương thức thanh toán trước khi thu tiền."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4687
+msgid "Cannot save clinical notes while offline"
+msgstr "Không thể lưu ghi chú lâm sàng khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4706
+msgid "Clinical notes saved successfully!"
+msgstr "Đã lưu ghi chú lâm sàng thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4752
+msgid "Failed to save clinical notes: "
+msgstr "Không thể lưu ghi chú lâm sàng: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4756
+msgid "Error saving clinical notes: "
+msgstr "Lỗi khi lưu ghi chú lâm sàng: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4823
+msgid "Cannot check next visit while offline"
+msgstr "Không thể kiểm tra lần hẹn tiếp theo khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4861
+msgid "Failed to check next visit status"
+msgstr "Không thể kiểm tra trạng thái lần hẹn tiếp theo"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4865
+msgid "Error checking next visit: "
+msgstr "Lỗi khi kiểm tra lần hẹn tiếp theo: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4876
+msgid "Please enter explanation for \\\"Other\\\" reason"
+msgstr "Vui lòng nhập giải thích cho lý do \\\"Khác\\\""
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4881
+msgid "Cannot submit while offline"
+msgstr "Không thể gửi khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4939
+msgid "Please assign a nurse"
+msgstr "Vui lòng phân công y tá"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4944
+msgid "Cannot schedule while offline"
+msgstr "Không thể lên lịch khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:4998
+msgid "Cannot upload images while offline"
+msgstr "Không thể tải ảnh lên khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5015
+msgid "Image uploaded successfully!"
+msgstr "Tải ảnh lên thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5017
+msgid "Failed to upload image: "
+msgstr "Không thể tải ảnh lên: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5021
+msgid "Error uploading image: "
+msgstr "Lỗi khi tải ảnh lên: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5039
+msgid "Cannot load invoice while offline"
+msgstr "Không thể tải hóa đơn khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5069
+msgid "Error loading quote: "
+msgstr "Lỗi khi tải báo giá: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5079
+msgid "Cannot save quote while offline"
+msgstr "Không thể lưu báo giá khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5103
+msgid "Invoice verified and saved successfully!"
+msgstr "Đã xác nhận và lưu hóa đơn thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5127
+msgid "Cannot load catalog while offline"
+msgstr "Không thể tải danh mục khi ngoại tuyến"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5165
+msgid "Product added successfully!"
+msgstr "Thêm sản phẩm thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5167
+msgid "Failed to add product: "
+msgstr "Không thể thêm sản phẩm: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5171
+msgid "Error adding product: "
+msgstr "Lỗi khi thêm sản phẩm: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5197
+msgid "Line updated successfully!"
+msgstr "Cập nhật dòng thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5199
+msgid "Failed to update line: "
+msgstr "Không thể cập nhật dòng: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5203
+msgid "Error updating line: "
+msgstr "Lỗi khi cập nhật dòng: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5228
+msgid "Line removed successfully!"
+msgstr "Xóa dòng thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5230
+msgid "Failed to remove line: "
+msgstr "Không thể xóa dòng: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5234
+msgid "Error removing line: "
+msgstr "Lỗi khi xóa dòng: "
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5240
+msgid "No address available"
+msgstr "Không có địa chỉ"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:5248
+msgid "Not set"
+msgstr "Chưa thiết lập"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:38
+msgid "Camera not supported on this device"
+msgstr "Thiết bị này không hỗ trợ camera"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:57
+msgid "Camera permission denied"
+msgstr "Quyền truy cập camera bị từ chối"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:118
+msgid "No file selected"
+msgstr "Chưa chọn tệp"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:134
+msgid "Geolocation not supported"
+msgstr "Thiết bị không hỗ trợ định vị"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:169
+msgid "Failed to get location"
+msgstr "Không thể lấy vị trí"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:172
+msgid "Location permission denied"
+msgstr "Quyền truy cập vị trí bị từ chối"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:174
+msgid "Location unavailable"
+msgstr "Không thể xác định vị trí"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:176
+msgid "Location request timeout"
+msgstr "Yêu cầu vị trí quá thời gian"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:6108
+msgid "App update available. Refresh to update."
+msgstr "Có bản cập nhật ứng dụng. Hãy tải lại để cập nhật."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:6117
+msgid "New version available! Please refresh the app."
+msgstr "Đã có phiên bản mới! Vui lòng tải lại ứng dụng."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2496
+msgid "Week"
+msgstr "Tuần"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2503
+msgid "Month"
+msgstr "Tháng"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2506
+msgid "Select date"
+msgstr "Chọn ngày"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2520
+msgid "Loading bookings..."
+msgstr "Đang tải lịch hẹn..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2667
+msgid "Loading details..."
+msgstr "Đang tải chi tiết..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2671
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2677
+msgid "Booking Details"
+msgstr "Chi tiết đặt lịch"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2693
+msgid "Scheduled Visit"
+msgstr "Lịch thăm khám"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2695
+msgid "Date & Time:"
+msgstr "Ngày & Giờ:"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2699
+msgid "Services:"
+msgstr "Dịch vụ:"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2703
+msgid "Package:"
+msgstr "Gói:"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2710
+msgid "Contact Information"
+msgstr "Thông tin liên hệ"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2714
+msgid "Address:"
+msgstr "Địa chỉ:"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2721
+msgid "Primary Contact:"
+msgstr "Liên hệ chính:"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2724
+msgid "Call"
+msgstr "Gọi"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2734
+msgid "View Intake Summary"
+msgstr "Xem tóm tắt tiếp nhận"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2743
+msgid "Cancel/Refuse Visit"
+msgstr "Hủy/Từ chối lượt thăm"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2744
+msgid "Start Service"
+msgstr "Bắt đầu dịch vụ"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2751
+msgid "Clinical Notes"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2826
+msgid "Diagnosis"
+msgstr "Chẩn đoán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2827
+msgid "Type here..."
+msgstr "Nhập tại đây..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2833
+msgid "Referring Doctor"
+msgstr "Bác sĩ giới thiệu"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2846
+msgid "Goal of Care"
+msgstr "Mục tiêu chăm sóc"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2852
+msgid "Required Equipment"
+msgstr "Thiết bị yêu cầu"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2858
+msgid "Intake Notes"
+msgstr "Ghi chú tiếp nhận"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3065
+msgid "Verification Notes"
+msgstr "Ghi chú xác minh"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3072
+msgid "Required: Explain the changes made to Qty or Discount..."
+msgstr "Bắt buộc: Giải thích các thay đổi về Số lượng hoặc Chiết khấu..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3072
+msgid "Add any general comments about this invoice..."
+msgstr "Thêm bất kỳ ghi chú chung nào về hóa đơn này..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3078
+msgid "Invoice verified successfully!"
+msgstr "Xác minh hóa đơn thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3084
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3087
+msgid "Save Quote"
+msgstr "Lưu báo giá"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3091
+msgid "Payment"
+msgstr "Thanh toán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3103
+msgid "Complete Service - Payment Collection"
+msgstr "Hoàn tất dịch vụ - Thu tiền"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3113
+msgid "Payment Timing"
+msgstr "Thời điểm thanh toán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3120
+msgid "Pay Now"
+msgstr "Trả ngay"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3127
+msgid "Pay Later"
+msgstr "Trả sau"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3134
+msgid "Payment Method"
+msgstr "Phương thức thanh toán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3141
+msgid "Cash"
+msgstr "Tiền mặt"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3148
+msgid "Card"
+msgstr "Thẻ"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3155
+msgid "Bank Transfer"
+msgstr "Chuyển khoản"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3162
+msgid "Service Notes"
+msgstr "Ghi chú dịch vụ"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3167
+msgid "Enter any additional service or payment notes..."
+msgstr "Nhập thêm ghi chú dịch vụ hoặc thanh toán..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3179
+msgid "Create Invoice Now"
+msgstr "Tạo hóa đơn ngay"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3187
+msgid "Amount"
+msgstr "Số tiền"
+
+#. module: health_pwa
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3192
+msgid "Now"
+msgstr "Ngay"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3199
+msgid "Complete Payment"
+msgstr "Hoàn tất thanh toán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2826
+msgid "Clinical Observations"
+msgstr "Quan sát lâm sàng"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2886
+msgid "Enter clinical observations..."
+msgstr "Nhập quan sát lâm sàng..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2896
+msgid "Enter diagnosis..."
+msgstr "Nhập chẩn đoán..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2906
+msgid "Describe treatment provided..."
+msgstr "Mô tả điều trị đã thực hiện..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2918
+msgid "Enter clinical notes..."
+msgstr "Nhập ghi chú lâm sàng..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2925
+msgid "Attach Photo"
+msgstr "Đính kèm ảnh"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2937
+msgid "Take Photo"
+msgstr "Chụp ảnh"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2965
+msgid "Verify Invoice"
+msgstr "Xác minh hóa đơn"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3002
+msgid "Qty"
+msgstr "SL"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3011
+msgid "Disc %"
+msgstr "CK %"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3022
+msgid "Price"
+msgstr "Giá"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3026
+msgid "Total"
+msgstr "Tổng"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3033
+msgid "Discount Reason:"
+msgstr "Lý do giảm giá:"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3038
+msgid "Required: Explain discount"
+msgstr "Bắt buộc: Giải thích chiết khấu"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3048
+msgid "Subtotal"
+msgstr "Tạm tính"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3052
+msgid "Tax"
+msgstr "Thuế"

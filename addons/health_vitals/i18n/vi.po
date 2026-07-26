@@ -11,345 +11,482 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_vitals
+#: model:ir.model,name:health_vitals.model_health_vitals_type
 msgid "Vital Sign / Observation Type"
 msgstr "Loại sinh hiệu / quan sát"
 
 #. module: health_vitals
+#: model:ir.model,name:health_vitals.model_health_observation
 msgid "Clinical Observation"
 msgstr "Quan sát lâm sàng"
 
 #. module: health_vitals
+#: model:ir.model,name:health_vitals.model_health_vitals_threshold
 msgid "Per-Client Vitals Alert Threshold"
 msgstr "Ngưỡng cảnh báo sinh hiệu theo khách hàng"
 
-#. module: health_vitals
-msgid "Vitals & Observations"
-msgstr "Sinh hiệu & Quan sát"
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Vitals & Observations"
+#~ msgstr "Sinh hiệu & Quan sát"
 
 #. module: health_vitals
+#: model:ir.ui.menu,name:health_vitals.menu_health_vitals_types
+#: model:ir.actions.act_window,name:health_vitals.action_health_vitals_type
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_type_list
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_type_search
 msgid "Observation Types"
 msgstr "Loại quan sát"
 
 #. module: health_vitals
+#: model:ir.actions.act_window,name:health_vitals.action_health_vitals_threshold
+#: model:ir.ui.menu,name:health_vitals.menu_health_vitals_thresholds
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_threshold_list
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_threshold_search
 msgid "Vitals Thresholds"
 msgstr "Ngưỡng sinh hiệu"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_form
 msgid "Observation"
 msgstr "Quan sát"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_fieldservice_order__observation_ids
+#: model:ir.model.fields,field_description:health_vitals.field_res_partner__observation_ids
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_list
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_pivot
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
 msgid "Observations"
 msgstr "Quan sát"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_threshold__vitals_type_id
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__vitals_type_id
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_threshold_search
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_type_form
 msgid "Observation Type"
 msgstr "Loại quan sát"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_threshold__client_id
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__client_id
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_threshold_search
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
 msgid "Client"
 msgstr "Khách hàng"
 
 #. module: health_vitals
+#. odoo-javascript
+#: code:addons/health_vitals/static/src/js/vitals-components.js:0
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__value_quantity
 msgid "Value"
 msgstr "Giá trị"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__value_text
 msgid "Text Value"
 msgstr "Giá trị văn bản"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__unit_display
 msgid "Unit"
 msgstr "Đơn vị"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_type__unit_display
 msgid "Unit Display"
 msgstr "Đơn vị hiển thị"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_type__ucum_unit
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__ucum_unit
 msgid "UCUM Unit"
 msgstr "Đơn vị UCUM"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_type__loinc_code
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__loinc_code
 msgid "LOINC Code"
 msgstr "Mã LOINC"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__effective_datetime
 msgid "Effective Datetime"
 msgstr "Thời điểm đo"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__performer_id
 msgid "Performer"
 msgstr "Người thực hiện"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__body_position
 msgid "Body Position"
 msgstr "Tư thế"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__body_position__sitting
 msgid "Sitting"
 msgstr "Ngồi"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__body_position__standing
 msgid "Standing"
 msgstr "Đứng"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__body_position__lying
 msgid "Lying"
 msgstr "Nằm"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__body_position__unknown
 msgid "Unknown"
 msgstr "Không rõ"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__order_id
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
 msgid "Visit"
 msgstr "Lượt thăm khám"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__clinical_note_id
 msgid "Clinical Note"
 msgstr "Ghi chú lâm sàng"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__parent_id
 msgid "Panel Observation"
 msgstr "Quan sát nhóm"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_type__child_ids
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__child_ids
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_form
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_type_form
 msgid "Panel Members"
 msgstr "Thành phần nhóm"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_type__value_type__panel
 msgid "Panel (no value)"
 msgstr "Nhóm (không có giá trị)"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_type__value_type__quantity
 msgid "Numeric"
 msgstr "Dạng số"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_type__value_type__string
 msgid "Text"
 msgstr "Văn bản"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__state__preliminary
 msgid "Preliminary"
 msgstr "Sơ bộ"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__state__final
 msgid "Final"
 msgstr "Hoàn tất"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__state__amended
 msgid "Amended"
 msgstr "Đã sửa đổi"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__state__entered_in_error
 msgid "Entered in Error"
 msgstr "Nhập sai"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_form
 msgid "Mark Entered in Error"
 msgstr "Đánh dấu nhập sai"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__alert_level__none
 msgid "None"
 msgstr "Không"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_threshold__severity__warning
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__alert_level__warning
 msgid "Warning"
 msgstr "Cảnh báo"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_threshold__severity__critical
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_observation__alert_level__critical
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_threshold_search
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
 msgid "Critical"
 msgstr "Nguy kịch"
 
-#. module: health_vitals
-msgid "Severity"
-msgstr "Mức độ"
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Severity"
+#~ msgstr "Mức độ"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_threshold__min_value
 msgid "Min"
 msgstr "Tối thiểu"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_threshold__max_value
 msgid "Max"
 msgstr "Tối đa"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_threshold__escalation_action__none
 msgid "Record Only"
 msgstr "Chỉ ghi nhận"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_threshold__escalation_action__chatter
 msgid "Post on Client Chatter"
 msgstr "Đăng lên trao đổi của khách hàng"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_threshold__escalation_action__activity
 msgid "Create Activity for Facility Manager"
 msgstr "Tạo hoạt động cho quản lý cơ sở"
 
 #. module: health_vitals
+#: model:ir.model.fields.selection,name:health_vitals.selection__health_vitals_threshold__escalation_action__activity_author
 msgid "Create Activity for Care Plan Author"
 msgstr "Tạo hoạt động cho người lập kế hoạch chăm sóc"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_clinical_note__has_structured_vitals
 msgid "Structured"
 msgstr "Có cấu trúc"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_clinical_note__observation_ids
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_clinical_note_form_vitals
 msgid "Structured Vitals"
 msgstr "Sinh hiệu có cấu trúc"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_clinical_note_form_vitals
 msgid "Vital Signs (free text — legacy)"
 msgstr "Sinh hiệu (văn bản tự do — cũ)"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_patient_form_vitals
 msgid "Alert Thresholds"
 msgstr "Ngưỡng cảnh báo"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_fieldservice_order.py:0
+#: model:ir.model.fields,field_description:health_vitals.field_health_fieldservice_order__observation_count
+#: model:ir.model.fields,field_description:health_vitals.field_res_partner__observation_count
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_patient_form_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_fieldservice_order_form_vitals
 msgid "Vitals"
 msgstr "Sinh hiệu"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_graph
 msgid "Vitals Trend"
 msgstr "Xu hướng sinh hiệu"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
 msgid "Abnormal"
 msgstr "Bất thường"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
 msgid "Today"
 msgstr "Hôm nay"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
 msgid "This Week"
 msgstr "Tuần này"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_observation_search
 msgid "My Entries"
 msgstr "Bản ghi của tôi"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_type__is_fhir_vital_sign
 msgid "FHIR Vital Sign"
 msgstr "Sinh hiệu FHIR"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_type_search
 msgid "FHIR Vital Signs"
 msgstr "Sinh hiệu FHIR"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_type__name_vi
 msgid "Vietnamese Name"
 msgstr "Tên tiếng Việt"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_type__parent_id
 msgid "Panel"
 msgstr "Nhóm"
 
 #. module: health_vitals
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_threshold_search
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_type_form
+#: model_terms:ir.ui.view,arch_db:health_vitals.view_health_vitals_type_search
 msgid "Archived"
 msgstr "Đã lưu trữ"
 
 #. module: health_vitals
+#: model:ir.model.fields,field_description:health_vitals.field_health_vitals_threshold__catchment_province_id
+#: model:ir.model.fields,field_description:health_vitals.field_health_observation__catchment_province_id
 msgid "Catchment Area"
 msgstr "Khu vực phụ trách"
 
-#. module: health_vitals
-msgid "LOINC code must be unique."
-msgstr "Mã LOINC phải là duy nhất."
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "LOINC code must be unique."
+#~ msgstr "Mã LOINC phải là duy nhất."
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Internal code must be unique."
+#~ msgstr "Mã nội bộ phải là duy nhất."
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "One threshold per client, type and severity."
+#~ msgstr "Mỗi khách hàng, loại và mức độ chỉ có một ngưỡng."
 
 #. module: health_vitals
-msgid "Internal code must be unique."
-msgstr "Mã nội bộ phải là duy nhất."
-
-#. module: health_vitals
-msgid "One threshold per client, type and severity."
-msgstr "Mỗi khách hàng, loại và mức độ chỉ có một ngưỡng."
-
-#. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_vitals_threshold.py:0
 msgid "A threshold needs at least a minimum or a maximum value."
 msgstr "Ngưỡng cần ít nhất một giá trị tối thiểu hoặc tối đa."
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_vitals_threshold.py:0
 msgid "Threshold minimum cannot exceed its maximum."
 msgstr "Giá trị tối thiểu của ngưỡng không được vượt quá giá trị tối đa."
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "%(name)s: value %(value)s outside plausible range [%(min)s – %(max)s]."
 msgstr "%(name)s: giá trị %(value)s ngoài phạm vi hợp lệ [%(min)s – %(max)s]."
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "Only a head nurse (or above) can amend the value of a final observation."
 msgstr "Chỉ điều dưỡng trưởng (hoặc cấp cao hơn) mới được sửa giá trị của quan sát đã hoàn tất."
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "Clinical observations are append-only and cannot be deleted. Mark the record 'Entered in Error' and re-enter the correct value instead."
 msgstr "Quan sát lâm sàng chỉ được thêm mới, không thể xóa. Hãy đánh dấu bản ghi là 'Nhập sai' và nhập lại giá trị đúng."
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "Observation %s is already marked entered in error."
 msgstr "Quan sát %s đã được đánh dấu nhập sai."
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "ALERT: %(type)s %(value)s%(unit)s breached %(severity)s threshold [%(min)s-%(max)s]"
 msgstr "CẢNH BÁO: %(type)s %(value)s%(unit)s vượt ngưỡng %(severity)s [%(min)s-%(max)s]"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "Unknown observation code: %s"
 msgstr "Mã quan sát không xác định: %s"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "Unknown panel type code: %s"
 msgstr "Mã loại nhóm không xác định: %s"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "%s is a panel type — use create_panel() with its components."
 msgstr "%s là loại nhóm — hãy dùng create_panel() với các thành phần của nó."
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "%s is not a panel type."
 msgstr "%s không phải là loại nhóm."
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "Source: %s"
 msgstr "Nguồn: %s"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/models/health_observation.py:0
 msgid "panel"
 msgstr "nhóm"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/controllers/api.py:0
 msgid "Access denied"
 msgstr "Từ chối truy cập"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/controllers/api.py:0
 msgid "Invalid JSON body"
 msgstr "Nội dung JSON không hợp lệ"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/controllers/api.py:0
 msgid "Order not found"
 msgstr "Không tìm thấy lượt đặt"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/controllers/api.py:0
 msgid "Order has no client"
 msgstr "Lượt đặt không có khách hàng"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/controllers/api.py:0
 msgid "Patient not found"
 msgstr "Không tìm thấy khách hàng"
 
 #. module: health_vitals
+#. odoo-python
+#: code:addons/health_vitals/controllers/api.py:0
 msgid "%(name)s %(value)s%(unit)s is %(level)s"
 msgstr "%(name)s %(value)s%(unit)s ở mức %(level)s"
 
-#. module: health_vitals
-msgid "Vitals threshold breached"
-msgstr "Vượt ngưỡng sinh hiệu"
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Vitals threshold breached"
+#~ msgstr "Vượt ngưỡng sinh hiệu"
 
 #. module: health_vitals
+#: model_terms:ir.actions.act_window,help:health_vitals.action_health_observation
 msgid "Record a structured observation"
 msgstr "Ghi nhận một quan sát có cấu trúc"
 
 #. module: health_vitals
+#: model_terms:ir.actions.act_window,help:health_vitals.action_health_vitals_threshold
 msgid "Define a per-client alert threshold"
 msgstr "Định nghĩa ngưỡng cảnh báo theo khách hàng"

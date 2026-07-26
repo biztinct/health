@@ -11,165 +11,222 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_scribe
+#: model:ir.ui.menu,name:health_scribe.menu_scribe_jobs
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_health_clinical_note_form_scribe
 msgid "Voice Recordings"
 msgstr "Ghi âm giọng nói"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__scribe_job_ids
+#: model:ir.actions.act_window,name:health_scribe.action_scribe_job
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
 msgid "Scribe Jobs"
 msgstr "Công việc ghi âm"
 
 #. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_form
 msgid "Scribe Job"
 msgstr "Công việc ghi âm"
 
 #. module: health_scribe
+#: model:ir.model,name:health_scribe.model_health_scribe_job
 msgid "Ambient Scribe Transcription Job"
 msgstr "Công việc chuyển giọng nói thành văn bản"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__note_id
 msgid "Clinical Note"
 msgstr "Ghi chú lâm sàng"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__fso_id
 msgid "Service Order"
 msgstr "Đơn dịch vụ"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__patient_id
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
 msgid "Patient"
 msgstr "Bệnh nhân"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__catchment_province_id
 msgid "Catchment Province"
 msgstr "Tỉnh phụ trách"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__attachment_id
 msgid "Audio"
 msgstr "Âm thanh"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__audio_ids
 msgid "Scribe Recordings"
 msgstr "Bản ghi âm"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__audio_sha256
 msgid "Audio SHA-256"
 msgstr "SHA-256 của âm thanh"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__duration_s
 msgid "Duration (s)"
 msgstr "Thời lượng (giây)"
 
 #. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
 msgid "Seconds"
 msgstr "Giây"
 
 #. module: health_scribe
+#: model:ir.model.fields.selection,name:health_scribe.selection__health_scribe_job__state__pending
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
 msgid "Pending"
 msgstr "Chờ xử lý"
 
 #. module: health_scribe
+#: model:ir.model.fields.selection,name:health_scribe.selection__health_scribe_job__state__done
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
 msgid "Done"
 msgstr "Hoàn tất"
 
 #. module: health_scribe
+#: model:ir.model.fields.selection,name:health_scribe.selection__health_scribe_job__state__failed
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
 msgid "Failed"
 msgstr "Thất bại"
 
 #. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
 msgid "Status"
 msgstr "Trạng thái"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__attempts
 msgid "Attempts"
 msgstr "Số lần thử"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__last_attempt
 msgid "Last Attempt"
 msgstr "Lần thử gần nhất"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__transcript
 msgid "Transcript"
 msgstr "Bản chép lời"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__error
 msgid "Last Error"
 msgstr "Lỗi gần nhất"
 
 #. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
 msgid "Uploaded"
 msgstr "Đã tải lên"
 
 #. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_health_clinical_note_form_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_form
 msgid "Transcribe now"
 msgstr "Chép lời ngay"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__scribe_pending_count
 msgid "Pending Recordings"
 msgstr "Bản ghi chờ xử lý"
 
 #. module: health_scribe
+#: model_terms:ir.actions.act_window,help:health_scribe.action_scribe_job
 msgid "No scribe recordings yet"
 msgstr "Chưa có bản ghi âm nào"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_enabled
 msgid "Enable Ambient Scribe"
 msgstr "Bật ghi âm hỗ trợ"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_stt_endpoint
 msgid "STT Endpoint (OpenAI-compatible)"
 msgstr "Điểm cuối STT (tương thích OpenAI)"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_allow_cloud
 msgid "Allow Cloud STT"
 msgstr "Cho phép STT đám mây"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_language
 msgid "STT Language"
 msgstr "Ngôn ngữ STT"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_max_seconds
 msgid "Max Recording Seconds"
 msgstr "Số giây ghi âm tối đa"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_max_bytes
 msgid "Max Audio Bytes"
 msgstr "Số byte âm thanh tối đa"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_batch_cap
 msgid "Recordings per Sweep"
 msgstr "Số bản ghi mỗi lần quét"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_stt_timeout_s
 msgid "STT Timeout (s)"
 msgstr "Thời gian chờ STT (giây)"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_max_attempts
 msgid "Max Attempts per Recording"
 msgstr "Số lần thử tối đa mỗi bản ghi"
 
 #. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
 msgid "Ambient Scribe (Voice → Note)"
 msgstr "Ghi âm hỗ trợ (Giọng nói → Ghi chú)"
 
 #. module: health_scribe
+#: model:ir.ui.menu,name:health_scribe.menu_scribe_jobs
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_health_clinical_note_form_scribe
 msgid "Voice Recordings"
 msgstr "Ghi âm giọng nói"
 
 #. module: health_scribe
+#. odoo-python
+#: code:addons/health_scribe/models/scribe_job.py:0
 msgid "Uploaded file is not audio."
 msgstr "Tệp tải lên không phải âm thanh."
 
 #. module: health_scribe
+#. odoo-python
+#: code:addons/health_scribe/controllers/api.py:0
 msgid "No audio provided"
 msgstr "Không có âm thanh"
 
 #. module: health_scribe
+#. odoo-python
+#: code:addons/health_scribe/controllers/api.py:0
 msgid "Clinical note not found for this order"
 msgstr "Không tìm thấy ghi chú lâm sàng cho đơn này"
 
 #. module: health_scribe
+#. odoo-python
+#: code:addons/health_scribe/models/scribe_job.py:0
 msgid "Only a manager may run or delete scribe transcription jobs."
 msgstr "Chỉ quản lý mới có thể chạy hoặc xóa công việc chép lời."
 
 #. module: health_scribe
+#. odoo-python
+#: code:addons/health_scribe/models/health_clinical_note.py:0
 msgid "Only a manager may run scribe transcription jobs."
 msgstr "Chỉ quản lý mới có thể chạy công việc chép lời."

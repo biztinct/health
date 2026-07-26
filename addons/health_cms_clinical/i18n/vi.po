@@ -11,33 +11,41 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_care_intel
 msgid "Care Intelligence"
 msgstr "Thông tin lâm sàng"
 
 #. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_worklist
 msgid "Deterioration Worklist"
 msgstr "Danh sách theo dõi suy giảm"
 
 #. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_alerts
 msgid "Deterioration Alerts"
 msgstr "Cảnh báo suy giảm"
 
 #. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_devices
 msgid "Monitoring Devices"
 msgstr "Thiết bị giám sát"
 
 #. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_news2
 msgid "NEWS2 Scores"
 msgstr "Điểm NEWS2"
 
 #. module: health_cms_clinical
+#: model_terms:ir.ui.view,arch_db:health_cms_clinical.view_ops_profile_clinical_tabs
 msgid "Alert Thresholds"
 msgstr "Ngưỡng cảnh báo"
 
 #. module: health_cms_clinical
+#: model_terms:ir.ui.view,arch_db:health_cms_clinical.view_ops_profile_clinical_tabs
 msgid "Consents"
 msgstr "Đồng thuận"
 
 #. module: health_cms_clinical
+#: model_terms:ir.ui.view,arch_db:health_cms_clinical.view_ops_profile_clinical_tabs
 msgid "Active Consents"
 msgstr "Đồng thuận đang hiệu lực"

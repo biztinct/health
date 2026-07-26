@@ -11,161 +11,237 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_evv
+#: model:ir.model,name:health_evv.model_health_evv_event
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_evv_event_form
 msgid "EVV Event"
 msgstr "Sự kiện EVV"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/models/health_fieldservice_order.py:0
+#: model:ir.model.fields,field_description:health_evv.field_health_fieldservice_order__evv_event_ids
+#: model:ir.actions.act_window,name:health_evv.action_health_evv_event
+#: model:ir.ui.menu,name:health_evv.menu_health_evv_events
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_fieldservice_order_form_evv
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_evv_event_list
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_evv_event_search
 msgid "EVV Events"
 msgstr "Sự kiện EVV"
 
 #. module: health_evv
+#: model:ir.model.fields.selection,name:health_evv.selection__health_evv_event__event_type__checkin
 msgid "Check-in"
 msgstr "Check in"
 
 #. module: health_evv
+#: model:ir.model.fields.selection,name:health_evv.selection__health_evv_event__event_type__checkout
 msgid "Check-out"
 msgstr "Check out"
 
 #. module: health_evv
+#. odoo-javascript
+#: code:addons/health_evv/static/src/js/evv-components.js:0
+#: model:ir.model.fields.selection,name:health_evv.selection__health_evv_event__event_type__signature
+#: model_terms:ir.ui.view,arch_db:health_evv.report_evv_verification
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_fieldservice_order_form_evv
 msgid "Signature"
 msgstr "Chữ ký"
 
 #. module: health_evv
+#: model:ir.model.fields.selection,name:health_evv.selection__health_evv_event__event_type__task_attest
 msgid "Task Attestation"
 msgstr "Xác nhận công việc"
 
 #. module: health_evv
+#: model:ir.model.fields.selection,name:health_evv.selection__health_evv_event__event_type__photo
 msgid "Photo"
 msgstr "Ảnh"
 
 #. module: health_evv
+#: model:ir.model.fields.selection,name:health_evv.selection__health_evv_event__origin__online
 msgid "Online"
 msgstr "Trực tuyến"
 
 #. module: health_evv
+#: model:ir.model.fields.selection,name:health_evv.selection__health_evv_event__origin__offline_sync
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_evv_event_search
 msgid "Offline Sync"
 msgstr "Đồng bộ ngoại tuyến"
 
 #. module: health_evv
+#. odoo-javascript
+#: code:addons/health_evv/static/src/js/evv-components.js:0
+#: model:ir.model.fields.selection,name:health_evv.selection__health_fieldservice_order__evv_signer_relationship__client
+#: model_terms:ir.ui.view,arch_db:health_evv.report_evv_verification
 msgid "Client"
 msgstr "Khách hàng"
 
 #. module: health_evv
+#. odoo-javascript
+#: code:addons/health_evv/static/src/js/evv-components.js:0
+#: model:ir.model.fields.selection,name:health_evv.selection__health_fieldservice_order__evv_signer_relationship__family
 msgid "Family Member"
 msgstr "Người nhà"
 
 #. module: health_evv
+#. odoo-javascript
+#: code:addons/health_evv/static/src/js/evv-components.js:0
+#: model:ir.model.fields.selection,name:health_evv.selection__health_fieldservice_order__evv_signer_relationship__caregiver
 msgid "Caregiver"
 msgstr "Người chăm sóc"
 
 #. module: health_evv
+#. odoo-javascript
+#: code:addons/health_evv/static/src/js/evv-components.js:0
+#: model:ir.model.fields.selection,name:health_evv.selection__health_fieldservice_order__evv_signer_relationship__other
 msgid "Other"
 msgstr "Khác"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_res_partner__geofence_radius_m
 msgid "Geofence Radius (m)"
 msgstr "Bán kính hàng rào địa lý (m)"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_res_partner__geofence_enabled
 msgid "Geofence Enabled"
 msgstr "Bật hàng rào địa lý"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_health_fieldservice_order__evv_verified
 msgid "EVV Verified"
 msgstr "Đã xác minh EVV"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_health_fieldservice_order__evv_chain_valid
 msgid "EVV Chain Valid"
 msgstr "Chuỗi EVV hợp lệ"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_health_fieldservice_order__evv_verified_units
 msgid "EVV Verified Units (h)"
 msgstr "Số giờ đã xác minh EVV"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_health_fieldservice_order__evv_signer_name
 msgid "Signer Name"
 msgstr "Tên người ký"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_health_fieldservice_order__evv_signer_relationship
 msgid "Signer Relationship"
 msgstr "Quan hệ người ký"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_health_fieldservice_order__evv_signed_at
 msgid "Signed At"
 msgstr "Ký lúc"
 
 #. module: health_evv
+#: model:ir.model.fields,field_description:health_evv.field_health_fieldservice_order__evv_signature_attachment_id
 msgid "EVV Signature"
 msgstr "Chữ ký EVV"
 
 #. module: health_evv
+#: model:ir.actions.report,name:health_evv.action_report_evv_verification
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_fieldservice_order_form_evv
 msgid "EVV Verification Report"
 msgstr "Báo cáo xác minh EVV"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/models/health_evv_event.py:0
 msgid "EVV events are append-only and can never be modified. To correct an event, append a new one with payload={'corrects': <event_id>, ...}."
 msgstr "Sự kiện EVV chỉ cho phép ghi thêm và không bao giờ được sửa đổi. Để sửa một sự kiện, hãy thêm sự kiện mới với payload={'corrects': <event_id>, ...}."
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/models/health_evv_event.py:0
 msgid "EVV events are append-only and can never be deleted."
 msgstr "Sự kiện EVV chỉ cho phép ghi thêm và không bao giờ được xóa."
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/models/health_evv_event.py:0
 msgid "EVV event is missing client_event_uuid."
 msgstr "Sự kiện EVV thiếu client_event_uuid."
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/models/health_evv_event.py:0
 msgid "EVV TAMPER DETECTED: %s"
 msgstr "PHÁT HIỆN GIẢ MẠO EVV: %s"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "Access denied"
 msgstr "Từ chối truy cập"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "Order not found"
 msgstr "Không tìm thấy đơn hàng"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "Invalid JSON body"
 msgstr "Nội dung JSON không hợp lệ"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "event_type and client_event_uuid are required"
 msgstr "event_type và client_event_uuid là bắt buộc"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "Current user has no linked employee"
 msgstr "Người dùng hiện tại chưa liên kết nhân viên"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "events must be a list"
 msgstr "events phải là một danh sách"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "Batch too large (max %s events)"
 msgstr "Lô quá lớn (tối đa %s sự kiện)"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "image_base64 and client_event_uuid are required"
 msgstr "image_base64 và client_event_uuid là bắt buộc"
 
 #. module: health_evv
+#. odoo-python
+#: code:addons/health_evv/controllers/evv_api.py:0
 msgid "Invalid base64 image"
 msgstr "Ảnh base64 không hợp lệ"
 
 #. module: health_evv
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_evv_event_search
 msgid "Tampered"
 msgstr "Bị giả mạo"
 
 #. module: health_evv
+#: model_terms:ir.ui.view,arch_db:health_evv.view_health_evv_event_search
 msgid "Outside Geofence"
 msgstr "Ngoài hàng rào địa lý"
 
 #. module: health_evv
+#: model:res.groups,name:health_evv.group_evv_user
 msgid "EVV: User"
 msgstr "EVV: Người dùng"
 
 #. module: health_evv
+#: model:res.groups,name:health_evv.group_evv_manager
 msgid "EVV: Manager"
 msgstr "EVV: Quản lý"

@@ -11,77 +11,104 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_telehealth
+#: model:ir.module.module,shortdesc:base.module_health_telehealth
 msgid "Health Telehealth (Video Visits)"
 msgstr "Khám trực tuyến (Video)"
 
 #. module: health_telehealth
+#: model:ir.model,name:health_telehealth.model_health_telehealth_session
 msgid "Telehealth Video Session"
 msgstr "Phiên khám trực tuyến"
 
 #. module: health_telehealth
+#: model:ir.actions.act_window,name:health_telehealth.action_telehealth_session
+#: model:ir.ui.menu,name:health_telehealth.menu_telehealth_session
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_list
 msgid "Telehealth Sessions"
 msgstr "Phiên khám trực tuyến"
 
 #. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_fieldservice_order__telehealth_session_id
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_form
 msgid "Telehealth Session"
 msgstr "Phiên khám trực tuyến"
 
 #. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_outbound_message__purpose__telehealth_join
 msgid "Telehealth Join Link"
 msgstr "Liên kết vào phòng khám trực tuyến"
 
 #. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_fso_form_telehealth
 msgid "Join Video"
 msgstr "Vào video"
 
 #. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__fso_id
 msgid "Visit"
 msgstr "Lịch khám"
 
 #. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__pending
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
 msgid "Pending"
 msgstr "Chờ"
 
 #. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__open
 msgid "Open"
 msgstr "Đang diễn ra"
 
 #. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__closed
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
 msgid "Closed"
 msgstr "Đã kết thúc"
 
 #. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__cancelled
 msgid "Cancelled"
 msgstr "Đã hủy"
 
 #. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_fieldservice_order__telehealth_session_state
 msgid "Video Session State"
 msgstr "Trạng thái phiên video"
 
 #. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__outbound_message_id
 msgid "Join Message"
 msgstr "Tin nhắn mời vào phòng khám"
 
 #. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__catchment_province_id
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
 msgid "Catchment Area"
 msgstr "Khu vực phụ trách"
 
 #. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_enabled
 msgid "Enable Telehealth Sessions"
 msgstr "Bật phiên khám trực tuyến"
 
 #. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_video_base_url
 msgid "Telehealth Video Base URL"
 msgstr "URL gốc cho video khám trực tuyến"
 
 #. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_zns_template_join
 msgid "Telehealth Join ZNS Template ID"
 msgstr "Mã mẫu ZNS mời vào phòng khám"
 
 #. module: health_telehealth
+#. odoo-python
+#: code:addons/health_telehealth/models/health_fieldservice_order.py:0
 msgid "The video room is not available yet. It opens when the visit is confirmed and you are assigned to it."
 msgstr "Phòng khám chưa sẵn sàng. Phòng sẽ mở khi lịch khám được xác nhận và bạn được phân công."
 
 #. module: health_telehealth
+#. odoo-python
+#: code:addons/health_telehealth/models/telehealth_session.py:0
 msgid "No usable phone for the patient."
 msgstr "Không có số điện thoại hợp lệ cho bệnh nhân."

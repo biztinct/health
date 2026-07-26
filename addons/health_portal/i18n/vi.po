@@ -12,29 +12,38 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_portal
+#: model:ir.actions.act_window,name:health_portal.action_portal_access
 msgid "My Care Portal Access"
 msgstr "Truy cập Cổng Chăm sóc"
 
 #. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
 msgid "My Care Link (share with the patient)"
 msgstr "Liên kết Chăm sóc của tôi (chia sẻ cho bệnh nhân)"
 
 #. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
 msgid "Rotate Token"
 msgstr "Đổi mã truy cập"
 
 #. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
 msgid "Revoke"
 msgstr "Thu hồi"
 
 #. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
 msgid "Reactivate"
 msgstr "Kích hoạt lại"
 
 #. module: health_portal
+#. odoo-python
+#: code:addons/health_portal/models/health_portal_access.py:0
 msgid "Portal access log entries are append-only."
 msgstr "Nhật ký truy cập cổng chỉ ghi thêm, không thể sửa."
 
 #. module: health_portal
+#. odoo-python
+#: code:addons/health_portal/models/health_portal_access.py:0
 msgid "Portal access log entries cannot be deleted."
 msgstr "Không thể xóa nhật ký truy cập cổng."

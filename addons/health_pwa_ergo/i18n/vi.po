@@ -11,9 +11,11 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_pwa_ergo
+#: model:ir.module.module,shortdesc:base.module_health_pwa_ergo
 msgid "Health PWA Ergonomic Modes"
 msgstr "Chế độ tiện dụng cho ứng dụng PWA"
 
 #. module: health_pwa_ergo
+#: model:ir.module.module,summary:base.module_health_pwa_ergo
 msgid "Glove mode + sunlight (high-contrast) mode for the field PWA"
 msgstr "Chế độ găng tay + chế độ ngoài trời (tương phản cao) cho ứng dụng hiện trường"

@@ -36,18 +36,46 @@ ssh VietUcUAT 'sudo service odoo-server stop && sleep 6 && \
   sudo su - odoo -s /bin/bash -c "/odoo/odoo-server/odoo-bin \
     -c /etc/odoo-server.conf -d vietuat -i <new_mods> -u <changed_mods> \
     --test-enable --test-tags /<mod1>,/<mod2> \
-    --stop-after-init --no-http --workers 0"; echo EXIT:$?; \
+    --stop-after-init --workers=0 --http-port=8169 \
+    --logfile=/tmp/gb/<mod>.log"; echo EXIT:$?; \
   sudo service odoo-server start; sleep 12; \
   curl -s -o /dev/null -w "HTTP:%{http_code}\n" localhost:8069/web/login'
 
-# 3. results are in /var/log/odoo/odoo-server.log:
-ssh VietUcUAT 'sudo grep -a "odoo.tests.result" /var/log/odoo/odoo-server.log | tail -3'
+# 3. results are in the logfile you named (or the server log if you didn't):
+ssh VietUcUAT 'sudo grep -a "odoo.tests.result" /tmp/gb/<mod>.log | tail -3'
+```
+
+**`--no-http` is GONE from this command and must not come back, and
+`--workers=0` is not optional.** Both are load-bearing, for independent
+reasons, and having either wrong silently skips an entire class of test:
+
+- `--no-http` leaves no HTTP server for an `HttpCase` to reach.
+- `workers = 2` in `/etc/odoo-server.conf` starts a **PreforkServer**, whose
+  `setUpClass` has no `.httpd` (§5.75).
+
+With either in place every `HttpCase` in the run dies in `setUpClass`, the
+runner counts them as errors, and the process exits 1 with a `FAIL:` count of
+**zero** — which reads like unrelated breakage and got ignored for months.
+Phase GB found **28 `HttpCase` classes across 15 modules that had never once
+executed**, covering portal tokens, family links, self-booking, the PWA API
+and the API gateway. Prefer a `--logfile` of your own and a spare
+`--http-port`: the shared server log interleaves with the live service, and
+8069 may still be draining.
+
+Verify the suites really ran — a green result over zero executed HttpCases
+looks identical to a green result over all of them:
+
+```bash
+ssh VietUcUAT 'sudo grep -ac "Starting .*Http\|ERROR: setUpClass" /tmp/gb/<mod>.log'
 ```
 
 Run test commands in the background if your harness supports it; a full
 run takes several minutes. If an SSH session drops mid-run the server-side
 process usually survives — check with
 `pgrep -af "python3.*odoo-bin.*test-enable"` before assuming failure.
+When draining workers before `odoo-bin`, anchor the `pgrep` pattern
+(`pgrep -c -f '^python3 /odoo/odoo-server/odoo-bin'`) — an unanchored one
+matches the `bash -c` wrapper running the check and never reaches zero.
 
 ## 3. PWA version bump rule (MANDATORY on any PWA-facing deploy)
 
@@ -62,7 +90,13 @@ injects JS into the shell requires bumping `health_pwa`:
   hardcoded value). Co-resident PIN TESTS hard-assert it and MUST be
   bumped in the same change: `health_pwa_daystrip/tests/test_daystrip.py`,
   `health_scribe/tests/test_scribe.py`,
-  `health_pwa_family/tests/test_pwa_family.py`.
+  `health_pwa_family/tests/test_pwa_family.py`,
+  **`health_pwa_ergo/tests/test_pwa_ergo.py`** (`PWA_VERSION`).
+  health_pwa_ergo was missing from this list until Phase GB, so its pin sat
+  at `1.9.0` through ten bumps while the shell served `1.19.0` — and because
+  it is an `HttpCase`, the procedure in §2 meant it never ran to say so. When
+  you add a version pin anywhere, add the file to this list in the same
+  commit; a tripwire nobody maintains is a tripwire nobody trips.
 - Deploy health_pwa alongside (add `-u health_pwa` to the upgrade).
 
 ## 4. Module structure conventions
@@ -95,10 +129,23 @@ injects JS into the shell requires bumping `health_pwa`:
   Client-scoped models get the catchment-province record rule pair
   (see health_consent/security/health_consent_security.xml for the
   template) plus an owner sees-all rule.
-- Every module ships `i18n/vi.po` (copy header format from
-  health_careplan/i18n/vi.po). If the module ALREADY ships a Vietnamese
-  catalog under another name (e.g. health_pwa's `vi_VN.po`), extend that
-  file — never create a competing second catalog.
+- Every module ships `i18n/vi.po` (copy the shape from
+  health_condition/i18n/vi.po or health_care_command_channels/i18n/vi.po —
+  both were repaired to the loader's actual requirements). If the module
+  ALREADY ships a Vietnamese catalog under another name (e.g. health_pwa's
+  `vi_VN.po`), extend that file — never create a competing second catalog.
+  **The filename must be a language code**: `get_po_paths()` only ever opens
+  `i18n/vi.po` and `i18n/vi_VN.po`, so anything else is never read at all
+  (health_pwa shipped `viVNpo.po` for nine months — 146 translations, 122 of
+  them live strings, dead on arrival; merged in Phase GB).
+  Per entry you need all three of `#. module:`, the code marker, and a `#:`
+  occurrence — see §5.58/§5.67, and note that a **field label is not a code
+  translation**: it needs a `model:ir.model.fields,field_description:` (or
+  `.selection`, or `model_terms:ir.ui.view,arch_db:`) occurrence instead, and
+  giving it a `code:` one makes the catalogue load while the label stays
+  English. `health_base/tests/test_i18n_catalogues.py` (G1/G2) enforces all
+  of this repo-wide, including that the labels reach the database in
+  Vietnamese — run it after any `.po` edit.
 - UI: flat mono colors only (NO gradients/dual-tone), `hf-wt-ico`
   CSS-mask SVG icons (NEVER emoji or font-awesome), form chatter at
   bottom full-width (never side column).
@@ -1283,3 +1330,67 @@ a no-op.
     fingerprint `state.mode === '`, which can appear in a branch condition and
     essentially nowhere else (§5.72's caveat about prose does not bite on a
     string with an operator in it). (Found in CC-E, finished in CC-F, T155.)
+
+- **§5.83 — "0 failed" over a suite that never executed is indistinguishable
+    from "0 failed" over a suite that passed, and this repo lived in the first
+    state for months.** Phase GB corrected §2 and found **28 `HttpCase`
+    classes across 15 modules had never once run** — every test we own for
+    public HTTP surface (portal tokens, family links, self-booking, the PWA
+    API, the API gateway). Two independent causes had to be fixed together
+    (`--no-http`, and `workers = 2` → PreforkServer, §5.75); fixing either
+    alone leaves the other. Their signature is an `EXIT:1` whose `FAIL:` count
+    is **zero**, which reads like unrelated breakage — so it was routinely
+    ignored, and one real defect (health_telehealth's stale CSS pin) was only
+    ever found by accident. Generalisation worth carrying past this repo:
+    **when a class of test can fail to run, assert that it ran.** A count of
+    executed tests is evidence; a count of failures is not. The corrected
+    §2 command and its `grep -ac "Starting .*Http"` check are the standing
+    form. (Phase GB.)
+
+- **§5.84 — a `.po` whose FILENAME is not a language code is never opened,
+    and nothing anywhere says so.** `get_po_paths(mod, lang)` builds exactly
+    `i18n/<base>.po` and `i18n/<lang>.po` from `get_base_langs()` — there is
+    no scan of the directory, no warning, no log line. `health_pwa` shipped
+    `i18n/viVNpo.po`, a correctly-formed 223-entry catalogue with 232
+    occurrence lines, dated 2025-10-29; Odoo read none of it for nine months.
+    146 of its entries existed in no other file and **122 were strings the PWA
+    still emits today**, in the field nurses' primary surface. This is the
+    third distinct way a catalogue can be inert (with §5.58's missing marker
+    and §5.67's missing occurrence) and the only one where the file itself is
+    flawless. Merged into `vi_VN.po` and asserted by
+    `health_base/tests/test_i18n_catalogues.py::test_g1c_filename_is_a_language_odoo_reads`.
+    (Phase GB.)
+
+- **§5.85 — a field label is NOT a code translation, and giving it a `code:`
+    occurrence makes the catalogue load while the label stays English.** The
+    three occurrence types travel different roads: `code:addons/<mod>/…`
+    reaches `_()` / `_t()` through `code_translations` at runtime;
+    `model:ir.model.fields,field_description:<mod>.field_<model>__<field>`
+    (and `.selection`, `model:ir.model,name:`, `model_terms:ir.ui.view,arch_db:`)
+    reaches the jsonb column via `_load_module_terms` **at upgrade**. Of the
+    1,382 inert entries Phase GB repaired, only 492 were code strings — 1,143
+    occurrences were model terms, i.e. the labels clinic staff actually read
+    all day. Resolve each entry from source rather than pattern-matching:
+    a string inside `_()` is code, a string in `fields.X(string=…)` /
+    `selection=[…]` / a view arch is a model term, and **a string that is
+    both gets both occurrences** (Odoo's own `.pot` files do exactly this;
+    `PoFileReader` yields one row per occurrence). Watch three parsing traps
+    that make a real string look dead: implicit concatenation across source
+    lines (use `ast`, not a regex — Python has already joined it), Odoo 19's
+    `self.env._()` form, and `selection=` pairs held in a module-level
+    constant. Verify every model xmlid you derive against `ir_model_data`
+    before writing it — a guessed reference passes a shape test and still
+    translates nothing. (Phase GB; §5.67 is the necessary-but-not-sufficient
+    half of this.)
+
+- **§5.86 — an `HttpCase` that authenticates as `admin/admin` is testing a
+    fresh demo database, not this one.** All five red tests in `biz_deroute`
+    traced to that one literal: four errored in `self.authenticate`, and the
+    fifth POSTed the same dead credentials to `/web/login`, got the login page
+    re-rendered at 200, and failed as `200 != 303` — reading like a routing
+    regression in the white-label layer when routing was never reached. Own
+    the user: `new_test_user(...)` in `setUp` (note Odoo 19 defaults its
+    password to `login + 'x' * (8 - len(login))`, so pass `password=` or use a
+    login of 8+ chars). Corollary for triage: when several tests in one file
+    fail with different-looking symptoms, look for the single shared fixture
+    before believing you have several bugs. (Phase GB.)

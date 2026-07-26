@@ -11,57 +11,75 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_fhir_adapter_vn
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_vn.view_health_patient_form_vn_emr
 msgid "Export EMR Bundle (VN)"
 msgstr "Xuất hồ sơ bệnh án điện tử (VN)"
 
 #. module: health_fhir_adapter_vn
+#. odoo-python
+#: code:addons/health_fhir_adapter_vn/models/res_partner.py:0
 msgid "EMR Submission"
 msgstr "Hồ sơ đã xuất"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.actions.act_window,name:health_fhir_adapter_vn.action_vn_emr_readiness
+#: model:ir.ui.menu,name:health_fhir_adapter_vn.menu_vn_emr_readiness
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_vn.view_vn_emr_readiness_form
 msgid "EMR Readiness Report"
 msgstr "Báo cáo mức độ sẵn sàng EMR"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model,name:health_fhir_adapter_vn.model_vn_emr_readiness
 msgid "VN EMR Readiness Report"
 msgstr "Báo cáo mức độ sẵn sàng EMR (VN)"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_health_facility__moh_facility_code
 msgid "MOH Facility Code (mã cơ sở KCB)"
 msgstr "Mã cơ sở KCB (Bộ Y tế)"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_partner__vneid_verified
 msgid "VNeID Verified"
 msgstr "Đã xác thực VNeID"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_partner__vneid_verified_date
 msgid "VNeID Verified On"
 msgstr "Ngày xác thực VNeID"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__facility_id
 msgid "Facility"
 msgstr "Cơ sở"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__coding_density
 msgid "Coding Density (%)"
 msgstr "Mật độ mã hóa (%)"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__notes_total
 msgid "Clinical Notes (90d)"
 msgstr "Ghi chú lâm sàng (90 ngày)"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__notes_coded
 msgid "Notes with ICD-10 Code (90d)"
 msgstr "Ghi chú có mã ICD-10 (90 ngày)"
 
 #. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__report_html
 msgid "Readiness Report"
 msgstr "Báo cáo mức độ sẵn sàng"
 
 #. module: health_fhir_adapter_vn
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_vn.view_vn_emr_readiness_form
 msgid "Close"
 msgstr "Đóng"
 
 #. module: health_fhir_adapter_vn
+#. odoo-python
+#: code:addons/health_fhir_adapter_vn/models/fhir_adapter_vn.py:0
 msgid "Only operations managers and above may export EMR bundles."
 msgstr "Chỉ quản lý vận hành trở lên mới được xuất hồ sơ bệnh án điện tử."

@@ -11,34 +11,42 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: biz_bi_margin
+#: model_terms:ir.ui.view,arch_db:biz_bi_margin.res_config_settings_view_form_margin
 msgid "Visit Margin — Costing Assumptions"
 msgstr "Lợi nhuận theo lượt thăm — Giả định chi phí"
 
 #. module: biz_bi_margin
+#: model:ir.model.fields,field_description:biz_bi_margin.field_res_config_settings__margin_default_hourly_cost_vnd
 msgid "Default Hourly Labor Cost (VND)"
 msgstr "Chi phí nhân công theo giờ mặc định (VND)"
 
 #. module: biz_bi_margin
+#: model_terms:ir.ui.view,arch_db:biz_bi_margin.res_config_settings_view_form_margin
 msgid "Default hourly labor cost (VND)"
 msgstr "Chi phí nhân công theo giờ mặc định (VND)"
 
 #. module: biz_bi_margin
+#: model:ir.model.fields,field_description:biz_bi_margin.field_res_config_settings__margin_monthly_hours
 msgid "Monthly Working Hours"
 msgstr "Số giờ làm việc hàng tháng"
 
 #. module: biz_bi_margin
+#: model_terms:ir.ui.view,arch_db:biz_bi_margin.res_config_settings_view_form_margin
 msgid "Monthly working hours"
 msgstr "Số giờ làm việc hàng tháng"
 
 #. module: biz_bi_margin
+#: model:ir.model.fields,field_description:biz_bi_margin.field_res_config_settings__margin_cost_per_km_vnd
 msgid "Travel Cost per km (VND)"
 msgstr "Chi phí di chuyển mỗi km (VND)"
 
 #. module: biz_bi_margin
+#: model_terms:ir.ui.view,arch_db:biz_bi_margin.res_config_settings_view_form_margin
 msgid "Travel cost per km (VND)"
 msgstr "Chi phí di chuyển mỗi km (VND)"
 
 #. module: biz_bi_margin
+#: model_terms:ir.ui.view,arch_db:biz_bi_margin.res_config_settings_view_form_margin
 msgid ""
 "ASSUMPTION. Used when a staff member has no wage on file. Margin quality "
 "depends on this — the per-employee active hr.version wage overrides it when "
@@ -49,6 +57,7 @@ msgstr ""
 "từng nhân viên sẽ được ưu tiên khi có."
 
 #. module: biz_bi_margin
+#: model_terms:ir.ui.view,arch_db:biz_bi_margin.res_config_settings_view_form_margin
 msgid ""
 "ASSUMPTION. Divides a monthly wage into an hourly rate (default 208 = ~26 "
 "days × 8h)."
@@ -57,6 +66,7 @@ msgstr ""
 "8 giờ)."
 
 #. module: biz_bi_margin
+#: model_terms:ir.ui.view,arch_db:biz_bi_margin.res_config_settings_view_form_margin
 msgid ""
 "ASSUMPTION. Per-km vehicle/fuel cost; travel time is additionally costed at "
 "the staff's hourly rate. Changes apply to the margin view on the next query "

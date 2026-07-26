@@ -11,469 +11,677 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_careplan
+#: model:ir.model,name:health_careplan.model_health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_goal__careplan_id
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_activity__careplan_id
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__careplan_id
+#: model:ir.sequence,name:health_careplan.seq_health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_search
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Care Plan"
 msgstr "Kế hoạch chăm sóc"
 
 #. module: health_careplan
+#: model:ir.ui.menu,name:health_careplan.menu_health_careplan
+#: model:ir.actions.act_window,name:health_careplan.action_health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_list
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_search
 msgid "Care Plans"
 msgstr "Kế hoạch chăm sóc"
 
 #. module: health_careplan
+#: model:ir.model,name:health_careplan.model_health_careplan_goal
 msgid "Care Plan Goal"
 msgstr "Mục tiêu kế hoạch chăm sóc"
 
 #. module: health_careplan
+#: model:ir.model,name:health_careplan.model_health_careplan_activity
 msgid "Care Plan Intervention/Activity"
 msgstr "Can thiệp/hoạt động kế hoạch chăm sóc"
 
 #. module: health_careplan
+#: model:ir.model,name:health_careplan.model_health_careplan_task
 msgid "Care Plan Visit Task"
 msgstr "Nhiệm vụ theo lần khám"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_fieldservice_order.py:0
+#: model:ir.model.fields,field_description:health_careplan.field_health_fieldservice_order__careplan_task_ids
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_fieldservice_order_form_careplan
 msgid "Care Plan Tasks"
 msgstr "Nhiệm vụ chăm sóc"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__task_ids
+#: model:ir.actions.act_window,name:health_careplan.action_health_careplan_task
+#: model:ir.ui.menu,name:health_careplan.menu_health_careplan_tasks
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_list
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_search
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Visit Tasks"
 msgstr "Nhiệm vụ theo lần khám"
 
 #. module: health_careplan
+#. odoo-javascript
+#: code:addons/health_careplan/static/src/js/careplan-components.js:0
+#: model:ir.model.fields,field_description:health_careplan.field_health_fieldservice_order__careplan_task_count
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_fieldservice_order_form_careplan
 msgid "Care Tasks"
 msgstr "Nhiệm vụ chăm sóc"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__client_id
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_goal__client_id
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_activity__client_id
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__client_id
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_search
 msgid "Client"
 msgstr "Khách hàng"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__state__draft
 msgid "Draft"
 msgstr "Nháp"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__state__active
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__lifecycle_status__active
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_search
 msgid "Active"
 msgstr "Đang hiệu lực"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__state__under_review
 msgid "Under Review"
 msgstr "Đang xem xét"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__state__completed
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__lifecycle_status__completed
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__status__completed
 msgid "Completed"
 msgstr "Hoàn thành"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__state__cancelled
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__lifecycle_status__cancelled
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__status__cancelled
 msgid "Cancelled"
 msgstr "Đã hủy"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__category__home_care
 msgid "Home Care"
 msgstr "Chăm sóc tại nhà"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__category__post_acute
 msgid "Post-Acute"
 msgstr "Hậu cấp tính"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__category__chronic
 msgid "Chronic Disease"
 msgstr "Bệnh mạn tính"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__category__palliative
 msgid "Palliative"
 msgstr "Chăm sóc giảm nhẹ"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__category__rehabilitation
 msgid "Rehabilitation"
 msgstr "Phục hồi chức năng"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan__category__other
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__not_done_reason__other
 msgid "Other"
 msgstr "Khác"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__author_id
 msgid "Author"
 msgstr "Người lập"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__facility_id
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_search
 msgid "Facility"
 msgstr "Cơ sở"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__protocol_id
 msgid "Based on Protocol"
 msgstr "Theo phác đồ"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__period_start
 msgid "Start Date"
 msgstr "Ngày bắt đầu"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__period_end
 msgid "End Date"
 msgstr "Ngày kết thúc"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__review_cycle_days
 msgid "Review Cycle (days)"
 msgstr "Chu kỳ xem xét (ngày)"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__goal_ids
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_activity__goal_ids
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_goal_list
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Goals"
 msgstr "Mục tiêu"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__careplan_activity_ids
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_activity_list
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Interventions"
 msgstr "Can thiệp"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Description"
 msgstr "Mô tả"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__drift_flag
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_kanban
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_search
 msgid "Drift"
 msgstr "Lệch kế hoạch"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan__catchment_province_id
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__catchment_province_id
 msgid "Catchment Area"
 msgstr "Khu vực phục vụ"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Activate"
 msgstr "Kích hoạt"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Start Review"
 msgstr "Bắt đầu xem xét"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Confirm Review"
 msgstr "Xác nhận xem xét"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Complete"
 msgstr "Hoàn thành"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Cancel Plan"
 msgstr "Hủy kế hoạch"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_form
 msgid "Reset to Draft"
 msgstr "Đặt lại về nháp"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_goal__name
 msgid "Goal"
 msgstr "Mục tiêu"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_goal__vitals_type_id
 msgid "Target Observation"
 msgstr "Chỉ số mục tiêu"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_goal__target_value_min
 msgid "Target Min"
 msgstr "Mục tiêu tối thiểu"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_goal__target_value_max
 msgid "Target Max"
 msgstr "Mục tiêu tối đa"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_goal__is_on_target
 msgid "On Target"
 msgstr "Đạt mục tiêu"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__lifecycle_status__proposed
 msgid "Proposed"
 msgstr "Đề xuất"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__lifecycle_status__on_hold
 msgid "On Hold"
 msgstr "Tạm hoãn"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__achievement_status__in_progress
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__status__in_progress
 msgid "In Progress"
 msgstr "Đang thực hiện"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__achievement_status__improving
 msgid "Improving"
 msgstr "Đang cải thiện"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__achievement_status__worsening
 msgid "Worsening"
 msgstr "Đang xấu đi"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__achievement_status__achieved
 msgid "Achieved"
 msgstr "Đã đạt"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__achievement_status__not_achieved
 msgid "Not Achieved"
 msgstr "Không đạt"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__priority__high
 msgid "High"
 msgstr "Cao"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__priority__medium
 msgid "Medium"
 msgstr "Trung bình"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_goal__priority__low
 msgid "Low"
 msgstr "Thấp"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_activity__name
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__activity_id
 msgid "Intervention"
 msgstr "Can thiệp"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_activity__service_type_id
 msgid "Service Type"
 msgstr "Loại dịch vụ"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__status__not_started
 msgid "Not Started"
 msgstr "Chưa bắt đầu"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__status__scheduled
 msgid "Scheduled"
 msgstr "Đã lên lịch"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__frequency__every_visit
 msgid "Every Visit"
 msgstr "Mỗi lần khám"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__frequency__daily
 msgid "Daily"
 msgstr "Hàng ngày"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__frequency__weekly
 msgid "Weekly"
 msgstr "Hàng tuần"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__frequency__monthly
 msgid "Monthly"
 msgstr "Hàng tháng"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__frequency__prn
 msgid "PRN / As Needed"
 msgstr "PRN / Khi cần"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__visit_filter__all
 msgid "All Visits"
 msgstr "Tất cả lần khám"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__visit_filter__home_visit
 msgid "Home Visits Only"
 msgstr "Chỉ khám tại nhà"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_activity__visit_filter__clinic_visit
 msgid "Clinic Visits Only"
 msgstr "Chỉ khám tại phòng khám"
 
 #. module: health_careplan
+#. odoo-javascript
+#: code:addons/health_careplan/static/src/js/careplan-components.js:0
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__name
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_form
 msgid "Task"
 msgstr "Nhiệm vụ"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__state__pending
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_search
 msgid "Pending"
 msgstr "Chờ thực hiện"
 
 #. module: health_careplan
+#. odoo-javascript
+#: code:addons/health_careplan/static/src/js/careplan-components.js:0
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__state__done
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_search
 msgid "Done"
 msgstr "Hoàn thành"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__state__not_done
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_search
 msgid "Not Done"
 msgstr "Không thực hiện"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__not_done_reason
 msgid "Not Done Reason"
 msgstr "Lý do không thực hiện"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__not_done_reason__client_refused
 msgid "Client Refused"
 msgstr "Khách hàng từ chối"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__not_done_reason__client_unavailable
 msgid "Client Unavailable/Asleep"
 msgstr "Khách hàng vắng mặt/đang ngủ"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__not_done_reason__clinical_judgement
 msgid "Withheld — Clinical Judgement"
 msgstr "Tạm hoãn — đánh giá lâm sàng"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__not_done_reason__no_supplies
 msgid "Missing Supplies/Equipment"
 msgstr "Thiếu vật tư/thiết bị"
 
 #. module: health_careplan
+#: model:ir.model.fields.selection,name:health_careplan.selection__health_careplan_task__not_done_reason__out_of_time
 msgid "Ran Out of Time"
 msgstr "Hết thời gian"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__not_done_note
 msgid "Reason Detail"
 msgstr "Chi tiết lý do"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__completed_by_id
 msgid "Completed By"
 msgstr "Người hoàn thành"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__completed_datetime
 msgid "Completed At"
 msgstr "Hoàn thành lúc"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_form
 msgid "Mark Done"
 msgstr "Đánh dấu hoàn thành"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_form
 msgid "Mark Not Done"
 msgstr "Đánh dấu không thực hiện"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_form
 msgid "Reset to Pending"
 msgstr "Đặt lại chờ thực hiện"
 
 #. module: health_careplan
+#: model:ir.model.fields,field_description:health_careplan.field_health_careplan_task__fso_id
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_search
 msgid "Visit"
 msgstr "Lần khám"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_task_form
 msgid "Instructions"
 msgstr "Hướng dẫn"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_search
 msgid "My Plans"
 msgstr "Kế hoạch của tôi"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_careplan_search
 msgid "Review Due"
 msgstr "Đến hạn xem xét"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Add at least one goal before activating the plan."
 msgstr "Thêm ít nhất một mục tiêu trước khi kích hoạt kế hoạch."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Add at least one intervention before activating the plan."
 msgstr "Thêm ít nhất một can thiệp trước khi kích hoạt kế hoạch."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Set the plan start date before activating."
 msgstr "Đặt ngày bắt đầu kế hoạch trước khi kích hoạt."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Only a draft care plan can be activated."
 msgstr "Chỉ kế hoạch nháp mới có thể kích hoạt."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Only an active care plan can be put under review."
 msgstr "Chỉ kế hoạch đang hiệu lực mới có thể đưa vào xem xét."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Only a care plan under review can be confirmed."
 msgstr "Chỉ kế hoạch đang xem xét mới có thể xác nhận."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Only an active care plan can be completed."
 msgstr "Chỉ kế hoạch đang hiệu lực mới có thể hoàn thành."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "This care plan cannot be cancelled from its current state."
 msgstr "Không thể hủy kế hoạch chăm sóc từ trạng thái hiện tại."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Only a cancelled care plan can be reset to draft."
 msgstr "Chỉ kế hoạch đã hủy mới có thể đặt lại về nháp."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Only head nurses, doctors or managers may change the state of a care plan."
 msgstr "Chỉ điều dưỡng trưởng, bác sĩ hoặc quản lý mới được thay đổi trạng thái kế hoạch chăm sóc."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Only managers may reset a cancelled care plan."
 msgstr "Chỉ quản lý mới được đặt lại kế hoạch đã hủy."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "End date must be after start date."
 msgstr "Ngày kết thúc phải sau ngày bắt đầu."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Review cycle must be positive."
 msgstr "Chu kỳ xem xét phải là số dương."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan_activity.py:0
 msgid "Frequency interval must be at least 1."
 msgstr "Khoảng tần suất phải ít nhất là 1."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan_activity.py:0
 msgid "Times per period must be at least 1."
 msgstr "Số lần mỗi chu kỳ phải ít nhất là 1."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan_task.py:0
 msgid "This activity already has a task on this visit."
 msgstr "Hoạt động này đã có nhiệm vụ trong lần khám này."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan_task.py:0
 msgid "A reason is required to mark a task not done."
 msgstr "Cần có lý do để đánh dấu nhiệm vụ không thực hiện."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan_task.py:0
 msgid "This intervention belongs to a different client."
 msgstr "Can thiệp này thuộc về khách hàng khác."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan_task.py:0
 msgid "The care plan of this intervention is not active."
 msgstr "Kế hoạch chăm sóc của can thiệp này không còn hiệu lực."
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/models/health_careplan.py:0
 msgid "Care plan review due: %s"
 msgstr "Đến hạn xem xét kế hoạch chăm sóc: %s"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Access denied"
 msgstr "Truy cập bị từ chối"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Invalid JSON body"
 msgstr "Nội dung JSON không hợp lệ"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Order not found"
 msgstr "Không tìm thấy đơn"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Task not found"
 msgstr "Không tìm thấy nhiệm vụ"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Activity not found"
 msgstr "Không tìm thấy hoạt động"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Patient not found"
 msgstr "Không tìm thấy khách hàng"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Task marked done"
 msgstr "Đã đánh dấu hoàn thành"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Task marked not done"
 msgstr "Đã đánh dấu không thực hiện"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Task reset to pending"
 msgstr "Đã đặt lại chờ thực hiện"
 
 #. module: health_careplan
+#. odoo-python
+#: code:addons/health_careplan/controllers/api.py:0
 msgid "Invalid state: %s"
 msgstr "Trạng thái không hợp lệ: %s"
 
 #. module: health_careplan
+#: model_terms:ir.ui.view,arch_db:health_careplan.view_health_fieldservice_order_form_careplan
 msgid "Open care-plan tasks remain on this visit."
 msgstr "Lần khám này vẫn còn nhiệm vụ chăm sóc chưa thực hiện."
 
 #. module: health_careplan
+#: model_terms:ir.actions.act_window,help:health_careplan.action_health_careplan
 msgid "Create a care plan"
 msgstr "Tạo kế hoạch chăm sóc"
 
 #. module: health_careplan
+#: model_terms:ir.actions.act_window,help:health_careplan.action_health_careplan_task
 msgid "No visit tasks yet"
 msgstr "Chưa có nhiệm vụ theo lần khám"

@@ -6374,3 +6374,83 @@ msgstr "× 100,000 ="
 
 #~ msgid "Google Maps"
 #~ msgstr "Google Maps"
+
+# ---------------------------------------------------------------
+# Phase GB: merged from i18n/SAMPLE_TRANSLATION.po — a real 56-entry vi_VN catalogue
+# whose filename is not a language code, so get_po_paths() never yielded
+# it (ledger §5.84, second instance).
+# ---------------------------------------------------------------
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__is_caregiver
+msgid "This contact is a caregiver"
+msgstr "Người liên hệ này là người chăm sóc"
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__is_payer
+msgid "This contact is responsible for payments"
+msgstr "Người liên hệ này chịu trách nhiệm thanh toán"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Please enter a valid phone number."
+msgstr "Vui lòng nhập số điện thoại hợp lệ."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Primary Facility is required for patients. Please select a facility to generate a valid Patient ID."
+msgstr "Cơ sở y tế chính là bắt buộc cho bệnh nhân. Vui lòng chọn một cơ sở để tạo mã bệnh nhân hợp lệ."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Patient Activated"
+msgstr "Đã kích hoạt bệnh nhân"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Patient Deactivated"
+msgstr "Đã hủy kích hoạt bệnh nhân"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_partner_form
+msgid "Create"
+msgstr "Tạo mới"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_partner_form
+msgid "Personal Information"
+msgstr "Thông tin cá nhân"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_partner_form
+msgid "Medical Information"
+msgstr "Thông tin y tế"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_partner_form
+msgid "Contact Details"
+msgstr "Thông tin liên hệ"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_partner_form
+msgid "Address"
+msgstr "Địa chỉ"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_partner_form
+msgid "Emergency Contact"
+msgstr "Liên hệ khẩn cấp"
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_health_root
+msgid "Health"
+msgstr "Y tế"
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_health_patients
+msgid "Patients"
+msgstr "Bệnh nhân"
