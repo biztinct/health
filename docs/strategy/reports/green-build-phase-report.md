@@ -397,7 +397,17 @@ omission.
    is a small separate job. Reported rather than silently left: the
    translation count for health_pwa is six higher than the number of strings
    that can actually resolve.
-7. **My own report was wrong once, and I found it after committing.** It said
+7. **`addons/biz_deroute/biz_deroute_stage/` is a full module copy nested one
+   level too deep.** Odoo discovers modules as direct children of the addons
+   path, so it is invisible — `ir_module_module` holds `biz_deroute` and
+   nothing else. Its `tests/test_deroute.py` is a stale copy still carrying
+   the `admin/admin` fixture this phase fixed, and it can never run to say so.
+   Dead weight, and a trap for the next person who greps: fixing the copy
+   would change nothing, and reading it would suggest the defect is still
+   open. Left alone — deleting someone's staging copy is not this phase's
+   call. (The other `admin/admin` hits in the repo are all in vendored Odoo
+   core modules, which are upstream's business.)
+8. **My own report was wrong once, and I found it after committing.** It said
    1 entry was skipped in the PWA merge; the real number was 7. Corrected in
    §2.5 with the reason for each. Noting it here because the check that caught
    it — comparing (msgid, msgstr) pairs across every changed file rather than
