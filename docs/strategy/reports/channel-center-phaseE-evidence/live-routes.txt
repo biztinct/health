@@ -1,0 +1,18 @@
+=== A. Meta webhook GET handshake ===
+GET ?hub.mode=subscribe&hub.verify_token=guess&hub.challenge=CHAL123     -> HTTP:403 bytes:0
+GET ?hub.mode=subscribe&hub.challenge=CHAL123                            -> HTTP:403 bytes:0
+GET ?                                                                    -> HTTP:403 bytes:0
+
+=== B. Meta webhook POST refusals ===
+POST whatsapp, no signature                                              -> HTTP:403 bytes:0
+POST whatsapp, bogus signature                                           -> HTTP:403 bytes:0
+POST fb, no signature                                                    -> HTTP:403 bytes:0
+POST instagram (not a channel key)                                       -> HTTP:403 bytes:0
+
+=== C. OAuth callback for meta: reachable, non-oracle ===
+GET /channel_hub/oauth/callback/meta?state=never-issued&code=x           -> HTTP:200 bytes:2732
+  echoes the state back?  0
+  echoes the code back?   0
+
+=== D. server health ===
+GET /web/login                                                           -> HTTP:200
