@@ -149,11 +149,22 @@ console output that exposed them):
   `Markup('<!DOCTYPE html>')`; the first attempt used `str + Markup` and shipped
   a literal `&lt;!DOCTYPE html&gt;` (ledger §5.20, hit live again).
 
-**Not in the pack:** the backend dock/composer/AI-patch screenshots. No login
-credential for care.biztinct.com is available in this session (same as CC-A) and
-I would not create or reset a privileged account to take a screenshot. The same
-facts are proven server-side (`server-state.txt`) and through the real-CRM-user
-transcript. Say the word with a login and I will take them.
+**Not in the pack at the time of writing:** the backend dock/composer/AI-patch
+screenshots. No login credential for care.biztinct.com was available in that
+session (same as CC-A) and I would not create or reset a privileged account to
+take a screenshot. The same facts were proven server-side
+(`server-state.txt`) and through the real-CRM-user transcript.
+
+> **CLOSED 2026-07-26 (Fable).** The user supplied a login for the existing
+> `crm` account (CRM Manager + Operations Manager, *not* a system
+> administrator) after the CC-C review. The dock and composer screenshots are
+> now in this pack — see `backend-navigation.md`,
+> `03-backend-dock-8-channels.png` and
+> `04-backend-composer-lead-no-channel.png`. Both confirm the report's
+> data-honesty claims visually: the four CC-B channels render **dark** with 0
+> connections, and the composer declares its derived reply channel ("Sends via
+> Email") before the operator types. Console clean; nothing created or
+> elevated.
 
 ---
 
