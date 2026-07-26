@@ -151,11 +151,27 @@ concatenation across source lines (solved with `ast` — Python has already
 joined it); Odoo 19's `self.env._()` form; and `selection=` pairs held in a
 module-level constant.
 
-### 2.3 Every derived xmlid was verified before it was written
+### 2.3 Every derived reference was verified — both kinds
 
-845 distinct model xmlids, checked against `ir_model_data` on vietuat:
-**845 of 845 present**. A guessed reference passes a shape test and still
-translates nothing, so none was guessed.
+**Model occurrences:** 845 distinct xmlids, checked against `ir_model_data` on
+vietuat before being written: **845 of 845 present**. A guessed reference
+passes a shape test and still translates nothing, so none was guessed.
+
+**Code occurrences:** re-checked afterwards by parsing each referenced file
+with `ast` and confirming the msgid really is an argument to `_()` / `_lt()`
+there (a substring grep is not enough — implicit concatenation across source
+lines makes a correct reference look wrong, and that produced 23 false alarms
+on the first attempt). Of 693 code occurrences in this phase's files,
+**6 are inaccurate, and none of them was derived by this phase** — all six sit
+in `health_base/i18n/vi_VN.po` and came in verbatim with the
+`SAMPLE_TRANSLATION.po` merge, carrying references Odoo's own export wrote
+against code that has since changed (`Patient Activated`,
+`Please enter a valid phone number.`, …). Stale references are inert for code
+translations — the loader keys on the msgid, not the path — so this is
+inaccurate documentation rather than a defect, but it is not nothing and it is
+listed in §5.
+
+Every one of the occurrences this phase actually derived checks out.
 
 ### 2.4 Totals written
 
@@ -401,7 +417,14 @@ omission.
    is a small separate job. Reported rather than silently left: the
    translation count for health_pwa is six higher than the number of strings
    that can actually resolve.
-7. **`addons/biz_deroute/biz_deroute_stage/` is a full module copy nested one
+7. **6 merged `health_base` entries carry stale `code:` references** pointing
+   at `models/res_partner.py` / `models/health_facility.py` for strings that
+   are no longer `_()` arguments there (§2.3). They arrived with the
+   `SAMPLE_TRANSLATION.po` merge, written by an Odoo export against older
+   code. Inert — code translations key on the msgid, not the path — so this is
+   wrong documentation, not a broken translation. Re-deriving them is a small
+   job and worth doing next time `health_base`'s catalogue is touched.
+8. **`addons/biz_deroute/biz_deroute_stage/` is a full module copy nested one
    level too deep.** Odoo discovers modules as direct children of the addons
    path, so it is invisible — `ir_module_module` holds `biz_deroute` and
    nothing else. Its `tests/test_deroute.py` is a stale copy still carrying
@@ -411,7 +434,7 @@ omission.
    open. Left alone — deleting someone's staging copy is not this phase's
    call. (The other `admin/admin` hits in the repo are all in vendored Odoo
    core modules, which are upstream's business.)
-8. **My own report was wrong once, and I found it after committing.** It said
+9. **My own report was wrong once, and I found it after committing.** It said
    1 entry was skipped in the PWA merge; the real number was 7. Corrected in
    §2.5 with the reason for each. Noting it here because the check that caught
    it — comparing (msgid, msgstr) pairs across every changed file rather than
