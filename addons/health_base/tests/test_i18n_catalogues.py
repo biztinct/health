@@ -48,14 +48,42 @@ def _our_catalogues():
 
 
 def _blocks(path):
-    """Entry blocks, skipping the header and obsolete (#~) entries."""
-    text = open(path, encoding='utf-8').read()
-    for block in text.split('\n\n'):
-        if not re.search(r'^msgid ', block, re.M) or HEADER in block:
-            continue
+    """One entry at a time, skipping the header and obsolete (#~) entries.
+
+    Deliberately NOT `text.split('\\n\\n')`. A blank line between entries is a
+    convention, not a rule, and this repo already has a place where a
+    translator banner follows an entry with no blank line
+    (health_care_command/i18n/vi.po). Blank-line splitting glues those two
+    entries into one string, and then a `re.search` for `#. module:` or `#: `
+    is satisfied by the NEIGHBOUR's comment lines — so a malformed entry rides
+    in behind a well-formed one and G1 never sees it. That is precisely the
+    silent-pass this file exists to prevent, so the entry boundary is found
+    structurally instead: an entry ends when its msgstr does.
+    """
+    lines = open(path, encoding='utf-8').read().split('\n')
+    buf, seen_msgstr = [], False
+    def flush(buf):
+        block = '\n'.join(buf).strip()
+        if not block or HEADER in block:
+            return None
+        if not re.search(r'^msgid ', block, re.M):
+            return None
         if re.search(r'^#~', block, re.M):
-            continue
-        yield block
+            return None
+        return block
+    for line in lines:
+        # a comment line arriving after a completed msgstr opens the next entry
+        if seen_msgstr and (line.startswith('#') or line.startswith('msgid ')):
+            done = flush(buf)
+            if done:
+                yield done
+            buf, seen_msgstr = [], False
+        if line.startswith('msgstr'):
+            seen_msgstr = True
+        buf.append(line)
+    done = flush(buf)
+    if done:
+        yield done
 
 
 _ESCAPES = {'n': '\n', 't': '\t', 'r': '\r', '"': '"', '\\': '\\'}

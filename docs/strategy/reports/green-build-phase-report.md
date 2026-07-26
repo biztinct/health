@@ -161,17 +161,32 @@ passes a shape test and still translates nothing, so none was guessed.
 with `ast` and confirming the msgid really is an argument to `_()` / `_lt()`
 there (a substring grep is not enough — implicit concatenation across source
 lines makes a correct reference look wrong, and that produced 23 false alarms
-on the first attempt). Of 693 code occurrences in this phase's files,
-**6 are inaccurate, and none of them was derived by this phase** — all six sit
-in `health_base/i18n/vi_VN.po` and came in verbatim with the
-`SAMPLE_TRANSLATION.po` merge, carrying references Odoo's own export wrote
-against code that has since changed (`Patient Activated`,
-`Please enter a valid phone number.`, …). Stale references are inert for code
-translations — the loader keys on the msgid, not the path — so this is
-inaccurate documentation rather than a defect, but it is not nothing and it is
-listed in §5.
+on the first attempt).
 
-Every one of the occurrences this phase actually derived checks out.
+Every occurrence **this phase derived** checks out. All of them end in `:0`,
+Odoo's convention for a code reference whose line number is unused.
+
+> **Correction — my check had a hole, and the independent review found it.**
+> I scoped that verification to occurrences matching `code:addons/…:0`, which
+> is exactly the set this phase wrote — so it could only ever exonerate me. It
+> silently skipped the **124 inherited occurrences** carrying real line
+> numbers (`app.js:4613`, …) that came in verbatim with the two merges. Of
+> those, **~45 are wrong**: they cite `static/src/js/app.js` for strings that
+> actually live in `utils/pwa-utils.js` (and in `oldappjs.rtf`, a dead backup),
+> and a handful cite `controllers/pwa.py` / `static/manifest.json` for strings
+> that exist nowhere in the codebase today. Odoo's export wrote them against
+> code that has since moved.
+>
+> Inert either way — code translations key on the msgid, not the path — so
+> nothing is broken. But a verification that only examines your own work is
+> not a verification, and I reported it as one. The correct scope was every
+> occurrence in every file the phase touched, however it got there.
+
+Counting properly: of 819 code occurrences across this phase's files,
+**~51 are inaccurate and none was derived here** — 45 inherited by the
+`viVNpo.po` merge into `health_pwa`, 6 by the `SAMPLE_TRANSLATION.po` merge
+into `health_base` (`Patient Activated`, `Please enter a valid phone
+number.`, …). Listed in §5.
 
 ### 2.4 Totals written
 
@@ -194,10 +209,31 @@ Anything else is never opened — no scan, no warning, no log line.
 | `health_pwa/i18n/viVNpo.po` | 223 | 146 | **122** | 145 merged into `vi_VN.po`, file removed |
 | `health_base/i18n/SAMPLE_TRANSLATION.po` | 56 | 14 | 10 | 14 merged into `vi_VN.po`, file removed |
 
-The PWA one is the sharper find: a correctly-formed catalogue dated
-2025-10-29, flawless in every respect except its name, holding 122 live
-strings for the field nurses' primary surface. Ledgered as §5.84 and asserted
-by `test_g1c_filename_is_a_language_odoo_reads`.
+The PWA one looked like the sharper find: a correctly-formed catalogue dated
+2025-10-29, flawless in every respect except its name. Ledgered as §5.84 and
+asserted by `test_g1c_filename_is_a_language_odoo_reads`.
+
+> **Correction — the "122 live strings" claim was overstated, and the
+> independent review is what caught it.** `health_pwa/static/src/js/app.js:35`
+> defines its own `_t()` which consults **two hardcoded JavaScript
+> dictionaries first** — `window.PWAUtils.i18n.vi` (460 keys, in
+> `utils/pwa-utils.js`) and `APP_VI_FALLBACK_TRANSLATIONS` (25 keys, in
+> app.js) — and only falls through to `window.odoo._t()` if both miss. Of the
+> 145 merged msgids, **98 are already keys in those dictionaries**, so for any
+> call routed through app.js the catalogue is never consulted and the merge
+> changes nothing a nurse sees. **47 depend on the catalogue.**
+>
+> The repair is still correct and still worth having — 47 strings, plus every
+> use outside app.js (Python controllers, QWeb templates), plus the file no
+> longer being a trap. But "122 live strings restored to the nurses' primary
+> surface" is not what happened, and the browser evidence in §2.7 is a backend
+> list view, not a PWA screen, so it does not support that claim either.
+>
+> This is §5.85 recurring one layer deeper: a translation that loads correctly
+> and is then shadowed before it reaches the screen. Worth its own ledger
+> entry — see §5.87. A phase whose whole subject is "shipped code silently not
+> doing its job" landing this claim unqualified is the finding, not a
+> footnote.
 
 **Exactly what was not carried over.** A self-check after committing showed
 **7** entries dropped from `viVNpo.po`, not the 1 first reported. All 7 were
@@ -422,14 +458,25 @@ omission.
    is a small separate job. Reported rather than silently left: the
    translation count for health_pwa is six higher than the number of strings
    that can actually resolve.
-7. **6 merged `health_base` entries carry stale `code:` references** pointing
-   at `models/res_partner.py` / `models/health_facility.py` for strings that
-   are no longer `_()` arguments there (§2.3). They arrived with the
-   `SAMPLE_TRANSLATION.po` merge, written by an Odoo export against older
-   code. Inert — code translations key on the msgid, not the path — so this is
-   wrong documentation, not a broken translation. Re-deriving them is a small
-   job and worth doing next time `health_base`'s catalogue is touched.
-8. **`addons/biz_deroute/biz_deroute_stage/` is a full module copy nested one
+7. **~51 merged entries carry stale `code:` references** — 45 in `health_pwa`
+   (citing `app.js` line numbers for strings that live in
+   `utils/pwa-utils.js`, plus a few citing files where the string no longer
+   exists at all), 6 in `health_base` (§2.3). All inherited verbatim from the
+   two dead catalogues, written by an Odoo export against code that has since
+   moved. Inert — code translations key on the msgid, not the path — so this
+   is wrong documentation, not a broken translation. Re-deriving them is a
+   small job for whenever those catalogues are next touched.
+8. **98 of the 145 merged PWA strings are shadowed by hardcoded JS
+   dictionaries** and never reach Odoo's translation layer at all (see the
+   correction in §2.5). Making the PWA use one translation path instead of
+   three is a real piece of work and squarely a product change, so it is not
+   done here — but until it is, no `.po` repair can be assumed to change what
+   a nurse sees, and any future claim that it did needs a PWA screenshot.
+9. **`addons/health_pwa/static/src/js/oldappjs.rtf`** is a dead `.rtf` backup
+   of an old `app.js` sitting inside the served static directory. It is why
+   several stale occurrences still "resolve" to a plausible-looking file when
+   grepped. Not deleted — not this phase's call — but it is a trap.
+10. **`addons/biz_deroute/biz_deroute_stage/` is a full module copy nested one
    level too deep.** Odoo discovers modules as direct children of the addons
    path, so it is invisible — `ir_module_module` holds `biz_deroute` and
    nothing else. Its `tests/test_deroute.py` is a stale copy still carrying
@@ -439,7 +486,7 @@ omission.
    open. Left alone — deleting someone's staging copy is not this phase's
    call. (The other `admin/admin` hits in the repo are all in vendored Odoo
    core modules, which are upstream's business.)
-9. **My own report was wrong once, and I found it after committing.** It said
+11. **My own report was wrong once, and I found it after committing.** It said
    1 entry was skipped in the PWA merge; the real number was 7. Corrected in
    §2.5 with the reason for each. Noting it here because the check that caught
    it — comparing (msgid, msgstr) pairs across every changed file rather than

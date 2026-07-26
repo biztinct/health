@@ -125,3 +125,9 @@ DONE
 0 failed, 0 error(s) of 24 tests when loading database 'vietuat' 
 --- FAIL/setUpClass-ERROR count ---
 0
+
+=== REVIEW FIX: G1 splitter rewritten (per-entry, not blank-line) ===
+EXIT:0
+HTTP:200
+DONE
+0 failed, 0 error(s) of 41 tests when loading database 'vietuat' 

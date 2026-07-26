@@ -1394,3 +1394,25 @@ a no-op.
     login of 8+ chars). Corollary for triage: when several tests in one file
     fail with different-looking symptoms, look for the single shared fixture
     before believing you have several bugs. (Phase GB.)
+
+- **§5.87 — the PWA has THREE translation paths and the `.po` is the last one
+    consulted, so a correct catalogue can still change nothing on screen.**
+    `health_pwa/static/src/js/app.js:35` defines its own `_t()` which tries
+    (1) `window.PWAUtils.i18n.vi` — a 460-key hardcoded dictionary in
+    `static/src/js/utils/pwa-utils.js`, then (2) `APP_VI_FALLBACK_TRANSLATIONS`
+    — 25 more keys hardcoded in app.js itself, and only then (3) Odoo's
+    `window.odoo._t()`, which is the one the catalogue feeds. Both dictionaries
+    are keyed by the **English string**, so they shadow the catalogue silently
+    and per-string. Measured in Phase GB: of 145 strings merged into
+    `health_pwa/i18n/vi_VN.po`, **98 were already keys in those dictionaries**
+    and only 47 could reach the catalogue at all. Consequences to carry:
+    (a) a load-count check, a shape check and a green `get_web_translations`
+    all say nothing about whether the PWA renders your translation — only a
+    **PWA screenshot** does, and a backend screenshot is not a substitute;
+    (b) editing the catalogue alone will not fix a wrong Vietnamese string in
+    the app if that string is one of the ~485 dictionary keys — grep both
+    dictionaries first; (c) this is §5.85 one layer deeper (a term that loads
+    correctly and is then shadowed before it reaches the screen), and the same
+    shape to watch for anywhere a client keeps its own i18n table.
+    (Found by the Phase GB review, after the phase had already claimed
+    otherwise.)

@@ -938,6 +938,7 @@ msgstr "Hồ sơ đồng ý không khả dụng trên máy chủ này."
 #: code:addons/health_care_command/models/care_conversation.py:0
 msgid "This conversation has no client to show consent for."
 msgstr "Cuộc hội thoại này không có khách hàng để xem hồ sơ đồng ý."
+
 # ---------------------------------------------------------------------------
 # Phase-4 core touch: the two Phase-3 gear-button tooltips (QWeb title=)
 # were missing from this catalog (declared one-line i18n touch, §7).
