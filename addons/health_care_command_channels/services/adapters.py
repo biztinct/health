@@ -39,6 +39,7 @@ from odoo import fields, tools
 from odoo.exceptions import UserError
 
 from . import channel_crypto
+from .redact import redact
 
 _logger = logging.getLogger(__name__)
 
@@ -701,6 +702,15 @@ class _MetaAdapterBase(_StubAdapter):
         rows = cached.get('rows') if isinstance(cached, dict) else None
         return list(rows or [])
 
+    # Approvals that are genuine prerequisites to messaging AT ALL. Template
+    # approval is NOT one: Meta lets a business reply free-form inside the
+    # 24 h customer-service window with no template, and the out-of-window
+    # template path has its own gate (`list_message_templates` returns only
+    # APPROVED names). Gating `ready` on a template would lock a
+    # reply-only clinic out of its own inbox (CC-E review, Trap 1) — the
+    # template row stays on the card, informational.
+    _APPROVAL_GATING_KEYS = ('business_verification', 'display_name')
+
     def _store_approvals(self, rows):
         self._merge_settings({'meta_approvals': {
             'rows': rows,
@@ -715,8 +725,29 @@ class _MetaAdapterBase(_StubAdapter):
             'required_checks') or [])
         if 'provider_approvals' not in required:
             return rows
-        every = bool(rows) and all(r.get('status') == 'pass' for r in rows)
-        self.env['care.channel.readiness.check'].upsert_check(
+        Check = self.env['care.channel.readiness.check']
+        existing = Check.sudo().search([
+            ('connection_id', '=', self.connection.id),
+            ('check_key', '=', 'provider_approvals')], limit=1)
+        # A LATCH (CC-E review HIGH-1). `provider_approvals` gates the way UP —
+        # Meta must approve a business before its channel goes live — but this
+        # is an ADVISORY poll (health cron + the card's Refresh button), and
+        # once the check is `pass` it must never be lowered here. Otherwise a
+        # transient Meta outage or rate-limit returns an `unreadable`/pending
+        # row, this flips the check to `pending`, `_recompute_ready` demotes a
+        # `ready` connection to `action_required` (unmet-but-not-failed, F1),
+        # and — because action_required is not ingestable — inbound is DROPPED
+        # (the webhook still answers 200, so Meta never retries; the messages
+        # are lost) over a network wobble. A genuine loss of messaging
+        # capability surfaces through the SEND path (authorization_valid / a
+        # failed template), which is the honest source of truth. So this poll
+        # only ever moves pending→pass.
+        if existing and existing.status == 'pass':
+            return rows
+        gating = [r for r in rows
+                  if r.get('key') in self._APPROVAL_GATING_KEYS]
+        every = bool(gating) and all(r.get('status') == 'pass' for r in gating)
+        Check.upsert_check(
             self.connection.sudo(), 'provider_approvals',
             'pass' if every else 'pending')
         return rows
@@ -728,8 +759,13 @@ class _MetaAdapterBase(_StubAdapter):
         except ChannelSendError as exc:
             _logger.info('care_channels: meta approvals unreadable on '
                          'connection %s', self.connection.id)
+            # redact, not str(): the approvals GETs carry the BISU/page token
+            # in the query string, and a requests exception stringifies the
+            # full URL — so an unredacted detail lands a live token in
+            # settings_json, a column any CRM manager can read (CC-E review
+            # MED-1). redact() truncates too.
             rows = [{'key': 'unreadable', 'status': 'pending',
-                     'detail': str(exc)[:200]}]
+                     'detail': redact(exc) or 'unreadable'}]
         return self._store_approvals(rows)
 
     def _fetch_approvals(self):

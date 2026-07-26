@@ -760,7 +760,11 @@ class TestMetaCenter(ChannelSpineCase):
                     for c in conn.sudo().readiness_check_ids}
         self.assertEqual(statuses.get('provider_approvals'), 'pass')
 
-        # (e) Meta being unreachable is pending too, and never raises at the UI.
+        # (e) Meta being unreachable never raises at the UI — and, now that
+        # provider_approvals is a LATCH (CC-E review HIGH-1), an unreadable
+        # refresh does NOT lower the `pass` earned in (d): a transient outage
+        # must not demote a live channel out of ingestion. The card row says
+        # "couldn't refresh"; the check holds.
         self._mock_graph(get_map={
             '/message_templates': ChannelSendError('network error: boom'),
             '/%s' % WA_PHONE_ID: ChannelSendError('network error: boom'),
@@ -772,7 +776,89 @@ class TestMetaCenter(ChannelSpineCase):
         conn.invalidate_recordset()
         statuses = {c.check_key: c.status
                     for c in conn.sudo().readiness_check_ids}
-        self.assertEqual(statuses.get('provider_approvals'), 'pending')
+        self.assertEqual(statuses.get('provider_approvals'), 'pass',
+                         'the advisory poll must never lower an earned pass')
+
+    # ==================================================================
+    # T141 — CC-E review: the approvals poll must not demote a LIVE channel,
+    # and template approval is not a prerequisite to reply in-window
+    # ==================================================================
+    def _wa_to_ready(self):
+        """A WhatsApp connection that has cleared every TECHNICAL check and
+        reached `ready` — which T136's fixture never does (it stops at
+        `configuring`, outside RECOMPUTE_STATES, so it could not see a
+        ready→action_required demotion at all)."""
+        self.Conn.center_begin('whatsapp')
+        conn = self._center_connection('whatsapp')
+        self._authorize_wa(conn)
+        self._mock_graph(get_map={'/phone_numbers': {'data': [PHONE_ROW]}})
+        self.Conn.center_meta_select(conn.id, WA_PHONE_ID)
+        # Into `testing` — the real flow reaches it via subscribe_webhook, and
+        # `_recompute_ready` only acts from a RECOMPUTE_STATE, so the checks
+        # below cannot promote a `configuring` connection.
+        conn.sudo()._transition('testing', reason='test to ready')
+        Check = self.env['care.channel.readiness.check']
+        for key in ('webhook_configured', 'inbound_ok', 'outbound_ok'):
+            Check.upsert_check(conn.sudo(), key, 'pass')
+        return conn
+
+    def test_141_approvals_poll_never_demotes_live_channel(self):
+        conn = self._wa_to_ready()
+
+        # Business + display name approved, and NO templates at all: a
+        # reply-only clinic. Template approval is informational, not a gate
+        # (Trap 1), so this reaches provider_approvals=pass and `ready`.
+        self._mock_graph(get_map={
+            '/message_templates': {'data': []},
+            '/%s' % WA_PHONE_ID: {'id': WA_PHONE_ID, 'name_status': 'APPROVED'},
+            '/%s' % WA_WABA_ID: {'id': WA_WABA_ID,
+                                 'account_review_status': 'APPROVED'},
+        })
+        self.Conn.center_meta_approvals(conn.id, refresh=True)
+        conn.invalidate_recordset()
+        statuses = {c.check_key: c.status
+                    for c in conn.sudo().readiness_check_ids}
+        self.assertEqual(statuses.get('provider_approvals'), 'pass',
+                         'a business with no template still reaches ready — '
+                         'it can reply inside the 24 h window')
+        self.assertEqual(conn.state, 'ready')
+        self.assertTrue(conn._may_ingest())
+
+        # Now Meta is unreachable on the nightly poll. Before the latch this
+        # demoted ready→action_required and DROPPED inbound. It must not.
+        self._mock_graph(get_map={
+            '/message_templates': ChannelSendError(
+                'network error: with url: /v17.0/x?access_token=EAAsecret123'),
+            '/%s' % WA_PHONE_ID: ChannelSendError('network error: boom'),
+            '/%s' % WA_WABA_ID: ChannelSendError('network error: boom'),
+        })
+        self.Conn.center_meta_approvals(conn.id, refresh=True)
+        conn.invalidate_recordset()
+        self.assertEqual(conn.state, 'ready',
+                         'a transient Meta outage must not demote a live '
+                         'channel out of ingestion')
+        self.assertTrue(conn._may_ingest())
+
+        # ...and the stored failure detail carries no token (MED-1).
+        cached = conn.sudo()._get_adapter()._setting('meta_approvals') or {}
+        blob = json.dumps(cached, default=str)
+        self.assertNotIn('EAAsecret123', blob,
+                         'the unreadable detail must be redacted before it '
+                         'lands in settings_json')
+
+        # A positively-reported regression also keeps traffic flowing: the row
+        # tells the truth on the card, the send path is what catches a real
+        # loss of capability.
+        self._mock_graph(get_map={
+            '/message_templates': {'data': []},
+            '/%s' % WA_PHONE_ID: {'id': WA_PHONE_ID, 'name_status': 'DECLINED'},
+            '/%s' % WA_WABA_ID: {'id': WA_WABA_ID,
+                                 'account_review_status': 'APPROVED'},
+        })
+        self.Conn.center_meta_approvals(conn.id, refresh=True)
+        conn.invalidate_recordset()
+        self.assertEqual(conn.state, 'ready')
+        self.assertTrue(conn._may_ingest())
 
     # ==================================================================
     # T137 — the honest dark state: this IS vietuat today

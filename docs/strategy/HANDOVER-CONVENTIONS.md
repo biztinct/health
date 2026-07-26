@@ -1164,3 +1164,52 @@ a no-op.
     with `FAIL: ` count 0 is a prompt to read the `ERROR:` lines, never to
     assume either failure or success. (Hit in the CC-D review re-runs; see also
     §5.32, the HttpCase-poisons-TransactionCase sibling.)
+
+- **§5.76 — a second `mock.patch(..., autospec=True)` on an already-patched
+    method silently stops binding `self`.** `create_autospec` builds its spec
+    from the CURRENT attribute, which on a re-patch is the first patch's mock;
+    the result accepts anything, returns the mock's default, and never reaches
+    the `side_effect` with the arguments you expect. Symptom: a call you mocked
+    with data comes back empty, only in tests that re-arm the mock mid-flow
+    (CC-E: 4 red tests, all "a listing with two rows returned none"). Multi-
+    stage provider flows re-arm constantly. Patch with a PLAIN FUNCTION —
+    `patch.object(cls, '_get', func)` where `func(self, …)` — an ordinary
+    descriptor that stacks correctly any number of times. (Found in CC-E.)
+
+- **§5.77 — a fixture timestamp becomes semantic the moment a phase adds a
+    time window, and the breakage lands in tests that never mention time.**
+    CC-B's canonical WhatsApp/Messenger payloads carried a fixed epoch six
+    months in the past. CC-E added Meta's 24 h customer-service window, and
+    every pre-existing `action_send_channel` test on those channels would have
+    started refusing — correctly. Rule: when a phase makes recency load-
+    bearing, grep every shared fixture for an absolute timestamp and make it
+    relative to now, keeping an explicit override for tests that WANT an old
+    event. Sibling of §5.62 (default-narrowing) and §5.50 (fixtures inheriting
+    live values). (Found in CC-E.)
+
+- **§5.78 — a readiness check that can leave `pass` is a traffic kill switch;
+    provider-review state must not be wired to one — and `pending` is as
+    deadly as `fail`.** `_recompute_ready` sends any required check that is not
+    `pass` to `action_required` from `ready`/`expiring` (F1 only protects
+    `testing`), and `action_required` is not in `INGESTABLE_STATES` — so the
+    webhook still answers 200 while inbound is dropped, and Meta/Zalo never
+    retry: the messages are lost. Opus wired Meta's provider-review state to
+    `provider_approvals` moving only `pending↔pass` (never `fail`), reasoning
+    that avoided the kill switch. **It did not** (CC-E review HIGH-1): a
+    transient provider outage on the nightly approvals poll returns an
+    `unreadable`/`pending` row, which lowers an *earned* `pass` back to
+    `pending`, which demotes a LIVE channel and drops its inbox over a network
+    wobble. Two rules, both required: (a) an ADVISORY poll (health cron, a
+    Refresh button) must **latch** — once a review-derived check is `pass` it
+    is never lowered by that poll again; a genuine loss of capability surfaces
+    through the SEND path (`authorization_valid` / a failed send), which is the
+    honest source of truth. (b) Only wire the checks that are true
+    prerequisites to messaging AT ALL into the readiness gate; an *optional*
+    capability (a WhatsApp template, needed only OUTSIDE the 24 h window, which
+    has its own gate) must stay informational on the card, or a reply-only
+    tenant is locked out of its own inbox forever. Same family as §5.66 (the
+    state that means *being proven* must survive its own evidence) and §5.74
+    (a safety mechanism that becomes the failure). (Found in CC-E review; the
+    test that "covered" it never reached `ready`, so it could not see the
+    demotion — a required-check kill-switch test MUST drive the connection to
+    `ready` first.)
