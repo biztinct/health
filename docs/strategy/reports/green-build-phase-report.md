@@ -179,6 +179,26 @@ The PWA one is the sharper find: a correctly-formed catalogue dated
 strings for the field nurses' primary surface. Ledgered as §5.84 and asserted
 by `test_g1c_filename_is_a_language_odoo_reads`.
 
+**Exactly what was not carried over.** A self-check after committing showed
+**7** entries dropped from `viVNpo.po`, not the 1 first reported. All 7 were
+correctly dropped, and each for a reason:
+
+| dropped | why |
+|---|---|
+| 2 | msgid is a Python f-string *expression* captured as a literal (`Service completed - {payment_method.replace("_", " ").title()} payment …`). Worse, the Vietnamese translated the identifier inside the braces (`{thanh toán_phương thức.replace(…)}`) — merging them would have been actively harmful had they ever matched. |
+| 2 | msgid carries literal backslashes (`Find and tap \"Add to Home screen\" …`); the real source string has none, so it can never match. |
+| 3 | multi-line view text that no longer exists in any current health_pwa view. |
+
+Nothing live was lost: an independent pass over all 37 modified catalogues
+comparing (msgid, msgstr) pairs before and after — obsolete entries included —
+found **0 pairs lost**, and all 56 entries of `SAMPLE_TRANSLATION.po` are
+present in `health_base/i18n/vi_VN.po`.
+
+One residue worth naming: **6 of the merged 145 carry that same
+literal-backslash corruption** and will therefore never match a runtime
+string. They are inert rather than harmful, and they inflate the apparent
+translation count by six. Not repaired here — flagged in §5 below.
+
 ### 2.6 Live load counts (handover §1.6 — loading, not shape)
 
 `code_translations.get_python_translations(mod, 'vi_VN')` in a shell on
@@ -367,6 +387,19 @@ omission.
    exist on the server but not in the repo. Not `.po`, so never loaded and not
    caught by G1c. Left alone — server-side cruft, not ours to delete
    unasked.
-5. **The 24 non-live orphans** among the 146 merged PWA strings translate
-   text the PWA no longer emits. Harmless (the loader keys on msgid) and
-   cheaper to keep than to audit one by one.
+5. **The 24 non-live orphans** among the merged PWA strings translate text the
+   PWA no longer emits. Harmless (the loader keys on msgid) and cheaper to
+   keep than to audit one by one.
+6. **6 merged PWA entries carry literal-backslash msgids**
+   (`… \"Add to Home screen\" …`) and can never match the real string, which
+   has no backslashes. They came in that way from the dead catalogue. Inert,
+   not harmful; repairing them means re-deriving each msgid from source, which
+   is a small separate job. Reported rather than silently left: the
+   translation count for health_pwa is six higher than the number of strings
+   that can actually resolve.
+7. **My own report was wrong once, and I found it after committing.** It said
+   1 entry was skipped in the PWA merge; the real number was 7. Corrected in
+   §2.5 with the reason for each. Noting it here because the check that caught
+   it — comparing (msgid, msgstr) pairs across every changed file rather than
+   trusting the merge script's own tally — is the check worth repeating on any
+   future bulk catalogue edit, and it is cheap.
