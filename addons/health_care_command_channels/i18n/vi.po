@@ -600,7 +600,9 @@ msgstr ""
 
 #. module: health_care_command_channels
 #. odoo-python
+#. odoo-javascript
 #: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "Sign in with Meta"
 msgstr "Đăng nhập bằng Meta"
 
@@ -620,7 +622,9 @@ msgstr "Gửi thử"
 
 #. module: health_care_command_channels
 #. odoo-python
+#. odoo-javascript
 #: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "Sign in with Facebook"
 msgstr "Đăng nhập bằng Facebook"
 
@@ -1356,3 +1360,482 @@ msgstr "Lưu khoá bí mật"
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "Skip"
 msgstr "Bỏ qua"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Business verification"
+msgstr "Xác minh doanh nghiệp"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Meta is still reviewing your business."
+msgstr "Meta vẫn đang xét duyệt doanh nghiệp của bạn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Meta has verified your business."
+msgstr "Meta đã xác minh doanh nghiệp của bạn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Meta did not accept your business verification. Open the Meta Business Suite "
+"to see what is missing."
+msgstr ""
+"Meta chưa chấp nhận việc xác minh doanh nghiệp của bạn. Hãy mở Meta Business "
+"Suite để xem còn thiếu gì."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Display name"
+msgstr "Tên hiển thị"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Meta is still reviewing the name clients will see."
+msgstr "Meta vẫn đang xét duyệt tên mà khách hàng sẽ nhìn thấy."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Your display name is approved."
+msgstr "Tên hiển thị của bạn đã được duyệt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Meta declined the display name. Choose another one in the Meta Business "
+"Suite."
+msgstr ""
+"Meta đã từ chối tên hiển thị. Hãy chọn tên khác trong Meta Business Suite."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"No approved template yet. Templates are approved by Meta, not by us — you "
+"need one to start a conversation more than 24 hours after a client last "
+"wrote."
+msgstr ""
+"Chưa có mẫu tin nào được duyệt. Mẫu tin do Meta duyệt chứ không phải chúng "
+"tôi — bạn cần một mẫu để bắt đầu cuộc trò chuyện sau hơn 24 giờ kể từ lần "
+"khách hàng nhắn gần nhất."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "You have at least one approved template."
+msgstr "Bạn có ít nhất một mẫu tin đã được duyệt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Meta declined your templates."
+msgstr "Meta đã từ chối các mẫu tin của bạn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Page access"
+msgstr "Quyền truy cập Trang"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We could not confirm access to your Page yet."
+msgstr "Chúng tôi chưa xác nhận được quyền truy cập vào Trang của bạn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We can reach your Page."
+msgstr "Chúng tôi kết nối được với Trang của bạn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We can no longer reach your Page. Sign in again."
+msgstr "Chúng tôi không còn kết nối được với Trang của bạn. Hãy đăng nhập lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Approval status"
+msgstr "Tình trạng phê duyệt"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"We could not read the approval status from Meta just now. Nothing is wrong "
+"on your side."
+msgstr ""
+"Hiện chúng tôi chưa đọc được tình trạng phê duyệt từ Meta. Phía bạn không có "
+"gì sai cả."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Everything Meta reviews is approved."
+msgstr "Mọi hạng mục Meta xét duyệt đều đã được duyệt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Meta reported a problem."
+msgstr "Meta báo có vấn đề."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "You can reply freely for now."
+msgstr "Hiện bạn có thể trả lời tự do."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"More than 24 hours have passed since this client last wrote, so WhatsApp "
+"only accepts an approved template."
+msgstr ""
+"Đã hơn 24 giờ kể từ lần khách hàng này nhắn gần nhất, nên WhatsApp chỉ chấp "
+"nhận một mẫu tin đã được duyệt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"This client has never written to you on WhatsApp, so only an approved "
+"template may be sent."
+msgstr ""
+"Khách hàng này chưa từng nhắn cho bạn trên WhatsApp, nên chỉ có thể gửi một "
+"mẫu tin đã được duyệt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"More than 24 hours have passed, so Facebook only accepts a human-agent reply "
+"— available for up to 7 days."
+msgstr ""
+"Đã hơn 24 giờ, nên Facebook chỉ chấp nhận câu trả lời của nhân viên trực — "
+"trong tối đa 7 ngày."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"More than 7 days have passed since this client last wrote. Facebook no "
+"longer allows a reply on this conversation."
+msgstr ""
+"Đã hơn 7 ngày kể từ lần khách hàng này nhắn gần nhất. Facebook không còn cho "
+"phép trả lời trong cuộc trò chuyện này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"A Meta window opens. Sign in as the owner of your business, then choose or "
+"create the WhatsApp account you want to use. Your Facebook password is only "
+"ever typed on Meta's own page."
+msgstr ""
+"Một cửa sổ Meta sẽ mở ra. Hãy đăng nhập với tư cách chủ sở hữu doanh nghiệp, "
+"rồi chọn hoặc tạo tài khoản WhatsApp bạn muốn dùng. Mật khẩu Facebook của "
+"bạn chỉ được nhập trên trang của chính Meta."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Pick the WhatsApp number clients should message. You can change it later."
+msgstr "Hãy chọn số WhatsApp mà khách hàng sẽ nhắn tới. Bạn có thể đổi lại sau."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"We tell Meta to send your messages to Health19. Nothing to do here — it "
+"takes a moment."
+msgstr ""
+"Chúng tôi báo Meta gửi tin nhắn của bạn về Health19. Bạn không cần làm gì ở "
+"đây — chỉ mất một lát."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Message your WhatsApp number from any phone — we will answer here. Meta only "
+"lets a business reply freely for 24 hours after a client writes; after that "
+"only an approved template may go out."
+msgstr ""
+"Hãy nhắn tới số WhatsApp của bạn từ bất kỳ điện thoại nào — chúng tôi sẽ trả "
+"lời ở đây. Meta chỉ cho doanh nghiệp trả lời tự do trong 24 giờ sau khi "
+"khách hàng nhắn; sau đó chỉ mẫu tin đã duyệt mới được gửi đi."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"A Facebook window opens. Sign in as an administrator of your Page and allow "
+"Health19 to read and reply to its messages. Your Facebook password is only "
+"ever typed on Facebook's own page."
+msgstr ""
+"Một cửa sổ Facebook sẽ mở ra. Hãy đăng nhập với tư cách quản trị viên Trang "
+"của bạn và cho phép Health19 đọc và trả lời tin nhắn của Trang. Mật khẩu "
+"Facebook của bạn chỉ được nhập trên trang của chính Facebook."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Pick the Page whose messages should arrive in Care Command."
+msgstr "Hãy chọn Trang có tin nhắn cần chuyển về Care Command."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"We tell Facebook to send your Page messages to Health19. Nothing to do here."
+msgstr ""
+"Chúng tôi báo Facebook gửi tin nhắn Trang của bạn về Health19. Bạn không cần "
+"làm gì ở đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Message your Page from Messenger — we will answer here. Facebook lets a "
+"business reply freely for 24 hours; after that only a human-agent reply is "
+"allowed, for up to 7 days."
+msgstr ""
+"Hãy nhắn tới Trang của bạn từ Messenger — chúng tôi sẽ trả lời ở đây. "
+"Facebook cho doanh nghiệp trả lời tự do trong 24 giờ; sau đó chỉ nhân viên "
+"trực mới được trả lời, trong tối đa 7 ngày."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This is not a WhatsApp or Messenger connection."
+msgstr "Đây không phải kết nối WhatsApp hay Messenger."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Sign-in could not be started: %s"
+msgstr "Không thể bắt đầu đăng nhập: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Messenger sign-in finishes on its own — there is nothing to paste here."
+msgstr "Việc đăng nhập Messenger tự hoàn tất — không cần dán gì ở đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Meta sign-in did not complete. Please try again."
+msgstr "Việc đăng nhập Meta chưa hoàn tất. Vui lòng thử lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This sign-in has expired. Please start again."
+msgstr "Phiên đăng nhập này đã hết hạn. Vui lòng bắt đầu lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Meta did not complete the sign-in: %s"
+msgstr "Meta không hoàn tất việc đăng nhập: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We could not read your %(channel)s accounts: %(reason)s"
+msgstr "Chúng tôi không đọc được các tài khoản %(channel)s của bạn: %(reason)s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "That choice could not be saved: %s"
+msgstr "Không lưu được lựa chọn đó: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Meta could not be connected: %s"
+msgstr "Không kết nối được Meta: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Only WhatsApp uses message templates."
+msgstr "Chỉ WhatsApp dùng mẫu tin nhắn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We could not read your templates: %s"
+msgstr "Chúng tôi không đọc được các mẫu tin của bạn: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Message your WhatsApp number from any phone first — Meta only lets a "
+"business reply to a conversation the client started."
+msgstr ""
+"Trước tiên hãy nhắn tới số WhatsApp của bạn từ một điện thoại bất kỳ — Meta "
+"chỉ cho doanh nghiệp trả lời cuộc trò chuyện do khách hàng bắt đầu."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Message your Page from Messenger first — Facebook only lets a business reply "
+"to a conversation the client started."
+msgstr ""
+"Trước tiên hãy nhắn tới Trang của bạn từ Messenger — Facebook chỉ cho doanh "
+"nghiệp trả lời cuộc trò chuyện do khách hàng bắt đầu."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"Facebook no longer allows a reply on that conversation — it is more than 7 "
+"days old. Ask someone to message your Page again, then test."
+msgstr ""
+"Facebook không còn cho phép trả lời cuộc trò chuyện đó — nó đã quá 7 ngày. "
+"Hãy nhờ ai đó nhắn lại cho Trang của bạn rồi thử lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid ""
+"WhatsApp only accepts an approved template more than 24 hours after a client "
+"last wrote. Message your WhatsApp number from any phone, then test again."
+msgstr ""
+"Sau hơn 24 giờ kể từ lần khách hàng nhắn gần nhất, WhatsApp chỉ chấp nhận "
+"mẫu tin đã được duyệt. Hãy nhắn tới số WhatsApp của bạn từ một điện thoại "
+"bất kỳ rồi thử lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
+msgid "This channel is not connected right now."
+msgstr "Kênh này hiện chưa được kết nối."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
+msgid "We could not read your WhatsApp templates: %s"
+msgstr "Chúng tôi không đọc được các mẫu tin WhatsApp của bạn: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
+msgid "Choose an approved template."
+msgstr "Hãy chọn một mẫu tin đã được duyệt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
+msgid "The template could not be sent: %s"
+msgstr "Không gửi được mẫu tin: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/care_conversation_ext.py:0
+msgid "%s Send an approved template instead."
+msgstr "%s Hãy gửi một mẫu tin đã được duyệt thay thế."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid ""
+"This needs Meta's own sign-in window, and your browser blocked it. Allow "
+"pop-ups for this site, or try another browser, then start again."
+msgstr ""
+"Việc này cần cửa sổ đăng nhập của chính Meta, và trình duyệt của bạn đã chặn "
+"nó. Hãy cho phép cửa sổ bật lên trên trang này, hoặc thử trình duyệt khác, "
+"rồi bắt đầu lại."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Open the Facebook sign-in page"
+msgstr "Mở trang đăng nhập Facebook"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid ""
+"Meta did not grant everything Health19 needs. Ask whoever administers your "
+"Meta account for:"
+msgstr ""
+"Meta chưa cấp đủ những quyền Health19 cần. Hãy đề nghị người quản trị tài "
+"khoản Meta của bạn cấp:"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid ""
+"Meta did not grant everything Health19 needs. Sign in again and allow every "
+"permission it asks for."
+msgstr ""
+"Meta chưa cấp đủ những quyền Health19 cần. Hãy đăng nhập lại và cho phép mọi "
+"quyền được yêu cầu."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Reading your Meta accounts…"
+msgstr "Đang đọc các tài khoản Meta của bạn…"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid ""
+"Meta returned nothing to choose from yet. Finish the sign-in, then try again."
+msgstr "Meta chưa trả về gì để chọn. Hãy hoàn tất việc đăng nhập rồi thử lại."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Meta is sending your messages to Health19."
+msgstr "Meta đang gửi tin nhắn của bạn về Health19."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Connected. New messages arrive in Care Command."
+msgstr "Đã kết nối. Tin nhắn mới sẽ về Care Command."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Waiting on Meta"
+msgstr "Đang chờ Meta"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Check again"
+msgstr "Kiểm tra lại"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Refresh the list"
+msgstr "Tải lại danh sách"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Use this one"
+msgstr "Dùng cái này"

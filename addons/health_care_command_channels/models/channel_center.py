@@ -40,8 +40,9 @@ from odoo.addons.health_care_command.models.care_conversation import (
 )
 
 from ..services.adapters import (
-    MODE_GUIDED_SECRET, MODE_OAUTH_POPUP, MODE_ONE_CLICK, ZALO_WEBHOOK_PATH,
-    ChannelSendError,
+    FB_MESSAGE_TAGS, META_SDK_URL, MODE_EMBEDDED_SIGNUP, MODE_GUIDED_SECRET,
+    MODE_OAUTH_POPUP, MODE_ONE_CLICK, ZALO_WEBHOOK_PATH, ChannelSendError,
+    meta_window_state,
 )
 from ..services.redact import redact
 from .care_channel_connection import SENDABLE_STATES
@@ -53,13 +54,24 @@ CENTER_CHANNELS = [key for key, _label in CHANNEL_SELECTION]
 
 # Modes whose stepper is actually implemented. Everything else renders its
 # structure and says so — an honest "not yet" beats a button that cannot work.
-IMPLEMENTED_MODES = {MODE_GUIDED_SECRET, MODE_ONE_CLICK, MODE_OAUTH_POPUP}
+IMPLEMENTED_MODES = {MODE_GUIDED_SECRET, MODE_ONE_CLICK, MODE_OAUTH_POPUP,
+                     MODE_EMBEDDED_SIGNUP}
 
 # Only these channels have a working begin/validate/test flow. The `call`
-# adapter also declares guided_secret and whatsapp/fb/email declare a popup or
-# embedded signup, but their credential exchanges are CC-E/CC-F — BOTH gates
-# must pass, so those cards stay honestly "in an upcoming update".
-CENTER_IMPLEMENTED_CHANNELS = {'telegram', 'webchat', 'zalo'}
+# adapter also declares guided_secret and `email` declares a popup, but their
+# credential exchanges are CC-F — BOTH gates must pass, so those cards stay
+# honestly "in an upcoming update".
+#
+# CC-E adds `whatsapp` and `fb`: their onboarding is software-complete against
+# mocks. Being *implemented* is not the same as being *available* — with no
+# `channel.platform.app` for provider `meta`, `_center_platform_available`
+# still renders both as "Not available yet" and `center_begin` still refuses,
+# which is exactly the state of vietuat today (T137).
+CENTER_IMPLEMENTED_CHANNELS = {'telegram', 'webchat', 'zalo', 'whatsapp', 'fb'}
+
+# Meta channels, and the `channel.platform.app.extra_json` key that configures
+# each one's sign-in (operator checklist §12.3).
+META_CHANNELS = ('whatsapp', 'fb')
 
 # ZNS template ids live in per-module ir.config_parameters (architecture §1.2,
 # the frozen 10-module contract). The Center counts how many are actually set:
@@ -153,6 +165,75 @@ class CareChannelConnectionCenter(models.Model):
         }
 
     @api.model
+    def _center_approval_labels(self):
+        """Meta's human review gates, in plain language.
+
+        These are PROVIDER states, not our errors (handover §1.3): a tenant
+        whose display name is still under review has done nothing wrong and
+        must not see a red failure — they see what is pending and where.
+        """
+        return {
+            'business_verification': {
+                'label': _('Business verification'),
+                'pending': _('Meta is still reviewing your business.'),
+                'pass': _('Meta has verified your business.'),
+                'fail': _('Meta did not accept your business verification. '
+                          'Open the Meta Business Suite to see what is '
+                          'missing.'),
+            },
+            'display_name': {
+                'label': _('Display name'),
+                'pending': _('Meta is still reviewing the name clients will '
+                             'see.'),
+                'pass': _('Your display name is approved.'),
+                'fail': _('Meta declined the display name. Choose another one '
+                          'in the Meta Business Suite.'),
+            },
+            'templates': {
+                'label': _('Message templates'),
+                'pending': _('No approved template yet. Templates are '
+                             'approved by Meta, not by us — you need one to '
+                             'start a conversation more than 24 hours after a '
+                             'client last wrote.'),
+                'pass': _('You have at least one approved template.'),
+                'fail': _('Meta declined your templates.'),
+            },
+            'page_access': {
+                'label': _('Page access'),
+                'pending': _('We could not confirm access to your Page yet.'),
+                'pass': _('We can reach your Page.'),
+                'fail': _('We can no longer reach your Page. Sign in again.'),
+            },
+            'unreadable': {
+                'label': _('Approval status'),
+                'pending': _('We could not read the approval status from Meta '
+                             'just now. Nothing is wrong on your side.'),
+                'pass': _('Everything Meta reviews is approved.'),
+                'fail': _('Meta reported a problem.'),
+            },
+        }
+
+    @api.model
+    def _center_window_texts(self):
+        """The provider messaging windows, said out loud (handover §1.4)."""
+        return {
+            'whatsapp_open': _('You can reply freely for now.'),
+            'whatsapp_closed': _(
+                'More than 24 hours have passed since this client last wrote, '
+                'so WhatsApp only accepts an approved template.'),
+            'whatsapp_never': _(
+                'This client has never written to you on WhatsApp, so only an '
+                'approved template may be sent.'),
+            'fb_open': _('You can reply freely for now.'),
+            'fb_tag': _(
+                'More than 24 hours have passed, so Facebook only accepts a '
+                'human-agent reply — available for up to 7 days.'),
+            'fb_blocked': _(
+                'More than 7 days have passed since this client last wrote. '
+                'Facebook no longer allows a reply on this conversation.'),
+        }
+
+    @api.model
     def _center_guide_texts(self):
         """``guide_steps`` keys → the words on the stepper screens.
 
@@ -201,15 +282,56 @@ class CareChannelConnectionCenter(models.Model):
                 'body': _('Open your website, use the chat bubble and send a '
                           'message. It appears in Care Command straight away.'),
             },
-            # -- structure only (CC-D / CC-E / CC-F) -----------------------
-            'channel_hub.guide.whatsapp.signin': {'title': _('Sign in with Meta')},
-            'channel_hub.guide.whatsapp.number': {'title': _('Choose your number')},
-            'channel_hub.guide.whatsapp.connecting': {'title': _('We set things up')},
-            'channel_hub.guide.whatsapp.test': {'title': _('Send a test')},
-            'channel_hub.guide.fb.signin': {'title': _('Sign in with Facebook')},
-            'channel_hub.guide.fb.page': {'title': _('Choose your Page')},
-            'channel_hub.guide.fb.connecting': {'title': _('We set things up')},
-            'channel_hub.guide.fb.test': {'title': _('Send a test')},
+            # -- WhatsApp (Meta Embedded Signup) --------------------------
+            'channel_hub.guide.whatsapp.signin': {
+                'title': _('Sign in with Meta'),
+                'body': _('A Meta window opens. Sign in as the owner of your '
+                          'business, then choose or create the WhatsApp '
+                          'account you want to use. Your Facebook password is '
+                          "only ever typed on Meta's own page."),
+            },
+            'channel_hub.guide.whatsapp.number': {
+                'title': _('Choose your number'),
+                'body': _('Pick the WhatsApp number clients should message. '
+                          'You can change it later.'),
+            },
+            'channel_hub.guide.whatsapp.connecting': {
+                'title': _('We set things up'),
+                'body': _('We tell Meta to send your messages to Health19. '
+                          'Nothing to do here — it takes a moment.'),
+            },
+            'channel_hub.guide.whatsapp.test': {
+                'title': _('Send a test'),
+                'body': _('Message your WhatsApp number from any phone — we '
+                          'will answer here. Meta only lets a business reply '
+                          'freely for 24 hours after a client writes; after '
+                          'that only an approved template may go out.'),
+            },
+            # -- Messenger (Facebook Login for Business) -------------------
+            'channel_hub.guide.fb.signin': {
+                'title': _('Sign in with Facebook'),
+                'body': _('A Facebook window opens. Sign in as an '
+                          'administrator of your Page and allow Health19 to '
+                          'read and reply to its messages. Your Facebook '
+                          "password is only ever typed on Facebook's own page."),
+            },
+            'channel_hub.guide.fb.page': {
+                'title': _('Choose your Page'),
+                'body': _('Pick the Page whose messages should arrive in Care '
+                          'Command.'),
+            },
+            'channel_hub.guide.fb.connecting': {
+                'title': _('We set things up'),
+                'body': _('We tell Facebook to send your Page messages to '
+                          'Health19. Nothing to do here.'),
+            },
+            'channel_hub.guide.fb.test': {
+                'title': _('Send a test'),
+                'body': _('Message your Page from Messenger — we will answer '
+                          'here. Facebook lets a business reply freely for 24 '
+                          'hours; after that only a human-agent reply is '
+                          'allowed, for up to 7 days.'),
+            },
             # -- Zalo (OAuth popup + a portal-guided webhook step) ---------
             'channel_hub.guide.zalo.signin': {
                 'title': _('Sign in with Zalo'),
@@ -374,7 +496,42 @@ class CareChannelConnectionCenter(models.Model):
             })
             if channel == 'zns':
                 cards[-1]['zns'] = self._center_zns_status(conn)
+            if channel in META_CHANNELS:
+                cards[-1]['approvals'] = self._center_approvals(conn)
         return cards
+
+    # ------------------------------------------------------------------
+    # Meta approvals — first-class STATE on the card, never an error dialog
+    # ------------------------------------------------------------------
+    @api.model
+    def _center_approvals(self, conn=None):
+        """The provider-review rows for a Meta connection, translated.
+
+        Reads the CACHE the adapter wrote on its last health check or explicit
+        refresh: rendering the catalogue must never make a Graph call, and a
+        Meta outage must never blank the Center. An empty cache is honest —
+        "we have not asked yet" — not an assertion that anything is approved.
+        """
+        labels = self._center_approval_labels()
+        rows = []
+        if conn:
+            try:
+                rows = conn.sudo()._get_adapter().approvals()
+            except (ValueError, NotImplementedError, AttributeError):
+                rows = []
+        out = []
+        for row in rows or []:
+            key = row.get('key') or 'unreadable'
+            text = labels.get(key) or labels['unreadable']
+            status = row.get('status') if row.get('status') in (
+                'pass', 'pending', 'fail') else 'pending'
+            out.append({
+                'key': key,
+                'label': text['label'],
+                'status': status,
+                'message': text[status],
+            })
+        return out
 
     # ------------------------------------------------------------------
     # ZNS readiness — honest, and never asserted
@@ -719,6 +876,225 @@ class CareChannelConnectionCenter(models.Model):
                 'has_webhook_secret': True}
 
     # ==================================================================
+    # 3c. Meta — WhatsApp (Embedded Signup v4) and Messenger (FLB)
+    # ==================================================================
+    @api.model
+    def _center_meta(self, conn_id):
+        conn = self._center_get(conn_id)
+        if conn.channel not in META_CHANNELS:
+            raise UserError(_('This is not a WhatsApp or Messenger connection.'))
+        return conn
+
+    @api.model
+    def center_meta_start(self, channel):
+        """Open a sign-in attempt for a Meta channel.
+
+        WhatsApp gets the payload its JS SDK needs (app id + Embedded Signup
+        configuration id + the single-use state); Messenger gets the Facebook
+        Login for Business dialog URL. **Neither carries the app secret** — it
+        exists only in the server-to-server exchange (T127).
+        """
+        if channel not in META_CHANNELS:
+            raise UserError(_('Unknown channel.'))
+        conn = self._center_connection(channel)
+        if not conn:
+            raise UserError(_('This channel is not set up yet.'))
+        conn._check_center_access()
+        caps = conn._capabilities()
+        if not self._center_platform_available(caps):
+            raise UserError(_('This channel is not available yet.'))
+        self._center_require_https()
+        if conn.state != 'authorizing':
+            conn._transition('authorizing', reason='meta sign-in')
+        Session = self.env['care.channel.oauth.session']
+        # PKCE is stored but unused: Meta's server-side code exchange does not
+        # accept a code_verifier (handover §2.3). The single-use, hashed,
+        # 10-minute state is mandatory either way.
+        opened = Session.create_for(conn, provider='meta')
+        session = Session.sudo().browse(opened['session_id'])
+        try:
+            payload = conn.sudo()._get_adapter().authorize_url(
+                session, opened['state'], opened['code_challenge'])
+        except ChannelSendError as exc:
+            session.sudo().write({'outcome': 'error',
+                                  'detail_redacted': redact(exc)})
+            raise UserError(_(
+                'Sign-in could not be started: %s',
+                redact(exc) or _('unknown error'))) from exc
+        result = {'connection_id': conn.id, 'channel': channel,
+                  'state': conn.state, 'mode': caps.get('mode'),
+                  'sdk_url': META_SDK_URL}
+        if isinstance(payload, dict):
+            result.update(payload)
+            result['state_token'] = payload.get('state')
+            # `state` on the envelope is the CONNECTION state (every other
+            # Center endpoint uses it that way); the authorization state rides
+            # as `state_token` so the two can never be confused in the UI.
+            result['state'] = conn.state
+        else:
+            result['url'] = payload
+        return result
+
+    @api.model
+    def center_meta_exchange(self, conn_id, code, state=None,
+                             resource_hint=None):
+        """WhatsApp only: the Embedded Signup code, handed over by the SDK.
+
+        The ES popup returns its code to the BROWSER (there is no redirect for
+        the OAuth controller to catch), so this endpoint is the exchange's
+        front door — and it is gated exactly like ``center_telegram_validate``:
+        group, company, channel. The code is credential material and is never
+        logged, never echoed and never stored.
+
+        ``state`` is the single-use authorization state minted by
+        ``center_meta_start``; it is burned here, so a code cannot be replayed
+        into a second connection or a second tab (deviation D1 — the handover's
+        signature named only ``(conn_id, code)``, but T127's "state single-use"
+        needs a consumer).
+
+        ``resource_hint`` carries the ``waba_id`` / ``phone_number_id`` the ES
+        popup announced through ``postMessage``. Both are PUBLIC provider ids,
+        never credentials, and they are only a hint: the authoritative WABA
+        list still comes from Meta's own ``debug_token`` granular scopes.
+        """
+        conn = self._center_meta(conn_id)
+        if conn.channel != 'whatsapp':
+            raise UserError(_(
+                'Messenger sign-in finishes on its own — there is nothing to '
+                'paste here.'))
+        if not code or not isinstance(code, str) or not code.strip():
+            raise UserError(_('Meta sign-in did not complete. Please try '
+                              'again.'))
+        Session = self.env['care.channel.oauth.session']
+        session = Session._consume(state)
+        if not session or session.connection_id != conn \
+                or session.provider != 'meta':
+            # One generic refusal for unknown / used / expired / foreign — the
+            # endpoint must not become an oracle for valid states.
+            raise UserError(_('This sign-in has expired. Please start again.'))
+        params = {'code': code.strip()}
+        if isinstance(resource_hint, dict):
+            for key in ('waba_id', 'phone_number_id'):
+                value = str(resource_hint.get(key) or '').strip()
+                # Provider ids are digits; refusing anything else keeps a
+                # browser-supplied value out of a Graph path.
+                if value and value.isdigit():
+                    params[key] = value
+        try:
+            result = conn.sudo()._get_adapter().handle_callback(session, params)
+        except ChannelSendError as exc:
+            session.sudo().write({'outcome': 'error',
+                                  'detail_redacted': redact(exc)})
+            self.env['care.channel.audit']._log(
+                'callback_error', connection=conn, detail=exc)
+            raise UserError(_(
+                'Meta did not complete the sign-in: %s',
+                redact(exc) or _('unknown error'))) from exc
+        session.sudo().write({'outcome': 'ok'})
+        self.env['care.channel.audit']._log(
+            'callback_ok', connection=conn, detail='whatsapp embedded signup')
+        conn.invalidate_recordset()
+        return {
+            'connection_id': conn.id,
+            'state': conn.state,
+            'missing_scopes': (result or {}).get('missing_scopes') or [],
+            'resource_line': conn._center_resource_line(),
+        }
+
+    @api.model
+    def center_meta_resources(self, conn_id):
+        """The picker list: WhatsApp numbers, or Facebook Pages.
+
+        Carries no token of any kind — the Messenger reply from Meta contains
+        one non-expiring credential per Page, and the adapter strips them
+        before this ever returns.
+        """
+        conn = self._center_meta(conn_id)
+        try:
+            resources = conn.sudo()._get_adapter().list_resources()
+        except ChannelSendError as exc:
+            raise UserError(_(
+                'We could not read your %(channel)s accounts: %(reason)s',
+                channel=self._center_channel_labels().get(conn.channel,
+                                                          conn.channel),
+                reason=redact(exc) or _('unknown error'))) from exc
+        return {'connection_id': conn.id, 'state': conn.state,
+                'selected': conn.resource_external_id or '',
+                'hint': conn.sudo().get_setting('meta_phone_hint') or '',
+                'resources': resources}
+
+    @api.model
+    def center_meta_select(self, conn_id, external_id):
+        """Pin the connection to one number / Page."""
+        conn = self._center_meta(conn_id)
+        try:
+            resource = conn.sudo()._get_adapter().select_resource(external_id)
+        except ChannelSendError as exc:
+            raise UserError(_(
+                'That choice could not be saved: %s',
+                redact(exc) or _('unknown error'))) from exc
+        if conn.state in ('authorizing', 'select_resource'):
+            conn._transition('configuring', reason='meta resource selected')
+        conn.invalidate_recordset()
+        return {'connection_id': conn.id, 'state': conn.state,
+                'selected': conn.resource_external_id or '',
+                'resource_line': conn._center_resource_line(),
+                'resource': resource}
+
+    @api.model
+    def center_meta_subscribe(self, conn_id):
+        """Register the webhook with Meta (``POST /{id}/subscribed_apps``).
+
+        A refusal writes the redacted evidence and leaves ``webhook_state`` /
+        ``webhook_configured`` untouched: a card that says "connection set up"
+        when Meta said no is precisely the lie this framework exists to stop.
+        """
+        conn = self._center_meta(conn_id)
+        self._center_require_https()
+        try:
+            conn.sudo()._get_adapter().subscribe_webhook()
+        except ChannelSendError as exc:
+            if not conn._persist_send_failure(None, None, exc):
+                conn._note_send_failure(exc)
+            raise UserError(_(
+                'Meta could not be connected: %s',
+                redact(exc) or _('unknown error'))) from exc
+        if conn.state in ('authorizing', 'select_resource', 'configuring',
+                          'action_required'):
+            conn._transition('testing', reason='meta webhook subscribed')
+        conn._recompute_ready()
+        conn.invalidate_recordset()
+        return {'connection_id': conn.id, 'state': conn.state,
+                'resource_line': conn._center_resource_line()}
+
+    @api.model
+    def center_meta_approvals(self, conn_id, refresh=False):
+        """Where Meta's human reviews stand, optionally re-read from Graph."""
+        conn = self._center_meta(conn_id)
+        if refresh:
+            conn.sudo()._get_adapter().refresh_approvals()
+            self.env['care.channel.audit']._log(
+                'approvals_refreshed', connection=conn)
+            conn.invalidate_recordset()
+        return {'connection_id': conn.id, 'state': conn.state,
+                'approvals': self._center_approvals(conn)}
+
+    @api.model
+    def center_meta_templates(self, conn_id):
+        """The WhatsApp templates Meta has APPROVED — the outside-window path."""
+        conn = self._center_meta(conn_id)
+        if conn.channel != 'whatsapp':
+            raise UserError(_('Only WhatsApp uses message templates.'))
+        try:
+            templates = conn.sudo()._get_adapter().list_message_templates()
+        except ChannelSendError as exc:
+            raise UserError(_(
+                'We could not read your templates: %s',
+                redact(exc) or _('unknown error'))) from exc
+        return {'connection_id': conn.id, 'templates': templates,
+                'tags': list(FB_MESSAGE_TAGS)}
+
+    # ==================================================================
     # 4. Web chat — one click
     # ==================================================================
     @api.model
@@ -847,6 +1223,33 @@ class CareChannelConnectionCenter(models.Model):
         return _('Health19 connection test — please ignore.')
 
     @api.model
+    def _center_window(self, conn, identity=None):
+        """The provider messaging window for one peer, with its plain words.
+
+        Channels that have no window (Telegram, web chat, Zalo) answer ``open``
+        with no restriction, so every caller can ask unconditionally.
+        """
+        state = meta_window_state(self.env, conn.sudo(), identity)
+        texts = self._center_window_texts()
+        if conn.channel == 'whatsapp':
+            if state['open']:
+                state['message'] = texts['whatsapp_open']
+            elif not state['last_inbound_at']:
+                state['message'] = texts['whatsapp_never']
+            else:
+                state['message'] = texts['whatsapp_closed']
+        elif conn.channel == 'fb':
+            if state['open']:
+                state['message'] = texts['fb_open']
+            elif state['requires_tag']:
+                state['message'] = texts['fb_tag']
+            else:
+                state['message'] = texts['fb_blocked']
+        else:
+            state['message'] = ''
+        return state
+
+    @api.model
     def center_test(self, conn_id):
         conn = self._center_get(conn_id)
         if conn.channel not in CENTER_IMPLEMENTED_CHANNELS:
@@ -865,14 +1268,42 @@ class CareChannelConnectionCenter(models.Model):
                 raise UserError(_(
                     'Send your bot a message from Telegram first — we can '
                     'only reply to a conversation somebody started.'))
+            if conn.channel == 'whatsapp':
+                raise UserError(_(
+                    'Message your WhatsApp number from any phone first — Meta '
+                    'only lets a business reply to a conversation the client '
+                    'started.'))
+            if conn.channel == 'fb':
+                raise UserError(_(
+                    'Message your Page from Messenger first — Facebook only '
+                    'lets a business reply to a conversation the client '
+                    'started.'))
             raise UserError(_(
                 'Send a message from the chat bubble on your website first — '
                 'we can only reply to a conversation somebody started.'))
 
         body = self._center_test_body()
         Message = self.env['care.channel.message']
+        # Meta's customer-service window applies to the test send too: pushing
+        # a free-form message at a closed window would fail AT META and read
+        # as "the connection is broken" when the connection is fine (§1.4).
+        window = self._center_window(conn, identity)
+        kwargs = {}
+        if window.get('blocked'):
+            raise UserError(_(
+                'Facebook no longer allows a reply on that conversation — it '
+                'is more than 7 days old. Ask someone to message your Page '
+                'again, then test.'))
+        if window.get('requires_template'):
+            raise UserError(_(
+                'WhatsApp only accepts an approved template more than 24 '
+                'hours after a client last wrote. Message your WhatsApp '
+                'number from any phone, then test again.'))
+        if window.get('requires_tag') and window.get('tags'):
+            kwargs['tag'] = window['tags'][0]
         try:
-            result = conn.sudo()._get_adapter().send_message(identity, body)
+            result = conn.sudo()._get_adapter().send_message(
+                identity, body, **kwargs)
         except Exception as exc:  # noqa: BLE001 — provider/network failure
             auth = any(marker in str(exc).lower()
                        for marker in ('401', 'unauthorized', 'invalid token'))

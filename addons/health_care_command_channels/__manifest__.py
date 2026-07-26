@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.4.0.0',
+    'version': '19.0.5.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -104,10 +104,51 @@ security boundary is replaced by the framework's fail-closed one:
   say hello) and an honest ZNS sub-card: how many consumer templates are
   configured, and whether Zalo has ever accepted one.
 
-Non-goals of this phase: no Meta JS SDK or embedded signup (CC-E), no
-email/VoIP wizard (CC-F), no ZNS template designer, no edits to any of the ten
-ZNS consumer modules, no real provider call anywhere in the tests, no
-credentials on any server.
+Channel Connection Center — Phase CC-E (Meta: WhatsApp + Messenger)
+====================================================================
+
+The onboarding half of the two Meta adapters CC-B left as message rails:
+
+- **WhatsApp — Embedded Signup v4**: the Center hands the browser the public
+  app id, the ES configuration id and a single-use state; Meta's JS SDK (loaded
+  ON DEMAND, never in the backend bundle) runs the popup and returns an
+  authorization code, which is exchanged server-to-server for a Business
+  Integration System User token that does not expire. ``debug_token`` is what
+  makes the scope claim honest; a missing permission is a ``scopes_granted``
+  FAIL with the plain list of what Meta withheld, never a silent half-connect.
+- **Messenger — Facebook Login for Business**: the same code exchange through
+  the framework's own OAuth callback, then ``/me/accounts`` for the Page picker.
+  The user token is held for the picker and the chosen Page's own non-expiring
+  token becomes what the composer spends.
+- **Webhook registration** is ours to do: ``POST /{waba}/subscribed_apps`` for
+  WhatsApp, ``POST /{page}/subscribed_apps`` (messages + postbacks) for
+  Messenger. A refusal writes redacted evidence and leaves ``webhook_state``
+  alone — a card that claims a subscription Meta declined is the lie the
+  readiness model exists to prevent.
+- **Approvals as first-class state**: business verification, display-name
+  review and template review are Meta's HUMAN processes. They are read from
+  Graph, cached, and rendered as plain-language pending tasks on the card.
+  ``provider_approvals`` only ever moves between ``pending`` and ``pass`` —
+  never ``fail``, which would strand a channel in ``action_required`` over a
+  review it can still win.
+- **The outbound windows reach the UI**: WhatsApp's 24 h customer-service
+  window (outside it, only an approved template — ``action_send_channel``
+  refuses HERE and points at ``action_send_channel_template``), and Messenger's
+  24 h window with ``HUMAN_AGENT`` (7 days) as the ONLY surviving tag since
+  2026-04-27. Every other Messenger tag is refused by us rather than sent and
+  rejected at Meta.
+
+**Honestly dark.** A Meta connection needs a Business-type app, Business
+Verification, App Review of five permissions and two Login-for-Business
+configurations — multi-week human processes (operator checklist §12.1–§12.4)
+that have not started. With no ``channel.platform.app`` for provider ``meta``,
+both cards read "Not available yet" and ``center_begin`` refuses. No
+placeholder credential is seeded anywhere.
+
+Non-goals of this phase: no Instagram (a separable Meta permission set), no
+email/VoIP wizard (CC-F), no ZNS template designer, no new public routes, no
+change to the CC-B Meta webhook controller, no edits to health_care_command, no
+real provider call anywhere in the tests, no credentials on any server.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',

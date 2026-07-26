@@ -8,10 +8,23 @@ no test in this phase reaches a real provider, and no credential in it is real.
 import hashlib
 import hmac
 import json
+import time
 from contextlib import contextmanager
 from unittest.mock import MagicMock, patch
 
 from .common import ChannelHubCase
+
+# CC-E: the canonical payloads used to carry a FIXED epoch (2026-01-21), which
+# was harmless while nothing depended on when a message arrived. Meta's 24 h
+# customer-service window makes recency semantic — a six-month-old fixture
+# inbound now correctly closes the window and refuses a free-form reply — so
+# the default is "a few minutes ago", computed at call time. Tests that care
+# about an old message set `ts` explicitly (T135 does exactly that).
+RECENT_SECONDS = 300
+
+
+def _recent_epoch():
+    return int(time.time()) - RECENT_SECONDS
 
 META_APP_SECRET = 'meta-app-secret-fixture'
 META_VERIFY_TOKEN = 'verify-token-fixture'
@@ -76,8 +89,9 @@ class ChannelSpineCase(ChannelHubCase):
     @staticmethod
     def wa_payload(wa_id='84901234567', mid='wamid.FIXTURE1',
                    text='Xin chào, tôi cần đặt lịch', name='Chị Lan',
-                   phone_id=WA_PHONE_ID, ts=1769000000):
+                   phone_id=WA_PHONE_ID, ts=None):
         """WhatsApp Cloud API `messages` webhook, trimmed to what we read."""
+        ts = _recent_epoch() if ts is None else ts
         return {
             'object': 'whatsapp_business_account',
             'entry': [{
@@ -101,7 +115,8 @@ class ChannelSpineCase(ChannelHubCase):
 
     @staticmethod
     def wa_status_payload(mid='wamid.FIXTURE1', status='delivered',
-                          phone_id=WA_PHONE_ID, ts=1769000060):
+                          phone_id=WA_PHONE_ID, ts=None):
+        ts = (_recent_epoch() + 60) if ts is None else ts
         return {
             'object': 'whatsapp_business_account',
             'entry': [{
@@ -121,7 +136,8 @@ class ChannelSpineCase(ChannelHubCase):
 
     @staticmethod
     def fb_payload(psid='PSID_1', mid='m_fixture1', text='Hello there',
-                   page_id=FB_PAGE_ID, ts=1769000000000):
+                   page_id=FB_PAGE_ID, ts=None):
+        ts = _recent_epoch() * 1000 if ts is None else ts
         return {
             'object': 'page',
             'entry': [{
@@ -137,7 +153,8 @@ class ChannelSpineCase(ChannelHubCase):
 
     @staticmethod
     def tg_payload(chat_id=555001, message_id=11, text='chào bạn',
-                   first_name='Minh', ts=1769000000):
+                   first_name='Minh', ts=None):
+        ts = _recent_epoch() if ts is None else ts
         return {
             'update_id': 900001,
             'message': {

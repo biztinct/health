@@ -35,6 +35,9 @@ KNOWN_EVENTS = {
     # because the connection is not in an ingestable state, and a send that
     # the provider refused.
     'webhook_ignored', 'send_failed',
+    # CC-E (Meta): a subscribed_apps call the provider refused, and a re-read
+    # of where Meta's human reviews stand.
+    'webhook_failed', 'approvals_refreshed',
 }
 
 

@@ -169,7 +169,106 @@ class CareConversationChannelExt(models.Model):
         caps = super()._capabilities()
         if self.channel_identity_id and self._sendable_connection():
             caps['ext_reply_channel'] = self.channel_identity_id.channel
+            # CC-E: the composer must KNOW about Meta's 24 h customer-service
+            # window rather than discovering it as a failed send (§1.4). Every
+            # channel answers, so a caller never has to special-case Meta;
+            # channels with no window simply report `open` with no restriction.
+            caps['ext_window'] = self._channel_window()
         return caps
+
+    def _channel_window(self):
+        """What may go out on this conversation right now, and why.
+
+        Returns the adapter's window state plus one plain sentence
+        (``message``) and, for WhatsApp outside the window, the fact that a
+        template is the only path. The composer renders that instead of
+        offering a send that Meta would refuse.
+        """
+        self.ensure_one()
+        ident = self.channel_identity_id
+        connection = self._sendable_connection()
+        if not ident or not connection:
+            return {'channel': ident.channel if ident else '', 'open': False,
+                    'requires_template': False, 'requires_tag': False,
+                    'blocked': True, 'tags': [], 'message': _(
+                        'This channel is not connected right now.')}
+        return self.env['care.channel.connection'].sudo()._center_window(
+            connection, ident)
+
+    @api.model
+    def channel_send_window(self, conv_id):
+        """RPC face of :meth:`_channel_window` — group- and company-gated."""
+        return self._guarded(conv_id)._channel_window()
+
+    @api.model
+    def channel_templates(self, conv_id):
+        """The APPROVED WhatsApp templates for this conversation's connection."""
+        rec = self._guarded(conv_id)
+        ident = rec.channel_identity_id
+        connection = rec._sendable_connection()
+        if not ident or ident.channel != 'whatsapp' or not connection:
+            return {'templates': []}
+        try:
+            templates = connection._get_adapter().list_message_templates()
+        except Exception as exc:  # noqa: BLE001 — provider/network failure
+            raise UserError(_(
+                'We could not read your WhatsApp templates: %s',
+                redact(exc) or _('unknown error'))) from exc
+        return {'templates': templates}
+
+    @api.model
+    def action_send_channel_template(self, conv_id, channel, template_name,
+                                     language='vi', params=None):
+        """Send an APPROVED WhatsApp template — the outside-window path.
+
+        Human composer only, exactly like :meth:`action_send_channel`. The body
+        stored on the message row is the template name plus the parameters the
+        agent supplied: the rendered text lives at Meta, and inventing our own
+        rendering of it would put words in the record that were never sent.
+        """
+        rec = self._guarded(conv_id)
+        ident = rec.channel_identity_id
+        if not ident:
+            raise UserError(_('This conversation has no messaging channel.'))
+        if channel != ident.channel or channel != 'whatsapp':
+            raise UserError(_('Only WhatsApp uses message templates.'))
+        connection = rec._sendable_connection()
+        if not connection:
+            raise UserError(_(
+                'This channel is not connected right now. Open Care Command → '
+                'Channels to reconnect it.'))
+        name = (template_name or '').strip()
+        if not name:
+            raise UserError(_('Choose an approved template.'))
+        values = [str(v) for v in (params or []) if v is not None]
+        body = '[%s] %s' % (name, ' · '.join(values)) if values else '[%s]' % name
+
+        Message = self.env['care.channel.message']
+        try:
+            result = connection._get_adapter().send_template(
+                ident, name, language=language, params=values)
+        except Exception as exc:  # noqa: BLE001 — provider/network failure
+            auth = any(m in str(exc).lower() for m in AUTH_ERROR_MARKERS)
+            if not connection._persist_send_failure(
+                    ident, body, exc, auth_failure=auth, conversation=rec):
+                Message._record_outbound(connection, ident, body,
+                                         conversation=rec, error=exc)
+                connection._note_send_failure(exc, auth_failure=auth)
+            raise UserError(_(
+                'The template could not be sent: %s',
+                redact(exc) or _('unknown error')))
+
+        msg = Message._record_outbound(connection, ident, body, result=result,
+                                       conversation=rec)
+        rec.write({'status': 'waiting', 'unread_count': 0,
+                   'last_event_at': fields.Datetime.now()})
+        return {
+            'kind': ident.channel,
+            'direction': 'out',
+            'text': body,
+            'ts': (msg.event_at or fields.Datetime.now()).isoformat(),
+            'delivery': msg.state,
+        }
 
     @api.model
     def _channel_keys(self):
@@ -217,9 +316,24 @@ class CareConversationChannelExt(models.Model):
                 'This channel is not connected right now. Open Care Command → '
                 'Channels to reconnect it.'))
 
+        # CC-E §1.4: Meta's customer-service window is checked HERE, before the
+        # network, so an agent is told what to do instead of watching a send
+        # fail at Meta. WhatsApp outside 24 h ⇒ the template path;
+        # Messenger outside 24 h ⇒ the HUMAN_AGENT tag (7 days), then nothing.
+        window = rec._channel_window()
+        kwargs = {}
+        if window.get('requires_template'):
+            raise UserError(_(
+                '%s Send an approved template instead.', window['message']))
+        if window.get('blocked') and ident.channel == 'fb':
+            raise UserError(window['message'])
+        if window.get('requires_tag') and window.get('tags'):
+            kwargs['tag'] = window['tags'][0]
+
         Message = self.env['care.channel.message']
         try:
-            result = connection._get_adapter().send_message(ident, text)
+            result = connection._get_adapter().send_message(ident, text,
+                                                            **kwargs)
         except Exception as exc:  # noqa: BLE001 — provider/network failure
             auth = any(m in str(exc).lower() for m in AUTH_ERROR_MARKERS)
             # The evidence has to outlive the UserError below, which rolls this

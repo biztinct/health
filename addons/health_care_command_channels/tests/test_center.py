@@ -414,7 +414,13 @@ class TestChannelCenter(ChannelSpineCase):
         # so `active_test=False` still SEES it. The contract this test exists
         # for is "a repeated begin creates no second row" and "a refused begin
         # creates nothing at all", so both are now relative to a baseline.
-        unimplemented = ['whatsapp', 'fb', 'zalo', 'zns', 'email', 'call']
+        #
+        # FORCED EDIT (CC-E): `whatsapp` and `fb` left this list — their
+        # onboarding is implemented from CC-E on, and the shared fixture seeds
+        # the `meta` platform app, so `center_begin` on them now SUCCEEDS. That
+        # is asserted below instead. (Ledger §5.62's family: widening what a
+        # service accepts breaks the tests that assert what it refuses.)
+        unimplemented = ['zalo', 'zns', 'email', 'call']
         before = self.Conn.with_context(active_test=False).search_count([
             ('channel', 'in', unimplemented),
             ('company_id', '=', self.company.id)])
@@ -436,6 +442,20 @@ class TestChannelCenter(ChannelSpineCase):
             ('company_id', '=', self.company.id)]), before)
         with self.assertRaises(UserError):
             self.Conn.center_begin('not-a-channel')
+
+        # CC-E: the two Meta channels DO begin now (a `meta` platform app is
+        # seeded in this fixture), and are idempotent the same way.
+        for channel in ('whatsapp', 'fb'):
+            first = self.Conn.center_begin(channel)
+            second = self.Conn.center_begin(channel)
+            self.assertEqual(first['connection_id'], second['connection_id'],
+                             channel)
+            self.assertEqual(self.Conn.search_count([
+                ('channel', '=', channel),
+                ('company_id', '=', self.company.id)]), 1, channel)
+        self.assertEqual(self.Conn.center_begin('whatsapp')['mode'],
+                         'embedded_signup')
+        self.assertEqual(self.Conn.center_begin('fb')['mode'], 'oauth_popup')
 
     # ==================================================================
     # T105 — Vietnamese catalogue: present, marked, and actually applied

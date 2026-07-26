@@ -33,6 +33,15 @@ import { _t } from "@web/core/l10n/translation";
 const MODEL = "care.channel.connection";
 const REFRESH_MS = 15000;
 
+// CC-E: Meta's JS SDK is an EXTERNAL script and is therefore loaded on demand,
+// only when a tenant actually opens the WhatsApp stepper — never in the
+// backend bundle, where every Odoo user would pay for it and a Meta outage
+// would be a Health19 outage. If it does not arrive (an ad blocker, a locked
+// down network, a blocked popup) the stepper says so in words instead of
+// looking broken.
+const META_SDK_TIMEOUT_MS = 8000;
+const META_SIGNUP_ORIGINS = ["https://www.facebook.com", "https://web.facebook.com"];
+
 // Icon + accent per channel key. The keys match the server Selection; the
 // accents match Care Command's dock so the same channel is the same colour in
 // both places.
@@ -98,7 +107,44 @@ export class ChannelCenter extends Component {
             webhookUrl: "",
             webhookSecret: "",
             hasWebhookSecret: false,
+            // Meta (CC-E): the SDK/dialog payload, the resource picker and the
+            // provider-approval rows.
+            meta: null,
+            metaResources: [],
+            metaSelected: "",
+            metaLoadingResources: false,
+            metaResourceError: "",
+            metaMissingScopes: [],
+            metaSdkBlocked: false,
+            approvals: [],
         });
+
+        // The ES popup posts its WABA / phone id back through postMessage.
+        // Captured (origin-checked) purely as a HINT for the picker — the
+        // authoritative list still comes from Meta's own debug_token.
+        this._metaHint = {};
+        this._onMetaMessage = (ev) => {
+            if (!META_SIGNUP_ORIGINS.includes(ev.origin)) {
+                return;
+            }
+            let payload = ev.data;
+            if (typeof payload === "string") {
+                try {
+                    payload = JSON.parse(payload);
+                } catch (e) {
+                    return;
+                }
+            }
+            if (!payload || payload.type !== "WA_EMBEDDED_SIGNUP") {
+                return;
+            }
+            const d = payload.data || {};
+            this._metaHint = {
+                waba_id: d.waba_id || "",
+                phone_number_id: d.phone_number_id || "",
+            };
+        };
+        window.addEventListener("message", this._onMetaMessage);
 
         // A hidden tab polls nothing: the interval is torn down on hide and
         // rebuilt (with one immediate refresh) on show.
@@ -119,6 +165,7 @@ export class ChannelCenter extends Component {
         onWillUnmount(() => {
             this._stopPolling();
             document.removeEventListener("visibilitychange", this._onVisibility);
+            window.removeEventListener("message", this._onMetaMessage);
             clearTimeout(this._toastTimer);
             clearTimeout(this._copyTimer);
             clearTimeout(this._copyWebhookTimer);
@@ -262,6 +309,9 @@ export class ChannelCenter extends Component {
             if (card.channel === "zalo" && info.connection_id) {
                 await this._loadZaloInfo(info.connection_id);
             }
+            if (this.isMetaChannel(card.channel) && info.connection_id) {
+                await this._resumeMeta(info.connection_id, card);
+            }
             if (card.channel === "webchat" && info.connection_id) {
                 const settings = await this.orm.call(
                     MODEL, "center_webchat_settings", [info.connection_id]);
@@ -291,11 +341,49 @@ export class ChannelCenter extends Component {
         this.state.authUrl = "";
         this.state.popupBlocked = false;
         this.state.webhookSecret = "";
+        this.state.meta = null;
+        this.state.metaResources = [];
+        this.state.metaSelected = "";
+        this.state.metaResourceError = "";
+        this.state.metaMissingScopes = [];
+        this.state.metaSdkBlocked = false;
+        this.state.approvals = [];
+        this._metaHint = {};
         // A reconnect on a channel whose key we still hold skips the paste
         // screen: the tenant should never be asked for a credential twice.
         if (this.state.mode === "guided_secret" && this.state.hasCredentials) {
             this.state.step = 2;
         }
+    }
+
+    // -----------------------------------------------------------------
+    // channel predicates — the stepper copy is per CHANNEL, not per mode
+    // -----------------------------------------------------------------
+    isMetaChannel(channel) {
+        return channel === "whatsapp" || channel === "fb";
+    }
+
+    get isZalo() {
+        return this.state.open === "zalo";
+    }
+
+    get isMeta() {
+        return this.isMetaChannel(this.state.open);
+    }
+
+    get isWhatsApp() {
+        return this.state.open === "whatsapp";
+    }
+
+    get isMessenger() {
+        return this.state.open === "fb";
+    }
+
+    /** Meta withheld a permission — true whichever flow noticed it first. */
+    get scopesFailed() {
+        const card = this.openCard;
+        return !!(card && (card.checks || []).some(
+            (c) => c.key === "scopes_granted" && c.status === "fail"));
     }
 
     // -----------------------------------------------------------------
@@ -322,14 +410,20 @@ export class ChannelCenter extends Component {
                 "width=520,height=720,noopener");
             this.state.popupBlocked = !popup;
             if (popup) {
-                this._watchPopup(popup);
+                this._watchPopup(popup, (card) => {
+                    this.state.hasCredentials = true;
+                    this._loadZaloInfo(card.connection_id).catch(() => {});
+                    if (this.state.step === 0) {
+                        this.state.step = 1;
+                    }
+                });
             }
             await this.load();
         });
     }
 
     /** Re-read the Center when the sign-in window closes or we regain focus. */
-    _watchPopup(popup) {
+    _watchPopup(popup, onDone) {
         clearInterval(this._popupTimer);
         const finish = () => {
             clearInterval(this._popupTimer);
@@ -337,12 +431,8 @@ export class ChannelCenter extends Component {
             window.removeEventListener("focus", finish);
             this.load().then(() => {
                 const card = this.openCard;
-                if (card && card.connection_id) {
-                    this.state.hasCredentials = true;
-                    this._loadZaloInfo(card.connection_id).catch(() => {});
-                    if (this.state.step === 0) {
-                        this.state.step = 1;
-                    }
+                if (card && card.connection_id && onDone) {
+                    onDone(card);
                 }
             });
         };
@@ -358,6 +448,199 @@ export class ChannelCenter extends Component {
                 finish();
             }
         }, 1000);
+    }
+
+    // -----------------------------------------------------------------
+    // Meta (CC-E): WhatsApp Embedded Signup v4 + Messenger FLB
+    // -----------------------------------------------------------------
+    /** Re-open a Meta stepper where the tenant left it. */
+    async _resumeMeta(connectionId, card) {
+        this.state.approvals = (card && card.approvals) || [];
+        if (!this.state.hasCredentials) {
+            return;
+        }
+        // Signed in already: the picker is the next thing that matters.
+        this.state.step = Math.max(this.state.step, 1);
+        if (card && card.resource_line) {
+            this.state.step = Math.max(this.state.step, 2);
+        }
+        await this.loadMetaResources();
+    }
+
+    /**
+     * Load Meta's JS SDK on demand. Resolves FALSE rather than throwing when
+     * the script does not arrive — the stepper then explains that Meta's popup
+     * is what this needs, instead of a dead button.
+     */
+    _loadMetaSdk(cfg) {
+        if (window.FB && window.FB.login) {
+            return Promise.resolve(true);
+        }
+        return new Promise((resolve) => {
+            const done = (ok) => resolve(ok);
+            const script = document.createElement("script");
+            script.src = cfg.sdk_url;
+            script.async = true;
+            script.defer = true;
+            script.crossOrigin = "anonymous";
+            script.onload = () => {
+                try {
+                    window.FB.init({
+                        appId: cfg.app_id,
+                        cookie: true,
+                        xfbml: false,
+                        version: cfg.graph_version,
+                    });
+                    done(!!(window.FB && window.FB.login));
+                } catch (e) {
+                    done(false);
+                }
+            };
+            script.onerror = () => done(false);
+            document.head.appendChild(script);
+            setTimeout(() => done(!!(window.FB && window.FB.login)),
+                META_SDK_TIMEOUT_MS);
+        });
+    }
+
+    /** Step 1 for both Meta channels: open the provider's own sign-in. */
+    async startMeta() {
+        await this._guarded(async () => {
+            const cfg = await this.orm.call(MODEL, "center_meta_start",
+                [this.state.open]);
+            this.state.meta = cfg;
+            this.state.metaSdkBlocked = false;
+            if (this.isMessenger) {
+                // Facebook Login for Business is an ordinary redirect flow:
+                // the popup lands on our own OAuth callback.
+                this.state.authUrl = cfg.url || "";
+                const popup = window.open(cfg.url, "h19_fb_signin",
+                    "width=560,height=740,noopener");
+                this.state.popupBlocked = !popup;
+                if (popup) {
+                    this._watchPopup(popup, async (card) => {
+                        this.state.hasCredentials = true;
+                        this.state.step = Math.max(this.state.step, 1);
+                        this.state.approvals = card.approvals || [];
+                        await this.loadMetaResources();
+                    });
+                }
+                await this.load();
+                return;
+            }
+            // WhatsApp: the SDK owns the popup, and hands the code back to us.
+            const ready = await this._loadMetaSdk(cfg);
+            if (!ready) {
+                this.state.metaSdkBlocked = true;
+                return;
+            }
+            this._metaHint = {};
+            const code = await this._metaEmbeddedSignup(cfg);
+            if (!code) {
+                // Cancelled or blocked — not an error, and nothing was stored.
+                this.state.metaSdkBlocked = !window.FB;
+                return;
+            }
+            const res = await this.orm.call(MODEL, "center_meta_exchange", [
+                this.state.connectionId,
+                code,
+                cfg.state_token,
+                this._metaHint,
+            ]);
+            this.state.metaMissingScopes = res.missing_scopes || [];
+            this.state.hasCredentials = true;
+            this.state.step = 1;
+            await this.load();
+            await this.loadMetaResources();
+        });
+    }
+
+    /** Wrap FB.login's callback in a promise; never rejects. */
+    _metaEmbeddedSignup(cfg) {
+        return new Promise((resolve) => {
+            try {
+                window.FB.login(
+                    (response) => {
+                        const auth = (response && response.authResponse) || {};
+                        resolve(auth.code || "");
+                    },
+                    {
+                        config_id: cfg.config_id,
+                        response_type: "code",
+                        override_default_response_type: true,
+                        extras: { setup: {}, sessionInfoVersion: 3 },
+                    }
+                );
+            } catch (e) {
+                resolve("");
+            }
+        });
+    }
+
+    async loadMetaResources() {
+        if (!this.state.connectionId || !this.isMeta) {
+            return;
+        }
+        this.state.metaLoadingResources = true;
+        this.state.metaResourceError = "";
+        try {
+            const res = await this.orm.call(MODEL, "center_meta_resources",
+                [this.state.connectionId]);
+            this.state.metaResources = res.resources || [];
+            this.state.metaSelected = res.selected || "";
+            // The ES popup told us which number the tenant just onboarded —
+            // preselect it so the picker is one click, never a guess.
+            const hint = (this._metaHint && this._metaHint.phone_number_id)
+                || res.hint || "";
+            if (!this.state.metaSelected && hint) {
+                const match = this.state.metaResources.find((r) => r.id === hint);
+                if (match) {
+                    this.state.metaSelected = match.id;
+                }
+            }
+        } catch (e) {
+            this.state.metaResources = [];
+            this.state.metaResourceError = this._msg(e);
+        } finally {
+            this.state.metaLoadingResources = false;
+        }
+    }
+
+    pickMetaResource(id) {
+        this.state.metaSelected = id;
+    }
+
+    async selectMetaResource() {
+        if (!this.state.metaSelected) {
+            return;
+        }
+        await this._guarded(async () => {
+            await this.orm.call(MODEL, "center_meta_select",
+                [this.state.connectionId, this.state.metaSelected]);
+            this.state.step = 2;
+            await this.load();
+        });
+    }
+
+    async subscribeMeta() {
+        await this._guarded(async () => {
+            await this.orm.call(MODEL, "center_meta_subscribe",
+                [this.state.connectionId]);
+            const res = await this.orm.call(MODEL, "center_meta_approvals",
+                [this.state.connectionId, true]);
+            this.state.approvals = res.approvals || [];
+            this.state.step = 3;
+            await this.load();
+        });
+    }
+
+    async refreshApprovals() {
+        await this._guarded(async () => {
+            const res = await this.orm.call(MODEL, "center_meta_approvals",
+                [this.state.connectionId, true]);
+            this.state.approvals = res.approvals || [];
+            await this.load();
+        });
     }
 
     async copyWebhookUrl() {
@@ -397,6 +680,9 @@ export class ChannelCenter extends Component {
         this.state.confirmOff = false;
         this.state.token = "";
         this.state.webhookSecret = "";
+        this.state.approvals = card.approvals || [];
+        this.state.metaResources = [];
+        this.state.metaSelected = "";
         if (card.channel === "zalo" && card.connection_id) {
             this._loadZaloInfo(card.connection_id).catch((e) => this._err(e));
         }

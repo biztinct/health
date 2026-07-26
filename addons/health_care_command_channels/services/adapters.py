@@ -49,6 +49,41 @@ GRAPH_BASE = 'https://graph.facebook.com'
 GRAPH_VERSION = 'v21.0'
 TELEGRAM_BASE = 'https://api.telegram.org'
 
+# Meta (CC-E, verified 2026-07-25 — architecture §3, handover §2.3).
+# Embedded Signup v4 is the current WhatsApp onboarding (v2 dies 2026-10-15);
+# Messenger uses Facebook Login for Business. Both exchange an authorization
+# code at the SAME Graph endpoint and both are configured by a `config_id` that
+# the platform operator pastes into channel.platform.app.extra_json.
+FB_DIALOG_BASE = 'https://www.facebook.com'
+META_SDK_URL = 'https://connect.facebook.net/en_US/sdk.js'
+META_CALLBACK_PATH = '/channel_hub/oauth/callback/meta'
+META_ES_CONFIG_KEY = 'es_config_id'
+META_FLB_CONFIG_KEY = 'flb_config_id'
+
+# What App Review grants (operator checklist §12.2), split per product. A grant
+# that arrives without one of these is a PARTIAL connect and must say so —
+# never a silent half-connection that fails at the first real message.
+WA_REQUIRED_SCOPES = ('whatsapp_business_management',
+                      'whatsapp_business_messaging')
+FB_REQUIRED_SCOPES = ('pages_show_list', 'pages_messaging',
+                      'pages_manage_metadata')
+
+# Outbound rules that MUST reach the UI (architecture §3, "Outbound
+# restrictions"). WhatsApp: a 24 h customer-service window, outside which only
+# an approved template may go out. Messenger: a 24 h window, outside which only
+# the HUMAN_AGENT tag survives — and only for 7 days. Every other Messenger tag
+# (CONFIRMED_EVENT_UPDATE, POST_PURCHASE_UPDATE, ACCOUNT_UPDATE) has been dead
+# since 2026-04-27 and must never be offered.
+WA_WINDOW_HOURS = 24
+FB_WINDOW_HOURS = 24
+FB_HUMAN_AGENT_HOURS = 24 * 7
+FB_MESSAGE_TAGS = ('HUMAN_AGENT',)
+
+# Meta's own approval vocabulary, normalised to three words we can render.
+META_APPROVED = ('APPROVED', 'AVAILABLE_WITHOUT_REVIEW', 'VERIFIED',
+                 'CONNECTED')
+META_REJECTED = ('DECLINED', 'REJECTED', 'DISABLED', 'FAILED', 'EXPIRED')
+
 # Zalo (CC-D, verified 2026-07-25 — architecture §3/§7, handover §2.6).
 # Authorization and token exchange live on oauth.zaloapp.com; everything else
 # (getoa, messaging, ZNS) on openapi.zalo.me. health_zalo's `api_base_url`
@@ -85,6 +120,103 @@ def _utc_from_unix(value):
             tzinfo=None)
     except (TypeError, ValueError, OSError, OverflowError):
         return None
+
+
+def _meta_error(data):
+    """The human part of a Graph error body, without the echoed request.
+
+    Meta answers a refusal as ``{"error": {"message": …, "type": …,
+    "code": 190, "fbtrace_id": …}}`` — and sometimes 200 with the same body.
+    The message is what a tenant needs; the trace id and the echoed inputs are
+    what a log must not carry.
+    """
+    error = (data or {}).get('error')
+    if isinstance(error, dict):
+        return (error.get('message') or error.get('type')
+                or ('code %s' % error['code'] if error.get('code') else '')
+                or 'unknown error')
+    if error:
+        return str(error)
+    return 'unknown error'
+
+
+def _meta_approval_status(raw):
+    """Meta's per-item review vocabulary → ``pass`` / ``pending`` / ``fail``.
+
+    Unknown values are ``pending``, never ``pass``: an approval we cannot read
+    has not been granted, and guessing in the tenant's favour is exactly the
+    "configured ≠ connected" lie the readiness model exists to stop.
+    """
+    value = str(raw or '').strip().upper()
+    if not value:
+        return 'pending'
+    if value in META_APPROVED:
+        return 'pass'
+    if value in META_REJECTED:
+        return 'fail'
+    return 'pending'
+
+
+def meta_window_state(env, connection, identity=None, now=None):
+    """What may be sent to ``identity`` right now, and why (architecture §3).
+
+    Returns a JSON-safe dict. ``open`` is the provider's customer-service
+    window: WhatsApp and Messenger both give 24 h from the peer's LAST inbound
+    message, and both count from real inbound traffic — so the answer is read
+    off ``care.channel.message``, never off a hopeful flag.
+
+    Outside the window the two providers diverge:
+
+    * WhatsApp allows only an **approved template** (``requires_template``);
+    * Messenger allows a tagged message for another 6 days, and since
+      2026-04-27 ``HUMAN_AGENT`` is the ONLY surviving tag (``tags``). Past
+      7 days nothing may go out at all (``blocked``).
+
+    A channel with no window at all (Telegram, web chat, Zalo — whose own 48 h
+    rule lives in health_zalo) reports ``open`` with no restriction, so a
+    caller can ask this unconditionally.
+    """
+    channel = getattr(connection, 'channel', None)
+    state = {
+        'channel': channel or '',
+        'open': True,
+        'requires_template': False,
+        'requires_tag': False,
+        'blocked': False,
+        'tags': [],
+        'window_hours': 0,
+        'last_inbound_at': '',
+        'closes_at': '',
+    }
+    if channel not in ('whatsapp', 'fb'):
+        return state
+    now = now or fields.Datetime.now()
+    last_at = None
+    if identity:
+        last = env['care.channel.message'].sudo().search(
+            [('identity_id', '=', identity.id), ('direction', '=', 'incoming')],
+            order='event_at desc, id desc', limit=1)
+        last_at = last.event_at if last else None
+    hours = ((now - last_at).total_seconds() / 3600.0) if last_at else None
+    window = WA_WINDOW_HOURS if channel == 'whatsapp' else FB_WINDOW_HOURS
+    state['window_hours'] = window
+    state['last_inbound_at'] = fields.Datetime.to_string(last_at) if last_at else ''
+    state['open'] = hours is not None and hours < window
+    if last_at:
+        state['closes_at'] = fields.Datetime.to_string(
+            last_at + timedelta(hours=window))
+    if state['open']:
+        return state
+    if channel == 'whatsapp':
+        state['requires_template'] = True
+        return state
+    # Messenger: the 7-day HUMAN_AGENT extension, and nothing else.
+    if hours is not None and hours < FB_HUMAN_AGENT_HOURS:
+        state['requires_tag'] = True
+        state['tags'] = list(FB_MESSAGE_TAGS)
+    else:
+        state['blocked'] = True
+    return state
 
 
 class ChannelSendError(Exception):
@@ -314,8 +446,298 @@ class _StubAdapter(BaseChannelAdapter):
 # The 8 channel declarations (verified provider matrix, architecture §3)
 # ---------------------------------------------------------------------------
 
+class _MetaAdapterBase(_StubAdapter):
+    """Everything WhatsApp and Messenger share (CC-E).
+
+    One Meta app serves both channels, so the platform lookup, the code
+    exchange, the token inspection and the ``subscribed_apps`` registration are
+    written once. What differs is declared by the two subclasses: which
+    ``config_id`` drives the sign-in, which scopes App Review granted, and what
+    a "resource" is (a WhatsApp phone number under a WABA, or a Facebook Page).
+
+    Three rules hold throughout:
+
+    * **the app secret never leaves the server** — it travels in the token
+      exchange and in the ``debug_token`` app-token, both server-to-server, and
+      appears in no URL the browser is handed (T127);
+    * **a partial grant is a visible failure**, not a silent half-connect: a
+      missing scope writes ``scopes_granted`` = fail with the plain list of
+      what Meta withheld, and readiness derivation keeps the channel out of
+      ``ready`` (T130);
+    * **approvals are provider STATE, never our error** — business
+      verification, display-name review and template review are read and
+      rendered, and ``provider_approvals`` only ever moves between ``pending``
+      and ``pass`` (T136).
+    """
+
+    _platform_provider = 'meta'
+    _config_key = None          # es_config_id / flb_config_id
+    _required_scopes = ()
+    # ES hands us a code that is NOT bound to a redirect_uri (the JS SDK owns
+    # the popup); the FLB redirect flow's code IS, and Meta refuses the
+    # exchange if the two do not match.
+    _exchange_with_redirect = True
+
+    # ------------------------------------------------------------------
+    # Platform plane
+    # ------------------------------------------------------------------
+    def _platform_app(self):
+        app = self.env['channel.platform.app'].sudo()._get_for_provider(
+            self._platform_provider)
+        if not app or not app.client_id:
+            raise ChannelSendError(
+                'the Meta platform application is not configured')
+        return app
+
+    def _app_secret(self, app=None):
+        secret = (app or self._platform_app())._get_secret()
+        if not secret:
+            raise ChannelSendError(
+                'the Meta platform application has no secret')
+        return secret
+
+    def config_id(self, app=None):
+        """The Embedded-Signup / Login-for-Business configuration id.
+
+        A non-secret provider id (operator checklist §12.3) that lives in
+        ``extra_json``. Absent ⇒ refuse: a sign-in without a config id opens a
+        dialog that can only fail, and inventing one would be a manufactured
+        credential.
+        """
+        app = app or self._platform_app()
+        value = (app.get_extra(self._config_key) or '')
+        value = str(value).strip()
+        if not value:
+            raise ChannelSendError(
+                'the Meta platform application has no %s' % self._config_key)
+        return value
+
+    def _base_url(self):
+        return (self.env['ir.config_parameter'].sudo()
+                .get_param('web.base.url') or '').strip().rstrip('/')
+
+    def _redirect_uri(self):
+        return '%s%s' % (self._base_url(), META_CALLBACK_PATH)
+
+    def _graph(self, path):
+        return '%s/%s/%s' % (self._api_base(GRAPH_BASE), GRAPH_VERSION,
+                             str(path).lstrip('/'))
+
+    # ------------------------------------------------------------------
+    # Settings (non-secret, server-side)
+    # ------------------------------------------------------------------
+    def _merge_settings(self, values):
+        """Merge non-secret configuration into ``settings_json``.
+
+        NOT ``connection.set_settings``: that method gates on
+        ``_check_center_access``, and the FLB callback runs in the public
+        controller's environment where there is no Center user to check. The
+        write itself is the same sanctioned ``sudo()._internal()`` door, and
+        nothing credential-shaped is ever routed here.
+        """
+        conn = self.connection.sudo()
+        try:
+            current = json.loads(conn.settings_json or '{}') or {}
+        except ValueError:
+            current = {}
+        if not isinstance(current, dict):
+            current = {}
+        current.update(values)
+        conn._internal().write({'settings_json': json.dumps(current)})
+        return current
+
+    def _setting(self, key, default=None):
+        return self.connection.sudo().get_setting(key, default)
+
+    # ------------------------------------------------------------------
+    # Token plumbing
+    # ------------------------------------------------------------------
+    def _store_tokens(self, access_token=None, refresh_token=None,
+                      token_expires_at=None, granted_scopes=None):
+        """Persist a grant, fresh cursor first (ledger §5.74).
+
+        Meta's long-lived tokens do not expire, so nothing here ROTATES a
+        single-use credential — but the writer is the same one CC-D hardened,
+        with its bounded ``lock_timeout``, and this phase takes no row lock
+        anywhere near it. Under ``--test-enable`` the independent cursor cannot
+        see a record the test transaction created (ledger §5.63), so the write
+        falls back in-transaction, which is what the suites assert on.
+        """
+        conn = self.connection
+        persisted = False
+        if not (tools.config.get('test_enable') or tools.config.get('test_file')):
+            persisted = conn.sudo()._persist_refreshed_tokens(
+                access_token=access_token, refresh_token=refresh_token,
+                token_expires_at=token_expires_at,
+                granted_scopes=granted_scopes)
+        if persisted:
+            return True
+        vals = {}
+        if access_token is not None:
+            vals['access_token_enc'] = channel_crypto.encrypt(
+                self.env, access_token)
+        if refresh_token is not None:
+            vals['refresh_token_enc'] = channel_crypto.encrypt(
+                self.env, refresh_token)
+        if token_expires_at is not None:
+            vals['token_expires_at'] = token_expires_at
+        if granted_scopes is not None:
+            vals['granted_scopes'] = granted_scopes
+        if vals:
+            conn.sudo()._internal().write(vals)
+        return bool(vals)
+
+    def exchange_code(self, code):
+        """Authorization code → a Meta access token. Nothing is stored here."""
+        if not code or not isinstance(code, str) or not code.strip():
+            raise ChannelSendError('the Meta callback carried no code')
+        app = self._platform_app()
+        params = {
+            'client_id': app.client_id,
+            'client_secret': self._app_secret(app),
+            'code': code.strip(),
+        }
+        if self._exchange_with_redirect:
+            params['redirect_uri'] = self._redirect_uri()
+        data = self._get(self._graph('oauth/access_token'), params=params)
+        token = (data or {}).get('access_token')
+        if not token:
+            raise ChannelSendError('meta refused the token exchange: %s'
+                                   % _meta_error(data))
+        expires_at = None
+        try:
+            seconds = int(data.get('expires_in') or 0)
+        except (TypeError, ValueError):
+            seconds = 0
+        if seconds:
+            expires_at = fields.Datetime.now() + timedelta(seconds=seconds)
+        return {'access_token': token, 'token_expires_at': expires_at}
+
+    def inspect_token(self, token):
+        """``debug_token`` — the ONLY honest source of what Meta granted.
+
+        The app token (``<app id>|<app secret>``) is what Graph requires to
+        inspect a user/business token; it is built here and never persisted.
+        """
+        app = self._platform_app()
+        data = self._get(self._graph('debug_token'), params={
+            'input_token': token,
+            'access_token': '%s|%s' % (app.client_id, self._app_secret(app)),
+        })
+        payload = (data or {}).get('data') or {}
+        if not payload or payload.get('is_valid') is False:
+            raise ChannelSendError('meta refused the token inspection: %s'
+                                   % _meta_error(data))
+        granular = {}
+        for entry in payload.get('granular_scopes') or []:
+            if entry.get('scope'):
+                granular[entry['scope']] = [str(t) for t in
+                                            (entry.get('target_ids') or [])]
+        return {
+            'scopes': [str(s) for s in (payload.get('scopes') or []) if s],
+            'granular': granular,
+            'app_id': str(payload.get('app_id') or ''),
+        }
+
+    def _record_scopes(self, scopes):
+        """Write ``scopes_granted`` and return what Meta withheld.
+
+        A missing scope is a FAIL with the list in it, in provider vocabulary
+        (the tenant hands that list to whoever owns the Meta app) — never a
+        silent partial connect that dies at the first real message.
+        """
+        granted = set(scopes or [])
+        missing = [s for s in self._required_scopes if s not in granted]
+        Check = self.env['care.channel.readiness.check']
+        Check.upsert_check(
+            self.connection.sudo(), 'scopes_granted',
+            'fail' if missing else 'pass',
+            detail=('Meta did not grant: %s' % ', '.join(missing)) if missing
+            else None)
+        return missing
+
+    # ------------------------------------------------------------------
+    # Webhook registration — POST /{id}/subscribed_apps
+    # ------------------------------------------------------------------
+    def _subscribe(self, node_id, token, fields_csv=None):
+        params = {'access_token': token}
+        if fields_csv:
+            params['subscribed_fields'] = fields_csv
+        data = self._post(self._graph('%s/subscribed_apps' % node_id),
+                          params=params)
+        if not (data or {}).get('success'):
+            raise ChannelSendError('meta refused the webhook subscription: %s'
+                                   % _meta_error(data))
+        return True
+
+    def _webhook_result(self, ok=True, error=None):
+        """Record the outcome of a subscription attempt, honestly.
+
+        Success ⇒ ``webhook_configured`` pass + ``webhook_state`` subscribed.
+        Failure ⇒ NEITHER is written: a state that says "subscribed" when Meta
+        refused is the lie this framework exists to prevent. The redacted
+        reason is kept, and the caller raises.
+        """
+        conn = self.connection.sudo()
+        Check = self.env['care.channel.readiness.check']
+        if ok:
+            conn._internal().write({'webhook_state': 'subscribed'})
+            Check.upsert_check(conn, 'webhook_configured', 'pass')
+            self.env['care.channel.audit']._log(
+                'webhook_subscribed', connection=conn,
+                detail='meta subscribed_apps (%s)' % conn.channel)
+            return True
+        Check.upsert_check(conn, 'webhook_configured', 'fail', detail=error)
+        self.env['care.channel.audit']._log(
+            'webhook_failed', connection=conn, detail=error)
+        return False
+
+    # ------------------------------------------------------------------
+    # Approvals — provider STATE, cached so a card render costs no HTTP
+    # ------------------------------------------------------------------
+    def approvals(self):
+        """The cached approval rows, or an honest empty list."""
+        cached = self._setting('meta_approvals') or {}
+        rows = cached.get('rows') if isinstance(cached, dict) else None
+        return list(rows or [])
+
+    def _store_approvals(self, rows):
+        self._merge_settings({'meta_approvals': {
+            'rows': rows,
+            'checked_at': fields.Datetime.to_string(fields.Datetime.now()),
+        }})
+        # `provider_approvals` may only ever be pending or pass. A rejected
+        # display name is real news for the tenant — it is in the ROW — but
+        # turning readiness to `fail` would put the connection in
+        # `action_required`, which is not ingestable, and lock a channel out of
+        # traffic over a review it can still win (§5.66's family).
+        required = set(self.authorization_capabilities().get(
+            'required_checks') or [])
+        if 'provider_approvals' not in required:
+            return rows
+        every = bool(rows) and all(r.get('status') == 'pass' for r in rows)
+        self.env['care.channel.readiness.check'].upsert_check(
+            self.connection.sudo(), 'provider_approvals',
+            'pass' if every else 'pending')
+        return rows
+
+    def refresh_approvals(self):
+        """Ask Meta where the human reviews stand. Never raises into the UI."""
+        try:
+            rows = self._fetch_approvals()
+        except ChannelSendError as exc:
+            _logger.info('care_channels: meta approvals unreadable on '
+                         'connection %s', self.connection.id)
+            rows = [{'key': 'unreadable', 'status': 'pending',
+                     'detail': str(exc)[:200]}]
+        return self._store_approvals(rows)
+
+    def _fetch_approvals(self):
+        return []
+
+
 @register_adapter('whatsapp')
-class WhatsAppAdapter(_StubAdapter):
+class WhatsAppAdapter(_MetaAdapterBase):
     """WhatsApp Cloud API via Meta Embedded Signup v4. The business (BISU)
     token does not expire by default, hence supports_refresh=False."""
     _capabilities = {
@@ -334,6 +756,326 @@ class WhatsAppAdapter(_StubAdapter):
                         'channel_hub.guide.whatsapp.connecting',
                         'channel_hub.guide.whatsapp.test'],
     }
+
+    _config_key = META_ES_CONFIG_KEY
+    _required_scopes = WA_REQUIRED_SCOPES
+    # The ES code comes from the JS SDK's popup, which owns its own redirect —
+    # sending a redirect_uri with it makes Meta refuse the exchange.
+    _exchange_with_redirect = False
+
+    # ==================================================================
+    # Onboarding (CC-E) — Embedded Signup v4
+    # ==================================================================
+    def authorize_url(self, session, state, code_challenge=None):
+        """The **payload the browser's SDK needs**, not a redirect.
+
+        Embedded Signup is driven by Meta's JS SDK inside a popup the SDK
+        opens itself, so there is no URL for us to hand over; what the browser
+        needs is the public app id, the ES configuration id and our single-use
+        state. Deliberately shaped like the other adapters' ``authorize_url``
+        so the Center can call one method for every OAuth-ish channel.
+
+        NOTHING secret is in the return value: the app secret is used only in
+        the server-to-server exchange (T127).
+        """
+        app = self._platform_app()
+        if not state:
+            raise ChannelSendError('WhatsApp requires an authorization state')
+        return {
+            'mode': MODE_EMBEDDED_SIGNUP,
+            'app_id': app.client_id,
+            'config_id': self.config_id(app),
+            'state': state,
+            'sdk_url': META_SDK_URL,
+            'graph_version': GRAPH_VERSION,
+        }
+
+    def handle_callback(self, session, params):
+        """Exchange the ES code, learn what Meta granted, record readiness.
+
+        Called from ``center_meta_exchange`` (the SDK hands the code to the
+        browser, so there is no redirect for the OAuth controller to catch).
+        Order is load-bearing: a refused exchange or a refused inspection must
+        leave NOTHING stored (T129), so the token is persisted only after both
+        have answered.
+        """
+        conn = self.connection
+        code = (params or {}).get('code')
+        tokens = self.exchange_code(code)
+        info = self.inspect_token(tokens['access_token'])
+
+        self._store_tokens(access_token=tokens['access_token'],
+                           token_expires_at=tokens.get('token_expires_at'),
+                           granted_scopes=' '.join(info['scopes']))
+        Check = self.env['care.channel.readiness.check']
+        Check.upsert_check(conn.sudo(), 'authorization_valid', 'pass')
+        missing = self._record_scopes(info['scopes'])
+
+        # Which WABAs the grant covers. The ES popup reports the one the tenant
+        # picked; debug_token's granular scopes are the authoritative list.
+        wabas = []
+        for key in ('waba_id', 'business_id'):
+            if (params or {}).get(key):
+                wabas.append(str(params[key]))
+        for scope in ('whatsapp_business_management',
+                      'whatsapp_business_messaging'):
+            for target in info['granular'].get(scope) or []:
+                if target not in wabas:
+                    wabas.append(target)
+        settings = {}
+        if wabas:
+            settings['meta_waba_ids'] = wabas
+        if (params or {}).get('phone_number_id'):
+            # A hint for the picker, nothing more: the tenant still confirms
+            # which number this connection answers on.
+            settings['meta_phone_hint'] = str(params['phone_number_id'])
+        if settings:
+            self._merge_settings(settings)
+
+        try:
+            conn.sudo()._transition('select_resource',
+                                    reason='whatsapp embedded signup complete')
+        except UserError:
+            _logger.info('care_channels: whatsapp connection %s stays in %s '
+                         'after authorization', conn.id, conn.state)
+        return {'ok': True, 'next_step': 'select_resource',
+                'missing_scopes': missing}
+
+    # ------------------------------------------------------------------
+    # Resource selection — WABA + phone number
+    # ------------------------------------------------------------------
+    def _wabas(self):
+        wabas = self._setting('meta_waba_ids') or []
+        if isinstance(wabas, str):
+            wabas = [wabas]
+        wabas = [str(w) for w in wabas if w]
+        if not wabas and self.connection.resource_secondary_id:
+            wabas = [self.connection.resource_secondary_id]
+        return wabas
+
+    def list_resources(self):
+        """Every phone number under every WABA the grant covers."""
+        conn = self.connection
+        token = conn.sudo()._get_secret('access_token')
+        if not token:
+            raise ChannelSendError('this WhatsApp connection is not authorized')
+        wabas = self._wabas()
+        if not wabas:
+            raise ChannelSendError(
+                'Meta granted no WhatsApp Business Account on this sign-in')
+        out = []
+        for waba in wabas:
+            data = self._get(self._graph('%s/phone_numbers' % waba), params={
+                'access_token': token,
+                'fields': ('id,display_phone_number,verified_name,'
+                           'quality_rating,name_status,'
+                           'code_verification_status'),
+            })
+            for row in (data or {}).get('data') or []:
+                if not row.get('id'):
+                    continue
+                number = row.get('display_phone_number') or ''
+                name = row.get('verified_name') or ''
+                out.append({
+                    'id': str(row['id']),
+                    'name': ('%s — %s' % (number, name)).strip(' —')
+                            or str(row['id']),
+                    'kind': 'phone',
+                    'meta': {
+                        'waba_id': waba,
+                        'display_phone_number': number,
+                        'verified_name': name,
+                        'name_status': row.get('name_status') or '',
+                        'quality_rating': row.get('quality_rating') or '',
+                        'code_verification_status':
+                            row.get('code_verification_status') or '',
+                    },
+                })
+        return out
+
+    def select_resource(self, external_id):
+        """Pin this connection to ONE phone number, under its own WABA."""
+        conn = self.connection
+        wanted = str(external_id or '').strip()
+        if not wanted:
+            raise ChannelSendError('no WhatsApp number was chosen')
+        for resource in self.list_resources():
+            if resource['id'] != wanted:
+                continue
+            conn.sudo()._internal().write({
+                'resource_external_id': resource['id'],
+                'resource_secondary_id': resource['meta']['waba_id'],
+                'resource_display_name': resource['name'],
+            })
+            self.env['care.channel.readiness.check'].upsert_check(
+                conn.sudo(), 'resource_selected', 'pass')
+            self.env['care.channel.audit']._log(
+                'resource_selected', connection=conn.sudo(),
+                detail='whatsapp phone number selected')
+            return resource
+        raise ChannelSendError(
+            'that number is not on the WhatsApp account Meta granted')
+
+    def connect_resource(self, resource_id):
+        return self.select_resource(resource_id)
+
+    # ------------------------------------------------------------------
+    # Webhook registration — POST /{waba}/subscribed_apps
+    # ------------------------------------------------------------------
+    def subscribe_webhook(self):
+        conn = self.connection
+        waba = conn.resource_secondary_id
+        token = conn.sudo()._get_secret('access_token')
+        if not waba or not token:
+            raise ChannelSendError(
+                'choose a WhatsApp number before connecting the webhook')
+        try:
+            self._subscribe(waba, token)
+        except ChannelSendError as exc:
+            self._webhook_result(ok=False, error=exc)
+            raise
+        return self._webhook_result(ok=True)
+
+    def register_webhook(self):
+        return self.subscribe_webhook()
+
+    # ------------------------------------------------------------------
+    # Approvals (architecture §3, "Tenant-side approvals")
+    # ------------------------------------------------------------------
+    def _fetch_approvals(self):
+        conn = self.connection
+        token = conn.sudo()._get_secret('access_token')
+        if not token:
+            raise ChannelSendError('this WhatsApp connection is not authorized')
+        waba = conn.resource_secondary_id
+        rows = []
+
+        if waba:
+            data = self._get(self._graph(waba), params={
+                'access_token': token,
+                'fields': 'id,name,account_review_status',
+            })
+            rows.append({
+                'key': 'business_verification',
+                'status': _meta_approval_status(
+                    (data or {}).get('account_review_status')),
+                'detail': str((data or {}).get('account_review_status') or ''),
+            })
+
+        if conn.resource_external_id:
+            data = self._get(self._graph(conn.resource_external_id), params={
+                'access_token': token,
+                'fields': 'id,display_phone_number,verified_name,name_status,'
+                          'quality_rating',
+            })
+            rows.append({
+                'key': 'display_name',
+                'status': _meta_approval_status((data or {}).get('name_status')),
+                'detail': str((data or {}).get('name_status') or ''),
+            })
+
+        if waba:
+            data = self._get(self._graph('%s/message_templates' % waba),
+                             params={'access_token': token,
+                                     'fields': 'name,status,language',
+                                     'limit': 100})
+            templates = (data or {}).get('data') or []
+            approved = [t for t in templates
+                        if str(t.get('status') or '').upper() == 'APPROVED']
+            rows.append({
+                'key': 'templates',
+                # No template at all is PENDING, not a failure: a tenant who
+                # only ever replies inside the 24 h window needs none, but they
+                # cannot start a conversation either — which is exactly what
+                # "not approved yet" means to them.
+                'status': 'pass' if approved else 'pending',
+                'detail': '%s/%s' % (len(approved), len(templates)),
+            })
+        return rows
+
+    def list_message_templates(self):
+        """The APPROVED templates — the only ones that may open a window."""
+        conn = self.connection
+        token = conn.sudo()._get_secret('access_token')
+        waba = conn.resource_secondary_id
+        if not token or not waba:
+            raise ChannelSendError('this WhatsApp connection is not configured')
+        data = self._get(self._graph('%s/message_templates' % waba), params={
+            'access_token': token,
+            'fields': 'name,status,language,category',
+            'limit': 100,
+        })
+        return [{
+            'name': row.get('name') or '',
+            'language': (row.get('language') or ''),
+            'category': row.get('category') or '',
+        } for row in ((data or {}).get('data') or [])
+            if str(row.get('status') or '').upper() == 'APPROVED'
+            and row.get('name')]
+
+    # ------------------------------------------------------------------
+    # Health
+    # ------------------------------------------------------------------
+    def health_check(self):
+        conn = self.connection
+        if not conn.sudo().access_token_enc:
+            return {'ok': False, 'error': 'whatsapp connection is not authorized'}
+        if not conn.resource_external_id:
+            return {'ok': False, 'error': 'no whatsapp number is selected'}
+        token = conn.sudo()._get_secret('access_token')
+        try:
+            data = self._get(self._graph(conn.resource_external_id), params={
+                'access_token': token, 'fields': 'id,name_status,quality_rating'})
+        except ChannelSendError as exc:
+            return {'ok': False, 'error': str(exc)}
+        self.refresh_approvals()
+        return {'ok': True, 'resource': str((data or {}).get('id') or '')}
+
+    # ==================================================================
+    # Outbound (CC-B send_message + the CC-E template path)
+    # ==================================================================
+    def _messages_url(self):
+        conn = self.connection
+        if not conn.resource_external_id:
+            raise ChannelSendError('whatsapp connection is not configured')
+        return self._graph('%s/messages' % conn.resource_external_id)
+
+    def send_template(self, identity, template_name, language='vi',
+                      params=None):
+        """The ONLY thing that may go out beyond the 24 h window.
+
+        Meta approves each template by name+language; anything else is refused
+        at their end, which is why the composer asks for this path explicitly
+        instead of letting a free-form send fail (handover §1.4).
+        """
+        conn = self.connection
+        token = conn.sudo()._get_secret('access_token')
+        if not token:
+            raise ChannelSendError('whatsapp connection is not configured')
+        name = (template_name or '').strip()
+        if not name:
+            raise ChannelSendError('no WhatsApp template was chosen')
+        body = {
+            'messaging_product': 'whatsapp',
+            'recipient_type': 'individual',
+            'to': identity.external_id,
+            'type': 'template',
+            'template': {
+                'name': name,
+                'language': {'code': (language or 'vi').strip() or 'vi'},
+            },
+        }
+        values = [str(v) for v in (params or []) if v is not None]
+        if values:
+            body['template']['components'] = [{
+                'type': 'body',
+                'parameters': [{'type': 'text', 'text': v} for v in values],
+            }]
+        data = self._post(self._messages_url(), json_body=body,
+                          headers={'Authorization': 'Bearer %s' % token})
+        messages = (data or {}).get('messages') or [{}]
+        return {'external_message_id': messages[0].get('id'), 'state': 'sent',
+                'template': name}
 
     # -- messaging (CC-B) ----------------------------------------------
     def parse_inbound(self, payload):
@@ -413,7 +1155,7 @@ class WhatsAppAdapter(_StubAdapter):
 
 
 @register_adapter('fb')
-class MessengerAdapter(_StubAdapter):
+class MessengerAdapter(_MetaAdapterBase):
     """Facebook Messenger via FB Login for Business. Page tokens obtained
     through the long-lived path do not expire."""
     _capabilities = {
@@ -432,6 +1174,188 @@ class MessengerAdapter(_StubAdapter):
                         'channel_hub.guide.fb.connecting',
                         'channel_hub.guide.fb.test'],
     }
+
+    _config_key = META_FLB_CONFIG_KEY
+    _required_scopes = FB_REQUIRED_SCOPES
+    _exchange_with_redirect = True
+
+    # ==================================================================
+    # Onboarding (CC-E) — Facebook Login for Business
+    # ==================================================================
+    def authorize_url(self, session, state, code_challenge=None):
+        """The FLB dialog URL the tenant's popup opens.
+
+        ``config_id`` is what makes this Login FOR BUSINESS rather than a
+        consumer login: the permission set is pinned in Meta's dashboard
+        (operator checklist §12.3), so no scope list travels in this URL and no
+        secret of any kind is in it (T127/T138).
+        """
+        app = self._platform_app()
+        if not state:
+            raise ChannelSendError('Messenger requires an authorization state')
+        params = {
+            'client_id': app.client_id,
+            'config_id': self.config_id(app),
+            'redirect_uri': self._redirect_uri(),
+            'response_type': 'code',
+            'state': state,
+        }
+        return '%s/%s/dialog/oauth?%s' % (
+            self._api_base(FB_DIALOG_BASE), GRAPH_VERSION, urlencode(params))
+
+    def handle_callback(self, session, params):
+        """Exchange the FLB code and hold the USER token for the Page picker.
+
+        Called by ``care.channel.oauth.session._handle_callback`` inside a
+        savepoint, AFTER the single-use state has been burned.
+
+        The user token lands in ``refresh_token_enc`` and ``access_token_enc``
+        stays EMPTY until a Page is chosen, because ``access_token`` is what
+        ``send_message`` spends and a user token cannot send as a Page. Meta
+        has no refresh token at all (the long-lived path does not expire), so
+        the column is otherwise unused — see the report's deviation D2.
+        """
+        conn = self.connection
+        code = (params or {}).get('code')
+        tokens = self.exchange_code(code)
+        info = self.inspect_token(tokens['access_token'])
+
+        self._store_tokens(refresh_token=tokens['access_token'],
+                           granted_scopes=' '.join(info['scopes']))
+        Check = self.env['care.channel.readiness.check']
+        Check.upsert_check(conn.sudo(), 'authorization_valid', 'pass')
+        missing = self._record_scopes(info['scopes'])
+        try:
+            conn.sudo()._transition('select_resource',
+                                    reason='messenger sign-in complete')
+        except UserError:
+            _logger.info('care_channels: fb connection %s stays in %s after '
+                         'authorization', conn.id, conn.state)
+        # NOTHING about the grant is returned: the engine renders a generic
+        # page and the browser learns the outcome by re-reading the Center.
+        return {'ok': True, 'next_step': 'select_resource',
+                'missing_scopes': missing}
+
+    # ------------------------------------------------------------------
+    # Resource selection — the Page picker
+    # ------------------------------------------------------------------
+    def _user_token(self):
+        conn = self.connection.sudo()
+        return conn._get_secret('refresh_token') or ''
+
+    def _pages(self):
+        """``/me/accounts`` — pages AND their per-page tokens.
+
+        Kept private: the reply carries one non-expiring credential per page,
+        and only :meth:`select_resource` may touch them.
+        """
+        token = self._user_token()
+        if not token:
+            raise ChannelSendError('this Messenger connection is not authorized')
+        data = self._get(self._graph('me/accounts'), params={
+            'access_token': token, 'fields': 'id,name,access_token', 'limit': 100})
+        return [row for row in ((data or {}).get('data') or []) if row.get('id')]
+
+    def list_resources(self):
+        """The Page list for the picker — with every token stripped out."""
+        return [{
+            'id': str(page['id']),
+            'name': page.get('name') or str(page['id']),
+            'kind': 'page',
+            'meta': {'has_token': bool(page.get('access_token'))},
+        } for page in self._pages()]
+
+    def select_resource(self, external_id):
+        """Pin this connection to ONE Page and store that Page's token."""
+        conn = self.connection
+        wanted = str(external_id or '').strip()
+        if not wanted:
+            raise ChannelSendError('no Facebook Page was chosen')
+        for page in self._pages():
+            if str(page['id']) != wanted:
+                continue
+            page_token = page.get('access_token')
+            if not page_token:
+                raise ChannelSendError(
+                    'Meta returned no access token for that Page — the '
+                    'signed-in account may not administer it')
+            self._store_tokens(access_token=page_token)
+            conn.sudo()._internal().write({
+                'resource_external_id': str(page['id']),
+                'resource_display_name': page.get('name') or str(page['id']),
+            })
+            self.env['care.channel.readiness.check'].upsert_check(
+                conn.sudo(), 'resource_selected', 'pass')
+            self.env['care.channel.audit']._log(
+                'resource_selected', connection=conn.sudo(),
+                detail='messenger page selected')
+            return {'id': str(page['id']),
+                    'name': page.get('name') or str(page['id']),
+                    'kind': 'page', 'meta': {'has_token': True}}
+        raise ChannelSendError(
+            'that Page is not one the signed-in account administers')
+
+    def connect_resource(self, resource_id):
+        return self.select_resource(resource_id)
+
+    # ------------------------------------------------------------------
+    # Webhook registration — POST /{page}/subscribed_apps
+    # ------------------------------------------------------------------
+    def subscribe_webhook(self):
+        conn = self.connection
+        page_id = conn.resource_external_id
+        token = conn.sudo()._get_secret('access_token')
+        if not page_id or not token:
+            raise ChannelSendError(
+                'choose a Facebook Page before connecting the webhook')
+        try:
+            # Narrow on purpose: we ingest messages and postbacks and nothing
+            # else, and asking for less is the smaller blast radius.
+            self._subscribe(page_id, token,
+                            fields_csv='messages,messaging_postbacks')
+        except ChannelSendError as exc:
+            self._webhook_result(ok=False, error=exc)
+            raise
+        return self._webhook_result(ok=True)
+
+    def register_webhook(self):
+        return self.subscribe_webhook()
+
+    # ------------------------------------------------------------------
+    # Approvals — informational for Messenger (App Review is OUR app)
+    # ------------------------------------------------------------------
+    def _fetch_approvals(self):
+        conn = self.connection
+        if not conn.resource_external_id:
+            return []
+        token = conn.sudo()._get_secret('access_token')
+        if not token:
+            raise ChannelSendError('this Messenger connection is not authorized')
+        data = self._get(self._graph(conn.resource_external_id), params={
+            'access_token': token, 'fields': 'id,name'})
+        return [{
+            'key': 'page_access',
+            'status': 'pass' if (data or {}).get('id') else 'pending',
+            'detail': str((data or {}).get('name') or ''),
+        }]
+
+    # ------------------------------------------------------------------
+    # Health
+    # ------------------------------------------------------------------
+    def health_check(self):
+        conn = self.connection
+        if not conn.resource_external_id:
+            return {'ok': False, 'error': 'no facebook page is selected'}
+        token = conn.sudo()._get_secret('access_token')
+        if not token:
+            return {'ok': False, 'error': 'messenger connection is not authorized'}
+        try:
+            data = self._get(self._graph(conn.resource_external_id),
+                             params={'access_token': token, 'fields': 'id,name'})
+        except ChannelSendError as exc:
+            return {'ok': False, 'error': str(exc)}
+        self.refresh_approvals()
+        return {'ok': True, 'resource': str((data or {}).get('id') or '')}
 
     # -- messaging (CC-B) ----------------------------------------------
     def parse_inbound(self, payload):
@@ -476,20 +1400,31 @@ class MessengerAdapter(_StubAdapter):
                      len(events), self.connection.id)
         return events
 
-    def send_message(self, identity, text):
+    def send_message(self, identity, text, tag=None):
+        """Send as the connected Page.
+
+        ``tag`` is the CC-E addition: inside the 24 h window a plain
+        ``RESPONSE`` is correct, and outside it Meta accepts only a tagged
+        message — where ``HUMAN_AGENT`` has been the sole surviving tag since
+        2026-04-27. An unknown tag is REFUSED here rather than sent and
+        rejected at Meta.
+        """
         conn = self.connection
         token = conn._get_secret('access_token')
         if not token:
             raise ChannelSendError('messenger connection is not configured')
+        if tag and tag not in FB_MESSAGE_TAGS:
+            raise ChannelSendError('%s is not a Messenger tag that still '
+                                   'exists' % tag)
         url = '%s/%s/me/messages' % (self._api_base(GRAPH_BASE), GRAPH_VERSION)
-        data = self._post(
-            url,
-            params={'access_token': token},
-            json_body={
-                'recipient': {'id': identity.external_id},
-                'messaging_type': 'RESPONSE',
-                'message': {'text': text},
-            })
+        body = {
+            'recipient': {'id': identity.external_id},
+            'messaging_type': 'MESSAGE_TAG' if tag else 'RESPONSE',
+            'message': {'text': text},
+        }
+        if tag:
+            body['tag'] = tag
+        data = self._post(url, params={'access_token': token}, json_body=body)
         return {'external_message_id': data.get('message_id'), 'state': 'sent'}
 
 

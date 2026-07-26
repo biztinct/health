@@ -62,6 +62,17 @@
             </span>
           </div>
 
+          <!-- Meta's human reviews, on the card itself: a tenant should not
+               have to open a stepper to learn what they are waiting for. -->
+          <t t-if="card.approvals">
+            <t t-foreach="card.approvals" t-as="ap" t-key="ap.key">
+              <p class="cc-sub-line" t-if="ap.status !== 'pass'"
+                 t-att-class="'st-' + ap.status">
+                <strong t-esc="ap.label"/>: <t t-esc="ap.message"/>
+              </p>
+            </t>
+          </t>
+
           <div class="cc-checks" t-if="card.checks.length and card.implemented">
             <div class="cc-dots">
               <t t-foreach="card.checks" t-as="chk" t-key="chk.key">
@@ -136,6 +147,25 @@
               </li>
             </t>
           </ul>
+
+          <!-- Provider approvals are STATE, not errors: business
+               verification, display-name review and template review are
+               Meta's human processes, and they render as pending tasks. -->
+          <div class="cc-sub" t-if="state.approvals.length">
+            <div class="cc-sub-head">
+              <span class="ic ic-clock"/>
+              <span class="cc-sub-name">Waiting on Meta</span>
+            </div>
+            <t t-foreach="state.approvals" t-as="ap" t-key="ap.key">
+              <p class="cc-sub-line" t-att-class="'st-' + ap.status">
+                <strong t-esc="ap.label"/>: <t t-esc="ap.message"/>
+              </p>
+            </t>
+            <div class="cc-row">
+              <button class="cc-btn ghost" t-att-disabled="state.busy"
+                      t-on-click="refreshApprovals">Check again</button>
+            </div>
+          </div>
 
           <div class="cc-tech" t-if="openCard">
             <details>
@@ -220,7 +250,7 @@
             </t>
 
             <!-- ===== Zalo: sign in with the provider ===== -->
-            <t t-if="state.mode === 'oauth_popup' and state.step === 0">
+            <t t-if="isZalo and state.step === 0">
               <p class="cc-wait" t-if="state.popupBlocked">
                 <span class="ic ic-clock"/>
                 <span>Your browser blocked the sign-in window.</span>
@@ -237,7 +267,7 @@
             </t>
 
             <!-- ===== Zalo: the portal-guided webhook checklist ===== -->
-            <t t-if="state.mode === 'oauth_popup' and state.step === 1">
+            <t t-if="isZalo and state.step === 1">
               <label class="cc-label" for="cc_zalo_hook">Webhook address</label>
               <textarea id="cc_zalo_hook" class="cc-input area mono" rows="2"
                         readonly="readonly"
@@ -260,7 +290,7 @@
             </t>
 
             <!-- ===== Zalo: waiting for Zalo to confirm ===== -->
-            <t t-if="state.mode === 'oauth_popup' and state.step === 2">
+            <t t-if="isZalo and state.step === 2">
               <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
                 <span class="ic ic-clock"/> Waiting for Zalo to confirm…
               </p>
@@ -271,7 +301,7 @@
             </t>
 
             <!-- ===== Zalo: the synthetic test reply ===== -->
-            <t t-if="state.mode === 'oauth_popup' and state.step === 3">
+            <t t-if="isZalo and state.step === 3">
               <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
                 <span class="ic ic-check"/>
                 <span>Zalo is connected. New messages arrive in Care Command.</span>
@@ -286,6 +316,98 @@
                   <p class="cc-sub-line" t-esc="znsCard.zns.proof"/>
                 </div>
               </t>
+            </t>
+
+            <!-- ===== Meta: sign in (ES popup for WA, FLB popup for FB) ===== -->
+            <t t-if="isMeta and state.step === 0">
+              <p class="cc-wait" t-if="state.metaSdkBlocked">
+                <span class="ic ic-clock"/>
+                <span>This needs Meta's own sign-in window, and your browser blocked it. Allow pop-ups for this site, or try another browser, then start again.</span>
+              </p>
+              <p class="cc-wait" t-if="state.popupBlocked and !state.metaSdkBlocked">
+                <span class="ic ic-clock"/>
+                <span>Your browser blocked the sign-in window.</span>
+              </p>
+              <p t-if="state.popupBlocked and state.authUrl">
+                <a class="cc-link" t-att-href="state.authUrl"
+                   target="_blank" rel="noopener noreferrer">Open the Facebook sign-in page</a>
+              </p>
+              <p class="cc-ok" t-if="state.hasCredentials">
+                <span class="ic ic-check"/>
+                <span>Signed in<t t-if="openCard and openCard.resource_line">
+                  — <t t-esc="openCard.resource_line"/></t></span>
+              </p>
+              <div class="cc-alert warn" t-if="state.metaMissingScopes.length">
+                <p>Meta did not grant everything Health19 needs. Ask whoever administers your Meta account for:</p>
+                <ul>
+                  <t t-foreach="state.metaMissingScopes" t-as="sc" t-key="sc">
+                    <li t-esc="sc"/>
+                  </t>
+                </ul>
+              </div>
+              <div class="cc-alert warn"
+                   t-if="scopesFailed and !state.metaMissingScopes.length">
+                <p>Meta did not grant everything Health19 needs. Sign in again and allow every permission it asks for.</p>
+              </div>
+            </t>
+
+            <!-- ===== Meta: choose a number / a Page ===== -->
+            <t t-if="isMeta and state.step === 1">
+              <p class="cc-wait" t-if="state.metaLoadingResources">
+                <span class="ic ic-clock"/> Reading your Meta accounts…
+              </p>
+              <div class="cc-alert bad" role="alert"
+                   t-if="state.metaResourceError" t-esc="state.metaResourceError"/>
+              <p class="cc-help"
+                 t-if="!state.metaLoadingResources and !state.metaResources.length and !state.metaResourceError">
+                Meta returned nothing to choose from yet. Finish the sign-in, then try again.
+              </p>
+              <ul class="cc-picker" t-if="state.metaResources.length">
+                <t t-foreach="state.metaResources" t-as="res" t-key="res.id">
+                  <li>
+                    <label>
+                      <input type="radio" name="cc_meta_resource"
+                             t-att-value="res.id"
+                             t-att-checked="state.metaSelected === res.id"
+                             t-on-change="() => this.pickMetaResource(res.id)"/>
+                      <span class="cc-pick-name" t-esc="res.name"/>
+                    </label>
+                  </li>
+                </t>
+              </ul>
+            </t>
+
+            <!-- ===== Meta: we set things up ===== -->
+            <t t-if="isMeta and state.step === 2">
+              <p class="cc-res" t-if="openCard and openCard.resource_line"
+                 t-esc="openCard.resource_line"/>
+              <p class="cc-ok"
+                 t-if="openCard and openCard.state !== 'select_resource' and openCard.state !== 'authorizing' and openCard.state !== 'configuring'">
+                <span class="ic ic-check"/>
+                <span>Meta is sending your messages to Health19.</span>
+              </p>
+            </t>
+
+            <!-- ===== Meta: test + the approvals that are not ours ===== -->
+            <t t-if="isMeta and state.step === 3">
+              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+                <span class="ic ic-clock"/> Waiting for your first message…
+              </p>
+              <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
+                <span class="ic ic-check"/>
+                <span>Connected. New messages arrive in Care Command.</span>
+              </p>
+              <div class="cc-sub" t-if="state.approvals.length">
+                <div class="cc-sub-head">
+                  <span class="ic ic-clock"/>
+                  <span class="cc-sub-name">Waiting on Meta</span>
+                </div>
+                <t t-foreach="state.approvals" t-as="ap" t-key="ap.key">
+                  <p class="cc-sub-line" t-att-class="'st-' + ap.status">
+                    <strong t-esc="ap.label"/>: <t t-esc="ap.message"/>
+                  </p>
+                </t>
+              </div>
             </t>
 
             <!-- ===== Web chat: origins ===== -->
@@ -353,25 +475,51 @@
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Zalo -->
-          <button t-if="state.mode === 'oauth_popup' and state.step === 0 and !state.hasCredentials"
+          <button t-if="isZalo and state.step === 0 and !state.hasCredentials"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="authorizeZalo">Sign in with Zalo</button>
-          <button t-if="state.mode === 'oauth_popup' and state.step === 0 and state.hasCredentials"
+          <button t-if="isZalo and state.step === 0 and state.hasCredentials"
                   class="cc-btn primary" t-on-click="next">Next</button>
-          <button t-if="state.mode === 'oauth_popup' and state.step === 1"
+          <button t-if="isZalo and state.step === 1"
                   class="cc-btn primary"
                   t-att-disabled="state.busy or !state.webhookSecret"
                   t-on-click="saveZaloSecret">Save the secret</button>
-          <button t-if="state.mode === 'oauth_popup' and state.step === 1 and state.hasWebhookSecret and !state.webhookSecret"
+          <button t-if="isZalo and state.step === 1 and state.hasWebhookSecret and !state.webhookSecret"
                   class="cc-btn ghost" t-on-click="next">Skip</button>
-          <button t-if="state.mode === 'oauth_popup' and state.step === 2"
+          <button t-if="isZalo and state.step === 2"
                   class="cc-btn primary"
                   t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
                   t-on-click="next">Next</button>
-          <button t-if="state.mode === 'oauth_popup' and state.step === 3 and !(openCard and openCard.state === 'ready')"
+          <button t-if="isZalo and state.step === 3 and !(openCard and openCard.state === 'ready')"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="sendTest">Send a reply</button>
-          <button t-if="state.mode === 'oauth_popup' and state.step === 3 and openCard and openCard.state === 'ready'"
+          <button t-if="isZalo and state.step === 3 and openCard and openCard.state === 'ready'"
+                  class="cc-btn primary" t-on-click="closeStepper">Done</button>
+
+          <!-- Meta (WhatsApp Embedded Signup + Messenger FLB) -->
+          <button t-if="isMeta and state.step === 0 and !state.hasCredentials"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="startMeta">
+            <t t-if="isWhatsApp">Sign in with Meta</t>
+            <t t-if="isMessenger">Sign in with Facebook</t>
+          </button>
+          <button t-if="isMeta and state.step === 0 and state.hasCredentials"
+                  class="cc-btn primary" t-on-click="next">Next</button>
+          <button t-if="isMeta and state.step === 1"
+                  class="cc-btn ghost" t-att-disabled="state.busy"
+                  t-on-click="loadMetaResources">Refresh the list</button>
+          <button t-if="isMeta and state.step === 1"
+                  class="cc-btn primary"
+                  t-att-disabled="state.busy or !state.metaSelected"
+                  t-on-click="selectMetaResource">Use this one</button>
+          <button t-if="isMeta and state.step === 2"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="subscribeMeta">Connect</button>
+          <button t-if="isMeta and state.step === 3 and !(openCard and openCard.state === 'ready')"
+                  class="cc-btn primary"
+                  t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
+                  t-on-click="sendTest">Send a reply</button>
+          <button t-if="isMeta and state.step === 3 and openCard and openCard.state === 'ready'"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Web chat -->
