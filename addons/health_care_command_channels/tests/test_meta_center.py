@@ -987,8 +987,10 @@ class TestMetaCenter(ChannelSpineCase):
         # Zalo/Google have no platform app in this fixture — unchanged.
         for channel in ('zalo', 'zns', 'email'):
             self.assertFalse(by_key[channel]['available'], channel)
+        # FORCED EDIT (CC-F): calls needs no platform app and its receive-only
+        # stepper shipped, so it is now available AND implemented.
         self.assertTrue(by_key['call']['available'])
-        self.assertFalse(by_key['call']['implemented'])
+        self.assertTrue(by_key['call']['implemented'])
 
         # No credential material of any kind reaches the browser.
         blob = json.dumps(cards, default=str)

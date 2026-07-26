@@ -9,3 +9,5 @@ from . import test_channel_wiring
 from . import test_center
 from . import test_zalo_center
 from . import test_meta_center
+from . import test_email_center
+from . import test_call_center

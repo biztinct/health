@@ -1839,3 +1839,183 @@ msgstr "Tải lại danh sách"
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "Use this one"
 msgstr "Dùng cái này"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Gmail / Google Workspace"
+msgstr "Gmail / Google Workspace"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Microsoft 365 / Outlook"
+msgstr "Microsoft 365 / Outlook"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Choose Gmail or Microsoft 365."
+msgstr "Hãy chọn Gmail hoặc Microsoft 365."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This is not an email connection."
+msgstr "Đây không phải kết nối email."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This is not a phone connection."
+msgstr "Đây không phải kết nối tổng đài."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Your phone system account"
+msgstr "Tài khoản tổng đài của bạn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Make a real call"
+msgstr "Gọi thử một cuộc thật"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Health19 connection test"
+msgstr "Health19 kiểm tra kết nối"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Enter the account name your phone system provider gave you."
+msgstr "Nhập tên tài khoản mà nhà cung cấp tổng đài đã cấp cho bạn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Enter the mailbox address clients write to, for example lienhe@vietuc.vn."
+msgstr "Nhập địa chỉ hộp thư mà khách hàng gửi tới, ví dụ lienhe@vietuc.vn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Email sign-in could not be started: %s"
+msgstr "Không thể bắt đầu đăng nhập email: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Test message sent. It should arrive in your own inbox within a minute."
+msgstr "Đã gửi tin nhắn thử. Tin sẽ về hộp thư của chính bạn trong khoảng một phút."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Calls arrive in Care Command. Placing calls and pulling call history need the VoIP24h API, which we cannot verify yet — so we do not offer them."
+msgstr "Cuộc gọi đến sẽ hiện trong Care Command. Việc gọi đi và tải lịch sử cuộc gọi cần API của VoIP24h mà chúng tôi chưa thể xác minh — nên chúng tôi không cung cấp."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Paste the webhook secret your phone system shows. Without it we cannot tell a real call event from a forged one, and we will refuse every event."
+msgstr "Dán mã bí mật webhook mà tổng đài hiển thị. Không có mã này, chúng tôi không thể phân biệt sự kiện cuộc gọi thật với sự kiện giả mạo và sẽ từ chối mọi sự kiện."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Type the address clients write to, then sign in. A Google or Microsoft window opens — your mailbox password is only ever typed on your provider's own page, never here."
+msgstr "Nhập địa chỉ khách hàng gửi tới rồi đăng nhập. Một cửa sổ của Google hoặc Microsoft sẽ mở ra — mật khẩu hộp thư chỉ được nhập trên trang của nhà cung cấp, không bao giờ nhập ở đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Check that this is the address you want clients to reach. Replies from Care Command will come from it."
+msgstr "Kiểm tra xem đây có đúng là địa chỉ bạn muốn khách hàng liên hệ không. Thư trả lời từ Care Command sẽ gửi đi từ địa chỉ này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We send one short message from your mailbox to itself. When it comes back, both sending and receiving are proven."
+msgstr "Chúng tôi gửi một tin ngắn từ hộp thư của bạn tới chính nó. Khi tin quay về, cả gửi và nhận đều đã được chứng minh."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Type the account name VoIP24h gave you. It is what they put on every call event they send us, and it is how we know a call belongs to your clinic."
+msgstr "Nhập tên tài khoản VoIP24h đã cấp. Đó là thông tin họ gắn vào mọi sự kiện cuộc gọi gửi cho chúng tôi, và là cách chúng tôi biết cuộc gọi thuộc về phòng khám của bạn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Open your VoIP24h portal (or ask their support) and set this address as the webhook. They will show you a secret — paste it back here so we can check that call events really came from them."
+msgstr "Mở cổng quản trị VoIP24h (hoặc nhờ bộ phận hỗ trợ) và đặt địa chỉ này làm webhook. Họ sẽ hiển thị một mã bí mật — dán lại vào đây để chúng tôi kiểm tra sự kiện cuộc gọi thực sự đến từ họ."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Ring your clinic number from any phone. The moment the call event reaches us, this step turns green — a real call is the only honest proof."
+msgstr "Gọi vào số của phòng khám từ bất kỳ điện thoại nào. Ngay khi sự kiện cuộc gọi tới chúng tôi, bước này chuyển xanh — một cuộc gọi thật là bằng chứng trung thực duy nhất."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Mailbox address"
+msgstr "Địa chỉ hộp thư"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Account name"
+msgstr "Tên tài khoản"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Sign in to this mailbox"
+msgstr "Đăng nhập hộp thư này"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Open the sign-in page"
+msgstr "Mở trang đăng nhập"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Waiting for a call…"
+msgstr "Đang chờ một cuộc gọi…"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "We received a call event."
+msgstr "Chúng tôi đã nhận được một sự kiện cuộc gọi."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Waiting for the first message to arrive…"
+msgstr "Đang chờ tin nhắn đầu tiên…"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Email is connected. New messages arrive in Care Command."
+msgstr "Email đã kết nối. Tin nhắn mới sẽ về Care Command."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Replies from Care Command will come from this address."
+msgstr "Thư trả lời từ Care Command sẽ gửi từ địa chỉ này."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "We have not seen the sign-in finish yet. Check again, or start it once more."
+msgstr "Chúng tôi chưa thấy việc đăng nhập hoàn tất. Hãy kiểm tra lại hoặc bắt đầu lần nữa."

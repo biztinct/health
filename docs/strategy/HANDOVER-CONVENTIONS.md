@@ -1213,3 +1213,73 @@ a no-op.
     test that "covered" it never reached `ready`, so it could not see the
     demotion — a required-check kill-switch test MUST drive the connection to
     `ready` first.)
+
+- **§5.79 — creating ONE `ir.mail_server` silently makes it the sender of
+    every outgoing email in the database.** `_find_mail_server`
+    (odoo/addons/base/models/ir_mail_server.py) walks the active servers in
+    `sequence` order and tries the `from_filter` in three passes — but its
+    **step 4 returns `mail_servers[0]` even when nothing matched**, logging
+    only `"No mail server matches the from_filter, using … as fallback"`. On a
+    database with no other row (which is vietuat: 0 `ir.mail_server` before
+    CC-F) the first server anyone creates becomes the global default, so a
+    per-tenant mailbox connected in a self-service wizard would start sending
+    invoices, password resets and other tenants' notifications. Core provides
+    the fix as an explicit hook: override
+    `_find_mail_server_allowed_domain()` and exclude the owned rows
+    (`domain & fields.Domain('care_connection_id', '=', False)`). The server
+    stays fully usable through `send_email(..., mail_server_id=…)` — it is
+    simply never *inferred*. A high `sequence` alone is NOT enough: it only
+    reorders the fallback, it does not remove the record from it. Same family
+    as §5.62 (a default that widens under you) but with a blast radius outside
+    the module. (Found while building CC-F; the hazard was designed out before
+    it shipped, and T-email asserts the exclusion.)
+
+- **§5.80 — an Odoo `fields.Integer` is an int4, and a "far future" sentinel
+    poisons the whole transaction.** `google_gmail_access_token_expiration` is
+    a plain Integer holding a UNIX timestamp; a fixture writing `99999999999`
+    (a habit that is harmless in Python and in most JSON) raises
+    `psycopg2.errors.NumericValueOutOfRange: integer out of range` at flush
+    time — which then cascades as
+    `current transaction is aborted, commands ignored…` through every later
+    statement, so **seven tests error with a message that names none of them**
+    and the first traceback is in unrelated bookkeeping (`care.channel.audit`
+    failing to write). Rule: epoch sentinels go through `int(time.time()) + n`,
+    never a hand-typed run of nines; and when a suite errors in a block with
+    `InFailedSqlTransaction`, read *upward* for the first `bad query:` line —
+    the real cause is above the noise, not in it. (Hit on the first CC-F run.)
+
+- **§5.81 — "no cron ships for X" is a claim about `ir_cron`, not about the
+    repo, and the difference can be a live call to an endpoint nobody has
+    verified.** The CC-F handover stated that no cron ships for VoIP24h's CDR
+    sync. `data/voip24h_cron.xml` ships **three**, all `active=True`, and
+    `ir_cron` id 133 is enabled on vietuat right now. It has simply never
+    *done* anything, because `cron_sync_call_history` selects on
+    `auto_sync_enabled = True AND state = 'connected'` and there are zero
+    `voip.config` rows. That made the facade's create the dangerous line in the
+    phase: a row written with the model's own defaults (`auto_sync_enabled`
+    defaults **True**) and `state='connected'` would have started calling
+    `https://api.voip24h.vn/v1/calls/history` — an unevidenced path — every
+    15 minutes. The row is therefore created `draft` with auto-sync off and
+    with `api_key`/`api_secret` deliberately EMPTY, because
+    `_check_credentials()` refusing to build a client is what actually keeps
+    the unverified endpoints unreachable. Rules: (a) verify cron claims with
+    `SELECT id, active FROM ir_cron …`, never by reading the addon; (b) when a
+    phase creates a row that an existing cron selects on, enumerate that cron's
+    domain field by field and write every one of them explicitly — inheriting a
+    default is how a dormant integration wakes up; (c) "0 rows today" is what
+    makes a live cron invisible, not what makes it safe.
+
+- **§5.82 — a UI branch keyed on a shared MODE hands the next channel its
+    neighbour's words.** The Center's stepper screens were written as
+    `t-if="state.mode === 'guided_secret' and state.step === 1"` — fine while
+    Telegram was the only `guided_secret` channel. CC-E hit the first half of
+    this (Zalo's copy would have leaked to any second `oauth_popup` channel)
+    and re-keyed those branches to `isZalo`; CC-F closed the other side, where
+    `call` joining `guided_secret` would have asked a clinic for a "Bot key"
+    and told them to message @BotFather. The general rule: **a stepper branch
+    keys on the CHANNEL, never on a capability enum that more than one channel
+    can declare** — the enum describes how a flow works, not what to say about
+    it. Assert it structurally rather than by eye: grep the template for the
+    fingerprint `state.mode === '`, which can appear in a branch condition and
+    essentially nowhere else (§5.72's caveat about prose does not bite on a
+    string with an operator in it). (Found in CC-E, finished in CC-F, T155.)

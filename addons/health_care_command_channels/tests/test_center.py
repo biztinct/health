@@ -109,9 +109,13 @@ class TestChannelCenter(ChannelSpineCase):
                              '%s must read "not available yet" with no '
                              'platform app' % key)
             self.assertEqual(by_key[key]['primary_action'], 'unavailable')
-        # No platform app needed, but the flow is CC-D/E/F work.
+        # FORCED EDIT (CC-F): `call` needs no platform app and its stepper is
+        # now real, so it is available AND implemented. What keeps it honest is
+        # not a disabled card but the receive-only notice it carries — CC-F
+        # cannot verify VoIP24h's API, and the card says exactly that.
         self.assertTrue(by_key['call']['available'])
-        self.assertFalse(by_key['call']['implemented'])
+        self.assertTrue(by_key['call']['implemented'])
+        self.assertIn('cannot verify', (by_key['call'].get('notice') or '').lower())
         # ZNS is a capability OF zalo, rendered inside its card.
         self.assertEqual(by_key['zns']['parent_channel'], 'zalo')
 
@@ -420,7 +424,12 @@ class TestChannelCenter(ChannelSpineCase):
         # the `meta` platform app, so `center_begin` on them now SUCCEEDS. That
         # is asserted below instead. (Ledger §5.62's family: widening what a
         # service accepts breaks the tests that assert what it refuses.)
-        unimplemented = ['zalo', 'zns', 'email', 'call']
+        # FORCED EDIT (CC-F): `call` left this list for the same reason the
+        # Meta pair did — its stepper is implemented and it needs no platform
+        # app, so `center_begin('call')` now succeeds. `email` stays: it is
+        # implemented too, but no google/microsoft platform app is seeded, so
+        # the availability gate still refuses it (which is vietuat today).
+        unimplemented = ['zalo', 'zns', 'email']
         before = self.Conn.with_context(active_test=False).search_count([
             ('channel', 'in', unimplemented),
             ('company_id', '=', self.company.id)])
@@ -445,7 +454,8 @@ class TestChannelCenter(ChannelSpineCase):
 
         # CC-E: the two Meta channels DO begin now (a `meta` platform app is
         # seeded in this fixture), and are idempotent the same way.
-        for channel in ('whatsapp', 'fb'):
+        # CC-F: and so does `call`, which needs no platform app at all.
+        for channel in ('whatsapp', 'fb', 'call'):
             first = self.Conn.center_begin(channel)
             second = self.Conn.center_begin(channel)
             self.assertEqual(first['connection_id'], second['connection_id'],

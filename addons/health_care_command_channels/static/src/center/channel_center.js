@@ -117,6 +117,19 @@ export class ChannelCenter extends Component {
             metaMissingScopes: [],
             metaSdkBlocked: false,
             approvals: [],
+            // Email (CC-F): the mailbox, the provider picker and whether the
+            // provider's own callback actually stored a grant. `signedIn` is
+            // read back from the server, never assumed from a closed popup.
+            emailProviders: [],
+            emailProvider: "",
+            mailbox: "",
+            emailSignedIn: false,
+            // Calls (CC-F): receive-only, so there is an account id and a
+            // webhook secret and nothing that could "test" an API.
+            callAccountId: "",
+            callSecret: "",
+            hasCallSecret: false,
+            callNotice: "",
         });
 
         // The ES popup posts its WABA / phone id back through postMessage.
@@ -312,6 +325,12 @@ export class ChannelCenter extends Component {
             if (this.isMetaChannel(card.channel) && info.connection_id) {
                 await this._resumeMeta(info.connection_id, card);
             }
+            if (card.channel === "email" && info.connection_id) {
+                await this._loadEmailInfo(info.connection_id);
+            }
+            if (card.channel === "call" && info.connection_id) {
+                await this._loadCallInfo(info.connection_id);
+            }
             if (card.channel === "webchat" && info.connection_id) {
                 const settings = await this.orm.call(
                     MODEL, "center_webchat_settings", [info.connection_id]);
@@ -348,16 +367,31 @@ export class ChannelCenter extends Component {
         this.state.metaMissingScopes = [];
         this.state.metaSdkBlocked = false;
         this.state.approvals = [];
+        this.state.emailSignedIn = false;
+        this.state.mailbox = "";
+        this.state.emailProvider = "";
+        this.state.emailProviders = [];
+        this.state.callAccountId = "";
+        this.state.callSecret = "";
+        this.state.hasCallSecret = false;
+        this.state.callNotice = "";
         this._metaHint = {};
         // A reconnect on a channel whose key we still hold skips the paste
         // screen: the tenant should never be asked for a credential twice.
-        if (this.state.mode === "guided_secret" && this.state.hasCredentials) {
+        if (this.isTelegram && this.state.hasCredentials) {
             this.state.step = 2;
         }
     }
 
     // -----------------------------------------------------------------
     // channel predicates — the stepper copy is per CHANNEL, not per mode
+    //
+    // CC-E re-keyed the Zalo screens off `mode === 'oauth_popup'` for exactly
+    // the reason CC-F now makes concrete: a second channel joined that mode
+    // (email) and would have inherited Zalo's words. CC-F finishes the job on
+    // the other side — `call` joins `guided_secret`, whose branches were all
+    // written for Telegram and talk about BotFather. Every stepper branch is
+    // keyed on a CHANNEL below; none is keyed on a mode.
     // -----------------------------------------------------------------
     isMetaChannel(channel) {
         return channel === "whatsapp" || channel === "fb";
@@ -365,6 +399,22 @@ export class ChannelCenter extends Component {
 
     get isZalo() {
         return this.state.open === "zalo";
+    }
+
+    get isTelegram() {
+        return this.state.open === "telegram";
+    }
+
+    get isEmail() {
+        return this.state.open === "email";
+    }
+
+    get isCall() {
+        return this.state.open === "call";
+    }
+
+    get isWebchat() {
+        return this.state.open === "webchat";
     }
 
     get isMeta() {
@@ -394,7 +444,8 @@ export class ChannelCenter extends Component {
         this.state.webhookUrl = info.webhook_url || "";
         this.state.hasWebhookSecret = !!info.has_webhook_secret;
         // A tenant whose OA is already authorized starts on the webhook step.
-        if (this.state.mode === "oauth_popup" && this.state.hasCredentials) {
+        // Keyed on the CHANNEL, not the mode: email shares `oauth_popup`.
+        if (this.isZalo && this.state.hasCredentials) {
             this.state.step = Math.max(this.state.step, 1);
         }
     }
@@ -671,6 +722,108 @@ export class ChannelCenter extends Component {
         });
     }
 
+    // -----------------------------------------------------------------
+    // Email (CC-F): Gmail / Microsoft 365 through Odoo's own OAuth
+    // -----------------------------------------------------------------
+    async _loadEmailInfo(connectionId) {
+        const info = await this.orm.call(MODEL, "center_email_info", [connectionId]);
+        this.state.emailProviders = info.providers || [];
+        this.state.emailProvider = info.provider || "";
+        this.state.mailbox = info.mailbox || "";
+        this.state.emailSignedIn = !!info.signed_in;
+        if (this.state.emailSignedIn) {
+            this.state.step = Math.max(this.state.step, 1);
+        }
+    }
+
+    pickEmailProvider(key) {
+        this.state.emailProvider = key;
+    }
+
+    async startEmail() {
+        const mailbox = (this.state.mailbox || "").trim();
+        if (!mailbox) {
+            return;
+        }
+        await this._guarded(async () => {
+            const res = await this.orm.call(MODEL, "center_email_start", [
+                this.state.connectionId,
+                this.state.emailProvider,
+                mailbox,
+            ]);
+            this.state.mailbox = res.mailbox || mailbox;
+            this.state.emailProvider = res.provider || this.state.emailProvider;
+            this.state.authUrl = res.url || "";
+            const popup = window.open(res.url, "h19_email_signin",
+                "width=560,height=740,noopener");
+            this.state.popupBlocked = !popup;
+            if (popup) {
+                this._watchPopup(popup, () => this.refreshEmailStatus());
+            }
+            await this.load();
+        });
+    }
+
+    /**
+     * Ask the SERVER whether a grant was actually stored. A closed popup
+     * proves nothing — the tenant may have cancelled, or the provider may
+     * have refused the mailbox — so the sign-in is only "done" once Odoo's
+     * own callback has written a refresh token we can see.
+     */
+    async refreshEmailStatus() {
+        if (!this.state.connectionId || !this.isEmail) {
+            return;
+        }
+        try {
+            const res = await this.orm.call(MODEL, "center_email_status",
+                [this.state.connectionId]);
+            this.state.emailSignedIn = !!res.signed_in;
+            this.state.mailbox = res.mailbox || this.state.mailbox;
+            if (this.state.emailSignedIn && this.state.step === 0) {
+                this.state.step = 1;
+            }
+            await this.load();
+        } catch (e) {
+            this._err(e);
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // Calls (CC-F): receive only, and the UI says so
+    // -----------------------------------------------------------------
+    async _loadCallInfo(connectionId) {
+        const info = await this.orm.call(MODEL, "center_call_info", [connectionId]);
+        this.state.webhookUrl = info.webhook_url || "";
+        this.state.callAccountId = info.account_id || "";
+        this.state.hasCallSecret = !!info.has_webhook_secret;
+        this.state.callNotice = info.notice || "";
+        if (this.state.callAccountId) {
+            this.state.step = Math.max(this.state.step, 1);
+        }
+    }
+
+    async saveCallSetup() {
+        const account = (this.state.callAccountId || "").trim();
+        if (!account) {
+            return;
+        }
+        await this._guarded(async () => {
+            try {
+                const res = await this.orm.call(MODEL, "center_call_configure", [
+                    this.state.connectionId,
+                    account,
+                    this.state.callSecret,
+                ]);
+                this.state.hasCallSecret = !!res.has_webhook_secret;
+                this.state.step = 2;
+                await this.load();
+            } finally {
+                // Zeroed on BOTH paths: a rejected paste is still a secret.
+                this.state.callSecret = "";
+            }
+        });
+    }
+
     openManage(card) {
         this.state.open = card.channel;
         this.state.manage = true;
@@ -683,8 +836,16 @@ export class ChannelCenter extends Component {
         this.state.approvals = card.approvals || [];
         this.state.metaResources = [];
         this.state.metaSelected = "";
+        this.state.callSecret = "";
+        this.state.callNotice = "";
         if (card.channel === "zalo" && card.connection_id) {
             this._loadZaloInfo(card.connection_id).catch((e) => this._err(e));
+        }
+        if (card.channel === "email" && card.connection_id) {
+            this._loadEmailInfo(card.connection_id).catch((e) => this._err(e));
+        }
+        if (card.channel === "call" && card.connection_id) {
+            this._loadCallInfo(card.connection_id).catch((e) => this._err(e));
         }
         this._focusModal();
     }

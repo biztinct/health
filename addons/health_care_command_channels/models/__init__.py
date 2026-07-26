@@ -9,4 +9,5 @@ from . import care_channel_identity
 from . import care_channel_message
 from . import care_conversation_ext
 from . import care_reply_template_ext
+from . import mail_server_link
 from . import res_config_settings

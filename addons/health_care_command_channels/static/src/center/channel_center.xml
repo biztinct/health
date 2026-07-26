@@ -53,6 +53,11 @@
             Available in an upcoming update.
           </p>
 
+          <!-- Calls is RECEIVE ONLY and the card says so without being
+               opened: "connected" here means call events are arriving, never
+               that VoIP24h's API works — which we have no way to know. -->
+          <p class="cc-sub-line" t-if="card.notice" t-esc="card.notice"/>
+
           <div class="cc-traffic" t-if="card.last_inbound_at or card.last_outbound_at">
             <span t-if="card.last_inbound_at">
               <span class="ic ic-in"/> Received <t t-esc="since(card.last_inbound_at)"/>
@@ -191,7 +196,10 @@
         </div>
 
         <footer t-if="state.manage" class="cc-modal-foot">
-          <button class="cc-btn ghost" t-att-disabled="state.busy"
+          <!-- No test button for Calls: there is no VoIP24h endpoint we hold
+               a verified contract for, so the button could only ever explain
+               why it cannot work. The card carries that sentence instead. -->
+          <button class="cc-btn ghost" t-if="!isCall" t-att-disabled="state.busy"
                   t-on-click="sendTest">Send a test</button>
           <button class="cc-btn ghost" t-if="!state.confirmOff"
                   t-on-click="askDisconnect">Turn off</button>
@@ -219,7 +227,7 @@
             </p>
 
             <!-- ===== Telegram: paste the key ===== -->
-            <t t-if="state.mode === 'guided_secret' and state.step === 1">
+            <t t-if="isTelegram and state.step === 1">
               <label class="cc-label" for="cc_token">Bot key</label>
               <input id="cc_token" type="password" class="cc-input"
                      autocomplete="off" spellcheck="false"
@@ -228,13 +236,13 @@
               <p class="cc-help">We check the key with Telegram before saving it. It is stored encrypted and never shown again.</p>
             </t>
 
-            <t t-if="state.mode === 'guided_secret' and state.step === 2 and state.botName">
+            <t t-if="isTelegram and state.step === 2 and state.botName">
               <p class="cc-ok"><span class="ic ic-check"/>
                  <span>Connected to <t t-esc="state.botName"/></span></p>
             </t>
 
             <!-- ===== Telegram: waiting for the first message ===== -->
-            <t t-if="state.mode === 'guided_secret' and state.step === 3">
+            <t t-if="isTelegram and state.step === 3">
               <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
                 <span class="ic ic-clock"/> Waiting for your first message…
               </p>
@@ -411,7 +419,7 @@
             </t>
 
             <!-- ===== Web chat: origins ===== -->
-            <t t-if="state.mode === 'one_click' and state.step === 0">
+            <t t-if="isWebchat and state.step === 0">
               <label class="cc-label" for="cc_origins">Website addresses</label>
               <textarea id="cc_origins" class="cc-input area" rows="3"
                         placeholder="https://vietuc.vn"
@@ -424,7 +432,7 @@
             </t>
 
             <!-- ===== Web chat: the snippet ===== -->
-            <t t-if="state.mode === 'one_click' and state.step === 1">
+            <t t-if="isWebchat and state.step === 1">
               <!-- The snippet is TEXT inside the textarea, never markup in the
                    arch: an escaped <script> written into a template is served
                    as a live element (ledger §5.64). -->
@@ -442,7 +450,7 @@
             </t>
 
             <!-- ===== Web chat: verify installation ===== -->
-            <t t-if="state.mode === 'one_click' and state.step === 2">
+            <t t-if="isWebchat and state.step === 2">
               <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
                 <span class="ic ic-clock"/> Waiting for the first message…
               </p>
@@ -450,6 +458,115 @@
                 <span class="ic ic-check"/>
                 <span>Web chat is working. Messages appear in Care Command.</span>
               </p>
+            </t>
+
+            <!-- ===== Email: the mailbox, then the provider's own sign-in ===== -->
+            <t t-if="isEmail and state.step === 0">
+              <label class="cc-label" for="cc_mailbox">Mailbox address</label>
+              <input id="cc_mailbox" type="email" class="cc-input"
+                     autocomplete="off" spellcheck="false"
+                     placeholder="lienhe@vietuc.vn"
+                     t-model="state.mailbox"/>
+              <ul class="cc-picker" t-if="state.emailProviders.length > 1">
+                <t t-foreach="state.emailProviders" t-as="prov" t-key="prov.key">
+                  <li>
+                    <label>
+                      <input type="radio" name="cc_email_provider"
+                             t-att-value="prov.key"
+                             t-att-disabled="!prov.available"
+                             t-att-checked="state.emailProvider === prov.key"
+                             t-on-change="() => this.pickEmailProvider(prov.key)"/>
+                      <span class="cc-pick-name" t-esc="prov.label"/>
+                    </label>
+                  </li>
+                </t>
+              </ul>
+              <p class="cc-wait" t-if="state.popupBlocked">
+                <span class="ic ic-clock"/>
+                <span>Your browser blocked the sign-in window.</span>
+              </p>
+              <p t-if="state.popupBlocked and state.authUrl">
+                <a class="cc-link" t-att-href="state.authUrl"
+                   target="_blank" rel="noopener noreferrer">Open the sign-in page</a>
+              </p>
+              <p class="cc-ok" t-if="state.emailSignedIn">
+                <span class="ic ic-check"/>
+                <span>Signed in<t t-if="state.mailbox"> — <t t-esc="state.mailbox"/></t></span>
+              </p>
+            </t>
+
+            <!-- ===== Email: confirm the mailbox ===== -->
+            <t t-if="isEmail and state.step === 1">
+              <p class="cc-res" t-if="state.mailbox" t-esc="state.mailbox"/>
+              <p class="cc-wait" t-if="!state.emailSignedIn">
+                <span class="ic ic-clock"/>
+                <span>We have not seen the sign-in finish yet. Check again, or
+                      start it once more.</span>
+              </p>
+              <p class="cc-ok" t-if="state.emailSignedIn">
+                <span class="ic ic-check"/>
+                <span>Replies from Care Command will come from this address.</span>
+              </p>
+            </t>
+
+            <!-- ===== Email: the round trip ===== -->
+            <t t-if="isEmail and state.step === 2">
+              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+                <span class="ic ic-clock"/>
+                <span>Waiting for the first message to arrive…</span>
+              </p>
+              <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
+                <span class="ic ic-check"/>
+                <span>Email is connected. New messages arrive in Care Command.</span>
+              </p>
+            </t>
+
+            <!-- ===== Calls: the account id ===== -->
+            <t t-if="isCall and state.step === 0">
+              <div class="cc-alert warn" t-if="state.callNotice">
+                <p t-esc="state.callNotice"/>
+              </div>
+              <label class="cc-label" for="cc_call_account">Account name</label>
+              <input id="cc_call_account" type="text" class="cc-input"
+                     autocomplete="off" spellcheck="false"
+                     t-model="state.callAccountId"/>
+            </t>
+
+            <!-- ===== Calls: the portal-guided webhook checklist ===== -->
+            <t t-if="isCall and state.step === 1">
+              <label class="cc-label" for="cc_call_hook">Webhook address</label>
+              <textarea id="cc_call_hook" class="cc-input area mono" rows="2"
+                        readonly="readonly"
+                        aria-label="Webhook address"><t t-esc="state.webhookUrl"/></textarea>
+              <div class="cc-row">
+                <button class="cc-btn ghost" t-on-click="copyWebhookUrl">
+                  <span class="ic" t-att-class="state.copiedWebhook ? 'ic-check' : 'ic-copy'"/>
+                  <span t-if="state.copiedWebhook">Copied ✓</span>
+                  <span t-if="!state.copiedWebhook">Copy</span>
+                </button>
+              </div>
+              <label class="cc-label" for="cc_call_secret">Webhook secret</label>
+              <input id="cc_call_secret" type="password" class="cc-input"
+                     autocomplete="off" spellcheck="false"
+                     t-model="state.callSecret"/>
+              <p class="cc-help">Without this we cannot tell a real call event from a forged one, so we refuse every event. It is stored encrypted and never shown again.</p>
+              <p class="cc-ok" t-if="state.hasCallSecret and !state.callSecret">
+                <span class="ic ic-check"/><span>A secret is already saved.</span>
+              </p>
+            </t>
+
+            <!-- ===== Calls: wait for a real call ===== -->
+            <t t-if="isCall and state.step === 2">
+              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+                <span class="ic ic-clock"/> Waiting for a call…
+              </p>
+              <p class="cc-ok" t-if="openCard and openCard.last_inbound_at">
+                <span class="ic ic-check"/>
+                <span>We received a call event.</span>
+              </p>
+              <div class="cc-alert warn" t-if="state.callNotice">
+                <p t-esc="state.callNotice"/>
+              </div>
             </t>
           </div>
         </div>
@@ -459,19 +576,19 @@
                   t-att-disabled="state.busy" t-on-click="back">Back</button>
 
           <!-- Telegram -->
-          <button t-if="state.mode === 'guided_secret' and state.step === 0"
+          <button t-if="isTelegram and state.step === 0"
                   class="cc-btn primary" t-on-click="next">I have my key</button>
-          <button t-if="state.mode === 'guided_secret' and state.step === 1"
+          <button t-if="isTelegram and state.step === 1"
                   class="cc-btn primary" t-att-disabled="state.busy or !state.token"
                   t-on-click="validateToken">Check the key</button>
-          <button t-if="state.mode === 'guided_secret' and state.step === 2"
+          <button t-if="isTelegram and state.step === 2"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="registerWebhook">Connect</button>
-          <button t-if="state.mode === 'guided_secret' and state.step === 3 and !(openCard and openCard.state === 'ready')"
+          <button t-if="isTelegram and state.step === 3 and !(openCard and openCard.state === 'ready')"
                   class="cc-btn primary"
                   t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
                   t-on-click="sendTest">Send a reply</button>
-          <button t-if="state.mode === 'guided_secret' and state.step === 3 and openCard and openCard.state === 'ready'"
+          <button t-if="isTelegram and state.step === 3 and openCard and openCard.state === 'ready'"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Zalo -->
@@ -522,13 +639,44 @@
           <button t-if="isMeta and state.step === 3 and openCard and openCard.state === 'ready'"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
+          <!-- Email -->
+          <button t-if="isEmail and state.step === 0 and !state.emailSignedIn"
+                  class="cc-btn primary"
+                  t-att-disabled="state.busy or !state.mailbox"
+                  t-on-click="startEmail">Sign in to this mailbox</button>
+          <button t-if="isEmail and state.step === 0 and state.emailSignedIn"
+                  class="cc-btn primary" t-on-click="next">Next</button>
+          <button t-if="isEmail and state.step === 1 and !state.emailSignedIn"
+                  class="cc-btn ghost" t-att-disabled="state.busy"
+                  t-on-click="refreshEmailStatus">Check again</button>
+          <button t-if="isEmail and state.step === 1 and state.emailSignedIn"
+                  class="cc-btn primary" t-on-click="next">Next</button>
+          <button t-if="isEmail and state.step === 2 and !(openCard and openCard.state === 'ready')"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="sendTest">Send a test</button>
+          <button t-if="isEmail and state.step === 2 and openCard and openCard.state === 'ready'"
+                  class="cc-btn primary" t-on-click="closeStepper">Done</button>
+
+          <!-- Calls (receive only — there is deliberately no "test" button:
+               we have no verified VoIP24h endpoint to test against) -->
+          <button t-if="isCall and state.step === 0"
+                  class="cc-btn primary"
+                  t-att-disabled="state.busy or !state.callAccountId"
+                  t-on-click="next">Next</button>
+          <button t-if="isCall and state.step === 1"
+                  class="cc-btn primary"
+                  t-att-disabled="state.busy or !(state.callSecret or state.hasCallSecret)"
+                  t-on-click="saveCallSetup">Save</button>
+          <button t-if="isCall and state.step === 2"
+                  class="cc-btn primary" t-on-click="closeStepper">Done</button>
+
           <!-- Web chat -->
-          <button t-if="state.mode === 'one_click' and state.step === 0"
+          <button t-if="isWebchat and state.step === 0"
                   class="cc-btn primary" t-att-disabled="state.busy"
                   t-on-click="enableWebchat">Turn on web chat</button>
-          <button t-if="state.mode === 'one_click' and state.step === 1"
+          <button t-if="isWebchat and state.step === 1"
                   class="cc-btn primary" t-on-click="next">Next</button>
-          <button t-if="state.mode === 'one_click' and state.step === 2"
+          <button t-if="isWebchat and state.step === 2"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
         </footer>
 

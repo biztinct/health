@@ -40,9 +40,9 @@ from odoo.addons.health_care_command.models.care_conversation import (
 )
 
 from ..services.adapters import (
-    FB_MESSAGE_TAGS, META_SDK_URL, MODE_EMBEDDED_SIGNUP, MODE_GUIDED_SECRET,
-    MODE_OAUTH_POPUP, MODE_ONE_CLICK, ZALO_WEBHOOK_PATH, ChannelSendError,
-    meta_window_state,
+    EMAIL_PROVIDER_SETTING, EMAIL_PROVIDERS, FB_MESSAGE_TAGS, META_SDK_URL,
+    MODE_EMBEDDED_SIGNUP, MODE_GUIDED_SECRET, MODE_OAUTH_POPUP, MODE_ONE_CLICK,
+    ZALO_WEBHOOK_PATH, ChannelSendError, meta_window_state,
 )
 from ..services.redact import redact
 from .care_channel_connection import SENDABLE_STATES
@@ -57,17 +57,22 @@ CENTER_CHANNELS = [key for key, _label in CHANNEL_SELECTION]
 IMPLEMENTED_MODES = {MODE_GUIDED_SECRET, MODE_ONE_CLICK, MODE_OAUTH_POPUP,
                      MODE_EMBEDDED_SIGNUP}
 
-# Only these channels have a working begin/validate/test flow. The `call`
-# adapter also declares guided_secret and `email` declares a popup, but their
-# credential exchanges are CC-F — BOTH gates must pass, so those cards stay
-# honestly "in an upcoming update".
+# Only these channels have a working begin/validate/test flow.
 #
-# CC-E adds `whatsapp` and `fb`: their onboarding is software-complete against
+# CC-E added `whatsapp` and `fb`: their onboarding is software-complete against
 # mocks. Being *implemented* is not the same as being *available* — with no
 # `channel.platform.app` for provider `meta`, `_center_platform_available`
 # still renders both as "Not available yet" and `center_begin` still refuses,
 # which is exactly the state of vietuat today (T137).
-CENTER_IMPLEMENTED_CHANNELS = {'telegram', 'webchat', 'zalo', 'whatsapp', 'fb'}
+#
+# CC-F closes the catalogue with `email` and `call`, and the two are honest in
+# DIFFERENT ways. Email is a full self-service flow that is gated on a
+# `google`/`microsoft` platform app nobody has seeded (so it reads "Not
+# available yet" today, T142). Calls needs no platform app and IS offerable —
+# but only to RECEIVE: we hold no verified contract for VoIP24h's HTTP API, so
+# the card says so in words and `center_test` refuses instead of pretending.
+CENTER_IMPLEMENTED_CHANNELS = {'telegram', 'webchat', 'zalo', 'whatsapp', 'fb',
+                               'email', 'call'}
 
 # Meta channels, and the `channel.platform.app.extra_json` key that configures
 # each one's sign-in (operator checklist §12.3).
@@ -97,6 +102,11 @@ ZNS_TEMPLATE_PARAMS = (
 # real validation is getMe, this only avoids burning an HTTP call (and a log
 # line) on an obvious paste accident.
 _TG_TOKEN_RE = re.compile(r'^\d+:[A-Za-z0-9_-]{10,}$')
+
+# One plain mailbox address. Intentionally narrower than RFC 5322: this value
+# becomes an SMTP from_filter, an IMAP username and a test recipient, so a
+# comma, a newline or a display name has to be refused, not normalised.
+_EMAIL_RE = re.compile(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$')
 
 # Web chat: a tenant with more than this many origins is configuring something
 # other than their own website.
@@ -365,13 +375,59 @@ class CareChannelConnectionCenter(models.Model):
                           'not by us. Each Health19 feature that sends one '
                           'has its own template setting.'),
             },
-            'channel_hub.guide.email.signin': {'title': _('Sign in to your mailbox')},
-            'channel_hub.guide.email.mailbox': {'title': _('Confirm the mailbox')},
-            'channel_hub.guide.email.test': {'title': _('Send a test')},
-            'channel_hub.guide.call.credentials': {'title': _('Enter your phone system key')},
-            'channel_hub.guide.call.webhook': {'title': _('Point your phone system at us')},
-            'channel_hub.guide.call.test': {'title': _('Make a test call')},
+            # -- Email (Gmail / Microsoft 365 through Odoo's own OAuth) ----
+            'channel_hub.guide.email.signin': {
+                'title': _('Sign in to your mailbox'),
+                'body': _('Type the address clients write to, then sign in. '
+                          'A Google or Microsoft window opens — your mailbox '
+                          "password is only ever typed on your provider's own "
+                          'page, never here.'),
+            },
+            'channel_hub.guide.email.mailbox': {
+                'title': _('Confirm the mailbox'),
+                'body': _('Check that this is the address you want clients to '
+                          'reach. Replies from Care Command will come from it.'),
+            },
+            'channel_hub.guide.email.test': {
+                'title': _('Send a test'),
+                'body': _('We send one short message from your mailbox to '
+                          'itself. When it comes back, both sending and '
+                          'receiving are proven.'),
+            },
+            # -- Calls (VoIP24h — receive only, and it says so) ------------
+            'channel_hub.guide.call.account': {
+                'title': _('Your phone system account'),
+                'body': _('Type the account name VoIP24h gave you. It is what '
+                          'they put on every call event they send us, and it '
+                          'is how we know a call belongs to your clinic.'),
+            },
+            'channel_hub.guide.call.webhook': {
+                'title': _('Point your phone system at us'),
+                'body': _('Open your VoIP24h portal (or ask their support) '
+                          'and set this address as the webhook. They will '
+                          'show you a secret — paste it back here so we can '
+                          'check that call events really came from them.'),
+            },
+            'channel_hub.guide.call.wait': {
+                'title': _('Make a real call'),
+                'body': _('Ring your clinic number from any phone. The moment '
+                          'the call event reaches us, this step turns green — '
+                          'a real call is the only honest proof.'),
+            },
         }
+
+    @api.model
+    def _center_call_notice(self):
+        """The one sentence the Calls card must never be without (§3.3).
+
+        "Connected" for Calls means we are RECEIVING call events. It has never
+        meant their API works, because we have no way to know that: VoIP24h's
+        documentation is unreachable from outside Vietnam and every endpoint
+        in the legacy client is unverified.
+        """
+        return _('Calls arrive in Care Command. Placing calls and pulling '
+                 'call history need the VoIP24h API, which we cannot verify '
+                 'yet — so we do not offer them.')
 
     # ==================================================================
     # Access + lookup
@@ -498,6 +554,10 @@ class CareChannelConnectionCenter(models.Model):
                 cards[-1]['zns'] = self._center_zns_status(conn)
             if channel in META_CHANNELS:
                 cards[-1]['approvals'] = self._center_approvals(conn)
+            if channel == 'call':
+                # Receive-only, on the CARD — a tenant must not have to open a
+                # stepper to learn what this channel does and does not do.
+                cards[-1]['notice'] = self._center_call_notice()
         return cards
 
     # ------------------------------------------------------------------
@@ -1095,6 +1155,208 @@ class CareChannelConnectionCenter(models.Model):
                 'tags': list(FB_MESSAGE_TAGS)}
 
     # ==================================================================
+    # 3d. Email — Gmail / Microsoft 365 through Odoo's own OAuth mixins
+    # ==================================================================
+    @api.model
+    def _center_email(self, conn_id):
+        conn = self._center_get(conn_id)
+        if conn.channel != 'email':
+            raise UserError(_('This is not an email connection.'))
+        return conn
+
+    @api.model
+    def _center_email_provider_labels(self):
+        return {'google': _('Gmail / Google Workspace'),
+                'microsoft': _('Microsoft 365 / Outlook')}
+
+    @api.model
+    def _center_validate_mailbox(self, mailbox):
+        """A single, plain mailbox address — nothing clever.
+
+        Deliberately strict: this value becomes an SMTP ``from_filter``, an
+        IMAP username and the address a test message is sent to, so a list, a
+        display name or a header injection attempt must be refused rather than
+        trimmed into something that half works.
+        """
+        mailbox = (mailbox or '').strip()
+        if not mailbox or len(mailbox) > 254 or not _EMAIL_RE.match(mailbox):
+            raise UserError(_(
+                'Enter the mailbox address clients write to, for example '
+                'lienhe@vietuc.vn.'))
+        return mailbox.lower()
+
+    @api.model
+    def center_email_info(self, conn_id):
+        """What the email stepper needs to render. No credential of any kind."""
+        conn = self._center_email(conn_id)
+        adapter = conn.sudo()._get_adapter()
+        labels = self._center_email_provider_labels()
+        available = adapter.available_providers()
+        return {
+            'connection_id': conn.id,
+            'state': conn.state,
+            'provider': adapter.provider(),
+            'providers': [{'key': key, 'label': labels.get(key, key),
+                           'available': key in available}
+                          for key in EMAIL_PROVIDERS],
+            'mailbox': conn.resource_external_id or '',
+            'signed_in': adapter.signed_in(),
+            'resource_line': conn._center_resource_line(),
+        }
+
+    @api.model
+    def center_email_start(self, conn_id, provider, mailbox):
+        """Prepare the mailbox and hand back the provider's own consent URL.
+
+        Nothing about the grant is minted here: the URL is built by Odoo's
+        Gmail/Outlook mixin, its state is CSRF-signed by core, and the token
+        exchange happens in core's ``/google_gmail/confirm`` (resp.
+        ``/microsoft_outlook/confirm``) callback. The only secret involved —
+        the platform app's client secret — is mirrored server-side into the
+        config parameter the mixin reads, and never appears in the URL or in
+        this return value.
+        """
+        conn = self._center_email(conn_id)
+        self._center_require_https()
+        provider = (provider or '').strip()
+        if provider and provider not in EMAIL_PROVIDERS:
+            raise UserError(_('Choose Gmail or Microsoft 365.'))
+        mailbox = self._center_validate_mailbox(mailbox)
+        adapter = conn.sudo()._get_adapter()
+        provider = provider or adapter.provider()
+        if provider not in adapter.available_providers():
+            raise UserError(_('This channel is not available yet.'))
+        # The provider choice is configuration, not a credential — and
+        # set_settings refuses anything credential-shaped anyway.
+        conn.set_settings({EMAIL_PROVIDER_SETTING: provider})
+        try:
+            url = adapter.authorize_url(provider, mailbox)
+        except ChannelSendError as exc:
+            raise UserError(_(
+                'Email sign-in could not be started: %s',
+                redact(exc) or _('unknown error'))) from exc
+        if conn.state in ('not_connected', 'disabled', 'error', 'legacy',
+                          'configuring', 'testing', 'select_resource',
+                          'action_required', 'ready', 'expiring'):
+            if conn.state != 'authorizing':
+                conn._transition('authorizing', reason='email sign-in')
+        self.env['care.channel.audit']._log(
+            'connect_start', connection=conn,
+            detail='email sign-in via %s' % provider)
+        return {'connection_id': conn.id, 'state': conn.state,
+                'provider': provider, 'mailbox': mailbox, 'url': url}
+
+    @api.model
+    def center_email_status(self, conn_id):
+        """Re-read what the provider callback actually stored.
+
+        Called when the sign-in window closes. It PROMOTES readiness or leaves
+        it alone; it never lowers a check, because "I could not see a grant
+        just now" and "the grant is gone" are different claims and only the
+        send path can tell them apart (ledger §5.78).
+        """
+        conn = self._center_email(conn_id)
+        result = conn.sudo()._get_adapter().sync_authorization()
+        if result.get('signed_in') and conn.state in (
+                'authorizing', 'select_resource', 'configuring',
+                'action_required'):
+            conn._transition('testing', reason='email mailbox authorized')
+            conn._recompute_ready()
+        conn.invalidate_recordset()
+        return {'connection_id': conn.id, 'state': conn.state,
+                'provider': result.get('provider') or '',
+                'mailbox': result.get('mailbox') or conn.resource_external_id or '',
+                'signed_in': bool(result.get('signed_in')),
+                'resource_line': conn._center_resource_line()}
+
+    # ==================================================================
+    # 3e. Calls — VoIP24h, receive only (§3.3)
+    # ==================================================================
+    @api.model
+    def _center_call(self, conn_id):
+        conn = self._center_get(conn_id)
+        if conn.channel != 'call':
+            raise UserError(_('This is not a phone connection.'))
+        return conn
+
+    @api.model
+    def center_call_info(self, conn_id):
+        """Webhook address, account id, whether a secret is stored — no secret."""
+        conn = self._center_call(conn_id)
+        return {
+            'connection_id': conn.id,
+            'state': conn.state,
+            'webhook_url': conn.sudo()._get_adapter().webhook_url(),
+            'account_id': conn.resource_external_id or '',
+            'has_webhook_secret': bool(conn.sudo().provider_secret_enc),
+            'notice': self._center_call_notice(),
+            'resource_line': conn._center_resource_line(),
+        }
+
+    @api.model
+    def center_call_configure(self, conn_id, account_id, webhook_secret=None):
+        """Store the PBX account id and the webhook secret it signs with.
+
+        Both halves of the tenant's own work. Neither proves anything yet:
+        ``webhook_verified`` and ``inbound_ok`` are flipped by a real, signed
+        call event and by nothing else — a pasted secret is a claim, an
+        accepted signature is evidence.
+        """
+        conn = self._center_call(conn_id)
+        self._center_require_https()
+        account_id = (account_id or '').strip()
+        if not account_id or len(account_id) > 128:
+            raise UserError(_(
+                'Enter the account name your phone system provider gave you.'))
+        secret = (webhook_secret or '').strip()
+        if secret:
+            conn.action_set_secret('provider_secret', secret)
+        elif not conn.sudo().provider_secret_enc:
+            raise UserError(_(
+                'Paste the webhook secret your phone system shows. Without it '
+                'we cannot tell a real call event from a forged one, and we '
+                'will refuse every event.'))
+        if conn.resource_external_id != account_id:
+            conn.sudo()._internal().write({
+                'resource_external_id': account_id,
+                'resource_display_name': account_id,
+            })
+        conn.sudo()._internal().write({'webhook_state': 'subscribed'})
+        if conn.state in ('authorizing', 'select_resource', 'configuring',
+                          'action_required'):
+            conn._transition('testing', reason='call webhook configured')
+            conn._recompute_ready()
+        self.env['care.channel.audit']._log(
+            'webhook_subscribed', connection=conn,
+            detail='voip account %s' % account_id)
+        self._center_sync_voip_config(conn, account_id)
+        return {'connection_id': conn.id, 'state': conn.state,
+                'account_id': account_id, 'has_webhook_secret': True,
+                'webhook_url': conn.sudo()._get_adapter().webhook_url(),
+                'notice': self._center_call_notice()}
+
+    @api.model
+    def _center_sync_voip_config(self, conn, account_id):
+        """Tell health_voip24h, if it is installed. SOFT reference both ways.
+
+        There is no manifest dependency edge in either direction (ledger
+        §5.71 — one is what made CC-D's first deploy unbuildable), so this is
+        a registry probe and a never-fatal call. The legacy webhook resolves
+        its config by ``account_id``, so a connection configured here has to
+        reach the row that lookup will find, or a real call event would be
+        answered "ignored" forever.
+        """
+        if 'voip.config' not in self.env:
+            return False
+        try:
+            return self.env['voip.config'].sudo()._sync_from_connection(
+                conn, account_id=account_id)
+        except Exception:  # noqa: BLE001 — the legacy bridge is never fatal
+            _logger.exception('care_channels: voip legacy config sync failed '
+                              'for connection %s', conn.id)
+            return False
+
+    # ==================================================================
     # 4. Web chat — one click
     # ==================================================================
     @api.model
@@ -1254,12 +1516,20 @@ class CareChannelConnectionCenter(models.Model):
         conn = self._center_get(conn_id)
         if conn.channel not in CENTER_IMPLEMENTED_CHANNELS:
             raise UserError(_('Testing this channel is not available yet.'))
+        if conn.channel == 'call':
+            # Not a failure — a fact. There is no VoIP24h endpoint we have a
+            # verified contract for, so there is nothing to test and saying
+            # so IS the honest answer (§3.3). Refused BEFORE the turned-off
+            # check: the reason never changes with the connection's state.
+            raise UserError(self._center_call_notice())
         if conn.state in ('not_connected', 'disabled', 'legacy'):
             # `testing` is deliberately allowed: proving outbound is exactly
             # what this button exists for, and that is a testing-state job.
             raise UserError(_('This channel is turned off right now.'))
         if conn.channel == 'zalo':
             return self._center_test_zalo(conn)
+        if conn.channel == 'email':
+            return self._center_test_email(conn)
         identity = self.env['care.channel.identity'].sudo().search(
             [('connection_id', '=', conn.id)], order='last_seen_at desc, id desc',
             limit=1)
@@ -1378,6 +1648,39 @@ class CareChannelConnectionCenter(models.Model):
                 'sent_to': conv.display_name_c or '',
                 'message': _('Test message sent.')}
 
+    @api.model
+    def _center_test_email(self, conn):
+        """Send one synthetic message from the mailbox to ITSELF (§7.6).
+
+        The tenant's own address is the only recipient we can be certain they
+        own, so there is no way for this button to touch a patient. A refusal
+        writes redacted evidence on an independent cursor first (ledger §5.65)
+        and does NOT claim the mailbox works — but it also does not lower
+        ``inbound_ok``: a broken send says nothing about receiving.
+        """
+        body = self._center_test_body()
+        subject = _('Health19 connection test')
+        try:
+            result = conn.sudo()._get_adapter().send_test(subject, body)
+        except Exception as exc:  # noqa: BLE001 — SMTP/provider/network
+            auth = any(marker in str(exc).lower()
+                       for marker in ('401', 'unauthorized', 'invalid_grant',
+                                      'authentication', 'invalid credentials'))
+            if not conn._persist_send_failure(None, body, exc,
+                                              auth_failure=auth):
+                conn._note_send_failure(exc, auth_failure=auth)
+            self.env['care.channel.audit']._log(
+                'test_fail', connection=conn, detail=redact(exc))
+            raise UserError(_(
+                'The test message could not be sent: %s',
+                redact(exc) or _('unknown error'))) from exc
+        conn._note_outbound()
+        self.env['care.channel.audit']._log('test_ok', connection=conn)
+        return {'connection_id': conn.id, 'state': conn.state,
+                'sent_to': result.get('mailbox') or '',
+                'message': _('Test message sent. It should arrive in your own '
+                             'inbox within a minute.')}
+
     # ==================================================================
     # 6. Disconnect / reconnect
     # ==================================================================
@@ -1393,9 +1696,37 @@ class CareChannelConnectionCenter(models.Model):
         if conn.state == 'disabled':
             return {'connection_id': conn.id, 'state': conn.state}
         conn._transition('disabled', reason='tenant disconnect')
+        self._center_pause_email(conn)
         self.env['care.channel.audit']._log('disconnect', connection=conn)
         return {'connection_id': conn.id, 'state': conn.state,
                 'message': _('Turned off.')}
+
+    @api.model
+    def _center_pause_email(self, conn, resume=False):
+        """Stop (or restart) the IMAP poll behind an email connection.
+
+        The state machine gates OUR bookkeeping, but Odoo's fetch cron is not
+        ours: it walks every ``fetchmail.server`` in state ``done`` regardless
+        of what a channel connection says, so a "turned off" mailbox would
+        keep pulling mail into the database. Sending the row back to ``draft``
+        is what actually stops it.
+
+        The refresh token is deliberately LEFT IN PLACE. Turning a channel off
+        is not revoking a grant, and CC-C's rule holds for email too: coming
+        back must never re-ask a tenant for a credential they already gave.
+        """
+        if conn.channel != 'email':
+            return False
+        try:
+            server = conn.sudo()._get_adapter().fetch_server()
+        except (ValueError, AttributeError):
+            return False
+        if not server:
+            return False
+        target = 'done' if resume else 'draft'
+        if server.state != target:
+            server.sudo().write({'state': target})
+        return True
 
     @api.model
     def center_reconnect(self, conn_id):
@@ -1403,6 +1734,11 @@ class CareChannelConnectionCenter(models.Model):
         if conn.state in ('ready', 'authorizing'):
             return {'connection_id': conn.id, 'state': conn.state}
         conn._transition('authorizing', reason='tenant reconnect')
+        if conn.channel == 'email' and conn.sudo()._get_adapter().signed_in():
+            # A mailbox we still hold a grant for comes straight back: resume
+            # the poll and let readiness re-derive from what is already proven.
+            self._center_pause_email(conn, resume=True)
+            conn.sudo()._get_adapter().sync_authorization()
         self.env['care.channel.audit']._log('reconnect', connection=conn)
         caps = conn._capabilities()
         return {'connection_id': conn.id, 'state': conn.state,

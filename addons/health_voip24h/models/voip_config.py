@@ -10,6 +10,25 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
+def verify_voip_signature(secret, raw_body, signature):
+    """HMAC-SHA256 over the RAW request bytes, compared in constant time.
+
+    Extracted to a module function in CC-F so the webhook route can verify an
+    event that belongs to a Channel Center connection with no ``voip.config``
+    row behind it yet. The logic is byte-for-byte what
+    ``_verify_webhook_signature`` has always done — this is a move, not a
+    rewrite. Fails CLOSED on a missing secret or a missing signature.
+    """
+    if not secret or not signature:
+        return False
+    expected = hmac.new(secret.encode(), raw_body or b'',
+                        hashlib.sha256).hexdigest()
+    provided = signature.strip().lower()
+    if provided.startswith('sha256='):
+        provided = provided[len('sha256='):]
+    return hmac.compare_digest(expected, provided)
+
+
 class VoIP24hConfig(models.Model):
     """
     VoIP24h Configuration and Authentication.
@@ -425,18 +444,214 @@ class VoIP24hConfig(models.Model):
         Fails CLOSED: the webhook route is public and runs su, so an
         unconfigured secret must reject events, not accept everything —
         otherwise anyone who guesses the account_id can inject forged calls.
+
+        CC-F changes exactly one thing here: WHERE the secret comes from. The
+        algorithm, the raw-bytes basis, the ``sha256=`` tolerance and the
+        constant-time compare are untouched — this verifier was already the
+        posture the rest of the framework was told to clone (ledger §5.61).
         """
         self.ensure_one()
-        secret = self.sudo().webhook_secret
+        secret = self._effective_webhook_secret()
         if not secret:
             _logger.warning(
-                'VoIP24h webhook rejected for %s: no webhook_secret configured '
+                'VoIP24h webhook rejected for %s: no webhook secret configured '
                 '(signature validation cannot run)', self.name)
             return False
-        if not signature:
+        return verify_voip_signature(secret, raw_body, signature)
+
+    # ==================================================================
+    # CC-F — the Channel Center facade
+    # ==================================================================
+    # Same shape as CC-D's zalo facade, and for the same reason: there is
+    # deliberately NO Many2one from here to `care.channel.connection`. The two
+    # modules have no dependency edge in either direction (ledger §5.71 — the
+    # loop CC-D closed by accident made the whole graph skip), so the join key
+    # is the framework's own uniqueness contract: one active connection per
+    # (channel, company), backed by its partial unique index.
+    #
+    # Every reference below is SOFT: health_voip24h must stay installable and
+    # working on a server with no Channel Center at all, which is also what
+    # every not-yet-migrated deployment looks like.
+
+    def _channel_connection(self):
+        """This company's Calls connection, as sudo, or None."""
+        self.ensure_one()
+        if 'care.channel.connection' not in self.env:
+            return None
+        return self.env['care.channel.connection'].sudo().search([
+            ('channel', '=', 'call'),
+            ('company_id', '=', (self.company_id or self.env.company).id),
+        ], order='id desc', limit=1)
+
+    def _effective_webhook_secret(self):
+        """The webhook secret to verify against, from wherever it really lives.
+
+        The connection wins when it has one: there the value is encrypted at
+        rest (AES-GCM), while this model's own column is plaintext. The legacy
+        column stays readable so a deployment that never migrates keeps
+        working — nothing is deleted by this phase.
+        """
+        self.ensure_one()
+        conn = self._channel_connection()
+        if conn:
+            try:
+                secret = conn._get_secret('provider_secret')
+            except Exception:  # noqa: BLE001 — a broken token must not
+                # silently accept events; fall through to the legacy column.
+                _logger.exception('Could not read the channel webhook secret '
+                                  'for voip config %s', self.id)
+                secret = None
+            if secret:
+                return secret
+        return self.sudo().webhook_secret
+
+    @api.model
+    def _resolve_channel_connection(self, account_id):
+        """The Calls connection a webhook's ``account_id`` belongs to, or None.
+
+        Company-agnostic on purpose (the provider addresses us by account id;
+        which company owns it is exactly what we are resolving) and usable
+        with NO ``voip.config`` row at all — a tenant who set Calls up through
+        the Center alone must still be routable.
+        """
+        if not account_id or 'care.channel.connection' not in self.env:
+            return None
+        return self.env['care.channel.connection']._find_for_resource(
+            'call', account_id) or None
+
+    @api.model
+    def _sync_from_connection(self, connection, account_id=None):
+        """A Center-configured Calls channel needs a config row to land in.
+
+        ``process_call_event`` resolves ``voip.config`` by ``account_id`` and
+        ``voip.call.log.voip_config_id`` is required, so without this a tenant
+        would finish the stepper, see call events arrive, watch the card turn
+        Connected — and get zero call logs. That is the "configured ≠
+        connected" lie in reverse, so the row is created when it is missing.
+
+        **What is deliberately NOT written is the point of this method.**
+        ``api_key`` and ``api_secret`` stay EMPTY, and that emptiness is a
+        safety mechanism, not an omission: ``_check_credentials`` refuses to
+        build an API client without them, which is what keeps every unverified
+        VoIP24h endpoint (``/auth/login``, ``/calls/history``, the recording
+        download) unreachable from a connection this phase created. For the
+        same reason ``state`` stays ``draft`` and ``auto_sync_enabled`` is
+        forced off: the CDR cron ships ACTIVE on this deployment and selects
+        on exactly those two fields, so a 'connected' row with auto-sync on
+        would start calling an endpoint nobody has ever verified, every 15
+        minutes.
+        """
+        connection.ensure_one()
+        account_id = (account_id or connection.resource_external_id or '').strip()
+        if not account_id:
             return False
-        expected = hmac.new(secret.encode(), raw_body or b'', hashlib.sha256).hexdigest()
-        provided = signature.strip().lower()
-        if provided.startswith('sha256='):
-            provided = provided[len('sha256='):]
-        return hmac.compare_digest(expected, provided)
+        company = connection.company_id or self.env.company
+        config = self.sudo().search([
+            ('company_id', '=', company.id), ('active', '=', True)], limit=1)
+        if not config:
+            config = self.sudo().create({
+                'name': 'Health19 Channel Center',
+                'company_id': company.id,
+                'account_id': account_id,
+                'webhook_enabled': True,
+                # See the docstring: every one of these is load-bearing.
+                'state': 'draft',
+                'auto_sync_enabled': False,
+                'enable_call_functionality': False,
+            })
+            _logger.info('health_voip24h: created config %s for channel '
+                         'connection %s', config.id, connection.id)
+            return config
+        vals = {'webhook_enabled': True}
+        if config.account_id != account_id:
+            vals['account_id'] = account_id
+        config.sudo().write(vals)
+        return config
+
+    def _note_channel_event(self, event_type=None):
+        """Framework bookkeeping for an ALREADY-VERIFIED call event.
+
+        Returns one of:
+
+        * ``'ignored'`` — a connection owns this account and is not in an
+          ingestable state (disabled, errored, still not_connected). The
+          caller must drop the event.
+        * ``'ok'`` — either no connection governs this account (legacy
+          behaviour, unchanged) or one does and accepted it.
+
+        The gate applies ONLY to a connection that actually owns the setup.
+        A ``legacy`` row — which is all the migration creates for an existing
+        deployment — observes traffic without gating it, because demoting a
+        working phone system to "ignored" the day this module upgrades would
+        be exactly the §5.66 lockout in a new costume.
+        """
+        self.ensure_one()
+        conn = self._channel_connection()
+        if not conn:
+            return 'ok'
+        governed = conn.state not in ('legacy', 'not_connected')
+        if governed and not conn._may_ingest():
+            self.env['care.channel.audit']._log(
+                'webhook_ignored', connection=conn,
+                detail='call event while %s' % conn.state)
+            return 'ignored'
+        conn._note_inbound()
+        return 'ok'
+
+    @api.model
+    def _migrate_legacy_connections(self):
+        """One ``state='legacy'`` connection per active config. Idempotent.
+
+        Nothing is deleted and nothing is invalidated: an existing VoIP setup
+        keeps working exactly as it did until a human completes the new setup
+        in the Channel Center. The three plaintext secrets are ENCRYPT-COPIED
+        onto the connection; the legacy columns are left in place so the
+        existing code keeps reading what it always read.
+        """
+        if 'care.channel.connection' not in self.env:
+            return {'created': 0, 'existing': 0, 'copied': 0}
+        # Imported here, not at module level: this module must stay importable
+        # and installable with no Channel Center at all.
+        from odoo.addons.health_care_command_channels.services import (  # noqa: PLC0415
+            channel_crypto,
+        )
+        Connection = self.env['care.channel.connection'].sudo()
+        created, existing_count, copied = 0, 0, 0
+        configs = self.sudo().with_context(active_test=False).search(
+            [('active', '=', True)])
+        for config in configs:
+            company = config.company_id or self.env.company
+            conn = Connection.with_context(active_test=False).search([
+                ('channel', '=', 'call'),
+                ('company_id', '=', company.id)], order='id desc', limit=1)
+            if not conn:
+                conn = Connection._internal().create({
+                    'channel': 'call', 'company_id': company.id})
+                conn = Connection.browse(conn.id)
+                conn._transition('legacy', reason='migrated voip.config')
+                created += 1
+            else:
+                existing_count += 1
+            vals = {}
+            if config.account_id and not conn.resource_external_id:
+                vals['resource_external_id'] = config.account_id
+            if config.name and not conn.resource_display_name:
+                vals['resource_display_name'] = config.name
+            # api_key / api_secret have no semantic slot of their own on the
+            # connection, so they ride the two token columns. The mapping is
+            # explicit here and nowhere else; nothing in CC-F ever SPENDS
+            # them, because there is no verified endpoint to spend them at.
+            pairs = (('webhook_secret', 'provider_secret_enc'),
+                     ('api_key', 'access_token_enc'),
+                     ('api_secret', 'refresh_token_enc'))
+            for legacy_field, column in pairs:
+                value = config.sudo()[legacy_field]
+                if value and not conn.sudo()[column]:
+                    vals[column] = channel_crypto.encrypt(self.env, value)
+                    copied += 1
+            if vals:
+                conn.sudo()._internal().write(vals)
+        _logger.info('health_voip24h CC-F migration: %s connection(s) created, '
+                     '%s already present, %s secret(s) copied',
+                     created, existing_count, copied)
+        return {'created': created, 'existing': existing_count, 'copied': copied}

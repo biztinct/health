@@ -608,19 +608,27 @@ class CareChannelConnection(models.Model):
             _logger.exception('Channel connection %s: %s failed', self.id, what)
             return False
 
-    def _note_inbound(self, when=None):
-        """An inbound event arrived: the webhook is verified, inbound proven."""
+    def _note_inbound(self, when=None, webhook=True):
+        """An inbound event arrived: the webhook is verified, inbound proven.
+
+        ``webhook=False`` is CC-F's email path: a mailbox is polled over IMAP,
+        there is no webhook to call verified, and claiming one would be a
+        state the tenant could never act on. Everything else is identical —
+        and note that both branches only ever PROMOTE a check (ledger §5.78):
+        real traffic is evidence, and evidence is never withdrawn by silence.
+        """
         self.ensure_one()
         now = when or fields.Datetime.now()
 
         def _run():
-            self.sudo()._internal().write({
-                'last_inbound_at': now,
-                'last_webhook_at': now,
-                'webhook_state': 'verified',
-            })
+            vals = {'last_inbound_at': now}
+            if webhook:
+                vals.update({'last_webhook_at': now,
+                             'webhook_state': 'verified'})
+            self.sudo()._internal().write(vals)
             Check = self.env['care.channel.readiness.check']
-            Check.upsert_check(self.sudo(), 'webhook_verified', 'pass')
+            if webhook:
+                Check.upsert_check(self.sudo(), 'webhook_verified', 'pass')
             Check.upsert_check(self.sudo(), 'inbound_ok', 'pass')
             return True
 

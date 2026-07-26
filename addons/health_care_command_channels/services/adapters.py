@@ -31,6 +31,7 @@ import json
 import logging
 import uuid
 from datetime import datetime, timedelta, timezone
+from email.message import EmailMessage
 from urllib.parse import urlencode
 
 import requests
@@ -100,6 +101,49 @@ ZALO_WEBHOOK_PATH = '/care_channels/zalo/webhook'
 # The access token lives ~25 h; refresh this far ahead of the wire so a cron
 # tick that lands late still has a working grant to renew.
 ZALO_REFRESH_AHEAD_HOURS = 3
+
+# Email (CC-F, verified against the installed addons on 2026-07-26).
+#
+# Odoo already owns Gmail/Outlook XOAUTH2 end to end: `google.gmail.mixin` and
+# `microsoft.outlook.mixin` mint the authorization URL, run the callback, store
+# the refresh token and renew the access token before every SMTP/IMAP login.
+# CC-F ORCHESTRATES those mixins — it never reimplements the token dance, and
+# it never edits the two core addons.
+#
+# THE THIRD CREDENTIAL PLANE (handover §2.1/§3.1). Both mixins read the client
+# id and secret from `ir.config_parameter`, which sits beside our own two
+# planes. The platform-app row stays the operator-facing truth and is mirrored
+# INTO these keys; nothing is ever read back the other way, because two
+# writable sources of one secret is how they drift apart.
+EMAIL_PROVIDERS = ('google', 'microsoft')
+EMAIL_PLATFORM_PARAMS = {
+    'google': ('google_gmail_client_id', 'google_gmail_client_secret'),
+    'microsoft': ('microsoft_outlook_client_id', 'microsoft_outlook_client_secret'),
+}
+# The value each mixin adds to `ir.mail_server.smtp_authentication` and to
+# `fetchmail.server.server_type` (google_gmail/ir_mail_server.py:16,
+# microsoft_outlook/fetchmail_server.py:16).
+EMAIL_AUTH_KIND = {'google': 'gmail', 'microsoft': 'outlook'}
+# Hosts the core onchange handlers set for each provider — replicated because
+# an onchange does not run on an ORM create.
+EMAIL_SMTP_HOST = {'google': ('smtp.gmail.com', 587),
+                   'microsoft': ('smtp.outlook.com', 587)}
+EMAIL_IMAP_HOST = {'google': ('imap.gmail.com', 993),
+                   'microsoft': ('imap.outlook.com', 993)}
+EMAIL_URI_FIELD = {'google': 'google_gmail_uri',
+                   'microsoft': 'microsoft_outlook_uri'}
+EMAIL_REFRESH_FIELD = {'google': 'google_gmail_refresh_token',
+                       'microsoft': 'microsoft_outlook_refresh_token'}
+# Non-secret per-connection settings (settings_json — never a credential).
+EMAIL_PROVIDER_SETTING = 'email_provider'
+
+# VoIP24h (CC-F). Deliberately EMPTY of endpoints: their documentation is
+# unreachable from outside Vietnam (docs.voip24h.vn answers ECONNREFUSED) and
+# every path in health_voip24h/services/voip24h_api.py is unverified, several
+# of them plainly invented. This adapter therefore speaks to nothing at all —
+# see docs/strategy/voip24h-contract-capture.md for what a human on a VN
+# connection has to capture before an outbound half can exist.
+VOIP_WEBHOOK_PATH = '/voip24h/webhook'
 
 # Provider message types we map onto our own small set.
 _WA_TYPE_MAP = {'text': 'text', 'image': 'image', 'document': 'file',
@@ -1921,9 +1965,34 @@ class TelegramAdapter(_StubAdapter):
 
 @register_adapter('email')
 class EmailAdapter(_StubAdapter):
-    """Gmail / Microsoft 365 via the Odoo XOAUTH2 mixins (CC-F). Inbound is an
-    IMAP poll rather than a webhook, so inbound_ok is proven separately from
-    outbound_ok and webhook_auto is meaningless (False)."""
+    """Gmail / Microsoft 365 through Odoo's own XOAUTH2 mixins (CC-F).
+
+    This adapter is an ORCHESTRATOR, not an OAuth client. Odoo ships
+    ``google.gmail.mixin`` / ``microsoft.outlook.mixin``, and they already do
+    the whole dance: build the consent URL, run the ``/google_gmail/confirm``
+    (resp. ``/microsoft_outlook/confirm``) callback with a CSRF-checked state,
+    store the refresh token and renew the access token before every SMTP and
+    IMAP login. Re-implementing that on our own engine would give a second,
+    weaker door to the same mailbox — so CC-F takes the *boundary* (which
+    platform app, which mailbox, what is proven, what the tenant sees) and
+    leaves the protocol where Odoo supports it.
+
+    Three consequences worth stating out loud:
+
+    * **The servers exist before the sign-in, not after.** The mixin's consent
+      URL carries ``{"model", "id", "csrf_token"}`` in its ``state``, so the
+      ``ir.mail_server`` / ``fetchmail.server`` rows must already have ids
+      (deviation D2 — the handover's §3.2 ordering assumed our own engine).
+    * **The refresh token lives on those core rows**, in the
+      ``base.group_system`` columns Odoo defines, NOT in our encrypted
+      ``*_enc`` columns. Copying it would create a second plaintext-equivalent
+      leak path for no gain; the mixin can only read its own field.
+    * **Inbound is an IMAP poll, so ``inbound_ok`` LATCHES** (ledger §5.78). A
+      quiet mailbox, or one fetch that fails, must never lower it: that would
+      demote a live ``ready`` connection to ``action_required``, which is not
+      ingestable. Nothing in this class ever writes ``inbound_ok`` to anything
+      but ``pass``.
+    """
     _capabilities = {
         'mode': MODE_OAUTH_POPUP,
         'needs_platform_app': True,
@@ -1940,26 +2009,355 @@ class EmailAdapter(_StubAdapter):
                         'channel_hub.guide.email.test'],
     }
 
+    # ------------------------------------------------------------------
+    # Platform plane
+    # ------------------------------------------------------------------
+    def available_providers(self):
+        """Providers the OPERATOR has made usable, in declaration order.
+
+        Usable means three things at once, because any one of them missing
+        makes "Connect" a button that can only fail: the Odoo addon is
+        installed, an active ``channel.platform.app`` row exists, and it
+        carries both a client id and a secret.
+        """
+        out = []
+        App = self.env['channel.platform.app'].sudo()
+        for provider in EMAIL_PROVIDERS:
+            if not self._addon_installed(provider):
+                continue
+            app = App._get_for_provider(provider)
+            if app and app.client_id and app.client_secret_enc:
+                out.append(provider)
+        return out
+
+    def _addon_installed(self, provider):
+        """Is Odoo's own mixin present? Model presence is the honest test."""
+        model = ('google.gmail.mixin' if provider == 'google'
+                 else 'microsoft.outlook.mixin')
+        return model in self.env
+
+    def provider(self):
+        """This connection's provider: what was chosen, else the only option."""
+        chosen = (self.connection.sudo().get_setting(EMAIL_PROVIDER_SETTING)
+                  or '') if self.connection else ''
+        if chosen in EMAIL_PROVIDERS:
+            return chosen
+        available = self.available_providers()
+        return available[0] if len(available) == 1 else ''
+
+    def _require_provider(self, provider=None):
+        provider = provider or self.provider()
+        if provider not in EMAIL_PROVIDERS:
+            raise ChannelSendError('choose Gmail or Microsoft 365 first')
+        if provider not in self.available_providers():
+            raise ChannelSendError(
+                'the %s platform application is not configured' % provider)
+        return provider
+
+    def mirror_platform_credentials(self, provider):
+        """Copy the operator's app id/secret into the keys the mixin reads.
+
+        ONE WAY, always (handover §3.1). The mixins are core code we must not
+        patch and they only look at ``ir.config_parameter``; the platform-app
+        row stays the source of truth, and nothing here ever reads a config
+        parameter back into it.
+
+        Returns True when a value actually changed, so a caller can prove the
+        mirror is idempotent (T143). The secret is written, never returned and
+        never logged.
+        """
+        provider = self._require_provider(provider)
+        app = self.env['channel.platform.app'].sudo()._get_for_provider(provider)
+        id_key, secret_key = EMAIL_PLATFORM_PARAMS[provider]
+        icp = self.env['ir.config_parameter'].sudo()
+        changed = False
+        if (icp.get_param(id_key) or '') != (app.client_id or ''):
+            icp.set_param(id_key, app.client_id or '')
+            changed = True
+        secret = app._get_secret()
+        if not secret:
+            raise ChannelSendError(
+                'the %s platform application has no secret' % provider)
+        if (icp.get_param(secret_key) or '') != secret:
+            icp.set_param(secret_key, secret)
+            changed = True
+        return changed
+
+    # ------------------------------------------------------------------
+    # The two core server rows this connection owns
+    # ------------------------------------------------------------------
+    def mail_server(self):
+        return self.env['ir.mail_server'].sudo().with_context(
+            active_test=False).search(
+            [('care_connection_id', '=', self.connection.id)], limit=1)
+
+    def fetch_server(self):
+        return self.env['fetchmail.server'].sudo().with_context(
+            active_test=False).search(
+            [('care_connection_id', '=', self.connection.id)], limit=1)
+
+    def ensure_servers(self, provider, mailbox):
+        """Get-or-create the SMTP + IMAP rows this connection owns.
+
+        Idempotent: a second call re-points the same two rows rather than
+        creating a third. Both are created INACTIVE-but-present and the
+        fetchmail row stays ``draft`` until a refresh token exists — Odoo's
+        fetch cron only picks up ``state='done'`` servers, so a half-set-up
+        mailbox is never polled.
+        """
+        provider = self._require_provider(provider)
+        conn = self.connection
+        kind = EMAIL_AUTH_KIND[provider]
+        smtp_host, smtp_port = EMAIL_SMTP_HOST[provider]
+        imap_host, imap_port = EMAIL_IMAP_HOST[provider]
+        label = '%s (%s)' % (conn.company_id.name or 'Health19', mailbox)
+
+        server = self.mail_server()
+        smtp_vals = {
+            'name': label,
+            'smtp_host': smtp_host,
+            'smtp_port': smtp_port,
+            'smtp_encryption': 'starttls',
+            'smtp_authentication': kind,
+            'smtp_user': mailbox,
+            # The core constraint refuses a password on an OAuth server.
+            'smtp_pass': False,
+            'from_filter': mailbox,
+            'active': True,
+            # Defence in depth behind `_find_mail_server_allowed_domain`:
+            # `_find_mail_server` orders by sequence, so even if that override
+            # were ever lost, an operator's own server still wins.
+            'sequence': 100,
+            'care_connection_id': conn.id,
+        }
+        if server:
+            server.write(smtp_vals)
+        else:
+            server = self.env['ir.mail_server'].sudo().create(smtp_vals)
+
+        fetcher = self.fetch_server()
+        imap_vals = {
+            'name': label,
+            'server': imap_host,
+            'port': imap_port,
+            'is_ssl': True,
+            'server_type': kind,
+            'user': mailbox,
+            'password': False,
+            'active': True,
+            'care_connection_id': conn.id,
+        }
+        if fetcher:
+            fetcher.write(imap_vals)
+        else:
+            fetcher = self.env['fetchmail.server'].sudo().create(imap_vals)
+        return server, fetcher
+
+    # ------------------------------------------------------------------
+    # Authorization
+    # ------------------------------------------------------------------
+    def authorize_url(self, provider, mailbox):
+        """The provider consent URL, built by Odoo's own mixin.
+
+        Carries no secret: the mixin puts the PUBLIC client id, the redirect
+        back to this deployment and a CSRF-signed state in it, and nothing
+        else. Raises rather than returning an empty string when the mixin
+        refuses to build one — an empty URL renders as a dead button.
+        """
+        provider = self._require_provider(provider)
+        self.mirror_platform_credentials(provider)
+        server, _fetcher = self.ensure_servers(provider, mailbox)
+        # The compute reads ir.config_parameter, which we have just written.
+        server.invalidate_recordset([EMAIL_URI_FIELD[provider]])
+        url = server[EMAIL_URI_FIELD[provider]]
+        if not url:
+            raise ChannelSendError(
+                'the %s sign-in could not be prepared' % provider)
+        return url
+
+    def _has_refresh_token(self, record, provider):
+        if not record:
+            return False
+        return bool(record.sudo()[EMAIL_REFRESH_FIELD[provider]])
+
+    def signed_in(self):
+        """Did the provider's own callback actually store a grant?
+
+        The single source of truth is the mixin's field on the SMTP row: we
+        never see the token ourselves, and asking anything else would be a
+        guess dressed up as a fact.
+        """
+        provider = self.provider()
+        if not provider:
+            return False
+        return self._has_refresh_token(self.mail_server(), provider)
+
+    def sync_authorization(self):
+        """Reconcile our readiness with what the mixin stored. Never lowers.
+
+        Called when the tenant comes back from the popup, and by the health
+        cron. It only ever PROMOTES: a missing grant leaves the checks where
+        they were rather than tearing a working mailbox down over a transient
+        read, and a genuine loss surfaces through the send path
+        (``authorization_valid`` = fail from a refused SMTP login).
+        """
+        conn = self.connection
+        provider = self.provider()
+        if not provider:
+            return {'signed_in': False, 'provider': ''}
+        server = self.mail_server()
+        fetcher = self.fetch_server()
+        if not self._has_refresh_token(server, provider):
+            return {'signed_in': False, 'provider': provider}
+
+        # The IMAP row shares the mailbox but has its own grant. Where the
+        # tenant only completed the SMTP consent, copy the refresh token
+        # across rather than asking them to sign in twice: it is the same
+        # account, the same scope family and the same core field.
+        field = EMAIL_REFRESH_FIELD[provider]
+        if fetcher and not fetcher.sudo()[field]:
+            fetcher.sudo().write({field: server.sudo()[field]})
+        if fetcher and fetcher.state != 'done':
+            # Only NOW does Odoo's fetch cron start polling this mailbox.
+            fetcher.sudo().write({'state': 'done'})
+
+        mailbox = server.smtp_user or ''
+        vals = {}
+        if mailbox and conn.resource_external_id != mailbox:
+            vals['resource_external_id'] = mailbox
+        if mailbox and conn.resource_display_name != mailbox:
+            vals['resource_display_name'] = mailbox
+        if vals:
+            conn.sudo()._internal().write(vals)
+        Check = self.env['care.channel.readiness.check']
+        Check.upsert_check(conn.sudo(), 'authorization_valid', 'pass')
+        if mailbox:
+            Check.upsert_check(conn.sudo(), 'resource_selected', 'pass')
+        return {'signed_in': True, 'provider': provider, 'mailbox': mailbox}
+
+    def revoke_authorization(self):
+        """Stop the mailbox without destroying it.
+
+        The grant is dropped (that is what "disconnect" means) and the IMAP
+        row goes back to ``draft`` so the cron stops polling — but neither row
+        is deleted and no conversation history is touched.
+        """
+        provider = self.provider()
+        if not provider:
+            return False
+        field = EMAIL_REFRESH_FIELD[provider]
+        for record in (self.mail_server(), self.fetch_server()):
+            if record:
+                record.sudo().write({field: False})
+        fetcher = self.fetch_server()
+        if fetcher:
+            fetcher.sudo().write({'state': 'draft'})
+        return True
+
+    # ------------------------------------------------------------------
+    # Outbound — a synthetic message to the tenant's OWN mailbox (§7.6)
+    # ------------------------------------------------------------------
+    def send_test(self, subject, body):
+        """Send one plain-text message from the mailbox to itself.
+
+        Never a patient address, never a patient body: the recipient is the
+        connected mailbox, which is the only address we can be certain the
+        tenant owns.
+        """
+        provider = self._require_provider()
+        server = self.mail_server()
+        if not self._has_refresh_token(server, provider):
+            raise ChannelSendError('this mailbox is not signed in yet')
+        mailbox = server.smtp_user
+        if not mailbox:
+            raise ChannelSendError('this connection has no mailbox address')
+        message = EmailMessage()
+        message['From'] = mailbox
+        message['To'] = mailbox
+        message['Subject'] = subject
+        message.set_content(body)
+        try:
+            self.env['ir.mail_server'].sudo().send_email(
+                message, mail_server_id=server.id)
+        except Exception as exc:  # noqa: BLE001 — SMTP/provider/network
+            raise ChannelSendError('%s' % exc) from exc
+        return {'external_message_id': message.get('Message-Id') or None,
+                'state': 'sent', 'mailbox': mailbox}
+
+    # ------------------------------------------------------------------
+    # Health — READ ONLY with respect to inbound_ok (ledger §5.78)
+    # ------------------------------------------------------------------
+    def health_check(self):
+        provider = self.provider()
+        if not provider:
+            return {'ok': False, 'error': 'email provider is not chosen'}
+        if not self._has_refresh_token(self.mail_server(), provider):
+            return {'ok': False, 'error': 'this mailbox is not signed in'}
+        # Deliberately no IMAP probe and no inbound bookkeeping: a mailbox
+        # that received nothing today is not a broken mailbox, and a poll that
+        # could lower `inbound_ok` would drop a live inbox over a quiet hour.
+        self.sync_authorization()
+        return {'ok': True, 'resource': self.connection.resource_external_id or ''}
+
 
 @register_adapter('call')
 class CallAdapter(_StubAdapter):
-    """VoIP24h: API key + secret exchanged for a short-lived bearer — a guided
-    credential entry, not OAuth. Webhook registration is portal/support-side.
-    Outbound messaging does not exist for telephony, so inbound_ok (call events
-    arriving) is the proof of life, not outbound_ok."""
+    """VoIP24h, RECEIVE ONLY — and the card has to say so (CC-F §3.3).
+
+    We hold no verified contract for their HTTP API. ``docs.voip24h.vn`` is
+    unreachable from outside Vietnam, no third party documents it, and every
+    path in ``health_voip24h/services/voip24h_api.py`` is a conventional REST
+    shape with no evidence behind it (the live data agrees: 0 configs, 0 call
+    logs, nothing has ever worked). So this adapter calls NOTHING. Inventing an
+    endpoint would be the manufactured-credential lie CC-D deleted, wearing a
+    different hat.
+
+    What we CAN prove is what arrives: their webhook is already sound (raw
+    bytes, HMAC-SHA256, ``compare_digest``, fails closed with no secret), so
+    the required checks are exactly the two that real inbound traffic
+    establishes. Any check that would need an API call to satisfy is dropped —
+    a card cannot ask a tenant to prove something we have no way to test.
+
+    See ``docs/strategy/voip24h-contract-capture.md``.
+    """
     _capabilities = {
         'mode': MODE_GUIDED_SECRET,
         'needs_platform_app': False,
-        'resource_selection': False,     # the PBX account is typed in
+        'resource_selection': False,     # the PBX account id is typed in
         'webhook_auto': False,           # portal/support-set
         'supports_refresh': False,
         'supports_revoke': False,
-        'required_checks': ['authorization_valid', 'resource_selected',
-                            'webhook_configured', 'inbound_ok'],
-        'guide_steps': ['channel_hub.guide.call.credentials',
+        # Receive-only: proven by traffic, never by an API round trip.
+        'required_checks': ['webhook_verified', 'inbound_ok'],
+        'guide_steps': ['channel_hub.guide.call.account',
                         'channel_hub.guide.call.webhook',
-                        'channel_hub.guide.call.test'],
+                        'channel_hub.guide.call.wait'],
     }
+
+    def webhook_url(self):
+        base = (self.env['ir.config_parameter'].sudo()
+                .get_param('web.base.url') or '').strip().rstrip('/')
+        return '%s%s' % (base, VOIP_WEBHOOK_PATH)
+
+    def test_connection(self):
+        """There is nothing honest to test, and saying so IS the result."""
+        raise ChannelSendError(
+            'sending and call history need the VoIP24h API, which we cannot '
+            'verify yet')
+
+    def health_check(self):
+        """Receive-only health: has a verified call event ever reached us?
+
+        No provider call — we have no endpoint we trust. ``ok`` therefore
+        means "the plumbing on our side is configured", never "their API
+        works", and it never lowers a readiness check.
+        """
+        conn = self.connection
+        if not conn.resource_external_id:
+            return {'ok': False, 'error': 'no phone system account is set'}
+        if not conn.sudo().provider_secret_enc:
+            return {'ok': False, 'error': 'no webhook secret is stored'}
+        return {'ok': True, 'resource': conn.resource_external_id}
 
 
 @register_adapter('webchat')

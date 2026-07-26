@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.5.0.0',
+    'version': '19.0.6.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -145,10 +145,64 @@ that have not started. With no ``channel.platform.app`` for provider ``meta``,
 both cards read "Not available yet" and ``center_begin`` refuses. No
 placeholder credential is seeded anywhere.
 
-Non-goals of this phase: no Instagram (a separable Meta permission set), no
-email/VoIP wizard (CC-F), no ZNS template designer, no new public routes, no
-change to the CC-B Meta webhook controller, no edits to health_care_command, no
-real provider call anywhere in the tests, no credentials on any server.
+Channel Connection Center — Phase CC-F (Email + Calls): the catalogue closes
+=============================================================================
+
+The last two cards, and they are honest in deliberately DIFFERENT ways.
+
+**Email is a real build, orchestrating Odoo's own OAuth.** ``google_gmail``
+and ``microsoft_outlook`` already ship working XOAUTH2 mixins that mint the
+consent URL, run a CSRF-checked callback, store the refresh token and renew
+the access token before every SMTP and IMAP login. CC-F takes the *boundary*,
+not the protocol: which platform app, which mailbox, what is proven, what the
+tenant sees. Re-implementing the token dance on our own engine would only add
+a second, weaker door to the same mailbox.
+
+- A THIRD credential plane exists and is now resolved explicitly: the mixins
+  read their client id/secret from ``ir.config_parameter``. The
+  ``channel.platform.app`` row stays the operator-facing truth and is mirrored
+  INTO those keys, one way, never back — two writable sources of one secret is
+  how they drift apart.
+- The connection owns an ``ir.mail_server`` (SMTP) and a ``fetchmail.server``
+  (IMAP) through a plain Many2one, and that ownership is load-bearing:
+  ``_find_mail_server_allowed_domain`` excludes channel-owned servers from the
+  default-sender search, so a clinic's mailbox can never become the sender of
+  every other email the database emits.
+- ``inbound_ok`` **latches** (ledger §5.78). Inbound is an IMAP poll, so a
+  quiet mailbox or one failed fetch must never lower it — that would demote a
+  live connection to ``action_required``, which is not ingestable.
+- Email chat storage stays exactly where it was: ``mail.message`` and core
+  ``action_send_email``. No ``care.channel.message`` rows, no core edits.
+
+**Calls is receive-only, and the card says so in words.** VoIP24h's
+documentation is unreachable from outside Vietnam (``docs.voip24h.vn`` answers
+ECONNREFUSED), no third party documents their API, and every path in
+``services/voip24h_api.py`` is a conventional REST shape with no evidence
+behind it. So this phase calls NOTHING of theirs:
+
+- their existing ``/voip24h/webhook`` is ADOPTED, not rewritten — it was
+  already the fail-closed posture the rest of the framework was told to clone
+  (raw bytes, HMAC-SHA256, ``compare_digest``, generic 200 for an unknown
+  account). CC-F adds routing: resolve the connection, honour its ingest gate,
+  let real traffic prove the channel. No new public route.
+- ``voip.config`` becomes a facade like CC-D's ``zalo.config``: the webhook
+  secret is read from the encrypted connection first, the three plaintext
+  secrets are encrypt-copied by an idempotent migration, and nothing is
+  deleted. A config the Center creates leaves ``api_key``/``api_secret``
+  EMPTY on purpose — ``_check_credentials`` then refuses to build an API
+  client, which is what keeps every unverified endpoint unreachable.
+- ``required_checks`` for calls is ``webhook_verified`` + ``inbound_ok`` and
+  nothing else: a check that would need an API round trip to satisfy cannot
+  be asked of a tenant when we have no way to test it.
+- ``docs/strategy/voip24h-contract-capture.md`` lists exactly what a human on
+  a Vietnamese connection must capture before outbound calling or CDR sync
+  could be built at all.
+
+Non-goals of this phase: no new VoIP24h HTTP call and no edit to any path in
+``voip24h_api.py``; no Instagram; no new public route; no edits to
+health_care_command or to the google_gmail / microsoft_outlook core addons; no
+placeholder credentials; no change to the 10-module ZNS contract; no real
+provider call anywhere in the tests.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',
