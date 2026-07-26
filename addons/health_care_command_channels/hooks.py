@@ -16,4 +16,10 @@ def post_init_hook(env):
     if 'zalo.config' not in env:
         return
     result = env['zalo.config']._migrate_legacy_connections()
-    _logger.info('channel_hub post_init: zalo migration %s', result)
+    # The Z1 cleanup belongs on BOTH paths (CC-D review): installing this
+    # module onto a database that already ran the old health_zalo is exactly
+    # the case where leaked app_secret tracking values exist, and a migration
+    # script never runs on a fresh install.
+    leaked = env['zalo.config']._drop_app_secret_tracking()
+    _logger.info('channel_hub post_init: zalo migration %s, %s leaked '
+                 'app_secret tracking value(s) removed', result, leaked)

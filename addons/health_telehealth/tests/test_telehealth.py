@@ -8,6 +8,7 @@ exemption, the logged consent check, timezone correctness, and hook
 resilience.
 """
 import os
+import re
 import uuid
 from datetime import datetime, timedelta
 from unittest.mock import patch
@@ -439,18 +440,38 @@ class TestEndpointAndShell(HttpCase, TeleMixin):
         self.assertEqual(res.status_code, 200)
         self.assertIn(fso.telehealth_session_id.room_slug, res.text)
 
-    def test_shell_serves_telehealth_at_1_8_0(self):
+    def test_shell_serves_telehealth_at_current_pwa_version(self):
+        """The shell serves our assets at whatever the CURRENT stamp is.
+
+        This used to pin the literal ``1.9.0`` and had been failing silently
+        for months: every health_pwa deploy bumps ``pwa_asset_version`` (it is
+        at 1.19.0 now), and no manual test run ever noticed because an
+        HttpCase cannot even reach ``setUpClass`` against the prefork
+        deployment conf (ledger §5.75) — the suite errored instead of failing,
+        on every deploy. Assert the CONTRACT (our assets are served, cache-
+        stamped, at one consistent version) instead of a number that goes
+        stale on the next bump.
+        """
         user = new_test_user(
             self.env, login='th_shell_user', groups='base.group_user')
         self.authenticate(user.login, user.login)
         res = self.url_open('/health_pwa')
         self.assertEqual(res.status_code, 200)
         body = res.text
-        self.assertIn('telehealth.css?v=1.9.0', body)
-        self.assertIn('telehealth.js?v=1.9.0', body)
-        # Co-resident daystrip + ergo assets must still be served after the bump.
-        self.assertIn('daystrip.js?v=1.9.0', body)
-        self.assertIn('ergo.css?v=1.9.0', body)
+
+        # The stamp the shell itself declares — read from the served page, so
+        # the assertion can never drift from the template again.
+        stamps = set(re.findall(r'telehealth\.css\?v=([0-9.]+)', body))
+        self.assertEqual(len(stamps), 1,
+                         'the shell must serve telehealth.css exactly once, '
+                         'with one cache stamp')
+        version = stamps.pop()
+
+        for asset in ('telehealth.css', 'telehealth.js', 'daystrip.js',
+                      'ergo.css'):
+            self.assertIn('%s?v=%s' % (asset, version), body,
+                          'co-resident PWA assets must all be served at the '
+                          'same stamp — a partial bump ships a mixed cache')
 
 
 # =====================================================================

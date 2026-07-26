@@ -29,7 +29,12 @@ from urllib.parse import parse_qs, urlparse
 import requests
 
 from odoo.exceptions import AccessError, UserError
+from odoo.modules.registry import Registry
 from odoo.tests import tagged
+
+from odoo.addons.health_care_command_channels.models.care_channel_connection import (
+    REFRESH_LOCK_CLASS,
+)
 
 from odoo.addons.health_care_command_channels.services.adapters import (
     ChannelSendError,
@@ -567,3 +572,84 @@ class TestZaloCenter(ChannelSpineCase):
         conn.invalidate_recordset()
         self.assertFalse(conn.last_inbound_at,
                          'a dropped event is not proof that anything works')
+
+    # ==================================================================
+    # T125 — the refresh lock excludes refreshers WITHOUT locking the row
+    # ==================================================================
+    def test_125_refresh_lock_is_advisory(self):
+        """CC-D review: the lock and the persist used to fight each other.
+
+        ``_with_refresh_lock`` held ``SELECT … FOR UPDATE`` on the connection
+        row for the rest of the transaction, and the rotation it guards is
+        written by ``_persist_refreshed_tokens`` on an INDEPENDENT cursor —
+        which then blocked on that row lock with nothing to break the wait
+        (no cycle for PostgreSQL to see, ``lock_timeout`` 0). The first real
+        rotation would have hung a worker *after* Zalo invalidated the old
+        refresh token, losing the grant. Now the lock is advisory.
+        """
+        conn = self._zalo_conn(state='ready', resource_external_id=ZALO_OA_ID)
+
+        # (a) it really is an advisory lock, and it is held inside func().
+        seen = {}
+
+        def _inside():
+            self.env.cr.execute(
+                "SELECT count(*) FROM pg_locks WHERE locktype = 'advisory' "
+                "AND pid = pg_backend_pid()")
+            seen['advisory'] = self.env.cr.fetchone()[0]
+            # ...and NOT a row lock: nothing in this transaction has taken a
+            # transactionid/tuple lock for the connection table by writing it.
+            self.env.cr.execute(
+                'SELECT id FROM care_channel_connection WHERE id = %s '
+                'FOR UPDATE NOWAIT', (conn.id,))
+            seen['row_lockable'] = bool(self.env.cr.fetchone())
+            return 'ran'
+
+        self.assertEqual(conn._with_refresh_lock(_inside), 'ran')
+        self.assertTrue(seen['advisory'],
+                        'the refresh lock must be an advisory lock')
+        self.assertTrue(seen['row_lockable'],
+                        'the row itself must stay lockable — the independent '
+                        'cursor that persists the rotation writes it')
+
+        # (b) REAL two-connection contention, which a row lock could never
+        # stage in a TransactionCase: a second cursor cannot see a record this
+        # transaction created (§5.63), but an advisory key is just an integer.
+        # A second COMPANY: one active connection per (channel, company) is
+        # the framework's own partial unique index, not something to work
+        # around.
+        other = self._zalo_conn(state='ready', company=self.company2,
+                                resource_external_id='oa-T125')
+        with Registry(self.env.cr.dbname).cursor() as cr2:
+            cr2.execute('SELECT pg_try_advisory_xact_lock(%s, %s)',
+                        (REFRESH_LOCK_CLASS, other.id))
+            self.assertTrue(cr2.fetchone()[0],
+                            'the contender must be able to take the key')
+            self.assertEqual(
+                other._with_refresh_lock(lambda: 'ran'), 'locked',
+                'a second worker must be refused, not queued behind a lock')
+
+        # ...and once the contender's transaction ends, the key is free again.
+        self.assertEqual(other._with_refresh_lock(lambda: 'ran'), 'ran')
+
+    # ==================================================================
+    # T126 — a rotation reads the COMMITTED refresh token, not its snapshot
+    # ==================================================================
+    def test_126_refresh_reads_committed_secret(self):
+        """Advisory locking gives up one thing a row lock gave for free.
+
+        ``FOR UPDATE`` made PostgreSQL raise a serialisation error when the
+        row had moved under a REPEATABLE READ snapshot; an advisory key does
+        not. So the rotation re-reads the token that is actually committed —
+        spending a single-use refresh token twice is how a grant dies.
+        """
+        conn = self._zalo_conn(state='ready', resource_external_id=ZALO_OA_ID)
+        conn.action_set_secret('refresh_token', TOKEN_OK['refresh_token'])
+        # In-test the fresh cursor cannot see this row (§5.63), so the helper
+        # must fall back to the in-transaction value rather than to nothing —
+        # a rotation that silently found no token would be far worse than a
+        # stale read.
+        self.assertEqual(conn.sudo()._committed_secret('refresh_token'),
+                         TOKEN_OK['refresh_token'])
+        with self.assertRaises(UserError):
+            conn.sudo()._committed_secret('not_a_credential_field')

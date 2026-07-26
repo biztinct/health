@@ -640,7 +640,11 @@ class ZaloAdapter(_StubAdapter):
 
     def _do_refresh(self):
         conn = self.connection
-        refresh_token = conn.sudo()._get_secret('refresh_token')
+        # The COMMITTED token, not this snapshot's: the refresh lock is
+        # advisory (CC-D review), so nothing forces a serialisation error on a
+        # transaction that started before another worker rotated. Spending a
+        # single-use token twice is how a 3-month grant dies.
+        refresh_token = conn.sudo()._committed_secret('refresh_token')
         if not refresh_token:
             raise ChannelSendError('this Zalo connection has no refresh token')
         app = self._platform_app()

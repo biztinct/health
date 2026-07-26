@@ -15,6 +15,10 @@ import psycopg2
 from odoo import fields
 from odoo.exceptions import UserError
 from odoo.modules.registry import Registry
+
+from odoo.addons.health_care_command_channels.models.care_channel_connection import (
+    REFRESH_LOCK_CLASS,
+)
 from odoo.tests import tagged
 
 from odoo.addons.health_care_command_channels.services import adapters
@@ -196,19 +200,39 @@ class TestOauthEngine(ChannelHubCase):
         # (b) Another worker is already refreshing ⇒ 'locked'. Never a raise,
         #     and the callable must NOT run — a second rotation would burn
         #     Zalo's single-use refresh token.
+        #
+        #     CC-D review: this is REAL two-connection contention now, not a
+        #     mocked LockNotAvailable. The lock became advisory (§5.74: a row
+        #     lock deadlocked against the fresh cursor that persists the
+        #     rotation), and an advisory key is just an integer — so a second
+        #     cursor can contend for it without needing to SEE this
+        #     transaction's uncommitted row, which is precisely what §5.63
+        #     made impossible for the old row lock. There is also no aborted
+        #     statement to absorb any more: pg_try_advisory_xact_lock returns
+        #     false rather than raising.
+        #     A DIFFERENT record, deliberately: an advisory *xact* lock is held
+        #     until the transaction ends, so this transaction still owns the
+        #     key it took in (a) — and a second cursor asking for that same key
+        #     would be refused, which would prove the fixture rather than the
+        #     code. (Assert that property here rather than tiptoe around it.)
+        other = self._conn('whatsapp')
         ran = []
-        real_execute = type(self.env.cr).execute
-
-        def _execute(cr, query, params=None, *args, **kwargs):
-            if 'FOR UPDATE NOWAIT' in str(query):
-                raise psycopg2.errors.LockNotAvailable('simulated contention')
-            return real_execute(cr, query, params, *args, **kwargs)
-
-        with patch.object(type(self.env.cr), 'execute', _execute):
-            self.assertEqual(conn._with_refresh_lock(lambda: ran.append(1)),
+        with Registry(self.env.cr.dbname).cursor() as cr2:
+            cr2.execute('SELECT pg_try_advisory_xact_lock(%s, %s)',
+                        (REFRESH_LOCK_CLASS, conn.id))
+            self.assertFalse(
+                cr2.fetchone()[0],
+                'the key taken in (a) is held until this transaction ends')
+            cr2.execute('SELECT pg_try_advisory_xact_lock(%s, %s)',
+                        (REFRESH_LOCK_CLASS, other.id))
+            self.assertTrue(cr2.fetchone()[0],
+                            'the contending worker must get the key first')
+            self.assertEqual(other._with_refresh_lock(lambda: ran.append(1)),
                              'locked')
         self.assertFalse(ran)
-        # The savepoint absorbed the aborted statement: the transaction lives.
+        # ...and once the contender's transaction ends, the key frees up.
+        self.assertEqual(other._with_refresh_lock(lambda: 'ran'), 'ran')
+        # The transaction is untouched and still usable.
         self.assertTrue(self._conn('email').id)
 
         # (c) Rotated credentials are written through the dedicated cursor path

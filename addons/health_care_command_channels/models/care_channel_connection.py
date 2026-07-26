@@ -145,6 +145,10 @@ CENTER_GROUPS = (
     'health_user_admin.group_health_user_admin',
 )
 
+# Advisory-lock class key for refresh serialisation (CC-D review). Any stable
+# int32 does; this one spells "chnl" so it is recognisable in `pg_locks`.
+REFRESH_LOCK_CLASS = 0x63686E6C
+
 # Failure backoff for the health cron (handover §7): 30 m → 2 h → 8 h.
 BACKOFF_MINUTES = (30, 120, 480)
 HEALTH_INTERVAL_MINUTES = 30
@@ -717,27 +721,76 @@ class CareChannelConnection(models.Model):
     # Refresh locking (architecture §7.4) — used for real in CC-D
     # ------------------------------------------------------------------
     def _with_refresh_lock(self, func):
-        """Run ``func()`` while holding a row lock on this connection.
+        """Run ``func()`` under an ADVISORY lock on this connection.
 
         Returns ``'locked'`` (never raises) when another worker already holds
-        the row — Zalo's single-use refresh-token rotation means two concurrent
+        it — Zalo's single-use refresh-token rotation means two concurrent
         refreshes would burn the 3-month grant.
 
-        The ``FOR UPDATE NOWAIT`` runs inside ``cr.savepoint()``: a
-        LockNotAvailable aborts the PostgreSQL transaction, so without the
-        savepoint every later statement in the caller's flow would fail too
-        (ledger §5.55).
+        **Advisory, deliberately NOT ``SELECT … FOR UPDATE`` (CC-D review).**
+        A row lock lives until the transaction ends — releasing the savepoint
+        does not release it — and the rotation this guards is persisted by
+        ``_persist_refreshed_tokens`` through an INDEPENDENT cursor, whose
+        ``UPDATE`` of this very row would then block on our own row lock.
+        Forever: PostgreSQL sees no cycle to break (this session is merely
+        idle-in-transaction while Python waits on the other cursor) and
+        ``lock_timeout`` is 0 on the deployment. The first real rotation would
+        hang a worker *after* Zalo had already invalidated the old refresh
+        token — destroying the grant the lock exists to protect.
+
+        An advisory key gives the same mutual exclusion between refreshers,
+        conflicts with no row write at all, and — because the key is just an
+        integer — is finally stageable in a TransactionCase: a second cursor
+        needs no visibility of the row to contend for it (ledger §5.63 does
+        not bite here, T125).
         """
         self.ensure_one()
-        try:
-            with self.env.cr.savepoint():
-                self.env.cr.execute(
-                    'SELECT id FROM care_channel_connection WHERE id = %s '
-                    'FOR UPDATE NOWAIT', (self.id,))
-        except psycopg2.errors.LockNotAvailable:
+        self.env.cr.execute('SELECT pg_try_advisory_xact_lock(%s, %s)',
+                            (REFRESH_LOCK_CLASS, self.id))
+        if not self.env.cr.fetchone()[0]:
             _logger.info('Channel connection %s already locked for refresh', self.id)
             return 'locked'
         return func()
+
+    def _committed_secret(self, field_key):
+        """The COMMITTED value of a secret, read on an independent cursor.
+
+        The refresh lock is advisory, so PostgreSQL no longer fails a
+        transaction whose snapshot predates another worker's rotation (a row
+        lock did, with a serialisation error). Odoo opens every connection at
+        REPEATABLE READ, so an in-snapshot read could hand back a refresh
+        token that has already been spent — and a single-use token spent twice
+        is a dead grant. Reading what is actually committed is what closes it.
+
+        Falls back to the in-transaction value when the fresh cursor cannot
+        see the row: under ``--test-enable`` the record was created inside the
+        test transaction (ledger §5.63), and on any read failure a possibly
+        stale token still beats no token at all.
+        """
+        self.ensure_one()
+        # Whitelisted by construction: `column` can only be a value of the
+        # SECRET_FIELDS constant, never anything a caller supplies.
+        column = SECRET_FIELDS.get(field_key)
+        if not column:
+            raise UserError(_('Unknown credential field.'))
+        if tools.config.get('test_enable') or tools.config.get('test_file'):
+            return self._get_secret(field_key)
+        blob = None
+        try:
+            with Registry(self.env.cr.dbname).cursor() as cr:
+                cr.execute(
+                    'SELECT %s FROM care_channel_connection WHERE id = %%s'
+                    % column, (self.id,))
+                row = cr.fetchone()
+                blob = row[0] if row else None
+        except Exception:  # noqa: BLE001 — never take the refresh down with us
+            _logger.exception('Could not read the committed %s for connection '
+                              '%s; falling back to this transaction',
+                              field_key, self.id)
+            return self._get_secret(field_key)
+        if not blob:
+            return self._get_secret(field_key)
+        return channel_crypto.decrypt(self.env, blob)
 
     def _persist_refreshed_tokens(self, access_token=None, refresh_token=None,
                                   token_expires_at=None, granted_scopes=None):
@@ -765,6 +818,12 @@ class CareChannelConnection(models.Model):
         record_id, dbname = self.id, self.env.cr.dbname
         try:
             with Registry(dbname).cursor() as cr:
+                # Bounded, like the send-failure writer: even if some future
+                # caller does hold a row lock on this record, persisting must
+                # fail fast so the caller can fall back to an in-transaction
+                # write — never hang a worker holding a rotated token
+                # (CC-D review).
+                cr.execute("SET LOCAL lock_timeout = '2s'")
                 env = api.Environment(cr, SUPERUSER_ID, {INTERNAL_CTX: True})
                 env['care.channel.connection'].browse(record_id).write(vals)
         except Exception:  # noqa: BLE001 — never take the caller down with us

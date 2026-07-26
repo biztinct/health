@@ -1109,3 +1109,58 @@ a no-op.
     accepting epoch seconds or milliseconds) because the timestamp is inside the
     signed string and therefore cannot be moved by an attacker, but a captured
     request would otherwise stay valid forever.
+
+- **§5.74 — a row lock and a fresh-cursor write of the SAME row is a
+    self-deadlock that PostgreSQL will never break.** CC-A shipped two
+    primitives that each looked right alone: `_with_refresh_lock`
+    (`SELECT … FOR UPDATE NOWAIT` on the connection row, so two workers cannot
+    rotate a single-use refresh token at once) and `_persist_refreshed_tokens`
+    (writes the rotated token on an **independent** cursor that commits
+    immediately, so a later rollback cannot lose a grant the provider has
+    already invalidated). CC-D became their first co-consumer — as the
+    handover explicitly instructed — and the combination hangs: releasing the
+    savepoint does **not** release a row lock, so the independent cursor's
+    `UPDATE` blocks on the caller's own lock while the caller sits
+    synchronously waiting for that cursor. PostgreSQL's deadlock detector sees
+    no cycle (the outer session is merely *idle in transaction* while Python
+    waits), and vietuat runs `lock_timeout = 0` and
+    `idle_in_transaction_session_timeout = 0` — so the wait is **indefinite**
+    until the worker is killed. Worse than a hang: by then the provider has
+    already rotated, so the new refresh token dies unwritten and the grant is
+    gone — precisely the disaster the fresh cursor exists to prevent. Rules:
+    (a) if a critical section persists through an independent cursor, make the
+    section's lock an **advisory** one (`pg_try_advisory_xact_lock(class, id)`)
+    — same mutual exclusion, conflicts with no row write; (b) every
+    fresh-cursor writer sets `SET LOCAL lock_timeout` (the CC-B send-failure
+    writer already did; the token writer did not — copy the whole idiom, not
+    the shape); (c) an advisory lock gives up the serialisation error a row
+    lock produced under REPEATABLE READ, so re-read anything single-use on an
+    independent cursor before spending it (`_committed_secret`). Bonus: an
+    advisory key is just an integer, so two-connection contention is finally
+    **stageable in a TransactionCase** — §5.63 blocked that only because a
+    second cursor cannot *see* an uncommitted row (T125/T126). Never accept a
+    lock smoke test whose callable is a no-op: it proves the refusal path and
+    nothing about what runs inside the lock. (Found in CC-D review; latent,
+    would have fired on the first real Zalo token rotation ~25 h after the
+    first tenant signed in.)
+
+- **§5.75 — running `odoo-bin` by hand against the deployment conf makes every
+    `HttpCase` suite ERROR in `setUpClass`, and the run exits 1 with zero test
+    failures.** `/etc/odoo-server.conf` sets `workers = 2`, so a manual
+    `odoo-bin … --test-enable` starts a **PreforkServer**, and `HttpCase`'s
+    `setUpClass` reaches for `odoo.service.server.server.httpd.server_port` —
+    which only the threaded server has:
+    `AttributeError: 'PreforkServer' object has no attribute 'httpd'`. Every
+    HttpCase class in the run dies there (16 of them on vietuat, across
+    health_family_link / family_messages / portal / pwa_daystrip / pwa_family /
+    self_booking / telehealth / workflow_auto), the runner counts them as
+    errors, and the process exits **1** even though `FAIL:` count is 0 — which
+    reads exactly like "your change broke eight unrelated modules". It did not.
+    Add **`--workers=0`** to any manual test run whose surface can reach an
+    HttpCase. The trap only appears when the surface is wide: upgrading a
+    low-level module (`health_zalo`) cascades post-tests to every module above
+    it (75 → 318 on vietuat), which is why a narrowly-scoped run of the same
+    code exits 0 and a wide one exits 1. Corollary for reviewers: an EXIT:1
+    with `FAIL: ` count 0 is a prompt to read the `ERROR:` lines, never to
+    assume either failure or success. (Hit in the CC-D review re-runs; see also
+    §5.32, the HttpCase-poisons-TransactionCase sibling.)

@@ -265,14 +265,26 @@ class ZaloConfig(models.Model):
     # ------------------------------------------------------------------
     # Z5 — only a system administrator may repoint the API host
     # ------------------------------------------------------------------
-    def write(self, vals):
+    def _check_system_only_fields(self, vals):
         offending = [f for f in SYSTEM_ONLY_FIELDS if f in vals]
         if offending and not (self.env.su
                               or self.env.user.has_group('base.group_system')):
             raise UserError(_(
                 'Only a system administrator can change where Zalo requests '
                 'are sent (%s).', ', '.join(offending)))
+
+    def write(self, vals):
+        self._check_system_only_fields(vals)
         return super().write(vals)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        # The same gate on the way IN (CC-D review): guarding only `write`
+        # left "create it already pointed at my host" open, which is the same
+        # exfil with one less step.
+        for vals in vals_list:
+            self._check_system_only_fields(vals)
+        return super().create(vals_list)
 
     # ------------------------------------------------------------------
     # Z6 — the legacy OAuth flow is retired, not patched

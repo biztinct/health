@@ -389,7 +389,13 @@ class CareChannelMessage(models.Model):
         else:
             try:
                 with self.env.cr.savepoint():
+                    # with_company, or the legacy pipeline resolves its config
+                    # by `self.env.company` — company 1 for the webhook's
+                    # superuser env — and a second tenant's verified events
+                    # would find no config, or worse, land on company 1's
+                    # conversations (CC-D review).
                     result = self.env['zalo.message.handler'].sudo() \
+                        .with_company(connection.company_id) \
                         ._ingest_verified_event(payload)
                 if isinstance(result, dict):
                     for key in ('ingested', 'duplicate', 'skipped'):
