@@ -52,3 +52,76 @@ odoo.tests.result: 0 failed, 0 error(s) of 24 tests when loading database 'vietu
 EXIT:0
 HTTP:200
 2026-07-26 10:50:54,188 2076687 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 654 tests when loading database 'vietuat' 
+
+=== FINAL CONFIRMATION: all 15 HttpCase modules re-run against the committed state ===
+biz_debranding EXIT:0
+biz_deroute EXIT:0
+health_api_gateway EXIT:0
+health_family_link EXIT:0
+health_family_messages EXIT:0
+health_portal EXIT:0
+health_pwa EXIT:0
+health_pwa_daystrip EXIT:0
+health_pwa_ergo EXIT:0
+health_pwa_family EXIT:0
+health_scribe EXIT:0
+health_self_booking EXIT:0
+health_telehealth EXIT:0
+health_telemonitoring EXIT:0
+health_workflow_auto EXIT:0
+HTTP:200
+DONE
+--- per-module results ---
+0 failed, 0 error(s) of 7 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 9 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 16 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 17 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 25 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 33 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 40 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 13 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 3 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 21 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 20 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 19 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 16 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 49 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 24 tests when loading database 'vietuat' 
+--- FAIL / ERROR: setUpClass line count: ---
+0
+=== FINAL CONFIRMATION: all 15 HttpCase modules, committed state ===
+biz_debranding EXIT:0
+biz_deroute EXIT:0
+health_api_gateway EXIT:0
+health_family_link EXIT:0
+health_family_messages EXIT:0
+health_portal EXIT:0
+health_pwa EXIT:0
+health_pwa_daystrip EXIT:0
+health_pwa_ergo EXIT:0
+health_pwa_family EXIT:0
+health_scribe EXIT:0
+health_self_booking EXIT:0
+health_telehealth EXIT:0
+health_telemonitoring EXIT:0
+health_workflow_auto EXIT:0
+HTTP:200
+DONE
+--- per-module ---
+0 failed, 0 error(s) of 7 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 9 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 16 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 17 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 25 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 33 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 40 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 13 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 3 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 21 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 20 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 19 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 16 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 49 tests when loading database 'vietuat' 
+0 failed, 0 error(s) of 24 tests when loading database 'vietuat' 
+--- FAIL/setUpClass-ERROR count ---
+0

@@ -16,9 +16,13 @@ shipped code was silently not doing its job.
 | catalogues Odoo never even opens | 2 (202 entries) | 0 |
 | repo-wide guard against all of it | none | 5 assertions in `health_base` |
 
-Final verification run on vietuat: **EXIT:0, HTTP:200,
-`0 failed, 0 error(s) of 654 tests`**, zero `FAIL:` and zero
-`ERROR: setUpClass` lines.
+Final verification on vietuat, two independent runs:
+- combined (35 modules upgraded, tests tagged): **EXIT:0, HTTP:200,
+  `0 failed, 0 error(s) of 654 tests`**;
+- all 15 HttpCase modules re-run **one at a time against the committed
+  state**: 15 × EXIT:0, **312 tests, 0 failed, 0 errors**, and — the check
+  that matters for this phase — **zero `ERROR: setUpClass` lines** with 540
+  `Starting …` lines in the log. The suites did not merely pass; they ran.
 
 **Genuine product bugs found: zero.** Seven red tests, all traced to two
 stale fixtures. That is the honest outcome and it is worth stating plainly:
