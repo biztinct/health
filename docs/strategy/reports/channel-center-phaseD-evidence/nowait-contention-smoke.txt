@@ -1,0 +1,49 @@
+# CC-A deferred rider — live two-worker FOR UPDATE NOWAIT contention
+# vietuat, 2026-07-26. Handover CC-D §1.7 / §6; ledger §5.63.
+
+WHY THIS IS NOT A TEST
+----------------------
+Odoo opens every database connection at REPEATABLE READ, so a TransactionCase
+can never observe another transaction's later commits: a second cursor cannot
+see the row the test transaction created, matches ZERO rows, takes no lock, and
+the contended branch silently returns the SUCCESS value. CC-A's T85 therefore
+drives the contended branch by making the NOWAIT statement raise, and the real
+race was deferred to the first time the code path ran for real — which is now,
+because CC-D is `_with_refresh_lock`'s first consumer (Zalo's refresh token is
+single use, so two concurrent rotations would burn the 3-month grant).
+
+METHOD
+------
+Two independent `odoo-bin shell` processes against vietuat, four seconds apart,
+both operating on the EXISTING migrated connection id=1207. No fixture was
+created and nothing was written: both rolled back (§5.34 — the cleanest
+cleanup is the one you never have to do).
+
+  A: conn._with_refresh_lock(lambda: sleep(10) -> 'ran')   # holds the row lock
+  B: conn._with_refresh_lock(lambda: 'ran')                # 4 s later
+
+RESULT (verbatim)
+-----------------
+  ===== SHELL B (the contender) =====
+  B: result='locked'
+  2026-07-26 01:21:44,660 2041288 INFO vietuat
+    odoo.addons.health_care_command_channels.models.care_channel_connection:
+    Channel connection 1207 already locked for refresh
+
+  ===== SHELL A (the holder) =====
+  A: connection 1207 state=legacy
+  A: LOCK HELD, sleeping 10s
+  A: result='ran'
+  A: rolled back, nothing written
+
+READ
+----
+The holder ran its callable; the contender did NOT wait, did NOT raise and did
+NOT refresh — it returned 'locked' and logged it. That is the whole contract:
+under two workers exactly one rotation happens, and the loser is a no-op rather
+than a second, grant-killing exchange. CC-A's rider is closed.
+
+POST-STATE
+----------
+Connection 1207 unchanged (state=legacy, has_credentials=False). Both
+transactions rolled back; nothing to clean up.

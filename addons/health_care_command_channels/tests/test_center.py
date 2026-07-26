@@ -408,21 +408,32 @@ class TestChannelCenter(ChannelSpineCase):
     # T104 — center_begin is idempotent
     # ==================================================================
     def test_104_center_begin_idempotent(self):
+        # FORCED EDIT (CC-D): both counts below used to be absolute, which only
+        # held while the table was empty. The zalo migration now lands a
+        # `legacy` row on every real database — archived by the shared fixture,
+        # so `active_test=False` still SEES it. The contract this test exists
+        # for is "a repeated begin creates no second row" and "a refused begin
+        # creates nothing at all", so both are now relative to a baseline.
+        unimplemented = ['whatsapp', 'fb', 'zalo', 'zns', 'email', 'call']
+        before = self.Conn.with_context(active_test=False).search_count([
+            ('channel', 'in', unimplemented),
+            ('company_id', '=', self.company.id)])
+
         first = self.Conn.center_begin('webchat')
         second = self.Conn.center_begin('webchat')
         self.assertEqual(first['connection_id'], second['connection_id'])
-        self.assertEqual(self.Conn.with_context(active_test=False).search_count([
+        self.assertEqual(self.Conn.search_count([
             ('channel', '=', 'webchat'),
             ('company_id', '=', self.company.id)]), 1)
 
         # A channel whose flow does not exist yet says so instead of half
         # creating something.
-        for channel in ('whatsapp', 'fb', 'zalo', 'zns', 'email', 'call'):
+        for channel in unimplemented:
             with self.assertRaises(UserError):
                 self.Conn.center_begin(channel)
-        self.assertFalse(self.Conn.with_context(active_test=False).search_count([
-            ('channel', 'in', ['whatsapp', 'fb', 'zalo', 'zns', 'email', 'call']),
-            ('company_id', '=', self.company.id)]))
+        self.assertEqual(self.Conn.with_context(active_test=False).search_count([
+            ('channel', 'in', unimplemented),
+            ('company_id', '=', self.company.id)]), before)
         with self.assertRaises(UserError):
             self.Conn.center_begin('not-a-channel')
 

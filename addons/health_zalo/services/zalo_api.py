@@ -8,6 +8,15 @@ from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
+# CC-D (defect Z8). The OAuth endpoints do NOT live on the OA API host: token
+# exchange and refresh are `oauth.zaloapp.com/v4/oa/access_token` and the app
+# secret travels in a `secret_key` HEADER, never in the body and never in the
+# URL. The old code posted to `{api_base_url}/v4/access_token` with the secret
+# in the JSON body (exchange) or no secret at all (refresh) — neither call
+# could ever have worked.
+ZALO_OAUTH_TOKEN_URL = 'https://oauth.zaloapp.com/v4/oa/access_token'
+HTTP_TIMEOUT = 30
+
 
 class ZaloAPIClient:
     """
@@ -94,70 +103,61 @@ class ZaloAPIClient:
     # OAuth & Authentication
     # ============================================================
 
+    def _token_request(self, config, payload):
+        """POST the OAuth token endpoint: form body, secret in the HEADER.
+
+        Never logs the payload — it carries a refresh token or an
+        authorization code on every call.
+        """
+        app_secret = config.sudo().app_secret or ''
+        if not app_secret:
+            return {'error': 'no app secret configured'}
+        headers = {'secret_key': app_secret}
+        data = dict(payload, app_id=config.app_id)
+        try:
+            response = requests.post(ZALO_OAUTH_TOKEN_URL, data=data,
+                                     headers=headers, timeout=HTTP_TIMEOUT)
+            result = response.json() if response.text else {}
+        except Exception as e:  # noqa: BLE001 — network/parse
+            _logger.warning('Zalo token request failed: %s', e)
+            return {'error': str(e)}
+        if result.get('access_token'):
+            return result
+        _logger.warning('Zalo refused a token request (grant_type=%s)',
+                        payload.get('grant_type'))
+        return {'error': (result.get('error_description')
+                          or result.get('message')
+                          or result.get('error') or 'Unknown error')}
+
     def exchange_code_for_token(self, config, code):
         """
         Exchange authorization code for access/refresh tokens.
 
-        Args:
-            config: zalo.config record
-            code: Authorization code from OAuth callback
-
-        Returns:
-            Dict with tokens and expiry info
+        LEGACY fallback only: the Channel Center's PKCE flow
+        (``care.channel.oauth.session`` + ``ZaloAdapter``) is the supported
+        path, and this one is never reached from the UI any more.
         """
-        url = f"{config.api_base_url}/v4/access_token"
-
-        data = {
-            'app_id': config.app_id,
-            'app_secret': config.app_secret,
+        return self._token_request(config, {
+            'grant_type': 'authorization_code',
             'code': code,
-        }
-
-        try:
-            response = requests.post(url, json=data, timeout=30)
-            result = response.json()
-
-            if result.get('access_token'):
-                return result
-            else:
-                _logger.error(f'Token exchange failed: {result}')
-                return {'error': result.get('message', 'Unknown error')}
-
-        except Exception as e:
-            _logger.error(f'Token exchange request failed: {e}')
-            return {'error': str(e)}
+        })
 
     def refresh_access_token(self, config):
         """
         Refresh access token using refresh token.
 
-        Args:
-            config: zalo.config record
-
-        Returns:
-            Dict with new tokens
+        Only used for a config with NO framework connection: a linked config
+        refreshes through ``ZaloAdapter.refresh_authorization`` so the
+        rotation happens under a row lock and is persisted on an independent
+        cursor before anything uses it.
         """
-        url = f"{config.api_base_url}/v4/access_token"
-
-        data = {
-            'app_id': config.app_id,
-            'refresh_token': config.refresh_token,
+        refresh_token = config._effective_refresh_token()
+        if not refresh_token:
+            return {'error': 'No refresh token available'}
+        return self._token_request(config, {
             'grant_type': 'refresh_token',
-        }
-
-        try:
-            response = requests.post(url, json=data, timeout=30)
-            result = response.json()
-
-            if result.get('access_token'):
-                return result
-            else:
-                _logger.error(f'Token refresh failed: {result}')
-                return {'error': result.get('message', 'Unknown error')}
-
-        except Exception as e:
-            _logger.error(f'Token refresh request failed: {e}')
-            return {'error': str(e)}
+            'refresh_token': refresh_token,
+        })
 
     # ============================================================
     # Official Account Info
@@ -306,6 +306,14 @@ class ZaloAPIClient:
 
         Returns:
             Dict with send result
+
+        **The signature and the return contract are frozen** — ten consumer
+        modules call exactly this, and every one of their tests patches it.
+        CC-D adds only bookkeeping around it: a send Zalo accepted is the ONLY
+        honest proof that ZNS works for this Official Account, so success
+        flips the connection's ``outbound_ok`` and ``provider_approvals``
+        checks and failure records a redacted reason. None of that may change
+        what the caller sees, and none of it may raise on its own.
         """
         data = {
             'phone': phone,
@@ -313,7 +321,32 @@ class ZaloAPIClient:
             'template_data': template_data,
         }
 
-        return self._make_request('POST', 'message/template', config, data=data)
+        connection = config.sudo()._connection() if config else False
+        try:
+            result = self._make_request('POST', 'message/template', config,
+                                        data=data)
+        except Exception as exc:  # noqa: BLE001 — re-raised untouched below
+            if connection:
+                auth = any(marker in str(exc).lower()
+                           for marker in ('401', 'unauthorized',
+                                          'access token', 'invalid token'))
+                connection._note_send_failure(exc, auth_failure=auth)
+            raise
+        if connection:
+            connection._note_outbound()
+            # Template approval is a human Zalo review; an accepted send is
+            # the evidence, and there is no attestation button anywhere.
+            # Savepoint-isolated: bookkeeping never breaks a real message
+            # (a caught IntegrityError would still poison the caller's
+            # transaction without it — ledger §5.55).
+            try:
+                with self.env.cr.savepoint():
+                    self.env['care.channel.readiness.check'].sudo() \
+                        .upsert_check(connection, 'provider_approvals', 'pass')
+            except Exception:  # noqa: BLE001
+                _logger.exception('health_zalo: ZNS readiness wiring failed '
+                                  'for connection %s', connection.id)
+        return result
 
     # ============================================================
     # Webhook Management

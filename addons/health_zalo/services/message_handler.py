@@ -16,6 +16,35 @@ class ZaloMessageHandler(models.AbstractModel):
     _name = 'zalo.message.handler'
     _description = 'Zalo Message Handler Service'
 
+    # ------------------------------------------------------------------
+    # CC-D — the entry point the NEW, verified webhook uses
+    # ------------------------------------------------------------------
+    @api.model
+    def _ingest_verified_event(self, event_data):
+        """Ingest ONE event whose signature the framework already verified.
+
+        Two things this does that the old path did not:
+
+        * it runs **synchronously**. The old controller dispatched through
+          ``with_delay()`` and no queue_job addon is installed, so the
+          ``AttributeError`` was swallowed and every event was dropped while
+          Zalo was told 200 OK (defect Z3);
+        * it **de-duplicates** on ``msg_id`` before creating anything (defect
+          Z7). A pre-check, not a unique index: ``zalo_message_id`` is indexed
+          but not unique and live duplicates may already exist, so adding a
+          unique index would fail on real data — and letting an index fire
+          inside a webhook transaction poisons it (ledger §5.3).
+        """
+        event_data = event_data or {}
+        msg_id = (event_data.get('message') or {}).get('msg_id')
+        if msg_id and self.env['zalo.message'].sudo().search_count(
+                [('zalo_message_id', '=', msg_id)]):
+            _logger.info('health_zalo: duplicate inbound msg_id — ignored')
+            return {'ingested': 0, 'duplicate': 1, 'skipped': 0}
+        ok = self.process_webhook_event(event_data)
+        return {'ingested': 1 if ok else 0, 'duplicate': 0,
+                'skipped': 0 if ok else 1}
+
     @api.model
     def process_webhook_event(self, event_data):
         """
@@ -83,6 +112,10 @@ class ZaloMessageHandler(models.AbstractModel):
                 'text': message_text,
             },
             'timestamp': timestamp,
+            # CC-D: carry the provider's own message id through, so the row
+            # can be de-duplicated on redelivery (defect Z7). The old builders
+            # dropped it and zalo_message_id was never populated at all.
+            'msg_id': (event_data.get('message') or {}).get('msg_id'),
         }
 
         message = self.env['zalo.message'].create_incoming_message(conversation, message_data)
@@ -110,6 +143,7 @@ class ZaloMessageHandler(models.AbstractModel):
                 'attachments': attachments,
             },
             'timestamp': event_data.get('timestamp'),
+            'msg_id': (event_data.get('message') or {}).get('msg_id'),
         }
 
         message = self.env['zalo.message'].create_incoming_message(conversation, message_data)
@@ -136,6 +170,7 @@ class ZaloMessageHandler(models.AbstractModel):
                 'attachments': event_data.get('message', {}).get('attachments', []),
             },
             'timestamp': event_data.get('timestamp'),
+            'msg_id': (event_data.get('message') or {}).get('msg_id'),
         }
 
         message = self.env['zalo.message'].create_incoming_message(conversation, message_data)

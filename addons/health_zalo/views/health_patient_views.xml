@@ -79,12 +79,6 @@
                                     class="btn-primary"
                                     invisible="not has_zalo or zalo_conversation_count == 0"
                                     icon="fa-comments"/>
-                            <button name="action_link_zalo_user"
-                                    type="object"
-                                    string="Link Zalo User"
-                                    class="btn-warning"
-                                    invisible="has_zalo"
-                                    icon="fa-link"/>
                         </group>
                     </group>
                 </page>

@@ -632,7 +632,9 @@ msgstr "Chọn Trang của bạn"
 
 #. module: health_care_command_channels
 #. odoo-python
+#. odoo-javascript
 #: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "Sign in with Zalo"
 msgstr "Đăng nhập bằng Zalo"
 
@@ -1192,3 +1194,165 @@ msgstr "Đã có lỗi xảy ra. Vui lòng thử lại."
 #: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
 msgid "Select the line and copy it manually."
 msgstr "Hãy chọn dòng đó và sao chép thủ công."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "A Zalo window opens. Sign in as the owner of your Official Account and allow Health19 to work with it. Your Zalo password is only ever typed on Zalo's own page."
+msgstr "Một cửa sổ Zalo sẽ mở ra. Hãy đăng nhập bằng tài khoản chủ sở hữu Official Account và cho phép Health19 làm việc với OA đó. Mật khẩu Zalo của bạn chỉ được nhập trên trang của Zalo."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Open the Zalo developer portal, choose your app, and paste the address below into the Webhook field. Zalo shows a secret on that page — copy it back here."
+msgstr "Mở cổng nhà phát triển Zalo, chọn ứng dụng của bạn và dán địa chỉ bên dưới vào ô Webhook. Zalo hiển thị một khoá bí mật trên trang đó — hãy sao chép lại vào đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Open the Zalo developer portal"
+msgstr "Mở cổng nhà phát triển Zalo"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Send your Official Account any message from Zalo. The moment it reaches us, this step turns green."
+msgstr "Hãy nhắn bất kỳ tin nào tới Official Account của bạn từ Zalo. Ngay khi tin nhắn đến nơi, bước này sẽ chuyển sang màu xanh."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "We reply to the newest Zalo conversation so you can see the whole round trip working."
+msgstr "Chúng tôi sẽ trả lời cuộc trò chuyện Zalo mới nhất để bạn thấy toàn bộ quy trình hoạt động."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Zalo notification templates are approved by Zalo, not by us. Each Health19 feature that sends one has its own template setting."
+msgstr "Mẫu thông báo ZNS do Zalo phê duyệt, không phải chúng tôi. Mỗi tính năng Health19 gửi thông báo đều có thiết lập mẫu riêng."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "%(done)s of %(total)s notification templates are configured."
+msgstr "Đã cấu hình %(done)s trên %(total)s mẫu thông báo."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Proven: Zalo has accepted a notification from this account."
+msgstr "Đã kiểm chứng: Zalo đã nhận một thông báo từ tài khoản này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Not proven yet: no notification has been accepted by Zalo from this account."
+msgstr "Chưa kiểm chứng: Zalo chưa nhận thông báo nào từ tài khoản này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "This is not a Zalo connection."
+msgstr "Đây không phải là kết nối Zalo."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Your Health19 address must start with https:// before Zalo can sign you in or send messages to it. Ask your administrator to set the website address, then try again."
+msgstr "Địa chỉ Health19 của bạn phải bắt đầu bằng https:// thì Zalo mới đăng nhập hoặc gửi tin nhắn tới được. Hãy nhờ quản trị viên đặt địa chỉ website rồi thử lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Zalo sign-in could not be started: %s"
+msgstr "Không thể bắt đầu đăng nhập Zalo: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Paste the webhook secret Zalo shows on your app page."
+msgstr "Hãy dán khoá bí mật webhook mà Zalo hiển thị trên trang ứng dụng của bạn."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "The Zalo module is not installed."
+msgstr "Phân hệ Zalo chưa được cài đặt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_center.py:0
+msgid "Send your Official Account a message from Zalo first — we can only reply to a conversation somebody started."
+msgstr "Hãy nhắn tin cho Official Account của bạn từ Zalo trước — chúng tôi chỉ có thể trả lời cuộc trò chuyện do người khác bắt đầu."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Your browser blocked the sign-in window."
+msgstr "Trình duyệt của bạn đã chặn cửa sổ đăng nhập."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Open the Zalo sign-in page"
+msgstr "Mở trang đăng nhập Zalo"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Signed in"
+msgstr "Đã đăng nhập"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Webhook address"
+msgstr "Địa chỉ webhook"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Webhook secret"
+msgstr "Khoá bí mật webhook"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Zalo shows this on the same page as the webhook address. It is stored encrypted and never shown again."
+msgstr "Zalo hiển thị khoá này trên cùng trang với địa chỉ webhook. Khoá được lưu ở dạng mã hoá và không bao giờ hiển thị lại."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "A secret is already saved."
+msgstr "Đã lưu một khoá bí mật."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Waiting for Zalo to confirm…"
+msgstr "Đang chờ Zalo xác nhận…"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "We received a message from Zalo."
+msgstr "Chúng tôi đã nhận được tin nhắn từ Zalo."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Zalo is connected. New messages arrive in Care Command."
+msgstr "Zalo đã kết nối. Tin nhắn mới sẽ xuất hiện trong Care Command."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Save the secret"
+msgstr "Lưu khoá bí mật"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Skip"
+msgstr "Bỏ qua"

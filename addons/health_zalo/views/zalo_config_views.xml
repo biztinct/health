@@ -8,15 +8,20 @@
         <field name="arch" type="xml">
             <form string="Zalo Configuration">
                 <header>
-                    <button name="action_connect_zalo" type="object" string="Connect to Zalo" class="oe_highlight" invisible="state != 'draft'"/>
+                    <!-- CC-D: connect/disconnect and the webhook now live in
+                         the Channel Center (Care Command Setup → Channel
+                         Center). The buttons that used to sit here started a
+                         PKCE-less OAuth flow (Z6) and flipped a boolean while
+                         claiming to have registered a webhook (Z9); their
+                         methods now refuse with a pointer to the Center. -->
                     <button name="action_test_connection" type="object" string="Test Connection" class="oe_highlight" invisible="state != 'connected'"/>
                     <button name="action_refresh_token" type="object" string="Refresh Token" invisible="state != 'connected'"/>
-                    <button name="action_disconnect_zalo" type="object" string="Disconnect" invisible="state not in ['connected', 'error']"/>
-                    <button name="action_enable_webhook" type="object" string="Enable Webhook" invisible="webhook_enabled or state != 'connected'"/>
-                    <button name="action_disable_webhook" type="object" string="Disable Webhook" invisible="not webhook_enabled"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
                 </header>
                 <sheet string="Zalo Configuration">
+                    <div class="alert alert-info" role="status">
+                        Zalo is connected from <b>Care Command Setup → Channel Center</b>.
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name" class="o_text_overflow"/>
@@ -28,8 +33,13 @@
                             <field name="active"/>
                         </group>
                         <group string="API Information">
-                            <field name="api_base_url"/>
-                            <field name="api_version"/>
+                            <!-- Z5: repointing these exfiltrates the next
+                                 refresh (app_id + refresh_token to a host of
+                                 the attacker's choosing). The model refuses
+                                 the write for anyone but a system
+                                 administrator; the view says so too. -->
+                            <field name="api_base_url" readonly="1"/>
+                            <field name="api_version" readonly="1"/>
                         </group>
                     </group>
                     <group>
@@ -40,7 +50,6 @@
                         </group>
                         <group string="OAuth Status">
                             <field name="token_expires_at" readonly="1"/>
-                            <field name="oauth_redirect_uri" readonly="1" widget="url"/>
                         </group>
                     </group>
                     <group>

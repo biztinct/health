@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.3.0.0',
+    'version': '19.0.4.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -79,10 +79,35 @@ channels and a four-step stepper, plus the server endpoints behind it.
   identity/message, and NOTHING on ``channel.platform.app``: the platform
   plane stays with the platform operator.
 
-Non-goals of this phase: no OAuth popup or code exchange (CC-D/E), no Meta JS
-SDK, no Zalo repair, no email/VoIP wizard, no bus/websocket, no new public
-routes, no real provider call anywhere in the tests, no credentials on any
-server.
+Channel Connection Center — Phase CC-D (Zalo / ZNS)
+===================================================
+
+Zalo becomes the first OAuth-popup channel, and health_zalo's fail-OPEN
+security boundary is replaced by the framework's fail-closed one:
+
+- ``ZaloAdapter`` — OAuth v4 with **mandatory PKCE S256**, token exchange and
+  refresh against ``oauth.zaloapp.com/v4/oa/access_token`` with the app secret
+  in a ``secret_key`` HEADER, ``getoa`` for the OA identity. Zalo's refresh
+  token is SINGLE USE, so every rotation runs under the connection's
+  ``FOR UPDATE NOWAIT`` lock and is persisted on an independent cursor before
+  anything uses it — two concurrent refreshes would burn the 3-month grant.
+- ``/care_channels/zalo/webhook`` — ONE route for the deployment (Zalo's
+  portal allows one URL per app), routed by ``oa_id`` and verified as
+  ``sha256(app_id + raw_body + timestamp + per-OA secret)`` over the RAW
+  bytes, with a replay window. Missing header, unknown OA, no secret and a
+  wrong mac are all the same bodyless 403.
+- The three legacy ``/zalo/*`` routes answer **410 Gone**.
+- ``zalo.config`` is a FACADE: tokens live encrypted on the connection, the
+  10-module ZNS contract keeps working verbatim, and a successful ZNS send is
+  what flips the connection's ``outbound_ok`` / ``provider_approvals``.
+- The Center's Zalo stepper (sign-in popup → portal-guided webhook checklist →
+  say hello) and an honest ZNS sub-card: how many consumer templates are
+  configured, and whether Zalo has ever accepted one.
+
+Non-goals of this phase: no Meta JS SDK or embedded signup (CC-E), no
+email/VoIP wizard (CC-F), no ZNS template designer, no edits to any of the ten
+ZNS consumer modules, no real provider call anywhere in the tests, no
+credentials on any server.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',
@@ -125,6 +150,7 @@ server.
             'health_care_command_channels/static/src/center/channel_center.xml',
         ],
     },
+    'post_init_hook': 'post_init_hook',
     'installable': True,
     'auto_install': False,
     'application': False,

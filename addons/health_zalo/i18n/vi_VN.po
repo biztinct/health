@@ -17,211 +17,253 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:52
 msgid "No Zalo Integration"
 msgstr "Chưa tích hợp Zalo"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:53
 msgid "This contact does not have a Zalo User ID configured. Please link their Zalo account first."
 msgstr "Liên hệ này chưa có ID Zalo. Vui lòng liên kết tài khoản Zalo trước."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:62
 msgid "This contact does not have a Zalo User ID. Please link their Zalo account first."
 msgstr "Liên hệ này chưa có ID Zalo. Vui lòng liên kết tài khoản Zalo trước."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:65
 msgid "Please enter a message to send."
 msgstr "Vui lòng nhập tin nhắn để gửi."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:89
 msgid "Message Sent"
 msgstr "Tin nhắn đã gửi"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:90
 msgid "Zalo message sent successfully to %s"
 msgstr "Đã gửi tin nhắn Zalo thành công đến %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:98
 msgid "Failed to send Zalo message: %s"
 msgstr "Không thể gửi tin nhắn Zalo: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:79
 msgid "Please enter a name for the new contact."
 msgstr "Vui lòng nhập tên cho liên hệ mới."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:91
 msgid "Created new contact and linked to Zalo conversation: %s"
 msgstr "Đã tạo liên hệ mới và liên kết với cuộc trò chuyện Zalo: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:96
 msgid "Please select a contact to link."
 msgstr "Vui lòng chọn liên hệ để liên kết."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:101
 msgid "Linked Zalo conversation to contact: %s"
 msgstr "Đã liên kết cuộc trò chuyện Zalo với liên hệ: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:107
 msgid "Success"
 msgstr "Thành công"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/health_patient.py:63
 msgid "Zalo Conversations"
 msgstr "Cuộc trò chuyện Zalo"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/health_patient.py:76
 msgid "Send Zalo Notification"
 msgstr "Gửi thông báo Zalo"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_message.py:157
 msgid "Only outgoing messages can be sent"
 msgstr "Chỉ có thể gửi tin nhắn đi"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_message.py:160
 msgid "Message has already been sent"
 msgstr "Tin nhắn đã được gửi"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_message.py:188
 msgid "No image attachment found"
 msgstr "Không tìm thấy hình ảnh đính kèm"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_message.py:198
 msgid "Message type %s not yet implemented"
 msgstr "Loại tin nhắn %s chưa được hỗ trợ"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_message.py:221
 msgid "Failed to send message: %s"
 msgstr "Không thể gửi tin nhắn: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_message.py:242
 msgid "Only failed messages can be retried"
 msgstr "Chỉ tin nhắn thất bại mới có thể gửi lại"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/crm_lead.py:42
 msgid "This contact does not have a Zalo User ID configured."
 msgstr "Liên hệ này chưa có ID Zalo."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/res_partner.py:186
 msgid "Link Zalo User"
 msgstr "Liên kết người dùng Zalo"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:191
 msgid "Please configure App ID and App Secret first."
 msgstr "Vui lòng cấu hình App ID và App Secret trước."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:233
 msgid "Failed to exchange authorization code for token: %s"
 msgstr "Không thể đổi mã ủy quyền lấy token: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:240
 msgid "No refresh token available. Please reconnect to Zalo."
 msgstr "Không có refresh token. Vui lòng kết nối lại Zalo."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:255
 msgid "Access token refreshed successfully"
 msgstr "Đã làm mới access token thành công"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:260
 msgid "Failed to refresh token: %s"
 msgstr "Không thể làm mới token: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:275
 msgid "Disconnected"
 msgstr "Ngắt kết nối"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:276
 msgid "Zalo account disconnected successfully"
 msgstr "Đã ngắt kết nối tài khoản Zalo thành công"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:285
 msgid "No access token available. Please connect to Zalo first."
 msgstr "Không có access token. Vui lòng kết nối Zalo trước."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:294
 msgid "Connection Successful"
 msgstr "Kết nối thành công"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:295
 msgid "Connected to Zalo OA: %s"
 msgstr "Đã kết nối Zalo OA: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:300
 msgid "Failed to fetch OA profile"
 msgstr "Không thể tải hồ sơ OA"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:303
 msgid "Connection test failed: %s"
 msgstr "Kiểm tra kết nối thất bại: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:356
 msgid "Webhook Enabled"
 msgstr "Đã bật Webhook"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:357
 msgid "Webhook URL: %s"
 msgstr "URL Webhook: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:370
 msgid "Webhook Disabled"
 msgstr "Đã tắt Webhook"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_config.py:371
 msgid "Webhook has been disabled"
 msgstr "Webhook đã được tắt"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/models/zalo_conversation.py:190
 msgid "Link to Contact"
 msgstr "Liên kết với liên hệ"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/services/zalo_api.py:46
 msgid "No valid access token available. Please connect to Zalo first."
 msgstr "Không có access token hợp lệ. Vui lòng kết nối Zalo trước."
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/services/zalo_api.py:79
 msgid "Zalo API error: %s"
 msgstr "Lỗi API Zalo: %s"
 
 #. module: health_zalo
+#. odoo-python
 #: code:addons/health_zalo/services/zalo_api.py:91
 msgid "Failed to connect to Zalo API: %s"
 msgstr "Không thể kết nối API Zalo: %s"
@@ -674,3 +716,27 @@ msgstr "Đã giao"
 #: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
 msgid "Type a message..."
 msgstr "Nhập tin nhắn..."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Only a system administrator can change where Zalo requests are sent (%s)."
+msgstr "Chỉ quản trị viên hệ thống mới được thay đổi nơi gửi yêu cầu Zalo (%s)."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Connect Zalo from Care Command Setup → Channel Center. The old sign-in on this form has been retired: it did not use the security Zalo now requires."
+msgstr "Hãy kết nối Zalo từ Care Command Setup → Trung tâm Kênh. Cách đăng nhập cũ trên biểu mẫu này đã ngừng hoạt động: nó không dùng cơ chế bảo mật mà Zalo hiện yêu cầu."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Turn this channel off from Care Command Setup → Channel Center, so the conversations and the audit trail stay consistent."
+msgstr "Hãy tắt kênh này từ Care Command Setup → Trung tâm Kênh để cuộc trò chuyện và nhật ký kiểm toán luôn nhất quán."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/res_partner.py:0
+msgid "Zalo is not connected yet. Open Care Command Setup → Channel Center and connect your Official Account."
+msgstr "Zalo chưa được kết nối. Hãy mở Care Command Setup → Trung tâm Kênh và kết nối Official Account của bạn."

@@ -30,9 +30,15 @@ Messaging rules that hold for every adapter here:
 import json
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urlencode
 
 import requests
+
+from odoo import fields, tools
+from odoo.exceptions import UserError
+
+from . import channel_crypto
 
 _logger = logging.getLogger(__name__)
 
@@ -42,6 +48,22 @@ HTTP_TIMEOUT = 15
 GRAPH_BASE = 'https://graph.facebook.com'
 GRAPH_VERSION = 'v21.0'
 TELEGRAM_BASE = 'https://api.telegram.org'
+
+# Zalo (CC-D, verified 2026-07-25 — architecture §3/§7, handover §2.6).
+# Authorization and token exchange live on oauth.zaloapp.com; everything else
+# (getoa, messaging, ZNS) on openapi.zalo.me. health_zalo's `api_base_url`
+# pointed BOTH at openapi.zalo.me, which is why its token calls never worked
+# (defect Z8).
+ZALO_OAUTH_BASE = 'https://oauth.zaloapp.com'
+ZALO_OPENAPI_BASE = 'https://openapi.zalo.me'
+ZALO_PERMISSION_PATH = '/v4/oa/permission'
+ZALO_TOKEN_PATH = '/v4/oa/access_token'
+ZALO_GETOA_PATH = '/v2.0/oa/getoa'
+ZALO_CALLBACK_PATH = '/channel_hub/oauth/callback/zalo'
+ZALO_WEBHOOK_PATH = '/care_channels/zalo/webhook'
+# The access token lives ~25 h; refresh this far ahead of the wire so a cron
+# tick that lands late still has a working grant to renew.
+ZALO_REFRESH_AHEAD_HOURS = 3
 
 # Provider message types we map onto our own small set.
 _WA_TYPE_MAP = {'text': 'text', 'image': 'image', 'document': 'file',
@@ -240,6 +262,39 @@ class BaseChannelAdapter:
             return resp.json() or {}
         except ValueError:
             return {}
+
+    def _form_post(self, url, *, data=None, headers=None):
+        """``application/x-www-form-urlencoded`` POST.
+
+        OAuth token endpoints take a form body, not JSON — Zalo's
+        ``/v4/oa/access_token`` refuses anything else, and the app secret
+        travels in a HEADER (never in the URL, never in the body).
+        """
+        try:
+            resp = requests.post(url, data=data, headers=headers,
+                                 timeout=HTTP_TIMEOUT)
+        except requests.RequestException as exc:
+            raise ChannelSendError('network error: %s' % exc) from exc
+        if resp.status_code >= 300:
+            raise ChannelSendError('HTTP %s: %s' % (resp.status_code,
+                                                    (resp.text or '')[:300]))
+        try:
+            return resp.json() or {}
+        except ValueError:
+            return {}
+
+    # ------------------------------------------------------------------
+    # Failure classification — a transient wobble must not tear a working
+    # grant down, and a lost grant must not be papered over as a wobble.
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _is_auth_failure(error):
+        text = str(error or '').lower()
+        if 'network error' in text or 'timed out' in text:
+            return False
+        if any(marker in text for marker in ('http 5', 'internal server')):
+            return False
+        return True
 
 
 class _StubAdapter(BaseChannelAdapter):
@@ -460,6 +515,277 @@ class ZaloAdapter(_StubAdapter):
                         'channel_hub.guide.zalo.verify',
                         'channel_hub.guide.zalo.test'],
     }
+
+    # ------------------------------------------------------------------
+    # Plumbing
+    # ------------------------------------------------------------------
+    def _oauth_base(self):
+        return self._api_base(ZALO_OAUTH_BASE)
+
+    def _openapi_base(self):
+        return self._api_base(ZALO_OPENAPI_BASE)
+
+    def _platform_app(self):
+        """The deployment's Zalo app (plane 1). Absent ⇒ refuse, never guess."""
+        app = self.env['channel.platform.app'].sudo()._get_for_provider('zalo')
+        if not app or not app.client_id:
+            raise ChannelSendError(
+                'the Zalo platform application is not configured')
+        return app
+
+    def _app_secret(self, app=None):
+        secret = (app or self._platform_app())._get_secret()
+        if not secret:
+            raise ChannelSendError(
+                'the Zalo platform application has no secret')
+        return secret
+
+    def _base_url(self):
+        return (self.env['ir.config_parameter'].sudo()
+                .get_param('web.base.url') or '').strip().rstrip('/')
+
+    def _redirect_uri(self):
+        return '%s%s' % (self._base_url(), ZALO_CALLBACK_PATH)
+
+    def webhook_url(self):
+        """The ONE webhook URL for this deployment (portal-only, one per app)."""
+        return '%s%s' % (self._base_url(), ZALO_WEBHOOK_PATH)
+
+    # ------------------------------------------------------------------
+    # Authorization — OAuth v4 with MANDATORY PKCE S256
+    # ------------------------------------------------------------------
+    def authorize_url(self, session, state, code_challenge):
+        """The URL the tenant's popup opens.
+
+        ``state`` and ``code_challenge`` are passed IN rather than read off
+        ``session``: the raw state exists exactly once, in the return value of
+        ``oauth.session.create_for`` (the row stores only its sha256), so it
+        cannot be recovered from the record — which is the point of hashing it.
+        No secret material of any kind goes into this URL; the app id is public.
+        """
+        app = self._platform_app()
+        if not state or not code_challenge:
+            raise ChannelSendError('zalo requires a state and a PKCE challenge')
+        params = {
+            'app_id': app.client_id,
+            'redirect_uri': self._redirect_uri(),
+            'code_challenge': code_challenge,
+            'state': state,
+        }
+        return '%s%s?%s' % (self._oauth_base(), ZALO_PERMISSION_PATH,
+                            urlencode(params))
+
+    def handle_callback(self, session, params):
+        """Exchange the authorization code, learn who we are, record readiness.
+
+        Called by ``care.channel.oauth.session._handle_callback`` inside a
+        savepoint, AFTER the single-use state has been burned.
+        """
+        conn = self.connection
+        code = (params or {}).get('code') or (params or {}).get('oa_code')
+        if not code:
+            raise ChannelSendError('the Zalo callback carried no code')
+        verifier = session._get_pkce_verifier()
+        if not verifier:
+            raise ChannelSendError(
+                'this authorization attempt has no PKCE verifier')
+        app = self._platform_app()
+        data = self._form_post(
+            '%s%s' % (self._oauth_base(), ZALO_TOKEN_PATH),
+            data={
+                'app_id': app.client_id,
+                'grant_type': 'authorization_code',
+                'code': code,
+                'code_verifier': verifier,
+            },
+            headers={'secret_key': self._app_secret(app)})
+        tokens = self._read_token_response(data)
+
+        # Persist BEFORE anything else touches the wire: Zalo's refresh token
+        # is single-use, so a token we hold but never stored is a dead OA.
+        self._store_tokens(**tokens)
+
+        oa = self._fetch_oa(tokens['access_token'])
+        conn.sudo()._internal().write({
+            'resource_external_id': oa['id'],
+            'resource_display_name': oa['name'] or oa['id'],
+        })
+        Check = self.env['care.channel.readiness.check']
+        for key in ('authorization_valid', 'resource_selected', 'token_fresh'):
+            Check.upsert_check(conn.sudo(), key, 'pass')
+        try:
+            conn.sudo()._transition('configuring',
+                                    reason='zalo authorization complete')
+        except UserError:
+            # Already past this point (a re-authorization of a live OA): the
+            # state machine refusing a backwards move is not a failure here.
+            _logger.info('care_channels: zalo connection %s stays in %s after '
+                         'authorization', conn.id, conn.state)
+        self._sync_legacy_config(oa)
+        # NOTHING about the grant is returned: the engine renders a generic
+        # page and the browser learns the outcome by re-reading the Center.
+        return {'ok': True, 'next_step': 'webhook'}
+
+    # ------------------------------------------------------------------
+    # Refresh — single-use rotation under the row lock
+    # ------------------------------------------------------------------
+    def refresh_authorization(self):
+        """Rotate the grant. Returns ``'locked'`` when another worker is on it.
+
+        Two concurrent refreshes would burn the 3-month grant: Zalo issues a
+        NEW refresh token on every use and invalidates the old one the moment
+        it answers.
+        """
+        return self.connection.sudo()._with_refresh_lock(self._do_refresh)
+
+    def _do_refresh(self):
+        conn = self.connection
+        refresh_token = conn.sudo()._get_secret('refresh_token')
+        if not refresh_token:
+            raise ChannelSendError('this Zalo connection has no refresh token')
+        app = self._platform_app()
+        Audit = self.env['care.channel.audit']
+        Check = self.env['care.channel.readiness.check']
+        try:
+            data = self._form_post(
+                '%s%s' % (self._oauth_base(), ZALO_TOKEN_PATH),
+                data={
+                    'app_id': app.client_id,
+                    'grant_type': 'refresh_token',
+                    'refresh_token': refresh_token,
+                },
+                headers={'secret_key': self._app_secret(app)})
+            tokens = self._read_token_response(data)
+        except ChannelSendError as exc:
+            # The OLD refresh token is untouched — we wrote nothing. Only an
+            # auth-class refusal costs the connection its token_fresh check; a
+            # network wobble must not tear a working channel down.
+            Audit._log('refresh_fail', connection=conn, detail=exc)
+            if self._is_auth_failure(exc):
+                Check.upsert_check(conn.sudo(), 'token_fresh', 'fail',
+                                   detail=exc)
+            raise
+        self._store_tokens(**tokens)
+        Check.upsert_check(conn.sudo(), 'token_fresh', 'pass')
+        Audit._log('refresh_ok', connection=conn, detail='zalo token rotated')
+        return {'ok': True,
+                'token_expires_at': tokens.get('token_expires_at')}
+
+    # ------------------------------------------------------------------
+    # Health
+    # ------------------------------------------------------------------
+    def health_check(self):
+        conn = self.connection
+        if not conn.sudo().access_token_enc:
+            return {'ok': False, 'error': 'zalo connection is not authorized'}
+        expires = conn.token_expires_at
+        if expires and expires <= fields.Datetime.now() + timedelta(
+                hours=ZALO_REFRESH_AHEAD_HOURS):
+            try:
+                self.refresh_authorization()
+            except ChannelSendError as exc:
+                return {'ok': False, 'error': str(exc)}
+            conn.invalidate_recordset(['access_token_enc', 'token_expires_at'])
+        try:
+            oa = self._fetch_oa(conn.sudo()._get_secret('access_token'))
+        except ChannelSendError as exc:
+            return {'ok': False, 'error': str(exc)}
+        return {'ok': True, 'resource': oa['id']}
+
+    def verify_webhook(self, raw_body, headers):
+        # Imported here: webhook_verify imports nothing from this module, and
+        # a module-level import would still be a needless cycle risk.
+        from .webhook_verify import verify_zalo
+        return verify_zalo(self.connection, raw_body, headers)
+
+    # ------------------------------------------------------------------
+    # Shared internals
+    # ------------------------------------------------------------------
+    def _read_token_response(self, data):
+        """Zalo answers 200 with an error BODY as readily as it answers 4xx."""
+        data = data or {}
+        access = data.get('access_token')
+        if not access:
+            raise ChannelSendError('zalo refused the token request: %s' % (
+                data.get('error_description') or data.get('error_name')
+                or data.get('message') or data.get('error') or 'unknown error'))
+        try:
+            expires_in = int(data.get('expires_in') or 0)
+        except (TypeError, ValueError):
+            expires_in = 0
+        return {
+            'access_token': access,
+            'refresh_token': data.get('refresh_token') or None,
+            'token_expires_at': (fields.Datetime.now()
+                                 + timedelta(seconds=expires_in)
+                                 if expires_in else None),
+        }
+
+    def _store_tokens(self, access_token=None, refresh_token=None,
+                      token_expires_at=None, granted_scopes=None):
+        """Persist rotated credentials, fresh cursor first.
+
+        ``_persist_refreshed_tokens`` commits on an independent cursor so a
+        rotation survives a later rollback of the request transaction. Under
+        ``--test-enable`` that cursor cannot see a record the test transaction
+        created (ledger §5.63), so the write happens in-transaction instead —
+        the same either/or the CC-B send-failure writer uses, and what lets the
+        suites assert on the stored ciphertext.
+        """
+        conn = self.connection
+        persisted = False
+        if not (tools.config.get('test_enable') or tools.config.get('test_file')):
+            persisted = conn.sudo()._persist_refreshed_tokens(
+                access_token=access_token, refresh_token=refresh_token,
+                token_expires_at=token_expires_at,
+                granted_scopes=granted_scopes)
+        if persisted:
+            return True
+        vals = {}
+        if access_token is not None:
+            vals['access_token_enc'] = channel_crypto.encrypt(
+                self.env, access_token)
+        if refresh_token is not None:
+            vals['refresh_token_enc'] = channel_crypto.encrypt(
+                self.env, refresh_token)
+        if token_expires_at is not None:
+            vals['token_expires_at'] = token_expires_at
+        if granted_scopes is not None:
+            vals['granted_scopes'] = granted_scopes
+        if vals:
+            conn.sudo()._internal().write(vals)
+        return bool(vals)
+
+    def _fetch_oa(self, access_token):
+        """``getoa`` — the OA's own id and name. This IS resource selection:
+        the grant fixes which Official Account we were given."""
+        data = self._get('%s%s' % (self._openapi_base(), ZALO_GETOA_PATH),
+                         headers={'access_token': access_token})
+        if data.get('error'):
+            raise ChannelSendError('zalo refused the profile call: %s'
+                                   % (data.get('message') or data.get('error')))
+        payload = data.get('data') or {}
+        oa_id = str(payload.get('oa_id') or '')
+        if not oa_id:
+            raise ChannelSendError('zalo returned no OA identity')
+        return {'id': oa_id, 'name': payload.get('name') or ''}
+
+    def _sync_legacy_config(self, oa):
+        """Hand the news to health_zalo, if it is installed.
+
+        SOFT reference on purpose: health_zalo depends on THIS module, never
+        the other way round, so the framework must work with or without it.
+        """
+        env = self.env
+        if 'zalo.config' not in env:
+            return False
+        try:
+            return env['zalo.config'].sudo()._sync_from_connection(
+                self.connection, oa_id=oa.get('id'), oa_name=oa.get('name'))
+        except Exception:  # noqa: BLE001 — the legacy bridge is never fatal
+            _logger.exception('care_channels: zalo legacy config sync failed '
+                              'for connection %s', self.connection.id)
+            return False
 
 
 @register_adapter('zns')

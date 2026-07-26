@@ -22,10 +22,22 @@ signature proves the sender is Meta, not which tenant the payload belongs to.
 import hashlib
 import hmac
 import logging
+import time
 
 _logger = logging.getLogger(__name__)
 
 VERIFY_TOKEN_KEY = 'verify_token'
+
+# Zalo signs `app_id + raw_body + timestamp + oa_secret` with a plain SHA-256
+# (NOT an HMAC — the secret is concatenated, not keyed). The per-OA secret is
+# tenant material from the app's portal page; the app id is platform material.
+ZALO_SIGNATURE_HEADER = 'X-ZEvent-Signature'
+ZALO_TIMESTAMP_HEADER = 'X-ZEvent-Timestamp'
+# Replay window (architecture §7.5). Widened, never disabled, through
+# `channel_hub.zalo_webhook_skew_seconds` — a deployment whose clock drifts is
+# an ops problem, not a reason to ship a code change.
+ZALO_DEFAULT_SKEW_SECONDS = 300
+ZALO_SKEW_PARAM = 'channel_hub.zalo_webhook_skew_seconds'
 
 
 def _app_secret(platform_app):
@@ -95,3 +107,79 @@ def verify_telegram(connection, path_secret, header_secret):
                                                  str(header_secret)):
         return False
     return True
+
+
+def _zalo_timestamp_ok(env, raw_timestamp):
+    """A timestamp inside the replay window, in seconds OR milliseconds.
+
+    Zalo sends epoch milliseconds; the header is part of the signed string, so
+    an attacker cannot move it — but a captured, still-valid request could
+    otherwise be replayed forever.
+    """
+    try:
+        value = int(str(raw_timestamp).strip())
+    except (TypeError, ValueError):
+        return False
+    if value > 10 ** 11:          # milliseconds
+        value = value // 1000
+    try:
+        skew = int(env['ir.config_parameter'].sudo().get_param(
+            ZALO_SKEW_PARAM) or ZALO_DEFAULT_SKEW_SECONDS)
+    except (TypeError, ValueError):
+        skew = ZALO_DEFAULT_SKEW_SECONDS
+    skew = max(skew, 60)
+    return abs(time.time() - value) <= skew
+
+
+def verify_zalo(connection, raw_body, headers, platform_app=None):
+    """``X-ZEvent-Signature: mac=<hex>`` over the RAW request bytes.
+
+    ``mac = sha256(app_id + raw_body + timestamp + per_OA_webhook_secret)``
+    (handover §2.6). Every missing piece — no platform app, no per-OA secret,
+    no header, no timestamp, a stale timestamp, a wrong mac — returns False.
+    The caller answers all of them with the same bodyless 403, so the route is
+    not an oracle for which OA exists here.
+
+    This is the antithesis of what it replaces: health_zalo's webhook accepted
+    events when no secret was configured, accepted them when no header was
+    sent, and hashed RE-SERIALISED JSON that could never match anything Zalo
+    signs (defect Z2, ledger §5.61).
+    """
+    if not connection:
+        return False
+    env = connection.env
+    app = platform_app if platform_app is not None else \
+        env['channel.platform.app'].sudo()._get_for_provider('zalo')
+    app_id = (app.client_id or '') if app else ''
+    if not app_id:
+        _logger.warning('Zalo webhook rejected: no platform application id')
+        return False
+    try:
+        secret = connection.sudo()._get_secret('provider_secret') or ''
+    except Exception:  # noqa: BLE001 — a corrupt secret must reject, not 500
+        _logger.warning('Zalo webhook rejected: connection %s secret could '
+                        'not be read', connection.id)
+        return False
+    if not secret:
+        _logger.warning('Zalo webhook rejected: connection %s has no webhook '
+                        'secret (signature validation cannot run)',
+                        connection.id)
+        return False
+    headers = headers or {}
+    provided = (headers.get(ZALO_SIGNATURE_HEADER)
+                or headers.get(ZALO_SIGNATURE_HEADER.lower()) or '').strip()
+    timestamp = (headers.get(ZALO_TIMESTAMP_HEADER)
+                 or headers.get(ZALO_TIMESTAMP_HEADER.lower()) or '').strip()
+    if not provided or not timestamp:
+        return False
+    if provided.lower().startswith('mac='):
+        provided = provided[len('mac='):]
+    provided = provided.strip().lower()
+    if not _zalo_timestamp_ok(env, timestamp):
+        _logger.warning('Zalo webhook rejected: timestamp outside the replay '
+                        'window')
+        return False
+    payload = (app_id.encode() + (raw_body or b'') + str(timestamp).encode()
+               + secret.encode())
+    expected = hashlib.sha256(payload).hexdigest()
+    return hmac.compare_digest(expected, provided)

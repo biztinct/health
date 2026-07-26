@@ -1,0 +1,28 @@
+# CC-D live route evidence — 2026-07-26T01:35:08Z (vietuat)
+
+## 1. The NEW fail-closed webhook /care_channels/zalo/webhook
+Every refusal is the SAME bodyless 403 — a missing header, an unknown OA,
+a connection with no secret and a wrong mac are indistinguishable.
+
+bad mac                 -> HTTP 403, 0 bytes
+no signature header     -> HTTP 403, 0 bytes
+no timestamp header     -> HTTP 403, 0 bytes
+unknown oa_id           -> HTTP 403, 0 bytes
+no oa_id in the body    -> HTTP 403, 0 bytes
+not JSON at all         -> HTTP 403, 0 bytes
+empty body              -> HTTP 403, 0 bytes
+GET (method not routed) -> HTTP 405
+
+## 2. The three retired health_zalo routes — 410 Gone
+POST /zalo/webhook        -> HTTP 410
+GET  /zalo/webhook        -> HTTP 410
+GET  /zalo/webhook/test   -> HTTP 410
+GET  /zalo/oauth/callback -> HTTP 410
+
+body served by the shim (no deployment detail in it):
+    This Zalo endpoint has been retired. Configure Zalo from Care Command Setup → Channel Center.
+
+## 3. The framework OAuth callback is not an oracle
+unknown state  -> HTTP 200
+no state       -> HTTP 200
+(200 + the same generic page in both cases — the refusal is invisible)

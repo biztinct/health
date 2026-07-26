@@ -89,8 +89,15 @@ export class ChannelCenter extends Component {
             snippet: "",
             demoUrl: "",
             copied: false,
+            copiedWebhook: false,
             confirmOff: false,
             toast: null,
+            // Zalo (CC-D): the sign-in popup and the portal-guided webhook step
+            authUrl: "",
+            popupBlocked: false,
+            webhookUrl: "",
+            webhookSecret: "",
+            hasWebhookSecret: false,
         });
 
         // A hidden tab polls nothing: the interval is torn down on hide and
@@ -114,6 +121,8 @@ export class ChannelCenter extends Component {
             document.removeEventListener("visibilitychange", this._onVisibility);
             clearTimeout(this._toastTimer);
             clearTimeout(this._copyTimer);
+            clearTimeout(this._copyWebhookTimer);
+            clearInterval(this._popupTimer);
         });
     }
 
@@ -250,6 +259,9 @@ export class ChannelCenter extends Component {
         await this._guarded(async () => {
             const info = await this.orm.call(MODEL, "center_begin", [card.channel]);
             this._resetWizard(card.channel, info);
+            if (card.channel === "zalo" && info.connection_id) {
+                await this._loadZaloInfo(info.connection_id);
+            }
             if (card.channel === "webchat" && info.connection_id) {
                 const settings = await this.orm.call(
                     MODEL, "center_webchat_settings", [info.connection_id]);
@@ -274,12 +286,106 @@ export class ChannelCenter extends Component {
         this.state.token = "";
         this.state.botName = "";
         this.state.copied = false;
+        this.state.copiedWebhook = false;
         this.state.confirmOff = false;
+        this.state.authUrl = "";
+        this.state.popupBlocked = false;
+        this.state.webhookSecret = "";
         // A reconnect on a channel whose key we still hold skips the paste
         // screen: the tenant should never be asked for a credential twice.
         if (this.state.mode === "guided_secret" && this.state.hasCredentials) {
             this.state.step = 2;
         }
+    }
+
+    // -----------------------------------------------------------------
+    // Zalo (CC-D): sign-in popup + the portal-guided webhook checklist
+    // -----------------------------------------------------------------
+    async _loadZaloInfo(connectionId) {
+        const info = await this.orm.call(MODEL, "center_zalo_info", [connectionId]);
+        this.state.webhookUrl = info.webhook_url || "";
+        this.state.hasWebhookSecret = !!info.has_webhook_secret;
+        // A tenant whose OA is already authorized starts on the webhook step.
+        if (this.state.mode === "oauth_popup" && this.state.hasCredentials) {
+            this.state.step = Math.max(this.state.step, 1);
+        }
+    }
+
+    async authorizeZalo() {
+        await this._guarded(async () => {
+            const res = await this.orm.call(MODEL, "center_zalo_authorize",
+                [this.state.connectionId]);
+            this.state.authUrl = res.url || "";
+            // A blocked popup must never look like a silent failure: the URL
+            // is shown as a normal link the tenant can click themselves.
+            const popup = window.open(res.url, "h19_zalo_signin",
+                "width=520,height=720,noopener");
+            this.state.popupBlocked = !popup;
+            if (popup) {
+                this._watchPopup(popup);
+            }
+            await this.load();
+        });
+    }
+
+    /** Re-read the Center when the sign-in window closes or we regain focus. */
+    _watchPopup(popup) {
+        clearInterval(this._popupTimer);
+        const finish = () => {
+            clearInterval(this._popupTimer);
+            this._popupTimer = null;
+            window.removeEventListener("focus", finish);
+            this.load().then(() => {
+                const card = this.openCard;
+                if (card && card.connection_id) {
+                    this.state.hasCredentials = true;
+                    this._loadZaloInfo(card.connection_id).catch(() => {});
+                    if (this.state.step === 0) {
+                        this.state.step = 1;
+                    }
+                }
+            });
+        };
+        window.addEventListener("focus", finish, { once: true });
+        this._popupTimer = setInterval(() => {
+            let closed = false;
+            try {
+                closed = popup.closed;
+            } catch (e) {
+                closed = true;
+            }
+            if (closed) {
+                finish();
+            }
+        }, 1000);
+    }
+
+    async copyWebhookUrl() {
+        this.state.copiedWebhook = await this._copy(this.state.webhookUrl || "");
+        if (this.state.copiedWebhook) {
+            clearTimeout(this._copyWebhookTimer);
+            this._copyWebhookTimer = setTimeout(
+                () => (this.state.copiedWebhook = false), 3000);
+        }
+    }
+
+    async saveZaloSecret() {
+        const secret = (this.state.webhookSecret || "").trim();
+        if (!secret) {
+            return;
+        }
+        await this._guarded(async () => {
+            try {
+                await this.orm.call(MODEL, "center_zalo_set_webhook_secret",
+                    [this.state.connectionId, secret]);
+                this.state.hasWebhookSecret = true;
+                this.state.step = 2;
+                await this.load();
+            } finally {
+                // Zeroed on BOTH paths: a rejected paste is still a secret.
+                this.state.webhookSecret = "";
+            }
+        });
     }
 
     openManage(card) {
@@ -290,7 +396,16 @@ export class ChannelCenter extends Component {
         this.state.mode = card.mode;
         this.state.confirmOff = false;
         this.state.token = "";
+        this.state.webhookSecret = "";
+        if (card.channel === "zalo" && card.connection_id) {
+            this._loadZaloInfo(card.connection_id).catch((e) => this._err(e));
+        }
         this._focusModal();
+    }
+
+    /** The ZNS sub-card's honest readiness, if the catalogue carries one. */
+    get znsCard() {
+        return this.state.cards.find((c) => c.channel === "zns") || null;
     }
 
     closeStepper() {
@@ -373,7 +488,16 @@ export class ChannelCenter extends Component {
     }
 
     async copySnippet() {
-        const text = this.state.snippet || "";
+        const done = await this._copy(this.state.snippet || "");
+        this.state.copied = done;
+        if (done) {
+            clearTimeout(this._copyTimer);
+            this._copyTimer = setTimeout(() => (this.state.copied = false), 3000);
+        }
+    }
+
+    /** Clipboard with an execCommand fallback (the API needs a secure context). */
+    async _copy(text) {
         let done = false;
         try {
             if (navigator.clipboard && window.isSecureContext) {
@@ -384,8 +508,6 @@ export class ChannelCenter extends Component {
             done = false;
         }
         if (!done) {
-            // execCommand fallback: clipboard API needs a secure context, and
-            // vietuat is still served over plain http for some hosts.
             const area = document.createElement("textarea");
             area.value = text;
             area.setAttribute("readonly", "readonly");
@@ -400,13 +522,10 @@ export class ChannelCenter extends Component {
             }
             document.body.removeChild(area);
         }
-        this.state.copied = done;
         if (!done) {
             this.toast(_t("Select the line and copy it manually."));
-        } else {
-            clearTimeout(this._copyTimer);
-            this._copyTimer = setTimeout(() => (this.state.copied = false), 3000);
         }
+        return done;
     }
 
     // -----------------------------------------------------------------

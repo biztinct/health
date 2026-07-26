@@ -40,7 +40,8 @@ from odoo.addons.health_care_command.models.care_conversation import (
 )
 
 from ..services.adapters import (
-    MODE_GUIDED_SECRET, MODE_ONE_CLICK, ChannelSendError,
+    MODE_GUIDED_SECRET, MODE_OAUTH_POPUP, MODE_ONE_CLICK, ZALO_WEBHOOK_PATH,
+    ChannelSendError,
 )
 from ..services.redact import redact
 from .care_channel_connection import SENDABLE_STATES
@@ -52,13 +53,33 @@ CENTER_CHANNELS = [key for key, _label in CHANNEL_SELECTION]
 
 # Modes whose stepper is actually implemented. Everything else renders its
 # structure and says so — an honest "not yet" beats a button that cannot work.
-IMPLEMENTED_MODES = {MODE_GUIDED_SECRET, MODE_ONE_CLICK}
+IMPLEMENTED_MODES = {MODE_GUIDED_SECRET, MODE_ONE_CLICK, MODE_OAUTH_POPUP}
 
-# Only these channels have a working begin/validate/test flow in CC-C. The
-# `call` adapter also declares guided_secret, but its credential exchange is
-# CC-F (and its endpoints are unverified — architecture §12.8), so it must not
-# be offered here.
-CENTER_IMPLEMENTED_CHANNELS = {'telegram', 'webchat'}
+# Only these channels have a working begin/validate/test flow. The `call`
+# adapter also declares guided_secret and whatsapp/fb/email declare a popup or
+# embedded signup, but their credential exchanges are CC-E/CC-F — BOTH gates
+# must pass, so those cards stay honestly "in an upcoming update".
+CENTER_IMPLEMENTED_CHANNELS = {'telegram', 'webchat', 'zalo'}
+
+# ZNS template ids live in per-module ir.config_parameters (architecture §1.2,
+# the frozen 10-module contract). The Center counts how many are actually set:
+# a tenant with a verified OA and zero configured templates can send nothing,
+# and saying "Connected" there would be a lie. Read-only honesty — the Center
+# never writes these, and each consumer module owns its own key.
+ZNS_TEMPLATE_PARAMS = (
+    'health_workflow_auto.zns_template_visit_offer',
+    'health_self_booking.zns_template_invite',
+    'health_telehealth.zns_template_join',
+    'health_schedule_drag.zns_template_rescheduled',
+    'health_messaging.zns_template_confirmation',
+    'health_messaging.zns_template_reminder24',
+    'health_messaging.zns_template_reminder2',
+    'health_messaging.zns_template_cancellation',
+    'health_family_link.zns_template_family_link',
+    'health_family_link.zns_template_family_snapshot',
+    'health_family_messages.zns_template_reply',
+    'health_pwa_family.zns_template_update',
+)
 
 # A pasted Telegram bot token is `<bot id>:<secret>`. Deliberately loose: the
 # real validation is getMe, this only avoids burning an HTTP call (and a log
@@ -189,11 +210,39 @@ class CareChannelConnectionCenter(models.Model):
             'channel_hub.guide.fb.page': {'title': _('Choose your Page')},
             'channel_hub.guide.fb.connecting': {'title': _('We set things up')},
             'channel_hub.guide.fb.test': {'title': _('Send a test')},
-            'channel_hub.guide.zalo.signin': {'title': _('Sign in with Zalo')},
-            'channel_hub.guide.zalo.webhook': {'title': _('Point Zalo at us')},
-            'channel_hub.guide.zalo.verify': {'title': _('Wait for confirmation')},
-            'channel_hub.guide.zalo.test': {'title': _('Send a test')},
-            'channel_hub.guide.zns.templates': {'title': _('Message templates')},
+            # -- Zalo (OAuth popup + a portal-guided webhook step) ---------
+            'channel_hub.guide.zalo.signin': {
+                'title': _('Sign in with Zalo'),
+                'body': _('A Zalo window opens. Sign in as the owner of your '
+                          'Official Account and allow Health19 to work with '
+                          'it. Your Zalo password is only ever typed on '
+                          "Zalo's own page."),
+            },
+            'channel_hub.guide.zalo.webhook': {
+                'title': _('Point Zalo at us'),
+                'body': _('Open the Zalo developer portal, choose your app, '
+                          'and paste the address below into the Webhook '
+                          'field. Zalo shows a secret on that page — copy it '
+                          'back here.'),
+                'link': 'https://developers.zalo.me/app',
+                'link_label': _('Open the Zalo developer portal'),
+            },
+            'channel_hub.guide.zalo.verify': {
+                'title': _('Wait for confirmation'),
+                'body': _('Send your Official Account any message from Zalo. '
+                          'The moment it reaches us, this step turns green.'),
+            },
+            'channel_hub.guide.zalo.test': {
+                'title': _('Send a test'),
+                'body': _('We reply to the newest Zalo conversation so you '
+                          'can see the whole round trip working.'),
+            },
+            'channel_hub.guide.zns.templates': {
+                'title': _('Message templates'),
+                'body': _('Zalo notification templates are approved by Zalo, '
+                          'not by us. Each Health19 feature that sends one '
+                          'has its own template setting.'),
+            },
             'channel_hub.guide.email.signin': {'title': _('Sign in to your mailbox')},
             'channel_hub.guide.email.mailbox': {'title': _('Confirm the mailbox')},
             'channel_hub.guide.email.test': {'title': _('Send a test')},
@@ -323,7 +372,50 @@ class CareChannelConnectionCenter(models.Model):
                 'parent_channel': parent or '',
                 'guide_steps': self._center_guide_steps(caps, conn),
             })
+            if channel == 'zns':
+                cards[-1]['zns'] = self._center_zns_status(conn)
         return cards
+
+    # ------------------------------------------------------------------
+    # ZNS readiness — honest, and never asserted
+    # ------------------------------------------------------------------
+    @api.model
+    def _center_zns_status(self, conn=None):
+        """What is really true about Zalo notifications right now.
+
+        Two independent facts, neither of which we can fake:
+
+        * how many of the ten consumer modules' ZNS template ids are actually
+          configured (read-only count over their own ir.config_parameters);
+        * whether a ZNS message has EVER been accepted by Zalo — which is what
+          flips ``provider_approvals`` to ``pass``. Template approval is a
+          human Zalo review with a funded ZCA behind it (architecture §13);
+          there is no attestation button here, because a tenant clicking "yes
+          it is approved" would prove nothing.
+        """
+        icp = self.env['ir.config_parameter'].sudo()
+        configured = [key for key in ZNS_TEMPLATE_PARAMS
+                      if (icp.get_param(key) or '').strip()]
+        approvals = 'pending'
+        if conn:
+            row = self.env['care.channel.readiness.check'].sudo().search([
+                ('connection_id', '=', conn.id),
+                ('check_key', '=', 'provider_approvals')], limit=1)
+            approvals = row.status if row else 'pending'
+        return {
+            'templates_configured': len(configured),
+            'templates_total': len(ZNS_TEMPLATE_PARAMS),
+            'approvals': approvals,
+            'last_outbound_at': (fields.Datetime.to_string(conn.last_outbound_at)
+                                 if conn and conn.last_outbound_at else ''),
+            'note': (_('%(done)s of %(total)s notification templates are '
+                       'configured.',
+                       done=len(configured), total=len(ZNS_TEMPLATE_PARAMS))),
+            'proof': (_('Proven: Zalo has accepted a notification from this '
+                        'account.') if approvals == 'pass'
+                      else _('Not proven yet: no notification has been '
+                             'accepted by Zalo from this account.')),
+        }
 
     @api.model
     def _center_primary_action(self, state, available, implemented):
@@ -531,6 +623,102 @@ class CareChannelConnectionCenter(models.Model):
                 'resource_line': conn._center_resource_line()}
 
     # ==================================================================
+    # 3b. Zalo — the first OAuth-popup channel
+    # ==================================================================
+    @api.model
+    def _center_zalo(self, conn_id):
+        conn = self._center_get(conn_id)
+        if conn.channel != 'zalo':
+            raise UserError(_('This is not a Zalo connection.'))
+        return conn
+
+    @api.model
+    def _center_require_https(self):
+        base = self._center_base_url()
+        if not base.lower().startswith('https://'):
+            raise UserError(_(
+                'Your Health19 address must start with https:// before Zalo '
+                'can sign you in or send messages to it. Ask your '
+                'administrator to set the website address, then try again.'))
+        return base
+
+    @api.model
+    def center_zalo_authorize(self, conn_id):
+        """Mint a single-use authorization attempt and hand back its URL.
+
+        The raw state and the PKCE verifier NEVER come back to the browser as
+        values of their own: the state is inside the URL because the provider
+        needs it there, and the verifier never leaves the server at all.
+        """
+        conn = self._center_zalo(conn_id)
+        caps = conn._capabilities()
+        if not self._center_platform_available(caps):
+            raise UserError(_('This channel is not available yet.'))
+        self._center_require_https()
+        if conn.state in ('not_connected', 'disabled', 'error', 'legacy',
+                          'configuring', 'testing', 'select_resource',
+                          'action_required', 'ready', 'expiring'):
+            if conn.state != 'authorizing':
+                conn._transition('authorizing', reason='zalo sign-in')
+        Session = self.env['care.channel.oauth.session']
+        opened = Session.create_for(conn, provider='zalo')
+        session = Session.sudo().browse(opened['session_id'])
+        try:
+            url = conn.sudo()._get_adapter().authorize_url(
+                session, opened['state'], opened['code_challenge'])
+        except ChannelSendError as exc:
+            session.sudo().write({'outcome': 'error',
+                                  'detail_redacted': redact(exc)})
+            raise UserError(_(
+                'Zalo sign-in could not be started: %s',
+                redact(exc) or _('unknown error'))) from exc
+        return {'connection_id': conn.id, 'state': conn.state, 'url': url}
+
+    @api.model
+    def center_zalo_info(self, conn_id):
+        """Everything the webhook step needs to render — and no secret."""
+        conn = self._center_zalo(conn_id)
+        return {
+            'connection_id': conn.id,
+            'state': conn.state,
+            'webhook_url': '%s%s' % (self._center_base_url(),
+                                     ZALO_WEBHOOK_PATH),
+            'has_webhook_secret': bool(conn.sudo().provider_secret_enc),
+            'resource_line': conn._center_resource_line(),
+            'zns': self._center_zns_status(conn),
+        }
+
+    @api.model
+    def center_zalo_set_webhook_secret(self, conn_id, secret):
+        """Store the per-OA webhook secret the tenant copied from the portal.
+
+        This proves the tenant has done THEIR half (``webhook_configured``).
+        ``webhook_verified`` stays pending until a real signed event arrives —
+        a pasted secret is a claim, an accepted signature is evidence.
+        """
+        conn = self._center_zalo(conn_id)
+        self._center_require_https()
+        secret = (secret or '').strip()
+        if not secret:
+            raise UserError(_(
+                'Paste the webhook secret Zalo shows on your app page.'))
+        conn.action_set_secret('provider_secret', secret)
+        conn.sudo()._internal().write({'webhook_state': 'subscribed'})
+        self.env['care.channel.readiness.check'].upsert_check(
+            conn, 'webhook_configured', 'pass')
+        if conn.state in ('authorizing', 'select_resource', 'configuring',
+                          'action_required'):
+            conn._transition('testing', reason='zalo webhook secret stored')
+            conn._recompute_ready()
+        self.env['care.channel.audit']._log(
+            'webhook_subscribed', connection=conn,
+            detail='zalo per-OA webhook secret stored')
+        return {'connection_id': conn.id, 'state': conn.state,
+                'webhook_url': '%s%s' % (self._center_base_url(),
+                                         ZALO_WEBHOOK_PATH),
+                'has_webhook_secret': True}
+
+    # ==================================================================
     # 4. Web chat — one click
     # ==================================================================
     @api.model
@@ -667,6 +855,8 @@ class CareChannelConnectionCenter(models.Model):
             # `testing` is deliberately allowed: proving outbound is exactly
             # what this button exists for, and that is a testing-state job.
             raise UserError(_('This channel is turned off right now.'))
+        if conn.channel == 'zalo':
+            return self._center_test_zalo(conn)
         identity = self.env['care.channel.identity'].sudo().search(
             [('connection_id', '=', conn.id)], order='last_seen_at desc, id desc',
             limit=1)
@@ -700,6 +890,61 @@ class CareChannelConnectionCenter(models.Model):
         self.env['care.channel.audit']._log('test_ok', connection=conn)
         return {'connection_id': conn.id, 'state': conn.state,
                 'sent_to': identity.display_name or '',
+                'message': _('Test message sent.')}
+
+    @api.model
+    def _center_test_zalo(self, conn):
+        """Reply on the newest Zalo thread, through the rails ops already use.
+
+        NOT an adapter send: Zalo chat storage and the ops send path stay on
+        ``zalo.message`` (handover §2.3), so the test writes exactly the row
+        the composer writes and calls the same ``action_send_message``. The
+        body is the fixed synthetic string — never patient data (§7.6).
+
+        Deliberately NOT routed through ``care.conversation.action_send_zalo``:
+        that method gates on the CRM-staff group, which two of the Center's
+        three personas (a platform operator, a tenant administrator) are not
+        in — the test button would refuse the very people the Center is for.
+        """
+        if 'zalo.message' not in self.env:
+            raise UserError(_('The Zalo module is not installed.'))
+        Care = self.env['care.conversation'].sudo()
+        conv = Care.search([
+            ('company_id', '=', conn.company_id.id),
+            ('zalo_conversation_id', '!=', False),
+        ], order='last_event_at desc, id desc', limit=1)
+        if not conv:
+            raise UserError(_(
+                'Send your Official Account a message from Zalo first — we '
+                'can only reply to a conversation somebody started.'))
+        body = self._center_test_body()
+        message = self.env['zalo.message'].sudo().create({
+            'conversation_id': conv.zalo_conversation_id.id,
+            'direction': 'outgoing',
+            'message_type': 'text',
+            'text': body,
+            'state': 'draft',
+        })
+        try:
+            message.action_send_message()
+        except Exception as exc:  # noqa: BLE001 — provider/network failure
+            auth = any(marker in str(exc).lower()
+                       for marker in ('401', 'unauthorized', 'invalid token',
+                                      'access token'))
+            # Evidence first, on an independent cursor: the UserError below
+            # rolls this transaction back, message row included (§5.65).
+            if not conn._persist_send_failure(None, body, exc,
+                                              auth_failure=auth):
+                conn._note_send_failure(exc, auth_failure=auth)
+            self.env['care.channel.audit']._log(
+                'test_fail', connection=conn, detail=redact(exc))
+            raise UserError(_(
+                'The test message could not be sent: %s',
+                redact(exc) or _('unknown error'))) from exc
+        conn._note_outbound()
+        self.env['care.channel.audit']._log('test_ok', connection=conn)
+        return {'connection_id': conn.id, 'state': conn.state,
+                'sent_to': conv.display_name_c or '',
                 'message': _('Test message sent.')}
 
     # ==================================================================

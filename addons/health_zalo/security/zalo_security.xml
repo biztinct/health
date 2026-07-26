@@ -34,4 +34,43 @@
         <field name="comment">Full access to Zalo configuration and settings</field>
     </record>
 
+    <!-- ==================================================================
+         CC-D, defect Z4: this module shipped with NO ir.rule at all, so any
+         Zalo user of any company could read every company's configuration,
+         conversations and messages. The rules below are GLOBAL (no `groups`
+         field) — a group-bound rule only constrains its own members, and a
+         group without a matching rule would read everything. Same posture as
+         health_care_command_channels/security/channel_hub_security.xml.
+         ================================================================== -->
+
+    <record id="zalo_config_company_rule" model="ir.rule">
+        <field name="name">Zalo Configuration: multi-company</field>
+        <field name="model_id" ref="model_zalo_config"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="zalo_conversation_company_rule" model="ir.rule">
+        <field name="name">Zalo Conversation: multi-company</field>
+        <field name="model_id" ref="model_zalo_conversation"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- zalo.message carries no company of its own: it hangs off the
+         conversation, which hangs off the config. -->
+    <record id="zalo_message_company_rule" model="ir.rule">
+        <field name="name">Zalo Message: multi-company</field>
+        <field name="model_id" ref="model_zalo_message"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('conversation_id.config_id.company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="zalo_attachment_company_rule" model="ir.rule">
+        <field name="name">Zalo Attachment: multi-company</field>
+        <field name="model_id" ref="model_zalo_attachment"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('message_id.conversation_id.config_id.company_id', 'in', company_ids)]</field>
+    </record>
+
 </odoo>

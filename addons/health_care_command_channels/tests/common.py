@@ -32,6 +32,18 @@ class ChannelHubCase(TransactionCase):
         cls.province = env['health.catchment.province'].search([], limit=1) or \
             env['health.catchment.province'].create({'name': 'CHUB Prov'})
 
+        # CC-D: a real database now carries connections this module did not
+        # create — the zalo migration lands one `legacy` row per active
+        # zalo.config on every live server. The partial unique index is
+        # (channel, company) WHERE active, so every fixture that creates its
+        # own connection for the same channel would collide, and every
+        # "nothing exists yet" assertion would read a row it never made.
+        # Archived (never deleted) inside the test transaction, so it rolls
+        # back with the class. Ledger §5.62's family: live data breaks
+        # fixtures that assumed an empty table.
+        env['care.channel.connection'].sudo().with_context(
+            active_test=False).search([]).write({'active': False})
+
         cls.crm_user = cls._mk_user('chub_user', ['health_crm.group_health_crm_user'])
         cls.crm_mgr = cls._mk_user('chub_mgr', ['health_crm.group_health_crm_manager'])
 

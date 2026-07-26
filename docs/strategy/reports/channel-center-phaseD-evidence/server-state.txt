@@ -1,0 +1,121 @@
+# CC-D server state on vietuat — 2026-07-26, after the final green deploy.
+# Everything below is a verbatim `odoo-bin shell` probe against the live
+# database. Counts are `active_test=False` (ledger §5.27).
+
+## Modules
+  health_zalo                       installed  19.0.2.0.0
+  health_care_command_channels      installed  19.0.4.0.0
+
+## Test runs (verbatim log lines)
+  health_care_command_channels: 81 tests 16.11s 14275 queries
+  health_zalo:                  10 tests  2.26s  1965 queries
+  odoo.tests.result: 0 failed, 0 error(s) of 75 tests when loading database 'vietuat'
+  EXIT:0   HTTP:200
+
+  regression (untouched Care Command family):
+  health_care_command:      38 tests 7.64s 6512 queries
+  health_care_command_ai:    8 tests 1.69s 1522 queries
+  health_care_command_voip:  6 tests 0.50s  397 queries
+  odoo.tests.result: 0 failed, 0 error(s) of 46 tests when loading database 'vietuat'
+  EXIT:0   HTTP:200
+
+## Migration proof — one legacy connection for the one active config
+  zalo.config rows:
+    id=3 active=True state=draft company=VIET UC oa_id='o'
+         app_id_set=True access_token_set=False refresh_token_set=False
+
+  care.channel.connection rows (ALL):
+    id=1207 channel=zalo active=True state=legacy company=VIET UC
+            resource='o' has_credentials=False webhook_state=none
+
+  Exactly one connection, created by the migration, in `legacy`. It carries NO
+  credentials because the config carries none — the migration copies what is
+  there and invents nothing. `resource='o'` is the config's real `oa_id` value
+  on this server (a single character); it was not normalised or "fixed".
+
+  Re-running the migration in the same transaction (T116) reports
+  created=0, copied=0.
+
+## Everything else is still zero
+  readiness checks .......... 0
+  channel identities ........ 0
+  care.channel.message ...... 0
+  zalo.message .............. 0
+  zalo.conversation ......... 0
+  channel.platform.app ...... 0   <-- no Zalo app seeded (operator item §12.5)
+  care.channel.audit ........ 26  (append-only, ondelete='set null' — designed,
+                                   not residue; 19 from CC-C + this phase's)
+
+## Defect Z1 — the app_secret tracking leak
+  mail.tracking.value rows for zalo.config.app_secret : 0
+  zalo.config._fields['app_secret'].tracking          : False
+
+## Defect Z4 — the ir.rules that did not exist before this phase
+  zalo.config        global=True  [('company_id', 'in', company_ids)]
+  zalo.conversation  global=True  [('company_id', 'in', company_ids)]
+  zalo.message       global=True  [('conversation_id.config_id.company_id', 'in', company_ids)]
+  zalo.attachment    global=True  [('message_id.conversation_id.config_id.company_id', 'in', company_ids)]
+
+  Live proof from the test log (T118, a Zalo Manager of another company):
+    Access Denied by record rules for operation: read on record ids: [3],
+    uid: 3832, model: zalo.config
+
+## Routes
+  /care_channels/zalo/webhook              (new, fail-closed)
+  /zalo/webhook, /zalo/webhook/test, /zalo/oauth/callback   (410 shims)
+  /channel_hub/oauth/callback/<provider>   (unchanged)
+
+## Center gating
+  CENTER_IMPLEMENTED_CHANNELS = ['telegram', 'webchat', 'zalo']
+  IMPLEMENTED_MODES           = ['guided_secret', 'oauth_popup', 'one_click']
+  BOTH gates must pass, so whatsapp / fb / email (also oauth_popup or
+  embedded_signup) stay honestly unavailable.
+
+## The catalogue as the real `crm` user's own RPC returns it
+  zalo      state=legacy         available=False implemented=True  action=unavailable
+  call      state=not_connected  available=True  implemented=False action=unavailable
+  email     state=not_connected  available=False implemented=False action=unavailable
+  zns       state=legacy         available=False implemented=False action=unavailable
+            | ZNS: 0 templates configured, approvals=pending
+  whatsapp  state=not_connected  available=False implemented=False action=unavailable
+  fb        state=not_connected  available=False implemented=False action=unavailable
+  telegram  state=not_connected  available=True  implemented=True  action=connect
+  webchat   state=not_connected  available=True  implemented=True  action=connect
+
+  Zalo reads "Not available yet" because there is no `channel.platform.app`
+  for the provider — which is TRUE, and is operator checklist item §12.5.
+  Seeding a placeholder would manufacture the same class of fake credential
+  row this phase deleted from health_zalo (defect Z9), so none was seeded.
+
+## Dock — unchanged by this phase
+  care.conversation._channel_keys() -> ('zalo', 'call', 'email', 'zns')
+
+## ZNS template honesty
+  0 of 12 consumer-module ZNS template ir.config_parameters are set on this
+  server. The sub-card says so in those words, in both languages.
+
+## Vietnamese (ledger §5.58 / §5.67)
+  health_care_command_channels : 133 python + 61 web  (was 118 + 48)
+  health_zalo                  :  46 python + 17 web  (was 0 + 0 — the whole
+                                  catalogue was inert for want of the code
+                                  markers; repaired on this touch)
+
+  Runtime spot-checks under lang='vi_VN':
+    guide.zalo.webhook title : "Trỏ Zalo về Health19"
+    zns note                 : "Đã cấu hình 0 trên 12 mẫu thông báo."
+    zns proof                : "Chưa kiểm chứng: Zalo chưa nhận thông báo nào từ tài khoản này."
+    retired entry point      : "Hãy kết nối Zalo từ Care Command Setup → Trung tâm Kênh. …"
+    web 'Waiting for Zalo to confirm…' -> "Đang chờ Zalo xác nhận…"
+    web 'Save the secret'              -> "Lưu khoá bí mật"
+
+## SCSS / asset bundle (ledger §5.68)
+  sass.compile(channel_center.scss)          OK, 13,339 bytes
+  web.assets_web.min.css regenerated         2,189,762 bytes
+    .o_channel_center .cc-card       present
+    .o_channel_center .cc-sub-line   present
+    .o_care_command                  present   <-- known-good sibling selector
+
+## Ops
+  web.base.url = https://care.biztinct.com  (unchanged, https, as required)
+  /web/login -> HTTP 200 after the final restart
+  No pip install. No PWA involvement (backend assets only), so no PWA bump.

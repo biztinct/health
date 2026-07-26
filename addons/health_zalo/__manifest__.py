@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Zalo Integration',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Healthcare/Communication',
     'summary': 'Zalo Official Account integration for patient messaging and notifications',
     'description': """
@@ -38,6 +38,14 @@ Technical Stack:
         'health_base',
         'health_crm',
         'bus',
+        # CC-D deliberately does NOT declare health_care_command_channels
+        # here. It cannot: health_care_command depends on health_zalo, and the
+        # channels module depends on health_care_command, so the edge would
+        # close a loop (module_graph: "module health_zalo: in a dependency
+        # loop, skipped" — hit live on the first deploy). The coupling is SOFT
+        # in both directions instead: this module reaches the framework only
+        # through `'care.channel.connection' in self.env` guards, and the
+        # framework reaches Zalo only through `'zalo.config' in env` guards.
     ],
     'data': [
         # Security

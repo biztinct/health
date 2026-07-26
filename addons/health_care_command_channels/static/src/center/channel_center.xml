@@ -82,10 +82,20 @@
           <!-- ZNS and any other capability-of-a-parent renders inside its parent -->
           <t t-foreach="subCards(card.channel)" t-as="sub" t-key="sub.channel">
             <div class="cc-sub">
-              <span class="ic" t-att-class="style(sub.channel).ic"/>
-              <span class="cc-sub-name" t-esc="sub.label"/>
-              <span class="cc-chip small" t-att-class="'tone-' + tone(sub.state)"
-                    t-esc="sub.state_chip"/>
+              <div class="cc-sub-head">
+                <span class="ic" t-att-class="style(sub.channel).ic"/>
+                <span class="cc-sub-name" t-esc="sub.label"/>
+                <span class="cc-chip small" t-att-class="'tone-' + tone(sub.state)"
+                      t-esc="sub.state_chip"/>
+              </div>
+              <!-- Honest ZNS readiness: a template count we can see, and a
+                   send Zalo has actually accepted. Nothing is asserted. -->
+              <t t-if="sub.zns">
+                <p class="cc-sub-line" t-esc="sub.zns.note"/>
+                <p class="cc-sub-line"
+                   t-att-class="sub.zns.approvals === 'pass' ? 'ok' : 'muted'"
+                   t-esc="sub.zns.proof"/>
+              </t>
             </div>
           </t>
         </section>
@@ -209,6 +219,75 @@
               </p>
             </t>
 
+            <!-- ===== Zalo: sign in with the provider ===== -->
+            <t t-if="state.mode === 'oauth_popup' and state.step === 0">
+              <p class="cc-wait" t-if="state.popupBlocked">
+                <span class="ic ic-clock"/>
+                <span>Your browser blocked the sign-in window.</span>
+              </p>
+              <p t-if="state.popupBlocked and state.authUrl">
+                <a class="cc-link" t-att-href="state.authUrl"
+                   target="_blank" rel="noopener noreferrer">Open the Zalo sign-in page</a>
+              </p>
+              <p class="cc-ok" t-if="state.hasCredentials">
+                <span class="ic ic-check"/>
+                <span>Signed in<t t-if="openCard and openCard.resource_line">
+                  — <t t-esc="openCard.resource_line"/></t></span>
+              </p>
+            </t>
+
+            <!-- ===== Zalo: the portal-guided webhook checklist ===== -->
+            <t t-if="state.mode === 'oauth_popup' and state.step === 1">
+              <label class="cc-label" for="cc_zalo_hook">Webhook address</label>
+              <textarea id="cc_zalo_hook" class="cc-input area mono" rows="2"
+                        readonly="readonly"
+                        aria-label="Webhook address"><t t-esc="state.webhookUrl"/></textarea>
+              <div class="cc-row">
+                <button class="cc-btn ghost" t-on-click="copyWebhookUrl">
+                  <span class="ic" t-att-class="state.copiedWebhook ? 'ic-check' : 'ic-copy'"/>
+                  <span t-if="state.copiedWebhook">Copied ✓</span>
+                  <span t-if="!state.copiedWebhook">Copy</span>
+                </button>
+              </div>
+              <label class="cc-label" for="cc_zalo_secret">Webhook secret</label>
+              <input id="cc_zalo_secret" type="password" class="cc-input"
+                     autocomplete="off" spellcheck="false"
+                     t-model="state.webhookSecret"/>
+              <p class="cc-help">Zalo shows this on the same page as the webhook address. It is stored encrypted and never shown again.</p>
+              <p class="cc-ok" t-if="state.hasWebhookSecret and !state.webhookSecret">
+                <span class="ic ic-check"/><span>A secret is already saved.</span>
+              </p>
+            </t>
+
+            <!-- ===== Zalo: waiting for Zalo to confirm ===== -->
+            <t t-if="state.mode === 'oauth_popup' and state.step === 2">
+              <p class="cc-wait" t-if="openCard and !openCard.last_inbound_at">
+                <span class="ic ic-clock"/> Waiting for Zalo to confirm…
+              </p>
+              <p class="cc-ok" t-if="openCard and openCard.last_inbound_at">
+                <span class="ic ic-check"/>
+                <span>We received a message from Zalo.</span>
+              </p>
+            </t>
+
+            <!-- ===== Zalo: the synthetic test reply ===== -->
+            <t t-if="state.mode === 'oauth_popup' and state.step === 3">
+              <p class="cc-ok" t-if="openCard and openCard.state === 'ready'">
+                <span class="ic ic-check"/>
+                <span>Zalo is connected. New messages arrive in Care Command.</span>
+              </p>
+              <t t-if="znsCard and znsCard.zns">
+                <div class="cc-sub">
+                  <div class="cc-sub-head">
+                    <span class="ic ic-send"/>
+                    <span class="cc-sub-name" t-esc="znsCard.label"/>
+                  </div>
+                  <p class="cc-sub-line" t-esc="znsCard.zns.note"/>
+                  <p class="cc-sub-line" t-esc="znsCard.zns.proof"/>
+                </div>
+              </t>
+            </t>
+
             <!-- ===== Web chat: origins ===== -->
             <t t-if="state.mode === 'one_click' and state.step === 0">
               <label class="cc-label" for="cc_origins">Website addresses</label>
@@ -271,6 +350,28 @@
                   t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
                   t-on-click="sendTest">Send a reply</button>
           <button t-if="state.mode === 'guided_secret' and state.step === 3 and openCard and openCard.state === 'ready'"
+                  class="cc-btn primary" t-on-click="closeStepper">Done</button>
+
+          <!-- Zalo -->
+          <button t-if="state.mode === 'oauth_popup' and state.step === 0 and !state.hasCredentials"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="authorizeZalo">Sign in with Zalo</button>
+          <button t-if="state.mode === 'oauth_popup' and state.step === 0 and state.hasCredentials"
+                  class="cc-btn primary" t-on-click="next">Next</button>
+          <button t-if="state.mode === 'oauth_popup' and state.step === 1"
+                  class="cc-btn primary"
+                  t-att-disabled="state.busy or !state.webhookSecret"
+                  t-on-click="saveZaloSecret">Save the secret</button>
+          <button t-if="state.mode === 'oauth_popup' and state.step === 1 and state.hasWebhookSecret and !state.webhookSecret"
+                  class="cc-btn ghost" t-on-click="next">Skip</button>
+          <button t-if="state.mode === 'oauth_popup' and state.step === 2"
+                  class="cc-btn primary"
+                  t-att-disabled="state.busy or !(openCard and openCard.last_inbound_at)"
+                  t-on-click="next">Next</button>
+          <button t-if="state.mode === 'oauth_popup' and state.step === 3 and !(openCard and openCard.state === 'ready')"
+                  class="cc-btn primary" t-att-disabled="state.busy"
+                  t-on-click="sendTest">Send a reply</button>
+          <button t-if="state.mode === 'oauth_popup' and state.step === 3 and openCard and openCard.state === 'ready'"
                   class="cc-btn primary" t-on-click="closeStepper">Done</button>
 
           <!-- Web chat -->

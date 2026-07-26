@@ -88,51 +88,25 @@ class ResPartner(models.Model):
         if not self.zalo_user_id:
             raise UserError(_('This contact does not have a Zalo User ID configured.'))
 
-        # Check if Zalo is configured (allow opening widget even without config for testing)
-        zalo_config = self.env['zalo.config'].search([], limit=1)  # Get any config, not just connected
-
-        # NOTE: Configuration check disabled for testing - widget can open without active config
-        # if not zalo_config or zalo_config.state != 'connected':
-        #     raise UserError(_(
-        #         'Zalo Official Account is not configured.\n\n'
-        #         'Please configure Zalo integration first:\n'
-        #         '1. Go to Zalo > Configuration > Zalo Settings\n'
-        #         '2. Create a new configuration with your App ID, App Secret, and OA ID\n'
-        #         '3. Click "Connect to Zalo" to authorize\n'
-        #         '4. Enable webhook to receive messages'
-        #     ))
-
         if not self.zalo_conversation_id:
-            # Create conversation if doesn't exist (allow creation even without active config)
+            # Z9: the old branch here silently created a "Demo Zalo Config
+            # (Testing)" row with app_id/app_secret/oa_id all set to "demo"
+            # whenever no real configuration existed — a permanent, live,
+            # fake credential record that then satisfied every
+            # `search([('active','=',True)])` in the ZNS contract. An honest
+            # refusal is the whole fix.
             try:
                 conversation = self.env['zalo.conversation'].find_or_create_conversation(
                     self.zalo_user_id,
                     {'display_name': self.name}
                 )
                 conversation.partner_id = self.id
-            except ValueError as e:
-                # If config is missing, create a demo conversation for testing
-                _logger.warning(f'Creating demo Zalo conversation without config: {str(e)}')
-
-                # Get or create a demo config for testing
-                demo_config = self.env['zalo.config'].search([], limit=1)
-                if not demo_config:
-                    # Create a minimal demo config
-                    demo_config = self.env['zalo.config'].create({
-                        'name': 'Demo Zalo Config (Testing)',
-                        'app_id': 'demo',
-                        'app_secret': 'demo',
-                        'oa_id': 'demo',
-                        'state': 'draft',
-                    })
-
-                conversation = self.env['zalo.conversation'].create({
-                    'zalo_user_id': self.zalo_user_id,
-                    'zalo_user_name': self.name,
-                    'partner_id': self.id,
-                    'config_id': demo_config.id,
-                    'state': 'active',
-                })
+            except ValueError as exc:
+                _logger.info('Zalo chat unavailable for partner %s: %s',
+                             self.id, exc)
+                raise UserError(_(
+                    'Zalo is not connected yet. Open Care Command Setup → '
+                    'Channel Center and connect your Official Account.')) from exc
         else:
             conversation = self.zalo_conversation_id
 
@@ -177,18 +151,12 @@ class ResPartner(models.Model):
             'context': {'default_partner_id': self.id},
         }
 
-    def action_link_zalo_user(self):
-        """Open wizard to link Zalo user to this contact"""
-        self.ensure_one()
-
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Link Zalo User'),
-            'res_model': 'zalo.link.user.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {'default_partner_id': self.id},
-        }
+    # Z9: `action_link_zalo_user` pointed at `zalo.link.user.wizard`, a model
+    # that has never existed (the real one is `zalo.link.partner.wizard`, and
+    # it links a CONVERSATION to a contact — there is nothing to link from a
+    # contact with no conversation). The button raised a bare KeyError for
+    # every user who pressed it; it is removed here along with the two view
+    # buttons that called it.
 
     @api.model
     def find_partner_by_zalo_id(self, zalo_user_id):

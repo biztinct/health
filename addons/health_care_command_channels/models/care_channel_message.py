@@ -355,6 +355,54 @@ class CareChannelMessage(models.Model):
         return counts
 
     # ==================================================================
+    # Zalo (CC-D) — the ONE channel whose storage stays where it was
+    # ==================================================================
+    @api.model
+    def _dispatch_zalo(self, connection, payload):
+        """A SIGNATURE-VERIFIED Zalo event → the legacy ``zalo.message`` rails.
+
+        Zalo chat deliberately does NOT become ``care.channel.message`` rows:
+        Care Command's detail timeline reads ``zalo.message`` and its ops send
+        path writes them (handover §2.3), and moving that storage would be a
+        core rewrite for no gain. What CC-D takes over is the *boundary* —
+        verification, tenant routing, dedupe and traffic-truth — while the
+        pipeline underneath is the one that has always run, minus the
+        ``with_delay()`` that silently dropped every event (defect Z3).
+
+        Never raises: the controller answers 200 after verification whatever
+        happens here, or Zalo retries the same event forever.
+        """
+        connection.ensure_one()
+        counts = {'ingested': 0, 'duplicate': 0, 'ignored': 0, 'skipped': 0}
+        if not connection._may_ingest():
+            self.env['care.channel.audit']._log(
+                'webhook_ignored', connection=connection,
+                detail='state %s' % connection.state)
+            counts['ignored'] += 1
+            return counts
+        if 'zalo.message.handler' not in self.env:
+            # The framework works with or without health_zalo installed; a
+            # verified event we have nowhere to put is still honest traffic.
+            _logger.warning('care_channels: zalo webhook verified but '
+                            'health_zalo is not installed — event skipped')
+            counts['skipped'] += 1
+        else:
+            try:
+                with self.env.cr.savepoint():
+                    result = self.env['zalo.message.handler'].sudo() \
+                        ._ingest_verified_event(payload)
+                if isinstance(result, dict):
+                    for key in ('ingested', 'duplicate', 'skipped'):
+                        counts[key] += result.get(key, 0)
+                else:
+                    counts['ingested'] += 1
+            except Exception:  # noqa: BLE001 — one poisoned event, not a batch
+                _logger.exception('care_channels: zalo ingest failed on '
+                                  'connection %s', connection.id)
+        connection._note_inbound()
+        return counts
+
+    # ==================================================================
     # Web chat (phase6 §2.6) — our own widget, no provider at all
     # ==================================================================
     @api.model

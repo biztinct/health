@@ -45,50 +45,21 @@ class CrmLead(models.Model):
         if self.partner_id:
             return self.partner_id.action_open_zalo_chat()
 
-        # Check if Zalo is configured (allow opening widget even without config for testing)
-        zalo_config = self.env['zalo.config'].search([], limit=1)  # Get any config, not just connected
-
-        # NOTE: Configuration check disabled for testing - widget can open without active config
-        # if not zalo_config or zalo_config.state != 'connected':
-        #     raise UserError(_(
-        #         'Zalo Official Account is not configured.\n\n'
-        #         'Please configure Zalo integration first:\n'
-        #         '1. Go to Zalo > Configuration > Zalo Settings\n'
-        #         '2. Create a new configuration with your App ID, App Secret, and OA ID\n'
-        #         '3. Click "Connect to Zalo" to authorize\n'
-        #         '4. Enable webhook to receive messages'
-        #     ))
-
-        # Create conversation for this lead (allow creation even without active config)
+        # Z9: this branch used to auto-create a "Demo Zalo Config (Testing)"
+        # row with fake credentials whenever Zalo was not configured — which
+        # then satisfied the ZNS contract's active-config search for every
+        # module in the system. Refusing honestly is the fix.
         try:
             conversation = self.env['zalo.conversation'].find_or_create_conversation(
                 self.zalo_user_id,
                 {'display_name': self.name or self.contact_name}
             )
             return conversation.action_open_chat()
-        except ValueError as e:
-            # If config is missing, create a demo conversation for testing
-            _logger.warning(f'Creating demo Zalo conversation for lead without config: {str(e)}')
-
-            # Get or create a demo config for testing
-            demo_config = self.env['zalo.config'].search([], limit=1)
-            if not demo_config:
-                # Create a minimal demo config
-                demo_config = self.env['zalo.config'].create({
-                    'name': 'Demo Zalo Config (Testing)',
-                    'app_id': 'demo',
-                    'app_secret': 'demo',
-                    'oa_id': 'demo',
-                    'state': 'draft',
-                })
-
-            conversation = self.env['zalo.conversation'].create({
-                'zalo_user_id': self.zalo_user_id,
-                'zalo_user_name': self.name or self.contact_name or 'Unknown',
-                'config_id': demo_config.id,
-                'state': 'active',
-            })
-            return conversation.action_open_chat()
+        except ValueError as exc:
+            _logger.info('Zalo chat unavailable for lead %s: %s', self.id, exc)
+            raise UserError(_(
+                'Zalo is not connected yet. Open Care Command Setup → '
+                'Channel Center and connect your Official Account.')) from exc
 
     def action_call_zalo(self):
         """Initiate Zalo call for this lead"""

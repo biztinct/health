@@ -1051,3 +1051,61 @@ a no-op.
     `UserError`), use the plain `try/except (A, B): raised = True` idiom —
     which is also the §5.8-safe form when the failure path's side effects must
     survive to be asserted. (Hit in the CC-C review fixes, T107.)
+
+- **§5.71 — a manifest dependency you are told to add may close a loop that is
+    invisible from either end.** CC-D's handover specified
+    `health_zalo → health_care_command_channels`. The loop is three hops long
+    (`… → health_care_command → health_zalo`) and health_care_command's
+    dependency on health_zalo is old, undocumented in the channel architecture
+    and load-bearing (`_inherit = 'zalo.message'`, hooks.py:27). The symptom is
+    NOT an error at the new edge: `odoo.modules.module_graph` logs
+    `module <X>: in a dependency loop, skipped`, then
+    `its direct/indirect dependency is skipped, skipped` for everything
+    downstream, and the run finishes **EXIT:0 with "0 failed, 0 error(s) of 0
+    tests"** — a green result line that means nothing ran. Before adding any
+    dependency edge, walk the target's own `depends` transitively; and treat
+    "0 of 0 tests" as a failure signal, never as a pass. Two corollaries, both
+    paid for in the same fix: (a) a **Many2one cannot point at a model from a
+    later-loaded module** — Odoo runs an incremental `_setup_models__` after
+    each module it loads (`odoo/modules/loading.py:185`), so the comodel must
+    already exist by then; where the modules cannot be reordered, join on the
+    target's own uniqueness key instead of an FK (CC-D joins `zalo.config` to
+    `care.channel.connection` on `(channel, company_id)`, which a partial
+    unique index already guarantees is unique); (b) a **migration script
+    belongs in the module that loads LAST**, not in the module that owns the
+    data — health_zalo could not migrate its own rows because the framework
+    models it migrates them into were not in the registry yet. (Hit live on the
+    first CC-D deploy.)
+
+- **§5.72 — a source-grep test assertion matches the comment that explains the
+    defect was removed.** Both of CC-D's "the old hazard is gone" tests failed
+    on their first run against perfectly correct code:
+    `assertNotIn('with_delay', inspect.getsource(module))` hit the 410 shim's
+    own docstring explaining why `with_delay` was removed, and
+    `assertNotIn('Demo Zalo Config', source)` hit the comment describing the
+    fake configuration row that had just been deleted. Grep the *callable*
+    (`inspect.getsource(cls.method)` — a handler is three lines), not the
+    module, and assert on a fingerprint that cannot appear in prose: the
+    literal `"'app_secret': 'demo'"` rather than the human-readable name of the
+    thing. Same family as ledger §31's "grep cannot see block comments": a text
+    search over source proves something about the TEXT, not about the program.
+
+- **§5.73 — the one place a webhook must parse before it verifies, and how to
+    keep that safe.** Zalo's developer portal allows exactly ONE webhook URL per
+    app (architecture §13), so every tenant OA arrives at the same route and the
+    per-OA secret to check the signature against is not known until the payload
+    has been read. The safe ordering is: read the RAW bytes → `json.loads`
+    **only** to lift the routing key (`oa_id`, falling back to `recipient.id`)
+    → resolve the connection → verify `sha256(app_id + raw_body + timestamp +
+    per-OA secret)` over the RAW bytes with THAT connection's secret → only then
+    decode and ingest. Nothing else in the body may be touched before the
+    verification, the routing key must never reach a log line or a response, and
+    every refusal (missing signature header, missing timestamp, unknown OA, a
+    connection with no secret, wrong mac, unparsable body, empty body) must be
+    the SAME bodyless 403 — otherwise the route is an oracle for "which
+    Official Accounts live on this deployment". Verified live on vietuat: seven
+    distinct refusal classes, all `HTTP 403, 0 bytes`. Replay is bounded by a
+    timestamp window (`channel_hub.zalo_webhook_skew_seconds`, default 300 s,
+    accepting epoch seconds or milliseconds) because the timestamp is inside the
+    signed string and therefore cannot be moved by an attacker, but a captured
+    request would otherwise stay valid forever.
