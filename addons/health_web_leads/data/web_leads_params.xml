@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- City maps live in configuration, not in code: the website agency
+         renumbering a Contact Form 7 form or adding a city landing page is
+         then an edit, not a deploy (design §8).
+
+         The values are LOGICAL keys ("HN" / "HCM") resolved through the
+         catchment resolver at runtime — never database ids, because vietuat's
+         `health.catchment.province` rows carry codes 01/02 while the seed XML
+         says HN/HCM (design §2.3).
+
+         noupdate="1": once ops edits a map in the UI, a module upgrade must
+         not overwrite it. -->
+    <data noupdate="1">
+
+        <record id="param_form_city_map" model="ir.config_parameter">
+            <field name="key">web_leads.form_city_map</field>
+            <field name="value">{"15838": "HN", "15670": "HCM"}</field>
+        </record>
+
+        <record id="param_url_city_map" model="ir.config_parameter">
+            <field name="key">web_leads.url_city_map</field>
+            <field name="value">{"/lien-he-hanoi/": "HN", "/dich-vu-tai-hn/": "HN", "/doi-ngu-tai-ha-noi/": "HN", "/lien-he-tphcm/": "HCM", "/dich-vu-tai-tphcm/": "HCM", "/doi-ngu-tai-tphcm/": "HCM"}</field>
+        </record>
+
+    </data>
+</odoo>

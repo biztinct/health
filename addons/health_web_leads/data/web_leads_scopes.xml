@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Our own scope records. The gateway's seed file (health_api_gateway/
+         data/api_scopes.xml) is NOT edited — `api.key.scope` is a shared
+         namespace any module may add to. -->
+    <data noupdate="1">
+
+        <record id="scope_web_lead_write" model="api.key.scope">
+            <field name="code">web_lead.write</field>
+            <field name="name">Web Leads Write</field>
+            <field name="description">Submit website contact-form submissions to POST /api/v1/web/leads.</field>
+        </record>
+
+        <record id="scope_web_lead_read" model="api.key.scope">
+            <field name="code">web_lead.read</field>
+            <field name="name">Web Leads Read</field>
+            <field name="description">Read back website submission status (reconciliation, Phase W2).</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         The service group carried by the WordPress relay's service user
+         (`svc_web_leads`). It is the ONLY thing that user needs beyond the
+         internal-user group.
+
+         `implied_ids` pulls in the stock CRM "User: All Documents" group
+         rather than "User: Own Documents Only" on purpose: the capture path
+         must SEE every open lead to deduplicate against it. Under the
+         personal-lead record rule (crm/security/crm_security.xml:21) a lead
+         owned by another salesperson is invisible, the dedup search finds
+         nothing, and the pipeline silently creates a second lead for a person
+         who already has one — the exact failure this phase exists to prevent.
+
+         Odoo 19 has NO `category_id` on res.groups — groups reference a
+         `privilege_id` (conventions §4).
+         ===================================================================== -->
+
+    <record id="group_web_leads_service" model="res.groups">
+        <field name="name">Web Leads Service</field>
+        <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
+        <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+        <field name="comment">Machine account group for the website lead-capture endpoint: create leads and touchpoints, read the catchment list. No clinical model access.</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,367 @@
+# Vietnamese translation for health_web_leads
+# Copyright (C) 2026
+# This file is distributed under the same license as the health_web_leads package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_web_leads\n"
+"Report-Msgid-Bugs-To: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Web: %s"
+msgstr "Web: %s"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Request body must be a JSON object"
+msgstr "Nội dung yêu cầu phải là một đối tượng JSON"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Missing required field(s): submission_id"
+msgstr "Thiếu trường bắt buộc: submission_id"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Missing required field(s): form_id"
+msgstr "Thiếu trường bắt buộc: form_id"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "At least one of phone or email is required"
+msgstr "Cần ít nhất một trong hai: số điện thoại hoặc email"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Phone (unverified, not a valid Vietnamese number): %s"
+msgstr "Số điện thoại (chưa xác thực, không phải số Việt Nam hợp lệ): %s"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Same phone number as lead %(ref)s (%(name)s), under a different name — kept as a separate lead. Flagged for review."
+msgstr "Trùng số điện thoại với lead %(ref)s (%(name)s) nhưng khác tên — giữ thành lead riêng. Đã đánh dấu cần rà soát."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "A new website enquiry (%(ref)s — %(name)s) arrived on this phone number under a different name."
+msgstr "Một yêu cầu mới từ website (%(ref)s — %(name)s) đã đến từ số điện thoại này nhưng dưới một tên khác."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Possible existing client: %(name)s (%(code)s). Verify before converting — the pipeline never links a lead to a client from a typed phone or email."
+msgstr "Có thể là khách hàng đã có: %(name)s (%(code)s). Hãy kiểm tra trước khi chuyển đổi — hệ thống không bao giờ tự liên kết lead với khách hàng chỉ từ số điện thoại hoặc email được nhập."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Repeat web enquiry received (form %(form)s, submission %(submission)s). Appended as a touchpoint — no second lead was created."
+msgstr "Đã nhận yêu cầu lặp lại từ website (biểu mẫu %(form)s, mã gửi %(submission)s). Được ghi nhận thành điểm chạm — không tạo lead thứ hai."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "no code"
+msgstr "chưa có mã"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Token is missing a required scope (%s)"
+msgstr "Token thiếu phạm vi quyền bắt buộc (%s)"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Rate limit exceeded"
+msgstr "Đã vượt quá giới hạn số lần gọi"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Request body too large"
+msgstr "Nội dung yêu cầu quá lớn"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Missing required field(s): %s"
+msgstr "Thiếu trường bắt buộc: %s"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Request body is not valid JSON"
+msgstr "Nội dung yêu cầu không phải JSON hợp lệ"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Unauthorized"
+msgstr "Không được phép truy cập"
+
+#. module: health_web_leads
+#: model:ir.model,name:health_web_leads.model_health_lead_touchpoint
+msgid "Lead Touchpoint"
+msgstr "Điểm chạm khách tiềm năng"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__utm_content
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_content
+msgid "UTM Content"
+msgstr "Nội dung UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__utm_term
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_term
+msgid "UTM Term"
+msgstr "Từ khoá UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__gclid
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__gclid
+msgid "Google Click ID"
+msgstr "Mã click Google"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbclid
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__fbclid
+msgid "Facebook Click ID"
+msgstr "Mã click Facebook"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbc
+msgid "Meta Click Cookie (_fbc)"
+msgstr "Cookie click Meta (_fbc)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbp
+msgid "Meta Browser Cookie (_fbp)"
+msgstr "Cookie trình duyệt Meta (_fbp)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__ga_client_id
+msgid "GA Client ID"
+msgstr "Mã khách Google Analytics"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_landing_url
+msgid "Landing URL"
+msgstr "URL trang đích"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_submit_page_url
+msgid "Submit Page URL"
+msgstr "URL trang gửi biểu mẫu"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_referrer_url
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__referrer_url
+msgid "Referrer URL"
+msgstr "URL nguồn giới thiệu"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_form_id
+msgid "Web Form ID"
+msgstr "Mã biểu mẫu web"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__external_submission_id
+msgid "External Submission ID"
+msgstr "Mã lượt gửi bên ngoài"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__city_source
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__city_source
+msgid "City Source"
+msgstr "Nguồn xác định thành phố"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__city_conflict
+msgid "City Conflict"
+msgstr "Xung đột thành phố"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_needs_review
+msgid "Needs Web Review"
+msgstr "Cần rà soát lead web"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_marketing
+msgid "Marketing Consent (Web)"
+msgstr "Đồng ý nhận tiếp thị (Web)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_text_version
+msgid "Consent Text Version"
+msgstr "Phiên bản nội dung đồng ý"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_touchpoint_ids
+msgid "Web Touchpoints"
+msgstr "Điểm chạm web"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__lead_id
+msgid "Lead"
+msgstr "Khách tiềm năng"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__occurred_at
+msgid "Occurred At"
+msgstr "Thời điểm phát sinh"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__received_at
+msgid "Received At"
+msgstr "Thời điểm tiếp nhận"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__touchpoint_type
+msgid "Touchpoint Type"
+msgstr "Loại điểm chạm"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__source_system
+msgid "Source System"
+msgstr "Hệ thống nguồn"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__catchment_province_id
+msgid "City"
+msgstr "Thành phố"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_source
+msgid "UTM Source"
+msgstr "Nguồn UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_medium
+msgid "UTM Medium"
+msgstr "Kênh UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_campaign
+msgid "UTM Campaign"
+msgstr "Chiến dịch UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__page_url
+msgid "Page URL"
+msgstr "URL trang"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__external_event_id
+msgid "External Event ID"
+msgstr "Mã sự kiện bên ngoài"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__raw_payload
+msgid "Raw Payload"
+msgstr "Dữ liệu gốc"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__form_location
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__form_location
+msgid "Form Location Field"
+msgstr "Trường Địa điểm trên biểu mẫu"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__form_id
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__form_id
+msgid "Form ID Map"
+msgstr "Bản đồ mã biểu mẫu"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__page_url
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__page_url
+msgid "Page URL Map"
+msgstr "Bản đồ URL trang"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__campaign_prefix
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__campaign_prefix
+msgid "Campaign Prefix"
+msgstr "Tiền tố chiến dịch"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__clicked_phone
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__clicked_phone
+msgid "Clicked Phone Number"
+msgstr "Số điện thoại được bấm"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__zalo_oa
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__zalo_oa
+msgid "Zalo Official Account"
+msgstr "Tài khoản Zalo OA"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__facebook_page
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__facebook_page
+msgid "Facebook Page"
+msgstr "Trang Facebook"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__manual
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__manual
+msgid "Set Manually"
+msgstr "Nhập thủ công"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__unknown
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__unknown
+msgid "Unknown"
+msgstr "Không xác định"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__form_submit
+msgid "Website Form Submission"
+msgstr "Gửi biểu mẫu website"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__manual
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__source_system__manual
+msgid "Manual Entry"
+msgstr "Nhập thủ công"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__click_to_call
+msgid "Click to Call"
+msgstr "Bấm gọi"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__zalo_click
+msgid "Zalo Click"
+msgstr "Bấm Zalo"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__messenger_click
+msgid "Messenger Click"
+msgstr "Bấm Messenger"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__call_cdr
+msgid "Call Record (CDR)"
+msgstr "Bản ghi cuộc gọi (CDR)"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__source_system__wordpress
+msgid "WordPress Website"
+msgstr "Website WordPress"
