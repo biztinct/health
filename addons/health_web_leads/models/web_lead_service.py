@@ -395,16 +395,9 @@ class WebLeadService(models.AbstractModel):
         if touch:
             return self._result('duplicate', touch.lead_id, submission_id)
 
-        # -- B. Identity (untrusted) -----------------------------------
-        raw_phone = payload.get('phone')
-        phone = _safe_phone(raw_phone)
-        email = _safe_email(payload.get('email'))
-        invalid_phone = bool(raw_phone) and not phone
-        if not phone and not email:
-            raise ApiError(
-                _('At least one of phone or email is required'), 422)
-
-        # -- C. Spam gate ----------------------------------------------
+        # -- B. Spam gate — BEFORE the identity requirement (review N2:
+        # a detected bot must always see 200, never a 422 oracle telling it
+        # which fields to fake next time) -------------------------------
         anti_spam = _sub(payload, 'anti_spam')
         if anti_spam.get('honeypot_filled') or anti_spam.get('token_ok') is False:
             # Rail R3: 200, never 4xx. A 4xx makes the relay retry forever and
@@ -414,6 +407,15 @@ class WebLeadService(models.AbstractModel):
                          submission_id)
             return {'status': 'rejected_spam',
                     'submission_id': submission_id}
+
+        # -- C. Identity (untrusted) -----------------------------------
+        raw_phone = payload.get('phone')
+        phone = _safe_phone(raw_phone)
+        email = _safe_email(payload.get('email'))
+        invalid_phone = bool(raw_phone) and not phone
+        if not phone and not email:
+            raise ApiError(
+                _('At least one of phone or email is required'), 422)
 
         spam_hit = bool(phone) and bool(Lead.search_count(
             [('phone', '=', phone), ('contact_status', '=', 'spam')], limit=1))
@@ -462,8 +464,18 @@ class WebLeadService(models.AbstractModel):
         shared_phone_hit = bool(phone_candidate) and not merge
 
         if merge:
-            return self._merge(candidate, payload, submission_id, phone, email,
-                               catchment, city_source, occurred_at)
+            try:
+                return self._merge(candidate, payload, submission_id, phone,
+                                   email, catchment, city_source, occurred_at)
+            except psycopg2.IntegrityError:
+                # Review M2 — the create branch's race guard, mirrored: two
+                # deliveries of the same submission both resolved to merge and
+                # the touchpoint unique index arbitrated. The merge target is
+                # already known, so answer as a replay against it.
+                _logger.info(
+                    'web_leads: submission %s lost the merge race — '
+                    'reporting the existing lead', submission_id)
+                return self._result('duplicate', candidate, submission_id)
 
         try:
             with self.env.cr.savepoint():
@@ -577,15 +589,21 @@ class WebLeadService(models.AbstractModel):
         return self.env['crm.lead'].create(vals)
 
     def _cross_reference(self, new_lead, other_lead):
-        """Reciprocal notes on a shared phone number (design §9.2)."""
+        """Reciprocal notes on a shared phone number (design §9.2).
+
+        Worded neutrally (review L1): this branch also fires when the names
+        DO match but the candidate fell outside the merge window, so the note
+        must not assert "a different name" as fact.
+        """
         new_lead.message_post(body=Markup('<p>%s</p>') % _(
-            'Same phone number as lead %(ref)s (%(name)s), under a different '
-            'name — kept as a separate lead. Flagged for review.',
+            'Same phone number as lead %(ref)s (%(name)s) — kept as a '
+            'separate lead, no automatic merge. Flagged for review.',
             ref=other_lead.unique_contact_code or other_lead.id,
             name=other_lead.contact_name or other_lead.name or ''))
         other_lead.message_post(body=Markup('<p>%s</p>') % _(
-            'A new website enquiry (%(ref)s — %(name)s) arrived on this phone '
-            'number under a different name.',
+            'A new website enquiry (%(ref)s — %(name)s) arrived on this '
+            'phone number. It was kept as a separate lead — review whether '
+            'the two belong together.',
             ref=new_lead.unique_contact_code or new_lead.id,
             name=new_lead.contact_name or new_lead.name or ''))
 

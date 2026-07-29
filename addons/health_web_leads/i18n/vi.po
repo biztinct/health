@@ -52,14 +52,20 @@ msgstr "Số điện thoại (chưa xác thực, không phải số Việt Nam h
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "Same phone number as lead %(ref)s (%(name)s), under a different name — kept as a separate lead. Flagged for review."
-msgstr "Trùng số điện thoại với lead %(ref)s (%(name)s) nhưng khác tên — giữ thành lead riêng. Đã đánh dấu cần rà soát."
+msgid "Same phone number as lead %(ref)s (%(name)s) — kept as a separate lead, no automatic merge. Flagged for review."
+msgstr "Trùng số điện thoại với lead %(ref)s (%(name)s) — giữ thành lead riêng, không tự động gộp. Đã đánh dấu cần rà soát."
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "A new website enquiry (%(ref)s — %(name)s) arrived on this phone number under a different name."
-msgstr "Một yêu cầu mới từ website (%(ref)s — %(name)s) đã đến từ số điện thoại này nhưng dưới một tên khác."
+msgid "A new website enquiry (%(ref)s — %(name)s) arrived on this phone number. It was kept as a separate lead — review whether the two belong together."
+msgstr "Một yêu cầu mới từ website (%(ref)s — %(name)s) đã đến từ số điện thoại này. Đã giữ thành lead riêng — vui lòng rà soát xem hai lead có thuộc về cùng một người không."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Internal server error"
+msgstr "Lỗi máy chủ nội bộ"
 
 #. module: health_web_leads
 #. odoo-python

@@ -20,7 +20,7 @@ city (catchment) and marketing attribution, over the existing
 Design: docs/strategy/website-crm-integration.md
 Handover: docs/strategy/handovers/web-leads-phaseW1.md
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Healthcare',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',

@@ -25,6 +25,7 @@ import time
 import werkzeug.exceptions
 
 from odoo import _, http
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.http import request
 
 from odoo.addons.health_api_gateway.api_registry import register_route
@@ -123,10 +124,18 @@ class HealthWebLeadsController(http.Controller):
             status_code = exc.status_code
             return _envelope_response(error=exc.message,
                                       status_code=exc.status_code)
-        except Exception as exc:  # noqa: BLE001 — envelope, never a stack page
+        except (UserError, ValidationError, AccessError) as exc:
+            # Review M1: without this tier (the decorator has it at
+            # gateway.py:334-337) an ORM refusal would surface as a 500 and
+            # the WP relay — which re-queues only on 5xx — would retry the
+            # same doomed submission forever.
+            status_code = 403 if isinstance(exc, AccessError) else 400
+            return _envelope_response(error=str(exc), status_code=status_code)
+        except Exception:  # noqa: BLE001 — envelope, never a stack page
             status_code = 500
             _logger.exception('web_leads: unhandled error in %s', ROUTE)
-            return _envelope_response(error=str(exc), status_code=500)
+            return _envelope_response(error=_('Internal server error'),
+                                      status_code=500)
         finally:
             # Same append-only audit row the @api_route decorator writes, on a
             # fresh cursor so it survives a rolled-back request. Bodies are

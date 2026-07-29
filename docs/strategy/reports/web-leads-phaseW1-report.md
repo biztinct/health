@@ -352,3 +352,19 @@ Until then a flagged lead is only discoverable by someone knowing to look, and
 the only monitoring is the gateway audit log (the heartbeat canary is W2). If
 the WordPress side is ready before W2, either bring the W2 triage surface
 forward or agree a manual daily check with ops.
+
+---
+
+## Fable review addendum (2026-07-29) — PASS-WITH-FIXES
+
+Independent bulk review (whole-module read against the handover + server re-verification, tests re-run independently: 0 failed of 21, all methods proven executed). The §5.38 route deviation was **adjudicated correct** — a designer miss in the handover, not an implementer liberty — and the hand-rolled route is in one respect *stronger* than the decorator (64KB body cap, which `@api_route` lacks).
+
+**Fixes shipped by Fable (19.0.1.0.1, tests re-run 0 failed of 21, live on vietuat):**
+- **M1** — added the `UserError/ValidationError/AccessError → 400/403` tier the decorator has and the hand-rolled route dropped; without it a persistent ORM refusal would 500 forever and the WP relay (which re-queues only on 5xx) would retry that submission indefinitely. Unexpected 500s now return a generic message instead of `str(exc)`.
+- **M2** — the merge branch now mirrors the create branch's `IntegrityError` race guard: two concurrent deliveries of the same submission that both resolve to merge answer as a replay against the known merge target instead of a 500.
+- **N2** (Fable design miss, not implementer's) — the spam gate now runs **before** the identity requirement, so a detected bot always sees 200 and never a 422 oracle revealing which fields to fake.
+- **L1** — the shared-phone cross-reference chatter is reworded neutrally (it also fires when names match but the merge window lapsed); vi.po updated, no inert entries.
+
+**Corrections to this report's claims:** "identical to a decorated route" was overstated (M1, and audit rows carry no record_ids — L2); "the group grants no clinical model access" is **false through the implied-group closure** — `group_web_leads_service` → `sales_team.group_sale_salesman_all_leads` → `group_sale_salesman` reaches `res.partner` create/write, `account.move` read, and `health.ews.score` read (M3). Blast radius is contained (the OAuth token reaches only this endpoint; XML-RPC needs the user's password), so accepted for W1 and **queued as a W2 tightening**: replace the salesman implication with dedicated ACL rows.
+
+**Deferred to W2:** M3 (ACL narrowing), L2 (audit record_ids), L5 (vi.po for group/scope names + field help), L4 (race-branch test via mock).
