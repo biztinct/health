@@ -1,12 +1,8 @@
 # CC-G evidence pack — vietuat, 2026-07-29
 
-This pack has two halves. The **tenant-facing** half (§7 steps 2–3) is a real browser
-pass driven from the login page as the real `crm` user — screenshots below. The
-**operator-facing** half (the Go-live tab itself, §7 step 4) is service-side only: that
-form is `base.group_system`, `crm` is deliberately not a system administrator (which is
-exactly what makes it valid tenant evidence), and no admin login was available. Every
-value the tab renders is proven below through the same methods the form calls; the
-*rendering* of the notebook page is not. That is the one thing still owed.
+This pack is complete: a **tenant** browser pass as `crm` (§7 steps 2–3), an **operator**
+browser pass as an administrator (§7 step 4, including a real Graph round trip), and the
+service-side transcripts that prove the values behind both.
 
 Personas used:
 
@@ -177,9 +173,51 @@ that differs, and it differs in the direction the non-goal requires: a **complet
 still lights the card exactly as it always did (the gate only ever tightened). Cleanup
 returned the pixels to the baseline.
 
-## Still owed
+---
 
-One screenshot: the **Go-live tab itself** on the platform-application form. It needs a
-`base.group_system` login; `crm` is not one, and giving it that group would both change a
-live user's privileges and destroy the persona this pack depends on. Its values are
-proven above (steps 3 and 4 of the service pass); only the rendering is unverified.
+## Operator pass — the Go-live tab, as an administrator
+
+Persona: `ash@biztinct.com` / Mitchell Admin, uid 2, `is_system: true` (verified via
+`/web/session/get_session_info`, not assumed).
+
+**Reachability finding first, because it changes how this pass reads.** The Platform
+Applications menu is `CRM Center → Care Command Setup → Platform Applications`
+(`ir.ui.menu` 986). `https://care.biztinct.com/odoo` **redirects to `/bizapp`** for the
+administrator exactly as it does for everyone else, the CMS sidebar has no leaf for it,
+and the shell's app switcher does not list the `CRM Center` root app — scraped, 30
+entries, no match. So the operator console is reachable **only by URL** today
+(`/odoo/action-1698`), which is ledger §5.69 on the operator plane. CC-G did not
+introduce this — the menu has been backend-only since CC-A — and the handover's non-goals
+forbid a tenant-shell change, so it is reported rather than fixed. Every step below was
+driven through the real form; only the first hop is a URL.
+
+| # | Action | Result | Shot |
+|---|---|---|---|
+| 1 | `/odoo/action-1698` → **New** → Provider `Meta (WhatsApp + Messenger)`, Client/App ID `000000000000000` → **Save** | record 455; the "Go live" tab renders with live computed values *before* the first save | `06-go-live-tab-meta-row.png` |
+| 2 | **Generate verify token** | 32-char token merged into `extra_json`; checklist row flips to Done | `07-verify-token-generated.png` |
+| 3 | **Check this application** (no secret yet) | `fail` — "Enter the app id and store the secret first.", **no network call** | — |
+| 4 | **Set secret** → paste → **Store secret** | `has_secret: true`, hint `••••cret`; a second press of Store on the blanked wizard correctly refused with "The secret cannot be empty." | — |
+| 5 | **Check this application** | real Graph call → **Failed**, `HTTP 400: {"error":{"message":"Invalid Client ID","type":"OAuthException",<redacted>,"fbtrace_id":"Awyi4qLyLFYKk4gJZJDG0I9"}}` — persisted, notification, no traceback | `08-preflight-refusal-notification.png` |
+| 6 | scroll the tab | full checklist: client id **Done**, secret **Done**, `verify_token` **Done**, `flb_config_id` / `es_config_id` **To do**, plus the four Meta steps and the console link | `09-go-live-checklist.png` |
+| 7 | Channel Center, same session | WhatsApp and Messenger **still "Not available yet"** | `10-meta-row-with-credentials-cards-still-dark.png` |
+| 8 | delete record 455 → Center **Refresh** | back to baseline | `11-after-cleanup-admin-view.png` |
+
+Step 7 is the phase in one screenshot. That Meta application has a client id, a stored
+secret and a verify token — under the CC-F gate it counted as "an active row exists" and
+**both cards would have offered Connect**. The Embedded-Signup and Login-for-Business
+configuration ids are missing, so `authorize_url` could only have failed, and the cards
+correctly stay dark. `code:1` in Meta's error body was redacted on the way in; the app
+secret appears in no field, no notification and no audit row.
+
+## Cleanup — fresh-cursor verified (§5.34), twice
+
+After both passes:
+
+```
+FRESH_CURSOR rows: 0
+SELECT count(*) FROM channel_platform_app  →  0
+curl /web/login → HTTP:200
+```
+
+The `care.channel.audit` rows are deliberately NOT cleaned up — the model is append-only
+and an operator really did generate a token and run four preflights.

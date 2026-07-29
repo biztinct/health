@@ -221,14 +221,31 @@ this phase, where that same empty row lit the Zalo and ZNS cards and offered a C
 that could only fail. The one frame that differs (`1efeb5c1…`) is the completed row
 lighting the card up, which is the non-goal "may only tighten" holding.
 
-**Still owed: one screenshot — the Go-live tab itself.** That form is
-`base.group_system`; `crm` is deliberately not a system administrator (which is what
-makes it valid tenant evidence), and granting it that group would change a live user's
-privileges and destroy the persona. Every value the tab renders is proven service-side
-in the pack — redirect URI, both webhook URLs, the checklist rows, the generator, and a
-real Graph round trip that returned `HTTP 400 Invalid Client ID` → `fail` persisted with
-no raise and no secret in the detail. Only the rendering is unverified. **An admin login
-closes it in one pass.**
+**The operator pass is now complete too** (admin login supplied after the first draft;
+uid 2, `is_system` verified via `get_session_info`). The Go-live tab was driven through
+the real form: create → **Generate verify token** (32 chars merged, checklist row flips)
+→ **Check this application** with no secret (`fail`, no network call) → **Set secret**
+wizard → **Check this application** again → a real Graph round trip returning
+`HTTP 400 Invalid Client ID`, persisted as `Failed` with the redacted detail on screen,
+a notification, and no traceback. Shots 06–11.
+
+**Shot 10 is the phase in one image.** That Meta application has a client id, a stored
+secret and a verify token — under the CC-F gate that counted as "an active row exists"
+and both cards would have offered Connect. The two configuration ids are missing, so
+`authorize_url` could only have failed, and WhatsApp and Messenger correctly stay "Not
+available yet". Deleting the row returns the Center to baseline; fresh cursor and psql
+both read 0 platform apps, `/web/login` HTTP 200.
+
+**Reachability finding (pre-existing, reported not fixed):** the Platform Applications
+menu is `CRM Center → Care Command Setup → Platform Applications`, and for the
+**administrator** `/odoo` redirects to `/bizapp` exactly as it does for everyone else,
+the CMS sidebar has no leaf for it, and the shell's app switcher does not list the
+`CRM Center` root app (scraped: 30 entries, no match). The operator console is therefore
+reachable **only by URL** (`/odoo/action-1698`) — ledger §5.69 on the operator plane.
+CC-G did not introduce it (the menu has been backend-only since CC-A) and this phase's
+non-goals forbid a tenant-shell change, so the fix — one group-gated `cms.sidebar.item`
+under ADMIN, the `health_cms_clinical` pattern — is left as a decision rather than taken
+unilaterally.
 
 ## 6. Observations worth a reviewer's attention
 
