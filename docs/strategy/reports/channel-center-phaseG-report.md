@@ -207,15 +207,28 @@ cursor that sets `SET LOCAL lock_timeout` like every other fresh cursor in the m
 and the two voip tests run on `company2`, created inside the transaction, where the
 deployment has no rows by construction. **Ledger §5.95 added.**
 
-## 5. What this phase owes
+## 5. Browser pass, and the one screenshot still owed
 
-**Screenshots.** The `care.biztinct.com` session had expired and this session holds no QA
-login, so DoD item 5 was met service-side only: every value the Go-live tab renders and
-every answer the Center gives was driven through the real methods as the real personas on
-the live database, including a real Graph round trip, with the QA rows deleted and
-fresh-cursor verified. That proves the values, not the rendering — a mis-parented
-notebook page would not appear in it. **Give me a UAT login and I will finish the three
-screenshots (§7 steps 2–4) in one pass.**
+The user supplied the `crm` login after the first draft of this report, so §7 steps 2–3
+are now a real browser pass from the login page through the CMS sidebar — no deep links,
+zero console messages on every screen (`channel-center-phaseG-evidence/`, shots 01–05).
+
+The evidence that matters is an md5: the Center with **zero** platform apps, the Center
+with an **empty** `zalo` row, and the Center after cleanup are **pixel-identical**
+(`b85fb266…`). An incomplete platform application changes nothing a tenant can see —
+which is precisely what G1 exists to guarantee, and precisely what was NOT true before
+this phase, where that same empty row lit the Zalo and ZNS cards and offered a Connect
+that could only fail. The one frame that differs (`1efeb5c1…`) is the completed row
+lighting the card up, which is the non-goal "may only tighten" holding.
+
+**Still owed: one screenshot — the Go-live tab itself.** That form is
+`base.group_system`; `crm` is deliberately not a system administrator (which is what
+makes it valid tenant evidence), and granting it that group would change a live user's
+privileges and destroy the persona. Every value the tab renders is proven service-side
+in the pack — redirect URI, both webhook URLs, the checklist rows, the generator, and a
+real Graph round trip that returned `HTTP 400 Invalid Client ID` → `fail` persisted with
+no raise and no secret in the detail. Only the rendering is unverified. **An admin login
+closes it in one pass.**
 
 ## 6. Observations worth a reviewer's attention
 

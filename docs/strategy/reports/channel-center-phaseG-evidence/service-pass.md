@@ -1,17 +1,12 @@
 # CC-G evidence pack — vietuat, 2026-07-29
 
-**Read this first: there are no screenshots in this pack, and that is a gap, not a
-choice.** The browser session on `care.biztinct.com` had expired and this session holds
-no QA login (the CC-E pack records the step as "User ID `crm`, password" without the
-password, correctly). Everything below was therefore driven through the **same server
-methods the screens call**, as the **real personas**, on the live UAT database — the
-service-side half of DoD item 5. The screenshot half (§7 steps 2–4 of the handover) is
-outstanding and is the one thing this phase owes.
-
-What that costs, stated plainly: these transcripts prove the *values* the Go-live tab
-renders and the *answers* the Center gives, not the *rendering*. A view arch error or a
-mis-parented notebook page would not show up here. The arch loaded without error during
-the upgrade (`EXIT:0`), which is weaker evidence than a picture.
+This pack has two halves. The **tenant-facing** half (§7 steps 2–3) is a real browser
+pass driven from the login page as the real `crm` user — screenshots below. The
+**operator-facing** half (the Go-live tab itself, §7 step 4) is service-side only: that
+form is `base.group_system`, `crm` is deliberately not a system administrator (which is
+exactly what makes it valid tenant evidence), and no admin login was available. Every
+value the tab renders is proven below through the same methods the form calls; the
+*rendering* of the notebook page is not. That is the one thing still owed.
 
 Personas used:
 
@@ -150,7 +145,41 @@ curl /web/login → HTTP:200
 
 The database is back in exactly the state step 2 measured.
 
+---
+
+## Browser pass — the real user's path, as `crm`
+
+Navigation, click by click, from the login page (no deep links):
+
+| # | Action | Result | Shot |
+|---|---|---|---|
+| 1 | `https://care.biztinct.com/web/login` → User ID `crm` + password → **Log in** | lands on `/bizapp` — the CMS shell, not `/odoo` | `01-bizapp-shell.png` |
+| 2 | CMS sidebar → **CRM → Channel Center** (`a.ops-nav-item`) | `/bizapp/action-1706`, all 8 cards | `02-center-zero-platform-apps.png` |
+| 3 | *(operator creates an EMPTY `zalo` platform-app row — server-side; `crm` has no access to that model)* → **Refresh** | Zalo card **still** "Not available yet" | `03-empty-zalo-row-card-stays-dark.png` |
+| 4 | *(the same row completed: client id + stored secret)* → **Refresh** | Zalo card lights up: **Upgrade connection**, approval copy gone | `04-complete-zalo-row-card-lights-up.png` |
+| 5 | *(both QA rows deleted)* → **Refresh** | back to the step-2 state | `05-after-cleanup-back-to-baseline.png` |
+
+**Console: zero messages on every screen** (no errors, no warnings).
+
+The strongest line in this pack is an md5:
+
+```
+02-center-zero-platform-apps.png        b85fb266a6d71e383871d8cb1c4e574b
+03-empty-zalo-row-card-stays-dark.png   b85fb266a6d71e383871d8cb1c4e574b
+05-after-cleanup-back-to-baseline.png   b85fb266a6d71e383871d8cb1c4e574b
+04-complete-zalo-row-card-lights-up.png 1efeb5c1134a257300368d382c404f10
+```
+
+Steps 2, 3 and 5 are **pixel-identical**. An empty platform-app row changes nothing a
+tenant can see — which is the whole point of G1, since before CC-G that same row lit the
+Zalo and ZNS cards and offered a Connect that could only fail. Step 4 is the only frame
+that differs, and it differs in the direction the non-goal requires: a **complete** row
+still lights the card exactly as it always did (the gate only ever tightened). Cleanup
+returned the pixels to the baseline.
+
 ## Still owed
 
-Screenshots of (a) the Center with zero rows, (b) the Go-live tab on an empty zalo row,
-(c) the Go-live tab on a meta row. Blocked on a UAT login for `care.biztinct.com`.
+One screenshot: the **Go-live tab itself** on the platform-application form. It needs a
+`base.group_system` login; `crm` is not one, and giving it that group would both change a
+live user's privileges and destroy the persona this pack depends on. Its values are
+proven above (steps 3 and 4 of the service pass); only the rendering is unverified.
