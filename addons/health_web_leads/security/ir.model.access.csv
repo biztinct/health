@@ -10,3 +10,9 @@ access_health_lead_touchpoint_crm_user,health.lead.touchpoint crm user,model_hea
 access_health_lead_touchpoint_crm_manager,health.lead.touchpoint crm manager,model_health_lead_touchpoint,health_crm.group_health_crm_manager,1,1,0,0
 access_health_lead_touchpoint_system,health.lead.touchpoint system,model_health_lead_touchpoint,base.group_system,1,1,1,1
 access_health_catchment_province_web_leads_service,health.catchment.province web service,health_base.model_health_catchment_province,group_web_leads_service,1,0,0,0
+access_crm_lead_web_leads_service,crm.lead web service,crm.model_crm_lead,group_web_leads_service,1,1,1,0
+access_crm_team_web_leads_service,crm.team web service,sales_team.model_crm_team,group_web_leads_service,1,0,0,0
+access_crm_stage_web_leads_service,crm.stage web service,crm.model_crm_stage,group_web_leads_service,1,0,0,0
+access_utm_source_web_leads_service,utm.source web service,utm.model_utm_source,group_web_leads_service,1,0,1,0
+access_utm_medium_web_leads_service,utm.medium web service,utm.model_utm_medium,group_web_leads_service,1,0,1,0
+access_utm_campaign_web_leads_service,utm.campaign web service,utm.model_utm_campaign,group_web_leads_service,1,0,0,0

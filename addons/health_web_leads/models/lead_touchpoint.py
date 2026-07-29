@@ -9,7 +9,7 @@ row; the LAST touch is the newest row. No duplicated first_*/last_* pairs.
 never the moment we received it — the relay's retry queue delivers late by
 design, and reconciliation needs the skew visible (`received_at`).
 """
-from odoo import fields, models
+from odoo import api, fields, models
 
 # Shared by the touchpoint and by ``crm.lead.city_source`` — the two must not
 # drift, so both read this one list.
@@ -96,6 +96,24 @@ class HealthLeadTouchpoint(models.Model):
         string='Raw Payload',
         help='The original submission, capped at 8 KB. Behind ACLs; never '
              'logged.')
+
+    @api.depends('touchpoint_type', 'occurred_at')
+    def _compute_display_name(self):
+        """The model has no `name`, so without this every breadcrumb, m2o
+        label and log line reads `health.lead.touchpoint,97`.
+
+        The type label comes from `fields_get`, which returns the TRANSLATED
+        selection — so the name follows the reader's language for free and
+        costs the catalogue no new msgid.
+        """
+        labels = dict(self.fields_get(
+            ['touchpoint_type'])['touchpoint_type']['selection'])
+        for touch in self:
+            parts = [labels.get(touch.touchpoint_type) or '']
+            if touch.occurred_at:
+                parts.append(fields.Datetime.to_string(touch.occurred_at))
+            touch.display_name = ' · '.join(p for p in parts if p) \
+                or str(touch.id or '')
 
     def init(self):
         # Ledger §5.1 — `_sql_constraints` are NOT materialized on Odoo 19.

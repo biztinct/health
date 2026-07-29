@@ -64,6 +64,27 @@ _CATCHMENT_REFS = {
 PARAM_FORM_CITY_MAP = 'web_leads.form_city_map'
 PARAM_URL_CITY_MAP = 'web_leads.url_city_map'
 
+# -- Phase W2 -------------------------------------------------------------
+PARAM_HEARTBEAT_ENABLED = 'web_leads.heartbeat_enabled'
+PARAM_HEARTBEAT_USER = 'web_leads.heartbeat_user_id'
+
+# One reconcile call covers a day's traffic with room to spare; past this the
+# relay is asking us to build a 100k-element `IN (...)` on a public endpoint.
+RECONCILE_MAX_IDS = 1000
+
+# "Did the pipe deliver?" — measured on `received_at`, never `occurred_at`
+# (which is sender-controlled and would let a broken relay backdate itself
+# into looking healthy).
+HEARTBEAT_STALE_HOURS = 24
+# The dedupe key for the search-first activity check. Changing it means the
+# next run schedules a SECOND activity next to the open one — which is also
+# why it is NOT wrapped in `_()`: a summary that varies with the reader's
+# language is not a key. The note body beside it is translated; that is the
+# sentence a human actually reads.
+HEARTBEAT_SUMMARY = 'Website lead pipeline: no submission received'
+
+_FALSY_PARAM = ('', '0', 'false', 'no', 'off', 'none')
+
 
 # ---------------------------------------------------------------------------
 # Pure helpers (no ORM) — unit-testable, and reused by the touchpoint vals
@@ -664,9 +685,201 @@ class WebLeadService(models.AbstractModel):
     @staticmethod
     def _result(status, lead, submission_id):
         """The `data` half of the envelope. `lead_ref` is the human contact
-        code, never a database id (design §5.1)."""
+        code, never a database id (design §5.1).
+
+        `_lead_id` is the review-L2 seam and is NOT part of the API contract:
+        the controller pops it into the audit row's `record_ids` and it never
+        reaches the envelope. The leading underscore is the marker — anything
+        the endpoint may return is named without one.
+        """
         return {
             'status': status,
             'lead_ref': (lead.unique_contact_code or False) if lead else False,
             'submission_id': submission_id,
+            '_lead_id': (lead.id or False) if lead else False,
         }
+
+    # ==================================================================
+    # Reconcile (W2 §4.1) — the relay's daily "did you get these?"
+    # ==================================================================
+    @api.model
+    def reconcile(self, payload):
+        """Answer which submission ids this system already holds.
+
+        The WordPress relay keeps a local queue and re-posts anything we
+        report as `missing`; capture is idempotent, so a re-post of something
+        we *do* hold is a no-op `duplicate`.
+
+        **`rejected_spam` submissions appear in NEITHER list and are counted
+        nowhere.** By design no row is created for them, so there is nothing
+        here to find: the relay marks a submission done from the CAPTURE
+        reply (`status == 'rejected_spam'`) and must never re-post it — if it
+        does, it will be told `missing` forever and will loop.
+
+        Returns ``{'known': [...], 'missing': [...]}`` plus, only when the
+        caller supplies ``date``, ``'counts': {'created': n, 'merged': n}``
+        over that UTC day's `received_at` (the day we accepted the touch, not
+        the day the visitor acted).
+        """
+        if not isinstance(payload, dict):
+            raise ApiError(_('Request body must be a JSON object'), 422)
+
+        raw_ids = payload.get('submission_ids')
+        if not isinstance(raw_ids, (list, tuple)) or not raw_ids:
+            raise ApiError(
+                _('submission_ids is required and must be a non-empty list'),
+                422)
+        if len(raw_ids) > RECONCILE_MAX_IDS:
+            raise ApiError(
+                _('submission_ids accepts at most %s ids per call',
+                  RECONCILE_MAX_IDS), 422)
+
+        # Same cleaning the capture path applied before storing, so a value
+        # that was truncated/stripped on the way in still matches on the way
+        # back out. Order preserved, duplicates collapsed.
+        ids, seen = [], set()
+        for value in raw_ids:
+            cleaned = _clean(value)
+            if cleaned and cleaned not in seen:
+                seen.add(cleaned)
+                ids.append(cleaned)
+        if not ids:
+            raise ApiError(
+                _('submission_ids is required and must be a non-empty list'),
+                422)
+
+        known = set(self.env['crm.lead'].search(
+            [('external_submission_id', 'in', ids)]
+        ).mapped('external_submission_id'))
+        known |= set(self.env['health.lead.touchpoint'].search(
+            [('touchpoint_type', '=', 'form_submit'),
+             ('external_event_id', 'in', ids)]
+        ).mapped('external_event_id'))
+
+        data = {
+            'known': [value for value in ids if value in known],
+            'missing': [value for value in ids if value not in known],
+        }
+        if payload.get('date'):
+            data['counts'] = self._reconcile_counts(payload['date'])
+        return data
+
+    @api.model
+    def _reconcile_counts(self, day):
+        """`created` vs `merged` touchpoints RECEIVED on one UTC day.
+
+        A touchpoint whose `external_event_id` is also its lead's
+        `external_submission_id` is the touch that CREATED that lead; every
+        other form_submit touch was appended to a lead that already existed.
+        """
+        try:
+            start = datetime.strptime(str(day).strip(), '%Y-%m-%d')
+        except (ValueError, TypeError):
+            raise ApiError(_('date must be formatted YYYY-MM-DD'), 422)
+        rows = self.env['health.lead.touchpoint'].search([
+            ('touchpoint_type', '=', 'form_submit'),
+            ('received_at', '>=', start),
+            ('received_at', '<', start + timedelta(days=1)),
+        ])
+        created = 0
+        for row in rows:
+            event_id = row.external_event_id
+            if event_id and row.lead_id \
+                    and row.lead_id.external_submission_id == event_id:
+                created += 1
+        return {'created': created, 'merged': len(rows) - created}
+
+    # ==================================================================
+    # Heartbeat (W2 §4.2) — the canary for a silently broken relay
+    # ==================================================================
+    @api.model
+    def _cron_heartbeat(self):
+        """Warn a human when the WordPress pipe has gone quiet.
+
+        Ships ACTIVE but inert: the gate is `web_leads.heartbeat_enabled`,
+        seeded False (ledger §5.81 — a cron that ships active must be
+        harmless by default). Enable it only once the relay is live, or
+        every quiet night raises a false alarm.
+        """
+        enabled = (self.env['ir.config_parameter'].sudo().get_param(
+            PARAM_HEARTBEAT_ENABLED) or '')
+        if str(enabled).strip().lower() in _FALSY_PARAM:
+            return False
+
+        newest = self.env['health.lead.touchpoint'].sudo().search(
+            [('source_system', '=', 'wordpress')],
+            order='received_at desc, id desc', limit=1)
+        cutoff = fields.Datetime.now() - timedelta(hours=HEARTBEAT_STALE_HOURS)
+        if newest and newest.received_at and newest.received_at >= cutoff:
+            return False
+        return self._heartbeat_alert(newest)
+
+    @api.model
+    def _heartbeat_user(self):
+        """The configured watcher, else the gateway admins, else nobody.
+
+        Ledger §5.16: `res.groups` has NO `.users` in Odoo 19 — it is
+        `.user_ids`. The webhook-subscription precedent this clones still
+        says `.users`, which raises inside its own blanket except and
+        silently degrades to `base.user_admin`; do not copy that half.
+        """
+        Users = self.env['res.users'].sudo()
+        raw = self.env['ir.config_parameter'].sudo().get_param(
+            PARAM_HEARTBEAT_USER)
+        if raw:
+            try:
+                user = Users.browse(int(str(raw).strip())).exists()
+            except (TypeError, ValueError):
+                user = Users.browse()
+            if user and user.active:
+                return user
+        group = self.env.ref('health_api_gateway.group_gateway_admin',
+                             raise_if_not_found=False)
+        if group and group.user_ids:
+            return group.user_ids[0]
+        return self.env.ref('base.user_admin',
+                            raise_if_not_found=False) or Users.browse()
+
+    @api.model
+    def _heartbeat_alert(self, newest):
+        """ONE open activity at a time — search first (handover fact #3), or a
+        daily cron stacks a fresh to-do on the same person every night."""
+        user = self._heartbeat_user()
+        if not user:
+            _logger.warning(
+                'web_leads: heartbeat is enabled but no user could be '
+                'resolved — set %s', PARAM_HEARTBEAT_USER)
+            return False
+
+        Activity = self.env['mail.activity'].sudo()
+        if Activity.search_count([('res_model', '=', False),
+                                  ('user_id', '=', user.id),
+                                  ('summary', '=', HEARTBEAT_SUMMARY)],
+                                 limit=1):
+            return False
+
+        if newest and newest.received_at:
+            note = _('The last website submission was received on %s (over '
+                     '%s hours ago). Check the WordPress relay and the '
+                     'gateway audit log before assuming a quiet day.',
+                     fields.Datetime.to_string(newest.received_at),
+                     HEARTBEAT_STALE_HOURS)
+        else:
+            note = _('No website submission has ever been received. If the '
+                     'WordPress relay is meant to be live, it is not '
+                     'reaching POST /api/v1/web/leads.')
+
+        # A FREE (model-less) activity: Odoo 19 supports `res_model_id`
+        # unset as long as `user_id` is set, and there is no honest record to
+        # hang this on — the alert is about an absence, not about a row.
+        vals = {'user_id': user.id, 'summary': HEARTBEAT_SUMMARY,
+                'note': Markup('<p>%s</p>') % note,
+                'date_deadline': fields.Date.context_today(self)}
+        activity_type = self.env.ref('mail.mail_activity_data_todo',
+                                     raise_if_not_found=False)
+        if activity_type:
+            vals['activity_type_id'] = activity_type.id
+        Activity.create(vals)
+        _logger.warning('web_leads: heartbeat raised an activity for %s',
+                        user.login)
+        return True

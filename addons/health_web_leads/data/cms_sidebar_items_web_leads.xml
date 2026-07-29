@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ledger §5.69: a backend `menuitem` is NOT a reachable surface for the
+     users who live in the /bizapp CMS shell — a real login lands there,
+     /odoo redirects back into it, and the app switcher lists only the
+     shell's own apps. The `Sales & CRM › Configuration › Web Touchpoints`
+     menu this module also ships is correct and group-gated, and for the
+     CMS persona it does not exist. The sidebar seed is what makes the
+     touchpoint list part of "done".
+
+     Two traps from that same ledger entry, both avoided here:
+       (a) seeded as a SIBLING leaf, never as a child of "Contacts" —
+           `cms_sidebar.js:124` turns any item WITH children into a
+           non-navigating expandable group, which would break the parent;
+       (b) no `parent_id` written at all (an omitted field is not an unset
+           field on a data update, so there is nothing to unset later).
+
+     NO noupdate: the item stays updatable on upgrade. Ungated (no
+     `role_ids`) like the sibling Contacts / Care Command items — the
+     `health.lead.touchpoint` ACLs are what actually govern the rows. -->
+<odoo>
+
+    <record id="item_web_touchpoints" model="cms.sidebar.item">
+        <field name="name">Web Touchpoints</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">21</field>
+        <field name="icon">fa fa-crosshairs</field>
+        <field name="action_xmlid">health_web_leads.action_health_lead_touchpoint</field>
+        <field name="match_action_xmlids">health_web_leads.action_health_lead_touchpoint</field>
+        <field name="match_models">health.lead.touchpoint</field>
+    </record>
+
+</odoo>

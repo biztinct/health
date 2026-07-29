@@ -194,6 +194,9 @@ msgstr "Mã lượt gửi bên ngoài"
 #. module: health_web_leads
 #: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__city_source
 #: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__city_source
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
 msgid "City Source"
 msgstr "Nguồn xác định thành phố"
 
@@ -219,6 +222,13 @@ msgstr "Phiên bản nội dung đồng ý"
 
 #. module: health_web_leads
 #: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_touchpoint_ids
+#: model:ir.actions.act_window,name:health_web_leads.action_health_lead_touchpoint
+#: model:ir.ui.menu,name:health_web_leads.menu_health_lead_touchpoint
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_list
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+#: model:cms.sidebar.item,name:health_web_leads.item_web_touchpoints
 msgid "Web Touchpoints"
 msgstr "Điểm chạm web"
 
@@ -239,16 +249,19 @@ msgstr "Thời điểm tiếp nhận"
 
 #. module: health_web_leads
 #: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__touchpoint_type
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
 msgid "Touchpoint Type"
 msgstr "Loại điểm chạm"
 
 #. module: health_web_leads
 #: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__source_system
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
 msgid "Source System"
 msgstr "Hệ thống nguồn"
 
 #. module: health_web_leads
 #: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__catchment_province_id
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
 msgid "City"
 msgstr "Thành phố"
 
@@ -279,6 +292,7 @@ msgstr "Mã sự kiện bên ngoài"
 
 #. module: health_web_leads
 #: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__raw_payload
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
 msgid "Raw Payload"
 msgstr "Dữ liệu gốc"
 
@@ -371,3 +385,305 @@ msgstr "Bản ghi cuộc gọi (CDR)"
 #: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__source_system__wordpress
 msgid "WordPress Website"
 msgstr "Website WordPress"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "submission_ids is required and must be a non-empty list"
+msgstr "submission_ids là bắt buộc và phải là danh sách không rỗng"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "submission_ids accepts at most %s ids per call"
+msgstr "submission_ids chỉ nhận tối đa %s mã mỗi lần gọi"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "date must be formatted YYYY-MM-DD"
+msgstr "Ngày phải theo định dạng YYYY-MM-DD"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "The last website submission was received on %s (over %s hours ago). Check the WordPress relay and the gateway audit log before assuming a quiet day."
+msgstr "Lượt gửi biểu mẫu gần nhất được tiếp nhận lúc %s (đã hơn %s giờ). Hãy kiểm tra bộ chuyển tiếp WordPress và nhật ký kiểm toán API trước khi kết luận là hôm nay vắng khách."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "No website submission has ever been received. If the WordPress relay is meant to be live, it is not reaching POST /api/v1/web/leads."
+msgstr "Hệ thống chưa từng tiếp nhận lượt gửi biểu mẫu nào. Nếu bộ chuyển tiếp WordPress đáng lẽ đã chạy thì nó chưa gọi được tới POST /api/v1/web/leads."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid "Notification email for website submission %s matched this lead by its marker — the email was filed here instead of creating a second lead."
+msgstr "Email thông báo cho lượt gửi biểu mẫu %s đã khớp với lead này qua mã đánh dấu — email được lưu vào đây thay vì tạo thêm một lead thứ hai."
+
+#. module: health_web_leads
+#: model:ir.model,name:health_web_leads.model_web_lead_service
+msgid "Website Lead Capture Service"
+msgstr "Dịch vụ tiếp nhận lead từ website"
+
+#. module: health_web_leads
+#: model:res.groups,name:health_web_leads.group_web_leads_service
+msgid "Web Leads Service"
+msgstr "Tài khoản dịch vụ Lead Website"
+
+#. module: health_web_leads
+#: model:res.groups,comment:health_web_leads.group_web_leads_service
+msgid "Machine account group for the website lead-capture endpoint: create and update leads, create touchpoints, read the catchment list, the CRM teams and stages, and the UTM vocabularies. No partner writes, no accounting, no clinical models."
+msgstr "Nhóm quyền cho tài khoản máy của điểm cuối tiếp nhận lead website: tạo và cập nhật lead, tạo điểm chạm, đọc danh mục địa bàn, đội ngũ và giai đoạn CRM, cùng các danh mục UTM. Không ghi dữ liệu đối tác, không kế toán, không mô hình lâm sàng."
+
+#. module: health_web_leads
+#: model:api.key.scope,name:health_web_leads.scope_web_lead_write
+msgid "Web Leads Write"
+msgstr "Ghi lead website"
+
+#. module: health_web_leads
+#: model:api.key.scope,description:health_web_leads.scope_web_lead_write
+msgid "Submit website contact-form submissions to POST /api/v1/web/leads."
+msgstr "Gửi dữ liệu biểu mẫu liên hệ từ website tới POST /api/v1/web/leads."
+
+#. module: health_web_leads
+#: model:api.key.scope,name:health_web_leads.scope_web_lead_read
+msgid "Web Leads Read"
+msgstr "Đọc lead website"
+
+#. module: health_web_leads
+#: model:api.key.scope,description:health_web_leads.scope_web_lead_read
+msgid "Read back website submission status (reconciliation, Phase W2)."
+msgstr "Đọc lại trạng thái lượt gửi biểu mẫu website (đối soát, Giai đoạn W2)."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__utm_content
+msgid "Ad / creative variant (raw value)."
+msgstr "Biến thể quảng cáo / mẫu sáng tạo (giá trị thô)."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__utm_term
+msgid "Paid keyword, where the platform supplies it."
+msgstr "Từ khoá trả phí, khi nền tảng có cung cấp."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_form_id
+msgid "Contact Form 7 form id, e.g. 15838."
+msgstr "Mã biểu mẫu Contact Form 7, ví dụ 15838."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__external_submission_id
+msgid "The sending system's submission UUID. Idempotency key: a replayed delivery finds this lead instead of creating a second."
+msgstr "Mã UUID của lượt gửi từ hệ thống nguồn. Đây là khoá chống trùng: một lần gửi lặp lại sẽ tìm thấy lead này thay vì tạo thêm lead thứ hai."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__city_source
+msgid "How the city on this lead was derived."
+msgstr "Cách xác định thành phố cho lead này."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__city_conflict
+msgid "A later touchpoint disagreed with the stored city. The stored city is never auto-changed — a human decides."
+msgstr "Một điểm chạm sau đó không khớp với thành phố đã lưu. Thành phố đã lưu không bao giờ bị tự động đổi — con người quyết định."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_needs_review
+msgid "Ops review flag: unusable phone, unknown city, city conflict, a shared phone number or a possible existing client."
+msgstr "Cờ cần vận hành rà soát: số điện thoại không dùng được, không rõ thành phố, xung đột thành phố, số điện thoại dùng chung hoặc có thể là khách hàng đã có."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_marketing
+msgid "The consent checkbox claim as submitted. Materialised as a health.consent record on conversion (Phase W3)."
+msgstr "Nội dung ô đồng ý như khách đã gửi. Sẽ được tạo thành bản ghi health.consent khi chuyển đổi (Giai đoạn W3)."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_text_version
+msgid "Which consent wording the visitor was shown."
+msgstr "Phiên bản nội dung đồng ý đã hiển thị cho khách."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__occurred_at
+msgid "When the visitor acted (the website submission time), never the time we received it — a queued relay delivers late."
+msgstr "Thời điểm khách thao tác (giờ gửi biểu mẫu trên website), không phải giờ hệ thống tiếp nhận — bộ chuyển tiếp có hàng đợi nên có thể giao trễ."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__received_at
+msgid "When this system accepted the touch. The gap to Occurred At is the relay skew."
+msgstr "Thời điểm hệ thống tiếp nhận điểm chạm. Khoảng cách với Thời điểm phát sinh chính là độ trễ của bộ chuyển tiếp."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__catchment_province_id
+msgid "This touch's own city verdict. It never overwrites the lead's stored city — a disagreement raises City Conflict instead."
+msgstr "Kết luận thành phố của riêng điểm chạm này. Nó không bao giờ ghi đè thành phố đã lưu trên lead — nếu khác nhau thì hệ thống bật cờ Xung đột thành phố."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__external_event_id
+msgid "The sending system's id for this event (the WordPress submission UUID for a form submit) — the idempotency key."
+msgstr "Mã sự kiện do hệ thống nguồn cấp (mã UUID lượt gửi WordPress với một lần gửi biểu mẫu) — đây là khoá chống trùng."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__raw_payload
+msgid "The original submission, capped at 8 KB. Behind ACLs; never logged."
+msgstr "Dữ liệu gửi gốc, giới hạn 8 KB. Được bảo vệ bằng phân quyền; không bao giờ ghi vào log."
+
+#. module: health_web_leads
+#: model:ir.actions.act_window,help:health_web_leads.action_health_lead_touchpoint
+msgid "<p class=\"o_view_nocontent_smiling_face\">No web touchpoints yet</p>"
+msgstr "<p class=\"o_view_nocontent_smiling_face\">Chưa có điểm chạm web nào</p>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Web Attribution"
+msgstr "Nguồn gốc từ web"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Triage"
+msgstr "Phân loại xử lý"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid "Why this lead may need a human look"
+msgstr "Vì sao lead này có thể cần người xem lại"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid "Where the visit happened"
+msgstr "Khách đã truy cập ở đâu"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid "First touch, frozen at creation"
+msgstr "Điểm chạm đầu tiên, cố định từ lúc tạo lead"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Pages"
+msgstr "Trang"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Campaign detail"
+msgstr "Chi tiết chiến dịch"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid "Click identifiers and consent"
+msgstr "Mã click và sự đồng ý"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid "Kept for offline-conversion export; never edited by hand"
+msgstr "Lưu để xuất chuyển đổi offline; không chỉnh sửa thủ công"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Click identifiers"
+msgstr "Mã click"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Consent claim"
+msgstr "Nội dung đồng ý đã gửi"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Touchpoints"
+msgstr "Điểm chạm"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid "Every touch behind this lead — the newest row is the last touch"
+msgstr "Mọi điểm chạm phía sau lead này — dòng mới nhất là điểm chạm cuối cùng"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
+msgid "Website Leads"
+msgstr "Lead từ website"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
+msgid "Needs review (web)"
+msgstr "Cần rà soát (web)"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
+msgid "City conflict"
+msgstr "Xung đột thành phố"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
+msgid "Web leads"
+msgstr "Lead từ web"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "Web Touchpoint"
+msgstr "Điểm chạm web"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "When"
+msgstr "Thời điểm"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "What"
+msgstr "Nội dung"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "City Verdict"
+msgstr "Kết luận thành phố"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "Attribution"
+msgstr "Nguồn gốc"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "Where"
+msgstr "Nơi phát sinh"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "Click Identifiers"
+msgstr "Mã click"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Form Submissions"
+msgstr "Lượt gửi biểu mẫu"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "From WordPress"
+msgstr "Từ WordPress"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Unknown City"
+msgstr "Không rõ thành phố"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Received Today"
+msgstr "Tiếp nhận hôm nay"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Occurred"
+msgstr "Thời điểm phát sinh"

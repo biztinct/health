@@ -3,16 +3,29 @@
 
     <!-- =====================================================================
          The service group carried by the WordPress relay's service user
-         (`svc_web_leads`). It is the ONLY thing that user needs beyond the
-         internal-user group.
+         (`svc_web_leads`). Together with `base.group_user` — granted on the
+         USER, not implied here — it is everything that account needs.
 
-         `implied_ids` pulls in the stock CRM "User: All Documents" group
-         rather than "User: Own Documents Only" on purpose: the capture path
-         must SEE every open lead to deduplicate against it. Under the
-         personal-lead record rule (crm/security/crm_security.xml:21) a lead
-         owned by another salesperson is invisible, the dedup search finds
-         nothing, and the pipeline silently creates a second lead for a person
-         who already has one — the exact failure this phase exists to prevent.
+         W1 shipped this group implying `sales_team.group_sale_salesman_all_
+         leads`, for two reasons that both turned out to be satisfiable
+         without it (W1 review M3):
+
+           (a) `crm.lead` ACLs — now granted directly, below, read/write/
+               create and NO unlink;
+           (b) escaping the stock *personal-leads* record rule so the dedup
+               search can see every open lead. A record rule only restricts
+               members of the rule's OWN groups: `crm.crm_rule_personal_lead`
+               and `crm.crm_rule_all_lead` are both scoped to the salesman
+               groups, so a user in NEITHER is untouched by both and sees
+               every lead the multi-company rule allows. Dropping the group
+               is therefore not a regression for dedup — it is the same
+               visibility by a narrower route.
+
+         What the implication silently also granted, and what dropping it
+         takes back: `res.partner` create/write (crm/security/ir.model.
+         access.csv), `account.move` + `account.move.line` read (sale/
+         security/ir.model.access.csv). Neither has anything to do with
+         capturing a contact form.
 
          Odoo 19 has NO `category_id` on res.groups — groups reference a
          `privilege_id` (conventions §4).
@@ -21,8 +34,12 @@
     <record id="group_web_leads_service" model="res.groups">
         <field name="name">Web Leads Service</field>
         <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
-        <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
-        <field name="comment">Machine account group for the website lead-capture endpoint: create leads and touchpoints, read the catchment list. No clinical model access.</field>
+        <!-- Ledger §5.69(b): deleting a field from a data record does NOT
+             unset it — an update writes only the fields it names. The W1
+             implication has to be cleared explicitly, or it survives the
+             upgrade. -->
+        <field name="implied_ids" eval="[(5, 0, 0)]"/>
+        <field name="comment">Machine account group for the website lead-capture endpoint: create and update leads, create touchpoints, read the catchment list, the CRM teams and stages, and the UTM vocabularies. No partner writes, no accounting, no clinical models.</field>
     </record>
 
 </odoo>

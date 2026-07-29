@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The pipe-broken canary.
+
+         Ships `active=True` — and is INERT until someone sets
+         `web_leads.heartbeat_enabled` to True, because ledger §5.81 is
+         explicit that a cron shipping active must be harmless by default
+         ("0 rows today" is what makes a live cron invisible, not what makes
+         it safe). Before the WordPress relay is live, every night is
+         legitimately quiet and an ungated heartbeat would cry wolf daily.
+
+         Clone of health_api_gateway/data/gateway_cron.xml. -->
+    <data noupdate="1">
+
+        <record id="ir_cron_web_leads_heartbeat" model="ir.cron">
+            <field name="name">Web Leads: heartbeat (relay delivery canary)</field>
+            <field name="model_id" ref="model_web_lead_service"/>
+            <field name="state">code</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="code">model._cron_heartbeat()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

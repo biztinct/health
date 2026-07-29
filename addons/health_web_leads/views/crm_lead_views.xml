@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         1. The FULL opportunity form — "Web Attribution" tab.
+
+         `health_crm.view_healthcare_opportunity_form` is the form the Lead
+         Hub opens on a centre click (`skip_hub_redirect`) and the one bound
+         to the CRM contact actions. Anchored on the NAMED page
+         `source_campaign` (ledger §5.21 — `@string` is not a legal selector
+         in Odoo 19, and a layout div is not a stable one either).
+
+         NOT group-gated: an unusable phone or an unknown city is exactly the
+         kind of thing the receptionist working the lead must see, and a gate
+         here would hide the triage flags from the people who resolve them.
+         ===================================================================== -->
+    <record id="view_healthcare_opportunity_form_web_attribution" model="ir.ui.view">
+        <field name="name">crm.lead.form.web.attribution</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_healthcare_opportunity_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='source_campaign']" position="after">
+                <page string="Web Attribution" name="web_attribution">
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="alert-triangle"/>
+                            <div>
+                                <span>Triage</span>
+                                <small class="text-muted d-block">Why this lead may need a human look</small>
+                            </div>
+                        </div>
+                        <div class="vu-card">
+                            <group col="2">
+                                <field name="web_needs_review"/>
+                                <field name="city_conflict"/>
+                                <field name="city_source"/>
+                                <field name="web_form_id" readonly="1"/>
+                                <field name="external_submission_id" readonly="1"/>
+                            </group>
+                        </div>
+                    </div>
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="globe"/>
+                            <div>
+                                <span>Where the visit happened</span>
+                                <small class="text-muted d-block">First touch, frozen at creation</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>Pages</span>
+                                </div>
+                                <group col="2">
+                                    <field name="web_landing_url" readonly="1" widget="url"/>
+                                    <field name="web_submit_page_url" readonly="1" widget="url"/>
+                                    <field name="web_referrer_url" readonly="1" widget="url"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="tag"/>
+                                    <span>Campaign detail</span>
+                                </div>
+                                <group col="2">
+                                    <field name="utm_content" readonly="1"/>
+                                    <field name="utm_term" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="id-card"/>
+                            <div>
+                                <span>Click identifiers and consent</span>
+                                <small class="text-muted d-block">Kept for offline-conversion export; never edited by hand</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="history"/>
+                                    <span>Click identifiers</span>
+                                </div>
+                                <group col="2">
+                                    <field name="gclid" readonly="1"/>
+                                    <field name="fbclid" readonly="1"/>
+                                    <field name="fbc" readonly="1"/>
+                                    <field name="fbp" readonly="1"/>
+                                    <field name="ga_client_id" readonly="1"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="shield-check"/>
+                                    <span>Consent claim</span>
+                                </div>
+                                <group col="2">
+                                    <field name="web_consent_marketing" readonly="1"/>
+                                    <field name="web_consent_text_version" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="timeline"/>
+                            <div>
+                                <span>Touchpoints</span>
+                                <small class="text-muted d-block">Every touch behind this lead — the newest row is the last touch</small>
+                            </div>
+                        </div>
+                        <div class="vu-card">
+                            <field name="web_touchpoint_ids" nolabel="1" readonly="1">
+                                <list string="Web Touchpoints" create="0" edit="0" delete="0">
+                                    <field name="occurred_at"/>
+                                    <field name="received_at" optional="show"/>
+                                    <field name="touchpoint_type"/>
+                                    <field name="source_system" optional="hide"/>
+                                    <field name="catchment_province_id"/>
+                                    <field name="city_source"/>
+                                    <field name="utm_campaign" optional="show"/>
+                                    <field name="external_event_id" optional="hide"/>
+                                </list>
+                            </field>
+                        </div>
+                    </div>
+
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- =====================================================================
+         2. The Lead Hub "Source" spoke modal — the surface ops actually use
+         (conventions: the live UI is the CMS/landing views, not the stock
+         form). Kept modal-small: four fields that answer "can I trust this
+         lead's city, and does it need a look?". The full story is on the
+         form tab above.
+         ===================================================================== -->
+    <record id="view_lead_source_modal_web_attribution" model="ir.ui.view">
+        <field name="name">crm.lead.source.modal.web.attribution</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_landing.view_lead_source_modal"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vietnamese_channel']" position="after">
+                <field name="city_source"/>
+                <field name="web_form_id" readonly="1"/>
+                <field name="web_needs_review"/>
+                <field name="city_conflict"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- =====================================================================
+         2b. The CMS-shell contact form — `health_crm.view_crm_contact_form_
+         crm_center`, a THIRD standalone primary view (priority 50, no
+         inherit_id) bound to `health_crm.action_crm_contact_list_native`,
+         which is what the CMS sidebar's "Contacts" entry opens.
+
+         Found by DRIVING the sidebar rather than reading the handover: an
+         ops user (CRM Manager + Operations Manager) who clicks CRM →
+         Contacts → a lead lands HERE, not on the opportunity form and not on
+         the Lead Hub. Ledger §5.41 exactly — "which view renders" is a
+         question you answer in the browser. Without this record the whole
+         triage surface would have been reachable only from the /odoo
+         backend list, i.e. by a path this persona never takes.
+
+         Plain `<group string=…>` styling to match the host form; the strings
+         are deliberately the SAME as the opportunity tab's so both views
+         share one set of vi.po entries.
+         ===================================================================== -->
+    <record id="view_crm_contact_form_crm_center_web_attribution" model="ir.ui.view">
+        <field name="name">crm.lead.form.crm.center.web.attribution</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_crm_contact_form_crm_center"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='more_details']" position="after">
+                <page string="Web Attribution" name="web_attribution">
+                    <group>
+                        <group string="Triage">
+                            <field name="web_needs_review"/>
+                            <field name="city_conflict"/>
+                            <field name="city_source"/>
+                            <field name="web_form_id" readonly="1"/>
+                            <field name="external_submission_id" readonly="1"/>
+                        </group>
+                        <group string="Pages">
+                            <field name="web_landing_url" readonly="1" widget="url"/>
+                            <field name="web_submit_page_url" readonly="1" widget="url"/>
+                            <field name="web_referrer_url" readonly="1" widget="url"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Campaign detail">
+                            <field name="utm_content" readonly="1"/>
+                            <field name="utm_term" readonly="1"/>
+                        </group>
+                        <group string="Consent claim">
+                            <field name="web_consent_marketing" readonly="1"/>
+                            <field name="web_consent_text_version" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Click identifiers">
+                        <group>
+                            <field name="gclid" readonly="1"/>
+                            <field name="fbclid" readonly="1"/>
+                            <field name="ga_client_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="fbc" readonly="1"/>
+                            <field name="fbp" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Touchpoints">
+                        <field name="web_touchpoint_ids" nolabel="1" readonly="1">
+                            <list string="Web Touchpoints" create="0" edit="0" delete="0">
+                                <field name="occurred_at"/>
+                                <field name="received_at" optional="show"/>
+                                <field name="touchpoint_type"/>
+                                <field name="catchment_province_id"/>
+                                <field name="city_source"/>
+                                <field name="utm_campaign" optional="show"/>
+                                <field name="external_event_id" optional="hide"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- =====================================================================
+         3. Search filters on the opportunity list.
+
+         Same inherit target health_crm already extends for the catchment
+         filters (crm_lead_views.xml:51). Ledger §5.10: the group-by filter
+         goes straight in `<search>`, with no `<group expand="0">` wrapper.
+         ===================================================================== -->
+    <record id="view_crm_case_opportunities_filter_web_leads" model="ir.ui.view">
+        <field name="name">crm.lead.search.web.leads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator string="Website Leads"/>
+                <filter name="filter_web_needs_review" string="Needs review (web)"
+                        domain="[('web_needs_review', '=', True)]"/>
+                <filter name="filter_web_city_conflict" string="City conflict"
+                        domain="[('city_conflict', '=', True)]"/>
+                <filter name="filter_web_leads" string="Web leads"
+                        domain="[('mode_of_contact', '=', 'website')]"/>
+                <filter name="groupby_web_city_source" string="City Source"
+                        context="{'group_by': 'city_source'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- =====================================================================
+         3b. …and the same filters on the CMS-shell contact search view, the
+         one `action_crm_contact_list_native` binds (2b's sibling: a separate
+         primary search view, so an inherit of the stock CRM filter never
+         reaches it). Without this, "Needs review (web)" exists only on a
+         list the ops persona does not open.
+         ===================================================================== -->
+    <record id="view_crm_contact_search_crm_center_web_leads" model="ir.ui.view">
+        <field name="name">crm.lead.search.crm.center.web.leads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_crm_contact_search_crm_center"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator string="Website Leads"/>
+                <filter name="filter_web_needs_review" string="Needs review (web)"
+                        domain="[('web_needs_review', '=', True)]"/>
+                <filter name="filter_web_city_conflict" string="City conflict"
+                        domain="[('city_conflict', '=', True)]"/>
+                <filter name="filter_web_leads" string="Web leads"
+                        domain="[('mode_of_contact', '=', 'website')]"/>
+                <filter name="groupby_web_city_source" string="City Source"
+                        context="{'group_by': 'city_source'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""T15–T16 — the HTTP surface: OAuth2 round-trip, scope gate, no-token gate.
+"""The HTTP surface: OAuth2 round-trip, scope gates, audit rows.
+
+W1: T15 (round trip), T16 (auth gates), T21 (calls are audited).
+W2: T3 (reconcile auth), T7 (the narrowed service account, positively),
+T9 (audit rows carry the record they touched).
 
 These only run if the test command carries BOTH `--workers=0` and no
 `--no-http` (conventions §2 / ledger §5.75, §5.83): with either wrong, every
@@ -109,13 +113,17 @@ class TestWebLeadsEndpoint(HttpCase):
                          % (response.status_code, response.text[:300]))
         return response.json()['access_token']
 
-    def _post(self, payload, token=None):
+    def _post(self, payload, token=None, route='/api/v1/web/leads'):
         headers = {'Content-Type': 'application/json'}
         if token:
             headers['Authorization'] = 'Bearer %s' % token
-        return self.url_open('/api/v1/web/leads',
+        return self.url_open(route,
                              data=json.dumps(payload).encode('utf-8'),
                              headers=headers)
+
+    def _reconcile(self, payload, token=None):
+        return self._post(payload, token,
+                          route='/api/v1/web/leads/reconcile')
 
     def _payload(self, **overrides):
         submission_id = uuid.uuid4().hex
@@ -233,3 +241,150 @@ class TestWebLeadsEndpoint(HttpCase):
         self.assertGreaterEqual(
             after - before, 2,
             'the capture endpoint did not write an api.audit.log row per call')
+
+    # ==================================================================
+    # W2-T3 — reconcile is gated on its OWN scope
+    # ==================================================================
+    def test_w2_03_reconcile_auth_and_scope(self):
+        # `cls.client` holds only web_lead.write. Scopes are not
+        # interchangeable: a leaked capture credential must not become a
+        # lead-enumeration credential.
+        write_only = self._token(self.client.client_id, self.secret)
+        denied = self._reconcile({'submission_ids': ['probe-0001']},
+                                 write_only)
+        self.assertEqual(denied.status_code, 403, denied.text[:300])
+        self.assertFalse(denied.json()['success'])
+
+        anonymous = self._reconcile({'submission_ids': ['probe-0001']})
+        self.assertEqual(anonymous.status_code, 401, anonymous.text[:300])
+        self.assertFalse(anonymous.json()['success'])
+
+        garbage = self._reconcile({'submission_ids': ['probe-0001']},
+                                  'hg_' + '0' * 48)
+        self.assertEqual(garbage.status_code, 401)
+
+        # …and the read-scoped client works, over the same wire.
+        read_token = self._token(self.wrong_client.client_id,
+                                 self.wrong_secret)
+        allowed = self._reconcile(
+            {'submission_ids': ['w2-never-seen-%s' % uuid.uuid4().hex]},
+            read_token)
+        self.assertEqual(allowed.status_code, 200, allowed.text[:300])
+        body = allowed.json()
+        self.assertIn('data', body, body)
+        self.assertEqual(len(body['data']['missing']), 1)
+        self.assertEqual(body['data']['known'], [])
+        self.assertNotIn('counts', body['data'])
+
+        # The input gates answer 422 over HTTP too, not 500.
+        for bad in ({}, {'submission_ids': []},
+                    {'submission_ids': ['a'], 'date': 'yesterday'}):
+            with self.subTest(payload=bad):
+                response = self._reconcile(bad, read_token)
+                self.assertEqual(response.status_code, 422,
+                                 response.text[:300])
+
+    # ==================================================================
+    # W2-T7 — the narrowed service account still captures AND merges
+    # ==================================================================
+    def test_w2_07_capture_as_the_narrowed_service_user(self):
+        """W1's test_15 plus the merge arm. The service user carries
+        `base.group_user` + `group_web_leads_service` and NOTHING else — no
+        salesman group, so no `res.partner` write and no accounting read.
+        If the ACL rows in this module are short of what `crm.lead.create`
+        actually needs, this is where it shows."""
+        token = self._token(self.client.client_id, self.secret)
+        phone = self.free_phones[-1]
+
+        created = self._post(
+            self._payload(phone=phone, name='W2 Merge Fixture',
+                          email='w2merge-%s@webleads.invalid'
+                                % uuid.uuid4().hex[:8]),
+            token)
+        self.assertEqual(created.status_code, 200, created.text[:500])
+        self.assertEqual(created.json()['data']['status'], 'created')
+        lead_ref = created.json()['data']['lead_ref']
+        self.assertTrue(lead_ref)
+
+        # Same person, same number, a NEW submission id -> merge, not a
+        # second lead. This exercises crm.lead WRITE and message_post under
+        # the narrowed group, which the create arm alone never touches.
+        merged = self._post(
+            self._payload(phone=phone, name='W2 Merge Fixture',
+                          email='w2merge2-%s@webleads.invalid'
+                                % uuid.uuid4().hex[:8]),
+            token)
+        self.assertEqual(merged.status_code, 200, merged.text[:500])
+        self.assertEqual(merged.json()['data']['status'], 'merged',
+                         'the merge arm did not run — check the fixture '
+                         'phone/name, not the ACLs, before blaming M3')
+        self.assertEqual(merged.json()['data']['lead_ref'], lead_ref)
+
+        self.env.invalidate_all()
+        lead = self.env['crm.lead'].sudo().search(
+            [('unique_contact_code', '=', lead_ref)], limit=1)
+        self.assertTrue(lead)
+        self.assertEqual(lead.create_uid, self.service_user)
+        self.assertEqual(len(lead.web_touchpoint_ids), 2,
+                         'the merged touch was not appended')
+        self.assertEqual(self.env['crm.lead'].sudo().search_count(
+            [('external_submission_id', 'in', self._submission_ids)]), 1,
+            'a merge must never create a second lead')
+
+    # ==================================================================
+    # W2-T9 — the audit row names the lead the call touched (review L2)
+    # ==================================================================
+    def _audit_rows_after(self, marker_id):
+        self.env.invalidate_all()
+        return self.env['api.audit.log'].sudo().search(
+            [('id', '>', marker_id),
+             ('route', '=', '/api/v1/web/leads')], order='id asc')
+
+    def test_w2_09_audit_rows_carry_record_ids(self):
+        token = self._token(self.client.client_id, self.secret)
+        Audit = self.env['api.audit.log'].sudo()
+        phone = self.free_phones[-2]
+
+        def last_row(marker):
+            rows = self._audit_rows_after(marker)
+            self.assertTrue(rows, 'no audit row was written')
+            return rows[-1]
+
+        # -- created --------------------------------------------------
+        marker = Audit.search([], order='id desc', limit=1).id or 0
+        payload = self._payload(phone=phone, name='W2 Audit Fixture')
+        response = self._post(payload, token)
+        self.assertEqual(response.json()['data']['status'], 'created')
+        self.assertNotIn(
+            '_lead_id', response.json()['data'],
+            'the internal `_lead_id` seam leaked into the API envelope — a '
+            'database id is not part of the contract, `lead_ref` is')
+        lead = self._lead_for(payload['submission_id'])
+        row = last_row(marker)
+        self.assertEqual(row.resource_type, 'crm.lead')
+        self.assertEqual(row.resource_ids, str(lead.id))
+
+        # -- duplicate (a replay) -------------------------------------
+        marker = row.id
+        self._post(payload, token)
+        self.assertEqual(last_row(marker).resource_ids, str(lead.id))
+
+        # -- merged ---------------------------------------------------
+        marker = last_row(marker).id
+        merged = self._post(
+            self._payload(phone=phone, name='W2 Audit Fixture'), token)
+        self.assertEqual(merged.json()['data']['status'], 'merged')
+        self.assertEqual(last_row(marker).resource_ids, str(lead.id))
+
+        # -- rejected_spam: nothing was created, so nothing is named ---
+        marker = last_row(marker).id
+        spam = self._post(
+            self._payload(anti_spam={'honeypot_filled': True,
+                                     'token_ok': True}), token)
+        self.assertEqual(spam.json()['data']['status'], 'rejected_spam')
+        spam_row = last_row(marker)
+        self.assertEqual(spam_row.status_code, 200)
+        self.assertFalse(
+            spam_row.resource_ids,
+            'a rejected spam submission creates no row, so the audit entry '
+            'must name none')

@@ -23,5 +23,28 @@
             <field name="value">{"/lien-he-hanoi/": "HN", "/dich-vu-tai-hn/": "HN", "/doi-ngu-tai-ha-noi/": "HN", "/lien-he-tphcm/": "HCM", "/dich-vu-tai-tphcm/": "HCM", "/doi-ngu-tai-tphcm/": "HCM"}</field>
         </record>
 
+        <!-- The heartbeat gate (W2 §4.2). Seeded FALSE: the cron ships
+             active, so this string is the only thing standing between a
+             pre-launch database and a nightly false alarm. Turn it on the
+             day the WordPress relay starts delivering.
+
+             Written as the STRING "False" on purpose — `get_param` returns
+             the raw string and the reader treats '', '0', 'false', 'no',
+             'off' and 'none' as off (ledger §5.36: a falsy value handed to
+             `set_param` UNLINKS the parameter, and a missing parameter is
+             then indistinguishable from an unset one). -->
+        <record id="param_heartbeat_enabled" model="ir.config_parameter">
+            <field name="key">web_leads.heartbeat_enabled</field>
+            <field name="value">False</field>
+        </record>
+
+        <!-- Who gets the to-do. Empty means "fall back to the gateway
+             administrators, then to the admin user" — set it to a res.users
+             id once ops nominates an owner for the pipeline. -->
+        <record id="param_heartbeat_user" model="ir.config_parameter">
+            <field name="key">web_leads.heartbeat_user_id</field>
+            <field name="value"></field>
+        </record>
+
     </data>
 </odoo>

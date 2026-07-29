@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== LIST =====================
+         Read-only throughout. A touchpoint is evidence of something that
+         already happened; editing one would be rewriting history, and the
+         ACL file grants create only to the service account and admins. -->
+    <record id="view_health_lead_touchpoint_list" model="ir.ui.view">
+        <field name="name">health.lead.touchpoint.list</field>
+        <field name="model">health.lead.touchpoint</field>
+        <field name="arch" type="xml">
+            <list string="Web Touchpoints" create="0" edit="0" delete="0"
+                  decoration-muted="not lead_id">
+                <field name="occurred_at"/>
+                <field name="received_at" optional="show"/>
+                <field name="lead_id"/>
+                <field name="touchpoint_type"/>
+                <field name="source_system" optional="show"/>
+                <field name="catchment_province_id" optional="show"/>
+                <field name="city_source" optional="show"/>
+                <field name="utm_source" optional="hide"/>
+                <field name="utm_medium" optional="hide"/>
+                <field name="utm_campaign" optional="show"/>
+                <field name="page_url" optional="hide"/>
+                <field name="external_event_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================== FORM (read-only) ===================== -->
+    <record id="view_health_lead_touchpoint_form" model="ir.ui.view">
+        <field name="name">health.lead.touchpoint.form</field>
+        <field name="model">health.lead.touchpoint</field>
+        <field name="arch" type="xml">
+            <form string="Web Touchpoint" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group string="When">
+                            <field name="occurred_at" readonly="1"/>
+                            <field name="received_at" readonly="1"/>
+                        </group>
+                        <group string="What">
+                            <field name="lead_id" readonly="1"/>
+                            <field name="touchpoint_type" readonly="1"/>
+                            <field name="source_system" readonly="1"/>
+                            <field name="external_event_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="City Verdict">
+                            <field name="catchment_province_id" readonly="1"/>
+                            <field name="city_source" readonly="1"/>
+                        </group>
+                        <group string="Attribution">
+                            <field name="utm_source" readonly="1"/>
+                            <field name="utm_medium" readonly="1"/>
+                            <field name="utm_campaign" readonly="1"/>
+                            <field name="utm_content" readonly="1"/>
+                            <field name="utm_term" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Where">
+                            <field name="page_url" readonly="1" widget="url"/>
+                            <field name="referrer_url" readonly="1" widget="url"/>
+                        </group>
+                        <group string="Click Identifiers">
+                            <field name="gclid" readonly="1"/>
+                            <field name="fbclid" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Raw Payload" name="raw_payload">
+                            <field name="raw_payload" readonly="1" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===================== SEARCH ===================== -->
+    <record id="view_health_lead_touchpoint_search" model="ir.ui.view">
+        <field name="name">health.lead.touchpoint.search</field>
+        <field name="model">health.lead.touchpoint</field>
+        <field name="arch" type="xml">
+            <search string="Web Touchpoints">
+                <field name="lead_id"/>
+                <field name="external_event_id"/>
+                <field name="utm_campaign"/>
+                <field name="catchment_province_id"/>
+                <separator/>
+                <filter name="filter_form_submit" string="Form Submissions"
+                        domain="[('touchpoint_type', '=', 'form_submit')]"/>
+                <filter name="filter_wordpress" string="From WordPress"
+                        domain="[('source_system', '=', 'wordpress')]"/>
+                <separator/>
+                <filter name="filter_unknown_city" string="Unknown City"
+                        domain="[('city_source', '=', 'unknown')]"/>
+                <separator/>
+                <filter name="filter_today" string="Received Today"
+                        domain="[('received_at', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <!-- Ledger §5.10: group-by filters go straight in <search>,
+                     never inside a <group expand="0"> wrapper. -->
+                <filter name="groupby_type" string="Touchpoint Type"
+                        context="{'group_by': 'touchpoint_type'}"/>
+                <filter name="groupby_source_system" string="Source System"
+                        context="{'group_by': 'source_system'}"/>
+                <filter name="groupby_city" string="City"
+                        context="{'group_by': 'catchment_province_id'}"/>
+                <filter name="groupby_city_source" string="City Source"
+                        context="{'group_by': 'city_source'}"/>
+                <filter name="groupby_occurred" string="Occurred"
+                        context="{'group_by': 'occurred_at'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ===================== ACTION ===================== -->
+    <record id="action_health_lead_touchpoint" model="ir.actions.act_window">
+        <field name="name">Web Touchpoints</field>
+        <field name="res_model">health.lead.touchpoint</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_lead_touchpoint_search"/>
+        <field name="context">{'search_default_filter_form_submit': 1}</field>
+        <!-- One line, no surrounding whitespace: `act_window.help` is
+             `translate=True`, so the WHOLE stored value is a single msgid and
+             any stray indentation would have to be reproduced byte-for-byte
+             in vi.po to translate. -->
+        <field name="help" type="html"><p class="o_view_nocontent_smiling_face">No web touchpoints yet</p></field>
+    </record>
+
+    <!-- ===================== MENU =====================
+         Under Sales &amp; CRM › Configuration, which is where health_crm
+         hangs its own configuration entries (health_crm_menus.xml:64). The
+         parent is gated to group_health_crm_manager, so this inherits that
+         audience; the per-row ACLs are what actually govern visibility. -->
+    <menuitem id="menu_health_lead_touchpoint"
+              name="Web Touchpoints"
+              parent="health_crm.menu_healthcare_crm_config"
+              action="action_health_lead_touchpoint"
+              sequence="60"/>
+
+</odoo>
