@@ -430,4 +430,13 @@ EAIaIQ…,web_lead_converted,2026-08-14 10:20:00+07:00,,VND
 | 4 | VoIP24h (or other PBX) contract for the 1800 lines? | Business | Real call attribution; until then taps-only |
 | 5 | Catchment xmlid↔live-row mapping on vietuat (codes are 01/02, seed says HN/HCM) | Opus W1 report-back | City resolution correctness |
 | 6 | 13 legacy leads with NULL company — clean or ignore? | CRM team | Cosmetic |
-| 7 | Meta Lead Ads planned? (Not used today; would need its own connector) | Marketing | Nothing now |
+| 7 | Meta Lead Ads planned? (Not used today; would need its own connector) | Marketing | **Resolved 2026-07-29 → §15.3**: Lead Ads connector phase planned, conditional on campaigns |
+
+---
+
+## 15. Addendum — decisions of 2026-07-29 (post-W1, user-approved)
+
+1. **The WP relay is a product, not per-client work.** One reusable plugin ("Health19 Leads for WordPress") owned by us. Per-tenant setup = install plugin + paste client_id/secret from the connector card. Proima is the integrator for pkgdvietuc.com only; §6 remains the plugin's behavioural spec.
+2. **W2.5 Website connector ships two modes.** Mode A = plugin/webhook (recommended; full attribution, idempotency, reconciliation). Mode B = controlled email ingestion (light tier for tenants who cannot modify their site): a Channel-Center-connected mailbox (Email channel — currently dark, needs a google/microsoft platform app) feeds parsed notification emails through the **same `web.lead.service`** so city/dedup/spam logic applies. Hard prerequisites: the W2 submission-id email stamp + ingestion suppression guard; the connector UI must label Mode B "no campaign attribution". This supersedes Option D's "fallback only" status — D becomes a productised tier, not a rejected path.
+3. **New phase: Lead Ads connector** (after W2; build only when marketing commits to lead-form campaigns). Meta Lead Ads via the `leadgen` webhook on the existing Meta platform-app rails (extends the CC-E app-review scope), Google Ads Lead Form Assets via Google's native webhook delivery to a sibling endpoint. Both feed `web.lead.service` with new `source_system` values (`meta_lead_ad`, `google_lead_form`) and platform campaign/ad ids — no new lead logic, better-than-website attribution (structured ids, no URL scraping).
+4. **Boundary restated (user question answered):** an ad click that never becomes a submission/message/call is **not capturable as a lead through any Meta/Google API** — click ids identify clicks, not people; Ads/Insights APIs are aggregate-only by policy. The tools for that population are retargeting audiences and GA4 funnel reporting — marketing-side configuration, no CRM build. GA4/Ads APIs remain reporting enrichment (W3/W4: cost-per-lead joins), never lead sources.

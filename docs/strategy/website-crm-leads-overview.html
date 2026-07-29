@@ -517,10 +517,24 @@
             <td><span class="pill p-wait">NOT STARTED</span></td>
           </tr>
           <tr>
-            <td>Facebook Lead Ads (forms inside Facebook)</td>
-            <td>Not used today. If marketing adopts them later they need their own connection — noted as an extension point, deliberately not built now.</td>
-            <td>Yes, if adopted</td>
-            <td><span class="pill p-wait">NOT STARTED</span><br><span style="font-size:12px">Only if adopted</span></td>
+            <td>Meta Lead Ads (forms inside Facebook / Instagram)</td>
+            <td>The person taps the ad and submits a pre-filled form without ever visiting the website. Meta delivers each submission to the CRM with the campaign and ad attached, and the same lead engine processes it — city rules, duplicates, history. Built as its own phase once marketing commits to running lead-form campaigns; uses the same Meta app approval as Messenger.</td>
+            <td>Yes — name, phone, email</td>
+            <td><span class="pill p-plan">PLANNED</span><br><span style="font-size:12px">Lead Ads phase</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Google lead forms (forms inside Google / YouTube ads)</td>
+            <td>Google's version of the same idea: the form lives inside the ad, and Google pushes each submission directly to an address we host — nearly identical to the connection already built for the website form.</td>
+            <td>Yes</td>
+            <td><span class="pill p-plan">PLANNED</span><br><span style="font-size:12px">Lead Ads phase</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Clicked an ad, browsed the site, left without submitting</td>
+            <td>Facebook and Google know who this person is — but no API they offer will ever reveal it to an advertiser, by deliberate policy. The code in the web address identifies the <em>click</em>, not the person. What marketing can do: show follow-up ads to these visitors as an anonymous group (retargeting) and see how many there were (funnel reports). A lead record is impossible until the person acts — submits, messages or calls.</td>
+            <td>No — and no API changes that</td>
+            <td><span class="pill p-none">NOT POSSIBLE</span><br><span style="font-size:12px">Platform policy</span></td>
             <td>—</td>
           </tr>
 
@@ -587,9 +601,9 @@
           </tr>
           <tr>
             <td>Email straight to a staff mailbox</td>
-            <td>Handled by people today. The CRM can ingest mailboxes directly, but that is deliberately switched off until the duplicate guard below is in place.</td>
+            <td>Handled by people today. Planned as the <strong>light-tier connection mode</strong> for future clinics who cannot touch their website: the CRM reads the form's notification email from a connected mailbox and runs it through the same lead engine. Honest trade-off: this mode cannot carry campaign attribution, and it waits on the duplicate guard below plus the Email channel being connected.</td>
             <td>Yes</td>
-            <td><span class="pill p-plan">PLANNED</span><br><span style="font-size:12px">Deliberately off</span></td>
+            <td><span class="pill p-plan">PLANNED</span><br><span style="font-size:12px">Mode B, light tier</span></td>
             <td>—</td>
           </tr>
         </tbody>
@@ -656,7 +670,7 @@
       <h2>Seven steps, in order</h2>
     </div>
     <div class="prose">
-      <p>All work is on the WordPress side. Nothing from the CRM is installed into WordPress and the CRM never reaches into the website — the only connection is the website sending a message out to one address. Steps 1–3 deliver working leads; steps 4–7 add the reporting quality and legal cover.</p>
+      <p>All work is on the WordPress side; the CRM never reaches into the website — the only connection is the website sending a message out to one address. The step-1 plugin is written <strong>once, as our own product</strong>: for pkgdvietuc.com Proima installs and wires it, and for every future clinic the work shrinks to installing the plugin and pasting two keys. Steps 1–3 deliver working leads; steps 4–7 add the reporting quality and legal cover.</p>
     </div>
 
     <div class="scroller">
@@ -778,6 +792,11 @@
         </thead>
         <tbody>
           <tr>
+            <td>Two connection modes</td>
+            <td><strong>Mode A (recommended):</strong> the clinic installs our WordPress plugin and pastes two keys — full campaign attribution, duplicate protection, daily reconciliation. <strong>Mode B (light tier):</strong> the clinic points their form's notification email at a connected mailbox — minutes of work with no plugin, but no campaign attribution, and it requires the email duplicate guard first. The card states the trade-off honestly instead of hiding it.</td>
+            <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+          <tr>
             <td>"Connect website" button</td>
             <td>Generates the client ID and secret in one click. The secret is shown once with a copy button and never stored in readable form — exactly the pattern the other channel connectors already use.</td>
             <td><span class="pill p-plan">DESIGNED</span></td>
@@ -855,9 +874,15 @@
           </tr>
           <tr>
             <td>W2.5 — Self-service connector</td>
-            <td>The Channel Connection Centre card described above. Needed before this is sold to a second clinic.</td>
+            <td>The Website card described above, with both connection modes. Needed before this is sold to a second clinic.</td>
             <td>CRM team</td>
             <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+          <tr>
+            <td>Lead Ads connector</td>
+            <td>Meta Lead Ads and Google lead-form ads delivered straight into the same lead engine — real leads from people who never visit the website. Built when marketing commits to running lead-form campaigns; shares the Meta app approval with Messenger.</td>
+            <td>CRM team + marketing</td>
+            <td><span class="pill p-plan">PLANNED</span></td>
           </tr>
           <tr>
             <td>W3 — Reporting</td>
