@@ -1444,8 +1444,18 @@ a no-op.
     write access is checked against the RELATED document. Caveats measured in
     W2: the dedupe key for such an activity is whatever you search on —
     (user, summary) means changing the watcher param leaves the old user's
-    open copy behind — and a `user_ids[0]` fallback does not apply the
-    active filter, so guard archived users explicitly. (Phase W2.)
+    open copy behind. (Phase W2.) **CORRECTED in W2.5:** this entry
+    originally claimed a `user_ids[0]` fallback "does not apply the active
+    filter". Measured on vietuat, that is wrong on Odoo 19:
+    `res.groups.user_ids` honours the CALLER's `active_test` — with the
+    relation row present and the user archived it reads `[]` in an ordinary
+    context and returns the ghost only under
+    `with_context(active_test=False)`. The general rule: the `active_test`
+    behaviour of an x2many read is the caller's, not the field's — measure
+    it on the target database before writing either "it filters" or "it
+    doesn't" into a finding. A `.filtered('active')` guard is still kept in
+    `_heartbeat_user()` because a caller CARRYING `active_test=False` would
+    otherwise break it — defensive, not corrective. (Phase W2.5.)
 
 - **§5.90 — the §5.83 executed-methods grep is fragile to a digit in a class
     name, one level below where W1 already found it fragile.**
@@ -1470,3 +1480,17 @@ a no-op.
     AND mode='primary'`, then CLICK the surface as the target persona and see
     which arch renders. (Phase W2, found by driving the sidebar — the W2
     handover itself had enumerated only two.)
+
+- **§5.92 — when `/etc/odoo-server.conf` sets `logfile`, `odoo-bin` writes
+    NOTHING to stdout: an empty captured stdout with `EXIT:0` means "look in
+    the configured logfile", never "no tests ran".** Two independent
+    reviewers tripped on this in one day: a
+    `odoo-bin … --test-enable … > /tmp/run.log` produced `EXIT:0` and an
+    empty file, which reads exactly like a silent no-op. The tests HAD run —
+    the result line, the `Starting Test` lines, and every FAIL/ERROR line
+    were in `/var/log/odoo/odoo-server.log` (grep them with `-a`, and scope
+    the §5.90 executed-count grep to the run's PID, because the log
+    accumulates every historical run: `grep -a "<pid>.*Starting
+    Test.*\.test_"`). Corollary: `EXIT:0` + empty stdout is NOT evidence of
+    success either — only the logfile's `odoo.tests.result` line for that
+    PID is. (Phase W2.5 review.)

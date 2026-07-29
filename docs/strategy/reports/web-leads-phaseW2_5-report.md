@@ -257,3 +257,81 @@ anywhere.
    verified in a fresh cursor (§5.34).
 3. `web_leads.heartbeat_user_id` is still empty. Once the relay is live, ops
    should name a watcher and switch the alert on from this screen.
+
+---
+
+## 9. Fable review addendum (2026-07-29) — PASS, no fixes shipped
+
+**Assurance note first:** the independent review subagent died mid-run on an
+API session limit. Unlike the CC-F cycle (where that produced a declared
+assurance gap), every verification below was then performed personally by the
+reviewer — there is no unverified claim in this addendum.
+
+**Independently reproduced on vietuat:**
+
+- `health_web_leads` installed at **19.0.3.0.0**; all 11 code files
+  **md5-identical** repo↔server (`/odoo/odoo-server/addons/health_web_leads`).
+- **Adoption:** exactly one `svc_web_leads` (id 6103, active); exactly one
+  active client for it — id 122, `b14edb5f…740a`; connector 23 → 122. No
+  duplicate rows. (Client 10 is a pre-existing archived smoke client owned by
+  uid 2 — unrelated.)
+- **Zero residue:** `connector-test-%` leads 0, phone `0900000000` 0,
+  touchpoint `connector-test-%` 0; totals 476 / 0 / 170 exactly as reported.
+- **Params:** `heartbeat_enabled` is the string `'False'` with the row
+  present; `heartbeat_user_id` row present and empty; both city maps at their
+  seeded values.
+- **Secret hygiene:** 0 chatter messages on the connector matching a 43-char
+  token pattern; no `token_urlsafe`/`client_secret` lines in the server log;
+  the evidence screenshot 05 is genuinely redacted (black bars in-DOM). The
+  connector chatter is itself a faithful audit trail of the whole drive —
+  message 111230 is the LIVE record of the D3 bug ("You are not allowed to
+  create 'Lead Touchpoint'") followed by the fixed run at 111394.
+- **Independent test re-run** (service stopped, `--workers=0`, no
+  `--no-http`): `0 failed, 0 error(s) of 52 tests`, **52 executed methods
+  counted for the run's own PID** (14 of them W2.5), zero FAIL/ERROR/
+  setUpClass lines, service restarted, site 200. En route this review hit the
+  same trap that killed the subagent — now ledgered as **§5.92** (a
+  configured `logfile` makes `odoo-bin` stdout empty; only the logfile's
+  result line for that PID is evidence).
+- **§5.89 correction claim: CONFIRMED live** (archived member of group 348 is
+  absent from `user_ids` in an ordinary context, present only under
+  `active_test=False`). The ledger entry is amended; the general rule is now
+  recorded there.
+- **Chatter `AccessError` claim: CONFIRMED live and pre-existing** — uid 40
+  (`crm`) gets `AccessError` on `res.partner.browse(1).read()`, and the
+  server's core `addons/mail/models/models.py:557` reads `base.partner_root`
+  without sudo. No mail/partner code is touched by ba7f0ea9. **Recommended:
+  its own remediation ticket** (a read rule for `base.partner_root`, or a
+  targeted core patch) — every mail.thread chatter surface for ops personas
+  is affected today.
+
+**Code review (whole module read personally):** rails R1–R7 all hold — R1
+grep-clean (the module never generates, stores, logs or asserts on a secret;
+T1 asserts framing text only), R2 proven by T5/T5b with full residue-count
+dictionaries including `mail.message`, R3 all param writes are strings, R7
+diff confined to `health_web_leads` + docs. The test file is the strongest of
+the stream: T3's byte-identical-after-rotate proof, T5b's staged-precondition
+persona test, T7b's isolated-ghost dual-context drive, and T9's §5.88
+live-closure precheck are all patterns worth reusing.
+
+**Deviations D1–D4: all four adjudicated CORRECT.** D1 was a spec error in
+the handover itself (a stored `state` has no `@api.depends` path from the
+capture endpoint's transaction); D3 is the significant one — found by driving
+the screen as the real persona where every uid-1 test passed (§5.4 in the
+flesh), and running the pipeline test as the service user is *better* than
+the spec (it exercises the relay's real rights, so an ACL regression on the
+machine account now surfaces on the button).
+
+**LOW notes (no redeploy warranted, fold into the next phase that touches
+these files):**
+
+1. The new comment above `_heartbeat_user`'s `.filtered('active')` states the
+   refuted premise ("a relational read carries `active_test=False`") — the
+   code is right, the comment contradicts the module's own T7b docstring and
+   the amended §5.89. Reword when the file is next touched.
+2. `_compute_state`/`_compute_health` count WordPress touchpoints globally,
+   not per company — informational only on this single-operating-company
+   database; becomes real if a second company ever gets its own connector.
+3. T9's positive arm writes `{'name': name}` back as its write-probe — a
+   no-op write proves write ACL, but a changed-value probe would also catch a
+   hypothetical readonly-field override. Cosmetic.

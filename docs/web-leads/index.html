@@ -776,13 +776,13 @@
       <h2>Turning the setup into a self-service connector</h2>
     </div>
     <div class="prose">
-      <p>Right now the connection was switched on the way a developer does it: someone logged into the server, created a service account and generated a secret by hand. That is fine for one clinic. For a product sold to many clinics, each new customer must be able to connect their own website in a few minutes without a developer — the same way they already connect Zalo, Facebook or email in the CRM's <strong>Channel Connection Centre</strong>.</p>
-      <p>This is a new, small phase. Everything it needs already exists in the system — encrypted secret storage, connection health checks and an audit trail are all proven in the existing channel connectors.</p>
+      <p>Until this phase, the connection was switched on the way a developer does it: someone logged into the server, created a service account and generated a secret by hand. That is now one screen. An administrator opens <strong>Website Connector</strong> in the CRM sidebar, presses one button for credentials, copies a ready-made configuration block for the website developer, edits the city mapping with validation, and runs a self-cleaning test — no server access, no developer. Chat channels stay in the Channel Connection Centre; the screen cross-links to it.</p>
+      <p>Built, tested and independently reviewed on the live server as phase W2.5. Every action is recorded on the record's own audit trail.</p>
     </div>
 
     <div class="scroller">
       <table>
-        <caption>Proposed "Website" card in the Channel Connection Centre.</caption>
+        <caption>The Website Connector screen — live in the CRM sidebar since phase W2.5.</caption>
         <thead>
           <tr>
             <th style="min-width:190px">What the clinic sees</th>
@@ -793,38 +793,38 @@
         <tbody>
           <tr>
             <td>Two connection modes</td>
-            <td><strong>Mode A (recommended):</strong> the clinic installs our WordPress plugin and pastes two keys — full campaign attribution, duplicate protection, daily reconciliation. <strong>Mode B (light tier):</strong> the clinic points their form's notification email at a connected mailbox — minutes of work with no plugin, but no campaign attribution, and it requires the email duplicate guard first. The card states the trade-off honestly instead of hiding it.</td>
-            <td><span class="pill p-plan">DESIGNED</span></td>
+            <td><strong>Mode A (recommended):</strong> the clinic installs our WordPress plugin and pastes two keys — full campaign attribution, duplicate protection, daily reconciliation. This is what the live screen provisions. <strong>Mode B (light tier):</strong> the clinic points their form's notification email at a connected mailbox — stays designed-only until a real mailbox exists to test against.</td>
+            <td><span class="pill p-live">LIVE (Mode A)</span></td>
           </tr>
           <tr>
             <td>"Connect website" button</td>
-            <td>Generates the client ID and secret in one click. The secret is shown once with a copy button and never stored in readable form — exactly the pattern the other channel connectors already use.</td>
-            <td><span class="pill p-plan">DESIGNED</span></td>
+            <td>The <strong>Get credentials</strong> button creates — or safely adopts, if they already exist — the service account and API client in one click. The secret is shown once and never stored in readable form; the same button later becomes <strong>Rotate secret</strong>.</td>
+            <td><span class="pill p-live">LIVE</span></td>
           </tr>
           <tr>
             <td>Ready-to-paste setup block</td>
-            <td>Shows the clinic's own address to send to and a copy-paste WordPress configuration block. The clinic forwards it to their web developer — no CRM knowledge needed on the website side.</td>
-            <td><span class="pill p-plan">DESIGNED</span></td>
+            <td>Shows the clinic's own address to send to and a copy-paste WordPress configuration block. The clinic forwards it to their web developer — no CRM knowledge needed on the website side. The block carries a placeholder, never the secret itself.</td>
+            <td><span class="pill p-live">LIVE</span></td>
           </tr>
           <tr>
             <td>City mapping table</td>
-            <td>Which form number belongs to which city, and which page addresses belong to which city — editable on screen. Today these live in a hidden settings record that only a developer can change; a clinic renumbering a form would otherwise need a code change.</td>
-            <td><span class="pill p-plan">DESIGNED</span></td>
+            <td>Which form number belongs to which city, and which page addresses belong to which city — editable on screen with validation that names any bad entry. Previously these lived in a hidden settings record only a developer could change.</td>
+            <td><span class="pill p-live">LIVE</span></td>
           </tr>
           <tr>
             <td>"Send a test enquiry" button</td>
-            <td>Fires a synthetic submission, shows exactly what the CRM decided and cleans up after itself — so the clinic can prove the connection without polluting real data.</td>
-            <td><span class="pill p-plan">DESIGNED</span></td>
+            <td>The <strong>Test pipeline</strong> button fires a synthetic submission through the real machinery, shows exactly what the CRM decided (including which city and why), and always cleans up after itself — proven to leave zero records behind. It honestly states the one thing it cannot test: the secret itself, which only a real submission from the website proves.</td>
+            <td><span class="pill p-live">LIVE</span></td>
           </tr>
           <tr>
             <td>Live connection status</td>
-            <td>Green when submissions are arriving; amber with a plain-English reason when nothing has arrived for 24 hours. Catches a website change that silently breaks the pipe — the failure mode that otherwise goes unnoticed for weeks.</td>
-            <td><span class="pill p-plan">DESIGNED</span></td>
+            <td>A plain-English health line ("No submission ever received — the website side is not live yet"), the last-submission time, a 7-day count, and an optional daily alert with a named watcher. Catches a website change that silently breaks the pipe — the failure mode that otherwise goes unnoticed for weeks. The alert ships off until the website side goes live.</td>
+            <td><span class="pill p-live">LIVE</span></td>
           </tr>
           <tr>
             <td>Rotate secret / disconnect</td>
-            <td>Replace a leaked secret or cut the connection immediately, with every action recorded in the audit log.</td>
-            <td><span class="pill p-plan">DESIGNED</span></td>
+            <td>Replace a leaked secret or cut the connection immediately — the old credentials stop working at once. The connection record is archived, never deleted, so the audit history stays readable. Reconnect restores it and advises rotating.</td>
+            <td><span class="pill p-live">LIVE</span></td>
           </tr>
         </tbody>
       </table>
@@ -874,9 +874,9 @@
           </tr>
           <tr>
             <td>W2.5 — Self-service connector</td>
-            <td>The Website connector screen described above. Needed before this is sold to a second clinic. The light-tier email mode stays designed-only until a real mailbox exists to test against.</td>
+            <td>The Website Connector screen described above. Installed, tested and independently reviewed on the live server. The light-tier email mode stays designed-only until a real mailbox exists to test against.</td>
             <td>CRM team</td>
-            <td><span class="pill p-wait">NEXT</span></td>
+            <td><span class="pill p-live">LIVE</span></td>
           </tr>
           <tr>
             <td>Lead Ads connector</td>
@@ -885,10 +885,10 @@
             <td><span class="pill p-plan">PLANNED</span></td>
           </tr>
           <tr>
-            <td>W3 — Reporting</td>
-            <td>Leads and conversions by city, source and campaign, in the CRM. Marketing consent recorded properly when a lead becomes a client.</td>
+            <td>W3 — Reporting + consent</td>
+            <td>Leads and conversions by city, source and campaign, in the CRM. Marketing consent recorded properly when a lead becomes a client. A review list for campaign names the CRM has not seen before.</td>
             <td>CRM team</td>
-            <td><span class="pill p-plan">PLANNED</span></td>
+            <td><span class="pill p-wait">NEXT</span></td>
           </tr>
           <tr>
             <td>W4 — Feeding results back to the ad platforms</td>
