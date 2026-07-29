@@ -85,6 +85,16 @@ HEARTBEAT_SUMMARY = 'Website lead pipeline: no submission received'
 
 _FALSY_PARAM = ('', '0', 'false', 'no', 'off', 'none')
 
+# -- Phase W3 -------------------------------------------------------------
+# Retention horizon for the touchpoint RAW PAYLOAD only (design §10 — the
+# legal review that will set it is a W0 item owned by counsel; this module
+# makes no compliance claim and hard-codes no number).
+PARAM_RAW_RETENTION_DAYS = 'web_leads.raw_payload_retention_days'
+# One night's work. At the current volume (170 touchpoints ever) this is
+# never reached; when it is, the sweep simply continues the next night, and
+# the log line says how many it touched.
+RAW_PRUNE_BATCH = 500
+
 
 # ---------------------------------------------------------------------------
 # Pure helpers (no ORM) — unit-testable, and reused by the touchpoint vals
@@ -836,9 +846,12 @@ class WebLeadService(models.AbstractModel):
         group = self.env.ref('health_api_gateway.group_gateway_admin',
                              raise_if_not_found=False)
         if group:
-            # W2 review LOW: a relational read carries `active_test=False`, so
-            # `group.user_ids[0]` can hand the alert to an ARCHIVED account and
-            # the to-do is never seen. Filter explicitly.
+            # DEFENSIVE, not corrective (ledger §5.89, CORRECTED in W2.5):
+            # `res.groups.user_ids` honours the CALLER's `active_test`, so on
+            # the cron's own path an archived member is already invisible.
+            # The filter is what keeps this true for a caller that arrives
+            # carrying `active_test=False` — which would otherwise hand the
+            # alert to an archived account nobody reads.
             candidate = group.user_ids.filtered('active')[:1]
             if candidate:
                 return candidate
@@ -888,3 +901,64 @@ class WebLeadService(models.AbstractModel):
         _logger.warning('web_leads: heartbeat raised an activity for %s',
                         user.login)
         return True
+
+    # ==================================================================
+    # Retention (W3 §4.5) — the raw payload, and ONLY the raw payload
+    # ==================================================================
+    @api.model
+    def _cron_prune_raw_payloads(self):
+        """Clear `raw_payload` on touchpoints older than the horizon.
+
+        Ships INERT: `web_leads.raw_payload_retention_days` is the string
+        `'0'`, which means keep forever. That is the legal default until
+        counsel sets a horizon (design §10 — Vietnam PDPL 2025 / Decree 13
+        review is a W0 item; **no compliance claim is made here and no
+        number is hard-coded**).
+
+        Binding scope (W3 §2): the payload FIELD only. Never a touchpoint
+        row, never a `crm.lead` field, never a consent record — a touchpoint
+        stripped of its payload is still evidence that the touch happened,
+        which is what reconciliation and attribution actually read.
+
+        Returns the number of rows cleared, so a manual run in a shell says
+        what it did.
+        """
+        raw = self.env['ir.config_parameter'].sudo().get_param(
+            PARAM_RAW_RETENTION_DAYS)
+        text = str(raw or '').strip().lower()
+        if text in _FALSY_PARAM:
+            # The inert path logs too: "the cron ran and did nothing on
+            # purpose" must be visible, or an operator cannot tell it apart
+            # from "the cron never fired" (ledger §5.83's lesson, applied to
+            # a cron instead of a test).
+            _logger.info(
+                'web_leads: raw-payload retention is off (%s=%r) — nothing '
+                'pruned', PARAM_RAW_RETENTION_DAYS, raw)
+            return 0
+        try:
+            days = int(float(text))
+        except (TypeError, ValueError):
+            _logger.warning(
+                'web_leads: %s is not a number (%r) — nothing pruned',
+                PARAM_RAW_RETENTION_DAYS, raw)
+            return 0
+        if days <= 0:
+            _logger.info('web_leads: raw-payload retention is off (%s days)',
+                         days)
+            return 0
+
+        cutoff = fields.Datetime.now() - timedelta(days=days)
+        rows = self.env['health.lead.touchpoint'].sudo().search(
+            [('received_at', '<', cutoff), ('raw_payload', '!=', False)],
+            limit=RAW_PRUNE_BATCH)
+        if not rows:
+            _logger.info(
+                'web_leads: raw-payload retention %s days — nothing older '
+                'than %s still carries a payload', days, cutoff)
+            return 0
+        count = len(rows)
+        rows.write({'raw_payload': False})
+        _logger.info(
+            'web_leads: pruned the raw payload from %s touchpoint(s) '
+            'received before %s (retention %s days)', count, cutoff, days)
+        return count

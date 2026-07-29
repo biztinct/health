@@ -1139,3 +1139,168 @@ msgstr "%s có một mục với khoá rỗng."
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
 msgid "The %(label)s entry \"%(key)s\" maps to \"%(value)s\", which is not a city. Use \"HN\" for Hà Nội or \"HCM\" for Hồ Chí Minh."
 msgstr "Mục \"%(key)s\" trong %(label)s trỏ tới \"%(value)s\", đây không phải một thành phố. Hãy dùng \"HN\" cho Hà Nội hoặc \"HCM\" cho Hồ Chí Minh."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/health_consent.py:0
+msgid "A web-form consent must record what the visitor was shown (consent text version and submission reference) in Scope / Limitations before it can be granted."
+msgstr "Đồng ý qua biểu mẫu web phải ghi lại nội dung mà khách đã xem (phiên bản văn bản đồng ý và mã lượt gửi) trong mục Phạm vi / Giới hạn trước khi được cấp."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/health_consent.py:0
+msgid "A web-form consent must carry the submission idempotency key before it can be granted."
+msgstr "Đồng ý qua biểu mẫu web phải mang khoá định danh lượt gửi trước khi được cấp."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid "Website marketing consent was NOT materialised: the contact details on this lead do not match the client %(client)s, so the person who ticked the box is not the person the consent would cover. Capture consent from the client directly if it is needed."
+msgstr "KHÔNG tạo bản ghi đồng ý tiếp thị từ website: thông tin liên hệ trên khách tiềm năng này không khớp với khách hàng %(client)s, nên người tích vào ô đồng ý không phải người mà sự đồng ý áp dụng. Hãy thu thập đồng ý trực tiếp từ khách hàng nếu cần."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid "Website marketing consent was NOT materialised: %(client)s already holds an active marketing consent (%(ref)s), which an automated claim must never supersede."
+msgstr "KHÔNG tạo bản ghi đồng ý tiếp thị từ website: %(client)s đã có một đồng ý tiếp thị đang hiệu lực (%(ref)s), và một khai báo tự động không bao giờ được thay thế bản ghi đó."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid "Created from website lead %(ref)s — the visitor ticked the marketing consent box on submission %(submission)s."
+msgstr "Được tạo từ khách tiềm năng website %(ref)s — khách đã tích ô đồng ý tiếp thị ở lượt gửi %(submission)s."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid "Website marketing consent materialised as %(ref)s for %(client)s."
+msgstr "Đồng ý tiếp thị từ website đã được ghi nhận thành %(ref)s cho %(client)s."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid "Website marketing consent checkbox (text version %(version)s), submission %(submission)s, submitted %(when)s UTC."
+msgstr "Ô đồng ý tiếp thị trên website (phiên bản văn bản %(version)s), lượt gửi %(submission)s, gửi lúc %(when)s UTC."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid "unversioned"
+msgstr "không có phiên bản"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Only CRM managers and administrators may link campaigns retroactively."
+msgstr "Chỉ quản lý CRM và quản trị viên mới được gán chiến dịch hồi tố."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Campaign %(campaign)s linked retroactively from touchpoint %(touchpoint)s (raw value \"%(raw)s\")."
+msgstr "Chiến dịch %(campaign)s được gán hồi tố từ điểm chạm %(touchpoint)s (giá trị gốc \"%(raw)s\")."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Campaigns linked"
+msgstr "Đã gán chiến dịch"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "%s lead(s) linked to a seeded campaign."
+msgstr "%s khách tiềm năng đã được gán vào chiến dịch có sẵn."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Nothing to link"
+msgstr "Không có gì để gán"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "No lead was linked: none of the selected raw campaign values matches a seeded utm.campaign. Seed the campaign first — this action never creates one."
+msgstr "Không có khách tiềm năng nào được gán: không giá trị chiến dịch gốc nào trong các dòng đã chọn khớp với một utm.campaign có sẵn. Hãy tạo chiến dịch trước — thao tác này không bao giờ tự tạo chiến dịch."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Only the first %s rows were examined — run it again to continue."
+msgstr "Chỉ %s dòng đầu tiên được xét — hãy chạy lại để tiếp tục."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_bridged
+msgid "Consent Bridge"
+msgstr "Cầu nối đồng ý"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_bridged
+msgid "What happened to the website consent claim when this lead became a client. Set once, on the first conversion: a real health.consent record was created, or the reason none was."
+msgstr "Điều gì đã xảy ra với khai báo đồng ý từ website khi khách tiềm năng này trở thành khách hàng. Chỉ ghi một lần, ở lần chuyển đổi đầu tiên: đã tạo một bản ghi health.consent thật, hoặc lý do vì sao không tạo."
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__created
+msgid "Consent record created"
+msgstr "Đã tạo bản ghi đồng ý"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_existing
+msgid "Skipped — consent already on file"
+msgstr "Bỏ qua — đã có đồng ý trong hồ sơ"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_identity
+msgid "Skipped — submitter is not the client"
+msgstr "Bỏ qua — người gửi không phải khách hàng"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_declined
+msgid "Skipped — consent not given"
+msgstr "Bỏ qua — khách không đồng ý"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_consent__method__web_form
+msgid "Web form checkbox"
+msgstr "Ô tích trên biểu mẫu web"
+
+#. module: health_web_leads
+#: model:ir.actions.act_window,name:health_web_leads.action_campaign_review
+#: model:ir.ui.menu,name:health_web_leads.menu_campaign_review
+#: model:cms.sidebar.item,name:health_web_leads.item_campaign_review
+msgid "Campaign Review"
+msgstr "Rà soát chiến dịch"
+
+#. module: health_web_leads
+#: model:ir.actions.act_window,help:health_web_leads.action_campaign_review
+msgid "<p class=\"o_view_nocontent_smiling_face\">Every campaign string the website sent is already in the CRM register</p>"
+msgstr "<p class=\"o_view_nocontent_smiling_face\">Mọi chuỗi chiến dịch website gửi sang đều đã có trong danh mục CRM</p>"
+
+#. module: health_web_leads
+#: model:ir.actions.act_window,name:health_web_leads.action_web_leads_funnel
+#: model:ir.ui.menu,name:health_web_leads.menu_web_leads_funnel
+#: model:cms.sidebar.item,name:health_web_leads.item_lead_analysis
+msgid "Lead Analysis"
+msgstr "Phân tích khách tiềm năng"
+
+#. module: health_web_leads
+#: model:ir.actions.act_window,help:health_web_leads.action_web_leads_funnel
+msgid "<p class=\"o_view_nocontent_smiling_face\">No leads to analyse yet</p>"
+msgstr "<p class=\"o_view_nocontent_smiling_face\">Chưa có khách tiềm năng nào để phân tích</p>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_lead_web_funnel_pivot
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_lead_web_funnel_graph
+msgid "Lead Funnel"
+msgstr "Phễu khách tiềm năng"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_list
+msgid "Link seeded campaigns"
+msgstr "Gán chiến dịch có sẵn"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Unmatched campaign"
+msgstr "Chiến dịch chưa khớp"

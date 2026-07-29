@@ -46,5 +46,24 @@
             <field name="value"></field>
         </record>
 
+        <!-- W3 §4.5 — how long a touchpoint keeps its RAW PAYLOAD.
+
+             `'0'` = keep forever, and it is the value that ships, because
+             nobody has decided yet. Vietnam's PDPL 2025 / Decree 13 review
+             (retention horizons included) is a W0 item owned by counsel
+             (design §10, "Legal review required — no compliance claims made
+             here"), so this phase builds the MECHANISM and hard-codes no
+             number. Set it to a day count the day counsel names one; the
+             cron is inert until then.
+
+             The value is a STRING (ledger §5.36: a falsy value handed to
+             `set_param` UNLINKS the row, and Integer 0 has the same trap as
+             Boolean False). '0', '', 'false', 'no', 'off' and 'none' all
+             read as off. -->
+        <record id="param_raw_payload_retention_days" model="ir.config_parameter">
+            <field name="key">web_leads.raw_payload_retention_days</field>
+            <field name="value">0</field>
+        </record>
+
     </data>
 </odoo>

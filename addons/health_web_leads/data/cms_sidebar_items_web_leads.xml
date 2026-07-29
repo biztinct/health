@@ -44,4 +44,39 @@
         <field name="match_models">web.leads.connector</field>
     </record>
 
+    <!-- W3. Sequences VERIFIED against the live table before choosing
+         (handover fact #9): section_crm holds 10 Dashboard, 11 Care Command,
+         12 Channel Center, 13 Website Connector, 20 Contacts, 21 Web
+         Touchpoints, 50 Activities — so 22 and 23 are free and put the two
+         new surfaces next to the touchpoint list they read from. Same two
+         §5.69 traps avoided: leaf SIBLINGS, and no `parent_id` field at
+         all. Ungated — the underlying ACLs govern the rows.
+
+         A THIRD trap, found by reading `cms_sidebar.js:50-100` rather than
+         copying the neighbours: `_buildMatchIndex` stores `match_models` in
+         a LAST-WINS map keyed by model name, and `_resolveActiveItem` falls
+         back to it whenever the current action has no xml_id. Neither new
+         leaf therefore declares `match_models` — `crm.lead` already belongs
+         to Contacts (seq 20) and `health.lead.touchpoint` to Web
+         Touchpoints (21), and a higher sequence would silently STEAL their
+         highlight on every action opened without an xml_id. The action
+         xml-ids below are the exact index and are checked first. -->
+    <record id="item_campaign_review" model="cms.sidebar.item">
+        <field name="name">Campaign Review</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">22</field>
+        <field name="icon">fa fa-bullhorn</field>
+        <field name="action_xmlid">health_web_leads.action_campaign_review</field>
+        <field name="match_action_xmlids">health_web_leads.action_campaign_review</field>
+    </record>
+
+    <record id="item_lead_analysis" model="cms.sidebar.item">
+        <field name="name">Lead Analysis</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">23</field>
+        <field name="icon">fa fa-bar-chart</field>
+        <field name="action_xmlid">health_web_leads.action_web_leads_funnel</field>
+        <field name="match_action_xmlids">health_web_leads.action_web_leads_funnel</field>
+    </record>
+
 </odoo>

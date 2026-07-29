@@ -23,5 +23,26 @@
             <field name="active" eval="True"/>
         </record>
 
+        <!-- W3 §4.5 — the retention rail.
+
+             Same §5.81 posture as the heartbeat above: it ships `active`,
+             and it is INERT because `web_leads.raw_payload_retention_days`
+             is the string '0'. "0 rows today" is what makes a live cron
+             invisible, not what makes it safe — so the gate is a parameter
+             a human sets deliberately, not a number in this file.
+
+             It prunes the `raw_payload` FIELD and nothing else: never a
+             touchpoint row, never a `crm.lead` field, never a consent. -->
+        <record id="ir_cron_web_leads_prune_raw_payloads" model="ir.cron">
+            <field name="name">Web Leads: prune touchpoint raw payloads</field>
+            <field name="model_id" ref="model_web_lead_service"/>
+            <field name="state">code</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="code">model._cron_prune_raw_payloads()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
     </data>
 </odoo>

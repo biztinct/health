@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- W3 §4.4 — the UTM vocabulary the naming standard (design §7.2) tells
+     marketing to tag with, pre-created in the canonical lowercase spelling.
+
+     WHY it matters: `_utm_ids` (web_lead_service.py:303-329) find-or-CREATES
+     `utm.source`/`utm.medium` with `=ilike`, so the FIRST arrival of a value
+     decides how it is spelled forever. Seeding fixes the spelling before the
+     first ad goes live. No campaigns — `utm.campaign` is find-only (design
+     §9.3, binding non-goal), and this file never creates one.
+
+     ONLY names that are absent — case-insensitively — from core AND from the
+     live vocabulary are seeded. `=ilike` already matches an existing row of
+     any casing, so seeding a lowercase twin of one would not "fix" a spelling:
+     it would split one channel across two rows in exactly the reports this
+     phase is building. Measured on vietuat 2026-07-29 (17 mediums, 24
+     sources) and against `addons/utm/data/utm_{medium,source}_data.xml`:
+
+       medium  cpc       ALREADY THERE as `cpc` (id 105)         — not seeded
+       medium  referral  ALREADY THERE as `Referral` (id 87)     — not seeded
+       source  google    ALREADY THERE as `google` (id 186)      — not seeded
+       source  facebook  ALREADY THERE as `Facebook` (id 4, core)— not seeded
+       source  zalo      ALREADY THERE as `Zalo` (id 158)        — not seeded
+
+     noupdate="1": once these rows exist, marketing owns their names. -->
+<odoo>
+    <data noupdate="1">
+
+        <record id="utm_medium_organic" model="utm.medium">
+            <field name="name">organic</field>
+        </record>
+
+        <record id="utm_medium_social" model="utm.medium">
+            <field name="name">social</field>
+        </record>
+
+        <record id="utm_medium_messaging" model="utm.medium">
+            <field name="name">messaging</field>
+        </record>
+
+        <record id="utm_source_tiktok" model="utm.source">
+            <field name="name">tiktok</field>
+        </record>
+
+    </data>
+</odoo>

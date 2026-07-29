@@ -43,11 +43,26 @@ Phase W2.5 turns provisioning into a screen (`web.leads.connector`):
 * a delivery-health strip plus the heartbeat switch and its watcher,
 * disconnect / reconnect by archiving the OAuth client, never deleting it.
 
+Phase W3 makes the pipeline reportable and the consent checkbox real:
+
+* the CONSENT BRIDGE — on lead→client conversion (the single
+  `_get_or_create_patient` chokepoint) a ticked marketing box becomes a real
+  `health.consent` record, method `web_form`, so `can_send_marketing()`
+  starts answering truthfully; identity-matched only, never superseding a
+  staff-captured consent, and never able to break a conversion,
+* Campaign Review — the raw `utm_campaign` strings the find-only policy
+  refused to auto-create, plus a find-only back-fill that links leads once
+  marketing seeds the campaign,
+* Lead Analysis — a city × channel pivot and graph over ALL leads, so the
+  hand-keyed baseline and the new web column are read side by side,
+* the UTM vocabulary seeds the naming standard prescribes,
+* a raw-payload retention cron that ships INERT until counsel sets a horizon.
+
 Design: docs/strategy/website-crm-integration.md
 Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
-…-phaseW2_5.md
+…-phaseW2_5.md, …-phaseW3.md
 """,
-    'version': '19.0.3.0.0',
+    'version': '19.0.4.0.0',
     'category': 'Healthcare',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',
@@ -70,6 +85,14 @@ Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
         # health_base / health_fieldservice / access_roles / hr, and nothing
         # in the tree depends on health_web_leads).
         'health_user_admin',
+        # W3: the consent bridge extends `health.consent` in-place
+        # (`_inherit`, no edit to health_consent — binding non-goal). Already
+        # a TRANSITIVE dependency via health_cms_sidebar, so this edge closes
+        # no loop (§5.71 walked: health_consent depends on health_base /
+        # health_crm / health_pwa, and nothing in that tree depends on
+        # health_web_leads — `grep -l health_web_leads addons/*/__manifest__.py`
+        # returns nothing).
+        'health_consent',
     ],
     'data': [
         'security/web_leads_security.xml',
@@ -77,6 +100,7 @@ Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
         'data/web_leads_scopes.xml',
         'data/web_leads_params.xml',
         'data/web_leads_cron.xml',
+        'data/utm_seeds.xml',
         'views/lead_touchpoint_views.xml',
         'views/crm_lead_views.xml',
         'views/web_leads_connector_views.xml',

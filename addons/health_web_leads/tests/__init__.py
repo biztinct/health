@@ -3,3 +3,4 @@ from . import test_web_lead_service
 from . import test_web_leads_endpoint
 from . import test_web_leads_w2
 from . import test_web_leads_connector
+from . import test_web_leads_w3
