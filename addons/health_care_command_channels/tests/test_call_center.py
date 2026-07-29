@@ -288,9 +288,17 @@ class TestCallCenter(ChannelSpineCase):
         """
         if not self.has_voip:
             self.skipTest('health_voip24h is not installed')
+        # FORCED FIXTURE EDIT (CC-G): company2, not company. The migration
+        # looks for an existing Calls connection with `active_test=False`
+        # (correctly — §5.27), so setUpClass archiving the deployment's live
+        # rows does NOT hide them from it. vietuat grew an `authorizing` call
+        # connection for company 1 today, and this test then measured "0
+        # created, 1 already present" and failed on live data rather than on
+        # code. A company created inside the transaction has no live rows by
+        # construction.
         config = self.env['voip.config'].sudo().create({
             'name': 'Legacy PBX', 'account_id': VOIP_ACCOUNT,
-            'company_id': self.company.id, 'webhook_secret': VOIP_SECRET,
+            'company_id': self.company2.id, 'webhook_secret': VOIP_SECRET,
             'auto_sync_enabled': False})
         self.env['voip.config']._migrate_legacy_connections()
         conn = config._channel_connection()
@@ -308,9 +316,12 @@ class TestCallCenter(ChannelSpineCase):
     def test_152_migration_is_idempotent(self):
         if not self.has_voip:
             self.skipTest('health_voip24h is not installed')
+        # FORCED FIXTURE EDIT (CC-G) — see test_151b: company2 keeps the
+        # migration's active_test=False lookup away from the deployment's own
+        # Calls connection.
         config = self.env['voip.config'].sudo().create({
             'name': 'Legacy PBX', 'account_id': VOIP_ACCOUNT,
-            'company_id': self.company.id,
+            'company_id': self.company2.id,
             'api_key': 'legacy-api-key', 'api_secret': 'legacy-api-secret',
             'webhook_secret': VOIP_SECRET, 'auto_sync_enabled': False})
 
@@ -336,7 +347,7 @@ class TestCallCenter(ChannelSpineCase):
         self.assertEqual(
             self.Conn.sudo().with_context(active_test=False).search_count(
                 [('channel', '=', 'call'),
-                 ('company_id', '=', self.company.id)]), 1)
+                 ('company_id', '=', self.company2.id)]), 1)
 
     def test_152b_a_center_created_config_cannot_reach_the_api(self):
         """The emptiness of api_key/api_secret is a SAFETY MECHANISM.

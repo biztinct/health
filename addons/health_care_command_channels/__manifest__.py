@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.6.0.0',
+    'version': '19.0.7.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -203,6 +203,41 @@ Non-goals of this phase: no new VoIP24h HTTP call and no edit to any path in
 health_care_command or to the google_gmail / microsoft_outlook core addons; no
 placeholder credentials; no change to the 10-module ZNS contract; no real
 provider call anywhere in the tests.
+
+Channel Connection Center — Phase CC-G (platform go-live console)
+==================================================================
+
+The four Meta/Zalo/Google/Microsoft cards are software-complete and honestly
+dark. What was left is the operator's half, and it had two holes:
+
+- **A row is not a configuration.** The card gate counted ``channel.platform.
+  app`` rows, so the moment an operator created an empty ``meta`` row to start
+  filling it in, WhatsApp AND Messenger went "available" and every Connect
+  could only fail. ``BaseChannelAdapter.platform_ready()`` now answers that
+  question where the knowledge already lived: client id, stored secret, and
+  the ``required_platform_keys`` each adapter refuses without (the Embedded
+  Signup / Login-for-Business configuration ids, and the webhook verify token
+  without which Meta's handshake 403s). Email delegates to its own
+  ``available_providers()``, which also demands Odoo's mixin addon. The gate
+  may only ever TIGHTEN: a complete row lights the same cards it always did.
+- **The go-live paperwork was a markdown checklist.** A "Go live" tab on the
+  platform application now shows the redirect URI and webhook URLs this
+  deployment actually answers on (per provider — Gmail/Outlook sign in
+  through Odoo's own mixins, so their redirect URI is core's, not ours),
+  a per-requirement checklist of what is still missing, and the external
+  steps that stay human paperwork. A generator mints the Meta webhook verify
+  token (merged into ``extra_json``, never clobbering a sibling key, and
+  never regenerated silently while Meta's dashboard holds the old one).
+
+**Preflight is honest about its own limits.** "Check this application" runs
+Meta's documented app-access-token call and reads the app's own name back —
+the only credentials-only check any of the four providers documents. Zalo,
+Google and Microsoft return ``unverifiable`` with the reason in words rather
+than a trick built on an undocumented error body. A provider refusal is an
+answer, not an exception: the outcome is persisted and reported, the button
+never raises, the app token is used and discarded, and no secret reaches a
+checklist row, a stored detail, an audit row or a log line. Manual only —
+no cron ships.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',

@@ -28,6 +28,15 @@ def _recent_epoch():
 
 META_APP_SECRET = 'meta-app-secret-fixture'
 META_VERIFY_TOKEN = 'verify-token-fixture'
+# FORCED FIXTURE EDIT (CC-G, ledger §5.62). The shared `meta` platform app used
+# to carry only the verify token, which was enough while the card gate counted
+# ROWS. CC-G asks the adapter what it will refuse without, and WhatsApp/
+# Messenger refuse without their Embedded-Signup / Login-for-Business
+# configuration id — so a fixture that means "the operator has finished this
+# app" has to say so. Same values as test_meta_center's own constants, which
+# re-write them in its setUpClass.
+META_ES_CONFIG_ID = '111222333444555'
+META_FLB_CONFIG_ID = '555444333222111'
 TG_PATH_SECRET = 'tg-path-secret-fixture-32chars-xx'
 TG_BOT_TOKEN = '123456:bot-token-fixture'
 
@@ -47,7 +56,9 @@ class ChannelSpineCase(ChannelHubCase):
 
         cls.meta_app = cls.App.create({
             'provider': 'meta', 'client_id': 'meta-app-1',
-            'extra_json': json.dumps({'verify_token': META_VERIFY_TOKEN}),
+            'extra_json': json.dumps({'verify_token': META_VERIFY_TOKEN,
+                                      'es_config_id': META_ES_CONFIG_ID,
+                                      'flb_config_id': META_FLB_CONFIG_ID}),
         })
         cls.meta_app.action_set_secret(META_APP_SECRET)
 

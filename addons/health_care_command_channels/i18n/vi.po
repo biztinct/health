@@ -1028,7 +1028,9 @@ msgstr "Tắt"
 
 #. module: health_care_command_channels
 #. odoo-javascript
+#. odoo-python
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
 msgid "Done"
 msgstr "Xong"
 
@@ -2019,3 +2021,257 @@ msgstr "Thư trả lời từ Care Command sẽ gửi từ địa chỉ này."
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "We have not seen the sign-in finish yet. Check again, or start it once more."
 msgstr "Chúng tôi chưa thấy việc đăng nhập hoàn tất. Hãy kiểm tra lại hoặc bắt đầu lần nữa."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "No webhook — mail arrives by IMAP poll."
+msgstr "Không có webhook — thư về qua IMAP."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Application (client) ID entered"
+msgstr "Đã nhập ID ứng dụng (client)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Client secret stored"
+msgstr "Đã lưu khoá bí mật"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Extra configuration: %s"
+msgstr "Cấu hình bổ sung: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Odoo mail addon installed (%s)"
+msgstr "Đã cài phân hệ thư của Odoo (%s)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "To do"
+msgstr "Chưa xong"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Channels served by this application: %s"
+msgstr "Các kênh dùng ứng dụng này: %s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "No channel uses this provider."
+msgstr "Không kênh nào dùng nhà cung cấp này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid ""
+"Every prerequisite Health19 can see is in place. The channel cards become "
+"available as soon as this row is active."
+msgstr ""
+"Mọi điều kiện Health19 có thể kiểm tra đều đã đủ. Thẻ kênh sẽ khả dụng ngay "
+"khi dòng này đang hoạt động."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid ""
+"Until every row above is done, the channels served by this application stay "
+"\"Not available yet\" for every tenant."
+msgstr ""
+"Cho đến khi mọi dòng ở trên hoàn tất, các kênh dùng ứng dụng này vẫn hiển thị "
+"\"Chưa khả dụng\" với mọi đơn vị."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Done outside Health19 (%s)"
+msgstr "Thực hiện bên ngoài Health19 (%s)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Only the Meta application uses a webhook verify token."
+msgstr "Chỉ ứng dụng Meta mới dùng mã xác thực webhook."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid ""
+"This application already has a webhook verify token, and Meta's dashboard "
+"still holds the old one. Clear the \"%s\" entry from the extra configuration "
+"(and from the Meta app) before generating a new one."
+msgstr ""
+"Ứng dụng này đã có mã xác thực webhook, và bảng điều khiển Meta vẫn đang giữ "
+"mã cũ. Hãy xoá mục \"%s\" khỏi cấu hình bổ sung (và khỏi ứng dụng Meta) trước "
+"khi tạo mã mới."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Verify token generated"
+msgstr "Đã tạo mã xác thực"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid ""
+"It is in the extra configuration below. Paste the same value into the Meta "
+"app's webhook settings — the handshake fails until both sides hold it."
+msgstr ""
+"Mã nằm trong phần cấu hình bổ sung bên dưới. Hãy dán đúng giá trị đó vào "
+"phần webhook của ứng dụng Meta — bắt tay sẽ thất bại cho tới khi hai bên "
+"giữ cùng một mã."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Application verified"
+msgstr "Ứng dụng đã được xác minh"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "The provider refused these credentials"
+msgstr "Nhà cung cấp từ chối thông tin đăng nhập này"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Nothing to check server-side"
+msgstr "Không có gì để kiểm tra phía máy chủ"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Preflight result"
+msgstr "Kết quả kiểm tra"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Enter the app id and store the secret first."
+msgstr "Hãy nhập ID ứng dụng và lưu khoá bí mật trước."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "The stored secret is unreadable."
+msgstr "Không đọc được khoá bí mật đã lưu."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "refused"
+msgstr "bị từ chối"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "failed"
+msgstr "thất bại"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Meta accepted these credentials."
+msgstr "Meta đã chấp nhận thông tin đăng nhập này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid "Only a platform administrator can manage a platform application."
+msgstr "Chỉ quản trị viên nền tảng mới được quản lý ứng dụng nền tảng."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+msgid ""
+"No harmless server-side check exists for this provider — the credentials are "
+"proven on the first real sign-in."
+msgstr ""
+"Nhà cung cấp này không có cách kiểm tra vô hại phía máy chủ — thông tin đăng "
+"nhập được chứng minh ở lần đăng nhập thật đầu tiên."
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_channel_platform_app__oauth_redirect_uri
+msgid "Redirect URI"
+msgstr "URI chuyển hướng"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_channel_platform_app__webhook_urls
+msgid "Webhook URLs"
+msgstr "Địa chỉ webhook"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_channel_platform_app__go_live_checklist
+msgid "Go-live checklist"
+msgstr "Danh mục kiểm tra trước khi chạy"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_channel_platform_app__preflight_status
+msgid "Preflight"
+msgstr "Kiểm tra trước"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_channel_platform_app__preflight_at
+msgid "Checked on"
+msgstr "Kiểm tra lúc"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields,field_description:health_care_command_channels.field_channel_platform_app__preflight_detail
+msgid "Preflight detail"
+msgstr "Chi tiết kiểm tra"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__channel_platform_app__preflight_status__none
+msgid "Not checked"
+msgstr "Chưa kiểm tra"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__channel_platform_app__preflight_status__pass
+msgid "Passed"
+msgstr "Đạt"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__channel_platform_app__preflight_status__fail
+msgid "Failed"
+msgstr "Không đạt"
+
+#. module: health_care_command_channels
+#: model:ir.model.fields.selection,name:health_care_command_channels.selection__channel_platform_app__preflight_status__unverifiable
+msgid "Proven on first sign-in"
+msgstr "Được chứng minh ở lần đăng nhập đầu"
+
+#. module: health_care_command_channels
+#: model_terms:ir.ui.view,arch_db:health_care_command_channels.view_channel_platform_app_form
+msgid "Go live"
+msgstr "Chạy thật"
+
+#. module: health_care_command_channels
+#: model_terms:ir.ui.view,arch_db:health_care_command_channels.view_channel_platform_app_form
+msgid "Check this application"
+msgstr "Kiểm tra ứng dụng này"
+
+#. module: health_care_command_channels
+#: model_terms:ir.ui.view,arch_db:health_care_command_channels.view_channel_platform_app_form
+msgid "Generate verify token"
+msgstr "Tạo mã xác thực"
+
+#. module: health_care_command_channels
+#: model_terms:ir.ui.view,arch_db:health_care_command_channels.view_channel_platform_app_form
+msgid "Last check"
+msgstr "Lần kiểm tra gần nhất"
+
+#. module: health_care_command_channels
+#: model_terms:ir.ui.view,arch_db:health_care_command_channels.view_channel_platform_app_form
+msgid "Paste these into the provider"
+msgstr "Dán các giá trị này vào nhà cung cấp"

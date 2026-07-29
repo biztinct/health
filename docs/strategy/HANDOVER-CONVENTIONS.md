@@ -1507,6 +1507,38 @@ a no-op.
     ("get_view lies about group-gated pages") and §5.62 ("a default filter
     hides rows you swear you created"). (Phase W3, deviation D2.)
 
+- **§5.95 — archiving the deployment's live rows inside a test transaction
+    frees the ORM slot but NOT the index entry, and hides them from nothing
+    that reads with `active_test=False`.** `health_care_command_channels`'
+    shared fixture archives every `care.channel.connection` in `setUpClass`
+    precisely so its own fixtures can take the partial unique index
+    `(channel, company_id) WHERE active`. Three hours before the CC-G test run
+    somebody drove the Center on vietuat and left an **active** `call` and
+    `webchat` connection on company 1. Two pre-existing tests then failed on
+    that live data, in two different ways, neither visible in the archive:
+    (a) health_voip24h's `_migrate_legacy_connections` looks for an existing
+    connection with `active_test=False` — correct, §5.27 — so it FOUND the
+    archived row and reported "0 created, 1 already present"; T151b/T152 red
+    against perfect code. (b) `test_85` INSERTs an **active** webchat row on an
+    INDEPENDENT cursor: the unique index still carries the live row's entry,
+    whose tuple this transaction had UPDATEd but not committed, so PostgreSQL
+    made the INSERT wait on our XID while our transaction waited on the INSERT.
+    No deadlock is reported (the outer session is merely *idle in
+    transaction*), vietuat runs `lock_timeout = 0`, and the run hung for **20
+    minutes** — with the HTTP service stopped, because `service odoo-server
+    start` is downstream of `odoo-bin` in the §2 deploy command. The symptom is
+    a logfile that simply stops advancing mid-suite. Rules: (i) a fixture row
+    written on an independent cursor must sit OUTSIDE any partial unique index
+    it could contend for (`active = false` was enough here — the flag proved
+    nothing about the token write under test) and that cursor must
+    `SET LOCAL lock_timeout` like every other fresh cursor in the module
+    (§5.74); (ii) a test that counts what a migration CREATED must run on a
+    company created inside the transaction, never on the deployment's own;
+    (iii) a test log that stops advancing is a LOCK, not a slow test —
+    `pg_blocking_pids()` names the blocker in one query, and every minute spent
+    waiting is a minute the UAT server is down. Sibling of §5.74, §5.63 and
+    §5.50. (Hit live in CC-G.)
+
 - **§5.94 — `cms.sidebar.item.match_models` lands in a LAST-WINS index: a
     new leaf that declares a model an existing leaf already owns steals its
     highlight for every action without an `xml_id`.**

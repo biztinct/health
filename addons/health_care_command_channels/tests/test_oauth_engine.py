@@ -239,11 +239,30 @@ class TestOauthEngine(ChannelHubCase):
         #     and land encrypted, with the scopes the provider reported.
         dbname = self.env.cr.dbname
         with Registry(dbname).cursor() as cr0:
+            # FORCED FIXTURE EDIT (CC-G). Two details, both paid for by a
+            # 20-minute silent hang on vietuat:
+            #
+            # `active = FALSE`. The partial unique index is
+            # (channel, company_id) WHERE active, and setUpClass ARCHIVES the
+            # deployment's live connections inside THIS transaction to free
+            # those slots. A live active webchat row for company 1 (someone
+            # drove the Center at 05:55 today) therefore still holds the index
+            # entry as far as any other connection is concerned — so this
+            # INSERT waited on our own uncommitted UPDATE of that row, while
+            # this transaction waited on the INSERT. PostgreSQL sees no cycle
+            # (the outer session is merely idle in transaction), vietuat runs
+            # lock_timeout = 0, and the run never ends. The row's `active`
+            # value proves nothing here; being outside the index does.
+            #
+            # `SET LOCAL lock_timeout`. Every other fresh cursor in this
+            # module sets one (ledger §5.74) — a fixture cursor that does not
+            # is a test that can hang forever instead of failing.
+            cr0.execute("SET LOCAL lock_timeout = '5s'")
             cr0.execute(
                 "INSERT INTO care_channel_connection "
                 "(channel, company_id, state, webhook_state, active, "
                 " consecutive_failures) "
-                "VALUES ('webchat', %s, 'ready', 'none', true, 0) RETURNING id",
+                "VALUES ('webchat', %s, 'ready', 'none', false, 0) RETURNING id",
                 (self.env.company.id,))
             committed_id = cr0.fetchone()[0]
         try:

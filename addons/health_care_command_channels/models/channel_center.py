@@ -42,7 +42,7 @@ from odoo.addons.health_care_command.models.care_conversation import (
 from ..services.adapters import (
     EMAIL_PROVIDER_SETTING, EMAIL_PROVIDERS, FB_MESSAGE_TAGS, META_SDK_URL,
     MODE_EMBEDDED_SIGNUP, MODE_GUIDED_SECRET, MODE_OAUTH_POPUP, MODE_ONE_CLICK,
-    ZALO_WEBHOOK_PATH, ChannelSendError, meta_window_state,
+    ZALO_WEBHOOK_PATH, ChannelSendError, get_adapter, meta_window_state,
 )
 from ..services.redact import redact
 from .care_channel_connection import SENDABLE_STATES
@@ -465,23 +465,31 @@ class CareChannelConnectionCenter(models.Model):
         return conn
 
     @api.model
-    def _center_platform_available(self, caps):
+    def _center_platform_available(self, caps, channel):
         """Is the platform-side prerequisite in place for this channel?
 
         ``needs_platform_app`` channels are offerable only where the platform
         operator has seeded (and kept active) the provider's app — otherwise
         "Connect" could only ever fail, and the honest answer is the
         pending-approval copy (architecture §4).
+
+        CC-G moved the second half of that sentence into the adapter. The old
+        gate counted rows: an active `meta` row with no client id, no secret
+        and no configuration ids lit WhatsApp AND Messenger up the moment the
+        operator created it to start filling it in. ``platform_ready()`` asks
+        each adapter what it will actually refuse without, which is where that
+        knowledge already lived (``_platform_app`` / ``_app_secret`` /
+        ``config_id``, and Email's ``available_providers``).
+
+        A missing adapter registration is an availability answer, never a
+        traceback: ``ValueError`` renders "Not available yet".
         """
         if not caps.get('needs_platform_app'):
             return True
-        providers = list(caps.get('platform_providers') or [])
-        if not providers:
-            # Declared as needing one but naming none: refuse to claim it is
-            # available rather than guess.
+        try:
+            return bool(get_adapter(self.env, channel).platform_ready())
+        except ValueError:
             return False
-        return bool(self.env['channel.platform.app'].sudo().search_count(
-            [('provider', 'in', providers), ('active', '=', True)]))
 
     # ==================================================================
     # 1. center_overview — the catalogue
@@ -512,7 +520,7 @@ class CareChannelConnectionCenter(models.Model):
                 continue
             parent = caps.get('parent_channel')
             conn = self._center_connection(parent or channel, company)
-            available = self._center_platform_available(caps)
+            available = self._center_platform_available(caps, channel)
             implemented = (caps.get('mode') in IMPLEMENTED_MODES
                            and channel in CENTER_IMPLEMENTED_CHANNELS)
             state = conn.state if conn else 'not_connected'
@@ -700,7 +708,7 @@ class CareChannelConnectionCenter(models.Model):
                 'This channel is part of the %s connection — set that up '
                 'first.', self._center_channel_labels().get(
                     caps['parent_channel'], caps['parent_channel'])))
-        if not self._center_platform_available(caps):
+        if not self._center_platform_available(caps, channel):
             raise UserError(_('This channel is not available yet.'))
         if caps.get('mode') not in IMPLEMENTED_MODES \
                 or channel not in CENTER_IMPLEMENTED_CHANNELS:
@@ -869,7 +877,7 @@ class CareChannelConnectionCenter(models.Model):
         """
         conn = self._center_zalo(conn_id)
         caps = conn._capabilities()
-        if not self._center_platform_available(caps):
+        if not self._center_platform_available(caps, conn.channel):
             raise UserError(_('This channel is not available yet.'))
         self._center_require_https()
         if conn.state in ('not_connected', 'disabled', 'error', 'legacy',
@@ -961,7 +969,7 @@ class CareChannelConnectionCenter(models.Model):
             raise UserError(_('This channel is not set up yet.'))
         conn._check_center_access()
         caps = conn._capabilities()
-        if not self._center_platform_available(caps):
+        if not self._center_platform_available(caps, conn.channel):
             raise UserError(_('This channel is not available yet.'))
         self._center_require_https()
         if conn.state != 'authorizing':

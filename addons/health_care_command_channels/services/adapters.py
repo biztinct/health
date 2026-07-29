@@ -41,6 +41,9 @@ from odoo.exceptions import UserError
 
 from . import channel_crypto
 from .redact import redact
+# The webhook verify token is a platform-app prerequisite (CC-G), and
+# webhook_verify.py imports nothing from here — the edge stays one-way.
+from .webhook_verify import VERIFY_TOKEN_KEY
 
 _logger = logging.getLogger(__name__)
 
@@ -202,6 +205,43 @@ def _meta_approval_status(raw):
     return 'pending'
 
 
+def meta_app_identity(env, client_id, client_secret):
+    """Prove a Meta app id/secret pair server-to-server, and name the app (CC-G).
+
+    The one provider preflight that exists without inventing anything: Meta
+    documents an **app access token** (``grant_type=client_credentials``),
+    which is minted from exactly the two values the operator pasted and is
+    refused if either is wrong. Reading ``/{app-id}?fields=name`` with it then
+    turns "the credentials work" into a sentence the operator can recognise —
+    seeing their own app's name back is what proves they pasted the right
+    app's secret, not merely a well-formed one.
+
+    Zalo, Google and Microsoft get no equivalent here: none of them documents
+    a harmless credentials-only call, and discriminating on an
+    ``invalid_client`` error body is an undocumented trick, not a contract.
+
+    The app token is used and discarded — never stored, never logged, never
+    returned. Raises ``ChannelSendError``; the two calls are the module's own
+    bounded ``_get`` (``HTTP_TIMEOUT``), so nothing here can hold a worker.
+    """
+    # No connection: `_get` reads none, and neither does anything below it.
+    http = BaseChannelAdapter(env, None)
+    base = '%s/%s' % (GRAPH_BASE, GRAPH_VERSION)
+    minted = http._get('%s/oauth/access_token' % base, params={
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'grant_type': 'client_credentials',
+    }) or {}
+    app_token = minted.get('access_token')
+    if not app_token:
+        raise ChannelSendError('Meta returned no app access token')
+    # The token travels in a header, never in a URL a log or an exception
+    # string could carry (the same rule the tenant flows follow).
+    data = http._get('%s/%s' % (base, client_id), params={'fields': 'name'},
+                     headers={'Authorization': 'Bearer %s' % app_token}) or {}
+    return str(data.get('name') or '')
+
+
 def meta_window_state(env, connection, identity=None, now=None):
     """What may be sent to ``identity`` right now, and why (architecture §3).
 
@@ -299,7 +339,14 @@ CAPABILITY_KEYS = (
 # would have to exist for a needs_platform_app channel to be offerable at all.
 # The Center reads it to answer "Not available yet" honestly instead of
 # offering a Connect button that could only fail (architecture §4, §9).
-OPTIONAL_CAPABILITY_KEYS = ('parent_channel', 'platform_providers')
+#
+# CC-G adds ``required_platform_keys``: the ``extra_json`` keys WITHOUT which
+# this channel's sign-in cannot start, even though the provider's app row
+# exists. A row is not a configuration — the moment the operator creates an
+# empty `meta` row to begin filling it in, the old "any active row" gate lit
+# WhatsApp and Messenger up and every Connect could only fail.
+OPTIONAL_CAPABILITY_KEYS = ('parent_channel', 'platform_providers',
+                            'required_platform_keys')
 
 
 def register_adapter(key):
@@ -346,6 +393,43 @@ class BaseChannelAdapter:
         "supports_refresh", "supports_revoke", "required_checks", "guide_steps"}
         """
         raise NotImplementedError
+
+    def platform_ready(self) -> bool:
+        """Can this channel's sign-in actually START on this deployment? (CC-G)
+
+        Not "does a row exist" — *is it complete*. A ``channel.platform.app``
+        with no client id, no secret or a missing ``required_platform_keys``
+        entry is a row the operator is halfway through creating, and offering
+        Connect against it produces a dialog that can only fail (architecture
+        §4). Every requirement below is one the code already refuses without:
+        ``_platform_app`` needs the client id, ``_app_secret`` the secret,
+        ``config_id`` the ES/FLB configuration id, and ``meta_challenge`` the
+        verify token — without which the dashboard handshake 403s and
+        ``webhook_verified`` can never pass.
+
+        **Reads no connection.** It is called with ``new()`` probes and with a
+        bare channel-key string (the model gate), so ``self.connection`` may be
+        a NewId, a str, or None.
+        """
+        caps = self.authorization_capabilities()
+        if not caps.get('needs_platform_app'):
+            return True
+        providers = list(caps.get('platform_providers') or [])
+        if not providers:
+            # Declared as needing one but naming none: refuse to claim it is
+            # available rather than guess.
+            return False
+        required = tuple(caps.get('required_platform_keys') or ())
+        App = self.env['channel.platform.app'].sudo()
+        for provider in providers:
+            # ANY complete provider makes the channel offerable — email
+            # declares two and either one is enough.
+            app = App._get_for_provider(provider)
+            if not app or not app.client_id or not app.client_secret_enc:
+                continue
+            if all(str(app.get_extra(key) or '').strip() for key in required):
+                return True
+        return False
 
     # ------------------------------------------------------------------
     # Authorization
@@ -824,6 +908,10 @@ class WhatsAppAdapter(_MetaAdapterBase):
         'mode': MODE_EMBEDDED_SIGNUP,
         'needs_platform_app': True,
         'platform_providers': ['meta'],
+        # Without the ES configuration id `authorize_url` refuses (config_id
+        # below); without the verify token Meta's handshake 403s at
+        # meta_challenge, so webhook_verified could never pass (CC-G).
+        'required_platform_keys': (META_ES_CONFIG_KEY, VERIFY_TOKEN_KEY),
         'resource_selection': True,      # WABA + phone number picker
         'webhook_auto': True,            # POST /{waba}/subscribed_apps
         'supports_refresh': False,
@@ -1242,6 +1330,9 @@ class MessengerAdapter(_MetaAdapterBase):
         'mode': MODE_OAUTH_POPUP,
         'needs_platform_app': True,
         'platform_providers': ['meta'],
+        # Same two prerequisites as WhatsApp, with the Login-for-Business
+        # configuration id in place of the Embedded-Signup one (CC-G).
+        'required_platform_keys': (META_FLB_CONFIG_KEY, VERIFY_TOKEN_KEY),
         'resource_selection': True,      # Page picker from /me/accounts
         'webhook_auto': True,            # POST /{page}/subscribed_apps
         'supports_refresh': False,
@@ -2029,6 +2120,17 @@ class EmailAdapter(_StubAdapter):
             if app and app.client_id and app.client_secret_enc:
                 out.append(provider)
         return out
+
+    def platform_ready(self) -> bool:
+        """Email's availability IS ``available_providers`` (CC-G).
+
+        The base implementation would answer "a complete google or microsoft
+        app exists"; this one also demands that Odoo's own mixin addon is
+        installed, because without it the sign-in has no engine at all. It was
+        already the truth this adapter used everywhere else — the card gate
+        simply never asked it.
+        """
+        return bool(self.available_providers())
 
     def _addon_installed(self, provider):
         """Is Odoo's own mixin present? Model presence is the honest test."""

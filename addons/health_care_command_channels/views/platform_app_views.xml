@@ -83,6 +83,36 @@
                     <group>
                         <field name="environment_note"/>
                     </group>
+                    <!-- CC-G: everything the operator needs to finish the
+                         provider-side paperwork, in the product instead of in
+                         a markdown checklist. Nothing here is a credential. -->
+                    <notebook>
+                        <page string="Go live" name="go_live">
+                            <div class="mb-3">
+                                <button name="action_preflight" type="object"
+                                        string="Check this application"
+                                        class="btn-primary"
+                                        invisible="not id"/>
+                                <button name="action_generate_verify_token"
+                                        type="object"
+                                        string="Generate verify token"
+                                        class="btn-secondary ms-2"
+                                        invisible="not id or provider != 'meta'"/>
+                            </div>
+                            <group>
+                                <group string="Last check">
+                                    <field name="preflight_status"/>
+                                    <field name="preflight_at"/>
+                                    <field name="preflight_detail"/>
+                                </group>
+                                <group string="Paste these into the provider">
+                                    <field name="oauth_redirect_uri"/>
+                                    <field name="webhook_urls"/>
+                                </group>
+                            </group>
+                            <field name="go_live_checklist" nolabel="1"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

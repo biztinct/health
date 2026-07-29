@@ -38,6 +38,10 @@ KNOWN_EVENTS = {
     # CC-E (Meta): a subscribed_apps call the provider refused, and a re-read
     # of where Meta's human reviews stand.
     'webhook_failed', 'approvals_refreshed',
+    # CC-G (platform go-live): the operator minted a Meta webhook verify token,
+    # and the outcome of a platform-application preflight. Both are plane-1
+    # operator events — no connection, no tenant.
+    'verify_token_generated', 'preflight',
 }
 
 
