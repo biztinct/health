@@ -1,0 +1,380 @@
+<title>CMS sidebar coverage — every backend menu the shell cannot reach</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff; --fg: #1a1d21; --muted: #5c6570; --line: #e3e6ea;
+    --head: #f5f7f9; --accent: #1f4e79; --add: #1b6b3a; --opt: #7a5c00; --skip: #6b6b6b;
+    --chip-add: #e6f3ec; --chip-opt: #fbf3dc; --chip-skip: #eef0f2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171a; --fg: #e6e9ec; --muted: #9aa3ad; --line: #2a2f35;
+      --head: #1c2126; --accent: #7fb3e0; --add: #6fd39b; --opt: #e0c064; --skip: #9aa3ad;
+      --chip-add: #16311f; --chip-opt: #322a12; --chip-skip: #22272c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171a; --fg: #e6e9ec; --muted: #9aa3ad; --line: #2a2f35;
+    --head: #1c2126; --accent: #7fb3e0; --add: #6fd39b; --opt: #e0c064; --skip: #9aa3ad;
+    --chip-add: #16311f; --chip-opt: #322a12; --chip-skip: #22272c;
+  }
+  :root[data-theme="light"] {
+    --bg: #ffffff; --fg: #1a1d21; --muted: #5c6570; --line: #e3e6ea;
+    --head: #f5f7f9; --accent: #1f4e79; --add: #1b6b3a; --opt: #7a5c00; --skip: #6b6b6b;
+    --chip-add: #e6f3ec; --chip-opt: #fbf3dc; --chip-skip: #eef0f2;
+  }
+  body {
+    background: var(--bg); color: var(--fg); margin: 0 auto; padding: 2rem 1.25rem 5rem;
+    max-width: 1180px; line-height: 1.55;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  h1 { font-size: 1.6rem; margin: 0 0 .3rem; letter-spacing: -.01em; }
+  h2 { font-size: 1.15rem; margin: 2.6rem 0 .4rem; padding-top: .9rem; border-top: 2px solid var(--line); }
+  h3 { font-size: .95rem; margin: 1.6rem 0 .4rem; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; }
+  p { margin: .5rem 0; }
+  .lede { color: var(--muted); max-width: 78ch; }
+  .counts { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.2rem 0 0; padding: 0; list-style: none; }
+  .counts li { border: 1px solid var(--line); border-radius: 6px; padding: .5rem .8rem; min-width: 8.5rem; }
+  .counts b { display: block; font-size: 1.5rem; line-height: 1.1; }
+  .counts span { color: var(--muted); font-size: .82rem; }
+  .wrap { overflow-x: auto; margin: .6rem 0 1.4rem; border: 1px solid var(--line); border-radius: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: .875rem; min-width: 720px; }
+  th, td { text-align: left; vertical-align: top; padding: .5rem .7rem; border-bottom: 1px solid var(--line); }
+  th { background: var(--head); font-weight: 600; position: sticky; top: 0; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .82em; color: var(--muted); }
+  /* Deliberately NOT nowrap: the grouped rows in table C list several menus in
+     one cell, and a non-wrapping first column pushes every other column off the
+     right edge. */
+  .path { word-break: normal; }
+  th:nth-child(1), td:nth-child(1) { width: 30%; }
+  th:nth-child(2), td:nth-child(2) { width: 40%; }
+  th:nth-child(3), td:nth-child(3) { width: 18%; }
+  th:nth-child(4), td:nth-child(4) { width: 12%; }
+  .chip { display: inline-block; border-radius: 4px; padding: .08rem .45rem; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+  .chip.add  { background: var(--chip-add);  color: var(--add); }
+  .chip.opt  { background: var(--chip-opt);  color: var(--opt); }
+  .chip.skip { background: var(--chip-skip); color: var(--skip); }
+  .new { color: var(--accent); font-weight: 600; }
+  .note { color: var(--muted); }
+  blockquote { margin: 1rem 0; padding: .7rem 1rem; border-left: 3px solid var(--accent); background: var(--head); border-radius: 0 6px 6px 0; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+</style>
+
+<h1>CMS sidebar coverage</h1>
+<p class="lede">
+  Every menu our own modules ship that the <code>/bizapp</code> shell cannot reach, what it
+  does, and where it could live. Measured on <strong>vietuat</strong>, 2026‑07‑29: 563 menus
+  carry an action, 71 sidebar leaves cover 83 action xml‑ids, and <strong>128 menus are
+  reachable only by typing a URL</strong>. This is a decision document — nothing here has been
+  implemented.
+</p>
+
+<ul class="counts">
+  <li><b>128</b><span>unreachable menus</span></li>
+  <li><b>42</b><span>recommended to add</span></li>
+  <li><b>32</b><span>optional (config / technical)</span></li>
+  <li><b>54</b><span>already reachable another way</span></li>
+  <li><b>~22</b><span>new leaves if you take table A<br>(several menus share one leaf)</span></li>
+</ul>
+
+<blockquote>
+  <strong>Why a menu can be invisible.</strong> A login lands in <code>/bizapp</code>, and
+  <code>/odoo</code> redirects straight back into it — for the <em>administrator</em> too, which
+  is how the operator‑only Platform Applications screen ended up URL‑only. The shell's app
+  switcher lists only its own apps, so the whole <code>CRM Center → … → Platform
+  Applications</code> path does not exist for any persona. That is ledger §5.69; the sidebar
+  seed is the only fix.
+</blockquote>
+
+<p class="note">
+  Existing sections and their current size: <strong>CRM</strong> (9),
+  <strong>OPERATIONS MANAGER</strong> (8), <strong>FINANCE</strong> (11),
+  <strong>CLINICAL</strong> (24), <strong>INTEROP &amp; COMPLIANCE</strong> (8),
+  <strong>ADMIN</strong> (11).
+</p>
+
+<h2>A · Recommended additions</h2>
+<p class="lede">
+  Shipped features with no entry anywhere in the shell. Rows that share a
+  <em>proposed leaf</em> would be wired as one sidebar item whose
+  <code>match_action_xmlids</code> lists the rest — that is how Master&nbsp;Data already covers
+  ten screens with one leaf.
+</p>
+
+<h3>→ CRM section</h3>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu</th><th>What it does</th><th>Proposed home</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="path">CRM Center / Care Command Setup / <b>Channels (setup)</b></td>
+        <td>The per‑company channel connections behind the Channel Center: state, readiness checks, last inbound/outbound, disconnect. The Center is the self‑service face; this is the record view.</td>
+        <td>CRM → <b>Channels (setup)</b></td>
+        <td class="note">CRM‑manager gated. One leaf for the next three rows.</td></tr>
+    <tr><td class="path">CRM Center / Care Command Setup / <b>Channel Messages</b></td>
+        <td>The raw message store for WhatsApp, Messenger, Telegram and web chat — one row per inbound/outbound message, with dedupe keys. Support/debug surface.</td>
+        <td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">CRM Center / Care Command Setup / <b>Channel Audit</b></td>
+        <td>Append‑only operational audit of every channel event (connect, callback, webhook refused, send failed, secret rotated). Redacted by construction.</td>
+        <td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">CRM Center / Care Command Setup / <b>Reply Templates</b></td>
+        <td>Canned replies the Care Command composer offers agents.</td>
+        <td>CRM → <b>Reply Templates</b></td><td class="note">Daily use by CRM staff.</td></tr>
+    <tr><td class="path">CRM Center / Care Command Setup / <b>Watchlist Phrases</b></td>
+        <td>Phrases that flag a conversation for attention when a client uses them.</td>
+        <td>same leaf as Reply Templates</td><td class="note">match only</td></tr>
+    <tr><td class="path">CRM Center / <b>Follow‑up Calendar</b></td>
+        <td>Calendar of leads by follow‑up date — the "who do I call today" view the list cannot give.</td>
+        <td>CRM → <b>Follow‑up Calendar</b></td><td class="note">Distinct from Activities.</td></tr>
+    <tr><td class="path">Healthcare / Sales &amp; CRM / <b>Healthcare Relationships</b></td>
+        <td>Family / caregiver / decision‑maker links between contacts — who may be told what.</td>
+        <td>CRM → <b>Relationships</b></td><td class="note">Also defensible under CLINICAL.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>→ OPERATIONS MANAGER section</h3>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu</th><th>What it does</th><th>Proposed home</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="path">Healthcare / <b>Telehealth Sessions</b></td>
+        <td>Video visit sessions: waiting‑room tokens, join links, who joined when. A whole shipped module with no entry.</td>
+        <td>OPS → <b>Telehealth</b></td><td class="note">Head‑nurse gated already.</td></tr>
+    <tr><td class="path">Healthcare / <b>Self‑Booking Invites</b></td>
+        <td>Tokenised rebooking invitations sent to clients, and whether they were used.</td>
+        <td>OPS → <b>Self‑Booking Invites</b></td><td></td></tr>
+    <tr><td class="path">Healthcare / <b>Family Visit Links</b></td>
+        <td>Tokenised family pages per visit — issue, revoke, see what a family can currently view.</td>
+        <td>OPS → <b>Family Links</b></td><td></td></tr>
+    <tr><td class="path">Operations Center / <b>Family Messages</b></td>
+        <td>The two‑way consent‑gated family ↔ team message threads (ops inbox side).</td>
+        <td>OPS → <b>Family Messages</b></td><td class="note">PHI‑encrypted; ops persona.</td></tr>
+    <tr><td class="path">Healthcare / Routes / <b>Route Feasibility</b></td>
+        <td>Travel‑feasibility warnings between consecutive visits — which back‑to‑back pairs are not physically drivable.</td>
+        <td>OPS → <b>Route Feasibility</b></td><td class="note">Warnings only, never blocks.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>→ CLINICAL section</h3>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu</th><th>What it does</th><th>Proposed home</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="path">Healthcare / <b>Diagnoses</b></td>
+        <td>The per‑patient problem list (ICD‑10 coded conditions) that feeds FHIR Condition and BHYT‑4210 diagnosis codes.</td>
+        <td>CLINICAL → <b>Diagnoses</b></td><td class="note">Doctor gated.</td></tr>
+    <tr><td class="path">Healthcare / Clinical Intelligence / <b>Unsigned Clinical Notes</b></td>
+        <td>Draft notes awaiting sign‑off — the backlog the PWA "Notes to sign" card works from.</td>
+        <td>CLINICAL → <b>Unsigned Notes</b></td><td class="note">~54 real drafts on this DB.</td></tr>
+    <tr><td class="path">Healthcare / Clinical Intelligence / <b>Voice Recordings</b></td>
+        <td>Ambient scribe jobs: audio captured on a visit, transcript state, what was appended to the note.</td>
+        <td>CLINICAL → <b>Voice Notes</b></td><td></td></tr>
+    <tr><td class="path">Healthcare / Clinical Intelligence / AI Coding / <b>AI Code Suggestions</b></td>
+        <td>The nightly LLM ICD‑10 retro‑coding review queue — human‑approve‑only.</td>
+        <td>CLINICAL → <b>Coding Review</b></td><td class="note">Consent‑gated, redacted.</td></tr>
+    <tr><td class="path">Healthcare / Clinical Intelligence / Care Plans / <b>Visit Tasks</b></td>
+        <td>The individual tasks a care plan generates per visit. The Care Plans leaf exists; the tasks behind it do not.</td>
+        <td>CLINICAL → under <b>Care Plans</b></td><td class="note">match on the Care Plans leaf.</td></tr>
+    <tr><td class="path">Healthcare / Client Management / <b>My Care Portal</b></td>
+        <td>Patient portal access tokens: who has a live link, when it expires, revoke.</td>
+        <td>CLINICAL → <b>Patient Portal</b></td><td></td></tr>
+    <tr><td class="path">Healthcare / Client Management / <b>My Care Access Log</b></td>
+        <td>Every portal page view — the evidence trail for "who read what, when".</td>
+        <td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">Healthcare / Client Management / Consents / <b>Consent Check Log</b></td>
+        <td>Append‑only record of every consent decision the engines made (who asked, what was answered).</td>
+        <td>CLINICAL → under <b>Consents</b></td><td class="note">match on the Consents leaf.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>→ FINANCE section</h3>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu</th><th>What it does</th><th>Proposed home</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="path">BHYT Claims / <b>Claims</b></td>
+        <td>Health‑insurance claims built from completed + invoiced visits: coverage split, evidence lock, the road to Decision‑4210 XML. An entire module with no entry.</td>
+        <td>FINANCE → <b>BHYT Claims</b></td><td class="note">Highest‑value single addition.</td></tr>
+    <tr><td class="path">Finance Center / <b>Service Packages</b></td>
+        <td>Prepaid service packages held by clients — sessions bought, sessions left.</td>
+        <td>FINANCE → <b>Service Packages</b></td><td class="note">Prefer this action over the Healthcare‑path twin.</td></tr>
+    <tr><td class="path">Invoicing / Red Invoices / <b>API Requests</b></td>
+        <td>The Viettel V‑Invoice request/response log — where you look when a tax e‑invoice does not come back.</td>
+        <td>FINANCE → <b>Red Invoice Log</b></td><td class="note">Red‑Invoice‑Manager gated.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>→ INTEROP &amp; COMPLIANCE section</h3>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu</th><th>What it does</th><th>Proposed home</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="path">Settings / Technical / API Gateway / <b>OAuth Clients</b></td>
+        <td>Third‑party API clients: credentials, scopes, enable/disable. The front door to the FHIR facade.</td>
+        <td>INTEROP → <b>API Gateway</b></td><td class="note">One leaf for all seven rows.</td></tr>
+    <tr><td class="path">… / <b>API Keys</b></td><td>Per‑user API keys issued for gateway access.</td><td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">… / <b>Scopes</b></td><td>The scope vocabulary a token can carry (what each grant may read or write).</td><td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">… / <b>Webhook Subscriptions</b></td><td>Outbound webhook registrations by third parties.</td><td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">… / <b>Webhook Deliveries</b></td><td>Delivery attempts and failures per subscription.</td><td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">… / <b>Integration Outbox</b></td><td>Queued outbound integration payloads awaiting delivery.</td><td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">… / <b>API Audit Log</b></td><td>Every authenticated API call: client, scope, resource, outcome.</td><td>same leaf</td><td class="note">match only</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>→ ADMIN section</h3>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu</th><th>What it does</th><th>Proposed home</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="path">CRM Center / Care Command Setup / <b>Platform Applications</b></td>
+        <td>The platform operator's provider apps (Meta / Zalo / Google / Microsoft) — client id, encrypted secret, the CC‑G Go‑live tab with redirect + webhook URLs, checklist and preflight.</td>
+        <td>ADMIN → <b>Platform Applications</b></td>
+        <td class="note"><b>The one you asked for.</b> <code>base.group_system</code> only.</td></tr>
+    <tr><td class="path">Healthcare / <b>Archive Log</b></td>
+        <td>What was archived, by whom, when — distinct from the audit log already in ADMIN.</td>
+        <td>ADMIN → under <b>Audit Log</b></td><td class="note">match on the Audit Log leaf.</td></tr>
+    <tr><td class="path">Workflow Automations / <b>First‑Visit Offers</b></td>
+        <td>Automated first‑visit offers generated for new clients, and whether they converted.</td>
+        <td>ADMIN → <b>Workflow Automations</b></td><td class="note">One leaf for both rows.</td></tr>
+    <tr><td class="path">Workflow Automations / <b>Timecard Mismatches</b></td>
+        <td>Where the EVV/attendance reconciliation disagrees with the roster — the exceptions a human must settle.</td>
+        <td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">VoIP24h / Call Logs / <b>All Calls</b></td>
+        <td>Inbound call records received from the PBX webhook (the only VoIP24h path we can verify).</td>
+        <td>ADMIN → <b>Call Logs</b></td><td class="note">Also defensible under OPERATIONS.</td></tr>
+    <tr><td class="path">Zalo / <b>Conversations</b></td>
+        <td>Zalo OA chat threads on the legacy rails the ZNS contract still uses.</td>
+        <td>ADMIN → <b>Zalo</b></td><td class="note">One leaf; Messages matches onto it.</td></tr>
+    <tr><td class="path">Zalo / <b>Messages</b></td><td>Individual Zalo messages, incl. ZNS notification sends.</td><td>same leaf</td><td class="note">match only</td></tr>
+    <tr><td class="path">Settings / Theme Engine / <b>Theme Studio</b></td>
+        <td>The live editor for the tenant's colour/typography tokens.</td>
+        <td>ADMIN → <b>Theme Studio</b></td><td class="note">Themes + Presets match onto it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>→ ANALYTICS (proposed <span class="new">new section</span>)</h3>
+<p class="lede">
+  <code>biz_bi</code> ships fifteen menus and the shell reaches none of them. Four are the
+  product; the other eleven are its plumbing (table&nbsp;B). A section of its own keeps ADMIN
+  from doubling in size.
+</p>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu</th><th>What it does</th><th>Proposed home</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="path">Analytics / <b>Home</b></td><td>The BI landing page — pinned dashboards for the signed‑in user.</td><td>ANALYTICS → <b>Home</b></td><td class="note">BI‑Viewer gated.</td></tr>
+    <tr><td class="path">Analytics / <b>Explore</b></td><td>Ad‑hoc query/chart builder over the published datasets.</td><td>ANALYTICS → <b>Explore</b></td><td class="note">Dashboard‑Creator gated.</td></tr>
+    <tr><td class="path">Analytics / Data / <b>Dashboards &amp; Schedules</b></td><td>Saved dashboards and their email/refresh schedules.</td><td>ANALYTICS → <b>Dashboards</b></td><td></td></tr>
+    <tr><td class="path">Analytics / Data / <b>Datasets</b></td><td>The published datasets everything else reads (incl. the margin‑per‑visit gold dataset).</td><td>ANALYTICS → <b>Datasets</b></td><td></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>B · Optional — configuration &amp; technical</h2>
+<p class="lede">
+  Real screens, but ones a user visits rarely and an implementer visits often. Adding them is
+  defensible; leaving them URL‑only costs little. Grouped by where they would go if you say yes.
+</p>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu</th><th>What it does</th><th>Would belong under</th><th></th></tr></thead>
+  <tbody>
+    <tr><td class="path">Analytics / Data / Sources</td><td>Connections to the databases and files datasets are built from.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Data / Semantic Modeler</td><td>Defines measures, dimensions and joins on top of a dataset.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Data / Pipeline Editor</td><td>Visual editor for the transform steps feeding a dataset.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Data / Refresh Jobs</td><td>History and status of dataset refreshes.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Data / Glossary</td><td>Business definitions attached to fields, so two people mean the same thing.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Data / Import CSV / Excel</td><td>Wizard: load a spreadsheet as a dataset.</td><td>ANALYTICS (wizard)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Data / New Dataset</td><td>Wizard: guided dataset creation.</td><td>ANALYTICS (wizard)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Configuration / Workspaces</td><td>Grouping + ownership of BI content.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Configuration / Access Rules</td><td>Row/column level access on datasets.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Configuration / AI Providers</td><td>Which LLM endpoint answers natural‑language BI questions.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Analytics / Configuration / Audit Log</td><td>Who ran which query against which dataset.</td><td>ANALYTICS (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">VoIP24h / Call Logs / Missed Calls</td><td>The missed‑call subset of the call log.</td><td>ADMIN → Call Logs (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">VoIP24h / Recordings</td><td>Call recordings linked to call logs.</td><td>ADMIN → Call Logs (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">VoIP24h / Extensions</td><td>PBX extension ↔ staff mapping.</td><td>ADMIN (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">VoIP24h / Configuration / VoIP Configuration</td><td>The PBX account facade — now owned by the Channel Center's Calls card.</td><td>ADMIN (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Zalo / Configuration / Zalo Settings</td><td>The Zalo app facade — now owned by the Channel Center's Zalo card.</td><td>ADMIN (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Settings / Theme Engine / Themes</td><td>Saved themes.</td><td>ADMIN → Theme Studio (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Settings / Theme Engine / Presets</td><td>Starter palettes a theme can be built from.</td><td>ADMIN → Theme Studio (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Clinical Intelligence / AI Coding / AI Call Log</td><td>Raw LLM request/response log for coding suggestions (manager/owner only).</td><td>CLINICAL → Coding Review (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Routes / Distance Cache</td><td>Cached travel legs between addresses — a performance table, not a workflow.</td><td>OPS → Route Feasibility (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Field Service / Communications</td><td>Per‑booking communication log (what was sent to whom about a visit).</td><td>OPERATIONS</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Field Service / Configuration / Booking Stages</td><td>The booking pipeline stages and their gates.</td><td>ADMIN (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Field Service / Configuration / Clinical Protocols</td><td>Protocol templates attached to service types.</td><td>ADMIN (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Field Service / Configuration / Field Service Teams</td><td>Team definitions used for assignment.</td><td>ADMIN (config)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Operations Center / Calendar</td><td>A calendar client action over bookings — overlaps the Bookings leaf, different rendering.</td><td>OPERATIONS</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Service Packages / Package Products</td><td>The products a package is composed of.</td><td>FINANCE → Service Packages (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Advanced Pricelist / Pricing Engines</td><td>The engines that evaluate pricing rules (surcharges, holiday multipliers).</td><td>ADMIN → Pricing (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Sales / Advanced Pricing / Configuration</td><td>Global pricing‑engine settings.</td><td>ADMIN → Pricing (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Sales &amp; CRM / Configuration / Contact Reasons</td><td>Why a client contacted us — the reason vocabulary.</td><td>ADMIN → Master Data (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Sales &amp; CRM / Configuration / Lead Reasons</td><td>Lead win/loss reason vocabulary.</td><td>ADMIN → Master Data (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Sales &amp; CRM / Configuration / Provinces / Cities</td><td>The province/city list behind catchments.</td><td>ADMIN → Master Data (match)</td><td><span class="chip opt">optional</span></td></tr>
+    <tr><td class="path">Healthcare / Configuration / Not‑Given Reasons</td><td>Why a medication dose was not administered (eMAR vocabulary).</td><td>ADMIN → Master Data (match)</td><td><span class="chip opt">optional</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>C · Already reachable another way — no action needed</h2>
+<p class="lede">
+  These 54 menus open data the shell already exposes under a different (usually purpose‑built)
+  action, or are app roots, superseded screens and wizards. Adding them would give the same
+  screen two names. Rows are grouped — the counts in each row add up to 54.
+</p>
+<div class="wrap">
+<table>
+  <thead><tr><th>Backend menu(s)</th><th>What it does</th><th>Already reached by</th><th></th></tr></thead>
+  <tbody>
+    <tr><td class="path">Home · Home Page · Viet Uc</td><td>Three landing dashboards from earlier eras of the product.</td><td>The shell itself (<code>/bizapp</code>)</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">CRM Center / Clients · Healthcare / Client Management / Client Registry · Sales &amp; CRM / All Clients · All Contacts</td><td>Four different list actions over <code>res.partner</code> / <code>crm.lead</code>.</td><td>CRM → Contacts, OPS → Clients</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">CRM Center / Bookings · Healthcare / Field Service / Bookings</td><td>Calendar and list of field‑service orders.</td><td>OPS → Bookings</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Scheduling and Staff / Assignment Dashboard · Visual Scheduler · Staff Availability</td><td>The three pre‑unification scheduling screens.</td><td>OPS → Staff Schedule (which replaced them)</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Scheduling and Staff / Configuration / Healthcare Staff · Healthcare Skills · Service Areas</td><td>Staff master data.</td><td>ADMIN → Healthcare Staff</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Healthcare / Facilities / Healthcare Facilities</td><td>Facility records.</td><td>ADMIN → Master Data</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Healthcare / Configuration / Catchment Provinces · Client Categories · Service Types · Symptoms · Medical Specialties · Referral Sources · Insurance Providers · Urgency Levels · Vietnamese Districts · Public Holidays</td><td>Ten master‑data vocabularies.</td><td>ADMIN → Master Data (nine) and ADMIN → Public Holidays</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Healthcare / Field Service / Portable Equipment</td><td>Equipment register.</td><td>ADMIN → Equipment</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Billing &amp; Invoicing / Invoices · All Service Billing · VAT Invoices Log · AR Dashboard · AR Transactions Log · Overdue Clients · Payment Transactions · Cash Collections</td><td>Eight finance list/report actions.</td><td>FINANCE (Invoices, VAT Log, AR Dashboard, AR Transactions, Overdue Clients, Payments, Cash In Transit)</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Healthcare / Service Packages / Client Packages · Package Products / All Healthcare Products</td><td>The Healthcare‑path twins of the Finance package screens.</td><td>FINANCE → Service Packages (table A)</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Advanced Pricelist / Pricing Rules · Quick Edit Rules · Import Price List <span class="note">(and the identical Sales / Advanced Pricing path — 7 menus, 4 actions)</span></td><td>Pricing rules, bulk edit, import wizard — each reachable by two menu paths.</td><td>ADMIN → Pricing</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Healthcare / Audit Log</td><td>Healthcare audit view.</td><td>ADMIN → Audit Log</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Field Requirements <span class="note">(root)</span></td><td>Per‑field requirement rules.</td><td>ADMIN → Field Requirements</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">CRM Center / New Contact · Settings · Sales &amp; CRM / Contacts · Follow‑up Activities</td><td>Two client actions and two wizards that duplicate flows the CRM screens already start.</td><td>CRM → Contacts / Activities</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Sales &amp; CRM / Configuration / Sales Teams · Stages</td><td>Core Odoo CRM configuration, not ours.</td><td>Odoo Settings</td><td><span class="chip skip">skip</span></td></tr>
+    <tr><td class="path">Billing / Payment Workflow / Process Payments · VoIP24h / Sync Call History</td><td>Wizards launched from the records they act on.</td><td>their own screens</td><td><span class="chip skip">skip</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Notes for whoever implements this</h2>
+<ul>
+  <li><strong>Leaves, not children.</strong> An item with children becomes a non‑navigating
+      accordion — adding a child under an existing leaf silently stops that leaf opening
+      (ledger §5.69a). New items go in as siblings with the next sequence.</li>
+  <li><strong>Never set <code>match_models</code> on a satellite leaf.</strong> The model index
+      is last‑wins, so a second leaf declaring <code>crm.lead</code> steals Contacts'
+      highlight for every action without an xml‑id (§5.94). Declare
+      <code>match_action_xmlids</code> only.</li>
+  <li><strong>Visibility is by <code>access.role</code>, not by Odoo group.</strong> A leaf with
+      no <code>role_ids</code> is shown to everyone; the underlying ACL still refuses the data,
+      so an ungated operator leaf would show a link that errors. Platform Applications needs the
+      Administrator role on the item as well as <code>base.group_system</code> on the model.</li>
+  <li><strong>Removing a field from an XML data record does not unset it</strong> — write
+      <code>eval="False"</code> explicitly (§5.69b).</li>
+  <li>The seed files live in <code>health_cms_sidebar/data/</code>, one per section, all
+      <code>noupdate="1"</code>; a satellite module may ship its own (the
+      <code>health_cms_clinical</code> pattern) rather than editing the base module.</li>
+</ul>
+
+<footer>
+  Measured on vietuat 2026‑07‑29 by comparing every <code>ir.ui.menu</code> with an action
+  owned by a <code>health_*</code> / <code>biz_*</code> / <code>advanced_pricing</code> module
+  against the union of <code>cms.sidebar.item.action_xmlid</code> and
+  <code>match_action_xmlids</code>. Descriptions are from each action's model and view mode plus
+  the module's own documentation; placements are proposals only. No code was changed.
+</footer>
