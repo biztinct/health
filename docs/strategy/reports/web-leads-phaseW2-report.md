@@ -505,3 +505,65 @@ night before there is anything to watch. When it is switched on, set
 `web_leads.heartbeat_user_id` to a named owner first; the fallback currently
 resolves to the first gateway administrator, which is a person who has not
 agreed to own this.
+
+---
+
+## 10. Fable review addendum (2026-07-29) — **PASS, no fixes shipped**
+
+Independent bulk review (one subagent: whole-module read against the handover,
+plus its own server verification) and a personal read of the flagged files
+(`controllers/web_leads.py`, `models/crm_lead.py`, both security files, this
+report's §3/§7A). First W-phase to come back with **zero fixes required**.
+
+**Independently reproduced, not taken from this report:** installed version
+`19.0.2.0.0`; all 18 module+test files md5-identical repo ↔ server; the
+closure query re-run cold (group 656 implies itself only; exactly the 8 ACL
+models, permissions matching §3's table verbatim); the inverted implication
+`gid=1 → hid=346` present in `res_groups_implied_rel`; cron 139 active with
+`heartbeat_enabled='False'` and zero heartbeat activities; **zero QA residue**
+(0 leads with an `external_submission_id`, 0 touchpoints, 0 `w2-smoke%` rows,
+temp OAuth clients gone — the fixtures-deleted claim is TRUE); unauthenticated
+probes 401 fail-closed; and a full test re-run with the service stopped:
+`0 failed, 0 error(s) of 38 tests`, all 38 methods proven executed by name,
+site back at 200 afterwards. vi.po re-validated independently: 122 entries
+(report said 123 — counting nit), 0 inert, all code occurrences real AST
+literals.
+
+**Both deviations adjudicated CORRECT.** D1's premise was verified in the
+codebase (`action_crm_contact_list_native` binds the priority-50 form AND its
+own primary search view; the CMS sidebar's Contacts opens exactly that
+action) — a real handover gap, caught by driving the UI, implemented with the
+sanctioned mechanism and locked by `test_w2_11`. D2 is what ledger §5.69
+already makes part of "done". The unasked `_compute_display_name` is a
+justified additive fix. Report §7's four gotchas are now ledgered as
+**§5.88–§5.91** in `HANDOVER-CONVENTIONS.md`.
+
+**LOW-severity notes, deliberately not redeployed for** (folded into the
+W2.5 handover where the same files are touched anyway):
+
+1. `crm_lead.py:151-154` — the marker regex scans the whole body and subject,
+   wider than the "final body line" contract wording. Behaviour accepted (it
+   can only route to the lead whose unguessable id it names, and a quoted
+   marker in a human reply threading onto the lead is arguably desirable);
+   the Proima spec keeps the strict wording.
+2. `web_lead_service.py:838-839` — the heartbeat fallback `user_ids[0]` does
+   not filter archived users (the configured-user path does). Mitigated:
+   ships disabled, §9 says to set a named owner first. **W2.5 fixes.**
+3. `test_web_leads_w2.py:359-363` — T8's positive-arm `assertIsNotNone` on a
+   recordset is tautological; the real proof is no-AccessError + T7's E2E.
+   Cosmetic. **W2.5 tidies.**
+4. Heartbeat dedupe keys on (user, summary): changing the watcher leaves the
+   old user's open activity behind. **W2.5 fixes** (reassign on change).
+5. Reconcile/dedup run under the global multi-company rule — informational
+   only on single-company vietuat; a real multi-tenant deployment revisits
+   this in the SaaS packaging phase.
+
+**Unconfirmed (declared, low-stakes):** §3's user-level model counts
+(294/43/25) were not re-computed; the §4.3 rolled-back dry-run transcript is
+unverifiable by nature (mechanism covered by `test_w2_04`, watched green);
+the browser screenshots were not re-driven.
+
+**Open remediation item, outside this stream:** the `base.group_user →
+group_healthcare_base` inverted implication (§7A / ledger §5.88) makes every
+privilege audit on vietuat read better than reality and deserves its own
+ticket — it is live data, and fixing it touches every internal user.

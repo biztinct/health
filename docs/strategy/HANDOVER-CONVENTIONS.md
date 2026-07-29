@@ -1416,3 +1416,57 @@ a no-op.
     shape to watch for anywhere a client keeps its own i18n table.
     (Found by the Phase GB review, after the phase had already claimed
     otherwise.)
+
+- **§5.88 — a privilege closure computed from the security XML is a claim
+    about the ADDONS; the one that governs access is in
+    `res_groups_implied_rel`, and on vietuat they disagree.**
+    `health_base/security/health_security.xml:23` declares
+    `group_healthcare_base → base.group_user`; the live table ALSO holds the
+    reverse edge `gid=1 → hid=346`, which no module's XML asks for. So every
+    internal user on this database carries the healthcare-base ACLs —
+    `health.ews.score` read included — and no amount of narrowing a service
+    group's own implications can take that away. Rules: (a) compute closures
+    with a recursive query over `res_groups_implied_rel` on the TARGET
+    database, never by reading `implied_ids` in source; (b) re-run the query
+    after the change lands, because an implication removed from XML survives
+    the upgrade unless explicitly cleared (§5.69(b) — `eval="[(5, 0, 0)]"`);
+    (c) an audit that says "group X cannot reach model Y" must name which
+    edge it measured. The inverted edge itself is an open remediation item,
+    deliberately not fixed inside a feature phase. (Phase W2.)
+
+- **§5.89 — `mail.activity` supports MODEL-LESS activities, and they are the
+    honest shape for an alert about an absence.** `res_model_id` is
+    `required=False`; the `_check_res_id_is_set_if_model` constraint allows an
+    empty `res_model` when `user_id` is set; `action_notify()` skips them and
+    `_compute_res_name` handles them; they still appear in the systray and My
+    Activities. Hanging an alert on a proxy record (the `ir.cron` row, say)
+    makes "mark as done" an `AccessError` for the recipient, because activity
+    write access is checked against the RELATED document. Caveats measured in
+    W2: the dedupe key for such an activity is whatever you search on —
+    (user, summary) means changing the watcher param leaves the old user's
+    open copy behind — and a `user_ids[0]` fallback does not apply the
+    active filter, so guard archived users explicitly. (Phase W2.)
+
+- **§5.90 — the §5.83 executed-methods grep is fragile to a digit in a class
+    name, one level below where W1 already found it fragile.**
+    `grep -ac "Starting .*Http"` misses classes not named `…Http…` (W1);
+    `Starting Test[A-Za-z]*\.test_` then silently drops `TestWebLeadsW2`
+    because of the `2`. Use `grep -ac "Starting Test.*\.test_"` for the count
+    and `grep -ao "Starting Test[A-Za-z0-9]*\.test_[a-z0-9_]*"` for the
+    names, and COMPARE the count to the number of methods you expect — the
+    comparison, not the regex, is what §5.83 asks for. (Phase W2.)
+
+- **§5.91 — `crm.lead` has THREE standalone primary form views and TWO
+    primary search views on this database, and the highest-priority one is
+    the one the CMS persona actually opens.** §5.41 stated this for
+    `res.partner`; it is worse here: `health_crm.view_healthcare_opportunity_form`
+    (priority 1, backend lists + Lead Hub centre),
+    `health_landing.view_lead_source_modal` (16, the Source spoke), and
+    `health_crm.view_crm_contact_form_crm_center` (50, bound with its OWN
+    primary search view by `action_crm_contact_list_native` — the CMS
+    sidebar's Contacts). A tab or filter added to "the lead form" reaches
+    nobody until it reaches the third one. Before touching any lead surface:
+    `SELECT id, priority, inherit_id FROM ir_ui_view WHERE model='crm.lead'
+    AND mode='primary'`, then CLICK the surface as the target persona and see
+    which arch renders. (Phase W2, found by driving the sidebar — the W2
+    handover itself had enumerated only two.)

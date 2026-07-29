@@ -618,7 +618,7 @@
       <h2>The form also sends an email — will we get two leads?</h2>
     </div>
     <div class="prose">
-      <p>Short answer: <strong>no today, and here is the check I ran plus the guard we still owe you.</strong> A single form submission can travel down three different roads into the CRM. Two of the three are already guarded by the code that has just been built. The third is currently a closed door — but it is unguarded, so it must be guarded <em>before</em> anyone opens it.</p>
+      <p>Short answer: <strong>no — and as of Phase W2, all three roads are guarded.</strong> A single form submission can travel down three different roads into the CRM. The first two were guarded by the original build; the third — the notification email — was a closed but unguarded door, and it now has its guard in place before anyone opens it.</p>
     </div>
 
     <div class="scroller">
@@ -649,17 +649,17 @@
           </tr>
           <tr>
             <td><strong>The notification email also creates a lead</strong></td>
-            <td>The CRM has four email addresses configured that turn incoming mail into leads. <strong>None of them can currently receive anything</strong> — there is no mail domain configured and no mailbox connected, and the form emails go to <code>contact@pkgdvietuc.com</code> and <code>om@cstnvusaigon.com</code>, which are not CRM addresses. So no duplicate exists today. The risk appears the day someone adds a CRM address to the form's recipients or connects those mailboxes to the CRM.</td>
-            <td><span class="pill p-wait">GUARD NOT BUILT</span></td>
+            <td>The CRM's lead email addresses still cannot receive anything today (no mail domain, no mailbox connected) — and the guard is now built anyway: any incoming email carrying a ticket number the CRM already holds is attached to that existing lead instead of creating a new one. The door stays closed, but it is now safe to open. One condition: the website plugin must stamp the ticket number as the final line of the notification email — that requirement is in the developer steps below.</td>
+            <td><span class="pill p-live">LIVE</span><br><span style="font-size:12px">Built in W2</span></td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="note warn">
-      <span class="label">Action — two small things, both cheap</span>
+      <span class="label">The two rules that keep it that way</span>
       <p><strong>1. Rule for the website developer (free):</strong> the form's notification email must go only to the staff mailboxes it goes to today. Never add a CRM address as a recipient, CC or BCC.</p>
-      <p><strong>2. Rule for the CRM (small build, Phase W2):</strong> the notification email carries the same unique ticket number as the direct connection, in the email body and header. If a mailbox is ever connected to the CRM, any message carrying a ticket number that already exists is attached to that existing lead instead of creating a new one. That makes the third door safe to open whenever the business wants it.</p>
+      <p><strong>2. Rule for the website plugin (built into the CRM side already):</strong> the notification email must end with the line <code>[web-lead:&lt;ticket number&gt;]</code> — the same ticket number the direct connection carries, generated once so both see it. The CRM's guard recognises that line and files the email onto the existing lead instead of creating a second one.</p>
     </div>
   </section>
 
@@ -690,7 +690,7 @@
             <td class="num">1</td>
             <td>Build the relay plugin</td>
             <td>WordPress plugin (custom, small)</td>
-            <td>Hook Contact Form 7's <code>wpcf7_mail_sent</code> event. For every submission: generate a unique ID, save a row in the plugin's own table, then POST the details to the CRM. If the CRM is unreachable, retry later using WP-Cron with the <em>same</em> ID — that is what makes retries safe.</td>
+            <td>Generate the unique ID at Contact Form 7's <code>wpcf7_before_send_mail</code> event and do two things with it: append <code>[web-lead:&lt;ID&gt;]</code> as the final line of the notification email, and save a row in the plugin's own table, then POST the details to the CRM. If the CRM is unreachable, retry later using WP-Cron with the <em>same</em> ID — that is what makes retries safe.</td>
             <td><span class="pill p-wait">NOT STARTED</span></td>
           </tr>
           <tr>
@@ -868,15 +868,15 @@
           </tr>
           <tr>
             <td>W2 — Daily operation</td>
-            <td>The staff screen showing web leads and their full enquiry history, the "needs checking" queue, the daily reconciliation, the pipe-broken alarm, and the email duplicate guard described above.</td>
+            <td>The staff screens showing web leads and their full enquiry history on every form staff actually use, the "needs checking" filters, the daily reconciliation address, the pipe-broken alarm (off until the website goes live), and the email duplicate guard described above. Installed, tested and independently reviewed on the live server.</td>
             <td>CRM team</td>
-            <td><span class="pill p-wait">NEXT</span></td>
+            <td><span class="pill p-live">LIVE</span></td>
           </tr>
           <tr>
             <td>W2.5 — Self-service connector</td>
-            <td>The Website card described above, with both connection modes. Needed before this is sold to a second clinic.</td>
+            <td>The Website connector screen described above. Needed before this is sold to a second clinic. The light-tier email mode stays designed-only until a real mailbox exists to test against.</td>
             <td>CRM team</td>
-            <td><span class="pill p-plan">DESIGNED</span></td>
+            <td><span class="pill p-wait">NEXT</span></td>
           </tr>
           <tr>
             <td>Lead Ads connector</td>
