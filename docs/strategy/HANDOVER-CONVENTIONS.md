@@ -1494,3 +1494,27 @@ a no-op.
     Test.*\.test_"`). Corollary: `EXIT:0` + empty stdout is NOT evidence of
     success either — only the logfile's `odoo.tests.result` line for that
     PID is. (Phase W2.5 review.)
+
+- **§5.93 — a `search_default_` group-by REPLACES a pivot/graph view's arch
+    row groupbys; an action that ships both silently loses the arch
+    dimension.** Measured in the browser during W3: an act_window whose
+    context carried `search_default_groupby_outcome` erased the pivot arch's
+    `catchment_province_id` row and the city axis disappeared. Put the second
+    dimension in the arch as another `type="row"` element and ship the action
+    with an empty context; and never prove a pivot by reading its arch —
+    the search model can override it, so the proof is a browser drive plus a
+    context assertion (`assertNotIn('search_default_'…)`). Sibling of §5.42
+    ("get_view lies about group-gated pages") and §5.62 ("a default filter
+    hides rows you swear you created"). (Phase W3, deviation D2.)
+
+- **§5.94 — `cms.sidebar.item.match_models` lands in a LAST-WINS index: a
+    new leaf that declares a model an existing leaf already owns steals its
+    highlight for every action without an `xml_id`.**
+    `health_cms_sidebar/static/src/js/cms_sidebar.js:65` builds
+    `this._modelIndex[model] = item.id` in catalogue order with no
+    duplicate check, and `_resolveActiveItem` falls back to that index
+    whenever the current action carries no tag/xmlid it knows. So a
+    satellite leaf (a filtered view of `crm.lead`, say) that declares
+    `match_models` would hijack Contacts' highlight. Satellite leaves
+    declare `match_action_xmlids` only; `match_models` belongs to the
+    model's ONE primary surface. (Phase W3, deviation D3.)

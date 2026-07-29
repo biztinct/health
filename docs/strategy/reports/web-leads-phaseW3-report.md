@@ -342,3 +342,50 @@ change, so no version bump was due (§3).
    already owns steals its highlight for every action without an `xml_id`.
    Declare `match_action_xmlids` on satellite leaves; leave `match_models` to
    the model's primary surface (D3).
+
+---
+
+## 9. Fable review addendum (2026-07-29) — PASS, no fixes shipped
+
+**Verdict: PASS.** One review subagent completed the whole-module spec check
+and the independent server verification end-to-end (no assurance gap this
+cycle); Fable personally read the four risky files it ranked
+(`crm_lead.py` bridge ladder, `health_consent.py` grant gate,
+`lead_touchpoint.py` back-fill, T6/T9 in the test file — both judged
+non-vacuous: T6 stages a real exploding `create` and proves conversion +
+unmarked retry + §5.55 transaction survival; T9 pre-checks the live §5.88
+closure before asserting the denial).
+
+**Independently reproduced, none taken on trust:** module 19.0.4.0.0 in the
+DB; all 27 files md5-identical repo↔`/odoo/odoo-server/addons`; fresh test
+re-run `0 failed, 0 error(s) of 65 tests` (PID 2146991, §5.92 log-scoped:
+65 `Starting Test`, 13 × TestWebLeadsW3 by name, 0 FAIL; the 19 PID-scoped
+ERROR lines are the geocoder test-mode block + W2.5's expected
+unique-index refusals); service healthy after (localhost + care.biztinct.com
+both 200); live-data honesty confirmed (0 web_form consents, 0 bridge
+markers, 0 touchpoints, cron 140 active + param literal `'0'`, sidebar
+81/82 at seq 22/23 with empty `match_models`, utm seeds 106/107/108/201,
+`utm_campaign` count unchanged at 11, no QA residue — the one 24h partner
+is W2.5's relay-service partner).
+
+**Deviations D1–D4: all four premises CONFIRMED** and adopted. One count
+correction: D1 skipped **5** candidates, not 4 — the five case-insensitive
+twins are `cpc`/`Referral`/`google`/`Facebook`/`Zalo` (one row each, no
+case-duplicates), 4 seeds shipped. Follow-up 4 → ledger **§5.93**;
+follow-up 5 → **§5.94**; follow-up 1 → **`docs/strategy/open-tickets.md`
+T-002** (with §5.88 as T-001), as requested — a ticket, not a footnote.
+
+**Findings (5, all LOW, none warranting a redeploy):**
+1. "Nothing outside the module was edited" is literally false — the commit
+   also updates `docs/web-leads/index.html` (a docs page; no spec breach).
+2. The "4 of 9" seed count above (and in the commit message) is 5 — see D1.
+3. `web_lead_service.py:94`'s "(170 touchpoints ever)" comment re-asserts
+   the number §6 of this report itself refutes (live count 0). Comment-only;
+   left as-is for md5 discipline, fold into the next phase touching the file.
+4. Behavior note: in the `skipped_identity`/`skipped_existing` branches the
+   marker is written before `message_post`, so if the note ever raises
+   (T-002's chatter bug), rail B1 swallows it after the marker — "one note"
+   can become zero notes with no retry. Designed priority (marker and
+   conversion survive) — accepted.
+5. Reviewer calibration: 295 is the uid-40 persona-visible lead count under
+   catchment rules; the table holds 476.
