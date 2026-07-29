@@ -355,12 +355,18 @@ class TestWebLeadsW2(TransactionCase):
         with self.assertRaises(AccessError):
             self.env['account.move'].with_user(service_user).search([], limit=1)
 
-        # …and the capture path's own models still work.
-        self.assertIsNotNone(
-            self.env['crm.lead'].with_user(service_user).search([], limit=1))
-        self.assertIsNotNone(
-            self.env['health.lead.touchpoint'].with_user(
-                service_user).search([], limit=1))
+        # …and the capture path's own models still work. W2.5 T11: the old
+        # `assertIsNotNone` on a recordset was a TAUTOLOGY — `search()` returns
+        # an empty recordset, never None, so it passed even for a model the
+        # user cannot read (the AccessError would have been the real signal).
+        # Assert the type instead, which only holds if the read went through.
+        for model_name in ('crm.lead', 'health.lead.touchpoint'):
+            with self.subTest(model=model_name):
+                rows = self.env[model_name].with_user(service_user).search(
+                    [], limit=1)
+                self.assertEqual(rows._name, model_name,
+                                 'the service user cannot read %s'
+                                 % model_name)
 
     def test_w2_08b_ews_read_survives_and_it_is_not_ours_to_close(self):
         """HONEST NEGATIVE. The W1 review listed `health.ews.score` read as

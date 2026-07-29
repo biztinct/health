@@ -29,4 +29,19 @@
         <field name="match_models">health.lead.touchpoint</field>
     </record>
 
+    <!-- W2.5. Sequence 13 is free (Channel Center is 12, Web Touchpoints
+         21); `fa fa-plug` is already the Channel Center's icon, so this one
+         takes `fa fa-globe`. Same two §5.69 traps avoided as above: a leaf
+         SIBLING, and no `parent_id` field at all. Ungated — the
+         `web.leads.connector` ACLs are what govern who sees rows. -->
+    <record id="item_web_leads_connector" model="cms.sidebar.item">
+        <field name="name">Website Connector</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">13</field>
+        <field name="icon">fa fa-globe</field>
+        <field name="action_xmlid">health_web_leads.action_web_leads_connector</field>
+        <field name="match_action_xmlids">health_web_leads.action_web_leads_connector</field>
+        <field name="match_models">web.leads.connector</field>
+    </record>
+
 </odoo>

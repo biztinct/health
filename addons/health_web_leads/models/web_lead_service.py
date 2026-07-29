@@ -835,8 +835,13 @@ class WebLeadService(models.AbstractModel):
                 return user
         group = self.env.ref('health_api_gateway.group_gateway_admin',
                              raise_if_not_found=False)
-        if group and group.user_ids:
-            return group.user_ids[0]
+        if group:
+            # W2 review LOW: a relational read carries `active_test=False`, so
+            # `group.user_ids[0]` can hand the alert to an ARCHIVED account and
+            # the to-do is never seen. Filter explicitly.
+            candidate = group.user_ids.filtered('active')[:1]
+            if candidate:
+                return candidate
         return self.env.ref('base.user_admin',
                             raise_if_not_found=False) or Users.browse()
 

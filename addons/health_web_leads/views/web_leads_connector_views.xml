@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== FORM =====================
+         Plain form arch on purpose (W2.5 §3): health_theme's FormCompiler
+         auto-skins every native form view
+         (health_theme/static/src/js/vu_form_compiler.js:1-43), so this screen
+         looks like the rest of the product without a line of JS. The Channel
+         Center is a 1,000-line OWL component; every function here is
+         form-native (header buttons, computed fields, copy widgets,
+         statusbar), so cloning it would buy styling and pay for it in the
+         §5.51 / §5.52 / §5.82 class of bug.
+
+         Every prose block sits on ONE line. A view text node is stored (and
+         translated) verbatim, indentation included, so a wrapped paragraph
+         becomes a msgid nobody can reproduce byte-for-byte in vi.po and the
+         translation is silently inert (§5.85). Same reason there is no inline
+         <b>/<code> markup inside the prose: it splits one sentence into
+         several unrecognisable terms.
+
+         Chatter at the BOTTOM, full width (project rule). -->
+    <record id="view_web_leads_connector_form" model="ir.ui.view">
+        <field name="name">web.leads.connector.form</field>
+        <field name="model">web.leads.connector</field>
+        <field name="arch" type="xml">
+            <form string="Website Connector">
+                <header>
+                    <button name="action_provision_credentials" type="object"
+                            string="Get credentials" class="btn-primary"
+                            invisible="state != 'draft'"
+                            help="Creates or adopts the service account and the OAuth client, then shows the secret once. Nothing is stored in plain text."/>
+                    <button name="action_provision_credentials" type="object"
+                            string="Rotate secret"
+                            invisible="state not in ('credentials_issued', 'live')"
+                            confirm="The current secret stops working immediately and the website must be updated with the new one. Continue?"
+                            help="Generates a new secret and shows it once. The previous secret stops working immediately."/>
+                    <button name="action_test_pipeline" type="object"
+                            string="Test pipeline"
+                            help="Runs one synthetic submission through the real handler inside a savepoint that always rolls back. Nothing is saved."/>
+                    <button name="action_disconnect" type="object"
+                            string="Disconnect"
+                            invisible="state in ('draft', 'disconnected')"
+                            confirm="The website will no longer be able to submit leads. The OAuth client is archived, not deleted. Continue?"
+                            groups="base.group_system,health_crm.group_health_crm_manager,health_user_admin.group_health_user_admin"/>
+                    <button name="action_reconnect" type="object"
+                            string="Reconnect"
+                            invisible="state != 'disconnected'"
+                            help="Un-archives the OAuth client. Rotate the secret afterwards unless the website still holds the previous one."
+                            groups="base.group_system,health_crm.group_health_crm_manager,health_user_admin.group_health_user_admin"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,credentials_issued,live"/>
+                </header>
+                <sheet>
+                    <!-- Cross-point to the Channel Center, and nothing more: a
+                         web form is not a conversation channel, and W2.5 adds
+                         no 9th CHANNEL_SELECTION key. Same shape as
+                         zalo_config_views.xml:22-25. -->
+                    <div class="alert alert-info" role="status">This screen connects the website contact forms. Chat channels (Zalo, Messenger, WhatsApp, Telegram, email, calls) are connected from Care Command Setup, Channel Center.</div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Website connector"/></h1>
+                    </div>
+                    <group>
+                        <group string="Credentials" name="credentials">
+                            <field name="company_id" options="{'no_create': True}"/>
+                            <field name="oauth_client_id" readonly="1"
+                                   options="{'no_open': True}"/>
+                            <field name="client_id_display" readonly="1"
+                                   widget="CopyClipboardChar"
+                                   invisible="not oauth_client_id"/>
+                        </group>
+                        <group string="Delivery health" name="health">
+                            <field name="health_note" readonly="1"/>
+                            <field name="last_received_at" readonly="1"/>
+                            <field name="received_7d_count" readonly="1"/>
+                            <field name="heartbeat_enabled"/>
+                            <field name="heartbeat_user_id"
+                                   options="{'no_create': True}"
+                                   invisible="not heartbeat_enabled"/>
+                        </group>
+                    </group>
+                    <group string="WordPress configuration" name="wp_config"
+                           invisible="not oauth_client_id">
+                        <!-- `CopyClipboardText` renders the value into a bare
+                             <span>, which Odoo's `.o_field_text{white-space:
+                             pre-wrap}` rule does NOT reach — so a block whose
+                             whole point is that it is paste-ready displayed
+                             as one collapsed paragraph. The clipboard copy
+                             was always correct (it copies the field value);
+                             this is about what the admin SEES. Both classes
+                             are in the served bundle, verified in the
+                             browser, not assumed. -->
+                        <field name="wp_config_block" nolabel="1" colspan="2"
+                               readonly="1" widget="CopyClipboardText"
+                               class="text-prewrap font-monospace"/>
+                        <div colspan="2" class="text-muted">Paste this block into wp-config.php and replace the placeholder with the secret you copied when it was shown. The secret is never stored here — if it was lost, use Rotate secret.</div>
+                    </group>
+                    <group string="City mapping" name="city_mapping">
+                        <div colspan="2" class="text-muted">Which submission belongs to which city. The form map is checked first, then the page-URL map, and a visitor who picked a city in the form beats both. Values must be HN for Hà Nội or HCM for Hồ Chí Minh. Use Test pipeline after editing.</div>
+                        <field name="form_city_map_text" colspan="2"
+                               class="font-monospace"
+                               placeholder='{"15838": "HN", "15670": "HCM"}'/>
+                        <field name="url_city_map_text" colspan="2"
+                               class="font-monospace"
+                               placeholder='{"/lien-he-hanoi/": "HN", "/lien-he-tphcm/": "HCM"}'/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===================== LIST =====================
+         0-or-1 record per company, so the list exists only to give first-run
+         a Create button and the CMS sidebar something to open. -->
+    <record id="view_web_leads_connector_list" model="ir.ui.view">
+        <field name="name">web.leads.connector.list</field>
+        <field name="model">web.leads.connector</field>
+        <field name="arch" type="xml">
+            <list string="Website Connector">
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="state" decoration-success="state == 'live'"
+                       decoration-info="state == 'credentials_issued'"
+                       decoration-muted="state == 'draft'"
+                       decoration-danger="state == 'disconnected'"/>
+                <field name="last_received_at"/>
+                <field name="received_7d_count"/>
+                <field name="health_note"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================== ACTION ===================== -->
+    <record id="action_web_leads_connector" model="ir.actions.act_window">
+        <field name="name">Website Connector</field>
+        <field name="res_model">web.leads.connector</field>
+        <field name="view_mode">list,form</field>
+        <!-- One line, no surrounding whitespace: `act_window.help` is
+             translate=True, so the WHOLE stored value is a single msgid. -->
+        <field name="help" type="html"><p class="o_view_nocontent_smiling_face">Connect the website in a few minutes</p></field>
+    </record>
+
+    <!-- ===================== MENU =====================
+         The admin persona lives in the backend gateway menu, beside OAuth
+         Clients. The CMS-shell persona reaches the same action through the
+         `cms.sidebar.item` seed (ledger §5.69) — a backend menuitem alone
+         would make this deep-link-only. -->
+    <menuitem id="menu_web_leads_connector"
+              name="Website Connector"
+              parent="health_api_gateway.menu_gateway_root"
+              action="action_web_leads_connector"
+              sequence="25"/>
+
+</odoo>

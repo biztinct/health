@@ -30,10 +30,24 @@ Phase W2 makes that pipeline operable:
 * a service account narrowed to its own ACL rows — no salesman group, so no
   `res.partner` writes and no accounting reads.
 
+Phase W2.5 turns provisioning into a screen (`web.leads.connector`):
+
+* one button issues (or adopts) the service account and the OAuth client and
+  shows the secret once — no SSH, no psql, no developer,
+* a ready-to-paste `wp-config.php` block that carries the client id and the
+  endpoint URLs but never secret material,
+* the two city maps editable on screen, validated before they are saved back
+  to the `ir.config_parameter` rows that stay the single source of truth,
+* a pipeline test that runs a synthetic submission through the real handler
+  inside a savepoint that always rolls back,
+* a delivery-health strip plus the heartbeat switch and its watcher,
+* disconnect / reconnect by archiving the OAuth client, never deleting it.
+
 Design: docs/strategy/website-crm-integration.md
-Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md
+Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
+…-phaseW2_5.md
 """,
-    'version': '19.0.2.0.0',
+    'version': '19.0.3.0.0',
     'category': 'Healthcare',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',
@@ -49,6 +63,13 @@ Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md
         # W2: the CMS shell is where the ops persona actually lives, so the
         # touchpoint list needs a `cms.sidebar.item` seed (ledger §5.69).
         'health_cms_sidebar',
+        # W2.5: the connector's ACL rows and its header-button `groups=`
+        # reference `health_user_admin.group_health_user_admin`. Already a
+        # TRANSITIVE dependency (health_landing → health_user_admin), so this
+        # edge closes no loop (§5.71 walked: health_user_admin depends on
+        # health_base / health_fieldservice / access_roles / hr, and nothing
+        # in the tree depends on health_web_leads).
+        'health_user_admin',
     ],
     'data': [
         'security/web_leads_security.xml',
@@ -58,7 +79,8 @@ Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md
         'data/web_leads_cron.xml',
         'views/lead_touchpoint_views.xml',
         'views/crm_lead_views.xml',
-        # after the views: the sidebar item references the action by xmlid
+        'views/web_leads_connector_views.xml',
+        # after the views: the sidebar items reference the actions by xmlid
         'data/cms_sidebar_items_web_leads.xml',
     ],
     'installable': True,
