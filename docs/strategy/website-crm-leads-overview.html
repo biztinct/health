@@ -1,0 +1,894 @@
+<title>Lead Capture — Website & Digital Channels</title>
+
+<style>
+  :root {
+    --paper: #F6F7F7;
+    --card: #FFFFFF;
+    --ink: #15181B;
+    --ink-soft: #4A5356;
+    --ink-faint: #737E81;
+    --rule: #DDE2E2;
+    --rule-soft: #E9EDED;
+    --accent: #0E5E68;
+    --accent-soft: #E4EDED;
+    --live: #1D6B44;
+    --live-bg: #E3EFE8;
+    --dark: #8A5A16;
+    --dark-bg: #F4EBDC;
+    --wait: #5A6467;
+    --wait-bg: #E8EBEB;
+    --none: #97402F;
+    --none-bg: #F5E5E1;
+    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #101314;
+      --card: #171B1C;
+      --ink: #E8ECEC;
+      --ink-soft: #A9B3B4;
+      --ink-faint: #7E8A8B;
+      --rule: #2A3132;
+      --rule-soft: #212728;
+      --accent: #5FB3BD;
+      --accent-soft: #1A2A2C;
+      --live: #74C79A;
+      --live-bg: #17281F;
+      --dark: #D4A45C;
+      --dark-bg: #2A2317;
+      --wait: #9AA4A6;
+      --wait-bg: #222829;
+      --none: #D98A76;
+      --none-bg: #2B1D19;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #101314;
+    --card: #171B1C;
+    --ink: #E8ECEC;
+    --ink-soft: #A9B3B4;
+    --ink-faint: #7E8A8B;
+    --rule: #2A3132;
+    --rule-soft: #212728;
+    --accent: #5FB3BD;
+    --accent-soft: #1A2A2C;
+    --live: #74C79A;
+    --live-bg: #17281F;
+    --dark: #D4A45C;
+    --dark-bg: #2A2317;
+    --wait: #9AA4A6;
+    --wait-bg: #222829;
+    --none: #D98A76;
+    --none-bg: #2B1D19;
+  }
+
+  :root[data-theme="light"] {
+    --paper: #F6F7F7;
+    --card: #FFFFFF;
+    --ink: #15181B;
+    --ink-soft: #4A5356;
+    --ink-faint: #737E81;
+    --rule: #DDE2E2;
+    --rule-soft: #E9EDED;
+    --accent: #0E5E68;
+    --accent-soft: #E4EDED;
+    --live: #1D6B44;
+    --live-bg: #E3EFE8;
+    --dark: #8A5A16;
+    --dark-bg: #F4EBDC;
+    --wait: #5A6467;
+    --wait-bg: #E8EBEB;
+    --none: #97402F;
+    --none-bg: #F5E5E1;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 40px 24px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  .prose { max-width: 68ch; }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(30px, 5vw, 46px);
+    line-height: 1.12;
+    font-weight: 400;
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .standfirst {
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 62ch;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+  .meta b { color: var(--ink-soft); font-weight: 600; }
+
+  /* ---------- sections ---------- */
+  section { display: flex; flex-direction: column; gap: 20px; }
+  h2 {
+    font-family: var(--serif);
+    font-size: 27px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .sec-head { display: flex; flex-direction: column; gap: 8px; }
+  p { margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--accent-soft);
+    color: var(--ink);
+    padding: 1px 5px;
+    border-radius: 3px;
+    word-break: break-word;
+  }
+
+  /* ---------- status pills ---------- */
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .p-live { background: var(--live-bg); color: var(--live); }
+  .p-dark { background: var(--dark-bg); color: var(--dark); }
+  .p-wait { background: var(--wait-bg); color: var(--wait); }
+  .p-none { background: var(--none-bg); color: var(--none); }
+  .p-plan { background: var(--accent-soft); color: var(--accent); }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .legend div {
+    background: var(--card);
+    padding: 13px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- flow strip ---------- */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .flow > div {
+    background: var(--card);
+    padding: 18px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .flow .step-n {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+  .flow strong { font-size: 15px; }
+  .flow span { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
+
+  /* ---------- tables ---------- */
+  .scroller {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--card);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 760px;
+    font-size: 14px;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    padding: 0 0 8px;
+  }
+  thead th {
+    background: var(--card);
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 12px 14px;
+    border-bottom: 1.5px solid var(--ink);
+    vertical-align: bottom;
+    position: sticky;
+    top: 0;
+  }
+  tbody td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  tbody td:first-child { color: var(--ink); font-weight: 600; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.group-head td {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+  }
+  td.num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    width: 1%;
+    white-space: nowrap;
+  }
+  .nowrap { white-space: nowrap; }
+
+  /* ---------- callouts ---------- */
+  .note {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    background: var(--card);
+    border-radius: 3px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .note.warn { border-left-color: var(--dark); }
+  .note .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .note.warn .label { color: var(--dark); }
+  .note p { font-size: 15px; }
+
+  ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 7px; }
+  li { color: var(--ink-soft); }
+  li strong { color: var(--ink); }
+
+  pre {
+    margin: 0;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+  pre b { color: var(--ink); font-weight: 600; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+    font-size: 13px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 28px 16px 64px; gap: 44px; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Việt Úc · pkgdvietuc.com → care.biztinct.com</div>
+    <h1>How every enquiry becomes a lead in the CRM</h1>
+    <p class="standfirst">One page covering all the ways a person can reach us — web form, Google, phone, Zalo, Facebook — what each one delivers into the CRM today, what still has to be built, and exactly what the website developer needs to do.</p>
+    <div class="meta">
+      <span><b>Updated</b> 29 July 2026</span>
+      <span><b>For</b> business owner · website developer (Proima) · CRM team</span>
+      <span><b>Full technical spec</b> docs/strategy/website-crm-integration.md</span>
+    </div>
+  </header>
+
+  <!-- ============ PLAIN ENGLISH ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Start here</div>
+      <h2>The idea in four steps</h2>
+    </div>
+    <div class="prose">
+      <p>Today, someone fills in a form on the website, an email lands in a staff mailbox, and a person re-types it into the CRM — or doesn't. Nobody can answer "how many leads did the Hanoi Google campaign produce last month?" without counting by hand.</p>
+      <p>The fix is to let the website talk directly to the CRM the moment a form is submitted, carrying the invisible context — which city, which ad, which campaign — along with the enquiry.</p>
+    </div>
+
+    <div class="flow">
+      <div>
+        <span class="step-n">STEP 1</span>
+        <strong>The visitor arrives</strong>
+        <span>Usually from a Google or Facebook ad. The ad quietly attaches a tracking code to the web address.</span>
+      </div>
+      <div>
+        <span class="step-n">STEP 2</span>
+        <strong>The website remembers</strong>
+        <span>That code, plus the campaign name and the page they landed on, is kept in the browser while they read.</span>
+      </div>
+      <div>
+        <span class="step-n">STEP 3</span>
+        <strong>They submit the form</strong>
+        <span>Name, phone, city choice — plus everything remembered in step 2 — is sent straight into the CRM, and the staff email still goes out as before.</span>
+      </div>
+      <div>
+        <span class="step-n">STEP 4</span>
+        <strong>The CRM decides</strong>
+        <span>New person → new lead. Someone who already enquired → added to their existing lead. Same form sent twice → ignored.</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="label">The one distinction that matters</span>
+      <p>Access to Google Analytics, Google Ads or Facebook Ads dashboards shows <em>how many</em> anonymous people clicked. It never creates a named lead in the CRM. Only the form connection (and, later, phone-call tracking) can do that. Everything below is labelled with which of the two it is.</p>
+    </div>
+  </section>
+
+  <!-- ============ LEGEND ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Reading the status columns</div>
+      <h2>Five states</h2>
+    </div>
+    <div class="legend">
+      <div><span class="pill p-live">LIVE</span> Built, tested and running on the CRM server right now.</div>
+      <div><span class="pill p-dark">BUILT · DORMANT</span> The code exists and is tested, but it cannot switch on until someone outside gives us access or a contract.</div>
+      <div><span class="pill p-wait">NOT STARTED</span> Designed and specified, waiting for someone to build it.</div>
+      <div><span class="pill p-plan">PLANNED</span> Deliberately scheduled for a later phase — not forgotten, not yet needed.</div>
+      <div><span class="pill p-none">NOT POSSIBLE</span> Cannot be done with the access or technology available. Stated honestly rather than promised.</div>
+    </div>
+  </section>
+
+  <!-- ============ CHANNEL TABLE ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Channel by channel</div>
+      <h2>Where leads come from, and what each one actually gives us</h2>
+    </div>
+    <div class="prose">
+      <p>"Do we learn who they are?" is the column that decides whether something can become a lead record at all. A click on a button is anonymous; a submitted form is not.</p>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>CRM status = our side. Website status = work in the website developer's hands.</caption>
+        <thead>
+          <tr>
+            <th style="min-width:170px">Channel</th>
+            <th style="min-width:250px">How a lead is captured — in plain terms</th>
+            <th style="min-width:130px">Do we learn who they are?</th>
+            <th style="min-width:110px">CRM status</th>
+            <th style="min-width:110px">Website status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-head"><td colspan="5">Website</td></tr>
+          <tr>
+            <td>Contact form — Hanoi &amp; HCMC pages</td>
+            <td>The moment the form is submitted, the website also sends it into the CRM, which creates the lead automatically with city and campaign attached. Forms <code>15838</code> (Hanoi) and <code>15670</code> (HCMC) identify the city by themselves.</td>
+            <td>Yes — name, phone, email</td>
+            <td><span class="pill p-live">LIVE</span><br><span style="font-size:12px">Receiving end ready</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span><br><span style="font-size:12px">Sending end to build</span></td>
+          </tr>
+          <tr>
+            <td>Contact form — shared form on both pages</td>
+            <td>The third form (<code>15615</code>) appears on both city pages, so the city comes from the visitor's own "Địa điểm" choice. If they leave it blank the lead is created and flagged for staff to confirm the city — never guessed silently.</td>
+            <td>Yes</td>
+            <td><span class="pill p-live">LIVE</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>Form notification email</td>
+            <td>Keeps working exactly as today — the email to city staff is untouched. It becomes the human backup, not the system of record. See the duplicate section below.</td>
+            <td>Yes (in the mailbox)</td>
+            <td><span class="pill p-live">LIVE</span><br><span style="font-size:12px">Unchanged</span></td>
+            <td><span class="pill p-live">LIVE</span><br><span style="font-size:12px">Unchanged</span></td>
+          </tr>
+
+          <tr class="group-head"><td colspan="5">Search &amp; advertising</td></tr>
+          <tr>
+            <td>Google Ads (paid search)</td>
+            <td>The ad click puts a code (<code>gclid</code>) in the web address. The website carries it to the form; the CRM stores it on the lead. That is how a lead is tied to an exact campaign and ad.</td>
+            <td>Only via the form they then fill in</td>
+            <td><span class="pill p-live">LIVE</span><br><span style="font-size:12px">Fields ready</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span><br><span style="font-size:12px">Must capture the code</span></td>
+          </tr>
+          <tr>
+            <td>Google Ads — teaching Google which ads produce clients</td>
+            <td>When a lead later becomes a paying client, we send that click code back to Google so it optimises toward ads that produce clients, not just clicks. Nothing personal is sent — only the code Google itself issued.</td>
+            <td>No personal data leaves the CRM</td>
+            <td><span class="pill p-plan">PLANNED</span><br><span style="font-size:12px">Phase W4</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Google organic (unpaid search)</td>
+            <td>No click code exists. The CRM records the lead as coming from Google search by reading where the visitor came from. Which words they searched stays inside Search Console as anonymous totals.</td>
+            <td>Only via the form</td>
+            <td><span class="pill p-live">LIVE</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>Facebook / Meta paid ads</td>
+            <td>Same idea as Google, with Meta's own codes (<code>fbclid</code>, <code>_fbp</code>, <code>_fbc</code>). Stored only if the visitor accepts cookies.</td>
+            <td>Only via the form</td>
+            <td><span class="pill p-live">LIVE</span><br><span style="font-size:12px">Fields ready</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>Facebook organic posts</td>
+            <td>Treated like any other referral: recorded as social traffic, and only becomes a lead if the person fills the form.</td>
+            <td>Only via the form</td>
+            <td><span class="pill p-live">LIVE</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>Facebook Lead Ads (forms inside Facebook)</td>
+            <td>Not used today. If marketing adopts them later they need their own connection — noted as an extension point, deliberately not built now.</td>
+            <td>Yes, if adopted</td>
+            <td><span class="pill p-wait">NOT STARTED</span><br><span style="font-size:12px">Only if adopted</span></td>
+            <td>—</td>
+          </tr>
+
+          <tr class="group-head"><td colspan="5">Phone</td></tr>
+          <tr>
+            <td>Tapping a phone button on the site</td>
+            <td>We count the tap and which hotline it was — <code>1800 6896</code> means Hanoi, <code>1800 6894</code> means HCMC — so campaign reports can show call intent per city.</td>
+            <td>No — completely anonymous</td>
+            <td><span class="pill p-none">NO LEAD</span><br><span style="font-size:12px">By design</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>Actual completed phone calls</td>
+            <td>Attributing real calls needs phone-system integration. The CRM already contains a full VoIP24h call integration — it stays dormant until a phone provider contract exists. Then every call arrives with the caller's number and the hotline dialled, and staff turn real enquiries into leads with one button.</td>
+            <td>Yes — the caller's number</td>
+            <td><span class="pill p-dark">BUILT · DORMANT</span><br><span style="font-size:12px">Needs a phone contract</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Reception / hotline enquiries today</td>
+            <td>Staff create the lead in the CRM by hand, as they do now. Unchanged by this project.</td>
+            <td>Yes</td>
+            <td><span class="pill p-live">LIVE</span></td>
+            <td>—</td>
+          </tr>
+
+          <tr class="group-head"><td colspan="5">Chat channels</td></tr>
+          <tr>
+            <td>Tapping a Zalo widget</td>
+            <td>We count the tap and which Zalo account it was, giving city and campaign context for the click. Zalo never tells the website who the person is.</td>
+            <td>No — anonymous</td>
+            <td><span class="pill p-none">NO LEAD</span><br><span style="font-size:12px">By design</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>The Zalo conversation itself</td>
+            <td>The CRM already has a complete Zalo Official Account integration — chats arrive in the CRM triage inbox and staff link or create the lead from there. It switches on once the business registers a Zalo app and connects the two accounts.</td>
+            <td>Yes, once connected</td>
+            <td><span class="pill p-dark">BUILT · DORMANT</span><br><span style="font-size:12px">Needs Zalo app approval</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Facebook Messenger</td>
+            <td>Same as Zalo: the Messenger integration is built and tested, dormant until Meta approves an app for us.</td>
+            <td>Yes, once connected</td>
+            <td><span class="pill p-dark">BUILT · DORMANT</span><br><span style="font-size:12px">Needs Meta app review</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Facebook "Call Now" button</td>
+            <td>This happens entirely inside Facebook — the call never touches our website. It only ever becomes visible if phone-call tracking is switched on.</td>
+            <td>No</td>
+            <td><span class="pill p-none">NOT POSSIBLE</span><br><span style="font-size:12px">Until call tracking</span></td>
+            <td>—</td>
+          </tr>
+
+          <tr class="group-head"><td colspan="5">Everything else</td></tr>
+          <tr>
+            <td>Referral sites &amp; direct visits</td>
+            <td>Recorded as referral or direct on the lead, using where the visitor came from. No special work needed.</td>
+            <td>Only via the form</td>
+            <td><span class="pill p-live">LIVE</span></td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>Email straight to a staff mailbox</td>
+            <td>Handled by people today. The CRM can ingest mailboxes directly, but that is deliberately switched off until the duplicate guard below is in place.</td>
+            <td>Yes</td>
+            <td><span class="pill p-plan">PLANNED</span><br><span style="font-size:12px">Deliberately off</span></td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ DUPLICATES ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Your question, answered directly</div>
+      <h2>The form also sends an email — will we get two leads?</h2>
+    </div>
+    <div class="prose">
+      <p>Short answer: <strong>no today, and here is the check I ran plus the guard we still owe you.</strong> A single form submission can travel down three different roads into the CRM. Two of the three are already guarded by the code that has just been built. The third is currently a closed door — but it is unguarded, so it must be guarded <em>before</em> anyone opens it.</p>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>Verified on the live CRM database on 29 July 2026.</caption>
+        <thead>
+          <tr>
+            <th style="min-width:190px">How a duplicate could happen</th>
+            <th style="min-width:290px">What stops it</th>
+            <th style="min-width:110px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>The website sends the same submission twice (retry after a timeout, visitor double-clicks)</td>
+            <td>Every submission carries a unique ticket number. The second arrival is recognised and returns the original lead instead of creating a new one.</td>
+            <td><span class="pill p-live">LIVE</span></td>
+          </tr>
+          <tr>
+            <td>The same person submits a form twice this week, or submits after phoning</td>
+            <td>The CRM looks for an open lead with the same phone number (or email) and the same name. If it finds one, the new enquiry is added to that lead's history instead of becoming a second lead.</td>
+            <td><span class="pill p-live">LIVE</span></td>
+          </tr>
+          <tr>
+            <td>Two different people share one phone number (family)</td>
+            <td>Deliberately creates two leads, cross-referenced to each other, and flags them for a human. Merging two real people by accident is far worse than an extra row.</td>
+            <td><span class="pill p-live">LIVE</span></td>
+          </tr>
+          <tr>
+            <td><strong>The notification email also creates a lead</strong></td>
+            <td>The CRM has four email addresses configured that turn incoming mail into leads. <strong>None of them can currently receive anything</strong> — there is no mail domain configured and no mailbox connected, and the form emails go to <code>contact@pkgdvietuc.com</code> and <code>om@cstnvusaigon.com</code>, which are not CRM addresses. So no duplicate exists today. The risk appears the day someone adds a CRM address to the form's recipients or connects those mailboxes to the CRM.</td>
+            <td><span class="pill p-wait">GUARD NOT BUILT</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note warn">
+      <span class="label">Action — two small things, both cheap</span>
+      <p><strong>1. Rule for the website developer (free):</strong> the form's notification email must go only to the staff mailboxes it goes to today. Never add a CRM address as a recipient, CC or BCC.</p>
+      <p><strong>2. Rule for the CRM (small build, Phase W2):</strong> the notification email carries the same unique ticket number as the direct connection, in the email body and header. If a mailbox is ever connected to the CRM, any message carrying a ticket number that already exists is attached to that existing lead instead of creating a new one. That makes the third door safe to open whenever the business wants it.</p>
+    </div>
+  </section>
+
+  <!-- ============ WEBSITE STEPS ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">For the website developer</div>
+      <h2>Seven steps, in order</h2>
+    </div>
+    <div class="prose">
+      <p>All work is on the WordPress side. Nothing from the CRM is installed into WordPress and the CRM never reaches into the website — the only connection is the website sending a message out to one address. Steps 1–3 deliver working leads; steps 4–7 add the reporting quality and legal cover.</p>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>Endpoint and credentials are already provisioned and waiting — ask the CRM team for the secret.</caption>
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th style="min-width:180px">Step</th>
+            <th style="min-width:130px">Where</th>
+            <th style="min-width:300px">What exactly</th>
+            <th style="min-width:110px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num">1</td>
+            <td>Build the relay plugin</td>
+            <td>WordPress plugin (custom, small)</td>
+            <td>Hook Contact Form 7's <code>wpcf7_mail_sent</code> event. For every submission: generate a unique ID, save a row in the plugin's own table, then POST the details to the CRM. If the CRM is unreachable, retry later using WP-Cron with the <em>same</em> ID — that is what makes retries safe.</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td>Store the credentials</td>
+            <td><code>wp-config.php</code></td>
+            <td>Client ID and secret as PHP constants — never in the WordPress database, never in a shared repository. The plugin exchanges them for a short-lived token at <code>POST https://care.biztinct.com/oauth/token</code> and caches it in a transient.</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td class="num">3</td>
+            <td>Send to the CRM</td>
+            <td>Plugin → CRM</td>
+            <td><code>POST https://care.biztinct.com/api/v1/web/leads</code> with the JSON below. The CRM replies <code>created</code>, <code>merged</code>, <code>duplicate</code> or <code>rejected_spam</code> — store the reply against the row so the WP admin list shows what happened.</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td class="num">4</td>
+            <td>Remember the campaign context</td>
+            <td>Google Tag Manager (<code>GTM-P7S44SDQ</code>)</td>
+            <td>On landing, save <code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code>, <code>utm_content</code>, <code>utm_term</code>, <code>gclid</code>, <code>fbclid</code>, the landing address and the referring site into a first-party cookie (90 days). Read them back into hidden form fields at submit time. Meta's <code>_fbp</code>/<code>_fbc</code> and the Analytics client ID are read only if the visitor has accepted cookies.</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td class="num">5</td>
+            <td>Add hidden fields + spam trap + consent box</td>
+            <td>CF7 forms <code>15838</code>, <code>15670</code>, <code>15615</code></td>
+            <td>Hidden fields for everything in step 4; one hidden "honeypot" field that real people never fill; and a visible, unticked consent checkbox with versioned wording (final text pending legal review). The CRM stores what the visitor agreed to and when.</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td class="num">6</td>
+            <td>Tag the click targets so the city is unambiguous</td>
+            <td>Theme templates / widgets</td>
+            <td>Both hotlines and both Zalo widgets appear on the same pages, so the page alone cannot tell us the city. Add <code>data-city="hanoi"</code> or <code>data-city="hcmc"</code> to every <code>tel:</code> link, Zalo widget and Facebook link. Then fire these events in GTM: <code>generate_lead</code> on successful form send, <code>click_to_call</code>, <code>zalo_click</code>, <code>messenger_click</code> — each with the city and the page. No names, phone numbers of visitors, message text or health wording may ever be put into these events.</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td class="num">7</td>
+            <td>Prove it end to end, then reconcile daily</td>
+            <td>Staging, then live</td>
+            <td>Submit a test enquiry on staging and confirm the lead appears in the CRM with the right city and campaign. Once live, the plugin posts yesterday's ticket numbers to the CRM each morning and re-sends anything that never arrived. Any submission still unsent after all retries shows up in a WordPress admin list.</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Exactly what to send (the CRM accepts these names, nothing else)</h3>
+    <pre><b>POST https://care.biztinct.com/api/v1/web/leads</b>
+<b>Authorization:</b> Bearer &lt;token from /oauth/token&gt;
+
+{
+  "<b>submission_id</b>": "3f6c1f2e-...",         // required — your unique ID, reused on every retry
+  "<b>form_id</b>": "15838",                      // required — 15838 Hanoi, 15670 HCMC, 15615 shared
+  "submitted_at": "2026-07-29T09:30:00+07:00",  // when the visitor pressed send, not when you retried
+  "name": "...", "email": "...", "phone": "...", "message": "...",
+  "location": "Hà Nội",                         // the visitor's own Địa điểm choice, sent as typed
+  "page_url": "...", "landing_url": "...", "referrer_url": "...",
+  "utm":       { "source": "google", "medium": "cpc", "campaign": "hn_homecare_leads_202607",
+                 "content": "...", "term": "..." },
+  "click_ids": { "gclid": "...", "fbclid": null, "fbc": null, "fbp": null },
+  "ga_client_id": "...",
+  "consent":   { "marketing": true, "text_version": "v1" },
+  "anti_spam": { "honeypot_filled": false, "token_ok": true }
+}
+
+<b>Reply:</b> { "status": "created" | "merged" | "duplicate" | "rejected_spam",
+          "lead_ref": "01 000422026" }</pre>
+
+    <div class="note">
+      <span class="label">Three rules that prevent painful mistakes</span>
+      <p><strong>Always reuse the same <code>submission_id</code> when retrying</strong> — that is the entire duplicate defence. A new ID on a retry creates a second lead.<br>
+      <strong>Save the submission locally before sending</strong> — if the send fails and nothing was saved, the enquiry is gone.<br>
+      <strong>A spam rejection comes back as a success</strong> (<code>rejected_spam</code>), not an error. Mark it done and never retry it.</p>
+    </div>
+  </section>
+
+  <!-- ============ SAAS CONNECTOR ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Making this sellable to other clinics</div>
+      <h2>Turning the setup into a self-service connector</h2>
+    </div>
+    <div class="prose">
+      <p>Right now the connection was switched on the way a developer does it: someone logged into the server, created a service account and generated a secret by hand. That is fine for one clinic. For a product sold to many clinics, each new customer must be able to connect their own website in a few minutes without a developer — the same way they already connect Zalo, Facebook or email in the CRM's <strong>Channel Connection Centre</strong>.</p>
+      <p>This is a new, small phase. Everything it needs already exists in the system — encrypted secret storage, connection health checks and an audit trail are all proven in the existing channel connectors.</p>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>Proposed "Website" card in the Channel Connection Centre.</caption>
+        <thead>
+          <tr>
+            <th style="min-width:190px">What the clinic sees</th>
+            <th style="min-width:320px">What it does</th>
+            <th style="min-width:110px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>"Connect website" button</td>
+            <td>Generates the client ID and secret in one click. The secret is shown once with a copy button and never stored in readable form — exactly the pattern the other channel connectors already use.</td>
+            <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+          <tr>
+            <td>Ready-to-paste setup block</td>
+            <td>Shows the clinic's own address to send to and a copy-paste WordPress configuration block. The clinic forwards it to their web developer — no CRM knowledge needed on the website side.</td>
+            <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+          <tr>
+            <td>City mapping table</td>
+            <td>Which form number belongs to which city, and which page addresses belong to which city — editable on screen. Today these live in a hidden settings record that only a developer can change; a clinic renumbering a form would otherwise need a code change.</td>
+            <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+          <tr>
+            <td>"Send a test enquiry" button</td>
+            <td>Fires a synthetic submission, shows exactly what the CRM decided and cleans up after itself — so the clinic can prove the connection without polluting real data.</td>
+            <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+          <tr>
+            <td>Live connection status</td>
+            <td>Green when submissions are arriving; amber with a plain-English reason when nothing has arrived for 24 hours. Catches a website change that silently breaks the pipe — the failure mode that otherwise goes unnoticed for weeks.</td>
+            <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+          <tr>
+            <td>Rotate secret / disconnect</td>
+            <td>Replace a leaked secret or cut the connection immediately, with every action recorded in the audit log.</td>
+            <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ ROADMAP ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Sequence</div>
+      <h2>What is done and what comes next</h2>
+    </div>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:110px">Phase</th>
+            <th style="min-width:290px">What it delivers</th>
+            <th style="min-width:130px">Who does it</th>
+            <th style="min-width:110px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Design</td>
+            <td>Full technical design covering every channel, city rules, duplicate rules, security and privacy.</td>
+            <td>CRM team</td>
+            <td><span class="pill p-live">DONE</span></td>
+          </tr>
+          <tr>
+            <td>W1 — Receiving end</td>
+            <td>The CRM address the website posts to, the attribution fields on every lead, the enquiry-history table, automatic city assignment and the duplicate guards. Installed and tested on the live server; no submissions received yet because the website side does not exist.</td>
+            <td>CRM team</td>
+            <td><span class="pill p-live">LIVE</span></td>
+          </tr>
+          <tr>
+            <td>W1-web — Sending end</td>
+            <td>Steps 1–7 above.</td>
+            <td>Website developer</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>W2 — Daily operation</td>
+            <td>The staff screen showing web leads and their full enquiry history, the "needs checking" queue, the daily reconciliation, the pipe-broken alarm, and the email duplicate guard described above.</td>
+            <td>CRM team</td>
+            <td><span class="pill p-wait">NEXT</span></td>
+          </tr>
+          <tr>
+            <td>W2.5 — Self-service connector</td>
+            <td>The Channel Connection Centre card described above. Needed before this is sold to a second clinic.</td>
+            <td>CRM team</td>
+            <td><span class="pill p-plan">DESIGNED</span></td>
+          </tr>
+          <tr>
+            <td>W3 — Reporting</td>
+            <td>Leads and conversions by city, source and campaign, in the CRM. Marketing consent recorded properly when a lead becomes a client.</td>
+            <td>CRM team</td>
+            <td><span class="pill p-plan">PLANNED</span></td>
+          </tr>
+          <tr>
+            <td>W4 — Feeding results back to the ad platforms</td>
+            <td>Sending conversions back to Google Ads and Meta so they optimise toward real clients. Worth doing once ad spend justifies it.</td>
+            <td>CRM team + marketing</td>
+            <td><span class="pill p-plan">DEFERRED</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note warn">
+      <span class="label">Still needed from the business</span>
+      <ul>
+        <li><strong>Which Zalo account belongs to which city?</strong> Both appear on both pages — until we know, Zalo clicks cannot be attributed to a city.</li>
+        <li><strong>Access to the Google Tag Manager container</strong> (<code>GTM-P7S44SDQ</code>) to confirm what analytics and advertising tags are actually installed.</li>
+        <li><strong>Consent wording</strong>, reviewed by a Vietnamese privacy lawyer. The system is ready to store it; we are not qualified to write it or to claim the result is compliant.</li>
+        <li><strong>A decision on phone-call tracking</strong> — the call integration exists and stays dormant without a provider contract. Until then, phone activity is counted as intent, never as confirmed enquiries.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>Technical companion documents: <code>docs/strategy/website-crm-integration.md</code> (full design) · <code>docs/strategy/handovers/web-leads-phaseW1.md</code> (build spec) · <code>docs/strategy/reports/web-leads-phaseW1-report.md</code> (what was built).</span>
+    <span>Statuses verified against the live CRM database and the published website on 29 July 2026. Anything not verified is labelled as such rather than assumed.</span>
+  </footer>
+
+</div>
