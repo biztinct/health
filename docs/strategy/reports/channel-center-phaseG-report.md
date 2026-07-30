@@ -288,3 +288,63 @@ attestation; `care.channel.connection`'s readiness vocabulary and `_recompute_re
 untouched — preflight is Plane-1 operator tooling and writes nothing on a connection; and
 `_center_platform_available` only ever tightened (a complete row lights the same cards it
 always did — proven live in the evidence pack, step 3b).
+
+---
+
+# Review addendum (Fable, 2026-07-31)
+
+## Verdict: PASS — zero fixes required
+
+Independent review subagent (whole-module read against the spec + full server
+verification) plus a personal read of the security-critical path
+(`meta_app_identity`, `_preflight_meta`, `_scrub`, `_require_operator`). The
+subagent completed normally — unlike CC-F there is **no assurance gap**: every
+claim below was re-derived, not trusted.
+
+**Claims verified independently:** 15/15 module files md5-identical
+local ↔ server ↔ commit; server file mtimes PRECEDE the logged test-run start
+(tested code is shipped code); `19.0.7.0.0 | installed` (psql);
+`channel_platform_app` count 0 (QA rows really deleted); the `0 failed of 128`
+line re-grepped from the server log with all 128 defined methods started (no
+§5.83 gap); the pixel-identical evidence md5s reproduced from the committed
+PNGs; audit tail is status-only strings, no secrets; service active, login 200.
+
+**The one high-risk area (secret-in-query-string on the Meta app-token mint —
+the CC-B HIGH-2 leak class) is cleared with depth:** requests exceptions are
+wrapped into `ChannelSendError` by the module's own `_get`; the stored detail is
+`_scrub(redact(exc), secret)` (denylist + literal-secret replace); the app token
+travels in an Authorization header, never a URL; the audit row carries only
+`provider: status`; live shot 09 shows redaction operating on a real Graph 400.
+
+**Deviations D1–D5 all accepted.** D1 (google/microsoft redirect URI shows
+core's `/google_gmail/confirm` / `/microsoft_outlook/confirm`, not ours) was
+verified against core's own mixin source on the server — the handover's §G2 was
+wrong for email and the implementation is right. D4: the handover asserted a
+capability-key validator that did not exist; T169 created the contract instead
+of silently skipping it — correct move.
+
+## Findings (all LOW, none blocking)
+
+1. **LOW — `PROVIDER_EXTERNAL_STEPS` / `PROVIDER_CONSOLE` untranslated**
+   (`channel_platform_app.py:93-124`): the ~13 external-paperwork sentences in
+   the Go-live checklist render English-only. Operator-plane
+   (`base.group_system`) surface. Fold into the next i18n housekeeping pass.
+2. **LOW, pre-existing (not CC-G)** — `create()` skips `_validate_extra_json`
+   (`channel_platform_app.py:222-227`); only `write()` validates. A record
+   created with invalid JSON silently yields `get_extra` defaults. One-line fix
+   for the next CC housekeeping change.
+3. **LOW cosmetic** — report §5 says "38 new vi.po entries"; the diff adds ~40.
+
+## Flagged for the user (not CC-G defects)
+
+- **Selection-label i18n question (report §6):** the observation that core's
+  cached field-description path may return English Selection labels
+  deployment-wide under `vi_VN` deserves its own investigation ticket — if
+  real, it is §5.85's family one layer down and affects every module.
+- **Operator console reachability:** `channel.platform.app` remains URL-only
+  (`/odoo/action-1698`); the CMS sidebar coverage commit (78c4c33d) did not add
+  an ADMIN-gated leaf for it. One-leaf decision, operator-plane only.
+
+**CC-G closes the arc's software: the four dark cards now light only on a
+genuinely complete provider application, and the operator can see and prove
+what is missing. Everything still dark is §12 paperwork.**
