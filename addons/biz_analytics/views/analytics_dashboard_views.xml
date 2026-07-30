@@ -207,6 +207,10 @@
                             </div>
                         </div>
                     </t>
+                    <!-- OWL kanban compatibility -->
+                    <t t-name="card">
+                        <t t-call="kanban-box"/>
+                    </t>
                 </templates>
             </kanban>
         </field>

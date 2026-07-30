@@ -193,11 +193,15 @@
                             </div>
                         </div>
                     </t>
+                    <!-- OWL kanban compatibility -->
+                    <t t-name="card">
+                        <t t-call="kanban-box"/>
+                    </t>
                 </templates>
             </kanban>
         </field>
     </record>
-    
+
     <!-- Approval Dashboard Action with Auto-Refresh -->
     <record id="action_payroll_approval_dashboard" model="ir.actions.act_window">
         <field name="name">Payroll Approval Dashboard</field>
