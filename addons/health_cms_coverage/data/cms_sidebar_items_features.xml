@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- =====================================================================
+         Table A of docs/strategy/cms-sidebar-menu-coverage.html, restricted to
+         the four business sections: CRM, OPERATIONS MANAGER, CLINICAL, FINANCE.
+         ADMIN, the proposed ANALYTICS section, the optional configuration
+         screens and the already-reachable duplicates are NOT touched, and no
+         existing sidebar item or backend menuitem is modified or removed.
+
+         Conventions, each cloned from the siblings in
+         health_cms_sidebar/data/ and health_cms_clinical/data/:
+           * ROOT leaves only — no parent_id. An item with children turns into a
+             non-navigating expander and would break the parent (§5.69a).
+           * match_action_xmlids only, NEVER match_models: the model index is
+             last-wins and a satellite leaf would hijack an existing leaf's
+             highlight (§5.94). This is a deliberate divergence from
+             health_cms_clinical, which predates that finding.
+           * no role_ids, like the siblings — the action/model ACL is the real
+             gate, and drawing a leaf a user cannot open is better than hiding
+             a feature from everyone.
+           * `icon` is rendered as <i t-att-class="item.icon"/>, so it must be a
+             font-awesome class here; the repo's hf-wt-ico SVG masks have no
+             render path in this template.
+           * sequences continue after the highest existing one in each section,
+             so nothing reorders.
+         ===================================================================== -->
+
+    <!-- =================================================================
+         CRM  (existing sequences 10-50 → new 60+)
+         ================================================================= -->
+
+    <record id="item_crm_channels_setup" model="cms.sidebar.item">
+        <field name="name">Channels (setup)</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">60</field>
+        <field name="icon">fa fa-plug</field>
+        <field name="action_xmlid">health_care_command_channels.action_care_channel_connection</field>
+        <!-- The message store and the ops audit are the same job (support and
+             evidence for a channel); one leaf, three screens. -->
+        <field name="match_action_xmlids">health_care_command_channels.action_care_channel_connection,health_care_command_channels.action_care_channel_message,health_care_command_channels.action_care_channel_audit</field>
+    </record>
+
+    <record id="item_crm_reply_templates" model="cms.sidebar.item">
+        <field name="name">Reply Templates</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">61</field>
+        <field name="icon">fa fa-comments-o</field>
+        <field name="action_xmlid">health_care_command.action_care_reply_template</field>
+        <field name="match_action_xmlids">health_care_command.action_care_reply_template,health_care_command.action_care_watch_phrase</field>
+    </record>
+
+    <record id="item_crm_followup_calendar" model="cms.sidebar.item">
+        <field name="name">Follow-up Calendar</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">62</field>
+        <field name="icon">fa fa-calendar-check-o</field>
+        <field name="action_xmlid">health_crm.action_crm_followup_calendar</field>
+        <field name="match_action_xmlids">health_crm.action_crm_followup_calendar</field>
+    </record>
+
+    <record id="item_crm_relationships" model="cms.sidebar.item">
+        <field name="name">Relationships</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">63</field>
+        <field name="icon">fa fa-sitemap</field>
+        <field name="action_xmlid">health_crm.action_health_client_relation</field>
+        <field name="match_action_xmlids">health_crm.action_health_client_relation</field>
+    </record>
+
+    <!-- =================================================================
+         OPERATIONS MANAGER  (existing sequences 10-70 → new 80+)
+         ================================================================= -->
+
+    <record id="item_ops_telehealth" model="cms.sidebar.item">
+        <field name="name">Telehealth</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="sequence">80</field>
+        <field name="icon">fa fa-video-camera</field>
+        <field name="action_xmlid">health_telehealth.action_telehealth_session</field>
+        <field name="match_action_xmlids">health_telehealth.action_telehealth_session</field>
+    </record>
+
+    <record id="item_ops_selfbooking" model="cms.sidebar.item">
+        <field name="name">Self-Booking Invites</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="sequence">81</field>
+        <field name="icon">fa fa-share-square-o</field>
+        <field name="action_xmlid">health_self_booking.action_selfbook_invite</field>
+        <field name="match_action_xmlids">health_self_booking.action_selfbook_invite</field>
+    </record>
+
+    <record id="item_ops_family_links" model="cms.sidebar.item">
+        <field name="name">Family Links</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="sequence">82</field>
+        <field name="icon">fa fa-link</field>
+        <field name="action_xmlid">health_family_link.action_family_link</field>
+        <field name="match_action_xmlids">health_family_link.action_family_link</field>
+    </record>
+
+    <record id="item_ops_family_messages" model="cms.sidebar.item">
+        <field name="name">Family Messages</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="sequence">83</field>
+        <field name="icon">fa fa-comments</field>
+        <field name="action_xmlid">health_family_messages.action_family_messages</field>
+        <field name="match_action_xmlids">health_family_messages.action_family_messages</field>
+    </record>
+
+    <record id="item_ops_route_feasibility" model="cms.sidebar.item">
+        <field name="name">Route Feasibility</field>
+        <field name="section_id" ref="health_cms_sidebar.section_ops"/>
+        <field name="sequence">84</field>
+        <field name="icon">fa fa-road</field>
+        <field name="action_xmlid">health_routes.action_route_transition</field>
+        <field name="match_action_xmlids">health_routes.action_route_transition</field>
+    </record>
+
+    <!-- =================================================================
+         CLINICAL  (existing sequences 10-62 → new 70+)
+
+         Visit Tasks and Consent Check Log were proposed as `match` hints on the
+         existing Care Plans / Consents leaves. Those leaves are noupdate="1"
+         records in health_cms_sidebar, so an upgrade would NOT apply the edit —
+         they ship as their own sibling leaves instead, which is also what the
+         user asked for ("create additional menu").
+         ================================================================= -->
+
+    <record id="item_clin_diagnoses" model="cms.sidebar.item">
+        <field name="name">Diagnoses</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="sequence">70</field>
+        <field name="icon">fa fa-stethoscope</field>
+        <field name="action_xmlid">health_condition.action_health_condition</field>
+        <field name="match_action_xmlids">health_condition.action_health_condition</field>
+    </record>
+
+    <record id="item_clin_unsigned_notes" model="cms.sidebar.item">
+        <field name="name">Unsigned Notes</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="sequence">71</field>
+        <field name="icon">fa fa-pencil-square-o</field>
+        <field name="action_xmlid">health_emr.action_unsigned_clinical_notes</field>
+        <field name="match_action_xmlids">health_emr.action_unsigned_clinical_notes</field>
+    </record>
+
+    <record id="item_clin_voice_notes" model="cms.sidebar.item">
+        <field name="name">Voice Notes</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="sequence">72</field>
+        <field name="icon">fa fa-microphone</field>
+        <field name="action_xmlid">health_scribe.action_scribe_job</field>
+        <field name="match_action_xmlids">health_scribe.action_scribe_job</field>
+    </record>
+
+    <record id="item_clin_coding_review" model="cms.sidebar.item">
+        <field name="name">Coding Review</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="sequence">73</field>
+        <field name="icon">fa fa-code</field>
+        <field name="action_xmlid">health_ai_coding.action_ai_code_suggestion</field>
+        <field name="match_action_xmlids">health_ai_coding.action_ai_code_suggestion</field>
+    </record>
+
+    <record id="item_clin_visit_tasks" model="cms.sidebar.item">
+        <field name="name">Visit Tasks</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="sequence">74</field>
+        <field name="icon">fa fa-tasks</field>
+        <field name="action_xmlid">health_careplan.action_health_careplan_task</field>
+        <field name="match_action_xmlids">health_careplan.action_health_careplan_task</field>
+    </record>
+
+    <record id="item_clin_patient_portal" model="cms.sidebar.item">
+        <field name="name">Patient Portal</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="sequence">75</field>
+        <field name="icon">fa fa-id-card-o</field>
+        <field name="action_xmlid">health_portal.action_portal_access</field>
+        <!-- The access log is the evidence half of the same feature. -->
+        <field name="match_action_xmlids">health_portal.action_portal_access,health_portal.action_portal_access_log</field>
+    </record>
+
+    <record id="item_clin_consent_log" model="cms.sidebar.item">
+        <field name="name">Consent Check Log</field>
+        <field name="section_id" ref="health_cms_sidebar.section_clinical"/>
+        <field name="sequence">76</field>
+        <field name="icon">fa fa-history</field>
+        <field name="action_xmlid">health_consent.action_health_consent_check_log</field>
+        <field name="match_action_xmlids">health_consent.action_health_consent_check_log</field>
+    </record>
+
+    <!-- =================================================================
+         FINANCE  (existing sequences 10-80 → new 90+)
+         ================================================================= -->
+
+    <record id="item_fin_bhyt_claims" model="cms.sidebar.item">
+        <field name="name">BHYT Claims</field>
+        <field name="section_id" ref="health_cms_sidebar.section_finance"/>
+        <field name="sequence">90</field>
+        <field name="icon">fa fa-shield</field>
+        <field name="action_xmlid">health_bhyt.action_bhyt_claim</field>
+        <field name="match_action_xmlids">health_bhyt.action_bhyt_claim</field>
+    </record>
+
+    <record id="item_fin_service_packages" model="cms.sidebar.item">
+        <field name="name">Service Packages</field>
+        <field name="section_id" ref="health_cms_sidebar.section_finance"/>
+        <field name="sequence">91</field>
+        <field name="icon">fa fa-cubes</field>
+        <field name="action_xmlid">health_invoicing.action_fin_package_list</field>
+        <field name="match_action_xmlids">health_invoicing.action_fin_package_list</field>
+    </record>
+
+    <record id="item_fin_red_invoice_log" model="cms.sidebar.item">
+        <field name="name">Red Invoice Log</field>
+        <field name="section_id" ref="health_cms_sidebar.section_finance"/>
+        <field name="sequence">92</field>
+        <field name="icon">fa fa-file-text-o</field>
+        <field name="action_xmlid">health_redinvoice.action_redinvoice_requests</field>
+        <field name="match_action_xmlids">health_redinvoice.action_redinvoice_requests</field>
+    </record>
+
+</odoo>

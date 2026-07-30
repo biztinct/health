@@ -66,8 +66,28 @@
   Every menu our own modules ship that the <code>/bizapp</code> shell cannot reach, what it
   does, and where it could live. Measured on <strong>vietuat</strong>, 2026‑07‑29: 563 menus
   carry an action, 71 sidebar leaves cover 83 action xml‑ids, and <strong>128 menus are
-  reachable only by typing a URL</strong>. This is a decision document — nothing here has been
-  implemented.
+  reachable only by typing a URL</strong>.
+</p>
+<p class="lede">
+  <strong>Status, 2026&#8209;07&#8209;30 — table A is partly live.</strong> The
+  <strong>CRM, OPERATIONS MANAGER, CLINICAL and FINANCE</strong> rows of table A shipped as
+  <code>health_cms_coverage</code> 19.0.1.1.0: <strong>19 leaves covering 23 menus</strong>, each
+  one clicked in the shell before it was called done. Table A's <strong>ADMIN</strong> and
+  <strong>ANALYTICS</strong> rows, all of <strong>table B</strong> and all of <strong>table
+  C</strong> are untouched and remain open decisions. No existing sidebar item and no backend
+  menuitem was modified or removed.
+</p>
+<p class="lede">
+  One correction the implementation forced on this document: it said visibility could be left to
+  the model ACLs "because the underlying ACL still refuses the data". Driving the shell as the
+  real <code>crm</code> user proved that too cheap — ungated leaves served a receptionist an
+  entire FINANCE section their sidebar has never had, answering "You are not allowed to access
+  'BHYT Insurance Claim'" on click. The live catalogue turns out to gate 34 of its 71 leaves by
+  <code>access.role</code>, written in the <em>database</em> (which is why the XML seeds look
+  ungated), and the shipped leaves now follow each section's own convention: CRM → Owner + CRM,
+  OPERATIONS → Owner + Operations Manager, FINANCE → Owner + Accountant, CLINICAL → ungated like
+  its 24 siblings, with Voice Notes gated because only Owner / Operations Manager / Branch
+  Manager can read <code>health.scribe.job</code>.
 </p>
 
 <ul class="counts">

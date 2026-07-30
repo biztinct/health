@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.5.0.0',
+    'version': '19.0.5.1.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -91,6 +91,11 @@
             'health_theme/static/src/scss/inline_edit.scss',
             'health_theme/static/src/scss/field_indicators.scss',
             'health_theme/static/src/scss/side_sheet.scss',
+            # Cross-cutting guard: keeps the inline-rendered AutoComplete
+            # dropdown above later-painted content on EVERY form. Loads last so
+            # it wins on equal specificity — see the file header for the
+            # mechanism it defends against.
+            'health_theme/static/src/scss/dropdown_trap_guard.scss',
             # OWL components — JS
             'health_theme/static/src/js/vu_form_state.js',
             'health_theme/static/src/js/vu_progress_rail.js',

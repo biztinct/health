@@ -1,0 +1,91 @@
+// =============================================================================
+// DROPDOWN TRAP GUARD — inline autocomplete dropdowns must stay on top
+// -----------------------------------------------------------------------------
+// WHY THIS FILE EXISTS
+//
+// Odoo's AutoComplete component (`web.AutoComplete` — the popup behind EVERY
+// many2one, many2many_tags, tags and char-autocomplete field) renders its <ul>
+// INLINE inside the field, as a sibling of the <input>:
+//
+//     <div class="o-autocomplete">
+//         <input class="o-autocomplete--input">
+//         <ul class="o-autocomplete--dropdown-menu">   ← position: fixed
+//     </div>                                              z-index: 1056
+//
+// It is NOT portalled into `.o-overlay-container` at <body> level the way
+// Dropdown / Popover / DateTimePicker / SelectMenu are. Those are immune by
+// construction; this one depends entirely on its ancestor chain being flat.
+//
+// The moment ANY ancestor between the field and <body> declares one of
+//
+//     contain: layout | paint | content | strict
+//     container-type / container      (container queries IMPLY layout containment)
+//     transform / filter / backdrop-filter / perspective
+//     opacity < 1 / will-change / isolation: isolate
+//
+// two things break at once:
+//
+//   1. That ancestor becomes a STACKING CONTEXT. The dropdown's z-index 1056
+//      is now resolved *inside* it, and the ancestor itself paints atomically
+//      at its own in-flow slot — so any content that comes LATER in DOM order
+//      (a notebook page, the next section card, x2many rows) paints straight
+//      over the open dropdown. Nothing is clipped: the <ul> is fully laid out,
+//      it is simply over-painted. To the user it reads as "cut off halfway".
+//
+//   2. That ancestor becomes the CONTAINING BLOCK for the `position: fixed`
+//      <ul>, so ancestor `overflow` can now clip it as well, and its
+//      coordinates start depending on Odoo's position-correction pass.
+//
+// PROVEN on care.biztinct.com, 2026-07-30, ir.ui.menu form / Visibility field:
+// `.o_inner_group.vu-sec { contain: layout style }` was the trap, and the
+// `position: static; z-index: auto` <td>s of the Submenus x2many painted over
+// the lower half of the dropdown. Removing the containment (see
+// vu_form_engine.scss §5) fixed it; this file is the net that catches every
+// other occurrence, present and future.
+//
+// THE RULE FOR ALL FUTURE CSS IN THIS REPO: never put containment, transform
+// or filter on a wrapper that can contain form fields. Where a container query
+// is genuinely load-bearing — the three-column workspace ladder in
+// vu_form_engine.scss §10b keys off `container: vuform / inline-size` on the
+// sheet and `container-type: inline-size` on the middle column — the z-index
+// lift below rescues it without giving the query up.
+// =============================================================================
+
+// The two inline-rendered popups this webclient actually has: core's
+// AutoComplete, and health_base's hand-rolled address suggester.
+$vu-inline-dropdowns: ".o-autocomplete--dropdown-menu, .address-suggestions-dropdown";
+
+// Field-bearing surfaces. Anchoring the guard keeps the `:has()` match set
+// small; the app shell (`.o_content`, `.o_action_manager`, `body`…) is
+// deliberately outside it — those are scroll containers, they declare no
+// containment, and their overflow must stay exactly as core sets it.
+// (one line on purpose: Sass rejects a raw newline inside a quoted string, and
+// a broken .scss silently fails the WHOLE backend bundle — see the deploy notes)
+$vu-dropdown-surfaces: ".o_form_renderer, .o_list_renderer, .o_kanban_renderer, .o_searchview, .o_cp_searchbar, .o-mail-Chatter, .vu-side-sheet";
+
+:is(#{$vu-dropdown-surfaces}) :has(#{$vu-inline-dropdowns}) {
+    // ── Traps that are never load-bearing on a field wrapper: kill them.
+    //    Only elements currently HOSTING an open dropdown match, so this is a
+    //    handful of elements for the lifetime of one interaction.
+    contain: none !important;
+    transform: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    perspective: none !important;
+    will-change: auto !important;
+    isolation: auto !important;
+
+    // ── `container-type` is deliberately NOT reset: resetting it would drop
+    //    the @container ladder and reflow the whole form mid-interaction.
+    //    Lifting the host instead promotes its (atomically painted) stacking
+    //    context above its later siblings, which is all the dropdown needs.
+    //    20 clears every in-form z-index (the chatter action bar, at 5, is the
+    //    highest) and stays far below the overlay/modal layer at 1050+, so
+    //    dialogs still paint over the form as they must.
+    //
+    //    NB: this works on static hosts too, because the group cards, sheet
+    //    and workspace columns are all flex/grid items — z-index applies to
+    //    those. A future container-query host that is NOT a flex/grid item
+    //    would additionally need `position: relative` here.
+    z-index: 20;
+}

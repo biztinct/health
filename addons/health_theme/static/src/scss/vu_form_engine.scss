@@ -359,7 +359,15 @@
         // !important: legacy :not(:has()) chains outrank us and crush this
         // to 8px 0 — labels end up touching the card border
         padding: var(--vuf-sp-5) var(--vuf-sp-5) var(--vuf-sp-4) !important;
-        contain: layout style;
+        // NEVER re-add containment here (was `contain: layout style`). A group
+        // card holds FIELDS, and the AutoComplete dropdown (every many2one /
+        // m2m-tags popup) renders INLINE inside the field as
+        // `position: fixed; z-index: 1056`. Containment makes this card both a
+        // stacking context and the dropdown's containing block, so the card
+        // paints atomically at its in-flow slot and everything after it in DOM
+        // order (a notebook page, the next card, x2many rows) paints straight
+        // over the open dropdown — it reads as "cut off halfway".
+        // See dropdown_trap_guard.scss for the full mechanism + the net.
         animation: vuf-fade-up var(--vuf-t-med) var(--vuf-ease);
 
         // all fields invisible → empty cells only → no ghost card pills
