@@ -1550,3 +1550,37 @@ a no-op.
     `match_models` would hijack Contacts' highlight. Satellite leaves
     declare `match_action_xmlids` only; `match_models` belongs to the
     model's ONE primary surface. (Phase W3, deviation D3.)
+
+- **§5.96 — the many2one dropdown is rendered INLINE, so ANY containment on a
+    wrapper that can hold a field makes it look "cut off halfway".**
+    `web.AutoComplete` (the popup behind every many2one / many2many_tags /
+    tags / char-autocomplete) renders its `<ul class="o-autocomplete--dropdown-menu">`
+    inside the field itself as `position: fixed; z-index: 1056` — it is NOT
+    portalled into `.o-overlay-container` the way `Dropdown` / `Popover` /
+    `DateTimePicker` / `SelectMenu` are, so those are immune and this one is
+    not. Declaring `contain: layout|paint|content|strict`, `container-type` /
+    `container` (container queries IMPLY layout containment), `transform`,
+    `filter`, `backdrop-filter`, `perspective`, `opacity < 1`, `will-change`
+    or `isolation: isolate` on ANY ancestor does two things at once: the
+    ancestor becomes a stacking context, so z-index 1056 is resolved *inside*
+    it and the ancestor paints atomically at its own in-flow slot — every bit
+    of markup LATER in DOM order (a notebook page, the next section card,
+    x2many rows) paints straight over the open dropdown; and the ancestor
+    becomes the containing block for the `fixed` `<ul>`, so ancestor
+    `overflow` can clip it and its coordinates start depending on Odoo's
+    position-correction pass. Nothing is clipped in the common case: the
+    `<ul>` is fully laid out (`scrollHeight == clientHeight`), it is merely
+    over-painted, which is why it reads as a clipping bug and gets "fixed"
+    per-form forever. Diagnose by walking the ancestor chain for
+    `contain`/`containerType`/`transform` — not by hunting `overflow`. Hit
+    live 2026-07-30: `.o_inner_group.vu-sec { contain: layout style }`
+    (vu_form_engine.scss) broke the Visibility field on the `ir.ui.menu`
+    form and every other group card in the product. Fixed by deleting that
+    declaration + `health_theme/static/src/scss/dropdown_trap_guard.scss`,
+    which neutralises the never-load-bearing traps and lifts the host to
+    `z-index: 20` for the ones that ARE load-bearing (the three-column
+    workspace ladder needs its container queries). `contain:` in a backend
+    stylesheet is now a test failure —
+    `health_theme/tests/test_dropdown_trap_guard.py` walks every backend
+    bundle in the repo. RULE: never put containment, transform or filter on a
+    wrapper that can contain form fields.
