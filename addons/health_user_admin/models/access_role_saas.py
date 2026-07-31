@@ -23,17 +23,44 @@ and only strip the arch/models after validation completes.
 
 import logging
 from lxml import etree
-from odoo import api, models
+from odoo import api, fields, models
 from odoo.exceptions import AccessError
 
 _logger = logging.getLogger(__name__)
 
-# Group xml ids that tenant admins must NEVER be allowed to assign
+# Group xml ids that tenant admins must NEVER be allowed to assign.
+# Checked TRANSITIVELY (a group implying one of these is equally dangerous).
 FORBIDDEN_GROUP_XMLIDS = [
     'base.group_system',           # Administration / Settings
     'base.group_erp_manager',      # Access Rights
+    # The access_roles module's own admin group: Access Role menus, ring-0
+    # ACL on access.role/role.management, CMS sidebar-gating bypass (E2).
+    'access_roles.access_role_group_administrator',
+]
+
+# Checked on DIRECT containment only: technical-UI exposure, no model
+# rights — and base.group_user implies it on this database, so a transitive
+# check would mark every role privileged.
+FORBIDDEN_DIRECT_GROUP_XMLIDS = [
     'base.group_no_one',           # Technical Features
 ]
+
+
+def _forbidden_in(env, groups):
+    """Subset of `groups` that grants-or-implies a forbidden group (plus
+    direct-only offenders). Empty recordset = safe."""
+    groups = groups.sudo()
+    Groups = env['res.groups'].sudo()
+    transitive = direct = Groups.browse()
+    for xmlid in FORBIDDEN_GROUP_XMLIDS:
+        grp = env.ref(xmlid, raise_if_not_found=False)
+        if grp:
+            transitive |= grp
+    for xmlid in FORBIDDEN_DIRECT_GROUP_XMLIDS:
+        grp = env.ref(xmlid, raise_if_not_found=False)
+        if grp:
+            direct |= grp
+    return ((groups | groups.all_implied_ids) & transitive) | (groups & direct)
 
 # Privilege names whose groups SHOULD be shown to tenant admins.
 # NOTE: 'Inventory' removed (duplicate of Purchase under Supply Chain)
@@ -47,7 +74,8 @@ ALLOWED_PRIVILEGE_NAMES = {
     'Accounting',
     'Employee Development',
     'AI Performance Coaching',
-    'Access Role',
+    # 'Access Role' removed (E2): its groups gate the access_roles module
+    # itself — never offered to tenant admins.
     'Employees',
     'Website',
     'Project',
@@ -80,7 +108,7 @@ def _get_hidden_group_ids(env):
     """Return set of res.groups IDs that should be hidden from tenant admins."""
     hidden_ids = set()
 
-    for xmlid in FORBIDDEN_GROUP_XMLIDS:
+    for xmlid in FORBIDDEN_GROUP_XMLIDS + FORBIDDEN_DIRECT_GROUP_XMLIDS:
         grp = env.ref(xmlid, raise_if_not_found=False)
         if grp:
             hidden_ids.add(grp.id)
@@ -185,6 +213,18 @@ class AccessRoleSaaS(models.Model):
     """
     _inherit = 'access.role'
 
+    is_privileged = fields.Boolean(
+        string='Privileged role',
+        compute='_compute_is_privileged', store=True,
+        help="True when the role's groups grant — or transitively imply — a "
+             "system administration group. Privileged roles are never "
+             "offered to tenant admins.")
+
+    @api.depends('groups_ids', 'groups_ids.all_implied_ids')
+    def _compute_is_privileged(self):
+        for role in self:
+            role.is_privileged = bool(_forbidden_in(self.env, role.groups_ids))
+
     def _should_filter_groups(self):
         return not _is_direct_system_admin(self.env)
 
@@ -228,49 +268,41 @@ class AccessRoleSaaS(models.Model):
     # ---- Protection 2: Block forbidden group assignment ----
 
     def _validate_groups_safe(self, values):
-        """Block forbidden group assignment for non-system-admins."""
+        """Block forbidden group assignment for non-system-admins.
+
+        Implication-aware (E1): an added group is refused when it IS
+        forbidden or when it transitively IMPLIES a forbidden group — the
+        Owner-role escalation rode an implied_ids row, not direct
+        membership."""
         if _is_direct_system_admin(self.env):
             return
 
-        forbidden = set()
-        for xmlid in FORBIDDEN_GROUP_XMLIDS:
-            grp = self.env.ref(xmlid, raise_if_not_found=False)
-            if grp:
-                forbidden.add(grp.id)
-
+        added_ids = set()
         for key, val in values.items():
             if key.startswith('in_group_') and val:
                 try:
-                    gid = int(key[9:])
-                    if gid in forbidden:
-                        group = self.env['res.groups'].sudo().browse(gid)
-                        raise AccessError(
-                            "You are not allowed to assign the '%s' group. "
-                            "Contact your system administrator." % group.name
-                        )
+                    added_ids.add(int(key[9:]))
                 except (ValueError, IndexError):
                     pass
 
-        if 'groups_ids' in values:
-            cmds = values['groups_ids']
-            if isinstance(cmds, list):
-                for cmd in cmds:
-                    if isinstance(cmd, (list, tuple)):
-                        if cmd[0] == 4 and cmd[1] in forbidden:
-                            group = self.env['res.groups'].sudo().browse(cmd[1])
-                            raise AccessError(
-                                "You are not allowed to assign the '%s' group. "
-                                "Contact your system administrator." % group.name
-                            )
-                        elif cmd[0] == 6 and cmd[2]:
-                            bad = set(cmd[2]) & forbidden
-                            if bad:
-                                groups = self.env['res.groups'].sudo().browse(list(bad))
-                                raise AccessError(
-                                    "You are not allowed to assign these groups: %s. "
-                                    "Contact your system administrator."
-                                    % ', '.join(groups.mapped('name'))
-                                )
+        if 'groups_ids' in values and isinstance(values['groups_ids'], list):
+            for cmd in values['groups_ids']:
+                if isinstance(cmd, (list, tuple)):
+                    if cmd[0] == 4:
+                        added_ids.add(cmd[1])
+                    elif cmd[0] == 6 and cmd[2]:
+                        added_ids.update(cmd[2])
+
+        if not added_ids:
+            return
+        added = self.env['res.groups'].sudo().browse(list(added_ids))
+        bad = _forbidden_in(self.env, added)
+        if bad:
+            raise AccessError(
+                "You are not allowed to assign groups that grant or imply: %s. "
+                "Contact your system administrator."
+                % ', '.join(bad.mapped('name'))
+            )
 
     @api.model_create_multi
     def create(self, vals_list):

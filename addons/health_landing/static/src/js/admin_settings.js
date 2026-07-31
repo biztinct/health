@@ -1,7 +1,8 @@
 /** @odoo-module **/
 
-import { Component } from "@odoo/owl";
+import { Component, onWillStart, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
 
 export class AdminSettings extends Component {
@@ -9,6 +10,14 @@ export class AdminSettings extends Component {
 
     setup() {
         this.actionService = useService("action");
+        // Ring 0 only: role/permission design is platform-admin work.
+        // Tenant admins assign predefined roles from Users — they never see
+        // the Access Roles tile (and the ACL denies the action regardless).
+        this.state = useState({ isRoleAdmin: false });
+        onWillStart(async () => {
+            this.state.isRoleAdmin = await user.hasGroup(
+                "access_roles.access_role_group_administrator");
+        });
     }
 
     openGeneralSettings() {

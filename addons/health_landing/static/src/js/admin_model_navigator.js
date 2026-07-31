@@ -3,8 +3,16 @@
 import { ListController } from "@web/views/list/list_controller";
 import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
+import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { onWillStart } from "@odoo/owl";
+
+// Tabs that open the access_roles configuration models. Ring 0 (platform
+// admin) only: for everyone else — including tenant admins, who manage USERS
+// but never role/permission design — the tabs are hidden here and the
+// underlying models are read-only/denied by ACL anyway.
+const RING0_TAB_IDS = new Set(["roles", "role_mgmt"]);
 
 const TAB_GROUPS = [
     {
@@ -81,6 +89,11 @@ export class AdminModelNavigatorController extends ListController {
         super.setup(...arguments);
         this.actionService = useService("action");
         this.tabConfig = this._resolveTabConfig();
+        this.isRoleAdmin = false;
+        onWillStart(async () => {
+            this.isRoleAdmin = await user.hasGroup(
+                "access_roles.access_role_group_administrator");
+        });
     }
 
     _resolveTabConfig() {
@@ -114,7 +127,8 @@ export class AdminModelNavigatorController extends ListController {
     }
 
     get navigationTabs() {
-        return this.tabConfig?.group.tabs || [];
+        const tabs = this.tabConfig?.group.tabs || [];
+        return this.isRoleAdmin ? tabs : tabs.filter((t) => !RING0_TAB_IDS.has(t.id));
     }
 
     get activeTabId() {

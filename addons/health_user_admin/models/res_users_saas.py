@@ -1,14 +1,49 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, AccessError
 
-# Groups that tenant admins must NEVER be able to assign
+_logger = logging.getLogger(__name__)
+
+# Groups that tenant admins must NEVER be able to assign — checked
+# TRANSITIVELY: containing a group that merely IMPLIES one of these is just
+# as dangerous as containing it directly (E1: the Owner-role escalation rode
+# a DB-only implied_ids row into base.group_system).
 PROTECTED_GROUP_XMLIDS = [
     'base.group_system',           # Administration / Settings
     'base.group_erp_manager',      # Access Rights (implied by group_system)
+    # The access_roles module's own admin group: grants the Access Role menus,
+    # full write on access.role/role.management (ring 0 ACL) and the CMS
+    # sidebar-gating bypass. Assigning it IS becoming platform admin (E2).
+    'access_roles.access_role_group_administrator',
+]
+
+# Checked on DIRECT containment only. group_no_one exposes technical UI but
+# grants no model rights — and on this database base.group_user itself
+# implies it, so a transitive check would damn every role in the system.
+PROTECTED_DIRECT_GROUP_XMLIDS = [
     'base.group_no_one',           # Technical / Extra Rights
 ]
+
+
+def _browse_xmlids(env, xmlids):
+    groups = env['res.groups'].sudo().browse()
+    for xmlid in xmlids:
+        grp = env.ref(xmlid, raise_if_not_found=False)
+        if grp:
+            groups |= grp
+    return groups
+
+
+def _dangerous_subset(env, groups):
+    """The part of `groups` a tenant admin must never hand out: any group
+    granting-or-implying a protected group, plus direct-only offenders."""
+    groups = groups.sudo()
+    transitive = _browse_xmlids(env, PROTECTED_GROUP_XMLIDS)
+    direct = _browse_xmlids(env, PROTECTED_DIRECT_GROUP_XMLIDS)
+    return ((groups | groups.all_implied_ids) & transitive) | (groups & direct)
 
 
 class ResUsersSaaS(models.Model):
@@ -20,6 +55,22 @@ class ResUsersSaaS(models.Model):
     res.users are done via sudo() but with strict validation.
     """
     _inherit = 'res.users'
+
+    @api.model
+    def _register_hook(self):
+        """Watchdog: the two-ring design depends on base.group_user being
+        READ-ONLY on access.role. If a re-imported access_roles update ever
+        reverts its CSV, scream in the log rather than fail silently open."""
+        res = super()._register_hook()
+        acl = self.env.ref('access_roles.access_access_role',
+                           raise_if_not_found=False)
+        if acl and (acl.perm_write or acl.perm_create or acl.perm_unlink):
+            _logger.critical(
+                "SECURITY: access_roles.access_access_role grants write on "
+                "access.role to base.group_user again — the ring ACL lockdown "
+                "has been reverted (likely an upstream access_roles update). "
+                "Re-apply the read-only CSV immediately.")
+        return res
 
     @api.model
     def action_open_create_user_wizard(self):
@@ -138,60 +189,54 @@ class ResUsersSaaS(models.Model):
             ))
 
     def _validate_role_safe(self, role_id):
-        """Ensure a role doesn't contain any protected system groups."""
+        """Ensure a role doesn't contain — or transitively IMPLY — any
+        protected system group. Direct containment alone is not enough:
+        the Owner role escalated to base.group_system through an implied_ids
+        row on one of its ordinary-looking groups (E1)."""
         role = self.env['access.role'].sudo().browse(role_id)
         if not role.exists():
             raise UserError(_("Invalid access role."))
-        
-        protected_groups = self.env['res.groups']
-        for xmlid in PROTECTED_GROUP_XMLIDS:
-            try:
-                grp = self.env.ref(xmlid, raise_if_not_found=False)
-                if grp:
-                    protected_groups |= grp
-            except Exception:
-                pass
 
-        dangerous = role.groups_ids & protected_groups
+        dangerous = _dangerous_subset(self.env, role.groups_ids)
         if dangerous:
             raise UserError(_(
-                "Access role '%s' contains restricted system groups: %s. "
+                "Access role '%s' contains or implies restricted system groups: %s. "
                 "These groups cannot be assigned through the tenant interface.",
                 role.name, ', '.join(dangerous.mapped('full_name'))
             ))
 
     def write(self, vals):
         """Override write to block system group assignment by tenant admins."""
-        if 'group_ids' in vals and not self.env.is_superuser():
-            # If the caller is a tenant admin (not system admin), 
+        if not self.env.is_superuser() \
+                and self.env.user.has_group('health_user_admin.group_health_user_admin') \
+                and not self.env.user.has_group('base.group_system'):
             # check that no protected groups are being added
-            if self.env.user.has_group('health_user_admin.group_health_user_admin') \
-                    and not self.env.user.has_group('base.group_system'):
+            if 'group_ids' in vals:
                 self._guard_protected_groups(vals.get('group_ids', []))
+            # a privileged role assignment is refused before its group sync
+            # can fire (the access_roles write override links role groups)
+            if vals.get('access_role_id'):
+                self._validate_role_safe(vals['access_role_id'])
         return super().write(vals)
 
     def _guard_protected_groups(self, group_commands):
-        """Prevent tenant admins from adding protected groups via write."""
-        protected_ids = set()
-        for xmlid in PROTECTED_GROUP_XMLIDS:
-            try:
-                grp = self.env.ref(xmlid, raise_if_not_found=False)
-                if grp:
-                    protected_ids.add(grp.id)
-            except Exception:
-                pass
+        """Prevent tenant admins from adding protected groups via write.
 
-        if not protected_ids:
-            return
-
+        Implication-aware (E1): a linked group is refused when it IS a
+        protected group or when it transitively implies one — otherwise a
+        harmless-looking wrapper group smuggles in base.group_system."""
+        added_ids = set()
         for cmd in (group_commands or []):
             if isinstance(cmd, (list, tuple)):
-                if cmd[0] == 4 and cmd[1] in protected_ids:  # Link
-                    raise AccessError(_(
-                        "You cannot assign system administration groups."
-                    ))
-                elif cmd[0] == 6:  # Replace
-                    if protected_ids & set(cmd[2] or []):
-                        raise AccessError(_(
-                            "You cannot assign system administration groups."
-                        ))
+                if cmd[0] == 4:            # Link
+                    added_ids.add(cmd[1])
+                elif cmd[0] == 6:          # Replace
+                    added_ids.update(cmd[2] or [])
+
+        if not added_ids:
+            return
+        added = self.env['res.groups'].sudo().browse(list(added_ids))
+        if _dangerous_subset(self.env, added):
+            raise AccessError(_(
+                "You cannot assign system administration groups."
+            ))

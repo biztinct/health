@@ -73,6 +73,14 @@ class AccessRole(models.Model):
     role_management_id = fields.Many2one('role.management')
     groups_ids = fields.Many2many('res.groups',
                                   string='Groups')
+    # Snapshot of the groups this role granted at the last sync. Sync
+    # reconciles against THIS set instead of Command.set-ing the user's whole
+    # group list: groups a user holds outside the role are never touched.
+    # (Upstream's set() wiped every out-of-role group of every linked user on
+    # each role edit — 43 nurses × 12 direct app-admin groups on vietuat.)
+    granted_group_ids = fields.Many2many(
+        'res.groups', 'access_role_granted_group_rel', 'role_id', 'group_id',
+        string='Granted groups (sync snapshot)')
     accesses_count = fields.Integer('# Access Rights',
                                     compute='_compute_accesses_count', compute_sudo=True)
     rules_count = fields.Integer('# Record Rules',
@@ -168,7 +176,12 @@ class AccessRole(models.Model):
                 values['groups_ids'] = [
                     Command.set([])]
             new_vals_list.append(self._remove_reified_groups(values))
-        return super(AccessRole, self).create(new_vals_list)
+        records = super(AccessRole, self).create(new_vals_list)
+        # Seed the sync snapshot: groups present at creation count as
+        # role-granted, so removing one later reconciles it off the users.
+        for record in records:
+            record.granted_group_ids = [Command.set(record.groups_ids.ids)]
+        return records
 
     def write(self, values):
         """Clean up group data and update user groups if changed"""
@@ -265,12 +278,20 @@ class AccessRole(models.Model):
         return values1
 
     def _update_users_groups(self):
-        """Update groups for all users associated with this role"""
+        """Reconcile the groups of all users associated with this role.
+
+        Link the role's current groups; unlink only groups the role itself
+        granted before (the snapshot) and no longer contains. Never
+        Command.set: that overwrote each user's ENTIRE group list, wiping
+        groups held outside the role — and turned "pre-stage myself into
+        user_ids" into a delayed privilege escalation."""
         for role in self:
             if role.user_ids:
-                role.user_ids.write({
-                    'group_ids': [Command.set(role.groups_ids.ids)]
-                })
+                removed = role.granted_group_ids - role.groups_ids
+                commands = [Command.link(gid) for gid in role.groups_ids.ids]
+                commands += [Command.unlink(gid) for gid in removed.ids]
+                role.user_ids.write({'group_ids': commands})
+            role.granted_group_ids = [Command.set(role.groups_ids.ids)]
 
     def _determine_fields_to_fetch(self, field_names, ignore_when_in_cache=False):
         """

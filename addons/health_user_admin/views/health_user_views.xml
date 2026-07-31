@@ -80,8 +80,14 @@
                             <field name="tz" string="Timezone"/>
                         </group>
                         <group string="Access Control">
+                            <!-- Role CREATION is ring-0 work: tenant admins
+                                 assign predefined roles only (ACL denies the
+                                 create anyway; the option must not invite it).
+                                 The is_privileged domain is belt-and-braces on
+                                 top of rule_tenant_admin_safe_roles. -->
                             <field name="access_role_id" string="Access Role"
-                                   options="{'no_create': False, 'no_create_edit': False}"/>
+                                   domain="[('is_privileged', '=', False)]"
+                                   options="{'no_create': True, 'no_open': True}"/>
                             <field name="active" string="Active" widget="boolean_toggle"/>
                         </group>
                     </group>

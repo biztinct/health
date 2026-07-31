@@ -41,22 +41,27 @@ class ResUsers(models.Model):
                     'message': _("Please save the user before assigning an Access Role."),
                 }
             }
+        # sudo: this only mirrors the m2o onto the role's user_ids for the
+        # user being edited. Tenant admins (ring 1) are read-only on
+        # access.role by ACL yet must still assign predefined roles from the
+        # user form; WHICH roles they may assign is enforced in
+        # health_user_admin (implication-aware guard + is_privileged rule).
         if not self.user_id:
             if self._origin.access_role_id:
-                self._origin.access_role_id.write(
+                self._origin.access_role_id.sudo().write(
                     {'user_ids': [(fields.Command.unlink(self._origin.id))]})
             # Assign user to the new role
             if self.access_role_id:
-                self.access_role_id.write(
+                self.access_role_id.sudo().write(
                     {'user_ids': [(fields.Command.link(self._origin.id))]})
         else:
             # Remove user from the previous role
             if self._origin.access_role_id:
-                self._origin.access_role_id.write(
+                self._origin.access_role_id.sudo().write(
                     {'user_ids': [(fields.Command.unlink(self.user_id.id))]})
             # Assign user to the new role
             if self.access_role_id:
-                self.access_role_id.write(
+                self.access_role_id.sudo().write(
                     {'user_ids': [(fields.Command.link(self.user_id.id))]})
 
     @api.model_create_multi

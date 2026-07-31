@@ -19,7 +19,9 @@
                             <field name="password" password="True" placeholder="Set initial password"/>
                         </group>
                         <group string="Access &amp; Role">
-                            <field name="access_role_id"/>
+                            <field name="access_role_id"
+                                   domain="[('is_privileged', '=', False)]"
+                                   options="{'no_create': True, 'no_open': True}"/>
                             <field name="show_duty_doctor" invisible="1"/>
                             <field name="show_head_nurse" invisible="1"/>
                             <field name="is_duty_doctor" invisible="not show_duty_doctor"/>

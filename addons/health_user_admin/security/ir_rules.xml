@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Tenant admins only ever see tenant-safe roles: a role whose groups
+         grant or transitively imply a system-administration group is
+         invisible to them on every path (list, picker, RPC). Ring 0 is not
+         in this group, so the platform admin keeps the full list. -->
+    <record id="rule_tenant_admin_safe_roles" model="ir.rule">
+        <field name="name">Healthcare: Tenant admin sees only non-privileged roles</field>
+        <field name="model_id" ref="access_roles.model_access_role"/>
+        <field name="groups" eval="[(4, ref('health_user_admin.group_health_user_admin'))]"/>
+        <field name="domain_force">[('is_privileged', '=', False)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
     <!-- Hide system admin users from tenant admin user list -->
     <record id="rule_hide_system_admins" model="ir.rule">
         <field name="name">Healthcare: Hide system admins from tenant admin</field>

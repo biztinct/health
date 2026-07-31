@@ -27,7 +27,7 @@
                     <i class="fa fa-chevron-right admin-tile-arrow"/>
                 </div>
 
-                <div class="admin-settings-tile" t-on-click="openUserDefaults">
+                <div class="admin-settings-tile" t-if="state.isRoleAdmin" t-on-click="openUserDefaults">
                     <div class="admin-tile-icon" style="background: #F3E5F5; color: #6A1B9A;">
                         <i class="fa fa-key"/>
                     </div>
