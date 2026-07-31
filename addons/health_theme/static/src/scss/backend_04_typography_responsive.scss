@@ -252,13 +252,15 @@
     transition: border-color var(--vu-transition-fast), box-shadow var(--vu-transition-fast);
 }
 
+// The ring goes on the input-group WRAPPER, not on .o_searchview: the search
+// box and its dropdown caret are two adjacent halves of one pill, and a ring
+// on the left half alone paints a line straight down the seam between them.
 .o_control_panel .o_cp_searchview:focus-within {
+    border-radius: 6px;   // matches the pill's outer corners so the ring traces it
+    box-shadow: var(--vuf-sh-ring);
+
     .o_searchview,
     .o_searchview_dropdown_toggler {
         border-color: var(--vu-brand-primary) !important;
-    }
-
-    .o_searchview {
-        box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.14);
     }
 }

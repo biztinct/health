@@ -60,7 +60,13 @@
     --vuf-sh-sm: 0 1px 2px rgba(16, 12, 40, .05);
     --vuf-sh-md: 0 8px 24px rgba(16, 12, 40, .07);
     --vuf-sh-lg: 0 18px 50px rgba(16, 12, 40, .14);
-    --vuf-sh-ring: 0 0 0 3px rgba(21, 101, 192, .16);
+    // THE focus ring — the single source of truth for "this control has focus"
+    // (ledger §5.97). One boundary only: a 1px solid ring flush against the
+    // control's own 1px brand border reads as ONE crisp 2px edge (and meets
+    // WCAG 2.2 SC 2.4.11's 2px-perimeter requirement without a reflow-causing
+    // border-width change), then fades out through a soft halo. Never pair
+    // this with an `outline` — that stacks a second visible rectangle.
+    --vuf-sh-ring: 0 0 0 1px var(--vuf-primary), 0 0 0 4px rgba(21, 101, 192, .14);
 
     // ── Motion ───────────────────────────────────────────────────────
     --vuf-t-fast: 120ms;

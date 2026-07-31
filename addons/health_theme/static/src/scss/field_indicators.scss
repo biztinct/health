@@ -98,9 +98,11 @@
             border-color: var(--vu-brand-secondary);
         }
 
+        // one ring, shared token — a bespoke shadow here used to fight the
+        // canonical focus treatment in backend_02 (ledger §5.97)
         &:focus {
             border-color: var(--vu-brand-primary);
-            box-shadow: 0 1px 0 0 var(--vu-brand-primary);
+            box-shadow: var(--vuf-sh-ring);
         }
     }
 }

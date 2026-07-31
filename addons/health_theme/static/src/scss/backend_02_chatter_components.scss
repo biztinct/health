@@ -679,27 +679,48 @@
     }
 }
 
-// Native focus: brand border for pointer focus, visible ring for keyboard
-// focus (Phase 1 accessibility fix — WCAG 2.4.7). Mouse users keep the quiet
-// underline look; Tab navigation gets an unmistakable brand ring.
+// Native focus: ONE boundary per focused control — brand border + the shared
+// focus ring (--vuf-sh-ring), which is itself a solid 1px ring flush against
+// that border plus a soft halo. Keeps WCAG 2.4.7 / 2.4.11 satisfied.
+//
+// The inputs used to ALSO carry `outline: 2px` at `outline-offset: 2px`, which
+// painted a third, detached rectangle inside the halo — and a fourth on
+// compound widgets (monetary, many2one), whose box lives on the WRAPPER while
+// the outline was drawn around the naked inner <input>. Text inputs match
+// :focus-visible on plain mouse clicks too, so this hit every click, not just
+// Tab. Boxed controls now get the ring and nothing else; outline stays for
+// buttons/links, which have no border+ring of their own.
 .o_form_view .o_field_widget input:focus,
 .o_form_view .o_field_widget textarea:focus,
 .o_form_view .o_field_widget select:focus {
-    box-shadow: none !important;
     outline: none !important;
     border-color: var(--vu-brand-primary) !important;
+    box-shadow: var(--vuf-sh-ring) !important;
 }
 
-.o_form_view .o_field_widget input:focus-visible,
-.o_form_view .o_field_widget textarea:focus-visible,
-.o_form_view .o_field_widget select:focus-visible,
-.o_web_client button:focus-visible,
+// `button.o_input` is how date/datetime fields render — they already carry the
+// boxed input style above, so they must be excluded from the outline too.
+.o_web_client button:not(.o_input):focus-visible,
 .o_web_client a:focus-visible,
 .o_web_client [role="button"]:focus-visible,
 .o_web_client .nav-link:focus-visible {
     outline: 2px solid var(--vu-focus-ring, var(--vu-brand-primary)) !important;
     outline-offset: 2px;
     border-radius: var(--vu-radius-sm);
+}
+
+// health_base ships a universal `*:focus-visible { outline: 2px solid }`
+// (health_base/static/src/css/health_base.css:651, same backend bundle). On a
+// control that already draws its own border + ring that is, again, a second
+// detached rectangle. Opt out ONLY where a ring is guaranteed: inside a form
+// (every .o_input is boxed there, date fields included — they render as
+// `button.o_input`) and the searchview, whose ring sits on the input-group
+// wrapper. Deliberately NOT scoped to .o_web_client: a standalone editable
+// list view's cell inputs get no ring of their own and must keep the outline
+// as their focus indicator.
+.o_form_view .o_input:focus-visible,
+.o_cp_searchview input:focus-visible {
+    outline: none;
 }
 
 // Patient badges smaller/right aligned

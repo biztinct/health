@@ -1584,3 +1584,37 @@ a no-op.
     `health_theme/tests/test_dropdown_trap_guard.py` walks every backend
     bundle in the repo. RULE: never put containment, transform or filter on a
     wrapper that can contain form fields.
+
+- **§5.97 — a focused field must draw exactly ONE boundary; `outline` and the
+    focus ring are not additive.**
+    Four independent stylesheets in the same backend bundle each had an
+    opinion about focus, and they all painted at once: `vu_form_engine.scss`
+    gave the control `border-color: primary` + `box-shadow: var(--vuf-sh-ring)`,
+    `backend_02_chatter_components.scss` added `outline: 2px solid` at
+    `outline-offset: 2px` under `:focus-visible`, `field_indicators.scss`
+    added a bespoke `0 1px 0 0` underline shadow, and `health_base.css:651`
+    ships a universal `*:focus-visible { outline: 2px solid }`. Three visible
+    rectangles on a plain input; on a COMPOUND widget (monetary, many2one)
+    four — those draw their box on the WRAPPER (`.o_field_monetary > div`,
+    `.o_field_many2one_selection`) while the outline was drawn around the
+    naked inner `<input>`, so the two rings crossed. The trap is that
+    `:focus-visible` was assumed to be keyboard-only: text inputs and
+    textareas match it on a plain MOUSE CLICK too (only buttons/divs are
+    click-exempt), so the "Tab-only" ring fired on every click. Fixed
+    2026-07-31: `--vuf-sh-ring` is now THE focus indicator repo-wide —
+    `0 0 0 1px var(--vuf-primary), 0 0 0 4px rgba(21,101,192,.14)`, a solid
+    ring flush against the control's own 1px brand border so it reads as one
+    crisp 2px edge (and clears WCAG 2.2 SC 2.4.11's 2px perimeter without a
+    reflow-causing border-width change) fading into a halo. Boxed controls get
+    `outline: none`; `button`/`a`/`[role=button]`/`.nav-link` keep the outline
+    because they have no ring of their own — `button` excludes `.o_input`,
+    which is how date fields render. The opt-out from health_base's universal
+    rule is scoped to `.o_form_view .o_input` and `.o_cp_searchview input`
+    ONLY: a standalone editable list view's cell inputs get no ring from the
+    theme, so stripping their outline would leave them with NO focus
+    indicator at all. Same trap on split controls: the searchview ring moved
+    from `.o_searchview` to the `.o_cp_searchview` input-group wrapper (with
+    `border-radius: 6px` so the shadow traces the pill), because a ring on
+    the left half alone paints a line straight down the seam to the caret.
+    RULE: one control, one ring, one stylesheet — reach for `--vuf-sh-ring`,
+    never a fresh `outline` or a bespoke `box-shadow`.
