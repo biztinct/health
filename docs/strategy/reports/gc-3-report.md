@@ -675,6 +675,18 @@ proves the earlier one failed); never on a check whose result is the thing
 you need to read. Checks should fail hard and in order: the first `failure`
 names the problem and everything after it reads `skipped`.
 
+**§5.105 — in a GitHub Actions *container* job, JavaScript actions run on the
+runner HOST, not in the container, so they cannot see container-only paths.**
+`actions/upload-artifact` reported *"No files were found with the provided
+path: /tmp/fhir-conformance.log"* for a file that existed — because the
+`run:` steps that created it execute inside `container:` while the upload
+action executes outside it. The two share exactly one directory: the
+workspace (`$GITHUB_WORKSPACE`). Anything a JS action must read is copied
+there first. The same split explains why `actions/checkout` works (it writes
+to the shared workspace) while a `/tmp` handoff silently does not — and the
+warning it emits reads like "your file is missing", not "I cannot see your
+filesystem", which is what makes it cost an iteration.
+
 ## 9. Files
 
 **New — `health_fhir_core`:** `models/__init__.py` ·
