@@ -66,6 +66,9 @@ jobs:
       # putting the image's copies first would silently test different code
       # from the one that is deployed.
       CI_ADDONS_PATH: addons,/usr/lib/python3/dist-packages/odoo/addons
+      # Floor for gate 3. A floor, not a pin: it fails on collapse (a module
+      # that silently failed to install, a --test-tags typo), not on growth.
+      MIN_EXECUTED: '50'
 
     steps:
       - name: Checkout
@@ -135,44 +138,62 @@ jobs:
             --log-level=test \
             --logfile="$CI_LOG"
 
-      - name: Gate on the result
+      # The gate is four named probes plus a verdict, for the same reason the
+      # install is five steps: Actions logs need repo-admin rights, but step
+      # names and conclusions are public. A red build should say WHICH gate
+      # rejected it without anyone needing to download anything.
+      - name: gate 1 — odoo exited zero
+        id: gate_exit
+        continue-on-error: true
         run: |
-          if [ ! -s "$CI_LOG" ]; then
-            echo "::error::no odoo log was produced — the run did not start"
-            exit 1
-          fi
+          echo "odoo step outcome: ${{ steps.odoo.outcome }}"
+          [ "${{ steps.odoo.outcome }}" = "success" ]
 
-          echo "--- last 40 log lines ---"
-          tail -40 "$CI_LOG" || true
+      - name: gate 0 — a log file was produced
+        id: gate_log
+        continue-on-error: true
+        run: |
+          ls -l "$CI_LOG"
+          [ -s "$CI_LOG" ]
 
-          # 1. the run itself must have succeeded
-          if [ "${{ steps.odoo.outcome }}" != "success" ]; then
-            echo "::error::odoo exited non-zero — see the ERROR lines below"
-            grep -a "ERROR" "$CI_LOG" | tail -40 || true
-            exit 1
-          fi
-
-          # 2. there must BE a result line, and it must be clean
+      - name: gate 2 — an odoo.tests.result line exists and is clean
+        id: gate_result
+        continue-on-error: true
+        run: |
           RESULT="$(grep -a 'odoo.tests.result' "$CI_LOG" | tail -1)"
-          if [ -z "$RESULT" ]; then
-            echo "::error::no 'odoo.tests.result' line — no test suite ran"
-            exit 1
-          fi
-          echo "result: $RESULT"
+          echo "result: ${RESULT:-<none>}"
+          [ -n "$RESULT" ] || { echo "::error::no result line — no suite ran"; exit 1; }
           case "$RESULT" in
             *"0 failed, 0 error(s)"*) ;;
             *) echo "::error::$RESULT"; exit 1 ;;
           esac
 
-          # 3. §5.83 — green over zero executed tests is not green
+      - name: gate 3 — enough test methods actually executed
+        id: gate_executed
+        continue-on-error: true
+        run: |
           EXECUTED="$(grep -ac 'Starting Test.*\.test_' "$CI_LOG" || true)"
-          echo "executed test methods: $EXECUTED"
-          if [ "${EXECUTED:-0}" -lt 50 ]; then
-            echo "::error::only $EXECUTED test methods executed — the suite did not run (conventions 5.83); expected the full health_fhir_* + health_condition suite"
+          echo "executed test methods: $EXECUTED (floor ${MIN_EXECUTED:-50})"
+          [ "${EXECUTED:-0}" -ge "${MIN_EXECUTED:-50}" ]
+
+      - name: Verdict
+        run: |
+          echo "gate 0 (log produced):   ${{ steps.gate_log.outcome }}"
+          echo "gate 1 (exit zero):      ${{ steps.gate_exit.outcome }}"
+          echo "gate 2 (clean result):   ${{ steps.gate_result.outcome }}"
+          echo "gate 3 (tests executed): ${{ steps.gate_executed.outcome }}"
+          echo "--- last 60 log lines ---"
+          tail -60 "$CI_LOG" 2>/dev/null || echo "(no log)"
+          echo "--- ERROR lines ---"
+          grep -a 'ERROR' "$CI_LOG" 2>/dev/null | tail -40 || true
+          if [ "${{ steps.gate_log.outcome }}" != "success" ] \
+             || [ "${{ steps.gate_exit.outcome }}" != "success" ] \
+             || [ "${{ steps.gate_result.outcome }}" != "success" ] \
+             || [ "${{ steps.gate_executed.outcome }}" != "success" ]; then
+            echo "::error::FHIR conformance gate FAILED — see which gate step above is red"
             exit 1
           fi
-
-          echo "FHIR conformance gate PASSED — $RESULT over $EXECUTED tests"
+          echo "FHIR conformance gate PASSED"
 
       - name: Upload the odoo log
         if: always()
