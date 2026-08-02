@@ -49,6 +49,16 @@ to anyone looking at the run summary, with no token and no download. Keep
 that shape when editing the workflow — collapsing the steps back into one
 `run:` block would save eight lines and cost the diagnosis.
 
+**Do not add `continue-on-error: true` to a gate.** It rewrites the step's
+public `conclusion` to `success` while only the private `outcome` records the
+failure, so the run summary shows four green gates under a red job and says
+nothing about which one failed — measured, not theorised: that is precisely
+what the first version of this workflow produced. The gates fail hard and in
+order, so the first `failure` names the problem and the rest read `skipped`.
+The install steps *do* use it, because they are a deliberate fallback chain —
+there, the signal is which attempt **ran** (a later attempt running at all
+means the earlier one failed), not what its conclusion says.
+
 The threshold is a floor, not a pin — it fails on collapse (a module that
 silently failed to install, a `--test-tags` typo), not on ordinary growth.
 Raise it if the suite ever shrinks past it for a legitimate reason, and say so
