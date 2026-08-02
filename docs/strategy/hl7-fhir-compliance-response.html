@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HL7 / FHIR Conformance &amp; Vietnam Regulatory Approval — Response</title>
+<style>
+  :root{
+    --ink:#15181C; --ink2:#40474F; --ink3:#6B7480;
+    --line:#DCE0E5; --line2:#EEF0F3; --bg:#FFFFFF; --bg2:#F7F8FA;
+    --ok:#1B6E20; --warn:#B26A00; --bad:#B3261E; --na:#5A5A5A; --accent:#0B4F6C;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --ink:#E8EAED; --ink2:#B6BCC4; --ink3:#8A929C;
+      --line:#31363D; --line2:#23272C; --bg:#14171A; --bg2:#1B1F23;
+      --ok:#5FBF66; --warn:#E9A23B; --bad:#F2695E; --na:#9AA1AA; --accent:#7FC3DC; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 28px 96px}
+  header.doc{border-bottom:3px solid var(--ink);padding-bottom:22px;margin-bottom:34px}
+  .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+  h1{font-size:30px;line-height:1.2;margin:10px 0 8px;letter-spacing:-.02em}
+  .sub{color:var(--ink2);font-size:15px;margin:0}
+  h2{font-size:20px;margin:52px 0 12px;padding-top:18px;border-top:1px solid var(--line);letter-spacing:-.01em}
+  h2 .num{color:var(--ink3);font-weight:600;margin-right:.5em}
+  h3{font-size:15.5px;margin:28px 0 8px;letter-spacing:-.005em}
+  h4{font-size:13px;margin:20px 0 6px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3)}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 14px;padding-left:22px}
+  li{margin:5px 0}
+  code,kbd{font-family:var(--mono);font-size:12.5px;background:var(--bg2);
+    border:1px solid var(--line2);border-radius:4px;padding:1px 5px}
+  pre{background:var(--bg2);border:1px solid var(--line);border-radius:8px;
+    padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.55;margin:0 0 16px}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+  a{color:var(--accent)}
+  .tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--line);border-radius:8px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:560px}
+  th{text-align:left;background:var(--bg2);font-weight:700;font-size:11.5px;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);
+    padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:9px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  td.mono,th.mono{font-family:var(--mono);font-size:12px}
+  .b{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;
+    text-transform:uppercase;padding:2px 7px;border-radius:4px;white-space:nowrap;
+    border:1px solid currentColor}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)} .na{color:var(--na)}
+  .callout{border-left:4px solid var(--ink);background:var(--bg2);
+    padding:14px 18px;border-radius:0 8px 8px 0;margin:0 0 18px}
+  .callout.bad{border-left-color:var(--bad)}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.ok{border-left-color:var(--ok)}
+  .callout p:last-child{margin-bottom:0}
+  .callout .lbl{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    display:block;margin-bottom:5px;color:var(--ink3)}
+  .q{font-weight:700;color:var(--ink);margin:26px 0 6px;padding-left:14px;border-left:3px solid var(--accent)}
+  .kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 22px;font-size:13.5px;margin:0 0 20px}
+  .kv dt{color:var(--ink3);font-weight:600}
+  .kv dd{margin:0;font-family:var(--mono);font-size:12.5px}
+  .toc{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin:0 0 8px}
+  .toc ol{margin:0;padding-left:20px;font-size:13.5px;columns:2;column-gap:34px}
+  .toc li{margin:3px 0;break-inside:avoid}
+  footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
+    color:var(--ink3);font-size:12.5px}
+  .note{font-size:12.5px;color:var(--ink3)}
+  @media print{
+    body{background:#fff;color:#000;font-size:10.5pt}
+    .wrap{max-width:none;padding:0}
+    h2{page-break-after:avoid} .tw,table,.callout{page-break-inside:avoid}
+    a{color:#000;text-decoration:none} pre{background:#f4f4f4}
+  }
+  @media (max-width:640px){ .toc ol{columns:1} .kv{grid-template-columns:1fr;gap:0 0} .kv dd{margin-bottom:10px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <div class="eyebrow">Technical &amp; Regulatory Response · Confidential</div>
+  <h1>HL7 / FHIR Conformance and Vietnam Regulatory Approval</h1>
+  <p class="sub">A point-by-point answer to the client's fifteen questions, with verifiable evidence, an honest gap register, and the approval path to 31 December 2026.</p>
+</header>
+
+<dl class="kv">
+  <dt>Prepared</dt><dd>2 August 2026</dd>
+  <dt>Platform</dt><dd>health19 / CarejioX — Odoo 19 Community</dd>
+  <dt>Build under review</dt><dd>branch <code>19.0</code>, commit <code>55e9ea0b</code></dd>
+  <dt>FHIR facade version</dt><dd>health_fhir_core <code>19.0.1.3.0</code></dd>
+  <dt>Environment inspected</dt><dd>care.biztinct.com — database <code>vietuat</code> (UAT)</dd>
+  <dt>Evidence basis</dt><dd>live endpoint + source code + UAT database, not documentation</dd>
+</dl>
+
+<div class="toc">
+  <ol>
+    <li><a href="#s0">Bottom line up front</a></li>
+    <li><a href="#s1">Which HL7 standards are implemented</a></li>
+    <li><a href="#s2">FHIR resources supported</a></li>
+    <li><a href="#s3">Capability Statement — published and accessible</a></li>
+    <li><a href="#s4">Conformance testing: Touchstone, Connectathon, bilateral</a></li>
+    <li><a href="#s5">Design-time vs operational conformance, and drift</a></li>
+    <li><a href="#s6">Certification status and the correct claim language</a></li>
+    <li><a href="#s7">Live today vs planned</a></li>
+    <li><a href="#s8">The Vietnam approval path (SYT / MOH)</a></li>
+    <li><a href="#s9">Gap register — all 20 items</a></li>
+    <li><a href="#s10">Remediation programme — closing every gap</a><br>
+      <span class="note"><a href="#s103">work packages</a> · <a href="#s104">schedule</a> · <a href="#s105">closure matrix</a> · <a href="#s106">governance</a> · <a href="#s108">definition of done</a></span></li>
+    <li><a href="#a1">Appendix A — verify this yourself</a></li>
+    <li><a href="#a2">Appendix B — build manifest</a></li>
+    <li><a href="#a3">Appendix C — sources</a></li>
+  </ol>
+</div>
+
+<!-- ===================================================================== -->
+<h2 id="s0"><span class="num">0.</span>Bottom line up front</h2>
+
+<div class="callout bad">
+  <span class="lbl">Correction we are making first</span>
+  <p><strong>"Compliant" was the wrong word and we are withdrawing it.</strong> The accurate statement is: <em>the system implements HL7 FHIR R4 (4.0.1) and is conformant by construction and self-assessed; it has not been externally tested or certified by any body.</em> Nobody has certified this system, and no HL7 conformance test suite has been run against it. The engineering underneath is real and verifiable — but the word "compliant" implies an external attestation that does not exist, and you should not carry that word into a submission to a Vietnamese authority.</p>
+</div>
+
+<div class="callout ok">
+  <span class="lbl">The reassuring part, and it is material</span>
+  <p><strong>Vietnam does not certify healthcare software products.</strong> There is no Vietnamese equivalent of the US ONC Health IT Certification Program. Under Circular 54/2017/TT-BYT the <em>facility</em> — not the vendor, not the app — determines its own IT-application level and reports it to its supervising health authority; under Circular 13/2025/TT-BYT the <em>facility</em> deploys electronic medical records and issues its own internal regulation governing them. The software is <strong>evidence in the facility's file</strong>, not a separately licensed object. So the approval you need is obtainable, and it does not depend on us holding a certificate that no Vietnamese authority issues.</p>
+</div>
+
+<p>Six things to take away:</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:30px">#</th><th>Finding</th><th style="width:120px">Status</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>FHIR R4 (4.0.1) REST is implemented and live</strong> — a read-only facade serving 21 resource types with OAuth2 scopes, cursor pagination, strict <code>OperationOutcome</code> error handling, and a machine-generated CapabilityStatement at a public URL.</td><td><span class="b ok">Live</span></td></tr>
+<tr><td>2</td><td><strong>HL7 v2.x messaging and CDA/C-CDA are not implemented at all.</strong> Zero lines of code. This is a deliberate architectural choice, not an omission — but it must be stated plainly.</td><td><span class="b bad">Not built</span></td></tr>
+<tr><td>3</td><td><strong>No Implementation Guide conformance is claimed.</strong> Resources validate against base FHIR R4 definitions. No <code>meta.profile</code> assertions are emitted. Vietnam's national IG ("VN Core") is itself a draft, unapproved by MOH — so there is currently no national profile to certify against.</td><td><span class="b warn">Base R4 only</span></td></tr>
+<tr><td>4</td><td><strong>No Touchstone run, no Connectathon, no bilateral interface test with a live third-party system.</strong> This is the single largest honest gap. It is also the most cheaply closed — Touchstone is free to register and the basic read/search test scripts are days of work, not months.</td><td><span class="b bad">Gap</span></td></tr>
+<tr><td>5</td><td><strong>Conformance is verified at build time by 78 automated tests, not continuously in production.</strong> Every serialized resource is structurally validated against the <code>fhir.resources</code> pydantic R4B models. A runtime validation switch exists but is currently off, and there is no CI pipeline or drift alarm.</td><td><span class="b warn">Partial</span></td></tr>
+<tr><td>6</td><td><strong>Two items are more likely to obstruct Vietnamese approval than FHIR ever will:</strong> (a) the current environment stores Vietnamese patient data on AWS <code>ap-southeast-2</code> (Sydney), which needs a data-residency decision before production SaaS in Vietnam; (b) legally-valid digital signature (chữ ký số) via a licensed Vietnamese CA is not yet integrated, and Circular 13/2025 turns on electronic authentication of records.</td><td><span class="b bad">Escalate</span></td></tr>
+</tbody></table></div>
+
+<div class="callout">
+  <span class="lbl">And the answer to "so what are you doing about it"</span>
+  <p><strong>§9 lists all 20 gaps we found. §10 is the programme that closes every one of them</strong> — 23 work packages across five workstreams, each with a named owner, a testable acceptance criterion, and a physical evidence artefact that lands in the regulatory dossier. §10.5 is a closure matrix proving no item is left unowned; §10.8 states the exit criteria under which the register is empty and what we would then be entitled to claim. Target: gaps closed and the facility's filing lodged by <strong>30 November 2026</strong>, one month ahead of the statutory deadline.</p>
+</div>
+
+<!-- ===================================================================== -->
+<h2 id="s1"><span class="num">1.</span>Which HL7 standards are actually implemented, and at which version</h2>
+
+<p class="q">Q. Which HL7 standard(s) are actually implemented — FHIR (REST API), HL7 v2.x messaging, CDA documents, or a combination? For each one, which version?</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:190px">Standard</th><th style="width:110px">Implemented</th><th style="width:110px">Version</th><th>What exists, precisely</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>HL7 FHIR — RESTful API</strong></td>
+  <td><span class="b ok">Yes</span></td>
+  <td class="mono">R4 · 4.0.1</td>
+  <td>A read-only FHIR facade at <code>/fhir/r4/*</code>, implemented in-process as an Odoo addon (<code>health_fhir_core</code>) so that the platform's existing record-level security applies to every FHIR query. Supports <code>read</code> and <code>search-type</code> on 21 resource types, plus the <code>Patient/$everything</code> compartment operation, <code>CodeSystem/$lookup</code> and <code>ValueSet/$expand</code>. Content type <code>application/fhir+json</code>. Auth is OAuth2 client-credentials with SMART-style <code>system/&lt;Resource&gt;.read</code> scopes.</td>
+</tr>
+<tr>
+  <td><strong>HL7 v2.x messaging</strong><br><span class="note">(ADT, ORU, ORM, MLLP)</span></td>
+  <td><span class="b bad">No</span></td>
+  <td class="mono">—</td>
+  <td>Not implemented. No message parser, no MLLP listener, no v2 conformance profile. A code search across the entire repository for v2 message types, segments and MLLP returns zero results. If a Vietnamese hospital HIS requires an ADT/ORU feed, that is new work (an adapter on the existing country-adapter seam, est. 3–5 weeks).</td>
+</tr>
+<tr>
+  <td><strong>HL7 CDA / C-CDA</strong></td>
+  <td><span class="b bad">No</span></td>
+  <td class="mono">—</td>
+  <td>Not implemented. Clinical documents are exchanged as FHIR <code>DocumentReference</code> and as FHIR <code>Bundle</code> exports, not as CDA XML. Note that Vietnam MOH published a Vietnamese-language CDA standard (Decision 3926/QĐ-BYT, 2017) for voluntary application; we do not implement it.</td>
+</tr>
+<tr>
+  <td><strong>FHIR Bulk Data / <code>$export</code></strong></td>
+  <td><span class="b bad">No</span></td>
+  <td class="mono">—</td>
+  <td>Designed but not built. The equivalent capability today is <code>Patient/$everything</code> (one patient at a time) and the Vietnam EMR bundle export (file-based).</td>
+</tr>
+<tr>
+  <td><strong>FHIR writes / transactions</strong></td>
+  <td><span class="b bad">No</span></td>
+  <td class="mono">—</td>
+  <td>The facade is deliberately read-only. No <code>create</code>, <code>update</code>, <code>delete</code>, <code>vread</code>, <code>history</code> or <code>transaction</code> Bundle. The CapabilityStatement declares only <code>read</code> and <code>search-type</code>, so this is honestly advertised rather than silently missing.</td>
+</tr>
+<tr>
+  <td><strong>Terminologies</strong></td>
+  <td><span class="b warn">Partial</span></td>
+  <td class="mono">—</td>
+  <td>ICD-10 (primary for Vietnam), LOINC (vital signs), UCUM (units), RxNorm (medications) are active. SNOMED CT is deliberately seeded <em>inactive</em> — Vietnam is not a SNOMED International member, so SNOMED codes are never the sole coding on a Vietnamese record. 44 codes are loaded in UAT (starter seed); a bulk CSV importer exists for the full WHO / MOH-KCB ICD-10 release.</td>
+</tr>
+</tbody></table></div>
+
+<div class="callout warn">
+  <span class="lbl">One precision worth disclosing to an assessor</span>
+  <p>The CapabilityStatement declares <code>fhirVersion: 4.0.1</code> (R4), while the validation library used in our test suite is <code>fhir.resources</code> 8.3.0 resolving to its <strong>R4B</strong> model classes. For all 21 resource types we serve, the R4B StructureDefinitions are unchanged from R4 — R4B's substantive changes are confined to the Subscriptions framework and the evidence-based-medicine resources, none of which we expose. We nonetheless list this in the gap register as an item to formally confirm and pin, because an external reviewer will ask.</p>
+</div>
+
+<!-- ===================================================================== -->
+<h2 id="s2"><span class="num">2.</span>Which FHIR resources are supported, and against which Implementation Guide</h2>
+
+<p class="q">Q. Which specific FHIR resources are supported, and against which Implementation Guide, if any?</p>
+
+<h3>2.1 The 21 resource types, read live from the running server</h3>
+
+<p>This table is not a design document — it is the actual output of <code>GET https://care.biztinct.com/fhir/r4/metadata</code>, read on 2 August 2026. Every row is independently verifiable by the client without our involvement.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:200px">FHIR resource</th><th style="width:130px">Interactions</th><th>Search parameters supported</th><th style="width:150px">Backing module</th></tr></thead>
+<tbody>
+<tr><td>Patient</td><td>read, search</td><td class="mono">birthdate, identifier, name, phone, telecom, _lastUpdated<br><strong>+ operation <code>$everything</code></strong></td><td class="mono">health_crm</td></tr>
+<tr><td>Practitioner</td><td>read, search</td><td class="mono">identifier, name, _lastUpdated</td><td class="mono">hr / health_base</td></tr>
+<tr><td>Organization</td><td>read, search</td><td class="mono">identifier, name, _lastUpdated</td><td class="mono">health_base</td></tr>
+<tr><td>Location</td><td>read, search</td><td class="mono">name, organization, _lastUpdated</td><td class="mono">health_base</td></tr>
+<tr><td>Encounter</td><td>read, search</td><td class="mono">date, patient, status, _lastUpdated</td><td class="mono">health_fieldservice</td></tr>
+<tr><td>Appointment</td><td>read, search</td><td class="mono">date, patient, status, _lastUpdated</td><td class="mono">health_fieldservice</td></tr>
+<tr><td>ServiceRequest</td><td>read, search</td><td class="mono">patient, status, _lastUpdated</td><td class="mono">health_fieldservice</td></tr>
+<tr><td>Condition</td><td>read, search</td><td class="mono">clinical-status, code, patient, recorded-date, _lastUpdated</td><td class="mono">health_condition</td></tr>
+<tr><td>Observation</td><td>read, search</td><td class="mono">code, date, patient, status, _lastUpdated</td><td class="mono">health_vitals</td></tr>
+<tr><td>CarePlan</td><td>read, search</td><td class="mono">date, patient, status, _lastUpdated</td><td class="mono">health_careplan</td></tr>
+<tr><td>Goal</td><td>read, search</td><td class="mono">lifecycle-status, patient, _lastUpdated</td><td class="mono">health_careplan</td></tr>
+<tr><td>Task</td><td>read, search</td><td class="mono">encounter, patient, status, _lastUpdated</td><td class="mono">health_careplan</td></tr>
+<tr><td>MedicationRequest</td><td>read, search</td><td class="mono">patient, status, _lastUpdated</td><td class="mono">health_emar</td></tr>
+<tr><td>MedicationAdministration</td><td>read, search</td><td class="mono">date, patient, status, _lastUpdated</td><td class="mono">health_emar</td></tr>
+<tr><td>Questionnaire</td><td>read, search</td><td class="mono">name, status, _lastUpdated</td><td class="mono">health_forms</td></tr>
+<tr><td>QuestionnaireResponse</td><td>read, search</td><td class="mono">authored, patient, questionnaire, status, _lastUpdated</td><td class="mono">health_forms</td></tr>
+<tr><td>AdverseEvent</td><td>read, search</td><td class="mono">date, patient, severity, _lastUpdated</td><td class="mono">health_incident</td></tr>
+<tr><td>Flag</td><td>read, search</td><td class="mono">patient, _lastUpdated</td><td class="mono">health_base</td></tr>
+<tr><td>Consent</td><td>read, search</td><td class="mono">patient, status, _lastUpdated</td><td class="mono">health_consent</td></tr>
+<tr><td>DocumentReference</td><td>read, search</td><td class="mono">date, encounter, patient, _lastUpdated</td><td class="mono">health_fieldservice</td></tr>
+<tr><td>CodeSystem</td><td>read, search</td><td class="mono">name, url, _lastUpdated</td><td class="mono">health_fhir_terminology</td></tr>
+</tbody></table></div>
+
+<p class="note">Two further operations are implemented and reachable on the live server but — see §9 — are <strong>not yet declared</strong> in the CapabilityStatement: <code>GET /fhir/r4/CodeSystem/$lookup</code> and <code>GET /fhir/r4/ValueSet/$expand</code>.</p>
+
+<h3>2.2 Implementation Guide conformance</h3>
+
+<p class="q">Q. …against which Implementation Guide, if any (e.g. a national or regional profile)?</p>
+
+<div class="callout">
+  <p><strong>None. We conform to base FHIR R4 resource definitions only, and we assert no profile.</strong> Our serializers do not emit <code>meta.profile</code>, which is the correct and honest behaviour: claiming a profile you have not validated against is worse than claiming none.</p>
+</div>
+
+<p>The reason this is defensible rather than negligent is that <strong>there is no national Vietnamese FHIR profile to conform to yet</strong>:</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:210px">Candidate IG</th><th style="width:130px">Status</th><th>Assessment</th></tr></thead>
+<tbody>
+<tr><td><strong>VN Core IG</strong><br><span class="note">fhir.hl7.org.vn</span></td><td><span class="b warn">Draft, unapproved</span></td><td>An FHIR R4 (4.0.1) trial-use guide for the Vietnamese context. Its own documentation states it is <em>not</em> a national standard and <em>not</em> an HL7 International approved publication. Two divergent repositories exist (an MOH IT Department 2024 draft and an actively-developed Omi HealthTech branch) with no unified governance. Version 1.0.0 is projected for Q3 2027, contingent on implementation evidence. There are zero confirmed public pilots.</td></tr>
+<tr><td><strong>Any MOH mandate for FHIR</strong></td><td><span class="b bad">Does not exist</span></td><td>Neither Circular 13/2025/TT-BYT nor Circular 54/2017/TT-BYT mandates FHIR. Decision 130/QĐ-BYT as amended by 3176/QĐ-BYT defines healthcare data standards without mandating FHIR. The mandatory machine-readable interface in Vietnam <em>today</em> is the BHYT/BHXH insurance claim XML, which is a proprietary schema, not HL7.</td></tr>
+<tr><td><strong>US Core / IPS / AU Base</strong></td><td><span class="b na">Out of scope</span></td><td>Not applicable to the Vietnamese market and not implemented. IPS (International Patient Summary) would be the sensible first external IG to target if cross-border referral becomes a requirement.</td></tr>
+</tbody></table></div>
+
+<div class="callout ok">
+  <p><strong>Strategic read.</strong> Because VN Core is still a draft with no confirmed public pilots, being an early conformant implementer is available to us at low cost and would be a genuine differentiator in front of an SYT assessor. We recommend adopting VN Core 0.5.0/0.8.0 as a <em>declared target</em> — see §10, step 3.</p>
+</div>
+
+<!-- ===================================================================== -->
+<h2 id="s3"><span class="num">3.</span>Capability Statement — published, public, and machine-generated</h2>
+
+<p class="q">Q. Can you provide the system's current Capability Statement? Is it published/accessible, or only available internally?</p>
+
+<div class="callout ok">
+  <p><strong>It is public, live, and requires no credentials.</strong> The client can fetch it right now:</p>
+  <pre><code>curl https://care.biztinct.com/fhir/r4/metadata</code></pre>
+  <p>This is the FHIR-specified conformance endpoint. It returns <code>200</code> with a complete <code>CapabilityStatement</code> resource. It contains no patient data, which is why it is safe to leave unauthenticated — and leaving it unauthenticated is what the specification expects.</p>
+</div>
+
+<h3>3.1 Why this statement can be trusted more than a hand-written one</h3>
+
+<p>The CapabilityStatement is <strong>not maintained by hand</strong>. It is generated at runtime from the same serializer registry that actually serves the requests (<code>health_fhir_core/capability.py</code>, derived from <code>serializers.REGISTRY</code>). The resource list, the interaction list and the search-parameter tables are read out of the live code path.</p>
+
+<p>The practical consequence for the client's drift question in §5: <strong>the declared capability cannot silently diverge from the implemented capability for resources and search parameters</strong>, because there is only one source of truth. If a developer adds a resource, it appears in the statement automatically; if they remove a search parameter, it disappears. This eliminates the most common category of conformance drift by construction rather than by discipline.</p>
+
+<p>The known exception — operations declared separately from routes — is exactly the gap identified in §9, item G2.</p>
+
+<h3>3.2 Header of the current statement</h3>
+
+<pre><code>{
+  "resourceType": "CapabilityStatement",
+  "status": "active",
+  "date": "2026-08-02T06:03:01+00:00",
+  "kind": "instance",
+  "name": "Health19FHIRFacade",
+  "title": "health19 FHIR R4 Facade (read-only, Phase 1)",
+  "publisher": "health19",
+  "fhirVersion": "4.0.1",
+  "format": ["application/fhir+json"],
+  "implementation": {
+    "description": "health19 FHIR R4 facade",
+    "url": "http://care.biztinct.com/fhir/r4"
+  },
+  "rest": [{
+    "mode": "server",
+    "security": { "service": [{ "coding": [{
+      "system": "http://terminology.hl7.org/CodeSystem/restful-security-service",
+      "code": "OAuth" }]}]},
+    "resource": [ /* 21 resource entries */ ]
+  }]
+}</code></pre>
+
+<p><strong>Missing element to fix immediately:</strong> the statement has no <code>software</code> element carrying a name and version. Since the client must record "assessing body, date and version number", the version the regulator records should be the one the system itself reports. Adding <code>software: {name: "health19 / CarejioX", version: "19.0.1.3.0", releaseDate: …}</code> makes the endpoint self-documenting for audit. This is a one-hour change and it is in the step-1 work package.</p>
+
+<h3>3.3 Conformance profile for HL7 v2</h3>
+<p>Not applicable — no v2 interface exists, therefore no v2 conformance profile exists.</p>
+
+<!-- ===================================================================== -->
+<h2 id="s4"><span class="num">4.</span>Conformance testing: Touchstone, Connectathon, bilateral</h2>
+
+<p class="q">Q. Has the FHIR API been run against HL7's Touchstone platform? Has the system participated in a Connectathon or bilateral interface testing with another live system?</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:290px">External validation activity</th><th style="width:110px">Status</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td><strong>HL7 Touchstone conformance testing</strong></td><td><span class="b bad">Never run</span></td><td>No account, no test-script execution, no results to share. Nothing has been run against <code>FHIR4-0-1-Basic</code>, the connectathon track scripts, or any other suite.</td></tr>
+<tr><td><strong>HL7 FHIR Connectathon participation</strong></td><td><span class="b bad">Never</span></td><td>The platform has never been entered in an HL7 Connectathon, in any track, in any region.</td></tr>
+<tr><td><strong>Bilateral interface testing with a live third-party system</strong></td><td><span class="b bad">Never</span></td><td>No hospital HIS, no laboratory, no national platform, no payer has ever connected to this FHIR endpoint. There are 2 OAuth clients registered on UAT (1 active) and they are our own smoke-test credentials.</td></tr>
+<tr><td><strong>Inferno / other automated conformance suites</strong></td><td><span class="b bad">Never run</span></td><td>Not attempted.</td></tr>
+<tr><td><strong>Independent third-party code or security audit of the FHIR layer</strong></td><td><span class="b bad">Never</span></td><td>All review to date has been internal.</td></tr>
+</tbody></table></div>
+
+<p class="q">Q. If no formal testing has been done, what internal testing process exists, and what does it check?</p>
+
+<h3>4.1 What the internal process actually is</h3>
+
+<p>The internal process is an automated test suite of <strong>78 tests across the FHIR layer</strong> (a further 16 cover the API gateway and auth), executed with the Odoo test runner against a real PostgreSQL database with real ORM records — not mocks. Every test that produces a FHIR resource passes it through <code>validate_resource()</code>, which constructs the corresponding <code>fhir.resources</code> pydantic model. A structurally invalid resource fails the build.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:230px">Suite</th><th style="width:60px">Tests</th><th>What it verifies</th></tr></thead>
+<tbody>
+<tr><td class="mono">health_fhir_core<br>test_fhir_core</td><td>14</td><td>CapabilityStatement contents; Patient serialization and validation; national-ID identifier slotting; search by identifier / name / date / reference; that an <strong>unsupported search parameter returns a strict HTTP 400 <code>OperationOutcome</code></strong> rather than being silently ignored; that one field-service order splits correctly into three linked resources; cursor pagination; unknown id → <code>not-found</code> outcome.</td></tr>
+<tr><td class="mono">health_fhir_core<br>test_fhir_phase2</td><td>14</td><td>Clinical-spine resources. LOINC codes and UCUM units on Observation; blood-pressure panels as <code>component[]</code>; vital-signs category; CarePlan/Goal/Task; MedicationRequest/Administration status mapping; Questionnaire and QuestionnaireResponse; AdverseEvent; Flag lifecycle; Consent active vs withdrawn. Each asserts <code>validate_resource()</code> passes.</td></tr>
+<tr><td class="mono">health_fhir_core<br>test_fhir_consent</td><td>5</td><td>The consent gate: log-only mode audits without withholding; enforced mode filters un-consented patients; a single un-consented subject denies a multi-subject record; non-PHI resources pass through ungated.</td></tr>
+<tr><td class="mono">health_fhir_core<br>test_fhir_everything</td><td>13</td><td><code>Patient/$everything</code>: bundle shape and validation; cross-patient isolation; compartment coverage; non-PHI exclusion; consent enforce/deny/log paths; record-rule isolation; <code>_type</code> and <code>_since</code> filters; <strong>declared truncation</strong> (a truncated result emits an <code>OperationOutcome</code> rather than silently returning a partial answer); declared handling of an unreadable compartment model.</td></tr>
+<tr><td class="mono">health_condition</td><td>14</td><td>Problem-list lifecycle, ICD-10 coding, additive-only removal, FHIR Condition validation, registry and capability registration, inclusion in <code>$everything</code>, search domains, record rules.</td></tr>
+<tr><td class="mono">health_fhir_terminology</td><td>9</td><td>Code-system seeds; duplicate-code and duplicate-URI constraints; Vietnamese-first typeahead; idempotent CSV re-import; CodeSystem serializer and capability registration; <code>$lookup</code> known and unknown; <code>$expand</code> with Vietnamese filter.</td></tr>
+<tr><td class="mono">health_fhir_adapter_base</td><td>4</td><td>Submission-log append-only guarantees: sequence assignment, non-draft deletion refused even for superuser, locked-field writes refused after draft, state/receipt writable.</td></tr>
+<tr><td class="mono">health_fhir_adapter_vn</td><td>5</td><td>Vietnam EMR bundle construction; VN profile validation issues; export produces an audit log row plus a JSON attachment; live ICD-10 coding-density computation; VNeID field defaults. Every entry in the exported bundle is passed through <code>validate_resource()</code>.</td></tr>
+</tbody></table></div>
+
+<h3>4.2 What the internal process does <em>not</em> check — stated plainly</h3>
+
+<div class="callout bad">
+<ul style="margin-bottom:0">
+  <li><strong>Semantic conformance.</strong> A resource can be structurally valid and still be clinically or semantically wrong. Nothing checks that our Encounter status mapping is the mapping a Vietnamese hospital would expect.</li>
+  <li><strong>Search-parameter behaviour against the specification's expectations.</strong> We test that our search parameters do what <em>we</em> intended, not that a conformant client's queries behave as the FHIR search specification requires (modifiers, chaining, <code>:missing</code>, prefix semantics on all types).</li>
+  <li><strong>Terminology binding validation.</strong> We do not verify that codes we emit are members of the ValueSets the specification binds those elements to.</li>
+  <li><strong>Interoperability.</strong> Passing our own tests proves internal consistency. It does not prove that a third-party FHIR client can consume our output — that requires an actual third-party client, which is what a Connectathon or a bilateral test provides.</li>
+  <li><strong>The tests are not run automatically.</strong> There is no CI pipeline. They run when an engineer runs them.</li>
+</ul>
+</div>
+
+<!-- ===================================================================== -->
+<h2 id="s5"><span class="num">5.</span>Design-time versus operational conformance, and drift</h2>
+
+<p class="q">Q. Is conformance validated at build/design time only, or is there an ongoing operational check? If the data model or API changes, what re-validates conformance — automatic or manual? Who notices if conformance drifts?</p>
+
+<h3>5.1 Honest current state</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:250px">Control</th><th style="width:120px">Exists?</th><th>Reality</th></tr></thead>
+<tbody>
+<tr><td>Build-time structural validation</td><td><span class="b ok">Yes</span></td><td>78 tests; every serialized resource validated against the pydantic FHIR models. Strong, and genuinely load-bearing.</td></tr>
+<tr><td>Capability statement drift protection</td><td><span class="b ok">Yes, by design</span></td><td>Registry-generated. Resources and search parameters cannot diverge from the code. Declared <em>operations</em> are the exception (§9 G2).</td></tr>
+<tr><td>Runtime response validation</td><td><span class="b warn">Built, switched off</span></td><td>A config flag <code>health_fhir_core.validate_responses</code> makes the controller validate every outbound payload before serving it. It is <strong>not set</strong> on UAT, so it is off. It is off by design for latency, but it means production responses are currently unvalidated.</td></tr>
+<tr><td>Continuous integration</td><td><span class="b bad">None</span></td><td>No CI configuration exists in the repository. Nothing runs the test suite on commit, on merge, or on deploy.</td></tr>
+<tr><td>Post-deploy conformance smoke test</td><td><span class="b bad">None</span></td><td>The deployment procedure restarts the service and checks it responds. It does not re-fetch the CapabilityStatement or re-validate a sample resource.</td></tr>
+<tr><td>Conformance drift monitoring / alerting</td><td><span class="b bad">None</span></td><td>Nothing watches the FHIR surface over time. There is no baseline snapshot to diff against.</td></tr>
+<tr><td>Named accountable owner</td><td><span class="b bad">Not formally assigned</span></td><td>Today it depends on the engineer who touches the code remembering to run the suite. That is precisely the failure mode the client is asking about, and they are right to ask.</td></tr>
+</tbody></table></div>
+
+<div class="callout bad">
+  <p><strong>Direct answer to "does it rely on someone remembering to re-check?" — yes, today it does.</strong> That is not an acceptable steady state for a system carrying an EMR claim, and closing it is step 2 of §10. It is also inexpensive to close: the tests already exist; what is missing is the machinery that runs them without being asked.</p>
+</div>
+
+<h3>5.2 The controls we propose to put in place</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:56px">Ref</th><th style="width:230px">Control</th><th>Mechanism</th><th style="width:110px">Effort</th></tr></thead>
+<tbody>
+<tr><td class="mono">C1</td><td>Conformance gate in CI</td><td>The 78-test FHIR suite plus the gateway suite run on every merge to <code>19.0</code>. A failing FHIR validation blocks the merge. This converts conformance from a habit into a mechanism.</td><td>2–3 days</td></tr>
+<tr><td class="mono">C2</td><td>Capability baseline diff</td><td>Snapshot the CapabilityStatement into version control. CI fetches the statement from a test instance and diffs it against the baseline; any change to resources, interactions, search parameters or operations must be an explicit, reviewed commit — never an accident.</td><td>1–2 days</td></tr>
+<tr><td class="mono">C3</td><td>Post-deploy conformance smoke</td><td>Extend the deploy script: after restart, fetch <code>/fhir/r4/metadata</code>, assert <code>fhirVersion</code> and resource count, fetch one resource of each type with a test token, validate each. Fail the deploy if any check fails.</td><td>2 days</td></tr>
+<tr><td class="mono">C4</td><td>Turn on runtime validation in a sampled mode</td><td>Enable <code>validate_responses</code> for a sampled percentage of responses (or on a canary client) so live drift is caught, without paying full validation latency on every request.</td><td>2 days</td></tr>
+<tr><td class="mono">C5</td><td>Scheduled conformance job</td><td>A weekly cron that re-runs the Touchstone execution (once §10 step 2 exists) and the capability diff, and posts the result to the platform's own incident channel.</td><td>2 days</td></tr>
+<tr><td class="mono">C6</td><td>Named accountability</td><td>Assign a named <strong>Interoperability Owner</strong> role, accountable for: the conformance baseline, reviewing every capability diff, the annual Touchstone re-run, and the regulatory dossier version. Record the name in the facility's IT-application file so the assessor can see the control has an owner.</td><td>Decision</td></tr>
+</tbody></table></div>
+
+<p>With C1–C3 in place the honest answer to "is re-validation automatic or manual?" changes from <em>"manual, on request"</em> to <em>"automatic on every change, with a human review required for any deliberate capability change"</em>. That is the answer the client is looking for, and it is achievable inside two weeks.</p>
+
+<!-- ===================================================================== -->
+<h2 id="s6"><span class="num">6.</span>Certification status, and the language we should use instead</h2>
+
+<p class="q">Q. Is the system certified under any formal program (e.g. US ONC Health IT Certification), or is conformance self-assessed? If self-assessed, on what basis do you describe it as "compliant" rather than "designed toward"?</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:270px">Program</th><th style="width:120px">Status</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>US ONC / ASTP Health IT Certification</td><td><span class="b bad">Not certified</span></td><td>Never applied. Not applicable to the Vietnamese market and would be a significant, expensive undertaking pursued only for US market entry.</td></tr>
+<tr><td>HL7 FHIR conformance attestation</td><td><span class="b bad">None</span></td><td>HL7 does not issue product certificates in the ONC sense; the closest equivalents are Touchstone results and Connectathon participation records, and we hold neither.</td></tr>
+<tr><td>Vietnamese product certification</td><td><span class="b na">Does not exist</span></td><td>Vietnam operates no product-certification program for health IT. See §8.</td></tr>
+<tr><td>ISO 27001 / SOC 2 / ISO 13485</td><td><span class="b bad">Not held</span></td><td>Outside the scope of this question but likely to be asked by the same stakeholder — worth noting we hold none of these either.</td></tr>
+<tr><td><strong>Actual status</strong></td><td><span class="b warn">Self-assessed</span></td><td>Conformance is asserted by us, on the basis of our own automated test evidence, with no external attestation of any kind.</td></tr>
+</tbody></table></div>
+
+<h3>6.1 The basis on which we would defend a claim — and its exact limits</h3>
+
+<p>The engineering basis for saying something stronger than "designed toward" is real and it is threefold:</p>
+<ol>
+  <li><strong>It runs.</strong> The endpoint is live, publicly introspectable, and serves 21 resource types today. This is not a specification or a roadmap.</li>
+  <li><strong>It is validated against the official structure definitions.</strong> Every resource the system emits is constructed through the <code>fhir.resources</code> pydantic models generated from the HL7 R4/R4B StructureDefinitions. Malformed FHIR fails the build.</li>
+  <li><strong>It declares only what it does.</strong> The CapabilityStatement is code-generated, the facade rejects unsupported search parameters with a strict <code>OperationOutcome</code> rather than silently ignoring them, and truncation is declared rather than hidden. These are exactly the behaviours external conformance suites test for and where hand-built facades typically fail.</li>
+</ol>
+
+<div class="callout bad">
+  <span class="lbl">And the limits, which we should never blur</span>
+  <p>None of that is <em>certification</em>, and none of it is <em>interoperability evidence</em>. Structural validity ≠ semantic correctness ≠ a working interface with somebody else's system. Nobody outside our team has tested this, ever.</p>
+</div>
+
+<h3>6.2 Recommended standard wording</h3>
+
+<p>Use this sentence, verbatim, in submissions, tenders and partner discussions until §10 step 2 is complete:</p>
+
+<div class="callout ok">
+  <p>"The CarejioX platform implements an HL7 FHIR R4 (4.0.1) RESTful API exposing 21 resource types, with a publicly accessible CapabilityStatement at <code>/fhir/r4/metadata</code>. All emitted resources are validated against the official HL7 FHIR R4 structure definitions in an automated test suite. <strong>Conformance is currently self-assessed; the system is not certified under any external program and has not yet been submitted for third-party conformance testing.</strong> An HL7 Touchstone conformance run is scheduled for [date]."</p>
+</div>
+
+<p>Once Touchstone results exist, the final sentence is replaced with the run date, the test scripts executed, the pass rate, and a link to the published result — which converts a self-assertion into third-party evidence.</p>
+
+<!-- ===================================================================== -->
+<h2 id="s7"><span class="num">7.</span>What is live today versus planned</h2>
+
+<p class="q">Q. Which parts of the CMS actually use HL7/FHIR today (live, in production) versus planned for a future release?</p>
+
+<div class="callout warn">
+  <span class="lbl">Definition, because it matters to the answer</span>
+  <p>The environment inspected — <code>care.biztinct.com</code>, database <code>vietuat</code> — is the <strong>UAT / pre-go-live environment</strong>. There is no separate production instance running the FHIR layer with live patient traffic. So the precise answer to "live in production" is: <em>deployed, functioning, and carrying no external production traffic yet.</em></p>
+</div>
+
+<h3>7.1 Deployed and functioning</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:250px">Capability</th><th style="width:110px">State</th><th>Evidence from the UAT database, 2 Aug 2026</th></tr></thead>
+<tbody>
+<tr><td>FHIR R4 read/search facade (21 resources)</td><td><span class="b ok">Deployed</span></td><td><code>health_fhir_core 19.0.1.3.0</code> installed; <code>/fhir/r4/metadata</code> returns 200 publicly.</td></tr>
+<tr><td>OAuth2 client-credentials + scopes</td><td><span class="b ok">Deployed</span></td><td>2 OAuth clients registered, 1 active — <strong>both are our own test credentials; no external partner is connected.</strong></td></tr>
+<tr><td>PHI access audit log</td><td><span class="b ok">Deployed</span></td><td>32 rows in <code>api_audit_log</code>. Every external read is recorded with route, resource type, resource ids, patient ids, caller and status. 32 rows is test traffic, not clinical traffic.</td></tr>
+<tr><td>Consent gate on external release</td><td><span class="b warn">Deployed, log-only</span></td><td><code>health_fhir_core.consent_enforced = False</code>. Every consent decision is logged, but nothing is currently withheld. <strong>This must be flipped to enforced before any real external partner connects.</strong></td></tr>
+<tr><td><code>Patient/$everything</code> whole-record export</td><td><span class="b ok">Deployed</span></td><td>Declared in the capability, 13 tests, consent-gated with a single whole-record decision.</td></tr>
+<tr><td>Vietnam EMR bundle export (Circular 13/2025)</td><td><span class="b ok">Deployed</span></td><td><code>health_fhir_adapter_vn 19.0.1.1.0</code> installed; 1 submission-log row exists (a QA export of 26 entries). Transport is <strong>file export</strong> — see below.</td></tr>
+<tr><td>Terminology service (ICD-10 / LOINC)</td><td><span class="b warn">Deployed, seed data only</span></td><td>6 coding systems, <strong>44 codes</strong> loaded — the starter seed (13 LOINC vitals + 31 home-care ICD-10). The full WHO / MOH ICD-10 release has not been imported. The bulk importer exists.</td></tr>
+<tr><td>Structured clinical data volume</td><td><span class="b bad">Effectively none</span></td><td><strong>2 Condition records, 0 Observation records</strong> in UAT. The FHIR resources are wired to real models, but there is no clinical data flowing through them yet. Coding density — the figure an SYT assessor will actually look at — is therefore near zero today.</td></tr>
+</tbody></table></div>
+
+<h3>7.2 Designed but not built</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:290px">Item</th><th style="width:110px">State</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>Live transport to a national platform (LGSP/NGSP)</td><td><span class="b bad">Not built</span></td><td>The adapter's <code>transport()</code> returns "exported" and writes a file. There is no government endpoint to submit to — the national platform is not open — but this is a stub, and should be described as one.</td></tr>
+<tr><td>BHYT claims XML (Decision 4210 / 130 / 4750 / 3176)</td><td><span class="b bad">Not built</span></td><td>Claim spine exists (<code>health_bhyt</code> phase 1); the XML generator is blocked pending the official XSD. <strong>This, not FHIR, is the mandatory machine interface in Vietnam today.</strong></td></tr>
+<tr><td>VNeID OIDC identity verification</td><td><span class="b warn">Field capture only</span></td><td><code>vneid_verified</code> is a manually-set flag. There is no integration with the national identity service. Circular 13/2025 expects connection to the national citizen identification database.</td></tr>
+<tr><td>Legally-valid digital signature (chữ ký số)</td><td><span class="b warn">Partial</span></td><td>Records are finalized, signed-off and sealed with a tamper-evident SHA-256 hash chain, which is strong integrity engineering. It is <strong>not</strong> a legally-recognised electronic signature from a licensed Vietnamese CA (VNPT-CA, Viettel-CA, FPT-CA). For Circular 13/2025 this distinction matters.</td></tr>
+<tr><td>HL7 v2.x, CDA, FHIR Bulk <code>$export</code>, FHIR writes</td><td><span class="b bad">Not built</span></td><td>As per §1.</td></tr>
+<tr><td>DICOM / DICOMweb imaging</td><td><span class="b bad">Not built</span></td><td>A <code>has_imaging</code> boolean on the facility record; no protocol implementation.</td></tr>
+<tr><td>Country adapters for Singapore / Indonesia / Australia</td><td><span class="b bad">Design only</span></td><td>Scoped in the architecture document; zero code. The adapter seam means these are bounded new work, not a rewrite.</td></tr>
+</tbody></table></div>
+
+<!-- ===================================================================== -->
+<h2 id="s8"><span class="num">8.</span>The Vietnam approval path — what is actually being approved</h2>
+
+<p class="q">Q. When will this build be submitted to SYT/MOH? We have to record the assessing body, date and version number. Inspectors can order us to stop using an unauthorised system.</p>
+
+<div class="callout ok">
+  <span class="lbl">The most important correction in this document</span>
+  <p><strong>Under Vietnamese law there is no mechanism by which a software build is "submitted to SYT/MOH" for approval, because Vietnam does not certify or license health IT products.</strong> The regulated object is the <em>medical examination and treatment facility</em>. The facility determines its own compliance position, issues its own decision, and reports to its supervising health authority. Our software is evidence inside that file. There is no separate vendor approval to obtain, and no queue to join.</p>
+  <p style="margin-top:10px">This is good news for schedule, and it means the client's real risk is not "our app was never approved" — it is "our <em>facility</em> never completed its self-assessment and reporting obligations". That is what an inspector would find fault with, and it is entirely within the client's control.</p>
+</div>
+
+<h3>8.1 The two instruments, and what each actually requires</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:180px">Instrument</th><th style="width:170px">Regulated party &amp; mechanism</th><th>What must happen</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>Circular 54/2017/TT-BYT</strong><br><span class="note">IT-application criteria, in force since 27 Feb 2018</span></td>
+  <td>The facility. <strong>Self-determination</strong> of its IT-application level, by decision of the facility's director.</td>
+  <td>Eight criteria groups (infrastructure; management software; HIS; RIS-PACS; LIS; non-functional; information security and safety; EMR) map to a level scale. All criteria at a level must be met — one unmet criterion drops the facility to the next lower level. <strong>The facility's leadership issues the decision determining its level and reports it to the direct supervising health management agency (the SYT).</strong> There is no external product audit in this mechanism.</td>
+</tr>
+<tr>
+  <td><strong>Circular 13/2025/TT-BYT</strong><br><span class="note">EMR deployment; issued 6 Jun 2025, effective 21 Jul 2025; replaces 46/2018</span></td>
+  <td>The facility. Deployment obligation with a statutory deadline.</td>
+  <td>The facility must deploy EMR, and must <strong>develop and issue its own internal regulation</strong> governing the creation, updating, management, storage, use and information security of electronic medical records. Records must be authenticated by electronic signature, biometrics or other lawful means. EMR content must satisfy Chapter X of Circular 32/2023/TT-BYT. Connection to the national citizen identification database is expected. <strong>Deadlines: hospitals — 30 Sep 2025 (passed); other facilities with inpatient, day-treatment or outpatient patients — 31 Dec 2026.</strong> Paper records stop from 1 Jan 2027.</td>
+</tr>
+</tbody></table></div>
+
+<div class="callout warn">
+  <p><strong>Action required from the client before anything else:</strong> confirm which tier the operating entity falls into. If any part of the operation is classified as a <em>bệnh viện</em> (hospital), the 30 September 2025 deadline has already passed and the position needs to be regularised with the SYT immediately. If it is an "other facility" — the likely case for a home-care and clinic operator — the deadline is <strong>31 December 2026, roughly five months from now</strong>, and the plan in §10 fits inside it with margin.</p>
+</div>
+
+<h3>8.2 What FHIR does and does not buy you here</h3>
+
+<p>Neither circular mandates FHIR. Demonstrable FHIR R4 conformance is nonetheless genuinely useful in the file, for three reasons: it evidences the "interoperability / HIS interface readiness" criterion under 54/2017; it evidences that the EMR can be exported and exchanged rather than trapped in one vendor's database, which is the policy intent behind 13/2025; and it positions the client ahead of the VN Core IG becoming a national standard. It is a strengthener, not the gate.</p>
+
+<h3>8.3 The record the client asked for</h3>
+
+<p>The client needs to record assessing body, date and version. Here is that record, pre-filled with everything we can determine and with the client's decisions marked:</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:230px">Field</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Assessing body</td><td><strong>Sở Y tế (Provincial Department of Health)</strong> of the province in which the facility is licensed — as the direct supervising health management agency under Circular 54/2017. Bộ Y tế (MOH) is the issuing authority for the circulars, not the assessor of an individual private facility. <em>Client to confirm the specific SYT.</em></td></tr>
+<tr><td>Submitting party</td><td><strong>The licensed operating facility</strong>, signed by its director — not the software vendor.</td></tr>
+<tr><td>Instrument 1</td><td>Circular 54/2017/TT-BYT — director's decision determining IT-application level, plus the completed Appendix II criteria table, reported to the SYT.</td></tr>
+<tr><td>Instrument 2</td><td>Circular 13/2025/TT-BYT — facility's internal EMR regulation (quy chế) issued by decision, plus evidence of EMR deployment.</td></tr>
+<tr><td>Target date</td><td><strong>Recommended: on or before 30 November 2026</strong>, giving one month of buffer against the 31 Dec 2026 statutory deadline. <em>Client to set and confirm.</em></td></tr>
+<tr><td>Software product name</td><td>CarejioX / health19 Healthcare Platform (Odoo 19 Community base)</td></tr>
+<tr><td>Software version to record</td><td><code>19.0</code> · build <code>55e9ea0b</code> · FHIR facade <code>health_fhir_core 19.0.1.3.0</code> · declared <code>fhirVersion 4.0.1</code><br><span class="note">This must be frozen as a named release tag before submission — see §10 step 1. The version recorded on the form and the version the CapabilityStatement reports must be the same string.</span></td></tr>
+<tr><td>Standards position to state</td><td>HL7 FHIR R4 (4.0.1) RESTful API, 21 resource types, self-assessed conformance, public CapabilityStatement. ICD-10 coded diagnoses. No HL7 v2.x, no CDA. <em>Do not state "certified".</em></td></tr>
+</tbody></table></div>
+
+<h3>8.4 Two risks larger than FHIR, which we are raising unprompted</h3>
+
+<div class="callout bad">
+  <span class="lbl">R1 — Data residency</span>
+  <p>The environment we inspected runs on AWS <strong><code>ap-southeast-2</code> (Sydney, Australia)</strong>. Vietnamese patients' health data — sensitive personal data — is therefore currently processed and stored offshore. Vietnam's Personal Data Protection Law (Law 91/2025/QH15, effective 1 Jan 2026, with Decree 356/2025/NĐ-CP) requires a cross-border transfer impact assessment filed with the Ministry of Public Security, and Decree 53/2022/NĐ-CP provides for data localisation obligations on certain service providers. For a healthcare SaaS operating in Vietnam this is, in our assessment, a materially higher-probability blocker than any FHIR question. <strong>We are not giving a legal opinion — this needs Vietnamese counsel, and it needs them before production go-live, not after.</strong> The engineering response, if localisation is required, is a migration to a Vietnam region or a licensed local provider; that is planning and downtime, not redevelopment.</p>
+</div>
+
+<div class="callout bad">
+  <span class="lbl">R2 — Legally-valid digital signature</span>
+  <p>Circular 13/2025 turns on records being electronically authenticated. Our tamper-evident SHA-256 seal proves integrity but is not a signature issued by a licensed Vietnamese certification authority. Integration with VNPT-CA, Viettel-CA or an equivalent licensed CA should be treated as a prerequisite for the 13/2025 filing, not as a later enhancement.</p>
+</div>
+
+<!-- ===================================================================== -->
+<h2 id="s9"><span class="num">9.</span>Gap register — all 20 items</h2>
+
+<p>Every item below is a real defect or absence we found, stated without softening. Severity is relative to obtaining and holding Vietnamese approval and to surviving a partner's technical due diligence. G14–G20 were surfaced by a second review pass and include two defects that would break the very first partner integration.</p>
+
+<p class="note">The right-hand column of each row gives the effort. The work package that closes each item is in the closure matrix at <a href="#s105">§10.5</a> — every one of the 20 is mapped, none is left unowned.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:52px">Ref</th><th style="width:230px">Gap</th><th style="width:90px">Severity</th><th>Detail and remedy</th><th style="width:90px">Effort</th></tr></thead>
+<tbody>
+<tr><td class="mono">G1</td><td>No external conformance testing of any kind</td><td><span class="b bad">High</span></td><td>No Touchstone, no Connectathon, no bilateral test. Remedy: register on Touchstone, execute the FHIR R4 basic read/search test scripts against a UAT endpoint, publish the result, and cite it. Converts every conformance claim in this document from self-assertion to third-party evidence.</td><td>1–2 weeks</td></tr>
+<tr><td class="mono">G2</td><td>Implemented operations not declared in the CapabilityStatement</td><td><span class="b warn">Medium</span></td><td><code>CodeSystem/$lookup</code> and <code>ValueSet/$expand</code> are live and reachable (verified: they return <code>401</code> unauthenticated, i.e. the routes exist) but neither appears in the capability output, and <code>ValueSet</code> is not listed as a resource at all. A conformance reviewer will flag this immediately: a server must declare what it supports. Remedy: extend the registry so operations register alongside resources.</td><td>1 day</td></tr>
+<tr><td class="mono">G3</td><td>No <code>software</code> element in the CapabilityStatement</td><td><span class="b warn">Medium</span></td><td>The statement carries no product name or version. Directly relevant to the client's requirement to record a version number. Remedy: emit <code>software: {name, version, releaseDate}</code> sourced from the module manifest, so the recorded version and the reported version are provably the same.</td><td>1 hour</td></tr>
+<tr><td class="mono">G4</td><td>No CI; conformance tests run only when someone remembers</td><td><span class="b bad">High</span></td><td>The single biggest process gap and precisely what the client asked about. Remedy: controls C1–C3 in §5.2.</td><td>1 week</td></tr>
+<tr><td class="mono">G5</td><td>Consent gate deployed in log-only mode</td><td><span class="b bad">High<br>before go-live</span></td><td><code>consent_enforced = False</code>. Consent decisions are logged but nothing is withheld. Acceptable while no external client is connected; unacceptable the moment one is. Remedy: flip to enforced and re-run the 5 consent tests plus the 13 <code>$everything</code> tests <strong>before</strong> the first partner credential is issued.</td><td>1 day + verification</td></tr>
+<tr><td class="mono">G6</td><td>Data residency — Vietnamese PHI hosted in AWS Sydney</td><td><span class="b bad">Critical<br>for prod</span></td><td>See §8.4 R1. Remedy: legal determination first, then a region migration if required.</td><td>Legal + 2–4 wks</td></tr>
+<tr><td class="mono">G7</td><td>No legally-valid CA digital signature</td><td><span class="b bad">High</span></td><td>See §8.4 R2. Remedy: integrate a licensed Vietnamese CA for clinician sign-off on finalised records.</td><td>3–4 weeks</td></tr>
+<tr><td class="mono">G8</td><td>Terminology loaded with starter seed only</td><td><span class="b warn">Medium</span></td><td>44 codes present against a full ICD-10 release of tens of thousands. An assessor reviewing "ICD-10 coded diagnoses" will look at coverage and coding density; today both are near zero. Remedy: run the existing bulk importer against the WHO release plus the MOH-KCB Vietnamese translation.</td><td>2–3 days</td></tr>
+<tr><td class="mono">G9</td><td>No Implementation Guide conformance</td><td><span class="b warn">Medium</span></td><td>Base R4 only, no <code>meta.profile</code>. Defensible today because no Vietnamese IG is official. Remedy: declare VN Core as a target, validate against it, and publish the delta — an early-mover position at low cost.</td><td>2–3 weeks</td></tr>
+<tr><td class="mono">G10</td><td>Runtime response validation switched off</td><td><span class="b warn">Medium</span></td><td>The mechanism exists (<code>validate_responses</code>) but is unset, so live responses are unvalidated. Remedy: control C4 — sampled runtime validation.</td><td>2 days</td></tr>
+<tr><td class="mono">G11</td><td>R4 declared, R4B models used for validation</td><td><span class="b na">Low</span></td><td>No practical divergence for the 21 resource types served, but it should be formally confirmed and the library version pinned, because an external reviewer will ask about it.</td><td>2 hours</td></tr>
+<tr><td class="mono">G12</td><td>Minor CapabilityStatement nits</td><td><span class="b na">Low</span></td><td><code>_count</code> is declared as a <code>searchParam</code> although it is a search-result parameter rather than a search parameter; <code>searchParam</code> entries carry no <code>definition</code> canonical URLs. Both are the kind of warning a validator emits. Remedy: fold into the G2/G3 work package.</td><td>2 hours</td></tr>
+<tr><td class="mono">G13</td><td>No HL7 v2.x or CDA capability</td><td><span class="b na">Low<br>unless required</span></td><td>Only becomes material if a specific Vietnamese hospital HIS partner demands a v2 feed. Remedy: build a v2 adapter on the existing country-adapter seam if and when a counterparty requires it.</td><td>3–5 weeks if needed</td></tr>
+<tr><td class="mono">G14</td><td><strong>Patient reads fail for any minimally-scoped service user</strong></td><td><span class="b bad">High</span></td><td>The Patient serializer's batch prefetch pulls every stored field on the partner record, including group-gated accounting fields (<code>credit_limit</code>, <code>signup_type</code>). A service user holding only <code>system/Patient.read</code> — which is exactly what we would issue to an external partner — gets an <code>AccessError</code> on <em>any</em> Patient serialization, including a plain read. <strong>This would break the first real integration on day one.</strong> Remedy: restrict the prefetch to the fields the serializer actually maps.</td><td>1 day</td></tr>
+<tr><td class="mono">G15</td><td>Flag / <code>health.fall.risk</code> ships with no access-control row</td><td><span class="b warn">Medium</span></td><td>The model has no <code>ir.model.access</code> entry for any group, so it is unreadable by any non-superuser. <code>$everything</code> currently survives this by omitting the compartment and declaring the omission — correct behaviour, but it masks a missing ACL. Remedy: add the ACL rows, then assert the compartment is actually populated.</td><td>0.5 day</td></tr>
+<tr><td class="mono">G16</td><td>No independent security or privacy review of the FHIR / gateway surface</td><td><span class="b bad">High</span></td><td>The OAuth2 flow, scope enforcement, record-rule behaviour under a service user, the consent gate and the audit trail have never been examined by anyone outside the build team. A partner's due diligence will ask for this, and an assessor may too. Remedy: commission a scoped third-party penetration test and remediate.</td><td>3–4 weeks<br><span class="note">incl. vendor</span></td></tr>
+<tr><td class="mono">G17</td><td>Semantic mappings, search-parameter behaviour and terminology bindings untested</td><td><span class="b warn">Medium</span></td><td>The §4.2 list. Structural validity is proven; correctness against the search specification (modifiers, prefixes, token <code>system|code</code> form, <code>:missing</code>), membership of required ValueSet bindings, and clinical correctness of the Odoo-state → FHIR-status mappings are not. Remedy: three new test tiers plus a clinician-signed mapping table.</td><td>2 weeks</td></tr>
+<tr><td class="mono">G18</td><td>VNeID identity linkage is a manual flag, not an integration</td><td><span class="b warn">Medium</span></td><td><code>vneid_verified</code> is set by hand. Circular 13/2025 expects connection to the national citizen identification database. Remedy: integrate VNeID OIDC, or — if the national service is not open to private providers — record that determination in writing with a trigger, and evidence CCCD capture and verification procedure instead.</td><td>3 weeks<br><span class="note">or decision</span></td></tr>
+<tr><td class="mono">G19</td><td>BHYT claims XML not built; blocked on the official XSD</td><td><span class="b warn">Medium<br>High for revenue</span></td><td>Decision 4210 / 130 / 4750 / 3176 XML is the <em>mandatory</em> machine interface in Vietnam and it is not an approval-path item — it is a getting-paid item. The claim spine exists; the generator is blocked pending the schema. Remedy: unblock the XSD through BHXH, the MOH, or a partner facility, then build. Owned and dated rather than left as "blocked".</td><td>3–4 weeks<br><span class="note">after unblock</span></td></tr>
+<tr><td class="mono">G20</td><td>Scope items left undecided rather than declared</td><td><span class="b warn">Medium</span></td><td>FHIR writes, <code>vread</code>/<code>history</code>, Bulk <code>$export</code>, the LGSP transport stub, DICOMweb imaging and the SG/ID/AU adapters currently sit in an ambiguous "not built" state. An undecided absence reads to an assessor as an oversight. Remedy: convert each into a signed, dated non-goal with an explicit trigger that would reopen it — see <a href="#s101">§10.1</a>.</td><td>2 days</td></tr>
+</tbody></table></div>
+
+<!-- ===================================================================== -->
+<h2 id="s10"><span class="num">10.</span>Remediation programme — closing every gap</h2>
+
+<p>This section is the plan to take the register in §9 to zero. It is written to be executed and audited, not read: 23 work packages, each with a named owner, a specific change, a testable acceptance criterion, and a physical artefact that lands in the regulatory dossier.</p>
+
+<h3 id="s101">10.1 The principle that makes "no gaps left" a truthful claim</h3>
+
+<p>An item leaves the register through one of exactly two doors, and there is no third state:</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:190px">Exit</th><th>What it requires</th></tr></thead>
+<tbody>
+<tr><td><strong>Closed by work</strong></td><td>The defect is fixed, an automated test proves it stays fixed, and an artefact evidencing the fix exists in the dossier. Applies to G1–G5, G8–G12, G14–G17.</td></tr>
+<tr><td><strong>Closed by decision</strong></td><td>The item is a scope choice rather than a defect. It is written down, dated, assigned an owner, given an explicit <em>trigger condition</em> that would reopen it, and signed off by the accountable party. Applies to G13, G18 (conditionally), G20, and the roadmap items.</td></tr>
+</tbody></table></div>
+
+<div class="callout">
+  <p><strong>Why the second door is legitimate and not a dodge.</strong> An <em>undecided</em> absence is a gap: it means nobody has thought about it, and an assessor or a partner will read it as an oversight. A <em>decided</em> absence — recorded, justified, owned, with a stated condition under which it gets built — is a scope boundary, which every system has. The difference is entirely in whether the decision exists on paper with a name against it. What we will not do is leave anything in the third state of "we're aware of it".</p>
+</div>
+
+<p>One engineering principle governs the whole programme: <strong>mechanism over discipline.</strong> Where a control could be either a written rule or an automated gate, we build the gate. Every finding in §5.1 traced back to something that depended on a person remembering; none of the controls we add may depend on that.</p>
+
+<h3 id="s102">10.2 Five workstreams</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:52px">WS</th><th style="width:210px">Workstream</th><th>Purpose</th><th style="width:150px">Closes</th><th style="width:120px">Effort</th></tr></thead>
+<tbody>
+<tr><td class="mono">A</td><td><strong>Conformance surface</strong></td><td>Make the API declare exactly what it does, no more and no less, and pin the versions that claim depends on.</td><td class="mono">G2, G3, G11, G12, G20</td><td>~2 weeks</td></tr>
+<tr><td class="mono">B</td><td><strong>Independent assurance</strong></td><td>Replace self-assertion with evidence produced by parties outside our team.</td><td class="mono">G1, G16, G17</td><td>~7 weeks<br><span class="note">incl. vendor lead time</span></td></tr>
+<tr><td class="mono">C</td><td><strong>Continuous conformance</strong></td><td>Make conformance hold automatically as the system changes, and give drift an owner and an alarm.</td><td class="mono">G4, G10</td><td>~2 weeks</td></tr>
+<tr><td class="mono">D</td><td><strong>Data, defects &amp; profile</strong></td><td>Fix the record-level defects that would break a real integration; load real terminology; drive coding density; target the national IG.</td><td class="mono">G5, G8, G9, G14, G15</td><td>~5 weeks</td></tr>
+<tr><td class="mono">E</td><td><strong>Regulatory &amp; legal</strong></td><td>Make it lawful to operate the service in Vietnam and get the facility's filing lodged.</td><td class="mono">G6, G7, G13, G18, G19</td><td>~10 weeks<br><span class="note">mostly external</span></td></tr>
+</tbody></table></div>
+
+<p class="note">Workstreams run in parallel. Total calendar is four months to the filing, not the sum of the effort figures. Engineering effort across A, C and D is roughly nine person-weeks; B and E are dominated by external lead time — counsel, a CA provider, a test vendor — which is why they start first.</p>
+
+<h3 id="s103">10.3 Work packages</h3>
+
+<h4>Workstream A — conformance surface</h4>
+
+<div class="tw"><table>
+<thead><tr><th style="width:64px">WP</th><th style="width:150px">Closes</th><th>What changes</th><th style="width:290px">Done when — acceptance &amp; evidence</th><th style="width:74px">Effort</th></tr></thead>
+<tbody>
+<tr>
+  <td class="mono">A1</td><td class="mono">G2, G12</td>
+  <td>Extend the serializer registry so <strong>operations register alongside resources</strong>, the same way search parameters already do. Emit <code>rest.resource[].operation</code> for <code>CodeSystem/$lookup</code> and <code>ValueSet/$expand</code>; add a <code>ValueSet</code> resource entry. Move <code>_count</code> out of <code>searchParam</code> — it is a search <em>result</em> parameter, not a search parameter. Add <code>definition</code> canonical URLs to every standard search parameter and mint local canonicals for non-standard ones. Add <code>documentation</code> on each resource stating read-only.</td>
+  <td>A script enumerates every registered route under <code>/fhir/r4</code> from the running server and diffs it against the CapabilityStatement. <strong>The diff must be empty in both directions</strong> — nothing implemented but undeclared, nothing declared but unimplemented. The statement validates against the R4 CapabilityStatement StructureDefinition with zero errors and zero warnings. <em>Artefact: route-vs-capability diff report, clean.</em></td>
+  <td>2 days</td>
+</tr>
+<tr>
+  <td class="mono">A2</td><td class="mono">G3</td>
+  <td>Emit a <code>software</code> element — <code>{name, version, releaseDate}</code> — sourced from the module manifest so it cannot be stale. Emit <code>implementation.url</code> from configuration rather than the request host.</td>
+  <td>The version string in the CapabilityStatement is byte-identical to the release tag and to the version recorded on the regulatory form. A test asserts the three match. <em>Artefact: the statement itself, self-documenting for audit.</em></td>
+  <td>2 hours</td>
+</tr>
+<tr>
+  <td class="mono">A3</td><td class="mono">G11</td>
+  <td>Pin <code>fhir.resources==8.3.0</code> in a committed requirements file. Add a test asserting which model package resolves (R4B vs R5) and failing if it changes. Generate a per-resource equivalence table for the 21 served types comparing the R4 and R4B StructureDefinitions, and either pin validation to R4 classes explicitly or change the declared <code>fhirVersion</code> to match what we validate against.</td>
+  <td>The equivalence table is committed and shows no substantive divergence for the 21 types, or the declared version is corrected. A dependency upgrade that changes the resolved package fails the build rather than passing silently. <em>Artefact: R4/R4B equivalence table.</em></td>
+  <td>1 day</td>
+</tr>
+<tr>
+  <td class="mono">A4</td><td class="mono">G20</td>
+  <td>Produce a signed <strong>Scope &amp; Non-Goals statement</strong> covering FHIR writes, <code>vread</code>/<code>history</code>, Bulk <code>$export</code>, the LGSP transport stub, DICOMweb, and the SG/ID/AU adapters. Each entry carries a rationale, an owner, a date, and a trigger condition. Example: "<em>Bulk <code>$export</code> — not built. Trigger: a counterparty requiring cohort-level extract, or a national platform mandating batch submission. Estimate 3 weeks. Owner: Interop Owner. Reviewed quarterly.</em>" The LGSP entry states explicitly that <code>transport()</code> is a file-export stub pending the national platform opening.</td>
+  <td>Every "not built" item named anywhere in §1 or §7.2 appears either in a work package or in this statement with a trigger. A reviewer can point at any absent capability and find a dated decision. <em>Artefact: signed Scope &amp; Non-Goals statement, in the dossier.</em></td>
+  <td>2 days</td>
+</tr>
+<tr>
+  <td class="mono">A5</td><td class="mono">—</td>
+  <td>Tag and freeze the <strong>conformance baseline release</strong>. Snapshot the CapabilityStatement into version control. Assemble the conformance dossier v1.0 (this document's §1–§3, the tagged version, the A1 diff report, the A3 equivalence table, the A4 scope statement).</td>
+  <td>A named, immutable release tag exists; the dossier is the artefact attached to the facility's regulatory file and given to partners. <em>Artefact: conformance dossier v1.0.</em></td>
+  <td>1 day</td>
+</tr>
+</tbody></table></div>
+
+<h4>Workstream B — independent assurance</h4>
+
+<div class="tw"><table>
+<thead><tr><th style="width:64px">WP</th><th style="width:150px">Closes</th><th>What changes</th><th style="width:290px">Done when — acceptance &amp; evidence</th><th style="width:74px">Effort</th></tr></thead>
+<tbody>
+<tr>
+  <td class="mono">B1</td><td class="mono">G1 (part)</td>
+  <td><strong>HL7 Touchstone.</strong> Register an organisation account. Stand up a dedicated conformance endpoint on a <em>separate database seeded with synthetic patients only</em> — no real PHI ever reaches a third-party test platform. Execute the FHIR R4 test scripts applicable to a read-only server: CapabilityStatement conformance, resource <code>read</code>, <code>search</code> by each declared parameter, error handling and <code>OperationOutcome</code> shape. Remediate every failure. Re-run until clean or explained.</td>
+  <td>Named test scripts, execution identifiers and pass rate recorded. <strong>Every failure is either fixed or has a written, reviewed explanation.</strong> Results published and cited in the dossier. This is the work package that changes what we are entitled to claim. <em>Artefact: Touchstone execution report + public result URL.</em></td>
+  <td>2 weeks</td>
+</tr>
+<tr>
+  <td class="mono">B2</td><td class="mono">G17</td>
+  <td>Three new test tiers. <strong>(i) Search behaviour:</strong> for every declared parameter, test the specification's semantics — <code>:exact</code>/<code>:contains</code> on strings, prefixes on dates, <code>system|code</code> form on tokens, <code>:missing</code>, <code>_id</code>. Where a modifier is not implemented, <em>stop declaring the parameter or implement it</em> — declare narrowly, implement fully. <strong>(ii) Terminology bindings:</strong> assert every emitted code is a member of the ValueSet bound to that element for all required and extensible bindings. <strong>(iii) Semantic mappings:</strong> a mapping table of every Odoo state → FHIR status, reviewed and signed by the clinical lead, with one test per row.</td>
+  <td>Every declared search parameter has a behaviour test. Every required binding has a membership test. The mapping table carries a clinician signature and date. The §4.2 "what we do not check" list is empty. <em>Artefact: signed clinical mapping table + expanded suite.</em></td>
+  <td>2 weeks</td>
+</tr>
+<tr>
+  <td class="mono">B3</td><td class="mono">G1 (part)</td>
+  <td><strong>Bilateral interface test.</strong> An independent party consumes the endpoint end-to-end and signs a report. In preference order: (a) a Vietnamese hospital HIS or laboratory partner; (b) the client's own downstream analytics team acting independently; (c) a reference FHIR client — HAPI FHIR test harness or a public SMART app — driven by a third party. Scope: obtain a token, fetch the CapabilityStatement, read and search every declared resource, exercise <code>$everything</code>, confirm error handling and that consent denial is indistinguishable from not-found.</td>
+  <td>A signed interface test report from someone outside the build team, naming what was tested, what worked, and what did not. <strong>Option (c) is the guaranteed fallback so this work package cannot be blocked by partner availability.</strong> <em>Artefact: signed bilateral test report.</em></td>
+  <td>1 week</td>
+</tr>
+<tr>
+  <td class="mono">B4</td><td class="mono">G16</td>
+  <td><strong>Third-party security and privacy review</strong> scoped to the interop surface: OAuth2 client-credentials flow and token handling, scope enforcement, record-rule behaviour under a service user, the consent gate, audit-log completeness and immutability, PHI leakage through error paths, and existence-reveal on denied resources.</td>
+  <td>Report received. All critical and high findings remediated and re-tested by the same vendor. Medium findings scheduled with dates. <em>Artefact: penetration test report + remediation attestation.</em></td>
+  <td>3–4 weeks<br><span class="note">vendor-led</span></td>
+</tr>
+<tr>
+  <td class="mono">B5</td><td class="mono">G1 (follow-on)</td>
+  <td><strong>HL7 Connectathon participation</strong> at the next available event, in a track relevant to a read-only clinical-data server. Registration and preparation only in this window; the event itself may fall outside it.</td>
+  <td>Registered and prepared. Participation recorded when it occurs. Not on the critical path for the filing — B1 and B3 carry the assurance argument. <em>Artefact: participation record.</em></td>
+  <td>Event-dependent</td>
+</tr>
+</tbody></table></div>
+
+<h4>Workstream C — continuous conformance</h4>
+
+<div class="tw"><table>
+<thead><tr><th style="width:64px">WP</th><th style="width:150px">Closes</th><th>What changes</th><th style="width:290px">Done when — acceptance &amp; evidence</th><th style="width:74px">Effort</th></tr></thead>
+<tbody>
+<tr>
+  <td class="mono">C1</td><td class="mono">G4</td>
+  <td>A CI pipeline runs the full FHIR suite — 78 tests plus the 16 gateway tests plus everything added by B2 — on every merge to <code>19.0</code>. A FHIR validation failure blocks the merge. This converts conformance from a habit into a gate.</td>
+  <td>A deliberately-broken serializer, committed as a test of the gate itself, is rejected by CI. <em>Artefact: pipeline definition + a failing-then-passing run.</em></td>
+  <td>3 days</td>
+</tr>
+<tr>
+  <td class="mono">C2</td><td class="mono">G4</td>
+  <td><strong>Capability baseline diff.</strong> CI fetches the CapabilityStatement from a test instance and diffs it against the committed baseline. Any change to resources, interactions, search parameters or operations fails the build until the baseline is deliberately updated in the same commit. Runs the A1 route-vs-capability diff on every build too.</td>
+  <td>Adding a resource without updating the baseline fails CI. Every capability change in history has a reviewed commit behind it. <strong>This is the mechanical answer to "who notices drift".</strong> <em>Artefact: baseline file + diff job.</em></td>
+  <td>2 days</td>
+</tr>
+<tr>
+  <td class="mono">C3</td><td class="mono">G4</td>
+  <td><strong>Post-deploy conformance smoke.</strong> The deploy script, after restart, fetches <code>/fhir/r4/metadata</code>, asserts <code>fhirVersion</code>, resource count and the software version; then with a test token reads one resource of each declared type and validates each. Deploy fails and rolls back if any check fails.</td>
+  <td>A deploy of a knowingly-broken build is rejected by the smoke test. <em>Artefact: smoke-test output attached to each deployment record.</em></td>
+  <td>2 days</td>
+</tr>
+<tr>
+  <td class="mono">C4</td><td class="mono">G10</td>
+  <td>Enable <code>health_fhir_core.validate_responses</code> in a <strong>sampled</strong> mode — a configurable percentage of responses, plus 100% for a designated canary client — so live drift is caught without paying full validation latency on every request. Validation failures are logged and alerted, never served as errors to the caller.</td>
+  <td>Sampling rate is configurable and set; a synthetic invalid response raises an alert within the sampling window; p95 latency impact measured and recorded as acceptable. <em>Artefact: configuration record + latency measurement.</em></td>
+  <td>2 days</td>
+</tr>
+<tr>
+  <td class="mono">C5</td><td class="mono">G4</td>
+  <td><strong>Scheduled conformance job.</strong> Weekly: re-run the capability and route diffs against production, re-validate a sample of each resource type, and check the terminology service responds. Annually: re-run Touchstone. Results post to the platform's own incident channel.</td>
+  <td>A weekly result exists for every week since go-live; a deliberately-introduced drift is detected and alerted within seven days. <em>Artefact: rolling conformance log.</em></td>
+  <td>2 days</td>
+</tr>
+<tr>
+  <td class="mono">C6</td><td class="mono">G4</td>
+  <td><strong>Named Interoperability Owner and change control.</strong> A written procedure: any change touching <code>serializers/</code>, <code>capability.py</code> or the FHIR controllers requires Interop Owner review; any capability diff requires a version bump and a dossier revision; quarterly conformance review; annual Touchstone re-run; annual review of every trigger in the A4 scope statement.</td>
+  <td>The role is filled by a named individual and that name is recorded in the facility's IT-application file. <strong>The answer to "who notices if conformance drifts" becomes a person plus four automated mechanisms, not a hope.</strong> <em>Artefact: role charter + change-control procedure.</em></td>
+  <td>1 day<br><span class="note">+ decision</span></td>
+</tr>
+</tbody></table></div>
+
+<h4>Workstream D — data, defects &amp; profile</h4>
+
+<div class="tw"><table>
+<thead><tr><th style="width:64px">WP</th><th style="width:150px">Closes</th><th>What changes</th><th style="width:290px">Done when — acceptance &amp; evidence</th><th style="width:74px">Effort</th></tr></thead>
+<tbody>
+<tr>
+  <td class="mono">D1</td><td class="mono">G14</td>
+  <td><strong>Fix the Patient prefetch defect.</strong> Restrict the serializer's batch fetch to the fields it actually maps, instead of every stored field on the partner record. This removes the dependency on accounting-group permissions that currently makes any minimally-scoped token fail.</td>
+  <td>A test creates a service user holding <em>only</em> <code>system/Patient.read</code>, with no accounting or admin groups, and successfully reads and searches Patient. <strong>Highest priority in the whole programme — without it the first partner integration fails on its first call.</strong> <em>Artefact: minimal-scope integration test.</em></td>
+  <td>1 day</td>
+</tr>
+<tr>
+  <td class="mono">D2</td><td class="mono">G15</td>
+  <td>Add the missing <code>ir.model.access</code> rows for <code>health.fall.risk</code> so Flag is genuinely readable. Keep the omit-and-declare safety net in <code>$everything</code> — it is correct behaviour — but stop relying on it to mask a missing ACL.</td>
+  <td>A minimal-scope service user reads Flag; the <code>$everything</code> compartment is populated rather than declared-suppressed; the suppression path retains its own test using a different model. <em>Artefact: test evidence.</em></td>
+  <td>0.5 day</td>
+</tr>
+<tr>
+  <td class="mono">D3</td><td class="mono">G5</td>
+  <td><strong>Enforce the consent gate.</strong> Set <code>health_fhir_core.consent_enforced = True</code> in production configuration. Re-run the 5 consent tests and the 13 <code>$everything</code> tests against the enforced setting. Establish the operational procedure for recording <code>data_sharing</code> consent before any patient's data can leave the platform.</td>
+  <td>Enforced in configuration; an un-consented patient's resources are provably withheld and the denial is byte-identical to not-found; the consent check log records every decision. <strong>Hard prerequisite: no external OAuth credential is issued before this is done.</strong> <em>Artefact: enforced-mode test run + configuration record.</em></td>
+  <td>1 day</td>
+</tr>
+<tr>
+  <td class="mono">D4</td><td class="mono">G8 (part)</td>
+  <td><strong>Full terminology load.</strong> Bulk-import the WHO ICD-10 release plus the MOH-KCB Vietnamese translation into <code>display_vi</code>; extend the LOINC set to cover every observation type the clinical modules produce; complete UCUM units; establish the RxNorm ↔ DAV registration-number crosswalk needed for Vietnamese prescribing.</td>
+  <td>Code counts recorded and orders of magnitude above the current 44. Vietnamese displays spot-checked by a clinical reviewer. Importer idempotency re-verified by a second run producing zero changes. <em>Artefact: import report + code counts.</em></td>
+  <td>3 days</td>
+</tr>
+<tr>
+  <td class="mono">D5</td><td class="mono">G8 (part)</td>
+  <td><strong>Coding-density programme.</strong> A data load alone does not fix this — the figure is near zero because coding is not yet part of clinical practice. Make ICD-10 selection part of note finalisation; enable the existing consent-gated AI retro-coding suggestions in human-approve-only mode; set a target of <strong>≥80% of finalised notes carrying at least one ICD-10 code within 90 days of go-live</strong>; monitor on the readiness report, which already computes it live per facility.</td>
+  <td>The readiness report shows density at or above target. <strong>This is the number an SYT assessor can check for themselves, so it must be real.</strong> <em>Artefact: readiness report output, dated, in the dossier.</em></td>
+  <td>1 week<br><span class="note">+ adoption time</span></td>
+</tr>
+<tr>
+  <td class="mono">D6</td><td class="mono">G9</td>
+  <td><strong>VN Core IG conformance.</strong> Validate all 21 resources against the current VN Core profiles. Emit <code>meta.profile</code> for those that conform. Publish a per-resource conformance delta for those that do not, with a plan for each. Feed the results back to the VN Core project — the guide explicitly needs implementation evidence to reach 1.0.0, so this is both conformance work and market positioning.</td>
+  <td>A per-resource conformance table exists; <code>meta.profile</code> is emitted only where validation passes — never asserted speculatively; the delta is published. <em>Artefact: VN Core conformance table + delta document.</em></td>
+  <td>2–3 weeks</td>
+</tr>
+</tbody></table></div>
+
+<h4>Workstream E — regulatory &amp; legal</h4>
+
+<div class="tw"><table>
+<thead><tr><th style="width:64px">WP</th><th style="width:150px">Closes</th><th>What changes</th><th style="width:290px">Done when — acceptance &amp; evidence</th><th style="width:74px">Effort</th></tr></thead>
+<tbody>
+<tr>
+  <td class="mono">E1</td><td class="mono">prerequisite</td>
+  <td><strong>Confirm the facility tier</strong> under Circular 13/2025 — hospital (deadline 30 Sep 2025, passed) versus other facility (31 Dec 2026). Confirm which Sở Y tế is the supervising authority. Confirm the licence type the operating entity holds.</td>
+  <td>Written determination held. <strong>Everything else in Workstream E is scheduled off this answer, so it goes first.</strong> If any part of the operation is hospital-tier, the position is regularised with the SYT immediately as a separate priority action. <em>Artefact: tier determination memo.</em></td>
+  <td>3 days</td>
+</tr>
+<tr>
+  <td class="mono">E2</td><td class="mono">G6</td>
+  <td><strong>Data residency.</strong> Vietnamese counsel to determine whether the operation falls within Decree 53/2022 localisation and what the PDPL (Law 91/2025, Decree 356/2025) cross-border transfer impact assessment requires. Then execute the answer: either file the transfer impact assessment with the Ministry of Public Security and put a data processing agreement in place, or migrate to a Vietnam region or licensed local provider. Includes a retention and deletion policy for PHI.</td>
+  <td>A written legal determination exists, and the operational position matches it. If migration is required: production runs in-country, verified, with a documented migration and cutover record. <strong>Longest lead time and highest blocking probability in the programme — starts in week one regardless of everything else.</strong> <em>Artefact: legal determination + filing receipt or migration record.</em></td>
+  <td>Legal 3–4 wks<br>+ migration 2–4 wks</td>
+</tr>
+<tr>
+  <td class="mono">E3</td><td class="mono">G7</td>
+  <td><strong>Licensed CA digital signature.</strong> Integrate VNPT-CA, Viettel-CA or an equivalent licensed Vietnamese certification authority, bound to clinician sign-off on finalised EMR records. Layered onto — not replacing — the existing SHA-256 integrity seal, so records carry both a legally-recognised signature and tamper evidence.</td>
+  <td>A finalised record carries a CA-issued signature that verifies independently of our platform, using the CA's own tooling. Signature failure blocks finalisation rather than silently degrading. <em>Artefact: independently verified signed record + CA contract.</em></td>
+  <td>3–4 weeks</td>
+</tr>
+<tr>
+  <td class="mono">E4</td><td class="mono">G18</td>
+  <td><strong>VNeID identity linkage.</strong> Determine whether the national VNeID OIDC service is available to private healthcare providers. If it is: integrate it, replacing the manual <code>vneid_verified</code> flag with a real verification. If it is not: record that determination in writing with a trigger, and evidence CCCD capture plus a documented manual verification procedure as the interim control.</td>
+  <td>Either a working integration, or a dated written determination with a named owner and a reopening trigger — door one or door two, never undecided. <em>Artefact: integration evidence or determination memo.</em></td>
+  <td>3 weeks<br><span class="note">or 2 days</span></td>
+</tr>
+<tr>
+  <td class="mono">E5</td><td class="mono">G19</td>
+  <td><strong>BHYT claims XML.</strong> Unblock the official XSD for Decision 4210 / 3176 through BHXH, the MOH, or a partner facility already submitting. Then build the generator on the existing claim spine, with the digital signature required by Công văn 1347/BHXH-CNTT. Not an approval-path item — it is the revenue path — but it does not get to sit unowned.</td>
+  <td>XSD obtained and recorded, or a written escalation record showing what was attempted and what the next step is with a date. Generator validates against the XSD. <em>Artefact: XSD provenance record + validation output.</em></td>
+  <td>3–4 wks<br><span class="note">after unblock</span></td>
+</tr>
+<tr>
+  <td class="mono">E6</td><td class="mono">G13, G20</td>
+  <td><strong>Counterparty interface survey.</strong> Ask each realistic Vietnamese integration counterparty — hospital HIS, laboratory, insurer — what interface they actually require. If any requires HL7 v2.x ADT/ORU or CDA, that converts G13 from a declared non-goal into a funded work package on the existing country-adapter seam.</td>
+  <td>A written survey result. G13 exits either as a signed non-goal with a trigger, or as a scheduled build with an estimate. <em>Artefact: counterparty interface survey.</em></td>
+  <td>1 week</td>
+</tr>
+<tr>
+  <td class="mono">E7</td><td class="mono">the deliverable</td>
+  <td><strong>Assemble and lodge the facility's regulatory package.</strong> Circular 54/2017: complete the Appendix II criteria table across all eight groups, obtain the director's decision determining the IT-application level, report to the SYT. Circular 13/2025: issue the facility's internal EMR regulation by decision, evidence EMR deployment and electronic authentication of records. Attach the conformance dossier (A5), the Touchstone result (B1), the bilateral test report (B3), the security report (B4), the readiness report (D5) and the residency determination (E2).</td>
+  <td>Package lodged with the SYT and receipt recorded. The §8.3 record — assessing body, date, version number — is complete and the version matches what the CapabilityStatement reports. <strong>Target 30 November 2026.</strong> <em>Artefact: lodged package + receipt.</em></td>
+  <td>2 weeks</td>
+</tr>
+<tr>
+  <td class="mono">E8</td><td class="mono">steady state</td>
+  <td><strong>Regulatory watch.</strong> A standing responsibility to track new circulars and decisions affecting EMR, data protection and health IT, and to re-run the facility's self-assessment annually. Paired with the C6 Interop Owner role so technical and regulatory drift have the same owner.</td>
+  <td>A named owner, a review cadence, and a first review scheduled. <em>Artefact: entry in the role charter.</em></td>
+  <td>Ongoing</td>
+</tr>
+</tbody></table></div>
+
+<h3 id="s104">10.4 Schedule</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:120px">Period</th><th>Work packages</th><th style="width:280px">Milestone</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>Aug 2026</strong><br><span class="note">weeks 1–4</span></td>
+  <td class="mono">E1 · E2 (start) · D1 · D2 · A1 · A2 · A3 · A4 · A5 · C1 · B4 (engage)</td>
+  <td>Facility tier confirmed. Counsel engaged on residency. <strong>The two integration-breaking defects fixed.</strong> Conformance baseline v1.0 tagged and dossier published. CI gate live.</td>
+</tr>
+<tr>
+  <td><strong>Sep 2026</strong></td>
+  <td class="mono">B1 · B2 · C2 · C3 · C4 · D4 · E2 (determination) · E6</td>
+  <td><strong>Touchstone executed and published</strong> — the claim language changes here. Drift controls mechanised. Full terminology loaded. Residency answer in hand.</td>
+</tr>
+<tr>
+  <td><strong>Oct 2026</strong></td>
+  <td class="mono">E3 · E4 · E5 (unblock) · B3 · B4 · C5 · C6 · D3 · D5 (start) · E2 (migrate if required)</td>
+  <td>CA signature live. <strong>Consent gate enforced, then the first partner credential issued</strong> — which doubles as the bilateral test. Security review complete. Interop Owner named.</td>
+</tr>
+<tr>
+  <td><strong>Nov 2026</strong></td>
+  <td class="mono">D6 · D5 (target) · E7 · B5 (register)</td>
+  <td>VN Core conformance published. Coding density at target. <strong>Regulatory package lodged with the SYT — 30 Nov 2026.</strong></td>
+</tr>
+<tr>
+  <td><strong>Dec 2026</strong></td>
+  <td class="mono">buffer</td>
+  <td>Contingency against slippage. Statutory deadline 31 Dec 2026. Paper records stop 1 Jan 2027.</td>
+</tr>
+<tr>
+  <td><strong>Q1 2027</strong></td>
+  <td class="mono">E5 (build) · B5 (attend) · E8 · C5/C6 cadence</td>
+  <td>BHYT XML delivered. Connectathon attended. Steady-state governance running.</td>
+</tr>
+</tbody></table></div>
+
+<div class="callout warn">
+  <p><strong>Critical path.</strong> E2 (data residency) → possible migration → E7 (filing). Nothing else in the programme can compress it, because it depends on external legal turnaround and potentially on a production migration. It must start in week one. The second-longest path is E3 (CA signature) → E7. Everything in workstreams A, C and D fits comfortably inside those two.</p>
+</div>
+
+<h3 id="s105">10.5 Closure matrix — every gap, its owner, its evidence</h3>
+
+<p>This is the audit view — <strong>and the live tracker of record</strong>. If an item is not in this table with a work package, an artefact and a date, it is not closed. The <em>Status</em> column is updated by the implementer at the end of every execution phase (see the status log at <a href="#s1010">§10.10</a>); the <em>Phase</em> column maps each gap to the engineering phase that closes it (GC-1…GC-4, per the implementation handover <code>docs/strategy/handovers/hl7-gap-closure.md</code>) or to <strong>OPS</strong> where closure is an operational/manual action no code change can perform.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:44px">Gap</th><th style="width:170px">Item</th><th style="width:66px">WP</th><th style="width:92px">Phase</th><th style="width:88px">Exit</th><th>Evidence artefact</th><th style="width:110px">Status</th></tr></thead>
+<tbody>
+<tr><td class="mono">G1</td><td>No external conformance testing</td><td class="mono">B1, B3, B5</td><td class="mono">GC-4 + OPS</td><td><span class="b ok">Work</span></td><td>Touchstone execution report + public result URL; signed bilateral interface test report</td><td><span class="b bad">Open</span><br><span class="note">Sep–Oct 26</span></td></tr>
+<tr><td class="mono">G2</td><td>Undeclared operations</td><td class="mono">A1</td><td class="mono">GC-1</td><td><span class="b ok">Work</span></td><td>Route-vs-capability diff report, empty in both directions</td><td><span class="b bad">Open</span><br><span class="note">Aug 26</span></td></tr>
+<tr><td class="mono">G3</td><td>No <code>software</code> element</td><td class="mono">A2</td><td class="mono">GC-1</td><td><span class="b ok">Work</span></td><td>CapabilityStatement carrying name + version; test asserting it matches the release tag</td><td><span class="b bad">Open</span><br><span class="note">Aug 26</span></td></tr>
+<tr><td class="mono">G4</td><td>No CI; tests run on request</td><td class="mono">C1–C6</td><td class="mono">GC-3 + OPS</td><td><span class="b ok">Work</span></td><td>Pipeline definition; capability baseline + diff job; deploy smoke output; rolling conformance log; role charter</td><td><span class="b bad">Open</span><br><span class="note">Aug–Oct 26</span></td></tr>
+<tr><td class="mono">G5</td><td>Consent gate log-only</td><td class="mono">D3</td><td class="mono">GC-2 + OPS</td><td><span class="b ok">Work</span></td><td>Enforced-mode test run; configuration record; consent check log</td><td><span class="b bad">Open</span><br><span class="note">Oct 26</span></td></tr>
+<tr><td class="mono">G6</td><td>Data residency</td><td class="mono">E2</td><td class="mono">OPS</td><td><span class="b ok">Work</span></td><td>Legal determination; MPS transfer-assessment filing receipt or in-country migration record</td><td><span class="b na">Operational</span><br><span class="note">Sep–Oct 26</span></td></tr>
+<tr><td class="mono">G7</td><td>No licensed CA signature</td><td class="mono">E3</td><td class="mono">OPS → GC-5</td><td><span class="b ok">Work</span></td><td>Independently verified signed record; CA contract</td><td><span class="b na">Operational</span><br><span class="note">procurement first · Oct 26</span></td></tr>
+<tr><td class="mono">G8</td><td>Terminology seed only; density zero</td><td class="mono">D4, D5</td><td class="mono">GC-2 + OPS</td><td><span class="b ok">Work</span></td><td>Import report + code counts; dated readiness report showing density ≥80%</td><td><span class="b bad">Open</span><br><span class="note">Sep–Nov 26</span></td></tr>
+<tr><td class="mono">G9</td><td>No IG conformance</td><td class="mono">D6</td><td class="mono">GC-4</td><td><span class="b ok">Work</span></td><td>VN Core per-resource conformance table + published delta</td><td><span class="b bad">Open</span><br><span class="note">Nov 26</span></td></tr>
+<tr><td class="mono">G10</td><td>Runtime validation off</td><td class="mono">C4</td><td class="mono">GC-3</td><td><span class="b ok">Work</span></td><td>Sampling configuration record + latency measurement</td><td><span class="b bad">Open</span><br><span class="note">Sep 26</span></td></tr>
+<tr><td class="mono">G11</td><td>R4 declared, R4B validated</td><td class="mono">A3</td><td class="mono">GC-1</td><td><span class="b ok">Work</span></td><td>R4/R4B equivalence table; pinned requirement; resolution test</td><td><span class="b bad">Open</span><br><span class="note">Aug 26</span></td></tr>
+<tr><td class="mono">G12</td><td>CapabilityStatement nits</td><td class="mono">A1</td><td class="mono">GC-1</td><td><span class="b ok">Work</span></td><td>Statement validating with zero errors and zero warnings</td><td><span class="b bad">Open</span><br><span class="note">Aug 26</span></td></tr>
+<tr><td class="mono">G13</td><td>No HL7 v2.x / CDA</td><td class="mono">E6, A4</td><td class="mono">GC-4 + OPS</td><td><span class="b warn">Decision</span><br><span class="note">or work</span></td><td>Counterparty interface survey; signed non-goal with trigger — <em>or</em> a funded build if a counterparty requires it</td><td><span class="b bad">Open</span><br><span class="note">Sep 26</span></td></tr>
+<tr><td class="mono">G14</td><td>Patient reads fail on minimal scope</td><td class="mono">D1</td><td class="mono">GC-1</td><td><span class="b ok">Work</span></td><td>Minimal-scope service-user integration test</td><td><span class="b bad">Open</span><br><span class="note">Aug 26</span></td></tr>
+<tr><td class="mono">G15</td><td>Flag missing ACL</td><td class="mono">D2</td><td class="mono">GC-1</td><td><span class="b ok">Work</span></td><td>Populated compartment test; retained suppression-path test</td><td><span class="b bad">Open</span><br><span class="note">Aug 26</span></td></tr>
+<tr><td class="mono">G16</td><td>No independent security review</td><td class="mono">B4</td><td class="mono">OPS</td><td><span class="b ok">Work</span></td><td>Penetration test report + remediation attestation</td><td><span class="b na">Operational</span><br><span class="note">vendor · Oct 26</span></td></tr>
+<tr><td class="mono">G17</td><td>Semantics, search behaviour, bindings untested</td><td class="mono">B2</td><td class="mono">GC-2</td><td><span class="b ok">Work</span></td><td>Signed clinical mapping table; search-behaviour and binding test tiers</td><td><span class="b bad">Open</span><br><span class="note">Sep 26</span></td></tr>
+<tr><td class="mono">G18</td><td>VNeID not integrated</td><td class="mono">E4</td><td class="mono">OPS → GC-5</td><td><span class="b warn">Either</span></td><td>Working OIDC integration — <em>or</em> a dated availability determination with trigger and interim control</td><td><span class="b na">Operational</span><br><span class="note">determination first · Oct 26</span></td></tr>
+<tr><td class="mono">G19</td><td>BHYT XML blocked</td><td class="mono">E5</td><td class="mono">OPS → GC-5</td><td><span class="b ok">Work</span></td><td>XSD provenance record or escalation record; generator validating against the schema</td><td><span class="b na">Operational</span><br><span class="note">XSD unblock first · Q1 27</span></td></tr>
+<tr><td class="mono">G20</td><td>Undecided scope items</td><td class="mono">A4</td><td class="mono">GC-4 + OPS</td><td><span class="b warn">Decision</span></td><td>Signed Scope &amp; Non-Goals statement, each entry dated with an owner and a reopening trigger</td><td><span class="b bad">Open</span><br><span class="note">Aug 26</span></td></tr>
+</tbody></table></div>
+
+<p class="note">Coverage: 20 of 20 items mapped. 16 close by work, 2 by decision, 2 (G13, G18) resolve to either door depending on an external answer that E6 and E4 obtain — and in both cases the door taken is recorded, so neither can end the programme in an undecided state. Status legend: <span class="b bad">Open</span> = engineering not yet done · <span class="b warn">In&nbsp;progress</span> = phase underway · <span class="b ok">Closed</span> = acceptance test green + artefact exists (cell records date &amp; commit) · <span class="b na">Operational</span> = nothing left to code; closure is a manual/business action tracked in <a href="#s1011">§10.11</a>.</p>
+
+<h3 id="s106">10.6 Governance and accountability</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:200px">Role</th><th style="width:230px">Accountable for</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><strong>Interoperability Owner</strong><br><span class="note">to be named — C6</span></td><td>The conformance baseline; review of every capability diff; the annual Touchstone re-run; quarterly review of every trigger in the Scope &amp; Non-Goals statement; the dossier version.</td><td><strong>The single most important governance output of this programme.</strong> The name goes in the facility's IT-application file so an assessor can see the control has a person behind it, not just a process document.</td></tr>
+<tr><td><strong>Facility director</strong></td><td>The Circular 54/2017 decision determining the IT-application level; the Circular 13/2025 internal EMR regulation; lodging with the SYT.</td><td>These are decisions only the licensed facility can make. The vendor supplies evidence; it cannot sign.</td></tr>
+<tr><td><strong>Clinical lead</strong></td><td>Signing the Odoo-state → FHIR-status mapping table (B2); Vietnamese terminology review (D4); driving coding density (D5).</td><td>Semantic correctness is a clinical judgement, not an engineering one. This is why B2 requires a signature rather than a test alone.</td></tr>
+<tr><td><strong>Engineering</strong></td><td>Workstreams A, C, D; the technical halves of B and E.</td><td>~9 person-weeks of build effort across the four months.</td></tr>
+<tr><td><strong>Vietnamese counsel</strong></td><td>The E2 residency determination; review of the E7 package before lodging.</td><td>External. Engage in week one — the critical path runs through here.</td></tr>
+<tr><td><strong>Security vendor</strong></td><td>B4 penetration test and remediation attestation.</td><td>External. Procurement should start in August for an October delivery.</td></tr>
+</tbody></table></div>
+
+<h4>Change-control rule</h4>
+<p>After the A5 baseline is tagged: any change to the serializer registry, the capability generator or the FHIR controllers requires Interop Owner review; any resulting capability diff requires a version bump and a dossier revision in the same change. CI enforces the diff detection (C2); the review requirement is the one human control in the programme, and it exists only because judging whether a capability change is <em>intended</em> cannot be automated.</p>
+
+<h3 id="s107">10.7 Risks to the programme itself</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:230px">Risk</th><th style="width:96px">Likelihood</th><th>Mitigation</th></tr></thead>
+<tbody>
+<tr><td>Counsel determines localisation is required, forcing a production migration</td><td><span class="b warn">Medium</span></td><td>Start E2 in week one so the answer arrives in September, leaving two months to migrate before the filing. Plan the migration in parallel with the determination rather than after it, so the answer triggers execution rather than planning.</td></tr>
+<tr><td>Touchstone surfaces failures needing substantial rework</td><td><span class="b warn">Medium</span></td><td>A1 and B2 land before B1 deliberately — most of what Touchstone checks is what those two fix. Two weeks of slack sit between the B1 window and the E7 filing.</td></tr>
+<tr><td>No third-party counterparty available for the bilateral test</td><td><span class="b warn">Medium</span></td><td>B3 option (c) — an independent party driving a reference FHIR client — is a guaranteed fallback that does not depend on partner goodwill or timing.</td></tr>
+<tr><td>BHYT XSD cannot be obtained</td><td><span class="b bad">High</span></td><td>G19 is off the approval critical path. If the schema does not arrive, E5 exits with a documented escalation record rather than blocking the filing. Revenue impact is tracked separately.</td></tr>
+<tr><td>Coding density does not reach target because clinical adoption lags</td><td><span class="b warn">Medium</span></td><td>D5 starts in October to allow adoption time, uses AI-assisted suggestion to lower the burden on nurses, and is measured continuously rather than checked once. If the target is missed, the actual figure is reported honestly in the filing with an improvement plan — an understated real number is safer than an overstated one.</td></tr>
+<tr><td>CA integration lead time exceeds estimate</td><td><span class="b warn">Medium</span></td><td>Begin CA procurement in August alongside the security vendor. The existing SHA-256 seal remains the interim integrity control and is itself defensible evidence.</td></tr>
+<tr><td>Facility turns out to be hospital-tier with a passed deadline</td><td><span class="b na">Low</span></td><td>E1 runs first precisely to surface this in week one. If it happens, regularising with the SYT becomes the immediate priority action and the rest of the schedule compresses around it.</td></tr>
+</tbody></table></div>
+
+<h3 id="s108">10.8 Definition of done — when the register is empty</h3>
+
+<p>The programme is complete when all of the following are true. Each is checkable by someone other than us, which is the point.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:52px">#</th><th>Exit criterion</th><th style="width:74px">From</th></tr></thead>
+<tbody>
+<tr><td class="mono">1</td><td>The route-vs-capability diff is empty in both directions, and the CapabilityStatement validates with zero errors and zero warnings.</td><td class="mono">A1</td></tr>
+<tr><td class="mono">2</td><td>The version in the CapabilityStatement, the release tag, and the version recorded on the regulatory form are the same string.</td><td class="mono">A2, E7</td></tr>
+<tr><td class="mono">3</td><td>Every capability not built has a signed, dated non-goal with an owner and a reopening trigger.</td><td class="mono">A4</td></tr>
+<tr><td class="mono">4</td><td>A published Touchstone result exists, with every failure fixed or explained in writing.</td><td class="mono">B1</td></tr>
+<tr><td class="mono">5</td><td>A signed interface test report exists from a party outside the build team.</td><td class="mono">B3</td></tr>
+<tr><td class="mono">6</td><td>A third-party security report exists with all critical and high findings remediated and re-tested.</td><td class="mono">B4</td></tr>
+<tr><td class="mono">7</td><td>Every declared search parameter has a behaviour test; every required binding has a membership test; the clinical mapping table is signed.</td><td class="mono">B2</td></tr>
+<tr><td class="mono">8</td><td>CI blocks a merge that breaks FHIR validation, and blocks an undeclared capability change. Proven by a deliberately-broken commit.</td><td class="mono">C1, C2</td></tr>
+<tr><td class="mono">9</td><td>Deploys run a conformance smoke test and roll back on failure; runtime validation samples live responses; a weekly conformance log exists.</td><td class="mono">C3, C4, C5</td></tr>
+<tr><td class="mono">10</td><td>A named Interoperability Owner is recorded in the facility's IT-application file, with a written change-control procedure.</td><td class="mono">C6</td></tr>
+<tr><td class="mono">11</td><td>A minimally-scoped service user can read and search every declared resource, including Patient and Flag.</td><td class="mono">D1, D2</td></tr>
+<tr><td class="mono">12</td><td>The consent gate is enforced in production, and no external credential was issued before it was.</td><td class="mono">D3</td></tr>
+<tr><td class="mono">13</td><td>Full ICD-10 with Vietnamese displays is loaded, and coding density is at target on a dated readiness report.</td><td class="mono">D4, D5</td></tr>
+<tr><td class="mono">14</td><td>A VN Core conformance table is published, with <code>meta.profile</code> asserted only where validation passes.</td><td class="mono">D6</td></tr>
+<tr><td class="mono">15</td><td>A written legal determination on data residency exists and the production position matches it.</td><td class="mono">E2</td></tr>
+<tr><td class="mono">16</td><td>Finalised EMR records carry a licensed-CA signature that verifies independently of our platform.</td><td class="mono">E3</td></tr>
+<tr><td class="mono">17</td><td>The Circular 54/2017 and 13/2025 package is lodged with the SYT and the receipt is held.</td><td class="mono">E7</td></tr>
+<tr><td class="mono">18</td><td>Every one of the 20 register items appears in the closure matrix with an artefact that physically exists.</td><td class="mono">10.5</td></tr>
+</tbody></table></div>
+
+<h4>What we would then be entitled to say</h4>
+
+<div class="callout ok">
+  <p>"The CarejioX platform implements an HL7 FHIR R4 (4.0.1) RESTful API exposing 21 resource types, with a publicly accessible CapabilityStatement at <code>/fhir/r4/metadata</code>. Conformance has been <strong>independently tested against HL7 Touchstone</strong> [test scripts, date, result URL], <strong>verified in a bilateral interface test</strong> with [counterparty, date], and <strong>independently security-reviewed</strong> by [vendor, date]. Conformance is enforced continuously by an automated gate on every change and verified on every deployment, under a named accountable owner. The platform remains <strong>self-certified — no national or international certification programme exists for this class of system in Vietnam</strong> — and the facility's compliance position under Circulars 54/2017/TT-BYT and 13/2025/TT-BYT was lodged with [SYT] on [date] for version [tag]."</p>
+</div>
+
+<p>That statement contains no claim we cannot produce a document for, and it does not use the word "compliant" to mean "certified". It is the difference between what we can say today and what we can say in December, and closing the twenty items above is exactly what buys it.</p>
+
+<h3 id="s109">10.9 Evidence pack — what physically exists at the end</h3>
+
+<div class="tw"><table>
+<thead><tr><th style="width:56px">Ref</th><th style="width:270px">Artefact</th><th>Purpose and audience</th></tr></thead>
+<tbody>
+<tr><td class="mono">EV-01</td><td>Conformance dossier v1.x</td><td>The master document: standards implemented, resource inventory, capability statement, scope boundaries, version. For the SYT file and for every partner's technical due diligence.</td></tr>
+<tr><td class="mono">EV-02</td><td>Route-vs-capability diff report</td><td>Proves the API declares exactly what it implements.</td></tr>
+<tr><td class="mono">EV-03</td><td>R4/R4B equivalence table</td><td>Answers the version question an external reviewer will ask.</td></tr>
+<tr><td class="mono">EV-04</td><td>Signed Scope &amp; Non-Goals statement</td><td>Converts every absence into a decision. For assessors and partners.</td></tr>
+<tr><td class="mono">EV-05</td><td>Touchstone execution report + result URL</td><td>Third-party conformance evidence. The single highest-value artefact.</td></tr>
+<tr><td class="mono">EV-06</td><td>Signed bilateral interface test report</td><td>Proves interoperability, which conformance testing alone does not.</td></tr>
+<tr><td class="mono">EV-07</td><td>Penetration test report + remediation attestation</td><td>For partner due diligence and the facility's information-security criteria under 54/2017.</td></tr>
+<tr><td class="mono">EV-08</td><td>Signed clinical mapping table</td><td>Semantic correctness, attested by a clinician rather than a test.</td></tr>
+<tr><td class="mono">EV-09</td><td>CI pipeline + capability baseline + rolling conformance log</td><td>Evidence that conformance is maintained, not just achieved once.</td></tr>
+<tr><td class="mono">EV-10</td><td>Interop Owner role charter + change-control procedure</td><td>Names the person accountable for drift. Goes in the facility file.</td></tr>
+<tr><td class="mono">EV-11</td><td>Dated EMR readiness report with coding density</td><td>The live, checkable number an SYT assessor can verify themselves.</td></tr>
+<tr><td class="mono">EV-12</td><td>VN Core conformance table + delta</td><td>National-profile position; early-mover evidence.</td></tr>
+<tr><td class="mono">EV-13</td><td>Legal determination on data residency + filing or migration record</td><td>The highest-risk item in the whole programme.</td></tr>
+<tr><td class="mono">EV-14</td><td>Independently verified CA-signed EMR record</td><td>Circular 13/2025 electronic authentication.</td></tr>
+<tr><td class="mono">EV-15</td><td>Lodged 54/2017 + 13/2025 package and SYT receipt</td><td>The actual regulatory outcome. Records assessing body, date and version.</td></tr>
+</tbody></table></div>
+
+<h3 id="s1010">10.10 Live status log</h3>
+
+<p>Append-only. One row per event that moves a gap — a phase completing, a review passing, a decision being signed, an operational item landing. The implementer appends a row at the end of every execution phase <em>in the same commit as the code</em>, and flips the corresponding Status badges in §10.5. Rows are never edited or deleted; a correction is a new row.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:100px">Date</th><th style="width:86px">Phase</th><th style="width:110px">Commit</th><th style="width:170px">Gaps moved</th><th>Note</th></tr></thead>
+<tbody id="status-log">
+<tr><td class="mono">2026-08-02</td><td class="mono">design</td><td class="mono">—</td><td class="mono">all 20 registered</td><td>Programme designed; implementation handover issued (<code>docs/strategy/handovers/hl7-gap-closure.md</code>, phases GC-1…GC-4). Engineering gaps set to Open; ops-only gaps set to Operational.</td></tr>
+<!-- STATUS-LOG: append new <tr> rows directly above this line; never edit existing rows -->
+</tbody></table></div>
+
+<h3 id="s1011">10.11 Residual operational register — what is left when the code work is done</h3>
+
+<p>This section is the end-state assessment the programme exists to produce: once phases GC-1…GC-4 are complete and reviewed, every remaining register item should appear below and <strong>none of them should be closable by writing code</strong>. Each is a manual, business or third-party action with a named owner outside engineering. The implementer populates the <em>Status</em> column here as phases close; if an item that was expected to close by engineering instead lands in this table, that is a finding to explain in the phase report, not a silent reclassification.</p>
+
+<div class="tw"><table>
+<thead><tr><th style="width:52px">Gap</th><th style="width:240px">Residual action (no code involved)</th><th style="width:150px">Owner</th><th>What engineering has already provided by then</th><th style="width:110px">Status</th></tr></thead>
+<tbody>
+<tr><td class="mono">G1</td><td>Execute the Touchstone run; commission the bilateral test counterparty; register for a Connectathon</td><td>Interop Owner</td><td>Dedicated synthetic-data conformance environment, seeding wizard, runbook (GC-4)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G4</td><td>Name the Interoperability Owner; record the name in the facility's IT-application file</td><td>Client leadership</td><td>All five automated controls (CI gate, baseline diff, deploy smoke, sampled runtime validation, weekly cron) running (GC-3)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G5</td><td>Operate the consent-capture procedure so real patients have <code>data_sharing</code> consents on file before external sharing</td><td>Facility operations</td><td>Gate enforced deny-by-default, verified by the full consent + <code>$everything</code> suites (GC-2)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G6</td><td>Engage Vietnamese counsel; obtain the residency determination; file the MPS transfer assessment or execute migration</td><td>Client + counsel</td><td>— (nothing to code until the determination lands)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G7</td><td>Select and contract a licensed CA (VNPT-CA / Viettel-CA); provide credentials</td><td>Client procurement</td><td>Seal + sign-off seam already live in health_emr; integration build (GC-5) starts when credentials exist</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G8</td><td>Accept the WHO ICD-10 licence, obtain the MOH-KCB Vietnamese translation file, run the bulk load; drive coding density to ≥80% through clinical practice</td><td>Client + clinical lead</td><td>Converter + idempotent importer verified on a sample; density computed live on the readiness report (GC-2)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G13</td><td>Send the counterparty interface survey; sign the resulting non-goal or fund the v2/CDA adapter build</td><td>Client BD + Interop Owner</td><td>Survey template + signature-ready non-goal text (GC-4)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G16</td><td>Procure the penetration-test vendor; schedule; remediate on receipt</td><td>Client procurement</td><td>Scope document for the vendor (attack surface inventory) (GC-4)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G17</td><td>Clinician signs the status-mapping table</td><td>Clinical lead</td><td>The complete mapping table document, generated and committed (GC-2)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G18</td><td>Determine VNeID OIDC availability for private providers; sign the determination or commission the build</td><td>Client + Interop Owner</td><td>Determination memo template with trigger clause (GC-4)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G19</td><td>Obtain the official 4210/3176 XSD via BHXH / MOH / partner facility</td><td>Client</td><td>Claim spine already live (health_bhyt phase 1); generator build (GC-5) starts when the XSD exists</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">G20</td><td>Director signs the Scope &amp; Non-Goals statement</td><td>Facility director</td><td>The statement drafted with every entry's rationale, owner and trigger (GC-4)</td><td><span class="b na">Waiting</span></td></tr>
+<tr><td class="mono">—</td><td>Assemble and lodge the 54/2017 + 13/2025 package with the SYT; record assessing body, date, version</td><td>Facility director</td><td>Conformance dossier, Touchstone prep, all evidence artefacts EV-01…EV-12 (GC-1…GC-4)</td><td><span class="b na">Waiting</span></td></tr>
+</tbody></table></div>
+
+<p class="note">Reading this table at programme end: if every §10.5 row marked GC-1…GC-4 shows <span class="b ok">Closed</span> and every row above is the only thing still open, the assessment the client asked for is made: <strong>the platform's engineering position is complete, and what remains is operational execution</strong> — signatures, procurement, counsel, data licensing, and the filing itself.</p>
+
+
+
+<!-- ===================================================================== -->
+<h2 id="a1"><span class="num">A.</span>Appendix A — verify this yourself</h2>
+
+<p>Nothing in this document needs to be taken on trust. These commands reproduce the primary evidence.</p>
+
+<h4>Public conformance endpoint — no credentials needed</h4>
+<pre><code># Full CapabilityStatement
+curl https://care.biztinct.com/fhir/r4/metadata
+
+# The 21 declared resource types and their interactions
+curl -s https://care.biztinct.com/fhir/r4/metadata \
+  | python3 -c "import json,sys; c=json.load(sys.stdin); \
+      print(c['fhirVersion'], len(c['rest'][0]['resource'])); \
+      [print(r['type'], [i['code'] for i in r['interaction']]) \
+       for r in c['rest'][0]['resource']]"
+
+# Confirm PHI routes are closed without a token (expect 401 + OperationOutcome)
+curl -i https://care.biztinct.com/fhir/r4/Patient</code></pre>
+
+<h4>Run the conformance test suite</h4>
+<pre><code>odoo-bin -c /etc/odoo-server.conf -d &lt;database&gt; \
+  --test-enable --workers=0 --stop-after-init \
+  -u health_fhir_core,health_fhir_terminology,\
+health_fhir_adapter_base,health_fhir_adapter_vn,health_condition</code></pre>
+
+<h4>Source of record</h4>
+<div class="tw"><table>
+<thead><tr><th style="width:330px">Artefact</th><th>Path</th></tr></thead>
+<tbody>
+<tr><td>CapabilityStatement generator</td><td class="mono">addons/health_fhir_core/capability.py</td></tr>
+<tr><td>Serializer registry (the single source of truth)</td><td class="mono">addons/health_fhir_core/serializers/__init__.py</td></tr>
+<tr><td>Validation helper &amp; base serializer</td><td class="mono">addons/health_fhir_core/serializers/base.py</td></tr>
+<tr><td>FHIR HTTP controller</td><td class="mono">addons/health_fhir_core/controllers/fhir.py</td></tr>
+<tr><td>Vietnam EMR adapter</td><td class="mono">addons/health_fhir_adapter_vn/models/fhir_adapter_vn.py</td></tr>
+<tr><td>Circular 13/2025 readiness checklist</td><td class="mono">addons/health_fhir_adapter_vn/wizards/vn_emr_readiness.py</td></tr>
+<tr><td>Interoperability architecture</td><td class="mono">docs/strategy/architecture-interop.md</td></tr>
+</tbody></table></div>
+
+<!-- ===================================================================== -->
+<h2 id="a2"><span class="num">B.</span>Appendix B — build manifest as inspected</h2>
+
+<div class="tw"><table>
+<thead><tr><th style="width:300px">Component</th><th style="width:150px">Version</th><th>State</th></tr></thead>
+<tbody>
+<tr><td class="mono">health_fhir_core</td><td class="mono">19.0.1.3.0</td><td>installed — FHIR R4 facade, 20 base serializers, <code>$everything</code></td></tr>
+<tr><td class="mono">health_fhir_terminology</td><td class="mono">19.0.1.0.0</td><td>installed — code systems, CodeSystem serializer, <code>$lookup</code>/<code>$expand</code></td></tr>
+<tr><td class="mono">health_fhir_adapter_base</td><td class="mono">19.0.1.0.0</td><td>installed — country-adapter interface, append-only submission log</td></tr>
+<tr><td class="mono">health_fhir_adapter_vn</td><td class="mono">19.0.1.1.0</td><td>installed — Vietnam EMR bundle, profile validation, readiness report</td></tr>
+<tr><td class="mono">health_condition</td><td class="mono">19.0.1.0.0</td><td>installed — problem list, FHIR Condition</td></tr>
+<tr><td class="mono">health_api_gateway</td><td class="mono">19.0.1.0.0</td><td>installed — OAuth2, scopes, PHI audit log, OpenAPI 3.1</td></tr>
+<tr><td class="mono">health_emr</td><td class="mono">19.0.1.1.0</td><td>installed — finalize / sign-off / tamper-evident seal</td></tr>
+<tr><td class="mono">health_consent</td><td class="mono">19.0.1.0.0</td><td>installed — consent kernel, append-only check log</td></tr>
+<tr><td class="mono">fhir.resources (pip)</td><td class="mono">8.3.0</td><td>validation library; R4B model classes</td></tr>
+<tr><td>Platform</td><td class="mono">Odoo 19 CE</td><td>—</td></tr>
+<tr><td>Repository</td><td class="mono">19.0 @ 55e9ea0b</td><td>2 August 2026</td></tr>
+<tr><td>Environment</td><td class="mono">vietuat</td><td>care.biztinct.com — UAT; AWS ap-southeast-2</td></tr>
+<tr><td>Config</td><td class="mono">consent_enforced = False</td><td>log-only; <code>validate_responses</code> unset (off)</td></tr>
+</tbody></table></div>
+
+<!-- ===================================================================== -->
+<h2 id="a3"><span class="num">C.</span>Appendix C — sources</h2>
+
+<ul>
+  <li><a href="https://thuvienphapluat.vn/van-ban/The-thao-Y-te/Thong-tu-13-2025-TT-BYT-huong-dan-trien-khai-ho-so-benh-an-dien-tu-660113.aspx">Thông tư 13/2025/TT-BYT — guidance on deploying electronic medical records</a></li>
+  <li><a href="https://caselaw.vn/bai-viet/thong-tu-13-2025-tt-byt-huong-dan-trien-khai-ho-so-benh-an-dien-tu-tu-ngay-21-07-2025">Circular 13/2025/TT-BYT — commentary, effective 21 July 2025</a></li>
+  <li><a href="https://caselaw.vn/bai-viet/ho-so-benh-an-dien-tu-bat-buoc-trien-khai-cham-nhat-tu-30-9-2025-theo-thong-tu-13-2025-tt-byt">EMR deployment deadlines by facility type under Circular 13/2025</a></li>
+  <li><a href="https://thuvienphapluat.vn/van-ban/Cong-nghe-thong-tin/Thong-tu-54-2017-TT-BYT-Bo-tieu-chi-ung-dung-cong-nghe-thong-tin-tai-cac-co-so-kham-chua-benh-373292.aspx">Thông tư 54/2017/TT-BYT — IT-application criteria for medical examination and treatment facilities</a></li>
+  <li><a href="https://thuvienphapluat.vn/van-ban/Cong-nghe-thong-tin/Circular-54-2017-TT-BYT-assessment-of-information-technology-application-at-health-facilities-375859.aspx">Circular 54/2017/TT-BYT — English translation</a></li>
+  <li><a href="https://hl7.org.vn/kien-thuc/cau-hoi-thuong-gap/">HL7 Vietnam / VN Core FHIR — FAQ and IG status</a></li>
+  <li><a href="https://fhir.hl7.org.vn/">VN Core FHIR Implementation Guide</a></li>
+  <li><a href="https://build.fhir.org/ig/hl7vn/vn-core-ig/artifacts.html">HL7.FHIR.VN.CORE — FHIR v4.0.1 artefacts (build)</a></li>
+  <li><a href="https://hl7.org.vn/kien-thuc/fhir-va-bhyt/">FHIR and BHYT — mapping the BHYT XML (Decisions 130 / 4750 / 3176)</a></li>
+  <li><a href="https://www.healthcareitnews.com/news/asia/hanoi-pilots-ehr-platform">Vietnam EHR platform and HL7 FHIR alignment — Healthcare IT News</a></li>
+  <li><a href="https://technologyquotient.freshfields.com/post/102iulg/data-localisation-in-vietnam-highlights-under-decree-53-and-decree-13">Data localisation in Vietnam — Decree 53 and Decree 13</a></li>
+  <li><a href="https://www.linklaters.com/en/insights/data-protected/data-protected---vietnam">Vietnam data protection — PDPL Law 91/2025/QH15 and Decree 356/2025/NĐ-CP</a></li>
+  <li><a href="https://itif.org/publications/2025/03/07/vietnam-data-localization-regulation/">Vietnam's data-localisation regulation — ITIF</a></li>
+</ul>
+
+<footer>
+  <p><strong>Standing of this document.</strong> Technical findings in §1–§7, §9 and the appendices are verified against the running system, the source code and the UAT database as at 2 August 2026, and are reproducible by the commands in Appendix A. Regulatory descriptions in §8 summarise published Vietnamese instruments and are provided for planning; they are not legal advice. The data-residency and digital-signature positions in §8.4 in particular require confirmation by qualified Vietnamese counsel before production go-live.</p>
+  <p><strong>Standing of the programme in §10.</strong> The work packages, acceptance criteria and evidence artefacts are our commitment; the dates are indicative from 2 August 2026 and assume the 31 December 2026 facility tier, which E1 confirms in week one. Effort figures are engineering estimates, not quotations — external items (counsel, security vendor, certification authority, any cloud migration) carry cost and lead time to be confirmed on engagement. §10 supersedes the earlier nine-step outline; the closure matrix at §10.5 is the version of record for tracking, and should be reviewed at each milestone rather than treated as fixed.</p>
+</footer>
+
+</div>
+</body>
+</html>
