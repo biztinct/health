@@ -126,13 +126,23 @@ jobs:
       #      server, with it. Conventions §1 records the same chain breaking
       #      the deployment. The image already provides cryptography; leave it
       #      exactly as it is.
+      #
+      # Because --no-deps suppresses the GOOD dependencies too, pywebpush's
+      # non-crypto ones are named explicitly in the first call. Measured from
+      # the deployment rather than guessed —
+      #   pywebpush -> aiohttp, cryptography>=2.6.1, http-ece>=1.1.0,
+      #                requests>=2.21.0, py-vapid>=1.7.0
+      #   http-ece  -> cryptography ;  py-vapid -> cryptography
+      # — of which the image already has `cryptography` and `requests`, so
+      # `aiohttp` is the one addition. Skipping it is what failed the last
+      # run: "import pywebpush → import aiohttp → ModuleNotFoundError".
       - name: deps — install (system, alongside the Debian-owned copies)
         id: pip_sys
         continue-on-error: true
         run: |
           set +e
           python3 -m pip install --break-system-packages --ignore-installed \
-            packaging 'fhir.resources==8.3.0' > /tmp/pipsys.log 2>&1
+            packaging aiohttp 'fhir.resources==8.3.0' > /tmp/pipsys.log 2>&1
           rc1=$?
           python3 -m pip install --break-system-packages --ignore-installed --no-deps \
             'pywebpush==2.3.0' 'http-ece' 'py-vapid' >> /tmp/pipsys.log 2>&1
@@ -153,7 +163,7 @@ jobs:
         if: steps.pip_sys.outcome != 'success'
         run: |
           python3 -m pip install --target /opt/fhirlibs \
-            packaging 'fhir.resources==8.3.0'
+            packaging aiohttp 'fhir.resources==8.3.0'
           python3 -m pip install --target /opt/fhirlibs --no-deps \
             'pywebpush==2.3.0' 'http-ece' 'py-vapid'
           # PYTHONPATH precedes site-packages, so anything here shadows the
