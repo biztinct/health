@@ -104,70 +104,65 @@ jobs:
             || { apt-get update -qq && apt-get install -y -qq python3-pip; }
           python3 -m pip --version
 
-      # Every `external_dependencies.python` the module closure declares, not
-      # just the FHIR one. `health_fhir_core` → … → `health_consent` →
-      # `health_pwa`, which needs pywebpush; without it Odoo refuses to install
-      # the chain at all ("Unable to install module health_pwa because an
-      # external dependency is not met"). `requests` is the third and is
-      # already in the image. Versions match the deployment.
-      - name: deps — install (PEP 668 override)
-        id: pip_break
+      # Every `external_dependencies.python` the module closure declares,
+      # plus `packaging` — Odoo 19 parses external_dependencies through
+      # `packaging.Requirement` and refuses to install ANY module without it
+      # ("Package `packaging` is required to parse `fhir.resources` external
+      # dependency and is not installed"). The image ships neither.
+      #
+      # Two pip calls, and both flags are load-bearing:
+      #
+      #  --ignore-installed  pip cannot uninstall a dpkg-owned package
+      #      ("Cannot uninstall typing_extensions 4.10.0, RECORD file not
+      #      found. Hint: The package was installed by debian"), so it has to
+      #      install alongside rather than replace. Without this the whole
+      #      install aborts and nothing is installed at all.
+      #
+      #  --no-deps (second call only)  pywebpush, http-ece and py-vapid all
+      #      depend on `cryptography`. Letting pip resolve it installs a newer
+      #      one that shadows the copy the image's system pyOpenSSL is linked
+      #      against, and `import OpenSSL` then dies with "module 'lib' has no
+      #      attribute GEN_EMAIL" — taking `odoo.addons.base`, and the entire
+      #      server, with it. Conventions §1 records the same chain breaking
+      #      the deployment. The image already provides cryptography; leave it
+      #      exactly as it is.
+      - name: deps — install (system, alongside the Debian-owned copies)
+        id: pip_sys
         continue-on-error: true
         run: |
           set +e
-          python3 -m pip install --break-system-packages \
-            'fhir.resources==8.3.0' 'pywebpush==2.3.0' > /tmp/pip1.log 2>&1
-          echo "$?" > /tmp/pip1.exit
-          cat /tmp/pip1.log
-          exit "$(cat /tmp/pip1.exit)"
+          python3 -m pip install --break-system-packages --ignore-installed \
+            packaging 'fhir.resources==8.3.0' > /tmp/pipsys.log 2>&1
+          rc1=$?
+          python3 -m pip install --break-system-packages --ignore-installed --no-deps \
+            'pywebpush==2.3.0' 'http-ece' 'py-vapid' >> /tmp/pipsys.log 2>&1
+          rc2=$?
+          echo "fhir=$rc1 push=$rc2" > /tmp/pipsys.exit
+          tail -25 /tmp/pipsys.log
+          [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
 
-      - name: deps — install (plain)
-        id: pip_plain
-        if: steps.pip_break.outcome != 'success'
-        continue-on-error: true
-        run: |
-          set +e
-          python3 -m pip install \
-            'fhir.resources==8.3.0' 'pywebpush==2.3.0' > /tmp/pip2.log 2>&1
-          echo "$?" > /tmp/pip2.exit
-          cat /tmp/pip2.log
-          exit "$(cat /tmp/pip2.exit)"
-
-      - name: deps — why the system installs were refused
-        if: steps.pip_break.outcome != 'success'
+      - name: deps — why the system install was refused
+        if: steps.pip_sys.outcome != 'success'
         run: |
           esc() { sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}'; }
-          printf '::warning::--break-system-packages exit %s:%%0A%s\n' \
-            "$(cat /tmp/pip1.exit 2>/dev/null || echo '?')" \
-            "$(tail -15 /tmp/pip1.log 2>/dev/null | esc)"
-          printf '::warning::plain exit %s:%%0A%s\n' \
-            "$(cat /tmp/pip2.exit 2>/dev/null || echo '?')" \
-            "$(tail -15 /tmp/pip2.log 2>/dev/null | esc)"
+          printf '::warning::system install exits (%s):%%0A%s\n' \
+            "$(cat /tmp/pipsys.exit 2>/dev/null || echo '?')" \
+            "$(tail -25 /tmp/pipsys.log 2>/dev/null | esc)"
 
-      - name: deps — install (--target, de-shadowed)
-        if: steps.pip_break.outcome != 'success' && steps.pip_plain.outcome != 'success'
+      - name: deps — install (--target fallback, de-shadowed)
+        if: steps.pip_sys.outcome != 'success'
         run: |
           python3 -m pip install --target /opt/fhirlibs \
-            'fhir.resources==8.3.0' 'pywebpush==2.3.0'
-          # PYTHONPATH precedes site-packages, so ANYTHING in the target dir
-          # shadows the image's copy of it. That is how the previous run died:
-          # pywebpush dragged a newer `cryptography` into the target, the
-          # image's system `pyOpenSSL` was built against the older one, and
-          # `import OpenSSL` raised "module 'lib' has no attribute GEN_EMAIL"
-          # — taking `odoo.addons.base`, and the whole server, with it.
-          # Conventions §1 warns about this exact chain on the server; a
-          # container is no safer. So drop from the target everything the
-          # image already provides, leaving only genuinely-new packages.
+            packaging 'fhir.resources==8.3.0'
+          python3 -m pip install --target /opt/fhirlibs --no-deps \
+            'pywebpush==2.3.0' 'http-ece' 'py-vapid'
+          # PYTHONPATH precedes site-packages, so anything here shadows the
+          # image's copy. Drop only what is binary-coupled to the image's
+          # OpenSSL; newer pure-Python copies are harmless, and pruning them
+          # all is what broke an earlier run (pydantic needs a newer
+          # typing_extensions than Debian ships).
           python3 /dev/stdin <<'PRUNE'
           import os, shutil
-          # Prune ONLY what is binary-coupled to the image's OpenSSL. The
-          # previous attempt dropped everything the image already had, which
-          # also removed `typing_extensions` — and pydantic (behind
-          # fhir.resources) needs a newer one than Debian ships, so the
-          # imports failed for the opposite reason. Newer pure-Python copies
-          # of requests/urllib3/attrs/typing_extensions are harmless on the
-          # path; a second `cryptography` or `cffi` is not, because the
-          # image's system pyOpenSSL is linked against its own.
           COUPLED = ('cryptography', 'cffi', '_cffi_backend', 'OpenSSL')
           target = '/opt/fhirlibs'
           removed, kept = [], []
@@ -182,7 +177,7 @@ jobs:
               else:
                   kept.append(entry)
           print('::warning::target dir — kept: %s' % (', '.join(kept) or '(none)'))
-          print('::warning::target dir — dropped as binary-coupled to the image: %s'
+          print('::warning::target dir — dropped as binary-coupled: %s'
                 % (', '.join(removed) or '(none)'))
           PRUNE
           echo "PYTHONPATH=/opt/fhirlibs" >> "$GITHUB_ENV"
@@ -201,6 +196,7 @@ jobs:
               fail=1
             fi
           }
+          check "packaging import"       "from packaging.requirements import Requirement; print('ok')"
           check "fhir.resources version" "import importlib.metadata as m; print(m.version('fhir.resources'))"
           check "pywebpush version"      "import importlib.metadata as m; print(m.version('pywebpush'))"
           check "fhir.resources R4B"     "from fhir.resources.R4B.patient import Patient; print('R4B ok')"
