@@ -9,9 +9,21 @@
               web_icon="health_cms_sidebar,static/description/icon.png"
               sequence="1"/>
 
-    <!-- Hide old individual center root menus -->
+    <!-- Hide old individual center root menus.
+
+         EXCEPT CRM Center: deliberately kept ACTIVE so admins can browse the
+         full CRM sub-menu tree, which the CMS sidebar only partially mirrors
+         (New Contact, Clients, Bookings and Settings have no sidebar leaf).
+         The duplication is accepted and understood — see the caveat below.
+
+         CAVEAT for whoever restricts a role next: the two surfaces read
+         DIFFERENT gates. The classic tree honours ir.ui.menu.groups_id plus
+         access_roles "Hide Menu"; the CMS sidebar honours only
+         cms.sidebar.item.role_ids. Hiding CRM Center from a role in Role
+         Management does NOT hide the 13 CRM sidebar leaves, and vice versa.
+         Restricting a duplicated area is always TWO edits. -->
     <record id="health_crm.menu_crm_center_root" model="ir.ui.menu">
-        <field name="active" eval="False"/>
+        <field name="active" eval="True"/>
     </record>
     <record id="health_fieldservice.menu_ops_center_root" model="ir.ui.menu">
         <field name="active" eval="False"/>
