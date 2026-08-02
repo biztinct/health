@@ -27,12 +27,11 @@
           ],
           "searchParam": [
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/clinical-date",
+              "definition": "http://hl7.org/fhir/SearchParameter/AdverseEvent-date",
               "name": "date",
               "type": "date"
             },
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
               "name": "patient",
               "type": "reference"
             },
@@ -58,12 +57,12 @@
           ],
           "searchParam": [
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/clinical-date",
+              "definition": "http://hl7.org/fhir/SearchParameter/Appointment-date",
               "name": "date",
               "type": "date"
             },
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "definition": "http://hl7.org/fhir/SearchParameter/Appointment-patient",
               "name": "patient",
               "type": "reference"
             },
@@ -588,7 +587,7 @@
               "type": "date"
             },
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "definition": "http://hl7.org/fhir/SearchParameter/QuestionnaireResponse-patient",
               "name": "patient",
               "type": "reference"
             },
@@ -647,12 +646,12 @@
           ],
           "searchParam": [
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/clinical-encounter",
+              "definition": "http://hl7.org/fhir/SearchParameter/Task-encounter",
               "name": "encounter",
               "type": "reference"
             },
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "definition": "http://hl7.org/fhir/SearchParameter/Task-patient",
               "name": "patient",
               "type": "reference"
             },

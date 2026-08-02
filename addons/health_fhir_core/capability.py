@@ -32,13 +32,16 @@ SEARCH_PARAM_BASE = 'http://hl7.org/fhir/SearchParameter/'
 #: is emitted without a ``definition`` key.
 SEARCH_PARAM_DEFINITIONS = {
     'AdverseEvent': {
-        'patient': 'clinical-patient',
-        'date': 'clinical-date',
+        # base-spec AdverseEvent has `subject`, not `patient` — no canonical
+        # for our spelling, so the key is omitted (review fix, GC-1).
+        'date': 'AdverseEvent-date',
         # 'severity' has no base-spec equivalent here — omitted deliberately.
     },
     'Appointment': {
-        'patient': 'clinical-patient',
-        'date': 'clinical-date',
+        # Appointment is NOT in the clinical-* common groups — it defines its
+        # own patient/date params (review fix, GC-1).
+        'patient': 'Appointment-patient',
+        'date': 'Appointment-date',
         'status': 'Appointment-status',
     },
     'CarePlan': {
@@ -117,7 +120,8 @@ SEARCH_PARAM_DEFINITIONS = {
         'status': 'Questionnaire-status',
     },
     'QuestionnaireResponse': {
-        'patient': 'clinical-patient',
+        # QR is not in clinical-patient — it defines its own (review fix).
+        'patient': 'QuestionnaireResponse-patient',
         'status': 'QuestionnaireResponse-status',
         'authored': 'QuestionnaireResponse-authored',
         'questionnaire': 'QuestionnaireResponse-questionnaire',
@@ -127,9 +131,10 @@ SEARCH_PARAM_DEFINITIONS = {
         'status': 'ServiceRequest-status',
     },
     'Task': {
-        'patient': 'clinical-patient',
+        # Task is not in the clinical-* groups — own params (review fix).
+        'patient': 'Task-patient',
         'status': 'Task-status',
-        'encounter': 'clinical-encounter',
+        'encounter': 'Task-encounter',
     },
 }
 

@@ -158,11 +158,18 @@ survives. Do NOT touch `everything.py` — the §5.47 net stays.
    using EXACTLY this rule set; where a param is not listed, omit the key
    (legal; never guess a canonical):
    - `patient` on Encounter/Observation/CarePlan/Goal/Condition/Consent/
-     DocumentReference/Flag/AdverseEvent/ServiceRequest/Task/MedicationRequest/
-     MedicationAdministration/QuestionnaireResponse/Appointment →
+     DocumentReference/Flag/ServiceRequest/MedicationRequest/
+     MedicationAdministration →
      `http://hl7.org/fhir/SearchParameter/clinical-patient`
-   - `date` on Encounter/Observation/CarePlan/AdverseEvent/Appointment →
-     `.../clinical-date`; `code` on Observation/Condition → `.../clinical-code`
+     *(GC-1 review correction: Appointment/QuestionnaireResponse/Task are NOT
+     clinical-patient members — use `Appointment-patient`,
+     `QuestionnaireResponse-patient`, `Task-patient`; AdverseEvent has no base
+     `patient` param at all (only `subject`) → OMIT)*
+   - `date` on Encounter/Observation/CarePlan → `.../clinical-date`
+     *(GC-1 review correction: Appointment→`Appointment-date`,
+     AdverseEvent→`AdverseEvent-date`; Task `encounter`→`Task-encounter`,
+     not clinical-encounter)*; `code` on Observation/Condition →
+     `.../clinical-code`
    - Patient: identifier→`.../Patient-identifier`, name→`.../Patient-name`,
      birthdate→`.../individual-birthdate`, phone→`.../individual-phone`,
      telecom→`.../individual-telecom`
