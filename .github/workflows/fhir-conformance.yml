@@ -71,15 +71,49 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install the pinned FHIR model library
-        # 8.3.0 is the version the R4/R4B equivalence argument is scoped to
-        # (docs/conformance/r4-r4b-equivalence.md, register item G11). The
-        # image is Debian/PEP-668, hence --break-system-packages.
+      # 8.3.0 is the version the R4/R4B equivalence argument is scoped to
+      # (docs/conformance/r4-r4b-equivalence.md, register item G11).
+      #
+      # This is four steps rather than one on purpose. Actions logs need
+      # repo-admin rights to download, but every step's NAME and CONCLUSION
+      # are public — so splitting the install into named attempts makes the
+      # failure diagnosable from the run summary alone, by whoever is looking.
+      # The odoo image is Debian: it may ship no pip at all, and if it does,
+      # PEP 668 refuses to install into the system interpreter.
+      - name: pip — probe the image
+        id: probe_pip
+        continue-on-error: true
+        run: python3 -m pip --version
+
+      - name: pip — bootstrap (image had none)
+        if: steps.probe_pip.outcome != 'success'
         run: |
-          pip install --break-system-packages 'fhir.resources==8.3.0' \
-            || pip install 'fhir.resources==8.3.0'
+          python3 -m ensurepip --default-pip \
+            || { apt-get update -qq && apt-get install -y -qq python3-pip; }
+          python3 -m pip --version
+
+      - name: fhir.resources — install (PEP 668 override)
+        id: pip_break
+        continue-on-error: true
+        run: python3 -m pip install --break-system-packages 'fhir.resources==8.3.0'
+
+      - name: fhir.resources — install (plain)
+        id: pip_plain
+        if: steps.pip_break.outcome != 'success'
+        continue-on-error: true
+        run: python3 -m pip install 'fhir.resources==8.3.0'
+
+      - name: fhir.resources — install (--target + PYTHONPATH)
+        if: steps.pip_break.outcome != 'success' && steps.pip_plain.outcome != 'success'
+        run: |
+          python3 -m pip install --target /opt/fhirlibs 'fhir.resources==8.3.0'
+          echo "PYTHONPATH=/opt/fhirlibs${PYTHONPATH:+:$PYTHONPATH}" >> "$GITHUB_ENV"
+
+      - name: fhir.resources — confirm the pin resolves
+        run: |
           python3 -c "import importlib.metadata as m; \
             print('fhir.resources', m.version('fhir.resources'))"
+          python3 -c "from fhir.resources.R4B.patient import Patient; print('R4B ok')"
 
       - name: Install the FHIR modules and run their tests
         id: odoo
