@@ -214,6 +214,13 @@ it. Verified both ways before use (§4 below).
 The audit check is R3: it is the GC-2 review's M2 fix, asserted live rather
 than assumed.
 
+One behaviour changed after the first authenticated run: a per-type failure
+no longer stops the script. Every type is probed, the audit check still runs,
+and the final `FAIL` line names all the failing types at once. Fail-fast
+would have reported `DocumentReference` and left the other 20 types and the
+audit attribution untested — one problem named, the rest hidden, which is the
+same "no silent truncation" mistake in a different costume.
+
 ### C4 — sampled runtime validation (§4.3), register item G10
 
 `serializers/base.py`: `validation_sample_pct(env)` and
@@ -614,6 +621,20 @@ which the `test_66` search-param guard does not see (that is what GC-3 R2
 fixed for DocumentReference and Location).
 
 ---
+
+**§5.104 — `continue-on-error: true` rewrites a GitHub Actions step's PUBLIC
+conclusion to `success`, so it destroys exactly the diagnosis it looks like
+it preserves.** A step that fails under `continue-on-error` reports
+`outcome: failure` (visible only inside the workflow, to `if:` expressions)
+and `conclusion: success` (what the API and the run summary show). The first
+version of this gate used it on all four checks plus a verdict step, and
+produced a **red job whose four gate steps all read green** — with the reason
+only in a log that needs repo-admin rights to download. Use it only where the
+signal you want is *which step ran* (a deliberate fallback chain, like the
+three `pip install` attempts here, where a later attempt executing at all
+proves the earlier one failed); never on a check whose result is the thing
+you need to read. Checks should fail hard and in order: the first `failure`
+names the problem and everything after it reads `skipped`.
 
 ## 9. Files
 
