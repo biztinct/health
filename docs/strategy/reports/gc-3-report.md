@@ -691,6 +691,27 @@ to the shared workspace) while a `/tmp` handoff silently does not — and the
 warning it emits reads like "your file is missing", not "I cannot see your
 filesystem", which is what makes it cost an iteration.
 
+**§5.106 — `pip install --target DIR` + `PYTHONPATH=DIR` SHADOWS every
+system package pip drags in, and the first casualty is the crypto chain.**
+Conventions §1 already says a pip upgrade of the cryptography chain has taken
+the *server* down; a container is no safer, and `--target` makes it worse
+because `PYTHONPATH` precedes `site-packages` unconditionally — order within
+`PYTHONPATH` is irrelevant, so you cannot "append" your way out of it.
+Installing `pywebpush` into a target dir pulled a newer `cryptography` in
+behind it; the image's system `pyOpenSSL` was built against the older one, and
+
+```
+AttributeError: module 'lib' has no attribute 'GEN_EMAIL'
+  → import OpenSSL → odoo.addons.base → "Failed to load server-wide module base"
+```
+
+killed the run before a single module loaded. Rules: (a) prefer a system
+install (`--break-system-packages`) and only fall back to `--target`; (b) when
+you must use `--target`, **prune it** of everything the environment already
+provides, so only genuinely-new packages are on the path; (c) assert an
+`import` of the shadowed-chain canary (`OpenSSL`) immediately after
+installing, because every later failure will point somewhere else entirely.
+
 ## 9. Files
 
 **New — `health_fhir_core`:** `models/__init__.py` ·
