@@ -196,6 +196,45 @@ the same messages, against a local Odoo checkout — and
 `docs/conformance/ci-runbook.md` covering both. See §5 D3 for why the
 fallback ships unconditionally rather than only on a blocked run.
 
+#### Where the Actions run stands — the named blocker (§4.1)
+
+§4.1 allows "a partially-green Actions run + fallback script … ONLY with the
+blocker named in the report". Naming it:
+
+**The blocker is not the pipeline, it is log access.** Downloading an Actions
+log — or a job log, or an artifact — requires **admin rights on the
+repository**, which the implementing session did not have:
+
+```
+GET /repos/biztinct/health/actions/runs/<id>/logs   → 403
+{"message": "Must have admin rights to Repository."}
+```
+
+The repo is public and the run summary is public, but the logs are not. Every
+iteration therefore had to infer the failure from what *is* public — step
+names and conclusions — which is why the workflow now looks the way it does.
+What that inference established, run by run:
+
+| # | Reached | Learned |
+|---|---|---|
+| 1 | install step | `pip install` failed outright |
+| 2 | odoo step **succeeded** | the image needs the `--target` + `PYTHONPATH` fallback; it refuses both a plain and a `--break-system-packages` system install |
+| 3 | gates | `continue-on-error` had masked all four gate conclusions to `success` under a red job (§5.104) |
+| 4 | gate 0 | `--logfile` produced **no file at all** — so odoo died before opening one |
+
+Run 4's finding is why the command now pipes through `tee` instead of using
+`--logfile` (a log always exists, including the reason odoo exited) and why
+every gate emits an `::error::` annotation carrying the relevant lines —
+**annotations are served by the public check-runs API; logs are not.** A red
+build now explains itself to whoever is looking, with no token.
+
+The dependency chain, the container, the postgres service, the checkout and
+the `fhir.resources` pin are all confirmed working. What is not yet confirmed
+is the odoo invocation itself inside `odoo:19`, and the honest statement is
+that **at the time of writing this report the Actions gate has not gone
+green**. The fallback (`tools/ci_fhir_local.sh`) runs the same suite with the
+same gates and is the sanctioned exit until it does.
+
 ### C3 — the post-deploy conformance smoke (§4.2)
 
 `tools/fhir_deploy_smoke.sh` + `docs/conformance/deploy-smoke.md`. Runs on
@@ -447,7 +486,7 @@ either way: the Actions result cannot be known until after the push, the
 runbook is the C1 artefact the register asks for regardless, and the
 fallback is what keeps the *control* alive if the *hosting* goes away. If the
 Actions run is green they are a convenience; if it is not, they are the
-sanctioned exit. Actions outcome: PLACEHOLDER_ACTIONS
+sanctioned exit. See §4.1 above for where the Actions run actually stands.
 
 **D4 — `--test-tags` and `--without-demo=all` added to the CI command.**
 §4.1's command has neither. Without `--test-tags` the run executes the test
