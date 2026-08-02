@@ -60,12 +60,19 @@ jobs:
     env:
       CI_DB: ci_test
       CI_LOG: /tmp/fhir-conformance.log
-      # `addons` FIRST, then the image's packaged addons. This mirrors the
-      # server, where /odoo/odoo-server/addons is a single directory holding
-      # both our modules and the (patched) core copies this repo tracks —
-      # putting the image's copies first would silently test different code
-      # from the one that is deployed.
-      CI_ADDONS_PATH: addons,/usr/lib/python3/dist-packages/odoo/addons
+      # Our modules. NOTE, measured from a run's own startup line: Odoo 19
+      # resolves `odoo.addons` as a namespace package and its built-in paths
+      # come FIRST regardless of what --addons-path says —
+      #   addons paths: ['/usr/lib/python3/dist-packages/odoo/addons',
+      #                  '/var/lib/odoo/addons/19.0',
+      #                  '/__w/health/health/addons', ...]
+      # so the image's stock core modules win over the patched copies this
+      # repo tracks (account, crm, mail, web, …). CI therefore tests OUR
+      # modules against STOCK Odoo 19, not against the deployment's core.
+      # That is a real fidelity limit of this gate, documented in
+      # docs/conformance/ci-runbook.md — control C3 is what covers the
+      # deployed combination.
+      CI_ADDONS_PATH: addons
       # Floor for gate 3. A floor, not a pin: it fails on collapse (a module
       # that silently failed to install, a --test-tags typo), not on growth.
       MIN_EXECUTED: '50'
@@ -95,27 +102,36 @@ jobs:
             || { apt-get update -qq && apt-get install -y -qq python3-pip; }
           python3 -m pip --version
 
-      - name: fhir.resources — install (PEP 668 override)
+      # Every `external_dependencies.python` the module closure declares, not
+      # just the FHIR one. `health_fhir_core` → … → `health_consent` →
+      # `health_pwa`, which needs pywebpush; without it Odoo refuses to install
+      # the chain at all ("Unable to install module health_pwa because an
+      # external dependency is not met"), which is how the first runs died.
+      # `requests` is the third and is already in the image. Versions match
+      # the deployment (pywebpush 2.3.0 on vietuat).
+      - name: deps — install (PEP 668 override)
         id: pip_break
         continue-on-error: true
-        run: python3 -m pip install --break-system-packages 'fhir.resources==8.3.0'
+        run: python3 -m pip install --break-system-packages 'fhir.resources==8.3.0' 'pywebpush==2.3.0'
 
-      - name: fhir.resources — install (plain)
+      - name: deps — install (plain)
         id: pip_plain
         if: steps.pip_break.outcome != 'success'
         continue-on-error: true
-        run: python3 -m pip install 'fhir.resources==8.3.0'
+        run: python3 -m pip install 'fhir.resources==8.3.0' 'pywebpush==2.3.0'
 
-      - name: fhir.resources — install (--target + PYTHONPATH)
+      - name: deps — install (--target + PYTHONPATH)
         if: steps.pip_break.outcome != 'success' && steps.pip_plain.outcome != 'success'
         run: |
-          python3 -m pip install --target /opt/fhirlibs 'fhir.resources==8.3.0'
+          python3 -m pip install --target /opt/fhirlibs \
+            'fhir.resources==8.3.0' 'pywebpush==2.3.0'
           echo "PYTHONPATH=/opt/fhirlibs${PYTHONPATH:+:$PYTHONPATH}" >> "$GITHUB_ENV"
 
-      - name: fhir.resources — confirm the pin resolves
+      - name: deps — confirm they resolve
         run: |
           python3 -c "import importlib.metadata as m; \
-            print('fhir.resources', m.version('fhir.resources'))"
+            print('fhir.resources', m.version('fhir.resources')); \
+            print('pywebpush', m.version('pywebpush'))"
           python3 -c "from fhir.resources.R4B.patient import Patient; print('R4B ok')"
 
       # Probe the image before trusting it. `odoo:19` is not ours and the
@@ -145,7 +161,7 @@ jobs:
             --test-tags '/health_fhir_core,/health_fhir_terminology,/health_condition' \
             --stop-after-init \
             --workers=0 \
-            --without-demo=all \
+            --without-demo=True \
             --db_host=postgres \
             --db_user=odoo \
             --db_password=odoo \

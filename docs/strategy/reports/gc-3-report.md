@@ -184,12 +184,16 @@ step's name and conclusion are public. Splitting the work into named steps
 makes a red build diagnosable from the run summary alone, by anyone, without
 a token. It also documents itself: the step list *is* the checklist.
 
-`addons` is listed **first** in the addons-path. This repo tracks the
-deployment's copies of several core Odoo modules (`account`, `crm`, `mail`,
-`sale`, `hr`, `web`, `product`, `calendar`), because on the server
-`/odoo/odoo-server/addons` is one directory holding both. Listing the image's
-packaged addons first would silently test different code from the one that is
-deployed.
+**A correction I owe the reader.** This section originally claimed the
+workflow lists `addons` first so the repo's patched copies of core Odoo
+modules (`account`, `crm`, `mail`, `web`, …) win over the image's. Measured
+from a run's own startup line, that is **false**: Odoo 19 resolves
+`odoo.addons` as a namespace package whose built-in paths precede anything
+`--addons-path` contributes, so the image's stock core always wins. The gate
+therefore tests **our modules against stock Odoo 19**, which is the right
+scope for a facade conformance gate but is *not* a test of the deployed
+combination — control C3 covers that, on the server. The workflow comment and
+`ci-runbook.md` now say this instead of the opposite.
 
 Also delivered: `tools/ci_fhir_local.sh` — the same suite, the same gates,
 the same messages, against a local Odoo checkout — and

@@ -89,19 +89,34 @@ in the commit.
   `--without-demo=all`, and a `--logfile` that is uploaded as an artifact on
   every run, pass or fail.
 
-### addons-path order is load-bearing
-
-```yaml
-CI_ADDONS_PATH: addons,/usr/lib/python3/dist-packages/odoo/addons
-```
+### CI tests our modules against STOCK core — a real fidelity limit
 
 The repo's `addons/` is **not** only our modules: it also tracks the
 deployment's copies of several core Odoo modules (`account`, `crm`, `mail`,
 `sale`, `hr`, `web`, `product`, `calendar`, …), because on the server
-`/odoo/odoo-server/addons` is one directory holding both. Odoo resolves a
-module name against the first path that contains it, so listing the image's
-packaged addons first would silently test *different code from the one that is
-deployed*. Repo first, image second.
+`/odoo/odoo-server/addons` is one directory holding both.
+
+An early version of this workflow tried to put `addons` first in
+`--addons-path` so those copies would win. **That does not work, and the run
+says so in its own startup line:**
+
+```
+addons paths: _NamespacePath(['/usr/lib/python3/dist-packages/odoo/addons',
+                              '/var/lib/odoo/addons/19.0',
+                              '/__w/health/health/addons',
+                              '/usr/lib/python3/dist-packages/addons'])
+```
+
+Odoo 19 resolves `odoo.addons` as a **namespace package**, and its built-in
+paths precede anything `--addons-path` contributes. The image's stock
+`account`/`crm`/`mail`/`web` therefore win over the repo's copies no matter
+what order you write.
+
+So state the boundary rather than pretend: **this gate tests our modules
+against stock Odoo 19.** That is the right scope for a FHIR conformance gate
+— the facade is what is under test — but it is not a test of the deployed
+combination. Control C3 (the post-deploy smoke) is what covers that, on the
+server, against the actual core the deployment runs.
 
 ### Reading a red run
 
