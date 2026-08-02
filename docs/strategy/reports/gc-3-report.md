@@ -5,7 +5,7 @@
 **Register items:** G4 (engineering closed — owner naming remains OPS), G10 (closed)
 **Carry-ins:** GC-2 review R1 (consent-log durability), R2 (emit-only bindings), R3 (audit attribution proven live)
 
-**Result: 0 failed, 0 error(s) of 154 tests on vietuat.** Server healthy
+**Result: 0 failed, 0 error(s) of 159 tests on vietuat.** Server healthy
 (HTTP 200). Five conformance controls now run without anyone remembering to:
 CI on every push, a baseline diff in the suite, a smoke after every deploy,
 sampled validation on live traffic, and a weekly cron with an assignee.
@@ -323,16 +323,22 @@ Live on vietuat: `ir_cron` id **141**, active, every 7 days, next call
 ## 3. Test results (verbatim)
 
 ```
-# shipping run — the exact committed code, health_consent + health_fhir_core
-# upgraded together, four test tags
-2026-08-02 20:51:49 INFO odoo.tests.result: 0 failed, 0 error(s) of 154 tests
+# shipping run — the exact committed code; health_base + health_consent +
+# health_fhir_core upgraded together, five test tags
+2026-08-02 23:30:54 INFO odoo.tests.result: 0 failed, 0 error(s) of 159 tests
                           when loading database 'vietuat'
 EXIT:0   HTTP:200
 
-grep -ac "Starting Test.*\.test_"   → 154   (every test the result line counted)
+grep -ac "Starting Test.*\.test_"   → 159   (every test the result line counted)
 grep -ac "FAIL:\|ERROR:"            → 0
 grep -ac "ERROR: setUpClass"        → 0     (§5.75 — no HttpCase died in setUpClass)
 ```
+
+159 rather than the 154 quoted earlier in this phase because the tag set now
+includes `/health_base` (D10 touches it). **This run was deliberately executed
+at 23:30 UTC — inside the 22:00–24:00 window in which `test_04` had failed
+four minutes earlier (§5.107).** Re-running a timezone flake until it passes
+proves nothing; running it in the window that broke it is the proof.
 
 New tests, all confirmed executed by name (§5.83/§5.90 — a count of failures
 is not evidence):
@@ -534,6 +540,28 @@ built and a precedent GC-1 already set on Patient. Contained to one
 serializer, strictly narrowing what is read. The residual
 `healthcare_skill_ids` problem is reported (F2), not worked around.
 
+**D10 — three lines edited in `health_base` (NOT a sanctioned module).**
+Forced, and the strongest-justified deviation in this phase: `health_base`
+referenced a demo-only xmlid from a data file, so it could not install on a
+demo-less database and the CI gate could not get past module loading (F6).
+The fix removes the `parent_id` field rather than repointing it, which makes
+it **provably inert for the running system**: Odoo writes only the fields a
+record declares, so an upgrade leaves existing values alone. Verified rather
+than asserted — after upgrading `health_base` on vietuat, categories 81/82/83
+still read `parent_id = 1`.
+
+**D11 — one line changed in `health_consent`'s test_04 (outside R1's
+sanction).** `test_04_cron_expiry_and_renewal` built its fixture dates from
+`fields.Date.today()` (UTC) while the code under test selects renewals with
+`fields.Date.context_today()` (the user's timezone). OdooBot's timezone is
+Europe/Brussels, so between 22:00 and 24:00 UTC the two differ by a day, the
+cron's equality match finds nothing, and the test fails — purely as a
+function of the hour the suite is run at. It passed in this phase's first
+three runs (≈20:30–20:51 UTC) and failed in the fourth (23:26 UTC). The
+fixture now derives its dates the same way the code under test does. A test
+whose result depends on the wall-clock hour is broken regardless of who owns
+the module.
+
 No other deviations. In particular: the facade is still **read-only** (no
 create/update/delete/vread/history/transaction route), no new resource
 serializer, `health_fhir_adapter_vn`/`_base` untouched, no `meta.profile`,
@@ -581,6 +609,25 @@ only affects newer records is invisible until the oldest record happens to
 change. A random or newest-first sample would trade determinism for coverage.
 Deliberate for now, worth a decision if the weekly log ever reads as
 uninformative.
+
+**F6 — the platform's install depends on Odoo DEMO data, and nobody knew.**
+`health_base/security/health_security.xml` referenced
+`base.res_partner_category_0` from three `res.partner.category` records. That
+xmlid is defined **only** in `base/data/res_partner_demo.xml` — demo data —
+so `health_base` could not be installed on any database created without it:
+
+```
+ParseError: while parsing health_base/security/health_security.xml:212
+```
+
+Every existing deployment was created *with* demo data (verified: the xmlid
+resolves on vietuat, and categories 81/82/83 are parented to it), which is why
+this never surfaced. **A fresh production install would have failed at this
+line.** GC-3 fixed the three references it found (D10), but the class is
+worth a sweep: any `ref="base.…_demo…"`-style xmlid in a `data` file is the
+same latent defect, and only a demo-less install exposes it. The CI gate now
+does exactly that on every push, which is arguably the single most valuable
+thing it will do.
 
 **F5 — `smoke_test_client` (gateway.oauth.client id 10) exists and is
 inactive.** Activating it is the OPS half of C3, exactly as §4.2 says; this
@@ -711,6 +758,20 @@ you must use `--target`, **prune it** of everything the environment already
 provides, so only genuinely-new packages are on the path; (c) assert an
 `import` of the shadowed-chain canary (`OpenSSL`) immediately after
 installing, because every later failure will point somewhere else entirely.
+
+**§5.107 — a test that builds dates with `fields.Date.today()` against code
+that selects with `fields.Date.context_today()` is a time-of-day flake, and
+on this deployment the window is 22:00–24:00 UTC.** `today()` is UTC;
+`context_today()` is the *user's* timezone — and the superuser that runs
+tests has tz **Europe/Brussels** on vietuat (not Asia/Ho_Chi_Minh, which is
+the surprise). Any equality match on a date therefore disagrees by one day
+whenever Brussels has rolled over and UTC has not. `health_consent`'s renewal
+test passed three times at ≈20:40 UTC and failed at 23:26 UTC on identical
+code. Rules: derive fixture dates with the SAME helper the code under test
+uses; be suspicious of any date equality (`==`) in a test rather than a range;
+and when a test starts failing with no relevant code change, **check the clock
+before checking the diff** — the three green runs and the red one differed by
+nothing but the hour.
 
 ## 9. Files
 

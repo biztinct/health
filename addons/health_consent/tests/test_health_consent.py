@@ -220,14 +220,23 @@ class TestHealthConsent(TransactionCase):
     # Acceptance #4 — cron expiry + renewal activity
     # ------------------------------------------------------------------
     def test_04_cron_expiry_and_renewal(self):
+        # `context_today`, not `today`: the cron selects renewals with
+        # `expiry_date == fields.Date.context_today(self) + 14`, i.e. in the
+        # USER's timezone, while `fields.Date.today()` is UTC. OdooBot's tz is
+        # Europe/Brussels, so between 22:00 and 24:00 UTC the two disagree by a
+        # day, the equality match finds nothing, and this test failed — purely
+        # as a function of the hour it was run at. Deriving the fixture dates
+        # the same way the code under test does makes it hold at any hour, in
+        # any timezone.
+        today = fields.Date.context_today(self.Consent)
         past = self._make_consent(
             'service',
-            effective_date=fields.Date.today() - timedelta(days=60),
-            expiry_date=fields.Date.today() - timedelta(days=1))
+            effective_date=today - timedelta(days=60),
+            expiry_date=today - timedelta(days=1))
         past.action_grant()
         expiring = self._make_consent(
             'marketing',
-            expiry_date=fields.Date.today() + timedelta(days=14),
+            expiry_date=today + timedelta(days=14),
             grant=True)
         manager_user = self.env['res.users'].create({
             'name': 'Consent Facility Manager',

@@ -208,23 +208,34 @@
         <field name="perm_unlink" eval="True"/>
     </record>
     
-    <!-- Partner category for healthcare classification -->
+    <!-- Partner category for healthcare classification.
+
+         These carried `parent_id ref="base.res_partner_category_0"`, which is
+         defined ONLY in base/data/res_partner_demo.xml — DEMO data. Referencing
+         it from a `data` file made health_base uninstallable on any database
+         created without demo data, i.e. on a production install:
+             ParseError: while parsing health_base/security/health_security.xml:212
+         Found by the GC-3 CI gate, which installs demo-less on purpose; vietuat
+         never showed it because that database was created WITH demo data.
+
+         Dropping the field rather than repointing it is deliberate: Odoo writes
+         only the fields a record declares, so an upgrade leaves the existing
+         parent_id untouched on databases that already have one (verified on
+         vietuat: categories 81/82/83 still parented to 1 after the upgrade),
+         while a fresh install simply creates them unparented. -->
     <record id="patient_category" model="res.partner.category">
         <field name="name">Healthcare Patient</field>
         <field name="color">4</field>
-        <field name="parent_id" ref="base.res_partner_category_0"/>
     </record>
     
     <record id="staff_category" model="res.partner.category">
         <field name="name">Healthcare Staff</field>
         <field name="color">2</field>
-        <field name="parent_id" ref="base.res_partner_category_0"/>
     </record>
     
     <record id="facility_category" model="res.partner.category">
         <field name="name">Healthcare Facility</field>
         <field name="color">6</field>
-        <field name="parent_id" ref="base.res_partner_category_0"/>
     </record>
     
     <!-- Data privacy and HIPAA compliance settings -->
