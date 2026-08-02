@@ -14,6 +14,7 @@
   "resourceType": "CapabilityStatement",
   "rest": [
     {
+      "documentation": "Read-only. Supported string modifiers: :exact, :contains.",
       "mode": "server",
       "resource": [
         {

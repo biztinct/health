@@ -213,6 +213,13 @@ def build_capability(env, base_url=''):
         },
         'rest': [{
             'mode': 'server',
+            # Applies across every resource served here (R4: rest.documentation
+            # is "capabilities that apply across all applications"). GC-2/G17:
+            # string params default to case-insensitive starts-with, and the
+            # two modifiers below are the ONLY ones accepted — any other is a
+            # 400 not-supported, never silently ignored.
+            'documentation': (
+                'Read-only. Supported string modifiers: :exact, :contains.'),
             'security': {
                 'service': [{
                     'coding': [{

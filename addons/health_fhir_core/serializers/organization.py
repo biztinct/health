@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Organization ← health.facility (legal entity view; Location is the site)."""
 
-from .base import FHIRSerializer
+from .base import FHIRSerializer, string_param_domain
 
 
 def _identifier_domain(value):
@@ -19,8 +19,7 @@ class OrganizationSerializer(FHIRSerializer):
     odoo_model = 'health.facility'
 
     search_params = {
-        'name': {'type': 'string',
-                 'domain': lambda v: [('name', 'ilike', v)]},
+        'name': {'type': 'string', 'domain': string_param_domain('name')},
         'identifier': {'type': 'token', 'domain': _identifier_domain},
     }
 

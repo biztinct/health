@@ -1,0 +1,51 @@
+code,display,display_vi,parent_code,synonyms
+ZZA0.0,"Synthetic hypertensive state, unspecified","Tăng áp lực tổng hợp, không đặc hiệu",ZZA0,tổng hợp;synthetic
+ZZA0.1,Synthetic metabolic disorder,Rối loạn chuyển hoá tổng hợp,ZZA0,
+ZZA1.2,"Synthetic functional decline, mild","Suy giảm chức năng tổng hợp, mức nhẹ",ZZA1,giả lập;simulated
+ZZA1.3,Synthetic acute inflammation,Viêm tổng hợp cấp,ZZA1,
+ZZA2.4,"Synthetic pressure ulcer, stage I","Loét tì đè tổng hợp, độ I",ZZA2,mẫu;sample
+ZZA2.5,Synthetic wound-care encounter,Chăm sóc vết thương tổng hợp,ZZA2,tổng hợp;synthetic
+ZZB0.6,Synthetic home blood-pressure monitoring,"Theo dõi huyết áp tại nhà, tổng hợp",ZZB0,
+ZZB0.7,"Synthetic diabetes, notional type","Đái tháo đường tổng hợp, típ giả định",ZZB0,giả lập;simulated
+ZZB1.8,"Synthetic undernutrition, moderate","Suy dinh dưỡng tổng hợp, mức vừa",ZZB1,
+ZZB1.9,Synthetic post-stroke rehabilitation,Phục hồi chức năng tổng hợp sau đột quỵ,ZZB1,mẫu;sample
+ZZB2.0,"Synthetic hypertensive state, unspecified","Tăng áp lực tổng hợp, không đặc hiệu",ZZB2,tổng hợp;synthetic
+ZZB2.1,Synthetic metabolic disorder,Rối loạn chuyển hoá tổng hợp,ZZB2,
+ZZC0.2,"Synthetic functional decline, mild","Suy giảm chức năng tổng hợp, mức nhẹ",ZZC0,giả lập;simulated
+ZZC0.3,Synthetic acute inflammation,Viêm tổng hợp cấp,ZZC0,
+ZZC1.4,"Synthetic pressure ulcer, stage I","Loét tì đè tổng hợp, độ I",ZZC1,mẫu;sample
+ZZC1.5,Synthetic wound-care encounter,Chăm sóc vết thương tổng hợp,ZZC1,tổng hợp;synthetic
+ZZC2.6,Synthetic home blood-pressure monitoring,"Theo dõi huyết áp tại nhà, tổng hợp",ZZC2,
+ZZC2.7,"Synthetic diabetes, notional type","Đái tháo đường tổng hợp, típ giả định",ZZC2,giả lập;simulated
+ZZD0.8,"Synthetic undernutrition, moderate","Suy dinh dưỡng tổng hợp, mức vừa",ZZD0,
+ZZD0.9,Synthetic post-stroke rehabilitation,Phục hồi chức năng tổng hợp sau đột quỵ,ZZD0,mẫu;sample
+ZZC9,,Hàng lỗi: thiếu tên tiếng Anh,,
+ZZD1.0,"Synthetic hypertensive state, unspecified","Tăng áp lực tổng hợp, không đặc hiệu",ZZD1,tổng hợp;synthetic
+ZZD1.1,Synthetic metabolic disorder,Rối loạn chuyển hoá tổng hợp,ZZD1,
+ZZD2.2,"Synthetic functional decline, mild","Suy giảm chức năng tổng hợp, mức nhẹ",ZZD2,giả lập;simulated
+ZZD2.3,Synthetic acute inflammation,Viêm tổng hợp cấp,ZZD2,
+ZZE0.4,"Synthetic pressure ulcer, stage I","Loét tì đè tổng hợp, độ I",ZZE0,mẫu;sample
+ZZE0.5,Synthetic wound-care encounter,Chăm sóc vết thương tổng hợp,ZZE0,tổng hợp;synthetic
+ZZE1.6,Synthetic home blood-pressure monitoring,"Theo dõi huyết áp tại nhà, tổng hợp",ZZE1,
+ZZE1.7,"Synthetic diabetes, notional type","Đái tháo đường tổng hợp, típ giả định",ZZE1,giả lập;simulated
+ZZE2.8,"Synthetic undernutrition, moderate","Suy dinh dưỡng tổng hợp, mức vừa",ZZE2,
+ZZA0,ZZA: Acute group,ZZA: Nhóm bệnh cấp tính,ZZA,
+ZZA1,ZZA: Chronic group,ZZA: Nhóm bệnh mạn tính,ZZA,
+ZZA2,ZZA: Home-monitoring group,ZZA: Nhóm theo dõi tại nhà,ZZA,
+ZZB0,ZZB: Acute group,ZZB: Nhóm bệnh cấp tính,ZZB,
+ZZB1,ZZB: Chronic group,ZZB: Nhóm bệnh mạn tính,ZZB,
+ZZB2,ZZB: Home-monitoring group,ZZB: Nhóm theo dõi tại nhà,ZZB,
+ZZC0,ZZC: Acute group,ZZC: Nhóm bệnh cấp tính,ZZC,
+ZZC1,ZZC: Chronic group,ZZC: Nhóm bệnh mạn tính,ZZC,
+ZZC2,ZZC: Home-monitoring group,ZZC: Nhóm theo dõi tại nhà,ZZC,
+ZZD0,ZZD: Acute group,ZZD: Nhóm bệnh cấp tính,ZZD,
+ZZD1,ZZD: Chronic group,ZZD: Nhóm bệnh mạn tính,ZZD,
+ZZD2,ZZD: Home-monitoring group,ZZD: Nhóm theo dõi tại nhà,ZZD,
+ZZE0,ZZE: Acute group,ZZE: Nhóm bệnh cấp tính,ZZE,
+ZZE1,ZZE: Chronic group,ZZE: Nhóm bệnh mạn tính,ZZE,
+ZZE2,ZZE: Home-monitoring group,ZZE: Nhóm theo dõi tại nhà,ZZE,
+ZZA,Synthetic chapter A — circulatory analogues,Chương tổng hợp A — tương tự tuần hoàn,,
+ZZB,Synthetic chapter B — endocrine analogues,Chương tổng hợp B — tương tự nội tiết,,
+ZZC,Synthetic chapter C — respiratory analogues,Chương tổng hợp C — tương tự hô hấp,,
+ZZD,Synthetic chapter D — integumentary analogues,Chương tổng hợp D — tương tự da,,
+ZZE,Synthetic chapter E — factors influencing care,Chương tổng hợp E — yếu tố ảnh hưởng chăm sóc,,

@@ -175,9 +175,15 @@ class TestFHIRCore(TransactionCase):
             records, _, _ = serializer.search_records(
                 self.env, {'identifier': [self.patient.patient_code]})
             self.assertIn(self.patient, records)
-        # name search matches diacritic names on an ASCII prefix
+        # GC-2 §3.2: the `string` default is now spec-correct STARTS-WITH, so
+        # a middle-of-name search must ask for `:contains` (it used to be the
+        # implicit default — the change is the point of the phase).
         records, _, _ = serializer.search_records(
-            self.env, {'name': ['Văn Tèo FHIR']})
+            self.env, {'name:contains': ['Văn Tèo FHIR']})
+        self.assertIn(self.patient, records)
+        # …and the prefix form still finds it.
+        records, _, _ = serializer.search_records(
+            self.env, {'name': ['Nguyễn Văn Tèo']})
         self.assertIn(self.patient, records)
 
     def test_unsupported_search_param_is_strict_400(self):
@@ -295,7 +301,8 @@ class TestFHIRCore(TransactionCase):
                 'catchment_province_id': self.province.id,
             })
         serializer = REGISTRY['Patient']
-        params = {'name': [marker], '_count': ['2']}
+        # the marker sits mid-name → `:contains` (GC-2 §3.2 starts-with default)
+        params = {'name:contains': [marker], '_count': ['2']}
         seen_ids = []
         pages = 0
         cursor = None

@@ -8,7 +8,7 @@ valueString. Child rows still serialize standalone too (reachable by search).
 
 from .base import (
     FHIRSerializer, FHIRBadRequest, fhir_instant, date_param_domain,
-    LOINC_SYSTEM, UCUM_SYSTEM,
+    token_domain, token_status_domain, LOINC_SYSTEM, UCUM_SYSTEM,
 )
 from . import fso_common
 
@@ -63,9 +63,11 @@ class ObservationSerializer(FHIRSerializer):
                     'domain': fso_common.patient_ref_domain('client_id')},
         'date': {'type': 'date',
                  'domain': date_param_domain('effective_datetime')},
-        'status': {'type': 'token', 'domain': _status_domain},
+        'status': {'type': 'token',
+                   'domain': token_status_domain(_status_domain)},
         'code': {'type': 'token',
-                 'domain': lambda v: [('vitals_type_id.loinc_code', '=', v)]},
+                 'domain': token_domain('vitals_type_id.loinc_code',
+                                        LOINC_SYSTEM)},
     }
 
     def base_domain(self, env):

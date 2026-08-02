@@ -18,7 +18,7 @@ from odoo.addons.health_fhir_core.serializers.everything import (
     build_everything_bundle,
 )
 from odoo.addons.health_condition.serializers.condition import (
-    ConditionSerializer,
+    ICD10_SYSTEM, ConditionSerializer,
 )
 
 
@@ -282,7 +282,7 @@ class TestCondition(TransactionCase):
     def test_11_everything_includes_condition(self):
         self._make_note(codes=[self.code_i10])
         bundle, _rec = build_everything_bundle(
-            self.env, self.patient.id, {}, 'http://test')
+            self.env, self.patient.id, {}, 'http://test', enforced=False)
         by_type = {}
         for entry in bundle['entry']:
             by_type.setdefault(
@@ -317,6 +317,34 @@ class TestCondition(TransactionCase):
         recs_after, _t, _c = serializer.search_records(
             self.env, {'patient': ['Patient/%d' % self.patient.id]})
         self.assertNotIn(cond, recs_after)
+
+    # ==================================================================
+    # 12b. GC-2 §3.1 — FHIR token syntax on `code` and `clinical-status`
+    # ==================================================================
+    def test_12b_token_system_code_search(self):
+        """`code=http://hl7.org/fhir/sid/icd-10|I10` is what a conformant
+        client sends. It used to match nothing (the raw string was compared
+        to the code column); a code qualified with a FOREIGN system must now
+        return zero rows — which is the spec's answer, not an error."""
+        self._make_note(codes=[self.code_i10])
+        cond = self._cond(self.patient, self.code_i10)
+        serializer = ConditionSerializer()
+        for value in ('I10', '%s|I10' % ICD10_SYSTEM, '|I10'):
+            recs, _t, _c = serializer.search_records(
+                self.env, {'code': [value]})
+            self.assertIn(cond, recs, 'code=%r did not match' % value)
+        # a different code system → zero matches, no exception
+        translate = serializer.search_params['code']['domain']
+        self.assertEqual(translate('http://snomed.info/sct|I10'),
+                         [('id', '=', 0)])
+        recs, _t, _c = serializer.search_records(
+            self.env, {'code': ['http://snomed.info/sct|I10']})
+        self.assertNotIn(cond, recs)
+        # clinical-status asserts no system, so `|active` works too
+        recs, _t, _c = serializer.search_records(
+            self.env, {'clinical-status': ['|active'],
+                       'patient': ['Patient/%d' % self.patient.id]})
+        self.assertIn(cond, recs)
 
     # ==================================================================
     # 13. recorded-date search param — the Date-column-vs-datetime-literal

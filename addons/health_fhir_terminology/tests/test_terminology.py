@@ -2,10 +2,13 @@
 """Tests for health_fhir_terminology (handover §7). Direct-call, no HTTP."""
 
 import base64
+import csv
+import io
 from datetime import datetime
 
 from odoo.exceptions import ValidationError
 from odoo.tests import TransactionCase, tagged
+from odoo.tools.misc import file_open
 
 from odoo.addons.health_fhir_core.capability import (
     build_capability, clear_capability_cache,
@@ -203,3 +206,127 @@ class TestTerminology(TransactionCase):
         self.assertLessEqual(len(full['expansion']['contains']), 50)
         # unknown system → None
         self.assertIsNone(self.Code.fhir_expand('urn:bogus'))
+
+
+SAMPLE_FIXTURE = ('health_fhir_terminology/tests/fixtures/'
+                  'icd10_sample_50.csv')
+
+
+@tagged('post_install', '-at_install')
+class TestIcd10SampleLoad(TransactionCase):
+    """Phase GC-2 / D4 — the ICD-10 load path, verified on a committed
+    licence-safe sample (register item G8, engineering half).
+
+    The real WHO release cannot be committed (licensed) and cannot be
+    downloaded in a test (no network), so what is proven here is the part we
+    own: the converter's OUTPUT SHAPE goes through `medical.code.import`
+    cleanly, hierarchy resolves when parents post-date their children, Vietnamese
+    diacritics survive the round trip, a malformed row is counted rather than
+    aborting the file — and a SECOND run of the same file changes nothing.
+    Idempotence is what makes a 14k-row load safe to repeat after a partial
+    failure, which is the operational risk in the runbook.
+
+    Every expectation is DERIVED from the fixture (never a literal count), so
+    editing the fixture cannot leave a stale assertion passing.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.Code = cls.env['medical.code']
+        cls.icd10 = cls.env['medical.coding.system'].search(
+            [('code', '=', 'icd10')], limit=1)
+        with file_open(SAMPLE_FIXTURE, 'rb') as handle:
+            cls.sample_bytes = handle.read()
+        rows = list(csv.reader(io.StringIO(
+            cls.sample_bytes.decode('utf-8-sig'))))
+        cls.header, cls.data_rows = rows[0], rows[1:]
+        # a row is malformed for the importer when code or display is empty
+        cls.malformed = [row for row in cls.data_rows
+                         if not row[0].strip() or not row[1].strip()]
+        cls.valid_rows = [row for row in cls.data_rows
+                          if row not in cls.malformed]
+
+    def _import(self):
+        wizard = self.env['medical.code.import'].create({
+            'system_id': self.icd10.id,
+            'file': base64.b64encode(self.sample_bytes),
+            'filename': 'icd10_sample_50.csv'})
+        wizard.action_import()
+        return wizard
+
+    def test_70_fixture_is_the_shape_the_converter_emits(self):
+        self.assertEqual(self.header,
+                         ['code', 'display', 'display_vi', 'parent_code',
+                          'synonyms'])
+        self.assertEqual(len(self.data_rows), 50)
+        self.assertEqual(len(self.malformed), 1,
+                         'the fixture must carry exactly one malformed row')
+        codes = [row[0] for row in self.data_rows]
+        self.assertEqual(len(set(codes)), len(codes), 'duplicate code')
+        # parents post-date their children — the 2-pass resolution is the
+        # thing under test, and a parents-first file would not exercise it
+        position = {code: index for index, code in enumerate(codes)}
+        for row in self.valid_rows:
+            if row[3]:
+                self.assertIn(row[3], position,
+                              'unknown parent_code %r' % row[3])
+                self.assertGreater(position[row[3]], position[row[0]],
+                                   'parent %r precedes its child %r'
+                                   % (row[3], row[0]))
+        self.assertTrue(any(any(ord(ch) > 127 for ch in row[2])
+                            for row in self.valid_rows),
+                        'no Vietnamese diacritics in the fixture')
+
+    def test_71_first_pass_creates_and_counts_the_malformed_row(self):
+        wizard = self._import()
+        self.assertEqual(wizard.created_count, len(self.valid_rows))
+        self.assertEqual(wizard.updated_count, 0)
+        self.assertEqual(wizard.skipped_count, len(self.malformed))
+        self.assertTrue(wizard.error_text,
+                        'the malformed row was not reported')
+        # hierarchy resolved across the file (child row before its parent row)
+        child = next(row for row in self.valid_rows if row[3])
+        record = self.Code.get('icd10', child[0])
+        self.assertTrue(record)
+        self.assertEqual(record.parent_id.code, child[3])
+        # diacritics survived the base64 → utf-8-sig → ORM round trip
+        vietnamese = next(row for row in self.valid_rows
+                          if any(ord(ch) > 127 for ch in row[2]))
+        self.assertEqual(
+            self.Code.get('icd10', vietnamese[0]).display_vi, vietnamese[2])
+
+    def test_72_second_pass_is_a_no_op(self):
+        """Idempotence: re-running the SAME file creates nothing and updates
+        nothing. This is what lets ops re-run a 14k-row load after a partial
+        failure without deduplicating by hand."""
+        self._import()
+        before = self.Code.with_context(active_test=False).search_count(
+            [('system_id', '=', self.icd10.id)])
+        second = self._import()
+        self.assertEqual(second.created_count, 0)
+        self.assertEqual(second.updated_count, 0)
+        self.assertEqual(second.skipped_count, len(self.malformed))
+        after = self.Code.with_context(active_test=False).search_count(
+            [('system_id', '=', self.icd10.id)])
+        self.assertEqual(after, before, 'the re-import duplicated rows')
+
+    def test_73_changed_display_updates_in_place(self):
+        """The other half of idempotence: a corrected translation must reach
+        the existing row, not create a second one."""
+        self._import()
+        target = self.valid_rows[0]
+        edited = [self.header] + [
+            [target[0], target[1], 'ĐÃ SỬA — bản dịch mới', target[3],
+             target[4]]]
+        buffer = io.StringIO()
+        csv.writer(buffer, lineterminator='\n').writerows(edited)
+        wizard = self.env['medical.code.import'].create({
+            'system_id': self.icd10.id,
+            'file': base64.b64encode(buffer.getvalue().encode('utf-8')),
+            'filename': 'fix.csv'})
+        wizard.action_import()
+        self.assertEqual(wizard.created_count, 0)
+        self.assertEqual(wizard.updated_count, 1)
+        self.assertEqual(self.Code.get('icd10', target[0]).display_vi,
+                         'ĐÃ SỬA — bản dịch mới')

@@ -6,7 +6,9 @@ Mapping per architecture-interop.md §1.1 / design-platform-services.md §C.3.
 transparently through the ORM but only supports exact-match search.
 """
 
-from .base import FHIRSerializer, fhir_date, date_param_domain
+from .base import (
+    FHIRSerializer, fhir_date, date_param_domain, string_param_domain,
+)
 
 VNEID_SYSTEM = 'https://vneid.gov.vn/id'
 
@@ -42,8 +44,7 @@ class PatientSerializer(FHIRSerializer):
 
     search_params = {
         'identifier': {'type': 'token', 'domain': _identifier_domain},
-        'name': {'type': 'string',
-                 'domain': lambda v: [('name', 'ilike', v)]},
+        'name': {'type': 'string', 'domain': string_param_domain('name')},
         'telecom': {'type': 'token', 'domain': _phone_domain},
         'phone': {'type': 'token', 'domain': _phone_domain},
         'birthdate': {'type': 'date', 'domain': date_param_domain('birth_date')},

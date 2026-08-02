@@ -5,7 +5,7 @@ Employment data stays out of Practitioner (belongs to PractitionerRole, Phase 2)
 CCHN practising licence (license_number) uses the MOH system URI per §1.1.
 """
 
-from .base import FHIRSerializer
+from .base import FHIRSerializer, string_param_domain
 
 CCHN_SYSTEM = 'https://moh.gov.vn/cchn'
 
@@ -26,8 +26,7 @@ class PractitionerSerializer(FHIRSerializer):
 
     search_params = {
         'identifier': {'type': 'token', 'domain': _identifier_domain},
-        'name': {'type': 'string',
-                 'domain': lambda v: [('name', 'ilike', v)]},
+        'name': {'type': 'string', 'domain': string_param_domain('name')},
     }
 
     def base_domain(self, env):

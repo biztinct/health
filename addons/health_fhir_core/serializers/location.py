@@ -5,7 +5,9 @@ Same records as Organization; ``managingOrganization`` points at the facility's
 own Organization resource. Timezone is exposed as extension urn:health19:timezone.
 """
 
-from .base import FHIRSerializer, parse_reference_value
+from .base import (
+    FHIRSerializer, parse_reference_value, string_param_domain,
+)
 from .organization import facility_address
 
 TIMEZONE_EXTENSION_URL = 'urn:health19:timezone'
@@ -20,8 +22,7 @@ class LocationSerializer(FHIRSerializer):
     odoo_model = 'health.facility'
 
     search_params = {
-        'name': {'type': 'string',
-                 'domain': lambda v: [('name', 'ilike', v)]},
+        'name': {'type': 'string', 'domain': string_param_domain('name')},
         'organization': {'type': 'reference', 'domain': _organization_domain},
     }
 

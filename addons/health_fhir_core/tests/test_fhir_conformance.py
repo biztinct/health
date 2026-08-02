@@ -154,7 +154,7 @@ class TestFHIRConformanceGC1(TransactionCase):
     def test_15_everything_contains_flag_and_declares_nothing_suppressed(self):
         env = self.env(user=self.nurse)
         bundle, _record = build_everything_bundle(
-            env, self.patient.id, {}, 'http://test')
+            env, self.patient.id, {}, 'http://test', enforced=False)
         by_type = {}
         for entry in bundle['entry']:
             by_type.setdefault(

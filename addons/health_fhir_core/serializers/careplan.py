@@ -4,7 +4,7 @@ Task ← health.careplan.task (health_careplan)."""
 
 from .base import (
     FHIRSerializer, FHIRBadRequest, fhir_date, fhir_instant, strip_html,
-    date_param_domain, LOINC_SYSTEM, UCUM_SYSTEM,
+    date_param_domain, token_status_domain, LOINC_SYSTEM, UCUM_SYSTEM,
 )
 from . import fso_common
 
@@ -26,13 +26,14 @@ def _loinc_concept(vtype):
 
 
 def _reverse_token_domain(fhir_to_states, field='state'):
-    """Build a token search callable from a {fhir_status: [states]} map."""
+    """Build a token search callable from a {fhir_status: [states]} map.
+    Accepts the full token syntax via ``token_status_domain`` (§3.1)."""
     def _domain(value):
         states = fhir_to_states.get(value)
         if not states:
             raise FHIRBadRequest("Unknown status token: %r" % value)
         return [(field, 'in', states)]
-    return _domain
+    return token_status_domain(_domain)
 
 
 # ---------------------------------------------------------------------------

@@ -160,6 +160,78 @@ def date_param_domain(field_name):
     return _domain
 
 
+def token_domain(field_name, system_uri=None):
+    """FHIR token search: accept `code`, `system|code`, `|code`.
+    A non-matching explicit system yields ZERO matches (FHIR semantics:
+    not an error), via an impossible domain."""
+    def _domain(value):
+        raw = (value or '').strip()
+        if '|' in raw:
+            system, _, code = raw.rpartition('|')
+            if system and system_uri and system != system_uri:
+                return [('id', '=', 0)]
+            raw = code
+        return [(field_name, '=', raw)]
+    return _domain
+
+
+#: field name used only to carry a parsed token value out of ``token_domain``
+#: (see ``token_status_domain``) — it is never part of a real domain.
+_TOKEN_SINK = '__token__'
+
+
+def token_status_domain(translate, system_uri=None):
+    """Adapt a bare-value token callable to the full token syntax.
+
+    The status params do not map one code onto one column — they reverse a
+    state→status table into ``('state', 'in', [...])`` — so they cannot use
+    ``token_domain`` directly. They still must accept `system|code` and
+    `|code` (G17). The grammar itself is parsed by ``token_domain`` over a
+    throwaway field name, so there is ONE implementation of the token syntax
+    in this module, not two: either the parse rejects the system (the
+    impossible domain is returned verbatim) or its parsed code is handed to
+    the caller's bare-value ``translate``.
+    """
+    parse = token_domain(_TOKEN_SINK, system_uri)
+
+    def _domain(value):
+        parsed = parse(value)
+        if parsed[0][0] != _TOKEN_SINK:  # explicit, non-matching system
+            return parsed
+        return translate(parsed[0][2])
+    return _domain
+
+
+#: FHIR `string` search-param modifiers this facade implements. Anything else
+#: is a strict 400 (`FHIRNotSupported`) — never silently ignored.
+STRING_MODIFIERS = ('exact', 'contains')
+
+
+def escape_like(value):
+    """Escape SQL LIKE wildcards in a user-supplied search value, so a `%` or
+    `_` inside a name cannot act as a wildcard in the generated pattern."""
+    return ((value or '')
+            .replace('\\', '\\\\').replace('%', r'\%').replace('_', r'\_'))
+
+
+def string_param_domain(field_name):
+    """FHIR `string` search-param semantics (R4 §3.1.1.6 "string"):
+
+    - no modifier → case-insensitive **starts-with** (the spec default; the
+      facade previously did a substring match, which is `:contains`);
+    - `:contains` → case-insensitive anywhere in the field;
+    - `:exact`    → exact value, case- and accent-sensitive.
+    """
+    def _domain(value, modifier=None):
+        raw = (value or '').strip()
+        if modifier == 'exact':
+            return [(field_name, '=', raw)]
+        if modifier == 'contains':
+            return [(field_name, 'ilike', raw)]
+        return [(field_name, '=ilike', escape_like(raw) + '%')]
+    return _domain
+
+
 def parse_reference_value(value, expected_type):
     """``Patient/123`` or ``123`` → int id. Strict on type mismatch."""
     raw = (value or '').strip()
@@ -331,23 +403,36 @@ class FHIRSerializer:
     def build_domain(self, env, params):
         """``params`` is a dict of name -> list[str] (repeats allowed, ANDed).
 
-        Raises FHIRNotSupported for any param outside the resource's table
-        (strict handling per architecture §1.2).
+        A param name may carry a modifier (`name:contains=…`). Modifiers are
+        accepted on `string`-typed params only, and only the two this facade
+        implements (``STRING_MODIFIERS``); everything else — an unknown param,
+        an unknown modifier, a modifier on a non-string param — is a strict
+        400 FHIRNotSupported (architecture §1.2: never silently ignored).
         """
         domain = list(self.base_domain(env))
-        for name, values in params.items():
-            if name in RESERVED_PARAMS:
+        for raw_name, values in params.items():
+            if raw_name in RESERVED_PARAMS:
                 continue
+            name, _sep, modifier = raw_name.partition(':')
             if name == '_lastUpdated':
+                param_type = 'date'
                 translate = date_param_domain('write_date')
             elif name in self.search_params:
-                translate = self.search_params[name]['domain']
+                spec = self.search_params[name]
+                param_type = spec['type']
+                translate = spec['domain']
             else:
                 raise FHIRNotSupported(
                     "Search parameter %r is not supported on %s"
-                    % (name, self.resource_type))
+                    % (raw_name, self.resource_type))
+            if modifier and (param_type != 'string'
+                             or modifier not in STRING_MODIFIERS):
+                raise FHIRNotSupported(
+                    "Search modifier %r is not supported on %s.%s"
+                    % (modifier, self.resource_type, name))
             for value in values:
-                domain += translate(value)
+                domain += (translate(value, modifier) if param_type == 'string'
+                           else translate(value))
         return domain
 
     @staticmethod

@@ -5,7 +5,9 @@ PHI restraint: the free-text ``scope_note`` narrowing is NOT exported, and
 signature/attachment binary is never emitted — only sourceAttachment
 metadata (contentType + title)."""
 
-from .base import FHIRSerializer, FHIRBadRequest, fhir_date
+from .base import (
+    FHIRSerializer, FHIRBadRequest, fhir_date, token_status_domain,
+)
 from . import fso_common
 
 CONSENT_SCOPE_SYSTEM = 'http://terminology.hl7.org/CodeSystem/consentscope'
@@ -30,7 +32,8 @@ class ConsentSerializer(FHIRSerializer):
     search_params = {
         'patient': {'type': 'reference',
                     'domain': fso_common.patient_ref_domain('client_id')},
-        'status': {'type': 'token', 'domain': _status_domain},
+        'status': {'type': 'token',
+                   'domain': token_status_domain(_status_domain)},
     }
 
     def base_domain(self, env):

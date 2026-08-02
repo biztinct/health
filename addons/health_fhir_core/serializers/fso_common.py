@@ -8,7 +8,10 @@ One health.fieldservice.order maps to three linked resources
 - ServiceRequest — the order itself (+ sale order lines as orderDetail)
 """
 
-from .base import FHIRBadRequest, parse_reference_value, date_param_domain
+from .base import (
+    FHIRBadRequest, parse_reference_value, date_param_domain,
+    token_status_domain,
+)
 
 FSO_MODEL = 'health.fieldservice.order'
 
@@ -84,7 +87,12 @@ def scheduled_date_domain():
 
 
 def status_token_domain(status_map, restrict_states=None):
-    """Reverse a state→fhir-status map into a token search callable."""
+    """Reverse a state→fhir-status map into a token search callable.
+
+    Wrapped in ``token_status_domain`` so the param accepts the full FHIR
+    token syntax (`code`, `system|code`, `|code`) — no system_uri, because
+    each status ValueSet has its own system and a bare code is what every
+    caller sends (G17 / handover §3.1)."""
     def _domain(value):
         states = [
             state for state, fhir_status in status_map.items()
@@ -94,7 +102,7 @@ def status_token_domain(status_map, restrict_states=None):
         if not states:
             raise FHIRBadRequest("Unknown status token: %r" % value)
         return [('state', 'in', states)]
-    return _domain
+    return token_status_domain(_domain)
 
 
 def service_code_text(order):

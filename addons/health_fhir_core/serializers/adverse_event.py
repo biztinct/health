@@ -7,7 +7,9 @@ investigation_notes, root_cause, contributing_factors, immediate_actions)
 are NOT exported — the facade carries the event's coded facts, not the story.
 """
 
-from .base import FHIRSerializer, fhir_instant, date_param_domain
+from .base import (
+    FHIRSerializer, fhir_instant, date_param_domain, token_domain,
+)
 from . import fso_common
 
 INCIDENT_TYPE_SYSTEM = 'urn:health19:incident-types'
@@ -34,8 +36,9 @@ class AdverseEventSerializer(FHIRSerializer):
                     'domain': fso_common.patient_ref_domain('client_id')},
         'date': {'type': 'date',
                  'domain': date_param_domain('incident_datetime')},
-        'severity': {'type': 'token',
-                     'domain': lambda v: [('severity', '=', v)]},
+        # local 1–5 severity scale (no base-spec ValueSet — the capability
+        # deliberately omits a canonical for it), token syntax tolerated.
+        'severity': {'type': 'token', 'domain': token_domain('severity')},
     }
 
     def base_domain(self, env):

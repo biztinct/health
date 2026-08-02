@@ -5,16 +5,21 @@
 inlined (ICD-10 is 14k+ rows); use CodeSystem/$lookup and ValueSet/$expand
 for the actual codes."""
 
-from odoo.addons.health_fhir_core.serializers.base import FHIRSerializer
+from odoo.addons.health_fhir_core.serializers.base import (
+    FHIRSerializer, token_domain,
+)
 
 
 class CodeSystemSerializer(FHIRSerializer):
     resource_type = 'CodeSystem'
     odoo_model = 'medical.coding.system'
 
+    # Both params are identifiers of the code system itself, so no system_uri
+    # is asserted — `|value` is accepted, an explicit system is not checked
+    # against anything (handover §3.1).
     search_params = {
-        'url': {'type': 'token', 'domain': lambda v: [('uri', '=', v)]},
-        'name': {'type': 'token', 'domain': lambda v: [('code', '=', v)]},
+        'url': {'type': 'token', 'domain': token_domain('uri')},
+        'name': {'type': 'token', 'domain': token_domain('code')},
     }
 
     def base_domain(self, env):

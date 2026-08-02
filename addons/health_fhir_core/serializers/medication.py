@@ -4,7 +4,7 @@ MedicationAdministration ← health.medication.administration (health_emar)."""
 
 from .base import (
     FHIRSerializer, FHIRBadRequest, fhir_date, fhir_instant, date_param_domain,
-    RXNORM_SYSTEM, DAV_SYSTEM,
+    token_status_domain, RXNORM_SYSTEM, DAV_SYSTEM,
 )
 from . import fso_common
 
@@ -33,12 +33,14 @@ def _selection_label(record, field):
 
 
 def _reverse_status_domain(fhir_to_states):
+    """{fhir_status: [odoo states]} → token search callable (full token
+    syntax via ``token_status_domain``, §3.1)."""
     def _domain(value):
         states = fhir_to_states.get(value)
         if not states:
             raise FHIRBadRequest("Unknown status token: %r" % value)
         return [('state', 'in', states)]
-    return _domain
+    return token_status_domain(_domain)
 
 
 # ---------------------------------------------------------------------------

@@ -9,7 +9,8 @@ correlate with their questionnaire. Responses render from the pinned
 
 from .base import (
     FHIRSerializer, FHIRBadRequest, fhir_date, fhir_instant, strip_html,
-    date_param_domain, parse_reference_value,
+    date_param_domain, parse_reference_value, token_domain,
+    token_status_domain,
 )
 from . import fso_common
 
@@ -49,8 +50,11 @@ class QuestionnaireSerializer(FHIRSerializer):
     odoo_model = 'health.form.template'
 
     search_params = {
-        'name': {'type': 'token', 'domain': lambda v: [('code', '=', v)]},
-        'status': {'type': 'token', 'domain': _template_status_domain},
+        # `name` is the template's stable code, matched exactly — a token,
+        # not the base spec's string param (see the GC-2 report, D3).
+        'name': {'type': 'token', 'domain': token_domain('code')},
+        'status': {'type': 'token',
+                   'domain': token_status_domain(_template_status_domain)},
     }
 
     def base_domain(self, env):
@@ -153,7 +157,8 @@ class QuestionnaireResponseSerializer(FHIRSerializer):
     search_params = {
         'patient': {'type': 'reference',
                     'domain': fso_common.patient_ref_domain('client_id')},
-        'status': {'type': 'token', 'domain': _instance_status_domain},
+        'status': {'type': 'token',
+                   'domain': token_status_domain(_instance_status_domain)},
         'authored': {'type': 'date',
                      'domain': date_param_domain('completed_datetime')},
         'questionnaire': {'type': 'reference',

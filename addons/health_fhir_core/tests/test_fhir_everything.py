@@ -132,7 +132,7 @@ class TestFhirEverything(TransactionCase):
     # ------------------------------------------------------------------
     def test_01_bundle_shape_and_validates(self):
         bundle, patient_rec = build_everything_bundle(
-            self.env, self.patient.id, {}, 'http://test')
+            self.env, self.patient.id, {}, 'http://test', enforced=False)
         self.assertEqual(patient_rec, self.patient)
         self.assertEqual(bundle['resourceType'], 'Bundle')
         self.assertEqual(bundle['type'], 'searchset')
@@ -160,7 +160,7 @@ class TestFhirEverything(TransactionCase):
     # ------------------------------------------------------------------
     def test_02_isolation_other_patient_absent(self):
         bundle, _ = build_everything_bundle(
-            self.env, self.patient.id, {}, 'http://test')
+            self.env, self.patient.id, {}, 'http://test', enforced=False)
         for entry in bundle['entry']:
             res = entry['resource']
             if res['resourceType'] == 'OperationOutcome':
@@ -205,7 +205,7 @@ class TestFhirEverything(TransactionCase):
     # ------------------------------------------------------------------
     def test_04_non_phi_excluded(self):
         bundle, _ = build_everything_bundle(
-            self.env, self.patient.id, {}, 'http://test')
+            self.env, self.patient.id, {}, 'http://test', enforced=False)
         present = set(self._by_type(bundle))
         for rtype in ('Organization', 'Practitioner', 'Location',
                       'Questionnaire'):
@@ -253,6 +253,31 @@ class TestFhirEverything(TransactionCase):
         self.assertIn('Observation', self._by_type(bundle))  # nothing withheld
         self.assertGreater(len(self._logs(self.patient)), len(before))
 
+    def test_05d_default_follows_the_config_parameter(self):
+        """Every other test in this suite pins `enforced=` explicitly, so
+        SOMETHING must still prove the default resolves from
+        `health_fhir_core.consent_enforced`. It does — and this is the branch
+        that changed the meaning of eight tests when GC-2 flipped the
+        parameter on vietuat."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        before = ICP.get_param('health_fhir_core.consent_enforced')
+        self.addCleanup(ICP.set_param,
+                        'health_fhir_core.consent_enforced', before)
+
+        ICP.set_param('health_fhir_core.consent_enforced', 'True')
+        raised = False
+        try:  # §5.8: assertRaises' savepoint would void the consent log row
+            build_everything_bundle(
+                self.env, self.patient.id, {}, 'http://test')
+        except FHIRNotFound:
+            raised = True
+        self.assertTrue(raised, 'the default did not read the enforced flag')
+
+        ICP.set_param('health_fhir_core.consent_enforced', 'False')
+        bundle, _ = build_everything_bundle(
+            self.env, self.patient.id, {}, 'http://test')
+        self.assertIn('Observation', self._by_type(bundle))
+
     # ------------------------------------------------------------------
     # 6. record-rule isolation: cross-catchment caller → FHIRNotFound
     # ------------------------------------------------------------------
@@ -264,7 +289,8 @@ class TestFhirEverything(TransactionCase):
         env = self.env(user=nurse)
         # the nurse cannot see the province-A patient at all
         with self.assertRaises(FHIRNotFound):
-            build_everything_bundle(env, self.patient.id, {}, 'http://test')
+            build_everything_bundle(env, self.patient.id, {}, 'http://test',
+                                    enforced=False)
 
     # ------------------------------------------------------------------
     # 7. _type restricts resource types
@@ -272,7 +298,8 @@ class TestFhirEverything(TransactionCase):
     def test_07_type_filter(self):
         bundle, _ = build_everything_bundle(
             self.env, self.patient.id,
-            {'_type': ['Observation,Encounter']}, 'http://test')
+            {'_type': ['Observation,Encounter']}, 'http://test',
+            enforced=False)
         present = set(self._by_type(bundle))
         self.assertEqual(present, {'Observation', 'Encounter'})
         self.assertNotIn('Patient', present)  # Patient not in _type → excluded
@@ -288,7 +315,8 @@ class TestFhirEverything(TransactionCase):
             ('2020-01-01 00:00:00', self.obs1.id))
         self.env.invalidate_all()
         bundle, _ = build_everything_bundle(
-            self.env, self.patient.id, {'_since': ['2023-01-01']}, 'http://test')
+            self.env, self.patient.id, {'_since': ['2023-01-01']},
+            'http://test', enforced=False)
         obs_ids = {e['resource']['id']
                    for e in self._by_type(bundle).get('Observation', [])}
         self.assertNotIn(str(self.obs1.id), obs_ids)  # 2020 < since → excluded
@@ -299,7 +327,8 @@ class TestFhirEverything(TransactionCase):
     # ------------------------------------------------------------------
     def test_09_truncation_declared(self):
         bundle, _ = build_everything_bundle(
-            self.env, self.patient.id, {'_count': ['2']}, 'http://test')
+            self.env, self.patient.id, {'_count': ['2']}, 'http://test',
+            enforced=False)
         by_type = self._by_type(bundle)
         self.assertIn('OperationOutcome', by_type,
                       'truncation was not declared')
@@ -335,7 +364,7 @@ class TestFhirEverything(TransactionCase):
 
         with patch.object(FallRisk, 'search_count', _deny):
             bundle, _ = build_everything_bundle(
-                self.env, self.patient.id, {}, 'http://test')
+                self.env, self.patient.id, {}, 'http://test', enforced=False)
         self.assertEqual(bundle['resourceType'], 'Bundle')
         by_type = self._by_type(bundle)
         self.assertIn('Patient', by_type)       # root still readable

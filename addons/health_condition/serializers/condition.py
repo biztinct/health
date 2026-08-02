@@ -12,7 +12,7 @@ new leak surface).
 """
 
 from odoo.addons.health_fhir_core.serializers.base import (
-    FHIRSerializer, fhir_date, date_param_domain,
+    FHIRSerializer, fhir_date, date_param_domain, token_domain,
 )
 from odoo.addons.health_fhir_core.serializers import fso_common
 
@@ -30,10 +30,13 @@ class ConditionSerializer(FHIRSerializer):
     search_params = {
         'patient': {'type': 'reference',
                     'domain': fso_common.patient_ref_domain('patient_id')},
+        # GC-2 §3.1: full FHIR token syntax. `code` asserts the ICD-10 system
+        # (an explicit foreign system yields zero matches, not an error);
+        # `clinical-status` asserts none — a bare code is what callers send.
         'code': {'type': 'token',
-                 'domain': lambda v: [('code_id.code', '=', v)]},
+                 'domain': token_domain('code_id.code', ICD10_SYSTEM)},
         'clinical-status': {'type': 'token',
-                            'domain': lambda v: [('clinical_status', '=', v)]},
+                            'domain': token_domain('clinical_status')},
         'recorded-date': {'type': 'date',
                           'domain': date_param_domain('recorded_date')},
     }
