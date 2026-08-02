@@ -203,43 +203,48 @@ fallback ships unconditionally rather than only on a blocked run.
 #### Where the Actions run stands — the named blocker (§4.1)
 
 §4.1 allows "a partially-green Actions run + fallback script … ONLY with the
-blocker named in the report". Naming it:
+blocker named in the report". Naming it, in two parts.
 
-**The blocker is not the pipeline, it is log access.** Downloading an Actions
-log — or a job log, or an artifact — requires **admin rights on the
-repository**, which the implementing session did not have:
+**Part 1 — diagnosis was slow because Actions logs are admin-only.**
+Downloading a run log, a job log or an artifact requires **admin rights on
+the repository**, which the implementing session did not have:
 
 ```
 GET /repos/biztinct/health/actions/runs/<id>/logs   → 403
 {"message": "Must have admin rights to Repository."}
 ```
 
-The repo is public and the run summary is public, but the logs are not. Every
-iteration therefore had to infer the failure from what *is* public — step
-names and conclusions — which is why the workflow now looks the way it does.
-What that inference established, run by run:
+The repo is public and the run summary is public; the logs are not. Every
+iteration had to infer the failure from step names and conclusions — which is
+why the workflow is shaped the way it is (a named step per gate and per
+install attempt), and why failures now emit `::error::`/`::warning::`
+**annotations**, which the public check-runs API *does* serve. Three findings
+came out of that constraint alone (§5.104–§5.106). Once annotations carried
+the tracebacks, each run named its own cause precisely.
 
-| # | Reached | Learned |
-|---|---|---|
-| 1 | install step | `pip install` failed outright |
-| 2 | odoo step **succeeded** | the image needs the `--target` + `PYTHONPATH` fallback; it refuses both a plain and a `--break-system-packages` system install |
-| 3 | gates | `continue-on-error` had masked all four gate conclusions to `success` under a red job (§5.104) |
-| 4 | gate 0 | `--logfile` produced **no file at all** — so odoo died before opening one |
+Everything on the CI side is now solved and verified working: container,
+postgres service, checkout, `packaging` + `fhir.resources` + `pywebpush` +
+`aiohttp` installed alongside Debian's copies without disturbing the crypto
+chain, odoo starting and loading modules.
 
-Run 4's finding is why the command now pipes through `tee` instead of using
-`--logfile` (a log always exists, including the reason odoo exited) and why
-every gate emits an `::error::` annotation carrying the relevant lines —
-**annotations are served by the public check-runs API; logs are not.** A red
-build now explains itself to whoever is looking, with no token.
+**Part 2 — the gate is red because the PLATFORM cannot install from scratch,
+and that is F6, not a CI defect.** The gate installs `--without-demo` into an
+empty database, which is what a production install is. Doing that surfaced a
+queue of latent defects: a `data` file referencing DEMO data, and eleven
+xmlids referenced before the files defining them load. GC-3 fixed the two in
+`health_base`; the rest live in `health_fieldservice` and `health_pwa`, which
+this phase does not sanction, and fixing them is a work stream of its own
+(F6).
 
-The dependency chain, the container, the postgres service, the checkout and
-the `fhir.resources` pin are all confirmed working. What is not yet confirmed
-is the odoo invocation itself inside `odoo:19`, and the honest statement is
-that **at the time of writing this report the Actions gate has not gone
-green**. The fallback (`tools/ci_fhir_local.sh`) runs the same suite with the
-same gates and is the sanctioned exit until it does.
+**So C1's exit is the sanctioned one:** the pipeline is delivered and proven
+up to the point where the platform's own install breaks, the blocker is named
+and enumerated, and `tools/ci_fhir_local.sh` — same suite, same gates — is
+the fallback the handover asks for. The gate will go green the day the
+fresh-install path is repaired, and until then it is doing something more
+useful than passing: it is the only thing in the repo that tests whether this
+software can be installed at all.
 
-### C3 — the post-deploy conformance smoke (§4.2)
+### C3 — the post-deploy conformance smoke (§4.2)### C3 — the post-deploy conformance smoke (§4.2)
 
 `tools/fhir_deploy_smoke.sh` + `docs/conformance/deploy-smoke.md`. Runs on
 the server after the restart step; six checks (metadata 200, `fhirVersion`,
@@ -550,6 +555,17 @@ record declares, so an upgrade leaves existing values alone. Verified rather
 than asserted — after upgrading `health_base` on vietuat, categories 81/82/83
 still read `parent_id = 1`.
 
+**D12 — `health_base`'s manifest data order changed (same unsanctioned
+module).** `views/health_catchment_province_views.xml` loaded before
+`views/health_facility_views.xml` but references
+`%(health_base.action_health_facility)d`, which the latter defines — so a
+fresh install died with `External ID not found in the system`. The two files
+are swapped, verified safe first: `health_facility_views` refers to the
+catchment province only as a FIELD, never as an xmlid, so the swap creates no
+reverse dependency. Version bumped 19.0.1.3.6 → 19.0.1.3.7, and the reason is
+written into the manifest beside the entries so a later tidy-up does not
+silently undo it.
+
 **D11 — one line changed in `health_consent`'s test_04 (outside R1's
 sanction).** `test_04_cron_expiry_and_renewal` built its fixture dates from
 `fields.Date.today()` (UTC) while the code under test selects renewals with
@@ -610,25 +626,64 @@ change. A random or newest-first sample would trade determinism for coverage.
 Deliberate for now, worth a decision if the weekly log ever reads as
 uninformative.
 
-**F6 — the platform's install depends on Odoo DEMO data, and nobody knew.**
-`health_base/security/health_security.xml` referenced
-`base.res_partner_category_0` from three `res.partner.category` records. That
-xmlid is defined **only** in `base/data/res_partner_demo.xml` — demo data —
-so `health_base` could not be installed on any database created without it:
+**F6 — THE PLATFORM CANNOT BE INSTALLED FROM SCRATCH. Every deployment has
+grown by upgrade, and the fresh-install path is broken in at least three
+modules.** This is the largest thing GC-3 found, it was found by the CI gate
+on its first real run, and it is not a CI problem.
 
-```
-ParseError: while parsing health_base/security/health_security.xml:212
-```
+Reproduced deterministically on a scratch database on the server
+(`-i health_fhir_core,health_fhir_terminology,health_condition
+--without-demo=True`), which is what makes it a finding rather than a
+suspicion. Two distinct defect classes, thirteen distinct symptoms:
 
-Every existing deployment was created *with* demo data (verified: the xmlid
-resolves on vietuat, and categories 81/82/83 are parented to it), which is why
-this never surfaced. **A fresh production install would have failed at this
-line.** GC-3 fixed the three references it found (D10), but the class is
-worth a sweep: any `ref="base.…_demo…"`-style xmlid in a `data` file is the
-same latent defect, and only a demo-less install exposes it. The CI gate now
-does exactly that on every push, which is arguably the single most valuable
-thing it will do.
+*Class 1 — a `data` file references DEMO data.*
+`health_base/security/health_security.xml` parented three
+`res.partner.category` records to `base.res_partner_category_0`, defined only
+in `base/data/res_partner_demo.xml`. **Fixed** (D10).
 
+*Class 2 — an xmlid is referenced before the file that defines it loads.*
+Odoo resolves xmlids at load time, so ordering is semantic; an upgrade never
+notices because the xmlid already exists from last time. Enumerated from the
+probe:
+
+| Missing xmlid | Status |
+|---|---|
+| `health_base.action_health_facility` | **fixed** (D12 — manifest reorder) |
+| `health_fieldservice.rule_fso_manager_all` | open |
+| `health_fieldservice.rule_fso_healthcare_staff` | open |
+| `health_fieldservice.rule_fso_head_nurse` | open |
+| `health_fieldservice.rule_fso_ops_manager` | open |
+| `health_fieldservice.rule_fso_sales_user` | open |
+| `health_fieldservice.rule_fso_system_admin` | open |
+| `health_fieldservice.fieldservice_order_manager_rule` | open |
+| `health_fieldservice.rule_assignment_manager_all` | open |
+| `health_fieldservice.rule_assignment_healthcare_staff` | open |
+| `health_fieldservice.rule_availability_healthcare_staff` | open |
+| `health_pwa.app_shell` | open |
+
+After the two `health_base` fixes the install reaches **module 97 of 109**
+(`health_emar`) before failing on `health_pwa.app_shell` — so `health_base`
+itself is now clean and the remainder sits in `health_fieldservice` and
+`health_pwa`.
+
+**GC-3 stopped here deliberately.** The remaining work is in modules this
+phase does not sanction, the queue is open-ended, and "make the platform
+installable from scratch" is a different work stream from "build conformance
+machinery" — one that deserves its own phase, its own risk assessment and its
+own owner. Two `health_base` fixes were taken because each was provably inert
+for the running deployment and each unblocked the diagnosis; continuing would
+have meant editing `health_fieldservice`'s security rules and `health_pwa`'s
+templates on the strength of a CI badge, which is not a trade GC-3 should
+make unilaterally.
+
+What this costs today: **nothing operationally** — vietuat runs fine and
+upgrades fine. What it costs the day someone stands up a second environment
+(a conformance sandbox for Touchstone, item G1; a DR rebuild; a new client
+tenant) is that it will not come up at all. That day is coming: **GC-4's
+own Touchstone preparation calls for a dedicated synthetic-data conformance
+environment**, which is exactly a from-scratch install.
+
+**F5 — `smoke_test_client` (gateway.oauth.client id 10) exists and is
 **F5 — `smoke_test_client` (gateway.oauth.client id 10) exists and is
 inactive.** Activating it is the OPS half of C3, exactly as §4.2 says; this
 phase did not touch it. The token half of the smoke was proven with a
