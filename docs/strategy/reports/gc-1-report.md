@@ -268,7 +268,27 @@ Note what the ValueSet entry does **not** contain: no `interaction`, no
 `searchParam`. The server declares the one thing it serves for that type and
 claims nothing else.
 
-### 4.4 Browser evidence pack
+### 4.4 QA fixtures — deleted and fresh-cursor verified (§5.34, §6)
+
+Two probes created records outside the test transaction's control: the §4.1
+pre-deploy `AccessError` reproduction (a patient + a receptionist-only user, in
+a shell transaction that was explicitly rolled back) and the baseline dump. The
+suite's own fixtures roll back with the `TransactionCase`, but "rolled back" is
+a claim, not evidence — verified in a **separate** shell invocation after the
+final deploy:
+
+```
+$ ssh VietUcUAT '… odoo-bin shell -d vietuat < /tmp/gc1_cleanup_verify.py'
+FRESH-CURSOR users: []
+FRESH-CURSOR partners: []
+FRESH-CURSOR fall.risk: []
+FRESH-CURSOR fall.risk ACL rows: 6
+```
+
+Nothing survives except the thing that is supposed to: the six new
+`ir.model.access` rows for `health.fall.risk` are live in the database.
+
+### 4.5 Browser evidence pack
 
 None, and none is due. GC-1 changes an ACL csv, a serializer prefetch list, the
 generated CapabilityStatement and tests. Nothing user-facing, no PWA asset, no
