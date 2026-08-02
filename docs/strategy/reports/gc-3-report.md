@@ -664,7 +664,34 @@ probe:
 After the two `health_base` fixes the install reaches **module 97 of 109**
 (`health_emar`) before failing on `health_pwa.app_shell` — so `health_base`
 itself is now clean and the remainder sits in `health_fieldservice` and
-`health_pwa`.
+`health_pwa`. The hosted CI run and the on-server scratch-database probe
+reached the identical point independently, which is what makes this a
+reproducible defect rather than an environment artifact.
+
+**The `app_shell` half is diagnosed and the remedy is three lines** — recorded
+here so the next phase does not re-derive it. Fourteen modules inherit
+`health_pwa.app_shell`; eleven declare `health_pwa` in `depends` and three do
+not:
+
+| Module | inherits `app_shell` | declares `health_pwa` |
+|---|---|---|
+| `health_emar` | yes | **no** |
+| `health_forms` | yes | **no** |
+| `health_telehealth` | yes | **no** |
+| careplan, consent, evv, incident, pwa_daystrip, pwa_ergo, pwa_family, scribe, vitals, workflow_auto | yes | yes |
+
+Odoo orders module loading by the dependency graph, so an undeclared edge
+means there is no guarantee `health_pwa` loads first — on the live system it
+happens to, which is luck rather than design, and it is also why uninstalling
+`health_pwa` would break these three.
+
+**Do not treat that as a trivial three-line fix.** Ledger **§5.71** is
+explicit: adding a manifest dependency can close a loop invisible from either
+end, and its symptom is not an error but `0 failed, 0 error(s) of 0 tests` —
+a green line over a run where everything was skipped. Each edge needs
+`health_pwa`'s own `depends` walked transitively first, and the resulting run
+needs its executed-test count checked (which is precisely what this phase's
+CI gate 3 exists to do). That verification is the work, not the edit.
 
 **GC-3 stopped here deliberately.** The remaining work is in modules this
 phase does not sanction, the queue is open-ended, and "make the platform
