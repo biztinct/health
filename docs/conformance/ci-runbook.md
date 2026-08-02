@@ -13,7 +13,7 @@ Two implementations of the same gate ship, deliberately:
 | **Fallback** | `tools/ci_fhir_local.sh` | on a developer machine or a self-hosted runner, on demand |
 
 They install the same modules, run the same test tags, and apply the same
-three gates. The fallback exists because the hosted runner is the one part of
+gates. The fallback exists because the hosted runner is the one part of
 this control that engineering does not own: if Actions is disabled for the
 repository, if the organisation's runner minutes are exhausted, or if the
 `odoo:19` image drifts from the deployment, the *control* must survive the
@@ -21,11 +21,13 @@ repository, if the organisation's runner minutes are exhausted, or if the
 
 ---
 
-## The three gates
+## The gates
 
-Both implementations fail the change unless **all three** hold. The third one
+Both implementations fail the change unless **all** of them hold. The last one
 is the interesting one.
 
+0. **A log file was produced.** No log means the run never started, which is
+   not the same as a clean run and must not read like one.
 1. **The run exited zero.** An Odoo test run that exits non-zero is a
    failure even if it reports `FAIL: 0` — conventions §5.75: when every
    `HttpCase` dies in `setUpClass`, the runner counts errors, exits 1, and the
@@ -38,6 +40,14 @@ is the interesting one.
    28 `HttpCase` classes across 15 modules that had never once run, precisely
    because nobody compared the count to an expectation. A CI gate that can go
    green while running nothing is not a gate.
+
+In the Actions workflow each gate is a **separate named step**, and so is
+each attempt at installing `fhir.resources`. That is deliberate: downloading
+an Actions log requires repo-admin rights, but a run's step names and
+conclusions are public. A red build therefore says *which* gate rejected it
+to anyone looking at the run summary, with no token and no download. Keep
+that shape when editing the workflow — collapsing the steps back into one
+`run:` block would save eight lines and cost the diagnosis.
 
 The threshold is a floor, not a pin — it fails on collapse (a module that
 silently failed to install, a `--test-tags` typo), not on ordinary growth.
@@ -85,7 +95,15 @@ deployed*. Repo first, image second.
 
 ### Reading a red run
 
-Download the `odoo-conformance-log` artifact. Then, in order:
+**Start with the run summary, not the log.** The failing step's *name* is the
+diagnosis: `gate 2 — an odoo.tests.result line exists and is clean` means the
+suite ran and something failed; `gate 3 — enough test methods actually
+executed` means it did not really run; a red step under
+`fhir.resources — install …` means the image changed under us. That much
+needs no credentials.
+
+For the detail, download the `odoo-conformance-log` artifact (repo-admin
+rights) and, in order:
 
 - `grep -a 'odoo.tests.result' odoo.log | tail -1` — the headline.
 - If the exit was non-zero but failures are 0, read the `ERROR` lines
@@ -112,7 +130,7 @@ name containing `prod`.
 Everything is overridable: `CI_DB_HOST`, `CI_DB_USER`, `CI_DB_PASSWORD`,
 `CI_MODULES`, `CI_TEST_TAGS`, `CI_MIN_EXECUTED`, `CI_LOG`.
 
-Same three gates, same messages, same log format — a red locally and a red in
+Same gates, same messages, same log format — a red locally and a red in
 Actions read identically.
 
 ---

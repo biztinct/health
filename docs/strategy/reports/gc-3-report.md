@@ -14,8 +14,10 @@ sampled validation on live traffic, and a weekly cron with an assignee.
 
 ## 1. Headline: the new machinery found three live defects on its first runs
 
-Neither was in the handover, and neither would have been found by the tests
-that already existed.
+None of the three was in the handover, and none would have been found by the
+tests that already existed — two of them are only visible to a
+minimally-scoped token over real HTTP, which is precisely what the new
+controls introduce.
 
 ### 1.1 Every FHIR data route was declared read-only — and writes
 
@@ -91,7 +93,7 @@ Fixed with the same one-line pattern: `prefetch_fields` on
 `_identifiers` actually read. `test_93` asserts the declaration is minimal
 and that the prefetch itself now succeeds for a non-HR user.
 
-**Not fixed, and reported instead (F4):** `to_fhir` also reads
+**Not fixed, and reported instead (F2):** `to_fhir` also reads
 `healthcare_skill_ids` for `Practitioner.qualification`, and that field is
 private on the public profile as well. Exposing it means adding it to
 health_base's public-employee whitelist, and `health_base` is not a module
@@ -162,15 +164,25 @@ substitute for them.
 ~50-module spine automatically), runs their test tags, uploads the odoo log
 as an artifact on every run.
 
-**Three gates, not one** — the third is the one that matters:
+**Four gates, not one** — the last is the one that matters:
 
+0. a log file was produced at all;
 1. the run exited zero (§5.75: an `EXIT:1` with `FAIL: 0` is an ERROR-line
    problem, not a pass);
 2. an `odoo.tests.result` line exists **and** says `0 failed, 0 error(s)`
    (no line = no suite ran = failure);
 3. **at least 50 test methods actually executed** (§5.83). Phase GB found 28
    `HttpCase` classes that had never once run; a gate that can go green while
-   running nothing is not a gate.
+   running nothing is not a gate. A floor, not a pin: it fails on collapse,
+   not on growth.
+
+Each gate is its own named step, and so is each attempt at installing
+`fhir.resources`. That shape is a direct response to a constraint discovered
+while getting the first runs green: **downloading an Actions log requires
+repo-admin rights, which the implementing session did not have** — but every
+step's name and conclusion are public. Splitting the work into named steps
+makes a red build diagnosable from the run summary alone, by anyone, without
+a token. It also documents itself: the step list *is* the checklist.
 
 `addons` is listed **first** in the addons-path. This repo tracks the
 deployment's copies of several core Odoo modules (`account`, `crm`, `mail`,
@@ -179,8 +191,8 @@ deployment's copies of several core Odoo modules (`account`, `crm`, `mail`,
 packaged addons first would silently test different code from the one that is
 deployed.
 
-Also delivered: `tools/ci_fhir_local.sh` — the same suite, the same three
-gates, the same messages, against a local Odoo checkout — and
+Also delivered: `tools/ci_fhir_local.sh` — the same suite, the same gates,
+the same messages, against a local Odoo checkout — and
 `docs/conformance/ci-runbook.md` covering both. See §5 D3 for why the
 fallback ships unconditionally rather than only on a blocked run.
 
@@ -261,8 +273,9 @@ Live on vietuat: `ir_cron` id **141**, active, every 7 days, next call
 ## 3. Test results (verbatim)
 
 ```
-# final run — health_consent + health_fhir_core upgraded, four test tags
-2026-08-02 20:47:03 INFO odoo.tests.result: 0 failed, 0 error(s) of 154 tests
+# shipping run — the exact committed code, health_consent + health_fhir_core
+# upgraded together, four test tags
+2026-08-02 20:51:49 INFO odoo.tests.result: 0 failed, 0 error(s) of 154 tests
                           when loading database 'vietuat'
 EXIT:0   HTTP:200
 
@@ -283,19 +296,26 @@ TestFHIRConformanceCronGC3.test_87…test_91                    (5)  C5
 ```
 
 `TestFHIRRuntimeValidationGC3` is an `HttpCase` and really executed —
-`grep -ac "ERROR: setUpClass"` is 0 and its four methods appear by name
+`grep -ac "ERROR: setUpClass"` is 0 and its five methods appear by name
 (§5.75/§5.83). No test was skipped.
 
 ### The gate proving itself
 
-The first run of this phase's suite, before the two defects of §1 were
-fixed, is the failing half of C1's acceptance criterion — the same code, the
-same command, the same three gates:
+The first run of this phase's suite, before the defects of §1 were fixed, is
+the failing half of C1's acceptance criterion ("a deliberately-broken
+serializer is rejected") — the same code, the same command, the same three
+gates, red then green:
 
 ```
-2026-08-02 20:23:22 ERROR odoo.tests.result: 5 failed, 1 error(s) of 151 tests   EXIT:1
-2026-08-02 20:31:33 INFO  odoo.tests.result: 0 failed, 0 error(s) of 152 tests   EXIT:0
+20:23:22 ERROR odoo.tests.result: 5 failed, 1 error(s) of 151 tests   EXIT:1
+20:31:33 INFO  odoo.tests.result: 0 failed, 0 error(s) of 152 tests   EXIT:0
+20:44:50 ERROR odoo.tests.result: 0 failed, 1 error(s) of 154 tests   EXIT:1   ← §1.3, mid-fix
+20:51:49 INFO  odoo.tests.result: 0 failed, 0 error(s) of 154 tests   EXIT:0   ← shipped
 ```
+
+Note the third line: `EXIT:1` with `FAIL: 0`. That is the §5.75 shape the
+gate's first check exists for — a run that reads like success to anything
+counting only failures.
 
 ---
 
@@ -326,7 +346,7 @@ FHIR-SMOKE ok:   smoke passed (metadata only)   EXIT:0
 Run with a **throwaway** probe client, created and destroyed inside this
 phase (`smoke_test_client`, the OPS-owned one, was not touched — it is still
 inactive, verified below). 20 of the 21 interaction-bearing types answered
-with a 200 searchset Bundle; `Practitioner` is finding F4:
+with a 200 searchset Bundle; `Practitioner` is finding F2:
 
 ```
 FHIR-SMOKE ok:   metadata: fhirVersion 4.0.1, software.version 19.0.1.5.0, 22 resources (21 interaction-bearing)
@@ -370,11 +390,27 @@ smoke_test_client_untouched   → smoke_test_client | active=f
 
 ### The weekly check against live data
 
+Called directly:
+
 ```
 $ env['fhir.conformance'].run_weekly_check()
 RESULT: []
 CHECKED: 12   FAILURES: []
 FHIR-CONFORMANCE-OK 12 types
+```
+
+…and fired through the **cron record itself**, so the XML → `ir.actions.server`
+→ model path is proven rather than assumed (a green unit test says nothing
+about whether the cron is wired up):
+
+```
+$ env['ir.cron'].browse(141).method_direct_trigger()
+GC3CRON before: name=FHIR: weekly conformance check active=True nextcall=2026-08-09 03:00:00
+GC3CRON triggered ok
+
+/var/log/odoo/odoo-server.log:
+2026-08-02 20:53:35 INFO vietuat odoo.addons.health_fhir_core.models.fhir_conformance:
+  FHIR-CONFORMANCE-OK 12 types
 ```
 
 Twelve of the 21 registered types have at least one record on vietuat; the
@@ -446,7 +482,7 @@ the handover; it is G14's remedy applied to the second model that needed it
 (§1.3), found by this phase's own smoke, using a mechanism GC-1 already
 built and a precedent GC-1 already set on Patient. Contained to one
 serializer, strictly narrowing what is read. The residual
-`healthcare_skill_ids` problem is reported (F4), not worked around.
+`healthcare_skill_ids` problem is reported (F2), not worked around.
 
 No other deviations. In particular: the facade is still **read-only** (no
 create/update/delete/vread/history/transaction route), no new resource
@@ -468,7 +504,7 @@ cannot read a clinical note through the ORM looks wrong, and
 row is the widest grant in the system. Neither is a GC-3 change; both deserve
 a decision. The facade now fails safely (403 `OperationOutcome`) either way.
 
-**F4 — `Practitioner.qualification` needs an HR-privileged service user.**
+**F2 — `Practitioner.qualification` needs an HR-privileged service user.**
 `hr.employee` treats every field outside its public-profile whitelist as
 private, and `healthcare_skill_ids` — a health_base addition — is not on it.
 The GC-3 prefetch fix removed ~30 other private fields from the read, but
@@ -478,7 +514,7 @@ decision is "should a read-all FHIR token see staff skills" rather than a
 mechanical fix. Until then, `/fhir/r4/Practitioner` answers 403 (a proper
 `OperationOutcome`, since §1.2) for a token whose user has no HR group.
 
-**F5 — record-rule scoping is inconsistent between a resource and the records
+**F3 — record-rule scoping is inconsistent between a resource and the records
 it dereferences.** `/fhir/r4/DocumentReference` 403s for a catchment-scoped
 user because the note passes its own record rules while the
 `health.fieldservice.order` it points at does not
@@ -489,14 +525,14 @@ to notes whose order is readable, or apply §5.47's omit-and-declare per
 record — and both change what the facade returns, which makes it a design
 decision rather than a GC-3 fix.
 
-**F2 — the C5 cron's resource sample is `search(limit=1)`, i.e. the
+**F4 — the C5 cron's resource sample is `search(limit=1)`, i.e. the
 lowest-id record of each type.** Stable and cheap, but it means drift that
 only affects newer records is invisible until the oldest record happens to
 change. A random or newest-first sample would trade determinism for coverage.
 Deliberate for now, worth a decision if the weekly log ever reads as
 uninformative.
 
-**F3 — `smoke_test_client` (gateway.oauth.client id 10) exists and is
+**F5 — `smoke_test_client` (gateway.oauth.client id 10) exists and is
 inactive.** Activating it is the OPS half of C3, exactly as §4.2 says; this
 phase did not touch it. The token half of the smoke was proven with a
 throwaway probe client that was destroyed afterwards (§4 above).

@@ -4,7 +4,7 @@
 # fallback path (gap register item G4).
 #
 # Runs exactly the suite `.github/workflows/fhir-conformance.yml` runs, and
-# applies exactly the same three gates, against a local Odoo 19 checkout and
+# applies exactly the same gates, against a local Odoo 19 checkout and
 # a local PostgreSQL. Use it when:
 #
 #   - GitHub Actions is unavailable, disabled for the repo, or blocked (the
