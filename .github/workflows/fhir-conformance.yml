@@ -123,6 +123,10 @@ jobs:
         continue-on-error: true
         run: |
           set -o pipefail
+          # `tee` rather than --logfile: odoo can die before it opens a
+          # logfile (bad option, unreachable database), and a missing log is
+          # the one failure mode that tells you nothing. Piping guarantees the
+          # gates below always have something to read, including the reason.
           odoo \
             -d "$CI_DB" \
             --addons-path="$CI_ADDONS_PATH" \
@@ -135,35 +139,40 @@ jobs:
             --db_host=postgres \
             --db_user=odoo \
             --db_password=odoo \
-            --log-level=test \
-            --logfile="$CI_LOG"
+            --log-level=test 2>&1 | tee "$CI_LOG"
 
-      # Four gates, each its OWN step and each allowed to fail hard.
+      # Four gates, each its own step, each allowed to fail hard.
       #
       # No `continue-on-error` here, deliberately: it rewrites a step's public
-      # `conclusion` to success, so a run whose gates are all "success" can
-      # still be red — which is exactly what the first attempt at this
-      # produced. Failing honestly means the first red step NAMES the gate
-      # that rejected the build and the rest show `skipped`, which is the
-      # whole diagnosis, readable without repo-admin rights (Actions logs
-      # need them; step names and conclusions do not).
-      - name: gate 0 — a log file was produced
-        run: |
-          ls -l "$CI_LOG"
-          [ -s "$CI_LOG" ] || {
-            echo "::error::no odoo log at $CI_LOG — the run never started"
-            exit 1
-          }
-
+      # `conclusion` to success, so a run whose gates all read "success" can
+      # still be red — which is exactly what the first attempt produced.
+      # Failing honestly means the first red step NAMES the gate that rejected
+      # the build and the rest read `skipped`.
+      #
+      # Each failure also emits a `::error::` annotation carrying the relevant
+      # log lines. Annotations are served by the public check-runs API, so a
+      # red build explains itself to anyone — Actions LOGS need repo-admin
+      # rights, annotations do not. `%0A` is GitHub's newline escape.
       - name: gate 1 — odoo exited zero
         run: |
+          annotate() {
+            printf '::error::%s%%0A%s\n' "$1" \
+              "$(tail -25 "$CI_LOG" 2>/dev/null | sed 's/%/%25/g' \
+                 | awk '{printf "%s%%0A", $0}')"
+          }
           echo "odoo step outcome: ${{ steps.odoo.outcome }}"
           if [ "${{ steps.odoo.outcome }}" != "success" ]; then
-            echo "--- ERROR lines ---"
-            grep -a 'ERROR' "$CI_LOG" | tail -40 || true
-            echo "::error::odoo exited non-zero (an EXIT:1 with FAIL:0 means read the ERROR lines — conventions 5.75)"
+            annotate "odoo exited non-zero (an EXIT:1 with FAIL:0 means read the ERROR lines — conventions 5.75). Tail of the run:"
             exit 1
           fi
+
+      - name: gate 0 — the run produced output
+        run: |
+          ls -l "$CI_LOG" || true
+          [ -s "$CI_LOG" ] || {
+            echo "::error::odoo produced no output at all — the command never ran"
+            exit 1
+          }
 
       - name: gate 2 — an odoo.tests.result line exists and is clean
         run: |
@@ -176,9 +185,9 @@ jobs:
           case "$RESULT" in
             *"0 failed, 0 error(s)"*) ;;
             *)
-              echo "--- failing tests ---"
-              grep -a 'FAIL:\|ERROR:' "$CI_LOG" | head -40 || true
-              echo "::error::$RESULT"
+              FAILED="$(grep -a 'FAIL: \|ERROR: ' "$CI_LOG" | head -12 \
+                | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
+              printf '::error::%s%%0A%s\n' "$RESULT" "$FAILED"
               exit 1 ;;
           esac
 
@@ -187,7 +196,6 @@ jobs:
           EXECUTED="$(grep -ac 'Starting Test.*\.test_' "$CI_LOG" || true)"
           echo "executed test methods: $EXECUTED (floor $MIN_EXECUTED)"
           if [ "${EXECUTED:-0}" -lt "$MIN_EXECUTED" ]; then
-            grep -ao 'Starting Test[A-Za-z0-9]*\.test_[a-z0-9_]*' "$CI_LOG" | sort -u || true
             echo "::error::only $EXECUTED test methods executed — the suite did not really run (conventions 5.83)"
             exit 1
           fi
