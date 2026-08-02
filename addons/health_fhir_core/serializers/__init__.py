@@ -52,3 +52,23 @@ REGISTRY = {
         ConsentSerializer(),
     )
 }
+
+# --------------------------------------------------------------------------
+# Operations registry (A1 / G2) — the CapabilityStatement is generated from
+# these, never hand-listed. Downstream modules append to BOTH dicts at import
+# time (health_fhir_terminology adds CodeSystem/$lookup + ValueSet/$expand)
+# exactly as they extend REGISTRY, then clear the capability cache.
+# --------------------------------------------------------------------------
+
+#: resource type (WITH a serializer in REGISTRY) -> list of operation dicts
+OPERATIONS = {
+    'Patient': [{
+        'name': 'everything',
+        'definition': ('http://hl7.org/fhir/OperationDefinition/'
+                       'Patient-everything'),
+    }],
+}
+
+#: resource type with NO serializer (operation-only: no read/search-type
+#: interaction, no searchParam) -> list of operation dicts
+OPERATION_ONLY_RESOURCES = {}

@@ -49,6 +49,20 @@ class PatientSerializer(FHIRSerializer):
         'birthdate': {'type': 'date', 'domain': date_param_domain('birth_date')},
     }
 
+    # G14: res.partner carries group-gated accounting fields (credit_limit,
+    # signup_type, …) that a blanket stored-field prefetch would read, 403-ing
+    # any minimally-scoped service user. Only the fields `to_fhir` maps are
+    # prefetched. The computed `national_id` / `catchment_province_name` are
+    # intentionally absent — they compute transparently on access and the
+    # store-filter in serialize_batch would drop them anyway.
+    prefetch_fields = [
+        'name', 'active', 'patient_code', 'insurance_number',
+        'phone', 'mobile', 'email', 'zalo_user_id', 'gender', 'birth_date',
+        'deceased', 'street', 'street2', 'vietnamese_address', 'city', 'zip',
+        'district_id', 'state_id', 'country_id', 'primary_facility_id',
+        'write_date',
+    ]
+
     def base_domain(self, env):
         return [('is_patient', '=', True)]
 

@@ -270,6 +270,11 @@ class FHIRSerializer:
     #: name -> {'type': 'token|string|date|reference', 'domain': callable(value)->domain}
     search_params = {}
 
+    #: optional explicit prefetch list; None = all stored non-relational-heavy
+    #: fields (legacy behaviour). Serializers over models with group-gated
+    #: fields (res.partner!) MUST declare this (§5.47 corollary).
+    prefetch_fields = None
+
     @property
     def scope(self):
         return 'system/%s.read' % self.resource_type
@@ -302,13 +307,23 @@ class FHIRSerializer:
     def serialize_batch(self, records):
         """N+1-safe batch serialization: warm the prefetch cache with one
         read, then serialize each record (relational traversals hit the
-        per-recordset prefetch, not per-record queries)."""
+        per-recordset prefetch, not per-record queries).
+
+        The blanket "every stored field" fetch is a G14 defect on any model
+        carrying group-gated fields (``res.partner`` drags accounting's
+        ``credit_limit`` / ``signup_type``, so a minimally-scoped service user
+        got an AccessError on ANY Patient serialization). A serializer over
+        such a model declares ``prefetch_fields`` and only those are read.
+        """
         if records:
-            # single batched fetch of all stored fields into cache
-            records.fetch([
-                fname for fname, f in records._fields.items()
-                if f.store and f.type not in ('binary', 'image', 'one2many', 'many2many')
-            ])
+            if self.prefetch_fields is not None:
+                names = [f for f in self.prefetch_fields
+                         if f in records._fields and records._fields[f].store]
+            else:
+                names = [fname for fname, f in records._fields.items()
+                         if f.store and f.type not in (
+                             'binary', 'image', 'one2many', 'many2many')]
+            records.fetch(names)
         return [self.to_fhir(rec) for rec in records]
 
     # -- search translation ---------------------------------------------------

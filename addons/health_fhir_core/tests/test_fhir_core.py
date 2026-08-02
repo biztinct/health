@@ -124,7 +124,10 @@ class TestFHIRCore(TransactionCase):
             self.assertEqual(codes, ['read', 'search-type'])
             names = [p['name'] for p in resource['searchParam']]
             self.assertIn('_lastUpdated', names)
-            self.assertIn('_count', names)
+            # GC-1 / G12: `_count` is a paging control, not a SearchParameter,
+            # and declaring it as one is a conformance nit. It is now absent
+            # (test_fhir_conformance.test_18 asserts the removal repo-wide).
+            self.assertNotIn('_count', names)
             # searchParam list mirrors the registry table
             serializer = REGISTRY[resource['type']]
             for name in serializer.search_params:

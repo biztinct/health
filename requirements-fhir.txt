@@ -1,0 +1,23 @@
+# FHIR facade — pinned python dependency (GC-1 / A3, register gap G11).
+#
+# The facade DECLARES `fhirVersion 4.0.1` (R4) and VALIDATES with this
+# library's R4B model classes. That is sound only because none of the 21
+# resource types we serve differs between R4 and R4B — the argument, the
+# per-type list and the reasoning are in docs/conformance/r4-r4b-equivalence.md.
+# The pin is what keeps that argument true: an unpinned resolve to a future
+# major could change the class set, the validation semantics, or the R4B
+# module layout that health_fhir_core.serializers.base.validate_resource
+# imports (`fhir.resources.R4B.<type>`, with a fall back to `fhir.resources.
+# <type>`). health_fhir_core/tests/test_fhir_conformance.py asserts the
+# resolved version at test time, so a drifting environment fails loudly
+# instead of silently validating against a different specification.
+#
+# INSTALL NOTE (conventions §1 — read before running this on any server):
+# do NOT `pip install -r` this file on the UAT/production host as a way of
+# "checking". fhir.resources==8.3.0 is ALREADY installed on vietuat; pip may
+# decide to upgrade the shared cryptography / pyOpenSSL chain as a side
+# effect, and that has taken the server down before. Install it explicitly
+# and alone (`pip install 'fhir.resources==8.3.0'`) on a NEW host only, and
+# only with the deploy owner's agreement.
+
+fhir.resources==8.3.0

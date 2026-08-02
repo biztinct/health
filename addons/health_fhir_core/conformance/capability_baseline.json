@@ -1,0 +1,701 @@
+{
+  "description": "Read-only FHIR R4 facade over the health19 home-care platform. Auth: API gateway tokens with system/<Resource>.read scopes. Note: DocumentReference image content[].attachment.url entries point at Odoo /web/content endpoints which require separate Odoo authentication.",
+  "fhirVersion": "4.0.1",
+  "format": [
+    "application/fhir+json"
+  ],
+  "implementation": {
+    "description": "health19 FHIR R4 facade",
+    "url": "/fhir/r4"
+  },
+  "kind": "instance",
+  "name": "Health19FHIRFacade",
+  "publisher": "health19",
+  "resourceType": "CapabilityStatement",
+  "rest": [
+    {
+      "mode": "server",
+      "resource": [
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-date",
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "severity",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "AdverseEvent"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-date",
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Appointment-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Appointment"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-date",
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/CarePlan-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "CarePlan"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "operation": [
+            {
+              "definition": "http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup",
+              "name": "lookup"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/CodeSystem-name",
+              "name": "name",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/CodeSystem-url",
+              "name": "url",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "CodeSystem"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Condition-clinical-status",
+              "name": "clinical-status",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-code",
+              "name": "code",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Condition-recorded-date",
+              "name": "recorded-date",
+              "type": "date"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Condition"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Consent-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Consent"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/DocumentReference-date",
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-encounter",
+              "name": "encounter",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "DocumentReference"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-date",
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Encounter-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Encounter"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Flag"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Goal-lifecycle-status",
+              "name": "lifecycle-status",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Goal"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Location-name",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Location-organization",
+              "name": "organization",
+              "type": "reference"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Location"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/medications-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "MedicationAdministration"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/medications-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "MedicationRequest"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-code",
+              "name": "code",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-date",
+              "name": "date",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Observation-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Observation"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Organization-identifier",
+              "name": "identifier",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Organization-name",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Organization"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "operation": [
+            {
+              "definition": "http://hl7.org/fhir/OperationDefinition/Patient-everything",
+              "name": "everything"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/individual-birthdate",
+              "name": "birthdate",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Patient-identifier",
+              "name": "identifier",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Patient-name",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/individual-phone",
+              "name": "phone",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/individual-telecom",
+              "name": "telecom",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Patient"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Practitioner-identifier",
+              "name": "identifier",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Practitioner-name",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Practitioner"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Questionnaire-name",
+              "name": "name",
+              "type": "token"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Questionnaire-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Questionnaire"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/QuestionnaireResponse-authored",
+              "name": "authored",
+              "type": "date"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/QuestionnaireResponse-questionnaire",
+              "name": "questionnaire",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/QuestionnaireResponse-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "QuestionnaireResponse"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/ServiceRequest-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "ServiceRequest"
+        },
+        {
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-encounter",
+              "name": "encounter",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/clinical-patient",
+              "name": "patient",
+              "type": "reference"
+            },
+            {
+              "definition": "http://hl7.org/fhir/SearchParameter/Task-status",
+              "name": "status",
+              "type": "token"
+            },
+            {
+              "name": "_lastUpdated",
+              "type": "date"
+            }
+          ],
+          "type": "Task"
+        },
+        {
+          "operation": [
+            {
+              "definition": "http://hl7.org/fhir/OperationDefinition/ValueSet-expand",
+              "name": "expand"
+            }
+          ],
+          "type": "ValueSet"
+        }
+      ],
+      "security": {
+        "service": [
+          {
+            "coding": [
+              {
+                "code": "OAuth",
+                "system": "http://terminology.hl7.org/CodeSystem/restful-security-service"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "software": {
+    "name": "health19 / CarejioX",
+    "version": "19.0.1.4.0"
+  },
+  "status": "active",
+  "title": "health19 FHIR R4 Facade (read-only, Phase 1)"
+}

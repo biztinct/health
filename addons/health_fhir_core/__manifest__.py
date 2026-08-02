@@ -2,7 +2,7 @@
 {
     'name': 'Health FHIR R4 Facade (read-only)',
     'summary': 'Read-only FHIR R4 facade over health19 clinical/operational models',
-    'version': '19.0.1.3.0',
+    'version': '19.0.1.4.0',
     'category': 'Healthcare',
     'author': 'health19',
     'depends': [
