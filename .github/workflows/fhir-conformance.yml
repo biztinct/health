@@ -114,27 +114,35 @@ jobs:
         id: pip_break
         continue-on-error: true
         run: |
-          set -o pipefail
+          set +e
           python3 -m pip install --break-system-packages \
-            'fhir.resources==8.3.0' 'pywebpush==2.3.0' 2>&1 | tee /tmp/pip1.log
+            'fhir.resources==8.3.0' 'pywebpush==2.3.0' > /tmp/pip1.log 2>&1
+          echo "$?" > /tmp/pip1.exit
+          cat /tmp/pip1.log
+          exit "$(cat /tmp/pip1.exit)"
 
       - name: deps — install (plain)
         id: pip_plain
         if: steps.pip_break.outcome != 'success'
         continue-on-error: true
         run: |
-          set -o pipefail
+          set +e
           python3 -m pip install \
-            'fhir.resources==8.3.0' 'pywebpush==2.3.0' 2>&1 | tee /tmp/pip2.log
+            'fhir.resources==8.3.0' 'pywebpush==2.3.0' > /tmp/pip2.log 2>&1
+          echo "$?" > /tmp/pip2.exit
+          cat /tmp/pip2.log
+          exit "$(cat /tmp/pip2.exit)"
 
       - name: deps — why the system installs were refused
         if: steps.pip_break.outcome != 'success'
         run: |
           esc() { sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}'; }
-          printf '::warning::--break-system-packages attempt:%%0A%s\n' \
-            "$(tail -12 /tmp/pip1.log 2>/dev/null | esc)"
-          printf '::warning::plain attempt:%%0A%s\n' \
-            "$(tail -12 /tmp/pip2.log 2>/dev/null | esc)"
+          printf '::warning::--break-system-packages exit %s:%%0A%s\n' \
+            "$(cat /tmp/pip1.exit 2>/dev/null || echo '?')" \
+            "$(tail -15 /tmp/pip1.log 2>/dev/null | esc)"
+          printf '::warning::plain exit %s:%%0A%s\n' \
+            "$(cat /tmp/pip2.exit 2>/dev/null || echo '?')" \
+            "$(tail -15 /tmp/pip2.log 2>/dev/null | esc)"
 
       - name: deps — install (--target, de-shadowed)
         if: steps.pip_break.outcome != 'success' && steps.pip_plain.outcome != 'success'
@@ -151,40 +159,56 @@ jobs:
           # container is no safer. So drop from the target everything the
           # image already provides, leaving only genuinely-new packages.
           python3 /dev/stdin <<'PRUNE'
-          import importlib.util, os, shutil, sys
+          import os, shutil
+          # Prune ONLY what is binary-coupled to the image's OpenSSL. The
+          # previous attempt dropped everything the image already had, which
+          # also removed `typing_extensions` — and pydantic (behind
+          # fhir.resources) needs a newer one than Debian ships, so the
+          # imports failed for the opposite reason. Newer pure-Python copies
+          # of requests/urllib3/attrs/typing_extensions are harmless on the
+          # path; a second `cryptography` or `cffi` is not, because the
+          # image's system pyOpenSSL is linked against its own.
+          COUPLED = ('cryptography', 'cffi', '_cffi_backend', 'OpenSSL')
           target = '/opt/fhirlibs'
-          sys.path = [p for p in sys.path if os.path.abspath(p) != target]
           removed, kept = [], []
           for entry in sorted(os.listdir(target)):
               if entry.endswith(('.dist-info', '.egg-info')) or entry == '__pycache__':
                   continue
-              name = entry[:-3] if entry.endswith('.py') else entry
+              stem = entry.split('.')[0]
               path = os.path.join(target, entry)
-              try:
-                  found = importlib.util.find_spec(name) is not None
-              except Exception:
-                  found = False
-              if found:
+              if stem in COUPLED:
                   shutil.rmtree(path, ignore_errors=True) if os.path.isdir(path) else os.remove(path)
-                  removed.append(name)
+                  removed.append(entry)
               else:
-                  kept.append(name)
+                  kept.append(entry)
           print('::warning::target dir — kept: %s' % (', '.join(kept) or '(none)'))
-          print('::warning::target dir — dropped as already in the image: %s'
+          print('::warning::target dir — dropped as binary-coupled to the image: %s'
                 % (', '.join(removed) or '(none)'))
           PRUNE
           echo "PYTHONPATH=/opt/fhirlibs" >> "$GITHUB_ENV"
 
       - name: deps — confirm they resolve
         run: |
-          python3 -c "import importlib.metadata as m; \
-            print('fhir.resources', m.version('fhir.resources')); \
-            print('pywebpush', m.version('pywebpush'))"
-          python3 -c "from fhir.resources.R4B.patient import Patient; print('R4B ok')"
-          python3 -c "import pywebpush; print('pywebpush import ok')"
-          # The canary for the shadowing failure above: if this breaks, odoo
-          # cannot even load `base`, and nothing after it means anything.
-          python3 -c "import OpenSSL; print('pyOpenSSL import ok')"
+          set +e
+          esc() { sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}'; }
+          fail=0
+          check() {  # check <label> <python snippet>
+            out="$(python3 -c "$2" 2>&1)"
+            if [ $? -eq 0 ]; then
+              echo "ok: $1 — $out"
+            else
+              printf '::error::%s failed:%%0A%s\n' "$1" "$(printf '%s' "$out" | esc)"
+              fail=1
+            fi
+          }
+          check "fhir.resources version" "import importlib.metadata as m; print(m.version('fhir.resources'))"
+          check "pywebpush version"      "import importlib.metadata as m; print(m.version('pywebpush'))"
+          check "fhir.resources R4B"     "from fhir.resources.R4B.patient import Patient; print('R4B ok')"
+          check "pywebpush import"       "import pywebpush; print('ok')"
+          # The canary for the shadowing failure: if pyOpenSSL breaks, odoo
+          # cannot load `base` at all and nothing after it means anything.
+          check "pyOpenSSL import"       "import OpenSSL; print('ok')"
+          exit "$fail"
 
       - name: probe — the odoo binary in this image
         run: |
