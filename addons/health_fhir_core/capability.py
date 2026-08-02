@@ -51,7 +51,9 @@ SEARCH_PARAM_DEFINITIONS = {
     },
     'CodeSystem': {
         'url': 'CodeSystem-url',
-        'name': 'CodeSystem-name',
+        # 'name' — base CodeSystem-name is a STRING param on .name; ours is an
+        # exact token on the code — semantics differ, so no canonical is
+        # claimed (review fix, GC-2).
     },
     'Condition': {
         'patient': 'clinical-patient',
@@ -116,7 +118,9 @@ SEARCH_PARAM_DEFINITIONS = {
         'name': 'Practitioner-name',
     },
     'Questionnaire': {
-        'name': 'Questionnaire-name',
+        # 'name' — base Questionnaire-name is a STRING param; ours is an exact
+        # token on the template code (a deliberate deviation, documented in
+        # the serializer) — no canonical claimed (review fix, GC-2).
         'status': 'Questionnaire-status',
     },
     'QuestionnaireResponse': {

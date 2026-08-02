@@ -17,7 +17,9 @@ from odoo import http
 from odoo.exceptions import AccessDenied, AccessError
 from odoo.http import request
 
-from odoo.addons.health_api_gateway.controllers.gateway import _gateway_authenticate
+from odoo.addons.health_api_gateway.controllers.gateway import (
+    _client_ip, _gateway_authenticate,
+)
 
 from ..capability import build_capability
 from ..serializers import REGISTRY
@@ -153,15 +155,22 @@ class HealthFHIRController(http.Controller):
     def _audit(self, env, user, serializer, records, status=200):
         """Every read/search is audited (write via sudo, never as the user)."""
         try:
+            # _gateway_authenticate stamped the caller's identity on
+            # request.gateway_auth — same source the gateway's own audit rows
+            # use (GC-2 review, M2: `request.api_client` never existed, so
+            # every FHIR audit row had an empty key_or_client).
+            auth = getattr(request, 'gateway_auth', {}) or {}
             env['api.audit.log'].sudo().log_access(
                 user_id=user.id,
-                client=getattr(request, 'api_client', None),
+                client=auth.get('key_ref'),
                 route=request.httprequest.path,
                 method=request.httprequest.method,
                 model=serializer.odoo_model,
                 record_ids=records.ids,
                 patient_ids=serializer.patient_ids_of(records),
                 status=status,
+                ip=_client_ip(),
+                auth_kind=auth.get('auth_kind'),
             )
         except Exception:  # pragma: no cover — auditing must not break reads
             _logger.exception('FHIR audit logging failed for %s',

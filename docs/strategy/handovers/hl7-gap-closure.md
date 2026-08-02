@@ -183,15 +183,18 @@ survives. Do NOT touch `everything.py` — the §5.47 net stays.
    - Organization/Practitioner/Location name→`.../<Resource>-name`;
      identifier→`.../<Resource>-identifier`; Location
      organization→`.../Location-organization`; CodeSystem
-     url→`.../CodeSystem-url`, name→`.../CodeSystem-name`;
+     url→`.../CodeSystem-url` (declared type `uri` — GC-2 review);
      DocumentReference encounter→`.../clinical-encounter`,
      date→`.../DocumentReference-date`; QuestionnaireResponse
      authored→`.../QuestionnaireResponse-authored`,
      questionnaire→`.../QuestionnaireResponse-questionnaire`;
-     Task encounter→`.../clinical-encounter`; Questionnaire
-     name→`.../Questionnaire-name`
+     Task encounter→`.../Task-encounter` (GC-1 review: Task is not in the
+     clinical-* groups)
    - OMIT for: AdverseEvent severity, Patient's `phone`-as-token nuance stays
-     as-is, anything else not listed.
+     as-is, CodeSystem `name` + Questionnaire `name` (GC-2 review: both are
+     exact tokens on the code, NOT the base spec's string semantics — claiming
+     the string-typed canonical would over-state conformance), anything else
+     not listed.
 
 ### 2.4 A2 — software element (G3)
 
@@ -446,8 +449,39 @@ deletion + fresh-cursor verify), every test changed by 3.2, mapping-table path.
 ## 4. Phase GC-3 — continuous conformance machinery
 
 **Scope:** G4 engineering (CI, deploy smoke, weekly cron), G10 (sampled
-runtime validation). **Modules sanctioned:** `health_fhir_core`, new
+runtime validation), plus the GC-2 review carry-ins (4.0). **Modules
+sanctioned:** `health_fhir_core`, `health_consent` (4.0 R1 ONLY), new
 `.github/workflows/`, `tools/`, `docs/conformance/`, HTML cells.
+
+### 4.0 Review carry-ins from GC-2 (do these FIRST)
+
+R1 — **consent-check log survives patient deletion (review finding M1).**
+`health_consent/models/health_consent_check_log.py` has `client_id ...
+ondelete='cascade'`: deleting a patient silently destroys their deny rows (it
+happened to the GC-2 probe fixtures — deny rows 5203/5204 are gone), and the
+Python append-only guard never sees a SQL cascade. Now that the gate is
+enforced this log IS compliance evidence. Decision (made, do not re-litigate):
+change to `ondelete='set null'` AND add a stored `client_ref` Char filled at
+create time (patient display name + `patient_code` if set, e.g. `Nguyễn Văn A
+[P00123]`) so a surviving row still names its subject after the partner is
+gone. Keep the append-only guard untouched. No backfill migration for the
+handful of live rows — `client_ref` may be empty on rows predating the field;
+say so in a comment. Tests: (1) create probe patient + consent check row,
+unlink patient → row survives, `client_id` empty, `client_ref` still set;
+(2) existing append-only tests stay green.
+
+R2 — **binding guard blind spot (review finding m3).** `test_66` keys on
+status-family SEARCH params, so serializers that only EMIT a status escape
+it: DocumentReference emits `'current'`, Location emits `active`/`inactive`.
+Both are legal today — assert they stay legal. Two tests in
+`test_fhir_bindings.py`, sets verbatim (R4 4.0.1 required bindings):
+`DocumentReference.status ⊆ {current, superseded, entered-in-error}`;
+`Location.status ⊆ {active, suspended, inactive}`. Source the asserted values
+from the serializer output (serialize a fixture record), not by retyping
+literals from the serializer source.
+
+R3 — folded into 4.2: the smoke script's token mode must also prove the M2
+audit-attribution fix live (see 4.2 step 2).
 
 ### 4.1 C1 — CI conformance gate
 
@@ -475,8 +509,11 @@ restart step of conventions §2): (1) GET `/fhir/r4/metadata` → assert HTTP
 `$1` (passed by the operator; compare and FAIL on mismatch); (2) if
 `$FHIR_SMOKE_TOKEN` set: for each interaction-bearing type, GET
 `?_count=1` → 200 and `resourceType == Bundle` (reads are audited — that's
-fine, it's the audit trail working); (3) exit non-zero on any failure with a
-one-line reason. Companion note `docs/conformance/deploy-smoke.md` (when to
+fine, it's the audit trail working), then ONE psql check that the newest
+`api.audit.log` row for `/fhir/r4/` has non-empty `key_or_client` AND
+`auth_kind` (proves the GC-2 review M2 fix live — FHIR audit rows used to
+have empty attribution); (3) exit non-zero on any failure with a one-line
+reason. Companion note `docs/conformance/deploy-smoke.md` (when to
 run, where the token comes from — the deactivated `smoke_test_client` is
 reactivated BY OPS, never by this phase).
 
@@ -581,7 +618,11 @@ only signs/sends (each ends with owner/date/signature block):
    file-export stub pending the national platform opening — cite
    `fhir_adapter_vn.py:201-205`), DICOMweb, SG/ID/AU adapters, HL7 v2.x/CDA
    (marked "pending E6 survey"). Each: what/why-not-now/trigger/estimate/
-   owner/review-cadence (quarterly).
+   owner/review-cadence (quarterly). Also record the two documented search
+   deviations from the GC-2 review (m5/m6) as accepted behaviour: `:contains`
+   passes LIKE wildcards through unescaped, and status params tolerate any
+   explicit `system|` prefix (system_uri unasserted) where a strict R4
+   reading would return zero rows for a foreign system.
 2. `counterparty-interface-survey.md` (G13): one-page questionnaire — systems
    in use, interface standards required (FHIR version? v2 messages+versions?
    CDA? proprietary?), transport, auth, test-environment availability,

@@ -17,8 +17,13 @@ class CodeSystemSerializer(FHIRSerializer):
     # Both params are identifiers of the code system itself, so no system_uri
     # is asserted — `|value` is accepted, an explicit system is not checked
     # against anything (handover §3.1).
+    # `url` is declared `uri` per the base CodeSystem-url param (exact match —
+    # which token_domain's bare path already is); a versioned `<uri>|<ver>`
+    # query parses to the version and finds nothing, honest while we store no
+    # versions. `name` stays a token: it exact-matches the system code, not
+    # the base spec's string semantics (so no canonical is claimed for it).
     search_params = {
-        'url': {'type': 'token', 'domain': token_domain('uri')},
+        'url': {'type': 'uri', 'domain': token_domain('uri')},
         'name': {'type': 'token', 'domain': token_domain('code')},
     }
 

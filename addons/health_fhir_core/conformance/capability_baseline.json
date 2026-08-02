@@ -128,14 +128,13 @@
           ],
           "searchParam": [
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/CodeSystem-name",
               "name": "name",
               "type": "token"
             },
             {
               "definition": "http://hl7.org/fhir/SearchParameter/CodeSystem-url",
               "name": "url",
-              "type": "token"
+              "type": "uri"
             },
             {
               "name": "_lastUpdated",
@@ -556,7 +555,6 @@
           ],
           "searchParam": [
             {
-              "definition": "http://hl7.org/fhir/SearchParameter/Questionnaire-name",
               "name": "name",
               "type": "token"
             },
