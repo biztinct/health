@@ -6,6 +6,19 @@ Auth is delegated to health_api_gateway's ``_gateway_authenticate`` (token →
 PHI). All data queries run in an environment bound to the authenticated user
 so existing record rules (catchment scoping) apply; only the audit-log write
 uses sudo.
+
+The three data routes declare ``readonly=False`` even though every one of them
+is a GET. An ``auth='none'`` route defaults to readonly in Odoo 19
+(http.py:924), and these routes DO write: every read appends an
+``api.audit.log`` row. The framework can normally recover — a
+``ReadOnlySqlTransaction`` out of a readonly route makes it retry on a
+read/write cursor — but ``_audit`` deliberately swallows every exception so
+auditing can never break a read, which also swallows the signal the retry
+depends on. The transaction is then poisoned and the caller gets a 500. Same
+mechanism, same fix, as health_telemonitoring/controllers/ingest.py. This was
+invisible on a deployment with no read replica (``cr.readonly`` is False
+there, so the writes simply worked) and surfaced the moment GC-3 put an
+``HttpCase`` on the route.
 """
 
 import json
@@ -26,7 +39,7 @@ from ..serializers import REGISTRY
 from ..serializers.base import (
     FHIRError, FHIRForbidden, FHIRNotFound, FHIRUnauthorized,
     consent_allowed_records, consent_enforced,
-    validate_resource, validation_enabled,
+    validate_resource, validation_enabled, validation_sample_hit,
 )
 from ..serializers.everything import build_everything_bundle
 
@@ -50,7 +63,7 @@ class HealthFHIRController(http.Controller):
         return self._fhir_response(statement)
 
     @http.route('/fhir/r4/<string:rtype>', type='http', auth='none',
-                methods=['GET'], csrf=False)
+                methods=['GET'], csrf=False, readonly=False)
     def fhir_search(self, rtype, **kwargs):
         try:
             serializer = self._serializer_or_404(rtype)
@@ -65,15 +78,17 @@ class HealthFHIRController(http.Controller):
                 env, params, self._base_url(),
                 record_filter=lambda recs: consent_allowed_records(
                     env, serializer, recs, enforced))
-            if validation_enabled(env):
+            if self._should_validate(env):
                 self._runtime_validate(bundle)
             self._audit(env, user, serializer, records, status=200)
             return self._fhir_response(bundle)
         except FHIRError as error:
             return self._error_response(error, rtype=rtype)
+        except AccessError as error:
+            return self._access_denied_response(error, rtype)
 
     @http.route('/fhir/r4/Patient/<int:rid>/$everything', type='http',
-                auth='none', methods=['GET'], csrf=False)
+                auth='none', methods=['GET'], csrf=False, readonly=False)
     def fhir_patient_everything(self, rid, **kwargs):
         """Patient/$everything — the whole clinical record in ONE
         consent-gated searchset Bundle (Patient first, then the patient's
@@ -87,15 +102,17 @@ class HealthFHIRController(http.Controller):
             params = self._query_params()
             bundle, patient_record = build_everything_bundle(
                 env, rid, params, self._base_url())
-            if validation_enabled(env):
+            if self._should_validate(env):
                 self._runtime_validate(bundle)
             self._audit(env, user, serializer, patient_record, status=200)
             return self._fhir_response(bundle)
         except FHIRError as error:
             return self._error_response(error, rtype='Patient')
+        except AccessError as error:
+            return self._access_denied_response(error, 'Patient')
 
     @http.route('/fhir/r4/<string:rtype>/<int:rid>', type='http', auth='none',
-                methods=['GET'], csrf=False)
+                methods=['GET'], csrf=False, readonly=False)
     def fhir_read(self, rtype, rid, **kwargs):
         try:
             serializer = self._serializer_or_404(rtype)
@@ -113,12 +130,14 @@ class HealthFHIRController(http.Controller):
                 raise FHIRNotFound(
                     'No %s resource with id %s' % (rtype, rid))
             resource = serializer.serialize_batch(record)[0]
-            if validation_enabled(env):
+            if self._should_validate(env):
                 self._runtime_validate(resource)
             self._audit(env, user, serializer, record, status=200)
             return self._fhir_response(resource)
         except FHIRError as error:
             return self._error_response(error, rtype=rtype)
+        except AccessError as error:
+            return self._access_denied_response(error, rtype)
 
     # ------------------------------------------------------------------
     # Auth / audit
@@ -188,15 +207,33 @@ class HealthFHIRController(http.Controller):
         args = request.httprequest.args
         return {name: args.getlist(name) for name in args.keys()}
 
+    def _should_validate(self, env):
+        """Runtime validation decision for THIS response (control C4 / G10).
+
+        `validate_responses` validates everything (staging); otherwise the
+        canary client and the sampling percentage decide. The client label is
+        the same one the audit row carries, so "which client drifted" and
+        "which client was sampled" are answerable from the same identifier."""
+        auth = getattr(request, 'gateway_auth', {}) or {}
+        return (validation_enabled(env)
+                or validation_sample_hit(env, auth.get('key_ref')))
+
     def _runtime_validate(self, payload):
+        """Detect conformance drift; NEVER surface it to the caller.
+
+        A facade that 500s because its own validator disagrees with it has
+        converted a monitoring control into an outage — so every failure is
+        logged and swallowed. `FHIR-CONFORMANCE-DRIFT` is the grep key
+        (docs/conformance/deploy-smoke.md)."""
         try:
             validate_resource(payload)
         except ImportError:
-            _logger.warning('health_fhir_core.validate_responses is enabled '
-                            'but fhir.resources is not installed')
-        except Exception:
-            _logger.exception('FHIR runtime validation failed on %s',
-                              payload.get('resourceType'))
+            _logger.warning('FHIR runtime validation is enabled but '
+                            'fhir.resources is not installed')
+        except Exception as error:  # noqa: BLE001 — see docstring
+            _logger.error('FHIR-CONFORMANCE-DRIFT rtype=%s id=%s: %s',
+                          payload.get('resourceType'), payload.get('id'),
+                          error)
 
     def _fhir_response(self, payload, status=200):
         body = json.dumps(payload, ensure_ascii=False, default=str)
@@ -205,6 +242,28 @@ class HealthFHIRController(http.Controller):
             headers=[('Content-Type', FHIR_MIME)],
             status=status,
         )
+
+    def _access_denied_response(self, error, rtype):
+        """An ORM ``AccessError`` raised INSIDE a search or read is a FHIR
+        403, not Odoo's HTML error page.
+
+        ``_authenticate`` already translates the gateway's AccessError, but an
+        access failure from the query itself escaped every handler: a token
+        whose service user is missing ONE model's ``ir.model.access`` row got
+        ``<!doctype html><title>403 Forbidden</title>`` back from a FHIR
+        endpoint — unparseable by any FHIR client, and naming the Odoo user in
+        the body. Same class of integration-breaking defect as G14/G15, and
+        found by the GC-3 deploy smoke on its first authenticated run.
+
+        The diagnostic names the FHIR resource type, never the Odoo model or
+        the ACL rule: enough for an integrator to know which scope to ask for,
+        nothing about the internals. The full error is logged server-side.
+        """
+        _logger.info('FHIR 403 (AccessError) on %s: %s', rtype, error)
+        return self._error_response(
+            FHIRForbidden('Access to %s is not permitted for this token'
+                          % rtype),
+            rtype=rtype)
 
     def _error_response(self, error, rtype=None):
         _logger.info('FHIR %s error on %s: %s',

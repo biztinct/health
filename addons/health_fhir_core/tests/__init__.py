@@ -6,3 +6,4 @@ from . import test_fhir_everything
 from . import test_fhir_conformance
 from . import test_fhir_search_gc2
 from . import test_fhir_bindings
+from . import test_fhir_gc3

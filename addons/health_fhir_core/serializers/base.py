@@ -14,6 +14,7 @@ Design (docs/strategy/design-platform-services.md §C.2):
 
 import importlib
 import logging
+import random
 import re
 from datetime import date, datetime
 
@@ -281,13 +282,78 @@ def validate_resource(resource_dict):
 
 
 def validation_enabled(env):
-    """Optional runtime validation flag (§C spec: 'optionally behind a config flag')."""
+    """Optional runtime validation flag (§C spec: 'optionally behind a config flag').
+
+    All-or-nothing: validate EVERY response. Correct for a staging box, too
+    expensive to be the only setting a production deployment has — which is
+    why it was simply left off, and why G10 stayed open. See
+    ``validation_sample_hit`` for the two settings that make it affordable."""
     try:
         value = env['ir.config_parameter'].sudo().get_param(
             'health_fhir_core.validate_responses')
         return str(value).lower() in ('1', 'true', 'yes', 'on')
     except Exception:  # pragma: no cover - never break serving on flag lookup
         return False
+
+
+#: Sampled runtime validation (control C4 / register item G10).
+VALIDATE_SAMPLE_PCT_PARAM = 'health_fhir_core.validate_sample_pct'
+VALIDATE_CANARY_CLIENT_PARAM = 'health_fhir_core.validate_canary_client'
+
+
+def validation_sample_pct(env):
+    """``health_fhir_core.validate_sample_pct`` as an int in [0, 100].
+
+    Parsed defensively and clamped: an unset, blank or garbage value means 0
+    (off). A config-parameter typo must not become an outage — and it must
+    not silently mean 100 either."""
+    try:
+        raw = env['ir.config_parameter'].sudo().get_param(
+            VALIDATE_SAMPLE_PCT_PARAM)
+    except Exception:  # pragma: no cover — never break serving on a lookup
+        return 0
+    if raw in (None, False, ''):
+        return 0
+    try:
+        pct = int(float(str(raw).strip()))
+    except (TypeError, ValueError):
+        _logger.warning('%s is not a number (%r) — sampling treated as 0',
+                        VALIDATE_SAMPLE_PCT_PARAM, raw)
+        return 0
+    return max(0, min(100, pct))
+
+
+def validation_sample_hit(env, client_label=None):
+    """True when THIS response should be validated even though the global
+    ``validate_responses`` flag is off (control C4, register item G10).
+
+    Two independent triggers, both read per request:
+
+    - ``health_fhir_core.validate_canary_client`` names ONE client label —
+      the key/client id the gateway already stamps on every audit row
+      (``request.gateway_auth['key_ref']``). Every response to that client is
+      validated, which is what an integration partner mid-onboarding actually
+      needs, and it costs nothing for everyone else;
+    - ``health_fhir_core.validate_sample_pct`` validates that percentage of
+      everything else, drawn per response.
+
+    Never raises: a failure to read the flags means "do not validate", not
+    "500 the caller".
+    """
+    try:
+        canary = env['ir.config_parameter'].sudo().get_param(
+            VALIDATE_CANARY_CLIENT_PARAM)
+    except Exception:  # pragma: no cover
+        canary = None
+    canary = (canary or '').strip()
+    if canary and client_label and canary == str(client_label).strip():
+        return True
+    pct = validation_sample_pct(env)
+    if pct <= 0:
+        return False
+    if pct >= 100:
+        return True
+    return random.random() * 100 < pct
 
 
 # Consent-aware access (architecture §6.6). The FHIR facade must not serve a

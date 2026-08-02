@@ -137,6 +137,26 @@ msgid "Client"
 msgstr "Khách hàng"
 
 #. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__client_ref
+msgid "Client (at check time)"
+msgstr "Khách hàng (tại thời điểm kiểm tra)"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent_check_log__client_ref
+msgid ""
+"Subject label frozen when the check was made — \"Name [code]\" — so a "
+"surviving row still names its subject after the partner record is deleted. "
+"Empty on rows created before this field existed (GC-3): no backfill was run "
+"for the handful of live rows, and a fabricated label would be worse evidence "
+"than an honest blank."
+msgstr ""
+"Nhãn đối tượng được lưu cố định tại thời điểm kiểm tra — \"Tên [mã]\" — để "
+"dòng dữ liệu còn lại vẫn nêu rõ đối tượng sau khi hồ sơ đối tác bị xóa. "
+"Trống với các dòng được tạo trước khi có trường này (GC-3): không chạy bù dữ "
+"liệu cho số ít dòng hiện có, và một nhãn bịa đặt còn tệ hơn một ô trống "
+"trung thực."
+
+#. module: health_consent
 #: model:ir.model.fields,field_description:health_consent.field_health_consent__name
 msgid "Reference"
 msgstr "Mã tham chiếu"

@@ -413,3 +413,86 @@ class TestHealthConsent(TransactionCase):
             # Bypassing action_grant (direct create as active) trips
             # the one-active-per-(client, type) constraint.
             self._make_consent('service', state='active')
+
+    # ------------------------------------------------------------------
+    # GC-3 R1 — the check log is evidence, so it must outlive its subject
+    # (gotcha ledger §5.99: an ondelete='cascade' FK into an append-only
+    # audit model deletes the evidence at the SQL layer, where the Python
+    # guard above never runs — it took the GC-2 probe's deny rows).
+    # ------------------------------------------------------------------
+    def test_13_check_log_survives_patient_deletion(self):
+        probe = self.env['res.partner'].create({
+            'name': 'Nguyễn Văn Xoá GC3',
+            'is_patient': True,
+            'catchment_province_id': self.province.id,
+            'patient_code': 'PGC3DEL',
+        })
+        # Two deny rows written by the service API itself (not hand-created),
+        # so the test covers the real evidence path. The probe deliberately
+        # has NO granted consent: `health.consent.client_id` is
+        # ondelete='restrict', so a patient who has ever been consented
+        # cannot be hard-deleted at all — the rows at risk are precisely the
+        # DENY rows of a patient nobody consented, which is what GC-2 lost.
+        self.assertFalse(self.Consent.check_consent(probe, 'service'))
+        self.assertFalse(self.Consent.check_consent(probe, 'data_sharing'))
+        rows = self.CheckLog.search([('client_id', '=', probe.id)])
+        self.assertEqual(len(rows), 2, 'the evidence rows were not written')
+        self.assertEqual(
+            set(rows.mapped('client_ref')), {'Nguyễn Văn Xoá GC3 [PGC3DEL]'},
+            'the subject label was not frozen at create time')
+
+        probe.unlink()
+        self.assertFalse(probe.exists())
+        # flush + invalidate: the SET NULL happened in the database, and the
+        # ORM cache still holds the pre-delete client_id.
+        self.env.invalidate_all()
+
+        survivors = self.CheckLog.browse(rows.ids).exists()
+        self.assertEqual(
+            len(survivors), 2,
+            'deleting the patient destroyed the consent-check evidence — '
+            "the FK is back to ondelete='cascade'")
+        self.assertFalse(any(survivors.mapped('client_id')),
+                         'client_id should be empty after SET NULL')
+        self.assertEqual(set(survivors.mapped('client_ref')),
+                         {'Nguyễn Văn Xoá GC3 [PGC3DEL]'},
+                         'an orphaned row no longer names its subject')
+        self.assertEqual(set(survivors.mapped('consent_type')),
+                         {'service', 'data_sharing'})
+        self.assertEqual(sorted(survivors.mapped('result')), [False, False])
+
+    def test_13b_orphaned_rows_are_still_append_only(self):
+        """The guard is unchanged — an orphan is still un-writable and
+        un-deletable through the ORM."""
+        probe = self.env['res.partner'].create({
+            'name': 'GC3 Append Only Probe',
+            'is_patient': True,
+            'catchment_province_id': self.province.id,
+        })
+        self.Consent.check_consent(probe, 'data_sharing')
+        row = self.CheckLog.search([('client_id', '=', probe.id)], limit=1)
+        self.assertTrue(row)
+        # patient_code is auto-assigned on create for patients, so the label
+        # is "Name [code]" here; the bare-name branch is covered below with a
+        # partner that has no code.
+        self.assertEqual(
+            row.client_ref,
+            'GC3 Append Only Probe [%s]' % probe.patient_code)
+        probe.unlink()
+        self.env.invalidate_all()
+        with self.assertRaises(UserError):
+            row.write({'result': True})
+        with self.assertRaises(UserError):
+            row.unlink()
+
+    def test_13c_client_label_without_a_patient_code(self):
+        """A partner with no `patient_code` (a representative, say) still gets
+        a label — the bare name — never a bracketed empty code."""
+        plain = self.env['res.partner'].create(
+            {'name': 'GC3 Label Probe', 'is_representative': True})
+        self.assertFalse(plain.patient_code)
+        self.assertEqual(self.CheckLog._client_label(plain),
+                         'GC3 Label Probe')
+        self.assertFalse(
+            self.CheckLog._client_label(self.env['res.partner']),
+            'an empty recordset must not produce a label')

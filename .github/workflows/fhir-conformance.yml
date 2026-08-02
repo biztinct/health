@@ -1,0 +1,149 @@
+# FHIR conformance gate — control C1 (gap register item G4).
+#
+# The register's largest process gap was not a missing test, it was that the
+# conformance tests "run only when someone remembers". This runs them on every
+# change that can reach the facade, and fails the change if they do not pass.
+#
+# Two failure modes are treated as failures, not one:
+#   - the odoo run exits non-zero, or its result line is not "0 failed,
+#     0 error(s)";
+#   - the run was GREEN OVER ZERO EXECUTED TESTS. Conventions §5.83: a suite
+#     that never executed is indistinguishable from a suite that passed, and
+#     that is how 28 HttpCase classes in this repo sat un-run for months.
+#     The executed-test count is asserted explicitly.
+name: FHIR conformance
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'addons/health_fhir_*/**'
+      - 'addons/health_condition/**'
+      - 'addons/health_base/**'
+      - '.github/workflows/fhir-conformance.yml'
+  pull_request:
+    paths:
+      - 'addons/health_fhir_*/**'
+      - 'addons/health_condition/**'
+      - 'addons/health_base/**'
+      - '.github/workflows/fhir-conformance.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: fhir-conformance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    # The deployment's own Odoo major version. Never float this to `latest`:
+    # the point of the gate is to test what production runs.
+    container:
+      image: odoo:19
+      options: --user root
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd "pg_isready -U odoo"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      CI_DB: ci_test
+      CI_LOG: /tmp/fhir-conformance.log
+      # `addons` FIRST, then the image's packaged addons. This mirrors the
+      # server, where /odoo/odoo-server/addons is a single directory holding
+      # both our modules and the (patched) core copies this repo tracks —
+      # putting the image's copies first would silently test different code
+      # from the one that is deployed.
+      CI_ADDONS_PATH: addons,/usr/lib/python3/dist-packages/odoo/addons
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install the pinned FHIR model library
+        # 8.3.0 is the version the R4/R4B equivalence argument is scoped to
+        # (docs/conformance/r4-r4b-equivalence.md, register item G11). The
+        # image is Debian/PEP-668, hence --break-system-packages.
+        run: |
+          pip install --break-system-packages 'fhir.resources==8.3.0' \
+            || pip install 'fhir.resources==8.3.0'
+          python3 -c "import importlib.metadata as m; \
+            print('fhir.resources', m.version('fhir.resources'))"
+
+      - name: Install the FHIR modules and run their tests
+        id: odoo
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          odoo \
+            -d "$CI_DB" \
+            --addons-path="$CI_ADDONS_PATH" \
+            -i health_fhir_core,health_fhir_terminology,health_condition \
+            --test-enable \
+            --test-tags '/health_fhir_core,/health_fhir_terminology,/health_condition' \
+            --stop-after-init \
+            --workers=0 \
+            --without-demo=all \
+            --db_host=postgres \
+            --db_user=odoo \
+            --db_password=odoo \
+            --log-level=test \
+            --logfile="$CI_LOG"
+
+      - name: Gate on the result
+        run: |
+          if [ ! -s "$CI_LOG" ]; then
+            echo "::error::no odoo log was produced — the run did not start"
+            exit 1
+          fi
+
+          echo "--- last 40 log lines ---"
+          tail -40 "$CI_LOG" || true
+
+          # 1. the run itself must have succeeded
+          if [ "${{ steps.odoo.outcome }}" != "success" ]; then
+            echo "::error::odoo exited non-zero — see the ERROR lines below"
+            grep -a "ERROR" "$CI_LOG" | tail -40 || true
+            exit 1
+          fi
+
+          # 2. there must BE a result line, and it must be clean
+          RESULT="$(grep -a 'odoo.tests.result' "$CI_LOG" | tail -1)"
+          if [ -z "$RESULT" ]; then
+            echo "::error::no 'odoo.tests.result' line — no test suite ran"
+            exit 1
+          fi
+          echo "result: $RESULT"
+          case "$RESULT" in
+            *"0 failed, 0 error(s)"*) ;;
+            *) echo "::error::$RESULT"; exit 1 ;;
+          esac
+
+          # 3. §5.83 — green over zero executed tests is not green
+          EXECUTED="$(grep -ac 'Starting Test.*\.test_' "$CI_LOG" || true)"
+          echo "executed test methods: $EXECUTED"
+          if [ "${EXECUTED:-0}" -lt 50 ]; then
+            echo "::error::only $EXECUTED test methods executed — the suite did not run (conventions 5.83); expected the full health_fhir_* + health_condition suite"
+            exit 1
+          fi
+
+          echo "FHIR conformance gate PASSED — $RESULT over $EXECUTED tests"
+
+      - name: Upload the odoo log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: odoo-conformance-log
+          path: /tmp/fhir-conformance.log
+          if-no-files-found: warn

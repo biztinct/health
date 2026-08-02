@@ -172,6 +172,9 @@
                   default_order="create_date desc">
                 <field name="create_date"/>
                 <field name="client_id"/>
+                <!-- The frozen subject label: the only thing that still names
+                     the subject of a row whose partner has been deleted. -->
+                <field name="client_ref" optional="show"/>
                 <field name="consent_type"/>
                 <field name="scope" optional="hide"/>
                 <field name="result" widget="boolean"/>

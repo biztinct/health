@@ -15,7 +15,16 @@ is fixed in the MAPPING, never by widening the set.
 Both directions of each table are checked where a search map exists: the
 emitted status (what a client reads) and the searchable status (what a client
 may send as `?status=`) are different dicts and can drift apart.
+
+GC-3 R2 closes the blind spot the GC-2 review found in `test_66`: that guard
+keys on status-family SEARCH params, so a serializer that only EMITS a status
+escapes it entirely (DocumentReference, Location). Their values are asserted
+from SERIALIZER OUTPUT — serialize a real fixture and read the resource —
+never by retyping the literal out of the serializer source, which would prove
+only that two copies of the same typo agree.
 """
+
+from datetime import datetime
 
 from odoo.tests import TransactionCase, tagged
 
@@ -75,6 +84,9 @@ CONDITION_CLINICAL_STATUS = {
 SERVICE_REQUEST_STATUS = {
     'draft', 'active', 'on-hold', 'revoked', 'completed', 'entered-in-error',
     'unknown'}
+# Emit-only statuses (no search param → invisible to test_66). GC-3 R2.
+DOCUMENT_REFERENCE_STATUS = {'current', 'superseded', 'entered-in-error'}
+LOCATION_STATUS = {'active', 'suspended', 'inactive'}
 
 # Bindings beyond the handover's 13, asserted for the same reason.
 PUBLICATION_STATUS = {'draft', 'active', 'retired', 'unknown'}
@@ -217,6 +229,68 @@ class TestFHIRBindings(TransactionCase):
     def test_65_careplan_activity_detail_status(self):
         self._subset('CarePlan.activity.detail.status',
                      _ACTIVITY_STATUS.values(), CAREPLAN_ACTIVITY_STATUS)
+
+    # ==================================================================
+    # GC-3 R2 — emit-only statuses (invisible to test_66's search-param key)
+    # ==================================================================
+
+    def _province(self):
+        province = self.env['health.catchment.province'].search([], limit=1)
+        if not province:
+            province = self.env['health.catchment.province'].create(
+                {'name': 'GC3 Binding Province'})
+        return province
+
+    def test_67_document_reference_status(self):
+        """DocumentReference.status is a literal in the serializer, so it has
+        no search param and test_66 never sees it. Assert what the serializer
+        actually EMITS for a real note — R4 requires DocumentReferenceStatus
+        (`current | superseded | entered-in-error`)."""
+        province = self._province()
+        facility = self.env['health.facility'].search(
+            [('catchment_province_id', '=', province.id)], limit=1)
+        if not facility:
+            facility = self.env['health.facility'].create({
+                'name': 'GC3 Binding Facility', 'code': 'GC3BND',
+                'street': '1 Đường GC3', 'city': 'Hà Nội',
+                'catchment_province_id': province.id})
+        patient = self.env['res.partner'].create({
+            'name': 'GC3 DocRef Patient', 'is_patient': True,
+            'catchment_province_id': province.id})
+        fso = self.env['health.fieldservice.order'].create({
+            'patient_id': patient.id,
+            'facility_id': facility.id,
+            'scheduled_datetime': datetime(2026, 8, 3, 2, 0, 0),
+            'scheduled_duration': 60,
+        })
+        note = self.env['health.clinical.note'].create({
+            'order_id': fso.id,
+            'clinical_notes': '<p>GC3 binding probe</p>',
+        })
+        emitted = REGISTRY['DocumentReference'].to_fhir(note)['status']
+        self._subset('DocumentReference.status', {emitted},
+                     DOCUMENT_REFERENCE_STATUS)
+
+    def test_68_location_status(self):
+        """Location.status is derived from `active`, again with no search
+        param. Both branches are exercised and both must be members of R4's
+        LocationStatus (`active | suspended | inactive`) — note that
+        `inactive`, not `suspended`, is the correct code for an archived
+        facility, and nothing else in the module would catch a change."""
+        province = self._province()
+        serializer = REGISTRY['Location']
+        common = {'street': '2 Đường GC3', 'city': 'Hà Nội',
+                  'catchment_province_id': province.id}
+        live = self.env['health.facility'].create(
+            dict(common, name='GC3 Location Live', code='GC3LOCA'))
+        archived = self.env['health.facility'].create(
+            dict(common, name='GC3 Location Archived', code='GC3LOCB'))
+        archived.active = False
+        emitted = {serializer.to_fhir(live)['status'],
+                   serializer.to_fhir(archived)['status']}
+        self.assertEqual(emitted, {'active', 'inactive'},
+                         'the fixture did not exercise both branches')
+        self._subset('Location.status', emitted, LOCATION_STATUS)
 
     # ==================================================================
     # The mapping document is generated from these same dicts — if a new
