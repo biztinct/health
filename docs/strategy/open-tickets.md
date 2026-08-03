@@ -123,7 +123,27 @@ blamed on rules 340/618. Same root question.
 
 ---
 
-## T-003 — `/website/snippet/filters` renders caller-supplied `res_model`/`res_id` through sudo
+## ~~T-003~~ — `/website/snippet/filters` renders caller-supplied `res_model`/`res_id` through sudo — **CLOSED 2026-08-04, module `health_website_security`**
+
+**Closed by a dedicated override module** (not a health phase). New addon
+`health_website_security` (`depends: ['website']`) overrides
+`website.snippet.filter._render` to refuse any **caller-supplied** `res_model`
+not on an explicit allow-list (`product.product`, `product.template` — the only
+models with a `dynamic_filter_template_*` view on this platform), returning `[]`
+before super() reaches the sudo browse. Admin-configured `filter_id` /
+`action_server_id` rendering is untouched — that path is not caller-controlled.
+
+Verified live and **unauthenticated**: `POST /website/snippet/filters` with
+`res_model=res.users, res_id=2` → `{"result": []}`. **Positive control** proved
+selectivity: the same request with `res_model=product.product` is NOT
+short-circuited — the stack trace shows it passing through the override into
+core `_prepare_values`, where it hits a pre-existing core `KeyError` on a
+`filter_id=0` single-record request (unchanged core behaviour, no leak, no
+regression). 8 module tests (unit + `HttpCase` route probes for `res.users` and
+a live `health.clinical.note`), 0 failed. Fix lives in an override module, never
+a vendored core copy (ledger §5.109).
+
+*Original ticket text follows.*
 
 **Found:** SH-1 design investigation (2026-08-03). **Not** closed by SH-1 §3
 — it is independent of the `base.group_public` ACL rows and survives their
@@ -350,7 +370,21 @@ they use daily. Do **not** fold into a feature phase.
 
 ---
 
-## T-012 — 8 of the 10 doctors have no catchment province, so catchment rules deny them everything
+## ~~T-012~~ — 8 of the 10 doctors have no catchment province, so catchment rules deny them everything — **CLOSED 2026-08-04, module `health_catchment_backfill`**
+
+**Closed by a one-time backfill module.** `health_catchment_backfill`'s
+`post_init_hook` set `catchment_province_id` for every `access.role` "Doctor"
+user with none, deriving it from `hr.employee.healthcare_facility_id
+.catchment_province_id`. Applied live at install: 8 of 8 backfilled — huynh,
+staff_155, staff_203 → Hà Nội (2); staff_130/140/154/205/207 → TPHCM (1) — each
+matching their facility, and consistent with the two already-correct doctors.
+Idempotent (only NULL rows), doctors only. 6 tests, 0 failed. The remaining
+NULL-catchment CLINICAL STAFF are ~41 nurses — deliberately out of scope, now
+**T-014**, because populating them EXPANDS patient visibility and is a separate
+access decision. Do T-014 (or decide against it) **before** T-009 adds a
+catchment rule to `health.clinical.note`, or that rule blackholes them.
+
+*Original ticket text follows.*
 
 **Found:** SH-2 review (2026-08-03).
 
@@ -397,6 +431,38 @@ work, so the seed has already been applied by hand.
 
 ---
 
+## T-014 — ~41 nurses share the NULL-catchment deny-all, but populating them expands visibility
+
+**Found:** T-012 fix (2026-08-04). Split out of T-012 rather than folded in.
+
+The same NULL-catchment deny-all (§5.117) that stranded the eight doctors also
+covers **~41 active Nurse-role clinical staff** whose province is equally
+derivable from their facility (36 at facility 1815 → HCMC, ~13 at 1812 → Hanoi;
+`khoa.bv`/`ahanoi`/`ahcmc` have no facility and are not derivable). T-012's fix
+was scoped to doctors ONLY, because a doctor's catchment merely completed a
+data-entry gap validated by two correct reference rows — whereas backfilling 41
+nurses would **grant them patient visibility on 26 catchment-narrowed models
+they currently see nothing on**. That is an access expansion, not a data repair,
+and needs an explicit decision.
+
+**Two questions to answer first:** (1) is a nurse *supposed* to see every patient
+in her province, or is nurse access meant to be assignment-scoped (via
+`assigned_staff_ids` on the FSO) rather than catchment-scoped? (2) if catchment
+is right, the same `health_catchment_backfill` hook generalises to
+`access_role_id.name ilike 'nurse'` in one line. **Do not run it blind** —
+confirm the intended nurse access model, because turning it on makes ~41
+accounts able to read every patient record in their city.
+
+**Also note (minor):** the single-record snippet path (`filter_id=0`,
+`res_model=product.product`, `res_id`) raises a core `KeyError: ''` because an
+empty filter has no `field_names`. Pre-existing core behaviour, surfaced by the
+T-003 positive control; not introduced by `health_website_security`, which only
+gates the model. No leak (it errors before rendering). Left for core, unticketed
+beyond this note.
+
+---
+
 *Registered 2026-07-29 during the W3 review close-out; T-003 – T-008 added
 2026-08-03 by SH-1; T-009 – T-010 added 2026-08-03 by the SH-1 review;
-T-001 closed and T-011 – T-013 added 2026-08-03 by the SH-2 review.*
+T-001 closed and T-011 – T-013 added 2026-08-03 by the SH-2 review;
+T-003 & T-012 closed and T-014 added 2026-08-04.*
