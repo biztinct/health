@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!--
+        BOTH records below are INERT on an upgraded database. Keep them — they
+        document the intended state — but do not expect them to do anything.
+
+        `base.group_system` and `base.group_user` are core records whose own
+        `ir_model_data.noupdate` is `true`, and `odoo/orm/models.py:5157`
+        skips `to_update` when `update and d_noupdate`. The `(3, …)` unlink
+        commands are therefore dropped silently on every upgrade: they applied
+        once, at install time, and never again. This is the noupdate
+        seed-cutover gotcha in its purest form.
+
+        The `base.group_user → health_base.group_healthcare_base` implication
+        (`res_groups_implied_rel` row gid=1, hid=346) was authored by an
+        earlier version of THIS file, under the comment "Give base users
+        healthcare access for debugging", and applied at install on
+        2025-12-06. Commit 8be03c5e flipped it to the `(3, …)` unlink below
+        and nothing happened, for the reason above.
+
+        What actually removes the row is
+        `health_base/migrations/19.0.1.3.8/post-migrate.py` (phase SH-2),
+        which also repairs the `access.role` "Doctor" mapping that had been
+        riding on the defect. Any database still carrying the row converges
+        when it upgrades past 19.0.1.3.8. Precedent for hand-deleting a
+        DB-only implication row: commit a201b3d1 (356 → 4, so Healthcare:
+        Owner no longer granted system admin).
+    -->
     <record id="base.group_system" model="res.groups">
         <field name="implied_ids" eval="[(3, ref('health_base.group_healthcare_owner'))]"/>
     </record>

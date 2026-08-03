@@ -634,7 +634,22 @@ class TestWebLeadsW3(TransactionCase):
                                       raise_if_not_found=False)
                 self.assertTrue(record, '%s did not load' % xmlid)
                 self.assertEqual(record._name, model)
-                self.assertEqual(record.name, name)
+                # Case-INSENSITIVE (ledger §5.50). The seed file's own header
+                # says "once these rows exist, marketing owns their names",
+                # and `noupdate="1"` two lines below enforces exactly that —
+                # so asserting the literal seeded spelling contradicts the
+                # contract this same test asserts on the next line. Measured
+                # 2026-08-03: `utm_source_tiktok` reads 'TikTok' on vietuat
+                # (renamed 03:24:19 by uid 1, outside any phase's code), and
+                # the equality was red against a perfectly correct seed.
+                # `_utm_ids` matches with `=ilike`, so case is exactly what
+                # the production matcher already ignores; what this assertion
+                # is really for is catching an xmlid bound to the WRONG
+                # channel row, and that still holds.
+                self.assertEqual(
+                    (record.name or '').lower(), name,
+                    '%s resolves to %r, which is not the %r channel'
+                    % (xmlid, record.name, name))
                 row = data.search([('module', '=', MODULE),
                                    ('name', '=', xmlid)], limit=1)
                 self.assertTrue(row.noupdate,

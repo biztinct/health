@@ -368,30 +368,45 @@ class TestWebLeadsW2(TransactionCase):
                                  'the service user cannot read %s'
                                  % model_name)
 
-    def test_w2_08b_ews_read_survives_and_it_is_not_ours_to_close(self):
-        """HONEST NEGATIVE. The W1 review listed `health.ews.score` read as
-        part of the salesman closure to be taken back. It is not: on this
-        database `base.group_user` ITSELF implies
-        `health_base.group_healthcare_base` (res_groups_implied_rel 1 -> 346,
-        a live data edge — the module XML declares the arrow the other way),
-        and that group carries the `health.ews.score base` ACL. The service
-        user must keep `base.group_user` (mail.message, ir.sequence,
-        res.partner read all hang off it), so every internal user on vietuat
-        can read EWS scores and narrowing this group cannot change that.
+    def test_w2_08b_ews_read_is_denied_to_plain_internal_users(self):
+        """SH-2 T5.1 — the ticket's own acceptance test, now a POSITIVE one.
 
-        The test asserts the mechanism rather than the wish, so that the day
-        somebody fixes the implication the failure points here.
+        This test used to be the honest negative for T-001: it asserted that
+        `health.ews.score` read SURVIVED for the service user, because on this
+        database `base.group_user` itself implied
+        `health_base.group_healthcare_base` (`res_groups_implied_rel` 1 -> 346,
+        a live data edge — the module XML declares the arrow the other way),
+        and that group carries the `health.ews.score base` ACL. Narrowing the
+        service group could not take it back, so W2 declined to pretend it had.
+
+        Phase SH-2 deleted that row
+        (`health_base/migrations/19.0.1.3.8/post-migrate.py`), so the wish is
+        now the fact and the assertion is inverted. It is deliberately NOT
+        left as a self-skip: the old form went green vacuously the moment the
+        implication disappeared, and a permanently-skipped test is not
+        evidence.
+
+        Measured against the LIVE implication table, never the security XML
+        (§5.88): `_group_closure` walks `implied_ids`, which is the same graph
+        `res.users.all_group_ids` is computed from.
         """
         base_user = self.env.ref('base.group_user')
         healthcare_base = self.env.ref('health_base.group_healthcare_base')
-        if healthcare_base not in self._group_closure(base_user):
-            self.skipTest('base.group_user no longer implies healthcare base '
-                          '— re-check whether EWS read is still universal')
+        # Name the edge before asserting the denial, so a resurrected
+        # implication fails HERE with a readable message rather than as a
+        # mystery AccessError miss below.
+        self.assertNotIn(
+            healthcare_base, self._group_closure(base_user),
+            'base.group_user implies group_healthcare_base again — the SH-2 '
+            'edge deletion has been undone, and every internal user can read '
+            'EWS scores')
+
         service_user = new_test_user(
             self.env, login='wl_w2_ews_probe', password='wl_w2_ews_probe_pw',
             groups='base.group_user,health_web_leads.group_web_leads_service')
-        # No raise: this is a property of base.group_user, not of our group.
-        self.env['health.ews.score'].with_user(service_user).search([], limit=1)
+        with self.assertRaises(AccessError):
+            self.env['health.ews.score'].with_user(service_user).search(
+                [], limit=1)
 
     # ==================================================================
     # W2-T10 — the two IntegrityError race branches

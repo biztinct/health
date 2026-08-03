@@ -1,0 +1,168 @@
+Pager usage is off.
+==============================================================
+A. FORWARD EDGES OF base.group_user (gid=1) — AFTER
+==============================================================
+ gid | hid |                    implied_group                     |                implied_xmlid                 
+-----+-----+------------------------------------------------------+----------------------------------------------
+   1 |   6 | Multi Currencies                                     | base.group_multi_currency
+   1 |   7 | Technical Features                                   | base.group_no_one
+   1 |  14 | Manage Multiple Units of Measure                     | uom.group_uom
+   1 |  20 | Manage Product Variants                              | product.group_product_variant
+   1 |  37 | Manage Lots / Serial Numbers                         | stock.group_production_lot
+   1 |  57 | Multi-website                                        | website.group_multi_website
+   1 | 393 | Use Recurring Tasks                                  | project.group_project_recurring_tasks
+   1 | 394 | Use Task Dependencies                                | project.group_project_task_dependencies
+   1 | 395 | Use Milestones                                       | project.group_project_milestone
+   1 | 399 | Send an automatic reminder email to confirm delivery | purchase.group_send_reminder
+   1 | 537 | User: Read his own attendances                       | hr_attendance.group_hr_attendance_own_reader
+(11 rows)
+
+==============================================================
+A2. REVERSE EDGES INTO 346 — AFTER (the declared 346->1 direction)
+==============================================================
+ gid |          implier          |                   implier_xmlid                   
+-----+---------------------------+---------------------------------------------------
+ 347 | Healthcare: Receptionist  | health_base.group_healthcare_receptionist
+ 348 | Healthcare: Nurse         | health_base.group_healthcare_nurse
+ 350 | Healthcare: Doctor        | health_base.group_healthcare_doctor
+ 351 | Healthcare: Sales         | health_base.group_healthcare_sales
+ 353 | Healthcare: Finance       | health_base.group_healthcare_finance
+ 388 | CRM User                  | health_crm.group_health_crm_user
+ 469 | Healthcare Invoicing User | health_invoicing.group_health_invoicing_user
+ 475 | Red Invoice Manager       | health_redinvoice.group_health_redinvoice_manager
+ 649 | Zalo User                 | health_zalo.group_zalo_user
+ 654 | VoIP: User                | health_voip24h.group_voip_user
+(10 rows)
+
+==============================================================
+B. CLOSURE OF base.group_user — AFTER (346 must be absent)
+==============================================================
+ gid |                      group_name                      |                    xmlid                     
+-----+------------------------------------------------------+----------------------------------------------
+   1 | Role / User                                          | base.group_user
+   6 | Multi Currencies                                     | base.group_multi_currency
+   7 | Technical Features                                   | base.group_no_one
+  14 | Manage Multiple Units of Measure                     | uom.group_uom
+  20 | Manage Product Variants                              | product.group_product_variant
+  37 | Manage Lots / Serial Numbers                         | stock.group_production_lot
+  57 | Multi-website                                        | website.group_multi_website
+ 393 | Use Recurring Tasks                                  | project.group_project_recurring_tasks
+ 394 | Use Task Dependencies                                | project.group_project_task_dependencies
+ 395 | Use Milestones                                       | project.group_project_milestone
+ 399 | Send an automatic reminder email to confirm delivery | purchase.group_send_reminder
+ 537 | User: Read his own attendances                       | hr_attendance.group_hr_attendance_own_reader
+(12 rows)
+
+==============================================================
+C. ACLs AND MENUS ON 346 — UNCHANGED BY THIS PHASE (18 / 7)
+==============================================================
+ acls_on_346 | menus_on_346 | rules_on_346 
+-------------+--------------+--------------
+          18 |            7 |            0
+(1 row)
+
+==============================================================
+D. THE 24 AFFECTED LOGINS — BEFORE/AFTER 346 REACHABILITY
+   before = closure WITH the (1,346) edge re-inserted (the rollback
+   state); after = the live closure now.
+==============================================================
+     login      | user_active | access_role | reached_346_before | reaches_346_now |        verdict         
+----------------+-------------+-------------+--------------------+-----------------+------------------------
+ dhanoi         | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ dhcmc          | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ huynh          | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ staff_130      | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ staff_140      | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ staff_154      | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ staff_155      | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ staff_203      | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ staff_205      | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ staff_207      | t           | Doctor      | t                  | t               | KEEPS (explicit grant)
+ __system__     | f           | (no role)   | t                  | f               | LOSES (as designed)
+ anh.pd         | f           | (no role)   | t                  | f               | LOSES (as designed)
+ bao.tq         | f           | (no role)   | t                  | f               | LOSES (as designed)
+ bi_walkthrough | f           | (no role)   | t                  | f               | LOSES (as designed)
+ dds_DemoAsst   | t           | (no role)   | t                  | f               | LOSES (as designed)
+ dds_DemoLead   | t           | (no role)   | t                  | f               | LOSES (as designed)
+ demo           | t           | (no role)   | t                  | f               | LOSES (as designed)
+ ha.dt          | f           | (no role)   | t                  | f               | LOSES (as designed)
+ huong.nt       | f           | (no role)   | t                  | f               | LOSES (as designed)
+ mai.vt         | f           | (no role)   | t                  | f               | LOSES (as designed)
+ nam.lh         | f           | Banker      | t                  | f               | LOSES (as designed)
+ svc_web_leads  | t           | (no role)   | t                  | f               | LOSES (as designed)
+ test           | f           | Owner       | t                  | f               | LOSES (as designed)
+ tuan.hm        | f           | (no role)   | t                  | f               | LOSES (as designed)
+(24 rows)
+
+==============================================================
+E. ACCESS ROLE 6 "Doctor" — AFTER
+==============================================================
+ id |  name  |                 groups                 
+----+--------+----------------------------------------
+  6 | Doctor | 1:Role / User | 350:Healthcare: Doctor
+(1 row)
+
+--- granted_group sync snapshot for role 6 ---
+ role_id | group_id 
+---------+----------
+       6 |        1
+       6 |      350
+(2 rows)
+
+==============================================================
+F. THE TEN DOCTORS — direct group 350 present?
+==============================================================
+   login   | active | has_group_350 | n_direct_groups | has_direct_group_no_one 
+-----------+--------+---------------+-----------------+-------------------------
+ dhanoi    | t      | t             |              14 | f
+ dhcmc     | t      | t             |              13 | f
+ huynh     | t      | t             |              14 | f
+ staff_130 | t      | t             |              14 | f
+ staff_140 | t      | t             |              14 | f
+ staff_154 | t      | t             |              14 | f
+ staff_155 | t      | t             |              14 | f
+ staff_203 | t      | t             |              14 | f
+ staff_205 | t      | t             |              14 | f
+ staff_207 | t      | t             |              14 | f
+(10 rows)
+
+==============================================================
+G. THE SEVEN — archived, partners untouched (T5.7)
+==============================================================
+ id |  login   | user_active | partner_id |   partner_name   | partner_active 
+----+----------+-------------+------------+------------------+----------------
+ 22 | anh.pd   | f           |        146 | Pham Duc Anh     | t
+ 28 | bao.tq   | f           |        152 | Tran Quoc Bao    | t
+ 25 | ha.dt    | f           |        149 | Do Thanh Ha      | t
+ 27 | huong.nt | f           |        151 | Nguyen Thi Huong | t
+ 23 | mai.vt   | f           |        147 | Vo Thi Mai       | t
+ 21 | nam.lh   | f           |        145 | Le Hoang Nam     | t
+ 24 | tuan.hm  | f           |        148 | Hoang Minh Tuan  | t
+(7 rows)
+
+==============================================================
+H. TOTALS — no user row deleted (T5.7)
+==============================================================
+ res_users_total | active_internal | gid1_edges | the_edge 
+-----------------+-----------------+------------+----------
+              92 |              70 |         11 |        0
+(1 row)
+
+==============================================================
+I. GLOBAL (groupless) ACTIVE ir.rule COUNT — §5.113 tripwire
+==============================================================
+ groupless_active_rules 
+------------------------
+                    127
+(1 row)
+
+==============================================================
+J. MODULE VERSIONS AFTER
+==============================================================
+       name       | latest_version |   state   
+------------------+----------------+-----------
+ access_roles     | 19.0.1.1.0     | installed
+ health_base      | 19.0.1.3.8     | installed
+ health_web_leads | 19.0.4.0.1     | installed
+(3 rows)
+

@@ -1888,3 +1888,73 @@ a no-op.
     (§5.NN trap in SH-1 §6.1). Any phase upgrading this module should assert
     afterwards that the count of GROUPLESS active rules is unchanged.
     (Phase SH-1 review.)
+
+- **§5.114 — Odoo 19 computes a user's group closure at READ time, so an
+    implication edge is live-editable and granting a group NEVER expands its
+    closure onto the user.** `res.users.all_group_ids` is a **non-stored**
+    compute — `user.all_group_ids = user.group_ids.all_implied_ids`,
+    `@api.depends('group_ids.all_implied_ids')`
+    (`base/models/res_users.py:446-449`) — not the older Odoo behaviour where
+    `UsersImplied.write` materialised implied groups into
+    `res_groups_users_rel`. Three consequences, all paid for in SH-2:
+    (a) granting `health_base.group_healthcare_doctor` (350) to ten users
+    wrote exactly ONE relation row each, and 346 arrived transitively through
+    the XML-declared `350 → 346` — so deleting the `1 → 346` edge could not
+    strand them; (b) crucially, none of them picked up `base.group_no_one` as
+    a **direct** group, which a write-time expansion would have done and which
+    would have quietly invalidated `health_user_admin`'s
+    `PROTECTED_DIRECT_GROUP_XMLIDS` reasoning
+    (`res_users_saas.py:23-28`) for every user touched; (c) the closure that
+    governs access is therefore the live `res_groups_implied_rel` graph and
+    nothing else — §5.88's rule, now with the mechanism behind it. Remove an
+    implication with
+    `res.groups.write({'implied_ids': [Command.unlink(id)]})`, **never a raw
+    `DELETE`**: the ORM path runs `ir.model.access.call_cache_clearing_
+    methods()` and `registry.clear_cache('groups')`
+    (`base/models/res_groups.py:180-197`), while a `DELETE` leaves both caches
+    serving the old graph until someone restarts — the change looks applied in
+    psql and is not applied in the running workers. Corollary for role
+    plumbing: `access.role.write({'groups_ids': …})` is the reproducible way
+    to change a role, because `_update_users_groups()` is what reconciles the
+    role onto its linked users; hand-writing `access_role_res_groups_rel`
+    updates nobody and leaves the `granted_group_ids` sync snapshot stale.
+    (Phase SH-2.)
+
+- **§5.115 — `ir.ui.menu.search()` does not answer "can this persona see this
+    menu"; `_visible_menu_ids()` does.** Measured in SH-2 while proving ten
+    doctors had not been locked out: `search([('id','in',menu_ids)])` run
+    `with_user()` returned the **identical 5 of 7** menus for a doctor holding
+    the gating group AND for three personas that had just lost it, while
+    `env['ir.ui.menu'].with_user(u)._visible_menu_ids()` returned **5 and 0**.
+    `search` answers a record-rule question; the group gate lives in
+    `_visible_menu_ids` (`base/models/ir_ui_menu.py:74-86`), which filters on
+    `['|', ('group_ids','=',False), ('group_ids','in', user._get_group_ids())]`
+    and then prunes menus whose action no longer exists. Two more traps in the
+    same method: it **discards `base.group_no_one` from the group set unless
+    `debug`**, so a menu gated only on that group is invisible in normal mode;
+    and a parent menu with no action of its own is visible only through a
+    visible CHILD, so granting one group can make an entire branch appear or
+    disappear. It is `@tools.ormcache`'d on
+    `frozenset(self.env.user._get_group_ids())`, so two users with the same
+    group set share an entry. Sibling of §5.42 ("get_view lies about
+    group-gated nodes") and §5.69 ("a backend menuitem is not a reachable
+    surface for CMS-shell users"): three different layers, three different
+    ways a permission check answers a question you did not ask. (Phase SH-2.)
+
+- **§5.116 — a `noupdate="1"` seed belongs to the business the moment it
+    exists, so a test may assert its stable identity but never its display
+    text.** `health_web_leads/data/utm_seeds.xml` seeds `utm_source_tiktok` as
+    `tiktok` and its own header says *"noupdate='1': once these rows exist,
+    marketing owns their names"* — yet `test_w3_11` asserted
+    `record.name == 'tiktok'` on the line directly above the line where it
+    asserts the record is `noupdate`. Somebody renamed the row to `TikTok` on
+    the deployment and the test went red against perfectly correct code, in an
+    unrelated phase's run (SH-2), costing a deploy cycle to attribute. This is
+    §5.50 with the noupdate twist that makes it inevitable rather than merely
+    likely: `noupdate` is a PROMISE that the value will drift. Assert the
+    xmlid resolves, the model is right, and the name matches
+    case-insensitively (which is also what the production matcher does —
+    `_utm_ids` searches `=ilike`); that still catches the real hazard, an
+    xmlid bound to the wrong record. General rule: if a data record is
+    `noupdate`, its mutable fields are OUT of the test's contract. (Phase
+    SH-2.)

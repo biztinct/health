@@ -1,0 +1,79 @@
+  id  |               model                |                   name                    | r | w | c | u 
+------+------------------------------------+-------------------------------------------+---+---+---+---
+ 6749 | fhir.submission.log                | fhir.submission.log doctor                | t | f | f | f
+ 6850 | health.ai.code.suggestion          | ai.code.suggestion doctor                 | t | t | f | f
+ 3880 | health.appointment                 | health.appointment.doctor                 | t | t | t | f
+ 2718 | health.booking.cancellation.reason | health.booking.cancellation.reason doctor | t | f | f | f
+ 6678 | health.careplan                    | health.careplan doctor                    | t | t | t | f
+ 6694 | health.careplan.activity           | health.careplan.activity doctor           | t | t | t | f
+ 6686 | health.careplan.goal               | health.careplan.goal doctor               | t | t | t | f
+ 6702 | health.careplan.task               | health.careplan.task doctor               | t | t | t | f
+ 5828 | health.catchment.province          | health.catchment.province doctor          | t | f | f | f
+ 7027 | health.clinical.note               | health.clinical.note.doctor               | t | t | t | f
+ 6940 | health.condition                   | health.condition doctor                   | t | t | t | f
+ 6710 | health.consent                     | health.consent doctor                     | t | t | t | f
+ 2778 | health.facility                    | health.facility doctor                    | t | f | f | f
+ 7022 | health.fall.risk                   | health.fall.risk doctor                   | t | t | t | f
+ 6813 | health.family.link                 | health.family.link.doctor                 | t | f | f | f
+ 6622 | health.form.instance               | health.form.instance doctor               | t | t | t | f
+ 6614 | health.form.question               | health.form.question doctor               | t | f | f | f
+ 6606 | health.form.template               | health.form.template doctor               | t | f | f | f
+ 6723 | health.incident                    | health.incident doctor                    | t | t | t | f
+ 6731 | health.incident.action             | health.incident.action doctor             | t | t | t | f
+ 6662 | health.medication.administration   | health.medication.administration doctor   | t | t | t | f
+ 6670 | health.medication.notgiven.reason  | health.medication.notgiven.reason doctor  | t | f | f | f
+ 6654 | health.medication.order            | health.medication.order doctor            | t | t | t | f
+ 6898 | health.monitor.alert               | health.monitor.alert doctor               | t | t | f | f
+ 6905 | health.monitor.device              | health.monitor.device doctor              | t | f | f | f
+ 6581 | health.observation                 | health.observation doctor                 | t | t | t | f
+ 6799 | health.outbound.message            | health.outbound.message doctor            | t | f | f | f
+ 2727 | health.patient.category            | health.patient.category doctor            | t | f | f | f
+ 6844 | health.route.transition            | health.route.transition.doctor            | t | f | f | f
+ 6826 | health.selfbook.invite             | health.selfbook.invite.doctor             | t | f | f | f
+ 2737 | health.service.type                | health.service.type doctor                | t | f | f | f
+ 2748 | health.symptom                     | health.symptom doctor                     | t | t | t | f
+ 6833 | health.telehealth.session          | health.telehealth.session.doctor          | t | f | f | f
+ 6916 | health.twin.risk                   | health.twin.risk doctor                   | t | f | f | f
+ 6923 | health.twin.risk.history           | health.twin.risk.history doctor           | t | f | f | f
+ 6598 | health.vitals.threshold            | health.vitals.threshold doctor            | t | t | t | f
+ 6589 | health.vitals.type                 | health.vitals.type doctor                 | t | f | f | f
+ 2788 | res.partner                        | res.partner patient doctor                | t | t | t | f
+(38 rows)
+
+ acls_on_group_350 
+-------------------
+                38
+(1 row)
+
+  id  |                              name                              | n_groups 
+------+----------------------------------------------------------------+----------
+ 4517 | Deterioration Risk History: Healthcare users see own catchment |        5
+  342 | Healthcare Staff: Patient and Business Partners                |        4
+ 4402 | Medication Order: Healthcare users see own catchment           |        5
+ 1377 | Appointments: Healthcare users see own catchment               |        8
+ 4419 | Corrective Action: Healthcare users see own catchment          |        5
+ 4421 | Corrective Action: Clinical leads write own catchment          |        4
+ 4431 | Family link: healthcare users see own catchment                |        5
+ 4404 | Medication Administration: Healthcare users see own catchment  |        5
+ 4392 | Observation: Healthcare users see own catchment                |        5
+ 4396 | Form Instance: Healthcare users see own catchment              |        5
+ 4423 | Submission Log: Healthcare users see own catchment             |        5
+ 4410 | Care Plan Goal: Healthcare users see own catchment             |        5
+ 4394 | Vitals Threshold: Healthcare users see own catchment           |        5
+ 4427 | Outbound Message: Healthcare users see own catchment           |        5
+ 4406 | Care Plan: Healthcare users see own catchment                  |        5
+ 4408 | Care Plan Task: Healthcare users see own catchment             |        5
+ 4412 | Care Plan Activity: Healthcare users see own catchment         |        5
+ 4414 | Consent: Healthcare users see own catchment                    |        5
+ 4507 | NEWS2 Score: Healthcare users see own catchment                |        5
+ 4416 | Incident: Healthcare users see own catchment                   |        4
+ 4509 | Deterioration Alert: Healthcare users see own catchment        |        5
+ 4511 | Monitor Device: Healthcare users see own catchment             |        5
+ 4442 | Self-booking invite: healthcare users see own catchment        |        5
+ 4455 | Route transition: healthcare users see own catchment           |        5
+ 4453 | Telehealth session: healthcare users see own catchment         |        5
+ 4457 | AI coding: healthcare users see own catchment                  |        5
+ 4515 | Deterioration Risk: Healthcare users see own catchment         |        5
+ 4525 | Condition: Healthcare users see own catchment                  |        6
+(28 rows)
+

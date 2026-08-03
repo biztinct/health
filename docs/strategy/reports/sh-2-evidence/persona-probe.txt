@@ -1,0 +1,31 @@
+login          | active | 346? | menus | ews.score        | notes.wizard
+----------------------------------------------------------------------------------------
+dhanoi         | True   | True | 5     | OK (0 rows)      | OK
+staff_207      | True   | True | 5     | OK (0 rows)      | OK
+demo           | True   | False | 5     | DENIED AccessError | DENIED AccessError
+svc_web_leads  | True   | False | 5     | DENIED AccessError | DENIED AccessError
+nam.lh         | False  | False | 5     | DENIED AccessError | DENIED AccessError
+Doctor-role users holding group 350 directly: 17
+dhanoi         active=True  346=True   visible 5/7 ['Healthcare', 'Client Management', 'Client Registry', 'Configuration', 'Incidents']  missing=['Home (landing)', 'Viet Uc']
+staff_207      active=True  346=True   visible 5/7 ['Healthcare', 'Client Management', 'Client Registry', 'Configuration', 'Incidents']  missing=['Home (landing)', 'Viet Uc']
+huynh          active=True  346=True   visible 5/7 ['Healthcare', 'Client Management', 'Client Registry', 'Configuration', 'Incidents']  missing=['Home (landing)', 'Viet Uc']
+demo           active=True  346=False  visible 0/7 []  missing=['Healthcare', 'Client Management', 'Client Registry', 'Configuration', 'Home (landing)', 'Viet Uc', 'Incidents']
+svc_web_leads  active=True  346=False  visible 0/7 []  missing=['Healthcare', 'Client Management', 'Client Registry', 'Configuration', 'Home (landing)', 'Viet Uc', 'Incidents']
+nam.lh         active=False 346=False  visible 0/7 []  missing=['Healthcare', 'Client Management', 'Client Registry', 'Configuration', 'Home (landing)', 'Viet Uc', 'Incidents']
+Nurse                khoa.bv        346=True   Healthcare=False Home=False Viet Uc=False
+Owner                dung           346=True   Healthcare=False Home=False Viet Uc=False
+Operations Manager   om             346=True   Healthcare=False Home=False Viet Uc=False
+Doctor               dhcmc          346=True   Healthcare=True Home=False Viet Uc=False
+Traceback (most recent call last):
+  File "/odoo/odoo-server/odoo-bin", line 6, in <module>
+    odoo.cli.main()
+  File "/odoo/odoo-server/odoo/cli/command.py", line 133, in main
+    command().run(args)
+  File "/odoo/odoo-server/odoo/cli/shell.py", line 162, in run
+    self.shell(dbnames[0])
+  File "/odoo/odoo-server/odoo/cli/shell.py", line 148, in shell
+    self.console(local_vars)
+  File "/odoo/odoo-server/odoo/cli/shell.py", line 82, in console
+    exec(sys.stdin.read(), local_vars)
+  File "<string>", line 20, in <module>
+AttributeError: 'ir.actions.client' object has no attribute 'groups_id'. Did you mean: 'grouped'?

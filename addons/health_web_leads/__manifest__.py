@@ -62,7 +62,7 @@ Design: docs/strategy/website-crm-integration.md
 Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
 …-phaseW2_5.md, …-phaseW3.md
 """,
-    'version': '19.0.4.0.0',
+    'version': '19.0.4.0.1',
     'category': 'Healthcare',
     'author': 'Biztinct',
     'website': 'https://carejiox.com',

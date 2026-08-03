@@ -1,0 +1,307 @@
+Pager usage is off.
+==============================================================
+A. FORWARD EDGES OF base.group_user (gid=1) — res_groups_implied_rel
+==============================================================
+ gid | hid |                    implied_group                     |                implied_xmlid                 
+-----+-----+------------------------------------------------------+----------------------------------------------
+   1 |   6 | Multi Currencies                                     | base.group_multi_currency
+   1 |   7 | Technical Features                                   | base.group_no_one
+   1 |  14 | Manage Multiple Units of Measure                     | uom.group_uom
+   1 |  20 | Manage Product Variants                              | product.group_product_variant
+   1 |  37 | Manage Lots / Serial Numbers                         | stock.group_production_lot
+   1 |  57 | Multi-website                                        | website.group_multi_website
+   1 | 346 | Healthcare: Base Access                              | health_base.group_healthcare_base
+   1 | 393 | Use Recurring Tasks                                  | project.group_project_recurring_tasks
+   1 | 394 | Use Task Dependencies                                | project.group_project_task_dependencies
+   1 | 395 | Use Milestones                                       | project.group_project_milestone
+   1 | 399 | Send an automatic reminder email to confirm delivery | purchase.group_send_reminder
+   1 | 537 | User: Read his own attendances                       | hr_attendance.group_hr_attendance_own_reader
+(12 rows)
+
+==============================================================
+A2. REVERSE EDGES INTO 346 (who implies group_healthcare_base)
+==============================================================
+ gid |          implier          |                   implier_xmlid                   | hid 
+-----+---------------------------+---------------------------------------------------+-----
+   1 | Role / User               | base.group_user                                   | 346
+ 347 | Healthcare: Receptionist  | health_base.group_healthcare_receptionist         | 346
+ 348 | Healthcare: Nurse         | health_base.group_healthcare_nurse                | 346
+ 350 | Healthcare: Doctor        | health_base.group_healthcare_doctor               | 346
+ 351 | Healthcare: Sales         | health_base.group_healthcare_sales                | 346
+ 353 | Healthcare: Finance       | health_base.group_healthcare_finance              | 346
+ 388 | CRM User                  | health_crm.group_health_crm_user                  | 346
+ 469 | Healthcare Invoicing User | health_invoicing.group_health_invoicing_user      | 346
+ 475 | Red Invoice Manager       | health_redinvoice.group_health_redinvoice_manager | 346
+ 649 | Zalo User                 | health_zalo.group_zalo_user                       | 346
+ 654 | VoIP: User                | health_voip24h.group_voip_user                    | 346
+(11 rows)
+
+==============================================================
+B. RECURSIVE CLOSURE OF base.group_user (gid=1)
+==============================================================
+ gid |                      group_name                      |                    xmlid                     
+-----+------------------------------------------------------+----------------------------------------------
+   1 | Role / User                                          | base.group_user
+   6 | Multi Currencies                                     | base.group_multi_currency
+   7 | Technical Features                                   | base.group_no_one
+  14 | Manage Multiple Units of Measure                     | uom.group_uom
+  20 | Manage Product Variants                              | product.group_product_variant
+  37 | Manage Lots / Serial Numbers                         | stock.group_production_lot
+  57 | Multi-website                                        | website.group_multi_website
+ 346 | Healthcare: Base Access                              | health_base.group_healthcare_base
+ 393 | Use Recurring Tasks                                  | project.group_project_recurring_tasks
+ 394 | Use Task Dependencies                                | project.group_project_task_dependencies
+ 395 | Use Milestones                                       | project.group_project_milestone
+ 399 | Send an automatic reminder email to confirm delivery | purchase.group_send_reminder
+ 537 | User: Read his own attendances                       | hr_attendance.group_hr_attendance_own_reader
+(13 rows)
+
+==============================================================
+C. THE 18 ACLs GATED ON GROUP 346
+==============================================================
+  id  |               model                |                  name                   | r | w | c | u 
+------+------------------------------------+-----------------------------------------+---+---+---+---
+ 6823 | health.archive.reason.wizard       | health.archive.reason.wizard base       | t | t | t | t
+ 6893 | health.ews.score                   | health.ews.score base                   | t | f | f | f
+ 4620 | health.fso.clinical.notes.wizard   | health.fso.clinical.notes.wizard.user   | t | t | t | t
+ 4625 | health.fso.confirm.booking.wizard  | health.fso.confirm.booking.wizard.user  | t | t | t | t
+ 4624 | health.fso.equipment.wizard        | health.fso.equipment.wizard.user        | t | t | t | t
+ 4622 | health.fso.invoice.wizard          | health.fso.invoice.wizard.user          | t | t | t | t
+ 4628 | health.fso.payment.received.wizard | health.fso.payment.received.wizard.user | t | t | t | t
+ 4623 | health.fso.service.packages.wizard | health.fso.service.packages.wizard.user | t | t | t | t
+ 4626 | health.fso.staff.assignment.wizard | health.fso.staff.assignment.wizard.user | t | t | t | t
+ 4627 | health.fso.start.service.wizard    | health.fso.start.service.wizard.user    | t | t | t | t
+ 2759 | health.insurance.provider          | health.insurance.provider all           | t | f | f | f
+ 2743 | health.medical.specialty           | health.medical.specialty all            | t | f | f | f
+ 2747 | health.symptom                     | health.symptom all                      | t | f | f | f
+ 2764 | health.urgency.level               | health.urgency.level all                | t | f | f | f
+ 2769 | health.vietnamese.district         | health.vietnamese.district all          | t | f | f | f
+ 4619 | ir.actions.client                  | health.landing.dashboard.user           | t | f | f | f
+ 6740 | medical.code                       | medical.code base                       | t | f | f | f
+ 6736 | medical.coding.system              | medical.coding.system base              | t | f | f | f
+(18 rows)
+
+ acl_count_on_346 
+------------------
+               18
+(1 row)
+
+==============================================================
+D. MENUS GATED ON GROUP 346
+==============================================================
+ id  |     menu_name     |                    xmlid                     
+-----+-------------------+----------------------------------------------
+ 406 | Healthcare        | health_base.menu_healthcare_root
+ 407 | Client Management | health_base.menu_healthcare_patients
+ 408 | Client Registry   | health_base.menu_healthcare_patient_registry
+ 418 | Configuration     | health_base.menu_healthcare_lookups
+ 640 | Home              | health_landing.menu_health_landing_home
+ 641 | Viet Uc           | health_landing.menu_health_viet_uc_root
+ 927 | Incidents         | health_incident.menu_health_incident_root
+(7 rows)
+
+==============================================================
+E. RECORD RULES GATED ON GROUP 346 (expect zero)
+==============================================================
+==============================================================
+F. USERS WHO LOSE GROUP 346 WHEN EDGE (1,346) IS DELETED
+==============================================================
+psql:/tmp/sh2_snapshot.sql:65: ERROR:  operator does not exist: character varying ->> unknown
+LINE 1: SELECT r.id, r.name->>'en_US' AS rule_name FROM ir_rule r
+                           ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+  id  |     login      | active | share | access_role | direct_healthcare_groups | n_direct_groups 
+------+----------------+--------+-------+-------------+--------------------------+-----------------
+   22 | anh.pd         | t      | f     | (no role)   | (none)                   |              16
+   28 | bao.tq         | t      | f     | (no role)   | (none)                   |              20
+  821 | dds_DemoAsst   | t      | f     | (no role)   | (none)                   |              13
+  820 | dds_DemoLead   | t      | f     | (no role)   | (none)                   |              13
+    5 | demo           | t      | f     | (no role)   | (none)                   |              11
+   37 | dhanoi         | t      | f     | Doctor      | (none)                   |              13
+   38 | dhcmc          | t      | f     | Doctor      | (none)                   |              12
+   25 | ha.dt          | t      | f     | (no role)   | (none)                   |              18
+   27 | huong.nt       | t      | f     | (no role)   | (none)                   |              16
+   45 | huynh          | t      | f     | Doctor      | (none)                   |              13
+   23 | mai.vt         | t      | f     | (no role)   | (none)                   |              16
+   21 | nam.lh         | t      | f     | Banker      | (none)                   |               2
+   46 | staff_130      | t      | f     | Doctor      | (none)                   |              13
+   70 | staff_140      | t      | f     | Doctor      | (none)                   |              13
+   78 | staff_154      | t      | f     | Doctor      | (none)                   |              13
+   77 | staff_155      | t      | f     | Doctor      | (none)                   |              13
+   53 | staff_203      | t      | f     | Doctor      | (none)                   |              13
+   56 | staff_205      | t      | f     | Doctor      | (none)                   |              13
+   68 | staff_207      | t      | f     | Doctor      | (none)                   |              13
+ 6103 | svc_web_leads  | t      | f     | (no role)   | Web Leads Service        |               2
+   24 | tuan.hm        | t      | f     | (no role)   | (none)                   |              16
+    1 | __system__     | f      | f     | (no role)   | (none)                   |              21
+   93 | bi_walkthrough | f      | f     | (no role)   | (none)                   |               2
+   35 | test           | f      | f     | Owner       | (none)                   |              12
+(24 rows)
+
+==============================================================
+G. ACCESS ROLES AND THEIR GROUPS
+==============================================================
+ id |        name        | n_users |                                                                                                                                                                                                                                                                                                                                                     groups                                                                                                                                                                                                                                                                                                                                                     
+----+--------------------+---------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  1 | Owner              |       5 | 1:Role / User | 24:Invoicing | 47:Officer: Manage all employees | 50:User: All Documents | 346:Healthcare: Base Access | 347:Healthcare: Receptionist | 348:Healthcare: Nurse | 349:Healthcare: Head Nurse | 350:Healthcare: Doctor | 351:Healthcare: Sales | 352:Healthcare: Operations Manager | 353:Healthcare: Finance | 354:Healthcare: Manager | 355:Healthcare: Administrator | 356:Healthcare: Owner | 357:Healthcare: Patient Portal | 388:CRM User | 389:CRM Manager | 469:Healthcare Invoicing User | 470:Healthcare Invoicing Manager | 471:Vietnamese Tax Compliance | 472:MISA Integration Admin | 473:Insurance Claims Processor | 475:Red Invoice Manager | 623:Healthcare: User Administrator
+  2 | Operations Manager |       1 | 1:Role / User | 24:Invoicing | 47:Officer: Manage all employees | 51:Administrator | 346:Healthcare: Base Access | 347:Healthcare: Receptionist | 348:Healthcare: Nurse | 349:Healthcare: Head Nurse | 350:Healthcare: Doctor | 351:Healthcare: Sales | 352:Healthcare: Operations Manager | 353:Healthcare: Finance | 354:Healthcare: Manager | 355:Healthcare: Administrator | 356:Healthcare: Owner | 357:Healthcare: Patient Portal | 388:CRM User | 389:CRM Manager | 469:Healthcare Invoicing User | 470:Healthcare Invoicing Manager | 471:Vietnamese Tax Compliance | 472:MISA Integration Admin | 473:Insurance Claims Processor | 475:Red Invoice Manager | 623:Healthcare: User Administrator
+  3 | Branch Manager     |       1 | 1:Role / User | 610:Branch Manager
+  4 | Banker             |       1 | 1:Role / User
+  5 | Nurse              |      44 | 1:Role / User | 24:Invoicing | 346:Healthcare: Base Access | 348:Healthcare: Nurse | 357:Healthcare: Patient Portal | 469:Healthcare Invoicing User | 470:Healthcare Invoicing Manager | 472:MISA Integration Admin
+  6 | Doctor             |      10 | 1:Role / User
+  7 | Accountant         |       1 | 1:Role / User | 24:Invoicing | 51:Administrator | 346:Healthcare: Base Access | 352:Healthcare: Operations Manager | 353:Healthcare: Finance | 469:Healthcare Invoicing User | 470:Healthcare Invoicing Manager | 471:Vietnamese Tax Compliance | 472:MISA Integration Admin | 473:Insurance Claims Processor | 475:Red Invoice Manager
+  8 | Admin              |       2 | 1:Role / User | 623:Healthcare: User Administrator
+  9 | CRM                |       1 | 1:Role / User | 51:Administrator | 346:Healthcare: Base Access | 351:Healthcare: Sales | 352:Healthcare: Operations Manager | 388:CRM User | 389:CRM Manager
+(9 rows)
+
+==============================================================
+H. THE TEN DOCTOR-ROLE USERS — direct groups today
+==============================================================
+ id |   login   | active |                 direct_gids                 
+----+-----------+--------+---------------------------------------------
+ 37 | dhanoi    | t      | 1,21,27,34,48,51,55,391,397,402,486,540,610
+ 38 | dhcmc     | t      | 1,21,27,34,48,51,55,391,397,402,486,540
+ 45 | huynh     | t      | 1,21,27,34,48,51,55,391,397,402,486,540,629
+ 46 | staff_130 | t      | 1,21,27,34,48,51,55,391,397,402,486,540,629
+ 70 | staff_140 | t      | 1,21,27,34,48,51,55,391,397,402,486,540,629
+ 78 | staff_154 | t      | 1,21,27,34,48,51,55,391,397,402,486,540,629
+ 77 | staff_155 | t      | 1,21,27,34,48,51,55,391,397,402,486,540,629
+ 53 | staff_203 | t      | 1,21,27,34,48,51,55,391,397,402,486,540,629
+ 56 | staff_205 | t      | 1,21,27,34,48,51,55,391,397,402,486,540,629
+ 68 | staff_207 | t      | 1,21,27,34,48,51,55,391,397,402,486,540,629
+(10 rows)
+
+==============================================================
+I. THE SEVEN ACCOUNTS — active flag + partner active flag (BEFORE)
+==============================================================
+ id |  login   | user_active | partner_id |   partner_name   | partner_active 
+----+----------+-------------+------------+------------------+----------------
+ 22 | anh.pd   | t           |        146 | Pham Duc Anh     | t
+ 28 | bao.tq   | t           |        152 | Tran Quoc Bao    | t
+ 25 | ha.dt    | t           |        149 | Do Thanh Ha      | t
+ 27 | huong.nt | t           |        151 | Nguyen Thi Huong | t
+ 23 | mai.vt   | t           |        147 | Vo Thi Mai       | t
+ 21 | nam.lh   | t           |        145 | Le Hoang Nam     | t
+ 24 | tuan.hm  | t           |        148 | Hoang Minh Tuan  | t
+(7 rows)
+
+==============================================================
+J. TOTALS
+==============================================================
+ res_users_total | active_internal | gid1_edges | the_edge 
+-----------------+-----------------+------------+----------
+              92 |              77 |         12 |        1
+(1 row)
+
+Pager usage is off.
+=== E(fixed). RECORD RULES GATED ON GROUP 346 ===
+ id | name | domain_force 
+----+------+--------------
+(0 rows)
+
+ rules_on_346 
+--------------
+            0
+(1 row)
+
+=== K. THE DOCTORS DIRECT GROUP IDS RESOLVED ===
+ id  |           group_name           |                    xmlid                    
+-----+--------------------------------+---------------------------------------------
+   1 | Role / User                    | base.group_user
+   4 | Role / Administrator           | base.group_system
+  21 | Create                         | product.group_product_manager
+  27 | Administrator                  | account.group_account_manager
+  34 | Administrator                  | stock.group_stock_manager
+  48 | Administrator                  | hr.group_hr_manager
+  51 | Administrator                  | sales_team.group_sale_manager
+  55 | Editor and Designer            | website.group_website_designer
+ 346 | Healthcare: Base Access        | health_base.group_healthcare_base
+ 350 | Healthcare: Doctor             | health_base.group_healthcare_doctor
+ 356 | Healthcare: Owner              | health_base.group_healthcare_owner
+ 391 | Administrator                  | project.group_project_manager
+ 397 | Administrator                  | purchase.group_purchase_manager
+ 402 | Administrator                  | hr_timesheet.group_timesheet_manager
+ 486 | Manager                        | website_slides.group_website_slides_manager
+ 540 | Administrator                  | hr_attendance.group_hr_attendance_manager
+ 610 | Branch Manager                 | hr_development_ai.group_bfsi_branch_manager
+ 623 | Healthcare: User Administrator | health_user_admin.group_health_user_admin
+ 629 | Administrator                  | hr_holidays.group_hr_holidays_manager
+(19 rows)
+
+=== L. GROUP 350 (Doctor) FORWARD CLOSURE ===
+ gid |                      group_name                      |                    xmlid                     
+-----+------------------------------------------------------+----------------------------------------------
+   1 | Role / User                                          | base.group_user
+   6 | Multi Currencies                                     | base.group_multi_currency
+   7 | Technical Features                                   | base.group_no_one
+  14 | Manage Multiple Units of Measure                     | uom.group_uom
+  20 | Manage Product Variants                              | product.group_product_variant
+  37 | Manage Lots / Serial Numbers                         | stock.group_production_lot
+  57 | Multi-website                                        | website.group_multi_website
+ 346 | Healthcare: Base Access                              | health_base.group_healthcare_base
+ 350 | Healthcare: Doctor                                   | health_base.group_healthcare_doctor
+ 393 | Use Recurring Tasks                                  | project.group_project_recurring_tasks
+ 394 | Use Task Dependencies                                | project.group_project_task_dependencies
+ 395 | Use Milestones                                       | project.group_project_milestone
+ 399 | Send an automatic reminder email to confirm delivery | purchase.group_send_reminder
+ 537 | User: Read his own attendances                       | hr_attendance.group_hr_attendance_own_reader
+(14 rows)
+
+=== M. ACCESS ROLE 6 IDENTITY + USER LINKS ===
+ id |  name  
+----+--------
+  6 | Doctor
+(1 row)
+
+ role_id |  name  | uid |   login   | active 
+---------+--------+-----+-----------+--------
+       6 | Doctor |  37 | dhanoi    | t
+       6 | Doctor |  38 | dhcmc     | t
+       6 | Doctor |  45 | huynh     | t
+       6 | Doctor |  46 | staff_130 | t
+       6 | Doctor |  70 | staff_140 | t
+       6 | Doctor |  78 | staff_154 | t
+       6 | Doctor |  77 | staff_155 | t
+       6 | Doctor |  53 | staff_203 | t
+       6 | Doctor |  56 | staff_205 | t
+       6 | Doctor |  68 | staff_207 | t
+(10 rows)
+
+--- granted_group snapshot rows for role 6 ---
+ role_id | group_id 
+---------+----------
+(0 rows)
+
+=== N. nam.lh DEVICE LOG EVIDENCE (handover claim: 30 sessions, latest 2026-06-12) ===
+  login   | device_log_rows |     first_seen      |      last_seen      
+----------+-----------------+---------------------+---------------------
+ anh.pd   |               0 |                     | 
+ bao.tq   |               0 |                     | 
+ ha.dt    |               0 |                     | 
+ huong.nt |               0 |                     | 
+ mai.vt   |               0 |                     | 
+ nam.lh   |              30 | 2026-02-27 07:03:14 | 2026-06-12 02:46:17
+ tuan.hm  |               0 |                     | 
+(7 rows)
+
+=== O. WORK PRODUCT BEHIND THE SEVEN (leads / partners / FSOs created) ===
+  login   | leads | partners | fsos | mail_messages 
+----------+-------+----------+------+---------------
+ anh.pd   |     0 |        0 |    0 |             0
+ bao.tq   |     0 |        0 |    0 |             0
+ ha.dt    |     0 |        0 |    0 |             0
+ huong.nt |     0 |        0 |    0 |             0
+ mai.vt   |     0 |        0 |    0 |             0
+ nam.lh   |     0 |        0 |    0 |            14
+ tuan.hm  |     0 |        0 |    0 |             0
+(7 rows)
+
+=== P. IR_MODULE_MODULE VERSIONS (health_base, access_roles) ===
+        name         | latest_version |   state   
+---------------------+----------------+-----------
+ health_fieldservice | 19.0.2.3.9     | installed
+ access_roles        | 19.0.1.1.0     | installed
+ health_base         | 19.0.1.3.7     | installed
+ health_web_leads    | 19.0.4.0.0     | installed
+(4 rows)
+
