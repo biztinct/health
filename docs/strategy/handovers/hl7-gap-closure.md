@@ -654,6 +654,23 @@ end-state assessment. **Modules sanctioned:** `health_fhir_core` (seed wizard
 only), `tools/`, `docs/conformance/`, HTML (§10.5 cells, §10.10 row, §10.11
 statuses, §0 tally sentence).
 
+> **REVISED 2026-08-03 — the conformance ENVIRONMENT is deferred by client
+> decision.** GC-4 builds and tests the seeding wizard and WRITES the
+> provisioning + execution runbook, but **provisions nothing and executes no
+> Touchstone run**. Binding non-goals for this phase, no exceptions:
+> **(a)** do NOT create a database on the vietuat host (measured 2026-08-03:
+> 1.9 GB RAM total, ~650 MB available, `workers = 2`, and
+> `limit_memory_hard = 1.6 GB` already exceeds the whole box, so the OS OOM
+> killer fires before Odoo's own guard — Odoo loads a separate registry per
+> database per worker, so a second 109-module database is a live-traffic
+> risk); **(b)** do NOT modify `dbfilter` / `list_db` / any line of
+> `/etc/odoo-server.conf` (currently `db_name = vietuat`,
+> `dbfilter = ^vietuat$`, `list_db = False` — correct, leave it);
+> **(c)** do NOT register with Touchstone or expose any endpoint to it.
+> The runbook targets a SEPARATE throwaway instance, provisioned later by
+> ops. G1 therefore stays open; §5.4 records it as deferred-by-decision, NOT
+> as blocked. Also fold in the two small GC-3 carry-ins at §5.4a.
+
 ### 5.1 Conformance seed wizard + Touchstone runbook (G1 prep)
 
 1. `health_fhir_core/wizards/fhir_conformance_seed.py`, TransientModel
@@ -668,14 +685,32 @@ statuses, §0 tally sentence).
    data_sharing consent for two of three (the third exercises deny).
    `action_purge`: deletes everything by prefix, archive-not-delete where
    FK-restricted (consent rows — §prior art: QA patients 9765/9766).
-2. `docs/conformance/touchstone-runbook.md`: stand up db `fhirconf` on the
-   server (conventions §2 install list, THIS wizard, param flip, note that
-   `dbfilter=^vietuat$` + `list_db=False` means the operator must serve the
-   conformance db explicitly — document the temporary conf change + revert),
-   create a dedicated OAuth client with all read scopes, Touchstone account
-   steps, which test-script families to execute (R4 basic read/search +
-   capability), where results publish, and the §10.10 log-row the operator
-   appends afterwards.
+2. `docs/conformance/touchstone-runbook.md` — **written, not executed**
+   (see the REVISED note above). It documents a procedure for a **separate,
+   throwaway instance**, never the vietuat host:
+   - **Why separate**, stated up front with the measured numbers from the
+     REVISED note, plus the security reason: Touchstone is an external
+     hosted service that calls YOUR endpoint, so the conformance database
+     must be internet-reachable. Reaching it through the host that serves
+     vietuat would require relaxing `dbfilter` on the live service, and one
+     misconfiguration then exposes real PHI instead of synthetic data. The
+     runbook must say this in as many words.
+   - **Provisioning:** a fresh small VM (≥4 GB RAM), Odoo 19 + PostgreSQL,
+     repo checkout, `-i` the conventions §2 install list into database
+     `fhirconf` **with `--without-demo=True`** — note plainly that this is a
+     from-scratch install and therefore requires phase GC-3.5 to have landed
+     (finding F6); if GC-3.5 has not landed, the runbook's provisioning step
+     is known-blocked and says so.
+   - Its own `dbfilter`/`list_db` settings (on the throwaway box only), the
+     seeding-wizard param flip and run, a dedicated OAuth client with all
+     read scopes, Touchstone account + registration steps, which test-script
+     families to execute (R4 basic read/search + capability), where results
+     publish, the §10.10 log-row the operator appends afterwards, and a
+     **destroy step** — the instance is terminated when the run is done, and
+     the runbook says so, because a long-lived internet-reachable clone of
+     the platform is a liability nobody owns.
+   - A one-line pre-flight checklist the operator ticks: not the vietuat
+     host · synthetic data only · no PHI copied in · destroyed afterwards.
 
 ### 5.2 D6 — VN Core validation attempt (G9)
 
@@ -723,14 +758,49 @@ only signs/sends (each ends with owner/date/signature block):
 ### 5.4 Final tracker pass — the end-state assessment (the thing the client asked for)
 
 In the SAME commit as 5.1–5.3: §10.5 → G9 per 5.2 outcome; G20/G13/G18 status
-note `instrument ready · signature/send = OPS`; G1 → `<span class="b
-warn">In progress</span><br><span class="note">prep complete · run = OPS</span>`.
-§10.11 → flip every row whose "engineering has provided" artefact now exists
-to `<span class="b warn">Ready — waiting on owner</span>`; rows still blocked
-externally (G6 counsel, G19 XSD) stay `Waiting`. §10.10 → GC-4 row. §0 tally
-sentence → update to state: engineering phases complete; N items Closed; the
-remainder enumerated in §10.11 are operational-only. Numbers must be derived
-by actually counting the matrix — no drift between the tally and the table.
+note `instrument ready · signature/send = OPS`; **G1 → `<span class="b
+warn">In progress</span><br><span class="note">prep complete · environment +
+run deferred by client decision 2026-08-03</span>`** — the wording matters:
+this is a deliberate deferral with the prep delivered, NOT an engineering
+blocker, and the end-state assessment must not read as though the programme
+stalled. §10.11 → flip every row whose "engineering has provided" artefact
+now exists to `<span class="b warn">Ready — waiting on owner</span>`; the G1
+row's residual action becomes "provision a separate conformance instance,
+then execute the run (runbook delivered)"; rows still blocked externally
+(G6 counsel, G19 XSD) stay `Waiting`. §10.10 → GC-4 row. §0 tally sentence →
+update to state: engineering phases complete; N items Closed; the remainder
+enumerated in §10.11 are operational-only. Numbers must be derived by
+actually counting the matrix — no drift between the tally and the table.
+
+**The honest-position paragraph.** §10.11's closing paragraph currently
+promises "if every §10.5 row marked GC-1…GC-4 shows Closed …". Reconcile it
+with reality in this phase: state which rows are Closed, that G1 is
+prep-complete-deferred, and that the client-facing conformance claim is
+unchanged by the deferral — **conformant by construction, self-assessed, not
+externally tested**. Do not soften that sentence; it is the one the client
+asked for and the one an SYT assessor would test.
+
+### 5.4a Carry-ins from the GC-3 review (small, do with 5.1–5.3)
+
+**F3 — record-rule scoping is inconsistent between a resource and the records
+it dereferences.** `/fhir/r4/DocumentReference` 403s for a catchment-scoped
+user because the clinical note passes its own record rules while the
+`health.fieldservice.order` it dereferences does not, so a legitimately
+scoped integration loses the whole search instead of getting a filtered
+Bundle. Decision (made, do not re-litigate): **narrow the serializer's
+`base_domain` so it only returns notes whose order is readable by the caller**
+— a filtered Bundle is the FHIR-correct answer and matches the consent gate's
+existing "omit, don't error" posture. Implement inside the DocumentReference
+serializer only. Test: a catchment-scoped user gets HTTP 200 and a Bundle
+containing only in-scope notes (not a 403), and an unscoped user's result set
+is unchanged.
+
+**F4 — the C5 cron samples `search(limit=1)`, i.e. the lowest-id record**, so
+drift that only affects newer records stays invisible. Change to newest-first
+(`order='id desc'`) and say why in a comment: determinism is worth less than
+noticing recent drift, and the run is logged either way. One-line change in
+`models/fhir_conformance.py::_check_resources`; the existing C5 tests must
+stay green.
 
 ### 5.5 Tests + deploy + report-back (GC-4)
 
@@ -738,10 +808,16 @@ T4.1 seed wizard: guard param off → raises; on → creates ≥1 record per
 compartment type (assert against REGISTRY so it can't silently miss a type);
 purge removes/archives all by prefix; fresh-cursor verify. T4.2 seeded
 `$everything` on the consented patient validates end-to-end; unconsented
-patient (enforced mode in-test) → denied. Deploy: upgrade `health_fhir_core`.
+patient (enforced mode in-test) → denied. **The wizard is exercised ONLY by
+these tests — never invoked against vietuat's data, and the guard param is
+never set on vietuat.** T4.3 (F3) catchment-scoped DocumentReference search
+returns 200 + a filtered Bundle. T4.4 (F4) newest-first sampling, C5 tests
+still green. Deploy: upgrade `health_fhir_core`; run
+`tools/fhir_deploy_smoke.sh <version>` (metadata mode).
 **Report-back:** validator outcome (or exact blocker), sample-set path, the
 four instrument docs, the final §10.5/§10.11 state as a table in the report,
-and any candidate NEW ledger entries.
+confirmation that nothing was provisioned and `/etc/odoo-server.conf` is
+untouched, and any candidate NEW ledger entries.
 
 ---
 
@@ -767,6 +843,18 @@ Then the canonical block from docs/strategy/KICKOFF-TEMPLATE.md with
 `<PHASE-DOC>` = `hl7-gap-closure`.
 
 Subsequent phases (issued one at a time after each review): same line with
-GC-2 → §3, GC-3 → §4, GC-3.5 → §4.6, GC-4 → §5. (GC-3.5 was inserted at the
-GC-3 review: GC-4's conformance environment needs a from-scratch install,
-which F6 blocks.)
+GC-2 → §3, GC-3 → §4, GC-3.5 → §4.6, GC-4 → §5.
+
+**Sequencing decided 2026-08-03.** The client deferred the conformance
+environment (see the REVISED note at §5), which also parks GC-3.5 — its main
+consumer was that environment, and its remaining value is a green CI gate
+plus the ability to stand up a second environment at all. Order from here:
+
+1. **`platform-security-hardening.md` phase SH-1** — a separate handover, and
+   the next phase to run. It closes a live public-group read on clinical
+   notes plus the two standing tickets in `docs/strategy/open-tickets.md`.
+2. **GC-4 → §5 of this document**, environment-deferred as revised above.
+3. **GC-3.5 → §4.6**, whenever a second environment is actually wanted
+   (a Touchstone run, a DR rebuild, a new tenant) or the red CI gate becomes
+   annoying enough.
+4. GC-5 — still gated on procurement / XSD / VNeID determination.

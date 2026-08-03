@@ -30,6 +30,14 @@ must NOT reach `health.ews.score`.
 closure before asserting denials (`_live_closure`), so the suites fail
 loudly rather than vacuously if the edge spreads.
 
+**ASSIGNED 2026-08-03 → phase SH-2**, specified at §5 of
+`docs/strategy/handovers/platform-security-hardening.md`. The design
+investigation found the fix is **not** a lone row deletion: `access.role`
+id 6 "Doctor" grants no healthcare group at all, so ten clinicians reach
+clinical data only through this edge and deleting it alone locks out 21
+users. The role repair is part of the fix, and §5.5 carries a user decision
+that must be answered before the phase runs.
+
 ---
 
 ## T-002 — core mail reads `base.partner_root` unsudo'd: every chatter throws AccessError for ops personas
@@ -54,6 +62,17 @@ live on vietuat (W2.5 review; W3 evidence README "Pre-existing, not ours").
 
 Test: drive a chatter render as a real ops persona (§5.4 — uid-1 tests hid
 this for months).
+
+**ASSIGNED 2026-08-03 → phase SH-1**, specified at §6 of
+`docs/strategy/handovers/platform-security-hardening.md`, which takes fix 1.
+Two corrections to this ticket, both verified live: **the partner is id 2**
+(`base.partner_root` = "Viet Uc Care"), not id 1 — a fix hard-coding 1 does
+nothing; and **the repo's `addons/mail` is a stale Odoo 18 snapshot that
+does not contain the offending code and must never be deployed** (the live
+server runs mail 1.19; the cited line 557 is correct for the SERVER file
+only). There are two unsudo'd reads, `models.py:406` and `:557`. 16 active
+internal users are affected. The "CMS Contacts list" half is **unverified**
+and is being split into its own ticket.
 
 ---
 
