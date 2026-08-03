@@ -168,6 +168,31 @@ class TestSh1PublicAcl(HttpCase):
                 with self.assertRaises(AccessError):
                     self.env[model].with_user(self.public_user).search([])
 
+    def test_33b_receptionist_has_no_clinical_note_read(self):
+        """SH-1 REVIEW FIX — the receptionist grant was removed again.
+
+        §3.2 specified cloning `health_condition`'s ladder, which includes a
+        receptionist read row, and the implementer did exactly that. The
+        review measured the consequence: `health.clinical.note` has ZERO
+        `ir.rule` rows, so that row was UNNARROWED read of every clinical
+        note in the database for ten front-desk users — and it bought
+        nothing, because a receptionist has no `health.fieldservice.order`
+        ACL and so cannot open the only form that embeds notes, while the
+        standalone "Unsigned Clinical Notes" menu (id 960, no group
+        restriction) is hidden by Odoo precisely when the model ACL is
+        absent. The phase's purpose was the DOCTOR sign-off worklist; the
+        receptionist row was collateral widening, so it is gone.
+
+        If a front-desk surface ever genuinely needs note data, the answer is
+        a record rule first (see T-009), not a blanket ACL row.
+        """
+        recep = new_test_user(
+            self.env, login='sh1_recep', password='sh1_recep_pw',
+            groups='base.group_user,health_base.group_healthcare_receptionist',
+            catchment_province_id=self.province.id)
+        with self.assertRaises(AccessError):
+            self.env['health.clinical.note'].with_user(recep).search([])
+
     def test_34b_portal_user_is_denied_on_appointments(self):
         portal = new_test_user(
             self.env, login='sh1_portal', password='sh1_portal_pw',

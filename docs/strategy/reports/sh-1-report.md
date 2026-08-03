@@ -45,9 +45,14 @@ HTTP:200
 
 **Executed-test evidence (§5.83 — a count of failures is not evidence a suite
 ran).** `grep -ac "Starting Test.*\.test_"` = **125**, matching the result
-line exactly. `ERROR: setUpClass` count = **0**. No test was skipped (the one
-`skipped` line in the log is `web_debranding`'s own startup message, not a
-test). Suites executed: `TestFHIRBindings`, `TestFHIRConformanceCronGC3`,
+line exactly. `ERROR: setUpClass` count = **0**. No test was skipped —
+*(corrected by the SH-1 review: there are about nine `skip`-matching lines in
+the log, not one — `web_debranding` ×3, `Skipping deletion for missing XML ID
+'rule_fso_ops_manager'`, plus push-notification and Morse-reassessment
+messages. **None of them is a test skip**, so the claim holds and the count
+did not.)* `TestSh1PublicAcl.test_35`'s `skipTest` guard did not fire
+(health_portal is installed). Suites executed: `TestFHIRBindings`,
+`TestFHIRConformanceCronGC3`,
 `TestFHIRConformanceGC1`, `TestFHIRCore`, `TestFHIRPhase2`,
 `TestFHIRRuntimeValidationGC3`, `TestFHIRSamplingGC3`, `TestFHIRSearchGC2`,
 `TestFhirConsentGate`, `TestFhirEverything`, `TestI18nCatalogueLoads`,
@@ -93,7 +98,10 @@ the missing `(Phase GC-2.)` / `(Phase GC-3.)` attributions. Extraction was
 scripted rather than retyped so the prose could not drift.
 
 Verification the handover asked for:
-- `grep -c '§5\.10[0-7]' docs/strategy/HANDOVER-CONVENTIONS.md` → **9** (≥ 8 ✓)
+- `grep -c '§5\.10[0-7]' docs/strategy/HANDOVER-CONVENTIONS.md` → **10** on the
+  committed file (8 entry headers + 2 cross-references at lines 1771 and 1817);
+  the criterion was ≥ 8 ✓. *(Corrected by the SH-1 review — the report
+  originally said 9, which does not reproduce.)*
 - every `§5.NN` reference in `addons/` with N ≥ 47 now resolves to a real
   entry, checked by script. This includes the live citation that motivated
   the whole item: `health_consent/models/health_consent_check_log.py`'s
@@ -536,3 +544,74 @@ res.partner global rules                                 exactly 1 (id 2), uncha
 SH-1 test fixtures left behind                           0
 SH-1 QA personas left behind                             0 (fresh-cursor verified)
 ```
+
+---
+
+## 10. SH-1 review outcome (Fable, 2026-08-03)
+
+**VERDICT: PASS** — no MAJOR findings, seven minors. Independent bulk review
+plus a personal read of the security-bearing files. The exploit was
+re-executed from scratch by the reviewer against the live server with a
+**positive control** (`res.partner` id 4, the public user's own partner,
+returns `hasReadAccess: true` with the same response shape as the
+before-evidence) — proving the three `false` verdicts are real denials rather
+than a broken probe. Rule 4700 confirmed non-global against an all-models
+audit; `res.partner` still has exactly one global rule. SH-2/§5 confirmed
+untouched. FHIR capability confirmed unchanged against its committed baseline.
+Ledger entries §5.98–§5.107 verified **verbatim** against their sources by
+scripted character diff.
+
+### Review fix shipped
+
+**The `health.clinical.note` receptionist grant was removed again.** §3.2 of
+the handover specified cloning `health_condition`'s ladder, which carries a
+receptionist read row, and the implementer did exactly that — the defect is in
+my spec, not the implementation. The review measured the consequence:
+`health.clinical.note` has **zero** `ir.rule` rows, so that row was
+*unnarrowed* read of all 57 clinical notes for ten front-desk users. It also
+bought nothing reachable — a receptionist has no `health.fieldservice.order`
+ACL and so cannot open the only form embedding notes, and the standalone
+"Unsigned Clinical Notes" menu (id 960, no group restriction) is hidden by
+Odoo precisely when the model ACL is absent. The phase's purpose was the
+DOCTOR sign-off worklist, which is untouched.
+
+Net effect of the corrected phase on clinical-note PHI: one anonymous grant
+removed, ten authenticated clinician grants added, zero front-desk grants.
+
+Shipped with `test_33b_receptionist_has_no_clinical_note_read` pinning the
+decision, `health_fieldservice` → `19.0.2.3.9`. Re-verified live:
+`0 failed, 0 error(s) of 116 tests` across
+`/health_fieldservice,/health_base,/health_fhir_core` (116 rather than 125
+because this run covered only the three modules the fix can reach), the new
+test executed by name, `ERROR: setUpClass` = 0; server restarted, 5 processes,
+`/web/login` 200; live clinical-note ACLs now nurse / ops-manager / owner /
+doctor only; groupless `res.partner` rules still exactly 1; and the
+unauthenticated probe still returns `hasReadAccess: false` on both models.
+
+### Carried to tickets rather than fixed
+
+- **T-009** — `health.clinical.note` has no record rule at all, so every
+  remaining grant is full-table. A clinical workflow decision, not a security
+  patch.
+- **T-010** — 610 tracked `__pycache__` files; deliberately not untracked
+  inside a security review.
+- Ledger **§5.113** — `health_fieldservice` delete/recreates ten `ir.rule`
+  rows on every upgrade, so rule ids are not stable identifiers and
+  before/after security snapshots must compare by NAME.
+
+### Report corrections applied
+
+The `grep -c` count (9 → 10), the "one skipped line" claim (~9 skip-matching
+lines, none of them a test skip), and T-008's account list (all four probe
+accounts are archived, two more omitted). Substance held in all three; the
+numbers did not.
+
+### Flagged to the user, outside this phase
+
+A **concurrent foreign workstream** was deploying to vietuat during SH-1's
+window and twice crashed registry load with a malformed `vi_VN.po`
+(`unknown occurrence: model:ir.ui.menu` → `Failed to load registry` →
+`CRITICAL`, pids 2271538 at 04:11:13 and 2272487 at 04:13:50 — neither an
+SH-1 process). SH-1's green run is unaffected and its end state was
+re-verified independently, but a session shipping a `.po` that kills registry
+load is a live deploy hazard that its owner should know about.

@@ -1870,3 +1870,21 @@ a no-op.
     (§5.27). Record rules still apply to `read` on an archived record, which
     is exactly why the chatter raised in the first place: a record can be
     invisible to `search` and still be the thing your ACL denies. (Phase SH-1.)
+
+- **§5.113 — `ir.rule` IDS ARE NOT STABLE IDENTIFIERS on `health_fieldservice`,
+    so a before/after security snapshot must be compared BY NAME.**
+    `health_fieldservice/security/cleanup_rules.xml:5-14` issues ten
+    `<delete model="ir.rule">` statements that later files in the same
+    manifest recreate, so **every** `-u health_fieldservice` deletes and
+    re-creates ten record rules. Measured on the SH-1 deploy: the FSO rules
+    renumbered uniformly +55 (4691→4746, 4692→4747, 4693→4748, 4695→4750,
+    4698→4753, 4699→4754) with no change in count, name, domain or group
+    binding. Two consequences. (a) A reviewer diffing a `rules-before.txt`
+    against a `rules-after.txt` by id will see nine security rules apparently
+    vanish and nine appear — snapshot and compare on `name` + `domain_force`
+    + the group set, never on `id`. (b) It is a standing latent risk: the
+    delete/recreate window is real, and a future edit that drops a `groups`
+    binding on recreation would silently turn a group rule into a GLOBAL one
+    (§5.NN trap in SH-1 §6.1). Any phase upgrading this module should assert
+    afterwards that the count of GROUPLESS active rules is unchanged.
+    (Phase SH-1 review.)

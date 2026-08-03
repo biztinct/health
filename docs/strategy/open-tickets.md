@@ -232,11 +232,66 @@ fresh-cursor verified; these were not. SH-1's own two personas
 (`sh1_qa_ops`, `sh1_qa_doctor`) were deleted and verified in a fresh cursor
 the same day.
 
+**Precise state, measured by the SH-1 review (2026-08-03):** all four named
+accounts are **archived, not deleted** — `qa_tenant_probe` 6373,
+`qa_theme_probe` 6374, `qa_zalo_probe` 6363, `qa_crm_probe` 6375, every one
+`active = f`. Two more the ticket omitted: `gc3_smoke_probe` 6453 (GC-3) and
+`qa_pwa_nurse` 1210. `res.partner` 1272 "DS QA Rep" is `active = t`, as
+claimed. So six user rows, five archived and one partner live. Archived
+users still appear in some pickers and still own audit rows, which is why
+this is worth closing rather than shrugging at.
+
 **Fix shape:** audit `res.users` for probe/temporary logins, confirm with
 whoever created them, archive or delete. Cheap, and it shrinks the login
 surface.
 
 ---
 
+## T-009 — `health.clinical.note` has NO record rule, so every clinical grant is unnarrowed
+
+**Found:** SH-1 review (2026-08-03). Verified live: the model has **zero**
+active `ir.rule` rows.
+
+Every ACL grant on `health.clinical.note` is therefore full-table. Nurse (57
+users), operations manager (14), manager/admin/owner and — after SH-1 §3.2 —
+doctor (10) all read **all 57 notes** with no catchment, facility, author or
+patient-consent scoping. Every sibling PHI model in this codebase is
+catchment-scoped: `health.fieldservice.order` carries nine catchment rules,
+`res.partner` carries rule 342, `health.condition` and `health.observation`
+follow the same ladder.
+
+The SH-1 review removed the receptionist row it had specified, on the grounds
+that it widened unnarrowed PHI access to ten front-desk users and bought
+nothing reachable. The remaining grants are all clinically justified — but
+"justified" and "unscoped" are different claims, and a doctor in one province
+can currently read every note in every province.
+
+**Fix shape:** a catchment/facility record rule on `health.clinical.note`
+mirroring the FSO rules, plus a decision on whether the note should also
+respect the patient's `data_sharing` consent the way the FHIR facade does.
+Needs its own phase: it changes what clinicians see, so it is a clinical
+workflow decision, not a security patch. Snapshot before/after **by rule
+name, not id** (ledger §5.113).
+
+---
+
+## T-010 — 610 `__pycache__` files are tracked in git
+
+**Found:** SH-1 review (2026-08-03). Pre-existing; SH-1 merely made it
+visible (`health_fieldservice/models/__pycache__/hr_employee_public.pyc` went
+dirty because the source changed, as did `health_redinvoice`'s).
+
+Compiled bytecode is build output. Tracking it means every source change
+leaves a phantom dirty binary that no reviewer can read, and "I committed only
+my own files" becomes unverifiable.
+
+**Fix shape:** `git rm -r --cached` every `__pycache__` directory and add it
+to `.gitignore`, in a commit that touches nothing else so the 610-file diff is
+reviewable at a glance. Deliberately NOT done inside SH-1 — a 610-file
+deletion landing in the middle of a security review is exactly the kind of
+noise that hides a real change.
+
+---
+
 *Registered 2026-07-29 during the W3 review close-out; T-003 – T-008 added
-2026-08-03 by SH-1.*
+2026-08-03 by SH-1; T-009 – T-010 added 2026-08-03 by the SH-1 review.*
