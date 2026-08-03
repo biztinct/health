@@ -2016,3 +2016,22 @@ a no-op.
     cascade to the employee. If "decommission this person" is the intent, that
     is three separate decisions: the login, the employee, the partner. Name
     which ones the phase is authorised to make. (SH-2 review.)
+
+- **§5.122 — `service odoo-server start` is a SILENT NO-OP when systemd still
+    reports the unit `active (exited)`, and a stale pidfile blocks it a second
+    way.** Hit during a live outage on 2026-08-04. The init script is LSB, so
+    systemd cannot track the forked master; when the master dies, the unit stays
+    `active (exited)` and `/var/run/odoo-server.pid` keeps the dead PID. A bare
+    `start` then does **nothing at all** — no new log lines, no pidfile, no
+    error, exit status 0 — because (a) systemd treats a start on an already
+    "active" unit as satisfied, and (b) `start-stop-daemon --pidfile` sees the
+    stale file. Diagnosing this by reading the Odoo log is a dead end: the log's
+    last lines are from the *previous* run and look like a clean shutdown.
+    **The recovery sequence is `stop` → remove the stale pidfile → `start`** —
+    the `stop` is what clears the systemd state, which is the real reason the
+    documented convention has always been stop-then-start rather than `start`
+    alone. Confirm recovery on the LISTENER (`ss -lntp | grep :8069`), not on
+    the service status, which lies. If you need to know whether the application
+    itself is broken, run `sudo -u odoo odoo-bin -c /etc/odoo-server.conf` in
+    the foreground for 30s: it either serves traffic (the app is fine, the
+    problem is daemonisation) or prints the real traceback.
