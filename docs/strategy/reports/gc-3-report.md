@@ -244,7 +244,7 @@ fresh-install path is repaired, and until then it is doing something more
 useful than passing: it is the only thing in the repo that tests whether this
 software can be installed at all.
 
-### C3 — the post-deploy conformance smoke (§4.2)### C3 — the post-deploy conformance smoke (§4.2)
+### C3 — the post-deploy conformance smoke (§4.2)
 
 `tools/fhir_deploy_smoke.sh` + `docs/conformance/deploy-smoke.md`. Runs on
 the server after the restart step; six checks (metadata 200, `fhirVersion`,
@@ -503,11 +503,11 @@ fallback is what keeps the *control* alive if the *hosting* goes away. If the
 Actions run is green they are a convenience; if it is not, they are the
 sanctioned exit. See §4.1 above for where the Actions run actually stands.
 
-**D4 — `--test-tags` and `--without-demo=all` added to the CI command.**
+**D4 — `--test-tags` and `--without-demo` added to the CI command.**
 §4.1's command has neither. Without `--test-tags` the run executes the test
 suites of every installed dependency (account, sale, crm, mail…), which is
-neither this gate's business nor green; `--without-demo=all` matches
-production. The gate's own §5.83 floor is what keeps the tag filter honest.
+neither this gate's business nor green; disabling demo data (`=True` in the
+workflow, `=all` in the local twin — same effect) matches production. The gate's own §5.83 floor is what keeps the tag filter honest.
 
 **D5 — the C5 green-path test does not use `assertLogs`.** Measured on
 vietuat: `assertLogs(<cron logger>, level='INFO')` reported "no logs of level
@@ -710,7 +710,6 @@ tenant) is that it will not come up at all. That day is coming: **GC-4's
 own Touchstone preparation calls for a dedicated synthetic-data conformance
 environment**, which is exactly a from-scratch install.
 
-**F5 — `smoke_test_client` (gateway.oauth.client id 10) exists and is
 **F5 — `smoke_test_client` (gateway.oauth.client id 10) exists and is
 inactive.** Activating it is the OPS half of C3, exactly as §4.2 says; this
 phase did not touch it. The token half of the smoke was proven with a

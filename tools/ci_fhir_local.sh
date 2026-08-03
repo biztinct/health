@@ -62,8 +62,14 @@ case "$PINNED" in
 to 8.3.0 (docs/conformance/r4-r4b-equivalence.md)" ;;
 esac
 
-# `addons` FIRST — the repo tracks patched copies of several core modules and
-# those are what the deployment runs. See the workflow for the same note.
+# `addons` FIRST — the repo tracks patched copies of several core modules,
+# and when both directories are plain --addons-path entries (the layout this
+# mirrors), the first definition of a module wins, so the repo's copies are
+# the ones tested. NOTE the asymmetry: the HOSTED gate cannot achieve this —
+# in the odoo:19 image `odoo.addons` is a namespace package whose built-in
+# paths precede anything --addons-path says, so CI tests our modules against
+# STOCK core (see docs/conformance/ci-runbook.md). Whether the local run
+# does better depends on where $ODOO_ADDONS's core modules come from.
 ADDONS_PATH="$REPO_ROOT/addons,$ODOO_ADDONS"
 
 note "dropping and recreating $DB"

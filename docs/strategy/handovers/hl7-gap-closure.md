@@ -559,6 +559,90 @@ row. **Report-back:** Actions run URL + conclusion (or the named blocker +
 fallback evidence), smoke transcript, drift-injection test output, cron
 activity screenshot-by-data (the activity row id).
 
+### 4.6 Phase GC-3.5 — fresh-install repair (F6) [designed at the GC-3 review]
+
+**Why this phase exists:** GC-3's CI gate proved the platform cannot be
+installed from scratch (report F6). GC-4 §5.1 requires a dedicated
+synthetic-data conformance environment — which is exactly a from-scratch
+install — so GC-4 is blocked in fact until this is fixed. **Scope:** make a
+demo-less fresh install of the full module list complete, turning the hosted
+C1 gate green. **Modules sanctioned:** `health_fieldservice` (ONLY the
+cleanup/load-order defect below), the manifests of `health_emar`,
+`health_forms`, `health_telehealth`, `.github/workflows/fhir-conformance.yml`
+(ONLY carry-in a), `health_fhir_core` tests (ONLY carry-in b), HTML cells.
+`health_pwa` itself: NO changes expected — the `app_shell` defect lives in
+the consumers' manifests; if you find otherwise, STOP and report, do not
+improvise. Binding non-goals: no F1/F2/F3 fixes (ACL/record-rule design
+decisions — they stay findings), no serializer changes, no new routes.
+
+**Verified facts (GC-3 review, do NOT re-derive):**
+- `health_fieldservice/security/cleanup_rules.xml` is loaded FIRST in the
+  manifest's data list and `<delete>`s ten `ir.rule` xmlids
+  (`rule_fso_manager_all`, `rule_fso_healthcare_staff`,
+  `rule_fso_head_nurse`, `rule_fso_ops_manager`, `rule_fso_sales_user`,
+  `rule_fso_system_admin`, `fieldservice_order_manager_rule`,
+  `rule_assignment_manager_all`, `rule_assignment_healthcare_staff`,
+  `rule_availability_healthcare_staff`) that are defined ONLY by
+  later-loaded files in the same manifest. Fresh install → "External ID not
+  found"; upgrades never see it because the xmlids already exist.
+- `health_emar` (`depends: ['health_base','health_fieldservice']`) has **no
+  dependency path to `health_pwa`** while its views inherit
+  `health_pwa.app_shell` — this is the edge the scratch install actually
+  dies on (module 97/109). `health_forms` (→ `health_vitals` →
+  `health_pwa`) and `health_telehealth` (→ `health_pwa_daystrip` →
+  `health_pwa`) have guaranteed transitive edges; direct edges there are
+  declaration hygiene, not blockers.
+- Ledger §5.71 is the live hazard for EVERY edge added: a manifest
+  dependency loop presents as a green `0 failed, 0 error(s) of 0 tests`
+  run, not an error. The C1 gate-3 executed-count floor is the guard.
+
+**Work items:**
+1. **F6a — cleanup_rules.xml.** READ the file and every later file defining
+   those ten xmlids first, then classify EACH of the ten: (a) re-defined
+   under the same xmlid later → the `<delete>` is dead weight (a record
+   re-declared under its xmlid updates in place) — remove it; (b) NOT
+   redefined later → the delete does real work on upgrades — keep the
+   behaviour but make it fresh-install-safe (move after the defining files,
+   or an idempotent search-based unlink). Record the per-xmlid
+   classification in the report. **Non-negotiable evidence:** snapshot the
+   ten rules on vietuat BEFORE the upgrade (id, name, `domain_force`,
+   groups) and show the identical set AFTER — these are PHI-scoping
+   security rules and a silent regression here is a data-exposure incident.
+2. **F6b — dependency edges.** Add `health_pwa` to `health_emar`'s
+   `depends`; then hygiene edges for `health_forms` and
+   `health_telehealth`. For EACH edge: walk `health_pwa`'s transitive
+   depends for a path back to the consumer (§5.71) and paste the walk into
+   the report; after deploy, confirm the executed-test count did not
+   collapse.
+3. **F6c — prove it.** Server-side scratch DB, the same probe command GC-3
+   used (full install list, demo-less) → completes through module 109; drop
+   the scratch DB. Push; the hosted C1 run goes GREEN end-to-end with
+   gate 3's count intact — the green Actions URL is the acceptance
+   artifact.
+4. **Carry-in a (review finding 4):** extend the workflow's `--test-tags`
+   with `/health_consent,/health_base` so R1's tests and the tz-fixed
+   test_04 are CI-gated. `MIN_EXECUTED` stays 50 (floor, not pin); state
+   the new executed count from the green run.
+5. **Carry-in b (review finding 5):** `tests/test_fhir_conformance.py`
+   imports `normalized_capability` from `models/fhir_conformance.py`
+   instead of holding its own copy — one canonical normalization, so the CI
+   control and the production control cannot desynchronize.
+6. Version-bump every touched module's manifest. `health_pwa` is not
+   deployed by this phase, so the PWA cache-version duty does NOT apply —
+   but if anything under `health_pwa/` turns out to need edits, STOP
+   (see scope) and report.
+
+**Tests + deploy:** conventions §2 as always (scp → /tmp, sudo cp + chown,
+upgrade `health_fieldservice,health_emar,health_forms,health_telehealth`,
+stop/sleep/start, 6 procs, login 200); full five-tag FHIR suite green
+(≥159) plus the fieldservice/emar/forms/telehealth suites if tagged; run
+`tools/fhir_deploy_smoke.sh 19.0.1.5.0` (metadata mode — health_fhir_core
+does not change). **HTML duty:** one §10.10 row (F6 closed, C1 hosted gate
+green); no §10.5 change (F6 is not a register gap — G1 stays Open until
+Touchstone). **Report-back:** per-xmlid classification table + before/after
+rule snapshot, the three dependency walks, green Actions URL + executed
+count, scratch-install transcript tail, smoke output.
+
 ---
 
 ## 5. Phase GC-4 — assurance prep + scope instruments
@@ -683,4 +767,6 @@ Then the canonical block from docs/strategy/KICKOFF-TEMPLATE.md with
 `<PHASE-DOC>` = `hl7-gap-closure`.
 
 Subsequent phases (issued one at a time after each review): same line with
-GC-2 → §3, GC-3 → §4, GC-4 → §5.
+GC-2 → §3, GC-3 → §4, GC-3.5 → §4.6, GC-4 → §5. (GC-3.5 was inserted at the
+GC-3 review: GC-4's conformance environment needs a from-scratch install,
+which F6 blocks.)

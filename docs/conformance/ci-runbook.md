@@ -86,8 +86,11 @@ in the commit.
 - **Command:** installs `health_fhir_core,health_fhir_terminology,
   health_condition` — the dependency chain pulls the ~50-module spine in
   automatically — with `--test-tags` limited to those three, `--workers=0`,
-  `--without-demo=all`, and a `--logfile` that is uploaded as an artifact on
-  every run, pass or fail.
+  and `--without-demo=True` (the local twin spells it `=all`; both disable
+  demo data, which is what a production install is). Output is captured with
+  `tee`, NOT `--logfile` — odoo can die before it opens a logfile, and a
+  missing log is the one failure mode that tells you nothing. The captured
+  log is uploaded as an artifact on every run, pass or fail.
 
 ### CI tests our modules against STOCK core — a real fidelity limit
 
