@@ -52,6 +52,7 @@ previous state exactly — that is the rollback plan.
 import logging
 
 from odoo import SUPERUSER_ID, api
+from odoo.exceptions import UserError
 from odoo.fields import Command
 
 _logger = logging.getLogger(__name__)
@@ -93,44 +94,72 @@ def _closure_of(cr, group_id):
 
 
 def _repair_doctor_role(env):
-    """Give `access.role` "Doctor" the healthcare group it never had."""
+    """Give `access.role` "Doctor" the healthcare group it never had.
+
+    Returns True when the role demonstrably grants the doctor group afterwards
+    (including "it already did"), or when this database has no `access.role`
+    rows at all and therefore no role-managed clinicians to strand. Returns
+    False when the repair could NOT be performed — the caller must not delete
+    the implication in that state. See the guard in `migrate()`.
+
+    REVIEW FIX (SH-2 review, 2026-08-03): the first version of this function
+    `return`ed on every failure path while `migrate()` went on to delete the
+    edge regardless. On any database whose Doctor role carries a different
+    name — the UI already ships Vietnamese group labels — the repair would
+    no-op with an INFO line and every clinician would silently lose healthcare
+    access. A migration that claims to converge other databases must fail
+    loudly instead.
+    """
     doctor_group = env.ref(DOCTOR_GROUP_XMLID, raise_if_not_found=False)
     if not doctor_group:
         _logger.warning(
             "SH-2: %s not found — Doctor role repair SKIPPED", DOCTOR_GROUP_XMLID)
-        return
+        return False
 
     Role = env['access.role'].sudo()
-    role = Role.search([('name', '=', DOCTOR_ROLE_NAME)], limit=1)
-    if not role:
-        _logger.info(
-            "SH-2: no access.role named %r on this database — role repair is a "
-            "no-op", DOCTOR_ROLE_NAME)
-        return
+    # Exact match first, then case-insensitive: 'doctor'/'DOCTOR' are the same
+    # role. No `limit=1` — if a database somehow carries two roles by that
+    # name, repair BOTH rather than silently ignoring one.
+    roles = Role.search([('name', '=', DOCTOR_ROLE_NAME)])
+    if not roles:
+        roles = Role.search([('name', '=ilike', DOCTOR_ROLE_NAME)])
+    if not roles:
+        if not Role.search_count([]):
+            _logger.info(
+                "SH-2: this database has no access.role rows at all — nothing "
+                "to repair, and no role-managed clinician can be stranded")
+            return True
+        _logger.error(
+            "SH-2: no access.role named %r on a database that has %s role(s) — "
+            "cannot repair", DOCTOR_ROLE_NAME, Role.search_count([]))
+        return False
 
-    if doctor_group in role.groups_ids:
+    todo = roles.filtered(lambda r: doctor_group not in r.groups_ids)
+    if not todo:
         _logger.info(
-            "SH-2: access.role %r (id %s) already grants %s — no change",
-            role.name, role.id, DOCTOR_GROUP_XMLID)
-        return
+            "SH-2: access.role(s) %s already grant %s — no change",
+            todo.ids or roles.ids, DOCTOR_GROUP_XMLID)
+        return True
 
-    users = role.user_ids
+    users = todo.user_ids
     # access_roles' own API: write() -> _update_users_groups() links the role's
     # groups onto every linked user and refreshes the granted_group_ids sync
     # snapshot. It only LINKs here (nothing is being removed from the role).
-    role.write({'groups_ids': [Command.link(doctor_group.id)]})
+    todo.write({'groups_ids': [Command.link(doctor_group.id)]})
     env.flush_all()
 
     still_missing = users.filtered(lambda u: doctor_group not in u.group_ids)
     _logger.info(
-        "SH-2: granted %s (id %s) to access.role %r (id %s); %s linked user(s) "
+        "SH-2: granted %s (id %s) to access.role(s) %s; %s linked user(s) "
         "reconciled: %s",
-        DOCTOR_GROUP_XMLID, doctor_group.id, role.name, role.id, len(users),
+        DOCTOR_GROUP_XMLID, doctor_group.id, todo.ids, len(users),
         ', '.join(sorted(users.mapped('login'))) or '(none)')
     if still_missing:
         _logger.error(
             "SH-2: %s user(s) did NOT receive the doctor group: %s",
             len(still_missing), ', '.join(sorted(still_missing.mapped('login'))))
+        return False
+    return True
 
 
 def _delete_inverted_implication(env):
@@ -201,7 +230,18 @@ def migrate(cr, version):
     # Order is load-bearing: repair the role BEFORE deleting the edge, so the
     # ten doctors never pass through a state with no healthcare access. The
     # archive runs last (§5.5a) so the access change is complete first.
-    _repair_doctor_role(env)
+    if not _repair_doctor_role(env):
+        # REVIEW FIX: refuse to remove the accidental path when the sanctioned
+        # one could not be established. Halting an upgrade is recoverable in a
+        # minute; silently de-authorising a clinical workforce is not.
+        raise UserError(
+            "SH-2 (health_base 19.0.1.3.8) cannot safely delete the "
+            "base.group_user -> %s implication on this database: the "
+            "access.role %r repair did not complete, so clinicians may reach "
+            "healthcare only through the row being removed. Resolve the role "
+            "mapping (grant %s to the role your clinicians hold), then re-run "
+            "the upgrade. Nothing has been changed."
+            % (HEALTHCARE_BASE_XMLID, DOCTOR_ROLE_NAME, DOCTOR_GROUP_XMLID))
     _delete_inverted_implication(env)
     _archive_unused_accounts(env)
     _logger.info("SH-2: T-001 repair complete")

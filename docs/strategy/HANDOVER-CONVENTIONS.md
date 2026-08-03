@@ -1958,3 +1958,61 @@ a no-op.
     xmlid bound to the wrong record. General rule: if a data record is
     `noupdate`, its mutable fields are OUT of the test's contract. (Phase
     SH-2.)
+
+- **§5.117 — a catchment record rule is a DENY-ALL for users whose own
+    `catchment_province_id` is NULL, not a pass-through.** The domain used
+    across the clinical models is
+    `['&', ('catchment_province_id','=',user.catchment_province_id.id), ('catchment_province_id','!=',False)]`.
+    When the acting user's field is empty the first leaf becomes
+    `('catchment_province_id','=',False)` and the second excludes exactly
+    those rows, so the conjunction is unsatisfiable — the user sees zero
+    records, forever, with no error. On vietuat 8 of the 10 Doctor-role users
+    are in that state (T-012). Two consequences for any phase: (a) granting a
+    catchment-gated group is theatre unless you first assert the target users
+    *have* a catchment province — assert it in the test, not in the report;
+    (b) adding such a rule to a model that currently has none silently
+    blackholes every NULL-catchment user who could previously read it, which
+    is a lockout dressed as a security fix. (SH-2 review.)
+
+- **§5.118 — a migration keyed on a human-readable name is not
+    convergence-safe, and a failed preparatory step must never fall through to
+    the destructive one.** SH-2's post-migrate resolved `access.role` by
+    `('name','=','Doctor')` and `return`ed on miss — while `migrate()` went on
+    to delete the implication row regardless. On any database whose role
+    carries a different label (the UI already ships `Y tế: Bác sĩ`) every
+    clinician would have lost healthcare access behind a single INFO log line.
+    `access.role` rows have no xmlid on this platform, so name matching is
+    unavoidable — which makes the *guard* the fix, not the lookup: the repair
+    returns a boolean, `migrate()` raises `UserError` when it is False, and
+    nothing is changed. Rule: when step N prepares the ground for a
+    destructive step N+1, N's failure must `raise`, never `return`. Halting an
+    upgrade costs a minute; silently de-authorising a workforce does not
+    announce itself at all. (SH-2 review fix.)
+
+- **§5.119 — column-type trap: `res_groups.name` is jsonb, but `ir_rule.name`
+    and `access_role.name` are plain `varchar`.** `r.name->>'en_US'` on the
+    latter two dies with `operator does not exist: character varying ->> unknown`.
+    In a `psql -f` evidence script that kills the offending statement and lets
+    the rest of the file continue, so the snapshot is silently INCOMPLETE —
+    SH-2 shipped one (`sh-2-evidence/snapshot-before.txt:109`, the whole
+    record-rule block missing). Check `psql` exit status per statement, or run
+    the snapshot with `ON_ERROR_STOP=1`. An evidence file nobody can trust is
+    worse than none, because the next phase quotes it.
+
+- **§5.120 — phase deploy output does NOT land in the service log.** Test runs
+    and migration logging go to `/tmp/<phase>/deploy.log` (SH-2's was 1.4 MB);
+    `/var/log/odoo/odoo-server.log` contains **zero** `SH-2:` lines. A reviewer
+    grepping the service log for the migration's own log statements will
+    wrongly conclude it never ran. Also `grep` treats the deploy log as binary
+    — use `grep -a`. Verify "the migration ran exactly once" by counting its
+    opening log line in the deploy log, not the service log.
+
+- **§5.121 — archiving a `res.users` does not archive its `hr.employee`.**
+    SH-2 archived seven accounts; all seven `hr_employee` rows stayed
+    `active = t` (ids 38–42, 44, 45), so the people remain assignable in staff,
+    roster and FSO pickers while being unable to log in. `res.users.active` is
+    a column on `res_users` itself — it does not delegate to the partner
+    (which is why the partners correctly stayed active) and it does not
+    cascade to the employee. If "decommission this person" is the intent, that
+    is three separate decisions: the login, the employee, the partner. Name
+    which ones the phase is authorised to make. (SH-2 review.)

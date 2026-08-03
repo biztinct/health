@@ -9,7 +9,20 @@ instead of re-describing it.
 
 ---
 
-## T-001 — inverted group implication: every internal user carries healthcare-base ACLs
+## ~~T-001~~ — inverted group implication: every internal user carries healthcare-base ACLs — **CLOSED 2026-08-03, commit afdc9206**
+
+**Closed by phase SH-2.** `health_base/migrations/19.0.1.3.8/post-migrate.py`
+grants `group_healthcare_doctor` (350) to `access.role` "Doctor", then deletes
+the single `(gid=1, hid=346)` row through the ORM, then archives the seven
+accounts §5.5a authorised. Verified independently at review: `gid=1` now
+implies `{6,7,14,20,37,57,393,394,395,399,537}` — 346 absent, `1 → 7`
+(`base.group_no_one`) intact. 18 ACLs and 7 menus withdrawn from ~60 internal
+users; the 10 Doctor-role clinicians keep access explicitly. Rollback is one
+INSERT. **Not closed by this ticket:** the 21 `health.*` ACLs granted
+*directly* to `group_id=1`, which the handover put out of scope and which the
+edge deletion does not touch — see T-011.
+
+*Original ticket text follows.*
 
 **Found:** Phase W2 (2026-07-29). **Ledger:** §5.88.
 
@@ -293,5 +306,97 @@ noise that hides a real change.
 
 ---
 
+## T-011 — 58 of 69 active internal users are Accounting and HR Administrators
+
+**Found:** SH-2 review (2026-08-03). Measured live, not inferred.
+
+SH-2 removed the *healthcare* over-grant. The **Odoo application** over-grant
+is untouched and is much larger. Direct rows in `res_groups_users_rel`, active
+holders out of 69 active internal users:
+
+| Group | Active holders |
+|---|---|
+| `sales_team.group_sale_manager` | 61 |
+| `stock.group_stock_manager` | 58 |
+| `hr.group_hr_manager` | **58** |
+| `account.group_account_manager` | **58** |
+| `purchase.group_purchase_manager` | 58 |
+| `hr_holidays.group_hr_holidays_manager` | 51 |
+| `base.group_system` | 1 ← the two-ring model, intact |
+
+`account.group_account_manager` is full Accounting Administrator over **1,098
+journal entries / 3,145 move lines** across 3 companies. `hr.group_hr_manager`
+is full HR Administrator over **98 employee records**, including the private
+columns this build carries: `birthday`, `private_phone`, `private_email`,
+`emergency_contact`.
+
+These are **not** granted by any `access.role`: all ten Doctor-role users hold
+the Doctor role and nothing else, yet carry 11–13 direct group rows each. The
+rows were assigned outside the role system — almost certainly by duplicating a
+template user — and `_update_users_groups()` only ever *adds*, so nothing has
+ever taken them away. `base.group_system` at 1 holder proves the platform-admin
+ring itself is sound; the failure is the app-manager ring beneath it.
+
+**Why this outranks T-009.** T-009 is 57 clinical notes visible to 10 licensed
+clinicians. T-011 is the general ledger and every employee's private contact
+details visible to 58 accounts, most of which are field nurses.
+
+**Fix shape:** decide the intended group set per `access.role`, then a
+migration that *revokes* direct rows not justified by the holder's role —
+revocation is the hard part, since nothing in `access_roles` removes groups.
+Needs a before/after snapshot by group xmlid (not id) and a per-persona login
+probe, because this is the change most likely to lock someone out of a screen
+they use daily. Do **not** fold into a feature phase.
+
+---
+
+## T-012 — 8 of the 10 doctors have no catchment province, so catchment rules deny them everything
+
+**Found:** SH-2 review (2026-08-03).
+
+`res_users.catchment_province_id` is set for exactly two of the ten Doctor-role
+users (`dhanoi`=2, `dhcmc`=1). The catchment rule domain used across the
+clinical models is
+
+```
+['&', ('catchment_province_id','=',user.catchment_province_id.id),
+      ('catchment_province_id','!=',False)]
+```
+
+which is **unsatisfiable when the user's own field is NULL** — it is a deny-all,
+not a pass-through. So of the 26 catchment-narrowed models SH-2's role repair
+newly granted, eight of the ten clinicians see **zero rows**.
+
+This is not an SH-2 regression: before the phase those users had no ACL on
+those models at all. But it means the phase's "clinical access restored"
+holds for two users in the functional sense and ten in the permission sense.
+
+**Fix shape:** populate `catchment_province_id` for the eight (an ops data
+task, not a code change), *before* T-009 adds a catchment rule to
+`health.clinical.note` — that rule would otherwise blackhole the same eight
+users on the notes they can currently read.
+
+---
+
+## T-013 — the deployed `health_base` manifest is not the committed one, and references an untracked file
+
+**Found:** SH-2 review (2026-08-03). **Authored by the concurrent migration
+workstream, not by SH-2** — SH-2's `-u health_base` deploy merely re-pushed it.
+
+`addons/health_base/__manifest__.py` in the working tree (and therefore on the
+server, md5 `5f283ad2…` vs the committed `6a783eb4…`) inserts
+`'data/health_facility_official.xml'` into `data`. That XML is **untracked**.
+Consequences: the running code is not described by git, and whoever commits the
+working tree next ships a manifest pointing at a file that is not in the
+repo — `health_base` then fails to install from a clean checkout.
+
+**Fix shape:** the owner of that workstream either commits
+`health_facility_official.xml` or reverts the manifest line. Do not split the
+pair. Six `health.facility` rows (1812–1817) already exist on vietuat from that
+work, so the seed has already been applied by hand.
+
+---
+
 *Registered 2026-07-29 during the W3 review close-out; T-003 – T-008 added
-2026-08-03 by SH-1; T-009 – T-010 added 2026-08-03 by the SH-1 review.*
+2026-08-03 by SH-1; T-009 – T-010 added 2026-08-03 by the SH-1 review;
+T-001 closed and T-011 – T-013 added 2026-08-03 by the SH-2 review.*

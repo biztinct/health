@@ -371,3 +371,111 @@ SH-2: T-001 repair complete
 No browser evidence pack: no user-facing code changed, and §7 of the handover
 requires one only for SH-1 §6. The equivalent live proof for an access-only
 change is §4's persona probe, which is server-side and reproducible.
+
+---
+
+## 10. SH-2 review outcome (Fable, 2026-08-03)
+
+**VERDICT: PASS.** One review fix shipped; three new tickets raised; nothing
+handed back.
+
+Everything this report claims about the change itself was re-derived
+independently — from the repo, from `/tmp/sh2/deploy.log`, and from read-only
+queries against vietuat — and held: the edge is gone (`gid=1` now implies
+`{6,7,14,20,37,57,393,394,395,399,537}`, 346 absent, `1 → 7` intact), exactly
+one row left `res_groups_implied_rel` and one entered
+`access_role_res_groups_rel`, `res_users` is still 92 with the seven archived
+and their partners active, `demo`/`dds_*`/`svc_web_leads` untouched, no direct
+`base.group_no_one` on any of the ten doctors, 18-vs-38 ACLs correct, one
+groupless active `res.partner` rule (§5.113 tripwire clean), repo↔server md5
+parity on every file except the manifest (see T-013), service healthy, HTTP 200,
+no ERROR/CRITICAL since 2026-07-31.
+
+### 10.1 Review fix shipped
+
+**The migration's failure path was a fall-through.** `_repair_doctor_role()`
+resolved `access.role` by `('name','=','Doctor')` and `return`ed on every miss,
+while `migrate()` proceeded to delete the implication regardless. On any
+database whose role carries a different label — the UI already ships
+`Y tế: Bác sĩ` — the repair would no-op behind an INFO line and every clinician
+would silently lose healthcare access, which is precisely the outcome the
+ordering was designed to prevent. The docstring's claim that the script exists
+"so any other database converges" made this worse, not better.
+
+Fixed in `migrations/19.0.1.3.8/post-migrate.py`: the repair now returns a
+boolean, matches case-insensitively, repairs *all* matching roles rather than
+`limit=1`, treats "this database has no `access.role` rows at all" as a safe
+True, and `migrate()` raises `UserError` when it is False — nothing is changed
+and the operator is told exactly which grant to make. Ledger §5.118.
+
+Not re-deployed: vietuat is already at 19.0.1.3.8, so the script will not run
+there again, and every guard in it converges. The fix is for the next database.
+
+### 10.2 Corrections to this report
+
+1. **§7 F4 is materially incomplete.** "Twenty-eight active record rules bound
+   to 350 narrow almost all of it to the user's own catchment province" is true
+   and misleading: **8 of the 10 doctors have `catchment_province_id = NULL`**
+   (only `dhanoi`=2 and `dhcmc`=1 are set), and the catchment domain is
+   *unsatisfiable* for a NULL-catchment user. Those eight see **zero rows** on
+   all 26 narrowed models. No regression — they had no ACL there before — but
+   the restored clinical access is non-functional for eight of the ten.
+   Ledger §5.117, ticket T-012.
+2. **§7 F1 — "14 `mail_message` rows".** 14 by `create_uid`, 12 by `author_id`.
+   Say which column.
+3. **§4's persona table is thinner evidence than it reads.** It probes
+   `health.ews.score` (0 rows) and a transient wizard — neither is one of the
+   37 models the role repair newly granted, so it does not test the surface
+   that actually changed.
+4. **The `_visible_menu_ids` "5 of 7 / 0 of 7" numbers behind §5.115 are
+   UNVERIFIABLE** — they came from an interactive shell that left no artefact.
+   The conclusion is consistent with `ir_ui_menu.py`; the numbers were not
+   re-derived.
+
+### 10.3 F4/F5 adjudicated — accepted, ticketed, not rolled back
+
+Group 350 grants 37 models that 346 did not. 26 are catchment-narrowed (and
+empty for the eight NULL-catchment users), 11 are unnarrowed but nine of those
+are reference data (service types, vitals types, cancellation reasons).
+
+The only genuine new PHI exposure is **`health.clinical.note` — 57 notes,
+read/write/create, no row filter, ten accounts** — plus a catchment-free
+widening on `res.partner` via rule 342's `('is_patient','=',False)` OR-branch.
+These are licensed clinicians and 350 is the group the Doctor role should
+always have granted, so this stays. It is **T-009**, and T-009 must land
+*after* T-012 or the new rule blackholes eight of the same ten users.
+
+### 10.4 What the review found that the phase did not
+
+**T-011 — 58 of 69 active internal users are Accounting and HR
+Administrators.** SH-2 closed the healthcare over-grant; the Odoo *application*
+over-grant is untouched and an order of magnitude larger. Measured live:
+`account.group_account_manager` 58 active holders (1,098 journal entries),
+`hr.group_hr_manager` 58 (98 employee records incl. `birthday`,
+`private_phone`, `private_email`, `emergency_contact`),
+`stock`/`purchase` 58, `sales_team` 61, `hr_holidays` 51. None of it comes from
+an `access.role` — all ten Doctor-role users hold that role and nothing else
+yet carry 11–13 direct group rows. `base.group_system` still has exactly one
+active holder, so the platform-admin ring is sound; the failure is the
+app-manager ring beneath it. This now outranks T-009.
+
+**T-013 — the deployed manifest is not the committed one.** Working tree and
+server carry `'data/health_facility_official.xml'` in `health_base`'s `data`
+list; that file is untracked. Authored by the concurrent migration workstream,
+re-pushed by SH-2's `-u health_base` deploy. Committing the working tree as-is
+breaks a clean-checkout install.
+
+**Minor, recorded not fixed:** archiving a `res.users` does not archive its
+`hr.employee` — all seven remain `active=t` (ids 38–42, 44, 45) and stay
+assignable in staff/roster pickers (§5.5a never asked for it; ledger §5.121).
+T5.7 asserts the seven still exist rather than the spec's global
+`count(res_users)` — independently verified at 92. The before-snapshot's
+record-rule block is missing to a `varchar ->> 'en_US'` error (ledger §5.119).
+
+### 10.5 Deviations reviewed
+
+D1 (re-archive on a restored pre-1.3.8 backup) — accepted. D2 (fixed
+`test_w3_11` rather than the seed) — correct, and §5.50/§5.116 is exactly the
+rule it applies. The manifest staging decision was right: committing the other
+session's line would have shipped a manifest referencing a file not in the
+repo.
