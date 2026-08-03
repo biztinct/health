@@ -560,10 +560,39 @@ List each of the 21 affected logins in the report with its before/after
 closure verdict — the point of the phase is that access is now explicit and
 auditable, so the report must show it.
 
-**Do NOT archive or delete any of these accounts.** The user said they are
-unused, not that they should be removed; deactivating real logins is a
-separate action nobody authorised. If you think they should be archived, say
-so in the report as a recommendation.
+**Add T5.7:** the seven archived accounts (§5.5a) read `active = False`
+afterwards, their `res.partner` records read `active = True`, and no user row
+was deleted (`SELECT count(*) FROM res_users` unchanged).
+
+### 5.5a Archive the seven accounts (authorised 2026-08-03)
+
+The user subsequently authorised **deactivating/archiving all seven**. Do it
+as part of this phase, after the edge deletion, so one report covers the whole
+access change.
+
+**Rules:**
+- Archive only (`active = False`). **Never delete a user row** — they own
+  audit-log, mail-message and create_uid references, and an orphaned
+  `create_uid` makes historical evidence unattributable.
+- Go through the ORM (`res.users.browse(...).write({'active': False})`), not
+  raw SQL: Odoo invalidates sessions and updates related records on that
+  write. Key on **login**, not id, and make it idempotent — skip any login not
+  present rather than failing.
+- Capture the before/after `active` flag for each of the seven in the report.
+- Do **not** archive their `res.partner` records. The partner is referenced by
+  historical documents; archiving it hides those references.
+- Do not touch the three demo accounts or `svc_web_leads` — they lose group
+  346 like everyone else, but nobody authorised archiving them.
+
+**One account carries evidence that contradicts "unused" — flag it, do not
+silently act as if it were clean.** `nam.lh` (**id 21, "Le Hoang Nam"**,
+created 2026-02-26, Banker role) has **30 `res_device_log` sessions, the most
+recent 2026-06-12**. The other six have **zero device-log rows ever**. It also
+created no `crm.lead`, `res.partner` or field-service-order records, so there
+is no work product behind those sessions. The user was told this and confirmed
+the archive anyway. Archive it as instructed — and put the finding in the
+report with a one-line note that un-archiving is a single write, so a mistake
+here is trivially reversible.
 
 Also unresolved, flag rather than assume: who removed the sibling `4 → 356`
 edge is not established (`a201b3d1` documents deleting `356 → 4`, the opposite
