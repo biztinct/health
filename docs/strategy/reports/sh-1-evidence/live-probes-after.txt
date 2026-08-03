@@ -1,0 +1,25 @@
+### P1 — the anonymous public user, post-fix
+note id: 444 | order id: 3014
+  has_access(read) as public on health.clinical.note: False
+  has_access(read) as public on health.fieldservice.order: False
+  SEARCH as public on health.clinical.note: AccessError (denied)
+  SEARCH as public on health.fieldservice.order: AccessError (denied)
+  SEARCH as public on health.appointment: AccessError (denied)
+
+### P2 — the ops persona and the root partner, post-fix
+  read(base.partner_root): OK
+  _message_get_suggested_recipients_batch: OK (no raise)
+  readable partner count: 1
+
+### P3 — §3.4: does the Unsigned Notes worklist render for a DOCTOR?
+  search_count(health.clinical.note): 57
+  action id: 1666
+  LIST web_search_read: OK, length = 57
+  FORM web_read (includes order_id): OK
+  doctor FSO search: AccessError (no ACL) — You are not allowed to access 'Healthcare Field Service Order (Unified Booking S
+
+### P4 — the ir.rule that was added
+  id=4700 global=False active=True groups=[1] perms r/w/c/u=True/False/False/False domain=[('id', '=', 2)]
+
+ROLLED BACK
+--- ensure no orphan shell (ledger 5.111) ---

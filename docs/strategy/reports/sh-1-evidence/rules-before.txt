@@ -1,0 +1,93 @@
+ERROR:  operator does not exist: character varying ->> unknown
+LINE 2: SELECT r.id, r.name->>'en_US' AS rule, m.model, r.global, r....
+                           ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+       t       | count 
+---------------+-------
+ clinical_note |    57
+ fso           |  1269
+ appointment   |     0
+(3 rows)
+
+                            xmlid                            | noupdate | res_id 
+-------------------------------------------------------------+----------+--------
+ health_fieldservice.access_health_fieldservice_order_public | f        |   3850
+ health_fieldservice.access_health_appointment_portal        | f        |   3885
+ health_fieldservice.access_health_appointment_public        | f        |   3886
+ health_fieldservice.access_health_clinical_note_public      | f        |   6398
+(4 rows)
+
+ id |     name     |      email       | active | company_id | partner_share |  type   
+----+--------------+------------------+--------+------------+---------------+---------
+  1 | VIET UC      | ash@biztinct.com | t      |            | t             | contact
+  2 | Viet Uc Care | bot@example.com  | f      |          1 | f             | contact
+(2 rows)
+
+       xmlid       | res_id 
+-------------------+--------
+ base.main_partner |      1
+ base.partner_root |      2
+(2 rows)
+
+  id  |                          name                           |           model           | global | active | n_groups | perm_read | perm_write |                                                      domain_force                                                       
+------+---------------------------------------------------------+---------------------------+--------+--------+----------+-----------+------------+-------------------------------------------------------------------------------------------------------------------------
+ 1377 | Appointments: Healthcare users see own catchment        | health.appointment        | f      | t      |        8 | t         | t          | ['&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]
+ 1378 | Appointments: Owner sees all                            | health.appointment        | f      | t      |        1 | t         | t          | [(1, '=', 1)]
+  527 | Field Service Orders: Staff sees only assigned orders   | health.fieldservice.order | f      | t      |        1 | t         | t          | [                                                                                                                      +
+      |                                                         |                           |        |        |          |           |            |             '&',                                                                                                       +
+      |                                                         |                           |        |        |          |           |            |             '&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),+
+      |                                                         |                           |        |        |          |           |            |             '|', '|',                                                                                                  +
+      |                                                         |                           |        |        |          |           |            |             ('assignment_ids.staff_id.user_id', '=', user.id),                                                         +
+      |                                                         |                           |        |        |          |           |            |             ('primary_doctor_id.user_id', '=', user.id),                                                               +
+      |                                                         |                           |        |        |          |           |            |             ('primary_nurse_id.user_id', '=', user.id)                                                                 +
+      |                                                         |                           |        |        |          |           |            |         ]
+  537 | FSO Portal User Access                                  | health.fieldservice.order | f      | t      |        1 | t         | f          | [('patient_id', '=', user.partner_id.id)]
+ 1376 | Field Service Orders: Owner sees all orders             | health.fieldservice.order | f      | t      |        1 | t         | t          | [(1, '=', 1)]
+ 4691 | Field Service Orders: Managers see own catchment orders | health.fieldservice.order | f      | t      |        1 | t         | t          | ['&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]
+ 4692 | FSO Sales User Access                                   | health.fieldservice.order | f      | t      |        1 | t         | t          | [                                                                                                                      +
+      |                                                         |                           |        |        |          |           |            |             '&',                                                                                                       +
+      |                                                         |                           |        |        |          |           |            |             '&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),+
+      |                                                         |                           |        |        |          |           |            |             ('state', 'in', ['draft', 'requested'])                                                                    +
+      |                                                         |                           |        |        |          |           |            |         ]
+ 4693 | FSO Head Nurse Access                                   | health.fieldservice.order | f      | t      |        1 | t         | t          | [                                                                                                                      +
+      |                                                         |                           |        |        |          |           |            |             '&',                                                                                                       +
+      |                                                         |                           |        |        |          |           |            |             '&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),+
+      |                                                         |                           |        |        |          |           |            |             ('state', 'in', ['confirmed', 'in_progress', 'completed'])                                                 +
+      |                                                         |                           |        |        |          |           |            |         ]
+ 4695 | FSO Healthcare Staff Access                             | health.fieldservice.order | f      | t      |        1 | t         | t          | [                                                                                                                      +
+      |                                                         |                           |        |        |          |           |            |             '&',                                                                                                       +
+      |                                                         |                           |        |        |          |           |            |             '&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),+
+      |                                                         |                           |        |        |          |           |            |             '|', '|',                                                                                                  +
+      |                                                         |                           |        |        |          |           |            |             ('assignment_ids.staff_id.user_id', '=', user.id),                                                         +
+      |                                                         |                           |        |        |          |           |            |             ('primary_doctor_id.user_id', '=', user.id),                                                               +
+      |                                                         |                           |        |        |          |           |            |             ('primary_nurse_id.user_id', '=', user.id)                                                                 +
+      |                                                         |                           |        |        |          |           |            |         ]
+ 4698 | FSO System Administrator Access                         | health.fieldservice.order | f      | t      |        1 | t         | t          | [(1, '=', 1)]
+ 4699 | FSO Field Service Manager Own Catchment Access          | health.fieldservice.order | f      | t      |        1 | t         | t          | ['&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]
+(11 rows)
+
+  id  |                               name                               | global | active |      gids       | perm_read |                                                                          domain_force                                                                           
+------+------------------------------------------------------------------+--------+--------+-----------------+-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    2 | res.partner company                                              | t      | t      |                 | t         | ['|', '|', ('partner_share', '=', False), ('company_id', 'parent_of', company_ids), ('company_id', '=', False)]
+    3 | res_partner: portal/public: read access on my commercial partner | f      | t      | 10,11           | t         | [('id', 'child_of', user.commercial_partner_id.id)]
+  340 | User: Own Partner Record                                         | f      | t      | 1               | t         | [('id', '=', user.partner_id.id)]
+  341 | System Admin: All Partners                                       | f      | t      | 4               | t         | [(1, '=', 1)]
+  342 | Healthcare Staff: Patient and Business Partners                  | f      | t      | 347,348,350,354 | t         | [                                                                                                                                                              +
+      |                                                                  |        |        |                 |           |             '|', '|', '|',                                                                                                                                     +
+      |                                                                  |        |        |                 |           |             ('id', '=', user.partner_id.id),                                                                                                                   +
+      |                                                                  |        |        |                 |           |             ('is_patient', '=', False),                                                                                                                        +
+      |                                                                  |        |        |                 |           |             '&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),                                        +
+      |                                                                  |        |        |                 |           |             '&', ('primary_facility_id.catchment_province_id', '=', user.catchment_province_id.id), ('primary_facility_id.catchment_province_id', '!=', False) +
+      |                                                                  |        |        |                 |           |         ]
+  343 | Patient Portal: Own Records Only                                 | f      | t      | 357             | t         | [('id', '=', user.partner_id.id)]
+  618 | Healthcare CRM Partner: User Access                              | f      | t      | 388             | t         | [                                                                                                                                                              +
+      |                                                                  |        |        |                 |           |             '&',                                                                                                                                               +
+      |                                                                  |        |        |                 |           |             '|',                                                                                                                                               +
+      |                                                                  |        |        |                 |           |             '&', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),                                        +
+      |                                                                  |        |        |                 |           |             '&', ('primary_facility_id.catchment_province_id', '=', user.catchment_province_id.id), ('primary_facility_id.catchment_province_id', '!=', False),+
+      |                                                                  |        |        |                 |           |             '|', '|', ('is_patient', '=', True), ('is_caregiver', '=', True), '|', ('is_payer', '=', True), ('is_referrer', '=', True)                         +
+      |                                                                  |        |        |                 |           |         ]
+ 1231 | BFSI: Read all partners                                          | f      | t      | 609             | t         | [(1, '=', 1)]
+ 1373 | Healthcare Owner: All Partners                                   | f      | t      | 356             | t         | [(1, '=', 1)]
+(9 rows)
+

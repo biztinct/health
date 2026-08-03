@@ -40,7 +40,7 @@ that must be answered before the phase runs.
 
 ---
 
-## T-002 — core mail reads `base.partner_root` unsudo'd: every chatter throws AccessError for ops personas
+## T-002 — core mail reads `base.partner_root` unsudo'd: every chatter throws AccessError for ops personas — **PARTIALLY CLOSED 2026-08-03**
 
 **Found:** Phase W2.5 (2026-07-29); reproduced again in W3 — third phase in
 a row.
@@ -74,6 +74,169 @@ only). There are two unsudo'd reads, `models.py:406` and `:557`. 16 active
 internal users are affected. The "CMS Contacts list" half is **unverified**
 and is being split into its own ticket.
 
+**The `base.partner_root` CAUSE is closed 2026-08-03** by SH-1 §6:
+`health_base.rule_internal_read_root_partner` (`ir.rule` id 4700) on
+`res.partner`, bound to `base.group_user`, `perm_read` only, domain
+`[('id','=',2)]` with the id baked at XML load. Verified live before (ops
+persona: `AccessError` on both the partner read and
+`_message_get_suggested_recipients_batch`) and after (both succeed, in a real
+browser session as a persona carrying uid 40's exact group set). The widening
+is exactly one record, asserted by T6.2.
+
+**The TICKET IS NOT CLOSED: SH-1 found a SECOND, independent cause on the
+same method.** `_message_get_suggested_recipients_batch` reads
+`record.message_partner_ids` at `mail/models/models.py:548` — **nine lines
+BEFORE** the `base.partner_root` read at :557 — and that triggers
+`_compute_message_partner_ids`, which writes the field from
+`message_follower_ids.mapped('partner_id')` and therefore needs **read on
+every follower partner**. On `crm.lead` 1952 the followers include partner 3
+(Mitchell Admin), which rules 340/618 deny an ops persona, so the chatter
+still raises — with the new rule listed among the applicable ones, i.e. the
+fix is live and simply does not govern this read. Measured live 2026-08-03
+via `/mail/thread/recipients/get_suggested_recipients` in an authenticated
+browser session. Because :548 runs first, this cause **masks** the
+`partner_root` one on any record with an unreadable follower.
+
+**Remaining fix shape:** decide which partners an ops/CRM persona may read
+(rule 618's scope) — the same product question as T-004 — or sudo the
+follower recompute. A `partner_root`-shaped point fix will not do it: the
+follower set is unbounded. Do NOT widen `rule_internal_read_root_partner`;
+it is deliberately one record.
+
+**The CMS Contacts half is NOT closed** — see T-004, and note SH-1 reproduced
+a sibling of it live: opening a client profile as the ops persona raises
+`Failed to write field res.partner.allowed_main_contact_ids` on partner 1272,
+blamed on rules 340/618. Same root question.
+
 ---
 
-*Registered 2026-07-29 during the W3 review close-out.*
+## T-003 — `/website/snippet/filters` renders caller-supplied `res_model`/`res_id` through sudo
+
+**Found:** SH-1 design investigation (2026-08-03). **Not** closed by SH-1 §3
+— it is independent of the `base.group_public` ACL rows and survives their
+deletion.
+
+`addons/website/controllers/main.py:417-426` →
+`website_snippet_filter.py:61-84` accepts a caller-supplied `res_model` /
+`res_id` and renders the result through a **sudo** recordset, guarded only by
+`assert '.dynamic_filter_template_' in template_key`. The template-key assert
+constrains the RENDERER, not the model — so the reachable surface is
+"whatever a dynamic-filter template chooses to print about an arbitrary
+record", on a public route.
+
+**Fix shape:** an allow-list of models the snippet filter may resolve, applied
+before the sudo, plus a test that a health model is refused. Needs its own
+phase: `website` is a core addon, so the fix belongs in an override module,
+not in a vendored copy (see §6.0(a) / ledger §5.109 — never deploy the repo's
+`addons/mail`-style stale core snapshots).
+
+---
+
+## T-004 — CMS Contacts list AccessError for ops personas (split from T-002)
+
+**Found:** SH-1 (2026-08-03), split out of T-002 because it was never
+verified.
+
+T-002 claimed both the chatter AND the CMS Contacts list raise for ops
+personas. Only the chatter/composer path was reproduced. A plain `res.partner`
+list does **not** traverse `mail/models/models.py`, so if Contacts really
+raises, the cause is different — most likely rule 618 (`Healthcare CRM
+Partner: User Access`) denying non-patient partners to a CRM-grouped user.
+SH-1's fix does not address it and deliberately did not widen to chase it.
+
+**Fix shape:** reproduce as a real CMS persona first; if rule 618 is the
+cause, the question is which partners a CRM user is *meant* to see, which is
+a product decision, not a security patch.
+
+---
+
+## T-005 — six remaining `base.group_public` / `base.group_portal` ACL rows in health_fieldservice
+
+**Found:** SH-1 §3 sweep (2026-08-03). Deliberately left alone by SH-1 —
+each needs its own "does a public website page actually use this?" check, and
+an unrequested ACL edit is indistinguishable from a mistake at review time.
+
+Remaining rows in `addons/health_fieldservice/security/ir.model.access.csv`
+after SH-1 deleted the four PHI-bearing ones:
+
+| Model | Group | Plausible legitimate use |
+|---|---|---|
+| `health.portable.equipment` | `base.group_public` | none obvious |
+| `health.clinical.protocol` | `base.group_public` | none obvious |
+| `health.staff.skill` | `base.group_public` | a public "our services" page |
+| `health.service.area` | `base.group_public` | a public coverage map |
+| `health.staff.assignment` | `base.group_portal` | none obvious |
+| `health.staff.availability.matrix` | `base.group_portal` | none obvious |
+
+None of them is narrowed by an `ir.rule`, so each is a full-table read for the
+anonymous or portal user. `health.staff.assignment` in particular joins staff
+to visits.
+
+**Fix shape:** for each row, find the public/portal surface that needs it
+(grep the website + portal controllers for the model, and drive the page); if
+none exists, delete the row. Same deletion mechanics as SH-1 §3 — the xmlids
+carry `ir_model_data.noupdate = false`, so removing the CSV line deletes the
+row on upgrade.
+
+---
+
+## T-006 — `health_base.group_healthcare_admin` ↔ `health_cms_sidebar.group_cms_sidebar_admin` imply each other
+
+**Found:** SH-1 §3 sweep (2026-08-03). Report-only; unrelated to F1.
+
+Each group implies the other, so the two are effectively one group: granting
+either grants both, and no closure computed from one direction is meaningful.
+Related to §5.88 (compute closures from `res_groups_implied_rel`, not from
+XML). Worth resolving alongside SH-2, which is already in the implication
+table.
+
+---
+
+## T-007 — the Unsigned Clinical Notes worklist is Admin-role-only in the CMS sidebar
+
+**Found:** SH-1 §3.4 verification (2026-08-03). Report-only; fixing it is a
+sidebar-seed change SH-1 is not sanctioned to make.
+
+SH-1 §3.2 granted `health_base.group_healthcare_doctor` read/write/create on
+`health.clinical.note` precisely so the EMR sign-off worklist works for the
+clinicians it exists for. Server-side that now works: as a doctor-grouped
+user, `search_count` returns 57, the list view's `web_search_read` returns
+all 57, and the note form's `web_read` (including the `order_id` many2one)
+succeeds — **even though the doctor still has no `health.fieldservice.order`
+ACL at all**.
+
+It is still unreachable in the shell a doctor actually logs into.
+`cms.sidebar.item` id 93 "Unsigned Notes" (and 54 "Clinical Forms", 94 "Voice
+Notes") are bound to the **Admin** role only, so a user on `access.role` 6
+"Doctor" sees none of them — the §5.69 trap on the exact surface §3.2 exists
+to serve. Verified by driving `/bizapp` as a Doctor-role persona.
+
+**Fix shape:** add the Doctor (and probably Head Nurse / Manager) roles to
+those `cms.sidebar.item` rows. The binding lives in
+`access_role_cms_sidebar_item_rel` in the DB, not in XML, so it needs a data
+change or a seed cutover (see the noupdate-seed-cutover note), not an addon
+edit alone.
+
+---
+
+## T-008 — abandoned QA probe accounts on the live UAT database
+
+**Found:** SH-1 browser QA (2026-08-03). Housekeeping, but they are real
+logins on a system carrying PHI.
+
+The `/web/login` user picker on `care.biztinct.com` offers `qa_crm_probe`,
+`qa_theme_probe`, `qa_tenant_probe` and `qa_zalo_probe`, all named
+"… (temporary)", left behind by earlier phases; `res.partner` 1272 "DS QA
+Rep" is another. Conventions §8.5 requires QA fixtures to be deleted and
+fresh-cursor verified; these were not. SH-1's own two personas
+(`sh1_qa_ops`, `sh1_qa_doctor`) were deleted and verified in a fresh cursor
+the same day.
+
+**Fix shape:** audit `res.users` for probe/temporary logins, confirm with
+whoever created them, archive or delete. Cheap, and it shrinks the login
+surface.
+
+---
+
+*Registered 2026-07-29 during the W3 review close-out; T-003 – T-008 added
+2026-08-03 by SH-1.*

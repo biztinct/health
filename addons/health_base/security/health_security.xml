@@ -115,7 +115,41 @@
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
-    
+
+    <!--
+        CRITICAL: core mail reads base.partner_root.email_normalized WITHOUT
+        sudo in two places — _message_get_default_recipients (composer and mail
+        templates) and _message_get_suggested_recipients_batch, which EVERY
+        chatter render drives. An internal user who cannot read that one
+        partner therefore gets an AccessError dialog instead of a chatter, and
+        the ops/CRM personas cannot: they hold neither the healthcare-staff
+        rule (342) nor any rule whose domain matches the root partner.
+
+        The `groups` field below is NON-NEGOTIABLE. ir.rule._compute_global
+        makes a rule GLOBAL iff `groups` is empty, and global rules are AND-ed
+        into every partner query for every user — omitting it would collapse
+        res.partner to a single record system-wide. With `groups` set, group
+        rules OR together and the widening is exactly {base.partner_root}.
+        Read-only on purpose: _get_rules filters on perm_<mode>, so this rule
+        can never grant write on the root partner.
+
+        The id is baked at XML load because the ir.rule eval context is only
+        {user, company_ids, company_id} — `ref()` is not available at rule
+        evaluation time, and a hard-coded 2 is database-specific.
+        (SH-1 §6; precedent: health_user_admin/security/ir_rules.xml:23.)
+    -->
+    <record id="rule_internal_read_root_partner" model="ir.rule">
+        <field name="name">Internal users: read the root (OdooBot) partner</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force"
+               eval="'[(\'id\', \'=\', ' + str(ref('base.partner_root')) + ')]'"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
     <!-- System administrators have unrestricted access -->
     <record id="rule_system_admin_all_partners" model="ir.rule">
         <field name="name">System Admin: All Partners</field>

@@ -1618,3 +1618,255 @@ a no-op.
     the left half alone paints a line straight down the seam to the caret.
     RULE: one control, one ring, one stylesheet — reach for `--vuf-sh-ring`,
     never a fresh `outline` or a bespoke `box-shadow`.
+
+- **§5.98 — flipping a deployment config parameter is a default-narrowing
+    change of the §5.62 class, and the tests it breaks are not the tests about
+    that feature.** Enforcing `health_fhir_core.consent_enforced` red-lit eight
+    tests, none of which mentions consent: they test bundle shape, compartment
+    isolation, `_type`/`_since` filters, truncation and an ACL-suppression path.
+    They broke because the engine resolves the mode from `ir.config_parameter`
+    when the caller does not pass one, so *the deployment's configuration was an
+    implicit test fixture*. Two rules: (a) when a phase flips a parameter, re-run
+    **every** suite that can reach the code path, not the ones named after the
+    feature — and treat a handover's claim that "the suites are green in both
+    modes" as a hypothesis to test, not a fact; (b) a test that lets behaviour
+    resolve from live configuration is non-deterministic across databases — pin
+    the mode explicitly and leave exactly one test asserting that the default
+    reads the parameter. Sharpest edge: `test_06_record_rule_isolation` continued
+    to PASS under enforcement — for the wrong reason (it asserts `FHIRNotFound`,
+    which enforcement also raises). A green test can be destroyed by a config
+    change without ever going red. (Phase GC-2.)
+
+- **§5.99 — an `ondelete='cascade'` FK into an append-only *audit* model
+    deletes the evidence and never runs the guard.** The §5.30 mechanism, applied
+    to compliance logs: `health.consent.check.log` blocks `write`/`unlink` in
+    Python and is described in its own docstring as evidence, yet deleting the
+    patient removes the rows at the SQL layer. Any model whose purpose is "prove
+    what we did with this person's data" needs `ondelete='restrict'` (or
+    `set null`) on its subject FK, or the retention guarantee is only as strong as
+    the convention that nobody deletes a patient. (Phase GC-2.)
+
+- **§5.100 — an Odoo 19 route with `auth='none'` defaults to `readonly=True`,
+    and a broad `except` around a write inside it converts the framework's
+    retry into a 500.** `http.py:924`: `default_mode = routing.get('readonly',
+    default_auth == 'none')`. The recovery path (`http.py:2246-2255`) depends on
+    the `ReadOnlySqlTransaction` *escaping* the endpoint — so any `try/except
+    Exception` around the write (an audit row, a counter, a log) eats the signal,
+    leaves the transaction poisoned, and the next query dies with "current
+    transaction is aborted". All three FHIR data routes had this. **It is
+    invisible on a deployment with no read replica**, because
+    `registry.cursor(readonly=True)` then returns an ordinary read/write cursor —
+    so the bug ships, passes every `TransactionCase`, works in production, and
+    detonates the day someone puts a replica in front of it. An `HttpCase` is
+    what exposes it, because the test framework hands out a genuinely read-only
+    cursor. Rule: any route that writes declares `readonly=False`, and "it is a
+    GET" is not evidence that it doesn't write — auditing is a write. (Precedent
+    already in the repo: `health_telemonitoring/controllers/ingest.py`,
+    `health_web_leads/controllers/web_leads.py`.) (Phase GC-3.)
+
+- **§5.101 — an `AccessError` from the ORM inside an API controller becomes the
+    framework's HTML error page, and API clients cannot parse HTML.** The FHIR
+    facade translated the *authentication* AccessError but not the one raised by
+    the query, so a token whose service user lacked one `ir.model.access` row got
+    `<!doctype html><title>403 Forbidden</title>` — with the Odoo user's name and
+    id in the body — from a `application/fhir+json` endpoint. Rule for any
+    machine-facing controller: catch `AccessError` at the route boundary
+    alongside your own error type, and answer in the protocol's error shape with
+    a diagnostic in the protocol's vocabulary (the FHIR resource type), never the
+    ORM's (the model name, the rule name, the user). Corollary: this is only
+    findable with a *minimally-scoped* token — an admin-grouped service user
+    never hits it, which is the same blind spot G14 came from. (Phase GC-3.)
+
+- **§5.102 — G14 is a PATTERN, not an incident: any Odoo model with a
+    group-gated read surface breaks a minimally-scoped serializer, and
+    `hr.employee` is the second one.** `res.partner` gates accounting fields
+    behind the accounting group; `hr.employee` goes further and treats **every**
+    field outside its public-profile whitelist as private
+    (`hr/models/hr_employee.py::_check_private_fields`), raising on `fetch()`
+    rather than on access. A blanket "read every stored field" prefetch therefore
+    403s the whole resource for exactly the users an API token maps onto. Rule:
+    a serializer over ANY model that another module extends with private or
+    group-gated fields declares `prefetch_fields`, and the check is
+    `fetch(<declared>)` **as a minimally-grouped user**, never as admin — an
+    admin-grouped fixture cannot see this bug at all. Corollary for
+    `hr.employee` specifically: a custom field added to it is private by default,
+    so adding a field to a serializer's output can 403 the resource without any
+    change to the serializer's own module. (Phase GC-3.)
+
+- **§5.103 — `fhir.resources` does not validate required-binding membership.**
+    Measured on vietuat 8.3.0: `Location(status='not-a-status')` validates clean;
+    `meta.lastUpdated='not-a-date'` does not. `validate_resource` checks types
+    and cardinality, not ValueSet membership, so runtime validation (C4) and the
+    weekly cron (C5) **cannot** catch a wrong status code. The
+    `test_fhir_bindings.py` tier is the only thing that does, and any new
+    status-bearing resource needs a table there — including emit-only statuses,
+    which the `test_66` search-param guard does not see (that is what GC-3 R2
+    fixed for DocumentReference and Location). (Phase GC-3.)
+
+- **§5.104 — `continue-on-error: true` rewrites a GitHub Actions step's PUBLIC
+    conclusion to `success`, so it destroys exactly the diagnosis it looks like
+    it preserves.** A step that fails under `continue-on-error` reports
+    `outcome: failure` (visible only inside the workflow, to `if:` expressions)
+    and `conclusion: success` (what the API and the run summary show). The first
+    version of this gate used it on all four checks plus a verdict step, and
+    produced a **red job whose four gate steps all read green** — with the reason
+    only in a log that needs repo-admin rights to download. Use it only where the
+    signal you want is *which step ran* (a deliberate fallback chain, like the
+    three `pip install` attempts here, where a later attempt executing at all
+    proves the earlier one failed); never on a check whose result is the thing
+    you need to read. Checks should fail hard and in order: the first `failure`
+    names the problem and everything after it reads `skipped`. (Phase GC-3.)
+
+- **§5.105 — in a GitHub Actions *container* job, JavaScript actions run on the
+    runner HOST, not in the container, so they cannot see container-only paths.**
+    `actions/upload-artifact` reported *"No files were found with the provided
+    path: /tmp/fhir-conformance.log"* for a file that existed — because the
+    `run:` steps that created it execute inside `container:` while the upload
+    action executes outside it. The two share exactly one directory: the
+    workspace (`$GITHUB_WORKSPACE`). Anything a JS action must read is copied
+    there first. The same split explains why `actions/checkout` works (it writes
+    to the shared workspace) while a `/tmp` handoff silently does not — and the
+    warning it emits reads like "your file is missing", not "I cannot see your
+    filesystem", which is what makes it cost an iteration. (Phase GC-3.)
+
+- **§5.106 — `pip install --target DIR` + `PYTHONPATH=DIR` SHADOWS every
+    system package pip drags in, and the first casualty is the crypto chain.**
+    Conventions §1 already says a pip upgrade of the cryptography chain has taken
+    the *server* down; a container is no safer, and `--target` makes it worse
+    because `PYTHONPATH` precedes `site-packages` unconditionally — order within
+    `PYTHONPATH` is irrelevant, so you cannot "append" your way out of it.
+    Installing `pywebpush` into a target dir pulled a newer `cryptography` in
+    behind it; the image's system `pyOpenSSL` was built against the older one, and
+
+    ```
+    AttributeError: module 'lib' has no attribute 'GEN_EMAIL'
+      → import OpenSSL → odoo.addons.base → "Failed to load server-wide module base"
+    ```
+
+    killed the run before a single module loaded. Rules: (a) prefer a system
+    install (`--break-system-packages`) and only fall back to `--target`; (b) when
+    you must use `--target`, **prune it** of everything the environment already
+    provides, so only genuinely-new packages are on the path; (c) assert an
+    `import` of the shadowed-chain canary (`OpenSSL`) immediately after
+    installing, because every later failure will point somewhere else entirely. (Phase GC-3.)
+
+- **§5.107 — a test that builds dates with `fields.Date.today()` against code
+    that selects with `fields.Date.context_today()` is a time-of-day flake, and
+    on this deployment the window is 22:00–24:00 UTC.** `today()` is UTC;
+    `context_today()` is the *user's* timezone — and the superuser that runs
+    tests has tz **Europe/Brussels** on vietuat (not Asia/Ho_Chi_Minh, which is
+    the surprise). Any equality match on a date therefore disagrees by one day
+    whenever Brussels has rolled over and UTC has not. `health_consent`'s renewal
+    test passed three times at ≈20:40 UTC and failed at 23:26 UTC on identical
+    code. Rules: derive fixture dates with the SAME helper the code under test
+    uses; be suspicious of any date equality (`==`) in a test rather than a range;
+    and when a test starts failing with no relevant code change, **check the clock
+    before checking the diff** — the three green runs and the red one differed by
+    nothing but the hour. (Phase GC-3.)
+
+- **§5.108 — a gotcha that lives only in a phase report does not exist for
+    the next phase.** Every kickoff prompt points the implementer at
+    `HANDOVER-CONVENTIONS.md` and at the phase doc — and at nothing else, so a
+    rule written into `docs/strategy/reports/<phase>-report.md` §8 is read by
+    the reviewer once and by no implementer ever. Ten entries (§5.98–§5.107)
+    accumulated unmerged across GC-2 and GC-3, and live code overtook them:
+    `health_consent/models/health_consent_check_log.py` cites "gotcha ledger
+    §5.99" against a ledger that stopped at §5.97, so the citation resolved to
+    nothing. The merge belongs in the SAME commit as the report — a report
+    section named "candidates for conventions §5" is a promise the next phase
+    cannot see, and a reviewer's memory is not a distribution mechanism.
+    (Phase SH-1.)
+
+- **§5.109 — `./addons/mail` is a stale Odoo-18 snapshot, and every fact you
+    read from a vendored core module in this repo is a fact about the WRONG
+    program.** `addons/mail/__manifest__.py` says version `1.18` and
+    `models/models.py` is 509 lines and still imports `odoo.osv.expression`
+    (removed in Odoo 19); the live `/odoo/odoo-server/addons/mail` is `1.19`
+    with a 926-line `models/models.py`. Two distinct costs, both paid in
+    SH-1: (a) **deployment** — the §2 procedure copies repo modules INTO the
+    core addons directory, so a routine `scp addons/mail` would downgrade
+    core mail on a running system; never edit, copy, sync or deploy it; and
+    (b) **analysis** — SH-1's handover cited `POST /mail/thread/data`
+    (`addons/mail/controllers/thread.py:16`) as the reachable primitive for
+    the public-ACL hole. That route exists ONLY in the stale copy: live it
+    404s, and the Odoo 19 equivalent is `POST /mail/data`
+    (`mail/controllers/webclient.py:20`, `auth="public"`), whose
+    `["mail.thread", {...}]` fetch param reaches the identical
+    `thread.sudo(False).has_access(mode)` gate at `mail_thread.py:5090`. The
+    vulnerability was real and the route name was not — an analysis that had
+    stopped at "the route does not exist" would have closed a live hole as a
+    false positive. RULE: for any claim about core behaviour, read the file
+    under `/odoo/odoo-server/addons/`, cite it with the server path, and
+    confirm reachability with a live request — the repo's copy of a core
+    addon is evidence of nothing. (Phase SH-1.)
+
+- **§5.110 — the way to make an `hr.employee` field readable without an HR
+    group is to declare it on `hr.employee.public`, and a Many2many may share
+    the relation table because that model is `_auto=False`.**
+    `hr._check_private_fields` (`hr/models/hr_employee.py:1134`) treats a
+    field as public **iff a field of that name exists on
+    `hr.employee.public`** — there is no separate whitelist to edit, and the
+    module that must declare it is the one that OWNS the field, not
+    `health_base` (SH-1's handover inherited that error from the GC-3 report:
+    `healthcare_skill_ids` lives in `health_fieldservice`). Re-declaring the
+    same Many2many is safe rather than a duplicate-relation error because
+    `Many2many.setup_nonrelated` (`odoo/orm/fields_relational.py:1303-1306`)
+    explicitly exempts pairs where the models differ and one of them is
+    `_auto=False` — `hr.employee.public` is a SQL view, so the check passes
+    and `update_db` no-ops on the existing relation table (no view
+    regeneration, no new column). Corollary from §5.24/§5.102: publishing a
+    field widens it to everyone who can read the public employee profile —
+    that is a decision, and this codebase had already taken it for
+    `license_number`, `specializations`, `qualifications` and
+    `certifications`. (Phase SH-1.)
+
+- **§5.111 — `service odoo-server stop` does not clear a hand-started
+    `odoo-bin shell`, and SOMEONE ELSE's shell will kill your deploy with a
+    lock error naming a column nobody has touched in years.** SH-1's first
+    deploy died 15 s into `health_base`'s `_auto_init` with
+    `psycopg2.errors.LockNotAvailable: canceling statement due to lock
+    timeout` on `ALTER TABLE "res_partner" ALTER COLUMN "group_rfq" DROP NOT
+    NULL` — a legacy column drop unrelated to the change, so the message
+    points at core rather than at anything you did. Then `Transient module
+    states were reset`, `Failed to load registry`, `CRITICAL Failed to
+    initialize database`, **EXIT:255** — and `service odoo-server start`
+    afterwards still answers HTTP 200, which masks the whole thing if you
+    only check the curl (§5.45). The holder was a **29-minute-old
+    `odoo-bin shell` belonging to a different session working on this
+    database**, sitting `idle in transaction` with `AccessShareLock` +
+    `RowShareLock` on `res_partner`, `res_users`, `res_company` and
+    `ir_model_data`. Rules: (a) before every deploy, drain
+    `until [ "$(pgrep -c -f '^python3 /odoo/odoo-server/odoo-bin')" = 0 ]`
+    **and** assert `SELECT count(*) FROM pg_stat_activity WHERE
+    datname='vietuat' AND state LIKE 'idle in transaction%'` is zero — the
+    service stop only kills the service; (b) when a schema statement times out
+    on a lock, `SELECT relation::regclass, mode FROM pg_locks WHERE pid=…`
+    names the holder in one query; (c) **identify the shell before killing
+    it** — `ls -l /proc/<pid>/fd` shows fd 0 (the script it is being fed) and
+    fd 1 (where its output goes), which is what distinguishes your own
+    leftover from a colleague's live work. SH-1 killed the blocker to get the
+    deploy through and only established afterwards, from `/proc/<pid>/fd`,
+    that it was **not its own** — an uncommitted transaction belonging to
+    another session was rolled back as a side effect. Check `/proc` FIRST.
+    (d) Wrap your own piped shells in
+    `timeout` and confirm the process is gone afterwards; a console fed from
+    piped stdin does not always exit at EOF. Sibling of §5.45 and §5.95.
+    (Phase SH-1.)
+
+- **§5.112 — a before/after test that toggles an `ir.rule` measures nothing
+    unless you flush AND turn off `active_test`, and on this database
+    `base.partner_root` is ARCHIVED.** SH-1's T6.2 — the test whose whole job
+    is to prove a new `res.partner` rule widened access by exactly one record
+    — failed twice on correct code, for two independent reasons. (a)
+    `ir_rule._get_rules` selects from `ir_rule` with **raw SQL**
+    (`self.env.execute_query`), so `rule.active = False` sitting unflushed in
+    the ORM cache is invisible to it and the rule stays in force; clearing the
+    `_compute_domain` ormcache is necessary but not sufficient — `flush_all()`
+    first, then `registry.clear_cache()`, then search (§5.9's family). (b)
+    `res_partner.active = f` for `base.partner_root` on vietuat (it is
+    OdooBot's partner, renamed "Viet Uc Care" by `biz_debranding`), so a plain
+    `search([])` carries the implicit `('active','=',True)` and drops the one
+    record under test from BOTH sides — use `with_context(active_test=False)`
+    (§5.27). Record rules still apply to `read` on an archived record, which
+    is exactly why the chatter raised in the first place: a record can be
+    invisible to `search` and still be the thing your ACL denies. (Phase SH-1.)

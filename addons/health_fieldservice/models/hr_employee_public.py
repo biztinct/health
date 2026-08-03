@@ -71,6 +71,21 @@ class HrEmployeePublic(models.Model):
     emergency_contact_email = fields.Char('Emergency Contact Email', readonly=True)
     
     # Skills and Qualifications
+    # Published here (SH-1 §4) so FHIR Practitioner.qualification can be built
+    # by a minimally-grouped service token: hr.employee._check_private_fields
+    # treats a field as public iff a field of that name exists on
+    # hr.employee.public, so without this line reading healthcare_skill_ids
+    # required an HR group and /fhir/r4/Practitioner answered 403.
+    # Same comodel, relation table and columns as the hr.employee definition
+    # (health_fieldservice/models/hr_employee.py) — sharing the relation is
+    # allowed because hr.employee.public is _auto=False.
+    healthcare_skill_ids = fields.Many2many(
+        'health.staff.skill',
+        'employee_healthcare_skill_rel',
+        'employee_id', 'skill_id',
+        string='Healthcare Skills', readonly=True
+    )
+
     skill_level = fields.Selection([
         ('junior', 'Junior'),
         ('intermediate', 'Intermediate'),

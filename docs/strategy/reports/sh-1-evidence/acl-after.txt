@@ -1,0 +1,109 @@
+=========== A1. ACL rows on the three PHI models (AFTER) ===========
+  id  |                              xmlid                              |           model           | gid |              grp               | perm_read | perm_write | perm_create | perm_unlink 
+------+-----------------------------------------------------------------+---------------------------+-----+--------------------------------+-----------+------------+-------------+-------------
+ 3877 | health_fieldservice.access_health_appointment_receptionist      | health.appointment        | 347 | Healthcare: Receptionist       | t         | t          | t           | f
+ 3878 | health_fieldservice.access_health_appointment_nurse             | health.appointment        | 348 | Healthcare: Nurse              | t         | t          | t           | f
+ 3879 | health_fieldservice.access_health_appointment_head_nurse        | health.appointment        | 349 | Healthcare: Head Nurse         | t         | t          | t           | f
+ 3880 | health_fieldservice.access_health_appointment_doctor            | health.appointment        | 350 | Healthcare: Doctor             | t         | t          | t           | f
+ 3881 | health_fieldservice.access_health_appointment_sales             | health.appointment        | 351 | Healthcare: Sales              | t         | t          | t           | f
+ 3882 | health_fieldservice.access_health_appointment_finance           | health.appointment        | 353 | Healthcare: Finance            | t         | f          | f           | f
+ 3883 | health_fieldservice.access_health_appointment_manager           | health.appointment        | 352 | Healthcare: Operations Manager | t         | t          | t           | f
+ 3884 | health_fieldservice.access_health_appointment_user              | health.appointment        |   1 | Role / User                    | t         | f          | f           | f
+ 3887 | health_fieldservice.access_health_appointment_crm_user          | health.appointment        | 351 | Healthcare: Sales              | t         | t          | t           | f
+ 3888 | health_fieldservice.access_health_appointment_crm_manager       | health.appointment        | 352 | Healthcare: Operations Manager | t         | t          | t           | f
+ 6332 | health_fieldservice.access_health_appointment_owner             | health.appointment        | 356 | Healthcare: Owner              | t         | t          | t           | t
+ 6396 | health_fieldservice.access_health_clinical_note_staff           | health.clinical.note      | 348 | Healthcare: Nurse              | t         | f          | t           | f
+ 6397 | health_fieldservice.access_health_clinical_note_dispatcher      | health.clinical.note      | 352 | Healthcare: Operations Manager | t         | f          | t           | f
+ 6399 | health_fieldservice.access_health_clinical_note_owner           | health.clinical.note      | 356 | Healthcare: Owner              | t         | t          | t           | t
+ 7026 | health_fieldservice.access_health_clinical_note_receptionist    | health.clinical.note      | 347 | Healthcare: Receptionist       | t         | f          | f           | f
+ 7027 | health_fieldservice.access_health_clinical_note_doctor          | health.clinical.note      | 350 | Healthcare: Doctor             | t         | t          | t           | f
+ 3828 | health_fieldservice.access_health_fieldservice_order_staff      | health.fieldservice.order | 348 | Healthcare: Nurse              | t         | t          | t           | f
+ 3829 | health_fieldservice.access_health_fieldservice_order_dispatcher | health.fieldservice.order | 352 | Healthcare: Operations Manager | t         | t          | t           | f
+ 3830 | health_fieldservice.access_health_fieldservice_order_manager    | health.fieldservice.order | 352 | Healthcare: Operations Manager | t         | t          | t           | f
+ 6320 | health_fieldservice.access_health_fieldservice_order_owner      | health.fieldservice.order | 356 | Healthcare: Owner              | t         | t          | t           | t
+(20 rows)
+
+=========== A2. the four deleted rows must be GONE ===========
+       tbl       | remaining 
+-----------------+-----------
+ ir_model_access |         0
+ ir_model_data   |         0
+(2 rows)
+
+=========== A3. any remaining public/portal grant on a PHI model ===========
+              model               | gid |      grp      |  id  
+----------------------------------+-----+---------------+------
+ health.clinical.protocol         |  11 | Role / Public | 3852
+ health.portable.equipment        |  11 | Role / Public | 3851
+ health.service.area              |  11 | Role / Public | 3876
+ health.staff.assignment          |  10 | Role / Portal | 3873
+ health.staff.availability.matrix |  10 | Role / Portal | 3874
+ health.staff.skill               |  11 | Role / Public | 3875
+(6 rows)
+
+=========== A4. the new res.partner rule ===========
+  id  |                      name                       | global | active | perm_read | perm_write | perm_create | perm_unlink |   domain_force   | gids 
+------+-------------------------------------------------+--------+--------+-----------+------------+-------------+-------------+------------------+------
+ 4700 | Internal users: read the root (OdooBot) partner | f      | t      | t         | f          | f           | f           | [('id', '=', 2)] | 1
+(1 row)
+
+=========== A5. every res.partner rule (global ones must be unchanged) ===========
+  id  |                               name                               | global | active | perm_read 
+------+------------------------------------------------------------------+--------+--------+-----------
+    2 | res.partner company                                              | t      | t      | t
+    3 | res_partner: portal/public: read access on my commercial partner | f      | t      | t
+  340 | User: Own Partner Record                                         | f      | t      | t
+  341 | System Admin: All Partners                                       | f      | t      | t
+  342 | Healthcare Staff: Patient and Business Partners                  | f      | t      | t
+  343 | Patient Portal: Own Records Only                                 | f      | t      | t
+  618 | Healthcare CRM Partner: User Access                              | f      | t      | t
+ 1231 | BFSI: Read all partners                                          | f      | t      | t
+ 1373 | Healthcare Owner: All Partners                                   | f      | t      | t
+ 4700 | Internal users: read the root (OdooBot) partner                  | f      | t      | t
+(10 rows)
+
+=========== A6. FSO record rules survived cleanup_rules.xml ===========
+  id  |                          name                           | active | n_groups 
+------+---------------------------------------------------------+--------+----------
+  527 | Field Service Orders: Staff sees only assigned orders   | t      |        1
+  537 | FSO Portal User Access                                  | t      |        1
+ 1376 | Field Service Orders: Owner sees all orders             | t      |        1
+ 4746 | Field Service Orders: Managers see own catchment orders | t      |        1
+ 4747 | FSO Sales User Access                                   | t      |        1
+ 4748 | FSO Head Nurse Access                                   | t      |        1
+ 4750 | FSO Healthcare Staff Access                             | t      |        1
+ 4753 | FSO System Administrator Access                         | t      |        1
+ 4754 | FSO Field Service Manager Own Catchment Access          | t      |        1
+(9 rows)
+
+=========== A7. healthcare_skill_ids is on hr.employee.public ===========
+   id   |       model        |         name         |   ttype   |      relation      |       module        
+--------+--------------------+----------------------+-----------+--------------------+---------------------
+  36224 | hr.employee        | healthcare_skill_ids | many2many | health.staff.skill | health_fieldservice
+ 114180 | hr.employee.public | healthcare_skill_ids | many2many | health.staff.skill | health_fieldservice
+(2 rows)
+
+=========== A8. row counts unchanged (nothing was deleted) ===========
+       t       | count 
+---------------+-------
+ clinical_note |    57
+ fso           |  1269
+ appointment   |     0
+(3 rows)
+
+=========== A9. no SH-1 test fixtures left behind ===========
+ERROR:  operator does not exist: jsonb ~~ unknown
+LINE 5: ...lities', count(*) FROM health_facility WHERE name LIKE 'SH1 ...
+                                                             ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+         t         | count 
+-------------------+-------
+ users sh1_%       |     0
+ partners SH1 %    |     0
+ skills SH1 %      |     0
+ facilities SH1 %  |     0
+ employees SH1 %   |     0
+ provinces SH1 %   |     0
+ notes SH1 fixture |     0
+(7 rows)
+

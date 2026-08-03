@@ -38,14 +38,16 @@ class PractitionerSerializer(FHIRSerializer):
     #: Identical defect to the one D1 fixed on Patient in GC-1; found live by
     #: the GC-3 deploy smoke. Only the fields `to_fhir`/`_identifiers` read.
     #:
-    #: `healthcare_skill_ids` is deliberately ABSENT and the prefetch does not
-    #: cure it: hr treats every field outside its public-profile whitelist as
-    #: private, so reading it for `qualification` still needs an HR group.
-    #: Exposing it belongs in health_base (not sanctioned by GC-3) — until
-    #: then a Practitioner-reading token needs an HR-privileged service user.
+    #: `healthcare_skill_ids` IS prefetched and IS readable: SH-1 §4 publishes
+    #: it on `hr.employee.public` (health_fieldservice/models/hr_employee_public.py
+    #: — that is the module owning the field, not health_base), which is the
+    #: whole whitelist mechanism `_check_private_fields` consults. Before that
+    #: change `/fhir/r4/Practitioner` answered 403 for any token whose service
+    #: user lacked `hr.group_hr_user`, because `qualification` reads it.
     prefetch_fields = [
         'name', 'active', 'staff_code', 'license_number',
         'work_phone', 'work_email', 'healthcare_facility_id', 'write_date',
+        'healthcare_skill_ids',
     ]
 
     def base_domain(self, env):

@@ -7,3 +7,4 @@ from . import test_fhir_conformance
 from . import test_fhir_search_gc2
 from . import test_fhir_bindings
 from . import test_fhir_gc3
+from . import test_sh1_practitioner

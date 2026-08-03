@@ -217,12 +217,13 @@ class TestFHIRRuntimeValidationGC3(HttpCase):
         reads — the same fix D1 applied to Patient in GC-1 — and this asserts
         the prefetch itself is clean for such a user.
 
-        NOT asserted here, because it is not fixed: `to_fhir` also reads
-        `healthcare_skill_ids` for `Practitioner.qualification`, and that
-        field is private on the public profile too. Making it readable means
-        adding it to health_base's public-employee whitelist, which GC-3 does
-        not sanction — see the phase report's findings. Until then a
-        Practitioner-reading token needs an HR-privileged service user."""
+        SH-1 §4 closed the other half: `to_fhir` also reads
+        `healthcare_skill_ids` for `Practitioner.qualification`, which was
+        private on the public profile too. It is now published on
+        `hr.employee.public` by health_fieldservice (NOT health_base, as the
+        GC-3 report guessed) and declared in `prefetch_fields`, so the fetch
+        below covers it. The qualification output itself is asserted in
+        `test_sh1_practitioner.py`."""
         env = self.env(user=self.service_user)
         employee = env['hr.employee'].sudo().search(
             [('healthcare_facility_id', '!=', False)], limit=1)

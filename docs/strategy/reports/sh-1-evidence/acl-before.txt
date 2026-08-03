@@ -1,0 +1,26 @@
+  id  |                              xmlid                              |           model           | gid |              grp               | perm_read | perm_write | perm_create | perm_unlink 
+------+-----------------------------------------------------------------+---------------------------+-----+--------------------------------+-----------+------------+-------------+-------------
+ 3877 | health_fieldservice.access_health_appointment_receptionist      | health.appointment        | 347 | Healthcare: Receptionist       | t         | t          | t           | f
+ 3878 | health_fieldservice.access_health_appointment_nurse             | health.appointment        | 348 | Healthcare: Nurse              | t         | t          | t           | f
+ 3879 | health_fieldservice.access_health_appointment_head_nurse        | health.appointment        | 349 | Healthcare: Head Nurse         | t         | t          | t           | f
+ 3880 | health_fieldservice.access_health_appointment_doctor            | health.appointment        | 350 | Healthcare: Doctor             | t         | t          | t           | f
+ 3881 | health_fieldservice.access_health_appointment_sales             | health.appointment        | 351 | Healthcare: Sales              | t         | t          | t           | f
+ 3882 | health_fieldservice.access_health_appointment_finance           | health.appointment        | 353 | Healthcare: Finance            | t         | f          | f           | f
+ 3883 | health_fieldservice.access_health_appointment_manager           | health.appointment        | 352 | Healthcare: Operations Manager | t         | t          | t           | f
+ 3884 | health_fieldservice.access_health_appointment_user              | health.appointment        |   1 | Role / User                    | t         | f          | f           | f
+ 3885 | health_fieldservice.access_health_appointment_portal            | health.appointment        |  10 | Role / Portal                  | t         | f          | f           | f
+ 3886 | health_fieldservice.access_health_appointment_public            | health.appointment        |  11 | Role / Public                  | t         | f          | f           | f
+ 3887 | health_fieldservice.access_health_appointment_crm_user          | health.appointment        | 351 | Healthcare: Sales              | t         | t          | t           | f
+ 3888 | health_fieldservice.access_health_appointment_crm_manager       | health.appointment        | 352 | Healthcare: Operations Manager | t         | t          | t           | f
+ 6332 | health_fieldservice.access_health_appointment_owner             | health.appointment        | 356 | Healthcare: Owner              | t         | t          | t           | t
+ 6396 | health_fieldservice.access_health_clinical_note_staff           | health.clinical.note      | 348 | Healthcare: Nurse              | t         | f          | t           | f
+ 6397 | health_fieldservice.access_health_clinical_note_dispatcher      | health.clinical.note      | 352 | Healthcare: Operations Manager | t         | f          | t           | f
+ 6398 | health_fieldservice.access_health_clinical_note_public          | health.clinical.note      |  11 | Role / Public                  | t         | f          | f           | f
+ 6399 | health_fieldservice.access_health_clinical_note_owner           | health.clinical.note      | 356 | Healthcare: Owner              | t         | t          | t           | t
+ 3828 | health_fieldservice.access_health_fieldservice_order_staff      | health.fieldservice.order | 348 | Healthcare: Nurse              | t         | t          | t           | f
+ 3829 | health_fieldservice.access_health_fieldservice_order_dispatcher | health.fieldservice.order | 352 | Healthcare: Operations Manager | t         | t          | t           | f
+ 3830 | health_fieldservice.access_health_fieldservice_order_manager    | health.fieldservice.order | 352 | Healthcare: Operations Manager | t         | t          | t           | f
+ 3850 | health_fieldservice.access_health_fieldservice_order_public     | health.fieldservice.order |  11 | Role / Public                  | t         | f          | f           | f
+ 6320 | health_fieldservice.access_health_fieldservice_order_owner      | health.fieldservice.order | 356 | Healthcare: Owner              | t         | t          | t           | t
+(22 rows)
+
