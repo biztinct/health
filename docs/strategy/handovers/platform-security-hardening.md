@@ -84,9 +84,10 @@ citable. §3 is the one with a live PHI surface — if you run out of budget,
 out to change effective access for 76 live users and to be entangled with a
 broken role mapping (ten doctors currently reach clinical data only through
 the defect). It gets its own phase, its own review and its own rollback
-story, and it needs a business decision from the user before it starts. **Do
-not implement §5 during SH-1 — not even partially, not even the "obvious"
-row deletion.**
+story. **Do not implement §5 during SH-1 — not even partially, not even the
+"obvious" row deletion.** *(SH-1 is complete and reviewed as of 2026-08-03;
+the §5.5 decision it was waiting on has been answered, so SH-2 is now
+unblocked and is the next phase to run.)*
 
 ---
 
@@ -539,14 +540,30 @@ Ten doctors are handled by the role repair (§5.2.2). Three demo accounts
 | `nam.lh` | Banker | none |
 | `anh.pd`, `mai.vt`, `tuan.hm`, `ha.dt`, `huong.nt`, `bao.tq` | **none assigned** | none |
 
-Options: (a) assign each an appropriate `access.role` — the correct fix, since
-an account with no role is itself a data-quality defect; (b) grant
-`group_healthcare_base` directly to preserve today's access, auditable and
-prunable later; (c) let them lose healthcare access. **Default if the user
-does not answer: (b) for all seven**, because locking real staff out of a
-production system is a worse failure than leaving a known, listed,
-status-quo grant in place — but record it in the report as a deliberate
-temporary measure with the list attached.
+**ANSWERED BY THE USER 2026-08-03 — decision made, do NOT re-litigate and do
+NOT apply any fallback.** All seven accounts are unused. **They lose
+healthcare access along with everyone else: grant them nothing, assign them
+nothing, preserve nothing.**
+
+So the rule for the whole phase is now uniform and simple:
+
+- The **ten Doctor-role users** keep access, via the role repair in §5.2.2 —
+  that is the only mitigation this phase applies.
+- **Every other affected account loses group 346**: the seven above, the three
+  demo accounts (`demo`, `dds_DemoLead`, `dds_DemoAsst`) and `svc_web_leads`.
+  That is the fix working as intended, not breakage to be worked around.
+
+**Add T5.6:** after the change, assert that a `base.group_user`-only user
+holding no healthcare group cannot read `health.ews.score` (this is T5.1) and
+that the seven named accounts' effective closures no longer contain group 346.
+List each of the 21 affected logins in the report with its before/after
+closure verdict — the point of the phase is that access is now explicit and
+auditable, so the report must show it.
+
+**Do NOT archive or delete any of these accounts.** The user said they are
+unused, not that they should be removed; deactivating real logins is a
+separate action nobody authorised. If you think they should be archived, say
+so in the report as a recommendation.
 
 Also unresolved, flag rather than assume: who removed the sibling `4 → 356`
 edge is not established (`a201b3d1` documents deleting `356 → 4`, the opposite
