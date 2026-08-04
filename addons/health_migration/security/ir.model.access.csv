@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_migration_xref,migration.xref,model_migration_xref,base.group_system,1,1,1,1
 access_migration_baseline,migration.baseline,model_migration_baseline,base.group_system,1,1,1,1
 access_migration_runner,migration.runner,model_migration_runner,base.group_system,1,1,1,1
+access_migration_lookup_seeder,migration.lookup.seeder,model_migration_lookup_seeder,base.group_system,1,1,1,1

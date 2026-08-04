@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Catchment scoping for the four OPERATIONS / ADMIN leaves that shipped
+        without it: Unsigned Notes, Healthcare Staff + Schedules, Time Off, and
+        Equipment.
+
+        Every scoped rule is paired with an unrestricted Owner rule. That
+        pairing is not decoration: group rules OR together, and being in a
+        group that has no rule does NOT exempt you. group_healthcare_owner
+        implies admin implies manager (health_security.xml:79-98), and manager
+        appears in every scoped rule below — so without the twin, an owner
+        would be pinned to one area by their own inherited groups.
+    -->
+
+    <!-- ============ Clinical notes (Unsigned Notes leaf) ============ -->
+    <record id="clinical_note_catchment_rule" model="ir.rule">
+        <field name="name">Clinical Notes: staff see their own catchment</field>
+        <field name="model_id" ref="model_health_clinical_note"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_base.group_healthcare_nurse')),
+            (4, ref('health_base.group_healthcare_doctor')),
+            (4, ref('health_base.group_healthcare_operations_manager')),
+            (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="clinical_note_catchment_owner_rule" model="ir.rule">
+        <field name="name">Clinical Notes: Owner sees all catchments</field>
+        <field name="model_id" ref="model_health_clinical_note"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- ============ Staff (Healthcare Staff + Schedules leaves) ============
+         Note the field name: hr.employee stores its area as
+         staff_catchment_province_id, not catchment_province_id.
+
+         READ ONLY, deliberately. 59 of the 96 active employees on this
+         deployment carry an area, so this rule genuinely narrows the staff
+         list — which is the requirement. Constraining WRITE as well would put
+         a rule in front of every assignment flow, the workload dashboard and
+         core's own employee writes (activity assignment, followers), for no
+         visibility gain. Employees with no area stay visible to everyone
+         rather than disappearing from assignment pickers. -->
+    <record id="hr_employee_catchment_rule" model="ir.rule">
+        <field name="name">Healthcare Staff: staff see their own catchment</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="domain_force">['|', ('staff_catchment_province_id', '=', False), ('staff_catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_base.group_healthcare_nurse')),
+            (4, ref('health_base.group_healthcare_doctor')),
+            (4, ref('health_base.group_healthcare_receptionist')),
+            (4, ref('health_base.group_healthcare_operations_manager')),
+            (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="hr_employee_catchment_owner_rule" model="ir.rule">
+        <field name="name">Healthcare Staff: Owner sees all catchments</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- ============ Time Off ============ -->
+    <record id="hr_leave_catchment_rule" model="ir.rule">
+        <field name="name">Time Off: staff see their own catchment</field>
+        <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+        <field name="domain_force">['|', ('catchment_province_id', '=', False), ('catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_base.group_healthcare_operations_manager')),
+            (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="hr_leave_catchment_owner_rule" model="ir.rule">
+        <field name="name">Time Off: Owner sees all catchments</field>
+        <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- ============ Equipment ============
+         Unassigned equipment (no area yet) stays visible to everybody rather
+         than vanishing: a device nobody can see is a device nobody can claim,
+         and the register is an inventory, not patient data. -->
+    <record id="portable_equipment_catchment_rule" model="ir.rule">
+        <field name="name">Equipment: staff see their own catchment</field>
+        <field name="model_id" ref="model_health_portable_equipment"/>
+        <field name="domain_force">['|', ('catchment_province_id', '=', False), ('catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_base.group_healthcare_nurse')),
+            (4, ref('health_base.group_healthcare_operations_manager')),
+            (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="portable_equipment_catchment_owner_rule" model="ir.rule">
+        <field name="name">Equipment: Owner sees all catchments</field>
+        <field name="model_id" ref="model_health_portable_equipment"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+</odoo>

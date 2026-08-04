@@ -73,6 +73,9 @@ class CareChannelMessage(models.Model):
     company_id = fields.Many2one(
         related='connection_id.company_id', store=True, index=True,
         readonly=True)
+    catchment_province_id = fields.Many2one(
+        related='connection_id.catchment_province_id', store=True, index=True,
+        readonly=True, string='Catchment Area')
     identity_id = fields.Many2one(
         'care.channel.identity', required=True, index=True,
         ondelete='restrict')

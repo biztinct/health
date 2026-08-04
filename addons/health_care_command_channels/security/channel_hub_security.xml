@@ -60,4 +60,63 @@
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
 
+    <!--
+        Catchment scoping. Each area runs its own Zalo OA / Facebook page, so a
+        connection belongs to an area and its identities and messages inherit
+        it (stored related, same shape as company_id above).
+
+        Connections with NO area are national accounts and stay visible to
+        everyone: hiding an unassigned account would make the Channels setup
+        screen look empty on a fresh install and give nobody a way to assign
+        one. The Owner twin is required for the inherited-group reason
+        documented in health_catchment_scope/security.
+    -->
+    <record id="care_channel_connection_catchment_rule" model="ir.rule">
+        <field name="name">Channel Connection: staff see their own catchment</field>
+        <field name="model_id" ref="model_care_channel_connection"/>
+        <field name="domain_force">['|', ('catchment_province_id', '=', False), ('catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_crm.group_health_crm_user')),
+            (4, ref('health_crm.group_health_crm_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="care_channel_connection_catchment_owner_rule" model="ir.rule">
+        <field name="name">Channel Connection: Owner sees all catchments</field>
+        <field name="model_id" ref="model_care_channel_connection"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="care_channel_message_catchment_rule" model="ir.rule">
+        <field name="name">Channel Message: staff see their own catchment</field>
+        <field name="model_id" ref="model_care_channel_message"/>
+        <field name="domain_force">['|', ('catchment_province_id', '=', False), ('catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_crm.group_health_crm_user')),
+            (4, ref('health_crm.group_health_crm_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="care_channel_message_catchment_owner_rule" model="ir.rule">
+        <field name="name">Channel Message: Owner sees all catchments</field>
+        <field name="model_id" ref="model_care_channel_message"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
 </odoo>

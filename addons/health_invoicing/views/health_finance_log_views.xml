@@ -60,8 +60,6 @@
                 <field name="partner_id"/>
                 <field name="catchment_province_id" string="Catchment Area"/>
                 <separator string="Catchment Area"/>
-                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
-                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 <field name="vat_serial_code"/>
                 <field name="retail_invoice_number"/>
                 <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
@@ -151,8 +149,6 @@
                 <field name="booking_id"/>
                 <field name="catchment_province_id" string="Catchment Area"/>
                 <separator string="Catchment Area"/>
-                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
-                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 <filter name="posted" string="Posted" domain="[('status', '=', 'posted')]"/>
                 <filter name="today" string="Today" domain="[('posting_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
                 <filter name="invoices" string="Invoices" domain="[('event_type', '=', 'invoice')]"/>

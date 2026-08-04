@@ -3,6 +3,8 @@
 import { Component, useState, onMounted } from "@odoo/owl";
 import { useService, useBus } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
+import { Domain } from "@web/core/domain";
+import { user } from "@web/core/user";
 import { sidebarRegistry } from "@health_fieldservice/js/sidebar_registry";
 
 export class CmsSidebar extends Component {
@@ -24,6 +26,11 @@ export class CmsSidebar extends Component {
             collapsedSections: {},
             expandedItems: {},
             loaded: false,
+            // Catchment scope. `pick` is the owner's chosen area — "" means
+            // "my own area" (the default everyone starts on) and "all" means
+            // no catchment filter at all, which only an owner can reach.
+            catchment: { current_name: "", can_switch: false, options: [], mine_filter: "" },
+            catchmentPick: "",
         });
 
         this._tagIndex = {};
@@ -32,6 +39,7 @@ export class CmsSidebar extends Component {
         this._childParent = {};
 
         this._loadCollapseState();
+        this._loadCatchmentPick();
 
         useBus(this.env.bus, "ACTION_MANAGER:UI-UPDATED", () => this._resolveActiveItem());
 
@@ -42,8 +50,17 @@ export class CmsSidebar extends Component {
     }
 
     async _loadSidebarData() {
-        const data = await this.orm.call("cms.sidebar.item", "get_sidebar_data", []);
+        const [data, scope] = await Promise.all([
+            this.orm.call("cms.sidebar.item", "get_sidebar_data", []),
+            this.orm.call("cms.sidebar.item", "get_catchment_scope", []),
+        ]);
         this.state.sections = data;
+        this.state.catchment = scope;
+        if (!scope.can_switch) {
+            // A scoped user has exactly one answer. Never let a stale
+            // localStorage value from a previous account widen their view.
+            this.state.catchmentPick = "";
+        }
         this.state.loaded = true;
         this._buildMatchIndex();
     }
@@ -140,11 +157,142 @@ export class CmsSidebar extends Component {
         return !!this.state.expandedItems[itemId];
     }
 
-    navigateTo(item) {
+    async navigateTo(item) {
         this.state.activeItemId = item.id;
         const actionRef = item.action_xmlid || item.action_tag;
-        if (actionRef) {
-            this.actionService.doAction(actionRef, { clearBreadcrumbs: true });
+        if (!actionRef) {
+            return;
+        }
+        const options = { clearBreadcrumbs: true };
+        const scope = this._catchmentDomain(item);
+        if (scope) {
+            try {
+                const action = await this.actionService.loadAction(actionRef, {});
+                action.domain = Domain.and([
+                    new Domain(action.domain || []),
+                    new Domain(scope),
+                ]).toString();
+                this.actionService.doAction(action, options);
+                return;
+            } catch {
+                // Fall through to plain navigation. Record rules remain the
+                // boundary, so the worst case here is an unscoped-looking
+                // list, never access to something the rules forbid.
+            }
+        }
+        this.actionService.doAction(actionRef, options);
+    }
+
+    /**
+     * The catchment scope for this leaf, as a domain — NOT as a
+     * `search_default_` facet.
+     *
+     * A facet was the first design and it was wrong twice over. It is
+     * removable, so a scoped user could clear it and widen their own list
+     * (on crm.lead the record rules alone let 296 rows through, because the
+     * Sales "All Documents" rule ORs the catchment rule away) — and clearing
+     * it produced a raw AccessError dialog. It also occupied
+     * `searchModel.query`, which silently suppressed the Contacts view's own
+     * default "Today" filter (crm_contact_list.js:162 only applies that when
+     * the query is empty), so the same screen showed different totals
+     * depending on whether an area was selected.
+     *
+     * As a domain it cannot be removed, cannot collide with the view's own
+     * filters, and the sidebar pill above remains the visible indication of
+     * what is being shown.
+     *
+     * Returns null when there is nothing to scope: reference-data leaves, the
+     * OWL dashboards, or an owner who has chosen "All areas".
+     */
+    _catchmentDomain(item) {
+        const field = item.catchment_field;
+        if (!field) {
+            return null;
+        }
+        const scope = this.state.catchment;
+        const pick = this.state.catchmentPick;
+        if (scope.can_switch && pick === "all") {
+            return null;
+        }
+        if (scope.can_switch && pick) {
+            const chosen = (scope.options || []).find((o) => String(o.id) === String(pick));
+            if (chosen) {
+                return [[field, "=", chosen.id]];
+            }
+        }
+        if (!scope.current_id) {
+            // An owner with no area set sees everything; a scoped user with no
+            // area set sees nothing, which is the same fail-closed answer the
+            // record rules give.
+            return scope.can_switch ? null : [[0, "=", 1]];
+        }
+        return [[field, "=", scope.current_id]];
+    }
+
+    /**
+     * QWeb expressions run in a restricted context with no access to global
+     * builtins — `String(...)` inside the template throws "ctx.String is not a
+     * function" and takes the whole sidebar down with it. Comparisons that need
+     * coercion belong here, in the component.
+     */
+    isCatchmentPicked(value) {
+        return String(this.state.catchmentPick) === String(value);
+    }
+
+    onCatchmentChange(ev) {
+        this.state.catchmentPick = ev.target.value;
+        this._saveCatchmentPick();
+        // Re-open the current screen so the new scope takes effect immediately
+        // rather than on the next click. Falls back to doing nothing when the
+        // active item cannot be resolved (e.g. arrived via a breadcrumb).
+        const item = this._findItem(this.state.activeItemId);
+        if (item) {
+            this.navigateTo(item);
+        }
+    }
+
+    _findItem(itemId) {
+        for (const section of this.state.sections) {
+            for (const item of section.items) {
+                if (item.id === itemId) {
+                    return item;
+                }
+                for (const child of item.children || []) {
+                    if (child.id === itemId) {
+                        return child;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * `window.odoo.session_info.uid` is undefined in this build — the existing
+     * collapse-state helpers below fall back to 0, so every account on a
+     * browser shares one key. Harmless for "which sections are folded"; not
+     * harmless for a scope pick, so this reads the real id from the user
+     * service. (_loadSidebarData still resets the pick for anyone who cannot
+     * switch, so a stale value can never widen a scoped user's view.)
+     */
+    _catchmentStorageKey() {
+        return `cms_catchment_${user.userId || 0}`;
+    }
+
+    _loadCatchmentPick() {
+        try {
+            this.state.catchmentPick =
+                localStorage.getItem(this._catchmentStorageKey()) || "";
+        } catch {
+            // ignore
+        }
+    }
+
+    _saveCatchmentPick() {
+        try {
+            localStorage.setItem(this._catchmentStorageKey(), this.state.catchmentPick);
+        } catch {
+            // ignore
         }
     }
 

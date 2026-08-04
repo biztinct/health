@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Province visibility.
+
+        Without this a Hanoi receptionist can open the Catchment Province
+        dropdown on a client form, pick "TPHCM", save, and lose the record into
+        an area they can no longer read. The filter injector keeps other areas
+        out of the SEARCH ui; this keeps them out of the m2o dropdowns.
+
+        THE BYPASS RULES BELOW ARE NOT OPTIONAL. Odoo ORs the group rules that
+        match any group the user is in, and being a member of a group that has
+        NO rule does not exempt you. group_healthcare_owner implies admin
+        implies manager (health_security.xml:79-98), and manager implies
+        operations_manager / head_nurse / finance — so every owner and every
+        admin is transitively inside the scoped list below and would be pinned
+        to one province without an unrestricted rule of their own to OR in.
+        Same shape as rule_healthcare_owner_all_partners (health_security.xml:183).
+
+        The conditional domain is deliberate: 60 of the 70 active internal
+        accounts on this deployment have no catchment area set. Returning an
+        empty set for them would not hide anything they can already reach — the
+        record rules do that — it would only raise AccessError the moment a
+        list rendered somebody else's province. So "no area set" reads as "no
+        province restriction", and the fail-closed behaviour stays where it
+        belongs: on the records themselves.
+    -->
+    <record id="rule_catchment_province_scoped" model="ir.rule">
+        <field name="name">Catchment Area: scoped roles see only their own</field>
+        <field name="model_id" ref="health_base.model_health_catchment_province"/>
+        <field name="domain_force">[('id', '=', user.catchment_province_id.id)] if user.catchment_province_id else [(1, '=', 1)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_base.group_healthcare_receptionist')),
+            (4, ref('health_base.group_healthcare_nurse')),
+            (4, ref('health_base.group_healthcare_head_nurse')),
+            (4, ref('health_base.group_healthcare_doctor')),
+            (4, ref('health_base.group_healthcare_sales')),
+            (4, ref('health_base.group_healthcare_finance')),
+            (4, ref('health_base.group_healthcare_operations_manager')),
+            (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_catchment_province_owner" model="ir.rule">
+        <field name="name">Catchment Area: Owner sees every area</field>
+        <field name="model_id" ref="health_base.model_health_catchment_province"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!--
+        Admin is exempt on purpose. Users &amp; Roles lists staff from every
+        area, and an admin who could not read another area's province would hit
+        an AccessError rendering that list. Managing accounts is not the same
+        act as reading another area's patient data, which stays owner-only.
+    -->
+    <!--
+        Users &amp; Roles. A receptionist opening the staff directory has no
+        reason to read another area's accounts. READ ONLY and blank-tolerant on
+        purpose: 60 of the 70 active internal accounts here have no area set, so
+        a strict rule would empty the list for almost everyone and, worse, would
+        break every m2o that renders a user's name (owner_id on a conversation,
+        author on a note, followers). Admin and Owner are exempt — managing
+        accounts across areas is their job.
+    -->
+    <record id="rule_res_users_catchment" model="ir.rule">
+        <field name="name">Users: staff see their own catchment</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="domain_force">['|', '|', ('catchment_province_id', '=', False), ('catchment_province_id', '=', user.catchment_province_id.id), ('id', '=', user.id)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_base.group_healthcare_receptionist')),
+            (4, ref('health_base.group_healthcare_nurse')),
+            (4, ref('health_base.group_healthcare_doctor')),
+            (4, ref('health_base.group_healthcare_sales')),
+            (4, ref('health_base.group_healthcare_finance')),
+            (4, ref('health_base.group_healthcare_operations_manager')),
+            (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_res_users_catchment_admin" model="ir.rule">
+        <field name="name">Users: Administrator and Owner see every catchment</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_base.group_healthcare_admin')),
+            (4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_catchment_province_admin" model="ir.rule">
+        <field name="name">Catchment Area: Administrator sees every area</field>
+        <field name="model_id" ref="health_base.model_health_catchment_province"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_admin'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

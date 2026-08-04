@@ -69,6 +69,13 @@ class HrEmployee(models.Model):
         store=True,
         help='Catchment province for this staff member. Select province first to filter healthcare facilities.'
     )
+
+    # This model stores its area under a non-standard name — it shipped as
+    # `staff_catchment_province_id` long before the scope engine existed, and
+    # 40-odd call sites read it. Rather than rename it (and risk missing one),
+    # tell the engine where to look. See health_catchment_scope/models/
+    # catchment_scope.py:catchment_field_of.
+    _catchment_field = 'staff_catchment_province_id'
     
     # Service Capabilities
     service_type_ids = fields.Many2many(

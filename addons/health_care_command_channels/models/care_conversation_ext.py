@@ -88,6 +88,29 @@ class CareConversationChannelExt(models.Model):
                     or rec.email_normalized or rec.phone_normalized):
                 rec.display_name_c = ident.display_name
 
+    @api.depends('channel_identity_id.catchment_province_id',
+                 'partner_id.catchment_province_id',
+                 'partner_id.primary_facility_id.catchment_province_id',
+                 'lead_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        """The channel ACCOUNT wins.
+
+        Each area runs its own Zalo OA and Facebook page, so the account a
+        message landed on is the most reliable statement of which area owns the
+        conversation — and it is known at first contact, before there is any
+        partner or lead to ask. The spine's contact/lead walk stays as the
+        fallback for conversations with no channel traffic (leads logged by
+        hand, walk-ins) and for connections left unassigned.
+
+        The decorator is re-declared in full rather than extended: overriding a
+        depends with a partial one silently drops the parent's dependencies,
+        the same trap `_check_anchor` above documents.
+        """
+        for rec in self:
+            from_channel = rec.channel_identity_id.catchment_province_id
+            rec.catchment_province_id = (
+                from_channel or rec._catchment_from_anchors())
+
     # ------------------------------------------------------------------
     # Identity-first upsert
     # ------------------------------------------------------------------

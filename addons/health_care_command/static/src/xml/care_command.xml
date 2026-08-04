@@ -40,6 +40,13 @@
           <h1><span class="live-dot"/>Care Command</h1>
           <span class="sub" t-esc="state.view === 'chat' ? 'Conversation' : 'Wall'"/>
         </div>
+        <!-- Which area's inbox this is. Care Command is a client action, so it
+             gets no search facet — without this the operator has no way to
+             tell a quiet wall from a scoped one. -->
+        <div class="cc-catchment" t-if="catchmentLabel"
+             t-att-class="{ empty: catchmentEmpty }">
+          <span class="ic ic-user"/><t t-esc="catchmentLabel"/>
+        </div>
         <!-- now-ticker: last ~20 live events this session (JS-only ring buffer).
              Always rendered (flexible spacer); empty = invisible gap. -->
         <div class="cc-ticker" t-att-class="{ empty: !state.ticks.length }">

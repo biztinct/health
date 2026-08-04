@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Consent Management',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.1.1',
     'category': 'Healthcare/Clinical',
     'summary': 'Consent capture (verbal/written/digital signature), expiry '
                'lifecycle and check_consent() service API (FHIR Consent)',
@@ -13,6 +13,7 @@
     'depends': ['health_base', 'health_crm', 'health_pwa'],
     'data': [
         'security/health_consent_security.xml',
+        'security/catchment_check_log_rules.xml',
         'security/ir.model.access.csv',
         'data/ir_sequence.xml',
         'data/ir_cron.xml',

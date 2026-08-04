@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Unified Work Layer',
-    'version': '19.0.4.1.0',
+    'version': '19.0.4.1.1',
     'category': 'Healthcare/CRM',
     'summary': 'Omnichannel triage wall + messenger thread over Zalo, Calls, Email and ZNS',
     'description': """
@@ -42,6 +42,10 @@ No AI. No clinical content. No new channels beyond Zalo / Calls / Email / ZNS.
         'health_zalo',
         'health_fieldservice',
         'health_cms_sidebar',
+        # `_scope_domain` calls res.users._catchment_can_switch(). Reachable
+        # transitively via health_cms_sidebar, but declared because the code
+        # reference is hard.
+        'health_catchment_scope',
         # NOTE: health_voip24h is an OPTIONAL/soft dependency, NOT declared
         # here. It does not install on Odoo 19 (it still uses the removed
         # res.groups.category_id), so it is uninstalled on vietuat. Every

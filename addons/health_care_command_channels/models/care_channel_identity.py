@@ -40,6 +40,9 @@ class CareChannelIdentity(models.Model):
     company_id = fields.Many2one(
         related='connection_id.company_id', store=True, index=True,
         readonly=True)
+    catchment_province_id = fields.Many2one(
+        related='connection_id.catchment_province_id', store=True, index=True,
+        readonly=True, string='Catchment Area')
     external_id = fields.Char(
         required=True, index=True,
         help='wa_id / PSID / Telegram chat id / web-chat session uuid.')

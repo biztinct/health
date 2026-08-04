@@ -15,6 +15,12 @@ class RedInvoiceRequest(models.Model):
 
     name = fields.Char(default='Red Invoice Request', required=True)
     move_id = fields.Many2one('account.move', string='Invoice', ondelete='cascade')
+    # account.move already carries a stored catchment (health_invoicing/models/
+    # account_move.py:116), so the red-invoice request just follows its invoice.
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province', string='Catchment Area',
+        related='move_id.catchment_province_id', store=True, index=True,
+        readonly=True)
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
     state = fields.Selection([
         ('pending', 'Pending'),

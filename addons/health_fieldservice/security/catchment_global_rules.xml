@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        GLOBAL catchment rules — the ones that cannot be OR-ed away.
+
+        Odoo ORs together every group rule matching any group the user holds,
+        and ANDs the global ones on top. A per-group catchment rule is therefore
+        only as strong as the most permissive rule the user picks up from
+        anywhere else. Measured on vietuat before these existed, 17 models
+        leaked across areas for real staff accounts: the stock Sales rule
+        "All Leads" ([(1,'=',1)], group "User: All Documents") ORed the
+        catchment rule off crm.lead entirely, and a Hà Nội doctor could read
+        150 Ho Chi Minh City patients.
+
+        `groups` is left EMPTY on purpose — that is what makes a rule global.
+        The per-group rules elsewhere stay exactly as they are: they grant, and
+        these only ever narrow.
+
+        The domain reads `user.catchment_enforced` (health_catchment_scope/
+        models/res_users.py), which is False for owners and for anyone who is
+        not healthcare staff — portal patients, public and integration users
+        pass straight through, so nothing outside healthcare changes.
+
+        Records with NO area are visible to everyone. 292 of 296 leads and 37
+        of 96 employees carry none, and hiding them would take real work away
+        from people rather than protect anything. The property enforced is
+        "you never see ANOTHER area's records".
+
+        create/unlink are off: a create rule is checked after the row exists and
+        would block legitimate cross-area setup, and unlink is already denied by
+        the per-group rules.
+    -->
+
+    <record id="catchment_global_health_staff_assignment" model="ir.rule">
+        <field name="name">Catchment: health.staff.assignment is never cross-area</field>
+        <field name="model_id" ref="model_health_staff_assignment"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.catchment_enforced else ['|', ('catchment_province_id', '=', False), ('catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="catchment_global_health_staff_availability_matrix" model="ir.rule">
+        <field name="name">Catchment: health.staff.availability.matrix is never cross-area</field>
+        <field name="model_id" ref="model_health_staff_availability_matrix"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.catchment_enforced else ['|', ('catchment_province_id', '=', False), ('catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="catchment_global_hr_employee" model="ir.rule">
+        <field name="name">Catchment: hr.employee is never cross-area</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.catchment_enforced else ['|', ('staff_catchment_province_id', '=', False), ('staff_catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!--
+        hr.employee.public is NOT optional cover for the rule above.
+
+        Core hr routes a user who lacks ACL read on hr.employee to the public
+        model instead — hr_employee.py:1096 `search_fetch` and :1113 `fetch`
+        both swap in hr.employee.public and copy its values back. A rule on
+        hr.employee alone therefore scopes only HR officers, and every ordinary
+        nurse keeps reading employees through the public model. That is exactly
+        how this was first shipped, and the leak audit caught it: 16 Hà Nội
+        employees still visible to a Ho Chi Minh City nurse after the private
+        model was locked down.
+    -->
+    <record id="catchment_global_hr_employee_public" model="ir.rule">
+        <field name="name">Catchment: hr.employee.public is never cross-area</field>
+        <field name="model_id" ref="hr.model_hr_employee_public"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.catchment_enforced else ['|', ('staff_catchment_province_id', '=', False), ('staff_catchment_province_id', '=', user.catchment_province_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

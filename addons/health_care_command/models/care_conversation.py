@@ -155,6 +155,21 @@ class CareConversation(models.Model):
         default=lambda self: self.env.company,
     )
 
+    # Catchment area — what keeps a Hanoi operator out of a Ho Chi Minh City
+    # inbox. Stored so `_scope_domain` can filter on it in SQL rather than in
+    # Python, which matters: the workspace read_groups count over the whole
+    # open set, not the capped page.
+    #
+    # This spine derives the area from the contact, then the lead. The channels
+    # module overrides the compute to prefer the channel ACCOUNT the traffic
+    # arrived on (one Zalo OA per area), which is the real answer whenever
+    # there is one — see care_conversation_ext.py.
+    catchment_province_id = fields.Many2one(
+        "health.catchment.province", string="Catchment Area",
+        compute="_compute_catchment_province_id", store=True, index=True,
+        readonly=True,
+    )
+
     # ------------------------------------------------------------------
     # DB constraints
     # ------------------------------------------------------------------
@@ -188,6 +203,30 @@ class CareConversation(models.Model):
     # ------------------------------------------------------------------
     # Computes
     # ------------------------------------------------------------------
+    @api.depends(
+        "partner_id.catchment_province_id",
+        "partner_id.primary_facility_id.catchment_province_id",
+        "lead_id.catchment_province_id",
+    )
+    def _compute_catchment_province_id(self):
+        for rec in self:
+            rec.catchment_province_id = rec._catchment_from_anchors()
+
+    def _catchment_from_anchors(self):
+        """The area this conversation belongs to, best source first.
+
+        Split out from the compute so the channels module can call it as its
+        fallback without re-implementing the partner/lead walk. Uses the
+        partner's own helper (res_partner.py:224) so the facility fallback
+        stays in one place.
+        """
+        self.ensure_one()
+        if self.partner_id:
+            found = self.partner_id._get_health_catchment_province()
+            if found:
+                return found
+        return self.lead_id.catchment_province_id or False
+
     @api.depends(
         "partner_id", "partner_id.name",
         "lead_id", "lead_id.contact_name", "lead_id.partner_name", "lead_id.name",
@@ -530,8 +569,48 @@ class CareConversation(models.Model):
         return self.env.user.has_group(CRM_MANAGER_GROUP)
 
     @api.model
+    def _scope_domain(self):
+        """Company AND catchment area — the single seam every service method
+        goes through.
+
+        This has to live in the DOMAIN, not in a record rule. Every read in
+        this file runs `.sudo()` (the hooks fire as whatever user happened to
+        trigger them), and sudo bypasses ir.rule entirely — so a rule would
+        scope nothing here. Putting the term in `_scope_domain` scopes the
+        wall, the dock counts, the Leads bucket, `get_conversation_detail` and
+        every `action_*` guard at once, because they all build on this.
+
+        Owners see every area. Everyone else sees their own PLUS the
+        conversations that resolve to no area at all.
+
+        That last part is a deliberate departure from the fail-closed rule the
+        PHI models follow, and it is not laxity. An inbound chat from an
+        unknown number has no area until somebody links it to a contact — on
+        this deployment that is 167 of 170 live conversations. Hiding them
+        would not protect anything (nobody has claimed them, and their content
+        is a stranger's opening message, not a patient record); it would just
+        drop unrouted work into a hole where no operator can see it and no
+        operator can route it. A patient record always belongs to an area; an
+        unanswered "hello" does not yet.
+
+        The moment a conversation IS linked to a contact, lead or an
+        area-assigned channel account, it scopes properly.
+        """
+        domain = [("company_id", "in", self.env.companies.ids)]
+        user = self.env.user
+        if user._catchment_can_switch():
+            return domain
+        return domain + [
+            "|",
+            ("catchment_province_id", "=", False),
+            ("catchment_province_id", "=", user.catchment_province_id.id),
+        ]
+
+    @api.model
     def _company_domain(self):
-        return [("company_id", "in", self.env.companies.ids)]
+        """Back-compat alias. Kept because the name appears in review notes and
+        migration scripts; new code should call _scope_domain."""
+        return self._scope_domain()
 
     @staticmethod
     def _initials(name):
@@ -573,7 +652,7 @@ class CareConversation(models.Model):
                            view="attention"):
         self._ensure_access()
         uid = self.env.user.id
-        open_domain = self._company_domain() + [("status", "!=", "closed")]
+        open_domain = self._scope_domain() + [("status", "!=", "closed")]
 
         # attention-first surface (§2.3): the wall/list shows conversations with
         # REAL channel activity; dormant leads collapse behind the Leads bucket.
@@ -670,6 +749,16 @@ class CareConversation(models.Model):
                 "is_manager": self._is_manager(),
             },
             "company_id": self.env.company.id,
+            # Which area's inbox this is. False for an owner (who is looking at
+            # all of them) and for an account with no area — in the latter case
+            # the wall is empty and `catchment_empty` says why, so nobody reads
+            # a fail-closed board as "no work today".
+            "catchment": (
+                False if self.env.user._catchment_can_switch()
+                else self.env.user.catchment_province_id.name or False),
+            "catchment_empty": (
+                not self.env.user._catchment_can_switch()
+                and not self.env.user.catchment_province_id),
         }
 
     def _workspace_row(self):
@@ -760,7 +849,7 @@ class CareConversation(models.Model):
     @api.model
     def get_conversation_detail(self, conv_id):
         self._ensure_access()
-        rec = self.sudo().search(self._company_domain() + [("id", "=", conv_id)], limit=1)
+        rec = self.sudo().search(self._scope_domain() + [("id", "=", conv_id)], limit=1)
         if not rec:
             raise UserError(_("Conversation not found."))
         return {
@@ -1034,7 +1123,7 @@ class CareConversation(models.Model):
         self._ensure_access()
         uid = self.env.user.id
         rec = self.sudo().search(
-            self._company_domain() + [("id", "=", conv_id)], limit=1)
+            self._scope_domain() + [("id", "=", conv_id)], limit=1)
         if not rec:
             return {"claimed": False, "owner": False}
         # Airtight claim (review LOW-6): lock the row ONLY if it is still
@@ -1068,7 +1157,7 @@ class CareConversation(models.Model):
     @api.model
     def action_release(self, conv_id):
         self._ensure_access()
-        rec = self.sudo().search(self._company_domain() + [("id", "=", conv_id)], limit=1)
+        rec = self.sudo().search(self._scope_domain() + [("id", "=", conv_id)], limit=1)
         if not rec:
             raise UserError(_("Conversation not found."))
         if rec.owner_id.id != self.env.user.id and not self._is_manager():
@@ -1081,7 +1170,7 @@ class CareConversation(models.Model):
         self._ensure_access()
         if not self._is_manager():
             raise AccessError(_("Only a CRM manager can take over an owned conversation."))
-        rec = self.sudo().search(self._company_domain() + [("id", "=", conv_id)], limit=1)
+        rec = self.sudo().search(self._scope_domain() + [("id", "=", conv_id)], limit=1)
         if not rec:
             raise UserError(_("Conversation not found."))
         rec.write({"owner_id": self.env.user.id, "claimed_at": fields.Datetime.now()})
@@ -1094,7 +1183,7 @@ class CareConversation(models.Model):
         self._ensure_access()
         if status not in ("needs_reply", "junk_suspect", "closed"):
             raise UserError(_("Unsupported status."))
-        rec = self.sudo().search(self._company_domain() + [("id", "=", conv_id)], limit=1)
+        rec = self.sudo().search(self._scope_domain() + [("id", "=", conv_id)], limit=1)
         if not rec:
             raise UserError(_("Conversation not found."))
         rec.write({"status": status})
@@ -1112,7 +1201,7 @@ class CareConversation(models.Model):
         text = (text or "").strip()
         if not text:
             raise UserError(_("Message is empty."))
-        rec = self.sudo().search(self._company_domain() + [("id", "=", conv_id)], limit=1)
+        rec = self.sudo().search(self._scope_domain() + [("id", "=", conv_id)], limit=1)
         if not rec or not rec.zalo_conversation_id:
             raise UserError(_("This conversation has no Zalo channel."))
         msg = self.env["zalo.message"].sudo().create({
@@ -1157,7 +1246,7 @@ class CareConversation(models.Model):
         text = (text or "").strip()
         if not text:
             raise UserError(_("Message is empty."))
-        rec = self.sudo().search(self._company_domain() + [("id", "=", conv_id)], limit=1)
+        rec = self.sudo().search(self._scope_domain() + [("id", "=", conv_id)], limit=1)
         if not rec:
             raise UserError(_("Conversation not found."))
         model, rid = rec._mail_target()
@@ -1201,7 +1290,7 @@ class CareConversation(models.Model):
     # ------------------------------------------------------------------
     def _guarded(self, conv_id):
         self._ensure_access()
-        rec = self.sudo().search(self._company_domain() + [("id", "=", conv_id)], limit=1)
+        rec = self.sudo().search(self._scope_domain() + [("id", "=", conv_id)], limit=1)
         if not rec:
             raise UserError(_("Conversation not found."))
         return rec
@@ -1362,7 +1451,7 @@ class CareConversation(models.Model):
     def resolve_incoming_call(self, payload):
         self._ensure_access()
         payload = payload or {}
-        base = self._company_domain()
+        base = self._scope_domain()
         rec = self.browse()
         if payload.get("partner_id"):
             rec = self.sudo().search(

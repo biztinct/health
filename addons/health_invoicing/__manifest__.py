@@ -81,6 +81,7 @@
         # Security
         'security/health_invoicing_security.xml',
         'security/ir.model.access.csv',
+        'security/catchment_global_rules.xml',
         
         # Configuration Data
         'data/healthcare_chart_of_accounts.xml',

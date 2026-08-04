@@ -11,6 +11,33 @@
             </div>
         </div>
 
+        <!-- Catchment scope. A label for staff, a picker for owners — the
+             server decides which by never sending options to anyone else. -->
+        <div class="cms-catchment" t-if="state.loaded">
+            <div class="cms-catchment-label">Catchment Area</div>
+            <t t-if="state.catchment.can_switch">
+                <select class="cms-catchment-select"
+                        t-on-change="onCatchmentChange">
+                    <option value="" t-att-selected="isCatchmentPicked('') or undefined">
+                        My area (<t t-esc="state.catchment.current_name"/>)
+                    </option>
+                    <t t-foreach="state.catchment.options" t-as="opt" t-key="opt.id">
+                        <option t-att-value="opt.id"
+                                t-att-selected="isCatchmentPicked(opt.id) or undefined"
+                                t-esc="opt.name"/>
+                    </t>
+                    <option value="all" t-att-selected="isCatchmentPicked('all') or undefined">
+                        All areas
+                    </option>
+                </select>
+            </t>
+            <t t-else="">
+                <div class="cms-catchment-pill">
+                    <i class="fa fa-map-marker"/> <t t-esc="state.catchment.current_name"/>
+                </div>
+            </t>
+        </div>
+
         <nav class="ops-sidebar-nav" t-if="state.loaded">
             <t t-foreach="state.sections" t-as="section" t-key="section.id">
                 <div class="cms-section-header"

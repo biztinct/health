@@ -33,6 +33,10 @@ class HrEmployeePublic(models.Model):
     # Facility Assignment
     healthcare_facility_id = fields.Many2one('health.facility', string='Healthcare Facility', readonly=True)
     staff_catchment_province_id = fields.Many2one('health.catchment.province', string='Staff Catchment Province', readonly=True)
+
+    # Same non-standard field name as hr.employee, same reason. Keeps the
+    # injected facet pointing at a field that exists here too.
+    _catchment_field = 'staff_catchment_province_id'
     
     # Availability Settings
     available_for_clinic = fields.Boolean('Available for Clinic Visits', readonly=True)

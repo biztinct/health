@@ -60,3 +60,69 @@
         &:hover { opacity: 1; }
     }
 }
+
+/* Catchment scope pill / picker.
+
+   Flat single colours only — no gradients. The select is a plain native
+   control on purpose: it must not be wrapped in anything that clips or
+   over-paints its popup (the repo-wide autocomplete containment trap). */
+.cms-sidebar {
+    .cms-catchment {
+        padding: 10px 16px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    .cms-catchment-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        font-weight: 600;
+        opacity: 0.45;
+        color: white;
+        margin-bottom: 6px;
+    }
+
+    .cms-catchment-pill {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 10px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.10);
+        color: white;
+        font-size: 12.5px;
+        font-weight: 600;
+        line-height: 1.2;
+
+        .fa {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+    }
+
+    .cms-catchment-select {
+        width: 100%;
+        padding: 7px 10px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.10);
+        color: white;
+        font-size: 12.5px;
+        font-weight: 600;
+        line-height: 1.2;
+        cursor: pointer;
+        appearance: none;
+
+        &:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.55);
+        }
+
+        /* The popup renders in the OS layer, which does not inherit the
+           sidebar's dark background — force readable option text. */
+        option {
+            color: #0D356B;
+            background: white;
+        }
+    }
+}

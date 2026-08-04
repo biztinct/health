@@ -20,6 +20,13 @@ class HealthClinicalNote(models.Model):
         default=lambda self: self.env.uid,
         readonly=True,
     )
+    # Catchment area, taken from the visit the note belongs to. Stored so the
+    # Unsigned Notes list can be filtered and record-ruled on it; a note has no
+    # area of its own, it inherits the visit's.
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province', string='Catchment Area',
+        related='order_id.catchment_province_id', store=True, index=True,
+        readonly=True)
     author_name = fields.Char(related='author_id.name', store=True)
     author_role = fields.Char(
         string='Role',

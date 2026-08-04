@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        The data-quality surface that pays for the fail-closed choice.
+
+        A scoped account with no catchment area sees nothing, by design. That is
+        only defensible if somebody can find those accounts, so here they are,
+        next to the Catchment Provinces menu they belong beside.
+    -->
+    <record id="view_users_search_catchment" model="ir.ui.view">
+        <field name="name">res.users.search.catchment</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_search"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <separator/>
+                <filter name="no_catchment" string="No Catchment Area"
+                        domain="[('catchment_province_id', '=', False)]"/>
+                <filter name="group_catchment" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_users_missing_catchment" model="ir.actions.act_window">
+        <field name="name">Staff Without a Catchment Area</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('share', '=', False)]</field>
+        <field name="context">{'search_default_no_catchment': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Every staff account has a catchment area</p>
+            <p>
+                Staff listed here would see empty lists everywhere, because
+                record access is scoped to the user's catchment area and theirs
+                is blank. Set one on each account.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_users_missing_catchment"
+              name="Staff Without a Catchment Area"
+              parent="health_base.menu_healthcare_lookups"
+              action="action_users_missing_catchment"
+              groups="health_base.group_healthcare_admin"
+              sequence="6"/>
+
+</odoo>

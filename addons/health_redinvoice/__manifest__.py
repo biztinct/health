@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Red Invoice Integration',
-    'version': '19.0.1.0.3',
+    'version': '19.0.1.0.5',
     'summary': 'Vietnam Viettel SInvoice (Red Invoice) integration for healthcare invoicing',
     'category': 'Accounting',
     'author': 'I Am Dream Catcher Ltd',
@@ -13,7 +13,9 @@
     ],
     'data': [
         'security/redinvoice_security.xml',
+        'security/catchment_rules.xml',
         'security/ir.model.access.csv',
+        'security/catchment_global_rules.xml',
         'views/redinvoice_request_views.xml',
         'views/account_move_views.xml',
         'views/fieldservice_order_views.xml',

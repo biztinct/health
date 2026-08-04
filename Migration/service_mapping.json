@@ -1,0 +1,1782 @@
+{
+ "groups": [
+  {
+   "vi": "Khám & Điều trị",
+   "en": "Examination & Treatment",
+   "service_type": "DV Bs",
+   "category": "consultation",
+   "interest": "consultation",
+   "items": 6
+  },
+  {
+   "vi": "Ảnh y tế & Thủ thuật",
+   "en": "Imaging & Procedures",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "imaging_procedures",
+   "items": 8
+  },
+  {
+   "vi": "Chăm sóc VT",
+   "en": "Wound Care",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "wound_care",
+   "items": 19
+  },
+  {
+   "vi": "Truyền & Tiêm",
+   "en": "IV & Injections",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "iv_infusion",
+   "items": 8
+  },
+  {
+   "vi": "Sonde",
+   "en": "Tubes",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "catheter",
+   "items": 9
+  },
+  {
+   "vi": "Hỗ trợ hô hấp",
+   "en": "Breathing Assistance",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "sputum_care",
+   "items": 4
+  },
+  {
+   "vi": "Thụt tháo",
+   "en": "Enema",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "enema",
+   "items": 4
+  },
+  {
+   "vi": "CSGN",
+   "en": "Palliative Care",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "palliative",
+   "items": 7
+  },
+  {
+   "vi": "CSCN",
+   "en": "ADL",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "personal_care",
+   "items": 8
+  },
+  {
+   "vi": "Mẫu bệnh phẩm",
+   "en": "Specimen Sample",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "lab_test",
+   "items": 4
+  },
+  {
+   "vi": "Điều dưỡng Khác",
+   "en": "Nursing Other",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "nursing_other",
+   "items": 2
+  },
+  {
+   "vi": "Dịch vụ yêu cầu khác",
+   "en": "Other Requested Service",
+   "service_type": "DV ĐD",
+   "category": "nursing_care",
+   "interest": "other",
+   "items": 2
+  }
+ ],
+ "segments": [
+  {
+   "text": "Thay băng, Cắt chỉ VT < 15 cm",
+   "norm": "thay băng, cắt chỉ vt<15 cm",
+   "bookings": 131,
+   "kind": "SERVICE",
+   "item_code": "đd_020",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Thay băng vết thương < 5cm/ vết thương nội soi",
+   "norm": "thay băng vết thương<5cm/ vết thương nội soi",
+   "bookings": 114,
+   "kind": "SERVICE",
+   "item_code": "đd_020",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Phí dịch vụ điều dưỡng ngoài giờ",
+   "norm": "phí dịch vụ điều dưỡng ngoài giờ",
+   "bookings": 110,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Phụ phí đi lại (khoảng cách từ 5km~8km)",
+   "norm": "phụ phí đi lại (khoảng cách từ 5km~8km)",
+   "bookings": 91,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Phụ phí khoảng cách >10Km",
+   "norm": "phụ phí khoảng cách>10km",
+   "bookings": 81,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Truyền theo thời gian",
+   "norm": "truyền theo thời gian",
+   "bookings": 60,
+   "kind": "SERVICE",
+   "item_code": "đd_055",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Chăm sóc cá nhân 10h",
+   "norm": "chăm sóc cá nhân 10h",
+   "bookings": 52,
+   "kind": "SERVICE",
+   "item_code": "đd_250",
+   "service_type": "DV ĐD",
+   "group_vi": "CSCN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Truyền theo thời gian ≥ 3h30 phút",
+   "norm": "truyền theo thời gian ≥ 3h30 phút",
+   "bookings": 50,
+   "kind": "SERVICE",
+   "item_code": "đd_065",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Chăm sóc giảm nhẹ ban ngày",
+   "norm": "chăm sóc giảm nhẹ ban ngày",
+   "bookings": 50,
+   "kind": "SERVICE",
+   "item_code": "đd_200",
+   "service_type": "DV ĐD",
+   "group_vi": "CSGN",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Tiêm bắp/tiêm trong da/tiêm dưới da",
+   "norm": "tiêm bắp/tiêm trong da/tiêm dưới da",
+   "bookings": 49,
+   "kind": "SERVICE",
+   "item_code": "đd_060",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Chăm sóc giảm nhẹ ban đêm",
+   "norm": "chăm sóc giảm nhẹ ban đêm",
+   "bookings": 47,
+   "kind": "SERVICE",
+   "item_code": "đd_210",
+   "service_type": "DV ĐD",
+   "group_vi": "CSGN",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Thay băng vết thương <5cm/ vết thương nội soi thứ 2 trở đi",
+   "norm": "thay băng vết thương<5cm/ vết thương nội soi thứ 2 trở đi",
+   "bookings": 46,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Tiêm bắp/ Tiêm trong da/ Tiêm dưới da",
+   "norm": "tiêm bắp/ tiêm trong da/ tiêm dưới da",
+   "bookings": 45,
+   "kind": "SERVICE",
+   "item_code": "đd_060",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Phụ phí đi lại (khoảng cách từ 8km trở đi)",
+   "norm": "phụ phí đi lại (khoảng cách từ 8km trở đi)",
+   "bookings": 34,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Phụ phí ngoài giờ của điều dưỡng",
+   "norm": "phụ phí ngoài giờ của điều dưỡng",
+   "bookings": 32,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Chăm sóc cá nhân 3h",
+   "norm": "chăm sóc cá nhân 3h",
+   "bookings": 31,
+   "kind": "SERVICE",
+   "item_code": "đd_230",
+   "service_type": "DV ĐD",
+   "group_vi": "CSCN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Thay băng, cắt chỉ VT nhiễm trùng < 15cm",
+   "norm": "thay băng, cắt chỉ vt nhiễm trùng<15cm",
+   "bookings": 31,
+   "kind": "SERVICE",
+   "item_code": "đd_020",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Truyền theo thời gian 0.5 giờ",
+   "norm": "truyền theo thời gian 0.5 giờ",
+   "bookings": 31,
+   "kind": "SERVICE",
+   "item_code": "đd_055",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Khám Nội khoa (khoảng cách nhỏ hơn 10km)",
+   "norm": "khám nội khoa (khoảng cách nhỏ hơn 10km)",
+   "bookings": 31,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Bác sĩ khám Nội khoa < 10km",
+   "norm": "bác sĩ khám nội khoa<10km",
+   "bookings": 30,
+   "kind": "SERVICE",
+   "item_code": "bs_020",
+   "service_type": "DV Bs",
+   "group_vi": "Khám & Điều trị",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Tiêm tĩnh mạch qua vein",
+   "norm": "tiêm tĩnh mạch qua vein",
+   "bookings": 29,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Truyền theo thời gian < 3h30 phút",
+   "norm": "truyền theo thời gian<3h30 phút",
+   "bookings": 28,
+   "kind": "SERVICE",
+   "item_code": "đd_060",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Chăm sóc giảm nhẹ 6h",
+   "norm": "chăm sóc giảm nhẹ 6h",
+   "bookings": 26,
+   "kind": "SERVICE",
+   "item_code": "đd_170",
+   "service_type": "DV ĐD",
+   "group_vi": "CSGN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Truyền theo thời gian < 3h30 phút từ chai thứ 2 trở đi",
+   "norm": "truyền theo thời gian<3h30 phút từ chai thứ 2 trở đi",
+   "bookings": 22,
+   "kind": "SERVICE",
+   "item_code": "đd_060",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Truyền theo thời gian nhỏ hơn 2 giờ",
+   "norm": "truyền theo thời gian nhỏ hơn 2 giờ",
+   "bookings": 21,
+   "kind": "SERVICE",
+   "item_code": "đd_055",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Chăm sóc cá nhân 5h",
+   "norm": "chăm sóc cá nhân 5h",
+   "bookings": 20,
+   "kind": "SERVICE",
+   "item_code": "đd_240",
+   "service_type": "DV ĐD",
+   "group_vi": "CSCN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Thay băng cắt chỉ Từ vết thương < 15cm thứ 2 trở đi. Tối đa thu thêm 150,000VND",
+   "norm": "thay băng cắt chỉ từ vết thương<15cm thứ 2 trở đi. tối đa thu thêm 150,000vnd",
+   "bookings": 20,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Thay băng vết thương từ 5cm ~ 15cm",
+   "norm": "thay băng vết thương từ 5cm ~ 15cm",
+   "bookings": 19,
+   "kind": "SERVICE",
+   "item_code": "đd_022",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Tiêm bắp/ Tiêm trong da/ Tiêm dưới da/ Tiêm tĩnh mạch mũi thứ 2",
+   "norm": "tiêm bắp/ tiêm trong da/ tiêm dưới da/ tiêm tĩnh mạch mũi thứ 2",
+   "bookings": 17,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Creatinine",
+   "norm": "creatinine",
+   "bookings": 17,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Thay băng, cắt chỉ VT 15-30cm",
+   "norm": "thay băng, cắt chỉ vt 15-30cm",
+   "bookings": 16,
+   "kind": "SERVICE",
+   "item_code": "đd_024",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Bác sĩ khám Nội khoa 10km ≤ x <20km",
+   "norm": "bác sĩ khám nội khoa 10km ≤ x<20km",
+   "bookings": 15,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV Bs",
+   "group_vi": "Khám & Điều trị",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Thay băng, cắt chỉ VT nhiễm trùng < 15cm, vết thương loét tỳ đè",
+   "norm": "thay băng, cắt chỉ vt nhiễm trùng<15cm, vết thương loét tỳ đè",
+   "bookings": 14,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Thêm thuốc tĩnh mạch khi truyền",
+   "norm": "thêm thuốc tĩnh mạch khi truyền",
+   "bookings": 14,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Đặt/Thay/Rút Sonde tiểu lưu",
+   "norm": "đặt/thay/rút sonde tiểu lưu",
+   "bookings": 13,
+   "kind": "SERVICE",
+   "item_code": "đd_080",
+   "service_type": "DV ĐD",
+   "group_vi": "Sonde",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Truyền dịch 0.5h",
+   "norm": "truyền dịch 0.5h",
+   "bookings": 13,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Phí dịch vụ điều dưỡng 1h",
+   "norm": "phí dịch vụ điều dưỡng 1h",
+   "bookings": 13,
+   "kind": "SERVICE",
+   "item_code": "đd_310",
+   "service_type": "DV ĐD",
+   "group_vi": "Điều dưỡng Khác",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Phí dịch vụ điều dưỡng phát sinh 0.5h",
+   "norm": "phí dịch vụ điều dưỡng phát sinh 0.5h",
+   "bookings": 13,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Chăm sóc giảm nhẹ 8h",
+   "norm": "chăm sóc giảm nhẹ 8h",
+   "bookings": 13,
+   "kind": "SERVICE",
+   "item_code": "đd_180",
+   "service_type": "DV ĐD",
+   "group_vi": "CSGN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Đặt/Thay Sonde dạ dày qua mũi",
+   "norm": "đặt/thay sonde dạ dày qua mũi",
+   "bookings": 11,
+   "kind": "SERVICE",
+   "item_code": "đd_100",
+   "service_type": "DV ĐD",
+   "group_vi": "Sonde",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Chăm sóc cá nhân 1h",
+   "norm": "chăm sóc cá nhân 1h",
+   "bookings": 10,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Phụ phí cuối tuần",
+   "norm": "phụ phí cuối tuần",
+   "bookings": 9,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Ure",
+   "norm": "ure",
+   "bookings": 9,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Điện giải đồ",
+   "norm": "điện giải đồ",
+   "bookings": 9,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Tổng phân tích máu 21 chỉ số",
+   "norm": "tổng phân tích máu 21 chỉ số",
+   "bookings": 9,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Chăm sóc giảm nhẹ 12h ca ngày",
+   "norm": "chăm sóc giảm nhẹ 12h ca ngày",
+   "bookings": 9,
+   "kind": "SERVICE",
+   "item_code": "đd_200",
+   "service_type": "DV ĐD",
+   "group_vi": "CSGN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Phí dịch vụ theo yêu cầu đối với dịch vụ khác",
+   "norm": "phí dịch vụ theo yêu cầu đối với dịch vụ khác",
+   "bookings": 9,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Dịch vụ yêu cầu khác",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Phí lấy mẫu xét nghiệm (máu, nước tiểu, phân…)",
+   "norm": "phí lấy mẫu xét nghiệm (máu, nước tiểu, phân…)",
+   "bookings": 8,
+   "kind": "SERVICE",
+   "item_code": "đd_210",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "AST (GOT)",
+   "norm": "ast (got)",
+   "bookings": 8,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "ALT (GPT)",
+   "norm": "alt (gpt)",
+   "bookings": 8,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Đặt/Thay Sonde tiểu lưu",
+   "norm": "đặt/thay sonde tiểu lưu",
+   "bookings": 8,
+   "kind": "SERVICE",
+   "item_code": "đd_080",
+   "service_type": "DV ĐD",
+   "group_vi": "Sonde",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Phí Lấy Mẫu Tại Nhà <10KM",
+   "norm": "phí lấy mẫu tại nhà<10km",
+   "bookings": 8,
+   "kind": "SERVICE",
+   "item_code": "đd_210",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Công thức máu (Huyết đồ)",
+   "norm": "công thức máu (huyết đồ)",
+   "bookings": 8,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Cắt chỉ vết thương < 5cm/ vết thương nội soi",
+   "norm": "cắt chỉ vết thương<5cm/ vết thương nội soi",
+   "bookings": 7,
+   "kind": "SERVICE",
+   "item_code": "đd_020",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Phí Bác sĩ ngoài giờ",
+   "norm": "phí bác sĩ ngoài giờ",
+   "bookings": 6,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "CRP định lượng",
+   "norm": "crp định lượng",
+   "bookings": 6,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Cholesterol",
+   "norm": "cholesterol",
+   "bookings": 6,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Na, K, Cl (Máu)",
+   "norm": "na, k, cl (máu)",
+   "bookings": 6,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Albumin",
+   "norm": "albumin",
+   "bookings": 6,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Điều dưỡng hành trình",
+   "norm": "điều dưỡng hành trình",
+   "bookings": 5,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Điều dưỡng Khác",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Triglyceride",
+   "norm": "triglyceride",
+   "bookings": 5,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Hút đờm ở hầu họng",
+   "norm": "hút đờm ở hầu họng",
+   "bookings": 5,
+   "kind": "SERVICE",
+   "item_code": "đd_130",
+   "service_type": "DV ĐD",
+   "group_vi": "Hỗ trợ hô hấp",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "CRP",
+   "norm": "crp",
+   "bookings": 5,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "ASAT (SGOT)",
+   "norm": "asat (sgot)",
+   "bookings": 5,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "ALAT (SGPT)",
+   "norm": "alat (sgpt)",
+   "bookings": 5,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Đường huyết (đói)",
+   "norm": "đường huyết (đói)",
+   "bookings": 5,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Protein toàn phần",
+   "norm": "protein toàn phần",
+   "bookings": 5,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Chăm sóc cá nhân ban ngày",
+   "norm": "chăm sóc cá nhân ban ngày",
+   "bookings": 5,
+   "kind": "SERVICE",
+   "item_code": "đd_260",
+   "service_type": "DV ĐD",
+   "group_vi": "CSCN",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Đặt/Thay Sonde dạ dày",
+   "norm": "đặt/thay sonde dạ dày",
+   "bookings": 4,
+   "kind": "SERVICE",
+   "item_code": "đd_100",
+   "service_type": "DV ĐD",
+   "group_vi": "Sonde",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Thay băng vết thương từ 15cm ~ 30cm",
+   "norm": "thay băng vết thương từ 15cm ~ 30cm",
+   "bookings": 4,
+   "kind": "SERVICE",
+   "item_code": "đd_024",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Phụ phí khoảng cách với dịch vụ tiêm >10Km",
+   "norm": "phụ phí khoảng cách với dịch vụ tiêm>10km",
+   "bookings": 4,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Cắt chỉ vết thương từ 15cm~30cm",
+   "norm": "cắt chỉ vết thương từ 15cm~30cm",
+   "bookings": 4,
+   "kind": "SERVICE",
+   "item_code": "đd_034",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Phí dịch vụ điều dưỡng",
+   "norm": "phí dịch vụ điều dưỡng",
+   "bookings": 4,
+   "kind": "SERVICE",
+   "item_code": "đd_310",
+   "service_type": "DV ĐD",
+   "group_vi": "Điều dưỡng Khác",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Glucose",
+   "norm": "glucose",
+   "bookings": 4,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Urea",
+   "norm": "urea",
+   "bookings": 4,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "CK - MB",
+   "norm": "ck - mb",
+   "bookings": 4,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Hút đờm hầu họng",
+   "norm": "hút đờm hầu họng",
+   "bookings": 4,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Thụt tháo bằng thuốc",
+   "norm": "thụt tháo bằng thuốc",
+   "bookings": 3,
+   "kind": "SERVICE",
+   "item_code": "đd_150",
+   "service_type": "DV ĐD",
+   "group_vi": "Thụt tháo",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Acid uric",
+   "norm": "acid uric",
+   "bookings": 3,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Bác sĩ Khám trực truyến",
+   "norm": "bác sĩ khám trực truyến",
+   "bookings": 3,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Sinh hóa nước tiểu",
+   "norm": "sinh hóa nước tiểu",
+   "bookings": 3,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Procalcitonin",
+   "norm": "procalcitonin",
+   "bookings": 3,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Phí Lấy Mẫu Tại Nhà >=10KM",
+   "norm": "phí lấy mẫu tại nhà>=10km",
+   "bookings": 3,
+   "kind": "SERVICE",
+   "item_code": "đd_210",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Rửa bàng quang, rửa buồng truyền đi khi cùng dịch vụ khác",
+   "norm": "rửa bàng quang, rửa buồng truyền đi khi cùng dịch vụ khác",
+   "bookings": 3,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Dịch vụ yêu cầu khác",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "LDL - Cholesterol",
+   "norm": "ldl - cholesterol",
+   "bookings": 3,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Albumine",
+   "norm": "albumine",
+   "bookings": 3,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "HbA1C/ Glycosylated Hb",
+   "norm": "hba1c/ glycosylated hb",
+   "bookings": 3,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "CK",
+   "norm": "ck",
+   "bookings": 3,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Phun khí dung đi kèm dịch vụ khác",
+   "norm": "phun khí dung đi kèm dịch vụ khác",
+   "bookings": 3,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Dịch vụ yêu cầu khác",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "NT-ProBNP",
+   "norm": "nt-probnp",
+   "bookings": 3,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Phí bác sĩ ngoài giờ",
+   "norm": "phí bác sĩ ngoài giờ",
+   "bookings": 3,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "HbA1c",
+   "norm": "hba1c",
+   "bookings": 3,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Rửa bàng quang, rửa buồng truyền",
+   "norm": "rửa bàng quang, rửa buồng truyền",
+   "bookings": 3,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Thay băng, Cắt chỉ VT nhiễm trùng từ 15- 30 cm",
+   "norm": "thay băng, cắt chỉ vt nhiễm trùng từ 15- 30 cm",
+   "bookings": 3,
+   "kind": "SERVICE",
+   "item_code": "đd_020",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "GGT",
+   "norm": "ggt",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Cắt chỉ vết thương <5cm/vết thương nội soi thứ 2 trở đi",
+   "norm": "cắt chỉ vết thương<5cm/vết thương nội soi thứ 2 trở đi",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Chăm sóc giảm nhẹ 24h ca ngày_HN",
+   "norm": "chăm sóc giảm nhẹ 24h ca ngày_hn",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "đd_200",
+   "service_type": "DV ĐD",
+   "group_vi": "CSGN",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Chăm sóc giảm nhẹ 24h ca đêm_HN",
+   "norm": "chăm sóc giảm nhẹ 24h ca đêm_hn",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "đd_210",
+   "service_type": "DV ĐD",
+   "group_vi": "CSGN",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Thay băng, cắt chỉ VT nhiễm trùng < 15cm thứ 2 trở đi. Tối đa thu thêm 300.000đ",
+   "norm": "thay băng, cắt chỉ vt nhiễm trùng<15cm thứ 2 trở đi. tối đa thu thêm 300.000đ",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "(Tự Động) Cặn Lắng + Cấy + Kháng Sinh Test Đồ [Nước Tiểu]",
+   "norm": "(tự động) cặn lắng + cấy + kháng sinh test đồ [nước tiểu]",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Calcium ion hóa",
+   "norm": "calcium ion hóa",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Chăm sóc giảm nhẹ 12h ca đêm",
+   "norm": "chăm sóc giảm nhẹ 12h ca đêm",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "đd_210",
+   "service_type": "DV ĐD",
+   "group_vi": "CSGN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Acid Uric",
+   "norm": "acid uric",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "(Tự Động) Cấy + Kháng Sinh Đồ [Mủ/Áp- Test xê/Tinh Trùng/Dịch]",
+   "norm": "(tự động) cấy + kháng sinh đồ [mủ/áp- test xê/tinh trùng/dịch]",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Sốt Dengue NS1",
+   "norm": "sốt dengue ns1",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Troponine I hs",
+   "norm": "troponine i hs",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Protein/ Máu",
+   "norm": "protein/ máu",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "HDL - Cholesterol",
+   "norm": "hdl - cholesterol",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Test thử đường huyết",
+   "norm": "test thử đường huyết",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Điện tâm đồ",
+   "norm": "điện tâm đồ",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "đd_230",
+   "service_type": "DV ĐD",
+   "group_vi": "Ảnh y tế & Thủ thuật",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Phí dịch vụ theo yêu cầu đối với dịch vụ khám hoặc gói chăm sóc",
+   "norm": "phí dịch vụ theo yêu cầu đối với dịch vụ khám hoặc gói chăm sóc",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Dịch vụ yêu cầu khác",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Calci ion",
+   "norm": "calci ion",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Calci toàn phần",
+   "norm": "calci toàn phần",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Khám nội khoa tại phòng khám",
+   "norm": "khám nội khoa tại phòng khám",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "bs_020",
+   "service_type": "DV Bs",
+   "group_vi": "Khám & Điều trị",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Chăm sóc cá nhân ban đêm",
+   "norm": "chăm sóc cá nhân ban đêm",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "đd_270",
+   "service_type": "DV ĐD",
+   "group_vi": "CSCN",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "TSH",
+   "norm": "tsh",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Chăm sóc cá nhân 12h ca đêm",
+   "norm": "chăm sóc cá nhân 12h ca đêm",
+   "bookings": 2,
+   "kind": "SERVICE",
+   "item_code": "đd_270",
+   "service_type": "DV ĐD",
+   "group_vi": "CSCN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Bộ mỡ(Cholesterol TP, HLD Cholesterol, LDL cholesterol, Trilycerides)",
+   "norm": "bộ mỡ(cholesterol tp, hld cholesterol, ldl cholesterol, trilycerides)",
+   "bookings": 2,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Thay băng, cắt chỉ vết thương 15-30cm thứ 2 trở đi. Tối đa thu thêm 300.000đ",
+   "norm": "thay băng, cắt chỉ vết thương 15-30cm thứ 2 trở đi. tối đa thu thêm 300.000đ",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Rút ống sonde tiểu lưu",
+   "norm": "rút ống sonde tiểu lưu",
+   "bookings": 1,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Thụt tháo hậu môn bằng thuốc",
+   "norm": "thụt tháo hậu môn bằng thuốc",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Cắt chỉ vết thương từ 15cm~30cm thứ 2 trở đi",
+   "norm": "cắt chỉ vết thương từ 15cm~30cm thứ 2 trở đi",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "đd_034",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Nhuộm Soi Gram",
+   "norm": "nhuộm soi gram",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Thay băng, cắt chỉ VT nhiễm trùng từ 15 - 30 cm, vết thương loét tỳ đè",
+   "norm": "thay băng, cắt chỉ vt nhiễm trùng từ 15 - 30 cm, vết thương loét tỳ đè",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Thay băng vết thương từ 15cm~30cm thứ 2 trở đi",
+   "norm": "thay băng vết thương từ 15cm~30cm thứ 2 trở đi",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "đd_024",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Procalcitonin (PCT)",
+   "norm": "procalcitonin (pct)",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Sốt Dengue (IgG+IgM)",
+   "norm": "sốt dengue (igg+igm)",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Acid Lactic (Lactate)",
+   "norm": "acid lactic (lactate)",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "eGFR",
+   "norm": "egfr",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "CKMB",
+   "norm": "ckmb",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "D - Dimères",
+   "norm": "d - dimères",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "(Tự Động) Cấy + Kháng Sinh Đồ [Phân]",
+   "norm": "(tự động) cấy + kháng sinh đồ [phân]",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "(Tự Động) Nhuộm Soi Trực Tiếp + Cấy Test Máu +\nKháng Sinh Đồ",
+   "norm": "(tự động) nhuộm soi trực tiếp + cấy test máu + kháng sinh đồ",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Siêu âm ổ bụng",
+   "norm": "siêu âm ổ bụng",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "bs_040",
+   "service_type": "DV Bs",
+   "group_vi": "Ảnh y tế & Thủ thuật",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Siêu âm Tuyến vú",
+   "norm": "siêu âm tuyến vú",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Ảnh y tế & Thủ thuật",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Tổng phân tích nước tiểu",
+   "norm": "tổng phân tích nước tiểu",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Phí điều dưỡng ngoài giờ. Tối đa thu thêm 100.000đ",
+   "norm": "phí điều dưỡng ngoài giờ. tối đa thu thêm 100.000đ",
+   "bookings": 1,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "CRP - hs",
+   "norm": "crp - hs",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Pro BNP",
+   "norm": "pro bnp",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Khám Nội khoa (khoảng cách từ 10km đến 20km)",
+   "norm": "khám nội khoa (khoảng cách từ 10km đến 20km)",
+   "bookings": 1,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Troponin T",
+   "norm": "troponin t",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Bác sĩ khám Nội tại phòng khám",
+   "norm": "bác sĩ khám nội tại phòng khám",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV Bs",
+   "group_vi": "Khám & Điều trị",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Khám Nội khoa (khoảng cách từ 20km đến 30km)",
+   "norm": "khám nội khoa (khoảng cách từ 20km đến 30km)",
+   "bookings": 1,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Thụt tháo hậu môn (bằng thuốc)",
+   "norm": "thụt tháo hậu môn (bằng thuốc)",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Truyền & Tiêm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Chăm sóc cá nhân 12h ca ngày",
+   "norm": "chăm sóc cá nhân 12h ca ngày",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "đd_260",
+   "service_type": "DV ĐD",
+   "group_vi": "CSCN",
+   "confidence": "HIGH"
+  },
+  {
+   "text": "Thay băng, cắt chỉ VT 5 - 15 cm",
+   "norm": "thay băng, cắt chỉ vt 5 - 15 cm",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "đd_022",
+   "service_type": "DV ĐD",
+   "group_vi": "Chăm sóc VT",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Phí dịch vụ theo yêu cầu đối với dịch vụ tiêm",
+   "norm": "phí dịch vụ theo yêu cầu đối với dịch vụ tiêm",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Dịch vụ yêu cầu khác",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "FT3",
+   "norm": "ft3",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "FT4",
+   "norm": "ft4",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Phụ phí ngoài giờ đặc biệt của điều dưỡng",
+   "norm": "phụ phí ngoài giờ đặc biệt của điều dưỡng",
+   "bookings": 1,
+   "kind": "ADJUSTMENT",
+   "item_code": "",
+   "service_type": "",
+   "group_vi": "",
+   "confidence": "N/A — surcharge"
+  },
+  {
+   "text": "Calcium",
+   "norm": "calcium",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Gamma GT",
+   "norm": "gamma gt",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Albumine&Protein, Tỉ lệ A/G",
+   "norm": "albumine&protein, tỉ lệ a/g",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Siêu Âm Doppler Màu Bụng Tổng Quát",
+   "norm": "siêu âm doppler màu bụng tổng quát",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "GROUP ONLY"
+  },
+  {
+   "text": "Gnathostoma spinigerum IgG (Giun đầu gai)",
+   "norm": "gnathostoma spinigerum igg (giun đầu gai)",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Toxocara IgG (Giun đũa chó,mèo)",
+   "norm": "toxocara igg (giun đũa chó,mèo)",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Strongyloides IgG (Giun lươn)",
+   "norm": "strongyloides igg (giun lươn)",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Khám trực tuyến",
+   "norm": "khám trực tuyến",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "bs_030",
+   "service_type": "DV Bs",
+   "group_vi": "Khám & Điều trị",
+   "confidence": "MEDIUM"
+  },
+  {
+   "text": "Sắt huyết thanh",
+   "norm": "sắt huyết thanh",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Transferin",
+   "norm": "transferin",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Ferritin",
+   "norm": "ferritin",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "PT (TP/ TQ)",
+   "norm": "pt (tp/ tq)",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "APTT (TCK)",
+   "norm": "aptt (tck)",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Magnesium",
+   "norm": "magnesium",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Bilirubin Toàn phần, Trực tiếp, Gián tiếp",
+   "norm": "bilirubin toàn phần, trực tiếp, gián tiếp",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Cortisol",
+   "norm": "cortisol",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Free T4",
+   "norm": "free t4",
+   "bookings": 1,
+   "kind": "LAB TEST",
+   "item_code": "",
+   "service_type": "DV ĐD",
+   "group_vi": "Mẫu bệnh phẩm",
+   "confidence": "LAB — not in price list"
+  },
+  {
+   "text": "Phun khí dung",
+   "norm": "phun khí dung",
+   "bookings": 1,
+   "kind": "SERVICE",
+   "item_code": "đd_140",
+   "service_type": "DV ĐD",
+   "group_vi": "Hỗ trợ hô hấp",
+   "confidence": "MEDIUM"
+  }
+ ]
+}

@@ -174,6 +174,19 @@ class CareChannelConnection(models.Model):
     company_id = fields.Many2one(
         'res.company', required=True, index=True,
         default=lambda self: self.env.company)
+    # The channel ACCOUNT owns the catchment area, not the conversation: each
+    # area runs its own Zalo OA and its own Facebook page, so a message's area
+    # is decided the moment it arrives, before anyone knows who sent it. This
+    # is the root of catchment truth for everything in Care Command —
+    # identities, messages and conversations all read it from here.
+    #
+    # Editable and optional. A connection with no area is a national one and
+    # its traffic falls back to the contact's or lead's area.
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province', string='Catchment Area', index=True,
+        help='The area this channel account serves. Conversations arriving on '
+             'it are scoped to this area, so staff only see their own area\'s '
+             'chats. Leave empty for an account shared across all areas.')
     active = fields.Boolean(default=True)
 
     state = fields.Selection(

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health EVV — Electronic Visit Verification',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Healthcare',
     'summary': 'EVV-grade visit verification: geofenced check-in/out, '
                'hash-chained tamper-evident event log, signature capture, '

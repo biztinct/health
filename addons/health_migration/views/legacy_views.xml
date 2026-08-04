@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Legacy-record panels. They live here rather than in the owning modules
+        because the fields are declared by health_migration, which loads after
+        health_crm / health_fieldservice. Each panel hides itself on records
+        that did not come from the legacy system.
+    -->
+
+    <record id="view_health_fso_form_ops_legacy" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops.legacy</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='location_details_card']" position="after">
+                <div class="vu-detail-card" name="legacy_audit_card"
+                     invisible="not legacy_booking_ref">
+                    <div class="vu-card__title">
+                        <span class="vu-section__icon" data-icon="archive"/>
+                        <span>Legacy Record</span>
+                    </div>
+                    <group>
+                        <field name="legacy_booking_ref" readonly="1"/>
+                        <field name="crm_lead_id" readonly="1" options="{'no_open': True}"/>
+                        <field name="legacy_created_by" readonly="1"/>
+                        <field name="legacy_owner" readonly="1"/>
+                        <field name="legacy_modified_by" readonly="1"/>
+                        <field name="legacy_modified_on" readonly="1"/>
+                    </group>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_form_legacy" model="ir.ui.view">
+        <field name="name">crm.lead.form.legacy</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_healthcare_opportunity_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='first_service_date']" position="after">
+                <field name="legacy_contact_guid" readonly="1"
+                       invisible="not legacy_contact_guid"/>
+                <field name="legacy_created_by" readonly="1"
+                       invisible="not legacy_created_by"/>
+                <field name="legacy_lastcontactuser" readonly="1"
+                       invisible="not legacy_lastcontactuser"/>
+                <field name="legacy_owner" readonly="1"
+                       invisible="not legacy_owner"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

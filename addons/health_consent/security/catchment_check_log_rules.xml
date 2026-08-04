@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Catchment scoping for the Consent Check Log leaf.
+
+        The Owner twin below is mandatory, not decorative: Odoo ORs the group
+        rules matching ANY group the user is in, and membership of a group with
+        no rule grants no exemption. group_healthcare_owner implies admin
+        implies manager (health_security.xml:79-98), and manager is inside the
+        scoped list — so without the twin an owner is pinned to one area by
+        their own inherited groups.
+    -->
+
+    <record id="consent_check_log_catchment_rule" model="ir.rule">
+        <field name="name">Consent Check Log: staff see their own catchment</field>
+        <field name="model_id" ref="model_health_consent_check_log"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[
+            (4, ref('health_base.group_healthcare_nurse')), 
+            (4, ref('health_base.group_healthcare_doctor')), 
+            (4, ref('health_base.group_healthcare_receptionist')), 
+            (4, ref('health_base.group_healthcare_operations_manager')), 
+            (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="consent_check_log_catchment_rule_owner" model="ir.rule">
+        <field name="name">Consent Check Log: Owner sees all catchments</field>
+        <field name="model_id" ref="model_health_consent_check_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+</odoo>

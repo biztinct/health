@@ -1,4 +1,12 @@
+import logging
+
 from odoo import api, fields, models
+
+from odoo.addons.health_catchment_scope.models.catchment_scope import (
+    catchment_field_of,
+)
+
+_logger = logging.getLogger(__name__)
 
 
 class CmsSidebarItem(models.Model):
@@ -64,7 +72,57 @@ class CmsSidebarItem(models.Model):
         }
 
     @api.model
+    def get_catchment_scope(self):
+        """What the sidebar's scope pill draws.
+
+        Kept as its own call rather than folded into get_sidebar_data's return
+        value, which is a bare list every consumer already unpacks as one.
+        """
+        return self.env['res.users']._catchment_scope_info()
+
+    def _catchment_scoped_action(self, action_xmlid):
+        """The name of the catchment field on this leaf's model, or False.
+
+        Returns the FIELD NAME rather than a boolean because the sidebar builds
+        a real domain out of it, and the field is not always called the same
+        thing — hr.employee stores its area as staff_catchment_province_id.
+
+        Resolved server-side because the browser has no way to know: it needs
+        the action's res_model and then that model's field list. Cached for the
+        life of the call — the sidebar resolves ~95 leaves per load and many of
+        them point at the same action.
+        """
+        if not action_xmlid:
+            return False
+        cache = self.env.context.get('__catchment_action_cache')
+        if cache is None:
+            cache = {}
+        if action_xmlid in cache:
+            return cache[action_xmlid]
+
+        result = False
+        try:
+            # sudo() is required, not convenience: reading ir.actions.act_window
+            # is gated to "Role / Administrator" on this deployment, so a nurse
+            # resolving their own menu would raise AccessError and every leaf
+            # would silently come back unscoped — which is exactly how this was
+            # first shipped, and how it was caught. What is read here is pure
+            # metadata (which model does this menu open), never a record.
+            action = self.env.ref(action_xmlid, raise_if_not_found=False)
+            res_model = action and getattr(action.sudo(), 'res_model', False)
+            if res_model and res_model in self.env:
+                result = catchment_field_of(self.env[res_model]) or False
+        except Exception:
+            _logger.debug('Could not resolve %s for catchment scoping',
+                          action_xmlid, exc_info=True)
+        cache[action_xmlid] = result
+        return result
+
+    @api.model
     def get_sidebar_data(self):
+        # One shared dict for the whole call, so the ~95 leaves resolve each
+        # distinct action exactly once.
+        self = self.with_context(__catchment_action_cache={})
         user = self.env.user
         user_role = user.access_role_id
         # Users with the "Access Role: Administrator" privilege always see the full
@@ -104,6 +162,10 @@ class CmsSidebarItem(models.Model):
                 'match_action_tags': _split(item.match_action_tags),
                 'match_action_xmlids': _split(item.match_action_xmlids),
                 'match_models': _split(item.match_models),
+                # The catchment field to scope this leaf by, or False for the
+                # reference-data leaves and the OWL dashboards. The sidebar ANDs
+                # a domain built from it into the action.
+                'catchment_field': self._catchment_scoped_action(item.action_xmlid),
                 'children': [],
             }
 

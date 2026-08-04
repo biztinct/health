@@ -1,120 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
+    <!--
+        Booking cancellation reasons, kept 1:1 with the legacy list (Lý do hủy)
+        so a cancelled booking reads the same as it did before the migration.
+        Vietnamese labels are applied by migration.lookup.seeder (the name field
+        is translatable); on existing databases that same seeder also archives
+        the older generic reasons this file used to carry.
+    -->
 
-    <!-- Patient-initiated Cancellation Reasons -->
-    <record id="cancel_reason_patient_illness" model="health.booking.cancellation.reason">
-        <field name="name">Patient is too ill to attend</field>
-        <field name="reason_type">patient</field>
+    <record id="cancel_reason_no_doctor_lt" model="health.booking.cancellation.reason">
+        <field name="name">No doctor available &lt; 2.5 hours</field>
+        <field name="reason_type">provider</field>
         <field name="sequence">10</field>
-        <field name="description">Patient's condition has worsened or they are unable to attend due to illness</field>
     </record>
 
-    <record id="cancel_reason_patient_emergency" model="health.booking.cancellation.reason">
-        <field name="name">Emergency situation</field>
-        <field name="reason_type">patient</field>
+    <record id="cancel_reason_no_doctor_gt" model="health.booking.cancellation.reason">
+        <field name="name">No doctor available &gt; 2.5 hours</field>
+        <field name="reason_type">provider</field>
         <field name="sequence">20</field>
-        <field name="description">Patient has an emergency that prevents attendance</field>
     </record>
 
-    <record id="cancel_reason_patient_schedule" model="health.booking.cancellation.reason">
-        <field name="name">Scheduling conflict</field>
-        <field name="reason_type">patient</field>
+    <record id="cancel_reason_no_nurse_lt" model="health.booking.cancellation.reason">
+        <field name="name">No nurse available &lt; 2.5 hours</field>
+        <field name="reason_type">provider</field>
         <field name="sequence">30</field>
-        <field name="description">Patient has another commitment or scheduling conflict</field>
     </record>
 
-    <record id="cancel_reason_patient_transport" model="health.booking.cancellation.reason">
-        <field name="name">Transportation issues</field>
-        <field name="reason_type">patient</field>
+    <record id="cancel_reason_no_nurse_gt" model="health.booking.cancellation.reason">
+        <field name="name">No nurse available &gt; 2.5 hours</field>
+        <field name="reason_type">provider</field>
         <field name="sequence">40</field>
-        <field name="description">Patient cannot arrange transportation to appointment</field>
     </record>
 
-    <record id="cancel_reason_patient_financial" model="health.booking.cancellation.reason">
-        <field name="name">Financial constraints</field>
-        <field name="reason_type">patient</field>
+    <record id="cancel_reason_preferred_nurse" model="health.booking.cancellation.reason">
+        <field name="name">Preferred nurse not available</field>
+        <field name="reason_type">provider</field>
         <field name="sequence">50</field>
-        <field name="description">Patient cannot afford the service at this time</field>
     </record>
 
-    <record id="cancel_reason_patient_nolongerneeded" model="health.booking.cancellation.reason">
-        <field name="name">Service no longer needed</field>
+    <record id="cancel_reason_hospitalized" model="health.booking.cancellation.reason">
+        <field name="name">Hospitalized</field>
         <field name="reason_type">patient</field>
         <field name="sequence">60</field>
-        <field name="description">Patient's condition has improved or service is no longer required</field>
     </record>
 
-    <record id="cancel_reason_patient_noshow" model="health.booking.cancellation.reason">
-        <field name="name">Patient no-show</field>
+    <record id="cancel_reason_deceased" model="health.booking.cancellation.reason">
+        <field name="name">Deceased</field>
         <field name="reason_type">patient</field>
         <field name="sequence">70</field>
-        <field name="description">Patient did not attend and did not notify in advance</field>
     </record>
 
-    <!-- Provider-initiated Cancellation Reasons -->
-    <record id="cancel_reason_provider_staffunavailable" model="health.booking.cancellation.reason">
-        <field name="name">Staff unavailable</field>
-        <field name="reason_type">provider</field>
-        <field name="sequence">110</field>
-        <field name="description">Assigned healthcare provider is unavailable</field>
+    <record id="cancel_reason_prescription_expired" model="health.booking.cancellation.reason">
+        <field name="name">Prescription completed/expired</field>
+        <field name="reason_type">patient</field>
+        <field name="sequence">80</field>
     </record>
 
-    <record id="cancel_reason_provider_emergencypriority" model="health.booking.cancellation.reason">
-        <field name="name">Emergency priority case</field>
-        <field name="reason_type">provider</field>
-        <field name="sequence">120</field>
-        <field name="description">Higher priority emergency case requires staff resources</field>
-    </record>
-
-    <record id="cancel_reason_provider_equipment" model="health.booking.cancellation.reason">
-        <field name="name">Equipment unavailable</field>
-        <field name="reason_type">provider</field>
-        <field name="sequence">130</field>
-        <field name="description">Required medical equipment is not available</field>
-    </record>
-
-    <record id="cancel_reason_provider_facility" model="health.booking.cancellation.reason">
-        <field name="name">Facility issues</field>
-        <field name="reason_type">provider</field>
-        <field name="sequence">140</field>
-        <field name="description">Facility is unavailable or has issues preventing service delivery</field>
-    </record>
-
-    <!-- System/Technical Cancellation Reasons -->
-    <record id="cancel_reason_system_duplicate" model="health.booking.cancellation.reason">
-        <field name="name">Duplicate booking</field>
-        <field name="reason_type">system</field>
-        <field name="sequence">210</field>
-        <field name="description">Booking was created in error or is a duplicate</field>
-    </record>
-
-    <record id="cancel_reason_system_dataerror" model="health.booking.cancellation.reason">
-        <field name="name">Data entry error</field>
-        <field name="reason_type">system</field>
-        <field name="sequence">220</field>
-        <field name="description">Booking was created with incorrect information</field>
-    </record>
-
-    <!-- Emergency/Force Majeure Cancellation Reasons -->
-    <record id="cancel_reason_emergency_weather" model="health.booking.cancellation.reason">
-        <field name="name">Severe weather conditions</field>
-        <field name="reason_type">emergency</field>
-        <field name="sequence">310</field>
-        <field name="description">Extreme weather making travel unsafe</field>
-    </record>
-
-    <record id="cancel_reason_emergency_pandemic" model="health.booking.cancellation.reason">
-        <field name="name">Pandemic/Epidemic restrictions</field>
-        <field name="reason_type">emergency</field>
-        <field name="sequence">320</field>
-        <field name="description">Government restrictions or pandemic protocols</field>
-    </record>
-
-    <record id="cancel_reason_emergency_disaster" model="health.booking.cancellation.reason">
-        <field name="name">Natural disaster</field>
-        <field name="reason_type">emergency</field>
-        <field name="sequence">330</field>
-        <field name="description">Natural disaster affecting service delivery</field>
+    <record id="cancel_reason_other" model="health.booking.cancellation.reason">
+        <field name="name">Other</field>
+        <field name="reason_type">patient</field>
+        <field name="sequence">90</field>
     </record>
 
 </odoo>

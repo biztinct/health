@@ -34,6 +34,35 @@ class ResUsers(models.Model):
         help='The catchment province/area where this user primarily works'
     )
 
+    catchment_enforced = fields.Boolean(
+        string='Catchment Scoping Applies',
+        compute='_compute_catchment_enforced',
+        help='True for staff whose record access is narrowed to their own '
+             'catchment area. False for owners and for anyone who is not '
+             'healthcare staff, so the global catchment rules leave them alone.'
+    )
+
+    @api.depends('group_ids', 'all_group_ids')
+    def _compute_catchment_enforced(self):
+        """Read by every global catchment rule (security/catchment_global_rules.xml
+        here and in six other modules), so it has to be cheap and it has to be
+        right for the non-staff cases — a portal patient or an integration user
+        must pass straight through.
+
+        It lives in health_base rather than health_catchment_scope because
+        health_base's OWN rules read it, and health_catchment_scope depends on
+        health_base: the other direction would be a dependency loop.
+
+        Deliberately NOT stored. A stored flag goes stale the moment somebody's
+        groups change, and a rule reading a stale flag either leaks or locks
+        people out. has_group is already cached per user.
+        """
+        for user in self:
+            user.catchment_enforced = (
+                user.has_group('health_base.group_healthcare_base')
+                and not user.has_group('health_base.group_healthcare_owner')
+            )
+
     is_duty_doctor = fields.Boolean('Is Duty Doctor', default=False)
     is_head_nurse = fields.Boolean('Is Head Nurse', default=False)
     is_doctor_role = fields.Boolean(

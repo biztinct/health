@@ -55,6 +55,25 @@ class HealthPortableEquipment(models.Model):
                                        string='Assigned Staff',
                                        domain=[('is_healthcare_staff', '=', True)],
                                        help="Staff member currently assigned this equipment")
+
+    # Equipment physically lives in an area and keeps it while idle, so this is
+    # an editable field of its own rather than something computed from the
+    # current assignment — a computed one would blank out the moment a device
+    # came back off a visit, and fail-closed would then hide it from everybody.
+    # Defaulted from the assigned staff member as a convenience only.
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province', string='Catchment Area', index=True,
+        tracking=True,
+        help="The area this equipment is based in. Staff only see equipment "
+             "from their own area.")
+
+    @api.onchange('assigned_staff_id')
+    def _onchange_assigned_staff_catchment(self):
+        """Fill the area from the staff member, never overwrite a set one."""
+        for rec in self:
+            if rec.assigned_staff_id and not rec.catchment_province_id:
+                rec.catchment_province_id = \
+                    rec.assigned_staff_id.staff_catchment_province_id
     
     # Equipment specifications
     weight_kg = fields.Float('Weight (kg)')

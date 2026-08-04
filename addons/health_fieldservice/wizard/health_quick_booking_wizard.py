@@ -5,13 +5,14 @@ from odoo.exceptions import ValidationError
 
 
 def _selection_service_location(model):
+    # Keep in sync with health_fieldservice_order._selection_service_location.
     return [
-        ('home', model.env._('Patient Home')),
-        ('clinic', model.env._('Clinic')),
+        ('home', model.env._('At Home')),
+        ('clinic', model.env._('At Clinic')),
         ('hospital', model.env._('Hospital')),
         ('nursing_home', model.env._('Nursing Home')),
         ('office', model.env._('Office')),
-        ('online', model.env._('Online/Telemedicine')),
+        ('online', model.env._('Telemedicine')),
         ('other', model.env._('Other Location')),
     ]
 

@@ -25,6 +25,10 @@
         'health_fhir_adapter_base',
         'health_fhir_adapter_vn',
         'health_messaging',
+        # The catchment scope pill + the default-on facet this sidebar hands to
+        # every action it opens. health_catchment_scope depends only on
+        # health_base, so this cannot close a loop.
+        'health_catchment_scope',
     ],
     'data': [
         'security/health_cms_sidebar_security.xml',

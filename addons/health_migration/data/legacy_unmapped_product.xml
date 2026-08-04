@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        The single placeholder used when a legacy booking names a service that
+        does not exist in the price list.
+
+        The price list is the master: the migration matches against it and never
+        creates a product from booking free text. Without a placeholder those
+        invoice lines could not exist at all and the migrated revenue would not
+        reconcile, so every unmatched service lands here with its original
+        wording preserved on the invoice line. Each one is also listed in the
+        importer's `unmatched_services` report so it can be added to the price
+        list deliberately — after which a re-run picks up the real product.
+    -->
+    <record id="product_legacy_unmapped" model="product.template">
+        <field name="name">Legacy service (not in price list)</field>
+        <field name="default_code">LEGACY_UNMAPPED</field>
+        <field name="type">service</field>
+        <field name="list_price">0.0</field>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="description_sale">Placeholder for a legacy service with no price-list item. The original service wording is kept on the invoice line.</field>
+    </record>
+
+    <!--
+        Surcharges (travel, after-hours, weekend) are priced by the Adjustment
+        rules, not sold as catalogue items. Their historical amounts are already
+        inside the booking total and cannot be separated from it, so the lines
+        stay for revenue fidelity — pointed here rather than at an invented
+        "service" in the catalogue.
+    -->
+    <record id="product_legacy_surcharge" model="product.template">
+        <field name="name">Legacy surcharge (priced by adjustment rules)</field>
+        <field name="default_code">LEGACY_SURCHARGE</field>
+        <field name="type">service</field>
+        <field name="list_price">0.0</field>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="description_sale">Placeholder for a legacy travel/after-hours/weekend surcharge. The original wording is kept on the invoice line.</field>
+    </record>
+
+</odoo>

@@ -26,6 +26,8 @@ Reusable ORM-based migration framework for importing legacy exports
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/legacy_unmapped_product.xml',
+        'views/legacy_views.xml',
     ],
     'installable': True,
     'application': False,

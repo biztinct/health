@@ -65,6 +65,13 @@ class HealthEvvEvent(models.Model):
     fso_id = fields.Many2one(
         'health.fieldservice.order', string='Visit', required=True,
         index=True, ondelete='restrict')
+    # The record rules here have always walked `fso_id.catchment_province_id`
+    # (evv_security.xml:48). Storing it makes the same truth filterable, which
+    # is what the injected search facet needs — a facet cannot sit on a path.
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province', string='Catchment Area',
+        related='fso_id.catchment_province_id', store=True, index=True,
+        readonly=True)
     sequence = fields.Integer(
         required=True, readonly=True,
         help='Position in the per-visit chain (1-based, server-assigned).')

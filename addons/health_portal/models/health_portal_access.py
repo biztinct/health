@@ -38,6 +38,20 @@ class HealthPortalAccess(models.Model):
     patient_id = fields.Many2one(
         'res.partner', string='Patient', required=True, index=True,
         ondelete='cascade', domain=[('is_patient', '=', True)], tracking=True)
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province', string='Catchment Area',
+        compute='_compute_catchment_province_id', store=True,
+        readonly=True, index=True,
+        help='Area of the patient this portal access belongs to. Staff only '
+             'see access records for their own area.')
+
+    @api.depends('patient_id.catchment_province_id',
+                 'patient_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for rec in self:
+            rec.catchment_province_id = (
+                rec.patient_id._get_health_catchment_province()
+                if rec.patient_id else False)
     token = fields.Char(
         required=True, index=True, copy=False,
         default=lambda self: secrets.token_urlsafe(32),

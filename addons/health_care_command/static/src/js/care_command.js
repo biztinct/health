@@ -247,6 +247,25 @@ export class CareCommand extends Component {
     get activeChannels() {
         return (this.state.data && this.state.data.active_channels) || [];
     }
+    /**
+     * Which area's inbox this is. Empty for an owner — they are looking at all
+     * of them, and a chip claiming one area would be a lie. A user with no area
+     * gets an explicit label rather than a bare empty wall, because the wall
+     * being empty IS the symptom of the missing setting.
+     */
+    get catchmentLabel() {
+        const data = this.state.data;
+        if (!data) {
+            return "";
+        }
+        if (data.catchment_empty) {
+            return _t("No catchment area set");
+        }
+        return data.catchment || "";
+    }
+    get catchmentEmpty() {
+        return !!(this.state.data && this.state.data.catchment_empty);
+    }
     // dock channels with `active` derived from the payload (Phase 6 narrows the
     // set to connected adapters). Static label/icon/colour from CHANNELS.
     get channels() {

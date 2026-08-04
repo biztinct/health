@@ -11,13 +11,14 @@ SAFETY: the master switch (health_messaging.enabled) is OFF and simulation
 mode (health_messaging.dry_run) is ON by default — installing this module
 changes nothing and sends nothing until an operator switches it on.
 """,
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Healthcare',
     'author': 'health19',
     'depends': ['health_fieldservice', 'health_base', 'health_zalo', 'mail'],
     'data': [
         'security/ir.model.access.csv',
         'security/health_messaging_security.xml',
+        'security/catchment_global_rules.xml',
         'data/ir_sequence.xml',
         'data/mail_templates.xml',
         'data/ir_cron.xml',

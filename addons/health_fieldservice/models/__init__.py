@@ -13,5 +13,6 @@ from . import health_staff_availability
 from . import healthcare_skill
 from . import hr_employee
 from . import hr_employee_public
+from . import hr_leave
 from . import res_partner
 from . import sale_order  # Healthcare quote extensions

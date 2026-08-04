@@ -47,6 +47,7 @@
         # Security
         'security/health_crm_security.xml',
         'security/ir.model.access.csv',
+        'security/catchment_global_rules.xml',
         
         # Data
         'data/health_crm_teams.xml',  # MUST load first - defines teams referenced by stages
@@ -54,6 +55,7 @@
         'data/utm_sources_vietnamese.xml',
         'data/health_contact_reasons.xml',  # Load contact reasons data
         'data/health_lead_reasons.xml',     # Load lead reasons data
+        'data/health_lost_reasons_vn.xml',  # Legacy rejection reasons (like-for-like)
         'data/health_provinces.xml',        # Load province data
         
         # Wizards - MUST load before menus (menus reference wizard actions)

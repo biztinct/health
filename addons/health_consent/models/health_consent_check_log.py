@@ -47,6 +47,23 @@ class HealthConsentCheckLog(models.Model):
         help='True = an active consent covered the check.')
     consent_id = fields.Many2one(
         'health.consent', string='Matched Consent', ondelete='set null')
+    # Same shape as health.consent's own (health_consent.py:143) — the client
+    # first, its facility as fallback. A row whose client has since been
+    # deleted keeps client_ref as evidence but loses its area, and then only an
+    # owner can see it. That is the correct reading: an orphan row belongs to
+    # no area.
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province', string='Catchment Area',
+        compute='_compute_catchment_province_id', store=True,
+        readonly=True, index=True)
+
+    @api.depends('client_id.catchment_province_id',
+                 'client_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for rec in self:
+            rec.catchment_province_id = (
+                rec.client_id._get_health_catchment_province()
+                if rec.client_id else False)
     user_id = fields.Many2one(
         'res.users', string='Checked By',
         default=lambda self: self.env.uid)

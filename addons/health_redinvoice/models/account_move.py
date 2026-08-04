@@ -62,6 +62,11 @@ class AccountMove(models.Model):
 
     def action_post(self):
         res = super().action_post()
+        # Never file an e-invoice for a historical/backdated posting (data
+        # migration, bulk import). Issuing one submits a real invoice to the tax
+        # authority, which must only ever happen for a genuine live sale.
+        if self.env.context.get('skip_redinvoice'):
+            return res
         # Master toggle — skip all Red Invoice when globally disabled
         red_invoice_globally_enabled = self.env['ir.config_parameter'].sudo().get_param(
             'vietnamese_tax.red_invoice_enabled', 'True'

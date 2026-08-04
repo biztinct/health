@@ -416,8 +416,6 @@
                 <field name="name"/>
                 <field name="catchment_province_id"/>
                 <separator string="Catchment Area"/>
-                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
-                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 <filter name="operational" string="Operational" domain="[('facility_status', '=', 'operational')]"/>
                 <filter name="group_by_catchment_province" string="Catchment Area"
                         context="{'group_by': 'catchment_province_id'}"/>

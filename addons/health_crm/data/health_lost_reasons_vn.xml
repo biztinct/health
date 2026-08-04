@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        Contact rejection reasons, kept 1:1 with the legacy list
+        (Lý do từ chối). 'Spam' is deliberately absent: this platform models
+        spam as a contact status, not a rejection reason.
+        Vietnamese labels are applied by migration.lookup.seeder; the same
+        seeder archives the three generic core reasons on existing databases.
+    -->
+
+    <record id="lost_reason_vn_no_doctor_lt" model="crm.lost.reason">
+        <field name="name">No doctor available &lt; 2.5 hours</field>
+    </record>
+    <record id="lost_reason_vn_no_doctor_gt" model="crm.lost.reason">
+        <field name="name">No doctor available &gt; 2.5 hours</field>
+    </record>
+    <record id="lost_reason_vn_no_nurse_lt" model="crm.lost.reason">
+        <field name="name">No nurse available &lt; 2.5 hours</field>
+    </record>
+    <record id="lost_reason_vn_no_nurse_gt" model="crm.lost.reason">
+        <field name="name">No nurse available &gt; 2.5 hours</field>
+    </record>
+    <record id="lost_reason_vn_price_high" model="crm.lost.reason">
+        <field name="name">Price too high</field>
+    </record>
+    <record id="lost_reason_vn_still_considering" model="crm.lost.reason">
+        <field name="name">Still considering</field>
+    </record>
+    <record id="lost_reason_vn_no_prescription" model="crm.lost.reason">
+        <field name="name">No prescription</field>
+    </record>
+    <record id="lost_reason_vn_consultation_only" model="crm.lost.reason">
+        <field name="name">Consultation only</field>
+    </record>
+    <record id="lost_reason_vn_address_far" model="crm.lost.reason">
+        <field name="name">Address too far</field>
+    </record>
+    <record id="lost_reason_vn_service_na" model="crm.lost.reason">
+        <field name="name">Service not available</field>
+    </record>
+    <record id="lost_reason_vn_wrong_hotline" model="crm.lost.reason">
+        <field name="name">Wrong hotline number</field>
+    </record>
+    <record id="lost_reason_vn_no_equipment" model="crm.lost.reason">
+        <field name="name">No equipment available</field>
+    </record>
+    <record id="lost_reason_vn_no_response" model="crm.lost.reason">
+        <field name="name">No response / Did not say</field>
+    </record>
+    <record id="lost_reason_vn_other" model="crm.lost.reason">
+        <field name="name">Other</field>
+    </record>
+
+</odoo>

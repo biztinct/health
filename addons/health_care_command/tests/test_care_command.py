@@ -66,10 +66,14 @@ class TestCareCommand(TransactionCase):
         cls.plain_user = cls._mk_user("cc_plain", [])
 
         # The default test user is the superuser, which is NOT a member of the
-        # CRM group (has_group checks real membership, not su) — grant it so the
-        # service-method tests that run in the default env pass the gate.
+        # CRM group (has_group checks real membership, not su) and carries no
+        # catchment area. Both gates are real for a
+        # live operator, so grant both: without the area, every service call in
+        # the default env is scoped to "no area" and cannot see the fixtures,
+        # which are anchored on area-carrying patients.
         env.user.sudo().write({
-            "group_ids": [(4, env.ref("health_crm.group_health_crm_manager").id)]})
+            "group_ids": [(4, env.ref("health_crm.group_health_crm_manager").id)],
+            "catchment_province_id": cls.province.id})
 
     @classmethod
     def _mk_user(cls, login, group_xmlids):
@@ -393,13 +397,16 @@ class TestCareCommand(TransactionCase):
         active_channels = ("zalo", "email") + (("call",) if self.has_voip else ())
         # Phase 5: counts read channel_effective (traffic ?? declared), so the
         # authoritative mirror must too — a declared-only lead lands in these.
+        # _open_domain carries the catchment term the payload is scoped by; an
+        # inline company-only domain would over-count by the live rows that
+        # belong to a real area.
+        open_dom = self._open_domain(self.crm_user)
         for ch in active_channels:
-            total = self.Care.sudo().search_count([
-                ("company_id", "=", self.company.id),
-                ("status", "!=", "closed"), ("channel_effective", "=", ch)])
-            needs = self.Care.sudo().search_count([
-                ("company_id", "=", self.company.id),
-                ("status", "=", "needs_reply"), ("channel_effective", "=", ch)])
+            total = self.Care.sudo().search_count(
+                open_dom + [("channel_effective", "=", ch)])
+            needs = self.Care.sudo().search_count(
+                open_dom + [("status", "=", "needs_reply"),
+                            ("channel_effective", "=", ch)])
             self.assertEqual(counts[ch]["total"], total)
             self.assertEqual(counts[ch]["needs"], needs)
         self.assertGreaterEqual(counts["email"]["total"], 1)
@@ -623,8 +630,8 @@ class TestCareCommand(TransactionCase):
         self.assertLessEqual(len(data["conversations"]), cap,
                              "tile/list payload is truncated to the cap")
         # counts are EXACT (read_group over the whole set, not the capped list)
-        total_open = self.Care.sudo().search_count([
-            ("company_id", "=", self.company.id), ("status", "!=", "closed")])
+        total_open = self.Care.sudo().search_count(
+            self._open_domain(self.crm_user))
         self.assertEqual(data["channel_counts"]["all"]["total"], total_open)
 
     # ======================================================================
@@ -780,8 +787,22 @@ class TestCareCommand(TransactionCase):
     # Phase 5 — Surface Truth. Helpers.
     # ======================================================================
     def _open_domain(self, user=None):
-        companies = (user or self.env.user).company_ids or self.company
-        return [("company_id", "in", companies.ids), ("status", "!=", "closed")]
+        """The authoritative "what should the payload have counted" domain.
+
+        Mirrors care_conversation._scope_domain(): company AND catchment. The
+        catchment half matters because this database carries live conversations
+        assigned to real areas — comparing a payload scoped to the fixture
+        province against an unscoped count is off by exactly those rows, which
+        is what it was before this term was added.
+        """
+        user = user or self.env.user
+        companies = user.company_ids or self.company
+        domain = [("company_id", "in", companies.ids), ("status", "!=", "closed")]
+        if not user._catchment_can_switch():
+            domain += ["|",
+                       ("catchment_province_id", "=", False),
+                       ("catchment_province_id", "=", user.catchment_province_id.id)]
+        return domain
 
     @staticmethod
     def _row(data, cid):
