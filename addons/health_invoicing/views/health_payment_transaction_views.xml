@@ -35,9 +35,22 @@
                 <button type="object" name="action_mark_cash_delivered" 
                         icon="fa-truck" title="Mark Cash Delivered"
                         invisible="payment_method != 'cash' or status != 'pending_delivery'"/>
-                <button type="object" name="action_create_ar_payment" 
+                <button type="object" name="action_create_ar_payment"
                         icon="fa-plus-circle" title="Create AR Payment"
                         invisible="status == 'reconciled' or payment_id or transaction_type == 'prepaid'"/>
+                <!-- Record lifecycle: Delete is a user function, Archive a
+                     custodian function (client data-governance spec). -->
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>
@@ -51,6 +64,22 @@
                 <header>
                     <field name="deleted" invisible="1"/>
                     <field name="active" invisible="1"/>
+                    <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                    <button name="action_open_delete_wizard" type="object"
+                            string="Delete" icon="fa-trash"
+                            invisible="deleted"/>
+                    <button name="action_open_restore_wizard" type="object"
+                            string="Restore" icon="fa-undo"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="not deleted"/>
+                    <button name="action_open_archive_wizard" type="object"
+                            string="Archive" icon="fa-archive"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="deleted or not active"/>
+                    <button name="action_open_unarchive_wizard" type="object"
+                            string="Unarchive" icon="fa-archive"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="active"/>
                     <field name="status" widget="statusbar"
                            statusbar_visible="collected,pending_delivery,delivered_to_om,reconciled"/>
                     

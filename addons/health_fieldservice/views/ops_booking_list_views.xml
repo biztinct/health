@@ -28,6 +28,19 @@
                 <field name="priority" string="Priority"
                        decoration-danger="priority >= '3'" optional="show"/>
                 <field name="has_staff_assigned" column_invisible="1"/>
+                <!-- Record lifecycle: Delete is a user function, Archive a
+                     custodian function (client data-governance spec). -->
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>

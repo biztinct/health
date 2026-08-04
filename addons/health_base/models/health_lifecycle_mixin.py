@@ -69,6 +69,38 @@ class HealthLifecycleMixin(models.AbstractModel):
         """Model-specific gate. Override to raise when a record must not be
         soft-deleted (posted invoices, partners linked to users, ...)."""
 
+    # ------------------------------------------------------------------
+    # Wizard launchers — generic targets for the Delete/Archive/Restore
+    # buttons that every lifecycle table and form carries (the client spec
+    # wants a visible button, not only the row-selection Actions menu).
+    # ------------------------------------------------------------------
+
+    def _lifecycle_wizard_action(self, mode, name):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': name,
+            'res_model': 'health.archive.reason.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_mode': mode,
+                'active_model': self._name,
+                'active_ids': self.ids,
+            },
+        }
+
+    def action_open_delete_wizard(self):
+        return self._lifecycle_wizard_action('delete', _('Delete Record'))
+
+    def action_open_archive_wizard(self):
+        return self._lifecycle_wizard_action('archive', _('Archive'))
+
+    def action_open_restore_wizard(self):
+        return self._lifecycle_wizard_action('restore', _('Restore Record'))
+
+    def action_open_unarchive_wizard(self):
+        return self._lifecycle_wizard_action('unarchive', _('Unarchive'))
+
     def action_soft_delete(self, reason_id=None, note=None):
         """Mark records Deleted with a mandatory, structured reason."""
         recs = self.filtered(lambda r: not r.deleted)

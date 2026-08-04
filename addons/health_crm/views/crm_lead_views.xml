@@ -143,6 +143,23 @@
                             icon="fa-ban"
                             title="Mark this contact as spam and return to dashboard"
                             confirm="Mark this contact as spam? This action cannot be undone."/>
+
+                    <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                    <button name="action_open_delete_wizard" type="object"
+                            string="Delete" icon="fa-trash" class="btn-secondary"
+                            invisible="deleted"/>
+                    <button name="action_open_restore_wizard" type="object"
+                            string="Restore" icon="fa-undo" class="btn-secondary"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="not deleted"/>
+                    <button name="action_open_archive_wizard" type="object"
+                            string="Archive" icon="fa-archive" class="btn-secondary"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="deleted or not active"/>
+                    <button name="action_open_unarchive_wizard" type="object"
+                            string="Unarchive" icon="fa-archive" class="btn-secondary"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="active"/>
                     
                     <!-- Booking - Opens booking creation flow -->
                     <button name="action_convert_to_booking"
@@ -621,6 +638,22 @@
             <xpath expr="//field[@name='contact_name']" position="replace">
                 <field name="client_name" string="Client Name"/>
             </xpath>
+            <!-- Record lifecycle: Delete is a user function, Archive a
+                 custodian function (client data-governance spec). -->
+            <xpath expr="//list" position="inside">
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+            </xpath>
         </field>
     </record>
 
@@ -658,6 +691,17 @@
             </xpath>
             <xpath expr="//list" position="inside">
                 <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </xpath>
             <!-- 'name' field is the caller/contact person, NOT the client -->
             <xpath expr="//field[@name='name']" position="attributes">

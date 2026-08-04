@@ -27,6 +27,22 @@
                             type="object" string="Check Quote" invisible="1"
                             id="auto_quote_trigger"
                             groups="health_base.group_healthcare_operations_manager"/>
+                    <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                    <button name="action_open_delete_wizard" type="object"
+                            string="Delete" icon="fa-trash"
+                            invisible="deleted"/>
+                    <button name="action_open_restore_wizard" type="object"
+                            string="Restore" icon="fa-undo"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="not deleted"/>
+                    <button name="action_open_archive_wizard" type="object"
+                            string="Archive" icon="fa-archive"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="deleted or not active"/>
+                    <button name="action_open_unarchive_wizard" type="object"
+                            string="Unarchive" icon="fa-archive"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="active"/>
                 </header>
 
                 <sheet>
@@ -802,6 +818,19 @@
                        decoration-danger="state == 'cancelled'"/>
                 <field name="stage_id"/>
                 <field name="priority" decoration-danger="priority == '3'"/>
+                <!-- Record lifecycle: Delete is a user function, Archive a
+                     custodian function (client data-governance spec). -->
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>
@@ -1000,6 +1029,22 @@
                             type="object" string="Check Quote" invisible="1"
                             id="auto_quote_trigger"
                             groups="health_base.group_healthcare_operations_manager"/>
+                    <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                    <button name="action_open_delete_wizard" type="object"
+                            string="Delete" icon="fa-trash"
+                            invisible="deleted"/>
+                    <button name="action_open_restore_wizard" type="object"
+                            string="Restore" icon="fa-undo"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="not deleted"/>
+                    <button name="action_open_archive_wizard" type="object"
+                            string="Archive" icon="fa-archive"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="deleted or not active"/>
+                    <button name="action_open_unarchive_wizard" type="object"
+                            string="Unarchive" icon="fa-archive"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="active"/>
                 </header>
 
                 <sheet>

@@ -29,6 +29,19 @@
                         class="fin-cl-pay-btn"
                         title="Receive payment for this invoice"
                         invisible="state != 'posted' or payment_state not in ('not_paid', 'partial')"/>
+                <!-- Record lifecycle: Delete is a user function (posted moves
+                     must be reversed first — server gate), Archive custodian. -->
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required; posted entries must be reversed first)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>
@@ -61,6 +74,20 @@
                         class="fin-cl-pay-btn"
                         title="Receive payment for this invoice"
                         invisible="state != 'posted' or payment_state not in ('not_paid', 'partial')"/>
+                <!-- Record lifecycle: Delete is a user function (posted moves
+                     must be reversed first — server gate), Archive custodian. -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required; posted entries must be reversed first)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>
@@ -107,6 +134,27 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="attributes">
                 <attribute name="js_class">fin_invoice_form_view</attribute>
+            </xpath>
+            <!-- Record lifecycle: Delete (user; posted must be reversed
+                 first — server gate) / Archive (custodian) -->
+            <xpath expr="//header" position="inside">
+                <field name="deleted" invisible="1"/>
+                <field name="active" invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        string="Delete" icon="fa-trash"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        string="Restore" icon="fa-undo"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        string="Archive" icon="fa-archive"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted or not active"/>
+                <button name="action_open_unarchive_wizard" type="object"
+                        string="Unarchive" icon="fa-archive"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="active"/>
             </xpath>
         </field>
     </record>
