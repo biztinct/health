@@ -93,6 +93,9 @@
                                         <span t-attf-class="ops-status-chip #{getStatusChipClass(c.patient_status)}">
                                             <t t-esc="getStatusLabel(c.patient_status)"/>
                                         </span>
+                                        <span t-if="c.deleted" class="badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted">
+                                            <i class="fa fa-trash"/> Deleted
+                                        </span>
                                     </td>
                                     <td t-esc="formatLastVisit(c.last_visit_date)"/>
                                     <td t-esc="c.total_assignments"/>

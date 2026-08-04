@@ -1,0 +1,40 @@
+// Record-lifecycle badges (DELETED / ARCHIVED).
+// Flat mono colors only — no gradients (theme rule, see vu_tokens.scss).
+// Tokens come from the vu.theme engine with hard fallbacks so the badges
+// render correctly even where health_theme is absent.
+
+.vu-lifecycle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid transparent;
+
+    .fa {
+        font-size: 0.85em;
+    }
+}
+
+.vu-lifecycle--deleted {
+    color: var(--vuf-danger, #c0332a);
+    background: var(--vuf-danger-bg, #fdecea);
+    border-color: var(--vuf-danger, #c0332a);
+}
+
+.vu-lifecycle--archived {
+    color: var(--vuf-muted, #6b7280);
+    background: var(--vuf-line-soft, #eef0f3);
+    border-color: var(--vuf-muted, #6b7280);
+}
+
+// Deleted rows in list views carry BOTH decoration-danger and
+// decoration-muted — that combination is the lifecycle signature and gets a
+// strike-through so a Delete request is unmistakable at a glance.
+.o_list_view .o_data_row.text-danger.text-muted {
+    text-decoration: line-through;
+    opacity: 0.75;
+}

@@ -11,6 +11,7 @@
                   class="ops-client-profile-form">
 
                 <field name="active" invisible="1"/>
+                <field name="deleted" invisible="1"/>
                 <field name="patient_status" invisible="1"/>
                 <field name="is_patient" invisible="1"/>
                 <field name="source_type" invisible="1"/>
@@ -19,6 +20,18 @@
                     <field name="name" invisible="1"/>
                     <field name="patient_code_display" invisible="1"/>
                     <field name="age_display" invisible="1"/>
+
+                    <!-- Lifecycle banner (this form has no header/ribbon seam) -->
+                    <div class="alert alert-danger" role="alert" invisible="not deleted">
+                        <strong><i class="fa fa-trash"/> DELETED:</strong>
+                        this client record is a Delete request — it stays visible here
+                        but no longer counts in reports.
+                        <field name="deleted_reason_id" readonly="1" class="d-inline ms-1"/>
+                    </div>
+                    <div class="alert alert-secondary" role="alert" invisible="active or deleted">
+                        <strong><i class="fa fa-archive"/> ARCHIVED:</strong>
+                        hidden from normal views, still counted in reports.
+                    </div>
 
                     <!-- Allergies Alert -->
                     <div class="alert alert-danger" role="alert" invisible="not allergies">

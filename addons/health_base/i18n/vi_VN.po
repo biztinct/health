@@ -1684,6 +1684,8 @@ msgstr "Khách hàng tôi giới thiệu"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__clinic_visit
+#. odoo-python
+#: code:addons/health_base/models/health_lookup.py:0
 msgid "Clinic Visit"
 msgstr "Khám tại phòng khám"
 
@@ -2241,8 +2243,10 @@ msgstr "Địa chỉ email"
 #: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__emergency
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__urgency_level__emergency
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+#. odoo-python
+#: code:addons/health_base/models/health_lookup.py:0
 msgid "Emergency"
-msgstr "Khẩn cấp"
+msgstr "Cấp cứu"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__emergency_contact_name
@@ -2365,6 +2369,8 @@ msgstr "Thời tiết khắc nghiệt khiến việc di chuyển không an toàn
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__facebook
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__facebook
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
 msgid "Facebook"
 msgstr "Facebook"
 
@@ -2451,6 +2457,8 @@ msgstr "Fall Rủi ro Đánh giá"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__female
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
 msgid "Female"
 msgstr "Nữ"
 
@@ -2973,6 +2981,8 @@ msgstr "Trang chủ Environment Đánh giá"
 #. module: health_base
 #: model:health.service.type,name:health_base.service_type_home_visit
 #: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__home_visit
+#. odoo-python
+#: code:addons/health_base/models/health_lookup.py:0
 msgid "Home Visit"
 msgstr "Khám tại nhà"
 
@@ -3092,6 +3102,8 @@ msgstr "Nếu được chọn, một số tin nhắn có lỗi gửi."
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__imaging
+#. odoo-python
+#: code:addons/health_base/models/health_lookup.py:0
 msgid "Imaging"
 msgstr "Chẩn đoán hình ảnh"
 
@@ -3343,8 +3355,10 @@ msgstr "Dị ứng đã biết"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__laboratory
+#. odoo-python
+#: code:addons/health_base/models/health_lookup.py:0
 msgid "Laboratory"
-msgstr "Phòng xét nghiệm"
+msgstr "Xét nghiệm"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__has_laboratory
@@ -3560,6 +3574,8 @@ msgstr "Nghiêm trọng"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__male
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
 msgid "Male"
 msgstr "Nam"
 
@@ -4159,6 +4175,8 @@ msgstr "Nhận thức đúng khả năng bản thân (0 điểm)"
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__other
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__other
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__other
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
 msgid "Other"
 msgstr "Khác"
 
@@ -4359,6 +4377,8 @@ msgstr "Physical trị liệu và Phục hồi chức năng"
 #. module: health_base
 #: model:health.service.type,name:health_base.service_type_physiotherapy
 #: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__physiotherapy
+#. odoo-python
+#: code:addons/health_base/models/health_lookup.py:0
 msgid "Physiotherapy"
 msgstr "Vật lý trị liệu"
 
@@ -5666,8 +5686,10 @@ msgstr "Yếu (10 điểm)"
 #: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__website
 #: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__website
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__website
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
 msgid "Website"
-msgstr "Trang web"
+msgstr "Website"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__website_message_ids
@@ -5729,6 +5751,8 @@ msgstr "Mã bưu điện Mã"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__zalo
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__zalo
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
 msgid "Zalo"
 msgstr "Zalo"
 
@@ -6454,3 +6478,314 @@ msgstr "Y tế"
 #: model:ir.ui.menu,name:health_base.menu_health_patients
 msgid "Patients"
 msgstr "Bệnh nhân"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Unspecified"
+msgstr "Không xác định"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Hotline"
+msgstr "Hotline"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Referrer"
+msgstr "Người Giới Thiệu"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Walk-in to Clinic"
+msgstr "Tự đến PK"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "New"
+msgstr "Mới"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Repeat"
+msgstr "Cũ"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Doctor Services"
+msgstr "DỊCH VỤ BÁC SĨ"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Nursing Services"
+msgstr "DỊCH VỤ ĐIỀU DƯỠNG"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Doctor Services - Foreigners"
+msgstr "DỊCH VỤ BÁC SĨ/ Người nước ngoài"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_lifecycle_mixin.py:0
+#: code:addons/health_base/models/health_archive_reason_wizard.py:0
+msgid "A deletion reason is required — every deletion must be explained."
+msgstr "Bắt buộc phải có lý do xóa — mọi yêu cầu xóa đều phải được giải thích."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_lifecycle_mixin.py:0
+msgid "Please explain this deletion in the note (at least %s characters)."
+msgstr "Vui lòng giải thích lý do xóa trong phần ghi chú (ít nhất %s ký tự)."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_lifecycle_mixin.py:0
+msgid "Only the Record Custodian may restore deleted records."
+msgstr "Chỉ Người quản lý hồ sơ mới được khôi phục bản ghi đã xóa."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/soft_delete_guard.py:0
+msgid ""
+"Physical deletion requires a verified Delete request: mark the record as "
+"Deleted (with a reason) first. Not marked: %s"
+msgstr ""
+"Xóa vĩnh viễn yêu cầu một yêu cầu Xóa đã được xác minh: hãy đánh dấu bản ghi "
+"là Đã xóa (kèm lý do) trước. Chưa đánh dấu: %s"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/soft_delete_guard.py:0
+msgid "Archiving is a custodian function — ask a Record Custodian."
+msgstr "Lưu trữ là chức năng của Người quản lý hồ sơ — hãy liên hệ Người quản lý hồ sơ."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/soft_delete_guard.py:0
+msgid "Unarchiving is a custodian function — ask a Record Custodian."
+msgstr "Bỏ lưu trữ là chức năng của Người quản lý hồ sơ — hãy liên hệ Người quản lý hồ sơ."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/soft_delete_guard.py:0
+msgid "Marked as Deleted. Reason: %s"
+msgstr "Đã đánh dấu là Đã xóa. Lý do: %s"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/soft_delete_guard.py:0
+msgid "Restored — the Deleted flag was removed."
+msgstr "Đã khôi phục — cờ Đã xóa đã được gỡ bỏ."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_archive_reason_wizard.py:0
+msgid "Records of this type do not support Delete requests."
+msgstr "Loại bản ghi này không hỗ trợ yêu cầu Xóa."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_archive_reason_wizard.py:0
+msgid "No records selected."
+msgstr "Chưa chọn bản ghi nào."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_archive_reason_wizard.py:0
+msgid " and %s more"
+msgstr " và %s bản ghi khác"
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_archive_log.py:0
+msgid "Lifecycle log entries are append-only and cannot be modified."
+msgstr "Nhật ký vòng đời chỉ cho phép ghi thêm và không thể sửa đổi."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_archive_log.py:0
+msgid "Lifecycle log entries are append-only and cannot be deleted."
+msgstr "Nhật ký vòng đời chỉ cho phép ghi thêm và không thể xóa."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_archive_log.py:0
+msgid "The record model is not installed."
+msgstr "Mô hình dữ liệu của bản ghi chưa được cài đặt."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "%s is linked to a user account and cannot be marked Deleted."
+msgstr "%s được liên kết với một tài khoản người dùng và không thể đánh dấu Đã xóa."
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "%s is not a client record — only client records can be marked Deleted."
+msgstr "%s không phải hồ sơ khách hàng — chỉ hồ sơ khách hàng mới có thể đánh dấu Đã xóa."
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__deleted
+#: model:ir.model.fields.selection,name:health_base.selection__health_archive_log__action__delete
+msgid "Deleted"
+msgstr "Đã xóa"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__deleted_date
+msgid "Deleted On"
+msgstr "Xóa vào lúc"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__deleted_by_id
+msgid "Deleted By"
+msgstr "Người xóa"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__deleted_reason_id
+msgid "Deletion Reason"
+msgstr "Lý do xóa"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__deleted_note
+msgid "Deletion Note"
+msgstr "Ghi chú xóa"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_archive_reason_wizard__reason_id
+msgid "Reason for deletion"
+msgstr "Lý do xóa"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_archive_reason_wizard__reason
+msgid "Details"
+msgstr "Chi tiết"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_deletion_reason__requires_note
+msgid "Requires Note"
+msgstr "Bắt buộc ghi chú"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_archive_log__record_state
+msgid "Current State"
+msgstr "Trạng thái hiện tại"
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_archive_log__action__restore
+msgid "Restored"
+msgstr "Đã khôi phục"
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_archive_log__action__purge
+msgid "Purged"
+msgstr "Đã xóa vĩnh viễn"
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_archive_log__record_state__deleted
+msgid "Awaiting Verification"
+msgstr "Chờ xác minh"
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_custodian
+msgid "Healthcare: Record Custodian"
+msgstr "Y tế: Người quản lý hồ sơ"
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_archive_log_main
+#: model:ir.actions.act_window,name:health_base.action_health_archive_log
+msgid "Data Lifecycle"
+msgstr "Vòng đời dữ liệu"
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_lifecycle_log
+msgid "Lifecycle Log"
+msgstr "Nhật ký vòng đời"
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_lifecycle_delete_requests
+#: model:ir.actions.act_window,name:health_base.action_health_lifecycle_delete_requests
+msgid "Delete Requests"
+msgstr "Yêu cầu xóa"
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_deletion_reasons
+#: model:ir.actions.act_window,name:health_base.action_health_deletion_reason
+msgid "Deletion Reasons"
+msgstr "Lý do xóa"
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_lifecycle_delete_wizard
+msgid "Delete Record"
+msgstr "Xóa bản ghi"
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_lifecycle_restore_wizard
+msgid "Restore Record"
+msgstr "Khôi phục bản ghi"
+
+#. module: health_base
+#: model:health.deletion.reason,name:health_base.deletion_reason_duplicate
+msgid "Duplicate record"
+msgstr "Bản ghi trùng lặp"
+
+#. module: health_base
+#: model:health.deletion.reason,name:health_base.deletion_reason_data_entry
+msgid "Data-entry error"
+msgstr "Lỗi nhập liệu"
+
+#. module: health_base
+#: model:health.deletion.reason,name:health_base.deletion_reason_test
+msgid "Test / training record"
+msgstr "Bản ghi thử nghiệm / đào tạo"
+
+#. module: health_base
+#: model:health.deletion.reason,name:health_base.deletion_reason_wrong_client
+msgid "Recorded against the wrong client"
+msgstr "Ghi nhầm cho khách hàng khác"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_archive_reason_wizard_form
+msgid "Mark as Deleted"
+msgstr "Đánh dấu Đã xóa"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_archive_reason_wizard_form
+msgid "Selected Records"
+msgstr "Bản ghi đã chọn"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_archive_reason_wizard_form
+msgid "Why?"
+msgstr "Vì sao?"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_archive_reason_wizard_form
+msgid "Explain this action for the audit trail…"
+msgstr "Giải thích thao tác này cho nhật ký kiểm toán…"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Not Deleted"
+msgstr "Chưa xóa"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/archive_delete_policy.js:0
+msgid "Delete Permanently"
+msgstr "Xóa vĩnh viễn"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/archive_delete_policy.js:0
+msgid "Restore"
+msgstr "Khôi phục"

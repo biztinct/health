@@ -11,9 +11,57 @@ import copy
 _logger = logging.getLogger(__name__)
 
 
+# Selections are declared as functions so their labels go through env._() and
+# can therefore be translated per user language (a plain list of literals is
+# not picked up by the translation catalog). Labels mirror the legacy system's
+# wording — see Migration_Audit_Report_v3.
+def _selection_partner_gender(model):
+    return [
+        ('male', model.env._('Male')),
+        ('female', model.env._('Female')),
+        ('other', model.env._('Other')),
+        ('prefer_not_to_say', model.env._('Unspecified')),
+    ]
+
+
+def _selection_client_source(model):
+    return [
+        ('facebook', model.env._('Facebook')),
+        ('zalo', model.env._('Zalo')),
+        ('website', model.env._('Website')),
+        ('phone', model.env._('Hotline')),
+        ('referral', model.env._('Referrer')),
+        ('walk_in', model.env._('Walk-in to Clinic')),
+        ('other', model.env._('Other')),
+    ]
+
+
+def _selection_client_type(model):
+    return [
+        ('new', model.env._('New')),
+        ('repeat', model.env._('Repeat')),
+    ]
+
+
 class ResPartner(models.Model):
     """Extend res.partner for healthcare functionality module"""
-    _inherit = 'res.partner'
+    _name = 'res.partner'
+    _inherit = ['res.partner', 'health.lifecycle.mixin']
+
+    def _lifecycle_check_soft_delete(self):
+        # The lifecycle field lands on every partner, but Delete requests are
+        # a client-record function: never on login partners, companies, staff
+        # or facilities.
+        super()._lifecycle_check_soft_delete()
+        for rec in self:
+            if rec.user_ids:
+                raise UserError(_(
+                    '%s is linked to a user account and cannot be marked '
+                    'Deleted.', rec.display_name))
+            if rec.is_company or rec.is_healthcare_facility or rec.is_healthcare_staff:
+                raise UserError(_(
+                    '%s is not a client record — only client records can be '
+                    'marked Deleted.', rec.display_name))
 
     # Healthcare Classification - FOUNDATIONAL FIELDS
     # CRITICAL: These fields are referenced by health_crm, health_fieldservice, health_invoicing
@@ -46,12 +94,8 @@ class ResPartner(models.Model):
     birth_date = fields.Date('Date of Birth', tracking=True)
     age = fields.Integer('Age', compute='_compute_age', store=True)
     age_display = fields.Char('Age Display', compute='_compute_age_display')
-    gender = fields.Selection([
-        ('male', 'Male'),
-        ('female', 'Female'),
-        ('other', 'Other'),
-        ('prefer_not_to_say', 'Prefer not to say')
-    ], string='Gender', tracking=True)
+    gender = fields.Selection(
+        _selection_partner_gender, string='Gender', tracking=True)
     
     # Healthcare Specific Fields
     patient_category_id = fields.Many2one('health.patient.category', string='Client Category')
@@ -176,17 +220,13 @@ class ResPartner(models.Model):
     ], string='Ethnicity', help='client ethnic group (Dân tộc)')
 
     # Source Tracking
-    source_type = fields.Selection([
-        ('facebook', 'Facebook'),
-        ('zalo', 'Zalo'),
-        ('website', 'Website'),
-        ('phone', 'Phone Call'),
-        ('referral', 'Referral'),
-        ('walk_in', 'Walk-in'),
-        ('other', 'Other')
-    ], string='Client Source', tracking=True)
+    source_type = fields.Selection(
+        _selection_client_source, string='Client Source', tracking=True)
     source_details = fields.Char('Source Details')
     referral_source = fields.Char('Referral Source')
+    client_type = fields.Selection(
+        _selection_client_type, string='Client Type', tracking=True,
+        help='New or returning client (Loại khách hàng).')
     
     # Catchment Province Assignment
     catchment_province_id = fields.Many2one(

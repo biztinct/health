@@ -46,6 +46,7 @@ export class OpsBookingListController extends ListController {
             { id: "active", label: _t("Active"), icon: "fa-play-circle" },
             { id: "completed", label: _t("Completed"), icon: "fa-check-circle" },
             { id: "issues", label: _t("Issues"), icon: "fa-exclamation-triangle" },
+            { id: "deleted", label: _t("Deleted"), icon: "fa-trash" },
         ];
     }
 
@@ -70,6 +71,10 @@ export class OpsBookingListController extends ListController {
                 return [['state', 'in', ['completed', 'completed_pending_invoice']]];
             case "issues":
                 return ['|', ['state', '=', 'cancelled'], ['priority', '>=', '3']];
+            case "deleted":
+                // Delete requests (soft-deleted, excluded from counts but
+                // kept visible in the queue per the data-governance spec).
+                return [['deleted', '=', true]];
             default:
                 return [['state', '!=', 'cancelled']];
         }

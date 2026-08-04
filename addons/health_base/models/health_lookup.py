@@ -1,6 +1,22 @@
 from odoo import models, fields, api, _
 
 
+
+def _selection_service_category(model):
+    """The service catalogue's top level, exactly as the price list defines it.
+
+    Maps 1:1 to the price list's `service_type` column (DV Bs / DV ĐD), which is
+    the legacy Contact_dich_vu_danh_muc lookup. Deliberately nothing else: the
+    price list is the master, so a category that does not exist there must not
+    be offered here.
+    """
+    return [
+        ('consultation', model.env._('Doctor Services')),
+        ('nursing_care', model.env._('Nursing Services')),
+        ('foreigner_doctor', model.env._('Doctor Services - Foreigners')),
+    ]
+
+
 class PatientCategory(models.Model):
     """Patient categories for classification"""
     _name = 'health.patient.category'
@@ -31,18 +47,9 @@ class ServiceType(models.Model):
     name = fields.Char('Service Name', required=True, translate=True)
     code = fields.Char('Service Code', required=True, size=10)
     description = fields.Text('Description', translate=True)
-    category = fields.Selection([
-        ('consultation', 'Consultation'),
-        ('home_visit', 'Home Visit'),
-        ('clinic_visit', 'Clinic Visit'),
-        ('telemedicine', 'Telemedicine'),
-        ('nursing_care', 'Nursing Care'),
-        ('physiotherapy', 'Physiotherapy'),
-        ('laboratory', 'Laboratory'),
-        ('imaging', 'Imaging'),
-        ('emergency', 'Emergency'),
-        ('other', 'Other')
-    ], string='Category', required=True, default='consultation')
+    category = fields.Selection(
+        _selection_service_category, string='Category', required=True,
+        default='consultation')
     
     # Pricing
     base_price = fields.Float('Base Price (VND)', default=0.0)
@@ -283,4 +290,24 @@ class BookingCancellationReason(models.Model):
 
     _sql_constraints = [
         ('name_unique', 'unique(name)', 'Cancellation reason must be unique!')
+    ]
+
+
+class HealthDeletionReason(models.Model):
+    """Structured reasons for user-requested record deletions (the soft
+    "Deleted" lifecycle tier — see health.lifecycle.mixin)."""
+    _name = 'health.deletion.reason'
+    _description = 'Record Deletion Reason'
+    _order = 'sequence, name'
+
+    name = fields.Char('Reason', required=True, translate=True)
+    sequence = fields.Integer('Sequence', default=10)
+    active = fields.Boolean('Active', default=True)
+    requires_note = fields.Boolean(
+        'Requires Note', default=False,
+        help='When set, the user must add an explanatory note with this reason.')
+    description = fields.Text('Description', translate=True)
+
+    _sql_constraints = [
+        ('name_unique', 'unique(name)', 'Deletion reason must be unique!')
     ]

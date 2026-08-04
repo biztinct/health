@@ -9,7 +9,9 @@
         <field name="arch" type="xml">
             <list js_class="ops_booking_list_view"
                   default_order="scheduled_datetime desc"
-                  class="ops-bq-list">
+                  class="ops-bq-list"
+                  decoration-danger="deleted" decoration-muted="deleted">
+                <field name="deleted" column_invisible="1"/>
                 <field name="display_name" string="Booking"/>
                 <field name="patient_id" string="Client"/>
                 <field name="patient_phone" string="Phone" widget="phone" optional="show"/>
@@ -35,8 +37,10 @@
         <field name="name">Booking Queue</field>
         <field name="res_model">health.fieldservice.order</field>
         <field name="view_mode">calendar,list,form</field>
-        <field name="domain">[]</field>
-        <field name="context">{'active_center': 'ops_center'}</field>
+        <!-- Neutral all-rows `deleted` clause: keeps Delete requests visible
+             in the queue by disabling the implicit deleted_test injection. -->
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
+        <field name="context">{'active_center': 'ops_center', 'deleted_test': False}</field>
         <field name="search_view_id" ref="view_health_fieldservice_order_search"/>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_health_fieldservice_order_calendar')}),

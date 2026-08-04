@@ -438,11 +438,13 @@ class HealthPWASyncController(http.Controller):
         used by the patient delta so a newly assigned order pulls its patient.
 
         Partition of the changed candidate set:
-          * active AND in-scope  -> upsert record (cap 500), sudo reads
-          * NOT active OR NOT in-scope -> removal {'id', 'is_deleted': True}
-            (ids only — never leak fields of out-of-scope orders)
+          * active AND not-deleted AND in-scope -> upsert record (cap 500)
+          * NOT (active AND not-deleted) OR NOT in-scope -> removal
+            {'id', 'is_deleted': True} (ids only — never leak fields of
+            out-of-scope orders)
         Plus hard-delete tombstones (§2.3). §5.27: the candidate query runs
-        active_test=False or archived orders vanish instead of emitting a
+        active_test=False (and deleted_test=False for the lifecycle soft
+        delete) or archived/deleted orders vanish instead of emitting a
         removal.
         """
         Order = request.env['health.fieldservice.order'].sudo()
@@ -452,7 +454,8 @@ class HealthPWASyncController(http.Controller):
             ('write_date', '>=', since_datetime),
             ('create_date', '>=', since_datetime),
         ]
-        candidates = Order.with_context(active_test=False).search(
+        candidates = Order.with_context(
+            active_test=False, deleted_test=False).search(
             candidate_domain, order='write_date desc', limit=FSO_CANDIDATE_LIMIT)
 
         # Scope changes ride the ASSIGNMENT row, not the order: cancelling an
@@ -466,16 +469,20 @@ class HealthPWASyncController(http.Controller):
             order='write_date desc', limit=4000).mapped('fso_id').ids)
         extra_ids = assign_fso_ids - set(candidates.ids)
         if extra_ids:
-            candidates |= Order.with_context(active_test=False).browse(
+            candidates |= Order.with_context(
+                active_test=False, deleted_test=False).browse(
                 sorted(extra_ids)).exists()
 
-        # in-scope AND active partition — ONE batch search over the candidate
-        # ids against the caller's grant domain (no per-record queries).
+        # in-scope AND active AND not-deleted partition — ONE batch search
+        # over the candidate ids against the caller's grant domain (no
+        # per-record queries). A soft-deleted order (lifecycle Delete request)
+        # falls to the removal branch: field nurses must not see it.
         if candidates:
             in_scope_active = Order.with_context(active_test=False).search(
                 scope['grant_domain'] + [
                     ('id', 'in', candidates.ids),
                     ('active', '=', True),
+                    ('deleted', '=', False),
                 ])
         else:
             in_scope_active = Order.browse()
@@ -797,11 +804,18 @@ class HealthPWASyncController(http.Controller):
                             'Invalid client_action_uuid'))
                         continue
 
-                    # 2. Resolve order sudo; must exist.
+                    # 2. Resolve order sudo; must exist and must not carry a
+                    # lifecycle Delete request (the device may replay an
+                    # offline action queued before the order was deleted).
                     order = Order.browse(fso_id) if fso_id else Order.browse()
                     if not fso_id or not order.exists():
                         results.append(self._action_error(
                             action_type, fso_id, client_ref, 'Order not found'))
+                        continue
+                    if order.deleted:
+                        results.append(self._action_error(
+                            action_type, fso_id, client_ref,
+                            'Order was deleted (lifecycle)'))
                         continue
 
                     # 3. G1 required — no receipt for an unauthorized caller.

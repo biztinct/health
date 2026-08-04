@@ -9,7 +9,8 @@
         <field name="name">fin.invoice.list</field>
         <field name="model">account.move</field>
         <field name="arch" type="xml">
-            <list string="Invoices" js_class="fin_invoice_list_view" decoration-danger="payment_state == 'not_paid' and invoice_date_due and invoice_date_due &lt; current_date" decoration-muted="state == 'cancel'">
+            <list string="Invoices" js_class="fin_invoice_list_view" decoration-danger="deleted or (payment_state == 'not_paid' and invoice_date_due and invoice_date_due &lt; current_date)" decoration-muted="deleted or state == 'cancel'">
+                <field name="deleted" column_invisible="1"/>
                 <field name="name" string="Number"/>
                 <field name="partner_id" string="Patient"/>
                 <field name="invoice_date" string="Date"/>
@@ -78,6 +79,15 @@
                 <filter name="partial" string="Partial" domain="[('payment_state', '=', 'partial')]"/>
                 <filter name="overdue" string="Overdue" domain="[('state', '=', 'posted'), ('payment_state', 'in', ['not_paid', 'partial']), ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
                 <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
+                <separator/>
+                <!-- The `deleted` reference in-domain disables the implicit
+                     deleted_test injection, so these work from any view. -->
+                <filter name="filter_deleted" string="Deleted"
+                        domain="[('deleted', '=', True)]"/>
+                <filter name="filter_not_deleted" string="Not Deleted"
+                        domain="[('deleted', '=', False)]"/>
+                <filter name="filter_archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
                 <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
                 <filter name="group_payment" string="Payment Status" context="{'group_by': 'payment_state'}"/>
                 <filter name="group_partner" string="Patient" context="{'group_by': 'partner_id'}"/>
@@ -106,8 +116,8 @@
         <field name="name">Invoices</field>
         <field name="res_model">account.move</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('move_type', '=', 'out_invoice')]</field>
-        <field name="context">{'default_move_type': 'out_invoice', 'active_center': 'finance_center'}</field>
+        <field name="domain">[('move_type', '=', 'out_invoice'), '|', ('deleted', '=', False), ('deleted', '=', True)]</field>
+        <field name="context">{'default_move_type': 'out_invoice', 'active_center': 'finance_center', 'deleted_test': False}</field>
         <field name="search_view_id" ref="view_fin_invoice_search"/>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_invoice_list')}),
@@ -177,7 +187,8 @@
         <field name="name">Payment Transactions</field>
         <field name="res_model">health.payment.transaction</field>
         <field name="view_mode">list,form</field>
-        <field name="context">{'active_center': 'finance_center'}</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
+        <field name="context">{'active_center': 'finance_center', 'deleted_test': False}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_payment_list')})]"/>
         <field name="search_view_id" ref="view_health_payment_transaction_search"/>

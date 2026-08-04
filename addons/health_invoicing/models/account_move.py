@@ -93,7 +93,20 @@ class HealthcareInvoice(models.Model):
     - MISA accounting system integration
     - Ministry of Health regulatory compliance
     """
-    _inherit = 'account.move'
+    _name = 'account.move'
+    _inherit = ['account.move', 'health.lifecycle.mixin']
+
+    def _lifecycle_check_soft_delete(self):
+        # A posted move is part of the financial/e-invoice chain (VN tax
+        # compliance) — it must be reversed or reset to draft before a Delete
+        # request is possible.
+        super()._lifecycle_check_soft_delete()
+        posted = self.filtered(lambda m: m.state == 'posted')
+        if posted:
+            raise UserError(_(
+                'Posted entries cannot be marked Deleted — reverse or reset '
+                'them to draft first: %s',
+                ', '.join(posted.mapped('display_name')[:5])))
 
     # Odoo 19 currently exposes static selection metadata in English through
     # fields_get. Callable selections return labels in the active user language.

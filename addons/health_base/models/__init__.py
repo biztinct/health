@@ -1,5 +1,6 @@
 from . import soft_delete_guard
 from . import health_archive_log
+from . import health_lifecycle_mixin
 from . import health_archive_reason_wizard
 from . import res_partner
 from . import health_lookup

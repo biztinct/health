@@ -5,14 +5,67 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.addons.health_base.models.phone_utils import normalize_vn_phone
 
 
-def _selection_health_contact_outcome(model):
+def _selection_lead_gender(model):
     return [
-        ('service_booked', model.env._('Service Booked')),
-        ('pending_follow_up', model.env._('Pending Follow-up')),
-        ('rejected', model.env._('Rejected')),
+        ('male', model.env._('Male')),
+        ('female', model.env._('Female')),
+        ('other', model.env._('Other')),
+        ('prefer_not_to_say', model.env._('Unspecified')),
+    ]
+
+
+def _selection_service_interest(model):
+    """The service groups a contact can be interested in.
+
+    One entry per price-list `service_name` group, which is the legacy
+    'Dịch vụ quan tâm' list. The last two have no legacy counterpart but do
+    exist in the price list, so a client can genuinely ask for them.
+    """
+    return [
+        ('consultation', model.env._('Medical Examination')),
+        ('wound_care', model.env._('Wound Care')),
+        ('injection', model.env._('Injection')),
+        ('iv_infusion', model.env._('IV Infusion')),
+        ('catheter', model.env._('Catheter Insertion/Removal')),
+        ('sputum_care', model.env._('Sputum Suction, Chest Percussion')),
+        ('enema', model.env._('Enema')),
+        ('palliative', model.env._('Palliative Care')),
+        ('personal_care', model.env._('Personal Care')),
+        ('lab_test', model.env._('Laboratory Testing')),
+        ('imaging_procedures', model.env._('Imaging & Procedures')),
+        ('nursing_other', model.env._('Nursing Other')),
+        ('other', model.env._('Other')),
+    ]
+
+
+def _selection_healthcare_lead_source(model):
+    # Mirrors the legacy 'Nguồn Khách Hàng' list.
+    return [
+        ('facebook_ad', model.env._('Facebook')),
+        ('zalo_marketing', model.env._('Zalo')),
+        ('website_form', model.env._('Online Form')),
+        ('phone_inquiry', model.env._('Hotline')),
+        ('referral_patient', model.env._('Referrer')),
+        ('referral_doctor', model.env._('Doctor Referral')),
+        ('walk_in', model.env._('Walk-in to Clinic')),
+        ('partner', model.env._('Partner')),
+        ('tiktok', model.env._('TikTok')),
+        ('google', model.env._('Google')),
+        ('former_client', model.env._('Former Client')),
+        ('inbox_email', model.env._('Email Inbox')),
+    ]
+
+
+def _selection_health_contact_outcome(model):
+    # Mirrors the legacy CSKH disposition list 1:1 (see Migration audit v2).
+    return [
+        ('service_booked', model.env._('Service Confirmed')),
+        ('pending_follow_up', model.env._('Busy - Call Back Later')),
+        ('rejected', model.env._('Service Declined')),
         ('no_response', model.env._('No Response')),
-        ('not_qualified', model.env._('Not Qualified')),
-        ('future_opportunity', model.env._('Future Opportunity')),
+        ('no_answer', model.env._('No Answer')),
+        ('service_inquiry', model.env._('Service Inquiry')),
+        ('future_opportunity', model.env._('Considering Further')),
     ]
 
 
@@ -50,12 +103,18 @@ def _selection_contact_outcome(model):
 
 
 def _selection_contact_status(model):
+    # The four trailing values mirror legacy statuses that had no equivalent
+    # here (Đang suy nghĩ / Liên hệ lại / Đã sử dụng / Cũ).
     return [
-        ('active', model.env._('Initial Contact')),
-        ('booking', model.env._('Booking')),
+        ('active', model.env._('New')),
+        ('booking', model.env._('Appointment Scheduled')),
         ('lead', model.env._('Lead')),
-        ('lost_booking', model.env._('Lost Booking')),
+        ('lost_booking', model.env._('Cancelled')),
         ('spam', model.env._('Spam Call')),
+        ('thinking', model.env._('Thinking / Considering')),
+        ('recontact', model.env._('To Be Contacted Again')),
+        ('service_used', model.env._('Service Used')),
+        ('existing', model.env._('Existing Client')),
     ]
 
 
@@ -92,19 +151,13 @@ class HealthLead(models.Model):
     Healthcare CRM Lead extending standard Odoo CRM functionality
     Inherits from crm.lead to leverage all standard CRM features
     """
-    _inherit = 'crm.lead'
+    _name = 'crm.lead'
+    _inherit = ['crm.lead', 'health.lifecycle.mixin']
 
     # Healthcare-specific service interest
-    service_interest = fields.Selection([
-        ('home_visit', 'Home Visit'),
-        ('clinic_visit', 'Clinic Visit'),
-        ('consultation', 'Consultation'),
-        ('follow_up', 'Follow-up Care'),
-        ('emergency', 'Emergency Care'),
-        ('preventive', 'Preventive Care'),
-        ('rehabilitation', 'Rehabilitation'),
-        ('palliative', 'Palliative Care'),
-    ], string='Service Interest', help='Type of healthcare service the lead is interested in')
+    service_interest = fields.Selection(
+        _selection_service_interest, string='Service Interest',
+        help='Type of healthcare service the lead is interested in')
 
     # Healthcare contact outcome
     health_contact_outcome = fields.Selection(
@@ -198,14 +251,15 @@ class HealthLead(models.Model):
     ], string='Preferred Language', default='vietnamese')
 
     # Lead demographic information (captured pre-conversion; mirrors res.partner)
-    gender = fields.Selection([
-        ('male', 'Male'),
-        ('female', 'Female'),
-        ('other', 'Other'),
-        ('prefer_not_to_say', 'Prefer not to say'),
-    ], string='Gender', help='Lead/client gender (Giới tính)')
+    gender = fields.Selection(
+        _selection_lead_gender, string='Gender',
+        help='Lead/client gender (Giới tính)')
     birth_date = fields.Date('Date of Birth', help='Lead/client date of birth (Năm sinh)')
     national_id = fields.Char('National ID (CCCD/CMND)', help='Vietnamese national identity number (Số CCCD)')
+    phone2 = fields.Char('Second Phone', help='Alternate contact number (Số điện thoại 2)')
+    first_service_date = fields.Date(
+        'First Service Date',
+        help='Date this contact first used a service (Ngày đầu sử dụng)')
 
     # Geographic preferences
     preferred_service_area = fields.Many2one(
@@ -623,17 +677,8 @@ class HealthLead(models.Model):
     )
 
     # Healthcare lead source tracking (moved from res.partner)
-    healthcare_lead_source = fields.Selection([
-        ('facebook_ad', 'Facebook Advertisement'),
-        ('zalo_marketing', 'Zalo Marketing'),
-        ('website_form', 'Website Contact Form'),
-        ('phone_inquiry', 'Phone Inquiry'),
-        ('referral_patient', 'Patient Referral'),
-        ('referral_doctor', 'Doctor Referral'),
-        ('walk_in', 'Walk-in'),
-        ('health_fair', 'Health Fair'),
-        ('community_outreach', 'Community Outreach'),
-    ], string='Healthcare Lead Source')
+    healthcare_lead_source = fields.Selection(
+        _selection_healthcare_lead_source, string='Healthcare Lead Source')
     
     contact_type = fields.Selection([
         ('new', 'New Contact'),
@@ -1117,10 +1162,11 @@ class HealthLead(models.Model):
         outcome_to_status = {
             'service_booked': 'booking',      # Client Acquired → Booking status
             'pending_follow_up': 'lead',      # Continue Follow-up → Lead status
-            'rejected': 'lost_booking',       # Rejected → Lost Booking status
+            'rejected': 'lost_booking',       # Service Declined → Lost Booking status
             'no_response': 'lead',            # No Response → Keep as Lead
-            'not_qualified': 'lost_booking',  # Not Qualified → Lost Booking status
-            'future_opportunity': 'lead',     # Future Opportunity → Keep as Lead
+            'no_answer': 'recontact',         # No Answer → try again
+            'service_inquiry': 'thinking',    # Service Inquiry → still deciding
+            'future_opportunity': 'thinking',  # Considering Further → still deciding
         }
         
         new_status = outcome_to_status.get(self.health_contact_outcome)

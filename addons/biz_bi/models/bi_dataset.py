@@ -424,6 +424,23 @@ class BiDataset(models.Model):
                 SQL.identifier(rel.child_field))
 
         where_sql = self._compile_static_filters()
+
+        # Record-lifecycle rule: soft-deleted rows (health.lifecycle.mixin
+        # `deleted` flag) never enter BI datasets, while archived rows stay —
+        # BI deliberately runs active_test=False (see bi_query_engine). The
+        # predicate is applied on the ROOT table only and baked into the
+        # silver view, so gold materializations inherit it automatically.
+        root_model = root.source_id.model_name
+        if root_model and root_model in self.env:
+            deleted_field = self.env[root_model]._fields.get('deleted')
+            if deleted_field is not None and deleted_field.store \
+                    and deleted_field.type == 'boolean':
+                lifecycle_sql = SQL(
+                    "COALESCE(%s.deleted, FALSE) = FALSE",
+                    SQL.identifier(root.alias))
+                where_sql = SQL("%s AND %s", where_sql, lifecycle_sql) \
+                    if where_sql else lifecycle_sql
+
         query = SQL("SELECT %s FROM %s",
                     SQL(", ").join(select_parts), from_sql)
         if where_sql:

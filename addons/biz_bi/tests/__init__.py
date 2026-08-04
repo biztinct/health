@@ -5,3 +5,4 @@ from . import test_rls
 from . import test_gold_publish
 from . import test_pipeline
 from . import test_insights
+from . import test_lifecycle_predicate

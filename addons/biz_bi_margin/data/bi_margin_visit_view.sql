@@ -88,6 +88,8 @@ base AS (
     FROM health_fieldservice_order o
     LEFT JOIN att ON att.fso_id = o.id
     WHERE o.state IN ('completed', 'completed_pending_invoice', 'closed')
+      -- lifecycle: soft-deleted bookings never count (archived ones do)
+      AND COALESCE(o.deleted, FALSE) = FALSE
 ),
 calc AS (
     SELECT b.*,

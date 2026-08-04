@@ -7,10 +7,12 @@
         <field name="model">health.payment.transaction</field>
         <field name="arch" type="xml">
             <list string="Payment Transactions" default_order="transaction_date desc"
-                  decoration-success="status == 'reconciled'"
-                  decoration-warning="status in ('pending_delivery', 'collected')"
-                  decoration-danger="status == 'failed'"
-                  decoration-info="transaction_type == 'prepaid'">
+                  decoration-muted="deleted"
+                  decoration-success="status == 'reconciled' and not deleted"
+                  decoration-warning="status in ('pending_delivery', 'collected') and not deleted"
+                  decoration-danger="status == 'failed' or deleted"
+                  decoration-info="transaction_type == 'prepaid' and not deleted">
+                <field name="deleted" column_invisible="1"/>
                 <field name="name"/>
                 <field name="transaction_date"/>
                 <field name="patient_id"/>
@@ -47,7 +49,9 @@
         <field name="arch" type="xml">
             <form string="Payment Transaction">
                 <header>
-                    <field name="status" widget="statusbar" 
+                    <field name="deleted" invisible="1"/>
+                    <field name="active" invisible="1"/>
+                    <field name="status" widget="statusbar"
                            statusbar_visible="collected,pending_delivery,delivered_to_om,reconciled"/>
                     
                     <!-- Status Actions -->
@@ -68,6 +72,10 @@
                 </header>
                 
                 <sheet string="Payment Transaction">
+                    <widget name="web_ribbon" title="Deleted" bg_color="text-bg-danger"
+                            invisible="not deleted"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-secondary"
+                            invisible="active or deleted"/>
                     
                     <!-- Status Alerts -->
                     <div class="alert alert-warning" role="alert" 
@@ -199,10 +207,17 @@
                 <field name="patient_id" string="Client"/>
                 <field name="catchment_province_id" string="Catchment Area"/>
                 <separator string="Catchment Area"/>
-                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
-                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 <filter name="group_by_catchment_province" string="Catchment Area"
                         context="{'group_by': 'catchment_province_id'}"/>
+                <separator/>
+                <!-- The `deleted` reference in-domain disables the implicit
+                     deleted_test injection, so these work from any view. -->
+                <filter name="filter_deleted" string="Deleted"
+                        domain="[('deleted', '=', True)]"/>
+                <filter name="filter_not_deleted" string="Not Deleted"
+                        domain="[('deleted', '=', False)]"/>
+                <filter name="filter_archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
@@ -212,6 +227,8 @@
         <field name="name">Payment Transactions</field>
         <field name="res_model">health.payment.transaction</field>
         <field name="view_mode">list,form</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
+        <field name="context">{'deleted_test': False}</field>
         <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('view_health_payment_transaction_list')}), (0, 0, {'view_mode': 'form', 'view_id': ref('view_health_payment_transaction_form')})]"/>
         <field name="search_view_id" ref="view_health_payment_transaction_search"/>
     </record>

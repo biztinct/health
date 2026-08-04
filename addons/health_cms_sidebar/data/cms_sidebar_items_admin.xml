@@ -95,6 +95,16 @@
         <field name="match_action_tags">admin_settings</field>
     </record>
 
+    <record id="item_admin_data_lifecycle" model="cms.sidebar.item">
+        <field name="name">Data Lifecycle</field>
+        <field name="section_id" ref="section_admin"/>
+        <field name="sequence">92</field>
+        <field name="icon">fa fa-recycle</field>
+        <field name="action_xmlid">health_base.action_health_archive_log</field>
+        <field name="match_action_xmlids">health_base.action_health_archive_log,health_base.action_health_lifecycle_delete_requests,health_base.action_health_deletion_reason</field>
+        <field name="match_models">health.archive.log,health.deletion.reason</field>
+    </record>
+
     <record id="item_admin_cms_sidebar" model="cms.sidebar.item">
         <field name="name">CMS Sidebar Config</field>
         <field name="section_id" ref="section_admin"/>

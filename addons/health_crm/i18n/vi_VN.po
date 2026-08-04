@@ -2456,6 +2456,8 @@ msgstr "Phòng khám Dịch vụs"
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__service_interest__clinic_visit
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__service_type__clinic_visit
 #: model:ir.model.fields.selection,name:health_crm.selection__health_recurring_booking_wizard__service_type__clinic_visit
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Clinic Visit"
 msgstr "Khám tại phòng khám"
 
@@ -2535,8 +2537,10 @@ msgstr "Tỷ lệ hoa hồng"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__healthcare_lead_source__community_outreach
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Community Outreach"
-msgstr "Cộng đồng Tiếp cận"
+msgstr "Cộng đồng"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__service_category__companion
@@ -3371,8 +3375,10 @@ msgstr "Quận/Huyện hoặc Thành phố"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__healthcare_lead_source__referral_doctor
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Doctor Referral"
-msgstr "Bác sĩ Giới thiệu"
+msgstr "Bác sĩ/Điều dưỡng"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__issued_date
@@ -3538,8 +3544,10 @@ msgstr "Cấp cứu"
 #: model:crm.team,name:health_crm.emergency_care_crm_team
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__service_interest__emergency
 #: model:utm.campaign,title:health_crm.utm_campaign_emergency_care
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Emergency Care"
-msgstr "Chăm sóc khẩn cấp"
+msgstr "Cấp cứu"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__emergency_contact_id
@@ -3765,8 +3773,10 @@ msgstr "Thực hiện hành động hoạt động (Gọi/Email/Việc cần là
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_initial_contact_wizard__existing_partner_id
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Existing Client"
-msgstr "Khách hàng hiện tại"
+msgstr "Cũ"
 
 #. module: health_crm
 #. odoo-python
@@ -3908,6 +3918,8 @@ msgstr "Thuế đàm phán với nhà cung cấp thường xuyên"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__client_gender__female
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Female"
 msgstr "Nữ"
 
@@ -3959,6 +3971,8 @@ msgstr "Lịch tiếp theo"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__service_interest__follow_up
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Follow-up Care"
 msgstr "Chăm sóc theo dõi"
 
@@ -4182,8 +4196,10 @@ msgstr "Y tế Sự kiện/Fair"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__healthcare_lead_source__health_fair
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Health Fair"
-msgstr "Y tế Fair"
+msgstr "Hội chợ sức khỏe"
 
 #. module: health_crm
 #. odoo-python
@@ -4363,6 +4379,8 @@ msgstr "Địa chỉ nhà"
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__service_interest__home_visit
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__service_type__home_visit
 #: model:ir.model.fields.selection,name:health_crm.selection__health_recurring_booking_wizard__service_type__home_visit
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Home Visit"
 msgstr "Khám tại nhà"
 
@@ -4903,6 +4921,8 @@ msgstr "Chính"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__client_gender__male
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Male"
 msgstr "Nam"
 
@@ -5196,6 +5216,8 @@ msgstr "Mạng lưới Biểu đồ"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__lead_status__new
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "New"
 msgstr "Mới"
 
@@ -5638,8 +5660,10 @@ msgstr "Theo dõi quá hạn"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__service_interest__palliative
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Palliative Care"
-msgstr "Chăm sóc giảm nhẹ Care"
+msgstr "Chăm sóc giảm nhẹ"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__parent
@@ -5649,6 +5673,8 @@ msgstr "Cha mẹ"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_search_line__partner_id
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Partner"
 msgstr "Đối tác"
 
@@ -5995,8 +6021,10 @@ msgstr "Phòng ngừa"
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__service_type__preventive
 #: model:ir.model.fields.selection,name:health_crm.selection__health_recurring_booking_wizard__service_type__preventive
 #: model:utm.campaign,title:health_crm.utm_campaign_preventive_care
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Preventive Care"
-msgstr "Chăm sóc phòng ngừa"
+msgstr "Dự phòng"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_recurring_booking_wizard__preview_dates_json
@@ -6306,8 +6334,10 @@ msgstr "Đề xuất đến bác sĩ nhiệm vụ"
 #: model:ir.model.fields.selection,name:health_crm.selection__health_initial_contact_wizard__contact_relationship_type__referrer
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__role__referrer
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Referrer"
-msgstr "Người giới thiệu"
+msgstr "Người Giới Thiệu"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_relationship_contact_form
@@ -6336,6 +6366,8 @@ msgstr "Vùng"
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__service_interest__rehabilitation
 #: model:ir.model.fields.selection,name:health_crm.selection__health_booking_wizard__service_type__rehabilitation
 #: model:ir.model.fields.selection,name:health_crm.selection__health_recurring_booking_wizard__service_type__rehabilitation
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
 msgid "Rehabilitation"
 msgstr "Phục hồi chức năng"
 
@@ -7168,7 +7200,7 @@ msgstr "Thư rác"
 #: code:addons/health_crm/models/crm_lead.py:0
 #: code:addons/health_crm/static/src/js/crm_dashboard.js:0
 msgid "Spam Call"
-msgstr "Cuộc gọi rác"
+msgstr "Spam"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__is_spam_caller
@@ -8513,3 +8545,201 @@ msgstr "👤 Sử dụng liên lạc hiện có"
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "🔍 Search"
 msgstr "🔍 Tìm kiếm"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Unspecified"
+msgstr "Không xác định"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Medical Examination"
+msgstr "Bác sĩ khám"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Personal Care"
+msgstr "Chăm sóc cá nhân"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Wound Care"
+msgstr "Chăm sóc vết thương"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Injection"
+msgstr "Tiêm"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "IV Infusion"
+msgstr "Truyền"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Enema"
+msgstr "Thụt tháo"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Catheter Insertion/Removal"
+msgstr "Đặt, rút sonde"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Sputum Suction, Chest Percussion"
+msgstr "Hút đờm, vỗ rung đờm"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Laboratory Testing"
+msgstr "Xét nghiệm"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Online Form"
+msgstr "Form"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Hotline"
+msgstr "Hotline"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Walk-in to Clinic"
+msgstr "Tự đến PK"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "TikTok"
+msgstr "TikTok"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Google"
+msgstr "Google"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Former Client"
+msgstr "Khách hàng cũ"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Email Inbox"
+msgstr "INBOX"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Appointment Scheduled"
+msgstr "Đặt lịch hẹn"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Cancelled"
+msgstr "Hủy"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Thinking / Considering"
+msgstr "Đang suy nghĩ"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "To Be Contacted Again"
+msgstr "Liên hệ lại"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Service Used"
+msgstr "Đã sử dụng"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Service Confirmed"
+msgstr "Chốt dùng dịch vụ"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Busy - Call Back Later"
+msgstr "Bận gọi lại sau"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Service Declined"
+msgstr "Từ chối dịch vụ"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "No Answer"
+msgstr "Không nghe máy"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Service Inquiry"
+msgstr "Tham khảo dịch vụ"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Considering Further"
+msgstr "Cân nhắc thêm"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Imaging & Procedures"
+msgstr "Ảnh y tế & Thủ thuật"
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/models/crm_lead.py:0
+msgid "Nursing Other"
+msgstr "Điều dưỡng Khác"
+
+#. module: health_crm
+#: model:ir.model.fields,field_description:health_crm.field_crm_lead__deleted
+#: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_lead_search
+#: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
+msgid "Deleted"
+msgstr "Đã xóa"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_lead_search
+msgid "Not Deleted"
+msgstr "Chưa xóa"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_lead_search
+#: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
+msgid "Archived"
+msgstr "Đã lưu trữ"

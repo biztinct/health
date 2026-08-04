@@ -43,9 +43,10 @@ def _selection_priority(model):
 
 
 def _selection_fso_state(model):
+    # Labels follow the legacy booking-status wording (Trạng thái lịch hẹn).
     return [
         ('draft', model.env._('Draft')),
-        ('confirmed', model.env._('Confirmed')),
+        ('confirmed', model.env._('New Booking')),
         ('assigned', model.env._('Assigned')),
         ('in_progress', model.env._('In Progress')),
         ('completed', model.env._('Completed')),
@@ -56,13 +57,14 @@ def _selection_fso_state(model):
 
 
 def _selection_service_location(model):
+    # Labels follow the legacy service-location wording (Dịch vụ tại).
     return [
-        ('home', model.env._('Patient Home')),
-        ('clinic', model.env._('Clinic')),
+        ('home', model.env._('At Home')),
+        ('clinic', model.env._('At Clinic')),
         ('hospital', model.env._('Hospital')),
         ('nursing_home', model.env._('Nursing Home')),
         ('office', model.env._('Office')),
-        ('online', model.env._('Online/Telemedicine')),
+        ('online', model.env._('Telemedicine')),
         ('other', model.env._('Other Location')),
     ]
 
@@ -79,7 +81,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     """
     _name = 'health.fieldservice.order'
     _description = 'Healthcare Field Service Order (Unified Booking System)'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin', 'health.lifecycle.mixin']
     _order = 'scheduled_datetime desc, priority desc, create_date desc'
     _rec_name = 'display_name'
 
@@ -274,7 +276,10 @@ class HealthFieldServiceOrderUnified(models.Model):
         string='Client',
         required=True,
         tracking=True,
-        domain=[('is_patient', '=', True)],
+        # deleted=False is explicit because booking tables run with
+        # deleted_test=False in the context (to show Delete requests), and
+        # that context would otherwise leak into this dropdown's name_search.
+        domain=[('is_patient', '=', True), ('deleted', '=', False)],
         help='client receiving the healthcare service'
     )
     
@@ -958,6 +963,16 @@ class HealthFieldServiceOrderUnified(models.Model):
     patient_contact_confirmed = fields.Boolean('Patient Contact Confirmed', default=False,
                                               help='client has been contacted and confirmed the appointment')
 
+    is_rescheduled = fields.Boolean(
+        'Rescheduled', default=False, copy=False, tracking=True,
+        help='Set when the appointment date/time is moved after the booking was '
+             'confirmed. Surfaces a "Rescheduled" tag on the booking.')
+
+    operations_manager_id = fields.Many2one(
+        'hr.employee', string='Operations Manager',
+        related='facility_id.facility_manager_id', readonly=True,
+        help='Operations manager of the facility handling this booking.')
+
     # Cancellation fields
     cancellation_reason_id = fields.Many2one(
         'health.booking.cancellation.reason',
@@ -1259,10 +1274,9 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     # Payment tracking
     payment_status = fields.Selection([
-        ('pending', 'Payment Pending'),
-        ('partial', 'Partially Paid'),
-        ('paid', 'Fully Paid'),
-        ('overpaid', 'Overpaid'),
+        ('pending', 'Unpaid'),
+        ('partial', 'Partial Payment'),
+        ('paid', 'Paid'),
         ('refunded', 'Refunded'),
     ], string='Payment Status', compute='_compute_payment_status')
     
@@ -1693,10 +1707,32 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         result = super().write(vals)
 
+        # Flag a genuine reschedule: the appointment moved on a booking that was
+        # already confirmed. Draft bookings are still being planned, so moving
+        # them is not a reschedule.
+        if old_scheduled and 'is_rescheduled' not in vals:
+            moved_ids = [
+                record.id for record in self
+                if old_scheduled.get(record.id)
+                and record.scheduled_datetime
+                and record.scheduled_datetime != old_scheduled[record.id]
+                and record.state in ('confirmed', 'assigned', 'in_progress')
+                and not record.is_rescheduled
+            ]
+            if moved_ids:
+                self.browse(moved_ids).write({'is_rescheduled': True})
+
         if 'active' in vals:
             assignments = self.with_context(active_test=False).mapped('assignment_ids')
             if assignments:
                 assignments.write({'active': vals['active']})
+
+        # Deleted bookings must vanish from staff schedules the same way
+        # archived ones do; a restore brings the assignments back.
+        if 'deleted' in vals:
+            assignments = self.with_context(active_test=False).mapped('assignment_ids')
+            if assignments:
+                assignments.write({'active': not vals['deleted']})
 
         # Handle state transitions
         if 'state' in vals:

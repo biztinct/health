@@ -5,12 +5,13 @@ from odoo.exceptions import UserError, ValidationError
 
 
 def _selection_payment_method(model):
+    # Labels follow the legacy payment-method wording (Hình thức thanh toán).
     return [
         ('cash', model.env._('Cash')),
         ('bank_transfer', model.env._('Bank Transfer')),
         ('credit_card', model.env._('Credit Card')),
         ('qr_code', model.env._('QR Code Payment')),
-        ('prepaid', model.env._('Prepaid Service')),
+        ('prepaid', model.env._('Paid from Prepayment Balance')),
         ('other', model.env._('Other')),
     ]
 
@@ -47,7 +48,7 @@ class HealthPaymentTransaction(models.Model):
     """
     _name = 'health.payment.transaction'
     _description = 'Healthcare Payment Transaction'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _order = 'transaction_date desc'
     _rec_name = 'display_name'
 

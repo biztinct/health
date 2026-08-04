@@ -1,22 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ============ Archive Reason Wizard ============ -->
+    <!-- ============ Record Lifecycle Wizard ============ -->
     <record id="view_health_archive_reason_wizard_form" model="ir.ui.view">
         <field name="name">health.archive.reason.wizard.form</field>
         <field name="model">health.archive.reason.wizard</field>
         <field name="arch" type="xml">
-            <form string="Archive">
-                <div class="alert alert-warning" role="alert">
-                    <i class="fa fa-archive"/>
-                    You are about to archive <field name="record_count" nolabel="1" class="d-inline"/> record(s).
-                    Archived records are hidden but preserved (soft delete). Please state why.
-                </div>
-                <group>
-                    <field name="reason" nolabel="1" placeholder="Reason for archiving (required)…"/>
-                </group>
+            <form string="Record Lifecycle">
+                <sheet>
+                    <field name="mode" invisible="1"/>
+                    <field name="requires_note" invisible="1"/>
+
+                    <div class="alert alert-danger" role="alert" invisible="mode != 'delete'">
+                        <strong>Delete request.</strong> The record stays visible in its table
+                        with a <strong>DELETED</strong> badge and stops counting in reports.
+                        Once the purpose is verified, the custodian can remove it permanently.
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="mode != 'archive'">
+                        <strong>Archive (custodian).</strong> The record is hidden from normal
+                        views but keeps counting in reports. Find it again with the
+                        "Archived" filter.
+                    </div>
+                    <div class="alert alert-info" role="alert" invisible="mode != 'restore'">
+                        <strong>Restore.</strong> The Deleted flag is removed and the record
+                        counts again everywhere.
+                    </div>
+                    <div class="alert alert-info" role="alert" invisible="mode != 'unarchive'">
+                        <strong>Unarchive.</strong> The record returns to normal views.
+                    </div>
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="clipboard-list"/>
+                            <div>
+                                <span>Selected Records</span>
+                                <small class="text-muted d-block">What this action applies to</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="record_count" readonly="1"/>
+                                    <field name="record_preview" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vu-section" invisible="mode in ('restore', 'unarchive')">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="alert-triangle"/>
+                            <div>
+                                <span>Why?</span>
+                                <small class="text-muted d-block">Mandatory — kept in the lifecycle audit trail</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group>
+                                    <field name="reason_id"
+                                           invisible="mode != 'delete'"
+                                           required="mode == 'delete'"
+                                           options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="reason"
+                                           required="mode == 'archive' or requires_note"
+                                           placeholder="Explain this action for the audit trail…"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
                 <footer>
-                    <button name="action_confirm" string="Archive" type="object" class="btn-primary"/>
+                    <button name="action_confirm" string="Mark as Deleted" type="object"
+                            class="btn-danger" invisible="mode != 'delete'"/>
+                    <button name="action_confirm" string="Archive" type="object"
+                            class="btn-warning" invisible="mode != 'archive'"/>
+                    <button name="action_confirm" string="Restore Record" type="object"
+                            class="btn-primary" invisible="mode != 'restore'"/>
+                    <button name="action_confirm" string="Unarchive" type="object"
+                            class="btn-primary" invisible="mode != 'unarchive'"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
@@ -29,6 +91,34 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="view_id" ref="view_health_archive_reason_wizard_form"/>
+        <field name="context">{'default_mode': 'archive'}</field>
+    </record>
+
+    <record id="action_lifecycle_delete_wizard" model="ir.actions.act_window">
+        <field name="name">Delete Record</field>
+        <field name="res_model">health.archive.reason.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_archive_reason_wizard_form"/>
+        <field name="context">{'default_mode': 'delete'}</field>
+    </record>
+
+    <record id="action_lifecycle_restore_wizard" model="ir.actions.act_window">
+        <field name="name">Restore Record</field>
+        <field name="res_model">health.archive.reason.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_archive_reason_wizard_form"/>
+        <field name="context">{'default_mode': 'restore'}</field>
+    </record>
+
+    <record id="action_lifecycle_unarchive_wizard" model="ir.actions.act_window">
+        <field name="name">Unarchive</field>
+        <field name="res_model">health.archive.reason.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_archive_reason_wizard_form"/>
+        <field name="context">{'default_mode': 'unarchive'}</field>
     </record>
 
     <!-- ============ Archive Log (append-only) ============ -->
@@ -36,18 +126,26 @@
         <field name="name">health.archive.log.list</field>
         <field name="model">health.archive.log</field>
         <field name="arch" type="xml">
-            <list string="Archive Log" create="false" edit="false" delete="false"
+            <list string="Data Lifecycle" create="false" edit="false" delete="false"
                   default_order="create_date desc">
                 <field name="create_date" string="When"/>
                 <field name="user_id" string="User"/>
                 <field name="action" widget="badge"
                        decoration-warning="action == 'archive'"
-                       decoration-success="action == 'unarchive'"/>
+                       decoration-success="action in ('unarchive', 'restore')"
+                       decoration-danger="action in ('delete', 'purge')"/>
                 <field name="model_name" string="Model"/>
                 <field name="record_name" string="Record"/>
                 <field name="reason" string="Reason"/>
+                <field name="record_state" string="Current State" widget="badge"
+                       decoration-danger="record_state == 'deleted'"
+                       decoration-warning="record_state == 'archived'"
+                       decoration-success="record_state == 'active'"/>
                 <field name="model_technical" string="Technical Model" optional="hide"/>
                 <field name="res_id" string="Record ID" optional="hide"/>
+                <button name="action_open_record" type="object"
+                        icon="fa-external-link" title="Open Record"
+                        invisible="record_state == 'purged'"/>
             </list>
         </field>
     </record>
@@ -56,7 +154,14 @@
         <field name="name">health.archive.log.form</field>
         <field name="model">health.archive.log</field>
         <field name="arch" type="xml">
-            <form string="Archive Log" create="false" edit="false" delete="false">
+            <form string="Lifecycle Entry" create="false" edit="false" delete="false">
+                <header>
+                    <button name="action_open_record" type="object"
+                            string="Open Record" class="btn-primary"
+                            icon="fa-external-link"
+                            invisible="record_state == 'purged'"/>
+                    <field name="record_state" widget="statusbar"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
@@ -83,15 +188,22 @@
         <field name="name">health.archive.log.search</field>
         <field name="model">health.archive.log</field>
         <field name="arch" type="xml">
-            <search string="Archive Log">
+            <search string="Data Lifecycle">
                 <field name="record_name"/>
                 <field name="model_name"/>
                 <field name="user_id"/>
                 <field name="reason"/>
+                <filter name="delete_requests" string="Delete Requests" domain="[('action', '=', 'delete')]"/>
+                <filter name="restored" string="Restored" domain="[('action', '=', 'restore')]"/>
+                <filter name="purged" string="Purged" domain="[('action', '=', 'purge')]"/>
+                <separator/>
                 <filter name="archived" string="Archived" domain="[('action', '=', 'archive')]"/>
                 <filter name="unarchived" string="Unarchived" domain="[('action', '=', 'unarchive')]"/>
+                <separator/>
                 <filter name="today" string="Today"
                         domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
                 <separator/>
                 <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
                 <filter name="group_model" string="Model" context="{'group_by': 'model_name'}"/>
@@ -101,16 +213,57 @@
     </record>
 
     <record id="action_health_archive_log" model="ir.actions.act_window">
-        <field name="name">Archive Log</field>
+        <field name="name">Data Lifecycle</field>
         <field name="res_model">health.archive.log</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_health_archive_log_search"/>
-        <field name="context">{'search_default_archived': 1}</field>
+        <field name="context">{}</field>
     </record>
 
-    <menuitem id="menu_healthcare_archive_log_main" name="Archive Log"
+    <!-- Custodian console: pending Delete requests awaiting verification -->
+    <record id="action_health_lifecycle_delete_requests" model="ir.actions.act_window">
+        <field name="name">Delete Requests</field>
+        <field name="res_model">health.archive.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_archive_log_search"/>
+        <field name="domain">[('action', '=', 'delete')]</field>
+    </record>
+
+    <!-- ============ Deletion Reasons (lookup) ============ -->
+    <record id="view_health_deletion_reason_list" model="ir.ui.view">
+        <field name="name">health.deletion.reason.list</field>
+        <field name="model">health.deletion.reason</field>
+        <field name="arch" type="xml">
+            <list string="Deletion Reasons" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="requires_note"/>
+                <field name="description" optional="hide"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_health_deletion_reason" model="ir.actions.act_window">
+        <field name="name">Deletion Reasons</field>
+        <field name="res_model">health.deletion.reason</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <menuitem id="menu_healthcare_archive_log_main" name="Data Lifecycle"
               parent="menu_healthcare_root" sequence="36"
+              groups="group_healthcare_custodian,group_healthcare_admin,group_healthcare_owner"/>
+    <menuitem id="menu_healthcare_lifecycle_log" name="Lifecycle Log"
+              parent="menu_healthcare_archive_log_main" sequence="10"
               action="action_health_archive_log"
+              groups="group_healthcare_custodian,group_healthcare_admin,group_healthcare_owner"/>
+    <menuitem id="menu_healthcare_lifecycle_delete_requests" name="Delete Requests"
+              parent="menu_healthcare_archive_log_main" sequence="20"
+              action="action_health_lifecycle_delete_requests"
+              groups="group_healthcare_custodian,group_healthcare_admin,group_healthcare_owner"/>
+    <menuitem id="menu_healthcare_deletion_reasons" name="Deletion Reasons"
+              parent="menu_healthcare_archive_log_main" sequence="30"
+              action="action_health_deletion_reason"
               groups="group_healthcare_admin,group_healthcare_owner"/>
 
 </odoo>

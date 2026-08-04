@@ -4538,7 +4538,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_stage__state__cancelled
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__real_time_status__cancelled
 msgid "Cancelled"
-msgstr "Đã hủy"
+msgstr "Hủy"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__cancelled_by
@@ -5304,7 +5304,7 @@ msgstr "Địa chỉ đầy đủ nơi dịch vụ sẽ được cung cấp"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__real_time_status__completed
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_form
 msgid "Completed"
-msgstr "Hoàn thành"
+msgstr "Đã hoàn thành"
 
 #. module: health_fieldservice
 #. odoo-python
@@ -7868,7 +7868,7 @@ msgstr "Nhân thân"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_stage__state__in_progress
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__real_time_status__in_progress
 msgid "In Progress"
-msgstr "Đang thực hiện"
+msgstr "Đang tiến hành"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -9048,7 +9048,7 @@ msgstr "Phân bổ nhiệm mới"
 #: code:addons/health_fieldservice/static/src/xml/ops_client_profile_form.xml:0
 #: model:ir.actions.client,name:health_fieldservice.action_ops_booking_wizard
 msgid "New Booking"
-msgstr "Lịch hẹn mới"
+msgstr "Đặt chỗ mới"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -10069,6 +10069,8 @@ msgstr "Trang"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__res_partner__invoice_status__paid
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 msgid "Paid"
 msgstr "Đã thanh toán"
 
@@ -13193,7 +13195,7 @@ msgstr "Sức khỏe qua đường dây"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_quick_booking_wizard__service_type__telemedicine
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_availability_matrix__location_type__online
 msgid "Telemedicine"
-msgstr "Thuốc điện y"
+msgstr "Telemedicine"
 
 #. module: health_fieldservice
 #. odoo-python
@@ -13884,8 +13886,10 @@ msgstr "Hầm không rõ"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__res_partner__invoice_status__unpaid
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 msgid "Unpaid"
-msgstr "Không được trả tiền"
+msgstr "Chưa thanh toán"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_quote_form_custom
@@ -15185,3 +15189,61 @@ msgstr " Sử dụng tối ưu hóa AI"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_ai_assignment_engine_form
 msgid "🧠 Train AI Model"
 msgstr " Mô hình AI tàu"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "At Home"
+msgstr "Tại Nhà"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "At Clinic"
+msgstr "Tại Phòng khám"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Partial Payment"
+msgstr "Thanh toán một phần"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+msgid "Rescheduled"
+msgstr "Dời lịch"
+
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_list_view.js:0
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
+msgid "Deleted"
+msgstr "Đã xóa"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
+msgid "Not Deleted"
+msgstr "Chưa xóa"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
+msgid "Archived"
+msgstr "Đã lưu trữ"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted_reason_id
+msgid "Deletion Reason"
+msgstr "Lý do xóa"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "DELETED:"
+msgstr "ĐÃ XÓA:"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "ARCHIVED:"
+msgstr "ĐÃ LƯU TRỮ:"

@@ -99,15 +99,18 @@ class OpsClientList extends Component {
                 'name', 'patient_code', 'mobile', 'email', 'gender', 'age',
                 'patient_status', 'catchment_province_id', 'primary_facility_id',
                 'preferred_staff_id', 'last_visit_date', 'total_assignments',
-                'patient_category_id',
+                'patient_category_id', 'deleted',
             ];
+            // deleted_test false: Delete requests stay visible in the record
+            // table (chip in the status column); counts elsewhere exclude them.
+            const lifecycleCtx = { context: { deleted_test: false } };
             const clients = await this.orm.searchRead(
                 "res.partner",
                 this.domain,
                 fields,
-                { limit: PAGE_SIZE, offset: this.state.page * PAGE_SIZE, order: this.orderBy }
+                { limit: PAGE_SIZE, offset: this.state.page * PAGE_SIZE, order: this.orderBy, ...lifecycleCtx }
             );
-            const count = await this.orm.searchCount("res.partner", this.domain);
+            const count = await this.orm.searchCount("res.partner", this.domain, lifecycleCtx);
             this.state.clients = clients;
             this.state.totalCount = count;
         } catch (e) {

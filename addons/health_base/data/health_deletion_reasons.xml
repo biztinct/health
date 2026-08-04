@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        Structured reasons for user-requested record deletions (soft delete).
+        The client spec: "A deletion must be explained. E.g. duplicated
+        transactions or similar." The "Other" reason forces a free-text note.
+    -->
+
+    <record id="deletion_reason_duplicate" model="health.deletion.reason">
+        <field name="name">Duplicate record</field>
+        <field name="sequence">10</field>
+        <field name="description">The same transaction or record was entered more than once.</field>
+    </record>
+
+    <record id="deletion_reason_data_entry" model="health.deletion.reason">
+        <field name="name">Data-entry error</field>
+        <field name="sequence">20</field>
+        <field name="description">The record was created by mistake or with unusable data.</field>
+    </record>
+
+    <record id="deletion_reason_test" model="health.deletion.reason">
+        <field name="name">Test / training record</field>
+        <field name="sequence">30</field>
+        <field name="description">Created while testing or training, never a real record.</field>
+    </record>
+
+    <record id="deletion_reason_wrong_client" model="health.deletion.reason">
+        <field name="name">Recorded against the wrong client</field>
+        <field name="sequence">40</field>
+        <field name="requires_note" eval="True"/>
+    </record>
+
+    <record id="deletion_reason_other" model="health.deletion.reason">
+        <field name="name">Other</field>
+        <field name="sequence">90</field>
+        <field name="requires_note" eval="True"/>
+    </record>
+
+</odoo>

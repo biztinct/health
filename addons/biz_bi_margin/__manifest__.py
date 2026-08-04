@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'BIZ BI — Margin per Visit',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Analytics',
     'summary': 'Revenue minus direct cost (labor + travel + commission) for '
                'every completed visit, on the BIZ BI platform.',

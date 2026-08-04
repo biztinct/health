@@ -30,9 +30,15 @@
                 </header>
 
                 <sheet>
+                    <widget name="web_ribbon" title="Deleted" bg_color="text-bg-danger"
+                            invisible="not deleted"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-secondary"
+                            invisible="active or deleted"/>
                     <div class="oe_button_box" name="button_box"/>
 
                     <!-- Hidden dependency fields for visibility conditions -->
+                    <field name="deleted" invisible="1"/>
+                    <field name="active" invisible="1"/>
                     <field name="state" invisible="1"/>
                     <field name="service_timer_active" invisible="1"/>
                     <field name="actual_start_datetime" invisible="1"/>
@@ -248,6 +254,7 @@
                                                 <field name="patient_national_id" string="National ID"/>
                                                 <field name="patient_catchment_province_id"/>
                                                 <field name="facility_id"/>
+                                                <field name="operations_manager_id" readonly="1" options="{'no_open': True}"/>
                                                 <field name="scheduled_datetime" readonly="has_staff_assigned"/>
                                                 <field name="scheduled_duration" widget="integer"/>
                                                 <field name="team_id"/>
@@ -778,7 +785,9 @@
         <field name="model">health.fieldservice.order</field>
         <field name="priority">99</field>
         <field name="arch" type="xml">
-            <list string="Bookings" default_order="create_date desc">
+            <list string="Bookings" default_order="create_date desc"
+                  decoration-danger="deleted" decoration-muted="deleted">
+                <field name="deleted" column_invisible="1"/>
                 <field name="display_name" string="Booking"/>
                 <field name="patient_id" string="Client"/>
                 <field name="patient_code" string="Client ID" optional="show"/>
@@ -904,8 +913,6 @@
                 <field name="patient_id" string="Client"/>
                 <field name="catchment_province_id" string="Catchment Area"/>
                 <separator string="Catchment Area"/>
-                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
-                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 <field name="facility_id"/>
                 <field name="lead_staff_id"/>
                 <filter name="group_by_catchment_province" string="Catchment Area"
@@ -914,6 +921,15 @@
                         context="{'group_by': 'facility_id'}"/>
                 <filter name="group_by_stage" string="Stage"
                         context="{'group_by': 'stage_id'}"/>
+                <separator/>
+                <!-- The `deleted` reference in-domain disables the implicit
+                     deleted_test injection, so this works from any view. -->
+                <filter name="filter_deleted" string="Deleted"
+                        domain="[('deleted', '=', True)]"/>
+                <filter name="filter_not_deleted" string="Not Deleted"
+                        domain="[('deleted', '=', False)]"/>
+                <filter name="filter_archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
@@ -924,7 +940,13 @@
         <field name="res_model">health.fieldservice.order</field>
         <field name="view_mode">calendar,kanban,list,form</field>
         <field name="search_view_id" ref="view_health_fieldservice_order_search"/>
-        <field name="context">{}</field>
+        <!-- Delete requests stay visible in the record table (with a DELETED
+             badge) while every count excludes them. The neutral all-rows
+             `deleted` clause disables the mixin's implicit deleted_test
+             injection (in-domain reference wins), and the context flag covers
+             paths that consume context rather than the action domain. -->
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
+        <field name="context">{'deleted_test': False}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No bookings found!
@@ -984,6 +1006,8 @@
                     <div class="oe_button_box" name="button_box"/>
 
                     <!-- Hidden dependency fields -->
+                    <field name="deleted" invisible="1"/>
+                    <field name="active" invisible="1"/>
                     <field name="state" invisible="1"/>
                     <field name="service_timer_active" invisible="1"/>
                     <field name="actual_start_datetime" invisible="1"/>
@@ -1013,6 +1037,14 @@
                                        decoration-success="state in ('assigned', 'completed', 'closed')"
                                        decoration-warning="state == 'in_progress'"
                                        decoration-danger="state == 'cancelled'"/>
+                                <span class="badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted"
+                                      invisible="not deleted">
+                                    <i class="fa fa-trash"/> Deleted
+                                </span>
+                                <span class="badge rounded-pill vu-lifecycle-badge vu-lifecycle--archived"
+                                      invisible="active or deleted">
+                                    <i class="fa fa-archive"/> Archived
+                                </span>
                                 <span class="badge rounded-pill vu-urgency-badge vu-urgency--urgent"
                                       invisible="urgency_level != 'urgent'">
                                     <i class="fa fa-arrow-up"/> Urgent
@@ -1043,6 +1075,10 @@
                                 <span class="badge rounded-pill vu-service-tag vu-service-tag--lab"
                                       invisible="service_type != 'lab_visit'">
                                     <i class="fa fa-flask"/> Lab Visit
+                                </span>
+                                <span class="badge rounded-pill vu-service-tag vu-service-tag--rescheduled"
+                                      invisible="not is_rescheduled">
+                                    <i class="fa fa-history"/> Rescheduled
                                 </span>
                             </div>
                         </div>
@@ -1261,6 +1297,7 @@
                                 </div>
                                 <group>
                                     <field name="facility_id"/>
+                                    <field name="operations_manager_id" readonly="1" options="{'no_open': True}"/>
                                     <field name="patient_catchment_province_id"/>
                                     <field name="patient_address_display" string="Address" readonly="1"/>
                                     <label for="travel_distance" string="Driving Distance"/>

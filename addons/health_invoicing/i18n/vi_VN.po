@@ -7961,3 +7961,40 @@ msgstr "🛒 Mua và chọn"
 
 #~ msgid "Issued"
 #~ msgstr "Đã phát hành"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_payment_transaction.py:0
+msgid "Paid from Prepayment Balance"
+msgstr "Trả từ TT trước"
+
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__deleted
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__deleted
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
+msgid "Deleted"
+msgstr "Đã xóa"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
+msgid "Not Deleted"
+msgstr "Chưa xóa"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
+msgid "Archived"
+msgstr "Đã lưu trữ"
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/account_move.py:0
+msgid ""
+"Posted entries cannot be marked Deleted — reverse or reset them to draft "
+"first: %s"
+msgstr ""
+"Bút toán đã ghi sổ không thể đánh dấu Đã xóa — hãy đảo hoặc đưa về nháp "
+"trước: %s"

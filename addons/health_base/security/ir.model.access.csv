@@ -101,3 +101,8 @@ access_health_fall_risk_head_nurse,health.fall.risk head_nurse,model_health_fall
 access_health_fall_risk_doctor,health.fall.risk doctor,model_health_fall_risk,group_healthcare_doctor,1,1,1,0
 access_health_fall_risk_operations_manager,health.fall.risk operations_manager,model_health_fall_risk,group_healthcare_operations_manager,1,0,0,0
 access_health_fall_risk_manager,health.fall.risk manager,model_health_fall_risk,group_healthcare_manager,1,1,1,0
+access_health_deletion_reason_base,health.deletion.reason base,model_health_deletion_reason,group_healthcare_base,1,0,0,0
+access_health_deletion_reason_manager,health.deletion.reason manager,model_health_deletion_reason,group_healthcare_manager,1,1,1,0
+access_health_deletion_reason_admin,health.deletion.reason admin,model_health_deletion_reason,group_healthcare_admin,1,1,1,0
+access_health_deletion_reason_owner,health.deletion.reason owner,model_health_deletion_reason,group_healthcare_owner,1,1,1,1
+access_health_archive_log_custodian,health.archive.log custodian,model_health_archive_log,group_healthcare_custodian,1,0,0,0

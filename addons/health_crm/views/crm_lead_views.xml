@@ -55,8 +55,15 @@
             <xpath expr="//search" position="inside">
                 <field name="catchment_province_id" string="Catchment Area"/>
                 <separator string="Catchment Area"/>
-                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
-                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
+                <separator/>
+                <!-- The `deleted` reference in-domain disables the implicit
+                     deleted_test injection, so these work from any view. -->
+                <filter name="filter_deleted" string="Deleted"
+                        domain="[('deleted', '=', True)]"/>
+                <filter name="filter_not_deleted" string="Not Deleted"
+                        domain="[('deleted', '=', False)]"/>
+                <filter name="filter_archived_lifecycle" string="Archived"
+                        domain="[('active', '=', False)]"/>
             </xpath>
             <xpath expr="//group" position="inside">
                 <filter string="Catchment Area" name="groupby_catchment_province" context="{'group_by': 'catchment_province_id'}"/>
@@ -124,6 +131,7 @@
         <field name="arch" type="xml">
             <form string="Contact Details" js_class="healthcare_lead_form_redirect">
                 <field name="active" invisible="1"/>
+                <field name="deleted" invisible="1"/>
                 <header>
                     <!-- CONTACT-FIRST ACTION MENU BAR -->
                     
@@ -252,6 +260,16 @@
                         </span>
                         <field name="contact_status" invisible="1"/>
 
+                        <!-- Lifecycle Badges -->
+                        <span class="badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted"
+                              invisible="not deleted">
+                            <i class="fa fa-trash"/> Deleted
+                        </span>
+                        <span class="badge rounded-pill vu-lifecycle-badge vu-lifecycle--archived"
+                              invisible="active or deleted">
+                            <i class="fa fa-archive"/> Archived
+                        </span>
+
                         <!-- Contact ID Badge -->
                         <span class="badge rounded-pill" style="background-color: #E4F4FD; color: #0D356B; font-size: 14px; padding: 8px 18px; font-weight: 700; letter-spacing: 0.5px;">
                             <field name="unique_contact_code" readonly="1" nolabel="1"/>
@@ -365,6 +383,9 @@
                                             <field name="gender"/>
                                             <field name="birth_date"/>
                                             <field name="national_id" string="National ID (CCCD/CMND)"/>
+                                            <field name="contact_name" string="Patient Name"/>
+                                            <field name="phone2" string="Second Phone"/>
+                                            <field name="first_service_date"/>
                                         </group>
                                     </div>
 
@@ -518,10 +539,11 @@
         <field name="name">CRM Contacts</field>
         <field name="res_model">crm.lead</field>
         <field name="view_mode">kanban,list,form,calendar,pivot,graph,activity</field>
-        <field name="domain">[('type', '=', 'opportunity')]</field>
+        <field name="domain">[('type', '=', 'opportunity'), '|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="context">{
             'default_type': 'opportunity',
             'form_view_ref': 'health_crm.view_healthcare_opportunity_form',
+            'deleted_test': False,
         }</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'kanban'}),
@@ -629,6 +651,14 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
         <field name="arch" type="xml">
+            <!-- Lifecycle: Delete requests stay visible, struck in red -->
+            <xpath expr="//list" position="attributes">
+                <attribute name="decoration-danger">deleted</attribute>
+                <attribute name="decoration-muted">deleted</attribute>
+            </xpath>
+            <xpath expr="//list" position="inside">
+                <field name="deleted" column_invisible="1"/>
+            </xpath>
             <!-- 'name' field is the caller/contact person, NOT the client -->
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="string">Contact Name</attribute>
@@ -804,8 +834,6 @@
                 <field name="catchment_province_id" string="Catchment Area"/>
 
                 <separator string="Catchment Area"/>
-                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
-                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 
                 <!-- Status filters -->
                 <filter string="Initial Contact" name="filter_active" 

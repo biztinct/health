@@ -13,11 +13,16 @@
         <field name="arch" type="xml">
             <form string="Client Record" class="o_form_patient_record">
                 <field name="active" invisible="1"/>
+                <field name="deleted" invisible="1"/>
                 <header>
                     <field name="patient_status" widget="statusbar" statusbar_visible="active,inactive"/>
                 </header>
 
                 <sheet string="Client">
+                    <widget name="web_ribbon" title="Deleted" bg_color="text-bg-danger"
+                            invisible="not deleted"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-secondary"
+                            invisible="active or deleted"/>
                     <div class="oe_button_box d-none" name="button_box" groups="base.group_user">
                     </div>
 
@@ -35,6 +40,9 @@
                                 </span>
                                 <span class="badge patient-badge badge-deceased text-danger" invisible="not deceased">
                                     <i class="fa fa-user-times" title="Deceased"/>
+                                </span>
+                                <span class="badge patient-badge vu-lifecycle-badge vu-lifecycle--deleted" invisible="not deleted">
+                                    <i class="fa fa-trash" title="Deleted"/> Deleted
                                 </span>
                             </div>
                         </h1>
@@ -211,6 +219,8 @@
                                                     <field name="catchment_province_id" required="1"/>
                                                     <field name="primary_facility_id" domain="[('catchment_province_id', '=', catchment_province_id)]"/>
                                                     <field name="source_type"/>
+                                                    <field name="source_details" invisible="not source_details"/>
+                                                    <field name="client_type"/>
                                                     <field name="national_id"/>
                                                     <field name="profession" string="Occupation"/>
                                                     <field name="ethnicity"/>
@@ -528,11 +538,13 @@
         <field name="model">res.partner</field>
         <field name="priority">99</field>
         <field name="arch" type="xml">
-            <list string="Client Registry" decoration-muted="patient_status=='inactive'"
-                  decoration-success="patient_category_id and 'VIP' in patient_category_id.name"
+            <list string="Client Registry" decoration-muted="patient_status=='inactive' or deleted"
+                  decoration-danger="deleted"
+                  decoration-success="patient_category_id and 'VIP' in patient_category_id.name and not deleted"
                   create="true" edit="true" delete="true" sample="1"
                   open_form_view="1">
 
+                <field name="deleted" column_invisible="1"/>
                 <field name="patient_code"/>
                 <field name="name"/>
                 <field name="age_display"/>
@@ -637,14 +649,20 @@
                 <field name="catchment_province_id" string="Catchment Area"/>
 
                 <separator string="Catchment Area"/>
-                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
-                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
 
                 <separator/>
 
                 <!-- Status Filters -->
                 <filter name="active_patients" string="Active" domain="[('patient_status', '=', 'active')]"/>
                 <filter name="inactive_patients" string="Inactive" domain="[('patient_status', '=', 'inactive')]"/>
+
+                <separator/>
+
+                <!-- Lifecycle Filters: the `deleted` reference in-domain
+                     disables the implicit deleted_test injection. -->
+                <filter name="filter_deleted" string="Deleted" domain="[('deleted', '=', True)]"/>
+                <filter name="filter_not_deleted" string="Not Deleted" domain="[('deleted', '=', False)]"/>
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
 
                 <separator/>
 
@@ -675,7 +693,9 @@
         <field name="res_model">res.partner</field>
         <field name="view_mode">list,kanban,form</field>
         <field name="search_view_id" ref="view_health_patient_search"/>
-        <field name="domain">[('is_patient', '=', True)]</field>
+        <!-- The neutral `deleted` clause keeps Delete requests visible in the
+             registry (disables the implicit deleted_test injection). -->
+        <field name="domain">[('is_patient', '=', True), '|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="context">{
             'search_default_active_patients': 1,
             'default_is_patient': True,
@@ -684,7 +704,8 @@
             'default_patient_status': 'active',
             'create': True,
             'edit': True,
-            'delete': True
+            'delete': True,
+            'deleted_test': False
         }</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
