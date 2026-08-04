@@ -63,6 +63,7 @@ No AI. No clinical content. No new channels beyond Zalo / Calls / Email / ZNS.
         'data/care_reply_templates.xml',
         'data/care_watch_phrases.xml',
         'data/cms_sidebar_items_care_command.xml',
+        'data/ir_cron.xml',
     ],
     'assets': {
         'web.assets_backend': [

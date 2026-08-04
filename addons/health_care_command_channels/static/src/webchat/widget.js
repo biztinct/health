@@ -163,12 +163,57 @@
         }
     }
 
+    /**
+     * Ad attribution for this visit (client requirement 3).
+     *
+     * The widget runs on our own marketing site, so unlike Messenger or Zalo
+     * this channel really does see a click id: Google appends `gclid` (or
+     * `wbraid` / `gbraid` under consent mode, where a gclid is not issued at
+     * all), Facebook appends `fbclid`, and Meta's own pixel writes `_fbc` /
+     * `_fbp`. Feeding those back is what lets Google Ads and Meta learn which
+     * clicks became real patients.
+     *
+     * Everything is read best-effort and capped; the server whitelists the
+     * keys again on arrival and never uses any of it as an identity.
+     */
+    function readCookie(name) {
+        try {
+            var hit = document.cookie.split("; ").find(function (row) {
+                return row.indexOf(name + "=") === 0;
+            });
+            return hit ? decodeURIComponent(hit.slice(name.length + 1)) : "";
+        } catch (e) { return ""; }
+    }
+
+    function collectAttribution() {
+        var out = {};
+        try {
+            var params = new URLSearchParams(window.location.search);
+            ["utm_source", "utm_medium", "utm_campaign", "utm_content",
+             "utm_term", "gclid", "wbraid", "gbraid", "fbclid"]
+                .forEach(function (key) {
+                    var value = params.get(key);
+                    if (value) out[key] = value.slice(0, 500);
+                });
+            // `_fbc` survives navigation after the fbclid has fallen off the
+            // URL, so it is the more reliable of the two on a second page.
+            var fbc = readCookie("_fbc");
+            if (fbc && !out.fbclid) out.fbclid = fbc.slice(0, 500);
+            out.page_url = String(window.location.href).slice(0, 500);
+            if (document.referrer) {
+                out.referrer_url = String(document.referrer).slice(0, 500);
+            }
+        } catch (e) { /* attribution is never worth breaking chat over */ }
+        return out;
+    }
+
     function start() {
         if (state.session || state.starting) return Promise.resolve();
         state.starting = true;
         var known = null;
         try { known = window.localStorage.getItem(STORAGE_KEY); } catch (e) { /* private mode */ }
-        return post("/care_channels/webchat/start", { session: known })
+        return post("/care_channels/webchat/start",
+                    { session: known, attribution: collectAttribution() })
             .then(function (data) {
                 state.session = data.session;
                 state.greeting = data.greeting || "";

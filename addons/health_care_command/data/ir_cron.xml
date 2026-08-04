@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!--
+      Ageing the wall (client requirement 2).
+
+      `urgency_score` is a stored compute whose time terms are evaluated at
+      WRITE time, so a conversation nobody touches never re-scores and the
+      "oldest waiting" ordering silently goes stale. Hourly is the right
+      cadence: the score's own time term is measured in whole hours
+      (`min(20, hours since last inbound)`), so anything finer would burn
+      writes for a number that cannot have changed.
+
+      noupdate="1": the interval is an operational knob. Once ops has tuned it
+      on a live database, a module upgrade must not reset it (ledger §5.32).
+    -->
+    <data noupdate="1">
+        <!-- No `numbercall`: the field was removed from ir.cron in Odoo 19
+             and setting it fails registry load outright. -->
+        <record id="ir_cron_age_conversations" model="ir.cron" forcecreate="True">
+            <field name="name">Care Command: age open conversations</field>
+            <field name="model_id" ref="model_care_conversation"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_age_conversations()</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(minutes=20)).strftime('%Y-%m-%d %H:%M:00')"/>
+        </record>
+    </data>
+</odoo>

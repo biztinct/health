@@ -36,7 +36,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from odoo.addons.health_care_command.models.care_conversation import (
-    CHANNEL_SELECTION,
+    CHANNEL_SELECTION, CONNECTABLE_CHANNELS,
 )
 
 from ..services.adapters import (
@@ -49,8 +49,26 @@ from .care_channel_connection import SENDABLE_STATES
 
 _logger = logging.getLogger(__name__)
 
-# The catalogue order IS the dock order (health_care_command CHANNEL_SELECTION).
-CENTER_CHANNELS = [key for key, _label in CHANNEL_SELECTION]
+# The catalogue order IS the dock order (health_care_command CHANNEL_SELECTION),
+# minus the channels that have no provider to connect to. walk_in is a
+# conversation channel with no adapter, so it is deliberately absent here — a
+# "Connect" card for it could only ever fail.
+CENTER_CHANNELS = list(CONNECTABLE_CHANNELS)
+
+# How good a connection state is, best first. Used to pick which of several
+# accounts speaks for the channel on its catalogue card (see
+# `_center_connection`). Lower is better; an unlisted state sorts last.
+CENTER_STATE_RANK = {
+    'ready': 0, 'expiring': 1, 'testing': 2, 'configuring': 3,
+    'select_resource': 4, 'authorizing': 5, 'action_required': 6,
+    'error': 7, 'disabled': 8, 'legacy': 9, 'not_connected': 10,
+}
+
+# Channels a tenant may legitimately hold several accounts on. webchat is the
+# exception: its resource id is the literal 'default' for every company, so a
+# second widget would be indistinguishable from the first.
+MULTI_ACCOUNT_CHANNELS = {'zalo', 'zns', 'fb', 'whatsapp', 'telegram',
+                          'email', 'call'}
 
 # Modes whose stepper is actually implemented. Everything else renders its
 # structure and says so — an honest "not yet" beats a button that cannot work.
@@ -433,15 +451,18 @@ class CareChannelConnectionCenter(models.Model):
     # Access + lookup
     # ==================================================================
     @api.model
-    def _center_connection(self, channel, company=None):
-        """The company's live connection row for ``channel``, if any.
+    def _center_connections(self, channel, company=None):
+        """EVERY live connection row for ``channel``, oldest first.
 
         Disabled rows are INCLUDED on purpose (a deviation from the handover's
         "non-disabled"): disconnect is a state, not a delete, so the row a
-        tenant must be able to reconnect is exactly the disabled one — and the
-        partial unique index means creating a second active row for the same
-        channel would raise instead. Archived rows stay invisible (the implicit
-        ``active`` filter), which is what "newest active" is really for.
+        tenant must be able to reconnect is exactly the disabled one. Archived
+        rows stay invisible (the implicit ``active`` filter).
+
+        Multi-account (client requirement 1): this replaces the old
+        ``limit=1``. The tenant runs two Facebook pages and two Zalo accounts,
+        and a catalogue that can only ever show one of each would make the
+        second invisible — including when it is the broken one.
         """
         company = company or self.env.company
         if channel not in CENTER_CHANNELS:
@@ -449,7 +470,25 @@ class CareChannelConnectionCenter(models.Model):
         return self.sudo().search([
             ('channel', '=', channel),
             ('company_id', '=', company.id),
-        ], order='id desc', limit=1)
+        ], order='id asc')
+
+    @api.model
+    def _center_connection(self, channel, company=None):
+        """The account that REPRESENTS ``channel`` on its catalogue card.
+
+        Kept as the single-row face of ``_center_connections`` for every caller
+        that legitimately wants one row (the card headline, the guide steps).
+        It returns the healthiest account rather than the newest: a channel
+        with one working page and one broken one is a channel that works, and a
+        card headline that said "Error" would send the tenant to repair
+        something that is already serving customers. The broken sibling is not
+        hidden — it has its own row in ``accounts`` with its own state chip.
+        """
+        conns = self._center_connections(channel, company)
+        if not conns:
+            return conns
+        return min(conns, key=lambda c: (CENTER_STATE_RANK.get(c.state, 99),
+                                         c.id))
 
     @api.model
     def _center_get(self, conn_id):
@@ -491,6 +530,58 @@ class CareChannelConnectionCenter(models.Model):
         except ValueError:
             return False
 
+    @api.model
+    def _center_account_payload(self, conn, caps, chips, check_labels):
+        """One account row under a catalogue card.
+
+        Same credential posture as the card itself: an id, a label, a state and
+        a readiness summary. No hint, no ciphertext, no scope string — T97
+        dumps the whole overview to JSON and asserts no seeded secret appears
+        anywhere in it, and that assertion covers this dict too.
+        """
+        statuses = {c.check_key: c.status for c in conn.readiness_check_ids}
+        checks = [{
+            'key': key,
+            'label': check_labels.get(key, key),
+            'status': statuses.get(key, 'pending'),
+        } for key in caps.get('required_checks') or []]
+        return {
+            'connection_id': conn.id,
+            # Falls back through the tenant's label, then the provider's name,
+            # then a generic word — never a bare page id, which means nothing
+            # to the person choosing between two accounts.
+            'account_label': (conn.account_label or conn.resource_display_name
+                              or _('Unnamed account')),
+            'named': bool(conn.account_label),
+            'resource_line': conn._center_resource_line(),
+            'state': conn.state,
+            'state_chip': chips.get(conn.state, conn.state),
+            'health_status': conn.health_status or '',
+            'sendable': conn.state in SENDABLE_STATES,
+            'catchment': (conn.catchment_province_id.display_name
+                          if conn.catchment_province_id else ''),
+            'last_inbound_at': (fields.Datetime.to_string(conn.last_inbound_at)
+                                if conn.last_inbound_at else ''),
+            'last_outbound_at': (fields.Datetime.to_string(conn.last_outbound_at)
+                                 if conn.last_outbound_at else ''),
+            'checks_done': sum(1 for c in checks if c['status'] == 'pass'),
+            'checks_total': len(checks),
+            'checks': checks,
+        }
+
+    @api.model
+    def center_rename_account(self, conn_id, label):
+        """Name one account. The only tenant-writable text on the model.
+
+        Goes through the normal guarded ``write`` (``account_label`` is in
+        USER_WRITABLE), so it needs no ``_internal()`` escalation — a label is
+        display text, not a credential or a state.
+        """
+        conn = self._center_get(conn_id)
+        label = (label or '').strip()[:120]
+        conn.write({'account_label': label or False})
+        return {'ok': True, 'account_label': label}
+
     # ==================================================================
     # 1. center_overview — the catalogue
     # ==================================================================
@@ -519,6 +610,7 @@ class CareChannelConnectionCenter(models.Model):
             except ValueError:
                 continue
             parent = caps.get('parent_channel')
+            conns = self._center_connections(parent or channel, company)
             conn = self._center_connection(parent or channel, company)
             available = self._center_platform_available(caps, channel)
             implemented = (caps.get('mode') in IMPLEMENTED_MODES
@@ -557,6 +649,17 @@ class CareChannelConnectionCenter(models.Model):
                 'mode': caps.get('mode'),
                 'parent_channel': parent or '',
                 'guide_steps': self._center_guide_steps(caps, conn),
+                # --- multi-account (client requirement 1) -----------------
+                # The card headline still describes the healthiest account, so
+                # every existing consumer keeps working; `accounts` is what a
+                # tenant with two Facebook pages actually reads.
+                'accounts': [self._center_account_payload(c, caps, chips,
+                                                          check_labels)
+                             for c in conns],
+                'multi_account': (parent or channel) in MULTI_ACCOUNT_CHANNELS,
+                'can_add_account': bool(
+                    (parent or channel) in MULTI_ACCOUNT_CHANNELS
+                    and conns and available and implemented),
             })
             if channel == 'zns':
                 cards[-1]['zns'] = self._center_zns_status(conn)
@@ -688,11 +791,21 @@ class CareChannelConnectionCenter(models.Model):
     # 2. center_begin — get-or-create, then start the stepper
     # ==================================================================
     @api.model
-    def center_begin(self, channel):
+    def center_begin(self, channel, add_account=False):
         """Get-or-create this company's connection and open its flow.
 
         Idempotent by construction (T104): the lookup runs before the create,
         and the partial unique index is the backstop.
+
+        ``add_account=True`` is the multi-account entry point — "connect a
+        SECOND Facebook page". It skips the get and forces a create, which the
+        indexes now permit because a fresh row carries no resource id yet; the
+        clash, if the tenant picks a page they already connected, surfaces at
+        resource-selection time where it can name the offending account.
+
+        A resumable half-finished row is reused even when adding: two blank
+        connections in `authorizing` are indistinguishable to the tenant and
+        one of them would be litter nothing ever cleans up.
         """
         if not self._center_group_ok():
             raise UserError(_(
@@ -714,7 +827,18 @@ class CareChannelConnectionCenter(models.Model):
                 or channel not in CENTER_IMPLEMENTED_CHANNELS:
             raise UserError(_('This channel is not available yet.'))
 
-        conn = self._center_connection(channel)
+        conn = self.browse()
+        if add_account:
+            if channel not in MULTI_ACCOUNT_CHANNELS:
+                raise UserError(_(
+                    'This channel supports one account only.'))
+            # Reuse an unclaimed half-finished row rather than stacking blanks.
+            conn = self._center_connections(channel).filtered(
+                lambda c: not c.resource_external_id
+                and c.state in ('not_connected', 'authorizing',
+                                'select_resource'))[:1]
+        else:
+            conn = self._center_connection(channel)
         if not conn:
             conn = self.sudo()._internal().create({
                 'channel': channel,
@@ -954,7 +1078,7 @@ class CareChannelConnectionCenter(models.Model):
         return conn
 
     @api.model
-    def center_meta_start(self, channel):
+    def center_meta_start(self, channel, conn_id=None):
         """Open a sign-in attempt for a Meta channel.
 
         WhatsApp gets the payload its JS SDK needs (app id + Embedded Signup
@@ -964,7 +1088,16 @@ class CareChannelConnectionCenter(models.Model):
         """
         if channel not in META_CHANNELS:
             raise UserError(_('Unknown channel.'))
-        conn = self._center_connection(channel)
+        # Multi-account: the stepper already holds the id `center_begin`
+        # returned, and with two Facebook pages connected, re-deriving it from
+        # the channel would start the sign-in against the wrong account —
+        # usually the healthy one the tenant was not trying to change.
+        if conn_id:
+            conn = self._center_get(conn_id)
+            if conn.channel != channel:
+                raise UserError(_('Unknown channel.'))
+        else:
+            conn = self._center_connection(channel)
         if not conn:
             raise UserError(_('This channel is not set up yet.'))
         conn._check_center_access()

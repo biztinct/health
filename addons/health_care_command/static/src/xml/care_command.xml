@@ -64,6 +64,40 @@
           <button t-att-class="{ on: !state.mineOnly }" t-on-click="() => this.setMine(false)">
             <span class="ic ic-users"/>Everyone</button>
         </div>
+        <!-- Contacts that reached us but could not be routed to a
+             conversation. Only rendered when there ARE some: a permanent
+             "0 unrouted" chip trains people to stop seeing it. -->
+        <button class="newbtn cc-unrouted" t-if="unroutedCount"
+                t-on-click="() => this.openUnrouted()"
+                t-att-title="'Contacts that could not be matched to a conversation'">
+          <span class="ic ic-warn"/>Unrouted
+          <span class="ct hot" t-esc="unroutedCount"/>
+        </button>
+        <!-- Walk-in: creates a work item, so it lives in the header next to
+             New Contact rather than in the per-conversation action strip. -->
+        <div class="rem-wrap">
+          <button class="newbtn" t-att-class="{ 'on': state.walkInOpen }"
+                  t-on-click="() => this.toggleWalkIn()"><span class="ic ic-user"/>Walk-in</button>
+          <div t-if="state.walkInOpen" class="cc-pop walkin-pop">
+            <div class="cc-pop-h">Log a walk-in</div>
+            <label class="cc-pop-row">Name
+              <input type="text" t-att-value="state.walkIn.name"
+                     t-on-input="(ev) => this.onWalkInField('name', ev)"/></label>
+            <label class="cc-pop-row">Phone
+              <input type="tel" t-att-value="state.walkIn.phone"
+                     t-on-input="(ev) => this.onWalkInField('phone', ev)"/></label>
+            <label class="cc-pop-row">Email
+              <input type="email" t-att-value="state.walkIn.email"
+                     t-on-input="(ev) => this.onWalkInField('email', ev)"/></label>
+            <textarea class="cc-pop-note" placeholder="What did they come in for?…"
+                      t-att-value="state.walkIn.note"
+                      t-on-input="(ev) => this.onWalkInField('note', ev)"/>
+            <div class="cc-pop-act">
+              <button class="abtn" t-on-click="() => this.toggleWalkIn(false)">Cancel</button>
+              <button class="abtn pri" t-on-click="() => this.doWalkIn()"><span class="ic ic-check"/>Log walk-in</button>
+            </div>
+          </div>
+        </div>
         <button class="newbtn" t-on-click="() => this.newContact()"><span class="ic ic-user"/>New Contact</button>
       </header>
 

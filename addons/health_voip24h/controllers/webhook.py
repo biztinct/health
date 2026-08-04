@@ -136,11 +136,20 @@ class VoIP24hWebhookController(http.Controller):
             # No legacy config: record the traffic truth and say so plainly.
             # There is no call log to create — `voip.call.log` requires a
             # config — and inventing one here would hide that from the tenant.
+            #
+            # But the CALLER does not vanish (client requirement 2): a real
+            # person rang a real number and, until CC-F's config exists, this
+            # branch was the end of them. The Unrouted queue keeps the number
+            # so somebody can ring back, and `no_voip_config` names exactly
+            # what an operator has to fix to stop it recurring.
             if not connection._may_ingest():
                 env['care.channel.audit']._log(
                     'webhook_ignored', connection=connection,
                     detail='call event while %s' % connection.state)
+                self._capture_call(env, connection, event_data,
+                                   'not_ingestable')
                 return self._json_response({'status': 'ignored'})
+            self._capture_call(env, connection, event_data, 'no_voip_config')
             connection._note_inbound()
             return self._json_response({'status': 'success'})
 
@@ -148,6 +157,31 @@ class VoIP24hWebhookController(http.Controller):
             _logger.error('Webhook processing error: %s', e, exc_info=True)
             # Still return 200 OK to prevent webhook retry storms
             return self._json_response({'status': 'error', 'message': 'Internal error'})
+
+    @staticmethod
+    def _capture_call(env, connection, event_data, reason):
+        """Put an unloggable call event on the Unrouted queue.
+
+        Never raises and never changes the response: this runs after
+        verification on a path whose whole job is to answer 200 so VoIP24h
+        does not retry. A missing queue model (health_care_command_channels
+        not installed) is simply a no-op.
+
+        The payload shape is the UNVERIFIED one this controller was adopted
+        with (see the class docstring) — hence the tolerant key lookup rather
+        than a schema.
+        """
+        if 'care.contact.capture' not in env:
+            return
+        data = event_data or {}
+        caller = (data.get('caller_number') or data.get('from')
+                  or data.get('caller') or '')
+        env['care.contact.capture']._capture(
+            reason, 'call', connection=connection,
+            peer_hint=caller, phone=caller,
+            body=data.get('event_type') or '',
+            external_event_id=data.get('call_id') or data.get('uuid') or None,
+            raw=str(data))
 
     @staticmethod
     def _json_response(payload, status=200):

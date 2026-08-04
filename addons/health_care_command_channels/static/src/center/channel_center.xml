@@ -42,10 +42,30 @@
             </div>
           </div>
 
-          <p class="cc-res" t-if="card.resource_line" t-esc="card.resource_line"/>
+          <!-- One account: the headline IS the account, so keep the single
+               line the card has always had. Several: list them, because
+               "Messenger — connected" is a lie when one of two pages is
+               broken. -->
+          <p class="cc-res" t-if="card.resource_line and card.accounts.length &lt;= 1"
+             t-esc="card.resource_line"/>
           <p class="cc-res muted" t-if="!card.resource_line and card.available and card.implemented">
             Not set up yet
           </p>
+
+          <div class="cc-accounts" t-if="card.accounts.length &gt; 1">
+            <t t-foreach="card.accounts" t-as="acc" t-key="acc.connection_id">
+              <button class="cc-account" t-att-class="'tone-' + tone(acc.state)"
+                      t-on-click="() => this.openManage(card, acc)">
+                <span class="cc-account-id">
+                  <span class="cc-account-name" t-esc="acc.account_label"/>
+                  <span class="cc-account-res" t-if="acc.resource_line"
+                        t-esc="acc.resource_line"/>
+                </span>
+                <span class="cc-chip small" t-att-class="'tone-' + tone(acc.state)"
+                      t-esc="acc.state_chip"/>
+              </button>
+            </t>
+          </div>
           <p class="cc-res muted" t-if="!card.available">
             Health19 is completing provider approval for this channel.
           </p>
@@ -93,6 +113,12 @@
                     t-att-disabled="card.primary_action === 'unavailable' or state.busy"
                     t-on-click="() => this.onPrimary(card)"
                     t-esc="card.primary_label"/>
+            <!-- Two Facebook pages, two Zalo accounts (client requirement 1).
+                 Only offered once the first account exists — "add another"
+                 with nothing to add another TO is just a confusing Connect. -->
+            <button class="cc-btn" t-if="card.can_add_account"
+                    t-att-disabled="state.busy"
+                    t-on-click="() => this.addAccount(card)">Add another account</button>
           </div>
 
           <!-- ZNS and any other capability-of-a-parent renders inside its parent -->
@@ -140,12 +166,34 @@
         </header>
 
         <!-- ===== manage panel (a connected channel) ===== -->
+        <!-- Everything here reads `openAccount`, not `openCard`: with two
+             accounts on one channel the card describes the healthier one, and
+             showing its green checklist for the page the tenant came here to
+             repair would be actively misleading. -->
         <div t-if="state.manage" class="cc-modal-body">
-          <p class="cc-res" t-if="openCard and openCard.resource_line"
-             t-esc="openCard.resource_line"/>
+          <p class="cc-res" t-if="openAccount and openAccount.resource_line"
+             t-esc="openAccount.resource_line"/>
 
-          <ul class="cc-checklist" t-if="openCard">
-            <t t-foreach="openCard.checks" t-as="chk" t-key="chk.key">
+          <!-- Naming an account is the only way to tell two Facebook pages
+               apart in a picker; the provider's own name is often identical. -->
+          <div class="cc-rename" t-if="state.connectionId">
+            <t t-if="!state.renaming">
+              <span class="cc-account-name"
+                    t-esc="state.accountLabel or 'Unnamed account'"/>
+              <button class="cc-btn tiny" t-on-click="startRename">Rename</button>
+            </t>
+            <t t-else="">
+              <input type="text" class="cc-input" maxlength="120"
+                     placeholder="e.g. Zalo OA — HCM"
+                     t-att-value="state.accountLabel"
+                     t-on-input="(ev) => this.onAccountLabel(ev)"/>
+              <button class="cc-btn tiny primary" t-att-disabled="state.busy"
+                      t-on-click="saveAccountLabel">Save</button>
+            </t>
+          </div>
+
+          <ul class="cc-checklist" t-if="openAccount">
+            <t t-foreach="openAccount.checks" t-as="chk" t-key="chk.key">
               <li t-att-class="'st-' + chk.status">
                 <span class="ic" t-att-class="chk.status === 'pass' ? 'ic-check' : (chk.status === 'fail' ? 'ic-x' : 'ic-clock')"/>
                 <span t-esc="chk.label"/>

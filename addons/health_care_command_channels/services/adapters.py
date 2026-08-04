@@ -170,6 +170,46 @@ def _utc_from_unix(value):
         return None
 
 
+def _fb_referral(item):
+    """Ad / link attribution off one Messenger messaging item.
+
+    Messenger has NO fbclid — there is no browser in the loop. What a
+    Click-to-Messenger ad delivers instead is a ``referral`` object carrying
+    the advertiser's own ``ref`` string, the ad id, and how the thread was
+    opened; and it arrives on the FIRST event of the conversation only, which
+    is why the ingest funnel records attribution first-touch.
+
+    Meta puts it in three different places depending on how the thread started
+    (an ad click on a brand-new thread, an ad click on an existing thread, or a
+    Get-Started postback), so all three are read. Nothing here is trusted
+    beyond being stored: it is advertiser-supplied text.
+
+    Returns ``{}`` when the item carries no referral — the overwhelmingly
+    common case for an organic message.
+    """
+    item = item or {}
+    referral = (item.get('referral')
+                or (item.get('message') or {}).get('referral')
+                or (item.get('postback') or {}).get('referral')
+                or {})
+    if not isinstance(referral, dict) or not referral:
+        return {}
+    ads_context = referral.get('ads_context_data') or {}
+    out = {
+        'referral_ref': referral.get('ref'),
+        'referral_source': referral.get('source'),
+        'entry_point': referral.get('type'),
+        'ad_id': referral.get('ad_id'),
+        # Meta names the ad's campaign inside ads_context_data; it is a NAME,
+        # not an id, which is exactly what the find-only utm.campaign policy
+        # expects (web_lead_service.py:313-339).
+        'utm_campaign': ads_context.get('ad_title'),
+        'utm_source': 'facebook' if referral.get('ad_id') else None,
+        'utm_medium': 'paid_social' if referral.get('ad_id') else None,
+    }
+    return {k: v for k, v in out.items() if v}
+
+
 def _meta_error(data):
     """The human part of a Graph error body, without the echoed request.
 
@@ -1543,6 +1583,7 @@ class MessengerAdapter(_MetaAdapterBase):
                     # would double every agent reply.
                     continue
                 sender = (item.get('sender') or {}).get('id')
+                attribution = _fb_referral(item)
                 attachment = {}
                 mtype = 'text'
                 for att in message.get('attachments') or []:
@@ -1565,6 +1606,7 @@ class MessengerAdapter(_MetaAdapterBase):
                     'event_at': _utc_from_unix(
                         (item['timestamp'] / 1000) if item.get('timestamp')
                         else None),
+                    'attribution': attribution,
                     'raw': item,
                 })
         _logger.info('care_channels: fb inbound %s event(s) on connection %s',

@@ -130,6 +130,10 @@ export class ChannelCenter extends Component {
             callSecret: "",
             hasCallSecret: false,
             callNotice: "",
+            // Multi-account: which account the manage panel is on, and
+            // whether its name is being edited.
+            accountLabel: "",
+            renaming: false,
         });
 
         // The ES popup posts its WABA / phone id back through postMessage.
@@ -240,6 +244,25 @@ export class ChannelCenter extends Component {
 
     get openCard() {
         return this.state.open ? this.card(this.state.open) : null;
+    }
+
+    /**
+     * The ACCOUNT the manage panel is on.
+     *
+     * The card's own `resource_line`, `checks` and `state` describe its
+     * healthiest account (see `_center_connection` server-side). That is the
+     * right thing for a catalogue tile and the wrong thing for a panel the
+     * tenant opened to fix one specific page — it would show them a green
+     * checklist for a different account. Falls back to the card so
+     * single-account channels behave exactly as before.
+     */
+    get openAccount() {
+        const card = this.openCard;
+        if (!card) return null;
+        const accounts = card.accounts || [];
+        return accounts.find((a) => a.connection_id === this.state.connectionId)
+            || (accounts.length === 1 ? accounts[0] : null)
+            || card;
     }
 
     style(channel) {
@@ -557,8 +580,11 @@ export class ChannelCenter extends Component {
     /** Step 1 for both Meta channels: open the provider's own sign-in. */
     async startMeta() {
         await this._guarded(async () => {
+            // Pass the connection the stepper is actually on: with two pages
+            // connected, deriving it from the channel alone would sign in
+            // against the wrong account.
             const cfg = await this.orm.call(MODEL, "center_meta_start",
-                [this.state.open]);
+                [this.state.open, this.state.connectionId]);
             this.state.meta = cfg;
             this.state.metaSdkBlocked = false;
             if (this.isMessenger) {
@@ -824,10 +850,21 @@ export class ChannelCenter extends Component {
         });
     }
 
-    openManage(card) {
+    /**
+     * Open the manage panel for one account.
+     *
+     * `account` is a row from `card.accounts`. Without it the card's own
+     * headline connection is used, which is what a single-account channel
+     * always wants — but with two Facebook pages connected, managing "the"
+     * page is meaningless, so every account row passes its own.
+     */
+    openManage(card, account = null) {
         this.state.open = card.channel;
         this.state.manage = true;
-        this.state.connectionId = card.connection_id;
+        this.state.connectionId = (account && account.connection_id)
+            || card.connection_id;
+        this.state.accountLabel = (account && account.account_label) || "";
+        this.state.renaming = false;
         this.state.steps = card.guide_steps || [];
         this.state.mode = card.mode;
         this.state.confirmOff = false;
@@ -838,16 +875,55 @@ export class ChannelCenter extends Component {
         this.state.metaSelected = "";
         this.state.callSecret = "";
         this.state.callNotice = "";
-        if (card.channel === "zalo" && card.connection_id) {
-            this._loadZaloInfo(card.connection_id).catch((e) => this._err(e));
+        const connId = this.state.connectionId;
+        if (card.channel === "zalo" && connId) {
+            this._loadZaloInfo(connId).catch((e) => this._err(e));
         }
-        if (card.channel === "email" && card.connection_id) {
-            this._loadEmailInfo(card.connection_id).catch((e) => this._err(e));
+        if (card.channel === "email" && connId) {
+            this._loadEmailInfo(connId).catch((e) => this._err(e));
         }
-        if (card.channel === "call" && card.connection_id) {
-            this._loadCallInfo(card.connection_id).catch((e) => this._err(e));
+        if (card.channel === "call" && connId) {
+            this._loadCallInfo(connId).catch((e) => this._err(e));
         }
         this._focusModal();
+    }
+
+    // -----------------------------------------------------------------
+    // multi-account (client requirement 1)
+    // -----------------------------------------------------------------
+    /** Connect an ADDITIONAL account on a channel that already has one. */
+    async addAccount(card) {
+        await this._guarded(async () => {
+            const info = await this.orm.call(
+                MODEL, "center_begin", [card.channel], { add_account: true });
+            this._resetWizard(card.channel, info);
+            if (card.channel === "zalo" && info.connection_id) {
+                await this._loadZaloInfo(info.connection_id);
+            }
+            if (this.isMetaChannel(card.channel) && info.connection_id) {
+                await this._resumeMeta(info.connection_id, card);
+            }
+            if (card.channel === "email" && info.connection_id) {
+                await this._loadEmailInfo(info.connection_id);
+            }
+            if (card.channel === "call" && info.connection_id) {
+                await this._loadCallInfo(info.connection_id);
+            }
+            await this.load();
+            this._focusModal();
+        });
+    }
+
+    startRename() { this.state.renaming = true; }
+    onAccountLabel(ev) { this.state.accountLabel = ev.target.value; }
+    async saveAccountLabel() {
+        if (!this.state.connectionId) return;
+        await this._guarded(async () => {
+            await this.orm.call(MODEL, "center_rename_account",
+                [this.state.connectionId, this.state.accountLabel]);
+            this.state.renaming = false;
+            await this.load();
+        });
     }
 
     /** The ZNS sub-card's honest readiness, if the catalogue carries one. */

@@ -66,6 +66,12 @@ class CrmLead(models.Model):
 
     # -- Click / browser identifiers (W4 offline-conversion export) -------
     gclid = fields.Char(string='Google Click ID')
+    # Google's cookie-less click ids. Under consent mode / ITP an ad click
+    # frequently arrives with wbraid (web) or gbraid (app) and NO gclid at
+    # all, and the offline-conversion upload accepts any of the three — so a
+    # schema that stores only gclid silently loses those conversions.
+    wbraid = fields.Char(string='Google Click ID (wbraid)')
+    gbraid = fields.Char(string='Google Click ID (gbraid)')
     fbclid = fields.Char(string='Facebook Click ID')
     fbc = fields.Char(string='Meta Click Cookie (_fbc)')
     fbp = fields.Char(string='Meta Browser Cookie (_fbp)')

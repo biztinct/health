@@ -12,3 +12,4 @@ from . import test_meta_center
 from . import test_email_center
 from . import test_call_center
 from . import test_platform_go_live
+from . import test_multi_account

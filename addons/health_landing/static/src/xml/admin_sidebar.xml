@@ -6,7 +6,7 @@
             <!-- Logo -->
             <div class="ops-sidebar-logo">
                 <div class="ops-logo-icon">
-                    <i class="fa fa-cogs"/>
+                    <img class="ops-logo-img" src="/health_fieldservice/static/img/vu-hibiscus.png" alt="Viet UC"/>
                 </div>
                 <div>
                     <div class="ops-logo-text">Admin Center</div>

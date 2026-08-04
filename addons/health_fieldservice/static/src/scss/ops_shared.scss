@@ -875,15 +875,27 @@
     border-bottom: 1px solid rgba(white, 0.1);
 }
 
+// The brand plate. The hibiscus is a multi-colour mark on transparency, so it
+// needs a light plate to read against every shell background (CMS navy, ops
+// slate, admin blue-grey). Per-shell colour overrides were removed with it —
+// one brand, one plate, six shells.
 .ops-logo-icon {
     width: 36px;
     height: 36px;
-    background: $vu-hibiscus-red;
+    background: #FFFFFF;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
+    padding: 5px;
+}
+
+.ops-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 }
 
 .ops-logo-text {

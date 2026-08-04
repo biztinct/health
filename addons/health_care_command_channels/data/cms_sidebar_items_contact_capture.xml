@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Unrouted queue's REAL entry point.
+
+     Same reasoning as cms_sidebar_items_channel_center.xml: a backend
+     `menuitem` is not a reachable surface for CMS-shell users (ledger
+     §5.69/§5.41/§5.94). A queue nobody can find is a queue that does not
+     exist, which would defeat the entire point of capturing these contacts.
+
+     A SIBLING of Care Command and Channel Center in the CRM section, not a
+     child — parenting a leaf under Care Command turns Care Command itself
+     into a non-navigating accordion (cms_sidebar.js:124). That regression
+     already happened once to the Channel Center item.
+
+     No noupdate, ungated (no role_ids), matching the two sibling items. -->
+<odoo>
+
+    <record id="item_contact_capture" model="cms.sidebar.item">
+        <field name="name">Unrouted Contacts</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <!-- Explicitly FALSE, not merely absent: an XML data update only
+             writes the fields it names. -->
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">13</field>
+        <field name="icon">fa fa-inbox</field>
+        <field name="action_xmlid">health_care_command_channels.action_care_contact_capture</field>
+    </record>
+
+</odoo>

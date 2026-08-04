@@ -151,7 +151,15 @@ class CareChannelMessage(models.Model):
             when=event.get('event_at'))
         if not ident:
             _logger.info('care_channels: inbound with no external id on '
-                         'connection %s — dropped', connection.id)
+                         'connection %s — captured', connection.id)
+            # Nothing vanishes: without a sender id we cannot open a thread,
+            # but the message itself is real and an operator can still read it.
+            self.env['care.contact.capture']._capture(
+                'no_identity', connection.channel, connection=connection,
+                peer_hint=event.get('peer_name'), body=event.get('text'),
+                raw=self._dump(event.get('raw')),
+                external_event_id=event.get('external_message_id'),
+                occurred_at=event.get('event_at'))
             return self.browse()
 
         attachment = event.get('attachment') or {}
@@ -195,6 +203,23 @@ class CareChannelMessage(models.Model):
                     'watch_hits': CareCo._match_watchlist(event.get('text')),
                 })
                 msg.sudo().write({'conversation_id': conv.id})
+                # Client requirement 3. First-touch, and this IS the first
+                # touch: a Click-to-Messenger ad puts its ref and ad id on the
+                # opening event and never repeats them. `_record_attribution`
+                # falls back to the account's own utm defaults, so even an
+                # organic message is attributed to the page it arrived on.
+                attribution = event.get('attribution')
+                if not attribution and ident.attribution_json:
+                    # Web chat: the click ids were captured at `start`, before
+                    # this conversation existed.
+                    try:
+                        attribution = json.loads(ident.attribution_json)
+                    except ValueError:
+                        attribution = None
+                conv._record_attribution(
+                    attribution, connection=connection,
+                    occurred_at=msg.event_at,
+                    external_event_id=event.get('external_message_id'))
         except Exception:  # noqa: BLE001 — the message row must survive
             _logger.exception('care_channels: conversation upsert failed for '
                               'message %s', msg.id)
@@ -306,8 +331,17 @@ class CareChannelMessage(models.Model):
             if not connection:
                 # No oracle: nothing about the unknown id goes into the
                 # response, and only the event TYPE goes into the log.
+                #
+                # It IS captured, though. A signature-verified event for a page
+                # we do not recognise is the single most useful thing in the
+                # Unrouted queue — it is what a newly-created Facebook page
+                # nobody connected yet looks like from in here.
                 _logger.info('care_channels: %s webhook for an unknown '
-                             'resource — ignored', channel)
+                             'resource — captured', channel)
+                self.env['care.contact.capture']._capture(
+                    'unknown_resource', channel,
+                    resource_external_id=resource_id,
+                    raw=self._dump(payload))
                 counts['unknown'] += 1
                 continue
             counts_for = self._dispatch_connection(connection, payload)
@@ -332,6 +366,13 @@ class CareChannelMessage(models.Model):
             self.env['care.channel.audit']._log(
                 'webhook_ignored', connection=connection,
                 detail='state %s' % connection.state)
+            # The audit row records that we dropped it; the capture keeps the
+            # CONTACT. Someone messaged a page that is half set up — that is a
+            # customer waiting, not an operations footnote.
+            self.env['care.contact.capture']._capture(
+                'not_ingestable', connection.channel, connection=connection,
+                resource_external_id=connection.resource_external_id,
+                raw=self._dump(payload))
             counts['ignored'] += 1
             return counts
         connection = connection.sudo()
@@ -381,6 +422,10 @@ class CareChannelMessage(models.Model):
             self.env['care.channel.audit']._log(
                 'webhook_ignored', connection=connection,
                 detail='state %s' % connection.state)
+            self.env['care.contact.capture']._capture(
+                'not_ingestable', connection.channel, connection=connection,
+                resource_external_id=connection.resource_external_id,
+                raw=self._dump(payload))
             counts['ignored'] += 1
             return counts
         if 'zalo.message.handler' not in self.env:
@@ -397,19 +442,103 @@ class CareChannelMessage(models.Model):
                     # superuser env — and a second tenant's verified events
                     # would find no config, or worse, land on company 1's
                     # conversations (CC-D review).
+                    # zalo_oa_id, or the legacy pipeline resolves "the" active
+                    # config for the company — and with two Official Accounts
+                    # connected that files OA #2's messages under OA #1's
+                    # conversations, and replies leave from the wrong account.
+                    # The legacy handler does not thread ids through its
+                    # internals, so the routed OA rides in the context and
+                    # `zalo.config.get_active_config` reads it there.
                     result = self.env['zalo.message.handler'].sudo() \
                         .with_company(connection.company_id) \
+                        .with_context(
+                            zalo_oa_id=connection.resource_external_id) \
                         ._ingest_verified_event(payload)
                 if isinstance(result, dict):
                     for key in ('ingested', 'duplicate', 'skipped'):
                         counts[key] += result.get(key, 0)
                 else:
                     counts['ingested'] += 1
+                self._zalo_record_attribution(connection, payload)
             except Exception:  # noqa: BLE001 — one poisoned event, not a batch
                 _logger.exception('care_channels: zalo ingest failed on '
                                   'connection %s', connection.id)
         connection._note_inbound()
         return counts
+
+    # ------------------------------------------------------------------
+    # Zalo attribution (client requirement 3)
+    # ------------------------------------------------------------------
+    # HONESTY NOTE. Unlike Meta's `referral` object, Zalo's ad-referral payload
+    # is NOT verified: developers.zalo.me is geo-blocked from where this was
+    # written, the same wall that left the VoIP24h payload shape unconfirmed
+    # (health_voip24h/controllers/webhook.py:52-56). What IS known is that
+    # `user_click_chatnow` and the follow events carry a tracking string, and
+    # that Zalo has moved its name between `ref`, `campaign_id` and a nested
+    # `info` object across versions.
+    #
+    # So this reads a GENERIC bucket — every plausible key, first match wins —
+    # and keeps the raw event on the touchpoint either way. When the docs are
+    # reachable from a Vietnamese connection, the exact mapping replaces the
+    # bucket and nothing else has to change.
+    ZALO_REF_KEYS = ('ref', 'campaign_id', 'tracking_id', 'utm_source',
+                     'source', 'ad_id')
+    ZALO_REF_EVENTS = ('user_click_chatnow', 'follow', 'user_seen_message',
+                       'oa_send_text')
+
+    @api.model
+    def _zalo_attribution(self, payload):
+        """Best-effort tracking payload off one Zalo event. ``{}`` if none."""
+        payload = payload or {}
+        if payload.get('event_name') not in self.ZALO_REF_EVENTS:
+            return {}
+        pools = [payload, payload.get('info') or {},
+                 payload.get('follower') or {}, payload.get('message') or {}]
+        found = {}
+        for pool in pools:
+            if not isinstance(pool, dict):
+                continue
+            for key in self.ZALO_REF_KEYS:
+                value = pool.get(key)
+                if value and 'referral_ref' not in found:
+                    found['referral_ref'] = str(value)[:500]
+        if not found:
+            return {}
+        found['referral_source'] = 'zalo'
+        found['entry_point'] = payload.get('event_name')
+        return found
+
+    @api.model
+    def _zalo_record_attribution(self, connection, payload):
+        """Attach a Zalo event's tracking payload to its conversation.
+
+        Zalo chat lives on the legacy ``zalo.message`` rails, so there is no
+        identity row to hang this off — the conversation is resolved back
+        through ``zalo.conversation`` by the sender's user id. Never raises:
+        this runs inside a webhook that must answer 200.
+        """
+        data = self._zalo_attribution(payload)
+        if not data:
+            return False
+        user_id = ((payload or {}).get('sender') or {}).get('id')
+        if not user_id or 'zalo.conversation' not in self.env:
+            return False
+        try:
+            with self.env.cr.savepoint():
+                zconv = self.env['zalo.conversation'].sudo().search(
+                    [('zalo_user_id', '=', str(user_id))], limit=1)
+                if not zconv:
+                    return False
+                conv = self.env['care.conversation'].sudo().search(
+                    [('zalo_conversation_id', '=', zconv.id)], limit=1)
+                if not conv:
+                    return False
+                conv._record_attribution(data, connection=connection)
+                return True
+        except Exception:  # noqa: BLE001 — analytics never breaks ingest
+            _logger.exception('care_channels: zalo attribution failed on '
+                              'connection %s', connection.id)
+            return False
 
     # ==================================================================
     # Web chat (phase6 §2.6) — our own widget, no provider at all
@@ -437,7 +566,8 @@ class CareChannelMessage(models.Model):
             limit=1)
 
     @api.model
-    def _webchat_start(self, session=None, name=None, phone=None):
+    def _webchat_start(self, session=None, name=None, phone=None,
+                       attribution=None):
         """Open (or resume) a widget session. Returns ``{session, greeting}``.
 
         The session id is generated SERVER-side: a client-chosen id would let a
@@ -459,6 +589,29 @@ class CareChannelMessage(models.Model):
         if phone:
             # Stored, not trusted: it only ever feeds the phone anchor.
             identity.sudo().write({'peer_phone': (phone or '').strip()[:32]})
+        # Park the click ids until the first message creates a conversation.
+        # First touch wins: a visitor who reopens the widget from an organic
+        # visit must not overwrite the ad click that brought them originally.
+        if attribution and not identity.attribution_json:
+            cleaned = self.env['care.conversation']._clean_attribution(
+                attribution)
+            if cleaned:
+                identity.sudo().write(
+                    {'attribution_json': json.dumps(cleaned)[:4000]})
+        # A visitor who filled in the pre-chat form and then typed nothing has
+        # still contacted us, and used to disappear entirely: no message row,
+        # so no conversation, and the 7-day GC deleted the identity. Capture
+        # the details they volunteered so the contact survives the silence.
+        # (No conversation: an unverified name and phone typed into a public
+        # widget must not anchor a thread — see the WhatsApp note in
+        # `_ingest_inbound`. Converting is an operator's decision.)
+        if (name or phone) and not self.sudo().search_count([
+                ('identity_id', '=', identity.id),
+                ('direction', '=', 'incoming')]):
+            self.env['care.contact.capture']._capture(
+                'webchat_abandoned', 'webchat', connection=connection,
+                peer_hint=name, phone=phone,
+                external_event_id='webchat:%s' % identity.external_id)
         return {
             'session': identity.external_id,
             'greeting': connection.get_setting('greeting') or '',
@@ -528,6 +681,17 @@ class CareChannelMessage(models.Model):
                 continue
             convs = self.env['care.conversation'].sudo().search(
                 [('channel_identity_id', '=', identity.id)])
+            # Capture before deleting, and only where the visitor left
+            # something reachable. A bare launcher click with no name and no
+            # phone is not a contact and captures nothing — the queue has to
+            # stay worth reading.
+            if identity.peer_phone:
+                self.env['care.contact.capture']._capture(
+                    'webchat_abandoned', 'webchat',
+                    connection=identity.connection_id,
+                    peer_hint=identity.peer_name, phone=identity.peer_phone,
+                    external_event_id='webchat:%s' % identity.external_id,
+                    occurred_at=identity.create_date)
             try:
                 with self.env.cr.savepoint():
                     self.sudo().search(

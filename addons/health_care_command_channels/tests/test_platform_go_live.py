@@ -387,6 +387,13 @@ class TestPlatformGoLive(ChannelHubCase):
         apps = [self._zalo_app(), self._google_app(),
                 self.App.create({'provider': 'microsoft',
                                  'client_id': 'ms-app-cc-g'})]
+        # The audit count below has to be scoped to THIS test's own rows.
+        # `care.channel.audit` is append-only operational evidence that
+        # accumulates on a real database, so an unscoped `search_count` was
+        # asserting against however many times an operator had ever pressed
+        # Preflight — on vietuat it counted 9 and had been failing since the
+        # first real use of the CC-G console.
+        before = self.Audit.sudo().search_count([('event', '=', 'preflight')])
         with self._mock_graph([]) as calls:
             for app in apps:
                 app.action_preflight()
@@ -396,7 +403,8 @@ class TestPlatformGoLive(ChannelHubCase):
             self.assertEqual(app.preflight_detail, PREFLIGHT_UNVERIFIABLE)
             self.assertTrue(app.preflight_at)
         self.assertEqual(
-            self.Audit.sudo().search_count([('event', '=', 'preflight')]), 3,
+            self.Audit.sudo().search_count([('event', '=', 'preflight')]),
+            before + 3,
             'every preflight is audited, including the ones that ask nobody')
 
     # ==================================================================

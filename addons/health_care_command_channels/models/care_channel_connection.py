@@ -34,7 +34,9 @@ from odoo import SUPERUSER_ID, _, api, fields, models, tools
 from odoo.exceptions import UserError, ValidationError
 from odoo.modules.registry import Registry
 
-from odoo.addons.health_care_command.models.care_conversation import CHANNEL_SELECTION
+from odoo.addons.health_care_command.models.care_conversation import (
+    CHANNEL_SELECTION, CONNECTABLE_SELECTION,
+)
 
 from ..services import channel_crypto
 from ..services.adapters import get_adapter
@@ -131,8 +133,14 @@ SECRET_FIELDS = {
 # guarded by default.
 # (message_main_attachment_id is mail.thread plumbing: _message_post_after_hook
 # writes it on the record when a chatter message carries an attachment.)
-USER_WRITABLE = {'active', 'message_main_attachment_id'}
-USER_CREATABLE = {'channel', 'company_id', 'active'}
+# account_label is deliberately in both: with several accounts per channel the
+# tenant needs to be able to name them ("Zalo OA — HCM"), and a label is inert
+# display text, not a credential or a state.
+# The attribution defaults join account_label: they are marketing metadata a
+# tenant owns, not credentials or state.
+USER_WRITABLE = {'active', 'account_label', 'utm_source_id', 'utm_medium_id',
+                 'campaign_id', 'message_main_attachment_id'}
+USER_CREATABLE = {'channel', 'company_id', 'active', 'account_label'}
 
 # Who may operate a connection through the Channel Connection Center: the
 # platform operator, the Care Command manager, and — from CC-C — the tenant
@@ -168,8 +176,10 @@ class CareChannelConnection(models.Model):
     # that is defect Z1 in health_zalo (a tracked app_secret copies plaintext
     # secrets into mail.tracking.value, bypassing field groups entirely).
 
+    # CONNECTABLE_SELECTION, not CHANNEL_SELECTION: walk_in is a conversation
+    # channel with no provider behind it, so it can never be a connection.
     channel = fields.Selection(
-        CHANNEL_SELECTION, required=True, index=True,
+        CONNECTABLE_SELECTION, required=True, index=True,
         help='The Care Command channel key this connection powers.')
     company_id = fields.Many2one(
         'res.company', required=True, index=True,
@@ -194,6 +204,31 @@ class CareChannelConnection(models.Model):
         readonly=True,
         help='Lifecycle of the tenant authorization. Only server paths write '
              'it; "Connected" is derived from the readiness checks.')
+
+    # The tenant's own name for this account. With two Facebook pages and two
+    # Zalo accounts, `resource_display_name` (what the PROVIDER calls it) is
+    # often the same or unhelpful, and a page id is not something an operator
+    # should have to recognise. This is the only free-text field a tenant owns.
+    account_label = fields.Char(
+        string='Account Name',
+        help='Your name for this account, e.g. "Zalo OA — HCM". Shown wherever '
+             'you have to pick between accounts on the same channel.')
+
+    # --- attribution defaults (client requirement 3) --------------------
+    # What a contact arriving on THIS account should be attributed to when the
+    # provider tells us nothing more specific. This is what makes multi-account
+    # pay off for marketing: "Messenger — HCM" and "Messenger — Hanoi" become
+    # different sources with no per-message work, and a phone call — which can
+    # never carry a click id — is attributed by the number that was dialled.
+    #
+    # A per-event ref/click id from the provider always WINS over these; they
+    # are the floor, not the answer.
+    utm_source_id = fields.Many2one(
+        'utm.source', string='Default Source',
+        help='Attributed to contacts arriving on this account when the '
+             'provider sends no campaign information of its own.')
+    utm_medium_id = fields.Many2one('utm.medium', string='Default Medium')
+    campaign_id = fields.Many2one('utm.campaign', string='Default Campaign')
 
     # -- what is connected ---------------------------------------------
     resource_external_id = fields.Char(
@@ -249,10 +284,44 @@ class CareChannelConnection(models.Model):
     # ------------------------------------------------------------------
     def init(self):
         # §5.1: _sql_constraints are not materialised on Odoo 19.
+        #
+        # MULTI-ACCOUNT (client requirement 1). The old index was
+        # (channel, company_id) WHERE active — one Facebook page, one Zalo OA
+        # per tenant, full stop. The client runs two of each, so the rule moves
+        # from "one connection per channel" to "one connection per provider
+        # RESOURCE": two Facebook pages are two page ids and coexist; the same
+        # page id twice is still a mistake.
+        #
+        # A CREATE ... IF NOT EXISTS will not remove the old index, so it is
+        # dropped explicitly. This is idempotent and safe to re-run.
+        self.env.cr.execute("""
+            DROP INDEX IF EXISTS care_channel_connection_channel_company_uniq
+        """)
+        # Rows still in the stepper carry no resource id yet and are left
+        # unconstrained on purpose — otherwise a tenant could not begin setting
+        # up their second account while the first is mid-flow.
         self.env.cr.execute("""
             CREATE UNIQUE INDEX IF NOT EXISTS
-                care_channel_connection_channel_company_uniq
-            ON care_channel_connection (channel, company_id) WHERE active
+                care_channel_connection_channel_company_resource_uniq
+            ON care_channel_connection (channel, company_id, resource_external_id)
+            WHERE active AND resource_external_id IS NOT NULL
+        """)
+        # One owner per provider resource platform-wide. `_find_for_resource`
+        # routes inbound webhooks by resource id alone and is company-agnostic
+        # by design, so two tenants claiming the same page id makes routing a
+        # coin flip. CC-F found this for `call` and fixed it in Python for that
+        # one channel; with several accounts per tenant now legal, it becomes a
+        # database rule for every channel.
+        #
+        # webchat is excluded: it uses the literal 'default' as its resource id
+        # for EVERY company, so this index would let exactly one tenant have a
+        # web chat widget.
+        self.env.cr.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS
+                care_channel_connection_channel_resource_uniq
+            ON care_channel_connection (channel, resource_external_id)
+            WHERE active AND resource_external_id IS NOT NULL
+              AND channel <> 'webchat'
         """)
 
     @api.depends('access_token_enc', 'refresh_token_enc', 'provider_secret_enc')
@@ -265,14 +334,16 @@ class CareChannelConnection(models.Model):
                 su.access_token_enc or su.refresh_token_enc
                 or su.provider_secret_enc)
 
-    @api.depends('channel', 'resource_display_name')
+    @api.depends('channel', 'account_label', 'resource_display_name')
     def _compute_display_name(self):
         labels = dict(CHANNEL_SELECTION)
         for rec in self:
             label = labels.get(rec.channel, rec.channel or '')
-            rec.display_name = (
-                '%s — %s' % (label, rec.resource_display_name)
-                if rec.resource_display_name else label)
+            # The tenant's own label wins: with two Messenger pages connected,
+            # "Messenger — Viet UC HCM" is the only thing that distinguishes
+            # them in a picker, and the provider's own name often does not.
+            suffix = rec.account_label or rec.resource_display_name
+            rec.display_name = '%s — %s' % (label, suffix) if suffix else label
 
     # ------------------------------------------------------------------
     # Guards
@@ -306,37 +377,56 @@ class CareChannelConnection(models.Model):
                 'disconnect actions.', ', '.join(offending)))
 
     @api.model
-    def _check_channel_unique(self, channel, company_id, active, exclude_id=None):
-        """Pre-check the partial unique index (ledger §5.3): raise a clean
-        ValidationError instead of letting the IntegrityError poison the tx."""
-        if not channel or not company_id or not active:
+    def _check_resource_unique(self, channel, company_id, resource_external_id,
+                               active, exclude_id=None):
+        """Pre-check both partial unique indexes (ledger §5.3): raise a clean
+        ValidationError instead of letting the IntegrityError poison the tx.
+
+        Mirrors ``init()`` exactly. A connection with no resource id yet is
+        mid-stepper and is not constrained by either index, so it short-circuits
+        here too — the two must not drift.
+        """
+        if not channel or not active or not resource_external_id:
             return
-        domain = [('channel', '=', channel), ('company_id', '=', company_id),
-                  ('active', '=', True)]
+        base = [('channel', '=', channel), ('active', '=', True),
+                ('resource_external_id', '=', resource_external_id)]
         if exclude_id:
-            domain.append(('id', '!=', exclude_id))
-        if self.sudo().search_count(domain):
+            base.append(('id', '!=', exclude_id))
+
+        if company_id and self.sudo().search_count(
+                base + [('company_id', '=', company_id)]):
             raise ValidationError(_(
-                'This channel already has an active connection for this '
-                'company. Archive it before creating another.'))
+                'This account is already connected for this company. Each '
+                'Facebook page, Zalo account or mailbox can be connected once.'))
+
+        # Cross-company: webchat legitimately shares the literal 'default'.
+        if channel != 'webchat' and self.sudo().search_count(base):
+            raise ValidationError(_(
+                'This account is already connected by another company. An '
+                'account can only belong to one company at a time.'))
 
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             self._check_guarded_vals(vals, creating=True)
-            self._check_channel_unique(
+            self._check_resource_unique(
                 vals.get('channel'),
                 vals.get('company_id') or self.env.company.id,
+                vals.get('resource_external_id'),
                 vals.get('active', True))
         return super().create(vals_list)
 
     def write(self, vals):
         self._check_guarded_vals(vals)
-        if 'active' in vals or 'channel' in vals or 'company_id' in vals:
+        # resource_external_id joins the trigger set: adopting a resource id is
+        # exactly the moment a row becomes constrained.
+        if {'active', 'channel', 'company_id',
+                'resource_external_id'} & set(vals):
             for rec in self:
-                self._check_channel_unique(
+                self._check_resource_unique(
                     vals.get('channel', rec.channel),
                     vals.get('company_id', rec.company_id.id),
+                    vals.get('resource_external_id', rec.resource_external_id),
                     vals.get('active', rec.active),
                     exclude_id=rec.id)
         return super().write(vals)
@@ -572,11 +662,16 @@ class CareChannelConnection(models.Model):
 
     @api.model
     def _find_sendable(self, channel, company_id):
-        """The connection that may SEND on ``channel`` for ``company_id``.
+        """*Some* connection that may SEND on ``channel`` for ``company_id``.
 
         Empty recordset when the channel is not connected, is still being set
         up, or was disabled — the composer then degrades honestly instead of
         offering a send that would fail at the provider.
+
+        With several accounts per channel this is now the FALLBACK, not the
+        answer: prefer ``_sendable_for_conversation`` wherever a conversation
+        is in hand, because replying to a Facebook thread from the wrong page
+        reaches nobody.
         """
         if not channel or not company_id:
             return self.browse()
@@ -584,7 +679,28 @@ class CareChannelConnection(models.Model):
             ('channel', '=', channel),
             ('company_id', '=', company_id),
             ('state', 'in', sorted(SENDABLE_STATES)),
-        ], limit=1)
+        ], order='id asc', limit=1)
+
+    @api.model
+    def _find_sendable_for_resource(self, channel, company_id,
+                                    resource_external_id):
+        """A sendable connection for THIS provider resource specifically.
+
+        The reconnect case: disconnecting and re-authorising a Facebook page
+        leaves the old row archived and creates a new one, so identities that
+        arrived on the old row must be able to follow the page to its new
+        connection. Matching on the resource id does exactly that — and,
+        unlike a channel-wide search, it cannot silently hand the thread to a
+        DIFFERENT page that happens to be connected too.
+        """
+        if not channel or not company_id or not resource_external_id:
+            return self.browse()
+        return self.sudo().search([
+            ('channel', '=', channel),
+            ('company_id', '=', company_id),
+            ('resource_external_id', '=', resource_external_id),
+            ('state', 'in', sorted(SENDABLE_STATES)),
+        ], order='id desc', limit=1)
 
     @api.model
     def _find_for_resource(self, channel, resource_external_id):

@@ -141,25 +141,51 @@ class TestChannelFramework(ChannelHubCase):
         self.assertFalse(conn.active)
 
     # ------------------------------------------------------------------
-    # T76 — one active connection per (channel, company)
+    # T76 — one active connection per provider RESOURCE
     # ------------------------------------------------------------------
-    def test_76_one_active_connection_per_channel(self):
-        first = self._conn('whatsapp')
-        with self.assertRaises(ValidationError):
-            self._conn('whatsapp')
+    # REWRITTEN for multi-account. This used to assert one connection per
+    # (channel, company) — the rule the client's "we have two Facebook pages
+    # and two Zalo accounts" made untenable. The uniqueness moved to the
+    # resource: two pages are two page ids and coexist; the same page id twice
+    # is still a mistake, and so is the same page id in a second company
+    # (`_find_for_resource` routes inbound by resource id ALONE, so two owners
+    # make routing a coin flip).
+    def test_76_one_active_connection_per_resource(self):
+        first = self._conn('whatsapp', resource_external_id='PHONE_A')
 
-        # Same channel, different company: fine.
-        other = self._conn('whatsapp', company=self.company2)
+        # Several accounts on one channel for one company: the whole point.
+        sibling = self._conn('whatsapp', resource_external_id='PHONE_B')
+        self.assertTrue(sibling.id)
+
+        # The SAME resource twice is refused — a clean ValidationError from
+        # the pre-check, not an IntegrityError that poisons the tx (§5.3).
+        with self.assertRaises(ValidationError):
+            self._conn('whatsapp', resource_external_id='PHONE_A')
+
+        # ...and refused across companies too.
+        with self.assertRaises(ValidationError):
+            self._conn('whatsapp', company=self.company2,
+                       resource_external_id='PHONE_A')
+
+        # A different resource in another company: fine.
+        other = self._conn('whatsapp', company=self.company2,
+                           resource_external_id='PHONE_C')
         self.assertTrue(other.id)
 
-        # Archived rows free the slot.
+        # Archived rows free the resource.
         first.write({'active': False})
-        second = self._conn('whatsapp')
+        second = self._conn('whatsapp', resource_external_id='PHONE_A')
         self.assertTrue(second.id)
 
         # ...and un-archiving the first one is refused while the second lives.
         with self.assertRaises(ValidationError):
             first.write({'active': True})
+
+        # A row still in the stepper carries no resource id and is deliberately
+        # unconstrained: a tenant must be able to start their second account
+        # while the first is mid-flow.
+        self.assertTrue(self._conn('whatsapp').id)
+        self.assertTrue(self._conn('whatsapp').id)
 
     # ------------------------------------------------------------------
     # T77 — readiness derivation ("configured" ≠ "connected")

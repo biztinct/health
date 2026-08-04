@@ -23,6 +23,19 @@ from .care_conversation import MODE_TO_CHANNEL
 _logger = logging.getLogger(__name__)
 
 
+def _capture(env, reason, channel, **kw):
+    """Soft-reference the Unrouted queue (client requirement 2).
+
+    ``care.contact.capture`` lives in health_care_command_CHANNELS, which
+    depends on this module and not the other way round, so the model may
+    simply not be in the registry. The hooks below must keep working either
+    way — a missing queue is a lesser problem than an ingest that raises.
+    """
+    if 'care.contact.capture' not in env:
+        return False
+    return env['care.contact.capture']._capture(reason, channel, **kw)
+
+
 class ZaloMessageHook(models.Model):
     _inherit = "zalo.message"
 
@@ -40,6 +53,14 @@ class ZaloMessageHook(models.Model):
     def _care_ingest_zalo(self, msg):
         conv = msg.conversation_id
         if not conv:
+            # A Zalo message with no conversation behind it has nothing to
+            # anchor on, but somebody did send it. Capture it rather than
+            # letting it end at this `return` (client requirement 2).
+            if msg.direction == "incoming":
+                _capture(self.env, "no_anchor", "zalo",
+                         body=msg.text,
+                         external_event_id="zalo.message:%s" % msg.id,
+                         occurred_at=msg.sent_date)
             return
         Care = self.env["care.conversation"]
         anchor = {
@@ -97,6 +118,16 @@ class CrmLeadHook(models.Model):
         phone = Care._safe_phone(lead.phone)
         email = Care._safe_email(lead.email_from)
         if not phone and not email:
+            # A lead with no reachable contact detail cannot become a
+            # conversation — there is nothing to reply TO. It is still someone
+            # who got in touch, so it goes on the queue where an operator can
+            # add a number and convert it.
+            _capture(self.env, "no_anchor",
+                     MODE_TO_CHANNEL.get(lead.mode_of_contact) or "unknown",
+                     peer_hint=lead.contact_name or lead.name,
+                     body=lead.description and str(lead.description)[:280],
+                     external_event_id="crm.lead:%s" % lead.id,
+                     occurred_at=lead.create_date)
             return
         # Derive a DECLARED channel from how the lead said they reached us —
         # never faked as traffic (no `channel` key → channel_primary stays NULL,
@@ -121,6 +152,19 @@ class MailMessageHook(models.Model):
             if vals.get("message_type") != "email":
                 continue
             if vals.get("model") not in ("crm.lead", "res.partner"):
+                # An inbound email landing on some OTHER record (an order, an
+                # invoice) used to end here. Most of those are fine — the mail
+                # is on the record and its sender is already a contact of ours,
+                # so nothing vanished. What DID vanish is mail from a sender we
+                # have never seen, and that is the only case captured, so the
+                # queue stays worth reading (client requirement 2).
+                try:
+                    with self.env.cr.savepoint():
+                        self._care_capture_stray_email(msg)
+                except Exception:
+                    _logger.exception(
+                        "care_command: stray email capture failed (msg %s)",
+                        msg.id)
                 continue
             try:
                 with self.env.cr.savepoint():
@@ -128,6 +172,27 @@ class MailMessageHook(models.Model):
             except Exception:
                 _logger.exception("care_command: mail.message ingest failed (msg %s)", msg.id)
         return messages
+
+    def _care_capture_stray_email(self, msg):
+        Care = self.env["care.conversation"]
+        email = Care._safe_email(msg.email_from)
+        if not email:
+            return
+        # Our own outbound is not an unrouted contact.
+        if msg.author_id and msg.author_id.user_ids:
+            return
+        # A sender we already know is reachable through their own record.
+        if self.env["res.partner"].sudo().search_count(
+                [("email_normalized", "=", email)], limit=1):
+            return
+        if self.env["crm.lead"].sudo().search_count(
+                [("email_from", "=ilike", email)], limit=1):
+            return
+        _capture(self.env, "no_anchor", "email",
+                 peer_hint=msg.email_from, email=email,
+                 body=html2plaintext(msg.body or "")[:280],
+                 external_event_id="mail.message:%s" % msg.id,
+                 occurred_at=msg.date)
 
     def _care_ingest_email(self, msg):
         if not msg.res_id:

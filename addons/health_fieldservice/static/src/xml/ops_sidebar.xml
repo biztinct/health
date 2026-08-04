@@ -4,7 +4,7 @@
 <t t-name="health_fieldservice.OpsSidebar">
     <aside class="ops-global-sidebar">
         <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
-            <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+            <div class="ops-logo-icon"><img class="ops-logo-img" src="/health_fieldservice/static/img/vu-hibiscus.png" alt="Viet UC"/></div>
             <div>
                 <div class="ops-logo-text">VIET UC</div>
                 <div class="ops-logo-sub">Healthcare Platform</div>

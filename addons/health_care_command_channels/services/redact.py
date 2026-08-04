@@ -37,11 +37,17 @@ _TG_BOT_RE = re.compile(r'(?i)/bot\d+:[\w-]+')
 _REDACTED = '<redacted>'
 
 
-def redact(text):
+def redact(text, max_len=MAX_LEN):
     """Return ``text`` with credential-shaped values stripped and truncated.
 
     Falsy input returns ``False`` (so it can be assigned straight to a Char
     field). Non-str input is coerced with ``str()``.
+
+    ``max_len`` exists for the one caller that stores evidence rather than a
+    one-line detail — ``care.contact.capture.raw_payload`` keeps up to 8 KB of
+    the original event so an operator can see what actually arrived. It changes
+    only the truncation: the SAME denylist runs either way, so a longer cap can
+    never let a credential through that the default would have caught.
     """
     if not text:
         return False
@@ -53,6 +59,6 @@ def redact(text):
     text = _TG_BOT_RE.sub('/bot' + _REDACTED, text)
     text = _BEARER_RE.sub(_REDACTED, text)
     text = _KV_RE.sub(_REDACTED, text)
-    if len(text) > MAX_LEN:
-        text = text[:MAX_LEN - 1] + '…'
+    if len(text) > max_len:
+        text = text[:max_len - 1] + '…'
     return text

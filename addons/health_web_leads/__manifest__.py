@@ -70,6 +70,11 @@ Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
         'health_base',
         'health_crm',
         'health_api_gateway',
+        # Channel attribution (client requirement 3): `health.lead.touchpoint`
+        # now carries a `conversation_id`, so `care.conversation` has to be in
+        # the registry. No loop — health_care_command does not depend on this
+        # module, and nothing else depends on it either (§5.71 walked).
+        'health_care_command',
         # W2: the ops-facing lead UI is the Lead Hub, and its Source spoke
         # modal lives here — an inheritance record cannot ref a view from a
         # module that is not a dependency. No loop: nothing depends on

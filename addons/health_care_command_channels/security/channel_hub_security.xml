@@ -60,6 +60,17 @@
         <field name="domain_force">[('company_id', 'in', company_ids)]</field>
     </record>
 
+    <!-- The Unrouted queue. Company-scoped like everything else here — a
+         capture from a page we could not recognise still carries the company
+         of the connection it was routed to, or the acting company when there
+         was none. -->
+    <record id="care_contact_capture_company_rule" model="ir.rule">
+        <field name="name">Unrouted Contact: multi-company</field>
+        <field name="model_id" ref="model_care_contact_capture"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
     <!--
         Catchment scoping. Each area runs its own Zalo OA / Facebook page, so a
         connection belongs to an area and its identities and messages inherit

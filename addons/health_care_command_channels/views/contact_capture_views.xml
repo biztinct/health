@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Unrouted queue (client requirement 2: "none of the contacts should
+     vanish in thin air").
+
+     Ordinary backend list/form rather than an OWL surface: this is a triage
+     queue an operator works through occasionally, not a live wall, and the
+     stock list gives them filtering, grouping and multi-select for free. -->
+<odoo>
+
+    <record id="view_care_contact_capture_list" model="ir.ui.view">
+        <field name="name">care.contact.capture.list</field>
+        <field name="model">care.contact.capture</field>
+        <field name="arch" type="xml">
+            <list string="Unrouted Contacts"
+                  decoration-warning="state == 'new'"
+                  decoration-muted="state == 'dismissed'">
+                <field name="occurred_at"/>
+                <field name="channel"/>
+                <field name="reason"/>
+                <field name="peer_hint"/>
+                <field name="phone_normalized"/>
+                <field name="email_normalized"/>
+                <field name="body_preview" optional="show"/>
+                <field name="connection_id" optional="hide"/>
+                <field name="resource_external_id" optional="hide"/>
+                <field name="state"/>
+                <field name="conversation_id" optional="hide"/>
+                <field name="company_id" column_invisible="1"/>
+                <button name="action_convert" type="object" icon="fa-arrow-right"
+                        title="Create a conversation from this contact"
+                        invisible="state != 'new'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_care_contact_capture_form" model="ir.ui.view">
+        <field name="name">care.contact.capture.form</field>
+        <field name="model">care.contact.capture</field>
+        <field name="arch" type="xml">
+            <form string="Unrouted Contact">
+                <header>
+                    <button name="action_convert" type="object" string="Convert to conversation"
+                            class="btn-primary" invisible="state != 'new'"/>
+                    <button name="action_dismiss" type="object" string="Dismiss"
+                            invisible="state != 'new'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,converted"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-info" role="status"
+                         invisible="reason != 'unknown_resource'">
+                        This message arrived for an account this system does not
+                        recognise. If it is one of yours, connect it in the
+                        Channel Center — every future message will then reach the
+                        wall by itself.
+                    </div>
+                    <div class="alert alert-info" role="status"
+                         invisible="reason != 'not_ingestable'">
+                        Somebody messaged a channel that is not finished being set
+                        up. Complete its setup in the Channel Center to stop this
+                        recurring.
+                    </div>
+                    <div class="alert alert-info" role="status"
+                         invisible="reason != 'no_voip_config'">
+                        A call arrived before Calls was configured, so no call
+                        record could be created. The caller's number is below.
+                    </div>
+                    <group>
+                        <group string="Contact">
+                            <field name="peer_hint"/>
+                            <field name="phone_normalized"/>
+                            <field name="email_normalized"/>
+                            <field name="body_preview"/>
+                        </group>
+                        <group string="Where it came from">
+                            <field name="channel"/>
+                            <field name="reason"/>
+                            <field name="connection_id"/>
+                            <field name="resource_external_id"/>
+                            <field name="occurred_at"/>
+                            <field name="external_event_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Outcome" invisible="state == 'new'">
+                        <field name="conversation_id"/>
+                        <field name="resolved_by_id"/>
+                        <field name="resolved_at"/>
+                        <field name="dismiss_reason"/>
+                    </group>
+                    <notebook>
+                        <page string="Raw Event" name="raw">
+                            <field name="raw_payload" widget="text" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_care_contact_capture_search" model="ir.ui.view">
+        <field name="name">care.contact.capture.search</field>
+        <field name="model">care.contact.capture</field>
+        <field name="arch" type="xml">
+            <search string="Unrouted Contacts">
+                <field name="peer_hint"/>
+                <field name="phone_normalized"/>
+                <field name="email_normalized"/>
+                <field name="resource_external_id"/>
+                <filter name="f_new" string="Unrouted"
+                        domain="[('state', '=', 'new')]"/>
+                <filter name="f_converted" string="Converted"
+                        domain="[('state', '=', 'converted')]"/>
+                <separator/>
+                <!-- The Odoo 19 date idiom. The hand-rolled
+                     `datetime.datetime.combine(context_today(), …)` domain
+                     this replaces failed view validation outright. -->
+                <filter name="f_received" date="occurred_at"/>
+                <!-- `<group>` here takes no `expand` and no `string` on
+                     Odoo 19; both are rejected by the search-view schema. -->
+                <group>
+                    <filter name="g_reason" string="Reason"
+                            context="{'group_by': 'reason'}"/>
+                    <filter name="g_channel" string="Channel"
+                            context="{'group_by': 'channel'}"/>
+                    <filter name="g_account" string="Account"
+                            context="{'group_by': 'connection_id'}"/>
+                    <filter name="g_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_care_contact_capture" model="ir.actions.act_window">
+        <field name="name">Unrouted Contacts</field>
+        <field name="res_model">care.contact.capture</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_care_contact_capture_search"/>
+        <!-- Opens on the unhandled ones: the queue's whole job is the backlog,
+             and a list dominated by already-converted rows hides it. -->
+        <field name="context">{'search_default_f_new': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing is waiting.</p>
+            <p>
+                Contacts that reached us but could not be matched to a
+                conversation land here — a message for an account that is not
+                connected yet, a call from a withheld number, a web-chat visitor
+                who left a phone number and nothing else. Nothing is discarded;
+                convert anything real in one click.
+            </p>
+        </field>
+    </record>
+
+</odoo>

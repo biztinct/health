@@ -65,15 +65,24 @@ body.has-custom-sidebar {
         border-bottom: 1px solid rgba(white, 0.1);
     }
 
+    // See ops_shared.scss — white plate so the hibiscus reads on every shell.
     .ops-logo-icon {
         width: 36px;
         height: 36px;
-        background: #E53935;
+        background: #FFFFFF;
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 18px;
+        padding: 5px;
+    }
+
+    .ops-logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
     }
 
     .ops-logo-text {

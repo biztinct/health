@@ -60,8 +60,27 @@ class VoipCallLogHook(models.Model):
             "lead_id": log.lead_id.id or False,
             "phone_normalized": Care._safe_phone(customer_number),
         }
+        if not anchor["phone_normalized"]:
+            # `_safe_phone` refuses anything normalize_vn_phone cannot parse —
+            # an international caller, a short code — and that used to drop the
+            # whole call. The RAW number is still a number somebody can ring
+            # back, so fall back to it before giving up (client requirement 2).
+            raw = (log.called_number if log.direction == "outgoing"
+                   else log.caller_number)
+            anchor["phone_normalized"] = (raw or "").strip()[:32] or False
+
         if not any(anchor.values()):
-            # no way to key the conversation — nothing to ingest
+            # A withheld/anonymous caller: no number at all, so there is
+            # genuinely nothing to key a conversation on. It still goes on the
+            # Unrouted queue — a missed call from a hidden number is exactly
+            # the kind of contact that used to vanish.
+            if "care.contact.capture" in self.env:
+                self.env["care.contact.capture"]._capture(
+                    "unmatched_call", "call",
+                    peer_hint=log.caller_number or log.called_number,
+                    body=log.call_type or "",
+                    external_event_id="voip.call.log:%s" % log.id,
+                    occurred_at=log.call_date)
             return
 
         if log.direction == "outgoing":

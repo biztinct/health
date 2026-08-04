@@ -439,7 +439,9 @@ class TestChannelSpine(ChannelSpineCase):
     # T67 — _channel_keys() reflects real connections
     # ==================================================================
     def test_67_channel_keys(self):
-        base = ('zalo', 'call', 'email', 'zns')
+        # walk_in joined the base rails: it has no connection to be gated BY,
+        # so the front desk can always log someone who walked in.
+        base = ('zalo', 'call', 'email', 'zns', 'walk_in')
         keys = self.Care._channel_keys()
         self.assertEqual(tuple(keys), base,
                          'no connection ⇒ the 4 adapter icons stay dark')

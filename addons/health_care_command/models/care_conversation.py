@@ -35,11 +35,16 @@ CRM_MANAGER_GROUP = "health_crm.group_health_crm_manager"
 # Bus-notified field set (§6.5)
 _BUS_FIELDS = {"status", "owner_id", "unread_count", "last_event_at"}
 
-# The 8 channels Care Command knows about. channel_primary (last real traffic),
+# The channels Care Command knows about. channel_primary (last real traffic),
 # channel_declared (how a lead SAID they reached us) and channel_effective
 # (stored compute: traffic ?? declared) all share this Selection. The 4 chat
 # adapters (whatsapp/fb/telegram/webchat) land NOW so Phase 6's adapters need no
 # selection_add. Order is the dock order.
+#
+# walk_in is a CONVERSATION channel but NOT a connectable one: a person walking
+# through the door has no provider, no credentials and no webhook, so it must
+# never appear in the Channel Center catalogue or on care.channel.connection.
+# That is why the two lists below are separate — see CONNECTABLE_CHANNELS.
 CHANNEL_SELECTION = [
     ("zalo", "Zalo"),
     ("call", "Calls"),
@@ -49,12 +54,21 @@ CHANNEL_SELECTION = [
     ("fb", "Messenger"),
     ("telegram", "Telegram"),
     ("webchat", "Web chat"),
+    ("walk_in", "Walk-in"),
 ]
 
+# The subset a tenant can actually CONNECT — everything with an adapter behind
+# it. The Channel Center catalogue and care.channel.connection.channel both read
+# THIS list, never CHANNEL_SELECTION: offering a "Connect" button for walk-in
+# could only ever fail.
+CONNECTABLE_SELECTION = [
+    (key, label) for key, label in CHANNEL_SELECTION if key != "walk_in"
+]
+CONNECTABLE_CHANNELS = [key for key, _label in CONNECTABLE_SELECTION]
+
 # crm.lead.mode_of_contact → a declared channel. NEVER faked as traffic:
-# it only ever writes channel_declared, never channel_primary. walk_in (and any
-# unmapped value) has no channel and stays None. Verified selection at
-# health_crm/models/crm_lead.py:69-78.
+# it only ever writes channel_declared, never channel_primary. Verified
+# selection at health_crm/models/crm_lead.py:69-78.
 MODE_TO_CHANNEL = {
     "phone": "call",
     "zalo": "zalo",
@@ -62,7 +76,7 @@ MODE_TO_CHANNEL = {
     "facebook": "fb",
     "website": "webchat",
     "chatbox": "webchat",
-    # walk_in: no channel — stays None
+    "walk_in": "walk_in",
 }
 
 
@@ -279,6 +293,43 @@ class CareConversation(models.Model):
                 hours = (now - rec.last_inbound_at).total_seconds() / 3600.0
                 score += min(20, max(0, int(hours)))
             rec.urgency_score = score
+
+    # ------------------------------------------------------------------
+    # Ageing (client requirement 2) — "so they can be responded to at any
+    # other time as well".
+    #
+    # The score above is honest about being evaluated at WRITE time, which was
+    # fine while every conversation was touched regularly. It is not fine as
+    # the guarantee that nothing is lost: a conversation nobody writes to never
+    # re-scores, so the one that has been waiting three days sorts below the
+    # one that was nudged an hour ago. This cron is what makes the wall
+    # ordering true rather than merely plausible.
+    # ------------------------------------------------------------------
+    AGEING_BATCH = 2000
+
+    @api.model
+    def _cron_age_conversations(self):
+        """Re-evaluate the time terms of every open conversation.
+
+        Recomputes and flushes rather than writing a field: `urgency_score` is
+        a stored compute and `modified()` is the supported way to invalidate
+        it, so the scoring rule stays in exactly one place.
+        """
+        open_convs = self.sudo().search(
+            [("status", "in", ("needs_reply", "waiting"))],
+            order="last_event_at asc", limit=self.AGEING_BATCH)
+        if not open_convs:
+            return 0
+        # `modified()` marks urgency_score for recomputation; the flush is what
+        # runs it and WRITES the column. Calling `_compute_urgency_score()` in
+        # between looks helpful and is not: it satisfies the pending recompute
+        # in cache without marking the record dirty, so the flush then has
+        # nothing to write and the stored score never moves.
+        open_convs.modified(["last_inbound_at"])
+        open_convs.flush_recordset(["urgency_score"])
+        _logger.info("care_command: aged %s open conversation(s)",
+                     len(open_convs))
+        return len(open_convs)
 
     @api.depends("channel_primary", "channel_declared")
     def _compute_channel_effective(self):
@@ -643,9 +694,13 @@ class CareConversation(models.Model):
     @api.model
     def _channel_keys(self):
         """The filterable channel set for the dock + counts. Phase 6 overrides
-        this to reflect connected adapter accounts; in Phase 5 all 8 are live."""
+        this to reflect connected adapter accounts; in Phase 5 all 8 are live.
+
+        walk_in needs no connection to be live — the front desk can always log
+        someone who walked in — so the override treats it as a base rail.
+        """
         return ("zalo", "call", "email", "zns",
-                "whatsapp", "fb", "telegram", "webchat")
+                "whatsapp", "fb", "telegram", "webchat", "walk_in")
 
     @api.model
     def get_workspace_data(self, channel=None, mine_only=False, query=None,
@@ -759,6 +814,14 @@ class CareConversation(models.Model):
             "catchment_empty": (
                 not self.env.user._catchment_can_switch()
                 and not self.env.user.catchment_province_id),
+            # How many contacts reached us but could not be routed to a
+            # conversation (client requirement 2). Soft-referenced: the queue
+            # lives in health_care_command_channels, which depends on this
+            # module and not the reverse, so 0 is the honest answer when it is
+            # not installed.
+            "unrouted": (
+                self.env["care.contact.capture"].unrouted_count()
+                if "care.contact.capture" in self.env else 0),
         }
 
     def _workspace_row(self):
@@ -1389,6 +1452,57 @@ class CareConversation(models.Model):
         if not rec.lead_id:
             raise UserError(_("Escalation needs a lead anchor."))
         return rec.lead_id.sudo().action_escalate_contact()  # crm_lead.py:2137
+
+    # ------------------------------------------------------------------
+    # Walk-in (client requirement 1) — the one channel a human logs by hand.
+    #
+    # Unlike the crm.lead hook, this DOES write channel_primary. A walk-in is
+    # real traffic: somebody physically arrived. A lead merely declaring
+    # "I came in once" is a declaration and still routes through
+    # MODE_TO_CHANNEL → channel_declared, which is why both exist.
+    # ------------------------------------------------------------------
+    @api.model
+    def action_log_walk_in(self, name=None, phone=None, email=None,
+                           partner_id=None, note=None):
+        self._ensure_access()
+        anchor = {}
+        if partner_id:
+            partner = self.env["res.partner"].browse(int(partner_id)).exists()
+            if not partner:
+                raise UserError(_("That contact no longer exists."))
+            anchor["partner_id"] = partner.id
+        anchor["phone_normalized"] = self._safe_phone(phone)
+        anchor["email_normalized"] = self._safe_email(email)
+        if not any(anchor.values()):
+            raise UserError(_(
+                "A walk-in needs a contact, a phone number or an email so it "
+                "can be followed up."))
+
+        rec = self._find_or_create_for(anchor, {
+            "channel": "walk_in",
+            "inbound": True,
+            "event_at": fields.Datetime.now(),
+            "set_status": "needs_reply",
+            # No unread bump: nobody sent us an unread message — the person is
+            # standing at the desk. The needs_reply status is what puts it on
+            # the wall.
+            "unread": 0,
+            "watch_hits": self._match_watchlist(name, note),
+        })
+        if name:
+            headline = _("Walk-in logged: %(name)s (by %(user)s).",
+                         name=name, user=self.env.user.display_name)
+        else:
+            headline = _("Walk-in logged by %s.", self.env.user.display_name)
+        # Markup("...") % arg ESCAPES arg, so the operator-typed name and note
+        # can never inject markup into the chatter.
+        body = Markup("<p>%s</p>") % headline
+        if note:
+            body += Markup("<p>%s</p>") % note
+        rec.sudo().message_post(body=body, message_type="comment",
+                                subtype_xmlid="mail.mt_note")
+        return {"ok": True, "conversation_id": rec.id,
+                "message": _("Walk-in logged.")}
 
     # ------------------------------------------------------------------
     # 7.6 Reminder (Phase 3) — schedule a todo activity on the anchor record.

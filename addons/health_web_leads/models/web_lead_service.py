@@ -436,6 +436,19 @@ class WebLeadService(models.AbstractModel):
             # lives in the gateway audit log; no lead row is created.
             _logger.info('web_leads: submission %s rejected as spam',
                          submission_id)
+            # Client requirement 2: a spam verdict is a heuristic, and a false
+            # positive used to be unrecoverable — no lead, no record, nothing
+            # for the person to be called back from. The submission now lands
+            # on the Unrouted queue instead, where an operator can convert the
+            # occasional real customer a honeypot caught. The response is
+            # unchanged: still 200, still no oracle.
+            if 'care.contact.capture' in self.env:
+                self.env['care.contact.capture']._capture(
+                    'spam_suspect', 'webchat',
+                    peer_hint=payload.get('name'),
+                    phone=payload.get('phone'), email=payload.get('email'),
+                    body=payload.get('message') or payload.get('note'),
+                    external_event_id='web_lead:%s' % submission_id)
             return {'status': 'rejected_spam',
                     'submission_id': submission_id}
 

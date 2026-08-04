@@ -57,6 +57,13 @@ class CareChannelIdentity(models.Model):
              'must not be merged onto the patient\'s thread (CC-B review).')
     display_name = fields.Char(compute='_compute_display_name', store=True)
     last_seen_at = fields.Datetime()
+    # Client requirement 3. The web-chat widget knows the gclid at the moment
+    # the visitor OPENS the chat, which is before they type anything and
+    # therefore before a conversation exists. Parked here and replayed by
+    # `_ingest_inbound` onto the conversation its first message creates.
+    # Whitelisted and capped on the way in (`_clean_attribution`), so this is
+    # never raw visitor input.
+    attribution_json = fields.Char(string='Attribution', readonly=True)
 
     def init(self):
         # §5.1 — _sql_constraints are not materialised on Odoo 19, and this

@@ -115,7 +115,14 @@ class WebChatController(http.Controller):
         result = Message._webchat_start(
             session=body.get('session'),
             name=body.get('name'),
-            phone=body.get('phone'))
+            phone=body.get('phone'),
+            # Client requirement 3. The widget runs on our own website, so
+            # this is the one channel where a real gclid/fbclid is available —
+            # it reads them off the URL and the _fbc/_fbp/_ga cookies. Wholly
+            # untrusted input from a public route: `_clean_attribution`
+            # whitelists the keys and caps every value, and nothing here is
+            # ever used as an identity.
+            attribution=body.get('attribution'))
         if not result:
             return self._generic(connection)
         return self._json(result, connection=connection)

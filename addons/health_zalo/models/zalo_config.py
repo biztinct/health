@@ -57,16 +57,29 @@ class ZaloConfig(models.Model):
         help='Only one configuration can be active per company',
     )
 
-    # Zalo Official Account Credentials
+    # Zalo Official Account Credentials.
+    #
+    # NEITHER IS REQUIRED ANY MORE. CC-D made this model a facade: the app
+    # lives on plane 1 (`channel.platform.app`) and the tokens live encrypted
+    # on `care.channel.connection`, so a config BRIDGED from the Channel
+    # Center genuinely has no plaintext app id or secret to put here — and
+    # multi-OA (the client's second Official Account) makes such a config
+    # routine rather than exceptional.
+    #
+    # Nothing is weakened by dropping `required`. The one consumer,
+    # `zalo_api._token_request`, already refuses on an empty secret
+    # (zalo_api.py:112-113) — the same fail-closed posture CC-F gave
+    # `voip.config`. What WOULD have been weakened is the alternative:
+    # inventing a placeholder secret to satisfy a NOT NULL constraint.
     app_id = fields.Char(
         string='App ID',
-        required=True,
         tracking=True,
-        help='Zalo Official Account App ID from https://developers.zalo.me',
+        help='Zalo Official Account App ID from https://developers.zalo.me. '
+             'Empty for an account connected through the Channel Center, '
+             'where the app lives on the platform application instead.',
     )
     app_secret = fields.Char(
         string='App Secret',
-        required=True,
         # NO tracking (defect Z1): a tracked secret is copied verbatim into
         # mail.tracking.value on every change, which is readable by anyone who
         # can read the chatter — a leak path that walks straight around the
@@ -246,21 +259,37 @@ class ZaloConfig(models.Model):
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
             config.webhook_url = f"{base_url}/zalo/webhook"
 
-    @api.constrains('active', 'company_id')
+    @api.constrains('active', 'company_id', 'oa_id')
     def _check_active_config(self):
-        """Ensure only one active configuration per company"""
+        """One active configuration per Official Account, not per company.
+
+        MULTI-OA: the client runs two Official Accounts under one company, so
+        the old "one active config per company" rule made the second one
+        impossible to configure. What must still be unique is the OA itself —
+        two configs for the same ``oa_id`` would race each other's tokens and
+        `get_active_config(oa_id=...)` could not tell them apart.
+
+        A config with no OA yet is the un-migrated legacy case: still limited
+        to one per company, because "the" unbound config is exactly what
+        `_sync_from_connection` adopts.
+        """
         for config in self:
-            if config.active:
-                other_active = self.search([
-                    ('id', '!=', config.id),
-                    ('company_id', '=', config.company_id.id),
-                    ('active', '=', True),
-                ])
-                if other_active:
+            if not config.active:
+                continue
+            domain = [('id', '!=', config.id),
+                      ('company_id', '=', config.company_id.id),
+                      ('active', '=', True)]
+            if config.oa_id:
+                if self.search(domain + [('oa_id', '=', config.oa_id)]):
                     raise ValidationError(_(
-                        'Only one Zalo configuration can be active per company. '
+                        'This Zalo Official Account is already configured. '
                         'Please deactivate the existing configuration first.'
                     ))
+            elif self.search(domain + [('oa_id', 'in', (False, ''))]):
+                raise ValidationError(_(
+                    'There is already an unconfigured Zalo configuration for '
+                    'this company. Finish or deactivate it first.'
+                ))
 
     # ------------------------------------------------------------------
     # Z5 — only a system administrator may repoint the API host
@@ -429,13 +458,37 @@ class ZaloConfig(models.Model):
         return self._effective_access_token()
 
     @api.model
-    def get_active_config(self):
-        """Get the active Zalo configuration for current company"""
-        config = self.search([
+    def get_active_config(self, oa_id=None):
+        """Get the active Zalo configuration for current company.
+
+        MULTI-OA: the client runs two Official Accounts, so "the" active config
+        is no longer a well-defined thing. Callers that know which OA they are
+        acting for say so — either by argument or, for the legacy handler whose
+        internals we do not thread ids through, via the ``zalo_oa_id`` context
+        key that ``_dispatch_zalo`` sets from the routed connection.
+
+        Without a hint the old behaviour stands (newest connected config for
+        the company), which is what every single-OA caller wants and what the
+        frozen 10-module ZNS contract already relies on.
+        """
+        oa_id = oa_id or self.env.context.get('zalo_oa_id')
+        domain = [
             ('company_id', '=', self.env.company.id),
             ('active', '=', True),
             ('state', '=', 'connected'),
-        ], limit=1)
+        ]
+        if oa_id:
+            config = self.search(domain + [('oa_id', '=', oa_id)], limit=1)
+            if config:
+                return config
+            # No config bound to this OA yet (a connection mid-migration).
+            # Falling through to "any config" would file the second OA's
+            # messages under the first OA's conversations, so say so.
+            _logger.warning(
+                'health_zalo: no configuration for OA %s — falling back to '
+                'the company default', oa_id)
+
+        config = self.search(domain, limit=1)
 
         if not config:
             _logger.warning('No active Zalo configuration found for current company')
@@ -479,6 +532,26 @@ class ZaloConfig(models.Model):
     # ==================================================================
     # CC-D — the bridge to the framework connection
     # ==================================================================
+    def _claimed_by_another(self, connection):
+        """Is this config already the legacy home of a DIFFERENT live OA?
+
+        Returns False for an unbound or stale config (nothing answers for its
+        oa_id), which is what makes it adoptable. Fails SAFE: if the framework
+        model is absent we cannot prove the config is free, but neither can
+        anything else be using it through a connection that does not exist.
+        """
+        self.ensure_one()
+        if not self.oa_id:
+            return False
+        if 'care.channel.connection' not in self.env:
+            return False
+        return bool(self.env['care.channel.connection'].sudo().search_count([
+            ('channel', '=', 'zalo'),
+            ('resource_external_id', '=', self.oa_id),
+            ('id', '!=', connection.id),
+            ('active', '=', True),
+        ], limit=1))
+
     @api.model
     def _sync_from_connection(self, connection, oa_id=None, oa_name=None):
         """A framework connection just authorized: make the legacy side usable.
@@ -492,9 +565,39 @@ class ZaloConfig(models.Model):
         "No active Zalo configuration found" on the first real message.
         """
         connection.ensure_one()
-        config = self.sudo().search([
-            ('company_id', '=', connection.company_id.id),
-            ('active', '=', True)], limit=1)
+        domain = [('company_id', '=', connection.company_id.id),
+                  ('active', '=', True)]
+        config = self.browse()
+        if oa_id:
+            config = self.sudo().search(domain + [('oa_id', '=', oa_id)],
+                                        limit=1)
+        if not config:
+            # MULTI-OA. A config may be adopted (and have its oa_id corrected)
+            # only when no OTHER live connection already answers for it —
+            # which covers the two cases that matter:
+            #
+            #   * the migration case, where the legacy config predates the
+            #     Channel Center and its oa_id is empty or stale (the live
+            #     vietuat row's oa_id is the single character 'o');
+            #   * the first real sign-in, which is what corrects it.
+            #
+            # It must NOT be adopted when it belongs to a second Official
+            # Account that is already connected: rewriting its oa_id would
+            # silently repoint that OA's entire legacy pipeline — its
+            # conversations would keep arriving under the wrong account and
+            # its replies would leave from it.
+            config = self.sudo().search(domain, limit=1).filtered(
+                lambda c: not c._claimed_by_another(connection))
+        if not config and oa_id:
+            # Nothing adoptable: the second OA gets its own config. It carries
+            # no app_id/app_secret on purpose — those live on the platform
+            # application and, for tokens, encrypted on the connection. Both
+            # columns stopped being required for exactly this row.
+            config = self.sudo().create({
+                'company_id': connection.company_id.id,
+                'name': oa_name or _('Zalo OA %s', oa_id),
+                'oa_id': oa_id,
+            })
         if not config:
             _logger.info('No zalo.config to bridge for connection %s',
                          connection.id)

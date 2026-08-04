@@ -4,7 +4,7 @@
 <t t-name="health_crm.CrmSidebar">
     <aside class="ops-global-sidebar crm-sidebar">
         <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
-            <div class="ops-logo-icon crm-logo-icon"><i class="fa fa-comments"/></div>
+            <div class="ops-logo-icon crm-logo-icon"><img class="ops-logo-img" src="/health_fieldservice/static/img/vu-hibiscus.png" alt="Viet UC"/></div>
             <div>
                 <div class="ops-logo-text">VIET UC</div>
                 <div class="ops-logo-sub">CRM Center</div>

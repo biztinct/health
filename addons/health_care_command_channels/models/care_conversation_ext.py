@@ -27,10 +27,12 @@ from .care_channel_connection import SENDABLE_STATES
 
 _logger = logging.getLogger(__name__)
 
-# The channels this module powers. The base four (zalo/call/email/zns) are live
-# rails maintained elsewhere and are never gated by a connection here.
+# The channels this module powers. The base rails (zalo/call/email/zns) are live
+# rails maintained elsewhere and are never gated by a connection here. walk_in
+# joins them because it has no connection to be gated BY — the front desk can
+# always log someone who walked through the door.
 EXT_CHANNELS = ('whatsapp', 'fb', 'telegram', 'webchat')
-BASE_CHANNELS = ('zalo', 'call', 'email', 'zns')
+BASE_CHANNELS = ('zalo', 'call', 'email', 'zns', 'walk_in')
 
 # Provider errors that mean "the grant is gone", not "the network hiccuped".
 AUTH_ERROR_MARKERS = ('401', '403', 'oauthexception', 'code 190',
@@ -44,6 +46,14 @@ class CareConversationChannelExt(models.Model):
     channel_identity_id = fields.Many2one(
         'care.channel.identity', string='Channel Identity', index=True,
         ondelete='set null')
+    # WHICH account this thread arrived on. Stored (not a plain related) so ops
+    # can filter and group the wall by account — with two Facebook pages and
+    # two Zalo OAs live, "show me the Hanoi inbox" is a routine ask and a
+    # non-stored related cannot answer it in a domain.
+    channel_connection_id = fields.Many2one(
+        'care.channel.connection', string='Channel Account',
+        related='channel_identity_id.connection_id',
+        store=True, index=True, readonly=True, ondelete='set null')
 
     def init(self):
         super().init()
@@ -135,6 +145,106 @@ class CareConversationChannelExt(models.Model):
         return rec
 
     # ------------------------------------------------------------------
+    # Attribution (client requirement 3): "capture the GCLID for google and
+    # equivalents for Facebook and Zalo, so we can feed back actual contacts
+    # to the algorithms".
+    #
+    # The touchpoint model already exists and already reserves the vocabulary
+    # for this — `zalo_click`, `messenger_click`, `click_to_call` were declared
+    # by W1 and written by nothing, precisely so the channel phases would add
+    # rows rather than a migration (lead_touchpoint.py:35-46). So this writes
+    # THERE rather than inventing a parallel store, and the deferred W4
+    # offline-conversion export to Google Ads / Meta CAPI reads one table.
+    # ------------------------------------------------------------------
+    TOUCHPOINT_TYPES = {
+        'zalo': 'zalo_click',
+        'zns': 'zalo_click',
+        'fb': 'messenger_click',
+        'whatsapp': 'messenger_click',
+        'call': 'click_to_call',
+    }
+
+    # What a caller may put in an `attribution` dict. A strict whitelist: this
+    # data comes off a public web page in the webchat case, so anything not
+    # named here is dropped rather than stored.
+    ATTRIBUTION_KEYS = (
+        'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
+        'gclid', 'wbraid', 'gbraid', 'fbclid', 'ad_id', 'ad_account_id',
+        'referral_ref', 'referral_source', 'entry_point',
+        'page_url', 'referrer_url',
+    )
+    ATTRIBUTION_VALUE_CAP = 500
+
+    @api.model
+    def _clean_attribution(self, attribution):
+        """Whitelist, stringify and cap one attribution dict."""
+        if not isinstance(attribution, dict):
+            return {}
+        out = {}
+        for key in self.ATTRIBUTION_KEYS:
+            value = attribution.get(key)
+            if value in (None, False, ''):
+                continue
+            if not isinstance(value, str):
+                value = str(value)
+            value = value.strip()[:self.ATTRIBUTION_VALUE_CAP]
+            if value:
+                out[key] = value
+        return out
+
+    def _record_attribution(self, attribution, connection=None,
+                            occurred_at=None, external_event_id=None):
+        """Store how this conversation was reached. First touch wins.
+
+        Deliberately FIRST-touch: the ad click that produced the conversation
+        is the thing the ad platforms need back, and a later message on the
+        same thread carries no click id to overwrite it with anyway. So a
+        conversation that already has a touchpoint is left alone.
+
+        Never raises. Attribution is analytics; losing it must never cost us
+        the message that carried it.
+        """
+        self.ensure_one()
+        if 'health.lead.touchpoint' not in self.env:
+            # health_web_leads is not installed: there is nowhere to put this,
+            # and that is a deployment choice rather than an error.
+            return self.browse()
+        data = self._clean_attribution(attribution)
+        connection = connection or self.channel_connection_id
+        # The account's own defaults are the FLOOR — a real per-event value
+        # from the provider always wins. This is what attributes a phone call,
+        # which can never carry a click id, to the number that was dialled.
+        if connection:
+            data.setdefault('utm_source', connection.utm_source_id.name or '')
+            data.setdefault('utm_medium', connection.utm_medium_id.name or '')
+            data.setdefault('utm_campaign', connection.campaign_id.name or '')
+            data = {k: v for k, v in data.items() if v}
+        Touch = self.env['health.lead.touchpoint'].sudo()
+        if not data:
+            return Touch.browse()
+        if Touch.search_count([('conversation_id', '=', self.id)], limit=1):
+            return Touch.browse()
+        channel = self.channel_effective or (connection.channel if connection
+                                             else '')
+        try:
+            with self.env.cr.savepoint():
+                return Touch.create(dict(
+                    data,
+                    conversation_id=self.id,
+                    lead_id=self.lead_id.id or False,
+                    touchpoint_type=self.TOUCHPOINT_TYPES.get(
+                        channel, 'manual'),
+                    occurred_at=occurred_at or self.last_inbound_at
+                    or fields.Datetime.now(),
+                    external_event_id=external_event_id or False,
+                ))
+        except Exception:  # noqa: BLE001 — analytics must not break ingest
+            _logger.exception(
+                'care_channels: attribution write failed for conversation %s',
+                self.id)
+            return Touch.browse()
+
+    # ------------------------------------------------------------------
     # Read-time merge
     # ------------------------------------------------------------------
     def _channel_messages(self, limit=100):
@@ -174,7 +284,20 @@ class CareConversationChannelExt(models.Model):
     # Capabilities + dock honesty
     # ------------------------------------------------------------------
     def _sendable_connection(self):
-        """The connection that may send on THIS conversation's channel."""
+        """The connection that may send on THIS conversation's channel.
+
+        Multi-account correctness: a reply belongs to the ACCOUNT the message
+        arrived on. With two Facebook pages connected, answering from whichever
+        page the search happened to return first delivers the reply from the
+        wrong identity — to a stranger, or to nobody.
+
+        So the fallback is scoped to the same provider resource rather than to
+        the channel. That still covers the case it was written for (a reconnect
+        archives the old row and creates a new one for the SAME page, and the
+        old peers must not go mute), while refusing to cross accounts. If the
+        peer's own page is genuinely down, the composer says so — see
+        ``_channel_window`` — instead of sending from a sibling.
+        """
         self.ensure_one()
         ident = self.channel_identity_id
         if not ident:
@@ -182,11 +305,8 @@ class CareConversationChannelExt(models.Model):
         conn = ident.connection_id.sudo()
         if conn.state in SENDABLE_STATES and conn.active:
             return conn
-        # The peer's own connection is down — fall back to whatever active
-        # connection serves this channel for the company (a reconnect creates
-        # a new row; the old peers must not go mute because of it).
-        return self.env['care.channel.connection']._find_sendable(
-            ident.channel, self.company_id.id)
+        return self.env['care.channel.connection']._find_sendable_for_resource(
+            ident.channel, self.company_id.id, conn.resource_external_id)
 
     def _capabilities(self):
         caps = super()._capabilities()

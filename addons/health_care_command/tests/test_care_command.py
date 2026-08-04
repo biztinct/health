@@ -820,15 +820,18 @@ class TestCareCommand(TransactionCase):
         self.assertEqual(conv.channel_effective, "fb")
         self.assertFalse(conv.channel_primary, "a lead never sets traffic")
         self.assertFalse(conv.has_channel_activity, "declared is not activity")
-        # walk_in has no mapped channel → all three channel fields falsy
+        # walk_in is now a real DECLARED channel (the client asked for walk-in
+        # as a channel). The invariant that matters is unchanged and asserted
+        # below: a lead is a declaration, never traffic.
         wlead = self.env["crm.lead"].create({
             "name": "walk39", "phone": "0912345699", "mode_of_contact": "walk_in"})
         wconv = self.Care.search([("lead_id", "=", wlead.id)], limit=1)
         self.assertTrue(wconv)
-        self.assertFalse(wconv.channel_declared)
-        self.assertFalse(wconv.channel_effective)
-        self.assertFalse(wconv.channel_primary)
-        self.assertFalse(wconv.has_channel_activity)
+        self.assertEqual(wconv.channel_declared, "walk_in")
+        self.assertEqual(wconv.channel_effective, "walk_in")
+        self.assertFalse(wconv.channel_primary, "a lead never sets traffic")
+        self.assertFalse(wconv.has_channel_activity,
+                         "a declared walk-in is not activity")
 
     # ======================================================================
     # T40 — traffic wins over a declaration; declared never overwritten

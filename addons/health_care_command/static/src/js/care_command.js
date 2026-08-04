@@ -21,6 +21,9 @@ const CHANNELS = [
     { key: "fb", label: _t("Messenger"), short: _t("FB MSGR"), ic: "ic-chat", cv: "var(--ch-fb)" },
     { key: "telegram", label: _t("Telegram"), short: _t("TELEGRAM"), ic: "ic-chat", cv: "var(--ch-telegram)" },
     { key: "webchat", label: _t("Web chat"), short: _t("WEB CHAT"), ic: "ic-globe", cv: "var(--ch-webchat)" },
+    // walk_in has no provider and no connection — the front desk logs it by
+    // hand, so it is always active in the dock.
+    { key: "walk_in", label: _t("Walk-in"), short: _t("WALK-IN"), ic: "ic-user", cv: "var(--ch-walkin)" },
 ];
 const CH_MAP = Object.fromEntries(CHANNELS.map((c) => [c.key, c]));
 
@@ -68,6 +71,8 @@ export class CareCommand extends Component {
             reminderOpen: false,     // reminder popover
             reminderDays: 1,
             reminderNote: "",
+            walkInOpen: false,       // walk-in capture popover
+            walkIn: { name: "", phone: "", email: "", note: "" },
         });
 
         this._busChannel = null;
@@ -265,6 +270,14 @@ export class CareCommand extends Component {
     }
     get catchmentEmpty() {
         return !!(this.state.data && this.state.data.catchment_empty);
+    }
+    /** Contacts that reached us but never made it onto the wall. */
+    get unroutedCount() {
+        return (this.state.data && this.state.data.unrouted) || 0;
+    }
+    openUnrouted() {
+        this.action.doAction(
+            "health_care_command_channels.action_care_contact_capture");
     }
     // dock channels with `active` derived from the payload (Phase 6 narrows the
     // set to connected adapters). Static label/icon/colour from CHANNELS.
@@ -590,6 +603,32 @@ export class CareCommand extends Component {
 
     newContact() {
         this.action.doAction("health_crm.action_crm_new_contact");
+    }
+
+    // --- walk-in (client requirement 1) ----------------------------
+    // Its own small form rather than a per-conversation action: a walk-in
+    // CREATES the work item, it does not act on a selected one.
+    toggleWalkIn(open) {
+        this.state.walkInOpen = open === undefined ? !this.state.walkInOpen : open;
+        if (!this.state.walkInOpen) {
+            this.state.walkIn = { name: "", phone: "", email: "", note: "" };
+        }
+    }
+    onWalkInField(field, ev) { this.state.walkIn[field] = ev.target.value; }
+    async doWalkIn() {
+        const w = this.state.walkIn;
+        if (!(w.phone || "").trim() && !(w.email || "").trim()) {
+            this.toast(_t("A walk-in needs a phone number or an email to follow up on."));
+            return;
+        }
+        try {
+            const res = await this.orm.call("care.conversation", "action_log_walk_in",
+                [], { name: w.name, phone: w.phone, email: w.email, note: w.note });
+            this.toggleWalkIn(false);
+            if (res && res.message) this.toast(res.message);
+            await this.load(true);
+            if (res && res.conversation_id) await this.selectConv(res.conversation_id);
+        } catch (e) { this._err(e); }
     }
 }
 

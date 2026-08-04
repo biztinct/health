@@ -248,6 +248,10 @@ no cron ships.
         'mail',
         'health_care_command',
         'health_api_gateway',
+        # Channel attribution (client requirement 3): connections carry
+        # utm.source / utm.medium / utm.campaign defaults. Already transitive
+        # (health_crm depends on utm), declared because the reference is hard.
+        'utm',
         # CC-C: the Center's audience. The tenant-admin ACL rows and the
         # Center menu both reference health_user_admin.group_health_user_admin,
         # so the dependency is hard from this phase on (CC-A deferred it).
@@ -264,11 +268,13 @@ no cron ships.
         'views/platform_app_views.xml',
         'views/channel_connection_views.xml',
         'views/channel_message_views.xml',
+        'views/contact_capture_views.xml',
         'views/res_config_settings_views.xml',
         'views/channel_center_views.xml',
         'views/menus.xml',
         'data/ir_cron.xml',
         'data/cms_sidebar_items_channel_center.xml',
+        'data/cms_sidebar_items_contact_capture.xml',
     ],
     'assets': {
         'web.assets_backend': [

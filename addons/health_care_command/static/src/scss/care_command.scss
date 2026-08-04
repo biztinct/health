@@ -19,6 +19,7 @@
   --danger:#c62839; --danger-soft:#fbebed;
   --ch-zalo:#0068ff; --ch-call:#0f766e; --ch-whatsapp:#16a34a; --ch-fb:#7c3aed;
   --ch-telegram:#0e9adf; --ch-webchat:#64748b; --ch-zns:#0a58c9; --ch-email:#b45309;
+  --ch-walkin:#9d174d;
   --r:10px; --r-lg:14px;
   --sh:0 1px 2px rgba(27,35,64,.06),0 4px 14px rgba(27,35,64,.06);
   --sh-lg:0 8px 40px rgba(27,35,64,.22);
@@ -80,6 +81,12 @@
     font-size:12px;padding:8px 13px;border-radius:8px}
   .newbtn:hover{background:#2a44b4}
   .newbtn .ic{width:12px;height:12px}
+  /* Unrouted: a backlog, not a primary action — amber so it reads as
+     "something is waiting" without competing with New Contact. */
+  .newbtn.cc-unrouted{background:var(--warn)}
+  .newbtn.cc-unrouted:hover{background:#b45309}
+  .newbtn.cc-unrouted .ct{background:rgba(255,255,255,.25);color:#fff;
+    border-radius:999px;padding:0 6px;font-size:11px;font-weight:800}
 
   /* ---------- state switch ---------- */
   .content{flex:1;min-height:0;display:flex;flex-direction:column}
@@ -343,6 +350,12 @@
   .cc-pop-note{border:1px solid var(--line-2);border-radius:8px;padding:7px 9px;font-size:12px;min-height:56px;resize:vertical}
   .cc-pop-row input:focus,.cc-pop-note:focus{border-color:var(--accent)}
   .cc-pop-act{display:flex;gap:6px;justify-content:flex-end}
+  /* Walk-in variant: anchored to the right edge (the trigger sits in the
+     header, so left:0 would run off the viewport) and with text-width inputs
+     instead of the reminder popover's narrow numeric field. */
+  .cc-pop.walkin-pop{left:auto;right:0;width:290px}
+  .cc-pop.walkin-pop .cc-pop-row{flex-direction:column;align-items:stretch;gap:4px}
+  .cc-pop.walkin-pop .cc-pop-row input{width:100%;text-align:left;font-weight:600}
 
   /* ---------- Phase 5: declared-only channel glyph (muted, hollow) ---------- */
   /* a lead that declared a channel but has NO real traffic yet — never render

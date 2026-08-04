@@ -14,7 +14,7 @@ import logging
 from markupsafe import Markup
 
 from odoo import _, api, fields, models
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -60,7 +60,12 @@ SOURCE_SYSTEM_SELECTION = [
 # implies, and the merge path never calls `_utm_ids` at all
 # (`web_lead_service.py:540-558`), so a campaign seeded LATER never
 # back-fills by itself. Hence the action below.
+# `lead_id != False` is load-bearing since touchpoints became lead-optional:
+# without it a chat touch with no lead reads `lead_id.campaign_id = False` as
+# TRUE and floods the review queue with rows that have no lead to link a
+# campaign onto.
 UNMATCHED_CAMPAIGN_DOMAIN = [('utm_campaign', '!=', False),
+                             ('lead_id', '!=', False),
                              ('lead_id.campaign_id', '=', False)]
 
 # Who may retro-link a campaign onto a lead. The W2.5 operator trio plus the
@@ -83,9 +88,20 @@ class HealthLeadTouchpoint(models.Model):
     _description = 'Lead Touchpoint'
     _order = 'occurred_at desc, id desc'
 
+    # OPTIONAL since the channel-attribution work (client requirement 3).
+    # A Messenger or Zalo contact carries a click id and an ad id from the
+    # first message, which is long before anyone decides it is a lead. Forcing
+    # a lead here would have meant either creating speculative leads or
+    # throwing the attribution away — and the click id is exactly what cannot
+    # be recovered later. Exactly one of lead_id / conversation_id is required;
+    # see `_check_attached`.
     lead_id = fields.Many2one(
-        'crm.lead', string='Lead', required=True, index=True,
-        ondelete='cascade')
+        'crm.lead', string='Lead', index=True, ondelete='cascade')
+    conversation_id = fields.Many2one(
+        'care.conversation', string='Conversation', index=True,
+        ondelete='cascade',
+        help='The Care Command conversation this touch belongs to, when it '
+             'arrived on a chat or call channel rather than a web form.')
 
     occurred_at = fields.Datetime(
         string='Occurred At', required=True, index=True,
@@ -117,6 +133,28 @@ class HealthLeadTouchpoint(models.Model):
 
     gclid = fields.Char(string='Google Click ID')
     fbclid = fields.Char(string='Facebook Click ID')
+    # Google's cookie-less click ids. Since consent-mode/ITP, an ad click
+    # frequently arrives with wbraid (web) or gbraid (app) INSTEAD of gclid,
+    # and the offline-conversion upload accepts any of the three — so storing
+    # only gclid loses those conversions outright.
+    wbraid = fields.Char(string='Google Click ID (wbraid)')
+    gbraid = fields.Char(string='Google Click ID (gbraid)')
+
+    # Chat-channel attribution (client requirement 3). Messenger and Zalo have
+    # no click id at all: a Click-to-Messenger ad delivers a `ref` payload and
+    # an ad id on the conversation's FIRST event, and that is the only moment
+    # it is ever available.
+    ad_id = fields.Char(string='Ad ID')
+    ad_account_id = fields.Char(string='Ad Account ID')
+    referral_ref = fields.Char(
+        string='Referral Ref',
+        help='The provider\'s own tracking payload for how this conversation '
+             'started — the m.me/ad `ref` string, or Zalo\'s equivalent.')
+    referral_source = fields.Char(
+        string='Referral Source',
+        help='How the provider says the conversation started (ADS, SHORTLINK, '
+             'CUSTOMER_CHAT_PLUGIN, …).')
+    entry_point = fields.Char(string='Entry Point')
 
     page_url = fields.Char(string='Page URL')
     referrer_url = fields.Char(string='Referrer URL')
@@ -130,6 +168,30 @@ class HealthLeadTouchpoint(models.Model):
         string='Raw Payload',
         help='The original submission, capped at 8 KB. Behind ACLs; never '
              'logged.')
+
+    @api.constrains('lead_id', 'conversation_id')
+    def _check_attached(self):
+        """A touchpoint must belong to something.
+
+        `lead_id` stopped being `required` so chat channels can record
+        attribution before a lead exists, but an orphan touch is unreachable
+        from every surface in the system and would silently accumulate.
+        """
+        for touch in self:
+            if not touch.lead_id and not touch.conversation_id:
+                raise ValidationError(_(
+                    'A touchpoint must belong to a lead or a conversation.'))
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        # `@api.constrains` only fires for fields PRESENT in the create vals,
+        # so a create that mentions neither anchor slipped past it entirely —
+        # which is exactly the orphan the constraint exists to stop. Re-run it
+        # unconditionally on create; this replaces the `required=True` that
+        # used to make the case impossible.
+        records._check_attached()
+        return records
 
     @api.depends('touchpoint_type', 'occurred_at')
     def _compute_display_name(self):
