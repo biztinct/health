@@ -1,0 +1,654 @@
+<title>Channel Connection Center — Status</title>
+
+<style>
+  :root {
+    --paper: #F3F4F6;
+    --card: #FFFFFF;
+    --ink: #14171C;
+    --ink-soft: #4B5563;
+    --ink-faint: #7C8593;
+    --rule: #DCE1E8;
+    --rule-soft: #E9ECF1;
+    --accent: #3C5A99;
+    --accent-soft: #E7EBF4;
+    --live: #1D6B44;
+    --live-bg: #E3EFE8;
+    --blocked: #8A5A16;
+    --blocked-bg: #F4EBDC;
+    --wait: #5A6467;
+    --wait-bg: #E8EBEB;
+    --risk: #97402F;
+    --risk-bg: #F5E5E1;
+    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F1216;
+      --card: #171B20;
+      --ink: #E8EAED;
+      --ink-soft: #A7AFB9;
+      --ink-faint: #77818D;
+      --rule: #2A3038;
+      --rule-soft: #20252C;
+      --accent: #8DA6E0;
+      --accent-soft: #1C2333;
+      --live: #74C79A;
+      --live-bg: #16281F;
+      --blocked: #D4A45C;
+      --blocked-bg: #2A2317;
+      --wait: #9AA4A6;
+      --wait-bg: #212729;
+      --risk: #D98A76;
+      --risk-bg: #2B1D19;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F1216; --card: #171B20; --ink: #E8EAED; --ink-soft: #A7AFB9; --ink-faint: #77818D;
+    --rule: #2A3038; --rule-soft: #20252C; --accent: #8DA6E0; --accent-soft: #1C2333;
+    --live: #74C79A; --live-bg: #16281F; --blocked: #D4A45C; --blocked-bg: #2A2317;
+    --wait: #9AA4A6; --wait-bg: #212729; --risk: #D98A76; --risk-bg: #2B1D19;
+  }
+  :root[data-theme="light"] {
+    --paper: #F3F4F6; --card: #FFFFFF; --ink: #14171C; --ink-soft: #4B5563; --ink-faint: #7C8593;
+    --rule: #DCE1E8; --rule-soft: #E9ECF1; --accent: #3C5A99; --accent-soft: #E7EBF4;
+    --live: #1D6B44; --live-bg: #E3EFE8; --blocked: #8A5A16; --blocked-bg: #F4EBDC;
+    --wait: #5A6467; --wait-bg: #E8EBEB; --risk: #97402F; --risk-bg: #F5E5E1;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 40px 24px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+  }
+
+  .prose { max-width: 68ch; }
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(30px, 5vw, 46px);
+    line-height: 1.12;
+    font-weight: 400;
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .standfirst {
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 64ch;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+  .meta b { color: var(--ink-soft); font-weight: 600; }
+
+  section { display: flex; flex-direction: column; gap: 20px; }
+  h2 {
+    font-family: var(--serif);
+    font-size: 27px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .sec-head { display: flex; flex-direction: column; gap: 8px; }
+  p { margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--accent-soft);
+    color: var(--ink);
+    padding: 1px 5px;
+    border-radius: 3px;
+    word-break: break-word;
+  }
+
+  /* ---------- status pills ---------- */
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .p-live { background: var(--live-bg); color: var(--live); }
+  .p-blocked { background: var(--blocked-bg); color: var(--blocked); }
+  .p-wait { background: var(--wait-bg); color: var(--wait); }
+  .p-risk { background: var(--risk-bg); color: var(--risk); }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .legend div {
+    background: var(--card);
+    padding: 13px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- verdict callout ---------- */
+  .verdict {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 20px 24px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+  }
+  .verdict .big {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .verdict .big b { color: var(--accent); font-weight: 600; }
+
+  /* ---------- tables ---------- */
+  .scroller {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--card);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 760px;
+    font-size: 14px;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    padding: 0 0 8px;
+  }
+  thead th {
+    background: var(--card);
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 12px 14px;
+    border-bottom: 1.5px solid var(--ink);
+    vertical-align: bottom;
+    position: sticky;
+    top: 0;
+  }
+  tbody td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  tbody td:first-child { color: var(--ink); font-weight: 600; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.group-head td {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+  }
+  tbody tr.sub-row td:first-child { padding-left: 30px; font-weight: 500; color: var(--ink-soft); }
+  td.num {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    font-weight: 600;
+    width: 1%;
+    white-space: nowrap;
+  }
+  .nowrap { white-space: nowrap; }
+
+  /* ---------- provider cards ---------- */
+  .providers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 16px;
+  }
+  .provider {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .provider-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .provider-head strong { font-size: 16px; }
+  .provider-unlocks {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+  }
+  .provider ol {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .provider ol li strong { color: var(--ink); }
+  .provider .foot-note {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--rule-soft);
+    padding-top: 10px;
+    margin-top: 2px;
+  }
+
+  /* ---------- data honesty panel ---------- */
+  .honesty {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .honesty-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .honesty-cell {
+    padding: 20px 22px;
+    border-right: 1px solid var(--rule-soft);
+    border-bottom: 1px solid var(--rule-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .honesty-cell:last-child { border-right: none; }
+  .honesty-cell .n {
+    font-family: var(--mono);
+    font-size: 30px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .honesty-cell .lbl {
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+  .honesty-detail {
+    padding: 18px 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .honesty-detail .row {
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+    align-items: baseline;
+  }
+  .honesty-detail .row .tag {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    min-width: 130px;
+    flex-shrink: 0;
+  }
+  .honesty-detail .row .txt { color: var(--ink-soft); }
+  .honesty-detail .row .txt strong { color: var(--ink); }
+
+  /* ---------- callouts ---------- */
+  .note {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    background: var(--card);
+    border-radius: 3px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .note.warn { border-left-color: var(--blocked); }
+  .note .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .note.warn .label { color: var(--blocked); }
+  .note p { font-size: 15px; }
+
+  ul.gaps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; }
+  ul.gaps li { color: var(--ink-soft); font-size: 15px; }
+  ul.gaps li strong { color: var(--ink); }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+    font-size: 13px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 28px 16px 64px; gap: 40px; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 22px; }
+    .honesty-cell { border-right: none; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Việt Úc · Care Command → Channel Connection Center</div>
+    <h1>Where every channel actually stands</h1>
+    <p class="standfirst">All eight channels — Zalo, ZNS, WhatsApp, Messenger, Telegram, Web Chat, Email, Calls — are built and tested. None are carrying real traffic yet. This page is the honest reason why, channel by channel, and the exact manual step that unblocks each one.</p>
+    <div class="meta">
+      <span><b>Checked live</b> on the server, 5 August 2026</span>
+      <span><b>For</b> business owner · platform operator</span>
+      <span><b>Full technical record</b> docs/strategy/handovers/channel-center-architecture.md</span>
+    </div>
+  </header>
+
+  <!-- ============ VERDICT ============ -->
+  <section>
+    <div class="verdict">
+      <span class="big">Software side: <b>closed</b>, all 8 channels. Live traffic: <b>zero</b> — every channel is waiting on a human approval or account outside Health19, not on more building.</span>
+    </div>
+  </section>
+
+  <!-- ============ LEGEND ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Reading the status column</div>
+      <h2>Four states</h2>
+    </div>
+    <div class="legend">
+      <div><span class="pill p-live">LIVE</span> Connected, tested, carrying real messages right now.</div>
+      <div><span class="pill p-blocked">BLOCKED — EXTERNAL STEP</span> Code is complete and tested. Cannot switch on until a human finishes something on the provider's own site — an app review, a business verification, a signed contract.</div>
+      <div><span class="pill p-wait">NOT STARTED</span> Nobody has begun the external step yet.</div>
+      <div><span class="pill p-risk">NEEDS ATTENTION</span> Leftover test data or a known gap — not a channel failure, but worth a look.</div>
+    </div>
+  </section>
+
+  <!-- ============ CHANNEL TABLE ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Channel by channel</div>
+      <h2>The eight connectors and what each is waiting on</h2>
+    </div>
+    <div class="prose">
+      <p>"Checklist" below counts the automatic health checks each channel proves before Care Command trusts it to send and receive — a card is not "Connected" because someone clicked through a form; it is Connected because every one of these came back green on its own.</p>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>Live counts read from the production database, 5 August 2026.</caption>
+        <thead>
+          <tr>
+            <th style="min-width:150px">Channel</th>
+            <th style="min-width:260px">What it needs to go live</th>
+            <th style="min-width:70px">Checklist</th>
+            <th style="min-width:150px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-head"><td colspan="4">Chat</td></tr>
+          <tr>
+            <td>Zalo</td>
+            <td>A Zalo Developers app linked to the Official Account, its one allowed webhook URL set, redirect URI added.</td>
+            <td class="num">0/6</td>
+            <td><span class="pill p-blocked">BLOCKED — EXTERNAL STEP</span></td>
+          </tr>
+          <tr class="sub-row">
+            <td>↳ ZNS (Zalo notifications)</td>
+            <td>Same Zalo app, plus a funded ZCA account and each notification template individually approved by Zalo — a 2–3 day human review per template.</td>
+            <td class="num">0/2</td>
+            <td><span class="pill p-blocked">BLOCKED — EXTERNAL STEP</span></td>
+          </tr>
+          <tr>
+            <td>WhatsApp</td>
+            <td>A Meta Business-type app, Business Verification, App Review on 5 permissions, an Embedded Signup configuration.</td>
+            <td class="num">0/6</td>
+            <td><span class="pill p-blocked">BLOCKED — EXTERNAL STEP</span></td>
+          </tr>
+          <tr>
+            <td>Messenger</td>
+            <td>The same Meta app as WhatsApp, plus its own Login for Business configuration.</td>
+            <td class="num">0/5</td>
+            <td><span class="pill p-blocked">BLOCKED — EXTERNAL STEP</span></td>
+          </tr>
+          <tr>
+            <td>Telegram</td>
+            <td>Nothing from us — a tenant creates their own bot with BotFather and pastes the token in. Fully self-service today.</td>
+            <td class="num">0/4</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+          <tr>
+            <td>Web Chat</td>
+            <td>Nothing — one click enables the widget on our own domain, no provider involved at all.</td>
+            <td class="num">0/2</td>
+            <td><span class="pill p-wait">NOT STARTED</span></td>
+          </tr>
+
+          <tr class="group-head"><td colspan="4">Email &amp; Calls</td></tr>
+          <tr>
+            <td>Email</td>
+            <td>A Google OAuth client (Gmail) or a Microsoft Entra app registration (M365) — either one lights the card.</td>
+            <td class="num">0/4</td>
+            <td><span class="pill p-blocked">BLOCKED — EXTERNAL STEP</span></td>
+          </tr>
+          <tr>
+            <td>Calls (VoIP24h)</td>
+            <td>Receive-only by design — we have no verified contract for VoIP24h's outbound API. Needs their real documentation (only fetchable from a Vietnam IP address) and support-issued credentials.</td>
+            <td class="num">0/2</td>
+            <td><span class="pill p-blocked">BLOCKED — EXTERNAL STEP</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ PROVIDERS ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">The actual to-do list</div>
+      <h2>Five providers, each unlocking one or more channels</h2>
+    </div>
+    <div class="prose">
+      <p>Everything above collapses to five external relationships. None of them are Health19 development work — they are accounts, forms and reviews on someone else's website.</p>
+    </div>
+
+    <div class="providers">
+      <div class="provider">
+        <div class="provider-head"><strong>Meta</strong><span class="pill p-blocked">BLOCKED</span></div>
+        <div class="provider-unlocks">Unlocks WhatsApp + Messenger</div>
+        <ol>
+          <li>Create a <strong>Business-type app</strong> and complete <strong>Business Verification</strong>.</li>
+          <li>Pass <strong>App Review</strong> for five permissions: <code>whatsapp_business_management</code>, <code>whatsapp_business_messaging</code>, <code>pages_show_list</code>, <code>pages_messaging</code>, <code>pages_manage_metadata</code>.</li>
+          <li>Create an <strong>Embedded Signup</strong> configuration for WhatsApp and a <strong>Login for Business</strong> configuration for Messenger.</li>
+          <li>Paste the redirect URI and both webhook URLs (generated on our side) into the app, with the verify token.</li>
+        </ol>
+        <div class="foot-note">Business verification is the long pole — often 1–3 weeks, and can bounce back for more documents.</div>
+      </div>
+
+      <div class="provider">
+        <div class="provider-head"><strong>Zalo</strong><span class="pill p-blocked">BLOCKED</span></div>
+        <div class="provider-unlocks">Unlocks Zalo chat + ZNS notifications</div>
+        <ol>
+          <li>Create an app on <strong>Zalo Developers</strong> and link it to the Official Account.</li>
+          <li>Add our redirect URI to the app's OAuth settings.</li>
+          <li>Set the single webhook URL Zalo allows per app — every tenant's OA shares it, routed by account id on our side.</li>
+        </ol>
+        <div class="foot-note">ZNS needs one more thing on top: a funded ZCA account, then each message template individually reviewed by Zalo (2–3 days, per template).</div>
+      </div>
+
+      <div class="provider">
+        <div class="provider-head"><strong>Google</strong><span class="pill p-blocked">BLOCKED</span></div>
+        <div class="provider-unlocks">Unlocks Email (Gmail)</div>
+        <ol>
+          <li>Create an <strong>OAuth 2.0 Client ID</strong> in Google Cloud Console and enable the Gmail API.</li>
+          <li>Add our redirect URI to Authorised redirect URIs.</li>
+          <li>Publish the consent screen — or list every clinic mailbox as a test user. An unpublished screen silently expires connections after 7 days.</li>
+          <li>For full read/send access: a restricted-scope + <strong>CASA security assessment</strong> (4–12 weeks, a lab fee). A send-only version can ship sooner without it.</li>
+        </ol>
+      </div>
+
+      <div class="provider">
+        <div class="provider-head"><strong>Microsoft</strong><span class="pill p-blocked">BLOCKED</span></div>
+        <div class="provider-unlocks">Unlocks Email (Microsoft 365)</div>
+        <ol>
+          <li>Register an app in <strong>Microsoft Entra ID</strong>; add the Mail.Send, Mail.ReadWrite, IMAP.AccessAsUser.All and offline_access permissions.</li>
+          <li>Add our redirect URI as a Web redirect URI.</li>
+          <li>Create a client secret — Entra secrets expire, so the expiry date needs tracking.</li>
+        </ol>
+        <div class="foot-note">Only one of Google or Microsoft is required to light the Email card — pick whichever the clinic's own mailboxes already run on.</div>
+      </div>
+
+      <div class="provider">
+        <div class="provider-head"><strong>VoIP24h</strong><span class="pill p-blocked">BLOCKED</span></div>
+        <div class="provider-unlocks">Unlocks Calls — receiving only</div>
+        <ol>
+          <li>Fetch VoIP24h's real API documentation from <code>docs-sdk.voip24h.vn</code> — geo-blocked to Vietnam IPs only.</li>
+          <li>Reconcile it against the endpoints already built (they were written from public traces, never confirmed against the real spec).</li>
+          <li>Get VoIP24h support to issue account credentials and confirm their webhook signature scheme.</li>
+        </ol>
+        <div class="foot-note">Outbound calling was never in scope here — this channel only ever listens for call events VoIP24h sends us.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DATA HONESTY ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">No rounding up</div>
+      <h2>Exactly what's on the server right now</h2>
+    </div>
+
+    <div class="honesty">
+      <div class="honesty-grid">
+        <div class="honesty-cell"><span class="n">0</span><span class="lbl">provider apps registered</span></div>
+        <div class="honesty-cell"><span class="n">1</span><span class="lbl">Zalo connection (unmigrated)</span></div>
+        <div class="honesty-cell"><span class="n">3</span><span class="lbl">stray test connections</span></div>
+        <div class="honesty-cell"><span class="n">0</span><span class="lbl">real messages, any channel</span></div>
+      </div>
+      <div class="honesty-detail">
+        <div class="row"><span class="tag">Zalo</span><span class="txt">One connection exists, carried over from the previous system. It is labelled <strong>"Demo"</strong> and has no working credentials — it cannot send or receive until a real Zalo app (above) replaces it.</span></div>
+        <div class="row"><span class="tag">Calls, Telegram,<br>Web Chat</span><span class="txt">One connection each, all stuck mid <strong>"Signing in"</strong> — leftover from an internal test session that was never finished. Zero messages on any of them. These should be archived, not read as progress.</span></div>
+        <div class="row"><span class="tag">WhatsApp, Messenger,<br>Email</span><span class="txt">No connection exists yet — nothing to add a second account to until the first one is connected, which needs the provider app above.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OPERATOR CONSOLE ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Where a provider app actually gets entered</div>
+      <h2>The operator console</h2>
+    </div>
+    <div class="prose">
+      <p>Once any one of the five provider relationships above is ready — an app id, a secret, a couple of configuration ids — there is exactly one place to enter it: <strong>Platform Applications</strong>, one row per provider (Meta / Zalo / Google / Microsoft). Filling that row is the whole activation: no code change, no redeploy. Its own "Go Live" tab shows the redirect URI and webhook URLs to paste back into the provider's console, and a self-test button that calls the provider directly and reports back in plain words.</p>
+    </div>
+    <div class="note warn">
+      <span class="label">One rough edge</span>
+      <p>This screen is reachable only by typing its address directly — it has no link in the sidebar and doesn't appear in the app switcher. Fine for now with one operator; worth a proper menu entry before a second person needs to find it.</p>
+    </div>
+  </section>
+
+  <!-- ============ GAPS ============ -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Two small things, neither blocking</div>
+      <h2>Known software gaps</h2>
+    </div>
+    <ul class="gaps">
+      <li><strong>Reply Templates</strong> can only be tagged for Zalo, Calls, Email, ZNS or "Any channel" — WhatsApp, Messenger, Telegram and Web Chat aren't offered yet, even though all four channels are otherwise live in the framework. A five-minute fix once someone needs a WhatsApp-specific canned reply.</li>
+      <li><strong>"Add another account"</strong> — the button that lets one clinic run, say, a Hanoi Zalo account and a separate HCMC one — only appears once a channel has both a working first connection <em>and</em> its provider app is registered. Until the steps above are done, it stays hidden. It is not missing; it has nothing to attach a second account to yet.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>Checked directly against the production database on 5 August 2026 — connection counts, message counts and provider-app counts are live reads, not estimates.</span>
+    <span>Full technical record: <code>docs/strategy/handovers/channel-center-architecture.md</code> (§12 external checklist, §13 limitations, §15 readiness table) and the phase-by-phase build reports under <code>docs/strategy/reports/</code>.</span>
+  </footer>
+
+</div>
