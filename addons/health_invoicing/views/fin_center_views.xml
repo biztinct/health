@@ -173,6 +173,7 @@
     <record id="action_fin_package_list" model="ir.actions.act_window">
         <field name="name">Service Packages</field>
         <field name="res_model">health.service.package</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="context">{'active_center': 'finance_center'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
