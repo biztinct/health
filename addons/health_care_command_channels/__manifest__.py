@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.9.0.0',
+    'version': '19.0.10.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -299,6 +299,43 @@ button on the raw platform-application form, and the Center strip.
 
 No invitations (GL-3), no Google/Microsoft/VoIP24h flows (GL-4), and no change
 to any GL-1 payload.
+
+Go-Live Studio — Phase GL-3 (delegation)
+========================================
+
+The person who can open Meta's App Dashboard is very often not the person with
+a Health19 login. GL-3 is the Zoho move: send ONE step to whoever has the
+console, as a tokenized page they open logged out.
+
+- ``channel.golive.invite`` stores ``sha256(token)`` and never the token. The
+  plaintext exists inside ``golive_invite_send`` for exactly as long as it takes
+  to build the URL and render the email body — it is in no return value, no
+  audit row and no log line, so a database backup contains no usable link.
+  Invitations are revoked, never deleted (``perm_unlink`` 0): a link that was
+  handed out is evidence.
+- A re-send is a **rotation**. Any live invitation for the same provider and
+  step is revoked first, so exactly one link can ever open a given step.
+- ``/channels/golive/<token>`` is the module's only unauthenticated read
+  surface, and it is a **non-oracle**: an unknown token, a revoked invitation,
+  an expired one and an archived platform application all render the same bytes
+  with the same 200 status. It is rate-limited per IP before the database is
+  touched, sets no cookie, is ``noindex`` and ``no-referrer`` (the token is in
+  the path, so the deep link into the provider console must not carry it in a
+  ``Referer``), and contains no input element of any kind.
+- The page shows the step's own words, the console deep link and the values
+  Health19 publishes anyway — our redirect address, our webhook addresses, the
+  verify token both sides must hold identically. **Never a secret**, and never
+  a write: where the verify token has not been minted yet, the page says so
+  rather than minting one, because a public route must not be able to change
+  what Meta already holds.
+- The email is built in Python from a QWeb view, not a ``mail.template`` record
+  (Odoo renders every template at INSTALL, and one that cannot render blocks the
+  module). If it cannot be sent, the invitation is revoked on the spot and the
+  operator is told to fix the outgoing mail server — a link nobody received is
+  a link only a guesser can find.
+
+No Google/Microsoft/VoIP24h flows (GL-4), no change to any GL-1 payload (the
+``invites`` key is additive), and no tenant-facing change.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',
@@ -326,6 +363,8 @@ to any GL-1 payload.
         'security/channel_hub_security.xml',
         'views/oauth_templates.xml',
         'views/webchat_templates.xml',
+        # GL-3: the public delegation page + the invitation email body.
+        'views/golive_invite_templates.xml',
         # GL-2: BEFORE platform_app_views.xml — that form's header button
         # references this action with %(...)d, resolved as the view loads.
         'views/golive_studio_views.xml',

@@ -1320,8 +1320,10 @@ msgstr "Đã đăng nhập"
 
 #. module: health_care_command_channels
 #. odoo-javascript
+#. odoo-python
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 #: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
 msgid "Webhook address"
 msgstr "Địa chỉ webhook"
 
@@ -3013,19 +3015,25 @@ msgstr "Sơ đồ màn hình bảng điều khiển của nhà cung cấp mà b�
 
 #. module: health_care_command_channels
 #. odoo-javascript
+#. odoo-python
 #: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
 msgid "Sign-in redirect address"
 msgstr "Địa chỉ chuyển hướng đăng nhập"
 
 #. module: health_care_command_channels
 #. odoo-javascript
+#. odoo-python
 #: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
 msgid "Webhook verify token"
 msgstr "Mã xác minh webhook"
 
 #. module: health_care_command_channels
 #. odoo-javascript
+#. odoo-python
 #: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
 msgid "Webhook address — %s"
 msgstr "Địa chỉ webhook — %s"
 
@@ -3088,3 +3096,122 @@ msgstr "%s trên %s nhà cung cấp đã sẵn sàng. Studio Go-Live sẽ hướ
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 msgid "Open the Go-Live Studio"
 msgstr "Mở Studio Go-Live"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"That does not look like an email address. Type the whole address of the "
+"person who has access to the console."
+msgstr ""
+"Địa chỉ email này không hợp lệ. Hãy nhập đầy đủ địa chỉ của người có quyền "
+"truy cập bảng điều khiển."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Only a step somebody can actually carry out in the provider console can be "
+"sent on. This one is a wait for the provider to finish a review of their own."
+msgstr ""
+"Chỉ những bước mà một người có thể tự thực hiện trong bảng điều khiển của nhà "
+"cung cấp mới gửi đi được. Bước này là chờ nhà cung cấp tự duyệt."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "That invitation no longer exists."
+msgstr "Lời mời này không còn tồn tại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "%(company)s: one step to finish in the %(provider)s console"
+msgstr "%(company)s: một bước cần hoàn tất trong bảng điều khiển %(provider)s"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"The invitation could not be sent, so its link has been revoked — nobody "
+"received it and nobody can use it. Check the outgoing mail server, then send "
+"it again."
+msgstr ""
+"Không gửi được lời mời nên liên kết đã bị thu hồi — không ai nhận được và "
+"không ai dùng được. Hãy kiểm tra máy chủ thư đi rồi gửi lại."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Not created yet — ask the sender to create it in the Studio first."
+msgstr "Chưa được tạo — hãy nhờ người gửi tạo trong Studio trước."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Revoked — the link sent to %s no longer opens."
+msgstr "Đã thu hồi — liên kết đã gửi tới %s không còn mở được."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "The link sent to %s expired on %s."
+msgstr "Liên kết đã gửi tới %s hết hạn ngày %s."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Sent to %s on %s — works until %s · Opened %s times."
+msgstr "Đã gửi tới %s ngày %s — dùng được đến %s · Đã mở %s lần."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Sent to %s on %s — works until %s · Not opened yet."
+msgstr "Đã gửi tới %s ngày %s — dùng được đến %s · Chưa mở lần nào."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Someone else has access to this console?"
+msgstr "Người khác mới có quyền vào bảng điều khiển này?"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Email them this step"
+msgstr "Gửi email bước này cho họ"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Send"
+msgstr "Gửi"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Cancel"
+msgstr "Huỷ"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid ""
+"They get this step's instructions and the values to copy — never a password "
+"or a secret, and nothing to type back."
+msgstr ""
+"Họ nhận được hướng dẫn của bước này và các giá trị cần sao chép — không bao "
+"giờ có mật khẩu hay khoá bí mật, và không phải nhập lại gì cả."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Revoke"
+msgstr "Thu hồi"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Send again"
+msgstr "Gửi lại"

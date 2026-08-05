@@ -44,5 +44,17 @@ registry.category("web_tour.tours").add("channel_golive_studio_tour", {
             content: "and the console link for step one is live",
             trigger: ".gl-canvas[data-step='create_app'] a.gl-console",
         },
+        // GL-3: the delegation affordance is offered on a do step, and it
+        // opens in place. The tour stops at the revealed field — pressing Send
+        // would post a real email to a real SMTP server.
+        {
+            content: "the step can be handed to whoever has the console",
+            trigger: ".gl-canvas[data-step='create_app'] .gl-invite-open",
+            run: "click",
+        },
+        {
+            content: "the address box opens in place, with no dialog",
+            trigger: ".gl-canvas[data-step='create_app'] .gl-invite-email",
+        },
     ],
 });

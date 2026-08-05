@@ -46,6 +46,10 @@ KNOWN_EVENTS = {
     # handshake against this deployment — the only honest proof that the
     # operator pasted our URL and our verify token correctly.
     'webhook_handshake',
+    # GL-3 (delegation): a go-live step was emailed to somebody outside
+    # Health19, that link was opened, or it was withdrawn. NEVER the token —
+    # the detail carries the provider/step and a masked address, nothing more.
+    'golive_invite_sent', 'golive_invite_viewed', 'golive_invite_revoked',
 }
 
 

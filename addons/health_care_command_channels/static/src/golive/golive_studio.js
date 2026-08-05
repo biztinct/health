@@ -99,6 +99,10 @@ export class GoliveStudio extends Component {
             copied: null,      // which copy chip just flipped
             flash: null,       // the step key whose milestone just went green
             waiting: false,    // a handshake poll is live
+            // GL-3 — delegation. The email box is revealed in place, never in
+            // a dialog: the operator is reading the step it belongs to.
+            inviteOpen: false,
+            inviteEmail: "",
         });
 
         // A hidden tab polls nothing (the Center's discipline, §D1).
@@ -493,6 +497,8 @@ export class GoliveStudio extends Component {
         this.state.inputErrors = {};
         this.state.formError = null;
         this.state.copied = null;
+        this.state.inviteOpen = false;
+        this.state.inviteEmail = "";
         this._clearFields();
     }
 
@@ -674,6 +680,111 @@ export class GoliveStudio extends Component {
         } finally {
             this.state.busy = false;
         }
+    }
+
+    // -----------------------------------------------------------------
+    // GL-3 — delegation
+    // -----------------------------------------------------------------
+    /** The invitations that belong to the OPEN step. The server sends every
+     *  live one plus the newest dead one per step; the rail is not the place
+     *  to show somebody else's step's invitations. */
+    get stepInvites() {
+        const provider = this.provider;
+        const step = this.step;
+        if (!provider || !step) {
+            return [];
+        }
+        return (provider.invites || []).filter((i) => i.step_key === step.key);
+    }
+
+    /** Only a step somebody can DO travels; a provider review cannot be
+     *  delegated to a colleague, because it is not ours to finish. */
+    get canDelegate() {
+        const step = this.step;
+        return !!step && step.kind === "do";
+    }
+
+    openInvite(email) {
+        this.state.inviteOpen = true;
+        this.state.inviteEmail = email || "";
+        this.state.formError = null;
+    }
+
+    closeInvite() {
+        this.state.inviteOpen = false;
+        this.state.inviteEmail = "";
+        this.state.formError = null;
+    }
+
+    onInviteInput(ev) {
+        this.state.inviteEmail = ev.target.value;
+        this.state.formError = null;
+    }
+
+    async sendInvite() {
+        const provider = this.provider;
+        const step = this.step;
+        const email = (this.state.inviteEmail || "").trim();
+        if (!provider || !step || !email || this.state.busy) {
+            return;
+        }
+        this.state.busy = true;
+        this.state.formError = null;
+        try {
+            const providers = await this.orm.silent.call(
+                MODEL, "golive_invite_send", [provider.provider, step.key, email]);
+            this._apply(providers);
+            this.state.inviteOpen = false;
+            this.state.inviteEmail = "";
+        } catch (error) {
+            // A refused address and a mail server that will not answer are both
+            // sentences from the server, rendered inline — never a crash dialog.
+            this.state.formError = this._msg(error);
+        } finally {
+            this.state.busy = false;
+        }
+    }
+
+    async revokeInvite(invite) {
+        if (this.state.busy) {
+            return;
+        }
+        this.state.busy = true;
+        this.state.formError = null;
+        try {
+            const providers = await this.orm.silent.call(
+                MODEL, "golive_invite_revoke", [invite.id]);
+            this._apply(providers);
+        } catch (error) {
+            this.state.formError = this._msg(error);
+        } finally {
+            this.state.busy = false;
+        }
+    }
+
+    /** Server datetimes are `YYYY-MM-DD HH:MM:SS`; the day is all this line
+     *  needs, and slicing it is deterministic where a locale parse is not. */
+    day(value) {
+        return String(value || "").slice(0, 10);
+    }
+
+    inviteLine(invite) {
+        if (invite.revoked) {
+            return _t("Revoked — the link sent to %s no longer opens.",
+                      invite.email);
+        }
+        if (invite.expired) {
+            return _t("The link sent to %s expired on %s.", invite.email,
+                      this.day(invite.expires_at));
+        }
+        if (invite.view_count) {
+            return _t("Sent to %s on %s — works until %s · Opened %s times.",
+                      invite.email, this.day(invite.sent_on),
+                      this.day(invite.expires_at), invite.view_count);
+        }
+        return _t("Sent to %s on %s — works until %s · Not opened yet.",
+                  invite.email, this.day(invite.sent_on),
+                  this.day(invite.expires_at));
     }
 
     // -----------------------------------------------------------------

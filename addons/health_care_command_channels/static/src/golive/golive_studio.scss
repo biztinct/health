@@ -195,6 +195,26 @@
   .gl-hint{color:var(--mut);font-size:12px}
   .gl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 
+  /* ---------- delegation (GL-3) ----------
+     A quiet block, not a call to action: the primary path is still the
+     operator doing the step themselves. Bordered off so the invitation lines
+     read as a small ledger rather than as more of the step's own copy. */
+  .gl-invite{display:flex;flex-direction:column;gap:8px;
+    border:1px solid var(--line);border-radius:var(--r);
+    padding:11px 13px;background:var(--bg)}
+  .gl-invite .ic{width:15px;height:15px;color:var(--faint);flex:none}
+  .gl-invite-ask{gap:8px}
+  .gl-invite-ask .gl-hint{flex:1;min-width:160px}
+  .gl-invite-form{gap:8px}
+  .gl-invite-form .gl-invite-email{flex:1;min-width:200px;max-width:340px;
+    background:var(--card)}
+  .gl-invite-form .gl-hint{flex-basis:100%}
+  .gl-invite-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    border-top:1px solid var(--line);padding-top:8px}
+  .gl-invite-line .gl-invite-txt{flex:1;min-width:180px;color:var(--ink);
+    font-weight:600}
+  .gl-invite-line.is-dead .gl-invite-txt{color:var(--faint);font-weight:400}
+
   /* ---------- verification + waits ---------- */
   .gl-note{border-radius:var(--r);padding:11px 13px;font-weight:600;
     display:flex;align-items:flex-start;gap:9px}

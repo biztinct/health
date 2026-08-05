@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- GL-3 — the delegation pages.
+
+         Standalone, exactly like the OAuth callback pages next door: no
+         website layout, no backend assets, no session and no cookie. The
+         recipient opens this from an email, logged out, very often on a phone,
+         and possibly on the same screen as the provider console.
+
+         SECURITY NOTES, all of them load-bearing:
+         * Every dynamic value is `t-esc`. There is no `t-out` and no `t-raw`
+           anywhere in this file — an escaped tag written into a QWeb arch is
+           served to the browser as a LIVE element (ledger §5.64, this module's
+           own history), and the step bodies come from a translation catalogue.
+         * There are NO `<input>` elements. The page is something to read and
+           copy from; nothing on it is ever typed back. A paste-back field on
+           an unauthenticated page is a credential-collection form wearing our
+           chrome, which is precisely the thing the footer tells the reader to
+           be suspicious of.
+         * The one `<script>` is a clipboard helper with no interpolated value
+           of any kind — it reads the text out of the `<code>` element beside
+           the button it was clicked on.
+         * The chrome is written bilingually (Vietnamese first, English gloss)
+           rather than through the catalogue: an anonymous request resolves to
+           the database's default language, so a translated string would never
+           reach this page. The step's OWN words do come from the catalogue —
+           the controller renders them in the sender's language. -->
+
+    <template id="golive_invite_styles" name="Go-Live Invite Styles">
+        <style>
+            * { box-sizing: border-box; }
+            body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+                   background: #f4f5f7; color: #1f2733; -webkit-text-size-adjust: 100%; }
+            .gi-wrap { max-width: 640px; margin: 0 auto; padding: 40px 16px 56px; }
+            .gi-card { background: #ffffff; border: 1px solid #e3e6ea; border-radius: 14px;
+                       padding: 26px 24px; }
+            .gi-from { color: #8a94a1; font-size: 12px; font-weight: 700; letter-spacing: .3px;
+                       text-transform: uppercase; margin: 0 0 4px; }
+            .gi-prov { color: #5b6572; font-size: 13px; margin: 0 0 18px; }
+            .gi-h1 { font-size: 21px; font-weight: 700; margin: 0 0 10px; line-height: 1.3; }
+            .gi-body { color: #3c4652; font-size: 15px; line-height: 1.6; margin: 0 0 20px; }
+            .gi-link { display: inline-block; padding: 11px 20px; border-radius: 10px;
+                       background: #0b6b5a; color: #ffffff; text-decoration: none;
+                       font-weight: 600; font-size: 15px; margin: 0 0 22px; }
+            .gi-sec { border-top: 1px solid #eceef1; padding-top: 18px; margin-top: 4px; }
+            .gi-sec-h { font-size: 12px; font-weight: 700; letter-spacing: .3px;
+                        text-transform: uppercase; color: #8a94a1; margin: 0 0 10px; }
+            .gi-val { border: 1px solid #e3e6ea; border-radius: 10px; padding: 10px 12px;
+                      margin: 0 0 10px; background: #fafbfc; }
+            .gi-val-l { display: block; font-size: 11px; font-weight: 700; letter-spacing: .3px;
+                        text-transform: uppercase; color: #8a94a1; margin: 0 0 6px; }
+            .gi-val-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+            .gi-val code { flex: 1; min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                           font-size: 13px; color: #1f2733; word-break: break-all; }
+            .gi-copy { border: 1px solid #cfd5dc; background: #ffffff; color: #1f2733;
+                       border-radius: 8px; padding: 7px 14px; font-weight: 600; font-size: 13px;
+                       cursor: pointer; font-family: inherit; }
+            .gi-copy:hover { background: #f4f5f7; }
+            .gi-copy:focus-visible { outline: 2px solid #0b6b5a; outline-offset: 2px; }
+            .gi-note { color: #8a94a1; font-size: 13px; margin: 0; }
+            .gi-exp { color: #5b6572; font-size: 13px; margin: 18px 0 0; }
+            .gi-warn { margin: 22px 0 0; padding: 12px 14px; border-radius: 10px;
+                       background: #fdf3e2; color: #7a5200; font-size: 13px; line-height: 1.5; }
+            .gi-foot { color: #8a94a1; font-size: 12px; text-align: center; margin: 18px 0 0;
+                       line-height: 1.6; }
+            .gi-mark { width: 44px; height: 44px; margin: 0 auto 16px; border-radius: 50%;
+                       background: #eef0f2; color: #5b6572; display: flex; align-items: center;
+                       justify-content: center; }
+            .gi-mark svg { width: 22px; height: 22px; }
+            .gi-dead { text-align: center; }
+            .gi-dead .gi-h1 { font-size: 19px; }
+            .gi-sub { color: #5b6572; font-size: 14px; margin: 0 0 6px; line-height: 1.5; }
+            .gi-en { color: #8a94a1; font-size: 13px; margin: 0; line-height: 1.5; }
+            @media (max-width: 520px) {
+                .gi-wrap { padding: 24px 12px 40px; }
+                .gi-card { padding: 20px 16px; }
+            }
+            /* The backend's `data-theme` attribute does not exist out here —
+               this page is standalone and logged out, so the reader's OS
+               preference is the only signal there is. Flat mono in both
+               directions: the same hues, moved. */
+            @media (prefers-color-scheme: dark) {
+                body { background: #0e1626; color: #ffffff; }
+                .gi-card { background: #16213a; border-color: #243049; }
+                .gi-from, .gi-val-l, .gi-note, .gi-foot { color: rgba(255,255,255,.5); }
+                .gi-prov, .gi-exp, .gi-sub { color: rgba(255,255,255,.72); }
+                .gi-body { color: rgba(255,255,255,.82); }
+                .gi-link { background: #42a5f5; color: #0e1626; }
+                .gi-sec { border-top-color: #243049; }
+                .gi-val { background: #101a2c; border-color: #324063; }
+                .gi-val code { color: #ffffff; }
+                .gi-copy { background: #16213a; border-color: #324063; color: #ffffff; }
+                .gi-copy:hover { background: #1d2942; }
+                .gi-copy:focus-visible { outline-color: #42a5f5; }
+                .gi-warn { background: rgba(252,178,77,.16); color: #fcb24d; }
+                .gi-mark { background: #1d2942; color: rgba(255,255,255,.72); }
+                .gi-en { color: rgba(255,255,255,.5); }
+            }
+        </style>
+    </template>
+
+    <template id="golive_invite_dead" name="Go-Live Invite — no longer available">
+        <!-- The ONE page for an unknown token, a revoked invitation, an expired
+             one, an archived platform application and a rate-limited caller.
+             Rendered with an EMPTY context and containing no conditional at
+             all, so the bytes are identical whichever of those it was: nothing
+             here tells a guesser that a token ever existed. -->
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="robots" content="noindex, nofollow"/>
+                <title>Health19</title>
+                <t t-call="health_care_command_channels.golive_invite_styles"/>
+            </head>
+            <body>
+                <div class="gi-wrap">
+                    <div class="gi-card gi-dead">
+                        <div class="gi-mark">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 8v5"/><path d="M12 16.5h.01"/>
+                                <circle cx="12" cy="12" r="9"/>
+                            </svg>
+                        </div>
+                        <p class="gi-h1">Liên kết này không còn dùng được</p>
+                        <p class="gi-sub">Hãy hỏi người đã gửi cho bạn để nhận một liên kết mới.</p>
+                        <p class="gi-en">This link is no longer available. Ask the person who
+                            sent it for a new one.</p>
+                    </div>
+                    <p class="gi-foot">Health19</p>
+                </div>
+            </body>
+        </html>
+    </template>
+
+    <template id="golive_invite_page" name="Go-Live Invite">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="robots" content="noindex, nofollow"/>
+                <title>Health19</title>
+                <t t-call="health_care_command_channels.golive_invite_styles"/>
+            </head>
+            <body>
+                <div class="gi-wrap">
+                    <div class="gi-card">
+                        <p class="gi-from">
+                            <span t-esc="company_name"/> · Health19</p>
+                        <p class="gi-prov">Một bước cần làm trong bảng điều khiển
+                            <span t-esc="provider_name"/> /
+                            One step to finish in the <span t-esc="provider_name"/> console.</p>
+
+                        <h1 class="gi-h1" t-esc="step_title"/>
+                        <p class="gi-body" t-esc="step_body"/>
+
+                        <a t-if="console" class="gi-link" t-att-href="console"
+                           target="_blank" rel="noopener noreferrer">
+                            <span t-esc="console_label or console"/>
+                        </a>
+
+                        <div class="gi-sec" t-if="blocks">
+                            <p class="gi-sec-h">Các giá trị cần sao chép / Values to copy</p>
+                            <t t-foreach="blocks" t-as="block" t-key="block_index">
+                                <div class="gi-val">
+                                    <span class="gi-val-l" t-esc="block['label']"/>
+                                    <div class="gi-val-row" t-if="block['value']">
+                                        <code t-esc="block['value']"/>
+                                        <button type="button" class="gi-copy" data-gi-copy="1">Sao chép / Copy</button>
+                                    </div>
+                                    <p class="gi-note" t-else="" t-esc="block['note']"/>
+                                </div>
+                            </t>
+                        </div>
+
+                        <p class="gi-exp">Liên kết này dùng được đến hết ngày
+                            <span t-esc="expires_on"/>. /
+                            This link works until <span t-esc="expires_on"/>.</p>
+
+                        <p class="gi-warn">Trang này không bao giờ chứa mật khẩu hay khoá bí mật.
+                            Nếu có nơi nào hỏi bạn nhập mật khẩu, đó không phải của chúng tôi. —
+                            This page never contains passwords or secrets. If it asks you for
+                            one, it is not ours.</p>
+                    </div>
+                    <p class="gi-foot">Health19 · <span t-esc="company_name"/></p>
+                </div>
+
+                <!-- The one script on the page. It interpolates NOTHING: it
+                     reads the text out of the <code> element beside whichever
+                     button was clicked. A copy button cannot be built without
+                     script, and everything else here is static markup. -->
+                <script type="text/javascript">
+                    (function () {
+                        document.addEventListener('click', function (ev) {
+                            var btn = ev.target.closest ? ev.target.closest('[data-gi-copy]') : null;
+                            if (!btn) { return; }
+                            var row = btn.parentNode;
+                            var code = row ? row.querySelector('code') : null;
+                            if (!code) { return; }
+                            var text = code.textContent || '';
+                            var done = function () {
+                                var was = btn.textContent;
+                                btn.textContent = 'Đã sao chép / Copied';
+                                setTimeout(function () { btn.textContent = was; }, 2000);
+                            };
+                            if (navigator.clipboard &amp;&amp; window.isSecureContext) {
+                                navigator.clipboard.writeText(text).then(done, function () {});
+                                return;
+                            }
+                            var area = document.createElement('textarea');
+                            area.value = text;
+                            area.setAttribute('readonly', 'readonly');
+                            area.style.position = 'fixed';
+                            area.style.opacity = '0';
+                            document.body.appendChild(area);
+                            area.select();
+                            try { if (document.execCommand('copy')) { done(); } } catch (e) { }
+                            document.body.removeChild(area);
+                        });
+                    })();
+                </script>
+            </body>
+        </html>
+    </template>
+
+    <template id="golive_invite_mail" name="Go-Live Invite Email">
+        <!-- Built as a QWeb view and rendered in Python, NOT as a mail.template
+             record: Odoo renders every template's subject and body AT INSTALL
+             against a bare sample record, and one that fails to render blocks
+             the module's install (ledger §5.14). Plain, narrow, table-free —
+             it has to survive Outlook, Gmail and a phone. -->
+        <div style="font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+                    font-size:15px; line-height:1.6; color:#1f2733; max-width:560px;">
+            <p style="margin:0 0 14px;">Xin chào,</p>
+            <p style="margin:0 0 14px;">
+                <span t-esc="sender_name"/> (<span t-esc="company_name"/>)
+                nhờ bạn hoàn tất một bước trong bảng điều khiển
+                <span t-esc="provider_name"/>:
+            </p>
+            <p style="margin:0 0 6px; font-weight:700;" t-esc="step_title"/>
+            <p style="margin:0 0 18px; color:#3c4652;" t-esc="step_body"/>
+            <p style="margin:0 0 18px;">
+                <a t-att-href="url"
+                   style="display:inline-block; padding:11px 20px; border-radius:10px;
+                          background:#0b6b5a; color:#ffffff; text-decoration:none;
+                          font-weight:600;">Mở hướng dẫn / Open the instructions</a>
+            </p>
+            <p style="margin:0 0 18px; font-size:13px; color:#5b6572; word-break:break-all;">
+                <span t-esc="url"/>
+            </p>
+            <p style="margin:0 0 14px; font-size:13px; color:#5b6572;">
+                Liên kết dùng được đến hết ngày <span t-esc="expires_on"/>.
+                Trang đó không bao giờ hỏi mật khẩu hay khoá bí mật của bạn. /
+                This link works until <span t-esc="expires_on"/>. That page never
+                asks you for a password or a secret.
+            </p>
+            <p style="margin:0; font-size:12px; color:#8a94a1;">Health19</p>
+        </div>
+    </template>
+
+</odoo>

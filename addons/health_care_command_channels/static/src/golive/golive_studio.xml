@@ -214,6 +214,60 @@
                 right page of the app.</p></div>
             </div>
 
+            <!-- == delegation (GL-3) ==
+                 Quiet by design: it sits under the console link because that is
+                 the moment an operator discovers the console is not theirs. Do
+                 steps only — a provider review is not somebody else's to
+                 finish, so it is never offered. -->
+            <div class="gl-invite" t-if="canDelegate">
+              <div class="gl-row gl-invite-ask">
+                <span class="ic ic-mail"/>
+                <span class="gl-hint">Someone else has access to this console?</span>
+                <button class="gl-btn ghost gl-invite-open" t-if="!state.inviteOpen"
+                        t-on-click="() => this.openInvite()"
+                        t-att-disabled="state.busy">Email them this step</button>
+              </div>
+
+              <div class="gl-row gl-invite-form" t-if="state.inviteOpen">
+                <input class="gl-input gl-invite-email" type="email"
+                       autocomplete="off" spellcheck="false"
+                       placeholder="name@company.com"
+                       t-att-value="state.inviteEmail"
+                       t-on-input="(ev) => this.onInviteInput(ev)"/>
+                <button class="gl-btn primary gl-invite-send"
+                        t-on-click="() => this.sendInvite()"
+                        t-att-disabled="state.busy or !state.inviteEmail.trim()">Send</button>
+                <button class="gl-btn ghost gl-invite-cancel"
+                        t-on-click="() => this.closeInvite()"
+                        t-att-disabled="state.busy">Cancel</button>
+                <span class="gl-hint">They get this step's instructions and the
+                  values to copy — never a password or a secret, and nothing to
+                  type back.</span>
+              </div>
+
+              <!-- The step form owns `.gl-form-error` when it exists; a step
+                   with no paste-back field has no form, so the invite block
+                   renders the same element instead of a second error channel. -->
+              <div class="gl-err gl-form-error" role="alert"
+                   t-if="state.formError and !step.inputs.length"
+                   t-esc="state.formError"/>
+
+              <t t-foreach="stepInvites" t-as="invite" t-key="invite.id">
+                <div class="gl-invite-line"
+                     t-att-class="{'is-dead': invite.revoked or invite.expired}"
+                     t-att-data-invite="invite.id">
+                  <span class="gl-hint gl-invite-txt" t-esc="inviteLine(invite)"/>
+                  <button t-if="!invite.revoked and !invite.expired"
+                          class="gl-btn ghost gl-invite-revoke"
+                          t-on-click="() => this.revokeInvite(invite)"
+                          t-att-disabled="state.busy">Revoke</button>
+                  <button class="gl-btn ghost gl-invite-again"
+                          t-on-click="() => this.openInvite(invite.email)"
+                          t-att-disabled="state.busy">Send again</button>
+                </div>
+              </t>
+            </div>
+
             <!-- == copy chips == -->
             <div class="gl-copies" t-if="copyChips.length">
               <t t-foreach="copyChips" t-as="chip" t-key="chip.id">

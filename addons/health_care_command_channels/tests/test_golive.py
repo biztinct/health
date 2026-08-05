@@ -23,12 +23,20 @@ Two suites, deliberately:
 """
 import hashlib
 import json
+import logging
 import os
+import re
+import secrets
 import time
+from datetime import timedelta
 from functools import wraps
 from unittest.mock import patch
 from urllib.parse import urlencode
 
+from markupsafe import escape
+
+from odoo import fields
+from odoo.addons.base.models.ir_mail_server import MailDeliveryException
 from odoo.exceptions import UserError, ValidationError
 from odoo.modules.module import get_manifest
 from odoo.tests import HttpCase, new_test_user, tagged
@@ -50,6 +58,8 @@ from odoo.addons.health_care_command_channels.services.adapters import (
 )
 
 from .common import ChannelHubCase
+
+_logger = logging.getLogger(__name__)
 
 HTTPS_BASE = 'https://care.example.test'
 
@@ -828,3 +838,526 @@ class TestGoliveStudioHttp(HttpCase):
             '/odoo/action-health_care_command_channels.'
             'action_channel_golive_studio',
             'channel_golive_studio_tour', login='gl2operator')
+
+
+# =====================================================================
+# GL-3 — delegation invites
+# =====================================================================
+INVITE_EMAIL = 'console.owner@example.test'
+INVITE_EMAIL_2 = 'the.other.one@example.test'
+INVITE_VERIFY_TOKEN = 'gl3-verify-token-fixture'
+
+
+def _fake_send(records, auto_commit=False, raise_exception=False,
+               post_send_callback=None, sink=None):
+    """Stand-in for ``mail.mail.send`` — a PLAIN FUNCTION, never an autospec
+    mock (§5.76), and deliberately NOT unlinking the auto_delete row: the
+    rendered body is the only place the token ever exists and the tests have to
+    be able to read it back."""
+    if sink is not None:
+        sink.append(records)
+    return True
+
+
+@tagged('post_install', '-at_install')
+class TestGoliveInvite(ChannelHubCase):
+    """T189–T191, T195 — the invitation model and its two RPCs.
+
+    The single claim under test: **the token is in the email and nowhere
+    else.** Everything else here is what keeps that true — the rotation that
+    means one live link per step, the send failure that takes its own
+    invitation down with it, and the state payload that carries an operator's
+    ledger without carrying a credential.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.env['ir.config_parameter'].sudo().set_param('web.base.url',
+                                                         HTTPS_BASE)
+        self.App.sudo().with_context(active_test=False).search([]).write(
+            {'active': False})
+        self.Invite = self.env['channel.golive.invite']
+        self.Invite.sudo().with_context(active_test=False).search([]).write(
+            {'active': False})
+
+    # -- helpers -------------------------------------------------------
+    def _mailbox(self):
+        """``(sink, patcher)`` — the sink collects the mail.mail records."""
+        sink = []
+
+        def send(records, auto_commit=False, raise_exception=False,
+                 post_send_callback=None):
+            return _fake_send(records, sink=sink)
+
+        return sink, patch.object(type(self.env['mail.mail']), 'send', send)
+
+    def _live(self, provider='meta', step_key='webhooks'):
+        return self.Invite.sudo().search(
+            [('provider', '=', provider), ('step_key', '=', step_key),
+             ('revoked', '=', False)])
+
+    def _audits(self, event):
+        return self.Audit.sudo().search_count([('event', '=', event)])
+
+    @staticmethod
+    def _token_from(mail):
+        match = re.search(r'/channels/golive/([A-Za-z0-9_-]+)',
+                          str(mail.body_html or ''))
+        return match.group(1) if match else None
+
+    # ==================================================================
+    # T189 — everything that must be refused, is
+    # ==================================================================
+    def test_189_send_refusals(self):
+        sink, patcher = self._mailbox()
+        with patcher:
+            # A non-operator: the platform plane stays with the platform
+            # operator, and both new methods are RPC-reachable by name.
+            with self.assertRaises(UserError):
+                self.App.with_user(self.crm_mgr).golive_invite_send(
+                    'meta', 'webhooks', INVITE_EMAIL)
+            with self.assertRaises(UserError):
+                self.App.with_user(self.crm_mgr).golive_invite_revoke(1)
+
+            # A provider review is not somebody else's to finish.
+            with self.assertRaises(ValidationError):
+                self.App.golive_invite_send('meta', 'business_verification',
+                                            INVITE_EMAIL)
+            with self.assertRaises(ValidationError):
+                self.App.golive_invite_send('meta', 'done', INVITE_EMAIL)
+
+            # Unknown step, unknown provider.
+            with self.assertRaises(ValidationError):
+                self.App.golive_invite_send('meta', 'not_a_step', INVITE_EMAIL)
+            with self.assertRaises(ValidationError):
+                self.App.golive_invite_send('google', 'create_app', INVITE_EMAIL)
+
+            # Addresses that are not addresses.
+            for bad in ('', '   ', 'nobody', 'no@body', 'two@@at.com',
+                        'has space@example.test', 'a@b.', 'a@.b', 'a' * 260):
+                with self.assertRaises(ValidationError, msg=repr(bad)):
+                    self.App.golive_invite_send('meta', 'webhooks', bad)
+
+            # A revoke of nothing.
+            with self.assertRaises(ValidationError):
+                self.App.golive_invite_revoke(0)
+
+        self.assertFalse(sink, 'not one refusal sent an email')
+        self.assertFalse(
+            self.Invite.sudo().with_context(active_test=False).search_count([]),
+            'not one refusal created an invitation')
+
+    # ==================================================================
+    # T190 — one live link per step, and the token lives only in the email
+    # ==================================================================
+    def test_190_rotation_and_token_secrecy(self):
+        sink, patcher = self._mailbox()
+        with patcher:
+            self.App.golive_invite_send('meta', 'webhooks', INVITE_EMAIL)
+
+        invite = self._live()
+        self.assertEqual(len(invite), 1)
+        self.assertEqual(invite.email, INVITE_EMAIL)
+        self.assertEqual(invite.invited_by_id, self.env.user)
+        self.assertEqual(invite.view_count, 0)
+        self.assertGreater(invite.expires_at, fields.Datetime.now())
+
+        # The email carries the URL...
+        self.assertEqual(len(sink), 1)
+        mail = sink[0]
+        self.assertEqual(mail.email_to, INVITE_EMAIL)
+        self.assertIn(HTTPS_BASE, str(mail.body_html or ''))
+        token = self._token_from(mail)
+        self.assertTrue(token, 'the email must carry the link — it is the only '
+                               'place the token exists at all')
+
+        # ...and what the database holds is its DIGEST, not the token.
+        self.assertEqual(len(invite.token_hash), 64)
+        self.assertNotEqual(token, invite.token_hash)
+        self.assertEqual(self.Invite._hash_token(token), invite.token_hash)
+
+        # The token appears in NO stored column, NO audit row and NO RPC return.
+        row = json.dumps(invite.sudo().read()[0], default=str)
+        self.assertNotIn(token, row)
+        for audit in self.Audit.sudo().search([('event', 'like', 'golive_invite')]):
+            self.assertNotIn(token, audit.detail_redacted or '')
+            self.assertNotIn(INVITE_EMAIL, audit.detail_redacted or '',
+                             'the audit carries a masked address, never the '
+                             'whole one')
+        self.assertNotIn(token, json.dumps(self.App.golive_state(), default=str))
+
+        # One audit row, saying what it was without saying the secret part.
+        sent_audit = self.Audit.sudo().search(
+            [('event', '=', 'golive_invite_sent')], limit=1)
+        self.assertIn('meta/webhooks', sent_audit.detail_redacted)
+        self.assertIn('c***@example.test', sent_audit.detail_redacted)
+
+        # A re-send is a ROTATION, not a second key.
+        sink2, patcher2 = self._mailbox()
+        with patcher2:
+            self.App.golive_invite_send('meta', 'webhooks', INVITE_EMAIL_2)
+        both = self.Invite.sudo().search(
+            [('provider', '=', 'meta'), ('step_key', '=', 'webhooks')],
+            order='id asc')
+        self.assertEqual(len(both), 2)
+        self.assertTrue(both[0].revoked,
+                        'the earlier link dies the moment a new one is sent')
+        self.assertFalse(both[1].revoked)
+        self.assertEqual(len(self._live()), 1)
+        token2 = self._token_from(sink2[0])
+        self.assertNotEqual(token, token2)
+        self.assertNotEqual(both[0].token_hash, both[1].token_hash)
+
+        # A different step is a different invitation, untouched by the rotation.
+        sink3, patcher3 = self._mailbox()
+        with patcher3:
+            self.App.golive_invite_send('meta', 'create_app', INVITE_EMAIL)
+        self.assertEqual(len(self._live('meta', 'create_app')), 1)
+        self.assertEqual(len(self._live('meta', 'webhooks')), 1)
+
+    # ==================================================================
+    # T191 — a link nobody received must not stay live
+    # ==================================================================
+    def test_191_mail_failure_revokes_the_invite(self):
+        before = self._audits('golive_invite_sent')
+
+        def boom(records, auto_commit=False, raise_exception=False,
+                 post_send_callback=None):
+            raise MailDeliveryException('Unable to connect to SMTP Server')
+
+        raised = False
+        # try/except, never assertRaises: Odoo wraps assertRaises in a savepoint
+        # and rolls back every write made before the raise (§5.8/§5.65) — which
+        # is exactly the evidence this test exists to look at.
+        with patch.object(type(self.env['mail.mail']), 'send', boom):
+            try:
+                self.App.golive_invite_send('meta', 'webhooks', INVITE_EMAIL)
+            except UserError:
+                raised = True
+        self.assertTrue(raised, 'a send that failed must not read as a success')
+
+        invites = self.Invite.sudo().search([('provider', '=', 'meta')])
+        self.assertEqual(len(invites), 1)
+        self.assertTrue(invites.revoked)
+        self.assertFalse(self._live())
+        self.assertEqual(self._audits('golive_invite_sent'), before,
+                         'nothing went out, so nothing may claim it did')
+
+    # ==================================================================
+    # T195 — the state block, and revoke
+    # ==================================================================
+    def test_195_state_carries_invites(self):
+        sink, patcher = self._mailbox()
+        with patcher:
+            state = self.App.golive_invite_send('meta', 'webhooks',
+                                                INVITE_EMAIL)
+        meta = {p['provider']: p for p in state}['meta']
+        zalo = {p['provider']: p for p in state}['zalo']
+
+        self.assertEqual(zalo['invites'], [],
+                         'one provider\'s invitations are not another\'s')
+        self.assertEqual(len(meta['invites']), 1)
+        row = meta['invites'][0]
+        for key in ('id', 'step_key', 'email', 'sent_on', 'expires_at',
+                    'revoked', 'expired', 'view_count', 'last_viewed_at'):
+            self.assertIn(key, row)
+        self.assertEqual(row['step_key'], 'webhooks')
+        self.assertEqual(row['email'], INVITE_EMAIL)
+        self.assertFalse(row['revoked'])
+        self.assertFalse(row['expired'])
+        self.assertEqual(row['view_count'], 0)
+        self.assertFalse(row['last_viewed_at'])
+
+        # GL-1's payload is untouched — `invites` is purely additive.
+        self.assertEqual(len(meta['steps']), 7)
+        self.assertEqual(len(zalo['steps']), 5)
+
+        # No token material of any kind reaches the Studio.
+        invite = self.Invite.sudo().browse(row['id'])
+        blob = json.dumps(state, default=str)
+        self.assertNotIn(invite.token_hash, blob)
+        self.assertNotIn(self._token_from(sink[0]), blob)
+
+        # Revoke flips it, writes evidence, and is idempotent.
+        before = self._audits('golive_invite_revoked')
+        state = self.App.golive_invite_revoke(row['id'])
+        meta = {p['provider']: p for p in state}['meta']
+        self.assertEqual(len(meta['invites']), 1)
+        self.assertTrue(meta['invites'][0]['revoked'])
+        self.assertEqual(self._audits('golive_invite_revoked'), before + 1)
+        self.App.golive_invite_revoke(row['id'])
+        self.assertEqual(self._audits('golive_invite_revoked'), before + 1,
+                         'revoking an already-revoked link is not a new event')
+
+        # An expired row reports itself as expired without being revoked.
+        invite.sudo().write({'revoked': False,
+                             'expires_at': fields.Datetime.now()
+                             - timedelta(minutes=1)})
+        meta = {p['provider']: p for p in self.App.golive_state()}['meta']
+        self.assertTrue(meta['invites'][0]['expired'])
+        self.assertFalse(meta['invites'][0]['revoked'])
+
+        # An invitation is revoked, never erased (ACL perm_unlink 0).
+        access = self.env['ir.model.access'].sudo().search(
+            [('model_id.model', '=', 'channel.golive.invite')])
+        self.assertTrue(access)
+        self.assertFalse(any(access.mapped('perm_unlink')),
+                         'a link that was handed out is evidence')
+
+
+@tagged('post_install', '-at_install')
+class TestGoliveInvitePublic(HttpCase):
+    """T192–T194 — the public page, which is the security surface of GL-3.
+
+    Every assertion here is one of the D3 rails, and each rail is the reason a
+    line of the controller is in the order it is in. The suite asserts on
+    DELTAS (``care.channel.audit`` is append-only evidence a real deployment
+    accumulates) and owns its own users (§5.86 — ``admin/admin`` is a fresh
+    demo database's credentials, not this one's).
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        env = cls.env
+        cls.Invite = env['channel.golive.invite']
+        cls.Audit = env['care.channel.audit']
+        cls.App = env['channel.platform.app']
+        cls.Icp = env['ir.config_parameter'].sudo()
+
+        env.user.sudo().write({'group_ids': [
+            (4, env.ref('base.group_system').id)]})
+        cls.App.sudo().with_context(active_test=False).search([]).write(
+            {'active': False})
+        cls.Invite.sudo().with_context(active_test=False).search([]).write(
+            {'active': False})
+
+        province = env['health.catchment.province'].search([], limit=1)
+        extra = {'catchment_province_id': province.id} if province else {}
+        cls.operator = new_test_user(
+            env, login='gl3operator', groups='base.group_system', **extra)
+
+        cls.meta_app = cls.App.create({
+            'provider': 'meta', 'client_id': META_APP_ID,
+            'extra_json': json.dumps({'verify_token': INVITE_VERIFY_TOKEN})})
+        cls.meta_app.action_set_secret(META_SECRET)
+        cls.zalo_app = cls.App.create({'provider': 'zalo',
+                                       'client_id': ZALO_APP_ID})
+
+        # The public page speaks the SENDER's language, not the anonymous
+        # visitor's, so every expectation below has to be resolved in that
+        # language too — on a Vietnamese deployment the step copy comes back
+        # translated and an English literal would red-light correct code
+        # (§5.50's family: never assert on text a live setting can move).
+        cls.sender_lang = cls.operator.lang or env.lang or 'en_US'
+        cls.SenderApp = cls.App.with_context(lang=cls.sender_lang)
+
+    def setUp(self):
+        super().setUp()
+        # §5.32: an HttpCase that moves a global config switch poisons every
+        # later suite. Restore both counters whatever happens.
+        self._rate_before = (self.Icp.get_param('gateway.rate_limit_per_min'),
+                             self.Icp.get_param('gateway.rate_limit_burst'))
+        self.addCleanup(self._restore_rate)
+
+    def _restore_rate(self):
+        for key, value in zip(('gateway.rate_limit_per_min',
+                               'gateway.rate_limit_burst'), self._rate_before):
+            if value:
+                self.Icp.set_param(key, value)
+            else:
+                self.Icp.search([('key', '=', key)]).unlink()
+
+    # -- helpers -------------------------------------------------------
+    def _mk_invite(self, provider='meta', step_key='webhooks', **vals):
+        token = secrets.token_urlsafe(32)
+        values = {
+            'provider': provider,
+            'step_key': step_key,
+            'email': INVITE_EMAIL,
+            'token_hash': self.Invite._hash_token(token),
+            'invited_by_id': self.operator.id,
+            'expires_at': fields.Datetime.now() + timedelta(days=14),
+        }
+        values.update(vals)
+        return self.Invite.sudo().create(values), token
+
+    def _get(self, token):
+        return self.url_open('/channels/golive/%s' % token)
+
+    def _audits(self, event):
+        return self.Audit.sudo().search_count([('event', '=', event)])
+
+    # ==================================================================
+    # T192 — the page a colleague opens, and every rail on it
+    # ==================================================================
+    def test_192_public_page_and_its_rails(self):
+        invite, token = self._mk_invite()
+        expires_before = invite.expires_at
+        views_before = self._audits('golive_invite_viewed')
+
+        resp = self._get(token)
+        self.assertEqual(resp.status_code, 200)
+        body = resp.text
+
+        # -- the step's own words, and the values it says to copy ----------
+        step = self.SenderApp._golive_step('meta', 'webhooks')
+        self.assertIn(str(escape(step['title'])), body)
+        self.assertIn(str(escape(step['body'][:40])), body)
+        self.assertIn(INVITE_VERIFY_TOKEN, body)
+        self.assertIn('/care_channels/meta/whatsapp/webhook', body)
+        self.assertIn('/care_channels/meta/fb/webhook', body)
+        self.assertIn('/channel_hub/oauth/callback/meta', body)
+        # ...and the console deep link, resolved with the real app id.
+        self.assertIn('developers.facebook.com/apps/%s/webhooks' % META_APP_ID,
+                      body)
+        self.assertIn('rel="noopener noreferrer"', body)
+
+        # -- NOTHING to type back ------------------------------------------
+        self.assertNotIn('<input', body.lower(),
+                         'an input on an unauthenticated page is a credential '
+                         'form wearing our chrome')
+        self.assertNotIn('<form', body.lower())
+
+        # -- and no secret material anywhere -------------------------------
+        for forbidden in (META_SECRET, 'chs$1$', 'client_secret',
+                          self.meta_app.sudo().client_secret_enc or 'chs$1$'):
+            self.assertNotIn(forbidden, body,
+                             'no credential material may reach a public page')
+
+        # -- headers: not indexed, not cached, and no Referer to the console
+        self.assertIn('noindex', resp.headers.get('X-Robots-Tag', ''))
+        self.assertIn('no-referrer', resp.headers.get('Referrer-Policy', ''))
+        self.assertIn('no-store', resp.headers.get('Cache-Control', ''))
+        self.assertNotIn('set-cookie', {k.lower() for k in resp.headers})
+        self.assertFalse(resp.cookies, 'a public page needs no session at all')
+
+        # -- the receipt: exactly one view, one audit row, no new expiry ----
+        invite.invalidate_recordset()
+        self.assertEqual(invite.view_count, 1)
+        self.assertTrue(invite.last_viewed_at)
+        self.assertEqual(invite.expires_at, expires_before,
+                         'a link that renewed itself on every open would '
+                         'never expire')
+        self.assertEqual(self._audits('golive_invite_viewed'),
+                         views_before + 1)
+        audit = self.Audit.sudo().search(
+            [('event', '=', 'golive_invite_viewed')], order='id desc', limit=1)
+        self.assertIn('meta/webhooks', audit.detail_redacted)
+        self.assertNotIn(token, audit.detail_redacted)
+
+        # A second open is a second view and a second row — and still nothing
+        # else moves.
+        self._get(token)
+        invite.invalidate_recordset()
+        self.assertEqual(invite.view_count, 2)
+        self.assertEqual(self._audits('golive_invite_viewed'),
+                         views_before + 2)
+
+        # A step whose verify token has NOT been minted says so rather than
+        # minting one: a public route must never write configuration.
+        self.meta_app.sudo().write({'extra_json': json.dumps({})})
+        fresh, fresh_token = self._mk_invite()
+        body = self._get(fresh_token).text
+        notes = [block['note'] for block
+                 in self.SenderApp.sudo()._golive_invite_values(fresh)['blocks']
+                 if block['note']]
+        self.assertTrue(notes, 'a missing verify token must say so in words')
+        self.assertIn(str(escape(notes[0])), body)
+        self.assertNotIn(INVITE_VERIFY_TOKEN, body)
+        self.assertEqual(json.loads(self.meta_app.sudo().extra_json or '{}'), {},
+                         'the page must not have minted anything')
+        self.meta_app.sudo().write(
+            {'extra_json': json.dumps({'verify_token': INVITE_VERIFY_TOKEN})})
+
+    # ==================================================================
+    # T193 — the non-oracle: four causes, one answer
+    # ==================================================================
+    def test_193_four_identical_dead_ends(self):
+        expired, expired_token = self._mk_invite(
+            step_key='create_app',
+            expires_at=fields.Datetime.now() - timedelta(days=1))
+        revoked, revoked_token = self._mk_invite(step_key='config_ids',
+                                                 revoked=True)
+        archived, archived_token = self._mk_invite(provider='zalo',
+                                                   step_key='oauth_redirect')
+        self.zalo_app.sudo().write({'active': False})
+        bogus_token = secrets.token_urlsafe(32)
+
+        views_before = self._audits('golive_invite_viewed')
+        cases = [('unknown token', bogus_token),
+                 ('expired invitation', expired_token),
+                 ('revoked invitation', revoked_token),
+                 ('archived platform application', archived_token)]
+        bodies, statuses = [], []
+        for _label, token in cases:
+            resp = self._get(token)
+            bodies.append(resp.text)
+            statuses.append(resp.status_code)
+
+        digests = {hashlib.sha256(b.encode('utf-8')).hexdigest()
+                   for b in bodies}
+        _logger.info(
+            'GL3-NONORACLE: %s responses (%s) -> %s distinct status %s, '
+            '%s distinct body sha256 %s',
+            len(bodies), ', '.join(label for label, _t in cases),
+            len(set(statuses)), sorted(set(statuses)), len(digests),
+            sorted(digests))
+        self.assertEqual(set(statuses), {200},
+                         'a different status is an oracle by itself')
+        self.assertEqual(len(digests), 1,
+                         'four causes must be one answer, byte for byte')
+        self.assertIn('no longer available', bodies[0])
+        # It says nothing about anything.
+        for token in (expired_token, revoked_token, archived_token,
+                      bogus_token):
+            self.assertNotIn(token, bodies[0])
+        # ("meta" is excluded on purpose — every HTML head has <meta charset>.)
+        for word in ('expired', 'revoked', 'archived', 'invitation', 'zalo',
+                     'facebook', 'webhook'):
+            self.assertNotIn(word, bodies[0].lower())
+
+        # ...and none of them moved anything.
+        self.assertEqual(self._audits('golive_invite_viewed'), views_before)
+        for invite in (expired, revoked, archived):
+            invite.invalidate_recordset()
+            self.assertEqual(invite.view_count, 0)
+            self.assertFalse(invite.last_viewed_at)
+        self.zalo_app.sudo().write({'active': True})
+
+    # ==================================================================
+    # T194 — guessing costs more than it can win
+    # ==================================================================
+    def test_194_rate_limit_fires_before_the_lookup(self):
+        invite, token = self._mk_invite(step_key='create_app')
+        self.assertEqual(self._get(token).status_code, 200)
+        invite.invalidate_recordset()
+        self.assertEqual(invite.view_count, 1)
+
+        # One request per minute is enough to prove the gate; the deployment
+        # default is 120 and hammering it in a test buys nothing.
+        self.Icp.set_param('gateway.rate_limit_per_min', '1')
+        self.Icp.set_param('gateway.rate_limit_burst', '1')
+
+        blocked = False
+        for _attempt in range(4):
+            invite.invalidate_recordset()
+            views_before = invite.view_count
+            audits_before = self._audits('golive_invite_viewed')
+            resp = self._get(token)
+            self.assertEqual(resp.status_code, 200)
+            if 'no longer available' in resp.text:
+                blocked = True
+                # The rate limit runs BEFORE the lookup: a VALID token gets the
+                # dead end and the row it points at is never touched.
+                invite.invalidate_recordset()
+                self.assertEqual(invite.view_count, views_before)
+                self.assertEqual(self._audits('golive_invite_viewed'),
+                                 audits_before)
+                break
+        self.assertTrue(blocked, 'the rate limit never fired')
+
+        # Restored (addCleanup also does it) — and the same token works again.
+        self._restore_rate()
+        title = self.SenderApp._golive_step('meta', 'create_app')['title']
+        self.assertIn(str(escape(title)), self._get(token).text)

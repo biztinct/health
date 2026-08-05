@@ -32,9 +32,14 @@ credential material appears in any return value — ``secret_hint`` and the
 webhook verify token (which already lives in the visible ``extra_json``) are
 the ceiling.
 """
+import hashlib
 import json
 import logging
 import re
+import secrets
+from datetime import timedelta
+
+import psycopg2
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
@@ -67,6 +72,40 @@ GOLIVE_EXTRA_KEYS = (META_ES_CONFIG_KEY, META_FLB_CONFIG_KEY)
 # ``False`` or ``[]`` where it does not apply, so the UI never has to ask.
 GOLIVE_STEP_KEYS = ('key', 'kind', 'title', 'body', 'console', 'console_label',
                     'copy_values', 'inputs', 'verify', 'est')
+
+# ---------------------------------------------------------------------------
+# GL-3 — delegation invites
+# ---------------------------------------------------------------------------
+# How long a link stays usable. Long enough for somebody to get round to it,
+# short enough that a forwarded mail in an archive is not a standing key.
+INVITE_TTL_DAYS = 14
+
+# The public page's path. ONE definition: the controller's route and the URL
+# the email carries must be the same string or the link 404s.
+INVITE_PATH = '/channels/golive/%s'
+
+# The ONLY copy values a public page may render. Anything else a future step
+# declares — a client id, an account number — is simply not shown to a
+# stranger, whatever the declaration says (D3, and it fails closed).
+INVITE_COPY_KEYS = ('oauth_redirect_uri', 'webhook_urls', VERIFY_TOKEN_KEY)
+
+# Brand names, deliberately untranslated and deliberately NOT the Selection
+# label ("Meta (WhatsApp + Messenger)" is a picker label, not a sentence).
+# Mirrors PROVIDER_NAME in static/src/golive/golive_studio.js.
+GOLIVE_PROVIDER_NAMES = {'meta': 'Meta', 'zalo': 'Zalo'}
+
+
+def mask_email(email):
+    """``john@example.com`` -> ``j***@example.com``.
+
+    Enough for an operator to recognise the address they typed, and the most
+    that may reach an append-only audit row that a whole tenant can read.
+    """
+    email = (email or '').strip()
+    if '@' not in email:
+        return '***'
+    local, _sep, domain = email.partition('@')
+    return '%s***@%s' % (local[:1], domain)
 
 
 class ChannelGoliveProgress(models.Model):
@@ -152,6 +191,128 @@ class ChannelGoliveProgress(models.Model):
                             self.id)
             return {}
         return parsed if isinstance(parsed, dict) else {}
+
+
+class ChannelGoliveInvite(models.Model):
+    """GL-3 — one do-step, handed to the person who has the provider console.
+
+    The human who can open Meta's App Dashboard is very often not the human who
+    has a Health19 login. This row is how a single step travels to them without
+    an account, and everything about it is shaped by the fact that its URL is
+    reachable by anyone who has the link:
+
+    * **The token is never stored.** Only ``sha256(token)`` reaches a column.
+      The plaintext exists inside ``golive_invite_send`` for the length of one
+      call — long enough to build the URL and put it in the email body — and is
+      in no return value, no audit row and no log line. A stolen database backup
+      contains no usable link.
+    * **Revoked, never erased** (``perm_unlink`` 0 on the ACL). A link that was
+      handed out is evidence; withdrawing it is a flag, not a delete.
+    * **No ``tracking=True`` on anything** (Z1, the whole platform plane's rule):
+      a tracked field copies its value into ``mail.tracking.value``, which is a
+      leak path that bypasses field groups entirely.
+    """
+    _name = 'channel.golive.invite'
+    _description = 'Go-Live Studio Invite'
+    _order = 'id desc'
+
+    provider = fields.Selection(PROVIDERS, required=True, index=True)
+    # ONE step per invite in v1: a link that carries three steps is a link that
+    # is right for none of them a week later.
+    step_key = fields.Char(required=True)
+    email = fields.Char(required=True)
+    token_hash = fields.Char(
+        required=True, index=True,
+        help='SHA-256 hex digest of the link token. The token itself is never '
+             'stored, logged or audited — it exists only in the email.')
+    invited_by_id = fields.Many2one(
+        'res.users', required=True, ondelete='restrict',
+        help='Whose language and company the public page speaks in.')
+    expires_at = fields.Datetime(required=True)
+    revoked = fields.Boolean(default=False)
+    view_count = fields.Integer(default=0)
+    last_viewed_at = fields.Datetime()
+    active = fields.Boolean(default=True)
+
+    # ------------------------------------------------------------------
+    # Token handling — the whole security posture of the phase
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _hash_token(token):
+        return hashlib.sha256((token or '').encode('utf-8')).hexdigest()
+
+    @api.model
+    def _mint(self, provider, step_key, email, user):
+        """Create an invite and return ``(record, plaintext token)``.
+
+        The ONLY place a plaintext token exists. The caller must put it in the
+        email and drop it — it must not be returned to an RPC caller, written
+        to a field, or logged.
+        """
+        token = secrets.token_urlsafe(32)
+        invite = self.sudo().create({
+            'provider': provider,
+            'step_key': step_key,
+            'email': email,
+            'token_hash': self._hash_token(token),
+            'invited_by_id': user.id,
+            'expires_at': (fields.Datetime.now()
+                           + timedelta(days=INVITE_TTL_DAYS)),
+        })
+        return invite, token
+
+    @api.model
+    def _resolve(self, token):
+        """The ONE lookup, by digest, in SQL.
+
+        Nothing is compared in Python and nothing is echoed: an unknown token
+        and a revoked one leave the same trace here (none), which is what makes
+        the controller's single dead-end page honest.
+        """
+        token = (token or '').strip()
+        # A length cap before hashing: the route's own path segment is already
+        # bounded by the server, but a 10 MB "token" should cost us one branch,
+        # not a digest.
+        if not token or len(token) > 256:
+            return self.browse()
+        return self.sudo().search(
+            [('token_hash', '=', self._hash_token(token))], limit=1)
+
+    def _is_live(self):
+        self.ensure_one()
+        return bool(self.active and not self.revoked and self.expires_at
+                    and self.expires_at > fields.Datetime.now())
+
+    def _register_view(self):
+        """The ONLY write the public route may cause on this row.
+
+        Note what it does NOT do: it never touches ``expires_at``. A link that
+        renewed itself every time somebody opened it would never expire at all.
+        """
+        self.ensure_one()
+        self.sudo().write({
+            'view_count': self.view_count + 1,
+            'last_viewed_at': fields.Datetime.now(),
+        })
+
+    def _payload(self):
+        """What the Studio is told about an invite. No token material, and
+        nothing about the recipient beyond the address the operator typed."""
+        self.ensure_one()
+        return {
+            'id': self.id,
+            'provider': self.provider,
+            'step_key': self.step_key,
+            'email': self.email or '',
+            'sent_on': fields.Datetime.to_string(self.create_date),
+            'expires_at': fields.Datetime.to_string(self.expires_at),
+            'revoked': bool(self.revoked),
+            'expired': bool(self.expires_at
+                            and self.expires_at <= fields.Datetime.now()),
+            'view_count': self.view_count or 0,
+            'last_viewed_at': (fields.Datetime.to_string(self.last_viewed_at)
+                               if self.last_viewed_at else False),
+        }
 
 
 class ChannelPlatformAppGoLive(models.Model):
@@ -582,7 +743,30 @@ class ChannelPlatformAppGoLive(models.Model):
                 for channel in channels},
             'steps': [self._golive_step_payload(step, ctx)
                       for step in self._golive_steps()[provider]],
+            # GL-3, additive-only: the GL-1/GL-2 payload above is untouched.
+            'invites': self._golive_invites(provider),
         }
+
+    @api.model
+    def _golive_invites(self, provider):
+        """The invitations worth showing for a provider.
+
+        Every LIVE one (there is at most one per step — a re-send rotates), plus
+        the newest revoked/expired one per step so "you already sent this to
+        somebody, and it is dead" is visible instead of silently vanishing.
+        Older dead ones stay in the table as evidence and out of the screen.
+        """
+        rows = self.env['channel.golive.invite'].sudo().search(
+            [('provider', '=', provider)])
+        payloads, dead_seen = [], set()
+        for invite in rows:                      # _order = 'id desc'
+            payload = invite._payload()
+            if payload['revoked'] or payload['expired']:
+                if payload['step_key'] in dead_seen:
+                    continue
+                dead_seen.add(payload['step_key'])
+            payloads.append(payload)
+        return payloads
 
     def _golive_step_payload(self, step, ctx):
         mark = ctx['progress'].get(step['key']) or {}
@@ -737,3 +921,232 @@ class ChannelPlatformAppGoLive(models.Model):
             steps[step_key] = {'marked': False, 'marked_on': False}
         row.write({'steps_json': json.dumps(steps, sort_keys=True)})
         return self.golive_state()
+
+    # ==================================================================
+    # GL-3 — delegation
+    # ==================================================================
+    @api.model
+    def _golive_validate_email(self, email):
+        """A plain ``@`` check, deliberately (D1).
+
+        An RFC-strict regex refuses far more real addresses than it catches
+        typos, and the person who notices the address is wrong is the operator
+        reading it back off the card a second later — not a regex.
+        """
+        email = (email or '').strip()
+        local, _sep, domain = email.partition('@')
+        if (not email or len(email) > 254 or email.count('@') != 1
+                or not local or not domain
+                or any(char.isspace() for char in email)
+                or '.' not in domain
+                or domain.startswith('.') or domain.endswith('.')):
+            raise ValidationError(_(
+                'That does not look like an email address. Type the whole '
+                'address of the person who has access to the console.'))
+        return email
+
+    @api.model
+    def golive_invite_send(self, provider, step_key, email):
+        """Send ONE do-step to the person who has the provider console.
+
+        A re-send is a ROTATION, not a second key: any live invitation for the
+        same (provider, step) is revoked first, so at every moment exactly one
+        link can open a given step. The plaintext token exists only between
+        ``_mint`` and the rendered email body — it is not returned to the
+        caller, and the caller could not be given it safely anyway (an RPC
+        response lands in a browser's memory, its devtools and its logs).
+        """
+        self._require_operator()
+        step = self._golive_step(provider, step_key)
+        if step['kind'] != 'do':
+            raise ValidationError(_(
+                'Only a step somebody can actually carry out in the provider '
+                'console can be sent on. This one is a wait for the provider '
+                'to finish a review of their own.'))
+        email = self._golive_validate_email(email)
+
+        Invite = self.env['channel.golive.invite'].sudo()
+        rotated = Invite.search([('provider', '=', provider),
+                                 ('step_key', '=', step_key),
+                                 ('revoked', '=', False)])
+        if rotated:
+            rotated.write({'revoked': True})
+
+        invite, token = Invite._mint(provider, step_key, email, self.env.user)
+        url = '%s%s' % (self._base_url(), INVITE_PATH % token)
+        # Raises (and takes the invite down with it) when the mail cannot go.
+        self._golive_invite_mail(invite, step, url)
+
+        self.env['care.channel.audit']._log(
+            'golive_invite_sent',
+            detail='%s/%s to %s%s' % (
+                provider, step_key, mask_email(email),
+                ' (rotated %s)' % len(rotated) if rotated else ''))
+        return self.golive_state()
+
+    @api.model
+    def golive_invite_revoke(self, invite_id):
+        self._require_operator()
+        invite = self.env['channel.golive.invite'].sudo().browse(
+            int(invite_id or 0)).exists()
+        if not invite:
+            raise ValidationError(_('That invitation no longer exists.'))
+        if not invite.revoked:
+            invite.write({'revoked': True})
+            self.env['care.channel.audit']._log(
+                'golive_invite_revoked',
+                detail='%s/%s invite %s to %s' % (
+                    invite.provider, invite.step_key, invite.id,
+                    mask_email(invite.email)))
+        return self.golive_state()
+
+    # ------------------------------------------------------------------
+    # The email (D4)
+    # ------------------------------------------------------------------
+    @api.model
+    def _golive_invite_mail(self, invite, step, url):
+        """Render and send the invitation, or refuse the whole operation.
+
+        NO ``mail.template`` record: Odoo renders every template's subject and
+        body AT INSTALL against a bare sample record, and one that cannot render
+        blocks the module's install (ledger §5.14 — health_messaging paid for
+        it). A QWeb view rendered here carries no such contract.
+
+        The token lives ONLY in this body. So a send that fails is not a
+        half-success to paper over: the invitation is revoked on the spot and
+        the operator is told to fix the outgoing mail server, because a link
+        nobody received is a link that can only ever be found by a guesser.
+        """
+        company = invite.invited_by_id.sudo().company_id or self.env.company
+        provider_name = GOLIVE_PROVIDER_NAMES.get(invite.provider,
+                                                  invite.provider)
+        body = self.env['ir.qweb']._render(
+            'health_care_command_channels.golive_invite_mail', {
+                'url': url,
+                'step_title': step['title'],
+                'step_body': step['body'],
+                'provider_name': provider_name,
+                'sender_name': self.env.user.name,
+                'company_name': company.name,
+                'expires_on': fields.Date.to_string(
+                    fields.Datetime.context_timestamp(
+                        self, invite.expires_at).date()),
+            })
+        values = {
+            'subject': _(
+                '%(company)s: one step to finish in the %(provider)s console',
+                company=company.name, provider=provider_name),
+            'body_html': body,
+            'email_to': invite.email,
+            # The token is in this body. It has no business outliving delivery
+            # in a table half the database can read.
+            'auto_delete': True,
+        }
+        email_from = company.email or self.env.user.email_formatted
+        if email_from:
+            values['email_from'] = email_from
+        mail = self.env['mail.mail'].sudo().create(values)
+        try:
+            mail.send(raise_exception=True)
+        except psycopg2.Error:
+            # Never swallow the read-only-cursor retry signal (ledger §5.38).
+            raise
+        except Exception as exc:  # noqa: BLE001 — every send failure is one
+            # The CLASS, not the message. `redact()` strips a URL's query
+            # string, and this URL has none: its token is in the PATH, so a
+            # provider error body that echoed it back would go straight into
+            # the log. Odoo's own mail_mail logs the delivery failure anyway.
+            _logger.warning('Go-Live invite mail failed (%s)',
+                            type(exc).__name__)
+            invite.sudo().write({'revoked': True})
+            raise UserError(_(
+                'The invitation could not be sent, so its link has been '
+                'revoked — nobody received it and nobody can use it. Check '
+                'the outgoing mail server, then send it again.'))
+
+    # ------------------------------------------------------------------
+    # The public page's values (D3) — read-only, and it renders nothing else
+    # ------------------------------------------------------------------
+    @api.model
+    def _golive_invite_values(self, invite):
+        """Everything the public page shows, or ``False`` for a dead end.
+
+        Called from a public route, so it reads and it never writes. Note the
+        two independent refusals folded in here, both of which the controller
+        turns into the SAME page as an unknown token:
+
+        * the step is no longer declared, or is no longer a ``do`` step;
+        * a platform application EXISTS for this provider but is archived —
+          the operator took the go-live down, so the links it handed out die
+          with it. A provider with no row at all is not a refusal: that is a
+          go-live which has not started, and step one is what the link is for.
+        """
+        provider = invite.provider
+        try:
+            step = self._golive_step(provider, invite.step_key)
+        except ValidationError:
+            return False
+        if step['kind'] != 'do':
+            return False
+
+        app = self._get_for_provider(provider)
+        if not app and self.sudo().with_context(active_test=False).search_count(
+                [('provider', '=', provider)]):
+            return False
+
+        redirect, webhooks = self._golive_urls(provider)
+        client_id = (app.client_id if app else '') or ''
+        console = step['console']
+        if console and '{app_id}' in console:
+            console = (console.replace('{app_id}', client_id)
+                       if client_id else False)
+
+        blocks = []
+        for key in step['copy_values'] or []:
+            if key not in INVITE_COPY_KEYS:
+                # Fails CLOSED: a future step may declare a value we have not
+                # decided is safe for a stranger's screen. It simply is not
+                # rendered until somebody decides.
+                continue
+            if key == 'webhook_urls':
+                for line in (webhooks or '').split('\n'):
+                    line = line.strip()
+                    if not line:
+                        continue
+                    label, _sep, value = line.partition(': ')
+                    blocks.append({
+                        'label': (_('Webhook address — %s', label) if value
+                                  else _('Webhook address')),
+                        'value': value or line,
+                        'note': False,
+                    })
+            elif key == 'oauth_redirect_uri':
+                blocks.append({'label': _('Sign-in redirect address'),
+                               'value': redirect, 'note': False})
+            else:                                  # VERIFY_TOKEN_KEY
+                token = str((app.get_extra(VERIFY_TOKEN_KEY)
+                             if app else '') or '').strip()
+                blocks.append({
+                    'label': _('Webhook verify token'),
+                    'value': token,
+                    # A public route must NEVER write configuration. If the
+                    # token does not exist yet, say so — minting one here would
+                    # let a stranger change what Meta must hold.
+                    'note': False if token else _(
+                        'Not created yet — ask the sender to create it in the '
+                        'Studio first.'),
+                })
+
+        return {
+            'provider_name': GOLIVE_PROVIDER_NAMES.get(provider, provider),
+            'company_name': (invite.invited_by_id.sudo().company_id.name
+                             or self.env.company.name),
+            'step_title': step['title'],
+            'step_body': step['body'],
+            'console': console or False,
+            'console_label': step['console_label'] or False,
+            'blocks': blocks,
+            'expires_on': fields.Date.to_string(
+                fields.Datetime.context_timestamp(
+                    self, invite.expires_at).date()),
+        }

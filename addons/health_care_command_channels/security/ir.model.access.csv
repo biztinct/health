@@ -26,3 +26,4 @@ access_care_channel_audit_tenant_admin,care.channel.audit.tenant.admin,model_car
 access_care_channel_identity_tenant_admin,care.channel.identity.tenant.admin,model_care_channel_identity,health_user_admin.group_health_user_admin,1,0,0,0
 access_care_channel_message_tenant_admin,care.channel.message.tenant.admin,model_care_channel_message,health_user_admin.group_health_user_admin,1,0,0,0
 access_channel_golive_progress_system,channel.golive.progress.system,model_channel_golive_progress,base.group_system,1,1,1,0
+access_channel_golive_invite_system,channel.golive.invite.system,model_channel_golive_invite,base.group_system,1,1,1,0
