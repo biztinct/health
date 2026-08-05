@@ -219,6 +219,20 @@
                 <field name="currency_id" column_invisible="1"/>
                 <field name="move_type" column_invisible="1"/>
 
+                <!-- Record lifecycle: Delete is a user function (posted moves
+                     must be reversed first — server gate), Archive custodian. -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required; posted entries must be reversed first)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>

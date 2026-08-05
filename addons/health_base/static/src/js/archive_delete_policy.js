@@ -22,6 +22,7 @@ import { ListController } from "@web/views/list/list_controller";
 import { FormController } from "@web/views/form/form_controller";
 import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
+import { useState } from "@odoo/owl";
 
 const OWNER_GROUP = "health_base.group_healthcare_owner";
 const CUSTODIAN_GROUP = "health_base.group_healthcare_custodian";
@@ -67,14 +68,46 @@ function applyPolicy(Controller, getTarget, getRecords) {
         setup() {
             super.setup(...arguments);
             // Resolve memberships once; default false (least privilege).
-            this._hdIsOwner = false;
-            this._hdIsCustodian = false;
+            // Reactive so the bulk selection-bar buttons re-render once the
+            // group RPCs resolve.
+            this._hdLc = useState({ owner: false, custodian: false });
             Promise.resolve(user.hasGroup(OWNER_GROUP))
-                .then((v) => { this._hdIsOwner = v; })
-                .catch(() => { this._hdIsOwner = false; });
+                .then((v) => { this._hdLc.owner = v; })
+                .catch(() => { this._hdLc.owner = false; });
             Promise.resolve(user.hasGroup(CUSTODIAN_GROUP))
-                .then((v) => { this._hdIsCustodian = v; })
-                .catch(() => { this._hdIsCustodian = false; });
+                .then((v) => { this._hdLc.custodian = v; })
+                .catch(() => { this._hdLc.custodian = false; });
+        },
+
+        get _hdIsOwner() {
+            return this._hdLc.owner;
+        },
+
+        get _hdIsCustodian() {
+            return this._hdLc.custodian;
+        },
+
+        // --- state for the bulk selection-bar buttons (list template) and
+        // --- the control-panel buttons (form template)
+        get hdIsLifecycleModel() {
+            try {
+                return LIFECYCLE_MODELS.has(this.model.root.resModel);
+            } catch {
+                return false;
+            }
+        },
+
+        get hdSelectedRecords() {
+            return getRecords(this);
+        },
+
+        get hdAnySelectedDeleted() {
+            return this.hdSelectedRecords.some((r) => !!(r.data || {}).deleted);
+        },
+
+        get hdAllSelectedDeleted() {
+            const records = this.hdSelectedRecords;
+            return records.length > 0 && records.every((r) => !!(r.data || {}).deleted);
         },
 
         _hdOpenLifecycleWizard(actionXmlId) {

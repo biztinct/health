@@ -10,9 +10,9 @@
             <list string="Contacts" js_class="crm_contact_list_view"
                   default_order="create_date desc"
                   class="crm-cl-list"
-                  decoration-muted="contact_status == 'spam'"
-                  decoration-danger="contact_status == 'lost_booking'"
-                  decoration-success="contact_status == 'booking'">
+                  decoration-muted="contact_status == 'spam' or deleted"
+                  decoration-danger="contact_status == 'lost_booking' or deleted"
+                  decoration-success="contact_status == 'booking' and not deleted">
                 <field name="unique_contact_code" string="Client ID" optional="show"/>
                 <field name="name" string="Contact"/>
                 <field name="related_client_name" string="Client Name"/>
@@ -45,6 +45,20 @@
                         string="Spam" icon="fa-ban"
                         title="Mark as Spam"
                         class="crm-cl-btn crm-cl-btn--spam"/>
+                <!-- Record lifecycle: Delete is a user function, Archive a
+                     custodian function (client data-governance spec). -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>
@@ -56,7 +70,31 @@
         <field name="priority">50</field>
         <field name="arch" type="xml">
             <form string="Contact" js_class="crm_contact_form_view">
+                <field name="active" invisible="1"/>
+                <field name="deleted" invisible="1"/>
+                <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <header>
+                    <button name="action_open_delete_wizard" type="object"
+                            string="Delete" icon="fa-trash"
+                            invisible="deleted"/>
+                    <button name="action_open_restore_wizard" type="object"
+                            string="Restore" icon="fa-undo"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="not deleted"/>
+                    <button name="action_open_archive_wizard" type="object"
+                            string="Archive" icon="fa-archive"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="deleted or not active"/>
+                    <button name="action_open_unarchive_wizard" type="object"
+                            string="Unarchive" icon="fa-archive"
+                            groups="health_base.group_healthcare_custodian"
+                            invisible="active"/>
+                </header>
                 <sheet>
+                    <widget name="web_ribbon" title="Deleted" bg_color="text-bg-danger"
+                            invisible="not deleted"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-secondary"
+                            invisible="active or deleted"/>
                     <!-- Contact Info Tab (Essential) -->
                     <group string="Contact Information">
                         <group>
@@ -282,6 +320,19 @@
                        decoration-danger="contact_status in ('lost_booking', 'spam')"/>
                 <field name="clinical_priority" string="Priority" optional="show"/>
                 <field name="user_id" string="Agent" widget="many2one_avatar_user" optional="show"/>
+                <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>
@@ -390,6 +441,19 @@
                        decoration-danger="contact_status in ('lost_booking', 'spam')"/>
                 <field name="catchment_province_id" string="Area" optional="show"/>
                 <field name="user_id" string="Assigned" widget="many2one_avatar_user"/>
+                <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>

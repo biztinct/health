@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Record lifecycle — bulk buttons in EVERY list's selection bar.
+         Delete is a user function; Archive/Restore are custodian functions
+         (client data-governance spec). Rendered only on the 5 lifecycle
+         models; all three route to the mandatory-reason wizard, so server
+         rules keep holding no matter the entry point. -->
+    <t t-name="health_base.ListView.LifecycleButtons"
+       t-inherit="web.ListView" t-inherit-mode="extension">
+        <xpath expr="//t[@t-set-slot='control-panel-selection-actions']//t[@t-if='props.info.actionMenus']"
+               position="before">
+            <t t-if="hdIsLifecycleModel">
+                <button class="btn btn-outline-danger o_hd_lc_btn"
+                        t-if="!hdAllSelectedDeleted"
+                        data-hotkey="shift+d"
+                        t-on-click="() => this._hdOpenLifecycleWizard('health_base.action_lifecycle_delete_wizard')">
+                    <i class="fa fa-trash me-1"/>Delete
+                </button>
+                <button class="btn btn-outline-secondary o_hd_lc_btn"
+                        t-if="_hdLc.custodian and hdAnySelectedDeleted"
+                        t-on-click="() => this._hdOpenLifecycleWizard('health_base.action_lifecycle_restore_wizard')">
+                    <i class="fa fa-undo me-1"/>Restore
+                </button>
+                <button class="btn btn-outline-secondary o_hd_lc_btn"
+                        t-if="_hdLc.custodian and !hdAllSelectedDeleted"
+                        t-on-click="() => this._hdOpenLifecycleWizard('health_base.action_archive_reason_wizard')">
+                    <i class="fa fa-archive me-1"/>Archive
+                </button>
+            </t>
+        </xpath>
+    </t>
+
+</templates>

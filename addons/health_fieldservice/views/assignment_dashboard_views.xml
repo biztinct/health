@@ -181,12 +181,25 @@
                         string="Complete Service"
                         invisible="state != 'in_progress'"/>
                 
-                <button name="action_close_fso" 
-                        type="object" 
-                        icon="fa-archive" 
+                <button name="action_close_fso"
+                        type="object"
+                        icon="fa-archive"
                         string="Close FSO"
                         invisible="state != 'completed'"/>
-                
+
+                <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
             </list>
         </field>
     </record>
