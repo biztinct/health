@@ -2044,3 +2044,26 @@ a no-op.
     `with_context(lang=<that user>.lang)` on the same model method the page
     uses, and compare `markupsafe.escape()`d text (the page HTML-escapes).
     Same family as §5.50. (GL-3.)
+
+- **§5.124 — a phase's own browser QA is the next run's live-data fixture.**
+    GL-4's QA created a google `channel.platform.app` row; the suite's
+    `setUpClass` archives the deployment's rows (§5.95's fix), which switched
+    on a correct "archived application ⇒ dead end" branch and red-lit a
+    correct HttpCase. A suite that archives the deployment's rows must CREATE
+    every row its assertions depend on. And on an append-only / never-deleted
+    model, any absolute `active_test=False` count measures the deployment's
+    HISTORY — baseline the ids in `setUp` and assert on the delta. (GL-4.)
+
+- **§5.125 — a declaration framework needs a UI affordance per
+    (kind, verify, artifact) COMBINATION, not per kind.** GL-2's canvas
+    offered "mark" only to `wait` steps; a `do` step with `verify: 'manual'`
+    and no inputs is completable only by a mark, so it strands at "to do"
+    while the server happily accepts the mark. Zalo's redirect step sat in
+    exactly that state from GL-2 until GL-4. Before adding declarations, grep
+    the template for which branch renders each combination. (GL-4.)
+
+- **§5.126 — an untrusted `element.click()` on an OWL button can silently do
+    NOTHING while a trusted click works.** Verifying UI behaviour with
+    `evaluate_script`-driven clicks can "prove" a handler didn't fire (e.g.
+    a validation error not rendering) when it renders fine under the real
+    click tool. Drive QA with trusted input events. (GL-4.)
