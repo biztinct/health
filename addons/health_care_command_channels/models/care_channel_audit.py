@@ -42,6 +42,10 @@ KNOWN_EVENTS = {
     # and the outcome of a platform-application preflight. Both are plane-1
     # operator events — no connection, no tenant.
     'verify_token_generated', 'preflight',
+    # GL-1 (Go-Live Studio): a provider's own dashboard completed the webhook
+    # handshake against this deployment — the only honest proof that the
+    # operator pasted our URL and our verify token correctly.
+    'webhook_handshake',
 }
 
 

@@ -38,12 +38,14 @@ msgstr ""
 #. module: health_care_command_channels
 #. odoo-python
 #: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
 msgid "Extra configuration must be valid JSON."
 msgstr "Cấu hình bổ sung phải là JSON hợp lệ."
 
 #. module: health_care_command_channels
 #. odoo-python
 #: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
 msgid "Extra configuration must be a JSON object."
 msgstr "Cấu hình bổ sung phải là một đối tượng JSON."
 
@@ -645,6 +647,7 @@ msgstr "Đăng nhập bằng Zalo"
 #. module: health_care_command_channels
 #. odoo-python
 #: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
 msgid "Point Zalo at us"
 msgstr "Trỏ Zalo về Health19"
 
@@ -2275,3 +2278,456 @@ msgstr "Lần kiểm tra gần nhất"
 #: model_terms:ir.ui.view,arch_db:health_care_command_channels.view_channel_platform_app_form
 msgid "Paste these into the provider"
 msgstr "Dán các giá trị này vào nhà cung cấp"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "\"%s\" is not a step of this go-live."
+msgstr "\"%s\" không phải là một bước của quy trình go-live này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Go-live progress for this provider already exists."
+msgstr "Đã có tiến trình go-live cho nhà cung cấp này."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Go-live progress must be a JSON object."
+msgstr "Tiến trình go-live phải là một đối tượng JSON."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "The Go-Live Studio does not drive \"%s\"."
+msgstr "Go-Live Studio không quản lý \"%s\"."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "The values for a go-live step must be a JSON object."
+msgstr "Giá trị của một bước go-live phải là một đối tượng JSON."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "This step has nothing to save."
+msgstr "Bước này không có gì để lưu."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Health19 checks this step for itself — it turns green when the work is "
+"really done, and cannot be ticked by hand."
+msgstr ""
+"Health19 tự kiểm tra bước này — nó chuyển xanh khi công việc thực sự "
+"hoàn tất và không thể đánh dấu bằng tay."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Go-live progress must be valid JSON."
+msgstr "Tiến trình go-live phải là JSON hợp lệ."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Create the app"
+msgstr "Tạo ứng dụng"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Open the Meta App Dashboard and create a new app of type Business. Give "
+"it your own company name — every clinic signs in through this one app. "
+"When the app exists, Meta shows an App ID at the top of its dashboard. "
+"Copy that number here."
+msgstr ""
+"Mở Meta App Dashboard và tạo một ứng dụng mới loại Business. Đặt tên "
+"theo công ty của bạn — mọi phòng khám đều đăng nhập qua ứng dụng duy "
+"nhất này. Khi ứng dụng đã tạo xong, Meta hiển thị App ID ở đầu trang. "
+"Sao chép số đó vào đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open the Meta App Dashboard"
+msgstr "Mở Meta App Dashboard"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "about 10 minutes"
+msgstr "khoảng 10 phút"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Store the app secret"
+msgstr "Lưu khoá bí mật của ứng dụng"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"In the same app open Settings, then Basic. The App Secret is hidden "
+"behind a Show button. Paste it here. We encrypt it and never display it "
+"again, and we ask Meta to confirm it straight away — you will see your "
+"own app name come back."
+msgstr ""
+"Trong cùng ứng dụng, mở Settings rồi Basic. App Secret được ẩn sau nút "
+"Show. Dán nó vào đây. Chúng tôi mã hoá và không bao giờ hiển thị lại, "
+"đồng thời hỏi Meta xác nhận ngay — bạn sẽ thấy chính tên ứng dụng của "
+"mình hiện về."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open Settings, then Basic"
+msgstr "Mở Settings, rồi Basic"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "about 5 minutes"
+msgstr "khoảng 5 phút"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Complete Business Verification"
+msgstr "Hoàn tất Business Verification"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Meta verifies the business behind the app before it lets anyone message "
+"clients. Submit your company documents in the Security Center. This "
+"takes one to three weeks and Meta may come back asking for a further "
+"document. Mark this step once you have submitted, so you can see where "
+"you are."
+msgstr ""
+"Meta xác minh doanh nghiệp đứng sau ứng dụng trước khi cho phép nhắn tin "
+"với khách hàng. Nộp hồ sơ doanh nghiệp trong Security Center. Việc này "
+"mất một đến ba tuần và Meta có thể yêu cầu bổ sung giấy tờ. Hãy đánh dấu "
+"bước này sau khi đã nộp để theo dõi tiến độ."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open the Meta Security Center"
+msgstr "Mở Meta Security Center"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "one to three weeks"
+msgstr "một đến ba tuần"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Pass App Review"
+msgstr "Vượt qua App Review"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Ask Meta for these five permissions: whatsapp_business_management, "
+"whatsapp_business_messaging, pages_show_list, pages_messaging and "
+"pages_manage_metadata. Each one needs a short description of how the "
+"clinics use it and a screen recording. Mark this step once the "
+"submission is in."
+msgstr ""
+"Xin Meta cấp năm quyền sau: whatsapp_business_management, "
+"whatsapp_business_messaging, pages_show_list, pages_messaging và "
+"pages_manage_metadata. Mỗi quyền cần một mô tả ngắn về cách phòng khám "
+"sử dụng và một video ghi màn hình. Đánh dấu bước này khi đã nộp hồ sơ."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open App Review"
+msgstr "Mở App Review"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "a few days to two weeks"
+msgstr "vài ngày đến hai tuần"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Point Meta at us"
+msgstr "Trỏ Meta về Health19"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Open Webhooks in the app and subscribe both products. Paste the WhatsApp "
+"address into the WhatsApp product, the Messenger address into the "
+"Messenger product, and the same verify token into both. Add the redirect "
+"address to the app while you are there. Then press Verify and save: this "
+"step turns green the moment Meta's check reaches us."
+msgstr ""
+"Mở Webhooks trong ứng dụng và đăng ký cả hai sản phẩm. Dán địa chỉ "
+"WhatsApp vào sản phẩm WhatsApp, địa chỉ Messenger vào sản phẩm "
+"Messenger, và cùng một verify token cho cả hai. Tiện thể thêm địa chỉ "
+"chuyển hướng vào ứng dụng. Sau đó nhấn Verify and save: bước này chuyển "
+"xanh ngay khi lệnh kiểm tra của Meta đến được chúng tôi."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open Webhooks"
+msgstr "Mở Webhooks"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Create the two sign-in configurations"
+msgstr "Tạo hai cấu hình đăng nhập"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"WhatsApp sign-in runs on an Embedded Signup configuration; Messenger "
+"sign-in runs on a Login for Business configuration. Create one of each "
+"in the app and paste both ids here. Without them a clinic cannot even "
+"start its sign-in, so the two cards stay dark until they are in."
+msgstr ""
+"Đăng nhập WhatsApp chạy trên cấu hình Embedded Signup; đăng nhập "
+"Messenger chạy trên cấu hình Login for Business. Hãy tạo mỗi loại một "
+"cấu hình trong ứng dụng và dán cả hai mã vào đây. Không có chúng thì "
+"phòng khám thậm chí không bắt đầu được việc đăng nhập, nên hai thẻ kênh "
+"vẫn tắt cho tới khi có đủ."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open the app dashboard"
+msgstr "Mở app dashboard"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "about 15 minutes"
+msgstr "khoảng 15 phút"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Meta is ready"
+msgstr "Meta đã sẵn sàng"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Everything Health19 needs from Meta is in place. The WhatsApp and "
+"Messenger cards are live for every clinic, and a clinic can connect its "
+"own number or Page without anything further from you."
+msgstr ""
+"Mọi thứ Health19 cần từ Meta đã đủ. Thẻ WhatsApp và Messenger đã bật cho "
+"mọi phòng khám, và mỗi phòng khám có thể tự kết nối số điện thoại hoặc "
+"Trang của mình mà không cần bạn làm gì thêm."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Create an app on Zalo Developers and link the Official Account the "
+"clinics will message from. Zalo shows the App ID and the App Secret on "
+"the app's own page once it exists."
+msgstr ""
+"Tạo một ứng dụng trên Zalo Developers và liên kết Official Account mà "
+"các phòng khám sẽ nhắn tin từ đó. Zalo hiển thị App ID và App Secret "
+"ngay trên trang ứng dụng sau khi tạo xong."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open Zalo Developers"
+msgstr "Mở Zalo Developers"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Copy the app credentials"
+msgstr "Sao chép thông tin đăng nhập của ứng dụng"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Copy the App ID and the App Secret from the app page. We encrypt the "
+"secret and never display it again. Zalo publishes no way to check "
+"credentials on their own, so the first clinic's sign-in is what proves "
+"them — which is why this step does not turn green by itself."
+msgstr ""
+"Sao chép App ID và App Secret từ trang ứng dụng. Chúng tôi mã hoá khoá "
+"bí mật và không bao giờ hiển thị lại. Zalo không công bố cách kiểm tra "
+"thông tin đăng nhập từ phía máy chủ, nên lần đăng nhập đầu tiên của một "
+"phòng khám mới là bằng chứng — vì vậy bước này không tự chuyển xanh."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open your Zalo app"
+msgstr "Mở ứng dụng Zalo của bạn"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Add the sign-in address"
+msgstr "Thêm địa chỉ đăng nhập"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Open the app's Official Account settings and add the address below as "
+"the callback URL. Zalo refuses the sign-in unless it matches exactly, "
+"character for character."
+msgstr ""
+"Mở phần cài đặt Official Account của ứng dụng và thêm địa chỉ bên dưới "
+"làm callback URL. Zalo từ chối đăng nhập nếu địa chỉ không trùng khớp "
+"từng ký tự."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Paste the address below into the Webhook field of the app and turn on "
+"the message events. Zalo allows ONE webhook address per app, and every "
+"clinic Official Account shares it — that is normal, we recognise each "
+"event by the account it came from. This step completes when the first "
+"verified Zalo event arrives."
+msgstr ""
+"Dán địa chỉ bên dưới vào ô Webhook của ứng dụng và bật các sự kiện tin "
+"nhắn. Zalo chỉ cho phép MỘT địa chỉ webhook cho mỗi ứng dụng, và mọi "
+"Official Account của các phòng khám đều dùng chung — điều đó là bình "
+"thường, chúng tôi nhận biết từng sự kiện theo tài khoản gửi đến. Bước "
+"này hoàn tất khi sự kiện Zalo đầu tiên được xác thực đến nơi."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Zalo is ready"
+msgstr "Zalo đã sẵn sàng"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Everything Health19 needs from Zalo is in place. The Zalo card is live "
+"for every clinic, and each one signs in with its own Official Account."
+msgstr ""
+"Mọi thứ Health19 cần từ Zalo đã đủ. Thẻ Zalo đã bật cho mọi phòng khám, "
+"và mỗi nơi đăng nhập bằng Official Account của chính mình."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "\"%s\" is not a value this step asks for."
+msgstr "\"%s\" không phải là giá trị mà bước này yêu cầu."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "App ID"
+msgstr "Mã ứng dụng (App ID)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"A Meta App ID is a long number — copy it from the top of the app "
+"dashboard."
+msgstr ""
+"App ID của Meta là một dãy số dài — hãy sao chép từ đầu trang app "
+"dashboard."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "App secret"
+msgstr "Khoá bí mật ứng dụng"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"The app secret is one long run of characters with no spaces. Press Show "
+"next to App Secret in Settings, Basic."
+msgstr ""
+"Khoá bí mật là một chuỗi ký tự dài không có khoảng trắng. Nhấn Show cạnh "
+"App Secret trong Settings, Basic."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Embedded Signup configuration id (WhatsApp)"
+msgstr "Mã cấu hình Embedded Signup (WhatsApp)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"An Embedded Signup configuration id is a number, shown next to the "
+"configuration in the WhatsApp product."
+msgstr ""
+"Mã cấu hình Embedded Signup là một dãy số, hiển thị cạnh cấu hình trong "
+"sản phẩm WhatsApp."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Login for Business configuration id (Messenger)"
+msgstr "Mã cấu hình Login for Business (Messenger)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"A Login for Business configuration id is a number, shown next to the "
+"configuration in Facebook Login for Business."
+msgstr ""
+"Mã cấu hình Login for Business là một dãy số, hiển thị cạnh cấu hình "
+"trong Facebook Login for Business."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Zalo App ID"
+msgstr "Mã ứng dụng Zalo (App ID)"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "A Zalo App ID is a number, shown at the top of the app page."
+msgstr "Zalo App ID là một dãy số, hiển thị ở đầu trang ứng dụng."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Zalo App Secret"
+msgstr "Khoá bí mật ứng dụng Zalo"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"The Zalo app secret is one run of characters with no spaces, shown "
+"beside the App ID."
+msgstr ""
+"Khoá bí mật ứng dụng Zalo là một chuỗi ký tự không có khoảng trắng, nằm "
+"cạnh App ID."

@@ -90,23 +90,13 @@ PROVIDER_CONSOLE = {
 # What a human must finish OUTSIDE Health19 before the credentials on this row
 # can do anything. Deliberately terse: the authority is the provider's own
 # console, this is only the reminder of what to look for.
+#
+# GL-1: meta and zalo are GONE from here. Their steps are declared once, in
+# structured and translatable form, by ``_golive_steps()``
+# (models/channel_golive.py) — which the Go-Live Studio drives and which this
+# checklist now reads too. Two lists of the same paperwork is how they drift
+# apart. google and microsoft keep their entries until GL-4 declares them.
 PROVIDER_EXTERNAL_STEPS = {
-    'meta': [
-        'Create a Business-type app and complete Business Verification.',
-        'Pass App Review for whatsapp_business_management, '
-        'whatsapp_business_messaging, pages_show_list, pages_messaging and '
-        'pages_manage_metadata.',
-        'Create an Embedded Signup configuration (WhatsApp) and a Login for '
-        'Business configuration (Messenger), and paste both ids below.',
-        'Add the redirect URI and both webhook URLs above to the app, using '
-        'the verify token below.',
-    ],
-    'zalo': [
-        'Create an app on Zalo Developers and link the Official Account.',
-        'Add the redirect URI above to the app\'s OAuth settings.',
-        'Set the ONE webhook URL above on the app (Zalo allows a single URL '
-        'per app — every tenant OA arrives on it).',
-    ],
     'google': [
         'Create an OAuth 2.0 Client ID (Web application) in Google Cloud '
         'Console and enable the Gmail API.',
@@ -355,7 +345,12 @@ class ChannelPlatformApp(models.Model):
             _('Until every row above is done, the channels served by this '
               'application stay "Not available yet" for every tenant.'))
 
-        steps = PROVIDER_EXTERNAL_STEPS.get(self.provider) or []
+        # GL-1: one source of truth. Where the Go-Live Studio declares the
+        # steps, they are the steps — this checklist renders their titles
+        # rather than a second, drifting copy of the same paperwork.
+        declared = self._golive_steps().get(self.provider) or []
+        steps = ([step['title'] for step in declared] or
+                 PROVIDER_EXTERNAL_STEPS.get(self.provider) or [])
         if steps:
             console_url, console_name = PROVIDER_CONSOLE.get(
                 self.provider, ('', ''))

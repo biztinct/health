@@ -2,6 +2,7 @@
 from . import care_channel_audit
 from . import care_contact_capture
 from . import channel_platform_app
+from . import channel_golive
 from . import care_channel_readiness_check
 from . import care_channel_connection
 from . import channel_center

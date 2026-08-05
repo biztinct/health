@@ -61,6 +61,14 @@ class MetaWebhookController(http.Controller):
         if not challenge:
             _logger.info('care_channels: meta handshake refused (%s)', channel)
             return self._text('', 403)
+        # GL-1: the SUCCESS path only. A wrong guess stays an unlogged 403 —
+        # auditing refusals would turn this route into an oracle for "is a
+        # verify token configured here", and `_log` is safe on a public
+        # success path because it never raises (care_channel_audit.py:86).
+        # The response bytes and status are unchanged.
+        request.env(su=True)['care.channel.audit']._log(
+            'webhook_handshake', channel=channel,
+            detail='meta dashboard handshake ok')
         return self._text(challenge)
 
     @http.route('/care_channels/meta/<string:channel>/webhook', type='http',

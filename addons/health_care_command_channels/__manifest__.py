@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.7.0.1',
+    'version': '19.0.8.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -238,6 +238,31 @@ answer, not an exception: the outcome is persisted and reported, the button
 never raises, the app token is used and discarded, and no secret reaches a
 checklist row, a stored detail, an audit row or a log line. Manual only —
 no cron ships.
+
+Go-Live Studio — Phase GL-1 (server framework)
+===============================================
+
+CC-G's go-live checklist knew what was missing; it could not tell the operator
+what to *do*. GL-1 turns the same knowledge into an ordered, translatable
+declaration — seven steps for Meta, five for Zalo — each one saying what to do,
+where to do it, what to copy out of Health19, what to type back in, roughly how
+long it takes, and how we will know it happened.
+
+- ``_golive_steps()`` is the declaration and ``golive_state()`` is the truth.
+  A step is ``done`` because the artifact exists — a client id, a stored
+  secret, a preflight Meta accepted, a webhook handshake that reached us, a
+  configuration id — never because somebody ticked it. Only the steps we
+  cannot observe (Business Verification, App Review) are markable, and they
+  read ``waiting``, not ``done``.
+- ``golive_submit()`` routes every write through the path that already owns
+  it: ``action_set_secret`` for the secret, a merge for ``extra_json``,
+  ``action_generate_verify_token`` for the token. No second door, and no
+  credential material in any return value.
+- The webhook handshake is now **evidence**: Meta's dashboard check and the
+  first verified Zalo event each write one ``webhook_handshake`` audit row,
+  on the success path only, with the routes' bytes and status untouched.
+
+No UI (GL-2), no invitations (GL-3), no Google/Microsoft steps (GL-4).
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',

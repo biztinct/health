@@ -78,6 +78,16 @@ class ZaloWebhookController(http.Controller):
         # Verified: escalate only now, and answer 200 from here on.
         env = request.env(su=True)
         connection = connection.with_env(env)
+        # GL-1: Zalo has no dashboard handshake — the FIRST verified event is
+        # the proof that the operator pasted our one webhook URL correctly.
+        # Logged once for the deployment: every later verified event would
+        # otherwise fill the audit with the same fact. Dispatch is untouched.
+        audit = env['care.channel.audit']
+        if not audit.sudo().search_count(
+                [('event', '=', 'webhook_handshake'), ('channel', '=', 'zalo')],
+                limit=1):
+            audit._log('webhook_handshake', connection=connection,
+                       channel='zalo', detail='first verified zalo event')
         try:
             counts = env['care.channel.message']._dispatch_zalo(
                 connection, payload)
