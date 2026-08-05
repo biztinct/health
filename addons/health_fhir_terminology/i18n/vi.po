@@ -4,6 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 19.0 health_fhir_terminology\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,31 +12,101 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_fhir_terminology
-#: model:ir.ui.menu,name:health_fhir_terminology.menu_terminology_root
-msgid "Terminology"
-msgstr "Danh mục mã hóa"
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_form
+msgid "2019"
+msgstr ""
 
 #. module: health_fhir_terminology
-#: model:ir.ui.menu,name:health_fhir_terminology.menu_medical_code
-#: model:ir.actions.act_window,name:health_fhir_terminology.action_medical_code
-#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_list
+#. odoo-python
+#: code:addons/health_fhir_terminology/models/medical_coding_system.py:0
+msgid "A coding system with URI \"%s\" already exists."
+msgstr "Hệ thống mã hóa với URI \"%s\" đã tồn tại."
+
+#. module: health_fhir_terminology
+#. odoo-python
+#: code:addons/health_fhir_terminology/models/medical_coding_system.py:0
+msgid "A coding system with code \"%s\" already exists."
+msgstr "Hệ thống mã hóa với mã \"%s\" đã tồn tại."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__active
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__active
 #: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_search
-msgid "Medical Codes"
-msgstr "Mã y tế"
-
-#. module: health_fhir_terminology
-#: model:ir.model,name:health_fhir_terminology.model_medical_code
-#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_form
-msgid "Medical Code"
-msgstr "Mã y tế"
-
-#. module: health_fhir_terminology
-#: model:ir.ui.menu,name:health_fhir_terminology.menu_medical_coding_system
-#: model:ir.actions.act_window,name:health_fhir_terminology.action_medical_coding_system
-#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_list
 #: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_search
-msgid "Coding Systems"
-msgstr "Hệ thống mã hóa"
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: health_fhir_terminology
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_search
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_search
+msgid "Archived"
+msgstr "Đã lưu trữ"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__file
+msgid "CSV File"
+msgstr "Tệp CSV"
+
+#. module: health_fhir_terminology
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_import_form
+msgid ""
+"CSV columns (fixed order):\n"
+"                        <strong>code,display,display_vi,parent_code,synonyms</"
+"strong>.\n"
+"                        Only <strong>code</strong> and <strong>display</"
+"strong>\n"
+"                        are mandatory per row. Import is idempotent — re-"
+"running\n"
+"                        updates existing codes instead of duplicating them."
+msgstr "Cột CSV (thứ tự cố định):\n                        <strong>mã,hiển thị,display_vi,parent_code,từ đồng nghĩa</strong>.\n                        Chỉ một <strong>mã số</strong> Và <strong>trưng bày</strong>\n                        là bắt buộc trên mỗi hàng. Quá trình nhập không có tác dụng — đang chạy lại\n                        cập nhật mã hiện có thay vì sao chép chúng."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_code_import__delimiter
+msgid "CSV field delimiter."
+msgstr "Ký tự phân tách trường CSV."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_coding_system__uri
+msgid "Canonical system URI (FHIR CodeSystem.url)."
+msgstr "URI hệ thống chuẩn (FHIR CodeSystem.url)."
+
+#. module: health_fhir_terminology
+#: model:ir.model,name:health_fhir_terminology.model_health_clinical_note
+msgid "Clinical Note"
+msgstr "Lưu ý lâm sàng"
+
+#. module: health_fhir_terminology
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_import_form
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__code
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__code
+msgid "Code"
+msgstr "Mã"
+
+#. module: health_fhir_terminology
+#. odoo-python
+#: code:addons/health_fhir_terminology/models/medical_code.py:0
+msgid "Code \"%s\" already exists in this coding system."
+msgstr "Mã \"%s\" đã tồn tại trong hệ thống mã hóa này."
+
+#. module: health_fhir_terminology
+#. odoo-python
+#: code:addons/health_fhir_terminology/wizards/medical_code_import.py:0
+msgid "Code \"%s\": unknown parent_code \"%s\"."
+msgstr "Mã \"%s\": không tìm thấy mã cha \"%s\"."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_health_clinical_note__condition_code_ids
+msgid "Coded Diagnoses (ICD-10)"
+msgstr "Chẩn đoán được mã hóa (ICD-10)"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__code_count
+msgid "Codes"
+msgstr "Số lượng mã"
 
 #. module: health_fhir_terminology
 #: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__system_id
@@ -46,9 +117,116 @@ msgid "Coding System"
 msgstr "Hệ thống mã hóa"
 
 #. module: health_fhir_terminology
-#: model:ir.model,name:health_fhir_terminology.model_medical_coding_system
-msgid "Medical Coding System"
-msgstr "Hệ thống mã hóa y tế"
+#: model:ir.actions.act_window,name:health_fhir_terminology.action_medical_coding_system
+#: model:ir.ui.menu,name:health_fhir_terminology.menu_medical_coding_system
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_list
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_search
+msgid "Coding Systems"
+msgstr "Hệ thống mã hóa"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__created_count
+msgid "Created Count"
+msgstr "Số lượng đã tạo"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__create_uid
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__create_uid
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__create_date
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__create_date
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__delimiter
+msgid "Delimiter"
+msgstr "Dấu phân cách"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__description
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_form
+msgid "Description"
+msgstr "Mô tả"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__display
+msgid "Display"
+msgstr "Trưng bày"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_health_clinical_note__display_name
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__display_name
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__display_name
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_code__display
+msgid "English display."
+msgstr "Tên hiển thị tiếng Anh."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__error_text
+msgid "Errors"
+msgstr "Lỗi"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__has_header
+msgid "File Has Header Row"
+msgstr "Tệp có dòng tiêu đề"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__filename
+msgid "Filename"
+msgstr "Tên tệp"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_coding_system__version
+msgid "Free text, e.g. \"2019\"."
+msgstr "Văn bản miễn phí, e.g. \"2019\"."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_code__parent_id
+msgid "Hierarchy (ICD-10 chapter/block)."
+msgstr "Hệ thống phân cấp (ICD-10 chương/khối)."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_coding_system__name
+msgid "Human name, e.g. \"ICD-10 (WHO + MOH VN)\"."
+msgstr "Tên người, e.g. \"ICD-10 (WHO + Bộ Y tế VN)\"."
+
+#. module: health_fhir_terminology
+#: model:medical.coding.system,name:health_fhir_terminology.system_icd10
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_form
+msgid "ICD-10 (WHO + MOH VN)"
+msgstr "ICD-10 (WHO + Bộ Y tế VN)"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_health_clinical_note__condition_code_ids
+msgid ""
+"ICD-10 coded diagnoses (sidecar to the free-text diagnosis; Circular 13/2025 "
+"EMR export)."
+msgstr "ICD-10 chẩn đoán được mã hóa (sidecar cho chẩn đoán văn bản tự do; Thông tư 13/2025 xuất khẩu EMR)."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_health_clinical_note__id
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__id
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__id
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_fhir_terminology
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_import_form
+msgid "Import"
+msgstr "Nhập"
 
 #. module: health_fhir_terminology
 #: model:ir.ui.menu,name:health_fhir_terminology.menu_medical_code_import
@@ -64,29 +242,23 @@ msgid "Import Medical Codes"
 msgstr "Nhập mã y tế"
 
 #. module: health_fhir_terminology
-#: model:ir.model,name:health_fhir_terminology.model_medical_code_import
-msgid "Medical Code Import"
-msgstr "Nhập mã y tế"
+#: model:medical.coding.system,name:health_fhir_terminology.system_loinc
+msgid "LOINC"
+msgstr ""
 
 #. module: health_fhir_terminology
-#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__code_count
-msgid "Codes"
-msgstr "Số lượng mã"
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__write_uid
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__write_uid
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__write_uid
+msgid "Last Updated by"
+msgstr ""
 
 #. module: health_fhir_terminology
-#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__display_vi
-msgid "Vietnamese Display"
-msgstr "Tên hiển thị tiếng Việt"
-
-#. module: health_fhir_terminology
-#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__parent_id
-msgid "Parent"
-msgstr "Mã cha"
-
-#. module: health_fhir_terminology
-#: model:ir.model.fields,help:health_fhir_terminology.field_medical_code__display
-msgid "English display."
-msgstr "Tên hiển thị tiếng Anh."
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__write_date
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__write_date
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__write_date
+msgid "Last Updated on"
+msgstr ""
 
 #. module: health_fhir_terminology
 #: model:ir.model.fields,help:health_fhir_terminology.field_medical_code__display_vi
@@ -94,73 +266,48 @@ msgid "MOH translation."
 msgstr "Bản dịch của Bộ Y tế."
 
 #. module: health_fhir_terminology
-#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__file
-msgid "CSV File"
-msgstr "Tệp CSV"
+#: model:ir.model,name:health_fhir_terminology.model_medical_code
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_form
+msgid "Medical Code"
+msgstr "Mã y tế"
 
 #. module: health_fhir_terminology
-#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__has_header
-msgid "File Has Header Row"
-msgstr "Tệp có dòng tiêu đề"
+#: model:ir.model,name:health_fhir_terminology.model_medical_code_import
+msgid "Medical Code Import"
+msgstr "Nhập mã y tế"
 
 #. module: health_fhir_terminology
-#: model:ir.model.fields,help:health_fhir_terminology.field_medical_code_import__delimiter
-msgid "CSV field delimiter."
-msgstr "Ký tự phân tách trường CSV."
+#: model:ir.actions.act_window,name:health_fhir_terminology.action_medical_code
+#: model:ir.ui.menu,name:health_fhir_terminology.menu_medical_code
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_list
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_search
+msgid "Medical Codes"
+msgstr "Mã y tế"
 
 #. module: health_fhir_terminology
-#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__error_text
-msgid "Errors"
-msgstr "Lỗi"
+#: model:ir.model,name:health_fhir_terminology.model_medical_coding_system
+msgid "Medical Coding System"
+msgstr "Hệ thống mã hóa y tế"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__name
+msgid "Name"
+msgstr "Tên"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_coding_system__code_count
+msgid "Number of codes registered under this system."
+msgstr "Số mã đăng ký theo hệ thống này."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__parent_id
+msgid "Parent"
+msgstr "Mã cha"
 
 #. module: health_fhir_terminology
 #: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_import_form
 msgid "Result"
 msgstr "Kết quả"
-
-#. module: health_fhir_terminology
-#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_import_form
-msgid "Import"
-msgstr "Nhập"
-
-#. module: health_fhir_terminology
-#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_code_import_form
-msgid "Close"
-msgstr "Đóng"
-
-#. module: health_fhir_terminology
-#: model:ir.model.fields,field_description:health_fhir_terminology.field_health_clinical_note__condition_code_ids
-msgid "Coded Diagnoses (ICD-10)"
-msgstr "Chẩn đoán được mã hóa (ICD-10)"
-
-#. module: health_fhir_terminology
-#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_form
-msgid "Description"
-msgstr "Mô tả"
-
-#. module: health_fhir_terminology
-#. odoo-python
-#: code:addons/health_fhir_terminology/models/medical_coding_system.py:0
-msgid "A coding system with URI \"%s\" already exists."
-msgstr "Hệ thống mã hóa với URI \"%s\" đã tồn tại."
-
-#. module: health_fhir_terminology
-#. odoo-python
-#: code:addons/health_fhir_terminology/models/medical_coding_system.py:0
-msgid "A coding system with code \"%s\" already exists."
-msgstr "Hệ thống mã hóa với mã \"%s\" đã tồn tại."
-
-#. module: health_fhir_terminology
-#. odoo-python
-#: code:addons/health_fhir_terminology/models/medical_code.py:0
-msgid "Code \"%s\" already exists in this coding system."
-msgstr "Mã \"%s\" đã tồn tại trong hệ thống mã hóa này."
-
-#. module: health_fhir_terminology
-#. odoo-python
-#: code:addons/health_fhir_terminology/wizards/medical_code_import.py:0
-msgid "Row %s: missing code or display."
-msgstr "Dòng %s: thiếu mã hoặc tên hiển thị."
 
 #. module: health_fhir_terminology
 #. odoo-python
@@ -171,5 +318,90 @@ msgstr "Dòng %s: mã trùng lặp \"%s\" trong tệp."
 #. module: health_fhir_terminology
 #. odoo-python
 #: code:addons/health_fhir_terminology/wizards/medical_code_import.py:0
-msgid "Code \"%s\": unknown parent_code \"%s\"."
-msgstr "Mã \"%s\": không tìm thấy mã cha \"%s\"."
+msgid "Row %s: missing code or display."
+msgstr "Dòng %s: thiếu mã hoặc tên hiển thị."
+
+#. module: health_fhir_terminology
+#: model:medical.coding.system,name:health_fhir_terminology.system_rxnorm
+msgid "RxNorm"
+msgstr ""
+
+#. module: health_fhir_terminology
+#: model:medical.coding.system,name:health_fhir_terminology.system_snomed
+msgid "SNOMED CT"
+msgstr ""
+
+#. module: health_fhir_terminology
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_health_clinical_note_form_terminology
+msgid "Search ICD-10 (Vietnamese or English)…"
+msgstr "Tìm kiếm ICD-10 (Tiếng Việt hoặc Tiếng Anh)…"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_code__synonyms
+msgid "Semicolon-separated alternates, searched by the typeahead."
+msgstr "Các từ thay thế được phân tách bằng dấu chấm phẩy, được tìm kiếm theo kiểu chữ."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_coding_system__code
+msgid "Short key: icd10, loinc, ucum, rxnorm, snomed, health19-services."
+msgstr "Khóa ngắn: icd10, loinc, ucum, rxnorm, snomed, health19-services."
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__skipped_count
+msgid "Skipped Count"
+msgstr "Số lượng bị bỏ qua"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__synonyms
+msgid "Synonyms"
+msgstr "từ đồng nghĩa"
+
+#. module: health_fhir_terminology
+#: model:ir.ui.menu,name:health_fhir_terminology.menu_terminology_root
+msgid "Terminology"
+msgstr "Danh mục mã hóa"
+
+#. module: health_fhir_terminology
+#: model:medical.coding.system,name:health_fhir_terminology.system_ucum
+msgid "UCUM"
+msgstr ""
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code_import__updated_count
+msgid "Updated Count"
+msgstr "Số lượng cập nhật"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__uri
+msgid "Uri"
+msgstr ""
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_coding_system__version
+msgid "Version"
+msgstr "Phiên bản"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,field_description:health_fhir_terminology.field_medical_code__display_vi
+msgid "Vietnamese Display"
+msgstr "Tên hiển thị tiếng Việt"
+
+#. module: health_fhir_terminology
+#: model:ir.model.fields,help:health_fhir_terminology.field_medical_code__code
+msgid "e.g. I10, 8867-4."
+msgstr ""
+
+#. module: health_fhir_terminology
+#: model:medical.coding.system,name:health_fhir_terminology.system_health19_services
+msgid "health19 Services"
+msgstr "Dịch vụ Health19"
+
+#. module: health_fhir_terminology
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_form
+msgid "http://hl7.org/fhir/sid/icd-10"
+msgstr ""
+
+#. module: health_fhir_terminology
+#: model_terms:ir.ui.view,arch_db:health_fhir_terminology.view_medical_coding_system_form
+msgid "icd10"
+msgstr ""

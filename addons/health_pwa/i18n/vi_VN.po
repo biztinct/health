@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 11:18+0000\n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
 "PO-Revision-Date: 2026-06-06 11:18+0000\n"
 "Last-Translator: \n"
-"Language: vi_VN\n"
 "Language-Team: \n"
+"Language: vi_VN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -25,15 +25,16 @@ msgstr ". Vui lòng thử lại."
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.service_worker_js
 msgid ""
-"// Health PWA Service Worker v1.0.95\n"
+"// Health PWA Service Worker v1.19.0\n"
 "// IMPORTANT: Increment version number when deploying updates!\n"
 "\n"
-"const CACHE_VERSION = '1.0.95';\n"
+"const CACHE_VERSION = '1.19.0';\n"
 "const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;\n"
 "const OFFLINE_URL = '/health_pwa/offline';\n"
 "const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;\n"
 "\n"
-"// Listen for SKIP_WAITING message to activate new service worker immediately\n"
+"// Listen for SKIP_WAITING message to activate new service worker "
+"immediately\n"
 "self.addEventListener('message', (event) =&gt; {\n"
 "    if (event.data &amp;&amp; event.data.type === 'SKIP_WAITING') {\n"
 "        self.skipWaiting();\n"
@@ -50,9 +51,12 @@ msgid ""
 "    `/health_pwa/static/src/js/app.js?v=${CACHE_VERSION}`,\n"
 "    `/health_pwa/static/src/js/router.js?v=${CACHE_VERSION}`,\n"
 "    '/health_pwa/static/icons/icon-192.png',\n"
-"    // Note: External CDN URLs removed from pre-cache - they fail with CORS errors\n"
-"    // and cause the entire SW installation to fail, preventing cache updates.\n"
-"    // These are loaded directly via &lt;script&gt; tags and cached by the browser normally.\n"
+"    // Note: External CDN URLs removed from pre-cache - they fail with CORS "
+"errors\n"
+"    // and cause the entire SW installation to fail, preventing cache "
+"updates.\n"
+"    // These are loaded directly via &lt;script&gt; tags and cached by the "
+"browser normally.\n"
 "];\n"
 "\n"
 "// API endpoints to cache\n"
@@ -77,7 +81,8 @@ msgid ""
 "                return self.skipWaiting();\n"
 "            })\n"
 "            .catch(error =&gt; {\n"
-"                console.error('Service Worker installation failed:', error);\n"
+"                console.error('Service Worker installation failed:', "
+"error);\n"
 "            })\n"
 "    );\n"
 "});\n"
@@ -89,7 +94,8 @@ msgid ""
 "        caches.keys().then(cacheNames =&gt; {\n"
 "            return Promise.all(\n"
 "                cacheNames.map(cacheName =&gt; {\n"
-"                    if (cacheName !== CACHE_NAME &amp;&amp; cacheName !== API_CACHE_NAME) {\n"
+"                    if (cacheName !== CACHE_NAME &amp;&amp; cacheName !== "
+"API_CACHE_NAME) {\n"
 "                        console.log('Deleting old cache:', cacheName);\n"
 "                        return caches.delete(cacheName);\n"
 "                    }\n"
@@ -114,14 +120,23 @@ msgid ""
 "    \n"
 "    // Handle PWA app requests\n"
 "    if (url.pathname.startsWith('/health_pwa')) {\n"
-"        if (url.pathname.startsWith('/health_pwa/api/') || url.pathname.startsWith('/health_pwa/sync/')) {\n"
+"        if (url.pathname.startsWith('/health_pwa/api/') || "
+"url.pathname.startsWith('/health_pwa/sync/')) {\n"
+"            // EVV endpoints (health_evv) are NETWORK-ONLY: hash-chained\n"
+"            // verification data must never be served from cache.\n"
+"            if (url.pathname.includes('/evv/')) {\n"
+"                return; // default browser networking, no cache read/write\n"
+"            }\n"
 "            // API requests - Network First with Cache Fallback\n"
 "            event.respondWith(handleAPIRequest(request));\n"
-"        } else if (request.mode === 'navigate' || url.pathname === '/health_pwa' || url.pathname === '/health_pwa/') {\n"
-"            // Navigation requests (HTML) - Network First to always get latest version\n"
+"        } else if (request.mode === 'navigate' || url.pathname === '/"
+"health_pwa' || url.pathname === '/health_pwa/') {\n"
+"            // Navigation requests (HTML) - Network First to always get "
+"latest version\n"
 "            event.respondWith(handleNavigationRequest(request));\n"
 "        } else {\n"
-"            // Static files (JS, CSS, images) - Cache First (versioned via query param)\n"
+"            // Static files (JS, CSS, images) - Cache First (versioned via "
+"query param)\n"
 "            event.respondWith(handleStaticRequest(request));\n"
 "        }\n"
 "    }\n"
@@ -210,7 +225,408 @@ msgid ""
 "        // Return offline page for navigation requests\n"
 "        if (request.mode === 'navigate') {\n"
 "            const offlineResponse = await cache.match(OFFLINE_URL);\n"
-"            return offlineResponse || new Response('Offline', { status: 503 });\n"
+"            return offlineResponse || new Response('Offline', { status: "
+"503 });\n"
+"        }\n"
+"        \n"
+"        // Return minimal response for other requests\n"
+"        return new Response('Offline', { status: 503 });\n"
+"    }\n"
+"}\n"
+"\n"
+"// Background sync for offline actions\n"
+"self.addEventListener('sync', event =&gt; {\n"
+"    console.log('Background sync triggered:', event.tag);\n"
+"    \n"
+"    if (event.tag === 'health-pwa-sync') {\n"
+"        event.waitUntil(performBackgroundSync());\n"
+"    }\n"
+"\n"
+"    // EVV offline queue (health_evv): the actual flush runs in app\n"
+"    // context where the local store lives — just wake the clients.\n"
+"    if (event.tag === 'evv-flush') {\n"
+"        event.waitUntil(\n"
+"            self.clients.matchAll({ includeUncontrolled: "
+"true }).then(clients =&gt; {\n"
+"                clients.forEach(client =&gt; client.postMessage({ type: "
+"'EVV_FLUSH' }));\n"
+"            })\n"
+"        );\n"
+"    }\n"
+"});\n"
+"\n"
+"// Perform background sync\n"
+"async function performBackgroundSync() {\n"
+"    try {\n"
+"        // Get pending sync data from IndexedDB (handled by PouchDB)\n"
+"        console.log('Performing background sync...');\n"
+"        \n"
+"        // Send message to active clients to trigger sync\n"
+"        const clients = await self.clients.matchAll();\n"
+"        clients.forEach(client =&gt; {\n"
+"            client.postMessage({\n"
+"                type: 'BACKGROUND_SYNC',\n"
+"                timestamp: new Date().toISOString()\n"
+"            });\n"
+"        });\n"
+"        \n"
+"    } catch (error) {\n"
+"        console.error('Background sync failed:', error);\n"
+"    }\n"
+"}\n"
+"\n"
+"// Push notification handler\n"
+"self.addEventListener('push', event =&gt; {\n"
+"    console.log('[SW] Push notification received');\n"
+"    \n"
+"    let notifData = {\n"
+"        title: 'Viet Uc Care',\n"
+"        body: 'New notification',\n"
+"        icon: '/health_pwa/static/icons/icon-192.png',\n"
+"        badge: '/health_pwa/static/icons/icon-96.png',\n"
+"        tag: 'health-pwa-notification',\n"
+"        data: {},\n"
+"    };\n"
+"\n"
+"    if (event.data) {\n"
+"        try {\n"
+"            const payload = event.data.json();\n"
+"            notifData.title = payload.title || notifData.title;\n"
+"            notifData.body = payload.body || notifData.body;\n"
+"            notifData.icon = payload.icon || notifData.icon;\n"
+"            notifData.badge = payload.badge || notifData.badge;\n"
+"            notifData.tag = payload.tag || notifData.tag;\n"
+"            notifData.data = payload.data || {};\n"
+"        } catch (e) {\n"
+"            notifData.body = event.data.text();\n"
+"        }\n"
+"    }\n"
+"\n"
+"    // Build notification actions based on type\n"
+"    let actions = [\n"
+"        { action: 'open', title: 'Mở / Open' },\n"
+"        { action: 'close', title: 'Đóng / Close' }\n"
+"    ];\n"
+"\n"
+"    // Assignment notifications get Accept/Decline buttons\n"
+"    if (notifData.data &amp;&amp; notifData.data.type === 'assignment' "
+"&amp;&amp; notifData.data.assignment_id) {\n"
+"        actions = [\n"
+"            { action: 'accept', title: '✅ Accept' },\n"
+"            { action: 'decline', title: '❌ Decline' },\n"
+"        ];\n"
+"    }\n"
+"\n"
+"    const options = {\n"
+"        body: notifData.body,\n"
+"        icon: notifData.icon,\n"
+"        badge: notifData.badge,\n"
+"        vibrate: [200, 100, 200],\n"
+"        tag: notifData.tag,\n"
+"        data: notifData.data,\n"
+"        actions: actions,\n"
+"        requireInteraction: true,\n"
+"    };\n"
+"\n"
+"    event.waitUntil(\n"
+"        self.registration.showNotification(notifData.title, options).then(() "
+"=&gt; {\n"
+"            // Notify all open clients to refresh notification count\n"
+"            return self.clients.matchAll({ type: 'window' }).then(clientList "
+"=&gt; {\n"
+"                clientList.forEach(client =&gt; {\n"
+"                    client.postMessage({ type: 'PUSH_RECEIVED' });\n"
+"                });\n"
+"            });\n"
+"        })\n"
+"    );\n"
+"});\n"
+"\n"
+"// Notification click handler\n"
+"self.addEventListener('notificationclick', event =&gt; {\n"
+"    console.log('[SW] Notification clicked:', event.action);\n"
+"    event.notification.close();\n"
+"    \n"
+"    if (event.action === 'close') return;\n"
+"\n"
+"    const notifData = event.notification.data || {};\n"
+"    const assignmentId = notifData.assignment_id;\n"
+"\n"
+"    // Handle Accept/Decline actions for assignments\n"
+"    if (assignmentId &amp;&amp; (event.action === 'accept' || event.action "
+"=== 'decline')) {\n"
+"        event.waitUntil(\n"
+"            fetch(`/health_pwa/api/assignments/${assignmentId}/respond`, {\n"
+"                method: 'POST',\n"
+"                headers: { 'Content-Type': 'application/json' },\n"
+"                body: JSON.stringify({ action: event.action }),\n"
+"            }).then(resp =&gt; resp.json()).then(data =&gt; {\n"
+"                console.log('[SW] Assignment response:', data);\n"
+"                // Notify clients to refresh\n"
+"                return self.clients.matchAll({ type: "
+"'window' }).then(clientList =&gt; {\n"
+"                    clientList.forEach(client =&gt; {\n"
+"                        client.postMessage({ type: 'PUSH_RECEIVED' });\n"
+"                    });\n"
+"                    // If no open clients, show a confirmation notification\n"
+"                    if (clientList.length === 0) {\n"
+"                        const msg = event.action === 'accept'\n"
+"                            ? '✅ Assignment confirmed'\n"
+"                            : '❌ Assignment declined';\n"
+"                        return self.registration.showNotification('Viet Uc "
+"Care', {\n"
+"                            body: msg,\n"
+"                            icon: '/health_pwa/static/icons/icon-192.png',\n"
+"                            tag: 'assignment-response',\n"
+"                        });\n"
+"                    }\n"
+"                });\n"
+"            }).catch(err =&gt; {\n"
+"                console.error('[SW] Failed to respond to assignment:', "
+"err);\n"
+"                return self.registration.showNotification('Viet Uc Care', {\n"
+"                    body: '⚠️ Error responding to assignment. Please open the "
+"app.',\n"
+"                    icon: '/health_pwa/static/icons/icon-192.png',\n"
+"                    tag: 'assignment-response-error',\n"
+"                });\n"
+"            })\n"
+"        );\n"
+"        return;\n"
+"    }\n"
+"\n"
+"    // Default: open the app (with notifications panel if assignment)\n"
+"    // A family_message push opens the shared booking modal for that visit "
+"via\n"
+"    // the #/order/ID deep link (the app maps it to openBooking()).\n"
+"    const urlToOpen = (notifData &amp;&amp; notifData.type === "
+"'assignment')\n"
+"        ? '/health_pwa#/today?showNotifications=1'\n"
+"        : (notifData &amp;&amp; notifData.type === 'family_message' "
+"&amp;&amp; notifData.fso_id)\n"
+"            ? ('/health_pwa#/order/' + notifData.fso_id)\n"
+"            : (notifData &amp;&amp; notifData.url)\n"
+"                ? notifData.url\n"
+"                : '/health_pwa';\n"
+"\n"
+"    event.waitUntil(\n"
+"        clients.matchAll({ type: 'window', includeUncontrolled: "
+"true }).then(clientList =&gt; {\n"
+"            // Try to focus existing window\n"
+"            for (const client of clientList) {\n"
+"                if (client.url.includes('/health_pwa') &amp;&amp; 'focus' in "
+"client) {\n"
+"                    client.navigate(urlToOpen);\n"
+"                    return client.focus();\n"
+"                }\n"
+"            }\n"
+"            // Open new window if no existing window\n"
+"            if (clients.openWindow) {\n"
+"                return clients.openWindow(urlToOpen);\n"
+"            }\n"
+"        })\n"
+"    );\n"
+"});\n"
+"\n"
+"console.log('Health PWA Service Worker loaded successfully');"
+msgstr ""
+"// Health PWA Service Worker v1.0.95\n"
+"// IMPORTANT: Increment version number when deploying updates!\n"
+"\n"
+"const CACHE_VERSION = '1.0.95';\n"
+"const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;\n"
+"const OFFLINE_URL = '/health_pwa/offline';\n"
+"const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;\n"
+"\n"
+"// Listen for SKIP_WAITING message to activate new service worker "
+"immediately\n"
+"self.addEventListener('message', (event) =&gt; {\n"
+"    if (event.data &amp;&amp; event.data.type === 'SKIP_WAITING') {\n"
+"        self.skipWaiting();\n"
+"    }\n"
+"});\n"
+"\n"
+"// Files to cache for offline functionality\n"
+"const STATIC_CACHE_URLS = [\n"
+"    '/health_pwa',\n"
+"    '/health_pwa/offline',\n"
+"    `/health_pwa/static/src/css/app.css?v=${CACHE_VERSION}`,\n"
+"    `/health_pwa/static/src/css/mobile.css?v=${CACHE_VERSION}`,\n"
+"    `/health_pwa/static/src/js/utils/pwa-utils.js?v=${CACHE_VERSION}`,\n"
+"    `/health_pwa/static/src/js/app.js?v=${CACHE_VERSION}`,\n"
+"    `/health_pwa/static/src/js/router.js?v=${CACHE_VERSION}`,\n"
+"    '/health_pwa/static/icons/icon-192.png',\n"
+"    // Note: External CDN URLs removed from pre-cache - they fail with CORS "
+"errors\n"
+"    // and cause the entire SW installation to fail, preventing cache "
+"updates.\n"
+"    // These are loaded directly via &lt;script&gt; tags and cached by the "
+"browser normally.\n"
+"];\n"
+"\n"
+"// API endpoints to cache\n"
+"const API_CACHE_PATTERNS = [\n"
+"    /^\\/health_pwa\\/api\\/patients/,\n"
+"    /^\\/health_pwa\\/api\\/fso/,\n"
+"    /^\\/health_pwa\\/api\\/teams/,\n"
+"    /^\\/health_pwa\\/api\\/user/,\n"
+"];\n"
+"\n"
+"// Install event - cache static files\n"
+"self.addEventListener('install', event =&gt; {\n"
+"    console.log('Service Worker installing...');\n"
+"    event.waitUntil(\n"
+"        caches.open(CACHE_NAME)\n"
+"            .then(cache =&gt; {\n"
+"                console.log('Caching static files');\n"
+"                return cache.addAll(STATIC_CACHE_URLS);\n"
+"            })\n"
+"            .then(() =&gt; {\n"
+"                console.log('Service Worker installed successfully');\n"
+"                return self.skipWaiting();\n"
+"            })\n"
+"            .catch(error =&gt; {\n"
+"                console.error('Service Worker installation failed:', "
+"error);\n"
+"            })\n"
+"    );\n"
+"});\n"
+"\n"
+"// Activate event - clean up old caches\n"
+"self.addEventListener('activate', event =&gt; {\n"
+"    console.log('Service Worker activating...');\n"
+"    event.waitUntil(\n"
+"        caches.keys().then(cacheNames =&gt; {\n"
+"            return Promise.all(\n"
+"                cacheNames.map(cacheName =&gt; {\n"
+"                    if (cacheName !== CACHE_NAME &amp;&amp; cacheName !== "
+"API_CACHE_NAME) {\n"
+"                        console.log('Deleting old cache:', cacheName);\n"
+"                        return caches.delete(cacheName);\n"
+"                    }\n"
+"                })\n"
+"            );\n"
+"        }).then(() =&gt; {\n"
+"            console.log('Service Worker activated');\n"
+"            return self.clients.claim();\n"
+"        })\n"
+"    );\n"
+"});\n"
+"\n"
+"// Fetch event - handle network requests with caching strategy\n"
+"self.addEventListener('fetch', event =&gt; {\n"
+"    const request = event.request;\n"
+"    const url = new URL(request.url);\n"
+"    \n"
+"    // Skip non-GET requests and chrome-extension requests\n"
+"    if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {\n"
+"        return;\n"
+"    }\n"
+"    \n"
+"    // Handle PWA app requests\n"
+"    if (url.pathname.startsWith('/health_pwa')) {\n"
+"        if (url.pathname.startsWith('/health_pwa/api/') || "
+"url.pathname.startsWith('/health_pwa/sync/')) {\n"
+"            // API requests - Network First with Cache Fallback\n"
+"            event.respondWith(handleAPIRequest(request));\n"
+"        } else if (request.mode === 'navigate' || url.pathname === '/"
+"health_pwa' || url.pathname === '/health_pwa/') {\n"
+"            // Navigation requests (HTML) - Network First to always get "
+"latest version\n"
+"            event.respondWith(handleNavigationRequest(request));\n"
+"        } else {\n"
+"            // Static files (JS, CSS, images) - Cache First (versioned via "
+"query param)\n"
+"            event.respondWith(handleStaticRequest(request));\n"
+"        }\n"
+"    }\n"
+"});\n"
+"// Handle navigation (HTML page) requests with Network First strategy\n"
+"async function handleNavigationRequest(request) {\n"
+"    try {\n"
+"        const response = await fetch(request);\n"
+"        if (response.ok) {\n"
+"            // Cache the latest HTML for offline use\n"
+"            const cache = await caches.open(CACHE_NAME);\n"
+"            cache.put(request, response.clone());\n"
+"        }\n"
+"        return response;\n"
+"    } catch (error) {\n"
+"        console.log('Navigation fetch failed, using cache');\n"
+"        const cache = await caches.open(CACHE_NAME);\n"
+"        const cachedResponse = await cache.match(request);\n"
+"        if (cachedResponse) return cachedResponse;\n"
+"        // Fallback to offline page\n"
+"        const offlineResponse = await cache.match(OFFLINE_URL);\n"
+"        return offlineResponse || new Response('Offline', { status: 503 });\n"
+"    }\n"
+"}\n"
+"\n"
+"// Handle API requests with Network First strategy\n"
+"async function handleAPIRequest(request) {\n"
+"    const url = new URL(request.url);\n"
+"    \n"
+"    try {\n"
+"        // Try network first\n"
+"        const response = await fetch(request);\n"
+"        \n"
+"        // Cache successful GET responses for offline use\n"
+"        if (response.ok &amp;&amp; request.method === 'GET') {\n"
+"            const cache = await caches.open(API_CACHE_NAME);\n"
+"            cache.put(request, response.clone());\n"
+"        }\n"
+"        \n"
+"        return response;\n"
+"    } catch (error) {\n"
+"        console.log('Network failed, trying cache for:', url.pathname);\n"
+"        \n"
+"        // Network failed, try cache\n"
+"        const cache = await caches.open(API_CACHE_NAME);\n"
+"        const cachedResponse = await cache.match(request);\n"
+"        \n"
+"        if (cachedResponse) {\n"
+"            // Add offline indicator header\n"
+"            const response = cachedResponse.clone();\n"
+"            response.headers.set('X-Served-By', 'ServiceWorker-Cache');\n"
+"            return response;\n"
+"        }\n"
+"        \n"
+"        // Return offline response for API requests\n"
+"        return new Response(JSON.stringify({\n"
+"            success: false,\n"
+"            error: 'Network unavailable and no cached data',\n"
+"            offline: true,\n"
+"            timestamp: new Date().toISOString()\n"
+"        }), {\n"
+"            status: 503,\n"
+"            headers: { 'Content-Type': 'application/json' }\n"
+"        });\n"
+"    }\n"
+"}\n"
+"\n"
+"// Handle static requests with Cache First strategy\n"
+"async function handleStaticRequest(request) {\n"
+"    const cache = await caches.open(CACHE_NAME);\n"
+"    const cachedResponse = await cache.match(request);\n"
+"    \n"
+"    if (cachedResponse) {\n"
+"        return cachedResponse;\n"
+"    }\n"
+"    \n"
+"    try {\n"
+"        const response = await fetch(request);\n"
+"        if (response.ok) {\n"
+"            cache.put(request, response.clone());\n"
+"        }\n"
+"        return response;\n"
+"    } catch (error) {\n"
+"        console.log('Static request failed:', request.url);\n"
+"        \n"
+"        // Return offline page for navigation requests\n"
+"        if (request.mode === 'navigate') {\n"
+"            const offlineResponse = await cache.match(OFFLINE_URL);\n"
+"            return offlineResponse || new Response('Offline', { status: "
+"503 });\n"
 "        }\n"
 "        \n"
 "        // Return minimal response for other requests\n"
@@ -281,7 +697,8 @@ msgid ""
 "    ];\n"
 "\n"
 "    // Assignment notifications get Accept/Decline buttons\n"
-"    if (notifData.data &amp;&amp; notifData.data.type === 'assignment' &amp;&amp; notifData.data.assignment_id) {\n"
+"    if (notifData.data &amp;&amp; notifData.data.type === 'assignment' "
+"&amp;&amp; notifData.data.assignment_id) {\n"
 "        actions = [\n"
 "            { action: 'accept', title: '✅ Accept' },\n"
 "            { action: 'decline', title: '❌ Decline' },\n"
@@ -300,9 +717,11 @@ msgid ""
 "    };\n"
 "\n"
 "    event.waitUntil(\n"
-"        self.registration.showNotification(notifData.title, options).then(() =&gt; {\n"
+"        self.registration.showNotification(notifData.title, options).then(() "
+"=&gt; {\n"
 "            // Notify all open clients to refresh notification count\n"
-"            return self.clients.matchAll({ type: 'window' }).then(clientList =&gt; {\n"
+"            return self.clients.matchAll({ type: 'window' }).then(clientList "
+"=&gt; {\n"
 "                clientList.forEach(client =&gt; {\n"
 "                    client.postMessage({ type: 'PUSH_RECEIVED' });\n"
 "                });\n"
@@ -322,7 +741,8 @@ msgid ""
 "    const assignmentId = notifData.assignment_id;\n"
 "\n"
 "    // Handle Accept/Decline actions for assignments\n"
-"    if (assignmentId &amp;&amp; (event.action === 'accept' || event.action === 'decline')) {\n"
+"    if (assignmentId &amp;&amp; (event.action === 'accept' || event.action "
+"=== 'decline')) {\n"
 "        event.waitUntil(\n"
 "            fetch(`/health_pwa/api/assignments/${assignmentId}/respond`, {\n"
 "                method: 'POST',\n"
@@ -331,7 +751,8 @@ msgid ""
 "            }).then(resp =&gt; resp.json()).then(data =&gt; {\n"
 "                console.log('[SW] Assignment response:', data);\n"
 "                // Notify clients to refresh\n"
-"                return self.clients.matchAll({ type: 'window' }).then(clientList =&gt; {\n"
+"                return self.clients.matchAll({ type: "
+"'window' }).then(clientList =&gt; {\n"
 "                    clientList.forEach(client =&gt; {\n"
 "                        client.postMessage({ type: 'PUSH_RECEIVED' });\n"
 "                    });\n"
@@ -340,7 +761,8 @@ msgid ""
 "                        const msg = event.action === 'accept'\n"
 "                            ? '✅ Assignment confirmed'\n"
 "                            : '❌ Assignment declined';\n"
-"                        return self.registration.showNotification('Viet Uc', {\n"
+"                        return self.registration.showNotification('Viet Uc', "
+"{\n"
 "                            body: msg,\n"
 "                            icon: '/health_pwa/static/icons/icon-192.png',\n"
 "                            tag: 'assignment-response',\n"
@@ -348,9 +770,11 @@ msgid ""
 "                    }\n"
 "                });\n"
 "            }).catch(err =&gt; {\n"
-"                console.error('[SW] Failed to respond to assignment:', err);\n"
+"                console.error('[SW] Failed to respond to assignment:', "
+"err);\n"
 "                return self.registration.showNotification('Viet Uc', {\n"
-"                    body: '⚠️ Error responding to assignment. Please open the app.',\n"
+"                    body: '⚠️ Error responding to assignment. Please open the "
+"app.',\n"
 "                    icon: '/health_pwa/static/icons/icon-192.png',\n"
 "                    tag: 'assignment-response-error',\n"
 "                });\n"
@@ -360,17 +784,20 @@ msgid ""
 "    }\n"
 "\n"
 "    // Default: open the app (with notifications panel if assignment)\n"
-"    const urlToOpen = (notifData &amp;&amp; notifData.type === 'assignment')\n"
+"    const urlToOpen = (notifData &amp;&amp; notifData.type === "
+"'assignment')\n"
 "        ? '/health_pwa#/today?showNotifications=1'\n"
 "        : (notifData &amp;&amp; notifData.url)\n"
 "            ? notifData.url\n"
 "            : '/health_pwa';\n"
 "\n"
 "    event.waitUntil(\n"
-"        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList =&gt; {\n"
+"        clients.matchAll({ type: 'window', includeUncontrolled: "
+"true }).then(clientList =&gt; {\n"
 "            // Try to focus existing window\n"
 "            for (const client of clientList) {\n"
-"                if (client.url.includes('/health_pwa') &amp;&amp; 'focus' in client) {\n"
+"                if (client.url.includes('/health_pwa') &amp;&amp; 'focus' in "
+"client) {\n"
 "                    client.navigate(urlToOpen);\n"
 "                    return client.focus();\n"
 "                }\n"
@@ -384,12 +811,11 @@ msgid ""
 "});\n"
 "\n"
 "console.log('Health PWA Service Worker loaded successfully');"
-msgstr "// Health PWA Service Worker v1.0.95\n// IMPORTANT: Increment version number when deploying updates!\n\nconst CACHE_VERSION = '1.0.95';\nconst CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;\nconst OFFLINE_URL = '/health_pwa/offline';\nconst API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;\n\n// Listen for SKIP_WAITING message to activate new service worker immediately\nself.addEventListener('message', (event) =&gt; {\n    if (event.data &amp;&amp; event.data.type === 'SKIP_WAITING') {\n        self.skipWaiting();\n    }\n});\n\n// Files to cache for offline functionality\nconst STATIC_CACHE_URLS = [\n    '/health_pwa',\n    '/health_pwa/offline',\n    `/health_pwa/static/src/css/app.css?v=${CACHE_VERSION}`,\n    `/health_pwa/static/src/css/mobile.css?v=${CACHE_VERSION}`,\n    `/health_pwa/static/src/js/utils/pwa-utils.js?v=${CACHE_VERSION}`,\n    `/health_pwa/static/src/js/app.js?v=${CACHE_VERSION}`,\n    `/health_pwa/static/src/js/router.js?v=${CACHE_VERSION}`,\n    '/health_pwa/static/icons/icon-192.png',\n    // Note: External CDN URLs removed from pre-cache - they fail with CORS errors\n    // and cause the entire SW installation to fail, preventing cache updates.\n    // These are loaded directly via &lt;script&gt; tags and cached by the browser normally.\n];\n\n// API endpoints to cache\nconst API_CACHE_PATTERNS = [\n    /^\\/health_pwa\\/api\\/patients/,\n    /^\\/health_pwa\\/api\\/fso/,\n    /^\\/health_pwa\\/api\\/teams/,\n    /^\\/health_pwa\\/api\\/user/,\n];\n\n// Install event - cache static files\nself.addEventListener('install', event =&gt; {\n    console.log('Service Worker installing...');\n    event.waitUntil(\n        caches.open(CACHE_NAME)\n            .then(cache =&gt; {\n                console.log('Caching static files');\n                return cache.addAll(STATIC_CACHE_URLS);\n            })\n            .then(() =&gt; {\n                console.log('Service Worker installed successfully');\n                return self.skipWaiting();\n            })\n            .catch(error =&gt; {\n                console.error('Service Worker installation failed:', error);\n            })\n    );\n});\n\n// Activate event - clean up old caches\nself.addEventListener('activate', event =&gt; {\n    console.log('Service Worker activating...');\n    event.waitUntil(\n        caches.keys().then(cacheNames =&gt; {\n            return Promise.all(\n                cacheNames.map(cacheName =&gt; {\n                    if (cacheName !== CACHE_NAME &amp;&amp; cacheName !== API_CACHE_NAME) {\n                        console.log('Deleting old cache:', cacheName);\n                        return caches.delete(cacheName);\n                    }\n                })\n            );\n        }).then(() =&gt; {\n            console.log('Service Worker activated');\n            return self.clients.claim();\n        })\n    );\n});\n\n// Fetch event - handle network requests with caching strategy\nself.addEventListener('fetch', event =&gt; {\n    const request = event.request;\n    const url = new URL(request.url);\n    \n    // Skip non-GET requests and chrome-extension requests\n    if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {\n        return;\n    }\n    \n    // Handle PWA app requests\n    if (url.pathname.startsWith('/health_pwa')) {\n        if (url.pathname.startsWith('/health_pwa/api/') || url.pathname.startsWith('/health_pwa/sync/')) {\n            // API requests - Network First with Cache Fallback\n            event.respondWith(handleAPIRequest(request));\n        } else if (request.mode === 'navigate' || url.pathname === '/health_pwa' || url.pathname === '/health_pwa/') {\n            // Navigation requests (HTML) - Network First to always get latest version\n            event.respondWith(handleNavigationRequest(request));\n        } else {\n            // Static files (JS, CSS, images) - Cache First (versioned via query param)\n            event.respondWith(handleStaticRequest(request));\n        }\n    }\n});\n// Handle navigation (HTML page) requests with Network First strategy\nasync function handleNavigationRequest(request) {\n    try {\n        const response = await fetch(request);\n        if (response.ok) {\n            // Cache the latest HTML for offline use\n            const cache = await caches.open(CACHE_NAME);\n            cache.put(request, response.clone());\n        }\n        return response;\n    } catch (error) {\n        console.log('Navigation fetch failed, using cache');\n        const cache = await caches.open(CACHE_NAME);\n        const cachedResponse = await cache.match(request);\n        if (cachedResponse) return cachedResponse;\n        // Fallback to offline page\n        const offlineResponse = await cache.match(OFFLINE_URL);\n        return offlineResponse || new Response('Offline', { status: 503 });\n    }\n}\n\n// Handle API requests with Network First strategy\nasync function handleAPIRequest(request) {\n    const url = new URL(request.url);\n    \n    try {\n        // Try network first\n        const response = await fetch(request);\n        \n        // Cache successful GET responses for offline use\n        if (response.ok &amp;&amp; request.method === 'GET') {\n            const cache = await caches.open(API_CACHE_NAME);\n            cache.put(request, response.clone());\n        }\n        \n        return response;\n    } catch (error) {\n        console.log('Network failed, trying cache for:', url.pathname);\n        \n        // Network failed, try cache\n        const cache = await caches.open(API_CACHE_NAME);\n        const cachedResponse = await cache.match(request);\n        \n        if (cachedResponse) {\n            // Add offline indicator header\n            const response = cachedResponse.clone();\n            response.headers.set('X-Served-By', 'ServiceWorker-Cache');\n            return response;\n        }\n        \n        // Return offline response for API requests\n        return new Response(JSON.stringify({\n            success: false,\n            error: 'Network unavailable and no cached data',\n            offline: true,\n            timestamp: new Date().toISOString()\n        }), {\n            status: 503,\n            headers: { 'Content-Type': 'application/json' }\n        });\n    }\n}\n\n// Handle static requests with Cache First strategy\nasync function handleStaticRequest(request) {\n    const cache = await caches.open(CACHE_NAME);\n    const cachedResponse = await cache.match(request);\n    \n    if (cachedResponse) {\n        return cachedResponse;\n    }\n    \n    try {\n        const response = await fetch(request);\n        if (response.ok) {\n            cache.put(request, response.clone());\n        }\n        return response;\n    } catch (error) {\n        console.log('Static request failed:', request.url);\n        \n        // Return offline page for navigation requests\n        if (request.mode === 'navigate') {\n            const offlineResponse = await cache.match(OFFLINE_URL);\n            return offlineResponse || new Response('Offline', { status: 503 });\n        }\n        \n        // Return minimal response for other requests\n        return new Response('Offline', { status: 503 });\n    }\n}\n\n// Background sync for offline actions\nself.addEventListener('sync', event =&gt; {\n    console.log('Background sync triggered:', event.tag);\n    \n    if (event.tag === 'health-pwa-sync') {\n        event.waitUntil(performBackgroundSync());\n    }\n});\n\n// Perform background sync\nasync function performBackgroundSync() {\n    try {\n        // Get pending sync data from IndexedDB (handled by PouchDB)\n        console.log('Performing background sync...');\n        \n        // Send message to active clients to trigger sync\n        const clients = await self.clients.matchAll();\n        clients.forEach(client =&gt; {\n            client.postMessage({\n                type: 'BACKGROUND_SYNC',\n                timestamp: new Date().toISOString()\n            });\n        });\n        \n    } catch (error) {\n        console.error('Background sync failed:', error);\n    }\n}\n\n// Push notification handler\nself.addEventListener('push', event =&gt; {\n    console.log('[SW] Push notification received');\n    \n    let notifData = {\n        title: 'Viet Uc',\n        body: 'New notification',\n        icon: '/health_pwa/static/icons/icon-192.png',\n        badge: '/health_pwa/static/icons/icon-96.png',\n        tag: 'health-pwa-notification',\n        data: {},\n    };\n\n    if (event.data) {\n        try {\n            const payload = event.data.json();\n            notifData.title = payload.title || notifData.title;\n            notifData.body = payload.body || notifData.body;\n            notifData.icon = payload.icon || notifData.icon;\n            notifData.badge = payload.badge || notifData.badge;\n            notifData.tag = payload.tag || notifData.tag;\n            notifData.data = payload.data || {};\n        } catch (e) {\n            notifData.body = event.data.text();\n        }\n    }\n\n    // Build notification actions based on type\n    let actions = [\n        { action: 'open', title: 'Mở / Open' },\n        { action: 'close', title: 'Đóng / Close' }\n    ];\n\n    // Assignment notifications get Accept/Decline buttons\n    if (notifData.data &amp;&amp; notifData.data.type === 'assignment' &amp;&amp; notifData.data.assignment_id) {\n        actions = [\n            { action: 'accept', title: '✅ Accept' },\n            { action: 'decline', title: '❌ Decline' },\n        ];\n    }\n\n    const options = {\n        body: notifData.body,\n        icon: notifData.icon,\n        badge: notifData.badge,\n        vibrate: [200, 100, 200],\n        tag: notifData.tag,\n        data: notifData.data,\n        actions: actions,\n        requireInteraction: true,\n    };\n\n    event.waitUntil(\n        self.registration.showNotification(notifData.title, options).then(() =&gt; {\n            // Notify all open clients to refresh notification count\n            return self.clients.matchAll({ type: 'window' }).then(clientList =&gt; {\n                clientList.forEach(client =&gt; {\n                    client.postMessage({ type: 'PUSH_RECEIVED' });\n                });\n            });\n        })\n    );\n});\n\n// Notification click handler\nself.addEventListener('notificationclick', event =&gt; {\n    console.log('[SW] Notification clicked:', event.action);\n    event.notification.close();\n    \n    if (event.action === 'close') return;\n\n    const notifData = event.notification.data || {};\n    const assignmentId = notifData.assignment_id;\n\n    // Handle Accept/Decline actions for assignments\n    if (assignmentId &amp;&amp; (event.action === 'accept' || event.action === 'decline')) {\n        event.waitUntil(\n            fetch(`/health_pwa/api/assignments/${assignmentId}/respond`, {\n                method: 'POST',\n                headers: { 'Content-Type': 'application/json' },\n                body: JSON.stringify({ action: event.action }),\n            }).then(resp =&gt; resp.json()).then(data =&gt; {\n                console.log('[SW] Assignment response:', data);\n                // Notify clients to refresh\n                return self.clients.matchAll({ type: 'window' }).then(clientList =&gt; {\n                    clientList.forEach(client =&gt; {\n                        client.postMessage({ type: 'PUSH_RECEIVED' });\n                    });\n                    // If no open clients, show a confirmation notification\n                    if (clientList.length === 0) {\n                        const msg = event.action === 'accept'\n                            ? '✅ Assignment confirmed'\n                            : '❌ Assignment declined';\n                        return self.registration.showNotification('Viet Uc', {\n                            body: msg,\n                            icon: '/health_pwa/static/icons/icon-192.png',\n                            tag: 'assignment-response',\n                        });\n                    }\n                });\n            }).catch(err =&gt; {\n                console.error('[SW] Failed to respond to assignment:', err);\n                return self.registration.showNotification('Viet Uc', {\n                    body: '⚠️ Error responding to assignment. Please open the app.',\n                    icon: '/health_pwa/static/icons/icon-192.png',\n                    tag: 'assignment-response-error',\n                });\n            })\n        );\n        return;\n    }\n\n    // Default: open the app (with notifications panel if assignment)\n    const urlToOpen = (notifData &amp;&amp; notifData.type === 'assignment')\n        ? '/health_pwa#/today?showNotifications=1'\n        : (notifData &amp;&amp; notifData.url)\n            ? notifData.url\n            : '/health_pwa';\n\n    event.waitUntil(\n        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList =&gt; {\n            // Try to focus existing window\n            for (const client of clientList) {\n                if (client.url.includes('/health_pwa') &amp;&amp; 'focus' in client) {\n                    client.navigate(urlToOpen);\n                    return client.focus();\n                }\n            }\n            // Open new window if no existing window\n            if (clients.openWindow) {\n                return clients.openWindow(urlToOpen);\n            }\n        })\n    );\n});\n\nconsole.log('Health PWA Service Worker loaded successfully');"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
-msgid "1.0.95"
-msgstr "1.0.95"
+msgid "1.19.0"
+msgstr ""
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
@@ -419,11 +845,21 @@ msgid "Access denied"
 msgstr "Từ chối truy cập"
 
 #. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__action_type
+msgid "Action Type"
+msgstr "Loại hành động"
+
+#. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__active
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__active
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__active
 msgid "Active"
 msgstr "Kích hoạt"
+
+#. module: health_pwa
+#: model:ir.model.fields.selection,name:health_pwa.selection__health_pwa_action_receipt__state__applied
+msgid "Applied"
+msgstr "Đã áp dụng"
 
 #. module: health_pwa
 #. odoo-javascript
@@ -488,9 +924,13 @@ msgstr "Thông tin trình duyệt"
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
 msgid ""
+"Bạn không có quyền truy cập Viet Uc Care.\n"
+"                    Vui lòng liên hệ quản trị viên để được cấp quyền truy "
+"cập."
+msgstr ""
 "Bạn không có quyền truy cập Viet Uc.\n"
-"                    Vui lòng liên hệ quản trị viên để được cấp quyền truy cập."
-msgstr "Bạn không có quyền truy cập Viet Uc.\n                    Vui lòng liên hệ quản trị viên để được cấp quyền truy cập."
+"                    Vui lòng liên hệ quản trị viên để được cấp quyền truy "
+"cập."
 
 #. module: health_pwa
 #. odoo-python
@@ -535,6 +975,16 @@ msgid "Cannot complete service in draft state"
 msgstr "Không thể hoàn tất dịch vụ khi lịch hẹn còn ở trạng thái Nháp."
 
 #. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__claimed_at
+msgid "Claimed At"
+msgstr "Yêu cầu tại"
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__client_action_uuid
+msgid "Client Action UUID"
+msgstr "Hành động của khách hàng UUID"
+
+#. module: health_pwa
 #. odoo-python
 #: code:addons/health_pwa/controllers/sync.py:0
 msgid "Client reset requested - perform full sync"
@@ -564,6 +1014,20 @@ msgstr "Đã tạo ghi chú lâm sàng thành công"
 
 #. module: health_pwa
 #. odoo-javascript
+#. odoo-python
+#: code:addons/health_pwa/controllers/api.py:0
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Clinical note finalized and signed"
+msgstr "Ghi chú lâm sàng được hoàn thiện và ký"
+
+#. module: health_pwa
+#. odoo-python
+#: code:addons/health_pwa/controllers/api.py:0
+msgid "Clinical note not found"
+msgstr "Không tìm thấy ghi chú lâm sàng"
+
+#. module: health_pwa
+#. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Clinical note saved successfully"
 msgstr "Đã lưu ghi chú lâm sàng thành công"
@@ -586,10 +1050,21 @@ msgid "Completed"
 msgstr "Đã hoàn thành"
 
 #. module: health_pwa
+#: model:ir.model.fields,help:health_pwa.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_pwa
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Confirmed"
 msgstr "Đã xác nhận"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Connect to the internet to finalize & sign this note."
+msgstr "Kết nối Internet để hoàn thiện và ký tên vào ghi chú này."
 
 #. module: health_pwa
 #: model:ir.model.fields,help:health_pwa.field_health_pwa_config__vapid_contact_email
@@ -601,16 +1076,26 @@ msgstr ""
 "sử dụng email này để liên hệ."
 
 #. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Could not sync offline action — refreshed"
+msgstr "Không thể đồng bộ thao tác ngoại tuyến — đã làm mới"
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__create_uid
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__create_uid
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__create_uid
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__create_uid
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__create_uid
 msgid "Created by"
 msgstr "Được tạo bởi"
 
 #. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__create_date
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__create_date
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__create_date
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__create_date
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__create_date
 msgid "Created on"
 msgstr "Ngày tạo"
 
@@ -621,17 +1106,25 @@ msgid "Day"
 msgstr "Ngày"
 
 #. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__stamp
+msgid "Deleted At"
+msgstr "Đã xóa tại"
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__display_name
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__display_name
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__display_name
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__display_name
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__display_name
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
 #. module: health_pwa
-#. odoo-javascript
-#: code:addons/health_pwa/static/src/js/app.js:0
-msgid "Draft"
-msgstr "Nháp"
+#. odoo-python
+#: code:addons/health_pwa/controllers/api.py:0
+msgid "EMR finalization is not available."
+msgstr "Quyết toán EMR không có sẵn."
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
@@ -759,8 +1252,22 @@ msgstr "Không thể gửi: "
 #. module: health_pwa
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Finalization failed"
+msgstr "Quyết toán không thành công"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid ""
+"Finalize and sign this clinical note? Once signed it becomes a permanent, "
+"locked medical record and cannot be edited."
+msgstr "Hoàn thiện và ký vào ghi chú lâm sàng này? Sau khi được ký, nó sẽ trở thành hồ sơ y tế bị khóa vĩnh viễn và không thể chỉnh sửa."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Health Mobile"
-msgstr "Health Mobile"
+msgstr "Y tế di động"
 
 #. module: health_pwa
 #: model:ir.model,name:health_pwa.model_health_pwa_config
@@ -773,9 +1280,18 @@ msgid "Health PWA Debug Information"
 msgstr "Thông tin gỡ lỗi Health PWA"
 
 #. module: health_pwa
+#: model:ir.model,name:health_pwa.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__id
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__id
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__id
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__id
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__id
 msgid "ID"
 msgstr "ID"
 
@@ -844,16 +1360,20 @@ msgid "Không có kết nối"
 msgstr "Không có kết nối"
 
 #. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__write_uid
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__write_uid
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__write_uid
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__write_uid
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__write_uid
 msgid "Last Updated by"
 msgstr "Cập nhật lần cuối bởi"
 
 #. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__write_date
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__write_date
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__write_date
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__write_date
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__write_date
 msgid "Last Updated on"
 msgstr "Ngày cập nhật gần nhất"
 
@@ -874,6 +1394,14 @@ msgstr "Không tìm thấy dòng"
 #: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Location not available"
 msgstr "Không có vị trí"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid ""
+"Log out of Viet Uc? Sync your data first — any unsynced changes will be "
+"lost, and offline data on this device will be cleared."
+msgstr "Đăng xuất khỏi Việt Úc? Trước tiên, hãy đồng bộ hóa dữ liệu của bạn — mọi thay đổi chưa được đồng bộ hóa sẽ bị mất và dữ liệu ngoại tuyến trên thiết bị này sẽ bị xóa."
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__message
@@ -903,6 +1431,11 @@ msgstr "Thiếu mã bệnh nhân"
 #: code:addons/health_pwa/controllers/api.py:0
 msgid "Missing required fields: endpoint, keys.p256dh, keys.auth"
 msgstr "Thiếu các trường bắt buộc: endpoint, keys.p256dh, keys.auth"
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__res_model
+msgid "Model"
+msgstr ""
 
 #. module: health_pwa
 #. odoo-javascript
@@ -1020,6 +1553,12 @@ msgid "Old Date/Time"
 msgstr "Ngày/giờ cũ"
 
 #. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "One-tap completion failed"
+msgstr "Hoàn thành một lần nhấn không thành công"
+
+#. module: health_pwa
 #. odoo-python
 #: code:addons/health_pwa/controllers/api.py:0
 #: code:addons/health_pwa/controllers/sync.py:0
@@ -1038,6 +1577,11 @@ msgid "P256DH Key"
 msgstr "Khóa P256DH"
 
 #. module: health_pwa
+#: model:ir.model,name:health_pwa.model_health_pwa_action_receipt
+msgid "PWA Offline Action Receipt"
+msgstr "PWA Biên nhận hành động ngoại tuyến"
+
+#. module: health_pwa
 #: model:ir.model,name:health_pwa.model_health_pwa_push_subscription
 msgid "PWA Push Notification Subscription"
 msgstr "Đăng ký thông báo đẩy PWA"
@@ -1046,6 +1590,11 @@ msgstr "Đăng ký thông báo đẩy PWA"
 #: model:ir.model,name:health_pwa.model_health_pwa_staff_notification
 msgid "PWA Staff Notification"
 msgstr "Thông báo nhân viên PWA"
+
+#. module: health_pwa
+#: model:ir.model,name:health_pwa.model_health_pwa_sync_tombstone
+msgid "PWA Sync Deletion Tombstone"
+msgstr "PWA Xóa đồng bộ bia mộ"
 
 #. module: health_pwa
 #. odoo-javascript
@@ -1093,9 +1642,10 @@ msgstr "Vui lòng thêm ít nhất một dịch vụ"
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
 msgid ""
-"Please add verification notes explaining the changes made to Qty or "
-"Discount."
-msgstr "Vui lòng thêm ghi chú xác minh để giải thích các thay đổi về số lượng hoặc chiết khấu."
+"Please add verification notes explaining the changes made to Qty or Discount."
+msgstr ""
+"Vui lòng thêm ghi chú xác minh để giải thích các thay đổi về số lượng hoặc "
+"chiết khấu."
 
 #. module: health_pwa
 #. odoo-javascript
@@ -1175,11 +1725,11 @@ msgstr "Hồ sơ"
 #. module: health_pwa
 #: model:ir.model.fields,help:health_pwa.field_health_pwa_config__vapid_public_key
 msgid ""
-"Public key for Web Push VAPID authentication. Generate with: vapid "
-"--applicationServerKey"
+"Public key for Web Push VAPID authentication. Generate with: vapid --"
+"applicationServerKey"
 msgstr ""
-"Khóa công khai dùng để xác thực Web Push VAPID. Tạo bằng lệnh: vapid "
-"--applicationServerKey"
+"Khóa công khai dùng để xác thực Web Push VAPID. Tạo bằng lệnh: vapid --"
+"applicationServerKey"
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__endpoint
@@ -1203,10 +1753,41 @@ msgid "Read"
 msgstr "Đã đọc"
 
 #. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_sync_tombstone__res_id
+msgid "Record ID"
+msgstr ""
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__reject_reason
+msgid "Reject Reason"
+msgstr "Lý do từ chối"
+
+#. module: health_pwa
+#: model:ir.model.fields.selection,name:health_pwa.selection__health_pwa_action_receipt__state__rejected
+msgid "Rejected"
+msgstr ""
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__result_json
+msgid "Result Payload"
+msgstr "Tải trọng kết quả"
+
+#. module: health_pwa
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Running Late"
 msgstr "Trễ lịch"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Saved offline — will sync when online"
+msgstr "Đã lưu ngoại tuyến — sẽ đồng bộ khi có mạng"
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__fso_id
+msgid "Service Order"
+msgstr ""
 
 #. module: health_pwa
 #. odoo-python
@@ -1214,7 +1795,9 @@ msgstr "Trễ lịch"
 msgid ""
 "Service cannot be started because the booking is still in Draft status. "
 "Please confirm or assign the booking before starting service."
-msgstr "Không thể bắt đầu dịch vụ vì lịch hẹn vẫn ở trạng thái Nháp. Vui lòng xác nhận hoặc phân công lịch hẹn trước khi bắt đầu dịch vụ."
+msgstr ""
+"Không thể bắt đầu dịch vụ vì lịch hẹn vẫn ở trạng thái Nháp. Vui lòng xác "
+"nhận hoặc phân công lịch hẹn trước khi bắt đầu dịch vụ."
 
 #. module: health_pwa
 #. odoo-python
@@ -1222,7 +1805,15 @@ msgstr "Không thể bắt đầu dịch vụ vì lịch hẹn vẫn ở trạng
 msgid ""
 "Service cannot be started in the current booking status. Please check the "
 "booking before starting service."
-msgstr "Không thể bắt đầu dịch vụ ở trạng thái hiện tại. Vui lòng kiểm tra lịch hẹn trước khi bắt đầu dịch vụ."
+msgstr ""
+"Không thể bắt đầu dịch vụ ở trạng thái hiện tại. Vui lòng kiểm tra lịch hẹn "
+"trước khi bắt đầu dịch vụ."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Service completed"
+msgstr ""
 
 #. module: health_pwa
 #. odoo-python
@@ -1281,6 +1872,7 @@ msgstr "Dịch vụ đã bắt đầu thành công"
 #. module: health_pwa
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__staff_id
 msgid "Staff"
 msgstr "Nhân viên"
 
@@ -1288,6 +1880,11 @@ msgstr "Nhân viên"
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__user_id
 msgid "Staff User"
 msgstr "Người dùng nhân viên"
+
+#. module: health_pwa
+#: model:ir.model.fields,field_description:health_pwa.field_health_pwa_action_receipt__state
+msgid "State"
+msgstr "Trạng thái"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
@@ -1391,16 +1988,16 @@ msgstr "VI"
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
 msgid ""
-"Viet Uc hiện không khả dụng.\n"
+"Viet Uc Care hiện không khả dụng.\n"
 "                    Vui lòng kiểm tra kết nối internet và thử lại."
 msgstr ""
-"Viet Uc hiện không khả dụng.\\n                    Vui lòng kiểm tra kết nối"
-" internet và thử lại."
+"Viet Uc hiện không khả dụng.\\n                    Vui lòng kiểm tra kết nối "
+"internet và thử lại."
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
-msgid "Viet Uc v"
-msgstr "Viet Uc v"
+msgid "Viet Uc Care v"
+msgstr "Việt Úc Care v"
 
 #. module: health_pwa
 #. odoo-python
@@ -1436,14 +2033,1460 @@ msgstr "✓ Kết xuất mẫu hoạt động"
 #. module: health_pwa
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
-msgid "Saved offline — will sync when online"
-msgstr "Đã lưu ngoại tuyến — sẽ đồng bộ khi có mạng"
+msgid "-- Select a reason --"
+msgstr "-- Chọn lý do --"
 
 #. module: health_pwa
 #. odoo-javascript
 #: code:addons/health_pwa/static/src/js/app.js:0
-msgid "Could not sync offline action — refreshed"
-msgstr "Không thể đồng bộ thao tác ngoại tuyến — đã làm mới"
+msgid "Add"
+msgstr "Thêm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Add New Clinical Note"
+msgstr "Thêm ghi chú lâm sàng mới"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Add from Catalog"
+msgstr "Thêm từ danh mục"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Additional details about the cancellation..."
+msgstr "Thông tin bổ sung về việc hủy..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Address"
+msgstr "Địa chỉ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Age"
+msgstr "Tuổi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Appointment Date & Time"
+msgstr "Ngày và giờ hẹn"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Assign different nurse"
+msgstr "Phân công y tá khác"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Assigned Healthcare Staff"
+msgstr "Nhân viên y tế được phân công"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Back to Patients"
+msgstr "Quay lại danh sách bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Basic Information"
+msgstr "Thông tin cơ bản"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Blood Group"
+msgstr "Nhóm máu"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Booking credit:"
+msgstr "Tín dụng đặt lịch:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Booking will be created in CONFIRMED state (unassigned)"
+msgstr "Lịch hẹn sẽ được tạo ở trạng thái Đã xác nhận (chưa phân công)"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Call Now"
+msgstr "Gọi ngay"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Call Referring Doctor"
+msgstr "Gọi bác sĩ giới thiệu"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Call patient"
+msgstr "Gọi bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Cancellation Notes"
+msgstr "Ghi chú hủy"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Cancellation Reason"
+msgstr "Lý do hủy"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Cancellation details will be logged for record-keeping."
+msgstr "Chi tiết hủy sẽ được ghi lại để lưu hồ sơ."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Cancelling..."
+msgstr "Đang hủy..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Category of Service:"
+msgstr "Loại dịch vụ:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Check my schedule"
+msgstr "Kiểm tra lịch của tôi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Check server data availability"
+msgstr "Kiểm tra dữ liệu có sẵn trên máy chủ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Client does not need or want a next visit"
+msgstr "Khách hàng không cần hoặc không muốn lượt thăm tiếp theo"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Clinical Note"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Code:"
+msgstr "Mã:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Complete Service"
+msgstr "Hoàn tất dịch vụ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Complete this visit in one tap"
+msgstr "Hoàn tất lượt thăm khám này trong một chạm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Completing..."
+msgstr "Đang hoàn tất..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Confirm Cancellation"
+msgstr "Xác nhận hủy"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Confirm and Save"
+msgstr "Xác nhận và lưu"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Contact Clinic"
+msgstr "Liên hệ phòng khám"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Copy Number"
+msgstr "Sao chép số"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Date"
+msgstr "Ngày"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Date of Birth"
+msgstr "Ngày sinh"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Debug Info"
+msgstr "Thông tin gỡ lỗi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Diagnosis:"
+msgstr "Chẩn đoán:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Dismiss"
+msgstr "Bỏ qua"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Email"
+msgstr "Email"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Emergency"
+msgstr "Khẩn cấp"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Emergency Contact"
+msgstr "Liên hệ khẩn cấp"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Error Loading Patient"
+msgstr "Lỗi khi tải bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Error:"
+msgstr "Lỗi:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Explain why there is no future visit..."
+msgstr "Giải thích vì sao không có lượt thăm tiếp theo..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Failed to load orders:"
+msgstr "Không thể tải đơn:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Failed to load past bookings:"
+msgstr "Không thể tải lịch hẹn trước đây:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Failed to load patients"
+msgstr "Không thể tải bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Finalize & Sign"
+msgstr "Hoàn tất & Ký"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Force Full Sync"
+msgstr "Buộc đồng bộ đầy đủ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Force full sync of all data"
+msgstr "Buộc đồng bộ toàn bộ dữ liệu"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Fri"
+msgstr "T6"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Full Name"
+msgstr "Họ và tên"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Gender"
+msgstr "Giới tính"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Go Back"
+msgstr "Quay lại"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Go to Today"
+msgstr "Đi đến hôm nay"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "IV Bags:"
+msgstr "Túi dịch truyền:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "IV Fluid Bags"
+msgstr "Túi dịch truyền"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Images"
+msgstr "Hình ảnh"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Injections"
+msgstr "Tiêm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Injections:"
+msgstr "Tiêm:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Jump to today"
+msgstr "Đi đến hôm nay"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Known Allergies"
+msgstr "Dị ứng đã biết"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Last Visit"
+msgstr "Lần thăm khám gần nhất"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading clinic information..."
+msgstr "Đang tải thông tin phòng khám..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading field service orders..."
+msgstr "Đang tải đơn dịch vụ hiện trường..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading past bookings..."
+msgstr "Đang tải lịch hẹn trước đây..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading patient details..."
+msgstr "Đang tải chi tiết bệnh nhân..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading patients..."
+msgstr "Đang tải bệnh nhân..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading products..."
+msgstr "Đang tải sản phẩm..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Log Out"
+msgstr "Đăng xuất"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Logging out…"
+msgstr "Đang đăng xuất…"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Manage patient records"
+msgstr "Quản lý hồ sơ bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Medical History"
+msgstr "Tiền sử bệnh"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Medical Information"
+msgstr "Thông tin y tế"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Medications"
+msgstr "Thuốc"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Medications Prescribed"
+msgstr "Thuốc đã kê"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Medications:"
+msgstr "Thuốc:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Mobile"
+msgstr "Di động"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Mon"
+msgstr "T2"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Need to Follow up"
+msgstr "Cần theo dõi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "New Clinical Note"
+msgstr "Ghi chú lâm sàng mới"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Next"
+msgstr "Tiếp"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Next Appointment Details"
+msgstr "Chi tiết lịch hẹn tiếp theo"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Next Booking"
+msgstr "Lịch hẹn tiếp theo"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Next Visit"
+msgstr "Lần thăm khám tiếp theo"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No Past Bookings"
+msgstr "Không có lịch hẹn trước đây"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No Patients Found"
+msgstr "Không tìm thấy bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No Upcoming Orders"
+msgstr "Không có đơn sắp tới"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No address provided"
+msgstr "Chưa có địa chỉ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No bookings scheduled for this day"
+msgstr "Không có lịch hẹn nào trong ngày này"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No bookings scheduled for this month"
+msgstr "Không có lịch hẹn nào trong tháng này"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No bookings scheduled for this week"
+msgstr "Không có lịch hẹn nào trong tuần này"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No clinical notes yet."
+msgstr "Chưa có ghi chú lâm sàng."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No email"
+msgstr "Không có email"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No field service orders have been synced yet."
+msgstr "Chưa đồng bộ đơn dịch vụ hiện trường nào."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No future visits are currently scheduled for"
+msgstr "Hiện chưa có lượt thăm nào trong tương lai cho"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No past bookings found. All orders are upcoming."
+msgstr "Không tìm thấy lịch hẹn trước đây. Tất cả đơn đều sắp tới."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No patients have been synced yet."
+msgstr "Chưa đồng bộ bệnh nhân nào."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No patients match your search criteria."
+msgstr "Không có bệnh nhân nào khớp với tiêu chí tìm kiếm."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No products found"
+msgstr "Không tìm thấy sản phẩm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No quote available"
+msgstr "Không có báo giá"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No services selected yet"
+msgstr "Chưa chọn dịch vụ nào"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No staff assigned"
+msgstr "Chưa phân công nhân viên"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No upcoming bookings found. All orders are in the past."
+msgstr "Không tìm thấy lịch hẹn sắp tới. Tất cả đơn đều đã qua."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "No upcoming bookings scheduled"
+msgstr "Chưa có lịch hẹn sắp tới"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Notes to sign"
+msgstr "Ghi chú cần ký"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Offline"
+msgstr "Ngoại tuyến"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Online"
+msgstr "Trực tuyến"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Open map"
+msgstr "Mở bản đồ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Other"
+msgstr "Khác"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Page Not Found"
+msgstr "Không tìm thấy trang"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Past"
+msgstr "Trước đây"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Past Bookings"
+msgstr "Lịch hẹn trước đây"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient Code"
+msgstr "Mã bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient Not Found"
+msgstr "Không tìm thấy bệnh nhân"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient admitted to hospital"
+msgstr "Bệnh nhân đã nhập viện"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient declined further visits"
+msgstr "Bệnh nhân từ chối các lượt thăm tiếp theo"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient died"
+msgstr "Bệnh nhân đã mất"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient improved/recovered"
+msgstr "Bệnh nhân đã cải thiện/phục hồi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient moved/relocated"
+msgstr "Bệnh nhân đã chuyển nơi ở"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Patient-initiated"
+msgstr "Do bệnh nhân yêu cầu"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Phone"
+msgstr "Điện thoại"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Phone Number"
+msgstr "Số điện thoại"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Please explain:"
+msgstr "Vui lòng giải thích:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid ""
+"Please fill in the clinical notes or take image of the notes to Complete "
+"this service"
+msgstr ""
+"Vui lòng điền ghi chú lâm sàng hoặc chụp ảnh ghi chú để hoàn tất dịch vụ này"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid ""
+"Please fill in the clinical notes or take image of the notes to view Quote"
+msgstr "Vui lòng điền ghi chú lâm sàng hoặc chụp ảnh ghi chú để xem báo giá"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Previous"
+msgstr "Trước"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Provider-initiated"
+msgstr "Do nhà cung cấp yêu cầu"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Qty:"
+msgstr "SL:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Quick Complete"
+msgstr "Hoàn tất nhanh"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Recent Orders"
+msgstr "Đơn gần đây"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Referred to another provider"
+msgstr "Đã chuyển sang nhà cung cấp khác"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Requires an internet connection."
+msgstr "Cần kết nối internet."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Retry"
+msgstr "Thử lại"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Sat"
+msgstr "T7"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Save Quote to display updated Total"
+msgstr "Lưu báo giá để hiển thị tổng tiền đã cập nhật"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Schedule Next Appointment"
+msgstr "Lên lịch hẹn tiếp theo"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Schedule Next Appointment?"
+msgstr "Lên lịch hẹn tiếp theo?"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Schedule Next Visit"
+msgstr "Lên lịch lượt thăm tiếp theo"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Schedule Visit"
+msgstr "Lên lịch thăm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Scheduled For"
+msgstr "Lên lịch cho"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Scheduled:"
+msgstr "Đã lên lịch:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Search Products"
+msgstr "Tìm kiếm sản phẩm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Search by product name or code..."
+msgstr "Tìm theo tên hoặc mã sản phẩm..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Search patients..."
+msgstr "Tìm kiếm bệnh nhân..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Select Services from Catalog"
+msgstr "Chọn dịch vụ từ danh mục"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Select a reason..."
+msgstr "Chọn lý do..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Selected Services"
+msgstr "Dịch vụ đã chọn"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Service Procedures"
+msgstr "Thủ thuật dịch vụ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Services"
+msgstr "Dịch vụ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Services to be Provided"
+msgstr "Dịch vụ sẽ cung cấp"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Signed"
+msgstr "Đã ký"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Signed by"
+msgstr "Ký bởi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Signed medical record — locked"
+msgstr "Hồ sơ bệnh án đã ký — đã khóa"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Signing…"
+msgstr "Đang ký…"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Submit"
+msgstr "Gửi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Sun"
+msgstr "CN"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Sync Data"
+msgstr "Đồng bộ dữ liệu"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Syncing"
+msgstr "Đang đồng bộ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "System/Technical"
+msgstr "Hệ thống/Kỹ thuật"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid ""
+"Tap \"Call Now\" to initiate a call to the clinic directly from your phone."
+msgstr ""
+"Nhấn \"Gọi ngay\" để gọi trực tiếp đến phòng khám từ điện thoại của bạn."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Tap the button below to add the first clinical note."
+msgstr "Nhấn nút bên dưới để thêm ghi chú lâm sàng đầu tiên."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Team management"
+msgstr "Quản lý đội nhóm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Team management interface will be implemented here."
+msgstr "Giao diện quản lý đội nhóm sẽ được triển khai tại đây."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Teams"
+msgstr "Đội nhóm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "The requested page could not be found."
+msgstr "Không tìm thấy trang được yêu cầu."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "The requested patient could not be found."
+msgstr "Không tìm thấy bệnh nhân được yêu cầu."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Thu"
+msgstr "T5"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Time"
+msgstr "Giờ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Treatment Performed"
+msgstr "Điều trị đã thực hiện"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Tue"
+msgstr "T3"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Unknown Patient"
+msgstr "Bệnh nhân không xác định"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Unknown Status"
+msgstr "Trạng thái không xác định"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Unnamed Patient"
+msgstr "Bệnh nhân chưa đặt tên"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Upcoming Bookings"
+msgstr "Lịch hẹn sắp tới"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "View Quote"
+msgstr "Xem báo giá"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "View Upcoming"
+msgstr "Xem lịch hẹn sắp tới"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "View service orders"
+msgstr "Xem đơn dịch vụ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Visit History"
+msgstr "Lịch sử thăm khám"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Vital Signs"
+msgstr "Dấu hiệu sinh tồn"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Wed"
+msgstr "T4"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Welcome back"
+msgstr "Chào mừng trở lại"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Why is there no future visit?"
+msgstr "Vì sao không có lượt thăm tiếp theo?"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Working offline"
+msgstr "Đang làm việc ngoại tuyến"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Wounds"
+msgstr "Vết thương"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Wounds:"
+msgstr "Vết thương:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Zalo call"
+msgstr "Gọi Zalo"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "at"
+msgstr "lúc"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "days ago"
+msgstr "ngày trước"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "done"
+msgstr "hoàn tất"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "item(s)"
+msgstr "mục"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "late"
+msgstr "trễ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "overdue"
+msgstr "quá hạn"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "visits"
+msgstr "lượt thăm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "years old"
+msgstr "tuổi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Add any general comments about this invoice..."
+msgstr "Thêm bất kỳ ghi chú chung nào về hóa đơn này..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Address:"
+msgstr "Địa chỉ:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Amount"
+msgstr "Số tiền"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Attach Photo"
+msgstr "Đính kèm ảnh"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Bank Transfer"
+msgstr "Chuyển khoản"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Booking Details"
+msgstr "Chi tiết đặt lịch"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Call"
+msgstr "Gọi"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Cancel/Refuse Visit"
+msgstr "Hủy/Từ chối lượt thăm"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Card"
+msgstr "Thẻ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Cash"
+msgstr "Tiền mặt"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Clinical Notes"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Clinical Observations"
+msgstr "Quan sát lâm sàng"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Complete Service - Payment Collection"
+msgstr "Hoàn tất dịch vụ - Thu tiền"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Contact Information"
+msgstr "Thông tin liên hệ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Create Invoice Now"
+msgstr "Tạo hóa đơn ngay"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Date & Time:"
+msgstr "Ngày & Giờ:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Describe treatment provided..."
+msgstr "Mô tả điều trị đã cung cấp..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Diagnosis"
+msgstr "Chẩn đoán"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Disc %"
+msgstr "CK %"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Discount Reason:"
+msgstr "Lý do chiết khấu:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Enter any additional service or payment notes..."
+msgstr "Nhập thêm ghi chú dịch vụ hoặc thanh toán..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Enter clinical notes..."
+msgstr "Nhập ghi chú lâm sàng..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Enter clinical observations..."
+msgstr "Nhập quan sát lâm sàng..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Enter diagnosis..."
+msgstr "Nhập chẩn đoán..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Field Orders"
+msgstr "Đơn công việc"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Goal of Care"
+msgstr "Mục tiêu chăm sóc"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Intake Notes"
+msgstr "Ghi chú tiếp nhận"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Invoice verified successfully!"
+msgstr "Xác minh hóa đơn thành công!"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Later"
+msgstr "Sau"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading bookings..."
+msgstr "Đang tải lịch hẹn..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading details..."
+msgstr "Đang tải chi tiết..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Loading healthcare data..."
+msgstr "Đang tải dữ liệu y tế..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Month"
+msgstr "Tháng"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Not set"
+msgstr "Chưa thiết lập"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Now"
+msgstr "Ngay"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Package:"
+msgstr "Gói:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Pay Later"
+msgstr "Trả sau"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Pay Now"
+msgstr "Trả ngay"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Payment"
+msgstr "Thanh toán"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Payment Method"
+msgstr "Phương thức thanh toán"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Payment Timing"
+msgstr "Thời điểm thanh toán"
 
 #. module: health_pwa
 #. odoo-javascript
@@ -1451,739 +3494,140 @@ msgstr "Không thể đồng bộ thao tác ngoại tuyến — đã làm mới"
 msgid "Pending sync"
 msgstr "Chờ đồng bộ"
 
-# ---------------------------------------------------------------
-# Phase GB: merged from i18n/viVNpo.po. That filename is not a language code, so
-# get_po_paths() never yielded it and Odoo never read a line of it —
-# 146 translations, 122 of them strings the PWA still emits, dead since
-# 2025-10-29 (ledger §5.84).
-# ---------------------------------------------------------------
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
-msgid "Access Denied"
-msgstr "Từ chối truy cập"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
-msgid "Back to Main System"
-msgstr "Quay lại hệ thống chính"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Click install"
-msgstr "Nhấp vào cài đặt"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Click the install icon and confirm to install Health Mobile"
-msgstr "Nhấp vào biểu tượng cài đặt và xác nhận để cài đặt Health Di động"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Confirm installation"
-msgstr "Xác nhận cài đặt"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Health Mobile will be available as a desktop application"
-msgstr "Health Di động sẽ khả dụng như một ứng dụng máy tính để bàn"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
-msgid "Install"
-msgstr "Cài đặt"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Install our app for the best mobile experience"
-msgstr "Cài đặt ứng dụng để có trải nghiệm di động tốt nhất"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
-msgid "Later"
-msgstr "Để sau"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Launch the app"
-msgstr "Khởi chạy ứng dụng"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
-msgid "Loading healthcare data..."
-msgstr "Đang tải dữ liệu y tế..."
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Look for the install icon"
-msgstr "Tìm biểu tượng cài đặt"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Look for the share icon at the bottom of your Safari browser"
-msgstr "Tìm biểu tượng chia sẻ ở cuối trình duyệt Safari"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Look for the three dots in the top-right corner of your Chrome browser"
-msgstr "Tìm nút ba chấm ở góc trên bên phải của trình duyệt Chrome"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Open Health Mobile"
-msgstr "Mở Health Di động"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Scroll down in the share menu and tap \\\"Add to Home Screen\\\""
-msgstr "Cuộn xuống trong trình đơn chia sẻ và chạm \\\"Thêm vào Màn hình chính\\\""
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Select \\\"Add to Home Screen\\\""
-msgstr "Chọn \\\"Thêm vào Màn hình chính\\\""
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Select \\\"Add to Home screen\\\""
-msgstr "Chọn \\\"Thêm vào màn hình chính\\\""
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Tap \\\"Add\\\" to install Health Mobile on your home screen"
-msgstr "Chạm \\\"Thêm\\\" để cài Health Di động lên màn hình chính"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Tap \\\"Install\\\" to add Health Mobile to your home screen"
-msgstr "Chạm \\\"Cài đặt\\\" để thêm Health Di động vào màn hình chính"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Tap the Share button"
-msgstr "Chạm nút Chia sẻ"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "Tap the menu button"
-msgstr "Chạm nút trình đơn"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
-msgid "Try Again"
-msgstr "Thử lại"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
-msgid "You should see an install icon in your browser's address bar"
-msgstr "Bạn sẽ thấy biểu tượng cài đặt trên thanh địa chỉ của trình duyệt"
-
-#. module: health_pwa
-#: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
-msgid "You're Offline"
-msgstr "Bạn đang ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/controllers/pwa.py:20
-msgid "Health PWA Controller is working!"
-msgstr "Bộ điều khiển Health PWA đang hoạt động!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/controllers/pwa.py:83
-msgid "Healthcare Mobile Application for Field Workers"
-msgstr "Ứng dụng di động chăm sóc sức khỏe cho nhân viên hiện trường"
-
-#. module: health_pwa
-#: code:addons/health_pwa/controllers/pwa.py:87
-#: code:addons/health_pwa/static/manifest.json:3
-msgid "Health Mobile - Progressive Web Application"
-msgstr "Health Di động - Ứng dụng web lũy tiến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/controllers/pwa.py:96
-#: code:addons/health_pwa/static/manifest.json:32
-msgid "Field Orders"
-msgstr "Lệnh dịch vụ hiện trường"
-
-#. module: health_pwa
-#: code:addons/health_pwa/controllers/pwa.py:90
-#: code:addons/health_pwa/static/manifest.json:25
-msgid "View patient list"
-msgstr "Xem danh sách bệnh nhân"
-
-#. module: health_pwa
-#: code:addons/health_pwa/controllers/pwa.py:97
-#: code:addons/health_pwa/static/manifest.json:33
-msgid "Manage field service orders"
-msgstr "Quản lý lệnh dịch vụ hiện trường"
-
-#. module: health_pwa
-#: code:addons/health_pwa/controllers/api.py:573
-msgid "Cannot start service in {order.state} state"
-msgstr "Không thể bắt đầu dịch vụ khi trạng thái là {thứ tự.trạng thái}"
-
-#. module: health_pwa
-#: code:addons/health_pwa/controllers/api.py:785
-msgid "Clinical notes saved successfully"
-msgstr "Đã lưu ghi chú lâm sàng thành công"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:176
-msgid "Using cached user data (offline)"
-msgstr "Đang dùng dữ liệu người dùng đã lưu (ngoại tuyến)"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:186
-msgid "Syncing data..."
-msgstr "Đang đồng bộ dữ liệu..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:195
-msgid "Data synced successfully"
-msgstr "Đồng bộ dữ liệu thành công"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:202
-msgid "Sync failed: "
-msgstr "Đồng bộ thất bại: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:455
-msgid "Cannot start service while offline"
-msgstr "Không thể bắt đầu dịch vụ khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:459
-msgid "Service started successfully!"
-msgstr "Bắt đầu dịch vụ thành công!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:464
-msgid "Failed to start service: "
-msgstr "Không thể bắt đầu dịch vụ: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4613
-msgid "Cannot complete service while offline"
-msgstr "Không thể hoàn tất dịch vụ khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4616
-msgid "Please select a Payment Method before collecting payment."
-msgstr "Vui lòng chọn phương thức thanh toán trước khi thu tiền."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4687
-msgid "Cannot save clinical notes while offline"
-msgstr "Không thể lưu ghi chú lâm sàng khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4706
-msgid "Clinical notes saved successfully!"
-msgstr "Đã lưu ghi chú lâm sàng thành công!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4752
-msgid "Failed to save clinical notes: "
-msgstr "Không thể lưu ghi chú lâm sàng: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4756
-msgid "Error saving clinical notes: "
-msgstr "Lỗi khi lưu ghi chú lâm sàng: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4823
-msgid "Cannot check next visit while offline"
-msgstr "Không thể kiểm tra lần hẹn tiếp theo khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4861
-msgid "Failed to check next visit status"
-msgstr "Không thể kiểm tra trạng thái lần hẹn tiếp theo"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4865
-msgid "Error checking next visit: "
-msgstr "Lỗi khi kiểm tra lần hẹn tiếp theo: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4876
-msgid "Please enter explanation for \\\"Other\\\" reason"
-msgstr "Vui lòng nhập giải thích cho lý do \\\"Khác\\\""
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4881
-msgid "Cannot submit while offline"
-msgstr "Không thể gửi khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4939
-msgid "Please assign a nurse"
-msgstr "Vui lòng phân công y tá"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4944
-msgid "Cannot schedule while offline"
-msgstr "Không thể lên lịch khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:4998
-msgid "Cannot upload images while offline"
-msgstr "Không thể tải ảnh lên khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5015
-msgid "Image uploaded successfully!"
-msgstr "Tải ảnh lên thành công!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5017
-msgid "Failed to upload image: "
-msgstr "Không thể tải ảnh lên: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5021
-msgid "Error uploading image: "
-msgstr "Lỗi khi tải ảnh lên: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5039
-msgid "Cannot load invoice while offline"
-msgstr "Không thể tải hóa đơn khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5069
-msgid "Error loading quote: "
-msgstr "Lỗi khi tải báo giá: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5079
-msgid "Cannot save quote while offline"
-msgstr "Không thể lưu báo giá khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5103
-msgid "Invoice verified and saved successfully!"
-msgstr "Đã xác nhận và lưu hóa đơn thành công!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5127
-msgid "Cannot load catalog while offline"
-msgstr "Không thể tải danh mục khi ngoại tuyến"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5165
-msgid "Product added successfully!"
-msgstr "Thêm sản phẩm thành công!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5167
-msgid "Failed to add product: "
-msgstr "Không thể thêm sản phẩm: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5171
-msgid "Error adding product: "
-msgstr "Lỗi khi thêm sản phẩm: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5197
-msgid "Line updated successfully!"
-msgstr "Cập nhật dòng thành công!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5199
-msgid "Failed to update line: "
-msgstr "Không thể cập nhật dòng: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5203
-msgid "Error updating line: "
-msgstr "Lỗi khi cập nhật dòng: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5228
-msgid "Line removed successfully!"
-msgstr "Xóa dòng thành công!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5230
-msgid "Failed to remove line: "
-msgstr "Không thể xóa dòng: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5234
-msgid "Error removing line: "
-msgstr "Lỗi khi xóa dòng: "
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5240
-msgid "No address available"
-msgstr "Không có địa chỉ"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:5248
-msgid "Not set"
-msgstr "Chưa thiết lập"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:38
-msgid "Camera not supported on this device"
-msgstr "Thiết bị này không hỗ trợ camera"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:57
-msgid "Camera permission denied"
-msgstr "Quyền truy cập camera bị từ chối"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:118
-msgid "No file selected"
-msgstr "Chưa chọn tệp"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:134
-msgid "Geolocation not supported"
-msgstr "Thiết bị không hỗ trợ định vị"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:169
-msgid "Failed to get location"
-msgstr "Không thể lấy vị trí"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:172
-msgid "Location permission denied"
-msgstr "Quyền truy cập vị trí bị từ chối"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:174
-msgid "Location unavailable"
-msgstr "Không thể xác định vị trí"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/utils/pwa-utils.js:176
-msgid "Location request timeout"
-msgstr "Yêu cầu vị trí quá thời gian"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:6108
-msgid "App update available. Refresh to update."
-msgstr "Có bản cập nhật ứng dụng. Hãy tải lại để cập nhật."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:6117
-msgid "New version available! Please refresh the app."
-msgstr "Đã có phiên bản mới! Vui lòng tải lại ứng dụng."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2496
-msgid "Week"
-msgstr "Tuần"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2503
-msgid "Month"
-msgstr "Tháng"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2506
-msgid "Select date"
-msgstr "Chọn ngày"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2520
-msgid "Loading bookings..."
-msgstr "Đang tải lịch hẹn..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2667
-msgid "Loading details..."
-msgstr "Đang tải chi tiết..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2671
-msgid "Close"
-msgstr "Đóng"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2677
-msgid "Booking Details"
-msgstr "Chi tiết đặt lịch"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2693
-msgid "Scheduled Visit"
-msgstr "Lịch thăm khám"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2695
-msgid "Date & Time:"
-msgstr "Ngày & Giờ:"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2699
-msgid "Services:"
-msgstr "Dịch vụ:"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2703
-msgid "Package:"
-msgstr "Gói:"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2710
-msgid "Contact Information"
-msgstr "Thông tin liên hệ"
-
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2714
-msgid "Address:"
-msgstr "Địa chỉ:"
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Price"
+msgstr "Đơn giá"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2721
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Primary Contact:"
 msgstr "Liên hệ chính:"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2724
-msgid "Call"
-msgstr "Gọi"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2734
-msgid "View Intake Summary"
-msgstr "Xem tóm tắt tiếp nhận"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2743
-msgid "Cancel/Refuse Visit"
-msgstr "Hủy/Từ chối lượt thăm"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2744
-msgid "Start Service"
-msgstr "Bắt đầu dịch vụ"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2751
-msgid "Clinical Notes"
-msgstr "Ghi chú lâm sàng"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2826
-msgid "Diagnosis"
-msgstr "Chẩn đoán"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2827
-msgid "Type here..."
-msgstr "Nhập tại đây..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2833
-msgid "Referring Doctor"
-msgstr "Bác sĩ giới thiệu"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2846
-msgid "Goal of Care"
-msgstr "Mục tiêu chăm sóc"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2852
-msgid "Required Equipment"
-msgstr "Thiết bị yêu cầu"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2858
-msgid "Intake Notes"
-msgstr "Ghi chú tiếp nhận"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3065
-msgid "Verification Notes"
-msgstr "Ghi chú xác minh"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3072
-msgid "Required: Explain the changes made to Qty or Discount..."
-msgstr "Bắt buộc: Giải thích các thay đổi về Số lượng hoặc Chiết khấu..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3072
-msgid "Add any general comments about this invoice..."
-msgstr "Thêm bất kỳ ghi chú chung nào về hóa đơn này..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3078
-msgid "Invoice verified successfully!"
-msgstr "Xác minh hóa đơn thành công!"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3084
-msgid "Cancel"
-msgstr "Hủy"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3087
-msgid "Save Quote"
-msgstr "Lưu báo giá"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3091
-msgid "Payment"
-msgstr "Thanh toán"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3103
-msgid "Complete Service - Payment Collection"
-msgstr "Hoàn tất dịch vụ - Thu tiền"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3113
-msgid "Payment Timing"
-msgstr "Thời điểm thanh toán"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3120
-msgid "Pay Now"
-msgstr "Trả ngay"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3127
-msgid "Pay Later"
-msgstr "Trả sau"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3134
-msgid "Payment Method"
-msgstr "Phương thức thanh toán"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3141
-msgid "Cash"
-msgstr "Tiền mặt"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3148
-msgid "Card"
-msgstr "Thẻ"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3155
-msgid "Bank Transfer"
-msgstr "Chuyển khoản"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3162
-msgid "Service Notes"
-msgstr "Ghi chú dịch vụ"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3167
-msgid "Enter any additional service or payment notes..."
-msgstr "Nhập thêm ghi chú dịch vụ hoặc thanh toán..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3179
-msgid "Create Invoice Now"
-msgstr "Tạo hóa đơn ngay"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3187
-msgid "Amount"
-msgstr "Số tiền"
-
-#. module: health_pwa
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3192
-msgid "Now"
-msgstr "Ngay"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3199
-msgid "Complete Payment"
-msgstr "Hoàn tất thanh toán"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2826
-msgid "Clinical Observations"
-msgstr "Quan sát lâm sàng"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2886
-msgid "Enter clinical observations..."
-msgstr "Nhập quan sát lâm sàng..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2896
-msgid "Enter diagnosis..."
-msgstr "Nhập chẩn đoán..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2906
-msgid "Describe treatment provided..."
-msgstr "Mô tả điều trị đã thực hiện..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2918
-msgid "Enter clinical notes..."
-msgstr "Nhập ghi chú lâm sàng..."
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2925
-msgid "Attach Photo"
-msgstr "Đính kèm ảnh"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2937
-msgid "Take Photo"
-msgstr "Chụp ảnh"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:2965
-msgid "Verify Invoice"
-msgstr "Xác minh hóa đơn"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3002
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Qty"
 msgstr "SL"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3011
-msgid "Disc %"
-msgstr "CK %"
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Referring Doctor"
+msgstr "Bác sĩ giới thiệu"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3022
-msgid "Price"
-msgstr "Giá"
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Required Equipment"
+msgstr "Thiết bị yêu cầu"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3026
-msgid "Total"
-msgstr "Tổng"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3033
-msgid "Discount Reason:"
-msgstr "Lý do giảm giá:"
-
-#. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3038
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Required: Explain discount"
-msgstr "Bắt buộc: Giải thích chiết khấu"
+msgstr "Bắt buộc: Giải thích lý do chiết khấu"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3048
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Required: Explain the changes made to Qty or Discount..."
+msgstr "Bắt buộc: Giải thích các thay đổi về Số lượng hoặc Chiết khấu..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Save Quote"
+msgstr "Lưu báo giá"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Scheduled Visit"
+msgstr "Lịch thăm khám"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Select date"
+msgstr "Chọn ngày"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Service Notes"
+msgstr "Ghi chú dịch vụ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Services:"
+msgstr "Dịch vụ:"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Start Service"
+msgstr "Bắt đầu dịch vụ"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Subtotal"
 msgstr "Tạm tính"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js:3052
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Take Photo"
+msgstr "Chụp ảnh"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Tax"
 msgstr "Thuế"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Total"
+msgstr "Tổng cộng"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Type here..."
+msgstr "Nhập tại đây..."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Verification Notes"
+msgstr "Ghi chú xác minh"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "View Intake Summary"
+msgstr "Xem tóm tắt tiếp nhận"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Week"
+msgstr "Tuần"
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Debug info logged to console. Check browser console."
+msgstr "Thông tin gỡ lỗi đã được ghi vào bảng điều khiển trình duyệt."
+
+#. module: health_pwa
+#. odoo-javascript
+#: code:addons/health_pwa/static/src/js/app.js:0
+msgid "Failed to get debug info: "
+msgstr "Không thể lấy thông tin gỡ lỗi: "

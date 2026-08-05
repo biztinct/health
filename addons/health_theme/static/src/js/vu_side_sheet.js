@@ -11,6 +11,7 @@
 // =============================================================================
 
 import { Component, useState, useRef, useExternalListener } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
 
 export class VuSideSheet extends Component {
@@ -23,7 +24,7 @@ export class VuSideSheet extends Component {
         slots: { type: Object, optional: true },
     };
     static defaultProps = {
-        title: "Details",
+        title: _t("Details"),
         subtitle: "",
         isOpen: false,
     };

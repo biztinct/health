@@ -10,7 +10,7 @@ import sys
 
 
 PLACEHOLDER_RE = re.compile(
-    r"%(?:\([^)]+\))?[#0 +\-]?\d*(?:\.\d+)?[a-zA-Z](?!\w)|\{\w+\}"
+    r"%(?:\([^)]+\))?[#0+\-]?\d*(?:\.\d+)?[diouxXeEfFgGcrsa]|\{\w+\}"
 )
 TAG_RE = re.compile(r"</?[a-zA-Z][^>]*>")
 LOCALIZABLE_ATTRIBUTE_RE = re.compile(r'\s(?:title|alt|placeholder)="[^"]*"')
@@ -75,6 +75,13 @@ def markup_signature(text):
     return tags
 
 
+def placeholder_signature(text):
+    values = PLACEHOLDER_RE.findall(text)
+    named = {value for value in values if value.startswith(("%(", "{"))}
+    positional = sorted(value for value in values if value not in named)
+    return named, positional
+
+
 def audit(path, show_same_source=False):
     lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
     entries = [entry for entry in parse_entries(lines) if entry["msgid"]]
@@ -88,8 +95,9 @@ def audit(path, show_same_source=False):
     placeholder_mismatches = [
         entry
         for entry in entries
-        if sorted(PLACEHOLDER_RE.findall(entry["msgid"]))
-        != sorted(PLACEHOLDER_RE.findall(entry["msgstr"]))
+        if entry["msgstr"]
+        and placeholder_signature(entry["msgid"])
+        != placeholder_signature(entry["msgstr"])
     ]
     markup_mismatches = [
         entry

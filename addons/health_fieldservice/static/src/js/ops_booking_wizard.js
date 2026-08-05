@@ -6,33 +6,33 @@ import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 
 const SERVICE_OPTIONS = [
-    { key: 'home_visit', name: 'Home Visit', desc: 'Staff travels to client\'s location', price: '2,000,000', icon: 'fa-house-medical', iconClass: 'hv', location: 'home' },
-    { key: 'clinic_visit', name: 'Clinic Visit', desc: 'Client visits our facility', price: '1,200,000', icon: 'fa-hospital', iconClass: 'cv', location: 'clinic' },
-    { key: 'consultation', name: 'Consultation', desc: 'Video or phone consultation', price: '500,000', icon: 'fa-video', iconClass: 'consult', location: 'online' },
-    { key: 'follow_up', name: 'Follow-up', desc: 'Post-visit check-in', price: '800,000', icon: 'fa-user-check', iconClass: 'fu', location: 'home' },
-    { key: 'emergency', name: 'Emergency', desc: 'Urgent medical response', price: '3,500,000', icon: 'fa-truck-medical', iconClass: 'em', location: 'home' },
-    { key: 'telemedicine', name: 'Telemedicine', desc: 'Online/remote consultation', price: '400,000', icon: 'fa-laptop-medical', iconClass: 'tm', location: 'online' },
-    { key: 'preventive', name: 'Preventive Care', desc: 'Routine health checkup', price: '1,500,000', icon: 'fa-shield-heart', iconClass: 'pv', location: 'home' },
-    { key: 'rehabilitation', name: 'Rehabilitation', desc: 'Physical therapy sessions', price: '1,800,000', icon: 'fa-person-walking', iconClass: 'rh', location: 'home' },
+    { key: 'home_visit', name: _t('Home Visit'), desc: _t("Staff travels to client's location"), price: '2,000,000', icon: 'fa-house-medical', iconClass: 'hv', location: 'home' },
+    { key: 'clinic_visit', name: _t('Clinic Visit'), desc: _t('Client visits our facility'), price: '1,200,000', icon: 'fa-hospital', iconClass: 'cv', location: 'clinic' },
+    { key: 'consultation', name: _t('Consultation'), desc: _t('Video or phone consultation'), price: '500,000', icon: 'fa-video', iconClass: 'consult', location: 'online' },
+    { key: 'follow_up', name: _t('Follow-up'), desc: _t('Post-visit check-in'), price: '800,000', icon: 'fa-user-check', iconClass: 'fu', location: 'home' },
+    { key: 'emergency', name: _t('Emergency'), desc: _t('Urgent medical response'), price: '3,500,000', icon: 'fa-truck-medical', iconClass: 'em', location: 'home' },
+    { key: 'telemedicine', name: _t('Telemedicine'), desc: _t('Online/remote consultation'), price: '400,000', icon: 'fa-laptop-medical', iconClass: 'tm', location: 'online' },
+    { key: 'preventive', name: _t('Preventive Care'), desc: _t('Routine health checkup'), price: '1,500,000', icon: 'fa-shield-heart', iconClass: 'pv', location: 'home' },
+    { key: 'rehabilitation', name: _t('Rehabilitation'), desc: _t('Physical therapy sessions'), price: '1,800,000', icon: 'fa-person-walking', iconClass: 'rh', location: 'home' },
 ];
 
 const DURATION_OPTIONS = [
     { value: 60, label: '1 hour' },
     { value: 120, label: '2 hours' },
     { value: 180, label: '3 hours' },
-    { value: 240, label: 'Half day (4 hours)' },
-    { value: 480, label: 'Full day (8 hours)' },
+    { value: 240, label: _t('Half day (4 hours)') },
+    { value: 480, label: _t('Full day (8 hours)') },
 ];
 
 const PRIORITY_OPTIONS = [
-    { value: '0', label: 'Low' },
-    { value: '1', label: 'Normal' },
-    { value: '2', label: 'High' },
-    { value: '3', label: 'Urgent' },
+    { value: '0', label: _t('Low') },
+    { value: '1', label: _t('Normal') },
+    { value: '2', label: _t('High') },
+    { value: '3', label: _t('Urgent') },
 ];
 
 const COMMISSION_DURATION_OPTIONS = [
-    { value: 'one_time', label: 'One Time' },
+    { value: 'one_time', label: _t('One Time') },
     { value: '30_days', label: '30 Days' },
 ];
 
@@ -458,7 +458,7 @@ class OpsBookingWizard extends Component {
 
     get priorityLabel() {
         const opt = this.priorityOptions.find(p => p.value === this.state.priority);
-        return opt ? opt.label : 'Normal';
+        return opt ? opt.label : _t('Normal');
     }
 
     formatCurrency(amount) {

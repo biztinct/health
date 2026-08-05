@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 10:37+0000\n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "PO-Revision-Date: 2026-06-06 10:37+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -86,7 +86,10 @@ msgstr "- Nguồn"
 msgid ""
 "<i class=\"fa fa-clock-o me-1 text-muted\"/>\n"
 "                                                <strong>Scheduled:</strong>"
-msgstr "<i class=\"fa fa-clock-o me-1 text-muted\"/>\n                                                <strong>Chương trình:</strong>"
+msgstr ""
+"<i class=\"fa fa-clock-o me-1 text-muted\"/>\n"
+"                                                <strong>Chương trình:</"
+"strong>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_patient_kanban_hub_spoke
@@ -98,28 +101,48 @@ msgstr "<i class=\"fa fa-tachometer\"/> bảng điều khiển"
 msgid ""
 "<i class=\"fa fa-user-md me-1 text-muted\"/>\n"
 "                                                <strong>Nurse:</strong>"
-msgstr "<i class=\"fa fa-user-md me-1 text-muted\"/>\n                                                <strong>Chị y tá:</strong>"
+msgstr ""
+"<i class=\"fa fa-user-md me-1 text-muted\"/>\n"
+"                                                <strong>Chị y tá:</strong>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
 msgid ""
-"<span class=\"fa fa-calendar-check-o\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"<span class=\"fa fa-calendar-check-o\" style=\"display: flex; align-items: "
+"center; justify-content: center; width: 32px; height: 32px; background: "
+"#1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
 "                            <span>View Activities</span>"
-msgstr "<span class=\"fa fa-calendar-check-o\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n                            <span>Xem các hoạt động</span>"
+msgstr ""
+"<span class=\"fa fa-calendar-check-o\" style=\"display: flex; align-items: "
+"center; justify-content: center; width: 32px; height: 32px; background: "
+"#1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"                            <span>Xem các hoạt động</span>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
 msgid ""
-"<span class=\"fa fa-plus-circle\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"<span class=\"fa fa-plus-circle\" style=\"display: flex; align-items: "
+"center; justify-content: center; width: 32px; height: 32px; background: "
+"#1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
 "                            <span>Schedule Activity</span>"
-msgstr "<span class=\"fa fa-plus-circle\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n                            <span>Chương trình hoạt động</span>"
+msgstr ""
+"<span class=\"fa fa-plus-circle\" style=\"display: flex; align-items: "
+"center; justify-content: center; width: 32px; height: 32px; background: "
+"#1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"                            <span>Chương trình hoạt động</span>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
 msgid ""
-"<span class=\"fa fa-user-md\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"<span class=\"fa fa-user-md\" style=\"display: flex; align-items: center; "
+"justify-content: center; width: 32px; height: 32px; background: #1565C0; "
+"color: white; border-radius: 8px; font-size: 16px;\"/>\n"
 "                            <span>View Client Dashboard</span>"
-msgstr "<span class=\"fa fa-user-md\" style=\"display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;\"/>\n                            <span>Xem bảng điều khiển khách hàng</span>"
+msgstr ""
+"<span class=\"fa fa-user-md\" style=\"display: flex; align-items: center; "
+"justify-content: center; width: 32px; height: 32px; background: #1565C0; "
+"color: white; border-radius: 8px; font-size: 16px;\"/>\n"
+"                            <span>Xem bảng điều khiển khách hàng</span>"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
@@ -140,9 +163,12 @@ msgstr "<span>Lập hóa đơn &amp; Các chi tiết trích dẫn</span>"
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_cash_collection_wizard.py:0
 msgid ""
-"<strong>Cash Collected by Operations Manager</strong><br/>Amount: %s "
-"%s<br/>Collected from: %s<br/>Collected by: %s<br/>Date: %s<br/>Notes: %s"
-msgstr "<strong>Tiền mặt được thu thập bởi người quản lý hoạt động</strong><br/>Số lượng: %s %s<br/>Được thu thập từ: %s<br/>Được thu thập bởi: %s<br/>Ngày: %s<br/>Các ghi chú: %s"
+"<strong>Cash Collected by Operations Manager</strong><br/>Amount: %s %s<br/"
+">Collected from: %s<br/>Collected by: %s<br/>Date: %s<br/>Notes: %s"
+msgstr ""
+"<strong>Tiền mặt được thu thập bởi người quản lý hoạt động</strong><br/>Số "
+"lượng: %s %s<br/>Được thu thập từ: %s<br/>Được thu thập bởi: %s<br/>Ngày: "
+"%s<br/>Các ghi chú: %s"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
@@ -158,6 +184,7 @@ msgstr "Bảng điều khiển công nợ"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/xml/admin_settings.xml:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_roles
 msgid "Access Roles"
@@ -332,7 +359,8 @@ msgstr "Bất kỳ hướng dẫn hoặc ghi chú đặc biệt nào cho xác nh
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_confirm_booking_wizard_form
 msgid "Any special instructions or notes for this booking confirmation..."
-msgstr "Bất kỳ hướng dẫn hoặc ghi chú đặc biệt nào cho xác nhận lịch hẹn này..."
+msgstr ""
+"Bất kỳ hướng dẫn hoặc ghi chú đặc biệt nào cho xác nhận lịch hẹn này..."
 
 #. module: health_landing
 #. odoo-javascript
@@ -399,7 +427,9 @@ msgstr "Các ghi chú về việc bổ nhiệm"
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__sale_order_id
 msgid "Associated healthcare quote/sales order for this service"
-msgstr "Giá bán dịch vụ chăm sóc sức khỏe liên quan/đơn đặt hàng bán hàng cho dịch vụ này"
+msgstr ""
+"Giá bán dịch vụ chăm sóc sức khỏe liên quan/đơn đặt hàng bán hàng cho dịch "
+"vụ này"
 
 #. module: health_landing
 #. odoo-javascript
@@ -591,6 +621,18 @@ msgstr "Thủy bỏ"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Cancelled Bookings"
+msgstr "Đặt chỗ đã hủy"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "Cancelled in period"
+msgstr "Đã hủy trong kỳ"
+
+#. module: health_landing
+#. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Caregivers ("
 msgstr "Người chăm sóc ("
@@ -671,6 +713,18 @@ msgstr "tỉnh Catchment"
 #: model:ir.actions.act_window,name:health_landing.action_admin_catchments
 msgid "Catchment Provinces"
 msgstr "Các tỉnh khai thác"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Catchments"
+msgstr "Khu vực phụ trách"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Categories"
+msgstr "Danh mục"
 
 #. module: health_landing
 #. odoo-javascript
@@ -1185,7 +1239,9 @@ msgstr "Hóa đơn khách hàng"
 #: model:ir.model.fields,help:health_landing.field_res_partner__customer_invoice_ids
 #: model:ir.model.fields,help:health_landing.field_res_users__customer_invoice_ids
 msgid "Customer invoices only (excludes payment entries and journal entries)"
-msgstr "Chỉ đơn hóa đơn của khách hàng (không bao gồm các mục thanh toán và các mục nhật ký))"
+msgstr ""
+"Chỉ đơn hóa đơn của khách hàng (không bao gồm các mục thanh toán và các mục "
+"nhật ký))"
 
 #. module: health_landing
 #. odoo-javascript
@@ -1297,6 +1353,12 @@ msgstr "Thả đi"
 #: model:ir.model.fields,field_description:health_landing.field_res_users__display_name
 msgid "Display Name"
 msgstr "Tên hiển thị"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Districts"
+msgstr "Quận/Huyện"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
@@ -1465,6 +1527,7 @@ msgstr "Trình hướng dẫn bắt đầu dịch vụ FSO"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 msgid "Facilities"
 msgstr "Cơ sở"
@@ -1567,6 +1630,12 @@ msgstr "Các hướng dẫn và ghi chú tiếp theo..."
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "From"
+msgstr "Từ"
+
+#. module: health_landing
+#. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "GPS Coordinates"
 msgstr "Các định vị GPS"
@@ -1608,7 +1677,8 @@ msgstr "Các cơ sở chăm sóc sức khỏe"
 #. module: health_landing
 #: model:ir.model,name:health_landing.model_health_fieldservice_order
 msgid "Healthcare Field Service Order (Unified Booking System)"
-msgstr "Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__sale_order_id
@@ -1636,6 +1706,7 @@ msgstr "Kỹ năng chăm sóc sức khỏe"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
@@ -1720,6 +1791,12 @@ msgstr "Liên hệ ban đầu"
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 msgid "Inline edit pricing rules"
 msgstr "Đổi thay quy tắc định giá"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Insurance"
+msgstr "Bảo hiểm"
 
 #. module: health_landing
 #. odoo-javascript
@@ -2121,6 +2198,11 @@ msgid "Monitor staff workload"
 msgstr "Theo dõi khối lượng công việc của nhân viên"
 
 #. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_lead_client_info_modal
+msgid "National ID (CCCD/CMND)"
+msgstr "Căn cước công dân (CCCD/CMND)"
+
+#. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
 msgid "Next Step"
@@ -2148,6 +2230,12 @@ msgstr "Không có gói dịch vụ hoạt động cho bệnh nhân này."
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "No bookings found"
 msgstr "Không tìm thấy lịch hẹn"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "No cancellations in this period."
+msgstr "Không hủy trong thời gian này."
 
 #. module: health_landing
 #. odoo-javascript
@@ -2404,6 +2492,7 @@ msgstr "Các ghi chú gói"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_packages
@@ -2661,7 +2750,8 @@ msgstr "Xin vui lòng chỉ định ít nhất một nhân viên trước khi ti
 msgid ""
 "Please confirm that the patient is present and verified before starting the "
 "service."
-msgstr "Vui lòng xác nhận bệnh nhân hiện diện và xác minh trước khi bắt đầu điều trị."
+msgstr ""
+"Vui lòng xác nhận bệnh nhân hiện diện và xác minh trước khi bắt đầu điều trị."
 
 #. module: health_landing
 #. odoo-python
@@ -2673,9 +2763,11 @@ msgstr "Vui lòng tạo một trích dẫn trước khi tạo hóa đơn."
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_clinical_notes_wizard.py:0
 msgid ""
-"Please fill in at least \"Clinical Notes\" or \"Treatment Performed\" before"
-" saving. Use the Cancel button if you do not wish to save."
-msgstr "Vui lòng điền ít nhất \"Các ý kiến lâm sàng\" hoặc \"Cử lý đã thực hiện\" trước khi lưu.."
+"Please fill in at least \"Clinical Notes\" or \"Treatment Performed\" before "
+"saving. Use the Cancel button if you do not wish to save."
+msgstr ""
+"Vui lòng điền ít nhất \"Các ý kiến lâm sàng\" hoặc \"Cử lý đã thực hiện\" "
+"trước khi lưu.."
 
 #. module: health_landing
 #. odoo-javascript
@@ -2706,6 +2798,7 @@ msgstr "Giá & Sản phẩm"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: code:addons/health_landing/static/src/xml/admin_settings.xml:0
@@ -2716,6 +2809,7 @@ msgstr "Công cụ định giá"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
@@ -2742,9 +2836,11 @@ msgstr "Thành viên viên viên chính"
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__lead_staff_id
 msgid ""
-"Primary staff member responsible for this service (computed from assignments"
-" with lead role)"
-msgstr "Nhân viên chính chịu trách nhiệm cho dịch vụ này (được tính từ các nhiệm vụ có vai trò khách hàng tiềm năng))"
+"Primary staff member responsible for this service (computed from assignments "
+"with lead role)"
+msgstr ""
+"Nhân viên chính chịu trách nhiệm cho dịch vụ này (được tính từ các nhiệm vụ "
+"có vai trò khách hàng tiềm năng))"
 
 #. module: health_landing
 #. odoo-javascript
@@ -2776,6 +2872,12 @@ msgstr "Ngày lễ công cộng"
 #: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
 msgid "Quick Actions"
 msgstr "Thao tác nhanh"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Quick Edit"
+msgstr "Chỉnh sửa nhanh"
 
 #. module: health_landing
 #. odoo-javascript
@@ -2840,6 +2942,7 @@ msgstr "Những dấu hiệu quan trọng được ghi lại trong thời gian p
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_referral_sources
@@ -2882,6 +2985,8 @@ msgid "Resources"
 msgstr "Tài nguyên"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_role_mgmt
 msgid "Role Management"
 msgstr "Quản lý vai trò"
@@ -2961,6 +3066,7 @@ msgstr "Gửi thông điệp"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_areas
@@ -3025,6 +3131,7 @@ msgstr "Loại dịch vụ"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
@@ -3175,6 +3282,12 @@ msgstr "Chỉ thị hoặc ghi chú đặc biệt cho nhân viên được chỉ
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Specialties"
+msgstr "Chuyên khoa"
+
+#. module: health_landing
+#. odoo-javascript
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 msgid "Staff"
 msgstr "Nhân viên"
@@ -3300,53 +3413,12 @@ msgstr "Danh mục triệu chứng"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_symptoms
 msgid "Symptoms"
 msgstr "Triệu chứng"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
-msgid "Catchments"
-msgstr "Khu vực phụ trách"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
-msgid "Categories"
-msgstr "Danh mục"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
-msgid "Districts"
-msgstr "Quận/Huyện"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
-msgid "Insurance"
-msgstr "Bảo hiểm"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
-msgid "Quick Edit"
-msgstr "Chỉnh sửa nhanh"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
-msgid "Specialties"
-msgstr "Chuyên khoa"
-
-#. module: health_landing
-#. odoo-javascript
-#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
-msgid "Urgency"
-msgstr "Mức độ khẩn cấp"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__symptoms
@@ -3409,6 +3481,12 @@ msgstr "Xem thời gian"
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 msgid "Timeline of assignments"
 msgstr "Thời gian của các nhiệm vụ"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_dashboard.xml:0
+msgid "To"
+msgstr ""
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__total_price
@@ -3488,6 +3566,12 @@ msgstr "Các đơn đặt hàng dịch vụ thực địa sắp tới"
 
 #. module: health_landing
 #. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
+msgid "Urgency"
+msgstr "Mức độ khẩn cấp"
+
+#. module: health_landing
+#. odoo-javascript
 #: code:addons/health_landing/static/src/js/landing_dashboard.js:0
 #: code:addons/health_landing/static/src/js/viet_uc_landing.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_urgency
@@ -3500,6 +3584,8 @@ msgid "User"
 msgstr "Người dùng"
 
 #. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_model_navigator.js:0
 #: model:ir.actions.act_window,name:health_landing.action_admin_users
 msgid "Users"
 msgstr "Người dùng"
@@ -3510,6 +3596,12 @@ msgstr "Người dùng"
 #: model:ir.ui.menu,name:health_landing.menu_admin_users
 msgid "Users & Roles"
 msgstr "Người dùng & vai trò"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/admin_sidebar.xml:0
+msgid "Viet UC"
+msgstr "Việt Úc"
 
 #. module: health_landing
 #. odoo-javascript
@@ -3539,8 +3631,7 @@ msgstr "Logo Viet Uc"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
 msgid ""
-"Vietnam-Australia Family Health Service - Comprehensive Healthcare "
-"Management"
+"Vietnam-Australia Family Health Service - Comprehensive Healthcare Management"
 msgstr "Dịch vụ Y tế Gia đình Việt Nam-Australia - Quản lý y tế toàn diện"
 
 #. module: health_landing
@@ -3711,7 +3802,9 @@ msgstr "còn lại"
 msgid ""
 "services used\n"
 "                                                <br/>"
-msgstr "Dịch vụ được sử dụng\n                                                <br/>"
+msgstr ""
+"Dịch vụ được sử dụng\n"
+"                                                <br/>"
 
 #. module: health_landing
 #. odoo-javascript
@@ -3729,3 +3822,33 @@ msgstr "⚠️ Người gọi thư rác"
 #: model_terms:ir.ui.view,arch_db:health_landing.view_lead_relations_modal
 msgid "🔍 Search"
 msgstr "🔍 Tìm kiếm"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_dashboard.js:0
+msgid "All Dates"
+msgstr "Tất cả ngày"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_dashboard.js:0
+msgid "Custom"
+msgstr "Tùy chỉnh"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_dashboard.js:0
+msgid "This Month"
+msgstr "Tháng này"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_dashboard.js:0
+msgid "This Week"
+msgstr "Tuần này"
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/js/admin_dashboard.js:0
+msgid "Today"
+msgstr "Hôm nay"

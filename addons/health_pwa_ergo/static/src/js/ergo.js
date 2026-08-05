@@ -8,6 +8,10 @@
 (function () {
   'use strict';
 
+  const _t = (text) => window.odoo?._t?.(text)
+    || window.PWAUtils?.i18n?.t?.(text)
+    || text;
+
   var STORAGE_KEY = 'vu_ergo_modes';
   var DEFAULTS = { glove: false, sunlight: 'off' };
   var root = document.documentElement;
@@ -195,7 +199,7 @@
     gRow.className = 'vu-ergo-row';
     var gLabel = document.createElement('div');
     gLabel.className = 'vu-ergo-label';
-    gLabel.textContent = 'Chế độ găng tay (Glove mode)';
+    gLabel.textContent = _t('Glove mode');
     var gSeg = document.createElement('div');
     gSeg.className = 'vu-ergo-segs';
     gSeg.appendChild(segButton('Tắt (Off)', !state.glove, function () { set({ glove: false }); }));
@@ -208,7 +212,7 @@
     sRow.className = 'vu-ergo-row';
     var sLabel = document.createElement('div');
     sLabel.className = 'vu-ergo-label';
-    sLabel.textContent = 'Chế độ ngoài trời (Sunlight)';
+    sLabel.textContent = _t('Sunlight mode');
     var sSeg = document.createElement('div');
     sSeg.className = 'vu-ergo-segs';
     sSeg.appendChild(segButton('Tắt (Off)', state.sunlight === 'off', function () { set({ sunlight: 'off' }); }));

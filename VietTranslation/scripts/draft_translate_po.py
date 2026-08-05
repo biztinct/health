@@ -12,7 +12,7 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 TAG_RE = re.compile(r"(<[^>]+>)")
 PLACEHOLDER_RE = re.compile(
-    r"%(?:\([^)]+\))?[#0 +\-]?\d*(?:\.\d+)?[a-zA-Z](?!\w)|\{\w+\}"
+    r"%(?:\([^)]+\))?[#0 +\-]?\d*(?:\.\d+)?[a-zA-Z]|\{\w+\}"
 )
 PROTECTED_RE = re.compile(
     r"\{\{.*?\}\}|\{%.*?%\}|"
@@ -64,7 +64,10 @@ def parse_entries(path):
 
 
 def placeholders(text):
-    return sorted(PLACEHOLDER_RE.findall(text))
+    values = PLACEHOLDER_RE.findall(text)
+    named = {value for value in values if value.startswith(("%(", "{"))}
+    positional = sorted(value for value in values if value not in named)
+    return named, positional
 
 
 def segment_content(segment):
@@ -108,7 +111,9 @@ def translate_missing_segments(
     model_path,
     batch_size,
 ):
-    missing = sorted(set(segments) - set(cache))
+    # Group similarly sized inputs to minimize tokenizer padding and make CPU
+    # drafting substantially faster for mixed short labels and long messages.
+    missing = sorted(set(segments) - set(cache), key=lambda text: (len(text), text))
     if not missing:
         return
 

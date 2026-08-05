@@ -269,11 +269,12 @@ class HealthFamilyThread(models.Model):
         record = fso.sudo() if fso else self.patient_id.sudo()
         try:
             user = self._notify_targets(fso)[:1]
+            patient_name = self.patient_id.name or str()
             record.activity_schedule(
                 activity_type_id=activity_type.id,
                 summary=_('Reply to family message'),
                 note=_('A family member sent a message about %s.')
-                % (self.patient_id.name or ''),
+                % patient_name,
                 user_id=user.id if user else self.env.uid)
         except Exception:  # noqa: BLE001 — alerting must never break capture
             _logger.exception('Family activity failed (thread %s)', self.id)

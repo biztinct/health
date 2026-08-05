@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 11:27+0000\n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "PO-Revision-Date: 2026-06-06 10:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -59,6 +59,12 @@ msgid "%s package(s) assigned"
 msgstr "Đã gán %s gói"
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/js/package_purchase_dialog.js:0
+msgid "%s purchased successfully"
+msgstr "%s đã mua thành công"
+
+#. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_fieldservice_order_form_invoicing
 msgid ""
 "- \n"
@@ -86,6 +92,7 @@ msgstr ""
 
 #. module: health_invoicing
 #. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: code:addons/health_invoicing/static/src/xml/package_wizard_dialog.xml:0
 msgid "/ea"
 msgstr "/đơn vị"
@@ -162,12 +169,6 @@ msgstr "<i class=\"fa fa-gift\"/> Các gói được mua"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
 msgid "<i class=\"fa fa-gift\"/> Quick Package Purchase"
 msgstr "<i class=\"fa fa-gift\"/> Mua gói nhanh"
-
-#. module: health_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_patient_form_ops_invoicing
-msgid "<i class=\"fa fa-info-circle\"/> No active packages for this client."
-msgstr ""
-"<i class=\"fa fa-info-circle\"/> Không có gói hoạt động cho khách hàng này."
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
@@ -563,8 +564,6 @@ msgstr "Các gói hoạt động"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_res_partner__active_service_packages
 #: model:ir.model.fields,field_description:health_invoicing.field_res_users__active_service_packages
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_patient_form_ops_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
 msgid "Active Service Packages"
 msgstr "Các gói dịch vụ hoạt động"
 
@@ -784,6 +783,8 @@ msgid "Already Paid"
 msgstr "Đã thanh toán"
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields,field_description:health_invoicing.field_health_ar_transaction_log__amount
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
 msgid "Amount"
@@ -803,6 +804,7 @@ msgstr "Lý do điều chỉnh số tiền"
 #. module: health_invoicing
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/xml/fin_invoice_form.xml:0
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_list
 msgid "Amount Due"
@@ -894,6 +896,30 @@ msgid "Approved"
 msgstr "Được chấp thuận"
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
+msgid "Archive"
+msgstr "Lưu trữ"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_overdue_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_vat_invoice_log_list
+msgid "Archive (custodian)"
+msgstr "Lưu trữ (người giám sát)"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
+msgid "Archived"
+msgstr "Đã lưu trữ"
+
+#. module: health_invoicing
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/xml/fin_dashboard.xml:0
 msgid "As of now"
@@ -982,6 +1008,7 @@ msgstr "Ngân hàng"
 #. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 #: code:addons/health_invoicing/static/src/js/fin_payment_list.js:0
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_nurse_payment_wizard__payment_method__bank_transfer
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_collection_wizard__payment_method__bank_transfer
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_workflow_wizard__payment_method__bank_transfer
@@ -1106,6 +1133,16 @@ msgid "Bookings linked to this package"
 msgstr "Lịch hẹn liên kết với gói này"
 
 #. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/account_move.py:0
+msgid ""
+"Bulk payment is only allowed for invoices of the same client, to prevent "
+"payment allocation errors.\n"
+"\n"
+"The selection spans %(count)s clients: %(names)s."
+msgstr "Thanh toán hàng loạt chỉ được phép cho các hóa đơn của cùng một khách hàng, để tránh lỗi phân bổ thanh toán.\n\nViệc lựa chọn kéo dài %(count)s khách hàng: %(names)s."
+
+#. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_package_wizard_product_line__selected
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_service_package_wizard_form
 msgid "Buy"
@@ -1146,6 +1183,7 @@ msgstr "Giá trị được tính toán cho mỗi đơn vị dịch vụ đượ
 
 #. module: health_invoicing
 #. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: code:addons/health_invoicing/static/src/xml/package_wizard_dialog.xml:0
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_cash_delivery_wizard_form
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_nurse_payment_wizard_form
@@ -1258,6 +1296,7 @@ msgstr "Thẻ"
 #. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 #: code:addons/health_invoicing/static/src/js/fin_payment_list.js:0
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_nurse_payment_wizard__payment_method__cash
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_collection_wizard__payment_method__cash
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_workflow_wizard__payment_method__cash
@@ -1468,6 +1507,7 @@ msgstr "Chọn phương thức thu thập thanh toán"
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_billing__patient_id
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_package__patient_id
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_package_wizard__patient_id
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_service_search
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_search
@@ -1639,6 +1679,12 @@ msgid "Confirm Cash Receipt"
 msgstr "Đảm nhận tiền mặt"
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
+msgid "Confirm the package for"
+msgstr "Xác nhận gói cho"
+
+#. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__misa_integration__connection_status__connected
 msgid "Connected"
 msgstr "Kết nối"
@@ -1727,6 +1773,8 @@ msgid "Create Bank Deposit Record"
 msgstr "Tạo hồ sơ tiền gửi ngân hàng"
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields,field_description:health_invoicing.field_health_prepaid_package_wizard__create_invoice
 msgid "Create Invoice"
 msgstr "Tạo hóa đơn"
@@ -1837,8 +1885,10 @@ msgid "Credit Account"
 msgstr "Tài khoản Có"
 
 #. module: health_invoicing
+#. odoo-javascript
 #. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_nurse_payment_wizard__payment_method__credit_card
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_collection_wizard__payment_method__credit_card
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_prepaid_package_wizard__payment_method__credit_card
@@ -2053,6 +2103,65 @@ msgid "Debit Account"
 msgstr "Tài khoản Nợ"
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
+msgid "Delete"
+msgstr "Xóa"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_list
+msgid "Delete (reason required)"
+msgstr "Xóa (cần có lý do)"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_overdue_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_vat_invoice_log_list
+msgid "Delete (reason required; posted entries must be reversed first)"
+msgstr "Xóa (cần có lý do; bài viết đã đăng phải được đảo ngược trước)"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__deleted
+#: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__deleted
+#: model:ir.model.fields,field_description:health_invoicing.field_health_service_package__deleted
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
+msgid "Deleted"
+msgstr "Đã xóa"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__deleted_by_id
+#: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__deleted_by_id
+#: model:ir.model.fields,field_description:health_invoicing.field_health_service_package__deleted_by_id
+msgid "Deleted By"
+msgstr "Người xóa"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__deleted_date
+#: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__deleted_date
+#: model:ir.model.fields,field_description:health_invoicing.field_health_service_package__deleted_date
+msgid "Deleted On"
+msgstr "Xóa vào lúc"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__deleted_note
+#: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__deleted_note
+#: model:ir.model.fields,field_description:health_invoicing.field_health_service_package__deleted_note
+msgid "Deletion Note"
+msgstr "Ghi chú xóa"
+
+#. module: health_invoicing
+#: model:ir.model.fields,field_description:health_invoicing.field_account_move__deleted_reason_id
+#: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__deleted_reason_id
+#: model:ir.model.fields,field_description:health_invoicing.field_health_service_package__deleted_reason_id
+msgid "Deletion Reason"
+msgstr "Lý do xóa"
+
+#. module: health_invoicing
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/js/fin_dashboard.js:0
 #: code:addons/health_invoicing/static/src/js/fin_payment_list.js:0
@@ -2175,11 +2284,13 @@ msgid "Draft"
 msgstr "Nháp"
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_list
 msgid "Due"
 msgstr "Đến hạn"
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_overdue_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_payments_tree
 msgid "Due Date"
@@ -2401,9 +2512,9 @@ msgstr "Không thể tạo hóa đơn từ báo giá. Vui lòng liên hệ bộ 
 
 #. module: health_invoicing
 #. odoo-javascript
-#: code:addons/health_invoicing/static/src/js/package_wizard_dialog.js:0
-msgid "Failed to open purchase wizard"
-msgstr "Không thể mở trình hướng dẫn mua gói"
+#: code:addons/health_invoicing/static/src/js/package_purchase_dialog.js:0
+msgid "Failed to purchase package"
+msgstr "Không mua được gói"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
@@ -2512,6 +2623,12 @@ msgid "Generate Electronic Receipt"
 msgstr "Tạo biên bản điện tử"
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
+msgid "Generate and post an invoice for this package."
+msgstr "Tạo và đăng hóa đơn cho gói này."
+
+#. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_cash_delivery_wizard__generate_receipt
 msgid "Generate electronic receipt for cash delivery"
 msgstr "Tạo hóa đơn điện tử cho giao hàng tiền mặt"
@@ -2538,17 +2655,6 @@ msgstr "Tổng cộng"
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_ar_transaction_log__event_type__handover
 msgid "Handover"
 msgstr "Bàn giao"
-
-#. module: health_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_service_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_payments_filter
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_filter
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_vat_invoice_log_search
-msgid "Hanoi"
-msgstr "Hà Nội"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_ar_transaction_log__company_id
@@ -2810,17 +2916,6 @@ msgid "Healthcare staff who delivered this service"
 msgstr "Nhân viên y tế đã cung cấp dịch vụ này"
 
 #. module: health_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_service_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_payments_filter
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_filter
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_vat_invoice_log_search
-msgid "Ho Chi Minh City"
-msgstr "Thành phố Hồ Chí Minh"
-
-#. module: health_invoicing
 #. odoo-python
 #: code:addons/health_invoicing/models/account_move.py:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_type__home_visit
@@ -3050,6 +3145,8 @@ msgid "Invoice %s is already fully paid."
 msgstr "Hóa đơn %s đã được thanh toán đầy đủ."
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_form
 msgid "Invoice & Payment"
 msgstr "Hóa đơn & thanh toán"
@@ -3098,6 +3195,7 @@ msgid "Invoice No (Số)"
 msgstr "Số hóa đơn"
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_list
 msgid "Invoice Number"
 msgstr "Số hóa đơn"
@@ -3216,6 +3314,11 @@ msgstr "Hóa đơn được gửi thành công cho Bộ Y tế."
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_workflow_wizard_form
 msgid "Invoice submitted to Tax Department immediately"
 msgstr "Hóa đơn được nộp cho Bộ Thuế ngay lập tức"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
+msgid "Invoice/Bill Date"
+msgstr "Ngày hóa đơn/hóa đơn"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_fieldservice_order__is_invoiced
@@ -3436,6 +3539,12 @@ msgid "Loading packages..."
 msgstr "Các gói tải..."
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/active_packages_widget.xml:0
+msgid "Loading packages…"
+msgstr "Đang tải gói…"
+
+#. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_misa_sync_log__name
 msgid "Log Entry"
 msgstr "Nhập nhật ký"
@@ -3448,7 +3557,7 @@ msgstr "MISA"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_misa_integration__misa_api_key
 msgid "MISA API Key"
-msgstr "MISA API Key"
+msgstr "Khóa API MISA"
 
 #. module: health_invoicing
 #: model:ir.model,name:health_invoicing.model_misa_integration
@@ -3490,7 +3599,7 @@ msgstr "MISA Password"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_misa_integration__misa_server_url
 msgid "MISA Server URL"
-msgstr "MISA Server URL"
+msgstr "URL máy chủ MISA"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__misa_sync_date
@@ -3903,6 +4012,12 @@ msgid "No VAT invoices yet"
 msgstr "Chưa có hóa đơn VAT."
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/active_packages_widget.xml:0
+msgid "No active packages for this client yet."
+msgstr "Chưa có gói hoạt động nào cho khách hàng này."
+
+#. module: health_invoicing
 #. odoo-python
 #: code:addons/health_invoicing/wizard/health_payment_workflow_wizard.py:0
 msgid ""
@@ -3977,6 +4092,18 @@ msgstr "Chưa có lượt sử dụng dịch vụ."
 #: code:addons/health_invoicing/models/health_service_package.py:0
 msgid "No services remaining to refund."
 msgstr "Không còn dịch vụ nào để hoàn lại."
+
+#. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/account_move.py:0
+msgid "None of the selected invoices are awaiting payment."
+msgstr "Không có hóa đơn nào đã chọn đang chờ thanh toán."
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
+msgid "Not Deleted"
+msgstr "Chưa xóa"
 
 #. module: health_invoicing
 #. odoo-javascript
@@ -4349,8 +4476,10 @@ msgid "Originally Collected By"
 msgstr "Được thu thập bởi"
 
 #. module: health_invoicing
+#. odoo-javascript
 #. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_collection_wizard__payment_method__other
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_prepaid_package_wizard__payment_method__other
 msgid "Other"
@@ -4395,6 +4524,7 @@ msgstr "Số tiền còn lại"
 #. odoo-python
 #: code:addons/health_invoicing/models/res_partner.py:0
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_collection_wizard__outstanding_invoice_ids
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 msgid "Outstanding Invoices"
 msgstr "Các hóa đơn xuất sắc"
 
@@ -4668,6 +4798,12 @@ msgid "Paid Amount"
 msgstr "Số tiền đã thanh toán"
 
 #. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/health_payment_transaction.py:0
+msgid "Paid from Prepayment Balance"
+msgstr "Trả từ TT trước"
+
+#. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_prepaid_service__package_id
 msgid "Parent service package this consumption belongs to"
 msgstr "gói dịch vụ phụ huynh tiêu thụ này thuộc về"
@@ -4889,6 +5025,8 @@ msgid "Payment Management"
 msgstr "Quản lý thanh toán"
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields,field_description:health_invoicing.field_health_nurse_payment_wizard__payment_method
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_collection_wizard__payment_method
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__payment_method
@@ -4944,6 +5082,7 @@ msgstr "Bắt buộc có chứng từ thanh toán"
 #: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__payment_state
 #: model:ir.model.fields,field_description:health_invoicing.field_account_move__payment_state
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__status
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
 msgid "Payment Status"
 msgstr "Trạng thái thanh toán"
@@ -5252,6 +5391,16 @@ msgid "Posted"
 msgstr "Đã ghi sổ"
 
 #. module: health_invoicing
+#. odoo-python
+#: code:addons/health_invoicing/models/account_move.py:0
+msgid ""
+"Posted entries cannot be marked Deleted — reverse or reset them to draft "
+"first: %s"
+msgstr ""
+"Bút toán đã ghi sổ không thể đánh dấu Đã xóa — hãy đảo hoặc đưa về nháp "
+"trước: %s"
+
+#. module: health_invoicing
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/xml/fin_dashboard.xml:0
 msgid "Posted, not issued"
@@ -5429,6 +5578,8 @@ msgid "Process Payment"
 msgstr "Phí thanh toán quy trình"
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields,field_description:health_invoicing.field_health_prepaid_package_wizard__process_payment
 msgid "Process Payment Now"
 msgstr "Quá trình thanh toán ngay bây giờ"
@@ -5538,8 +5689,12 @@ msgid "Purchase New Package"
 msgstr "Mua gói mới"
 
 #. module: health_invoicing
+#. odoo-javascript
 #. odoo-python
 #: code:addons/health_invoicing/models/health_fieldservice_order.py:0
+#: code:addons/health_invoicing/models/res_partner.py:0
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
+#: code:addons/health_invoicing/static/src/xml/package_wizard_dialog.xml:0
 #: code:addons/health_invoicing/wizard/service_package_wizard.py:0
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_package_wizard_form
 msgid "Purchase Package"
@@ -5563,8 +5718,10 @@ msgid "QR Code"
 msgstr "Mã QR"
 
 #. module: health_invoicing
+#. odoo-javascript
 #. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_nurse_payment_wizard__payment_method__qr_code
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_collection_wizard__payment_method__qr_code
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_prepaid_package_wizard__payment_method__qr_code
@@ -5627,6 +5784,30 @@ msgid "Reason provided by nurse if payment amount was overridden"
 msgstr "Lý do do được cung cấp bởi y tá nếu số tiền thanh toán đã bị vượt quá"
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_account_payment_register_form_receive
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_list
+msgid "Receive Payment"
+msgstr "Nhận thanh toán"
+
+#. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/fin_invoice_list.xml:0
+msgid "Receive Payment ("
+msgstr "Nhận thanh toán ("
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_account_payment_register_form_receive
+msgid "Receive Payments"
+msgstr "Nhận thanh toán"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_list
+msgid "Receive payment for this invoice"
+msgstr "Nhận thanh toán cho hóa đơn này"
+
+#. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__received_by_om_id
 msgid "Received by OM"
 msgstr "Được nhận bởi OM"
@@ -5673,6 +5854,12 @@ msgstr "Mô hình ghi chép"
 msgid "Record cash or bank transfer payments against invoices"
 msgstr ""
 "Các khoản thanh toán bằng tiền mặt hoặc chuyển khoản ngân hàng bằng hóa đơn"
+
+#. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
+msgid "Record the payment immediately after creating the package."
+msgstr "Ghi nhận thanh toán ngay sau khi tạo gói."
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__red_invoice_enabled
@@ -5849,6 +6036,23 @@ msgid "Responsible User"
 msgstr "Người dùng có trách nhiệm"
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
+msgid "Restore"
+msgstr "Khôi phục"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_overdue_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_list
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_vat_invoice_log_list
+msgid "Restore this deleted record"
+msgstr "Khôi phục bản ghi đã xóa này"
+
+#. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__retail_invoice_number
 #: model:ir.model.fields,field_description:health_invoicing.field_account_move__retail_invoice_number
 msgid "Retail Invoice Number"
@@ -5987,6 +6191,12 @@ msgstr "Chọn ít nhất một gói"
 #: model:ir.model.fields,help:health_invoicing.field_health_payment_collection_wizard__outstanding_invoice_ids
 msgid "Select invoices to apply this payment to"
 msgstr "Chọn hóa đơn để áp dụng khoản thanh toán này cho"
+
+#. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/js/fin_invoice_list.js:0
+msgid "Select one or more invoices first."
+msgstr "Trước tiên hãy chọn một hoặc nhiều hóa đơn."
 
 #. module: health_invoicing
 #. odoo-javascript
@@ -6373,11 +6583,6 @@ msgid "Services to Consume"
 msgstr "Dịch vụ tiêu thụ"
 
 #. module: health_invoicing
-#: model:ir.ui.menu,name:health_invoicing.menu_fin_settings
-msgid "Settings"
-msgstr "Cài đặt"
-
-#. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_ar_transaction_log__company_entity_code
 msgid "Short code: VAFHS or CSTNVU"
 msgstr "Mã ngắn: VAFHS hoặc CSTNVU"
@@ -6388,6 +6593,7 @@ msgid "Source Booking"
 msgstr "Lịch hẹn nguồn"
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoices_list
 msgid "Source Document"
 msgstr "Chứng từ nguồn"
@@ -6811,6 +7017,7 @@ msgstr "Hôm nay"
 #. module: health_invoicing
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/xml/fin_invoice_form.xml:0
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_client_pay_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_overdue_list
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_ar_transaction_log_list
@@ -7169,6 +7376,12 @@ msgid "Type of the exception activity on record."
 msgstr "Loại hoạt động ngoại lệ được ghi lại."
 
 #. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
+msgid "Unarchive"
+msgstr "Bỏ lưu trữ"
+
+#. module: health_invoicing
 #: model:account.account,name:health_invoicing.account_unearned_revenue
 msgid "Unearned Revenue - Healthcare"
 msgstr "Doanh thu chưa thực hiện - Chăm sóc sức khỏe"
@@ -7319,6 +7532,12 @@ msgstr "Hóa đơn nhà cung cấp"
 #: code:addons/health_invoicing/models/account_move.py:0
 msgid "Vendor Credit Note"
 msgstr "Giấy báo có nhà cung cấp"
+
+#. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/fin_sidebar.xml:0
+msgid "Viet UC"
+msgstr "Việt Úc"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_account_bank_statement_line__customer_cccd_number
@@ -7656,6 +7875,12 @@ msgid "error"
 msgstr "Lỗi"
 
 #. module: health_invoicing
+#. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
+msgid "expires"
+msgstr "hết hạn"
+
+#. module: health_invoicing
 #. odoo-python
 #: code:addons/health_invoicing/models/health_payment_transaction.py:0
 msgid "failed"
@@ -7711,6 +7936,7 @@ msgstr "Kế thừa ứng dụng hóa đơn"
 
 #. module: health_invoicing
 #. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/active_packages_widget.xml:0
 #: code:addons/health_invoicing/static/src/xml/package_wizard_dialog.xml:0
 msgid "left"
 msgstr "trái"
@@ -7850,8 +8076,6 @@ msgstr "Bị từ chối"
 #. module: health_invoicing
 #. odoo-javascript
 #: code:addons/health_invoicing/static/src/xml/fin_dashboard.xml:0
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_patient_form_ops_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
 msgid "remaining"
 msgstr "còn lại"
 
@@ -7869,6 +8093,12 @@ msgstr "Đã gửi"
 
 #. module: health_invoicing
 #. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
+msgid "services"
+msgstr "Dịch vụ"
+
+#. module: health_invoicing
+#. odoo-javascript
 #: code:addons/health_invoicing/static/src/xml/package_wizard_dialog.xml:0
 msgid ""
 "services\n"
@@ -7881,15 +8111,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_form
 msgid "services remaining in this package."
 msgstr "dịch vụ còn lại trong gói này."
-
-#. module: health_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
-msgid ""
-"services used\n"
-"                                            <br/>"
-msgstr ""
-"Dịch vụ được sử dụng\n"
-"                                            <br/>"
 
 #. module: health_invoicing
 #. odoo-python
@@ -7929,25 +8150,18 @@ msgstr "đến"
 
 #. module: health_invoicing
 #. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/package_purchase_dialog.xml:0
 #: code:addons/health_invoicing/static/src/xml/package_wizard_dialog.xml:0
 msgid "total"
 msgstr "tổng số"
 
 #. module: health_invoicing
 #. odoo-javascript
+#: code:addons/health_invoicing/static/src/xml/active_packages_widget.xml:0
 #: code:addons/health_invoicing/static/src/xml/package_wizard_dialog.xml:0
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_form
 msgid "used"
 msgstr "được sử dụng"
-
-#. module: health_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_patient_form_ops_invoicing
-msgid ""
-"used\n"
-"                                            <br/>"
-msgstr ""
-"được sử dụng\n"
-"                                            <br/>"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_service_package_wizard_form
@@ -7958,43 +8172,3 @@ msgstr "✅ Chọn gói hiện có"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_service_package_wizard_form
 msgid "🛒 Purchase and Select"
 msgstr "🛒 Mua và chọn"
-
-#~ msgid "Issued"
-#~ msgstr "Đã phát hành"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/health_payment_transaction.py:0
-msgid "Paid from Prepayment Balance"
-msgstr "Trả từ TT trước"
-
-
-#. module: health_invoicing
-#: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__deleted
-#: model:ir.model.fields,field_description:health_invoicing.field_account_move__deleted
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
-msgid "Deleted"
-msgstr "Đã xóa"
-
-#. module: health_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
-msgid "Not Deleted"
-msgstr "Chưa xóa"
-
-#. module: health_invoicing
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_search
-#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fin_invoice_search
-msgid "Archived"
-msgstr "Đã lưu trữ"
-
-#. module: health_invoicing
-#. odoo-python
-#: code:addons/health_invoicing/models/account_move.py:0
-msgid ""
-"Posted entries cannot be marked Deleted — reverse or reset them to draft "
-"first: %s"
-msgstr ""
-"Bút toán đã ghi sổ không thể đánh dấu Đã xóa — hãy đảo hoặc đưa về nháp "
-"trước: %s"

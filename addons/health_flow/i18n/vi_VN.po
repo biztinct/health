@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 10:13+0000\n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "PO-Revision-Date: 2026-02-25 06:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -158,6 +158,12 @@ msgstr "Lịch hẹn đã phân công"
 #: code:addons/health_flow/static/src/js/health_flow_action.js:0
 msgid "Assignment timeline view"
 msgstr "Giao diện dòng thời gian phân công"
+
+#. module: health_flow
+#. odoo-javascript
+#: code:addons/health_flow/static/src/js/health_flow_action.js:0
+msgid "Audit"
+msgstr "Kiểm tra"
 
 #. module: health_flow
 #. odoo-python
@@ -1099,126 +1105,3 @@ msgstr "health_user_admin.action_healthcare_role_management"
 #: code:addons/health_flow/models/health_flow_wizard.py:0
 msgid "health_user_admin.action_healthcare_users"
 msgstr "health_user_admin.action_healthcare_users"
-
-#~ msgid "AR Dashboard"
-#~ msgstr "Bảng công nợ"
-
-#~ msgid "Pricing Engines"
-#~ msgstr "Công cụ định giá"
-
-#~ msgid "Quick Edit Rules"
-#~ msgstr "Quy tắc chỉnh sửa nhanh"
-
-#~ msgid "Invoicing"
-#~ msgstr "Hóa đơn"
-
-#~ msgid "Accounts receivable overview"
-#~ msgstr "Tổng quan công nợ phải thu"
-
-#~ msgid "Configure pricing engines"
-#~ msgstr "Cấu hình công cụ định giá"
-
-#~ msgid "Quick edit pricing"
-#~ msgstr "Chỉnh sửa nhanh giá"
-
-#~ msgid "Facilities management"
-#~ msgstr "Quản lý cơ sở"
-
-#~ msgid "Catchment provinces"
-#~ msgstr "Tỉnh thành phân vùng"
-
-#~ msgid "Define services"
-#~ msgstr "Xác định dịch vụ"
-
-#~ msgid "Configure symptoms"
-#~ msgstr "Cấu hình triệu chứng"
-
-#~ msgid "Referral sources"
-#~ msgstr "Nguồn giới thiệu"
-
-#~ msgid "Insurance providers"
-#~ msgstr "Nhà cung cấp bảo hiểm"
-
-#~ msgid "Urgency levels"
-#~ msgstr "Mức độ khẩn cấp"
-
-#~ msgid "Booking Notifications"
-#~ msgstr "Thông báo lịch hẹn"
-
-#~ msgid "No new notifications"
-#~ msgstr "Không có thông báo mới"
-
-#~ msgid "Clients"
-#~ msgstr "Khách hàng"
-
-#~ msgid "Sales &amp; CRM"
-#~ msgstr "Bán hàng &amp; CRM"
-
-#~ msgid "Analytics"
-#~ msgstr "Phân tích"
-
-#. module: health_flow
-#. odoo-javascript
-#: code:addons/health_flow/static/src/js/health_flow_action.js:0
-msgid "Audit"
-msgstr "Kiểm tra"
-
-#~ msgid "Booking Search"
-#~ msgstr "Tìm kiếm lịch hẹn"
-
-#~ msgid "Search by name, phone, or email..."
-#~ msgstr "Tìm theo tên, số điện thoại, hoặc email..."
-
-#~ msgid "Search by client name, phone, or booking code..."
-#~ msgstr "Tìm theo tên khách hàng, số điện thoại, hoặc mã lịch hẹn..."
-
-#~ msgid "Merge "
-#~ msgstr "Gộp "
-
-#~ msgid " contacts"
-#~ msgstr " liên hệ"
-
-#~ msgid "No CRM results found"
-#~ msgstr "Không tìm thấy kết quả CRM"
-
-#~ msgid "No bookings found"
-#~ msgstr "Không tìm thấy lịch hẹn"
-
-#~ msgid "Select Existing Client"
-#~ msgstr "Chọn khách hàng hiện có"
-
-#~ msgid "Add New Client"
-#~ msgstr "Thêm khách hàng mới"
-
-#~ msgid "Healthcare Facility"
-#~ msgstr "Cơ sở y tế"
-
-#~ msgid "Catchment Province"
-#~ msgstr "Tỉnh phụ trách"
-
-#~ msgid "Insurance Provider"
-#~ msgstr "Nhà cung cấp bảo hiểm"
-
-#~ msgid "Add, edit, and manage user accounts"
-#~ msgstr "Thêm, chỉnh sửa và quản lý tài khoản người dùng"
-
-#~ msgid "Define permission bundles for user groups"
-#~ msgstr "Định nghĩa bộ quyền cho nhóm người dùng"
-
-#~ msgid "Configure restrictions, hidden menus, and field access"
-#~ msgstr "Cấu hình hạn chế, menu ẩn và quyền truy cập trường"
-
-#~ msgid "Record cash or bank transfer payments against invoices"
-#~ msgstr "Ghi nhận thanh toán tiền mặt hoặc chuyển khoản cho hóa đơn"
-
-#~ msgid "Nurse cash pending delivery to Head Office"
-#~ msgstr "Tiền mặt của điều dưỡng đang chờ nộp về văn phòng chính"
-
-#~ msgid "Issue credit notes and process refunds"
-#~ msgstr "Phát hành phiếu ghi có và xử lý hoàn tiền"
-
-#~ msgid "Merge"
-#~ msgstr "Gộp"
-
-#~ msgid "contacts"
-#~ msgstr "liên hệ"

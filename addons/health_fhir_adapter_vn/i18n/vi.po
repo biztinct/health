@@ -4,6 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 19.0 health_fhir_adapter_vn\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,15 +12,42 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_fhir_adapter_vn
-#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_vn.view_health_patient_form_vn_emr
-msgid "Export EMR Bundle (VN)"
-msgstr "Xuất hồ sơ bệnh án điện tử (VN)"
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__notes_total
+msgid "Clinical Notes (90d)"
+msgstr "Ghi chú lâm sàng (90 ngày)"
 
 #. module: health_fhir_adapter_vn
-#. odoo-python
-#: code:addons/health_fhir_adapter_vn/models/res_partner.py:0
-msgid "EMR Submission"
-msgstr "Hồ sơ đã xuất"
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_vn.view_vn_emr_readiness_form
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__coding_density
+msgid "Coding Density (%)"
+msgstr "Mật độ mã hóa (%)"
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model,name:health_fhir_adapter_vn.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_fhir_adapter_vn__display_name
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_health_facility__display_name
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_partner__display_name
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__display_name
+msgid "Display Name"
+msgstr "Display Tên"
 
 #. module: health_fhir_adapter_vn
 #: model:ir.actions.act_window,name:health_fhir_adapter_vn.action_vn_emr_readiness
@@ -29,24 +57,15 @@ msgid "EMR Readiness Report"
 msgstr "Báo cáo mức độ sẵn sàng EMR"
 
 #. module: health_fhir_adapter_vn
-#: model:ir.model,name:health_fhir_adapter_vn.model_vn_emr_readiness
-msgid "VN EMR Readiness Report"
-msgstr "Báo cáo mức độ sẵn sàng EMR (VN)"
+#. odoo-python
+#: code:addons/health_fhir_adapter_vn/models/res_partner.py:0
+msgid "EMR Submission"
+msgstr "Hồ sơ đã xuất"
 
 #. module: health_fhir_adapter_vn
-#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_health_facility__moh_facility_code
-msgid "MOH Facility Code (mã cơ sở KCB)"
-msgstr "Mã cơ sở KCB (Bộ Y tế)"
-
-#. module: health_fhir_adapter_vn
-#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_partner__vneid_verified
-msgid "VNeID Verified"
-msgstr "Đã xác thực VNeID"
-
-#. module: health_fhir_adapter_vn
-#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_partner__vneid_verified_date
-msgid "VNeID Verified On"
-msgstr "Ngày xác thực VNeID"
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_vn.view_health_patient_form_vn_emr
+msgid "Export EMR Bundle (VN)"
+msgstr "Xuất hồ sơ bệnh án điện tử (VN)"
 
 #. module: health_fhir_adapter_vn
 #: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__facility_id
@@ -54,14 +73,49 @@ msgid "Facility"
 msgstr "Cơ sở"
 
 #. module: health_fhir_adapter_vn
-#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__coding_density
-msgid "Coding Density (%)"
-msgstr "Mật độ mã hóa (%)"
+#: model:ir.model,name:health_fhir_adapter_vn.model_health_facility
+msgid "Healthcare Facility"
+msgstr "Cơ sở y tế"
 
 #. module: health_fhir_adapter_vn
-#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__notes_total
-msgid "Clinical Notes (90d)"
-msgstr "Ghi chú lâm sàng (90 ngày)"
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_fhir_adapter_vn__id
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_health_facility__id
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_partner__id
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,help:health_fhir_adapter_vn.field_res_partner__vneid_verified
+#: model:ir.model.fields,help:health_fhir_adapter_vn.field_res_users__vneid_verified
+msgid ""
+"Identity verified against VNeID (captured manually now; OIDC login "
+"integration is a later phase)."
+msgstr "Đã xác minh danh tính dựa trên VNeID (hiện đã được chụp thủ công; tích hợp đăng nhập OIDC là giai đoạn sau)."
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_health_facility__moh_facility_code
+msgid "MOH Facility Code (mã cơ sở KCB)"
+msgstr "Mã cơ sở KCB (Bộ Y tế)"
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,help:health_fhir_adapter_vn.field_health_facility__moh_facility_code
+msgid ""
+"Ministry of Health facility registration code (mã cơ sở khám chữa bệnh) — "
+"required for Circular 13/2025 EMR export and future LGSP submission."
+msgstr ""
+"Ministry of Health facility registration code (mã cơ sở khám chữa bệnh) — "
+"required for Circular 13/2025 EMR export and future LGSP submission."
 
 #. module: health_fhir_adapter_vn
 #: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__notes_coded
@@ -69,17 +123,40 @@ msgid "Notes with ICD-10 Code (90d)"
 msgstr "Ghi chú có mã ICD-10 (90 ngày)"
 
 #. module: health_fhir_adapter_vn
+#. odoo-python
+#: code:addons/health_fhir_adapter_vn/models/fhir_adapter_vn.py:0
+msgid "Only operations managers and above may export EMR bundles."
+msgstr "Chỉ quản lý vận hành trở lên mới được xuất hồ sơ bệnh án điện tử."
+
+#. module: health_fhir_adapter_vn
 #: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_vn_emr_readiness__report_html
 msgid "Readiness Report"
 msgstr "Báo cáo mức độ sẵn sàng"
 
 #. module: health_fhir_adapter_vn
-#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_vn.view_vn_emr_readiness_form
-msgid "Close"
-msgstr "Đóng"
+#: model:ir.model.fields,help:health_fhir_adapter_vn.field_vn_emr_readiness__facility_id
+msgid ""
+"Scope the coding-density figure to one facility (empty = all facilities)."
+msgstr "Phạm vi số liệu mật độ mã hóa cho một cơ sở (trống = tất cả các cơ sở)."
 
 #. module: health_fhir_adapter_vn
-#. odoo-python
-#: code:addons/health_fhir_adapter_vn/models/fhir_adapter_vn.py:0
-msgid "Only operations managers and above may export EMR bundles."
-msgstr "Chỉ quản lý vận hành trở lên mới được xuất hồ sơ bệnh án điện tử."
+#: model:ir.model,name:health_fhir_adapter_vn.model_vn_emr_readiness
+msgid "VN EMR Readiness Report"
+msgstr "Báo cáo mức độ sẵn sàng EMR (VN)"
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_partner__vneid_verified
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_users__vneid_verified
+msgid "VNeID Verified"
+msgstr "Đã xác thực VNeID"
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_partner__vneid_verified_date
+#: model:ir.model.fields,field_description:health_fhir_adapter_vn.field_res_users__vneid_verified_date
+msgid "VNeID Verified On"
+msgstr "Ngày xác thực VNeID"
+
+#. module: health_fhir_adapter_vn
+#: model:ir.model,name:health_fhir_adapter_vn.model_fhir_adapter_vn
+msgid "Vietnam FHIR EMR Adapter"
+msgstr "Việt Nam FHIR Bộ chuyển đổi EMR"

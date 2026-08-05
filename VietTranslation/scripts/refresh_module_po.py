@@ -17,6 +17,16 @@ def run(*command):
     subprocess.run(command, check=True)
 
 
+def catalog_path(module):
+    """Keep the module's existing Vietnamese filename, preferring vi.po."""
+    i18n_dir = REPO_ROOT / "addons" / module / "i18n"
+    for filename in ("vi.po", "vi_VN.po"):
+        candidate = i18n_dir / filename
+        if candidate.is_file():
+            return candidate
+    return i18n_dir / "vi.po"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("module")
@@ -30,9 +40,7 @@ def main():
             "module must be a health_* technical module name or advanced_pricing"
         )
 
-    current = REPO_ROOT / "addons" / args.module / "i18n" / "vi_VN.po"
-    if not current.is_file():
-        parser.error(f"current catalog does not exist: {current}")
+    current = catalog_path(args.module)
     if not args.export.is_file():
         parser.error(f"fresh export does not exist: {args.export}")
 
@@ -52,18 +60,33 @@ def main():
     )
     backup.parent.mkdir(parents=True, exist_ok=True)
     output.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(current, backup)
+    has_current = current.is_file() and current.stat().st_size > 0
+    if current.is_file():
+        shutil.copy2(current, backup)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         combined = pathlib.Path(temp_dir) / "combined.po"
-        run(
-            "msgcat",
-            "--use-first",
-            str(current),
-            str(args.export),
-            "-o",
-            str(combined),
-        )
+        if has_current:
+            normalized = pathlib.Path(temp_dir) / "current-normalized.po"
+            run(
+                "msguniq",
+                "--use-first",
+                str(current),
+                "-o",
+                str(normalized),
+            )
+            if not normalized.is_file():
+                shutil.copy2(current, normalized)
+            run(
+                "msgcat",
+                "--use-first",
+                str(normalized),
+                str(args.export),
+                "-o",
+                str(combined),
+            )
+        else:
+            shutil.copy2(args.export, combined)
         run(
             "msgmerge",
             "--no-fuzzy-matching",
@@ -72,12 +95,19 @@ def main():
             "-o",
             str(output),
         )
+        active_only = pathlib.Path(temp_dir) / "active-only.po"
+        run("msgattrib", "--no-obsolete", str(output), "-o", str(active_only))
+        shutil.copy2(active_only, output)
 
     run("msgfmt", "--check", "--check-format", "-o", "/dev/null", str(output))
-    print(f"Backup: {backup}")
+    if has_current:
+        print(f"Backup: {backup}")
+    else:
+        print(f"Initialized catalog: {current}")
     print(f"Candidate: {output}")
 
     if args.install:
+        current.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(output, current)
         print(f"Installed candidate at {current}")
 

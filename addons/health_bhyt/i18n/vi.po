@@ -4,6 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 19.0 health_bhyt\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,72 +12,44 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_bhyt
-#: model:ir.ui.menu,name:health_bhyt.menu_bhyt_root
-#: model:ir.actions.act_window,name:health_bhyt.action_bhyt_claim
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_list
+#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim__state__acked
+msgid "Acknowledged"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__event_ids
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
+msgid "Audit Trail"
+msgstr "Nhật ký kiểm toán"
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_health_patient_form_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_health_patient_form_ops_bhyt
+msgid "BHYT"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_beneficiary_code
+#: model:ir.model.fields,field_description:health_bhyt.field_res_users__bhyt_beneficiary_code
+msgid "BHYT Beneficiary Code"
+msgstr "Mã đối tượng BHYT"
+
+#. module: health_bhyt
 #: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
-msgid "BHYT Claims"
-msgstr "Yêu cầu BHYT"
-
-#. module: health_bhyt
-#: model:ir.model,name:health_bhyt.model_bhyt_claim
-msgid "BHYT Insurance Claim"
-msgstr "Yêu cầu bảo hiểm y tế (BHYT)"
-
-#. module: health_bhyt
-#. odoo-python
-#: code:addons/health_bhyt/models/health_fieldservice_order.py:0
-#: model:ir.sequence,name:health_bhyt.seq_bhyt_claim
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
-msgid "BHYT Claim"
-msgstr "Yêu cầu BHYT"
-
-#. module: health_bhyt
-#: model:ir.ui.menu,name:health_bhyt.menu_bhyt_claims
-msgid "Claims"
-msgstr "Yêu cầu"
-
-#. module: health_bhyt
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_health_fieldservice_order_form_bhyt
-msgid "Generate BHYT Claim"
-msgstr "Tạo yêu cầu BHYT"
-
-#. module: health_bhyt
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
-msgid "Coverage Split"
-msgstr "Phân chia chi trả"
-
-#. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_amount
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__bhyt_amount
-msgid "BHYT Covered"
-msgstr "BHYT chi trả"
-
-#. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__patient_amount
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__patient_amount
-msgid "Patient Copay"
-msgstr "Bệnh nhân đồng chi trả"
-
-#. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__eligible_amount
-msgid "Eligible Amount"
-msgstr "Số tiền hợp lệ"
-
-#. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__covered_service
-msgid "On BHYT List"
-msgstr "Trong danh mục BHYT"
-
-#. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__total_amount
-msgid "Total"
-msgstr "Tổng cộng"
-
-#. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_coverage_rate
-msgid "Coverage Rate (%)"
-msgstr "Tỷ lệ chi trả (%)"
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_health_patient_form_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_health_patient_form_ops_bhyt
+msgid "BHYT Card"
+msgstr "Thẻ BHYT"
 
 #. module: health_bhyt
 #: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_card_no
@@ -86,23 +59,64 @@ msgid "BHYT Card No."
 msgstr "Số thẻ BHYT"
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_beneficiary_code
-msgid "Beneficiary Code"
-msgstr "Mã đối tượng"
+#. odoo-python
+#: code:addons/health_bhyt/models/health_fieldservice_order.py:0
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
+msgid "BHYT Claim"
+msgstr "Yêu cầu BHYT"
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_registered_facility
-msgid "Registered Facility"
-msgstr "Nơi đăng ký KCB ban đầu"
+#: model:ir.model,name:health_bhyt.model_bhyt_claim_event
+msgid "BHYT Claim Event"
+msgstr "BHYT Sự kiện yêu cầu"
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__service_date
-msgid "Service Date"
-msgstr "Ngày dịch vụ"
+#: model:ir.model,name:health_bhyt.model_bhyt_claim_line
+msgid "BHYT Claim Line"
+msgstr "BHYT Dòng yêu cầu bồi thường"
+
+#. module: health_bhyt
+#: model:ir.actions.act_window,name:health_bhyt.action_bhyt_claim
+#: model:ir.ui.menu,name:health_bhyt.menu_bhyt_root
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_list
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
+msgid "BHYT Claims"
+msgstr "Yêu cầu BHYT"
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_health_patient_form_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_health_patient_form_ops_bhyt
+msgid "BHYT Coverage"
+msgstr "BHYT Bảo hiểm"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_coverage_rate
+#: model:ir.model.fields,field_description:health_bhyt.field_res_users__bhyt_coverage_rate
+msgid "BHYT Coverage Rate (%)"
+msgstr "Tỷ lệ chi trả BHYT (%)"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_amount
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__bhyt_amount
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_list
+msgid "BHYT Covered"
+msgstr "BHYT chi trả"
+
+#. module: health_bhyt
+#: model:ir.model,name:health_bhyt.model_bhyt_claim
+msgid "BHYT Insurance Claim"
+msgstr "Yêu cầu bảo hiểm y tế (BHYT)"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_registered_facility
+#: model:ir.model.fields,field_description:health_bhyt.field_res_users__bhyt_registered_facility
+msgid "BHYT Registered Facility"
+msgstr "Nơi đăng ký KCB ban đầu BHYT"
 
 #. module: health_bhyt
 #: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__provider_id
 #: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_provider_id
+#: model:ir.model.fields,field_description:health_bhyt.field_res_users__bhyt_provider_id
 msgid "BHYT Scheme"
 msgstr "Chương trình BHYT"
 
@@ -112,42 +126,63 @@ msgid "BHYT Snapshot"
 msgstr "Ảnh chụp BHYT"
 
 #. module: health_bhyt
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
-msgid "Visit &amp; Invoice"
-msgstr "Lượt khám &amp; Hóa đơn"
+#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_valid
+#: model:ir.model.fields,field_description:health_bhyt.field_res_users__bhyt_valid
+msgid "BHYT Valid"
+msgstr "BHYT hợp lệ"
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__event_ids
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
-msgid "Audit Trail"
-msgstr "Nhật ký kiểm toán"
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim.py:0
+msgid ""
+"BHYT claim %(names)s is locked reconciliation evidence — reset it to draft "
+"to change it (locked fields: %(fields)s)."
+msgstr "BHYT yêu cầu %(names)s bằng chứng đối chiếu bị khóa — đặt lại thành bản nháp để thay đổi (các trường bị khóa: %(fields)s)."
 
 #. module: health_bhyt
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
-msgid "Mark Ready"
-msgstr "Đánh dấu sẵn sàng"
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim_event.py:0
+msgid ""
+"BHYT claim events are append-only audit evidence and can never be modified "
+"or deleted."
+msgstr "BHYT các sự kiện khiếu nại là bằng chứng kiểm toán chỉ được thêm vào và không bao giờ có thể sửa đổi hoặc xóa được."
 
 #. module: health_bhyt
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
-msgid "Reset to Draft"
-msgstr "Đặt lại nháp"
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim_line__eligible_amount
+msgid ""
+"BHYT-eligible base (the invoice line subtotal unless the service is out-of-"
+"list)."
+msgstr "BHYT-cơ sở đủ điều kiện (tổng phụ dòng hóa đơn trừ khi dịch vụ nằm ngoài danh sách)."
+
+#. module: health_bhyt
+#: model:ir.actions.server,name:health_bhyt.cron_bhyt_generate_ir_actions_server
+msgid "BHYT: generate claims for eligible visits"
+msgstr "BHYT: tạo yêu cầu cho các lượt truy cập đủ điều kiện"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_beneficiary_code
+msgid "Beneficiary Code"
+msgstr "Mã đối tượng"
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_res_partner__bhyt_beneficiary_code
+#: model:ir.model.fields,help:health_bhyt.field_res_users__bhyt_beneficiary_code
+msgid ""
+"Beneficiary-group code (mã đối tượng). Free text in Phase 1; the "
+"Decision-4210 category enum arrives with the Phase-2 schema."
+msgstr ""
+"Beneficiary-group code (mã đối tượng). Free text in Phase 1; the "
+"Decision-4210 category enum arrives with the Phase-2 schema."
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__user_id
+msgid "By"
+msgstr "Qua"
 
 #. module: health_bhyt
 #: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
 msgid "Cancel"
 msgstr "Hủy"
-
-#. module: health_bhyt
-#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim__state__draft
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
-msgid "Draft"
-msgstr "Nháp"
-
-#. module: health_bhyt
-#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim__state__ready
-#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
-msgid "Ready"
-msgstr "Sẵn sàng"
 
 #. module: health_bhyt
 #: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim__state__cancelled
@@ -157,14 +192,185 @@ msgid "Cancelled"
 msgstr "Đã hủy"
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__patient_id
-msgid "Patient"
-msgstr "Bệnh nhân"
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim_line.py:0
+msgid ""
+"Cannot %(action)s a line on a locked BHYT claim (%(claims)s) — reset it to "
+"draft first."
+msgstr "không thể %(action)s một dòng trên một khóa BHYT yêu cầu (%(claims)s) - đặt lại thành bản nháp trước."
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__fso_id
-msgid "Visit"
-msgstr "Lượt khám"
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim_line.py:0
+msgid ""
+"Cannot add a line to a locked BHYT claim (%s) — reset it to draft first."
+msgstr "Không thể thêm một dòng vào bị khóa BHYT yêu cầu (%s) - đặt lại thành bản nháp trước."
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
+msgid "Catchment"
+msgstr "Thuộc bắt"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__catchment_province_id
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__claim_id
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__claim_id
+msgid "Claim"
+msgstr "Nhận"
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim.py:0
+msgid "Claim %s has no lines to reconcile."
+msgstr "Yêu cầu %s không có dòng nào để hòa giải."
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__line_ids
+msgid "Claim Lines"
+msgstr "Dòng yêu cầu bồi thường"
+
+#. module: health_bhyt
+#: model:ir.ui.menu,name:health_bhyt.menu_bhyt_claims
+msgid "Claims"
+msgstr "Yêu cầu"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__company_id
+msgid "Company"
+msgstr "Công ty"
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_bhyt
+#: model:ir.model,name:health_bhyt.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_coverage_rate
+msgid "Coverage Rate (%)"
+msgstr "Tỷ lệ chi trả (%)"
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
+msgid "Coverage Split"
+msgstr "Phân chia chi trả"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__create_uid
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__create_uid
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__create_date
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__create_date
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__currency_id
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__currency_id
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__currency_id
+msgid "Currency"
+msgstr "Tiền tệ"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__display_name
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__display_name
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__display_name
+#: model:ir.model.fields,field_description:health_bhyt.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_bhyt
+#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim__state__draft
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
+msgid "Draft or Ready"
+msgstr "Bản nháp hoặc Sẵn sàng"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__eligible_amount
+msgid "Eligible Amount"
+msgstr "Số tiền hợp lệ"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__event
+msgid "Event"
+msgstr "Sự kiện"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_health_fieldservice_order_form_bhyt
+msgid "Generate BHYT Claim"
+msgstr "Tạo yêu cầu BHYT"
+
+#. module: health_bhyt
+#: model_terms:ir.actions.act_window,help:health_bhyt.action_bhyt_claim
+msgid ""
+"Generate a claim from a completed, invoiced visit whose patient\n"
+"               holds a valid BHYT card."
+msgstr "Tạo yêu cầu bồi thường từ một lần thăm khám đã hoàn tất, được lập hóa đơn mà bệnh nhân của họ\n               giữ một giá trị hợp lệ BHYT thẻ."
+
+#. module: health_bhyt
+#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim_event__event__generated
+msgid "Generated"
+msgstr "Đã tạo"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model,name:health_bhyt.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__id
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__id
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__id
+#: model:ir.model.fields,field_description:health_bhyt.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim__message_has_error
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
 
 #. module: health_bhyt
 #: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__invoice_id
@@ -172,21 +378,316 @@ msgid "Invoice"
 msgstr "Hóa đơn"
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_coverage_rate
-msgid "BHYT Coverage Rate (%)"
-msgstr "Tỷ lệ chi trả BHYT (%)"
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_is_follower
+msgid "Is Follower"
+msgstr ""
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_beneficiary_code
-msgid "BHYT Beneficiary Code"
-msgstr "Mã đối tượng BHYT"
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__write_uid
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__write_uid
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__write_uid
+msgid "Last Updated by"
+msgstr ""
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_registered_facility
-msgid "BHYT Registered Facility"
-msgstr "Nơi đăng ký KCB ban đầu BHYT"
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__write_date
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__write_date
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__write_date
+msgid "Last Updated on"
+msgstr ""
 
 #. module: health_bhyt
-#: model:ir.model.fields,field_description:health_bhyt.field_res_partner__bhyt_valid
-msgid "BHYT Valid"
-msgstr "BHYT hợp lệ"
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
+msgid "Mark Ready"
+msgstr "Đánh dấu sẵn sàng"
+
+#. module: health_bhyt
+#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim_event__event__marked_ready
+msgid "Marked ready"
+msgstr "Đánh dấu sẵn sàng"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_ids
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim.py:0
+msgid "New"
+msgstr "Mới"
+
+#. module: health_bhyt
+#: model_terms:ir.actions.act_window,help:health_bhyt.action_bhyt_claim
+msgid "No BHYT claims yet"
+msgstr "KHÔNG BHYT yêu cầu chưa"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__note
+msgid "Note"
+msgstr "Ghi chú"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_res_partner__bhyt_registered_facility
+#: model:ir.model.fields,help:health_bhyt.field_res_users__bhyt_registered_facility
+msgid "Nơi đăng ký khám chữa bệnh ban đầu (initial registered facility)."
+msgstr "Nơi đăng ký khám chữa bệnh ban đầu (initial registered facility)."
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__covered_service
+msgid "On BHYT List"
+msgstr "Trong danh mục BHYT"
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim.py:0
+msgid "Only a draft claim can be marked ready (%s)."
+msgstr "Chỉ có thể đánh dấu một yêu cầu dự thảo là sẵn sàng (%s)."
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim.py:0
+msgid "Only a draft or ready claim can be cancelled (%s)."
+msgstr "Chỉ có thể hủy yêu cầu dự thảo hoặc đã sẵn sàng (%s)."
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim.py:0
+msgid "Only a ready or cancelled claim can be reset to draft (%s)."
+msgstr "Chỉ có thể đặt lại xác nhận quyền sở hữu đã sẵn sàng hoặc bị hủy thành bản nháp (%s)."
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim.py:0
+msgid ""
+"Only draft or cancelled BHYT claims can be deleted — a ready/submitted claim "
+"is reconciliation evidence (%s)."
+msgstr "Chỉ dự thảo hoặc hủy bỏ BHYT khiếu nại có thể bị xóa - khiếu nại đã sẵn sàng/đã gửi là bằng chứng hòa giải (%s)."
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__patient_id
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__patient_amount
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__patient_amount
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_list
+msgid "Patient Copay"
+msgstr "Bệnh nhân đồng chi trả"
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_res_partner__bhyt_coverage_rate
+#: model:ir.model.fields,help:health_bhyt.field_res_users__bhyt_coverage_rate
+msgid ""
+"Patient đồng-chi-trả (co-payment) coverage rate, 0–100 (e.g. 80 / 95 / 100). "
+"Defaults from the BHYT scheme."
+msgstr ""
+"Patient đồng-chi-trả (co-payment) coverage rate, 0–100 (e.g. 80 / 95 / 100). "
+"Defaults from the BHYT scheme."
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__product_id
+msgid "Product"
+msgstr "Sản phẩm"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__quantity
+msgid "Quantity"
+msgstr "Số lượng"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim__state__ready
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
+msgid "Ready"
+msgstr "Sẵn sàng"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__name
+msgid "Reference"
+msgstr "Mã tham chiếu"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__bhyt_registered_facility
+msgid "Registered Facility"
+msgstr "Nơi đăng ký KCB ban đầu"
+
+#. module: health_bhyt
+#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim__state__rejected
+msgid "Rejected"
+msgstr ""
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
+msgid "Reset to Draft"
+msgstr "Đặt lại nháp"
+
+#. module: health_bhyt
+#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim_event__event__reset
+msgid "Reset to draft"
+msgstr "Đặt lại về bản nháp"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
+msgid "Scheme"
+msgstr "Cơ chế"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__name
+msgid "Service"
+msgstr "Dịch vụ"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__service_date
+msgid "Service Date"
+msgstr "Ngày dịch vụ"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__state
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__error_text
+msgid "Submission Error"
+msgstr "Lỗi gửi dữ liệu"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__submission_ref
+msgid "Submission Reference"
+msgstr "Mã tham chiếu gửi"
+
+#. module: health_bhyt
+#: model:ir.model.fields.selection,name:health_bhyt.selection__bhyt_claim__state__submitted
+msgid "Submitted"
+msgstr "Đã gửi"
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_res_partner__bhyt_provider_id
+#: model:ir.model.fields,help:health_bhyt.field_res_users__bhyt_provider_id
+msgid ""
+"The BHYT (social health insurance) scheme record. Its default coverage % "
+"seeds the patient coverage rate when unset."
+msgstr "các BHYT (hồ sơ chương trình bảo hiểm y tế xã hội). Phạm vi bảo hiểm mặc định của nó % sthay đổi tỷ lệ bao phủ bệnh nhân khi không được đặt."
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim__invoice_id
+msgid ""
+"The posted customer invoice this claim was generated from (read-only "
+"snapshot — the claim never writes accounting)."
+msgstr "Hóa đơn khách hàng đã đăng mà khiếu nại này được tạo từ (ảnh chụp nhanh chỉ đọc - khiếu nại không bao giờ ghi thông tin kế toán)."
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/health_fieldservice_order.py:0
+msgid ""
+"This visit is not eligible for a BHYT claim — it must be completed, invoiced "
+"(posted), and the patient must hold a valid BHYT card."
+msgstr "Chuyến thăm này không đủ điều kiện cho một BHYT yêu cầu bồi thường - nó phải được hoàn thành, lập hoá đơn (đăng) và bệnh nhân phải có giấy tờ hợp lệ BHYT thẻ."
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__total_amount
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_list
+msgid "Total"
+msgstr "Tổng cộng"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_event__amount_snapshot
+msgid "Total (snapshot)"
+msgstr "Tổng cộng (ảnh chụp nhanh)"
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_res_partner__bhyt_valid
+#: model:ir.model.fields,help:health_bhyt.field_res_users__bhyt_valid
+msgid ""
+"True when the patient has a BHYT card number and a non-expired card. Flags "
+"claim eligibility."
+msgstr "Đúng khi bệnh nhân có BHYT số thẻ và thẻ chưa hết hạn sử dụng. Cờ yêu cầu tính đủ điều kiện."
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim_line__unit_price
+msgid "Unit Price"
+msgstr "Giá đơn vị"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__fso_id
+msgid "Visit"
+msgstr "Lượt khám"
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
+msgid "Visit & Invoice"
+msgstr "Truy cập & Hóa đơn"
+
+#. module: health_bhyt
+#: model:ir.model.fields,field_description:health_bhyt.field_bhyt_claim__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_bhyt
+#: model_terms:ir.ui.view,arch_db:health_bhyt.view_bhyt_claim_form
+msgid "When"
+msgstr "Thời điểm"
+
+#. module: health_bhyt
+#: model:ir.model.fields,help:health_bhyt.field_bhyt_claim_line__covered_service
+msgid "When off, the whole line is the patient responsibility."
+msgstr "Khi tắt, toàn bộ dòng là trách nhiệm của bệnh nhân."
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim_line.py:0
+msgid "delete"
+msgstr "Xóa"
+
+#. module: health_bhyt
+#. odoo-python
+#: code:addons/health_bhyt/models/bhyt_claim_line.py:0
+msgid "modify"
+msgstr "biến đổi"

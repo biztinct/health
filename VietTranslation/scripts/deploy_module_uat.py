@@ -17,6 +17,14 @@ MODULE_RE = re.compile(
 )
 
 
+def resolve_catalog_path(module_dir):
+    for filename in ("vi.po", "vi_VN.po"):
+        candidate = module_dir / "i18n" / filename
+        if candidate.is_file():
+            return candidate
+    return module_dir / "i18n" / "vi.po"
+
+
 def run(command, **kwargs):
     return subprocess.run(command, check=True, text=True, **kwargs)
 
@@ -45,7 +53,7 @@ def main():
 
     module_dir = REPO_ROOT / "addons" / args.module
     manifest_path = module_dir / "__manifest__.py"
-    catalog_path = module_dir / "i18n" / "vi_VN.po"
+    catalog_path = resolve_catalog_path(module_dir)
     if not manifest_path.is_file():
         parser.error(f"manifest does not exist: {manifest_path}")
 

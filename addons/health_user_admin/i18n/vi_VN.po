@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 11:30+0000\n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
 "PO-Revision-Date: 2026-05-07 22:52+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -28,7 +28,6 @@ msgstr "<span>Chi tiết nhân viên</span>"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/wizard/health_create_user_wizard.py:0
 #: code:addons/health_user_admin/wizard/health_create_user_wizard.py:0
 msgid "A user with email '%s' already exists."
 msgstr "Người dùng có email '%s' đã tồn tại."
@@ -58,19 +57,21 @@ msgstr "Vai trò truy cập"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid ""
-"Access role '%s' contains restricted system groups: %s. These groups cannot "
-"be assigned through the tenant interface."
-msgstr "Vai trò truy cập '%s' chứa các nhóm hệ thống bị hạn chế: %s. Không thể gán các nhóm này qua giao diện đơn vị."
+"Access role '%s' contains or implies restricted system groups: %s. These "
+"groups cannot be assigned through the tenant interface."
+msgstr "Vai trò truy cập '%s' chứa hoặc ngụ ý các nhóm hệ thống bị hạn chế: %s. Các nhóm này không thể được chỉ định thông qua giao diện đối tượng thuê."
 
 #. module: health_user_admin
 #: model_terms:ir.actions.act_window,help:health_user_admin.action_healthcare_access_roles
 msgid ""
 "Access roles define what permissions a group of users have.\n"
 "                Assign roles to users to control their access."
-msgstr "Vai trò truy cập xác định quyền của một nhóm người dùng.\n                Gán vai trò cho người dùng để kiểm soát quyền truy cập của họ."
+msgstr ""
+"Vai trò truy cập xác định quyền của một nhóm người dùng.\n"
+"                Gán vai trò cho người dùng để kiểm soát quyền truy cập của "
+"họ."
 
 #. module: health_user_admin
 #: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_create_user_wizard_form
@@ -95,7 +96,9 @@ msgstr "Đang hoạt động"
 msgid ""
 "Add users and assign them access roles to control what they can do in the "
 "system."
-msgstr "Thêm người dùng và gán vai trò truy cập để kiểm soát các thao tác họ có thể thực hiện trong hệ thống."
+msgstr ""
+"Thêm người dùng và gán vai trò truy cập để kiểm soát các thao tác họ có thể "
+"thực hiện trong hệ thống."
 
 #. module: health_user_admin
 #: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_users_form
@@ -113,7 +116,10 @@ msgid ""
 "Can create and manage users, assign access roles,\n"
 "and manage role permissions — without access to Settings, \n"
 "module installation, or system administration."
-msgstr "Có thể tạo và quản lý người dùng, gán vai trò truy cập\nvà quản lý quyền của vai trò — không có quyền truy cập Cài đặt,\ncài đặt mô-đun hoặc quản trị hệ thống."
+msgstr ""
+"Có thể tạo và quản lý người dùng, gán vai trò truy cập\n"
+"và quản lý quyền của vai trò — không có quyền truy cập Cài đặt,\n"
+"cài đặt mô-đun hoặc quản trị hệ thống."
 
 #. module: health_user_admin
 #: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_create_user_wizard_form
@@ -122,16 +128,16 @@ msgstr "Hủy"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid ""
 "Cannot deactivate system administrator '%s'. Contact your system "
 "administrator."
-msgstr "Không thể vô hiệu hóa quản trị viên hệ thống '%s'. Vui lòng liên hệ quản trị viên hệ thống."
+msgstr ""
+"Không thể vô hiệu hóa quản trị viên hệ thống '%s'. Vui lòng liên hệ quản trị "
+"viên hệ thống."
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "Cannot reset password for system administrator '%s'."
 msgstr "Không thể đặt lại mật khẩu cho quản trị viên hệ thống '%s'."
@@ -140,6 +146,12 @@ msgstr "Không thể đặt lại mật khẩu cho quản trị viên hệ thố
 #: model:ir.model.fields.selection,name:health_user_admin.selection__health_create_user_wizard__employment_type__casual
 msgid "Casual/Contract"
 msgstr "Thời vụ/Hợp đồng"
+
+#. module: health_user_admin
+#: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_users_list
+#: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_users_search
+msgid "Catchment Area"
+msgstr ""
 
 #. module: health_user_admin
 #: model:ir.model.fields,field_description:health_user_admin.field_health_create_user_wizard__catchment_province_id
@@ -165,7 +177,6 @@ msgstr "Tạo người dùng mới"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 #: model:ir.actions.act_window,name:health_user_admin.action_health_create_user_wizard
 #: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_create_user_wizard_form
@@ -208,7 +219,10 @@ msgid ""
 "Define fine-grained restrictions for each role: hide menus, \n"
 "                disable buttons, restrict exports, and control field "
 "visibility."
-msgstr "Thiết lập giới hạn chi tiết cho từng vai trò: ẩn menu,\n                vô hiệu hóa nút, hạn chế xuất dữ liệu và kiểm soát khả năng hiển thị trường."
+msgstr ""
+"Thiết lập giới hạn chi tiết cho từng vai trò: ẩn menu,\n"
+"                vô hiệu hóa nút, hạn chế xuất dữ liệu và kiểm soát khả năng "
+"hiển thị trường."
 
 #. module: health_user_admin
 #: model:ir.model.fields,field_description:health_user_admin.field_access_role__display_name
@@ -269,7 +283,6 @@ msgstr "Không hoạt động"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "Invalid access role."
 msgstr "Vai trò truy cập không hợp lệ."
@@ -318,21 +331,18 @@ msgstr "Tên"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "Name and Email are required to create a user."
 msgstr "Tên và email là bắt buộc để tạo người dùng."
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "No Employee Record"
 msgstr "Không có hồ sơ nhân viên"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "No employee record found for this user."
 msgstr "Không tìm thấy hồ sơ nhân viên cho người dùng này."
@@ -357,6 +367,11 @@ msgstr "Mật khẩu"
 #: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_users_form
 msgid "Phone"
 msgstr "Điện thoại"
+
+#. module: health_user_admin
+#: model:ir.model.fields,field_description:health_user_admin.field_access_role__is_privileged
+msgid "Privileged role"
+msgstr "Vai trò đặc quyền"
 
 #. module: health_user_admin
 #: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_create_user_wizard_form
@@ -395,7 +410,6 @@ msgstr "Hiển thị điều dưỡng trưởng"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "Staff Details"
 msgstr "Chi tiết nhân viên"
@@ -422,6 +436,13 @@ msgid "Timezone"
 msgstr "Múi giờ"
 
 #. module: health_user_admin
+#: model:ir.model.fields,help:health_user_admin.field_access_role__is_privileged
+msgid ""
+"True when the role's groups grant — or transitively imply — a system "
+"administration group. Privileged roles are never offered to tenant admins."
+msgstr "Đúng khi các nhóm của vai trò cấp — hoặc ngụ ý tạm thời — một nhóm quản trị hệ thống. Các vai trò đặc quyền không bao giờ được cung cấp cho quản trị viên đối tượng thuê."
+
+#. module: health_user_admin
 #: model:ir.model,name:health_user_admin.model_res_users
 #: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_users_form
 msgid "User"
@@ -429,7 +450,6 @@ msgstr "Người dùng"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/wizard/health_create_user_wizard.py:0
 #: code:addons/health_user_admin/wizard/health_create_user_wizard.py:0
 msgid "User \"%s\" created successfully."
 msgstr "Đã tạo người dùng \"%s\" thành công."
@@ -442,21 +462,18 @@ msgstr "Người dùng"
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "You cannot assign system administration groups."
 msgstr "Bạn không thể gán nhóm quản trị hệ thống."
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "You cannot deactivate your own account."
 msgstr "Bạn không thể vô hiệu hóa tài khoản của chính mình."
 
 #. module: health_user_admin
 #. odoo-python
-#: code:addons/health_user_admin/health_user_admin/models/res_users_saas.py:0
 #: code:addons/health_user_admin/models/res_users_saas.py:0
 msgid "You do not have permission to manage users. Contact your administrator."
 msgstr "Bạn không có quyền quản lý người dùng. Vui lòng liên hệ quản trị viên."
@@ -477,3 +494,10 @@ msgstr "ví dụ: Nguyễn Văn An"
 #: model_terms:ir.ui.view,arch_db:health_user_admin.view_health_users_form
 msgid "e.g. john@company.com"
 msgstr "ví dụ: an@congty.com"
+
+#~ msgid ""
+#~ "Access role '%s' contains restricted system groups: %s. These groups "
+#~ "cannot be assigned through the tenant interface."
+#~ msgstr ""
+#~ "Vai trò truy cập '%s' chứa các nhóm hệ thống bị hạn chế: %s. Không thể "
+#~ "gán các nhóm này qua giao diện đơn vị."

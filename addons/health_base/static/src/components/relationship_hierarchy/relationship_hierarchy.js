@@ -1,3 +1,4 @@
+import { _t } from "@web/core/l10n/translation";
 /** @odoo-module */
 
 import { registry } from "@web/core/registry";
@@ -158,7 +159,7 @@ export class RelationshipHierarchyWidget extends Component {
 
         // Show confirmation dialog
         this.dialog.add(ConfirmationDialog, {
-            title: 'Remove Relationship',
+            title: _t('Remove Relationship'),
             body: `Are you sure you want to remove the relationship with ${partnerName}?`,
             confirm: async () => {
                 try {

@@ -313,11 +313,11 @@ export class RelationshipGraphWidget extends Component {
             .attr("transform", `translate(20, 20)`);
 
         const legendItems = [
-            { label: 'Caregiver', color: roleColors.caregiver },
-            { label: 'Payer', color: roleColors.payer },
-            { label: 'Referrer', color: roleColors.referrer },
-            { label: 'Emergency', color: roleColors.emergency_contact },
-            { label: 'Legal Guardian', color: roleColors.legal_guardian },
+            { label: _t('Caregiver'), color: roleColors.caregiver },
+            { label: _t('Payer'), color: roleColors.payer },
+            { label: _t('Referrer'), color: roleColors.referrer },
+            { label: _t('Emergency'), color: roleColors.emergency_contact },
+            { label: _t('Legal Guardian'), color: roleColors.legal_guardian },
         ];
 
         legendItems.forEach((item, i) => {

@@ -43,11 +43,13 @@ class RedInvoicePdfPreviewWizard(models.TransientModel):
         self.ensure_one()
         move = self.move_id
         partner = move.partner_id
-        subject = _('Red Invoice %s') % (move.red_invoice_no or move.name or '')
+        invoice_number = move.red_invoice_no or move.name or str()
+        company_name = move.company_id.name or str()
+        subject = _('Red Invoice %s') % invoice_number
         body = _(
             '<p>Dear %s,</p><p>Please find attached your VAT (Red) invoice.</p>'
             '<p>Best regards,<br/>%s</p>'
-        ) % (partner.name or _('Customer'), move.company_id.name or '')
+        ) % (partner.name or _('Customer'), company_name)
         return {
             'type': 'ir.actions.act_window',
             'name': _('Email Red Invoice'),

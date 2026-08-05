@@ -19,3 +19,15 @@ msgstr "Chế độ tiện dụng cho ứng dụng PWA"
 #: model:ir.module.module,summary:base.module_health_pwa_ergo
 msgid "Glove mode + sunlight (high-contrast) mode for the field PWA"
 msgstr "Chế độ găng tay + chế độ ngoài trời (tương phản cao) cho ứng dụng hiện trường"
+
+#. module: health_pwa_ergo
+#. odoo-javascript
+#: code:addons/health_pwa_ergo/static/src/js/ergo.js:0
+msgid "Glove mode"
+msgstr "Chế độ găng tay"
+
+#. module: health_pwa_ergo
+#. odoo-javascript
+#: code:addons/health_pwa_ergo/static/src/js/ergo.js:0
+msgid "Sunlight mode"
+msgstr "Chế độ ngoài trời"

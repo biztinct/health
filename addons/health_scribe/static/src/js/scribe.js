@@ -13,6 +13,9 @@
 // secure context — care.biztinct.com is https.
 
 (function () {
+  const _t = (text) => window.odoo?._t?.(text)
+    || window.PWAUtils?.i18n?.t?.(text)
+    || text;
   'use strict';
 
   // Mirrors the server default health_scribe.max_seconds; the real safety gate
@@ -112,12 +115,12 @@
 
   function startRecording() {
     if (!navigator.onLine) {
-      alert('Cần kết nối mạng để ghi âm (recording needs a connection)');
+      alert(_t('Recording needs a connection.'));
       return;
     }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia ||
         !window.MediaRecorder) {
-      alert('Thiết bị không hỗ trợ ghi âm (recording is not supported)');
+      alert(_t('Recording is not supported on this device.'));
       return;
     }
     pendingAudio = null;
@@ -161,9 +164,9 @@
     }).catch(function (err) {
       cleanupStream();
       if (err && err.name === 'NotAllowedError') {
-        alert('Vui lòng cho phép micro để ghi âm (please allow microphone access)');
+        alert(_t('Please allow microphone access to record.'));
       } else {
-        alert('Không thể bắt đầu ghi âm (could not start recording)');
+        alert(_t('Could not start recording.'));
       }
     });
   }

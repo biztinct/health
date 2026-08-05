@@ -106,7 +106,7 @@ const STEP_ART = {
  * rendered in the operator's language.
  */
 const CALLS_CARD = {
-    title: "Calls (VoIP24h)",
+    title: _t("Calls (VoIP24h)"),
     body: _t(
         "No provider application is needed here. A clinic connects its phone " +
         "system from the Channel Center with the webhook secret from its own " +

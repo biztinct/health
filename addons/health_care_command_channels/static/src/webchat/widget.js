@@ -97,7 +97,8 @@
 
         var launcher = el("button", "h19wc-launch");
         launcher.setAttribute("aria-label", "Chat");
-        launcher.textContent = "Chat";
+        launcher.textContent = document.documentElement.lang
+            .toLowerCase().startsWith("vi") ? "Trò chuyện" : "Chat";
         launcher.addEventListener("click", toggle);
 
         var panel = el("div", "h19wc-panel");

@@ -4,6 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 19.0 health_scribe\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,23 +12,30 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_scribe
-#: model:ir.ui.menu,name:health_scribe.menu_scribe_jobs
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_health_clinical_note_form_scribe
-msgid "Voice Recordings"
-msgstr "Ghi âm giọng nói"
+#. odoo-python
+#: code:addons/health_scribe/controllers/api.py:0
+msgid "Access denied"
+msgstr ""
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__scribe_job_ids
-#: model:ir.actions.act_window,name:health_scribe.action_scribe_job
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
-msgid "Scribe Jobs"
-msgstr "Công việc ghi âm"
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "After this many failed sweeps a recording is marked failed."
+msgstr "Sau nhiều lần quét thất bại, bản ghi được đánh dấu là không thành công."
 
 #. module: health_scribe
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_form
-msgid "Scribe Job"
-msgstr "Công việc ghi âm"
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_allow_cloud
+msgid "Allow Cloud STT"
+msgstr "Cho phép STT đám mây"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Allow cloud STT"
+msgstr "Cho phép đám mây STT"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Ambient Scribe (Voice → Note)"
+msgstr "Ghi âm hỗ trợ (Giọng nói → Ghi chú)"
 
 #. module: health_scribe
 #: model:ir.model,name:health_scribe.model_health_scribe_job
@@ -35,25 +43,9 @@ msgid "Ambient Scribe Transcription Job"
 msgstr "Công việc chuyển giọng nói thành văn bản"
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__note_id
-msgid "Clinical Note"
-msgstr "Ghi chú lâm sàng"
-
-#. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__fso_id
-msgid "Service Order"
-msgstr "Đơn dịch vụ"
-
-#. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__patient_id
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
-msgid "Patient"
-msgstr "Bệnh nhân"
-
-#. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__catchment_province_id
-msgid "Catchment Province"
-msgstr "Tỉnh phụ trách"
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__attempts
+msgid "Attempts"
+msgstr "Số lần thử"
 
 #. module: health_scribe
 #: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__attachment_id
@@ -61,30 +53,59 @@ msgid "Audio"
 msgstr "Âm thanh"
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__audio_ids
-msgid "Scribe Recordings"
-msgstr "Bản ghi âm"
-
-#. module: health_scribe
 #: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__audio_sha256
 msgid "Audio SHA-256"
 msgstr "SHA-256 của âm thanh"
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__duration_s
-msgid "Duration (s)"
-msgstr "Thời lượng (giây)"
+#. odoo-python
+#: code:addons/health_scribe/models/scribe_job.py:0
+msgid "Audio exceeds the %s-byte limit."
+msgstr "Âm thanh vượt quá %s-giới hạn byte."
 
 #. module: health_scribe
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
-msgid "Seconds"
-msgstr "Giây"
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__catchment_province_id
+msgid "Catchment Province"
+msgstr "Tỉnh phụ trách"
 
 #. module: health_scribe
-#: model:ir.model.fields.selection,name:health_scribe.selection__health_scribe_job__state__pending
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
-msgid "Pending"
-msgstr "Chờ xử lý"
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Client-side hard stop for a single recording."
+msgstr "Dừng cứng phía máy khách cho một bản ghi."
+
+#. module: health_scribe
+#: model:ir.model,name:health_scribe.model_health_clinical_note
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__note_id
+msgid "Clinical Note"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_scribe
+#. odoo-python
+#: code:addons/health_scribe/controllers/api.py:0
+msgid "Clinical note not found for this order"
+msgstr "Không tìm thấy ghi chú lâm sàng cho đơn này"
+
+#. module: health_scribe
+#: model:ir.model,name:health_scribe.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__display_name
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__display_name
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
 
 #. module: health_scribe
 #: model:ir.model.fields.selection,name:health_scribe.selection__health_scribe_job__state__done
@@ -93,57 +114,9 @@ msgid "Done"
 msgstr "Hoàn tất"
 
 #. module: health_scribe
-#: model:ir.model.fields.selection,name:health_scribe.selection__health_scribe_job__state__failed
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
-msgid "Failed"
-msgstr "Thất bại"
-
-#. module: health_scribe
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
-msgid "Status"
-msgstr "Trạng thái"
-
-#. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__attempts
-msgid "Attempts"
-msgstr "Số lần thử"
-
-#. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__last_attempt
-msgid "Last Attempt"
-msgstr "Lần thử gần nhất"
-
-#. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__transcript
-msgid "Transcript"
-msgstr "Bản chép lời"
-
-#. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__error
-msgid "Last Error"
-msgstr "Lỗi gần nhất"
-
-#. module: health_scribe
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
-msgid "Uploaded"
-msgstr "Đã tải lên"
-
-#. module: health_scribe
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_health_clinical_note_form_scribe
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_form
-msgid "Transcribe now"
-msgstr "Chép lời ngay"
-
-#. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__scribe_pending_count
-msgid "Pending Recordings"
-msgstr "Bản ghi chờ xử lý"
-
-#. module: health_scribe
-#: model_terms:ir.actions.act_window,help:health_scribe.action_scribe_job
-msgid "No scribe recordings yet"
-msgstr "Chưa có bản ghi âm nào"
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__duration_s
+msgid "Duration (s)"
+msgstr "Thời lượng (giây)"
 
 #. module: health_scribe
 #: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_enabled
@@ -151,39 +124,61 @@ msgid "Enable Ambient Scribe"
 msgstr "Bật ghi âm hỗ trợ"
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_stt_endpoint
-msgid "STT Endpoint (OpenAI-compatible)"
-msgstr "Điểm cuối STT (tương thích OpenAI)"
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Enable ambient scribe"
+msgstr "Bật trình ghi chép xung quanh"
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_allow_cloud
-msgid "Allow Cloud STT"
-msgstr "Cho phép STT đám mây"
+#: model:ir.model.fields.selection,name:health_scribe.selection__health_scribe_job__state__failed
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
+msgid "Failed"
+msgstr "Thất bại"
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_language
-msgid "STT Language"
-msgstr "Ngôn ngữ STT"
+#: model:ir.model.fields,help:health_scribe.field_res_config_settings__scribe_stt_endpoint
+msgid ""
+"Full URL of the transcription endpoint, e.g. http://127.0.0.1:8123/v1/audio/"
+"transcriptions. Empty → recordings queue and wait. Must be a private host "
+"unless \"Allow cloud STT\"."
+msgstr "URL đầy đủ của điểm cuối phiên mã, e.g. http://127.0.0.1:8123/v1/audio/transcriptions. Trống → xếp hàng ghi âm và chờ đợi. Phải là máy chủ riêng trừ khi \"Cho phép đám mây STT\"."
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_max_seconds
-msgid "Max Recording Seconds"
-msgstr "Số giây ghi âm tối đa"
+#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__id
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__id
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_max_bytes
-msgid "Max Audio Bytes"
-msgstr "Số byte âm thanh tối đa"
+#. odoo-python
+#: code:addons/health_scribe/controllers/api.py:0
+msgid "Invalid note id"
+msgstr "Id ghi chú không hợp lệ"
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_batch_cap
-msgid "Recordings per Sweep"
-msgstr "Số bản ghi mỗi lần quét"
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Language hint sent to the transcription backend (default vi)."
+msgstr "Gợi ý ngôn ngữ được gửi tới phần phụ trợ phiên âm (vi mặc định)."
 
 #. module: health_scribe
-#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_stt_timeout_s
-msgid "STT Timeout (s)"
-msgstr "Thời gian chờ STT (giây)"
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__last_attempt
+msgid "Last Attempt"
+msgstr "Lần thử gần nhất"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__error
+msgid "Last Error"
+msgstr "Lỗi gần nhất"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__write_date
+msgid "Last Updated on"
+msgstr ""
 
 #. module: health_scribe
 #: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_max_attempts
@@ -191,21 +186,34 @@ msgid "Max Attempts per Recording"
 msgstr "Số lần thử tối đa mỗi bản ghi"
 
 #. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_max_bytes
+msgid "Max Audio Bytes"
+msgstr "Số byte âm thanh tối đa"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_max_seconds
+msgid "Max Recording Seconds"
+msgstr "Số giây ghi âm tối đa"
+
+#. module: health_scribe
 #: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
-msgid "Ambient Scribe (Voice → Note)"
-msgstr "Ghi âm hỗ trợ (Giọng nói → Ghi chú)"
+msgid "Max attempts per recording"
+msgstr "Số lần thử tối đa cho mỗi lần ghi"
 
 #. module: health_scribe
-#: model:ir.ui.menu,name:health_scribe.menu_scribe_jobs
-#: model_terms:ir.ui.view,arch_db:health_scribe.view_health_clinical_note_form_scribe
-msgid "Voice Recordings"
-msgstr "Ghi âm giọng nói"
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Max audio bytes"
+msgstr "Byte âm thanh tối đa"
 
 #. module: health_scribe
-#. odoo-python
-#: code:addons/health_scribe/models/scribe_job.py:0
-msgid "Uploaded file is not audio."
-msgstr "Tệp tải lên không phải âm thanh."
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Max recording seconds"
+msgstr "Số giây ghi tối đa"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Maximum recordings transcribed per 30-minute run."
+msgstr "Số bản ghi tối đa được sao chép trong mỗi lần chạy 30 phút."
 
 #. module: health_scribe
 #. odoo-python
@@ -214,10 +222,24 @@ msgid "No audio provided"
 msgstr "Không có âm thanh"
 
 #. module: health_scribe
-#. odoo-python
-#: code:addons/health_scribe/controllers/api.py:0
-msgid "Clinical note not found for this order"
-msgstr "Không tìm thấy ghi chú lâm sàng cho đơn này"
+#: model_terms:ir.actions.act_window,help:health_scribe.action_scribe_job
+msgid "No scribe recordings yet"
+msgstr "Chưa có bản ghi âm nào"
+
+#. module: health_scribe
+#: model:ir.model.fields,help:health_scribe.field_res_config_settings__scribe_allow_cloud
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid ""
+"Off by default (data sovereignty): only a private-host endpoint (localhost / "
+"RFC-1918) is called; a public host is refused."
+msgstr "Tắt theo mặc định (chủ quyền dữ liệu): chỉ điểm cuối máy chủ riêng (localhost / RFC-1918) được gọi; một máy chủ công cộng bị từ chối."
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid ""
+"On by default. Nurses can record voice notes in the PWA; the sweep "
+"transcribes them into the note text. Inert without an STT endpoint."
+msgstr "Bật theo mặc định. Y tá có thể ghi lại ghi chú giọng nói trong PWA; quá trình quét sẽ chuyển chúng thành văn bản ghi chú. Trơ mà không có STT điểm cuối."
 
 #. module: health_scribe
 #. odoo-python
@@ -230,3 +252,203 @@ msgstr "Chỉ quản lý mới có thể chạy hoặc xóa công việc chép l
 #: code:addons/health_scribe/models/health_clinical_note.py:0
 msgid "Only a manager may run scribe transcription jobs."
 msgstr "Chỉ quản lý mới có thể chạy công việc chép lời."
+
+#. module: health_scribe
+#. odoo-python
+#: code:addons/health_scribe/controllers/api.py:0
+msgid "Order not found"
+msgstr ""
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__patient_id
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_scribe
+#: model:ir.model.fields.selection,name:health_scribe.selection__health_scribe_job__state__pending
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
+msgid "Pending"
+msgstr "Chờ xử lý"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__scribe_pending_count
+msgid "Pending Recordings"
+msgstr "Bản ghi chờ xử lý"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Per-request timeout for the transcription call."
+msgstr "Hết thời gian chờ theo yêu cầu cho cuộc gọi phiên âm."
+
+#. module: health_scribe
+#: model:ir.model.fields,help:health_scribe.field_health_scribe_job__transcript
+msgid ""
+"Raw STT output (NOT encrypted — the authoritative copy is the appended, "
+"encrypted clinical note)."
+msgstr "thô STT đầu ra (KHÔNG được mã hóa - bản sao chính thức là ghi chú lâm sàng được mã hóa, được thêm vào)."
+
+#. module: health_scribe
+#: model_terms:ir.actions.act_window,help:health_scribe.action_scribe_job
+msgid ""
+"Recordings captured in the PWA clinical-note form queue here and\n"
+"               are transcribed by the 30-minute sweep."
+msgstr "Các bản ghi được ghi lại trong PWA hàng đợi biểu mẫu ghi chú lâm sàng ở đây và\n               được phiên âm bằng cách quét 30 phút."
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_batch_cap
+msgid "Recordings per Sweep"
+msgstr "Số bản ghi mỗi lần quét"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Recordings per sweep"
+msgstr "Ghi mỗi lần quét"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_stt_endpoint
+msgid "STT Endpoint (OpenAI-compatible)"
+msgstr "Điểm cuối STT (tương thích OpenAI)"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_language
+msgid "STT Language"
+msgstr "Ngôn ngữ STT"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_res_config_settings__scribe_stt_timeout_s
+msgid "STT Timeout (s)"
+msgstr "Thời gian chờ STT (giây)"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "STT endpoint (OpenAI-compatible)"
+msgstr "STT điểm cuối (tương thích với OpenAI)"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "STT language"
+msgstr "STT ngôn ngữ"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "STT timeout (s)"
+msgstr "STT hết thời gian chờ (giây)"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_form
+msgid "Scribe Job"
+msgstr "Công việc ghi âm"
+
+#. module: health_scribe
+#: model:ir.actions.act_window,name:health_scribe.action_scribe_job
+#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__scribe_job_ids
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
+msgid "Scribe Jobs"
+msgstr "Công việc ghi âm"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_clinical_note__audio_ids
+msgid "Scribe Recordings"
+msgstr "Bản ghi âm"
+
+#. module: health_scribe
+#: model:ir.actions.server,name:health_scribe.cron_scribe_transcribe_ir_actions_server
+msgid "Scribe: transcribe pending recordings"
+msgstr "Scribe: chép lại các bản ghi âm đang chờ xử lý"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
+msgid "Seconds"
+msgstr "Giây"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid "Server-side upload size cap (the real safety gate)."
+msgstr "Giới hạn kích thước tải lên phía máy chủ (cổng an toàn thực sự)."
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__fso_id
+msgid "Service Order"
+msgstr "Đơn dịch vụ"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__state
+msgid "State"
+msgstr "Trạng thái"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_health_clinical_note_form_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_form
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
+msgid "Transcribe now"
+msgstr "Chép lời ngay"
+
+#. module: health_scribe
+#: model:ir.model.fields,field_description:health_scribe.field_health_scribe_job__transcript
+msgid "Transcript"
+msgstr "Bản chép lời"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_form
+msgid "Transcript (raw, unencrypted — verify in the note)"
+msgstr "Bản ghi (thô, không được mã hóa - xác minh trong ghi chú)"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_scribe_job_list
+msgid "Uploaded"
+msgstr "Đã tải lên"
+
+#. module: health_scribe
+#. odoo-python
+#: code:addons/health_scribe/models/scribe_job.py:0
+msgid "Uploaded file is not audio."
+msgstr "Tệp tải lên không phải âm thanh."
+
+#. module: health_scribe
+#: model:ir.ui.menu,name:health_scribe.menu_scribe_jobs
+#: model_terms:ir.ui.view,arch_db:health_scribe.view_health_clinical_note_form_scribe
+msgid "Voice Recordings"
+msgstr "Ghi âm giọng nói"
+
+#. module: health_scribe
+#: model:ir.model.fields,help:health_scribe.field_health_scribe_job__patient_id
+msgid "client receiving the healthcare service"
+msgstr "khách hàng nhận dịch vụ chăm sóc sức khỏe"
+
+#. module: health_scribe
+#: model_terms:ir.ui.view,arch_db:health_scribe.res_config_settings_view_form_scribe
+msgid ""
+"e.g. http://127.0.0.1:8123/v1/audio/transcriptions. Empty → recordings queue "
+"and wait. Must be a private host unless cloud STT is allowed."
+msgstr "e.g. http://127.0.0.1:8123/v1/audio/transcriptions. Trống → xếp hàng ghi âm và chờ đợi. Phải là máy chủ riêng trừ khi có đám mây STT được phép."
+
+#. module: health_scribe
+#. odoo-javascript
+#: code:addons/health_scribe/static/src/js/scribe.js:0
+msgid "Could not start recording."
+msgstr "Không thể bắt đầu ghi âm."
+
+#. module: health_scribe
+#. odoo-javascript
+#: code:addons/health_scribe/static/src/js/scribe.js:0
+msgid "Please allow microphone access to record."
+msgstr "Vui lòng cho phép truy cập micro để ghi âm."
+
+#. module: health_scribe
+#. odoo-javascript
+#: code:addons/health_scribe/static/src/js/scribe.js:0
+msgid "Recording is not supported on this device."
+msgstr "Thiết bị này không hỗ trợ ghi âm."
+
+#. module: health_scribe
+#. odoo-javascript
+#: code:addons/health_scribe/static/src/js/scribe.js:0
+msgid "Recording needs a connection."
+msgstr "Cần kết nối mạng để ghi âm."

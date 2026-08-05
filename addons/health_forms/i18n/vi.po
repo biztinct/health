@@ -5,6 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: health_forms 19.0.1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,57 +13,22 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_forms
-#: model:ir.ui.menu,name:health_forms.menu_health_forms
-msgid "Assessments & Forms"
-msgstr "Đánh giá & Biểu mẫu"
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid ""
+"A form instance with this client UUID already exists (idempotency key must "
+"be unique)."
+msgstr "Một phiên bản biểu mẫu với khách hàng này UUID đã tồn tại (khóa đảm bảo tính lũy đẳng phải là duy nhất)."
 
 #. module: health_forms
-#: model:ir.ui.menu,name:health_forms.menu_health_form_instances
-#: model:ir.actions.act_window,name:health_forms.action_health_form_instance
-msgid "Form Instances"
-msgstr "Phiếu đánh giá"
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "AMTS"
+msgstr ""
 
 #. module: health_forms
-#: model:ir.ui.menu,name:health_forms.menu_health_form_templates
-#: model:ir.ui.menu,name:health_forms.menu_health_form_templates_config
-#: model:ir.actions.act_window,name:health_forms.action_health_form_template
-msgid "Form Templates"
-msgstr "Mẫu biểu đánh giá"
-
-#. module: health_forms
-#: model:ir.model,name:health_forms.model_health_form_template
-msgid "Clinical Form Template"
-msgstr "Mẫu biểu mẫu lâm sàng"
-
-#. module: health_forms
-#: model:ir.model,name:health_forms.model_health_form_question
-msgid "Clinical Form Question"
-msgstr "Câu hỏi biểu mẫu lâm sàng"
-
-#. module: health_forms
-#: model:ir.model,name:health_forms.model_health_form_instance
-msgid "Clinical Form Instance (Response)"
-msgstr "Phiếu đánh giá lâm sàng (phản hồi)"
-
-#. module: health_forms
-#: model:health.form.template,name:health_forms.form_template_pain
-msgid "Pain Scale"
-msgstr "Thang điểm đau"
-
-#. module: health_forms
-#: model:health.form.template,name:health_forms.form_template_barthel
-msgid "Barthel ADL Index"
-msgstr "Chỉ số Barthel ADL"
-
-#. module: health_forms
-#: model:health.form.template,name:health_forms.form_template_mna
-msgid "Mini Nutritional Assessment SF"
-msgstr "Đánh giá dinh dưỡng (MNA-SF)"
-
-#. module: health_forms
-#: model:health.form.template,name:health_forms.form_template_braden
-msgid "Braden Pressure Injury Risk"
-msgstr "Nguy cơ loét tì đè (Braden)"
+#: model:health.vitals.type,name:health_forms.vitals_type_amts_total
+msgid "AMTS score"
+msgstr "điểm AMTS"
 
 #. module: health_forms
 #: model:health.form.template,name:health_forms.form_template_amts
@@ -70,9 +36,1220 @@ msgid "Abbreviated Mental Test Score"
 msgstr "Đánh giá nhận thức (AMTS)"
 
 #. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Access denied"
+msgstr "Từ chối truy cập"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_needaction
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__active
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_braden_activity
+msgid "Activity"
+msgstr "Hoạt động"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_age
+msgid "Age — client states their age correctly"
+msgstr "Tuổi - khách hàng nêu chính xác tuổi của họ"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_instance__state__amended
+msgid "Amended"
+msgstr "Đã sửa đổi"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__key
+msgid "Answer key (snake_case, unique per template)."
+msgstr "Khóa trả lời (snake_case, duy nhất cho mỗi mẫu)."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Answer to \"%s\" is above the maximum (%s)."
+msgstr "Câu trả lời cho \"%s\" cao hơn giá trị tối đa (%s)."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Answer to \"%s\" is below the minimum (%s)."
+msgstr "Câu trả lời cho \"%s\" thấp hơn giá trị tối thiểu (%s)."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Answer to \"%s\" must be a number."
+msgstr "Câu trả lời cho \"%s\" phải là một số."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__answers_json
+msgid "Answers"
+msgstr "Câu trả lời"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__service_type_ids
+msgid "Applicable Services"
+msgstr "Dịch vụ áp dụng"
+
+#. module: health_forms
+#: model:health.form.question,help:health_forms.form_question_pain_score
+msgid "Ask the client to rate their current pain on a 0-10 scale."
+msgstr "Yêu cầu khách hàng đánh giá mức độ đau hiện tại của họ theo thang điểm 0-10."
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__category__assessment
+msgid "Assessment"
+msgstr "Đánh giá"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_fieldservice_order__form_instance_count
+msgid "Assessment Count"
+msgstr "Số lượng đánh giá"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_graph
+msgid "Assessment Trends"
+msgstr "Xu hướng đánh giá"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Assessment saved"
+msgstr "Đã lưu đánh giá"
+
+#. module: health_forms
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_forms/models/health_fieldservice_order.py:0
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+#: model:ir.model.fields,field_description:health_forms.field_health_fieldservice_order__form_instance_ids
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_fieldservice_order_form_forms
+msgid "Assessments"
+msgstr "Đánh giá"
+
+#. module: health_forms
+#: model:ir.ui.menu,name:health_forms.menu_health_forms
+msgid "Assessments & Forms"
+msgstr "Đánh giá & Biểu mẫu"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_attachment_count
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.xml:0
+msgid "Attachment preview"
+msgstr "Xem trước tệp đính kèm"
+
+#. module: health_forms
+#: model_terms:ir.actions.act_window,help:health_forms.action_health_form_template
+msgid "Author a clinical form"
+msgstr "Tác giả một mẫu lâm sàng"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "Barthel"
+msgstr ""
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_barthel
+msgid "Barthel ADL Index"
+msgstr "Chỉ số Barthel ADL"
+
+#. module: health_forms
+#: model:health.vitals.type,name:health_forms.vitals_type_barthel_total
+msgid "Barthel ADL Index total score"
+msgstr "Tổng điểm chỉ số Barthel ADL"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_bathing
+msgid "Bathing"
+msgstr "tắm"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_bladder
+msgid "Bladder"
+msgstr "Bàng quang"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_mna_bmi_band
+msgid "Body Mass Index (BMI)"
+msgstr "Chỉ số khối cơ thể (BMI)"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__order_id
+msgid "Booking"
+msgstr "Đặt lịch"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_bowels
+msgid "Bowels"
+msgstr "Ruột"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "Braden"
+msgstr ""
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_braden
+msgid "Braden Pressure Injury Risk"
+msgstr "Nguy cơ loét tì đè (Braden)"
+
+#. module: health_forms
+#: model:health.vitals.type,name:health_forms.vitals_type_braden_total
+msgid "Braden scale total score"
+msgstr "Tổng điểm theo thang điểm Braden"
+
+#. module: health_forms
+#: model_terms:ir.actions.act_window,help:health_forms.action_health_form_template
+msgid ""
+"Build versioned, scored assessment forms rendered in both\n"
+"                the backend and the nurse PWA from one JSON schema."
+msgstr "Xây dựng các biểu mẫu đánh giá theo phiên bản, được chấm điểm được hiển thị ở cả hai\n                người hỗ trợ và y tá PWA từ một JSON lược đồ."
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Cancel this form instance?"
+msgstr "Hủy phiên bản biểu mẫu này?"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_instance__state__cancelled
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Cannot publish a form template without questions."
+msgstr "Không thể xuất bản mẫu biểu mẫu không có câu hỏi."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__catchment_province_id
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__catchment_province_id
+msgid "Catchment area used for filtering and access control"
+msgstr "Khu vực bắt được sử dụng để lọc và kiểm soát truy cập"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__category
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_search
+msgid "Category"
+msgstr "Danh mục"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Clear"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__client_id
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__client_uuid
+msgid "Client Uuid"
+msgstr "Khách hàng Uuid"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__client_uuid
+msgid "Client-generated idempotency key for offline PWA replay."
+msgstr "Khóa bình thường do khách hàng tạo cho ngoại tuyến PWA phát lại."
+
+#. module: health_forms
+#: model:ir.model,name:health_forms.model_health_form_instance
+msgid "Clinical Form Instance (Response)"
+msgstr "Phiếu đánh giá lâm sàng (phản hồi)"
+
+#. module: health_forms
+#: model:ir.model,name:health_forms.model_health_form_question
+msgid "Clinical Form Question"
+msgstr "Câu hỏi biểu mẫu lâm sàng"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.js:0
+msgid "Clinical Form Renderer"
+msgstr "Trình kết xuất biểu mẫu lâm sàng"
+
+#. module: health_forms
+#: model:ir.model,name:health_forms.model_health_form_template
+msgid "Clinical Form Template"
+msgstr "Mẫu biểu mẫu lâm sàng"
+
+#. module: health_forms
+#: model:ir.model,name:health_forms.model_health_observation
+msgid "Clinical Observation"
+msgstr "Quan sát lâm sàng"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_observation__form_instance_id
+msgid "Clinical form instance this observation was extracted from."
+msgstr "Ví dụ mẫu lâm sàng quan sát này được trích từ."
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__code
+msgid "Code"
+msgstr "Mã"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__company_id
+msgid "Company"
+msgstr "Công ty"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__schema_json
+msgid "Compiled Schema"
+msgstr "Lược đồ được biên dịch"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__scoring_method
+msgid "Compiles into scoring.method of the schema."
+msgstr "Biên dịch thành scoring.method của lược đồ."
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Complete"
+msgstr "Hoàn thành"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_instance__state__completed
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "Completed"
+msgstr "Đã hoàn thành"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__completed_datetime
+msgid "Completed Datetime"
+msgstr "Ngày giờ đã hoàn thành"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid ""
+"Completed form instances cannot be deleted (clinical record integrity). "
+"Cancel or amend instead."
+msgstr ""
+"Không thể xóa phiếu đánh giá đã hoàn thành (bảo toàn hồ sơ lâm sàng). Hãy "
+"hủy hoặc sửa đổi."
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Completed this visit"
+msgstr "Đã hoàn thành chuyến thăm này"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__computed_score
+msgid "Computed Score"
+msgstr "Điểm tính toán"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__schema_snapshot
+msgid ""
+"Copy of the template schema_json at creation — the instance renders from "
+"this forever."
+msgstr "Bản sao schema_json của mẫu tại thời điểm tạo; phiên biểu mẫu luôn hiển thị từ bản sao này."
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.js:0
+msgid "Could not upload the file."
+msgstr "Không thể tải tập tin lên."
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_count_backwards
+msgid "Count backwards — from 20 down to 1"
+msgstr "Đếm ngược - từ 20 xuống 1"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Create new versions from the published template."
+msgstr "Tạo phiên bản mới từ mẫu đã xuất bản."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__create_uid
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__create_uid
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__create_date
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__create_date
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__date
+msgid "Date"
+msgstr "Ngày"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_dob
+msgid "Date of birth — client states their date of birth"
+msgstr "Ngày sinh - khách hàng nêu rõ ngày sinh của họ"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__description
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Description"
+msgstr "Mô tả"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__display_name
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__display_name
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__display_name
+#: model:ir.model.fields,field_description:health_forms.field_health_observation__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_instance__state__draft
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__state__draft
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_search
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_dressing
+msgid "Dressing"
+msgstr "mặc quần áo"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__observation_ids
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Extracted Observations"
+msgstr "Chỉ số đã trích xuất"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__score_vitals_type_id
+msgid "Extraction target for the total score."
+msgstr "Mục tiêu trích xuất cho tổng số điểm."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__vitals_type_id
+msgid "Extraction target for this question (overrides the LOINC lookup)."
+msgstr "Mục tiêu trích xuất cho câu hỏi này (ghi đè LOINC tra cứu)."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__state
+msgid "FHIR Questionnaire.status (published maps to active)."
+msgstr "FHIR Questionnaire.status (published ánh xạ thành active)."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__name
+msgid "FHIR Questionnaire.title"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__version
+msgid "FHIR Questionnaire.version; unique together with code."
+msgstr "FHIR Questionnaire.version; độc đáo cùng với mã."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__performer_id
+msgid "FHIR QuestionnaireResponse.author"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__completed_datetime
+msgid "FHIR QuestionnaireResponse.authored"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__order_id
+msgid "FHIR QuestionnaireResponse.encounter"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__state
+msgid ""
+"FHIR QuestionnaireResponse.status (completed/amended verbatim, cancelled "
+"maps to stopped)."
+msgstr "FHIR QuestionnaireResponse.status (giữ nguyên completed/amended; cancelled ánh xạ thành stopped)."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__client_id
+msgid "FHIR QuestionnaireResponse.subject"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__template_code
+#: model:ir.model.fields,help:health_forms.field_health_form_template__code
+msgid ""
+"Family code (PAIN, BARTHEL, MNA_SF, BRADEN, AMTS); FHIR Questionnaire.name"
+msgstr "Mã gia đình (PAIN, BARTHEL, MNA_SF, BRADEN, AMTS); FHIR Questionnaire.name"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_feeding
+msgid "Feeding"
+msgstr "cho ăn"
+
+#. module: health_forms
+#: model_terms:ir.actions.act_window,help:health_forms.action_health_form_instance
+msgid ""
+"Fill a published form template for a client — scores and\n"
+"                coded observations are extracted automatically."
+msgstr "Điền vào mẫu biểu mẫu đã phát hành cho khách hàng — điểm số và\n                các quan sát được mã hóa được trích xuất tự động."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_follower_ids
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_partner_ids
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "Form"
+msgstr "Biểu mẫu"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__template_code
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_search
+msgid "Form Code"
+msgstr "Mã mẫu"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_observation__form_instance_id
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Form Instance"
+msgstr "Phiên biểu mẫu"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+#: model:ir.actions.act_window,name:health_forms.action_health_form_instance
+#: model:ir.ui.menu,name:health_forms.menu_health_form_instances
+msgid "Form Instances"
+msgstr "Phiếu đánh giá"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__template_id
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Form Template"
+msgstr "Mẫu biểu mẫu"
+
+#. module: health_forms
+#: model:ir.actions.act_window,name:health_forms.action_health_form_template
+#: model:ir.ui.menu,name:health_forms.menu_health_form_templates
+#: model:ir.ui.menu,name:health_forms.menu_health_form_templates_config
+msgid "Form Templates"
+msgstr "Mẫu biểu đánh giá"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Form instances can only be created from published templates."
+msgstr "Phiếu đánh giá chỉ được tạo từ mẫu đã xuất bản."
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Form title"
+msgstr "Tiêu đề biểu mẫu"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_braden_friction
+msgid "Friction and shear"
+msgstr "Ma sát và cắt"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_grooming
+msgid "Grooming"
+msgstr "chải chuốt"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__has_message
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_mna_food_intake
+msgid ""
+"Has food intake declined over the past 3 months due to loss of appetite, "
+"digestive problems, chewing or swallowing difficulties?"
+msgstr "Lượng thức ăn ăn vào đã giảm trong 3 tháng qua do chán ăn, các vấn đề về tiêu hóa, khó nhai hoặc nuốt?"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_mna_acute_stress
+msgid ""
+"Has suffered psychological stress or acute disease in the past 3 months?"
+msgstr "Đã bị căng thẳng tâm lý hoặc mắc bệnh cấp tính trong 3 tháng qua?"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_head_of_state
+msgid "Head of state — client names the current head of state"
+msgstr "Nguyên thủ quốc gia - khách hàng nêu tên nguyên thủ quốc gia hiện tại"
+
+#. module: health_forms
+#: model:ir.model,name:health_forms.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__help
+msgid "Help"
+msgstr "Giúp đỡ"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__help
+msgid "Hint text."
+msgstr "Văn bản gợi ý."
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_historic_date
+msgid "Historic date — year of national reunification (1975)"
+msgstr "Ngày lịch sử — năm thống nhất đất nước (1975)"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__id
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__id
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__id
+#: model:ir.model.fields,field_description:health_forms.field_health_observation__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_exception_icon
+msgid "Icon"
+msgstr "Biểu tượng"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__message_needaction
+#: model:ir.model.fields,help:health_forms.field_health_form_template__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__message_has_error
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__message_has_sms_error
+#: model:ir.model.fields,help:health_forms.field_health_form_template__message_has_error
+#: model:ir.model.fields,help:health_forms.field_health_form_template__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__instance_count
+msgid "Instance Count"
+msgstr "Số lượng phiên bản"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Instances"
+msgstr "trường hợp"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__category__intake
+msgid "Intake"
+msgstr "Tiêu thụ"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Invalid JSON body"
+msgstr "Nội dung JSON không hợp lệ"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.js:0
+msgid "Invalid JSON — value not saved."
+msgstr "Không hợp lệ JSON - giá trị không được lưu."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_is_follower
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__is_latest
+msgid "Is Latest"
+msgstr "Là mới nhất"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.js:0
+msgid "JSON (editable)"
+msgstr "JSON (có thể chỉnh sửa được)"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__key
+msgid "Key"
+msgstr "Khóa"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__loinc_code
+msgid "LOINC Code"
+msgstr "Mã LOINC"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__label
+msgid "Label"
+msgstr "Nhãn"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__write_uid
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__write_uid
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__write_date
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__write_date
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_search
+msgid "Latest only"
+msgstr "Chỉ mới nhất"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__min_value
+msgid "Lower bound for number questions."
+msgstr "Giới hạn dưới cho câu hỏi về số."
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "MNA-SF"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__max_value
+msgid "Max Value"
+msgstr "Giá trị tối đa"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_has_error
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_ids
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_ids
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__min_value
+msgid "Min Value"
+msgstr "Giá trị tối thiểu"
+
+#. module: health_forms
+#: model:health.vitals.type,name:health_forms.vitals_type_mna_sf_total
+msgid "Mini Nutritional Assessment (SF) score"
+msgstr "Điểm đánh giá dinh dưỡng tối thiểu (SF)"
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_mna
+msgid "Mini Nutritional Assessment SF"
+msgstr "Đánh giá dinh dưỡng (MNA-SF)"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_braden_mobility
+#: model:health.form.question,label:health_forms.form_question_mna_mobility
+msgid "Mobility"
+msgstr "Tính cơ động"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_mobility
+msgid "Mobility (on level surfaces)"
+msgstr "Tính di động (trên bề mặt bằng phẳng)"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_braden_moisture
+msgid "Moisture"
+msgstr "Độ ẩm"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__multiselect
+msgid "Multi-select"
+msgstr "Chọn nhiều lần"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "My Instances"
+msgstr "Phiên bản của tôi"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__name
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__name
+msgid "Name"
+msgstr "Tên"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_mna_neuropsych
+msgid "Neuropsychological problems"
+msgstr "Vấn đề tâm lý thần kinh"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "New"
+msgstr "Mới"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_fieldservice_order.py:0
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_fieldservice_order_form_forms
+msgid "New Assessment"
+msgstr "Đánh giá mới"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "New Version"
+msgstr "Phiên bản mới"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "No"
+msgstr "KHÔNG"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.xml:0
+msgid "No / Không"
+msgstr "No / Không"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.xml:0
+msgid "No attachment"
+msgstr "Không có tệp đính kèm"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "No forms apply to this visit"
+msgstr "Không có biểu mẫu nào áp dụng cho lượt thăm này"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__is_latest
+msgid ""
+"No other template of the same code has a higher version in a state other "
+"than retired."
+msgstr "Không có mẫu nào khác có cùng mã có phiên bản cao hơn ở trạng thái ngoài trạng thái đã ngừng hoạt động."
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__scoring_method__none
+msgid "No scoring"
+msgstr "Không ghi điểm"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__number
+msgid "Number"
+msgstr "Số"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__score_weight
+msgid "Number contribution multiplier."
+msgstr "Số nhân đóng góp."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_needaction_counter
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_has_error_counter
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__message_needaction_counter
+#: model:ir.model.fields,help:health_forms.field_health_form_template__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__message_has_error_counter
+#: model:ir.model.fields,help:health_forms.field_health_form_template__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_braden_nutrition
+msgid "Nutrition"
+msgstr "Dinh dưỡng"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__vitals_type_id
+msgid "Observation Type"
+msgstr "Loại quan sát"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Only draft form instances can be completed."
+msgstr "Chỉ phiếu đánh giá ở trạng thái nháp mới có thể hoàn thành."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid ""
+"Only draft form templates can be deleted. Retire published templates instead."
+msgstr "Chỉ có thể xóa các mẫu biểu mẫu nháp. Thay vào đó, hãy gỡ bỏ các mẫu đã xuất bản."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Only draft or completed form instances can be cancelled."
+msgstr ""
+"Chỉ phiếu đánh giá ở trạng thái nháp hoặc đã hoàn thành mới có thể hủy."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Only draft templates can be published."
+msgstr "Chỉ mẫu ở trạng thái nháp mới được xuất bản."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Only head nurses and above can amend a completed form instance."
+msgstr ""
+"Chỉ điều dưỡng trưởng trở lên mới được sửa phiếu đánh giá đã hoàn thành."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Only head nurses and above can cancel form instances."
+msgstr "Chỉ điều dưỡng trưởng trở lên mới được hủy phiếu đánh giá."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Only published templates can be retired."
+msgstr "Chỉ mẫu đã xuất bản mới có thể ngừng sử dụng."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__options_json
+msgid "Options"
+msgstr "Tùy chọn"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Order not found"
+msgstr "Không tìm thấy lịch hẹn"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__category__other
+msgid "Other"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__category__outcome
+msgid "Outcome Measure"
+msgstr "Đo lường kết quả"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "Pain"
+msgstr "Nỗi đau"
+
+#. module: health_forms
+#: model:health.form.template,name:health_forms.form_template_pain
+msgid "Pain Scale"
+msgstr "Thang điểm đau"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_pain_character
+msgid "Pain character"
+msgstr "Nhân vật đau đớn"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_pain_location
+msgid "Pain location"
+msgstr "Vị trí đau"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_pain_score
+msgid "Pain score (0 = no pain, 10 = worst possible pain)"
+msgstr "Điểm đau (0 = không đau, 10 = đau nặng nhất có thể)"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/controllers/api.py:0
+msgid "Patient not found"
+msgstr "Không tìm thấy khách hàng"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__loinc_code
+msgid "Per-question coded extraction (numeric / selection-with-scores only)."
+msgstr "Trích xuất được mã hóa theo từng câu hỏi (chỉ số / lựa chọn có điểm)."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__performer_id
+msgid "Performer"
+msgstr "Người thực hiện"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__photo
+msgid "Photo"
+msgstr "Ảnh"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__attachment_ids
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
+msgid "Photos & Signatures"
+msgstr "Ảnh & Chữ ký"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_place
+msgid "Place — client names the current location"
+msgstr "Địa điểm - khách hàng đặt tên cho vị trí hiện tại"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Preview"
+msgstr "Xem trước"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__predecessor_id
+msgid "Previous Version"
+msgstr "Phiên bản trước"
+
+#. module: health_forms
 #: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
 msgid "Publish"
 msgstr "Xuất bản"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__state__published
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_search
+msgid "Published"
+msgstr "Đã xuất bản"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__published_date
+msgid "Published Date"
+msgstr "Ngày xuất bản"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid ""
+"Published form templates are immutable (%s). Create a new version instead."
+msgstr "Mẫu biểu mẫu đã xuất bản là không thay đổi (%s). Thay vào đó hãy tạo một phiên bản mới."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_question.py:0
+msgid "Question key \"%s\" is already used in this template."
+msgstr "Khóa câu hỏi \"%s\" đã được sử dụng trong mẫu này."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_question.py:0
+msgid "Question key \"%s\" must be snake_case (pattern ^[a-z][a-z0-9_]*$)."
+msgstr "Khóa câu hỏi \"%s\" phải là snake_case (mẫu ^[a-z][a-z0-9_]*$)."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "Question keys must be unique within the template."
+msgstr "Khóa câu hỏi phải là duy nhất trong mẫu."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__label
+msgid "Question text."
+msgstr "Nội dung câu hỏi."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__question_ids
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
+msgid "Questions"
+msgstr "Câu hỏi"
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_question.py:0
+msgid ""
+"Questions of a published form template are immutable. Create a new version "
+"instead."
+msgstr ""
+"Câu hỏi của mẫu đã xuất bản không thể chỉnh sửa. Hãy tạo phiên bản mới."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__rating_ids
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_address_recall
+msgid "Recall — client recalls the address given earlier"
+msgstr "Nhớ lại - khách hàng nhớ lại địa chỉ đã cung cấp trước đó"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_person_recognition
+msgid "Recognition — client recognizes two persons (e.g. doctor, nurse)"
+msgstr "Sự công nhận - khách hàng nhận ra hai người (e.g. bác sĩ, y tá)"
+
+#. module: health_forms
+#: model_terms:ir.actions.act_window,help:health_forms.action_health_form_instance
+msgid "Record a clinical assessment"
+msgstr "Ghi lại đánh giá lâm sàng"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_address_registered
+msgid ""
+"Registration — give the client an address to remember (e.g. \"42 Lê Lợi\") "
+"and ask them to repeat it (not scored)"
+msgstr ""
+"Registration — give the client an address to remember (e.g. \\\"42 Lê Lợi\\"
+"\") and ask them to repeat it (not scored)"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.xml:0
+msgid "Remove"
+msgstr "Di dời"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__question_type
+msgid "Renderer widget."
+msgstr "Tiện ích kết xuất."
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__required
+msgid "Required"
+msgstr ""
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_instance.py:0
+msgid "Required question \"%s\" is not answered."
+msgstr "Câu hỏi bắt buộc \"%s\" chưa được trả lời."
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Required questions are missing"
+msgstr "Thiếu câu hỏi bắt buộc"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__activity_user_id
+msgid "Responsible User"
+msgstr ""
 
 #. module: health_forms
 #: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
@@ -81,159 +1258,333 @@ msgstr "Ngừng sử dụng"
 
 #. module: health_forms
 #: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
-msgid "New Version"
-msgstr "Phiên bản mới"
+msgid ""
+"Retire this form template? Existing instances keep rendering from their own "
+"schema snapshot."
+msgstr "Gỡ bỏ mẫu biểu mẫu này? Các phiên bản hiện tại tiếp tục hiển thị từ ảnh chụp nhanh lược đồ của chính chúng."
 
 #. module: health_forms
-#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
-msgid "Complete"
-msgstr "Hoàn thành"
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__state__retired
+msgid "Retired"
+msgstr ""
 
 #. module: health_forms
-#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
-msgid "Cancel"
-msgstr "Hủy"
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__message_has_sms_error
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
 
 #. module: health_forms
-#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
-msgid "Extracted Observations"
-msgstr "Chỉ số đã trích xuất"
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Saved offline — will sync when online"
+msgstr "Đã lưu ngoại tuyến — sẽ đồng bộ khi có mạng"
 
 #. module: health_forms
-#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_form
-msgid "Photos & Signatures"
-msgstr "Ảnh & Chữ ký"
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__schema_snapshot
+msgid "Schema Snapshot"
+msgstr "Ảnh chụp sơ đồ"
 
 #. module: health_forms
-#: model_terms:ir.ui.view,arch_db:health_forms.view_health_fieldservice_order_form_forms
-msgid "Assessments"
-msgstr "Đánh giá"
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__score_label
+msgid "Score Label"
+msgstr "Nhãn điểm"
 
 #. module: health_forms
-#: model_terms:ir.ui.view,arch_db:health_forms.view_health_fieldservice_order_form_forms
-msgid "New Assessment"
-msgstr "Đánh giá mới"
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__score_label_vi
+msgid "Score Label Vi"
+msgstr "Điểm Nhãn Vi"
 
 #. module: health_forms
-#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
-msgid "Questions"
-msgstr "Câu hỏi"
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__score_weight
+msgid "Score Weight"
+msgstr "Điểm Trọng số"
 
 #. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__scoring_bands_json
 #: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
 msgid "Scoring Bands"
 msgstr "Khoảng điểm"
 
 #. module: health_forms
-#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_template_form
-msgid "Preview"
-msgstr "Xem trước"
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__scoring_method
+msgid "Scoring Method"
+msgstr "Phương pháp chấm điểm"
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_template.py:0
-msgid "Cannot publish a form template without questions."
-msgstr "Không thể xuất bản mẫu biểu mẫu không có câu hỏi."
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__category__screening
+msgid "Screening"
+msgstr "Sàng lọc"
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_template.py:0
-msgid "Question keys must be unique within the template."
-msgstr "Khóa câu hỏi phải là duy nhất trong mẫu."
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.xml:0
+msgid "Select a published form template to load its questions."
+msgstr "Chọn mẫu biểu mẫu đã phát hành để tải câu hỏi của nó."
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_template.py:0
-msgid "Only draft templates can be published."
-msgstr "Chỉ mẫu ở trạng thái nháp mới được xuất bản."
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__selection
+msgid "Selection"
+msgstr "Lựa chọn"
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_template.py:0
-msgid "Only published templates can be retired."
-msgstr "Chỉ mẫu đã xuất bản mới có thể ngừng sử dụng."
+#: model:health.form.question,label:health_forms.form_question_braden_sensory
+msgid "Sensory perception"
+msgstr "Nhận thức giác quan"
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_question.py:0
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Sign here"
+msgstr "Ký vào đây"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__signature
+msgid "Signature"
+msgstr "Chữ ký"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_stairs
+msgid "Stairs"
+msgstr "Cầu thang"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__state
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__state
+msgid "State"
+msgstr "Trạng thái"
+
+#. module: health_forms
+#: model_terms:ir.ui.view,arch_db:health_forms.view_health_form_instance_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__activity_state
 msgid ""
-"Questions of a published form template are immutable. Create a new "
-"version instead."
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
 msgstr ""
-"Câu hỏi của mẫu đã xuất bản không thể chỉnh sửa. Hãy tạo phiên bản mới."
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Only draft form instances can be completed."
-msgstr "Chỉ phiếu đánh giá ở trạng thái nháp mới có thể hoàn thành."
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Submit"
+msgstr "Gửi"
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Required question \"%s\" is not answered."
-msgstr "Câu hỏi bắt buộc \"%s\" chưa được trả lời."
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_template__scoring_method__sum
+msgid "Sum of scores"
+msgstr "Tổng điểm"
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Answer to \"%s\" must be a number."
-msgstr "Câu trả lời cho \"%s\" phải là một số."
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__template_id
+msgid "Template"
+msgstr "Mẫu"
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Answer to \"%s\" is below the minimum (%s)."
-msgstr "Câu trả lời cho \"%s\" thấp hơn giá trị tối thiểu (%s)."
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__template_version
+msgid "Template Version"
+msgstr "Phiên bản mẫu"
 
 #. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Answer to \"%s\" is above the maximum (%s)."
-msgstr "Câu trả lời cho \"%s\" cao hơn giá trị tối đa (%s)."
-
-#. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Only head nurses and above can amend a completed form instance."
-msgstr ""
-"Chỉ điều dưỡng trưởng trở lên mới được sửa phiếu đánh giá đã hoàn thành."
-
-#. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Only head nurses and above can cancel form instances."
-msgstr "Chỉ điều dưỡng trưởng trở lên mới được hủy phiếu đánh giá."
-
-#. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Only draft or completed form instances can be cancelled."
-msgstr ""
-"Chỉ phiếu đánh giá ở trạng thái nháp hoặc đã hoàn thành mới có thể hủy."
-
-#. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid ""
-"Completed form instances cannot be deleted (clinical record integrity). "
-"Cancel or amend instead."
-msgstr ""
-"Không thể xóa phiếu đánh giá đã hoàn thành (bảo toàn hồ sơ lâm sàng). "
-"Hãy hủy hoặc sửa đổi."
-
-#. module: health_forms
-#: code:addons/health_forms/models/health_form_instance.py:0
-msgid "Form instances can only be created from published templates."
-msgstr "Phiếu đánh giá chỉ được tạo từ mẫu đã xuất bản."
-
-#. module: health_forms
-#: code:addons/health_forms/controllers/api.py:0
-msgid "Access denied"
-msgstr "Từ chối truy cập"
-
-#. module: health_forms
-#: code:addons/health_forms/controllers/api.py:0
-msgid "Invalid JSON body"
-msgstr "Nội dung JSON không hợp lệ"
-
-#. module: health_forms
-#: code:addons/health_forms/controllers/api.py:0
-msgid "Order not found"
-msgstr "Không tìm thấy lịch hẹn"
-
-#. module: health_forms
+#. odoo-python
 #: code:addons/health_forms/controllers/api.py:0
 msgid "Template not found"
 msgstr "Không tìm thấy mẫu"
 
 #. module: health_forms
-#: code:addons/health_forms/controllers/api.py:0
-msgid "Patient not found"
-msgstr "Không tìm thấy khách hàng"
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__template_version
+msgid "Template version pinned at creation."
+msgstr "Phiên bản mẫu được ghim khi tạo."
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__text
+msgid "Text"
+msgstr "Văn bản"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__schema_json
+msgid "The shared JSON schema (§4.2) — the only thing renderers read."
+msgstr "Việc chia sẻ JSON lược đồ (§4.2) - thứ duy nhất mà trình kết xuất đọc được."
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_time
+msgid "Time — client states the time to the nearest hour"
+msgstr "Thời gian - khách hàng nêu thời gian đến giờ gần nhất"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_toilet_use
+msgid "Toilet use"
+msgstr "sử dụng nhà vệ sinh"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__total_score
+msgid "Total Score"
+msgstr "Tổng số điểm"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__score_vitals_type_id
+msgid "Total Score Observation Type"
+msgstr "Tổng số điểm Loại quan sát"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Total score"
+msgstr "Tổng số điểm"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.xml:0
+msgid "Total score / Tổng điểm:"
+msgstr "Total score / Tổng điểm:"
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_barthel_transfers
+msgid "Transfers (bed to chair and back)"
+msgstr "Chuyển (giường sang ghế và lưng)"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__question_type
+msgid "Type"
+msgstr "Loại"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__ucum_unit
+msgid "UCUM Unit"
+msgstr "Đơn vị UCUM"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__ucum_unit
+msgid "Unit for the extracted observation."
+msgstr "Đơn vị cho quan sát được trích xuất."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__max_value
+msgid "Upper bound for number questions."
+msgstr "Giới hạn trên cho câu hỏi về số."
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Value out of range"
+msgstr "Giá trị ngoài phạm vi"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__version
+msgid "Version"
+msgstr "Phiên bản"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__help_vi
+msgid "Vietnamese Hint"
+msgstr "Gợi ý tiếng Việt"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__label_vi
+msgid "Vietnamese Label"
+msgstr "Nhãn Việt"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__name_vi
+msgid "Vietnamese Title"
+msgstr "Tiêu Đề Tiếng Việt"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_question__visible_if_json
+msgid "Visible If"
+msgstr "Hiển thị nếu"
+
+#. module: health_forms
+#: model:ir.model.fields,field_description:health_forms.field_health_form_instance__website_message_ids
+#: model:ir.model.fields,field_description:health_forms.field_health_form_template__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__website_message_ids
+#: model:ir.model.fields,help:health_forms.field_health_form_template__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_mna_weight_loss
+msgid "Weight loss during the last 3 months"
+msgstr "Giảm cân trong 3 tháng qua"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__service_type_ids
+msgid ""
+"Which services this form applies to (PWA filtering). Empty means the form "
+"applies to all services."
+msgstr "Biểu mẫu này áp dụng cho những dịch vụ nào (PWA lọc). Trống có nghĩa là biểu mẫu áp dụng cho tất cả các dịch vụ."
+
+#. module: health_forms
+#: model:health.form.question,label:health_forms.form_question_amts_year
+msgid "Year — client states the current year"
+msgstr "Năm — khách hàng cho biết năm hiện tại"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/js/forms-runner.js:0
+msgid "Yes"
+msgstr "Đúng"
+
+#. module: health_forms
+#. odoo-javascript
+#: code:addons/health_forms/static/src/components/form_renderer/form_renderer.xml:0
+msgid "Yes / Có"
+msgstr "Yes / Có"
+
+#. module: health_forms
+#: model:ir.model.fields.selection,name:health_forms.selection__health_form_question__question_type__boolean
+msgid "Yes/No"
+msgstr "Có/Không"
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_template__scoring_bands_json
+msgid ""
+"[{min, max, label, label_vi, color}] — inclusive bounds, flat mono colors."
+msgstr "[{min, max, label, label_vi, color}] — giới hạn bao gồm, màu đơn sắc phẳng."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__options_json
+msgid "[{value, label, label_vi, score}] for selection/multiselect/boolean."
+msgstr "[{value, label, label_vi, Score}] cho lựa chọn/đa lựa chọn/boolean."
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_fieldservice_order.py:0
+msgid "order_id"
+msgstr ""
+
+#. module: health_forms
+#. odoo-python
+#: code:addons/health_forms/models/health_form_template.py:0
+msgid "template_id"
+msgstr ""
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_question__visible_if_json
+msgid ""
+"{\"key\": \"<other question key>\", \"operator\": \"=|!=|in|>=|<=\", "
+"\"value\": ...} — single-condition show/hide."
+msgstr "{\"chìa khóa\": \"<other question key>\", \"operator\": \"=|!=|in|>=|<=\", \"value\": ...} — hiển thị/ẩn một điều kiện."
+
+#. module: health_forms
+#: model:ir.model.fields,help:health_forms.field_health_form_instance__answers_json
+msgid "{key: value}; photo/signature values = {\"attachment_id\": id}."
+msgstr "{khóa: giá trị}; giá trị ảnh/chữ ký = {\"attachment_id\": id}."

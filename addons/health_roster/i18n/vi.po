@@ -1,0 +1,23 @@
+# Translation of Odoo Server.
+# Modules: health_roster
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_roster
+#. odoo-javascript
+#: code:addons/health_roster/static/src/js/roster_planning.js:0
+msgid "Error loading roster data"
+msgstr "Lỗi tải dữ liệu danh sách"
+
+#. module: health_roster
+#. odoo-javascript
+#: code:addons/health_roster/static/src/js/roster_planning.js:0
+msgid "Roster refreshed"
+msgstr "Danh sách được làm mới"

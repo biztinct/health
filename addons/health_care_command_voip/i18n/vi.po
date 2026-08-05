@@ -7,8 +7,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 19.0 health_care_command_voip\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_care_command_voip
+#: model:ir.model.fields,field_description:health_care_command_voip.field_voip_call_log__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: health_care_command_voip
+#: model:ir.model.fields,field_description:health_care_command_voip.field_voip_call_log__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_care_command_voip
+#: model:ir.model,name:health_care_command_voip.model_voip_call_log
+msgid "VoIP Call Log"
+msgstr "Nhật ký cuộc gọi VoIP"

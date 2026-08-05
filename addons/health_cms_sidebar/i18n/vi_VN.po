@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 07:29+0000\n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "PO-Revision-Date: 2026-06-06 07:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Tiếng Việt\n"
@@ -78,14 +78,35 @@ msgid "Activities"
 msgstr "Hoạt động"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_emar_admin
+msgid "Administration Register"
+msgstr "Sổ thực hiện thuốc"
+
+#. module: health_cms_sidebar
+#. odoo-javascript
+#: code:addons/health_cms_sidebar/static/src/xml/cms_sidebar.xml:0
+msgid "All areas"
+msgstr "Tất cả các khu vực"
+
+#. module: health_cms_sidebar
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__role_ids
 msgid "Allowed Roles"
 msgstr "Vai trò được phép"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_incidents_analysis
+msgid "Analysis"
+msgstr "Phân tích"
+
+#. module: health_cms_sidebar
 #: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_item_view_search
 msgid "Archived"
 msgstr "Đã lưu trữ"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_forms_instances
+msgid "Assessments"
+msgstr "Đánh giá"
 
 #. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_audit
@@ -101,6 +122,11 @@ msgstr "Cơ bản"
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_bookings
 msgid "Bookings"
 msgstr "Lịch đặt"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.section,name:health_cms_sidebar.section_clinical
+msgid "CLINICAL"
+msgstr "Lâm sàng"
 
 #. module: health_cms_sidebar
 #. odoo-javascript
@@ -134,9 +160,20 @@ msgid "CRM"
 msgstr "CRM"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_careplan
+msgid "Care Plans"
+msgstr "Kế hoạch chăm sóc"
+
+#. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_ar_cash_transit
 msgid "Cash In Transit"
 msgstr "Tiền đang chuyển"
+
+#. module: health_cms_sidebar
+#. odoo-javascript
+#: code:addons/health_cms_sidebar/static/src/xml/cms_sidebar.xml:0
+msgid "Catchment Area"
+msgstr ""
 
 #. module: health_cms_sidebar
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__action_tag
@@ -149,6 +186,16 @@ msgid "Clients"
 msgstr "Khách hàng"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_forms
+msgid "Clinical Forms"
+msgstr "Biểu mẫu lâm sàng"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_int_term_systems
+msgid "Coding Systems"
+msgstr "Hệ thống mã hóa"
+
+#. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_collections
 msgid "Collections"
 msgstr "Thu hồi công nợ"
@@ -156,12 +203,15 @@ msgstr "Thu hồi công nợ"
 #. module: health_cms_sidebar
 #: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__match_action_xmlids
 msgid "Comma-separated action XML IDs that highlight this item"
-msgstr "Các XML ID hành động, phân tách bằng dấu phẩy, dùng để đánh dấu mục này"
+msgstr ""
+"Các XML ID hành động, phân tách bằng dấu phẩy, dùng để đánh dấu mục này"
 
 #. module: health_cms_sidebar
 #: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__match_action_tags
 msgid "Comma-separated client action tags that highlight this item"
-msgstr "Các thẻ hành động phía máy khách, phân tách bằng dấu phẩy, dùng để đánh dấu mục này"
+msgstr ""
+"Các thẻ hành động phía máy khách, phân tách bằng dấu phẩy, dùng để đánh dấu "
+"mục này"
 
 #. module: health_cms_sidebar
 #: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__match_models
@@ -169,9 +219,20 @@ msgid "Comma-separated model names that highlight this item"
 msgstr "Các tên mô hình, phân tách bằng dấu phẩy, dùng để đánh dấu mục này"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_consents
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_consents_all
+msgid "Consents"
+msgstr ""
+
+#. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_crm_contacts
 msgid "Contacts"
 msgstr "Liên hệ"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_incidents_actions
+msgid "Corrective Actions"
+msgstr "Hành động khắc phục"
 
 #. module: health_cms_sidebar
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__create_uid
@@ -194,15 +255,40 @@ msgid "Dashboard"
 msgstr "Bảng điều khiển"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_data_lifecycle
+msgid "Data Lifecycle"
+msgstr "Vòng đời dữ liệu"
+
+#. module: health_cms_sidebar
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__display_name
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__display_name
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_int_emr_export
+msgid "EMR Export (VN)"
+msgstr "Xuất EMR (VN)"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_int_emr_readiness
+msgid "EMR Readiness"
+msgstr "Sẵn sàng EMR"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_int_evv
+msgid "EVV Events"
+msgstr "Sự kiện EVV"
+
+#. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_equipment
 msgid "Equipment"
 msgstr "Thiết bị"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_consents_expiring
+msgid "Expiring Consents"
+msgstr "Đồng ý sắp hết hạn"
 
 #. module: health_cms_sidebar
 #: model:cms.sidebar.section,name:health_cms_sidebar.section_finance
@@ -213,6 +299,11 @@ msgstr "TÀI CHÍNH"
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_field_req
 msgid "Field Requirements"
 msgstr "Yêu cầu trường dữ liệu"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_forms_templates
+msgid "Form Templates"
+msgstr "Mẫu biểu đánh giá"
 
 #. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_staff
@@ -231,10 +322,30 @@ msgid "ID"
 msgstr "ID"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.section,name:health_cms_sidebar.section_interop
+msgid "INTEROP & COMPLIANCE"
+msgstr "TƯƠNG TÁC & TUÂN THỦ"
+
+#. module: health_cms_sidebar
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__icon
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__icon
 msgid "Icon Class"
 msgstr "Lớp biểu tượng"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_int_term_import
+msgid "Import Codes"
+msgstr "Nhập mã"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_incidents_register
+msgid "Incident Register"
+msgstr "Sổ đăng ký sự cố"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_incidents
+msgid "Incidents"
+msgstr "Sự cố"
 
 #. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_invoices
@@ -274,11 +385,42 @@ msgid "Match Models"
 msgstr "Đối chiếu mô hình"
 
 #. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_int_term_codes
+msgid "Medical Codes"
+msgstr "Mã y tế"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_int_terminology
+msgid "Medical Terminology"
+msgstr "Thuật ngữ y khoa"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_emar_catalog
+msgid "Medication Catalog"
+msgstr "Danh mục thuốc"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_emar_orders
+msgid "Medication Orders"
+msgstr "Y lệnh thuốc"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_emar
+msgid "Medications (eMAR)"
+msgstr "Thuốc (eMAR)"
+
+#. module: health_cms_sidebar
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__item_ids
 #: model:ir.ui.menu,name:health_cms_sidebar.menu_cms_sidebar_items
 #: model_terms:ir.ui.view,arch_db:health_cms_sidebar.cms_sidebar_section_view_form
 msgid "Menu Items"
 msgstr "Mục menu"
+
+#. module: health_cms_sidebar
+#. odoo-javascript
+#: code:addons/health_cms_sidebar/static/src/xml/cms_sidebar.xml:0
+msgid "My area ("
+msgstr "Khu vực của tôi ("
 
 #. module: health_cms_sidebar
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_item__name
@@ -290,6 +432,16 @@ msgstr "Tên"
 #: model:cms.sidebar.section,name:health_cms_sidebar.section_ops
 msgid "OPERATIONS MANAGER"
 msgstr "QUẢN LÝ VẬN HÀNH"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_vitals_types
+msgid "Observation Types"
+msgstr "Loại quan sát"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_vitals_obs
+msgid "Observations"
+msgstr "Quan sát"
 
 #. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_overdue
@@ -350,7 +502,6 @@ msgstr "Thứ tự"
 
 #. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_admin_settings
-#: model:cms.sidebar.item,name:health_cms_sidebar.item_fin_settings
 msgid "Settings"
 msgstr "Cài đặt"
 
@@ -376,7 +527,7 @@ msgstr "Nhân viên"
 
 #. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_roster
-msgid "Staff Assignment"
+msgid "Staff Schedule"
 msgstr "Phân công nhân viên"
 
 #. module: health_cms_sidebar
@@ -388,6 +539,11 @@ msgstr "Thẻ cho hành động OWL phía máy khách, ví dụ: crm_dashboard"
 #: model:ir.model.fields,field_description:health_cms_sidebar.field_cms_sidebar_section__technical_key
 msgid "Technical Key"
 msgstr "Khóa kỹ thuật"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_vitals_thresholds
+msgid "Thresholds"
+msgstr "Ngưỡng"
 
 #. module: health_cms_sidebar
 #: model:cms.sidebar.item,name:health_cms_sidebar.item_ops_staff_timeoff
@@ -413,9 +569,25 @@ msgstr "VIỆT ÚC"
 #. module: health_cms_sidebar
 #. odoo-javascript
 #: code:addons/health_cms_sidebar/static/src/xml/cms_sidebar.xml:0
+msgid "Viet UC"
+msgstr "Việt Úc"
+
+#. module: health_cms_sidebar
+#. odoo-javascript
+#: code:addons/health_cms_sidebar/static/src/xml/cms_sidebar.xml:0
 #: model:ir.ui.menu,name:health_cms_sidebar.menu_cms_root
 msgid "Viet UC CMS"
 msgstr "CMS Việt Úc"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_int_messaging
+msgid "Visit Messaging"
+msgstr "Truy cập tin nhắn"
+
+#. module: health_cms_sidebar
+#: model:cms.sidebar.item,name:health_cms_sidebar.item_clin_vitals
+msgid "Vitals & Observations"
+msgstr "Sinh hiệu & Quan sát"
 
 #. module: health_cms_sidebar
 #: model:ir.model.fields,help:health_cms_sidebar.field_cms_sidebar_item__parent_id
@@ -432,4 +604,6 @@ msgstr "Khối lượng công việc"
 msgid ""
 "XML ID of the action to execute on click, e.g. "
 "health_crm.action_crm_dashboard"
-msgstr "XML ID của hành động được thực thi khi nhấp, ví dụ: health_crm.action_crm_dashboard"
+msgstr ""
+"XML ID của hành động được thực thi khi nhấp, ví dụ: "
+"health_crm.action_crm_dashboard"

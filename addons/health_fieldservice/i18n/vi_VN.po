@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 10:05+0000\n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "PO-Revision-Date: 2025-10-29 04:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -96,6 +96,12 @@ msgstr "%s giờ %s phút"
 
 #. module: health_fieldservice
 #. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "%s is already assigned to this booking."
+msgstr "%s đã được chỉ định cho lượt đặt chỗ này."
+
+#. module: health_fieldservice
+#. odoo-python
 #: code:addons/health_fieldservice/models/hr_employee.py:0
 msgid ""
 "%s is not a valid phone number.\n"
@@ -105,6 +111,12 @@ msgid ""
 msgstr ""
 "%s không phải là một số điện thoại hợp lệ. Nhập một số 9 chữ số (một số "
 "trước 0 được thêm vào tự động) hoặc một số 10 chữ số bắt đầu với một 0."
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "%s is on leave that day."
+msgstr "%s được nghỉ phép vào ngày hôm đó."
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -855,6 +867,28 @@ msgstr "<span class=\"badge badge-info\">Quảng cáo về chăm sóc sức kh�
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
 msgid ""
+"<span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted\" "
+"invisible=\"not deleted\">\n"
+"                                    <i class=\"fa fa-trash\"/> Deleted\n"
+"                                </span>\n"
+"                                <span class=\"badge rounded-pill vu-"
+"lifecycle-badge vu-lifecycle--archived\" invisible=\"active or deleted\">\n"
+"                                    <i class=\"fa fa-archive\"/> Archived\n"
+"                                </span>\n"
+"                                <span class=\"badge rounded-pill vu-urgency-"
+"badge vu-urgency--urgent\" invisible=\"urgency_level != 'urgent'\">\n"
+"                                    <i class=\"fa fa-arrow-up\"/> Urgent\n"
+"                                </span>\n"
+"                                <span class=\"badge rounded-pill vu-urgency-"
+"badge vu-urgency--emergency\" invisible=\"urgency_level != 'emergency'\">\n"
+"                                    <i class=\"fa fa-exclamation-triangle\"/"
+"> Emergency\n"
+"                                </span>"
+msgstr "<span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                                    <i class=\"fa fa-trash\"/> Đã xóa\n                                </span>\n                                <span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--archived\" invisible=\"active or deleted\">\n                                    <i class=\"fa fa-archive\"/> Đã lưu trữ\n                                </span>\n                                <span class=\"badge rounded-pill vu-urgency-badge vu-urgency--urgent\" invisible=\"urgency_level != 'urgent'\">\n                                    <i class=\"fa fa-arrow-up\"/> Cấp bách\n                                </span>\n                                <span class=\"badge rounded-pill vu-urgency-badge vu-urgency--emergency\" invisible=\"urgency_level != 'emergency'\">\n                                    <i class=\"fa fa-exclamation-triangle\"/> Khẩn cấp\n                                </span>"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid ""
 "<span class=\"badge rounded-pill vu-service-tag vu-service-tag--home-visit\" "
 "invisible=\"service_type != 'home_visit'\">\n"
 "                                    <i class=\"fa fa-medkit\"/> Home Visit\n"
@@ -879,59 +913,13 @@ msgid ""
 "                                <span class=\"badge rounded-pill vu-service-"
 "tag vu-service-tag--lab\" invisible=\"service_type != 'lab_visit'\">\n"
 "                                    <i class=\"fa fa-flask\"/> Lab Visit\n"
+"                                </span>\n"
+"                                <span class=\"badge rounded-pill vu-service-"
+"tag vu-service-tag--rescheduled\" invisible=\"not is_rescheduled\">\n"
+"                                    <i class=\"fa fa-history\"/> "
+"Rescheduled\n"
 "                                </span>"
 msgstr ""
-"<span class=\"badge rounded-pill vu-service-tag vu-service-tag--home-visit\" "
-"invisible=\"service_type != 'home_visit'\">\n"
-"                                    <i class=\"fa fa-medkit\"/> Chuyến thăm "
-"nhà\n"
-"                                </span>\n"
-"                                <span class=\"badge rounded-pill vu-service-"
-"tag vu-service-tag--clinic\" invisible=\"service_type != 'clinic_visit'\">\n"
-"                                    <i class=\"fa fa-hospital-o\"/> Chuyến "
-"thăm phòng khám\n"
-"                                </span>\n"
-"                                <span class=\"badge rounded-pill vu-service-"
-"tag vu-service-tag--telehealth\" invisible=\"service_type != "
-"'teleconsultation'\">\n"
-"                                    <i class=\"fa fa-video-camera\"/> Truyền "
-"thông\n"
-"                                </span>\n"
-"                                <span class=\"badge rounded-pill vu-service-"
-"tag vu-service-tag--hospital\" invisible=\"service_type != "
-"'hospital_visit'\">\n"
-"                                    <i class=\"fa fa-h-square\"/> Chuyến "
-"thăm bệnh viện\n"
-"                                </span>\n"
-"                                <span class=\"badge rounded-pill vu-service-"
-"tag vu-service-tag--lab\" invisible=\"service_type != 'lab_visit'\">\n"
-"                                    <i class=\"fa fa-flask\"/> Chuyến thăm "
-"phòng thí nghiệm\n"
-"                                </span>"
-
-#. module: health_fieldservice
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
-msgid ""
-"<span class=\"badge rounded-pill vu-urgency-badge vu-urgency--urgent\" "
-"invisible=\"urgency_level != 'urgent'\">\n"
-"                                    <i class=\"fa fa-arrow-up\"/> Urgent\n"
-"                                </span>\n"
-"                                <span class=\"badge rounded-pill vu-urgency-"
-"badge vu-urgency--emergency\" invisible=\"urgency_level != 'emergency'\">\n"
-"                                    <i class=\"fa fa-exclamation-triangle\"/"
-"> Emergency\n"
-"                                </span>"
-msgstr ""
-"<span class=\"badge rounded-pill vu-urgency-badge vu-urgency--urgent\" "
-"invisible=\"urgency_level != 'urgent'\">\n"
-"                                    <i class=\"fa fa-arrow-up\"/> Tự khẩn "
-"cấp\n"
-"                                </span>\n"
-"                                <span class=\"badge rounded-pill vu-urgency-"
-"badge vu-urgency--emergency\" invisible=\"urgency_level != 'emergency'\">\n"
-"                                    <i class=\"fa fa-exclamation-triangle\"/"
-"> Tình trạng khẩn cấp\n"
-"                                </span>"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
@@ -1022,6 +1010,7 @@ msgstr ""
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.health_staff_assignment_timeline_view
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_staff_schedule_timeline
 msgid "<span class=\"hf-wt-sep\">·</span>"
 msgstr "<span class=\"hf-wt-sep\">·</span>"
 
@@ -1222,6 +1211,14 @@ msgid ""
 msgstr ""
 "<span class=\"vu-section__icon\" data-icon=\"clipboard-list\"/>\n"
 "                                        <span>Kế hoạch chăm sóc</span>"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid ""
+"<span class=\"vu-section__icon\" data-icon=\"credit-card\"/>\n"
+"                                                <span>Additional Charges</"
+"span>"
+msgstr "<span class=\"vu-section__icon\" data-icon=\"credit-card\"/>\n                                                <span>Phí bổ sung</span>"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
@@ -1620,6 +1617,14 @@ msgid ""
 msgstr ""
 "<span class=\"vu-section__icon\" data-icon=\"map-pin\"/>\n"
 "                                    <span>Chi tiết địa điểm</span>"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid ""
+"<span class=\"vu-section__icon\" data-icon=\"navigation\"/>\n"
+"                                            <span class=\"text-"
+"muted\">Driving distance to clinic: </span>"
+msgstr "<span class=\"vu-section__icon\" data-icon=\"navigation\"/>\n                                            <span class=\"text-muted\">Khoảng cách lái xe đến phòng khám: </span>"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
@@ -2376,6 +2381,13 @@ msgid "<span>WHO CANCELLED?</span>"
 msgstr "<span>Ai đã hủy bỏ?</span>"
 
 #. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid ""
+"<strong><i class=\"fa fa-archive\"/> ARCHIVED:</strong>\n"
+"                        hidden from normal views, still counted in reports."
+msgstr "<strong><i class=\"fa fa-archive\"/> ĐÃ LƯU TRỮ:</strong>\n                        bị ẩn khỏi chế độ xem bình thường, vẫn được tính trong báo cáo."
+
+#. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
 msgid ""
 "<strong><i class=\"fa fa-clipboard\"/> Completion Requirements:</strong>\n"
@@ -2475,6 +2487,15 @@ msgstr ""
 "thời gian:</strong>\n"
 "                                Nhóm hoạt động đã được thông báo để tạo hóa "
 "đơn."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid ""
+"<strong><i class=\"fa fa-trash\"/> DELETED:</strong>\n"
+"                        this client record is a Delete request — it stays "
+"visible here\n"
+"                        but no longer counts in reports."
+msgstr "<strong><i class=\"fa fa-trash\"/> ĐÃ XÓA:</strong>\n                        bản ghi khách hàng này là một yêu cầu Xóa - nó vẫn hiển thị ở đây\n                        nhưng không còn được tính trong báo cáo."
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.report_moh_document
@@ -3011,6 +3032,11 @@ msgstr "Các chứng chỉ bổ sung"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid "Additional Charges"
+msgstr "Phí bổ sung"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
 msgid "Additional Notes"
 msgstr "Các ghi chú bổ sung"
 
@@ -3155,6 +3181,7 @@ msgstr "Các biện pháp phòng ngừa trên không"
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/js/ops_booking_list_view.js:0
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_queue.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_client_list.xml:0
 #: code:addons/health_fieldservice/static/src/xml/product_catalog_dialog.xml:0
@@ -3226,6 +3253,12 @@ msgstr "Tất cả ngày nay"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "All assigned staff will be notified."
+msgstr "Tất cả nhân viên được phân công sẽ được thông báo."
+
+#. module: health_fieldservice
+#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_recurring_booking.xml:0
 msgid "All bookings created with quotes and staff assigned"
 msgstr ""
@@ -3289,6 +3322,12 @@ msgstr "Cho phép chỉnh sửa"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Also moves"
+msgstr "Cũng di chuyển"
+
+#. module: health_fieldservice
+#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_queue.xml:0
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
 msgid "Amount"
@@ -3333,6 +3372,12 @@ msgstr "Bất kỳ hướng dẫn đặc biệt hay ghi chú nào..."
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_clinical_protocol__service_type_ids
 msgid "Applicable Service Types"
 msgstr "Các loại dịch vụ có thể áp dụng"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/ops_quick_booking.xml:0
+msgid "Applied conditions:"
+msgstr "Điều kiện áp dụng:"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__destination_location
@@ -3382,6 +3427,28 @@ msgstr "Những lời nhắc nhở đã được gửi"
 #: code:addons/health_fieldservice/static/src/xml/assignment_timeline_view.xml:0
 msgid "Appointment:"
 msgstr "Việc bổ nhiệm:"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Archive"
+msgstr "Lưu trữ"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_fso_assignment_list
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_list
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_list_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_list
+msgid "Archive (custodian)"
+msgstr "Lưu trữ (người giám sát)"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
+msgid "Archived"
+msgstr "Đã lưu trữ"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_form
@@ -3443,6 +3510,18 @@ msgstr "Đề xuất nhân viên phục vụ"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Assign anyway"
+msgstr "Vẫn chỉ định"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Assign anyway?"
+msgstr "Vẫn chỉ định?"
+
+#. module: health_fieldservice
+#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_command_center.xml:0
 msgid "Assign:"
 msgstr "Đề xuất:"
@@ -3456,6 +3535,7 @@ msgstr "Đề xuất:"
 #: code:addons/health_fieldservice/static/src/js/fso_calendar_popover.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_queue.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_command_center.js:0
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: code:addons/health_fieldservice/static/src/xml/staff_workload_dashboard.xml:0
 #: model:health.fieldservice.stage,name:health_fieldservice.stage_assigned
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_stage__state__assigned
@@ -3506,6 +3586,12 @@ msgstr "Nhóm được chỉ định"
 #: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__staff_notified
 msgid "Assigned staff have been notified"
 msgstr "Nhân viên được chỉ định đã được thông báo"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Assigned staff will be notified."
+msgstr "Nhân viên được chỉ định sẽ được thông báo."
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -3741,6 +3827,20 @@ msgstr ""
 "vụ này"
 
 #. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+#: code:addons/health_fieldservice/wizard/health_quick_booking_wizard.py:0
+msgid "At Clinic"
+msgstr "Tại Phòng khám"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+#: code:addons/health_fieldservice/wizard/health_quick_booking_wizard.py:0
+msgid "At Home"
+msgstr "Tại Nhà"
+
+#. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_ai_assignment_engine__message_attachment_count
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_appointment__message_attachment_count
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_clinical_protocol__message_attachment_count
@@ -3930,6 +4030,14 @@ msgid "Bank Transfer"
 msgstr "Chuyển ngân hàng"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/ops_quick_booking.xml:0
+#: code:addons/health_fieldservice/static/src/xml/ops_service_in_progress.xml:0
+#: code:addons/health_fieldservice/static/src/xml/services_packages_widget.xml:0
+msgid "Base"
+msgstr "Cơ sở"
+
+#. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__base_price
 msgid "Base Service Price"
 msgstr "Giá dịch vụ cơ bản"
@@ -3984,6 +4092,8 @@ msgid "Bicycle"
 msgstr "Xe đạp"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_availability_matrix__status__blocked
 msgid "Blocked"
 msgstr "Chặn"
@@ -4041,6 +4151,7 @@ msgstr "Số lượng được đặt không thể vượt quá dung lượng."
 #: code:addons/health_fieldservice/static/src/js/ops_command_center.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_quick_booking.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_reschedule_booking.js:0
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_queue.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_reschedule_booking.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_staff_assignment.xml:0
@@ -4197,6 +4308,12 @@ msgid "Booking already exists for this appointment."
 msgstr "Lịch hẹn đã có sẵn cho cuộc hẹn này."
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Booking assigned."
+msgstr "Đã chỉ định đặt chỗ."
+
+#. module: health_fieldservice
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 msgid ""
@@ -4222,6 +4339,11 @@ msgid ""
 msgstr ""
 "Đặt không thể xác nhận. Bạn phải tạo một Quảng cáo với ít nhất một mục dịch "
 "vụ / dòng sản phẩm."
+
+#. module: health_fieldservice
+#: model:health.fieldservice.stage,description:health_fieldservice.stage_closed
+msgid "Booking closed - cash collected/reconciled, fully finalized"
+msgstr "Đã đóng đặt phòng - đã thu/đối chiếu tiền mặt, hoàn tất đầy đủ"
 
 #. module: health_fieldservice
 #: model:health.fieldservice.stage,description:health_fieldservice.stage_booked
@@ -4460,6 +4582,7 @@ msgstr "Có thể tạo hóa đơn"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: code:addons/health_fieldservice/static/src/xml/client_match_dialog.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_command_center.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_payment_collection.xml:0
@@ -4532,6 +4655,7 @@ msgstr ""
 #: code:addons/health_fieldservice/static/src/js/fso_calendar_popover.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_queue.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_command_center.js:0
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: model:health.fieldservice.stage,name:health_fieldservice.stage_cancelled
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_appointment__state__cancelled
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_equipment_service_history__status__cancelled
@@ -4609,6 +4733,12 @@ msgid "Cannot optimize assignment without an appointment."
 msgstr "Không thể tối ưu hóa nhiệm vụ mà không có cuộc hẹn."
 
 #. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Cannot reschedule — "
+msgstr "Không thể lên lịch lại - "
+
+#. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_availability_matrix__capacity
 msgid "Capacity"
 msgstr "Công suất"
@@ -4679,10 +4809,13 @@ msgstr "Thuộc bắt"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_appointment__catchment_province_id
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_clinical_note__catchment_province_id
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_communication__catchment_province_id
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__catchment_province_id
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__catchment_province_id
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__catchment_province_id
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_availability_matrix__catchment_province_id
+#: model:ir.model.fields,field_description:health_fieldservice.field_hr_leave__catchment_province_id
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_search
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_calendar
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_list
@@ -4705,6 +4838,7 @@ msgstr "tỉnh Catchment"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,help:health_fieldservice.field_health_appointment__catchment_province_id
+#: model:ir.model.fields,help:health_fieldservice.field_health_clinical_note__catchment_province_id
 #: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_communication__catchment_province_id
 #: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__catchment_province_id
 #: model:ir.model.fields,help:health_fieldservice.field_health_staff_assignment__catchment_province_id
@@ -4714,6 +4848,7 @@ msgstr "Khu vực bắt được sử dụng để lọc và kiểm soát truy c
 
 #. module: health_fieldservice
 #: model:ir.model.fields,help:health_fieldservice.field_hr_employee__staff_catchment_province_id
+#: model:ir.model.fields,help:health_fieldservice.field_hr_leave__catchment_province_id
 msgid ""
 "Catchment province for this staff member. Select province first to filter "
 "healthcare facilities."
@@ -4967,14 +5102,11 @@ msgstr "Khách hàng"
 
 #. module: health_fieldservice
 #. odoo-javascript
-#. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_quick_booking.js:0
 #: code:addons/health_fieldservice/static/src/xml/assignment_dashboard.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_wizard.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_command_center.xml:0
-#: code:addons/health_fieldservice/wizard/health_quick_booking_wizard.py:0
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_availability_matrix__location_type__clinic
 msgid "Clinic"
 msgstr "Phòng khám"
@@ -5094,6 +5226,7 @@ msgstr "FSO gần"
 #: code:addons/health_fieldservice/static/src/js/fso_calendar_popover.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_queue.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_command_center.js:0
+#: model:health.fieldservice.stage,name:health_fieldservice.stage_closed
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_stage__state__closed
 msgid "Closed"
 msgstr "Đã đóng"
@@ -5293,6 +5426,7 @@ msgstr "Địa chỉ đầy đủ nơi dịch vụ sẽ được cung cấp"
 #: code:addons/health_fieldservice/static/src/js/ops_booking_list_view.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_queue.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_command_center.js:0
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: code:addons/health_fieldservice/static/src/xml/booking_timeline_widget.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_queue.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_command_center.xml:0
@@ -5404,6 +5538,12 @@ msgstr ""
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Confirm"
+msgstr "Xác nhận"
+
+#. module: health_fieldservice
+#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_staff_assignment.xml:0
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_form
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_wizard_form
@@ -5434,6 +5574,12 @@ msgid "Confirm Reschedule"
 msgstr "Tiếp tục lịch trình"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Confirm change"
+msgstr "Xác nhận thay đổi"
+
+#. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
 msgid "Confirm with Client"
 msgstr "Hãy xác nhận với khách hàng."
@@ -5456,6 +5602,7 @@ msgstr "Phương pháp xác nhận"
 #: code:addons/health_fieldservice/static/src/js/fso_calendar_popover.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_queue.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_command_center.js:0
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: code:addons/health_fieldservice/static/src/xml/booking_timeline_widget.xml:0
 #: code:addons/health_fieldservice/static/src/xml/staff_workload_dashboard.xml:0
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_appointment__state__confirmed
@@ -5544,6 +5691,12 @@ msgstr "Không thể bổ nhiệm nhân viên"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Could not assign this booking."
+msgstr "Không thể chỉ định đặt chỗ này."
+
+#. module: health_fieldservice
+#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/js/ops_command_center.js:0
 msgid "Could not cancel booking"
 msgstr "Không thể hủy lịch hẹn"
@@ -5595,6 +5748,18 @@ msgstr "Không thể lưu lịch hẹn"
 #: code:addons/health_fieldservice/static/src/js/ops_service_in_progress.js:0
 msgid "Could not save draft"
 msgstr "Không thể lưu dự thảo"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Could not save the change."
+msgstr "Không thể lưu thay đổi."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Could not validate the change."
+msgstr "Không thể xác thực thay đổi."
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_service_area__priority
@@ -6038,8 +6203,10 @@ msgid "Default Stage"
 msgstr "Giai đoạn mặc định"
 
 #. module: health_fieldservice
+#. odoo-javascript
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 msgid "Deferred"
 msgstr "Tạm hoãn"
 
@@ -6057,6 +6224,57 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:health_fieldservice.action_service_areas
 msgid "Define your first service area!"
 msgstr "Định nghĩa khu vực dịch vụ đầu tiên của bạn!"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Delete"
+msgstr "Xóa"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_fso_assignment_list
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_list
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_list_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_list
+msgid "Delete (reason required)"
+msgstr "Xóa (cần có lý do)"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_list_view.js:0
+#: code:addons/health_fieldservice/static/src/xml/ops_client_list.xml:0
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__deleted
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
+msgid "Deleted"
+msgstr "Đã xóa"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted_by_id
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__deleted_by_id
+msgid "Deleted By"
+msgstr "Người xóa"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted_date
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__deleted_date
+msgid "Deleted On"
+msgstr "Xóa vào lúc"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted_note
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__deleted_note
+msgid "Deletion Note"
+msgstr "Ghi chú xóa"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted_reason_id
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__deleted_reason_id
+msgid "Deletion Reason"
+msgstr "Lý do xóa"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_form
@@ -6175,6 +6393,8 @@ msgstr "Đưa ra"
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_timeoff_wizard__display_name
 #: model:ir.model.fields,field_description:health_fieldservice.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:health_fieldservice.field_hr_employee_public__display_name
+#: model:ir.model.fields,field_description:health_fieldservice.field_hr_leave__display_name
+#: model:ir.model.fields,field_description:health_fieldservice.field_ir_http__display_name
 #: model:ir.model.fields,field_description:health_fieldservice.field_res_partner__display_name
 #: model:ir.model.fields,field_description:health_fieldservice.field_sale_order__display_name
 msgid "Display Name"
@@ -6238,6 +6458,12 @@ msgstr "Làm xong"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Double-booking"
+msgstr "Đặt phòng đôi"
+
+#. module: health_fieldservice
+#. odoo-javascript
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 #: code:addons/health_fieldservice/models/health_staff_assignment.py:0
@@ -6266,10 +6492,33 @@ msgid "Drag the assignment card to a staff row to assign them"
 msgstr "Nhổ thẻ bổ nhiệm vào một hàng nhân viên để bổ nhiệm họ"
 
 #. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid "Driving Distance"
+msgstr "Khoảng cách lái xe"
+
+#. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/assignment_timeline_view.xml:0
 msgid "Drop assignment here"
 msgstr "Thả nhiệm vụ ở đây"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Drop on a staff member."
+msgstr "Thả vào một nhân viên."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Drop the assignment on a staff member's row."
+msgstr "Thả phân công vào dòng của một nhân viên."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Drop the booking on a staff member's row."
+msgstr "Thả đặt chỗ vào hàng của nhân viên."
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_kanban
@@ -6378,6 +6627,14 @@ msgstr "Địa chỉ chỉnh sửa"
 #: code:addons/health_fieldservice/static/src/xml/ops_quick_booking.xml:0
 msgid "Edit client address"
 msgstr "chỉnh sửa địa chỉ của khách hàng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_staff_form
+msgid ""
+"Editable once a login is created for this staff. Setting a role (e.g. Nurse) "
+"syncs the user's permissions and includes the staff in the booking staff "
+"pickers."
+msgstr "Có thể chỉnh sửa sau khi tạo thông tin đăng nhập cho nhân viên này. Đặt vai trò (e.g. Y tá) đồng bộ hóa quyền của người dùng và đưa nhân viên vào bộ chọn nhân viên đặt lịch."
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_clinical_protocol__effective_date
@@ -7251,11 +7508,6 @@ msgstr ""
 "yêu cầu hóa đơn hoạt động"
 
 #. module: health_fieldservice
-#: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__payment_status__paid
-msgid "Fully Paid"
-msgstr "Được trả đầy đủ"
-
-#. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__gps_coordinates
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_form
 msgid "GPS Coordinates"
@@ -7355,12 +7607,9 @@ msgid "Google Meet"
 msgstr "Google Meet"
 
 #. module: health_fieldservice
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_search
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_search
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_availability_search
-msgid "Hanoi"
-msgstr "Hà Nội"
+#: model:ir.model,name:health_fieldservice.model_ir_http
+msgid "HTTP Routing"
+msgstr "Định tuyến HTTP"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_communication__has_audio
@@ -7546,6 +7795,7 @@ msgstr "Kỹ năng chăm sóc sức khỏe"
 #. module: health_fieldservice
 #: model:ir.actions.act_window,name:health_fieldservice.action_healthcare_skills
 #: model:ir.model.fields,field_description:health_fieldservice.field_hr_employee__healthcare_skill_ids
+#: model:ir.model.fields,field_description:health_fieldservice.field_hr_employee_public__healthcare_skill_ids
 #: model:ir.ui.menu,name:health_fieldservice.menu_healthcare_skills
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_skill_list
 msgid "Healthcare Skills"
@@ -7658,14 +7908,6 @@ msgid "Hire Date"
 msgstr "Ngày thuê"
 
 #. module: health_fieldservice
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_search
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_search
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_availability_search
-msgid "Ho Chi Minh City"
-msgstr "Thành phố Hồ Chí Minh"
-
-#. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_quick_booking.xml:0
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
@@ -7758,6 +8000,8 @@ msgstr "Hình trước có thể đọc được của con người về các b�
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_timeoff_wizard__id
 #: model:ir.model.fields,field_description:health_fieldservice.field_hr_employee__id
 #: model:ir.model.fields,field_description:health_fieldservice.field_hr_employee_public__id
+#: model:ir.model.fields,field_description:health_fieldservice.field_hr_leave__id
+#: model:ir.model.fields,field_description:health_fieldservice.field_ir_http__id
 #: model:ir.model.fields,field_description:health_fieldservice.field_res_partner__id
 #: model:ir.model.fields,field_description:health_fieldservice.field_sale_order__id
 msgid "ID"
@@ -7887,6 +8131,12 @@ msgstr "Sử dụng"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "In progress"
+msgstr "ĐANG THỰC HIỆN"
+
+#. module: health_fieldservice
+#. odoo-javascript
 #. odoo-python
 #: code:addons/health_fieldservice/models/hr_employee.py:0
 #: code:addons/health_fieldservice/static/src/js/ops_client_list.js:0
@@ -7991,6 +8241,12 @@ msgstr "Trung gian"
 #: code:addons/health_fieldservice/models/hr_employee.py:0
 msgid "Invalid phone number"
 msgstr "Số điện thoại không hợp lệ"
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Invalid time."
+msgstr "Thời gian không hợp lệ."
 
 #. module: health_fieldservice
 #. odoo-python
@@ -8335,6 +8591,12 @@ msgstr "Nhân viên lãnh đạo"
 msgid "Leave \"Assigned Staff\" empty to create an unassigned assignment"
 msgstr ""
 "Để \"Nhà nhân viên được giao\" trống để tạo một nhiệm vụ không được giao"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Leave / time off"
+msgstr "Nghỉ phép/thời gian nghỉ"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_wizard_form
@@ -9464,6 +9726,12 @@ msgstr "Không có nhân viên phù hợp với bộ lọc hiện tại"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "No unassigned bookings in view."
+msgstr "Không có lượt đặt chỗ nào chưa được chỉ định trong chế độ xem."
+
+#. module: health_fieldservice
+#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_wizard.xml:0
 msgid "No — Pay per visit"
 msgstr "Không  Thu nhập mỗi chuyến thăm"
@@ -9501,6 +9769,11 @@ msgstr "Bình thường"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_service_area__priority__3
 msgid "Normal Priority"
 msgstr "Tầm quan trọng bình thường"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
+msgid "Not Deleted"
+msgstr "Chưa xóa"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -9611,6 +9884,14 @@ msgid "Number of messages with delivery error"
 msgstr "Số tin nhắn với lỗi giao hàng"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_recurring_booking.js:0
+msgid ""
+"Number of occurrences must be more than 0. Please enter how many bookings "
+"you want to create."
+msgstr "Số lần xuất hiện phải lớn hơn 0. Vui lòng nhập số lượng đặt chỗ bạn muốn tạo."
+
+#. module: health_fieldservice
 #: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__order_line_count
 msgid "Number of order lines in the healthcare quote"
 msgstr "Số dòng đơn đặt hàng trong báo giá chăm sóc sức khỏe"
@@ -9713,6 +9994,12 @@ msgstr "Ngoài giờ làm việc"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Off-hours"
+msgstr "Ngoài giờ"
+
+#. module: health_fieldservice
+#. odoo-javascript
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
@@ -9777,11 +10064,8 @@ msgstr "Nền tảng trực tuyến"
 
 #. module: health_fieldservice
 #. odoo-javascript
-#. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_wizard.xml:0
-#: code:addons/health_fieldservice/wizard/health_quick_booking_wizard.py:0
 msgid "Online/Telemedicine"
 msgstr "Trực tuyến/Y tế từ xa"
 
@@ -9890,8 +10174,14 @@ msgstr "Trung tâm chỉ huy hoạt động"
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 #: code:addons/health_fieldservice/static/src/xml/ops_sidebar.xml:0
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__operations_manager_id
 msgid "Operations Manager"
 msgstr "Quản lý vận hành"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__operations_manager_id
+msgid "Operations manager of the facility handling this booking."
+msgstr "Người quản lý hoạt động của cơ sở xử lý việc đặt chỗ này."
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_appointment__ops_manager_approved_by
@@ -10014,6 +10304,12 @@ msgid "Other Location"
 msgstr "Địa điểm khác"
 
 #. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Outside %s's working hours."
+msgstr "Ngoài %s'giờ làm việc."
+
+#. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_client_profile_form.xml:0
 msgid "Outstanding"
@@ -10032,15 +10328,16 @@ msgid "Overdue"
 msgstr "Quá hạn"
 
 #. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Overlaps %(staff)s's booking %(bk)s."
+msgstr "Trùng với lịch đặt %(bk)s của %(staff)s."
+
+#. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/staff_workload_dashboard.xml:0
 msgid "Overloaded"
 msgstr "Nên quá tải"
-
-#. module: health_fieldservice
-#: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__payment_status__overpaid
-msgid "Overpaid"
-msgstr "Tiền quá mức"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
@@ -10068,9 +10365,8 @@ msgid "Page"
 msgstr "Trang"
 
 #. module: health_fieldservice
+#: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__payment_status__paid
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__res_partner__invoice_status__paid
-#. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 msgid "Paid"
 msgstr "Đã thanh toán"
 
@@ -10085,6 +10381,16 @@ msgid "Parent"
 msgstr "Cha mẹ"
 
 #. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__parking_charge
+msgid "Parking Charge"
+msgstr "Phí đỗ xe"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__parking_charge
+msgid "Parking/access fee (gửi xe)"
+msgstr "Parking/access fee (gửi xe)"
+
+#. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__employment_type__part_time
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee_public__employment_type__part_time
 msgid "Part-Time Staff"
@@ -10092,8 +10398,8 @@ msgstr "Nhân viên bán thời gian"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__payment_status__partial
-msgid "Partially Paid"
-msgstr "Phần trả"
+msgid "Partial Payment"
+msgstr "Thanh toán một phần"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -10170,12 +10476,9 @@ msgstr "Email bệnh nhân"
 
 #. module: health_fieldservice
 #. odoo-javascript
-#. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 #: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
 #: code:addons/health_fieldservice/static/src/js/ops_quick_booking.js:0
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_wizard.xml:0
-#: code:addons/health_fieldservice/wizard/health_quick_booking_wizard.py:0
 msgid "Patient Home"
 msgstr "Nhà bệnh nhân"
 
@@ -10272,11 +10575,6 @@ msgstr "Thanh toán"
 #: code:addons/health_fieldservice/static/src/xml/ops_payment_collection.xml:0
 msgid "Payment Method"
 msgstr "Phương pháp thanh toán"
-
-#. module: health_fieldservice
-#: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__payment_status__pending
-msgid "Payment Pending"
-msgstr "Việc thanh toán đang chờ đợi"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__payment_status
@@ -10664,6 +10962,7 @@ msgstr "Chăm sóc phòng ngừa"
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_quick_booking.xml:0
+#: code:addons/health_fieldservice/static/src/xml/ops_recurring_booking.xml:0
 msgid ""
 "Prices auto-calculated from the booking conditions (time, location, service "
 "type)."
@@ -11387,6 +11686,7 @@ msgstr "Cần phải trả lời"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: code:addons/health_fieldservice/static/src/xml/fso_calendar_popover.xml:0
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
@@ -11412,6 +11712,11 @@ msgstr "Đặt lại lịch"
 #: code:addons/health_fieldservice/static/src/xml/ops_reschedule_booking.xml:0
 msgid "Reschedule Summary"
 msgstr "Lịch lại thời gian"
+
+#. module: health_fieldservice
+#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__is_rescheduled
+msgid "Rescheduled"
+msgstr "Dời lịch"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -11451,6 +11756,22 @@ msgstr "Phản ứng"
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__activity_user_id
 msgid "Responsible User"
 msgstr "Người dùng có trách nhiệm"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Restore"
+msgstr "Khôi phục"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_fso_assignment_list
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_client_list_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_list
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_list_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_list
+msgid "Restore this deleted record"
+msgstr "Khôi phục bản ghi đã xóa này"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -12341,6 +12662,13 @@ msgid "Set Staff Working Hours"
 msgstr "Đặt giờ làm việc của nhân viên"
 
 #. module: health_fieldservice
+#: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__is_rescheduled
+msgid ""
+"Set when the appointment date/time is moved after the booking was confirmed. "
+"Surfaces a \"Rescheduled\" tag on the booking."
+msgstr "Đặt thời điểm ngày/giờ cuộc hẹn được dời lại sau khi việc đặt chỗ được xác nhận. Hiển thị thẻ \"Đã lên lịch lại\" trên lượt đặt chỗ."
+
+#. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/staff_workload_dashboard.xml:0
 msgid "Show all staff"
@@ -12687,7 +13015,6 @@ msgstr "Tỷ lệ hiệu suất của nhân viên"
 #: code:addons/health_fieldservice/static/src/xml/ops_command_center.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_staff_roster.xml:0
 #: model:ir.actions.client,name:health_fieldservice.action_ops_staff_roster
-#: model:ir.ui.menu,name:health_fieldservice.menu_ops_staff_roster
 msgid "Staff Roster"
 msgstr "Danh sách nhân viên"
 
@@ -12695,6 +13022,13 @@ msgstr "Danh sách nhân viên"
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_ai_assignment_engine__staff_satisfaction_score
 msgid "Staff Satisfaction Score"
 msgstr "Điểm hài lòng của nhân viên"
+
+#. module: health_fieldservice
+#: model:ir.actions.act_window,name:health_fieldservice.action_staff_schedule
+#: model:ir.ui.menu,name:health_fieldservice.menu_assignment_timeline
+#: model:ir.ui.menu,name:health_fieldservice.menu_ops_staff_roster
+msgid "Staff Schedule"
+msgstr "Xem thời gian"
 
 #. module: health_fieldservice
 #: model:ir.actions.act_window,name:health_fieldservice.action_health_staff_schedules
@@ -12798,6 +13132,12 @@ msgstr ""
 #: model:ir.model.fields,help:health_fieldservice.field_health_staff_assignment__availability_score
 msgid "Staff availability buffer score (0-100)"
 msgstr "Điểm số của bộ phận bảo hiểm khả năng tiếp cận nhân viên (0-100)"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Staff is not available in that slot."
+msgstr "Nhân viên không có sẵn ở vị trí đó."
 
 #. module: health_fieldservice
 #: model:ir.model.fields,help:health_fieldservice.field_health_portable_equipment__assigned_staff_id
@@ -13190,8 +13530,11 @@ msgstr "Sức khỏe qua đường dây"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 #: code:addons/health_fieldservice/static/src/js/fso_calendar_popover.js:0
 #: code:addons/health_fieldservice/static/src/xml/ops_calendar.xml:0
+#: code:addons/health_fieldservice/wizard/health_quick_booking_wizard.py:0
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_quick_booking_wizard__service_type__telemedicine
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_availability_matrix__location_type__online
 msgid "Telemedicine"
@@ -13239,6 +13582,12 @@ msgid "Th"
 msgstr "T5"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "That change isn't allowed."
+msgstr "Không cho phép thay đổi này."
+
+#. module: health_fieldservice
 #. odoo-python
 #: code:addons/health_fieldservice/wizard/health_staff_timeoff_wizard.py:0
 msgid "The \"To\" date must be on or after the \"From\" date."
@@ -13255,6 +13604,13 @@ msgid ""
 msgstr ""
 "Máy điều khiển AI sử dụng máy học để tối ưu hóa nhiệm vụ của nhân viên, cải "
 "thiện hiệu quả và cân bằng khối lượng công việc."
+
+#. module: health_fieldservice
+#: model:ir.model.fields,help:health_fieldservice.field_health_portable_equipment__catchment_province_id
+msgid ""
+"The area this equipment is based in. Staff only see equipment from their own "
+"area."
+msgstr "Khu vực đặt thiết bị này. Nhân viên chỉ nhìn thấy thiết bị từ khu vực của họ."
 
 #. module: health_fieldservice
 #: model_terms:ir.actions.act_window,help:health_fieldservice.action_assignment_web_timeline_view
@@ -13308,6 +13664,12 @@ msgid "This Week"
 msgstr "Tuần này"
 
 #. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "This booking is already in progress and cannot be rescheduled here."
+msgstr "Việc đặt chỗ này đã được tiến hành và không thể lên lịch lại tại đây."
+
+#. module: health_fieldservice
 #: model_terms:ir.actions.act_window,help:health_fieldservice.action_fso_assignment_dashboard
 msgid ""
 "This is your command center for managing Field Service Orders and staff "
@@ -13326,6 +13688,12 @@ msgstr ""
 #: code:addons/health_fieldservice/static/src/xml/staff_workload_dashboard.xml:0
 msgid "This month"
 msgstr "Tháng này"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "This overlaps another assignment. Continue?"
+msgstr "Điều này chồng chéo một nhiệm vụ khác. Tiếp tục?"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -13388,6 +13756,7 @@ msgstr "Thời gian"
 #. module: health_fieldservice
 #. odoo-python
 #: code:addons/health_fieldservice/wizard/health_staff_timeoff_wizard.py:0
+#: model:ir.model,name:health_fieldservice.model_hr_leave
 msgid "Time Off"
 msgstr "Thời gian nghỉ"
 
@@ -13435,6 +13804,12 @@ msgid "Time scale"
 msgstr "Tỷ lệ thời gian"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Time stays"
+msgstr "Thời gian ở lại"
+
+#. module: health_fieldservice
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_staff_availability.py:0
 msgid "Time values must be between 0 and 24."
@@ -13445,11 +13820,6 @@ msgstr "Giá trị thời gian phải nằm trong khoảng 0 đến 24."
 #: code:addons/health_fieldservice/static/src/xml/assignment_timeline_view.xml:0
 msgid "Timeline"
 msgstr "Thời gian"
-
-#. module: health_fieldservice
-#: model:ir.ui.menu,name:health_fieldservice.menu_assignment_timeline
-msgid "Timeline View"
-msgstr "Xem thời gian"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__service_timer_active
@@ -13817,6 +14187,12 @@ msgstr "Tên tiếng Việt"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "UNASSIGNED"
+msgstr "CHƯA ĐƯỢC CHỈ ĐỊNH"
+
+#. module: health_fieldservice
+#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_booking_queue.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_command_center.xml:0
 msgid "URGENT"
@@ -13831,13 +14207,23 @@ msgid ""
 msgstr "Không thể tạo ra dự đoán AI. Xin đảm bảo chi tiết hẹn là đầy đủ."
 
 #. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
+msgid "Unarchive"
+msgstr "Bỏ lưu trữ"
+
+#. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: code:addons/health_fieldservice/static/src/xml/fso_calendar_popover.xml:0
 #: code:addons/health_fieldservice/static/src/xml/ops_calendar.xml:0
 msgid "Unassigned"
 msgstr "Không được chỉ định"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_portable_equipment__status__unavailable
 msgid "Unavailable"
 msgstr "Không có"
@@ -13879,17 +14265,40 @@ msgid "Unit Price"
 msgstr "Giá đơn vị"
 
 #. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Unknown assignment."
+msgstr "Không tìm thấy phân công."
+
+#. module: health_fieldservice
+#. odoo-python
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Unknown booking or staff member."
+msgstr "Đặt phòng hoặc nhân viên không xác định."
+
+#. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/js/staff_workload_dashboard.js:0
 msgid "Unknown error"
 msgstr "Hầm không rõ"
 
 #. module: health_fieldservice
-#: model:ir.model.fields.selection,name:health_fieldservice.selection__res_partner__invoice_status__unpaid
 #. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
+#: code:addons/health_fieldservice/models/health_staff_assignment.py:0
+msgid "Unknown staff member."
+msgstr "Không tìm thấy nhân viên."
+
+#. module: health_fieldservice
+#: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__payment_status__pending
+#: model:ir.model.fields.selection,name:health_fieldservice.selection__res_partner__invoice_status__unpaid
 msgid "Unpaid"
 msgstr "Chưa thanh toán"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Unscheduled"
+msgstr "Chưa lên lịch"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_quote_form_custom
@@ -14034,6 +14443,12 @@ msgstr "Tiêm chủng"
 #: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__online_meeting_url
 msgid "Video consultation link"
 msgstr "Liên kết tham vấn video"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/ops_sidebar.xml:0
+msgid "Viet UC"
+msgstr "Việt Úc"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -14376,6 +14791,12 @@ msgid "Whether the booking creator is authorized to raise invoices"
 msgstr "Nếu người tạo lịch hẹn có được phép thu thập hóa đơn"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/ops_service_in_progress.xml:0
+msgid "Why this price"
+msgstr "Tại sao giá này"
+
+#. module: health_fieldservice
 #. odoo-python
 #: code:addons/health_fieldservice/wizard/health_staff_schedule_wizard.py:0
 msgid "Work"
@@ -14387,6 +14808,12 @@ msgstr "Công việc"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_staff_form
 msgid "Working Hours"
 msgstr "Thời gian làm việc"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Working hours"
+msgstr "Giờ làm việc"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -14641,6 +15068,7 @@ msgstr "chẩn đoán"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.health_staff_assignment_timeline_view
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_staff_schedule_timeline
 msgid "display_name"
 msgstr "display_name"
 
@@ -14776,6 +15204,11 @@ msgid "kg"
 msgstr "kg"
 
 #. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
+msgid "km"
+msgstr ""
+
+#. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/services_packages_widget.xml:0
 msgid "left"
@@ -14784,6 +15217,7 @@ msgstr "trái"
 #. module: health_fieldservice
 #. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ops_service_in_progress.xml:0
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fso_form_ops
 msgid "min"
 msgstr "min"
 
@@ -14844,6 +15278,12 @@ msgid "of 4"
 msgstr "của 4"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "of the new assignment."
+msgstr "của nhiệm vụ mới."
+
+#. module: health_fieldservice
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 #: code:addons/health_fieldservice/wizard/health_quick_booking_wizard.py:0
@@ -14863,6 +15303,12 @@ msgstr "online"
 #: code:addons/health_fieldservice/wizard/health_quick_booking_wizard.py:0
 msgid "other"
 msgstr "other"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "other staff:"
+msgstr "nhân viên khác:"
 
 #. module: health_fieldservice
 #. odoo-python
@@ -14911,6 +15357,12 @@ msgid ""
 msgstr "dịch vụ còn lại nhưng"
 
 #. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "switch to Day view (or open the card) to change the time."
+msgstr "chuyển sang Chế độ xem ngày (hoặc mở thẻ) để thay đổi thời gian."
+
+#. module: health_fieldservice
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 msgid "telemedicine"
@@ -14918,9 +15370,21 @@ msgstr "khám từ xa"
 
 #. module: health_fieldservice
 #. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "this booking"
+msgstr "đặt phòng này"
+
+#. module: health_fieldservice
+#. odoo-javascript
 #: code:addons/health_fieldservice/static/src/xml/ai_staff_suggestions_widget.xml:0
 msgid "this week"
 msgstr "tuần này"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "to"
+msgstr "đến"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -14940,6 +15404,12 @@ msgstr "khẩn cấp ·"
 #: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 msgid "vaccination"
 msgstr "tiêm chủng"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "will be notified of the cancellation"
+msgstr "sẽ được thông báo về việc hủy bỏ"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_clinical_protocol_form
@@ -15191,59 +15661,85 @@ msgid "🧠 Train AI Model"
 msgstr " Mô hình AI tàu"
 
 #. module: health_fieldservice
-#. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
-msgid "At Home"
-msgstr "Tại Nhà"
-
-#. module: health_fieldservice
-#. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
-msgid "At Clinic"
-msgstr "Tại Phòng khám"
-
-#. module: health_fieldservice
-#. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
-msgid "Partial Payment"
-msgstr "Thanh toán một phần"
-
-#. module: health_fieldservice
-#. odoo-python
-#: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
-msgid "Rescheduled"
-msgstr "Dời lịch"
-
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Client visits our facility"
+msgstr "Khách hàng đến cơ sở của chúng tôi"
 
 #. module: health_fieldservice
 #. odoo-javascript
-#: code:addons/health_fieldservice/static/src/js/ops_booking_list_view.js:0
-#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
-msgid "Deleted"
-msgstr "Đã xóa"
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Full day (8 hours)"
+msgstr "Cả ngày (8 giờ)"
 
 #. module: health_fieldservice
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
-msgid "Not Deleted"
-msgstr "Chưa xóa"
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Half day (4 hours)"
+msgstr "Nửa ngày (4 giờ)"
 
 #. module: health_fieldservice
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_search
-msgid "Archived"
-msgstr "Đã lưu trữ"
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Move"
+msgstr "Di chuyển"
 
 #. module: health_fieldservice
-#: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__deleted_reason_id
-msgid "Deletion Reason"
-msgstr "Lý do xóa"
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "One Time"
+msgstr "Một lần"
 
 #. module: health_fieldservice
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
-msgid "DELETED:"
-msgstr "ĐÃ XÓA:"
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Online/remote consultation"
+msgstr "Tư vấn trực tuyến/từ xa"
 
 #. module: health_fieldservice
-#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_patient_form_ops
-msgid "ARCHIVED:"
-msgstr "ĐÃ LƯU TRỮ:"
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Physical therapy sessions"
+msgstr "Các buổi vật lý trị liệu"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Post-visit check-in"
+msgstr "Theo dõi sau lượt thăm"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "Reassign"
+msgstr "Phân công lại"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Routine health checkup"
+msgstr "Khám sức khỏe định kỳ"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Staff travels to client's location"
+msgstr "Nhân viên đến địa điểm của khách hàng"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Urgent medical response"
+msgstr "Đáp ứng y tế khẩn cấp"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/ops_booking_wizard.js:0
+msgid "Video or phone consultation"
+msgstr "Tư vấn qua video hoặc điện thoại"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/js/staff_schedule_timeline.esm.js:0
+msgid "and reschedule"
+msgstr "và sắp xếp lại"

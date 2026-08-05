@@ -40,7 +40,8 @@ Present but not installed on VietUcUAT:
 ## Safe Module Workflow
 
 1. Export one installed module from VietUcUAT in `vi_VN`.
-2. Back up the repository module's current `i18n/vi_VN.po`.
+2. Back up the repository module's current `i18n/vi.po` or
+   `i18n/vi_VN.po`, preserving whichever filename the module already uses.
 3. Merge the current catalog and fresh export with GNU gettext, preferring
    reviewed repository translations for identical `msgid` values.
 4. Apply only reviewed exact-match translations.
@@ -90,6 +91,12 @@ python3 VietTranslation/scripts/refresh_module_po.py health_base \
   VietTranslation/exports/health_base/vi_VN_odoo19_export_YYYYMMDD.po
 ```
 
+Export all installed `health_*` modules in one Odoo shell session:
+
+```bash
+python3 VietTranslation/scripts/export_health_uat.py
+```
+
 ## Import One Reviewed Module
 
 ```bash
@@ -122,4 +129,18 @@ python3 VietTranslation/scripts/po_catalog.py apply \
   VietTranslation/exports/health_base/vi_VN_merged_candidate.po \
   VietTranslation/translations/health_base.json \
   --output VietTranslation/exports/health_base/vi_VN_reviewed.po
+```
+
+Fill blank entries from translations that have one consistent reviewed value
+across the existing `health_*` catalogs:
+
+```bash
+python3 VietTranslation/scripts/fill_from_health_memory.py --apply
+```
+
+After wrapping JavaScript UI literals in `_t()`, synchronize literal calls that
+are not yet present in the module catalogs:
+
+```bash
+python3 VietTranslation/scripts/sync_health_js_po.py --apply
 ```

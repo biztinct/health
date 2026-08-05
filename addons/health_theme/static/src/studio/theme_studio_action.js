@@ -1,4 +1,5 @@
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
@@ -17,7 +18,7 @@ import { applyDraftTokens } from "../services/theme_loader_service";
 
 const GROUPS = [
     {
-        label: "Brand",
+        label: _t("Brand"),
         tokens: [
             ["vu-brand-primary", "Primary"],
             ["vu-brand-primary-dark", "Primary (hover/active)"],
@@ -27,7 +28,7 @@ const GROUPS = [
         ],
     },
     {
-        label: "Surfaces",
+        label: _t("Surfaces"),
         tokens: [
             ["vu-surface-app", "App background"],
             ["vu-surface-panel", "Content background"],
@@ -37,7 +38,7 @@ const GROUPS = [
         ],
     },
     {
-        label: "Text",
+        label: _t("Text"),
         tokens: [
             ["vu-text-primary", "Primary text"],
             ["vu-text-secondary", "Secondary text"],
@@ -45,14 +46,14 @@ const GROUPS = [
         ],
     },
     {
-        label: "Borders",
+        label: _t("Borders"),
         tokens: [
             ["vu-border-soft", "Soft borders"],
             ["vu-border-strong", "Strong borders"],
         ],
     },
     {
-        label: "Status colors",
+        label: _t("Status colors"),
         tokens: [
             ["vu-status-success", "Success"],
             ["vu-status-info", "Info"],
@@ -61,7 +62,7 @@ const GROUPS = [
         ],
     },
     {
-        label: "Workflow states",
+        label: _t("Workflow states"),
         tokens: [
             ["vu-state-draft", "Draft"],
             ["vu-state-confirmed", "Confirmed"],
@@ -73,7 +74,7 @@ const GROUPS = [
         ],
     },
     {
-        label: "Navbar & Sidebar",
+        label: _t("Navbar & Sidebar"),
         tokens: [
             ["vu-navbar-bg", "Navbar background"],
             ["vu-navbar-text", "Navbar text"],
@@ -83,7 +84,7 @@ const GROUPS = [
         ],
     },
     {
-        label: "Buttons",
+        label: _t("Buttons"),
         tokens: [
             ["vu-btn-primary-bg", "Primary button"],
             ["vu-btn-primary-text", "Primary button text"],
@@ -94,7 +95,7 @@ const GROUPS = [
         ],
     },
     {
-        label: "Status bar & Tabs",
+        label: _t("Status bar & Tabs"),
         tokens: [
             ["vu-statusbar-btn-bg", "Status bar button"],
             ["vu-statusbar-btn-text", "Status bar button text"],
@@ -192,7 +193,7 @@ export class ThemeStudioAction extends Component {
             dirty: false,
             undoStack: [],
             redoStack: [],
-            activeGroup: "Brand",
+            activeGroup: _t("Brand"),
         });
 
         onWillStart(async () => {
@@ -376,7 +377,7 @@ export class ThemeStudioAction extends Component {
               `(${issues.map((i) => i.label).join(", ")}). Publish for ALL users anyway?`
             : "Publish this theme for ALL users?";
         this.dialog.add(ConfirmationDialog, {
-            title: "Publish theme",
+            title: _t("Publish theme"),
             body,
             confirmLabel: "Publish",
             confirm: async () => {

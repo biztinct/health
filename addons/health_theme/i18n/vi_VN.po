@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 06:01+0000\n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
 "PO-Revision-Date: 2026-06-06 11:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,108 @@ msgstr ""
 
 #. module: health_theme
 #. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "120 mins"
+msgstr "120 phút"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "81 years old"
+msgstr "81 tuổi"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid ":1 (needs"
+msgstr ":1 (cần"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Activity"
+msgstr "Hoạt động"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "An Xu"
+msgstr ""
+
+#. module: health_theme
+#: model:ir.model.fields.selection,name:health_theme.selection__vu_theme__state__archived
+msgid "Archived"
+msgstr "Đã lưu trữ"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Assigned"
+msgstr "Đã phân công"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "BK1230"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "BK1235"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "BK1238"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Booking"
+msgstr "Đặt lịch"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Buttons"
+msgstr "Nút"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Bành"
+msgstr "Bành"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Bùi T"
+msgstr "Bùi T"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
 #: code:addons/health_theme/static/src/xml/vu_progress_rail.xml:0
 msgid "Cancelled"
 msgstr "Đã hủy"
 
 #. module: health_theme
 #. odoo-javascript
-#: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
-msgid "Assigned"
-msgstr "Đã phân công"
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid ""
+"Changes preview instantly in this tab (and across the app while\n"
+"                    previewing). Nobody else sees them until you Publish."
+msgstr "Xem trước các thay đổi ngay lập tức trong tab này (và trên toàn bộ ứng dụng trong khi\n                    xem trước). Không ai khác nhìn thấy chúng cho đến khi bạn xuất bản."
 
 #. module: health_theme
 #. odoo-javascript
@@ -36,19 +129,56 @@ msgstr "Trò chuyện"
 
 #. module: health_theme
 #. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Client name"
+msgstr "Tên khách hàng"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Clinical"
+msgstr "Tiêm nghiệm lâm sàng"
+
+#. module: health_theme
+#. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
 msgid "Closed"
 msgstr "Đã đóng"
 
 #. module: health_theme
 #. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Collect Payment"
+msgstr "Thu thập khoản thanh toán"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__company_id
+msgid "Company"
+msgstr "Công ty"
+
+#. module: health_theme
+#. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
 msgid "Completed"
 msgstr "Hoàn thành"
 
 #. module: health_theme
 #. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Confirm"
+msgstr "Xác nhận"
+
+#. module: health_theme
+#. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
 msgid "Confirmed"
 msgstr "Đã xác nhận"
 
@@ -60,15 +190,266 @@ msgstr "Đã tạo"
 
 #. module: health_theme
 #. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Created Jun 8 · by Tran OM"
+msgstr "Được tạo vào ngày 8 tháng 6 · của Trần OM"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__create_uid
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__create_date
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Danger alert"
+msgstr "Cảnh báo nguy hiểm"
+
+#. module: health_theme
+#: model_terms:ir.ui.view,arch_db:health_theme.vu_theme_view_form
+msgid "Delete this draft theme?"
+msgstr "Xóa chủ đề dự thảo này?"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__description
+msgid "Description"
+msgstr "Mô tả"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Discard"
+msgstr ""
+
+#. module: health_theme
+#: model_terms:ir.ui.view,arch_db:health_theme.vu_theme_view_form
+msgid "Discard Draft"
+msgstr "Hủy bản nháp"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_ir_http__display_name
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__display_name
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: model:ir.model.fields.selection,name:health_theme.selection__vu_theme__state__draft
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: model_terms:ir.ui.view,arch_db:health_theme.vu_theme_view_form
+msgid "Duplicate"
+msgstr "Tần trùng"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Duration"
+msgstr ""
+
+#. module: health_theme
+#: model:ir.model.fields,help:health_theme.field_vu_theme__token_values_text
+msgid "Editable JSON view of the token values."
+msgstr "Có thể chỉnh sửa JSON chế độ xem các giá trị mã thông báo."
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Export"
+msgstr "Xuất khẩu"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Export theme JSON"
+msgstr "Xuất chủ đề JSON"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Facility"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "HCM Facility"
+msgstr "Cơ sở HCM"
+
+#. module: health_theme
+#: model:ir.model,name:health_theme.model_ir_http
+msgid "HTTP Routing"
+msgstr "Định tuyến HTTP"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Hanoi Facility"
+msgstr "Cơ sở Hà Nội"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Home Visit · 2 hours"
+msgstr "Thăm nhà · 2 giờ"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_ir_http__id
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__id
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "ID: 02 0024"
+msgstr "Mã số: 02 0024"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Import"
+msgstr "Nhập"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Import theme JSON"
+msgstr "Nhập chủ đề JSON"
+
+#. module: health_theme
+#. odoo-javascript
 #: code:addons/health_theme/static/src/js/vu_progress_rail.js:0
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
 msgid "In Progress"
 msgstr "Đang thực hiện"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Info alert"
+msgstr "Cảnh báo thông tin"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Internal notes…"
+msgstr "Ghi chú nội bộ…"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Jul 6, 12:00"
+msgstr "Ngày 6 tháng 7, 12:00"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Jul 9, 12:00"
+msgstr "Ngày 9 tháng 7, 12:00"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Jul 9, 12:00 PM"
+msgstr "12:00 trưa ngày 9 tháng 7"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Jun 21, 12:00"
+msgstr "Ngày 21 tháng 6, 12:00"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__key
+msgid "Key"
+msgstr "Khóa"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__write_uid
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__write_date
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Link button"
+msgstr "Nút liên kết"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "List view"
+msgstr "Chế độ xem danh sách"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Log note"
+msgstr "Ghi chú nhật ký"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Mitchell Admin"
+msgstr "Quản trị viên Mitchell"
 
 #. module: health_theme
 #. odoo-javascript
 #: code:addons/health_theme/static/src/js/vi_translation_terms.js:0
 msgid "My Preferences"
 msgstr "Tùy chọn của tôi"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__name
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__name
+msgid "Name"
+msgstr "Tên"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Native form (dialogs, opted-out views)"
+msgstr "Biểu mẫu gốc (hộp thoại, chế độ xem đã từ chối)"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/webclient/apps_menu.xml:0
+msgid "No apps match \""
+msgstr "Không có ứng dụng nào phù hợp \""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Normal"
+msgstr "Bình thường"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Notes"
+msgstr "Ghi chú"
 
 #. module: health_theme
 #. odoo-javascript
@@ -84,9 +465,240 @@ msgstr "Trực tuyến"
 
 #. module: health_theme
 #. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Overview"
+msgstr "Tổng quan"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Plain link"
+msgstr "Liên kết đơn giản"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Planning"
+msgstr "Kế hoạch"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__preset_key
+msgid "Preset Key"
+msgstr "Khóa cài đặt sẵn"
+
+#. module: health_theme
+#: model:ir.model.fields,help:health_theme.field_vu_theme__preset_key
+msgid "Preset this theme started from (provenance)."
+msgstr "Đặt trước chủ đề này bắt đầu từ (xuất xứ)."
+
+#. module: health_theme
+#: model:ir.ui.menu,name:health_theme.menu_vu_theme_preset
+msgid "Presets"
+msgstr "cài đặt trước"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__preview_colors
+msgid "Preview Colors"
+msgstr "Xem trước màu sắc"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Pricing"
+msgstr "Định giá"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Primary"
+msgstr "Chính"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Priority"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: model_terms:ir.ui.view,arch_db:health_theme.vu_theme_view_form
+msgid "Publish"
+msgstr "Xuất bản"
+
+#. module: health_theme
+#: model_terms:ir.ui.view,arch_db:health_theme.vu_theme_view_form
+msgid "Publish this theme for ALL users?"
+msgstr "Xuất bản chủ đề này cho TẤT CẢ người dùng?"
+
+#. module: health_theme
+#: model:ir.model.fields.selection,name:health_theme.selection__vu_theme__state__published
+msgid "Published"
+msgstr "Đã xuất bản"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Redo"
+msgstr "Làm lại"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Reschedule"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Reset"
+msgstr "Cài lại"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Reset all overrides"
+msgstr "Đặt lại tất cả các phần ghi đè"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Reset to default"
+msgstr "Đặt lại về mặc định"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Scheduled"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/webclient/apps_menu.xml:0
+msgid "Search apps…"
+msgstr "Tìm kiếm ứng dụng…"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Secondary"
+msgstr "Sơ trung"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Send message"
+msgstr "Gửi tin nhắn"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Shape & Density"
+msgstr "Hình dạng & Mật độ"
+
+#. module: health_theme
+#. odoo-javascript
 #: code:addons/health_theme/static/src/js/vi_translation_terms.js:0
 msgid "Shortcuts"
 msgstr "Phím tắt"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__state
+msgid "State"
+msgstr "Trạng thái"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Stop preview"
+msgstr "Dừng xem trước"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Success alert"
+msgstr "Cảnh báo thành công"
+
+#. module: health_theme
+#: model:ir.model.fields,help:health_theme.field_vu_theme_preset__preview_colors
+msgid "Swatch strip for the preset gallery (list of hex strings)."
+msgstr "Dải mẫu cho thư viện cài sẵn (danh sách các chuỗi hex)."
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Tabs, kanban card & chatter"
+msgstr "Tab, thẻ Kanban và trò chuyện"
+
+#. module: health_theme
+#: model:ir.ui.menu,name:health_theme.menu_vu_theme_root
+msgid "Theme Engine"
+msgstr "Công cụ chủ đề"
+
+#. module: health_theme
+#: model:ir.actions.act_window,name:health_theme.action_vu_theme_preset
+msgid "Theme Presets"
+msgstr "Cài đặt trước chủ đề"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: model:ir.actions.client,name:health_theme.action_theme_studio
+#: model:ir.ui.menu,name:health_theme.menu_theme_studio
+msgid "Theme Studio"
+msgstr "Studio chủ đề"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+#: model_terms:ir.ui.view,arch_db:health_theme.vu_theme_view_form
+msgid "Theme name"
+msgstr "Tên chủ đề"
+
+#. module: health_theme
+#: model:ir.actions.act_window,name:health_theme.action_vu_theme
+#: model:ir.ui.menu,name:health_theme.menu_vu_theme
+msgid "Themes"
+msgstr "Chủ đề"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__token_values
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme_preset__token_values
+msgid "Token Values"
+msgstr "Giá trị mã thông báo"
+
+#. module: health_theme
+#: model_terms:ir.ui.view,arch_db:health_theme.vu_theme_view_form
+msgid "Tokens"
+msgstr "Mã thông báo"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__token_values_text
+msgid "Tokens (JSON)"
+msgstr "Mã thông báo (JSON)"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Undo"
+msgstr "Hoàn tác"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Urgent"
+msgstr "Khẩn cấp"
 
 #. module: health_theme
 #: model_terms:ir.ui.view,arch_db:health_theme.login_userid_label
@@ -95,6 +707,105 @@ msgstr "Mã người dùng"
 
 #. module: health_theme
 #. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "VU form hero & stat cards"
+msgstr "Anh hùng dạng VU & thẻ chỉ số"
+
+#. module: health_theme
+#: model:ir.model.fields,field_description:health_theme.field_vu_theme__version
+msgid "Version"
+msgstr "Phiên bản"
+
+#. module: health_theme
+#: model:ir.model,name:health_theme.model_vu_theme
+msgid "Việt Úc Theme"
+msgstr "Việt Úc Theme"
+
+#. module: health_theme
+#: model:ir.model,name:health_theme.model_vu_theme_preset
+msgid "Việt Úc Theme Preset"
+msgstr "Việt Úc Theme Preset"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Warning alert"
+msgstr "Cảnh báo cảnh báo"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "Workflow states & badges"
+msgstr "Huy hiệu và trạng thái quy trình làm việc"
+
+#. module: health_theme
+#. odoo-javascript
 #: code:addons/health_theme/static/src/js/vi_translation_terms.js:0
 msgid "You will not receive any notifications"
 msgstr "Bạn sẽ không nhận được bất kỳ thông báo nào"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio.xml:0
+msgid "· Jun 8 — Address updated to 72 Lê Thánh Tôn."
+msgstr "· Jun 8 — Address updated to 72 Lê Thánh Tôn."
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Borders"
+msgstr "Đường viền"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Brand"
+msgstr "Thương hiệu"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/js/vu_side_sheet.js:0
+msgid "Details"
+msgstr "Chi tiết"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Navbar & Sidebar"
+msgstr "Thanh điều hướng và thanh bên"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Publish theme"
+msgstr "Xuất bản giao diện"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Status bar & Tabs"
+msgstr "Thanh trạng thái và thẻ"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Status colors"
+msgstr "Màu trạng thái"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Surfaces"
+msgstr "Bề mặt"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Text"
+msgstr "Văn bản"
+
+#. module: health_theme
+#. odoo-javascript
+#: code:addons/health_theme/static/src/studio/theme_studio_action.js:0
+msgid "Workflow states"
+msgstr "Trạng thái quy trình"

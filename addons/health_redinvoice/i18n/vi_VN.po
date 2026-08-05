@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 11:32+0000\n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
 "PO-Revision-Date: 2026-02-25 06:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -47,6 +47,11 @@ msgstr ""
 #: model:ir.ui.menu,name:health_redinvoice.menu_health_redinvoice_requests
 msgid "API Requests"
 msgstr "Yêu cầu API"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Archive (custodian)"
+msgstr "Lưu trữ (người giám sát)"
 
 #. module: health_redinvoice
 #: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_pdf_preview_wizard__attachment_id
@@ -176,6 +181,16 @@ msgid "Cash/Bank Transfer (TT78)"
 msgstr "Tiền mặt/Chuyển khoản (TT78)"
 
 #. module: health_redinvoice
+#: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__catchment_province_id
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_redinvoice
+#: model:ir.model.fields,help:health_redinvoice.field_redinvoice_request__catchment_province_id
+msgid "Catchment area used for filtering and access control"
+msgstr "Khu vực bắt được sử dụng để lọc và kiểm soát truy cập"
+
+#. module: health_redinvoice
 #: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_pdf_preview_wizard
 msgid "Close"
 msgstr "Đóng"
@@ -260,6 +275,11 @@ msgstr "Ký hiệu hóa đơn mặc định"
 #: model:ir.model.fields,field_description:health_redinvoice.field_res_config_settings__red_invoice_template_code
 msgid "Default Template Code"
 msgstr "Mã mẫu mặc định"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Delete (reason required; posted entries must be reversed first)"
+msgstr "Xóa (cần có lý do; bài viết đã đăng phải được đảo ngược trước)"
 
 #. module: health_redinvoice
 #: model:ir.model.fields,field_description:health_redinvoice.field_account_move__display_name
@@ -830,6 +850,11 @@ msgstr "Phản hồi"
 #: model:ir.model.fields,field_description:health_redinvoice.field_redinvoice_request__response_body
 msgid "Response Body"
 msgstr "Nội dung phản hồi"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list
+msgid "Restore this deleted record"
+msgstr "Khôi phục bản ghi đã xóa này"
 
 #. module: health_redinvoice
 #: model_terms:ir.ui.view,arch_db:health_redinvoice.view_redinvoice_drill_list

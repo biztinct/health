@@ -1,4 +1,5 @@
 /** @odoo-module **/
+import { _t } from "@web/core/l10n/translation";
 
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { registry } from "@web/core/registry";
@@ -22,11 +23,11 @@ export class AdminDashboard extends Component {
         });
 
         this.cancelPeriods = [
-            { id: "today", label: "Today" },
-            { id: "week", label: "This Week" },
-            { id: "month", label: "This Month" },
-            { id: "all", label: "All Dates" },
-            { id: "custom", label: "Custom" },
+            { id: "today", label: _t("Today") },
+            { id: "week", label: _t("This Week") },
+            { id: "month", label: _t("This Month") },
+            { id: "all", label: _t("All Dates") },
+            { id: "custom", label: _t("Custom") },
         ];
 
         onWillStart(async () => {

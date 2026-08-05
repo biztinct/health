@@ -10,6 +10,15 @@ import subprocess
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 
+def default_catalog(module):
+    i18n_dir = REPO_ROOT / "addons" / module / "i18n"
+    for filename in ("vi.po", "vi_VN.po"):
+        candidate = i18n_dir / filename
+        if candidate.is_file():
+            return candidate
+    return i18n_dir / "vi.po"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("module")
@@ -28,9 +37,7 @@ def main():
             "module must be health_*, advanced_pricing, or hr_development_ai"
         )
 
-    catalog = args.catalog or (
-        REPO_ROOT / "addons" / args.module / "i18n" / "vi_VN.po"
-    )
+    catalog = args.catalog or default_catalog(args.module)
     if not catalog.is_file():
         parser.error(f"catalog does not exist: {catalog}")
 

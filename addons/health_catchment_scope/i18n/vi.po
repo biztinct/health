@@ -1,0 +1,91 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_catchment_scope
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-08-05 07:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_catchment_scope
+#. odoo-python
+#: code:addons/health_catchment_scope/models/ir_ui_view.py:0
+#: model_terms:ir.ui.view,arch_db:health_catchment_scope.view_users_search_catchment
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_catchment_scope
+#: model:ir.model.fields,field_description:health_catchment_scope.field_ir_ui_view__display_name
+#: model:ir.model.fields,field_description:health_catchment_scope.field_res_users__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_catchment_scope
+#: model_terms:ir.actions.act_window,help:health_catchment_scope.action_users_missing_catchment
+msgid "Every staff account has a catchment area"
+msgstr "Mỗi tài khoản nhân viên đều có một khu vực lưu vực"
+
+#. module: health_catchment_scope
+#: model:ir.model.fields,field_description:health_catchment_scope.field_ir_ui_view__id
+#: model:ir.model.fields,field_description:health_catchment_scope.field_res_users__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_catchment_scope
+#. odoo-python
+#: code:addons/health_catchment_scope/models/ir_ui_view.py:0
+msgid "My Catchment Area: %s"
+msgstr "Khu vực lưu vực của tôi: %s"
+
+#. module: health_catchment_scope
+#: model_terms:ir.ui.view,arch_db:health_catchment_scope.view_users_search_catchment
+msgid "No Catchment Area"
+msgstr "Không có khu vực lưu vực"
+
+#. module: health_catchment_scope
+#. odoo-python
+#: code:addons/health_catchment_scope/models/res_users.py:0
+msgid "Not set"
+msgstr "Chưa thiết lập"
+
+#. module: health_catchment_scope
+#. odoo-python
+#: code:addons/health_catchment_scope/models/res_users.py:0
+#: model:ir.actions.act_window,name:health_catchment_scope.action_users_missing_catchment
+#: model:ir.ui.menu,name:health_catchment_scope.menu_users_missing_catchment
+msgid "Staff Without a Catchment Area"
+msgstr "Nhân viên không có khu vực lưu vực"
+
+#. module: health_catchment_scope
+#: model_terms:ir.actions.act_window,help:health_catchment_scope.action_users_missing_catchment
+msgid ""
+"Staff listed here would see empty lists everywhere, because\n"
+"                record access is scoped to the user's catchment area and "
+"theirs\n"
+"                is blank. Set one on each account."
+msgstr "Nhân viên được liệt kê ở đây sẽ thấy danh sách trống ở khắp mọi nơi, bởi vì\n                quyền truy cập hồ sơ nằm trong phạm vi khu vực lưu vực của người dùng và của họ\n                trống. Đặt một cái trên mỗi tài khoản."
+
+#. module: health_catchment_scope
+#: model:ir.model,name:health_catchment_scope.model_res_users
+msgid "User"
+msgstr "Người dùng"
+
+#. module: health_catchment_scope
+#: model:ir.model,name:health_catchment_scope.model_ir_ui_view
+msgid "View"
+msgstr "Chế độ xem"
+
+#. module: health_catchment_scope
+#. odoo-python
+#: code:addons/health_catchment_scope/models/res_users.py:0
+msgid "share"
+msgstr "chia sẻ"

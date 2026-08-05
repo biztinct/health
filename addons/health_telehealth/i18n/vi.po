@@ -4,6 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 19.0 health_telehealth\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,13 +12,352 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_telehealth
-#: model:ir.module.module,shortdesc:base.module_health_telehealth
-msgid "Health Telehealth (Video Visits)"
-msgstr "Khám trực tuyến (Video)"
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid ""
+".\n"
+"                                    (Having trouble? Call"
+msgstr ".\n                                    (Gặp rắc rối? Gọi"
 
 #. module: health_telehealth
-#: model:ir.model,name:health_telehealth.model_health_telehealth_session
-msgid "Telehealth Video Session"
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid ""
+".\n"
+"                                    (Need anything else? Call"
+msgstr ".\n                                    (Cần gì nữa không? Gọi"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid ""
+".\n"
+"                                    (Need help? Call"
+msgstr ".\n                                    (Cần giúp đỡ? Gọi"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "<span class=\"tl-label\">Bác sĩ (Doctor)</span>"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "<span class=\"tl-label\">Khung giờ (Time)</span>"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "<span class=\"tl-label\">Ngày (Date)</span>"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "<span class=\"tl-status closed\">Đã kết thúc (Ended)</span>"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "<span class=\"tl-status open\">Đang diễn ra (Live)</span>"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "<span class=\"tl-status pending\">Sắp diễn ra (Upcoming)</span>"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_brand
+msgid "<span>Viet Uc Health</span>"
+msgstr "<span>Sức khỏe Việt Úc</span>"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "<span>Vào phòng khám (Join)</span>"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.actions.act_window,help:health_telehealth.action_telehealth_session
+msgid ""
+"A session is created automatically when an online (telemedicine)\n"
+"                booking is confirmed."
+msgstr "Một phiên được tạo tự động khi có một phiên trực tuyến (y học từ xa)\n                đặt phòng đã được xác nhận."
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "Buổi khám đã bắt đầu"
+msgstr "Buổi khám đã bắt đầu"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "Buổi khám đã kết thúc"
+msgstr "Buổi khám đã kết thúc"
+
+#. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__cancelled
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_telehealth
+#: model:ir.model.fields,help:health_telehealth.field_health_telehealth_session__room_url
+msgid ""
+"Capability URL = <video_base_url>/<room_slug>. Not stored; never logged at "
+"info level."
+msgstr "URL khả năng = <video_base_url>/<room_slug>. Không được lưu trữ; chưa bao giờ ghi nhật ký ở cấp độ thông tin."
+
+#. module: health_telehealth
+#: model:ir.model.fields,help:health_telehealth.field_health_telehealth_session__patient_token
+msgid ""
+"Capability token for the waiting-room page URL. Never logged at info level."
+msgstr "Mã thông báo khả năng cho URL trang phòng chờ. Chưa bao giờ ghi nhật ký ở cấp độ thông tin."
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__catchment_province_id
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_telehealth
+#: model:ir.model.fields,help:health_telehealth.field_health_telehealth_session__catchment_province_id
+msgid "Catchment area used for access control."
+msgstr "Khu vực lưu vực được sử dụng để kiểm soát truy cập."
+
+#. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__closed
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
+msgid "Closed"
+msgstr "Đã kết thúc"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__closed_at
+msgid "Closed At"
+msgstr "Đóng cửa vào lúc"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__company_id
+msgid "Company"
+msgstr "Công ty"
+
+#. module: health_telehealth
+#: model:ir.model.fields,help:health_telehealth.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_telehealth
+#: model:ir.model,name:health_telehealth.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid ""
+"Cảm ơn bạn đã sử dụng dịch vụ khám trực tuyến.\n"
+"                                   (Thank you — your video visit has ended.)"
+msgstr "Cảm ơn bạn đã sử dụng dịch vụ khám trực tuyến.\\n                                   (Thank you — your video visit has ended.)"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "Cần hỗ trợ thêm? Gọi"
+msgstr "Cần hỗ trợ thêm? Gọi"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "Cần hỗ trợ? Gọi"
+msgstr "Cần hỗ trợ? Gọi"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_telehealth.field_health_outbound_message__display_name
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__display_name
+#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_enabled
+msgid "Enable Telehealth Sessions"
+msgstr "Bật phiên khám trực tuyến"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.res_config_settings_view_form_telehealth
+msgid "Enable telehealth sessions"
+msgstr "Kích hoạt phiên telehealth"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__expires_at
+msgid "Expires At"
+msgstr "Hết hạn vào lúc"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "Gặp sự cố? Gọi"
+msgstr "Gặp sự cố? Gọi"
+
+#. module: health_telehealth
+#: model:ir.model,name:health_telehealth.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_telehealth.field_health_outbound_message__id
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__id
+#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__outbound_message_id
+msgid "Join Message"
+msgstr "Tin nhắn mời vào phòng khám"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_fso_form_telehealth
+msgid "Join Video"
+msgstr "Vào video"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "Khám trực tuyến cho"
+msgstr "Khám trực tuyến cho"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_neutral
+msgid "Không có thông tin để hiển thị"
+msgstr "Không có thông tin để hiển thị"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
+msgid "Live"
+msgstr "Đang chạy"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_neutral
+msgid ""
+"Liên kết này không còn hiệu lực hoặc chưa có thông tin.\n"
+"                               Vui lòng liên hệ với chúng tôi nếu cần hỗ "
+"trợ.\n"
+"                               <br/>(This link is no longer available. "
+"Please contact us if you need help.)"
+msgstr "Liên kết này không còn hiệu lực hoặc chưa có thông tin.\\n                               Vui lòng liên hệ với chúng tôi nếu cần hỗ trợ.\\n                               <br/>(This link is no longer available. Please contact us if you need help.)"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid ""
+"Nhấn để vào phòng khám trực tuyến.\n"
+"                                   (Tap to join the video visit.)"
+msgstr "Nhấn để vào phòng khám trực tuyến.\\n                                   (Tap to join the video visit.)"
+
+#. module: health_telehealth
+#: model_terms:ir.actions.act_window,help:health_telehealth.action_telehealth_session
+msgid "No telehealth sessions yet."
+msgstr "Chưa có phiên telehealth nào."
+
+#. module: health_telehealth
+#. odoo-python
+#: code:addons/health_telehealth/models/telehealth_session.py:0
+msgid "No usable phone for the patient."
+msgstr "Không có số điện thoại hợp lệ cho bệnh nhân."
+
+#. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__open
+msgid "Open"
+msgstr "Đang diễn ra"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__opened_at
+msgid "Opened At"
+msgstr "Đã mở vào lúc"
+
+#. module: health_telehealth
+#: model:ir.model,name:health_telehealth.model_health_outbound_message
+msgid "Outbound Message"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__patient_token
+msgid "Patient Token"
+msgstr "Mã thông báo bệnh nhân"
+
+#. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__pending
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
+msgid "Pending"
+msgstr "Chờ"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_outbound_message__purpose
+msgid "Purpose"
+msgstr "Mục đích"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__room_slug
+msgid "Room Slug"
+msgstr "Sên phòng"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.res_config_settings_view_form_telehealth
+msgid ""
+"Room URL = this base + a unique room slug. Default meet.jit.si. Self-host "
+"Jitsi with signed JWT room tokens as the v2 upgrade path."
+msgstr "URL phòng = cơ sở này + một con sên phòng duy nhất. Mặc định meet.jit.si. Tự lưu trữ Jitsi với mã thông báo phòng JWT đã ký làm đường dẫn nâng cấp v2."
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__room_url
+msgid "Room Url"
+msgstr "Url phòng"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
+msgid "Search Telehealth Sessions"
+msgstr "Tìm kiếm các phiên Telehealth"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__state
+msgid "State"
+msgstr "Trạng thái"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_telehealth
+#: model_terms:ir.ui.view,arch_db:health_telehealth.res_config_settings_view_form_telehealth
+msgid "Telehealth (Video Visits)"
+msgstr "Telehealth (Thăm khám qua video)"
+
+#. module: health_telehealth
+#: model:ir.model.fields.selection,name:health_telehealth.selection__health_outbound_message__purpose__telehealth_join
+msgid "Telehealth Join Link"
+msgstr "Liên kết vào phòng khám trực tuyến"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_zns_template_join
+msgid "Telehealth Join ZNS Template ID"
+msgstr "Mã mẫu ZNS mời vào phòng khám"
+
+#. module: health_telehealth
+#: model:ir.model.fields,field_description:health_telehealth.field_health_fieldservice_order__telehealth_session_id
+#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_form
+msgid "Telehealth Session"
 msgstr "Phiên khám trực tuyến"
 
 #. module: health_telehealth
@@ -28,47 +368,36 @@ msgid "Telehealth Sessions"
 msgstr "Phiên khám trực tuyến"
 
 #. module: health_telehealth
-#: model:ir.model.fields,field_description:health_telehealth.field_health_fieldservice_order__telehealth_session_id
-#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_form
-msgid "Telehealth Session"
+#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_video_base_url
+msgid "Telehealth Video Base URL"
+msgstr "URL gốc cho video khám trực tuyến"
+
+#. module: health_telehealth
+#: model:ir.model,name:health_telehealth.model_health_telehealth_session
+msgid "Telehealth Video Session"
 msgstr "Phiên khám trực tuyến"
 
 #. module: health_telehealth
-#: model:ir.model.fields.selection,name:health_telehealth.selection__health_outbound_message__purpose__telehealth_join
-msgid "Telehealth Join Link"
-msgstr "Liên kết vào phòng khám trực tuyến"
+#: model_terms:ir.ui.view,arch_db:health_telehealth.res_config_settings_view_form_telehealth
+msgid "Telehealth join ZNS template"
+msgstr "Mẫu ZNS tham gia Telehealth"
 
 #. module: health_telehealth
-#: model_terms:ir.ui.view,arch_db:health_telehealth.view_fso_form_telehealth
-msgid "Join Video"
-msgstr "Vào video"
+#. odoo-python
+#: code:addons/health_telehealth/models/health_fieldservice_order.py:0
+msgid ""
+"The video room is not available yet. It opens when the visit is confirmed "
+"and you are assigned to it."
+msgstr ""
+"Phòng khám chưa sẵn sàng. Phòng sẽ mở khi lịch khám được xác nhận và bạn "
+"được phân công."
 
 #. module: health_telehealth
-#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__fso_id
-msgid "Visit"
-msgstr "Lịch khám"
-
-#. module: health_telehealth
-#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__pending
-#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
-msgid "Pending"
-msgstr "Chờ"
-
-#. module: health_telehealth
-#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__open
-msgid "Open"
-msgstr "Đang diễn ra"
-
-#. module: health_telehealth
-#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__closed
-#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
-msgid "Closed"
-msgstr "Đã kết thúc"
-
-#. module: health_telehealth
-#: model:ir.model.fields.selection,name:health_telehealth.selection__health_telehealth_session__state__cancelled
-msgid "Cancelled"
-msgstr "Đã hủy"
+#: model:ir.model.fields,help:health_telehealth.field_health_telehealth_session__room_slug
+msgid ""
+"Unguessable room path segment (the v1 access control). Generated once at "
+"session creation."
+msgstr "Đoạn đường dẫn phòng không thể đoán được (điều khiển truy cập v1). Được tạo một lần khi tạo phiên."
 
 #. module: health_telehealth
 #: model:ir.model.fields,field_description:health_telehealth.field_health_fieldservice_order__telehealth_session_state
@@ -76,39 +405,59 @@ msgid "Video Session State"
 msgstr "Trạng thái phiên video"
 
 #. module: health_telehealth
-#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__outbound_message_id
-msgid "Join Message"
-msgstr "Tin nhắn mời vào phòng khám"
+#: model_terms:ir.ui.view,arch_db:health_telehealth.res_config_settings_view_form_telehealth
+msgid "Video base URL"
+msgstr "URL cơ sở video"
 
 #. module: health_telehealth
-#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__catchment_province_id
-#: model_terms:ir.ui.view,arch_db:health_telehealth.view_telehealth_session_search
-msgid "Catchment Area"
-msgstr "Khu vực phụ trách"
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid ""
+"Video sẽ mở khi bác sĩ bắt đầu.\n"
+"                                   (The video opens when the doctor starts.)"
+msgstr "Video sẽ mở khi bác sĩ bắt đầu.\\n                                   (The video opens when the doctor starts.)"
 
 #. module: health_telehealth
-#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_enabled
-msgid "Enable Telehealth Sessions"
-msgstr "Bật phiên khám trực tuyến"
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_neutral
+#: model_terms:ir.ui.view,arch_db:health_telehealth.tele_page
+msgid "Viet Uc Health"
+msgstr "Sức khỏe Việt Úc"
 
 #. module: health_telehealth
-#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_video_base_url
-msgid "Telehealth Video Base URL"
-msgstr "URL gốc cho video khám trực tuyến"
+#: model:ir.model.fields,field_description:health_telehealth.field_health_telehealth_session__fso_id
+msgid "Visit"
+msgstr "Lịch khám"
 
 #. module: health_telehealth
-#: model:ir.model.fields,field_description:health_telehealth.field_res_config_settings__th_zns_template_join
-msgid "Telehealth Join ZNS Template ID"
-msgstr "Mã mẫu ZNS mời vào phòng khám"
+#: model_terms:ir.ui.view,arch_db:health_telehealth.res_config_settings_view_form_telehealth
+msgid ""
+"When on, confirming an online (telemedicine) booking creates a video session "
+"and sends the join link (the send still rides the messaging enabled/dry-run "
+"switches)."
+msgstr "Khi được bật, việc xác nhận đăng ký trực tuyến (điều trị từ xa) sẽ tạo một phiên video và gửi liên kết tham gia (việc gửi vẫn chạy trên các công tắc đã bật/chạy thử tính năng nhắn tin)."
 
 #. module: health_telehealth
-#. odoo-python
-#: code:addons/health_telehealth/models/health_fieldservice_order.py:0
-msgid "The video room is not available yet. It opens when the visit is confirmed and you are assigned to it."
-msgstr "Phòng khám chưa sẵn sàng. Phòng sẽ mở khi lịch khám được xác nhận và bạn được phân công."
+#: model_terms:ir.ui.view,arch_db:health_telehealth.res_config_settings_view_form_telehealth
+msgid ""
+"Zalo ZNS template ID for the join link. Rides the messaging enabled/dry-run "
+"switches. Empty = ZNS step skipped (session still created)."
+msgstr "Zalo ID mẫu ZNS cho liên kết tham gia. Sử dụng các công tắc kích hoạt/chạy thử tin nhắn. Trống = Bước ZNS bị bỏ qua (phiên vẫn được tạo)."
 
 #. module: health_telehealth
-#. odoo-python
-#: code:addons/health_telehealth/models/telehealth_session.py:0
-msgid "No usable phone for the patient."
-msgstr "Không có số điện thoại hợp lệ cho bệnh nhân."
+#: model:ir.model.fields,help:health_telehealth.field_health_telehealth_session__expires_at
+msgid "scheduled end + 24h; checked at render time (no cron)."
+msgstr "dự kiến ​​kết thúc + 24h; được kiểm tra tại thời điểm kết xuất (không có cron)."
+
+#~ msgid "Health Telehealth (Video Visits)"
+#~ msgstr "Khám trực tuyến (Video)"
+
+#. module: health_telehealth
+#. odoo-javascript
+#: code:addons/health_telehealth/static/src/js/telehealth.js:0
+msgid "Could not open the video room."
+msgstr "Không thể mở phòng video."
+
+#. module: health_telehealth
+#. odoo-javascript
+#: code:addons/health_telehealth/static/src/js/telehealth.js:0
+msgid "The video room is not ready yet."
+msgstr "Phòng video chưa sẵn sàng."

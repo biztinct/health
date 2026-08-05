@@ -9,60 +9,60 @@ import { AddressDialog } from "@health_base/js/address_dialog";
 import { RequiredFieldsDialog } from "@health_crm/js/required_fields_dialog";
 
 const MODE_OPTIONS = [
-    { key: "phone", label: "Phone Call", icon: "fa-phone" },
-    { key: "zalo", label: "Zalo", icon: "fa-comment" },
-    { key: "facebook", label: "Facebook", icon: "fa-facebook" },
-    { key: "email", label: "Email", icon: "fa-envelope" },
-    { key: "website", label: "Website", icon: "fa-globe" },
-    { key: "chatbox", label: "Chatbox", icon: "fa-comments" },
-    { key: "walk_in", label: "Walk-in", icon: "fa-walking" },
+    { key: "phone", label: _t("Phone Call"), icon: "fa-phone" },
+    { key: "zalo", label: _t("Zalo"), icon: "fa-comment" },
+    { key: "facebook", label: _t("Facebook"), icon: "fa-facebook" },
+    { key: "email", label: _t("Email"), icon: "fa-envelope" },
+    { key: "website", label: _t("Website"), icon: "fa-globe" },
+    { key: "chatbox", label: _t("Chatbox"), icon: "fa-comments" },
+    { key: "walk_in", label: _t("Walk-in"), icon: "fa-walking" },
 ];
 
 const RELATIONSHIP_OPTIONS = [
-    { key: "client", label: "Client (Self)" },
-    { key: "payer", label: "Payer" },
-    { key: "referrer", label: "Referrer" },
-    { key: "emergency_contact", label: "Emergency Contact" },
-    { key: "legal_guardian", label: "Legal Guardian" },
-    { key: "client_representative", label: "Client Representative" },
+    { key: "client", label: _t("Client (Self)") },
+    { key: "payer", label: _t("Payer") },
+    { key: "referrer", label: _t("Referrer") },
+    { key: "emergency_contact", label: _t("Emergency Contact") },
+    { key: "legal_guardian", label: _t("Legal Guardian") },
+    { key: "client_representative", label: _t("Client Representative") },
 ];
 
 const SERVICE_OPTIONS = [
-    { key: "home_visit", label: "Home Visit", icon: "fa-home" },
-    { key: "clinic_visit", label: "Clinic Visit", icon: "fa-hospital-o" },
-    { key: "consultation", label: "Consultation", icon: "fa-comments" },
-    { key: "follow_up", label: "Follow-up", icon: "fa-refresh" },
-    { key: "emergency", label: "Emergency", icon: "fa-ambulance" },
-    { key: "preventive", label: "Preventive", icon: "fa-shield" },
-    { key: "rehabilitation", label: "Rehabilitation", icon: "fa-heartbeat" },
-    { key: "palliative", label: "Palliative", icon: "fa-medkit" },
+    { key: "home_visit", label: _t("Home Visit"), icon: "fa-home" },
+    { key: "clinic_visit", label: _t("Clinic Visit"), icon: "fa-hospital-o" },
+    { key: "consultation", label: _t("Consultation"), icon: "fa-comments" },
+    { key: "follow_up", label: _t("Follow-up"), icon: "fa-refresh" },
+    { key: "emergency", label: _t("Emergency"), icon: "fa-ambulance" },
+    { key: "preventive", label: _t("Preventive"), icon: "fa-shield" },
+    { key: "rehabilitation", label: _t("Rehabilitation"), icon: "fa-heartbeat" },
+    { key: "palliative", label: _t("Palliative"), icon: "fa-medkit" },
 ];
 
 const PRIORITY_OPTIONS = [
-    { key: "routine", label: "Routine" },
-    { key: "urgent", label: "Urgent" },
-    { key: "emergency", label: "Emergency" },
-    { key: "preventive", label: "Preventive" },
+    { key: "routine", label: _t("Routine") },
+    { key: "urgent", label: _t("Urgent") },
+    { key: "emergency", label: _t("Emergency") },
+    { key: "preventive", label: _t("Preventive") },
 ];
 
 const ACTIVITY_TYPE_OPTIONS = [
-    { key: "todo", label: "To-Do", icon: "fa-check-square-o" },
-    { key: "call", label: "Call", icon: "fa-phone" },
-    { key: "email", label: "Email", icon: "fa-envelope" },
-    { key: "meeting", label: "Meeting", icon: "fa-users" },
-    { key: "follow_up", label: "Follow-up", icon: "fa-refresh" },
-    { key: "reminder", label: "Reminder", icon: "fa-bell" },
+    { key: "todo", label: _t("To-Do"), icon: "fa-check-square-o" },
+    { key: "call", label: _t("Call"), icon: "fa-phone" },
+    { key: "email", label: _t("Email"), icon: "fa-envelope" },
+    { key: "meeting", label: _t("Meeting"), icon: "fa-users" },
+    { key: "follow_up", label: _t("Follow-up"), icon: "fa-refresh" },
+    { key: "reminder", label: _t("Reminder"), icon: "fa-bell" },
 ];
 
 const STEP3_ACTIONS = [
-    { key: "booking", label: "New Booking", icon: "fa-calendar-plus-o", type: "navigate", accent: "default" },
-    { key: "escalate", label: "Escalate", icon: "fa-arrow-up", type: "dialog", accent: "warning" },
-    { key: "consult", label: "Consultation", icon: "fa-stethoscope", type: "dialog", accent: "info" },
-    { key: "message", label: "Send Message", icon: "fa-comment", type: "dialog", accent: "default" },
-    { key: "activity", label: "Log Activity", icon: "fa-tasks", type: "inline", accent: "default" },
-    { key: "notes", label: "Add Notes", icon: "fa-sticky-note", type: "inline", accent: "default" },
-    { key: "spam", label: "Mark Spam", icon: "fa-ban", type: "inline", accent: "danger" },
-    { key: "open", label: "Open Record", icon: "fa-external-link", type: "navigate", accent: "default" },
+    { key: "booking", label: _t("New Booking"), icon: "fa-calendar-plus-o", type: "navigate", accent: "default" },
+    { key: "escalate", label: _t("Escalate"), icon: "fa-arrow-up", type: "dialog", accent: "warning" },
+    { key: "consult", label: _t("Consultation"), icon: "fa-stethoscope", type: "dialog", accent: "info" },
+    { key: "message", label: _t("Send Message"), icon: "fa-comment", type: "dialog", accent: "default" },
+    { key: "activity", label: _t("Log Activity"), icon: "fa-tasks", type: "inline", accent: "default" },
+    { key: "notes", label: _t("Add Notes"), icon: "fa-sticky-note", type: "inline", accent: "default" },
+    { key: "spam", label: _t("Mark Spam"), icon: "fa-ban", type: "inline", accent: "danger" },
+    { key: "open", label: _t("Open Record"), icon: "fa-external-link", type: "navigate", accent: "default" },
 ];
 
 class CrmNewContact extends Component {
@@ -166,6 +166,33 @@ class CrmNewContact extends Component {
 
     _normalizePhone(phone) {
         return phone ? phone.replace(/[^\d]/g, '') : '';
+    }
+
+    // Client-side mirror of health_base normalize_vn_phone(): crm.lead.create()
+    // rejects an invalid Vietnamese number with a ValidationError, so catch it
+    // here and name the offending field instead of letting the create fail.
+    // Returns the normalized 10-digit number, or null when it is not valid.
+    _normalizeVnPhone(phone) {
+        let digits = this._normalizePhone(phone);
+        if (!digits) return null;
+        if (digits.startsWith('84') && (digits.length === 11 || digits.length === 12)) {
+            const rest = digits.slice(2);
+            digits = rest.startsWith('0') ? rest : '0' + rest;
+        }
+        if (digits.startsWith('0')) {
+            return (digits.length === 10 && digits[1] !== '0') ? digits : null;
+        }
+        return digits.length === 9 ? '0' + digits : null;
+    }
+
+    // The human-readable part of an Odoo RPC error (ValidationError/UserError
+    // text), so the wizard can show WHY the server refused instead of a bare
+    // "Failed to create contact".
+    _serverErrorMessage(error) {
+        const data = error && error.data;
+        let msg = (data && (data.arguments?.[0] || data.message)) || error?.message || "";
+        if (typeof msg !== "string") msg = String(msg || "");
+        return msg.trim();
     }
 
     _setContactDatetime() {
@@ -524,7 +551,33 @@ class CrmNewContact extends Component {
         if (!this.state.phone.trim() && !this.state.email.trim()) {
             missing.push(_t("Phone Number or Email Address (enter at least one)"));
         }
+        missing.push(...this._invalidPhoneFields());
         return missing;
+    }
+
+    // Phone numbers the server would reject at lead creation. Valid numbers are
+    // normalized in place (938038028 -> 0938038028) so what is submitted is what
+    // the user sees.
+    _invalidPhoneFields() {
+        const invalid = [];
+        const phone = this.state.phone.trim();
+        if (phone) {
+            const normalized = this._normalizeVnPhone(phone);
+            if (normalized) {
+                this.state.phone = normalized;
+                if (this.state.zaloNumber.trim() === phone) {
+                    this.state.zaloNumber = normalized;
+                    this._prevPhone = normalized;
+                }
+            } else {
+                invalid.push(_t(
+                    "Phone Number — '%s' is not valid. Enter a 9-digit number "
+                    + "(a leading 0 is added automatically) or a 10-digit number "
+                    + "starting with a single 0.", phone
+                ));
+            }
+        }
+        return invalid;
     }
 
     _showRequiredFieldsDialog(fields, message) {
@@ -576,8 +629,12 @@ class CrmNewContact extends Component {
             }]);
             this.notification.add(_t("Contact marked as junk"), { type: "info" });
             this.closeWizard();
-        } catch (_e) {
-            this.notification.add(_t("Failed to mark as junk"), { type: "danger" });
+        } catch (e) {
+            const detail = this._serverErrorMessage(e);
+            this.notification.add(
+                detail || _t("Failed to mark as junk"),
+                { type: "danger", sticky: !!detail }
+            );
         }
     }
 
@@ -601,6 +658,10 @@ class CrmNewContact extends Component {
             && !this.state.clientName.trim() && !this.state.selectedClientId) {
             missing.push(_t("Client Name"));
         }
+        // crm.lead.create() rejects an invalid VN phone — catch it here so the
+        // user is told which field is wrong (and on which step) rather than
+        // getting a bare failure notification.
+        missing.push(...this._invalidPhoneFields());
         if (missing.length) {
             this._showRequiredFieldsDialog(missing);
             return;
@@ -646,7 +707,18 @@ class CrmNewContact extends Component {
             this.notification.add(_t("Contact created successfully"), { type: "success" });
         } catch (e) {
             console.error("Failed to create contact:", e);
-            this.notification.add(_t("Failed to create contact"), { type: "danger" });
+            // Show the server's own explanation (ValidationError / UserError
+            // text) — a generic notification here hides the actual reason.
+            const detail = this._serverErrorMessage(e);
+            if (detail) {
+                this.dialog.add(RequiredFieldsDialog, {
+                    title: _t("Contact not created"),
+                    message: _t("The contact could not be created:"),
+                    fields: [detail],
+                });
+            } else {
+                this.notification.add(_t("Failed to create contact"), { type: "danger" });
+            }
         }
         this.state.isSubmitting = false;
     }

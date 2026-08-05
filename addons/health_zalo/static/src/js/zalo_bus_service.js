@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Zalo Bus Service
@@ -101,7 +102,7 @@ export const zaloBusService = {
             // Show Odoo notification
             notification.add(`New Zalo message: ${notificationText}`, {
                 type: "info",
-                title: "Zalo Message",
+                title: _t("Zalo Message"),
                 sticky: false,
             });
 

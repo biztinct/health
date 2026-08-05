@@ -5,6 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 19.0 health_web_leads\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
 "Language-Team: \n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
@@ -14,28 +15,170 @@ msgstr ""
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "Web: %s"
-msgstr "Web: %s"
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"%(label)s updated by %(user)s. The capture endpoint reads the new map on its "
+"next submission."
+msgstr ""
+"%(label)s đã được %(user)s cập nhật. Điểm cuối tiếp nhận sẽ đọc bản đồ mới "
+"ngay từ lượt gửi kế tiếp."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "%s lead(s) linked to a seeded campaign."
+msgstr "%s khách tiềm năng đã được gán vào chiến dịch có sẵn."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid ""
+"<span class=\"vu-section__icon\" data-icon=\"history\"/>\n"
+"                                    <span>Click identifiers</span>"
+msgstr "<span class=\"vu-section__icon\" data-icon=\"history\"/>\n                                    <span>Số nhận dạng nhấp chuột</span>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid ""
+"<span class=\"vu-section__icon\" data-icon=\"map-pin\"/>\n"
+"                                    <span>Pages</span>"
+msgstr "<span class=\"vu-section__icon\" data-icon=\"map-pin\"/>\n                                    <span>Trang</span>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid ""
+"<span class=\"vu-section__icon\" data-icon=\"shield-check\"/>\n"
+"                                    <span>Consent claim</span>"
+msgstr "<span class=\"vu-section__icon\" data-icon=\"shield-check\"/>\n                                    <span>Yêu cầu đồng ý</span>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid ""
+"<span class=\"vu-section__icon\" data-icon=\"tag\"/>\n"
+"                                    <span>Campaign detail</span>"
+msgstr "<span class=\"vu-section__icon\" data-icon=\"tag\"/>\n                                    <span>Chi tiết chiến dịch</span>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid ""
+"<span>Click identifiers and consent</span>\n"
+"                                <small class=\"text-muted d-block\">Kept for "
+"offline-conversion export; never edited by hand</small>"
+msgstr "<span>Nhấp vào số nhận dạng và sự đồng ý</span>\n                                <small class=\"text-muted d-block\">Được giữ lại để xuất chuyển đổi ngoại tuyến; chưa bao giờ được chỉnh sửa bằng tay</small>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid ""
+"<span>Touchpoints</span>\n"
+"                                <small class=\"text-muted d-block\">Every "
+"touch behind this lead — the newest row is the last touch</small>"
+msgstr "<span>Điểm tiếp xúc</span>\n                                <small class=\"text-muted d-block\">Mỗi lần chạm phía sau khách hàng tiềm năng này — hàng mới nhất là lần chạm cuối cùng</small>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid ""
+"<span>Triage</span>\n"
+"                                <small class=\"text-muted d-block\">Why this "
+"lead may need a human look</small>"
+msgstr "<span>Phân loại</span>\n                                <small class=\"text-muted d-block\">Tại sao khách hàng tiềm năng này có thể cần cái nhìn của con người</small>"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid ""
+"<span>Where the visit happened</span>\n"
+"                                <small class=\"text-muted d-block\">First "
+"touch, frozen at creation</small>"
+msgstr "<span>Nơi chuyến thăm diễn ra</span>\n                                <small class=\"text-muted d-block\">Lần chạm đầu tiên, bị treo khi tạo</small>"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__city_conflict
+msgid ""
+"A later touchpoint disagreed with the stored city. The stored city is never "
+"auto-changed — a human decides."
+msgstr ""
+"Một điểm chạm sau đó không khớp với thành phố đã lưu. Thành phố đã lưu không "
+"bao giờ bị tự động đổi — con người quyết định."
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_lead_service.py:0
-#: code:addons/health_web_leads/controllers/web_leads.py:0
-msgid "Request body must be a JSON object"
-msgstr "Nội dung yêu cầu phải là một đối tượng JSON"
+msgid ""
+"A new website enquiry (%(ref)s — %(name)s) arrived on this phone number. It "
+"was kept as a separate lead — review whether the two belong together."
+msgstr ""
+"Một yêu cầu mới từ website (%(ref)s — %(name)s) đã đến từ số điện thoại này. "
+"Đã giữ thành lead riêng — vui lòng rà soát xem hai lead có thuộc về cùng một "
+"người không."
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "Missing required field(s): submission_id"
-msgstr "Thiếu trường bắt buộc: submission_id"
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "A touchpoint must belong to a lead or a conversation."
+msgstr "Điểm tiếp xúc phải thuộc về khách hàng tiềm năng hoặc cuộc trò chuyện."
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "Missing required field(s): form_id"
-msgstr "Thiếu trường bắt buộc: form_id"
+#: code:addons/health_web_leads/models/health_consent.py:0
+msgid ""
+"A web-form consent must carry the submission idempotency key before it can "
+"be granted."
+msgstr ""
+"Đồng ý qua biểu mẫu web phải mang khoá định danh lượt gửi trước khi được cấp."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/health_consent.py:0
+msgid ""
+"A web-form consent must record what the visitor was shown (consent text "
+"version and submission reference) in Scope / Limitations before it can be "
+"granted."
+msgstr ""
+"Đồng ý qua biểu mẫu web phải ghi lại nội dung mà khách đã xem (phiên bản văn "
+"bản đồng ý và mã lượt gửi) trong mục Phạm vi / Giới hạn trước khi được cấp."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__utm_content
+msgid "Ad / creative variant (raw value)."
+msgstr "Biến thể quảng cáo / mẫu sáng tạo (giá trị thô)."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__ad_account_id
+msgid "Ad Account ID"
+msgstr "ID tài khoản quảng cáo"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__ad_id
+msgid "Ad ID"
+msgstr "Mã quảng cáo"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__heartbeat_user_id
+msgid "Alert Watcher"
+msgstr "Người nhận cảnh báo"
 
 #. module: health_web_leads
 #. odoo-python
@@ -44,275 +187,29 @@ msgid "At least one of phone or email is required"
 msgstr "Cần ít nhất một trong hai: số điện thoại hoặc email"
 
 #. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "Phone (unverified, not a valid Vietnamese number): %s"
-msgstr "Số điện thoại (chưa xác thực, không phải số Việt Nam hợp lệ): %s"
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
 
 #. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "Same phone number as lead %(ref)s (%(name)s) — kept as a separate lead, no automatic merge. Flagged for review."
-msgstr "Trùng số điện thoại với lead %(ref)s (%(name)s) — giữ thành lead riêng, không tự động gộp. Đã đánh dấu cần rà soát."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "A new website enquiry (%(ref)s — %(name)s) arrived on this phone number. It was kept as a separate lead — review whether the two belong together."
-msgstr "Một yêu cầu mới từ website (%(ref)s — %(name)s) đã đến từ số điện thoại này. Đã giữ thành lead riêng — vui lòng rà soát xem hai lead có thuộc về cùng một người không."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/controllers/web_leads.py:0
-msgid "Internal server error"
-msgstr "Lỗi máy chủ nội bộ"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "Possible existing client: %(name)s (%(code)s). Verify before converting — the pipeline never links a lead to a client from a typed phone or email."
-msgstr "Có thể là khách hàng đã có: %(name)s (%(code)s). Hãy kiểm tra trước khi chuyển đổi — hệ thống không bao giờ tự liên kết lead với khách hàng chỉ từ số điện thoại hoặc email được nhập."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "Repeat web enquiry received (form %(form)s, submission %(submission)s). Appended as a touchpoint — no second lead was created."
-msgstr "Đã nhận yêu cầu lặp lại từ website (biểu mẫu %(form)s, mã gửi %(submission)s). Được ghi nhận thành điểm chạm — không tạo lead thứ hai."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "no code"
-msgstr "chưa có mã"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/controllers/web_leads.py:0
-msgid "Token is missing a required scope (%s)"
-msgstr "Token thiếu phạm vi quyền bắt buộc (%s)"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/controllers/web_leads.py:0
-msgid "Rate limit exceeded"
-msgstr "Đã vượt quá giới hạn số lần gọi"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/controllers/web_leads.py:0
-msgid "Request body too large"
-msgstr "Nội dung yêu cầu quá lớn"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/controllers/web_leads.py:0
-msgid "Missing required field(s): %s"
-msgstr "Thiếu trường bắt buộc: %s"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/controllers/web_leads.py:0
-msgid "Request body is not valid JSON"
-msgstr "Nội dung yêu cầu không phải JSON hợp lệ"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/controllers/web_leads.py:0
-msgid "Unauthorized"
-msgstr "Không được phép truy cập"
-
-#. module: health_web_leads
-#: model:ir.model,name:health_web_leads.model_health_lead_touchpoint
-msgid "Lead Touchpoint"
-msgstr "Điểm chạm khách tiềm năng"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__utm_content
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_content
-msgid "UTM Content"
-msgstr "Nội dung UTM"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__utm_term
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_term
-msgid "UTM Term"
-msgstr "Từ khoá UTM"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__gclid
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__gclid
-msgid "Google Click ID"
-msgstr "Mã click Google"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbclid
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__fbclid
-msgid "Facebook Click ID"
-msgstr "Mã click Facebook"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbc
-msgid "Meta Click Cookie (_fbc)"
-msgstr "Cookie click Meta (_fbc)"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbp
-msgid "Meta Browser Cookie (_fbp)"
-msgstr "Cookie trình duyệt Meta (_fbp)"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__ga_client_id
-msgid "GA Client ID"
-msgstr "Mã khách Google Analytics"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_landing_url
-msgid "Landing URL"
-msgstr "URL trang đích"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_submit_page_url
-msgid "Submit Page URL"
-msgstr "URL trang gửi biểu mẫu"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_referrer_url
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__referrer_url
-msgid "Referrer URL"
-msgstr "URL nguồn giới thiệu"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_form_id
-msgid "Web Form ID"
-msgstr "Mã biểu mẫu web"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__external_submission_id
-msgid "External Submission ID"
-msgstr "Mã lượt gửi bên ngoài"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__city_source
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__city_source
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
-msgid "City Source"
-msgstr "Nguồn xác định thành phố"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__city_conflict
-msgid "City Conflict"
-msgstr "Xung đột thành phố"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_needs_review
-msgid "Needs Web Review"
-msgstr "Cần rà soát lead web"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_marketing
-msgid "Marketing Consent (Web)"
-msgstr "Đồng ý nhận tiếp thị (Web)"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_text_version
-msgid "Consent Text Version"
-msgstr "Phiên bản nội dung đồng ý"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_touchpoint_ids
-#: model:ir.actions.act_window,name:health_web_leads.action_health_lead_touchpoint
-#: model:ir.ui.menu,name:health_web_leads.menu_health_lead_touchpoint
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_list
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
-#: model:cms.sidebar.item,name:health_web_leads.item_web_touchpoints
-msgid "Web Touchpoints"
-msgstr "Điểm chạm web"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__lead_id
-msgid "Lead"
-msgstr "Khách tiềm năng"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__occurred_at
-msgid "Occurred At"
-msgstr "Thời điểm phát sinh"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__received_at
-msgid "Received At"
-msgstr "Thời điểm tiếp nhận"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__touchpoint_type
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "Touchpoint Type"
-msgstr "Loại điểm chạm"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__source_system
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "Source System"
-msgstr "Hệ thống nguồn"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__catchment_province_id
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "City"
-msgstr "Thành phố"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_source
-msgid "UTM Source"
-msgstr "Nguồn UTM"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_medium
-msgid "UTM Medium"
-msgstr "Kênh UTM"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_campaign
-msgid "UTM Campaign"
-msgstr "Chiến dịch UTM"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__page_url
-msgid "Page URL"
-msgstr "URL trang"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__external_event_id
-msgid "External Event ID"
-msgstr "Mã sự kiện bên ngoài"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__raw_payload
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
-msgid "Raw Payload"
-msgstr "Dữ liệu gốc"
+msgid "Attribution"
+msgstr "Nguồn gốc"
 
 #. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__form_location
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__form_location
-msgid "Form Location Field"
-msgstr "Trường Địa điểm trên biểu mẫu"
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__call_cdr
+msgid "Call Record (CDR)"
+msgstr "Bản ghi cuộc gọi (CDR)"
 
 #. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__form_id
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__form_id
-msgid "Form ID Map"
-msgstr "Bản đồ mã biểu mẫu"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__page_url
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__page_url
-msgid "Page URL Map"
-msgstr "Bản đồ URL trang"
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid ""
+"Campaign %(campaign)s linked retroactively from touchpoint %(touchpoint)s "
+"(raw value \"%(raw)s\")."
+msgstr ""
+"Chiến dịch %(campaign)s được gán hồi tố từ điểm chạm %(touchpoint)s (giá trị "
+"gốc \"%(raw)s\")."
 
 #. module: health_web_leads
 #: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__campaign_prefix
@@ -321,300 +218,52 @@ msgid "Campaign Prefix"
 msgstr "Tiền tố chiến dịch"
 
 #. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__clicked_phone
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__clicked_phone
-msgid "Clicked Phone Number"
-msgstr "Số điện thoại được bấm"
+#: model:cms.sidebar.item,name:health_web_leads.item_campaign_review
+#: model:ir.actions.act_window,name:health_web_leads.action_campaign_review
+#: model:ir.ui.menu,name:health_web_leads.menu_campaign_review
+msgid "Campaign Review"
+msgstr "Rà soát chiến dịch"
 
 #. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__zalo_oa
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__zalo_oa
-msgid "Zalo Official Account"
-msgstr "Tài khoản Zalo OA"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__facebook_page
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__facebook_page
-msgid "Facebook Page"
-msgstr "Trang Facebook"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__manual
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__manual
-msgid "Set Manually"
-msgstr "Nhập thủ công"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__unknown
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__unknown
-msgid "Unknown"
-msgstr "Không xác định"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__form_submit
-msgid "Website Form Submission"
-msgstr "Gửi biểu mẫu website"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__manual
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__source_system__manual
-msgid "Manual Entry"
-msgstr "Nhập thủ công"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__click_to_call
-msgid "Click to Call"
-msgstr "Bấm gọi"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__zalo_click
-msgid "Zalo Click"
-msgstr "Bấm Zalo"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__messenger_click
-msgid "Messenger Click"
-msgstr "Bấm Messenger"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__call_cdr
-msgid "Call Record (CDR)"
-msgstr "Bản ghi cuộc gọi (CDR)"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__source_system__wordpress
-msgid "WordPress Website"
-msgstr "Website WordPress"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "submission_ids is required and must be a non-empty list"
-msgstr "submission_ids là bắt buộc và phải là danh sách không rỗng"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "submission_ids accepts at most %s ids per call"
-msgstr "submission_ids chỉ nhận tối đa %s mã mỗi lần gọi"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "date must be formatted YYYY-MM-DD"
-msgstr "Ngày phải theo định dạng YYYY-MM-DD"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "The last website submission was received on %s (over %s hours ago). Check the WordPress relay and the gateway audit log before assuming a quiet day."
-msgstr "Lượt gửi biểu mẫu gần nhất được tiếp nhận lúc %s (đã hơn %s giờ). Hãy kiểm tra bộ chuyển tiếp WordPress và nhật ký kiểm toán API trước khi kết luận là hôm nay vắng khách."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_lead_service.py:0
-msgid "No website submission has ever been received. If the WordPress relay is meant to be live, it is not reaching POST /api/v1/web/leads."
-msgstr "Hệ thống chưa từng tiếp nhận lượt gửi biểu mẫu nào. Nếu bộ chuyển tiếp WordPress đáng lẽ đã chạy thì nó chưa gọi được tới POST /api/v1/web/leads."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/crm_lead.py:0
-msgid "Notification email for website submission %s matched this lead by its marker — the email was filed here instead of creating a second lead."
-msgstr "Email thông báo cho lượt gửi biểu mẫu %s đã khớp với lead này qua mã đánh dấu — email được lưu vào đây thay vì tạo thêm một lead thứ hai."
-
-#. module: health_web_leads
-#: model:ir.model,name:health_web_leads.model_web_lead_service
-msgid "Website Lead Capture Service"
-msgstr "Dịch vụ tiếp nhận lead từ website"
-
-#. module: health_web_leads
-#: model:res.groups,name:health_web_leads.group_web_leads_service
-msgid "Web Leads Service"
-msgstr "Tài khoản dịch vụ Lead Website"
-
-#. module: health_web_leads
-#: model:res.groups,comment:health_web_leads.group_web_leads_service
-msgid "Machine account group for the website lead-capture endpoint: create and update leads, create touchpoints, read the catchment list, the CRM teams and stages, and the UTM vocabularies. No partner writes, no accounting, no clinical models."
-msgstr "Nhóm quyền cho tài khoản máy của điểm cuối tiếp nhận lead website: tạo và cập nhật lead, tạo điểm chạm, đọc danh mục địa bàn, đội ngũ và giai đoạn CRM, cùng các danh mục UTM. Không ghi dữ liệu đối tác, không kế toán, không mô hình lâm sàng."
-
-#. module: health_web_leads
-#: model:api.key.scope,name:health_web_leads.scope_web_lead_write
-msgid "Web Leads Write"
-msgstr "Ghi lead website"
-
-#. module: health_web_leads
-#: model:api.key.scope,description:health_web_leads.scope_web_lead_write
-msgid "Submit website contact-form submissions to POST /api/v1/web/leads."
-msgstr "Gửi dữ liệu biểu mẫu liên hệ từ website tới POST /api/v1/web/leads."
-
-#. module: health_web_leads
-#: model:api.key.scope,name:health_web_leads.scope_web_lead_read
-msgid "Web Leads Read"
-msgstr "Đọc lead website"
-
-#. module: health_web_leads
-#: model:api.key.scope,description:health_web_leads.scope_web_lead_read
-msgid "Read back website submission status (reconciliation, Phase W2)."
-msgstr "Đọc lại trạng thái lượt gửi biểu mẫu website (đối soát, Giai đoạn W2)."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__utm_content
-msgid "Ad / creative variant (raw value)."
-msgstr "Biến thể quảng cáo / mẫu sáng tạo (giá trị thô)."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__utm_term
-msgid "Paid keyword, where the platform supplies it."
-msgstr "Từ khoá trả phí, khi nền tảng có cung cấp."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_form_id
-msgid "Contact Form 7 form id, e.g. 15838."
-msgstr "Mã biểu mẫu Contact Form 7, ví dụ 15838."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__external_submission_id
-msgid "The sending system's submission UUID. Idempotency key: a replayed delivery finds this lead instead of creating a second."
-msgstr "Mã UUID của lượt gửi từ hệ thống nguồn. Đây là khoá chống trùng: một lần gửi lặp lại sẽ tìm thấy lead này thay vì tạo thêm lead thứ hai."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__city_source
-msgid "How the city on this lead was derived."
-msgstr "Cách xác định thành phố cho lead này."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__city_conflict
-msgid "A later touchpoint disagreed with the stored city. The stored city is never auto-changed — a human decides."
-msgstr "Một điểm chạm sau đó không khớp với thành phố đã lưu. Thành phố đã lưu không bao giờ bị tự động đổi — con người quyết định."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_needs_review
-msgid "Ops review flag: unusable phone, unknown city, city conflict, a shared phone number or a possible existing client."
-msgstr "Cờ cần vận hành rà soát: số điện thoại không dùng được, không rõ thành phố, xung đột thành phố, số điện thoại dùng chung hoặc có thể là khách hàng đã có."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_marketing
-msgid "The consent checkbox claim as submitted. Materialised as a health.consent record on conversion (Phase W3)."
-msgstr "Nội dung ô đồng ý như khách đã gửi. Sẽ được tạo thành bản ghi health.consent khi chuyển đổi (Giai đoạn W3)."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_text_version
-msgid "Which consent wording the visitor was shown."
-msgstr "Phiên bản nội dung đồng ý đã hiển thị cho khách."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__occurred_at
-msgid "When the visitor acted (the website submission time), never the time we received it — a queued relay delivers late."
-msgstr "Thời điểm khách thao tác (giờ gửi biểu mẫu trên website), không phải giờ hệ thống tiếp nhận — bộ chuyển tiếp có hàng đợi nên có thể giao trễ."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__received_at
-msgid "When this system accepted the touch. The gap to Occurred At is the relay skew."
-msgstr "Thời điểm hệ thống tiếp nhận điểm chạm. Khoảng cách với Thời điểm phát sinh chính là độ trễ của bộ chuyển tiếp."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__catchment_province_id
-msgid "This touch's own city verdict. It never overwrites the lead's stored city — a disagreement raises City Conflict instead."
-msgstr "Kết luận thành phố của riêng điểm chạm này. Nó không bao giờ ghi đè thành phố đã lưu trên lead — nếu khác nhau thì hệ thống bật cờ Xung đột thành phố."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__external_event_id
-msgid "The sending system's id for this event (the WordPress submission UUID for a form submit) — the idempotency key."
-msgstr "Mã sự kiện do hệ thống nguồn cấp (mã UUID lượt gửi WordPress với một lần gửi biểu mẫu) — đây là khoá chống trùng."
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__raw_payload
-msgid "The original submission, capped at 8 KB. Behind ACLs; never logged."
-msgstr "Dữ liệu gửi gốc, giới hạn 8 KB. Được bảo vệ bằng phân quyền; không bao giờ ghi vào log."
-
-#. module: health_web_leads
-#: model:ir.actions.act_window,help:health_web_leads.action_health_lead_touchpoint
-msgid "<p class=\"o_view_nocontent_smiling_face\">No web touchpoints yet</p>"
-msgstr "<p class=\"o_view_nocontent_smiling_face\">Chưa có điểm chạm web nào</p>"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
-msgid "Web Attribution"
-msgstr "Nguồn gốc từ web"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
-msgid "Triage"
-msgstr "Phân loại xử lý"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-msgid "Why this lead may need a human look"
-msgstr "Vì sao lead này có thể cần người xem lại"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-msgid "Where the visit happened"
-msgstr "Khách đã truy cập ở đâu"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-msgid "First touch, frozen at creation"
-msgstr "Điểm chạm đầu tiên, cố định từ lúc tạo lead"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
-msgid "Pages"
-msgstr "Trang"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
 msgid "Campaign detail"
 msgstr "Chi tiết chiến dịch"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-msgid "Click identifiers and consent"
-msgstr "Mã click và sự đồng ý"
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Campaigns linked"
+msgstr "Đã gán chiến dịch"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-msgid "Kept for offline-conversion export; never edited by hand"
-msgstr "Lưu để xuất chuyển đổi offline; không chỉnh sửa thủ công"
+#: model:ir.model,name:health_web_leads.model_care_conversation
+msgid "Care Command Conversation (work item)"
+msgstr "Hội thoại lệnh chăm sóc (mục công việc)"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
-msgid "Click identifiers"
-msgstr "Mã click"
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__catchment_province_id
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "City"
+msgstr "Thành phố"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
-msgid "Consent claim"
-msgstr "Nội dung đồng ý đã gửi"
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__city_conflict
+msgid "City Conflict"
+msgstr "Xung đột thành phố"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
-msgid "Touchpoints"
-msgstr "Điểm chạm"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
-msgid "Every touch behind this lead — the newest row is the last touch"
-msgstr "Mọi điểm chạm phía sau lead này — dòng mới nhất là điểm chạm cuối cùng"
-
-#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__city_source
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__city_source
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
-msgid "Website Leads"
-msgstr "Lead từ website"
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "City Source"
+msgstr "Nguồn xác định thành phố"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
-msgid "Needs review (web)"
-msgstr "Cần rà soát (web)"
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "City Verdict"
+msgstr "Kết luận thành phố"
 
 #. module: health_web_leads
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
@@ -623,40 +272,9 @@ msgid "City conflict"
 msgstr "Xung đột thành phố"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
-msgid "Web leads"
-msgstr "Lead từ web"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
-msgid "Web Touchpoint"
-msgstr "Điểm chạm web"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
-msgid "When"
-msgstr "Thời điểm"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
-msgid "What"
-msgstr "Nội dung"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
-msgid "City Verdict"
-msgstr "Kết luận thành phố"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
-msgid "Attribution"
-msgstr "Nguồn gốc"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
-msgid "Where"
-msgstr "Nơi phát sinh"
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "City mapping"
+msgstr "Ánh xạ thành phố"
 
 #. module: health_web_leads
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
@@ -664,94 +282,25 @@ msgid "Click Identifiers"
 msgstr "Mã click"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "Form Submissions"
-msgstr "Lượt gửi biểu mẫu"
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Click identifiers"
+msgstr "Mã click"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "From WordPress"
-msgstr "Từ WordPress"
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__click_to_call
+msgid "Click to Call"
+msgstr "Bấm gọi"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "Unknown City"
-msgstr "Không rõ thành phố"
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__clicked_phone
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__clicked_phone
+msgid "Clicked Phone Number"
+msgstr "Số điện thoại được bấm"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "Received Today"
-msgstr "Tiếp nhận hôm nay"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "Occurred"
-msgstr "Thời điểm phát sinh"
-
-#. module: health_web_leads
-#: model:ir.model,name:health_web_leads.model_web_leads_connector
-#: model:ir.actions.act_window,name:health_web_leads.action_web_leads_connector
-#: model:ir.ui.menu,name:health_web_leads.menu_web_leads_connector
-#: model:cms.sidebar.item,name:health_web_leads.item_web_leads_connector
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_list
-msgid "Website Connector"
-msgstr "Kết nối website"
-
-#. module: health_web_leads
-#: model:ir.actions.act_window,help:health_web_leads.action_web_leads_connector
-msgid "<p class=\"o_view_nocontent_smiling_face\">Connect the website in a few minutes</p>"
-msgstr "<p class=\"o_view_nocontent_smiling_face\">Kết nối website chỉ trong vài phút</p>"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__name
-msgid "Name"
-msgstr "Tên"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__company_id
-msgid "Company"
-msgstr "Công ty"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__state
-msgid "Status"
-msgstr "Trạng thái"
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__state
-msgid "Live means at least one website submission has been received."
-msgstr "Trạng thái Đang chạy nghĩa là hệ thống đã tiếp nhận ít nhất một lượt gửi biểu mẫu từ website."
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__web_leads_connector__state__draft
-msgid "Not connected"
-msgstr "Chưa kết nối"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__web_leads_connector__state__credentials_issued
-msgid "Credentials issued"
-msgstr "Đã cấp thông tin xác thực"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__web_leads_connector__state__live
-msgid "Live"
-msgstr "Đang chạy"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__web_leads_connector__state__disconnected
-msgid "Disconnected"
-msgstr "Đã ngắt kết nối"
-
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__oauth_client_id
-msgid "OAuth Client"
-msgstr "Ứng dụng OAuth"
-
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__oauth_client_id
-msgid "The API-gateway client the WordPress relay authenticates with. Issued by the Get credentials button — never edited by hand."
-msgstr "Ứng dụng OAuth mà bộ chuyển tiếp WordPress dùng để xác thực với cổng API. Được cấp bằng nút Lấy thông tin xác thực — không bao giờ sửa tay."
+#: model:ir.model,name:health_web_leads.model_health_consent
+msgid "Client Consent"
+msgstr "Đồng ý của khách hàng"
 
 #. module: health_web_leads
 #: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__client_id_display
@@ -759,134 +308,90 @@ msgid "Client ID"
 msgstr "Mã ứng dụng (Client ID)"
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__wp_config_block
-msgid "WordPress Configuration"
-msgstr "Cấu hình WordPress"
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"Client secret rotated by %(user)s for OAuth client %(client)s. Update wp-"
+"config.php on the website — the previous secret stopped working immediately."
+msgstr ""
+"%(user)s đã đổi mã bí mật cho ứng dụng OAuth %(client)s. Hãy cập nhật wp-"
+"config.php trên website — mã bí mật cũ đã ngừng hoạt động ngay lập tức."
 
 #. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__wp_config_block
-msgid "Paste this into wp-config.php, then replace the placeholder with the secret you were shown once."
-msgstr "Dán khối này vào wp-config.php, rồi thay chỗ giữ chỗ bằng mã bí mật đã được hiển thị một lần duy nhất."
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__company_id
+msgid "Company"
+msgstr "Công ty"
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__form_city_map_text
-msgid "Form → City Map"
-msgstr "Bản đồ Biểu mẫu → Thành phố"
+#: model_terms:ir.actions.act_window,help:health_web_leads.action_web_leads_connector
+msgid "Connect the website in a few minutes"
+msgstr "Kết nối trang web trong vài phút"
 
 #. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__form_city_map_text
-msgid "Which Contact Form 7 form belongs to which city, as JSON. Example: {\"15838\": \"HN\", \"15670\": \"HCM\"}. Only \"HN\" (Hà Nội) and \"HCM\" (Hồ Chí Minh) are accepted as values."
-msgstr "Biểu mẫu Contact Form 7 nào thuộc thành phố nào, dạng JSON. Ví dụ: {\"15838\": \"HN\", \"15670\": \"HCM\"}. Chỉ chấp nhận giá trị \"HN\" (Hà Nội) và \"HCM\" (Hồ Chí Minh)."
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_bridged
+msgid "Consent Bridge"
+msgstr "Cầu nối đồng ý"
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__url_city_map_text
-msgid "Page URL → City Map"
-msgstr "Bản đồ URL trang → Thành phố"
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_text_version
+msgid "Consent Text Version"
+msgstr "Phiên bản nội dung đồng ý"
 
 #. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__url_city_map_text
-msgid "Which page-URL fragment belongs to which city, as JSON. Example: {\"/lien-he-hanoi/\": \"HN\", \"/lien-he-tphcm/\": \"HCM\"}. A fragment matches anywhere in the submitted page URL."
-msgstr "Đoạn URL trang nào thuộc thành phố nào, dạng JSON. Ví dụ: {\"/lien-he-hanoi/\": \"HN\", \"/lien-he-tphcm/\": \"HCM\"}. Đoạn URL được so khớp ở bất kỳ vị trí nào trong URL trang đã gửi."
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Consent claim"
+msgstr "Nội dung đồng ý đã gửi"
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__heartbeat_enabled
-msgid "Daily Delivery Alert"
-msgstr "Cảnh báo giao dữ liệu hằng ngày"
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__created
+msgid "Consent record created"
+msgstr "Đã tạo bản ghi đồng ý"
 
 #. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__heartbeat_enabled
-msgid "Raise a to-do when no website submission has arrived for 24 hours. Leave this off until the WordPress relay is live, or every quiet night raises a false alarm."
-msgstr "Tạo một việc cần làm khi không có lượt gửi biểu mẫu nào trong 24 giờ. Hãy để tắt cho tới khi bộ chuyển tiếp WordPress chạy thật, nếu không mỗi đêm vắng khách đều sinh ra cảnh báo giả."
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_form_id
+msgid "Contact Form 7 form id, e.g. 15838."
+msgstr "Mã biểu mẫu Contact Form 7, ví dụ 15838."
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__heartbeat_user_id
-msgid "Alert Watcher"
-msgstr "Người nhận cảnh báo"
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__conversation_id
+msgid "Conversation"
+msgstr "Cuộc trò chuyện"
 
 #. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__heartbeat_user_id
-msgid "Who gets the to-do. Empty falls back to the API-gateway administrators, then to the system administrator."
-msgstr "Ai nhận việc cần làm. Để trống thì hệ thống chuyển cho quản trị viên cổng API, sau đó tới quản trị viên hệ thống."
+#: model:ir.model,website_form_label:health_web_leads.model_crm_lead
+msgid "Create an Opportunity"
+msgstr "Hãy tạo ra cơ hội"
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__last_received_at
-msgid "Last Submission"
-msgstr "Lượt gửi gần nhất"
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__create_uid
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__create_uid
+msgid "Created by"
+msgstr ""
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__received_7d_count
-msgid "Submissions (7 days)"
-msgstr "Số lượt gửi (7 ngày)"
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid ""
+"Created from website lead %(ref)s — the visitor ticked the marketing consent "
+"box on submission %(submission)s."
+msgstr ""
+"Được tạo từ khách tiềm năng website %(ref)s — khách đã tích ô đồng ý tiếp "
+"thị ở lượt gửi %(submission)s."
 
 #. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__health_note
-msgid "Delivery Health"
-msgstr "Tình trạng giao dữ liệu"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Get credentials"
-msgstr "Lấy thông tin xác thực"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Creates or adopts the service account and the OAuth client, then shows the secret once. Nothing is stored in plain text."
-msgstr "Tạo mới hoặc dùng lại tài khoản dịch vụ và ứng dụng OAuth, sau đó hiển thị mã bí mật đúng một lần. Không có gì được lưu ở dạng văn bản thường."
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Rotate secret"
-msgstr "Đổi mã bí mật"
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__create_date
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__create_date
+msgid "Created on"
+msgstr ""
 
 #. module: health_web_leads
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "The current secret stops working immediately and the website must be updated with the new one. Continue?"
-msgstr "Mã bí mật hiện tại sẽ ngừng hoạt động ngay lập tức và website phải được cập nhật mã mới. Tiếp tục?"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Generates a new secret and shows it once. The previous secret stops working immediately."
-msgstr "Tạo mã bí mật mới và hiển thị đúng một lần. Mã bí mật trước đó ngừng hoạt động ngay lập tức."
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Test pipeline"
-msgstr "Kiểm tra luồng xử lý"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Runs one synthetic submission through the real handler inside a savepoint that always rolls back. Nothing is saved."
-msgstr "Chạy một lượt gửi giả lập qua đúng bộ xử lý thật, bên trong một savepoint luôn được hoàn tác. Không có dữ liệu nào được lưu."
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Disconnect"
-msgstr "Ngắt kết nối"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "The website will no longer be able to submit leads. The OAuth client is archived, not deleted. Continue?"
-msgstr "Website sẽ không thể gửi lead nữa. Ứng dụng OAuth chỉ được lưu trữ, không bị xoá. Tiếp tục?"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Reconnect"
-msgstr "Kết nối lại"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Un-archives the OAuth client. Rotate the secret afterwards unless the website still holds the previous one."
-msgstr "Bỏ lưu trữ ứng dụng OAuth. Sau đó hãy đổi mã bí mật, trừ khi website vẫn đang giữ mã cũ."
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "This screen connects the website contact forms. Chat channels (Zalo, Messenger, WhatsApp, Telegram, email, calls) are connected from Care Command Setup, Channel Center."
-msgstr "Màn hình này kết nối các biểu mẫu liên hệ trên website. Các kênh chat (Zalo, Messenger, WhatsApp, Telegram, email, cuộc gọi) được kết nối tại Care Command Setup, Channel Center."
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Website connector"
-msgstr "Kết nối website"
+msgid ""
+"Creates or adopts the service account and the OAuth client, then shows the "
+"secret once. Nothing is stored in plain text."
+msgstr ""
+"Tạo mới hoặc dùng lại tài khoản dịch vụ và ứng dụng OAuth, sau đó hiển thị "
+"mã bí mật đúng một lần. Không có gì được lưu ở dạng văn bản thường."
 
 #. module: health_web_leads
 #: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
@@ -894,71 +399,25 @@ msgid "Credentials"
 msgstr "Thông tin xác thực"
 
 #. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Delivery health"
-msgstr "Tình trạng giao dữ liệu"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "WordPress configuration"
-msgstr "Cấu hình WordPress"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Paste this block into wp-config.php and replace the placeholder with the secret you copied when it was shown. The secret is never stored here — if it was lost, use Rotate secret."
-msgstr "Dán khối này vào wp-config.php và thay chỗ giữ chỗ bằng mã bí mật bạn đã sao chép khi nó được hiển thị. Mã bí mật không bao giờ được lưu ở đây — nếu đã mất, hãy dùng Đổi mã bí mật."
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "City mapping"
-msgstr "Ánh xạ thành phố"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
-msgid "Which submission belongs to which city. The form map is checked first, then the page-URL map, and a visitor who picked a city in the form beats both. Values must be HN for Hà Nội or HCM for Hồ Chí Minh. Use Test pipeline after editing."
-msgstr "Lượt gửi nào thuộc thành phố nào. Bản đồ biểu mẫu được xét trước, rồi tới bản đồ URL trang; nếu khách đã chọn thành phố ngay trên biểu mẫu thì lựa chọn đó thắng cả hai. Giá trị phải là HN cho Hà Nội hoặc HCM cho Hồ Chí Minh. Hãy dùng Kiểm tra luồng xử lý sau khi chỉnh sửa."
+#: model:ir.model.fields.selection,name:health_web_leads.selection__web_leads_connector__state__credentials_issued
+msgid "Credentials issued"
+msgstr "Đã cấp thông tin xác thực"
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "No submission ever received — the website side is not live yet."
-msgstr "Chưa từng tiếp nhận lượt gửi nào — phía website vẫn chưa hoạt động."
+msgid ""
+"Credentials issued by %(user)s: service account %(login)s, OAuth client %"
+"(client)s. The secret was shown once and is not stored anywhere."
+msgstr ""
+"%(user)s đã cấp thông tin xác thực: tài khoản dịch vụ %(login)s, ứng dụng "
+"OAuth %(client)s. Mã bí mật chỉ hiển thị một lần và không được lưu ở bất kỳ "
+"đâu."
 
 #. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Nothing for over %s hours — check the WordPress relay."
-msgstr "Không có dữ liệu nào trong hơn %s giờ — hãy kiểm tra bộ chuyển tiếp WordPress."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Last submission %s hours ago."
-msgstr "Lượt gửi gần nhất cách đây %s giờ."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Form → City map"
-msgstr "Bản đồ Biểu mẫu → Thành phố"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Page URL → City map"
-msgstr "Bản đồ URL trang → Thành phố"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "%(label)s updated by %(user)s. The capture endpoint reads the new map on its next submission."
-msgstr "%(label)s đã được %(user)s cập nhật. Điểm cuối tiếp nhận sẽ đọc bản đồ mới ngay từ lượt gửi kế tiếp."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Daily delivery alert switched ON by %s."
-msgstr "Cảnh báo giao dữ liệu hằng ngày đã được %s BẬT."
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__heartbeat_enabled
+msgid "Daily Delivery Alert"
+msgstr "Cảnh báo giao dữ liệu hằng ngày"
 
 #. module: health_web_leads
 #. odoo-python
@@ -969,56 +428,629 @@ msgstr "Cảnh báo giao dữ liệu hằng ngày đã được %s TẮT."
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "Daily delivery alert switched ON by %s."
+msgstr "Cảnh báo giao dữ liệu hằng ngày đã được %s BẬT."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__health_note
+msgid "Delivery Health"
+msgstr "Tình trạng giao dữ liệu"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "Delivery health"
+msgstr "Tình trạng giao dữ liệu"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"Delivery-alert watcher cleared by %s — alerts fall back to the API-gateway "
+"administrators."
+msgstr ""
+"%s đã xoá người nhận cảnh báo giao dữ liệu — cảnh báo sẽ chuyển về cho quản "
+"trị viên cổng API."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
 msgid "Delivery-alert watcher set to %(watcher)s by %(user)s."
 msgstr "%(user)s đã đặt người nhận cảnh báo giao dữ liệu là %(watcher)s."
 
 #. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Delivery-alert watcher cleared by %s — alerts fall back to the API-gateway administrators."
-msgstr "%s đã xoá người nhận cảnh báo giao dữ liệu — cảnh báo sẽ chuyển về cho quản trị viên cổng API."
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "Disconnect"
+msgstr "Ngắt kết nối"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__web_leads_connector__state__disconnected
+msgid "Disconnected"
+msgstr "Đã ngắt kết nối"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_care_conversation__display_name
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:health_web_leads.field_health_consent__display_name
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__display_name
+#: model:ir.model.fields,field_description:health_web_leads.field_web_lead_service__display_name
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__entry_point
+msgid "Entry Point"
+msgstr "Điểm vào"
+
+#. module: health_web_leads
+#: model_terms:ir.actions.act_window,help:health_web_leads.action_campaign_review
+msgid "Every campaign string the website sent is already in the CRM register"
+msgstr "Mọi chuỗi chiến dịch mà trang web gửi đều đã có trong sổ đăng ký CRM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_consent__method
+msgid "Evidence class."
+msgstr "Lớp bằng chứng."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__external_event_id
+msgid "External Event ID"
+msgstr "Mã sự kiện bên ngoài"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__external_submission_id
+msgid "External Submission ID"
+msgstr "Mã lượt gửi bên ngoài"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbclid
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__fbclid
+msgid "Facebook Click ID"
+msgstr "Mã click Facebook"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__facebook_page
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__facebook_page
+msgid "Facebook Page"
+msgstr "Trang Facebook"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__form_id
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__form_id
+msgid "Form ID Map"
+msgstr "Bản đồ mã biểu mẫu"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__form_location
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__form_location
+msgid "Form Location Field"
+msgstr "Trường Địa điểm trên biểu mẫu"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Form Submissions"
+msgstr "Lượt gửi biểu mẫu"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__form_city_map_text
+msgid "Form → City Map"
+msgstr "Bản đồ Biểu mẫu → Thành phố"
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Credentials issued by %(user)s: service account %(login)s, OAuth client %(client)s. The secret was shown once and is not stored anywhere."
-msgstr "%(user)s đã cấp thông tin xác thực: tài khoản dịch vụ %(login)s, ứng dụng OAuth %(client)s. Mã bí mật chỉ hiển thị một lần và không được lưu ở bất kỳ đâu."
+msgid "Form → City map"
+msgstr "Bản đồ Biểu mẫu → Thành phố"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "From WordPress"
+msgstr "Từ WordPress"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__ga_client_id
+msgid "GA Client ID"
+msgstr "Mã khách Google Analytics"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid ""
+"Generates a new secret and shows it once. The previous secret stops working "
+"immediately."
+msgstr ""
+"Tạo mã bí mật mới và hiển thị đúng một lần. Mã bí mật trước đó ngừng hoạt "
+"động ngay lập tức."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "Get credentials"
+msgstr "Lấy thông tin xác thực"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__gclid
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__gclid
+msgid "Google Click ID"
+msgstr "Mã click Google"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__gbraid
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__gbraid
+msgid "Google Click ID (gbraid)"
+msgstr "ID lượt nhấp chuột của Google (gbraid)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__wbraid
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__wbraid
+msgid "Google Click ID (wbraid)"
+msgstr "ID nhấp chuột của Google (wbraid)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__city_source
+msgid "How the city on this lead was derived."
+msgstr "Cách xác định thành phố cho lead này."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__referral_source
+msgid ""
+"How the provider says the conversation started (ADS, SHORTLINK, "
+"CUSTOMER_CHAT_PLUGIN, …)."
+msgstr "Cách nhà cung cấp cho biết cuộc trò chuyện đã bắt đầu (ADS, SHORTLINK, KHÁCH HÀNG_CHAT_PLUGIN, …)."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_care_conversation__id
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__id
+#: model:ir.model.fields,field_description:health_web_leads.field_health_consent__id
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__id
+#: model:ir.model.fields,field_description:health_web_leads.field_web_lead_service__id
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_exception_icon
+msgid "Icon"
+msgstr "Biểu tượng"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__message_has_error
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Internal server error"
+msgstr "Lỗi máy chủ nội bộ"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_landing_url
+msgid "Landing URL"
+msgstr "URL trang đích"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__last_received_at
+msgid "Last Submission"
+msgstr "Lượt gửi gần nhất"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__write_uid
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__write_date
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__write_date
+msgid "Last Updated on"
+msgstr ""
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Client secret rotated by %(user)s for OAuth client %(client)s. Update wp-config.php on the website — the previous secret stopped working immediately."
-msgstr "%(user)s đã đổi mã bí mật cho ứng dụng OAuth %(client)s. Hãy cập nhật wp-config.php trên website — mã bí mật cũ đã ngừng hoạt động ngay lập tức."
+msgid "Last submission %s hours ago."
+msgstr "Lượt gửi gần nhất cách đây %s giờ."
+
+#. module: health_web_leads
+#: model:ir.model,name:health_web_leads.model_crm_lead
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__lead_id
+msgid "Lead"
+msgstr "Khách tiềm năng"
+
+#. module: health_web_leads
+#: model:cms.sidebar.item,name:health_web_leads.item_lead_analysis
+#: model:ir.actions.act_window,name:health_web_leads.action_web_leads_funnel
+#: model:ir.ui.menu,name:health_web_leads.menu_web_leads_funnel
+msgid "Lead Analysis"
+msgstr "Phân tích khách tiềm năng"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_lead_web_funnel_graph
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_lead_web_funnel_pivot
+msgid "Lead Funnel"
+msgstr "Phễu khách tiềm năng"
+
+#. module: health_web_leads
+#: model:ir.model,name:health_web_leads.model_health_lead_touchpoint
+msgid "Lead Touchpoint"
+msgstr "Điểm chạm khách tiềm năng"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_list
+msgid "Link seeded campaigns"
+msgstr "Gán chiến dịch có sẵn"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__web_leads_connector__state__live
+msgid "Live"
+msgstr "Đang chạy"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__state
+msgid "Live means at least one website submission has been received."
+msgstr ""
+"Trạng thái Đang chạy nghĩa là hệ thống đã tiếp nhận ít nhất một lượt gửi "
+"biểu mẫu từ website."
+
+#. module: health_web_leads
+#: model:res.groups,comment:health_web_leads.group_web_leads_service
+msgid ""
+"Machine account group for the website lead-capture endpoint: create and "
+"update leads, create touchpoints, read the catchment list, the CRM teams and "
+"stages, and the UTM vocabularies. No partner writes, no accounting, no "
+"clinical models."
+msgstr ""
+"Nhóm quyền cho tài khoản máy của điểm cuối tiếp nhận lead website: tạo và "
+"cập nhật lead, tạo điểm chạm, đọc danh mục địa bàn, đội ngũ và giai đoạn "
+"CRM, cùng các danh mục UTM. Không ghi dữ liệu đối tác, không kế toán, không "
+"mô hình lâm sàng."
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__source_system__manual
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__manual
+msgid "Manual Entry"
+msgstr "Nhập thủ công"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_marketing
+msgid "Marketing Consent (Web)"
+msgstr "Đồng ý nhận tiếp thị (Web)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_ids
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__messenger_click
+msgid "Messenger Click"
+msgstr "Bấm Messenger"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbp
+msgid "Meta Browser Cookie (_fbp)"
+msgstr "Cookie trình duyệt Meta (_fbp)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__fbc
+msgid "Meta Click Cookie (_fbc)"
+msgstr "Cookie click Meta (_fbc)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_consent__method
+msgid "Method"
+msgstr "Phương thức"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Missing required field(s): %s"
+msgstr "Thiếu trường bắt buộc: %s"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Missing required field(s): form_id"
+msgstr "Thiếu trường bắt buộc: form_id"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Missing required field(s): submission_id"
+msgstr "Thiếu trường bắt buộc: submission_id"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__name
+msgid "Name"
+msgstr "Tên"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_needs_review
+msgid "Needs Web Review"
+msgstr "Cần rà soát lead web"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
+msgid "Needs review (web)"
+msgstr "Cần rà soát (web)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid ""
+"No lead was linked: none of the selected raw campaign values matches a "
+"seeded utm.campaign. Seed the campaign first — this action never creates one."
+msgstr ""
+"Không có khách tiềm năng nào được gán: không giá trị chiến dịch gốc nào "
+"trong các dòng đã chọn khớp với một utm.campaign có sẵn. Hãy tạo chiến dịch "
+"trước — thao tác này không bao giờ tự tạo chiến dịch."
+
+#. module: health_web_leads
+#: model_terms:ir.actions.act_window,help:health_web_leads.action_web_leads_funnel
+msgid "No leads to analyse yet"
+msgstr "Chưa có khách hàng tiềm năng để phân tích"
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Provisioning created: %s."
-msgstr "Quá trình cấp phát đã tạo mới: %s."
+msgid "No submission ever received — the website side is not live yet."
+msgstr "Chưa từng tiếp nhận lượt gửi nào — phía website vẫn chưa hoạt động."
+
+#. module: health_web_leads
+#: model_terms:ir.actions.act_window,help:health_web_leads.action_health_lead_touchpoint
+msgid "No web touchpoints yet"
+msgstr "Chưa có điểm tiếp xúc trên web"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid ""
+"No website submission has ever been received. If the WordPress relay is "
+"meant to be live, it is not reaching POST /api/v1/web/leads."
+msgstr ""
+"Hệ thống chưa từng tiếp nhận lượt gửi biểu mẫu nào. Nếu bộ chuyển tiếp "
+"WordPress đáng lẽ đã chạy thì nó chưa gọi được tới POST /api/v1/web/leads."
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__web_leads_connector__state__draft
+msgid "Not connected"
+msgstr "Chưa kết nối"
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "the service user"
-msgstr "tài khoản dịch vụ"
+msgid "Nothing for over %s hours — check the WordPress relay."
+msgstr ""
+"Không có dữ liệu nào trong hơn %s giờ — hãy kiểm tra bộ chuyển tiếp "
+"WordPress."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Nothing to link"
+msgstr "Không có gì để gán"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid ""
+"Notification email for website submission %s matched this lead by its marker "
+"— the email was filed here instead of creating a second lead."
+msgstr ""
+"Email thông báo cho lượt gửi biểu mẫu %s đã khớp với lead này qua mã đánh "
+"dấu — email được lưu vào đây thay vì tạo thêm một lead thứ hai."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__oauth_client_id
+msgid "OAuth Client"
+msgstr "Ứng dụng OAuth"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Occurred"
+msgstr "Thời điểm phát sinh"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__occurred_at
+msgid "Occurred At"
+msgstr "Thời điểm phát sinh"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Only CRM managers and administrators may link campaigns retroactively."
+msgstr "Chỉ quản lý CRM và quản trị viên mới được gán chiến dịch hồi tố."
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "the OAuth client"
-msgstr "ứng dụng OAuth"
+msgid ""
+"Only a system administrator, a CRM manager or a user administrator may "
+"operate the website connector."
+msgstr ""
+"Chỉ quản trị viên hệ thống, quản lý CRM hoặc quản trị viên người dùng mới "
+"được vận hành phần kết nối website."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/lead_touchpoint.py:0
+msgid "Only the first %s rows were examined — run it again to continue."
+msgstr "Chỉ %s dòng đầu tiên được xét — hãy chạy lại để tiếp tục."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_needs_review
+msgid ""
+"Ops review flag: unusable phone, unknown city, city conflict, a shared phone "
+"number or a possible existing client."
+msgstr ""
+"Cờ cần vận hành rà soát: số điện thoại không dùng được, không rõ thành phố, "
+"xung đột thành phố, số điện thoại dùng chung hoặc có thể là khách hàng đã có."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__page_url
+msgid "Page URL"
+msgstr "URL trang"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__page_url
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__page_url
+msgid "Page URL Map"
+msgstr "Bản đồ URL trang"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__url_city_map_text
+msgid "Page URL → City Map"
+msgstr "Bản đồ URL trang → Thành phố"
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Provisioning adopted the existing service account and OAuth client — nothing was duplicated."
-msgstr "Quá trình cấp phát đã dùng lại tài khoản dịch vụ và ứng dụng OAuth sẵn có — không có gì bị tạo trùng."
+msgid "Page URL → City map"
+msgstr "Bản đồ URL trang → Thành phố"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Pages"
+msgstr "Trang"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__utm_term
+msgid "Paid keyword, where the platform supplies it."
+msgstr "Từ khoá trả phí, khi nền tảng có cung cấp."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid ""
+"Paste this block into wp-config.php and replace the placeholder with the "
+"secret you copied when it was shown. The secret is never stored here — if it "
+"was lost, use Rotate secret."
+msgstr ""
+"Dán khối này vào wp-config.php và thay chỗ giữ chỗ bằng mã bí mật bạn đã sao "
+"chép khi nó được hiển thị. Mã bí mật không bao giờ được lưu ở đây — nếu đã "
+"mất, hãy dùng Đổi mã bí mật."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__wp_config_block
+msgid ""
+"Paste this into wp-config.php, then replace the placeholder with the secret "
+"you were shown once."
+msgstr ""
+"Dán khối này vào wp-config.php, rồi thay chỗ giữ chỗ bằng mã bí mật đã được "
+"hiển thị một lần duy nhất."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Phone (unverified, not a valid Vietnamese number): %s"
+msgstr "Số điện thoại (chưa xác thực, không phải số Việt Nam hợp lệ): %s"
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "This checks the city maps and the lead pipeline only. It cannot check HTTP authentication — the CRM never knows the client secret, so the live test is a real submission from the WordPress plugin."
-msgstr "Phép thử này chỉ kiểm tra bản đồ thành phố và luồng xử lý lead. Nó không kiểm tra được phần xác thực HTTP — CRM không bao giờ biết mã bí mật, nên phép thử thật là một lượt gửi thực từ plugin WordPress."
+msgid ""
+"Pipeline OK — a submission on form %(form)s would create a lead in %(city)s "
+"(city from: %(source)s). Nothing was saved."
+msgstr ""
+"Luồng xử lý ĐẠT — một lượt gửi trên biểu mẫu %(form)s sẽ tạo lead tại %"
+"(city)s (thành phố lấy từ: %(source)s). Không có dữ liệu nào được lưu."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"Pipeline OK — but a submission on form %(form)s would create a lead with NO "
+"city (city from: %(source)s), which flags it for review. Check the maps "
+"below. Nothing was saved."
+msgstr ""
+"Luồng xử lý ĐẠT — nhưng một lượt gửi trên biểu mẫu %(form)s sẽ tạo lead "
+"KHÔNG có thành phố (thành phố lấy từ: %(source)s), nên lead bị đánh dấu cần "
+"rà soát. Hãy kiểm tra các bản đồ bên dưới. Không có dữ liệu nào được lưu."
 
 #. module: health_web_leads
 #. odoo-python
@@ -1029,80 +1061,138 @@ msgstr "Phép thử luồng xử lý THẤT BẠI cho %(user)s: %(reason)s"
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Website connector: pipeline test failed"
-msgstr "Kết nối website: phép thử luồng xử lý thất bại"
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Pipeline OK — a submission on form %(form)s would create a lead in %(city)s (city from: %(source)s). Nothing was saved."
-msgstr "Luồng xử lý ĐẠT — một lượt gửi trên biểu mẫu %(form)s sẽ tạo lead tại %(city)s (thành phố lấy từ: %(source)s). Không có dữ liệu nào được lưu."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Pipeline OK — but a submission on form %(form)s would create a lead with NO city (city from: %(source)s), which flags it for review. Check the maps below. Nothing was saved."
-msgstr "Luồng xử lý ĐẠT — nhưng một lượt gửi trên biểu mẫu %(form)s sẽ tạo lead KHÔNG có thành phố (thành phố lấy từ: %(source)s), nên lead bị đánh dấu cần rà soát. Hãy kiểm tra các bản đồ bên dưới. Không có dữ liệu nào được lưu."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "The synthetic submission resolved to \"%s\" rather than a new lead — an open lead already matches the test phone number."
-msgstr "Lượt gửi giả lập cho kết quả \"%s\" thay vì tạo lead mới — đã có một lead đang mở trùng với số điện thoại thử nghiệm."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
 msgid "Pipeline test run by %(user)s: %(result)s"
 msgstr "%(user)s đã chạy phép thử luồng xử lý: %(result)s"
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Website connector: pipeline OK"
-msgstr "Kết nối website: luồng xử lý đạt"
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid ""
+"Possible existing client: %(name)s (%(code)s). Verify before converting — "
+"the pipeline never links a lead to a client from a typed phone or email."
+msgstr ""
+"Có thể là khách hàng đã có: %(name)s (%(code)s). Hãy kiểm tra trước khi "
+"chuyển đổi — hệ thống không bao giờ tự liên kết lead với khách hàng chỉ từ "
+"số điện thoại hoặc email được nhập."
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "There is nothing to disconnect yet — no credentials have been issued."
-msgstr "Chưa có gì để ngắt kết nối — chưa cấp thông tin xác thực nào."
+msgid ""
+"Provisioning adopted the existing service account and OAuth client — nothing "
+"was duplicated."
+msgstr ""
+"Quá trình cấp phát đã dùng lại tài khoản dịch vụ và ứng dụng OAuth sẵn có — "
+"không có gì bị tạo trùng."
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Website disconnected by %(user)s: OAuth client %(client)s is archived, so its tokens no longer authenticate. The record is kept for the audit trail."
-msgstr "%(user)s đã ngắt kết nối website: ứng dụng OAuth %(client)s đã được lưu trữ nên các token của nó không còn xác thực được. Bản ghi vẫn được giữ để phục vụ nhật ký kiểm toán."
+msgid "Provisioning created: %s."
+msgstr "Quá trình cấp phát đã tạo mới: %s."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__heartbeat_enabled
+msgid ""
+"Raise a to-do when no website submission has arrived for 24 hours. Leave "
+"this off until the WordPress relay is live, or every quiet night raises a "
+"false alarm."
+msgstr ""
+"Tạo một việc cần làm khi không có lượt gửi biểu mẫu nào trong 24 giờ. Hãy để "
+"tắt cho tới khi bộ chuyển tiếp WordPress chạy thật, nếu không mỗi đêm vắng "
+"khách đều sinh ra cảnh báo giả."
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Website disconnected"
-msgstr "Đã ngắt kết nối website"
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Rate limit exceeded"
+msgstr "Đã vượt quá giới hạn số lần gọi"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__raw_payload
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "Raw Payload"
+msgstr "Dữ liệu gốc"
+
+#. module: health_web_leads
+#: model:api.key.scope,description:health_web_leads.scope_web_lead_read
+msgid "Read back website submission status (reconciliation, Phase W2)."
+msgstr "Đọc lại trạng thái lượt gửi biểu mẫu website (đối soát, Giai đoạn W2)."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__received_at
+msgid "Received At"
+msgstr "Thời điểm tiếp nhận"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Received Today"
+msgstr "Tiếp nhận hôm nay"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "Reconnect"
+msgstr "Kết nối lại"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__referral_ref
+msgid "Referral Ref"
+msgstr "Người giới thiệu"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__referral_source
+msgid "Referral Source"
+msgstr "Nguồn giới thiệu"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_referrer_url
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__referrer_url
+msgid "Referrer URL"
+msgstr "URL nguồn giới thiệu"
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "The WordPress relay can no longer submit leads. Reconnect restores the client — rotate the secret afterwards."
-msgstr "Bộ chuyển tiếp WordPress không thể gửi lead nữa. Kết nối lại sẽ khôi phục ứng dụng OAuth — sau đó hãy đổi mã bí mật."
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid ""
+"Repeat web enquiry received (form %(form)s, submission %(submission)s). "
+"Appended as a touchpoint — no second lead was created."
+msgstr ""
+"Đã nhận yêu cầu lặp lại từ website (biểu mẫu %(form)s, mã gửi %"
+"(submission)s). Được ghi nhận thành điểm chạm — không tạo lead thứ hai."
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "There are no credentials to reconnect — use Get credentials instead."
-msgstr "Không có thông tin xác thực nào để kết nối lại — hãy dùng Lấy thông tin xác thực."
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Request body is not valid JSON"
+msgstr "Nội dung yêu cầu không phải JSON hợp lệ"
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Website reconnected by %(user)s. Rotate the secret unless the website still holds the previous one."
-msgstr "%(user)s đã kết nối lại website. Hãy đổi mã bí mật, trừ khi website vẫn đang giữ mã cũ."
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Request body must be a JSON object"
+msgstr "Nội dung yêu cầu phải là một đối tượng JSON"
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Website reconnected"
-msgstr "Đã kết nối lại website"
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Request body too large"
+msgstr "Nội dung yêu cầu quá lớn"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "Rotate secret"
+msgstr "Đổi mã bí mật"
 
 #. module: health_web_leads
 #. odoo-python
@@ -1111,22 +1201,99 @@ msgid "Rotate the secret unless the website still holds the previous one."
 msgstr "Hãy đổi mã bí mật, trừ khi website vẫn đang giữ mã cũ."
 
 #. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid ""
+"Runs one synthetic submission through the real handler inside a savepoint "
+"that always rolls back. Nothing is saved."
+msgstr ""
+"Chạy một lượt gửi giả lập qua đúng bộ xử lý thật, bên trong một savepoint "
+"luôn được hoàn tác. Không có dữ liệu nào được lưu."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "Only a system administrator, a CRM manager or a user administrator may operate the website connector."
-msgstr "Chỉ quản trị viên hệ thống, quản lý CRM hoặc quản trị viên người dùng mới được vận hành phần kết nối website."
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid ""
+"Same phone number as lead %(ref)s (%(name)s) — kept as a separate lead, no "
+"automatic merge. Flagged for review."
+msgstr ""
+"Trùng số điện thoại với lead %(ref)s (%(name)s) — giữ thành lead riêng, "
+"không tự động gộp. Đã đánh dấu cần rà soát."
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__manual
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__manual
+msgid "Set Manually"
+msgstr "Nhập thủ công"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_existing
+msgid "Skipped — consent already on file"
+msgstr "Bỏ qua — đã có đồng ý trong hồ sơ"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_declined
+msgid "Skipped — consent not given"
+msgstr "Bỏ qua — khách không đồng ý"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_identity
+msgid "Skipped — submitter is not the client"
+msgstr "Bỏ qua — người gửi không phải khách hàng"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__source_system
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Source System"
+msgstr "Hệ thống nguồn"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__state
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__received_7d_count
+msgid "Submissions (7 days)"
+msgstr "Số lượt gửi (7 ngày)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_submit_page_url
+msgid "Submit Page URL"
+msgstr "URL trang gửi biểu mẫu"
+
+#. module: health_web_leads
+#: model:api.key.scope,description:health_web_leads.scope_web_lead_write
+msgid "Submit website contact-form submissions to POST /api/v1/web/leads."
+msgstr "Gửi dữ liệu biểu mẫu liên hệ từ website tới POST /api/v1/web/leads."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "Test pipeline"
+msgstr "Kiểm tra luồng xử lý"
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "The %s is not valid JSON. Expected an object such as {\"15838\": \"HN\", \"15670\": \"HCM\"}."
-msgstr "%s không phải JSON hợp lệ. Cần một đối tượng dạng {\"15838\": \"HN\", \"15670\": \"HCM\"}."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "The %s must be a JSON object, not a list or a plain value."
-msgstr "%s phải là một đối tượng JSON, không phải danh sách hay giá trị đơn."
+msgid ""
+"The %(label)s entry \"%(key)s\" maps to \"%(value)s\", which is not a city. "
+"Use \"HN\" for Hà Nội or \"HCM\" for Hồ Chí Minh."
+msgstr ""
+"Mục \"%(key)s\" trong %(label)s trỏ tới \"%(value)s\", đây không phải một "
+"thành phố. Hãy dùng \"HN\" cho Hà Nội hoặc \"HCM\" cho Hồ Chí Minh."
 
 #. module: health_web_leads
 #. odoo-python
@@ -1137,50 +1304,609 @@ msgstr "%s có một mục với khoá rỗng."
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/web_leads_connector.py:0
-msgid "The %(label)s entry \"%(key)s\" maps to \"%(value)s\", which is not a city. Use \"HN\" for Hà Nội or \"HCM\" for Hồ Chí Minh."
-msgstr "Mục \"%(key)s\" trong %(label)s trỏ tới \"%(value)s\", đây không phải một thành phố. Hãy dùng \"HN\" cho Hà Nội hoặc \"HCM\" cho Hồ Chí Minh."
+msgid ""
+"The %s is not valid JSON. Expected an object such as {\"15838\": \"HN\", "
+"\"15670\": \"HCM\"}."
+msgstr ""
+"%s không phải JSON hợp lệ. Cần một đối tượng dạng {\"15838\": \"HN\", "
+"\"15670\": \"HCM\"}."
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/health_consent.py:0
-msgid "A web-form consent must record what the visitor was shown (consent text version and submission reference) in Scope / Limitations before it can be granted."
-msgstr "Đồng ý qua biểu mẫu web phải ghi lại nội dung mà khách đã xem (phiên bản văn bản đồng ý và mã lượt gửi) trong mục Phạm vi / Giới hạn trước khi được cấp."
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "The %s must be a JSON object, not a list or a plain value."
+msgstr "%s phải là một đối tượng JSON, không phải danh sách hay giá trị đơn."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__oauth_client_id
+msgid ""
+"The API-gateway client the WordPress relay authenticates with. Issued by the "
+"Get credentials button — never edited by hand."
+msgstr ""
+"Ứng dụng OAuth mà bộ chuyển tiếp WordPress dùng để xác thực với cổng API. "
+"Được cấp bằng nút Lấy thông tin xác thực — không bao giờ sửa tay."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__conversation_id
+msgid ""
+"The Care Command conversation this touch belongs to, when it arrived on a "
+"chat or call channel rather than a web form."
+msgstr "Cuộc trò chuyện về Lệnh Chăm sóc mà lần chạm này thuộc về khi nó xuất hiện trên kênh trò chuyện hoặc cuộc gọi chứ không phải trên biểu mẫu web."
 
 #. module: health_web_leads
 #. odoo-python
-#: code:addons/health_web_leads/models/health_consent.py:0
-msgid "A web-form consent must carry the submission idempotency key before it can be granted."
-msgstr "Đồng ý qua biểu mẫu web phải mang khoá định danh lượt gửi trước khi được cấp."
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"The WordPress relay can no longer submit leads. Reconnect restores the "
+"client — rotate the secret afterwards."
+msgstr ""
+"Bộ chuyển tiếp WordPress không thể gửi lead nữa. Kết nối lại sẽ khôi phục "
+"ứng dụng OAuth — sau đó hãy đổi mã bí mật."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_marketing
+msgid ""
+"The consent checkbox claim as submitted. Materialised as a health.consent "
+"record on conversion (Phase W3)."
+msgstr ""
+"Nội dung ô đồng ý như khách đã gửi. Sẽ được tạo thành bản ghi health.consent "
+"khi chuyển đổi (Giai đoạn W3)."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid ""
+"The current secret stops working immediately and the website must be updated "
+"with the new one. Continue?"
+msgstr ""
+"Mã bí mật hiện tại sẽ ngừng hoạt động ngay lập tức và website phải được cập "
+"nhật mã mới. Tiếp tục?"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid ""
+"The last website submission was received on %s (over %s hours ago). Check "
+"the WordPress relay and the gateway audit log before assuming a quiet day."
+msgstr ""
+"Lượt gửi biểu mẫu gần nhất được tiếp nhận lúc %s (đã hơn %s giờ). Hãy kiểm "
+"tra bộ chuyển tiếp WordPress và nhật ký kiểm toán API trước khi kết luận là "
+"hôm nay vắng khách."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__raw_payload
+msgid "The original submission, capped at 8 KB. Behind ACLs; never logged."
+msgstr ""
+"Dữ liệu gửi gốc, giới hạn 8 KB. Được bảo vệ bằng phân quyền; không bao giờ "
+"ghi vào log."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__referral_ref
+msgid ""
+"The provider's own tracking payload for how this conversation started — the "
+"m.me/ad `ref` string, or Zalo's equivalent."
+msgstr "Trọng tải theo dõi riêng của nhà cung cấp về cách cuộc trò chuyện này bắt đầu - m.me/ad `ref` chuỗi, hoặc Zalo's tương đương."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__external_event_id
+msgid ""
+"The sending system's id for this event (the WordPress submission UUID for a "
+"form submit) — the idempotency key."
+msgstr ""
+"Mã sự kiện do hệ thống nguồn cấp (mã UUID lượt gửi WordPress với một lần gửi "
+"biểu mẫu) — đây là khoá chống trùng."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__external_submission_id
+msgid ""
+"The sending system's submission UUID. Idempotency key: a replayed delivery "
+"finds this lead instead of creating a second."
+msgstr ""
+"Mã UUID của lượt gửi từ hệ thống nguồn. Đây là khoá chống trùng: một lần gửi "
+"lặp lại sẽ tìm thấy lead này thay vì tạo thêm lead thứ hai."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"The synthetic submission resolved to \"%s\" rather than a new lead — an open "
+"lead already matches the test phone number."
+msgstr ""
+"Lượt gửi giả lập cho kết quả \"%s\" thay vì tạo lead mới — đã có một lead "
+"đang mở trùng với số điện thoại thử nghiệm."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid ""
+"The website will no longer be able to submit leads. The OAuth client is "
+"archived, not deleted. Continue?"
+msgstr ""
+"Website sẽ không thể gửi lead nữa. Ứng dụng OAuth chỉ được lưu trữ, không bị "
+"xoá. Tiếp tục?"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "There are no credentials to reconnect — use Get credentials instead."
+msgstr ""
+"Không có thông tin xác thực nào để kết nối lại — hãy dùng Lấy thông tin xác "
+"thực."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "There is nothing to disconnect yet — no credentials have been issued."
+msgstr "Chưa có gì để ngắt kết nối — chưa cấp thông tin xác thực nào."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"This checks the city maps and the lead pipeline only. It cannot check HTTP "
+"authentication — the CRM never knows the client secret, so the live test is "
+"a real submission from the WordPress plugin."
+msgstr ""
+"Phép thử này chỉ kiểm tra bản đồ thành phố và luồng xử lý lead. Nó không "
+"kiểm tra được phần xác thực HTTP — CRM không bao giờ biết mã bí mật, nên "
+"phép thử thật là một lượt gửi thực từ plugin WordPress."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid ""
+"This screen connects the website contact forms. Chat channels (Zalo, "
+"Messenger, WhatsApp, Telegram, email, calls) are connected from Care Command "
+"Setup, Channel Center."
+msgstr ""
+"Màn hình này kết nối các biểu mẫu liên hệ trên website. Các kênh chat (Zalo, "
+"Messenger, WhatsApp, Telegram, email, cuộc gọi) được kết nối tại Care "
+"Command Setup, Channel Center."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__catchment_province_id
+msgid ""
+"This touch's own city verdict. It never overwrites the lead's stored city — "
+"a disagreement raises City Conflict instead."
+msgstr ""
+"Kết luận thành phố của riêng điểm chạm này. Nó không bao giờ ghi đè thành "
+"phố đã lưu trên lead — nếu khác nhau thì hệ thống bật cờ Xung đột thành phố."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Token is missing a required scope (%s)"
+msgstr "Token thiếu phạm vi quyền bắt buộc (%s)"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__touchpoint_type
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Touchpoint Type"
+msgstr "Loại điểm chạm"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Touchpoints"
+msgstr "Điểm chạm"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+msgid "Triage"
+msgstr "Phân loại xử lý"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_campaign
+msgid "UTM Campaign"
+msgstr "Chiến dịch UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__utm_content
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_content
+msgid "UTM Content"
+msgstr "Nội dung UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_medium
+msgid "UTM Medium"
+msgstr "Kênh UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_source
+msgid "UTM Source"
+msgstr "Nguồn UTM"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__utm_term
+#: model:ir.model.fields,field_description:health_web_leads.field_health_lead_touchpoint__utm_term
+msgid "UTM Term"
+msgstr "Từ khoá UTM"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid ""
+"Un-archives the OAuth client. Rotate the secret afterwards unless the "
+"website still holds the previous one."
+msgstr ""
+"Bỏ lưu trữ ứng dụng OAuth. Sau đó hãy đổi mã bí mật, trừ khi website vẫn "
+"đang giữ mã cũ."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/controllers/web_leads.py:0
+msgid "Unauthorized"
+msgstr "Không được phép truy cập"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__unknown
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__unknown
+msgid "Unknown"
+msgstr "Không xác định"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Unknown City"
+msgstr "Không rõ thành phố"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+msgid "Unmatched campaign"
+msgstr "Chiến dịch chưa khớp"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid "Web Attribution"
+msgstr "Nguồn gốc từ web"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_form_id
+msgid "Web Form ID"
+msgstr "Mã biểu mẫu web"
+
+#. module: health_web_leads
+#: model:api.key.scope,name:health_web_leads.scope_web_lead_read
+msgid "Web Leads Read"
+msgstr "Đọc lead website"
+
+#. module: health_web_leads
+#: model:res.groups,name:health_web_leads.group_web_leads_service
+msgid "Web Leads Service"
+msgstr "Tài khoản dịch vụ Lead Website"
+
+#. module: health_web_leads
+#: model:api.key.scope,name:health_web_leads.scope_web_lead_write
+msgid "Web Leads Write"
+msgstr "Ghi lead website"
+
+#. module: health_web_leads
+#: model:ir.actions.server,name:health_web_leads.ir_cron_web_leads_heartbeat_ir_actions_server
+msgid "Web Leads: heartbeat (relay delivery canary)"
+msgstr "Web dẫn: nhịp tim (chuyển tiếp canary)"
+
+#. module: health_web_leads
+#: model:ir.actions.server,name:health_web_leads.ir_cron_web_leads_prune_raw_payloads_ir_actions_server
+msgid "Web Leads: prune touchpoint raw payloads"
+msgstr "Khách hàng tiềm năng trên web: cắt bớt tải trọng thô của điểm tiếp xúc"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "Web Touchpoint"
+msgstr "Điểm chạm web"
+
+#. module: health_web_leads
+#: model:cms.sidebar.item,name:health_web_leads.item_web_touchpoints
+#: model:ir.actions.act_window,name:health_web_leads.action_health_lead_touchpoint
+#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_touchpoint_ids
+#: model:ir.ui.menu,name:health_web_leads.menu_health_lead_touchpoint
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_form_crm_center_web_attribution
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_list
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_healthcare_opportunity_form_web_attribution
+msgid "Web Touchpoints"
+msgstr "Điểm chạm web"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_consent__method__web_form
+msgid "Web form checkbox"
+msgstr "Ô tích trên biểu mẫu web"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
+msgid "Web leads"
+msgstr "Lead từ web"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "Web: %s"
+msgstr "Web: %s"
+
+#. module: health_web_leads
+#: model:cms.sidebar.item,name:health_web_leads.item_web_leads_connector
+#: model:ir.actions.act_window,name:health_web_leads.action_web_leads_connector
+#: model:ir.model,name:health_web_leads.model_web_leads_connector
+#: model:ir.ui.menu,name:health_web_leads.menu_web_leads_connector
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_list
+msgid "Website Connector"
+msgstr "Kết nối website"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__form_submit
+msgid "Website Form Submission"
+msgstr "Gửi biểu mẫu website"
+
+#. module: health_web_leads
+#: model:ir.model,name:health_web_leads.model_web_lead_service
+msgid "Website Lead Capture Service"
+msgstr "Dịch vụ tiếp nhận lead từ website"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_case_opportunities_filter_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_contact_search_crm_center_web_leads
+msgid "Website Leads"
+msgstr "Lead từ website"
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "Website connector"
+msgstr "Kết nối website"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "Website connector: pipeline OK"
+msgstr "Kết nối website: luồng xử lý đạt"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "Website connector: pipeline test failed"
+msgstr "Kết nối website: phép thử luồng xử lý thất bại"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "Website disconnected"
+msgstr "Đã ngắt kết nối website"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"Website disconnected by %(user)s: OAuth client %(client)s is archived, so "
+"its tokens no longer authenticate. The record is kept for the audit trail."
+msgstr ""
+"%(user)s đã ngắt kết nối website: ứng dụng OAuth %(client)s đã được lưu trữ "
+"nên các token của nó không còn xác thực được. Bản ghi vẫn được giữ để phục "
+"vụ nhật ký kiểm toán."
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/crm_lead.py:0
-msgid "Website marketing consent was NOT materialised: the contact details on this lead do not match the client %(client)s, so the person who ticked the box is not the person the consent would cover. Capture consent from the client directly if it is needed."
-msgstr "KHÔNG tạo bản ghi đồng ý tiếp thị từ website: thông tin liên hệ trên khách tiềm năng này không khớp với khách hàng %(client)s, nên người tích vào ô đồng ý không phải người mà sự đồng ý áp dụng. Hãy thu thập đồng ý trực tiếp từ khách hàng nếu cần."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/crm_lead.py:0
-msgid "Website marketing consent was NOT materialised: %(client)s already holds an active marketing consent (%(ref)s), which an automated claim must never supersede."
-msgstr "KHÔNG tạo bản ghi đồng ý tiếp thị từ website: %(client)s đã có một đồng ý tiếp thị đang hiệu lực (%(ref)s), và một khai báo tự động không bao giờ được thay thế bản ghi đó."
-
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/crm_lead.py:0
-msgid "Created from website lead %(ref)s — the visitor ticked the marketing consent box on submission %(submission)s."
-msgstr "Được tạo từ khách tiềm năng website %(ref)s — khách đã tích ô đồng ý tiếp thị ở lượt gửi %(submission)s."
+msgid ""
+"Website marketing consent checkbox (text version %(version)s), submission %"
+"(submission)s, submitted %(when)s UTC."
+msgstr ""
+"Ô đồng ý tiếp thị trên website (phiên bản văn bản %(version)s), lượt gửi %"
+"(submission)s, gửi lúc %(when)s UTC."
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/crm_lead.py:0
 msgid "Website marketing consent materialised as %(ref)s for %(client)s."
-msgstr "Đồng ý tiếp thị từ website đã được ghi nhận thành %(ref)s cho %(client)s."
+msgstr ""
+"Đồng ý tiếp thị từ website đã được ghi nhận thành %(ref)s cho %(client)s."
 
 #. module: health_web_leads
 #. odoo-python
 #: code:addons/health_web_leads/models/crm_lead.py:0
-msgid "Website marketing consent checkbox (text version %(version)s), submission %(submission)s, submitted %(when)s UTC."
-msgstr "Ô đồng ý tiếp thị trên website (phiên bản văn bản %(version)s), lượt gửi %(submission)s, gửi lúc %(when)s UTC."
+msgid ""
+"Website marketing consent was NOT materialised: %(client)s already holds an "
+"active marketing consent (%(ref)s), which an automated claim must never "
+"supersede."
+msgstr ""
+"KHÔNG tạo bản ghi đồng ý tiếp thị từ website: %(client)s đã có một đồng ý "
+"tiếp thị đang hiệu lực (%(ref)s), và một khai báo tự động không bao giờ được "
+"thay thế bản ghi đó."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/crm_lead.py:0
+msgid ""
+"Website marketing consent was NOT materialised: the contact details on this "
+"lead do not match the client %(client)s, so the person who ticked the box is "
+"not the person the consent would cover. Capture consent from the client "
+"directly if it is needed."
+msgstr ""
+"KHÔNG tạo bản ghi đồng ý tiếp thị từ website: thông tin liên hệ trên khách "
+"tiềm năng này không khớp với khách hàng %(client)s, nên người tích vào ô "
+"đồng ý không phải người mà sự đồng ý áp dụng. Hãy thu thập đồng ý trực tiếp "
+"từ khách hàng nếu cần."
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "Website reconnected"
+msgstr "Đã kết nối lại website"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid ""
+"Website reconnected by %(user)s. Rotate the secret unless the website still "
+"holds the previous one."
+msgstr ""
+"%(user)s đã kết nối lại website. Hãy đổi mã bí mật, trừ khi website vẫn đang "
+"giữ mã cũ."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "What"
+msgstr "Nội dung"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_bridged
+msgid ""
+"What happened to the website consent claim when this lead became a client. "
+"Set once, on the first conversion: a real health.consent record was created, "
+"or the reason none was."
+msgstr ""
+"Điều gì đã xảy ra với khai báo đồng ý từ website khi khách tiềm năng này trở "
+"thành khách hàng. Chỉ ghi một lần, ở lần chuyển đổi đầu tiên: đã tạo một bản "
+"ghi health.consent thật, hoặc lý do vì sao không tạo."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "When"
+msgstr "Thời điểm"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__occurred_at
+msgid ""
+"When the visitor acted (the website submission time), never the time we "
+"received it — a queued relay delivers late."
+msgstr ""
+"Thời điểm khách thao tác (giờ gửi biểu mẫu trên website), không phải giờ hệ "
+"thống tiếp nhận — bộ chuyển tiếp có hàng đợi nên có thể giao trễ."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_health_lead_touchpoint__received_at
+msgid ""
+"When this system accepted the touch. The gap to Occurred At is the relay "
+"skew."
+msgstr ""
+"Thời điểm hệ thống tiếp nhận điểm chạm. Khoảng cách với Thời điểm phát sinh "
+"chính là độ trễ của bộ chuyển tiếp."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_form
+msgid "Where"
+msgstr "Nơi phát sinh"
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__form_city_map_text
+msgid ""
+"Which Contact Form 7 form belongs to which city, as JSON. Example: "
+"{\"15838\": \"HN\", \"15670\": \"HCM\"}. Only \"HN\" (Hà Nội) and \"HCM\" "
+"(Hồ Chí Minh) are accepted as values."
+msgstr ""
+"Biểu mẫu Contact Form 7 nào thuộc thành phố nào, dạng JSON. Ví dụ: "
+"{\"15838\": \"HN\", \"15670\": \"HCM\"}. Chỉ chấp nhận giá trị \"HN\" (Hà "
+"Nội) và \"HCM\" (Hồ Chí Minh)."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_text_version
+msgid "Which consent wording the visitor was shown."
+msgstr "Phiên bản nội dung đồng ý đã hiển thị cho khách."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__url_city_map_text
+msgid ""
+"Which page-URL fragment belongs to which city, as JSON. Example: {\"/lien-he-"
+"hanoi/\": \"HN\", \"/lien-he-tphcm/\": \"HCM\"}. A fragment matches anywhere "
+"in the submitted page URL."
+msgstr ""
+"Đoạn URL trang nào thuộc thành phố nào, dạng JSON. Ví dụ: {\"/lien-he-hanoi/"
+"\": \"HN\", \"/lien-he-tphcm/\": \"HCM\"}. Đoạn URL được so khớp ở bất kỳ vị "
+"trí nào trong URL trang đã gửi."
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid ""
+"Which submission belongs to which city. The form map is checked first, then "
+"the page-URL map, and a visitor who picked a city in the form beats both. "
+"Values must be HN for Hà Nội or HCM for Hồ Chí Minh. Use Test pipeline after "
+"editing."
+msgstr ""
+"Lượt gửi nào thuộc thành phố nào. Bản đồ biểu mẫu được xét trước, rồi tới "
+"bản đồ URL trang; nếu khách đã chọn thành phố ngay trên biểu mẫu thì lựa "
+"chọn đó thắng cả hai. Giá trị phải là HN cho Hà Nội hoặc HCM cho Hồ Chí "
+"Minh. Hãy dùng Kiểm tra luồng xử lý sau khi chỉnh sửa."
+
+#. module: health_web_leads
+#: model:ir.model.fields,help:health_web_leads.field_web_leads_connector__heartbeat_user_id
+msgid ""
+"Who gets the to-do. Empty falls back to the API-gateway administrators, then "
+"to the system administrator."
+msgstr ""
+"Ai nhận việc cần làm. Để trống thì hệ thống chuyển cho quản trị viên cổng "
+"API, sau đó tới quản trị viên hệ thống."
+
+#. module: health_web_leads
+#: model:ir.model.fields,field_description:health_web_leads.field_web_leads_connector__wp_config_block
+msgid "WordPress Configuration"
+msgstr "Cấu hình WordPress"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__source_system__wordpress
+msgid "WordPress Website"
+msgstr "Website WordPress"
+
+#. module: health_web_leads
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "WordPress configuration"
+msgstr "Cấu hình WordPress"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__touchpoint_type__zalo_click
+msgid "Zalo Click"
+msgstr "Bấm Zalo"
+
+#. module: health_web_leads
+#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__city_source__zalo_oa
+#: model:ir.model.fields.selection,name:health_web_leads.selection__health_lead_touchpoint__city_source__zalo_oa
+msgid "Zalo Official Account"
+msgstr "Tài khoản Zalo OA"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "date must be formatted YYYY-MM-DD"
+msgstr "Ngày phải theo định dạng YYYY-MM-DD"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "no code"
+msgstr "chưa có mã"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "submission_ids accepts at most %s ids per call"
+msgstr "submission_ids chỉ nhận tối đa %s mã mỗi lần gọi"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_lead_service.py:0
+msgid "submission_ids is required and must be a non-empty list"
+msgstr "submission_ids là bắt buộc và phải là danh sách không rỗng"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "the OAuth client"
+msgstr "ứng dụng OAuth"
+
+#. module: health_web_leads
+#. odoo-python
+#: code:addons/health_web_leads/models/web_leads_connector.py:0
+msgid "the service user"
+msgstr "tài khoản dịch vụ"
 
 #. module: health_web_leads
 #. odoo-python
@@ -1189,118 +1915,55 @@ msgid "unversioned"
 msgstr "không có phiên bản"
 
 #. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/lead_touchpoint.py:0
-msgid "Only CRM managers and administrators may link campaigns retroactively."
-msgstr "Chỉ quản lý CRM và quản trị viên mới được gán chiến dịch hồi tố."
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "{\"/lien-he-hanoi/\": \"HN\", \"/lien-he-tphcm/\": \"HCM\"}"
+msgstr ""
 
 #. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/lead_touchpoint.py:0
-msgid "Campaign %(campaign)s linked retroactively from touchpoint %(touchpoint)s (raw value \"%(raw)s\")."
-msgstr "Chiến dịch %(campaign)s được gán hồi tố từ điểm chạm %(touchpoint)s (giá trị gốc \"%(raw)s\")."
+#: model_terms:ir.ui.view,arch_db:health_web_leads.view_web_leads_connector_form
+msgid "{\"15838\": \"HN\", \"15670\": \"HCM\"}"
+msgstr ""
 
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/lead_touchpoint.py:0
-msgid "Campaigns linked"
-msgstr "Đã gán chiến dịch"
+#~ msgid ""
+#~ "<p class=\"o_view_nocontent_smiling_face\">No web touchpoints yet</p>"
+#~ msgstr ""
+#~ "<p class=\"o_view_nocontent_smiling_face\">Chưa có điểm chạm web nào</p>"
 
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/lead_touchpoint.py:0
-msgid "%s lead(s) linked to a seeded campaign."
-msgstr "%s khách tiềm năng đã được gán vào chiến dịch có sẵn."
+#~ msgid "Why this lead may need a human look"
+#~ msgstr "Vì sao lead này có thể cần người xem lại"
 
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/lead_touchpoint.py:0
-msgid "Nothing to link"
-msgstr "Không có gì để gán"
+#~ msgid "Where the visit happened"
+#~ msgstr "Khách đã truy cập ở đâu"
 
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/lead_touchpoint.py:0
-msgid "No lead was linked: none of the selected raw campaign values matches a seeded utm.campaign. Seed the campaign first — this action never creates one."
-msgstr "Không có khách tiềm năng nào được gán: không giá trị chiến dịch gốc nào trong các dòng đã chọn khớp với một utm.campaign có sẵn. Hãy tạo chiến dịch trước — thao tác này không bao giờ tự tạo chiến dịch."
+#~ msgid "First touch, frozen at creation"
+#~ msgstr "Điểm chạm đầu tiên, cố định từ lúc tạo lead"
 
-#. module: health_web_leads
-#. odoo-python
-#: code:addons/health_web_leads/models/lead_touchpoint.py:0
-msgid "Only the first %s rows were examined — run it again to continue."
-msgstr "Chỉ %s dòng đầu tiên được xét — hãy chạy lại để tiếp tục."
+#~ msgid "Click identifiers and consent"
+#~ msgstr "Mã click và sự đồng ý"
 
-#. module: health_web_leads
-#: model:ir.model.fields,field_description:health_web_leads.field_crm_lead__web_consent_bridged
-msgid "Consent Bridge"
-msgstr "Cầu nối đồng ý"
+#~ msgid "Kept for offline-conversion export; never edited by hand"
+#~ msgstr "Lưu để xuất chuyển đổi offline; không chỉnh sửa thủ công"
 
-#. module: health_web_leads
-#: model:ir.model.fields,help:health_web_leads.field_crm_lead__web_consent_bridged
-msgid "What happened to the website consent claim when this lead became a client. Set once, on the first conversion: a real health.consent record was created, or the reason none was."
-msgstr "Điều gì đã xảy ra với khai báo đồng ý từ website khi khách tiềm năng này trở thành khách hàng. Chỉ ghi một lần, ở lần chuyển đổi đầu tiên: đã tạo một bản ghi health.consent thật, hoặc lý do vì sao không tạo."
+#~ msgid "Every touch behind this lead — the newest row is the last touch"
+#~ msgstr ""
+#~ "Mọi điểm chạm phía sau lead này — dòng mới nhất là điểm chạm cuối cùng"
 
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__created
-msgid "Consent record created"
-msgstr "Đã tạo bản ghi đồng ý"
+#~ msgid ""
+#~ "<p class=\"o_view_nocontent_smiling_face\">Connect the website in a few "
+#~ "minutes</p>"
+#~ msgstr ""
+#~ "<p class=\"o_view_nocontent_smiling_face\">Kết nối website chỉ trong vài "
+#~ "phút</p>"
 
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_existing
-msgid "Skipped — consent already on file"
-msgstr "Bỏ qua — đã có đồng ý trong hồ sơ"
+#~ msgid ""
+#~ "<p class=\"o_view_nocontent_smiling_face\">Every campaign string the "
+#~ "website sent is already in the CRM register</p>"
+#~ msgstr ""
+#~ "<p class=\"o_view_nocontent_smiling_face\">Mọi chuỗi chiến dịch website "
+#~ "gửi sang đều đã có trong danh mục CRM</p>"
 
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_identity
-msgid "Skipped — submitter is not the client"
-msgstr "Bỏ qua — người gửi không phải khách hàng"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__crm_lead__web_consent_bridged__skipped_declined
-msgid "Skipped — consent not given"
-msgstr "Bỏ qua — khách không đồng ý"
-
-#. module: health_web_leads
-#: model:ir.model.fields.selection,name:health_web_leads.selection__health_consent__method__web_form
-msgid "Web form checkbox"
-msgstr "Ô tích trên biểu mẫu web"
-
-#. module: health_web_leads
-#: model:ir.actions.act_window,name:health_web_leads.action_campaign_review
-#: model:ir.ui.menu,name:health_web_leads.menu_campaign_review
-#: model:cms.sidebar.item,name:health_web_leads.item_campaign_review
-msgid "Campaign Review"
-msgstr "Rà soát chiến dịch"
-
-#. module: health_web_leads
-#: model:ir.actions.act_window,help:health_web_leads.action_campaign_review
-msgid "<p class=\"o_view_nocontent_smiling_face\">Every campaign string the website sent is already in the CRM register</p>"
-msgstr "<p class=\"o_view_nocontent_smiling_face\">Mọi chuỗi chiến dịch website gửi sang đều đã có trong danh mục CRM</p>"
-
-#. module: health_web_leads
-#: model:ir.actions.act_window,name:health_web_leads.action_web_leads_funnel
-#: model:ir.ui.menu,name:health_web_leads.menu_web_leads_funnel
-#: model:cms.sidebar.item,name:health_web_leads.item_lead_analysis
-msgid "Lead Analysis"
-msgstr "Phân tích khách tiềm năng"
-
-#. module: health_web_leads
-#: model:ir.actions.act_window,help:health_web_leads.action_web_leads_funnel
-msgid "<p class=\"o_view_nocontent_smiling_face\">No leads to analyse yet</p>"
-msgstr "<p class=\"o_view_nocontent_smiling_face\">Chưa có khách tiềm năng nào để phân tích</p>"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_lead_web_funnel_pivot
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_crm_lead_web_funnel_graph
-msgid "Lead Funnel"
-msgstr "Phễu khách tiềm năng"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_list
-msgid "Link seeded campaigns"
-msgstr "Gán chiến dịch có sẵn"
-
-#. module: health_web_leads
-#: model_terms:ir.ui.view,arch_db:health_web_leads.view_health_lead_touchpoint_search
-msgid "Unmatched campaign"
-msgstr "Chiến dịch chưa khớp"
+#~ msgid ""
+#~ "<p class=\"o_view_nocontent_smiling_face\">No leads to analyse yet</p>"
+#~ msgstr ""
+#~ "<p class=\"o_view_nocontent_smiling_face\">Chưa có khách tiềm năng nào để "
+#~ "phân tích</p>"

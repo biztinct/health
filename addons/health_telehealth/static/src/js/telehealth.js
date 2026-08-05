@@ -12,6 +12,9 @@
 // window.open()s the room. The room URL is NEVER cached or stored client-side.
 
 (function () {
+  const _t = (text) => window.odoo?._t?.(text)
+    || window.PWAUtils?.i18n?.t?.(text)
+    || text;
   'use strict';
 
   // location === 'online' identifies telemedicine cards (handover §1: today
@@ -82,11 +85,11 @@
         else { window.open(url, '_blank', 'noopener'); }
       } else {
         if (win) { win.close(); }
-        alert('Phòng khám chưa sẵn sàng. (The video room is not ready yet.)');
+        alert(_t('The video room is not ready yet.'));
       }
     }).catch(function () {
       if (win) { win.close(); }
-      alert('Không thể mở phòng khám. (Could not open the video room.)');
+      alert(_t('Could not open the video room.'));
     });
   }
 

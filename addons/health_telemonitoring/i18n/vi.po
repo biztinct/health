@@ -4,6 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 19.0 health_telemonitoring\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,10 +12,281 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_telemonitoring
-#: model:ir.ui.menu,name:health_telemonitoring.menu_telemonitoring_root
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid " (ý thức mặc định A)"
+msgstr " (ý thức mặc định A)"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "%(stub)s — %(name)s"
+msgstr ""
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "%(type)s %(value)s%(unit)s — %(sev)s — %(name)s"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model_terms:ir.actions.act_window,help:health_telemonitoring.action_health_ews_score
+msgid ""
+"A NEWS2 score is computed automatically whenever a complete\n"
+"               vital-sign set is captured at a visit."
+msgstr "MỘT NEWS2 điểm được tính tự động bất cứ khi nào hoàn thành\n               bộ dấu hiệu sinh tồn được ghi lại trong lần thăm khám."
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "A closing note is required to dismiss an alert."
+msgstr "Cần có ghi chú kết thúc để bỏ qua cảnh báo."
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_list
+msgid "A def."
+msgstr "Một sự chắc chắn."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__acvpu_value
+msgid "ACVPU"
+msgstr "ACVPU"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_ews_score__defaulted_consciousness
+msgid "ACVPU was not recorded in the window; Alert (A) was assumed."
+msgstr "ACVPU không được ghi vào cửa sổ; Cảnh báo (A) đã được giả định."
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
+msgid "Acknowledge"
+msgstr "Ghi nhận"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__state__acknowledged
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
+msgid "Acknowledged"
+msgstr "Đã ghi nhận"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__ack_user_id
+msgid "Acknowledged by"
+msgstr "Được thừa nhận bởi"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__ack_date
+msgid "Acknowledged on"
+msgstr "Được thừa nhận trên"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_needaction
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__state__active
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_config_settings__tm_activity_on_critical
+msgid "Activity on Critical Alert"
+msgstr "Hoạt động trên Cảnh báo Quan trọng"
+
+#. module: health_telemonitoring
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
-msgid "Telemonitoring"
-msgstr "Theo dõi từ xa"
+msgid "Activity on critical alert"
+msgstr "Hoạt động khi cảnh báo nghiêm trọng"
+
+#. module: health_telemonitoring
+#: model_terms:ir.actions.act_window,help:health_telemonitoring.action_health_monitor_alert
+msgid ""
+"Alerts surface here when a NEWS2 band, a vitals threshold, or\n"
+"               a nightly trend rule flags a patient for review."
+msgstr "Cảnh báo xuất hiện ở đây khi NEWS2 ban nhạc, ngưỡng sinh tồn, hoặc\n               quy tắc xu hướng hàng đêm đánh dấu bệnh nhân để xem xét."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_ews_score__score_datetime
+msgid "Anchor time of the scored set (latest triggering observation)."
+msgstr "Thời gian neo của tập hợp điểm (quan sát kích hoạt mới nhất)."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_device_receipt__state__applied
+msgid "Applied"
+msgstr "Đã áp dụng"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Assembly"
+msgstr "Cuộc họp"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_attachment_count
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__bp_score
+msgid "BP score"
+msgstr "điểm huyết áp"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__band
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_search
+msgid "Band"
+msgstr "Mức"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "Batch too large: %(n)s readings (max %(max)s)"
+msgstr "Lô quá lớn: %(n)s bài đọc (tối đa %(max)s)"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__bp_monitor
+msgid "Blood-pressure monitor"
+msgstr "Máy đo huyết áp"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__catchment_province_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__catchment_province_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__catchment_province_id
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__client_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__client_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__client_id
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_search
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__client_batch_uuid
+msgid "Client Batch UUID"
+msgstr "Lô khách hàng UUID"
+
+#. module: health_telemonitoring
+#: model:ir.model,name:health_telemonitoring.model_health_observation
+msgid "Clinical Observation"
+msgstr "Quan sát lâm sàng"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__closed_user_id
+msgid "Closed by"
+msgstr "Đóng cửa bởi"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__closed_date
+msgid "Closed on"
+msgstr "Đóng cửa vào"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
+msgid "Closing"
+msgstr "Kết thúc"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__close_note
+msgid "Closing note"
+msgstr "Ghi chú kết thúc"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__company_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__company_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__company_id
+msgid "Company"
+msgstr "Công ty"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Components"
+msgstr "Linh kiện"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
+msgid ""
+"Compute a NEWS2 early-warning score automatically at every complete vitals "
+"capture."
+msgstr "Tính một NEWS2 điểm cảnh báo sớm tự động ở mỗi lần chụp dấu hiệu sinh tồn hoàn chỉnh."
+
+#. module: health_telemonitoring
+#: model:ir.model,name:health_telemonitoring.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Consciousness (ACVPU)"
+msgstr "Ý thức (ACVPU)"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__defaulted_consciousness
+msgid "Consciousness defaulted (A)"
+msgstr "Ý thức mặc định (A)"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__consciousness_score
+msgid "Consciousness score"
+msgstr "Điểm ý thức"
+
+#. module: health_telemonitoring
+#: model:ir.model,name:health_telemonitoring.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__create_uid
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__create_uid
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__create_uid
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__create_date
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__create_date
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__create_date
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__severity__critical
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
+msgid "Critical"
+msgstr "Nghiêm trọng"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_search
+msgid "Current"
+msgstr "Hiện tại"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid ""
+"Cân nặng / weight: %(wf)s → %(wl)s kg trong %(d).1f ngày (%(p).1f%%/tuần, "
+"ngưỡng %(th)s%%/tuần)."
+msgstr "Cân nặng / weight: %(wf)s → %(wl)s kg trong %(d).1f ngày (%(p).1f%%/tuần, ngưỡng %(th)s%%/tuần)."
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "Daily reading cap reached for this device"
+msgstr "Thiết bị đã đạt giới hạn số lần đo trong ngày"
+
+#. module: health_telemonitoring
+#: model:ir.model,name:health_telemonitoring.model_health_monitor_alert
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
+msgid "Deterioration Alert"
+msgstr "Cảnh báo diễn tiến xấu"
 
 #. module: health_telemonitoring
 #: model:ir.actions.act_window,name:health_telemonitoring.action_health_monitor_alert
@@ -25,40 +297,220 @@ msgid "Deterioration Alerts"
 msgstr "Cảnh báo diễn tiến xấu"
 
 #. module: health_telemonitoring
-#: model:ir.model,name:health_telemonitoring.model_health_monitor_alert
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid ""
+"Deterioration alerts are managed through the Acknowledge / Resolve / Dismiss "
+"actions."
+msgstr "Cảnh báo suy giảm được quản lý thông qua các hành động Xác nhận / Giải quyết / Loại bỏ."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__device_id
+msgid "Device"
+msgstr "Thiết bị"
+
+#. module: health_telemonitoring
+#: model:ir.model,name:health_telemonitoring.model_health_device_receipt
+msgid "Device Ingestion Receipt"
+msgstr "Biên nhận tiếp nhận dữ liệu thiết bị"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__name
+msgid "Device Name"
+msgstr "Tên thiết bị"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__device_type
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
+msgid "Device Type"
+msgstr "Loại thiết bị"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_device_receipt.py:0
+msgid "Device ingestion receipts are immutable."
+msgstr "Biên nhận tiếp nhận dữ liệu thiết bị không thể chỉnh sửa."
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "Device is not active"
+msgstr "Thiết bị không hoạt động"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "Device not found"
+msgstr "Không tìm thấy thiết bị"
+
+#. module: health_telemonitoring
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
-msgid "Deterioration Alert"
-msgstr "Cảnh báo diễn tiến xấu"
+msgid "Dismiss"
+msgstr "Bỏ qua"
 
 #. module: health_telemonitoring
-#: model:ir.actions.act_window,name:health_telemonitoring.action_health_ews_score
-#: model:ir.ui.menu,name:health_telemonitoring.menu_health_ews_score
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_list
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_search
-msgid "NEWS2 Scores"
-msgstr "Điểm NEWS2"
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__state__dismissed
+msgid "Dismissed"
+msgstr "Đã bỏ qua"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__ews_score_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__display_name
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__display_name
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__display_name
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__display_name
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_observation__display_name
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__body
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__evidence_json
+msgid "Evidence (machine)"
+msgstr "Bằng chứng (máy)"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__observation_ids
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__observation_ids
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "NEWS2 Score"
-msgstr "Điểm NEWS2"
+msgid "Evidence observations"
+msgstr "Quan sát bằng chứng"
 
 #. module: health_telemonitoring
-#: model:ir.model,name:health_telemonitoring.model_health_ews_score
-msgid "NEWS2 Early-Warning Score"
-msgstr "Điểm cảnh báo sớm NEWS2"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__external_id
+msgid "External ID"
+msgstr "Mã thiết bị (bên ngoài)"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__total
-msgid "NEWS2 total"
-msgstr "Tổng điểm NEWS2"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_follower_ids
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_follower_ids
+msgid "Followers"
+msgstr ""
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__band
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_partner_ids
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__glucometer
+msgid "Glucometer"
+msgstr "Máy đo đường huyết"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__hr_score
+msgid "HR score"
+msgstr "điểm nhân sự"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__has_message
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__hr_value
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Heart rate"
+msgstr "Nhịp tim"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_ews_score__band__high
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_search
-msgid "Band"
-msgstr "Mức"
+msgid "High"
+msgstr "Cao"
+
+#. module: health_telemonitoring
+#: model:ir.model,name:health_telemonitoring.model_health_monitor_device
+msgid "Home Monitoring Device"
+msgstr "Thiết bị theo dõi tại nhà"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__name
+msgid "Human label for this device, e.g. \"Omron X5 — bà Lan\"."
+msgstr "Human label for this device, e.g. \\\"Omron X5 — bà Lan\\\"."
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "Huyết áp tâm thu thay đổi / Systolic BP drift"
+msgstr "Huyết áp tâm thu thay đổi / Systolic BP drift"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_observation__id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_config_settings__id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_partner__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_alert__message_needaction
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_alert__message_has_error
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_alert__message_has_sms_error
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__message_has_error
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_device_receipt_form
+msgid "Ingestion Receipt"
+msgstr "Biên nhận tiếp nhận dữ liệu"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_device.py:0
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_device_receipt_list
+msgid "Ingestion Receipts"
+msgstr "Biên nhận tiếp nhận dữ liệu"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_is_follower
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__last_reading_at
+msgid "Last Reading"
+msgstr "Lần đo gần nhất"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__write_uid
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__write_uid
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__write_uid
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__write_date
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__write_date
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__write_date
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:health.vitals.type,name:health_telemonitoring.vitals_type_acvpu
+msgid "Level of consciousness (ACVPU)"
+msgstr "Mức độ ý thức (ACVPU)"
 
 #. module: health_telemonitoring
 #: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_ews_score__band__low
@@ -78,186 +530,95 @@ msgid "Medium"
 msgstr "Trung bình"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_ews_score__band__high
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_search
-msgid "High"
-msgstr "Cao"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_has_error
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_has_error
+msgid "Message Delivery error"
+msgstr ""
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__client_id
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__client_id
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__client_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_ids
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_ids
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__model
+msgid "Model"
+msgstr "Kiểu máy"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
+msgid "Monitoring Device"
+msgstr "Thiết bị theo dõi"
+
+#. module: health_telemonitoring
+#: model:ir.actions.act_window,name:health_telemonitoring.action_health_monitor_device
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_partner__monitor_device_count
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_partner__monitor_device_ids
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_users__monitor_device_count
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_users__monitor_device_ids
+#: model:ir.ui.menu,name:health_telemonitoring.menu_health_monitor_device
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_list
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_patient_form_telemonitoring
+msgid "Monitoring Devices"
+msgstr "Thiết bị theo dõi"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid ""
+"NEWS2 %(total)s (%(band)s)\n"
+"• Nhịp thở / RR: %(rr)s (điểm %(rr_s)s)\n"
+"• SpO₂: %(spo2)s (điểm %(spo2_s)s) — thang %(scale)s\n"
+"• Thở oxy / O₂: %(o2)s (điểm %(o2_s)s)\n"
+"• Huyết áp tâm thu / SBP: %(sbp)s (điểm %(bp_s)s)\n"
+"• Nhịp tim / HR: %(hr)s (điểm %(hr_s)s)\n"
+"• Nhiệt độ / Temp: %(temp)s (điểm %(temp_s)s)\n"
+"• Ý thức / ACVPU: %(acvpu)s (điểm %(cons_s)s)%(defaulted)s"
+msgstr "NEWS2 %(total)s (%(band)s)\\n• Nhịp thở / RR: %(rr)s (điểm %(rr_s)s)\\n• SpO₂: %(spo2)s (điểm %(spo2_s)s) — thang %(scale)s\\n• Thở oxy / O₂: %(o2)s (điểm %(o2_s)s)\\n• Huyết áp tâm thu / SBP: %(sbp)s (điểm %(bp_s)s)\\n• Nhịp tim / HR: %(hr)s (điểm %(hr_s)s)\\n• Nhiệt độ / Temp: %(temp)s (điểm %(temp_s)s)\\n• Ý thức / ACVPU: %(acvpu)s (điểm %(cons_s)s)%(defaulted)s"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "NEWS2 %(total)s — %(band)s — %(name)s"
+msgstr ""
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_ews_score.py:0
+msgid "NEWS2 %(total)s — %(name)s — %(when)s"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model,name:health_telemonitoring.model_health_ews_score
+msgid "NEWS2 Early-Warning Score"
+msgstr "Điểm cảnh báo sớm NEWS2"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__ews_score_id
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "NEWS2 Score"
+msgstr "Điểm NEWS2"
+
+#. module: health_telemonitoring
+#: model:ir.actions.act_window,name:health_telemonitoring.action_health_ews_score
+#: model:ir.ui.menu,name:health_telemonitoring.menu_health_ews_score
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_list
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_search
-msgid "Client"
-msgstr "Khách hàng"
+msgid "NEWS2 Scores"
+msgstr "Điểm NEWS2"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__order_id
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__order_id
-msgid "Visit"
-msgstr "Lần khám"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_config_settings__tm_ews_enabled
+msgid "NEWS2 Scoring"
+msgstr "NEWS2 Ghi điểm"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__score_datetime
-msgid "Score Time"
-msgstr "Thời điểm chấm điểm"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__rr_value
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "Respiratory rate"
-msgstr "Nhịp thở"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__spo2_value
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "SpO₂"
-msgstr "SpO₂"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__sbp_value
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "Systolic BP"
-msgstr "Huyết áp tâm thu"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__hr_value
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "Heart rate"
-msgstr "Nhịp tim"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__temp_value
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "Temperature"
-msgstr "Nhiệt độ"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__acvpu_value
-msgid "ACVPU"
-msgstr "ACVPU"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__on_oxygen
-msgid "On oxygen"
-msgstr "Đang thở oxy"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "Oxygen"
-msgstr "Oxy"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "Consciousness (ACVPU)"
-msgstr "Ý thức (ACVPU)"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__superseded
-msgid "Superseded"
-msgstr "Đã thay thế"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__defaulted_consciousness
-msgid "Consciousness defaulted (A)"
-msgstr "Ý thức mặc định (A)"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__observation_ids
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__observation_ids
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
-msgid "Evidence observations"
-msgstr "Quan sát bằng chứng"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__rule
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
-msgid "Rule"
-msgstr "Quy tắc"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__severity
-msgid "Severity"
-msgstr "Mức độ"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__severity__warning
-msgid "Warning"
-msgstr "Cảnh báo"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__severity__critical
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
-msgid "Critical"
-msgstr "Nghiêm trọng"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__state
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__state
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
-msgid "Status"
-msgstr "Trạng thái"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__state__new
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
-msgid "New"
-msgstr "Mới"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__state__acknowledged
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
-msgid "Acknowledged"
-msgstr "Đã ghi nhận"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__state__resolved
-msgid "Resolved"
-msgstr "Đã xử lý"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__state__dismissed
-msgid "Dismissed"
-msgstr "Đã bỏ qua"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__title
-msgid "Title"
-msgstr "Tiêu đề"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__body
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
-msgid "Evidence"
-msgstr "Bằng chứng"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__close_note
-msgid "Closing note"
-msgstr "Ghi chú kết thúc"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
-msgid "Closing"
-msgstr "Kết thúc"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
-msgid "Acknowledge"
-msgstr "Ghi nhận"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
-msgid "Resolve"
-msgstr "Xử lý"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
-msgid "Dismiss"
-msgstr "Bỏ qua"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_partner__news2_spo2_scale2
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_users__news2_spo2_scale2
+msgid "NEWS2 SpO₂ Scale 2 (hypercapnic)"
+msgstr "NEWS2 SpO₂ Thang 2 (tăng CO₂)"
 
 #. module: health_telemonitoring
 #: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__ews_high
@@ -270,39 +631,20 @@ msgid "NEWS2 medium"
 msgstr "NEWS2 trung bình"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__ews_single3
-msgid "NEWS2 single-parameter 3"
-msgstr "NEWS2 một thông số = 3"
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_ews_score.py:0
+msgid "NEWS2 scores are append-only and cannot be deleted."
+msgstr "Điểm NEWS2 chỉ ghi thêm và không thể xóa."
 
 #. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__threshold
-msgid "Threshold breach"
-msgstr "Vượt ngưỡng"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__trend_hr_drift
-msgid "Resting HR drift"
-msgstr "Nhịp tim nghỉ tăng"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__trend_sbp_drift
-msgid "Systolic BP drift"
-msgstr "Huyết áp tâm thu thay đổi"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__trend_spo2_decline
-msgid "SpO2 decline"
-msgstr "SpO₂ giảm"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__trend_weight_loss
-msgid "Weight loss"
-msgstr "Sụt cân"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_res_partner__news2_spo2_scale2
-msgid "NEWS2 SpO₂ Scale 2 (hypercapnic)"
-msgstr "NEWS2 SpO₂ Thang 2 (tăng CO₂)"
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_ews_score.py:0
+msgid ""
+"NEWS2 scores are system-generated and append-only; only the superseded flag "
+"may change."
+msgstr ""
+"Điểm NEWS2 do hệ thống tạo và chỉ ghi thêm; chỉ cờ đã-thay-thế có thể thay "
+"đổi."
 
 #. module: health_telemonitoring
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
@@ -310,14 +652,49 @@ msgid "NEWS2 scoring"
 msgstr "Chấm điểm NEWS2"
 
 #. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
-msgid "Scoring window (minutes)"
-msgstr "Cửa sổ chấm điểm (phút)"
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__ews_single3
+msgid "NEWS2 single-parameter 3"
+msgstr "NEWS2 một thông số = 3"
 
 #. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
-msgid "Activity on critical alert"
-msgstr "Hoạt động khi cảnh báo nghiêm trọng"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__total
+msgid "NEWS2 total"
+msgstr "Tổng điểm NEWS2"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__state__new
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
+msgid "New"
+msgstr "Mới"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid ""
+"Ngưỡng cảnh báo bị vượt / Threshold breach\n"
+"• %(type)s: %(value)s%(unit)s\n"
+"• Ngưỡng / threshold: [%(min)s – %(max)s]\n"
+"• Mức độ / severity: %(sev)s"
+msgstr "Ngưỡng cảnh báo bị vượt / Threshold breach\\n• %(type)s: %(value)s%(unit)s\\n• Ngưỡng / threshold: [%(min)s – %(max)s]\\n• Mức độ / severity: %(sev)s"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid ""
+"Nhịp tim / HR: trung vị 7 ngày %(mr)s vs 21 ngày trước %(mp)s (ngưỡng %(th)s "
+"bpm)."
+msgstr "Nhịp tim / HR: trung vị 7 ngày %(mr)s vs 21 ngày trước %(mp)s (ngưỡng %(th)s bpm)."
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "Nhịp tim nghỉ tăng / Resting HR drift"
+msgstr "Nhịp tim nghỉ tăng / Resting HR drift"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_config_settings__tm_trend_enabled
+msgid "Nightly Trend Sweep"
+msgstr "Quét xu hướng hàng đêm"
 
 #. module: health_telemonitoring
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
@@ -325,34 +702,69 @@ msgid "Nightly trend sweep"
 msgstr "Quét xu hướng hằng đêm"
 
 #. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
-msgid "Only a new alert can be acknowledged."
-msgstr "Chỉ có thể ghi nhận cảnh báo mới."
+#: model_terms:ir.actions.act_window,help:health_telemonitoring.action_health_ews_score
+msgid "No NEWS2 scores yet"
+msgstr "KHÔNG NEWS2 điểm chưa"
+
+#. module: health_telemonitoring
+#: model_terms:ir.actions.act_window,help:health_telemonitoring.action_health_monitor_alert
+msgid "No deterioration alerts"
+msgstr "Không có cảnh báo suy giảm"
+
+#. module: health_telemonitoring
+#: model_terms:ir.actions.act_window,help:health_telemonitoring.action_health_monitor_device
+msgid "No monitoring devices registered"
+msgstr "Chưa đăng ký thiết bị theo dõi nào"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__notes
+msgid "Notes"
+msgstr "Ghi chú"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
+msgid "Notes…"
+msgstr "Ghi chú…"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_needaction_counter
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_has_error_counter
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_alert__message_needaction_counter
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_alert__message_has_error_counter
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
+msgid "Observations"
+msgstr "Quan sát"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__on_oxygen
+msgid "On oxygen"
+msgstr "Đang thở oxy"
 
 #. module: health_telemonitoring
 #. odoo-python
 #: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
-msgid "Only an open alert can be resolved."
-msgstr "Chỉ có thể xử lý cảnh báo đang mở."
-
-#. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
-msgid "Only an open alert can be dismissed."
-msgstr "Chỉ có thể bỏ qua cảnh báo đang mở."
-
-#. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
-msgid "A closing note is required to dismiss an alert."
-msgstr "Cần có ghi chú kết thúc để bỏ qua cảnh báo."
-
-#. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
-msgid "You are not allowed to acknowledge deterioration alerts."
-msgstr "Bạn không được phép ghi nhận cảnh báo diễn tiến xấu."
+msgid "Only a head nurse, doctor, or manager may dismiss alerts."
+msgstr "Chỉ điều dưỡng trưởng, bác sĩ hoặc quản lý mới được bỏ qua cảnh báo."
 
 #. module: health_telemonitoring
 #. odoo-python
@@ -363,92 +775,25 @@ msgstr "Chỉ điều dưỡng trưởng, bác sĩ hoặc quản lý mới đư�
 #. module: health_telemonitoring
 #. odoo-python
 #: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
-msgid "Only a head nurse, doctor, or manager may dismiss alerts."
-msgstr "Chỉ điều dưỡng trưởng, bác sĩ hoặc quản lý mới được bỏ qua cảnh báo."
+msgid "Only a new alert can be acknowledged."
+msgstr "Chỉ có thể ghi nhận cảnh báo mới."
 
 #. module: health_telemonitoring
 #. odoo-python
-#: code:addons/health_telemonitoring/models/health_ews_score.py:0
-msgid "NEWS2 scores are system-generated and append-only; only the superseded flag may change."
-msgstr "Điểm NEWS2 do hệ thống tạo và chỉ ghi thêm; chỉ cờ đã-thay-thế có thể thay đổi."
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "Only an open alert can be dismissed."
+msgstr "Chỉ có thể bỏ qua cảnh báo đang mở."
 
 #. module: health_telemonitoring
 #. odoo-python
-#: code:addons/health_telemonitoring/models/health_ews_score.py:0
-msgid "NEWS2 scores are append-only and cannot be deleted."
-msgstr "Điểm NEWS2 chỉ ghi thêm và không thể xóa."
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "Only an open alert can be resolved."
+msgstr "Chỉ có thể xử lý cảnh báo đang mở."
 
 #. module: health_telemonitoring
-#: model:health.vitals.type,name:health_telemonitoring.vitals_type_acvpu
-msgid "Level of consciousness (ACVPU)"
-msgstr "Mức độ ý thức (ACVPU)"
-
-#. module: health_telemonitoring
-#: model:health.vitals.type,name:health_telemonitoring.vitals_type_o2_flow
-msgid "Supplemental oxygen flow rate"
-msgstr "Lưu lượng oxy hỗ trợ"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_res_partner__monitor_device_ids
-#: model:ir.model.fields,field_description:health_telemonitoring.field_res_partner__monitor_device_count
-#: model:ir.actions.act_window,name:health_telemonitoring.action_health_monitor_device
-#: model:ir.ui.menu,name:health_telemonitoring.menu_health_monitor_device
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_patient_form_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_list
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
-msgid "Monitoring Devices"
-msgstr "Thiết bị theo dõi"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
-msgid "Monitoring Device"
-msgstr "Thiết bị theo dõi"
-
-#. module: health_telemonitoring
-#: model:ir.model,name:health_telemonitoring.model_health_monitor_device
-msgid "Home Monitoring Device"
-msgstr "Thiết bị theo dõi tại nhà"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__name
-msgid "Device Name"
-msgstr "Tên thiết bị"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__device_type
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
-msgid "Device Type"
-msgstr "Loại thiết bị"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__bp_monitor
-msgid "Blood-pressure monitor"
-msgstr "Máy đo huyết áp"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__pulse_oximeter
-msgid "Pulse oximeter"
-msgstr "Máy đo SpO₂"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__thermometer
-msgid "Thermometer"
-msgstr "Nhiệt kế"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__glucometer
-msgid "Glucometer"
-msgstr "Máy đo đường huyết"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__scale
-msgid "Weighing scale"
-msgstr "Cân sức khỏe"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__wearable
-msgid "Wearable"
-msgstr "Thiết bị đeo"
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
+msgid "Open"
+msgstr ""
 
 #. module: health_telemonitoring
 #: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__other
@@ -456,42 +801,53 @@ msgid "Other"
 msgstr "Khác"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__external_id
-msgid "External ID"
-msgstr "Mã thiết bị (bên ngoài)"
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Oxygen"
+msgstr "Oxy"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__vendor
-msgid "Vendor"
-msgstr "Nhà cung cấp"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__o2_score
+msgid "O₂ score"
+msgstr "điểm O₂"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__model
-msgid "Model"
-msgstr "Kiểu máy"
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_device_receipt__state__partial
+msgid "Partial"
+msgstr "Một phần"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__notes
-msgid "Notes"
-msgstr "Ghi chú"
+#: model:api.key.scope,description:health_telemonitoring.scope_telemonitoring_ingest
+msgid ""
+"Post home-monitoring device readings to\n"
+"                the telemonitoring ingestion endpoint."
+msgstr "Đăng thông số đo của thiết bị giám sát tại nhà lên\n                điểm cuối nhập dữ liệu giám sát từ xa."
 
 #. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__state__active
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
-msgid "Active"
-msgstr "Đang hoạt động"
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__pulse_oximeter
+msgid "Pulse oximeter"
+msgstr "Máy đo SpO₂"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__state__suspended
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
-msgid "Suspended"
-msgstr "Tạm ngưng"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__rr_score
+msgid "RR score"
+msgstr "điểm RR"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__state__retired
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
-msgid "Retired"
-msgstr "Ngừng sử dụng"
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "Rate limit exceeded"
+msgstr "Đã vượt quá giới hạn số lần gọi"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__rating_ids
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
+msgid "Reactivate"
+msgstr "Kích hoạt lại"
 
 #. module: health_telemonitoring
 #: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__reading_count
@@ -500,56 +856,23 @@ msgid "Readings"
 msgstr "Số lần đo"
 
 #. module: health_telemonitoring
-#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__last_reading_at
-msgid "Last Reading"
-msgstr "Lần đo gần nhất"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
-msgid "Suspend"
-msgstr "Tạm ngưng"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
-msgid "Reactivate"
-msgstr "Kích hoạt lại"
-
-#. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
-msgid "Retire"
-msgstr "Ngừng sử dụng"
-
-#. module: health_telemonitoring
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
 msgid "Receipts"
 msgstr "Biên nhận"
 
 #. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/models/health_monitor_device.py:0
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_device_receipt_list
-msgid "Ingestion Receipts"
-msgstr "Biên nhận tiếp nhận dữ liệu"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__received_at
+msgid "Received At"
+msgstr "Thời điểm tiếp nhận"
 
 #. module: health_telemonitoring
-#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_device_receipt_form
-msgid "Ingestion Receipt"
-msgstr "Biên nhận tiếp nhận dữ liệu"
-
-#. module: health_telemonitoring
-#: model:ir.model,name:health_telemonitoring.model_health_device_receipt
-msgid "Device Ingestion Receipt"
-msgstr "Biên nhận tiếp nhận dữ liệu thiết bị"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_device_receipt__state__applied
-msgid "Applied"
-msgstr "Đã áp dụng"
-
-#. module: health_telemonitoring
-#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_device_receipt__state__partial
-msgid "Partial"
-msgstr "Một phần"
+#: model_terms:ir.actions.act_window,help:health_telemonitoring.action_health_monitor_device
+msgid ""
+"Register a home device (BP monitor, pulse oximeter, glucometer,\n"
+"               scale) here so its readings flow into the patient's vitals "
+"and\n"
+"               deterioration engines."
+msgstr "Đăng ký một thiết bị gia đình (máy đo huyết áp, máy đo nồng độ oxy trong mạch, máy đo đường huyết,\n               thang đo) ở đây để số đọc của nó chảy vào sức sống của bệnh nhân và\n               động cơ xuống cấp."
 
 #. module: health_telemonitoring
 #: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_device_receipt__state__rejected
@@ -558,33 +881,50 @@ msgstr "Bị từ chối"
 
 #. module: health_telemonitoring
 #. odoo-python
-#: code:addons/health_telemonitoring/models/health_device_receipt.py:0
-msgid "Device ingestion receipts are immutable."
-msgstr "Biên nhận tiếp nhận dữ liệu thiết bị không thể chỉnh sửa."
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "Request body is not valid JSON"
+msgstr "Nội dung yêu cầu không phải JSON hợp lệ"
 
 #. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/controllers/ingest.py:0
-msgid "Device not found"
-msgstr "Không tìm thấy thiết bị"
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
+msgid "Required to dismiss an alert."
+msgstr "Bắt buộc phải loại bỏ cảnh báo."
 
 #. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/controllers/ingest.py:0
-msgid "Device is not active"
-msgstr "Thiết bị không hoạt động"
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_form
+msgid "Resolve"
+msgstr "Xử lý"
 
 #. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/controllers/ingest.py:0
-msgid "Daily reading cap reached for this device"
-msgstr "Thiết bị đã đạt giới hạn số lần đo trong ngày"
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__state__resolved
+msgid "Resolved"
+msgstr "Đã xử lý"
 
 #. module: health_telemonitoring
-#. odoo-python
-#: code:addons/health_telemonitoring/controllers/ingest.py:0
-msgid "readings must be a non-empty list"
-msgstr "danh sách chỉ số không được để trống"
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__rr_value
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Respiratory rate"
+msgstr "Nhịp thở"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__trend_hr_drift
+msgid "Resting HR drift"
+msgstr "Nhịp tim nghỉ tăng"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_device_receipt_form
+msgid "Result"
+msgstr "Kết quả"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__result_json
+msgid "Result Payload"
+msgstr "Tải trọng kết quả"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
+msgid "Retire"
+msgstr "Ngừng sử dụng"
 
 #. module: health_telemonitoring
 #: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
@@ -592,6 +932,354 @@ msgid "Retire this device? It will stop accepting readings."
 msgstr "Ngừng sử dụng thiết bị này? Thiết bị sẽ không nhận chỉ số nữa."
 
 #. module: health_telemonitoring
-#: model_terms:ir.actions.act_window,help:health_telemonitoring.action_health_monitor_device
-msgid "No monitoring devices registered"
-msgstr "Chưa đăng ký thiết bị theo dõi nào"
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__state__retired
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
+msgid "Retired"
+msgstr "Ngừng sử dụng"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__rule
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
+msgid "Rule"
+msgstr "Quy tắc"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
+msgid ""
+"Run the nightly statistical baseline/trend sweep (HR drift, SBP drift, SpO2 "
+"decline, weight loss)."
+msgstr "Chạy quét đường cơ sở/xu hướng thống kê hàng đêm (độ lệch HR, độ lệch SBP, giảm SpO2, giảm cân)."
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid ""
+"SBP: trung vị 7 ngày %(mr)s vs 21 ngày trước %(mp)s (ngưỡng %(th)s mmHg)."
+msgstr "SBP: trung vị 7 ngày %(mr)s vs 21 ngày trước %(mp)s (ngưỡng %(th)s mmHg)."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__message_has_sms_error
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_ews_score__spo2_scale__1
+msgid "Scale 1"
+msgstr "Thang đo 1"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_ews_score__spo2_scale__2
+msgid "Scale 2"
+msgstr "Thang đo 2"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
+msgid ""
+"Schedule a to-do activity for the facility manager when a critical "
+"deterioration alert is raised."
+msgstr "Lên lịch hoạt động việc cần làm cho người quản lý cơ sở khi có cảnh báo suy giảm nghiêm trọng."
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Score"
+msgstr "Điểm"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__score_datetime
+msgid "Score Time"
+msgstr "Thời điểm chấm điểm"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_res_config_settings__tm_ews_window_minutes
+msgid "Scoring Window (minutes)"
+msgstr "Khoảng thời gian tính điểm (phút)"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
+msgid "Scoring window (minutes)"
+msgstr "Cửa sổ chấm điểm (phút)"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__severity
+msgid "Severity"
+msgstr "Mức độ"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__trend_spo2_decline
+msgid "SpO2 decline"
+msgstr "SpO₂ giảm"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__spo2_value
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "SpO₂"
+msgstr "SpO₂"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "SpO₂ giảm / SpO2 decline"
+msgstr "SpO₂ giảm / SpO2 decline"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__spo2_scale
+msgid "SpO₂ scale"
+msgstr "Thang đo SpO₂"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__spo2_score
+msgid "SpO₂ score"
+msgstr "điểm SpO₂"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid ""
+"SpO₂: trung vị 7 ngày %(mr)s vs 21 ngày trước %(mp)s (giảm ≥ %(th)s điểm, "
+"hiện < 94)."
+msgstr "SpO₂: trung vị 7 ngày %(mr)s vs 21 ngày trước %(mp)s (giảm ≥ %(th)s điểm, hiện < 94)."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__last_reading_at
+msgid "Stamped by the ingestion engine on each accepted batch."
+msgstr "Được đóng dấu bởi công cụ nhập liệu trên mỗi lô được chấp nhận."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_device_receipt__state
+msgid "State"
+msgstr "Trạng thái"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__state
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__state
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_alert_search
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__superseded
+msgid "Superseded"
+msgstr "Đã thay thế"
+
+#. module: health_telemonitoring
+#: model:health.vitals.type,name:health_telemonitoring.vitals_type_o2_flow
+msgid "Supplemental oxygen flow rate"
+msgstr "Lưu lượng oxy hỗ trợ"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
+msgid "Suspend"
+msgstr "Tạm ngưng"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__state__suspended
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_search
+msgid "Suspended"
+msgstr "Tạm ngưng"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__sbp_value
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Systolic BP"
+msgstr "Huyết áp tâm thu"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__trend_sbp_drift
+msgid "Systolic BP drift"
+msgstr "Huyết áp tâm thu thay đổi"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "Sụt cân / Weight loss"
+msgstr "Sụt cân / Weight loss"
+
+#. module: health_telemonitoring
+#: model:ir.ui.menu,name:health_telemonitoring.menu_telemonitoring_root
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
+msgid "Telemonitoring"
+msgstr "Theo dõi từ xa"
+
+#. module: health_telemonitoring
+#: model:api.key.scope,name:health_telemonitoring.scope_telemonitoring_ingest
+msgid "Telemonitoring: ingest device readings"
+msgstr "Giám sát từ xa: nhập dữ liệu đọc của thiết bị"
+
+#. module: health_telemonitoring
+#: model:ir.actions.server,name:health_telemonitoring.cron_trend_sweep_ir_actions_server
+msgid "Telemonitoring: nightly deterioration trend sweep"
+msgstr "Giám sát từ xa: quét xu hướng suy thoái hàng đêm"
+
+#. module: health_telemonitoring
+#: model:ir.actions.server,name:health_telemonitoring.cron_device_receipt_gc_ir_actions_server
+msgid "Telemonitoring: prune expired device ingestion receipts"
+msgstr "Giám sát từ xa: cắt bớt biên lai nhập thiết bị đã hết hạn"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__temp_score
+msgid "Temp score"
+msgstr "Điểm tạm thời"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__temp_value
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_ews_score_form
+msgid "Temperature"
+msgstr "Nhiệt độ"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__external_id
+msgid ""
+"The identifier the partner/vendor sends per reading (device serial / uuid). "
+"Globally unique — partners address devices without a client context."
+msgstr "Mã định danh mà đối tác/nhà cung cấp gửi cho mỗi lần đọc (serial thiết bị / uuid). Duy nhất trên toàn cầu — đối tác xử lý các thiết bị mà không cần bối cảnh máy khách."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_ews_score__observation_ids
+msgid "The observation rows actually used to compute this score."
+msgstr "Các hàng quan sát thực sự được sử dụng để tính điểm này."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__thermometer
+msgid "Thermometer"
+msgstr "Nhiệt kế"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__threshold
+msgid "Threshold breach"
+msgstr "Vượt ngưỡng"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__title
+msgid "Title"
+msgstr "Tiêu đề"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "Token is missing a required scope (%s)"
+msgstr "Token thiếu phạm vi quyền bắt buộc (%s)"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "Unauthorized"
+msgstr "Không được phép truy cập"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_res_partner__news2_spo2_scale2
+#: model:ir.model.fields,help:health_telemonitoring.field_res_users__news2_spo2_scale2
+msgid ""
+"Use NEWS2 SpO₂ Scale 2 for this patient — for hypercapnic respiratory "
+"failure (e.g. COPD) with a target saturation range of 88–92%. Leave off for "
+"the default Scale 1."
+msgstr "Sử dụng NEWS2 SpO₂ Thang 2 cho bệnh nhân này - đối với suy hô hấp tăng CO2 (e.g. COPD) với phạm vi bão hòa mục tiêu là 88–92%. Để lại thang âm 1 mặc định."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__vendor
+msgid "Vendor"
+msgstr "Nhà cung cấp"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_ews_score__order_id
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__order_id
+msgid "Visit"
+msgstr "Lần khám"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__vitals_type_id
+msgid "Vitals Type"
+msgstr "Loại sức sống"
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.res_config_settings_view_form_telemonitoring
+msgid ""
+"Vitals recorded within this many minutes of the anchor observation are "
+"assembled into one NEWS2 score."
+msgstr "Các thông số quan trọng được ghi lại trong nhiều phút quan sát mỏ neo này được tập hợp thành một NEWS2 điểm."
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__severity__warning
+msgid "Warning"
+msgstr "Cảnh báo"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__wearable
+msgid "Wearable"
+msgstr "Thiết bị đeo"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_alert__website_message_ids
+#: model:ir.model.fields,field_description:health_telemonitoring.field_health_monitor_device__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_alert__website_message_ids
+#: model:ir.model.fields,help:health_telemonitoring.field_health_monitor_device__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_device__device_type__scale
+msgid "Weighing scale"
+msgstr "Cân sức khỏe"
+
+#. module: health_telemonitoring
+#: model:ir.model.fields.selection,name:health_telemonitoring.selection__health_monitor_alert__rule__trend_weight_loss
+msgid "Weight loss"
+msgstr "Sụt cân"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "You are not allowed to acknowledge deterioration alerts."
+msgstr "Bạn không được phép ghi nhận cảnh báo diễn tiến xấu."
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "client_batch_uuid is required"
+msgstr "client_batch_uuid là bắt buộc"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "client_batch_uuid must be at most 64 characters"
+msgstr "client_batch_uuid phải có tối đa 64 ký tự"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "có"
+msgstr "có"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "device_external_id is required"
+msgstr "device_external_id là bắt buộc"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_device.py:0
+msgid "device_id"
+msgstr ""
+
+#. module: health_telemonitoring
+#: model_terms:ir.ui.view,arch_db:health_telemonitoring.view_health_monitor_device_form
+msgid "e.g. Omron X5 — bà Lan"
+msgstr "e.g. Omron X5 — bà Lan"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/models/health_monitor_alert.py:0
+msgid "không"
+msgstr "không"
+
+#. module: health_telemonitoring
+#. odoo-python
+#: code:addons/health_telemonitoring/controllers/ingest.py:0
+msgid "readings must be a non-empty list"
+msgstr "danh sách chỉ số không được để trống"

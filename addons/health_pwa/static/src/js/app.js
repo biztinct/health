@@ -923,10 +923,10 @@ window.healthPWA = {
             const data = await response.json();
             debugInfo.value = data;
             console.log('Debug Info:', data);
-            alert('Debug info logged to console. Check browser console.');
+            alert(_t('Debug info logged to console. Check browser console.'));
           } catch (error) {
             console.error('Failed to get debug info:', error);
-            alert('Failed to get debug info: ' + error.message);
+            alert(_t('Failed to get debug info: ') + error.message);
           }
         };
         
@@ -1990,13 +1990,13 @@ window.healthPWA = {
           need_follow_up: false
         });
         const noFutureVisitReasons = [
-          { value: 'patient_died', label: 'Patient died' },
-          { value: 'improved', label: 'Patient improved/recovered' },
-          { value: 'hospital', label: 'Patient admitted to hospital' },
-          { value: 'declined', label: 'Patient declined further visits' },
-          { value: 'moved', label: 'Patient moved/relocated' },
-          { value: 'referral', label: 'Referred to another provider' },
-          { value: 'other', label: 'Other' }
+          { value: 'patient_died', label: _t('Patient died') },
+          { value: 'improved', label: _t('Patient improved/recovered') },
+          { value: 'hospital', label: _t('Patient admitted to hospital') },
+          { value: 'declined', label: _t('Patient declined further visits') },
+          { value: 'moved', label: _t('Patient moved/relocated') },
+          { value: 'referral', label: _t('Referred to another provider') },
+          { value: 'other', label: _t('Other') }
         ];
         const showNoFutureVisitDropdown = ref(false);
 
