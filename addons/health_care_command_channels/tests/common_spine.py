@@ -54,6 +54,9 @@ class ChannelSpineCase(ChannelHubCase):
         cls.Message = cls.env['care.channel.message']
         cls.Care = cls.env['care.conversation']
 
+        # The deployment's own platform applications are archived by
+        # ChannelHubCase.setUpClass (GL-2) — without that, this unconditional
+        # `meta` create collides with any row a human made.
         cls.meta_app = cls.App.create({
             'provider': 'meta', 'client_id': 'meta-app-1',
             'extra_json': json.dumps({'verify_token': META_VERIFY_TOKEN,

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- The Channel Go-Live Studio (GL-2). An OWL client action, like the
+         tenant Center it sits above: creating the provider APPLICATIONS and
+         connecting a clinic's own account are different jobs for different
+         people, and the Studio's audience is the platform operator alone.
+
+         Declared BEFORE views/platform_app_views.xml in the manifest, because
+         that form references this action with %(...)d and the reference is
+         resolved as the view record loads. -->
+    <record id="action_channel_golive_studio" model="ir.actions.client">
+        <field name="name">Go-Live Studio</field>
+        <field name="tag">channel_golive_studio</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Sequence 45: directly above "Platform Applications" (50), which stays
+         as the expert escape hatch. `base.group_system` matches the gate every
+         golive RPC enforces for itself (channel_golive.py `_require_operator`)
+         — the menu is a convenience, never the permission. -->
+    <menuitem id="menu_channel_golive_studio"
+              name="Go-Live Studio"
+              parent="health_care_command.menu_care_command_config"
+              action="action_channel_golive_studio"
+              groups="base.group_system"
+              sequence="45"/>
+
+</odoo>

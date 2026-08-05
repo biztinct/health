@@ -60,6 +60,13 @@
                             string="Set secret" type="action" class="btn-primary"
                             context="{'default_app_id': id}"
                             invisible="not id"/>
+                    <!-- GL-2: this raw form survives as the expert escape
+                         hatch; the guided run is next door. Visible always —
+                         the form is already `base.group_system` only, and the
+                         Studio's own RPCs enforce the same gate. -->
+                    <button name="%(action_channel_golive_studio)d"
+                            string="Open Go-Live Studio" type="action"
+                            class="btn-secondary"/>
                 </header>
                 <sheet>
                     <group>

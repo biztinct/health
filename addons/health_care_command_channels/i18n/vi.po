@@ -940,12 +940,14 @@ msgstr ""
 #. module: health_care_command_channels
 #. odoo-javascript
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
 msgid "Refresh"
 msgstr "Làm mới"
 
 #. module: health_care_command_channels
 #. odoo-javascript
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
 msgid "Loading…"
 msgstr "Đang tải…"
 
@@ -1034,6 +1036,7 @@ msgstr "Tắt"
 #. odoo-python
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
 #: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
 msgid "Done"
 msgstr "Xong"
 
@@ -1099,6 +1102,7 @@ msgstr "Lời chào đầu tiên (không bắt buộc)"
 #. module: health_care_command_channels
 #. odoo-javascript
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
 msgid "Copy"
 msgstr "Sao chép"
 
@@ -1153,6 +1157,7 @@ msgstr "Gửi trả lời"
 #. module: health_care_command_channels
 #. odoo-javascript
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
 msgid "Next"
 msgstr "Tiếp theo"
 
@@ -1195,6 +1200,7 @@ msgstr "%s ngày trước"
 #. module: health_care_command_channels
 #. odoo-javascript
 #: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
 msgid "Something went wrong. Please try again."
 msgstr "Đã có lỗi xảy ra. Vui lòng thử lại."
 
@@ -1315,6 +1321,7 @@ msgstr "Đã đăng nhập"
 #. module: health_care_command_channels
 #. odoo-javascript
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
 msgid "Webhook address"
 msgstr "Địa chỉ webhook"
 
@@ -1830,6 +1837,7 @@ msgstr "Đang chờ Meta"
 #. module: health_care_command_channels
 #. odoo-javascript
 #: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
 msgid "Check again"
 msgstr "Kiểm tra lại"
 
@@ -2058,6 +2066,7 @@ msgstr "Đã cài phân hệ thư của Odoo (%s)"
 #. module: health_care_command_channels
 #. odoo-python
 #: code:addons/health_care_command_channels/models/channel_platform_app.py:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
 msgid "To do"
 msgstr "Chưa xong"
 
@@ -2731,3 +2740,351 @@ msgid ""
 msgstr ""
 "Khoá bí mật ứng dụng Zalo là một chuỗi ký tự không có khoảng trắng, nằm "
 "cạnh App ID."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "The Go-Live Studio is for the platform operator"
+msgstr "Studio Go-Live dành cho quản trị viên nền tảng"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "This console creates the provider applications every clinic signs in through, so it stays with the team that owns those accounts. Ask your Health19 administrator to run the go-live, or to give you platform administrator access."
+msgstr "Bảng điều khiển này tạo các ứng dụng nhà cung cấp mà mọi phòng khám đăng nhập qua đó, nên nó thuộc về nhóm sở hữu các tài khoản ấy. Hãy đề nghị quản trị viên Health19 chạy quy trình go-live, hoặc cấp cho bạn quyền quản trị nền tảng."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Channel Go-Live Studio"
+msgstr "Studio Go-Live Kênh"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Create the provider applications the clinics sign in through. One guided run per provider — we say what to do and where to do it, and we watch for the proof that it worked."
+msgstr "Tạo các ứng dụng nhà cung cấp mà các phòng khám đăng nhập qua đó. Mỗi nhà cung cấp một lượt hướng dẫn — chúng tôi nói rõ phải làm gì và làm ở đâu, rồi theo dõi bằng chứng cho thấy việc đó đã xong."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "All providers"
+msgstr "Tất cả nhà cung cấp"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Finished"
+msgstr "Đã hoàn tất"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "ZNS notifications ride this same app — there is nothing separate to register for them."
+msgstr "Thông báo ZNS dùng chung ứng dụng này — không cần đăng ký riêng cho chúng."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "What you'll need before you start"
+msgstr "Những gì bạn cần chuẩn bị trước khi bắt đầu"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Continue"
+msgstr "Tiếp tục"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Start"
+msgstr "Bắt đầu"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Not yet. The milestones on the left that are not green are what is still missing — this screen becomes the finish line the moment the last one lands."
+msgstr "Chưa xong. Những mốc bên trái chưa chuyển xanh chính là phần còn thiếu — màn hình này sẽ trở thành vạch đích ngay khi mốc cuối cùng hoàn tất."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Open the Channel Center"
+msgstr "Mở Trung tâm Kết nối Kênh"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Finish the App ID step first — then this button opens the right page of the app."
+msgstr "Hãy hoàn tất bước App ID trước — sau đó nút này sẽ mở đúng trang của ứng dụng."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Not created yet."
+msgstr "Chưa được tạo."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Copied"
+msgstr "Đã sao chép"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Create the verify token"
+msgstr "Tạo mã xác minh webhook"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "We generate it; you paste the same value into both Meta products. It is not a secret — Meta and we must hold it identically for the check to work at all."
+msgstr "Chúng tôi tạo mã này; bạn dán cùng một giá trị vào cả hai sản phẩm của Meta. Đây không phải khoá bí mật — Meta và chúng tôi phải giữ giá trị giống hệt nhau thì phép kiểm tra mới chạy được."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Save"
+msgstr "Lưu"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Meta confirmed this application."
+msgstr "Meta đã xác nhận ứng dụng này."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Meta refused this application."
+msgstr "Meta đã từ chối ứng dụng này."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "The provider's check reached us."
+msgstr "Phép kiểm tra của nhà cung cấp đã đến chúng tôi."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Waiting for the provider's check to reach us…"
+msgstr "Đang chờ phép kiểm tra của nhà cung cấp đến chúng tôi…"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Leave this screen open. It turns green by itself the moment the address you pasted is verified."
+msgstr "Hãy để màn hình này mở. Nó sẽ tự chuyển xanh ngay khi địa chỉ bạn dán được xác minh."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Mark as submitted"
+msgstr "Đánh dấu đã nộp"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Not submitted yet"
+msgstr "Chưa nộp"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "%s of %s steps done"
+msgstr "Đã xong %s trên %s bước"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Mostly waiting on %s: %s."
+msgstr "Chủ yếu là chờ %s: %s."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "No provider review to wait for — every step below is yours."
+msgstr "Không phải chờ nhà cung cấp xét duyệt — mọi bước bên dưới đều do bạn làm."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "A Facebook account with administrator access to your company's Business portfolio."
+msgstr "Một tài khoản Facebook có quyền quản trị danh mục Doanh nghiệp của công ty bạn."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Your company registration documents, for Business Verification."
+msgstr "Giấy tờ đăng ký doanh nghiệp, dùng cho Xác minh Doanh nghiệp."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Somebody who can record a short screen video of the clinics using each permission, for App Review."
+msgstr "Một người có thể quay video màn hình ngắn cho từng quyền mà các phòng khám sử dụng, phục vụ App Review."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "About an hour of hands-on time, spread over the weeks Meta takes to review."
+msgstr "Khoảng một giờ thao tác trực tiếp, rải ra trong những tuần Meta xét duyệt."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "A Zalo account that already administers the Official Account the clinics will message from."
+msgstr "Một tài khoản Zalo đang quản trị Official Account mà các phòng khám sẽ nhắn tin từ đó."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Access to the Official Account's settings, to add our addresses."
+msgstr "Quyền vào phần cài đặt của Official Account, để thêm các địa chỉ của chúng tôi."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "About half an hour, all of it yours — Zalo reviews nothing here."
+msgstr "Khoảng nửa giờ, tất cả đều do bạn làm — Zalo không xét duyệt gì ở đây."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Meta App Dashboard → Create app → Business"
+msgstr "Meta App Dashboard → Create app → Business"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Meta App Dashboard → Settings → Basic"
+msgstr "Meta App Dashboard → Settings → Basic"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Meta Business settings → Security Center"
+msgstr "Meta Business settings → Security Center"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Meta App Dashboard → App Review → Permissions"
+msgstr "Meta App Dashboard → App Review → Permissions"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Meta App Dashboard → Webhooks"
+msgstr "Meta App Dashboard → Webhooks"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Meta App Dashboard → the two sign-in configurations"
+msgstr "Meta App Dashboard → hai cấu hình đăng nhập"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Zalo Developers → Create application"
+msgstr "Zalo Developers → Create application"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Zalo Developers → your app → Settings"
+msgstr "Zalo Developers → ứng dụng của bạn → Settings"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Zalo Developers → your app → Webhook"
+msgstr "Zalo Developers → ứng dụng của bạn → Webhook"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "A diagram of the provider console screen this step is about, with the field you need highlighted."
+msgstr "Sơ đồ màn hình bảng điều khiển của nhà cung cấp mà bước này nói tới, với ô bạn cần được làm nổi bật."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Sign-in redirect address"
+msgstr "Địa chỉ chuyển hướng đăng nhập"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Webhook verify token"
+msgstr "Mã xác minh webhook"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Webhook address — %s"
+msgstr "Địa chỉ webhook — %s"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Select the value and copy it manually."
+msgstr "Hãy bôi đen giá trị và tự sao chép."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Submitted %s"
+msgstr "Đã nộp %s"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Submitted on %s. We cannot see the provider's queue, so this date is your own note."
+msgstr "Đã nộp ngày %s. Chúng tôi không nhìn thấy hàng đợi của nhà cung cấp, nên ngày này là ghi chú của riêng bạn."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Last seen %s."
+msgstr "Lần gần nhất lúc %s."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "A secret is already saved (ending %s). Pasting a new one replaces it."
+msgstr "Đã lưu một khoá bí mật (kết thúc bằng %s). Dán khoá mới sẽ thay thế khoá cũ."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "It came back as \"%s\" — if that is not your app, the App ID belongs to a different one."
+msgstr "Kết quả trả về là \"%s\" — nếu đó không phải ứng dụng của bạn thì App ID thuộc về một ứng dụng khác."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Waiting on the provider"
+msgstr "Đang chờ nhà cung cấp"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Needs attention"
+msgstr "Cần xử lý"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.js:0
+msgid "%s of %s providers are ready. The Go-Live Studio walks you through the rest."
+msgstr "%s trên %s nhà cung cấp đã sẵn sàng. Studio Go-Live sẽ hướng dẫn bạn phần còn lại."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/center/channel_center.xml:0
+msgid "Open the Go-Live Studio"
+msgstr "Mở Studio Go-Live"

@@ -1,0 +1,282 @@
+/* Channel Go-Live Studio (GL-2) — the operator plane.
+   Same design system as the Channel Connection Center: flat mono colours, no
+   gradients, CSS-mask icons (in ./golive_studio.css — Odoo's libsass mangles
+   data-URI mask() inside .scss, ledger §5.51).
+
+   Three rules this stylesheet obeys, each paid for by a live failure:
+   - the root uses `display:flex; width:100%; height:100%`, never
+     `position:absolute; inset:0` — under the /bizapp CMS shell the action host
+     is not a positioned ancestor and inset:0 escapes to the viewport, hiding
+     the left edge behind the sidebar (§5.52);
+   - no `min()` / `max()` / `clamp()` anywhere: libsass evaluates them as SASS
+     functions and ONE failure ships the whole backend bundle unstyled (§5.68);
+   - no `contain` / `transform` / `filter` on any wrapper that can hold a
+     field — that is the many2one-dropdown over-paint trap (§5.96). */
+
+.o_golive_studio {
+  --navy:#1e2a5e; --bg:#f2f4f9; --card:#ffffff; --ink:#1b2340;
+  --mut:#6a7189; --faint:#98a0b6; --line:#e3e7f0; --line-2:#d3d9e7;
+  --accent:#3451d1; --accent-soft:#eaeefb;
+  --ok:#188554; --ok-soft:#e7f4ec;
+  --warn:#b76e00; --warn-soft:#fdf3e2;
+  --danger:#c62839; --danger-soft:#fbebed;
+  --art-line:#c3cadd; --art-panel:#f7f8fc; --art-chrome:#e7eaf3;
+  --r:10px; --r-lg:14px;
+  --sh:0 1px 2px rgba(27,35,64,.06),0 4px 14px rgba(27,35,64,.06);
+
+  display:flex; flex-direction:column; width:100%; height:100%; min-height:0;
+  overflow:auto; background:var(--bg); color:var(--ink);
+  font-size:13px; line-height:1.5;
+
+  * { box-sizing:border-box; }
+  button { font:inherit; border:none; background:none; cursor:pointer; color:inherit; }
+  input { font:inherit; color:inherit; }
+  /* The backend theme colours headings with a fixed dark navy that does NOT
+     follow `data-theme`, so every h1/h2 in here went dark-on-dark the moment
+     the page flipped (browser QA, pixel pass 2). Binding them to our own token
+     is deterministic in both themes — the light values are unchanged. */
+  h1, h2 { color:var(--ink); }
+
+  /* ---------- header ---------- */
+  .gl-top{display:flex;align-items:flex-start;justify-content:space-between;
+    gap:16px;padding:20px 24px 12px;background:var(--card);
+    border-bottom:1px solid var(--line);flex:none}
+  .gl-title{display:flex;gap:12px;align-items:flex-start}
+  .gl-title .ic{width:22px;height:22px;color:var(--navy);margin-top:2px}
+  .gl-title h1{margin:0;font-size:17px;font-weight:800;letter-spacing:-.2px}
+  .gl-title p{margin:2px 0 0;color:var(--mut);max-width:64ch}
+  .gl-top-actions{display:flex;align-items:center;gap:8px}
+
+  /* ---------- buttons ---------- */
+  .gl-btn{display:inline-flex;align-items:center;gap:6px;border-radius:var(--r);
+    padding:8px 14px;font-weight:700;font-size:12px;border:1px solid transparent;
+    text-decoration:none;transition:background .12s,border-color .12s}
+  .gl-btn.primary{background:var(--navy);color:#fff}
+  .gl-btn.primary:hover:not([disabled]){background:var(--accent)}
+  .gl-btn.ghost{background:var(--card);border-color:var(--line-2);color:var(--ink)}
+  .gl-btn.ghost:hover:not([disabled]){background:var(--bg)}
+  .gl-btn[disabled]{opacity:.45;cursor:not-allowed}
+  .gl-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* ---------- home: the journey map ---------- */
+  /* Tracks are capped as well as floored: `1fr` on a 1900px screen threw the
+     two provider cards into a third of the width with a dead column beside
+     them. justify-content:start keeps them together at the reading edge. */
+  .gl-home{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,460px));
+    justify-content:start;gap:16px;padding:18px 24px 28px}
+  .gl-card{background:var(--card);border:1px solid var(--line);
+    border-radius:var(--r-lg);padding:18px;display:flex;flex-direction:column;
+    gap:12px;box-shadow:var(--sh)}
+  .gl-card-head{display:flex;gap:14px;align-items:center}
+  .gl-ring{flex:none;width:56px;height:56px;display:block}
+  .gl-ring .gl-ring-bg{fill:none;stroke:var(--line);stroke-width:5}
+  .gl-ring .gl-ring-fg{fill:none;stroke:var(--navy);stroke-width:5;
+    stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%}
+  .gl-ring.is-complete .gl-ring-fg{stroke:var(--ok)}
+  /* A 0-length dash with stroke-linecap:round still paints a dot — on an
+     untouched provider that reads as progress it has not made. */
+  .gl-ring.is-empty .gl-ring-fg{stroke-linecap:butt}
+  .gl-ring text{fill:var(--ink);font-size:15px;font-weight:800;
+    text-anchor:middle;dominant-baseline:central}
+  .gl-card-id{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .gl-card-id h2{margin:0;font-size:15px;font-weight:800}
+  .gl-chips{display:flex;flex-wrap:wrap;gap:5px}
+  .gl-chip{font-size:10px;font-weight:800;letter-spacing:.3px;
+    text-transform:uppercase;border-radius:20px;padding:2px 9px;
+    background:var(--line);color:var(--mut)}
+  .gl-chip.tone-ok{background:var(--ok-soft);color:var(--ok)}
+  .gl-next{margin:0;font-weight:700}
+  .gl-next .gl-next-k{color:var(--faint);font-weight:800;font-size:11px;
+    text-transform:uppercase;letter-spacing:.3px;display:block}
+  .gl-est{margin:0;color:var(--mut);display:flex;align-items:flex-start;gap:7px}
+  .gl-est .ic{width:14px;height:14px;margin-top:2px;color:var(--faint)}
+  .gl-prereq{border-top:1px solid var(--line);padding-top:10px}
+  .gl-prereq summary{cursor:pointer;font-weight:700;color:var(--mut);font-size:12px}
+  .gl-prereq summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .gl-prereq ul{margin:9px 0 0;padding-left:18px;color:var(--mut)}
+  .gl-prereq li{margin:0 0 4px}
+  .gl-card .gl-actions{margin-top:auto;padding-top:4px}
+  .gl-card .gl-actions .gl-btn{width:100%;justify-content:center}
+
+  /* ---------- provider flow ---------- */
+  .gl-flow{display:flex;align-items:flex-start;gap:20px;padding:18px 24px 28px;
+    min-height:0}
+  .gl-rail{flex:none;width:250px;display:flex;flex-direction:column;gap:8px}
+  .gl-rail-list{list-style:none;margin:0;padding:0;display:flex;
+    flex-direction:column;gap:2px}
+  .gl-rail-item{display:flex;align-items:flex-start;gap:10px;width:100%;
+    text-align:left;padding:9px 10px;border-radius:var(--r);
+    border:1px solid transparent;color:var(--mut)}
+  .gl-rail-item:hover{background:var(--card)}
+  .gl-rail-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .gl-rail-item.is-open{background:var(--card);border-color:var(--line-2);
+    color:var(--ink);box-shadow:var(--sh)}
+  .gl-bub{width:24px;height:24px;flex:none;border-radius:50%;display:flex;
+    align-items:center;justify-content:center;background:var(--line);
+    color:var(--mut);font-size:11px;font-weight:800}
+  .gl-bub .ic{width:13px;height:13px}
+  .gl-rail-item.st-done .gl-bub{background:var(--ok-soft);color:var(--ok)}
+  .gl-rail-item.st-waiting .gl-bub{background:var(--warn-soft);color:var(--warn)}
+  .gl-rail-item.st-fail .gl-bub{background:var(--danger-soft);color:var(--danger)}
+  .gl-rail-item.is-open .gl-bub{background:var(--navy);color:#fff}
+  .gl-rail-item.is-open.st-done .gl-bub{background:var(--ok);color:#fff}
+  .gl-rail-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .gl-rail-name{font-weight:700;line-height:1.35}
+  .gl-rail-sub{font-size:11px;color:var(--faint);display:flex;
+    align-items:center;gap:5px}
+  .gl-rail-sub .ic{width:11px;height:11px}
+  .gl-rail-item.st-done .gl-rail-name{color:var(--ok)}
+
+  /* One-shot green flash the moment a handshake lands. */
+  .gl-rail-item.gl-flash{animation:gl-flash-in .9s ease-out 1}
+  @keyframes gl-flash-in{
+    0%{background:var(--ok-soft)}
+    60%{background:var(--ok-soft)}
+    100%{background:var(--card)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .gl-rail-item.gl-flash{animation:none;background:var(--ok-soft)}
+    .gl-btn{transition:none}
+  }
+
+  /* ---------- canvas ---------- */
+  .gl-canvas{flex:1;min-width:0;max-width:860px;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--r-lg);box-shadow:var(--sh);padding:22px 24px 26px;
+    display:flex;flex-direction:column;gap:14px}
+  .gl-canvas-head{display:flex;flex-direction:column;gap:6px}
+  .gl-canvas-head h2{margin:0;font-size:19px;font-weight:800;letter-spacing:-.2px}
+  .gl-canvas-head p{margin:0;color:var(--mut);max-width:74ch}
+  .gl-status{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+    font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;
+    border-radius:20px;padding:3px 10px;background:var(--line);color:var(--mut)}
+  .gl-status .ic{width:12px;height:12px}
+  .gl-status.st-done{background:var(--ok-soft);color:var(--ok)}
+  .gl-status.st-waiting{background:var(--warn-soft);color:var(--warn)}
+  .gl-status.st-fail{background:var(--danger-soft);color:var(--danger)}
+
+  /* ---------- console illustration ---------- */
+  .gl-art{margin:0;display:flex;flex-direction:column;gap:7px}
+  .gl-art svg{width:100%;height:auto;max-width:420px;display:block;
+    border:1px solid var(--line);border-radius:var(--r);background:var(--art-panel)}
+  .gl-art svg .gl-art-chrome{fill:var(--art-chrome)}
+  .gl-art svg .gl-art-line{fill:none;stroke:var(--art-line);stroke-width:2;
+    stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .gl-art svg .gl-art-fill{fill:var(--art-line)}
+  .gl-art svg .gl-art-hot{fill:none;stroke:var(--accent);stroke-width:2.4;
+    vector-effect:non-scaling-stroke}
+  .gl-art svg .gl-art-hot-fill{fill:var(--accent)}
+  .gl-art figcaption{color:var(--faint);font-size:11.5px;font-weight:700}
+
+  /* ---------- copy chips ---------- */
+  .gl-copies{display:flex;flex-direction:column;gap:8px}
+  .gl-copy{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    border:1px solid var(--line-2);border-radius:var(--r);padding:8px 10px;
+    background:var(--bg)}
+  .gl-copy-id{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+  .gl-copy-l{font-size:10px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.3px;color:var(--faint)}
+  .gl-copy-v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gl-copy-v.empty{font-family:inherit;color:var(--mut);white-space:normal}
+
+  /* ---------- inputs ---------- */
+  .gl-form{display:flex;flex-direction:column;gap:4px}
+  .gl-field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;
+    max-width:520px}
+  .gl-label{font-size:11px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.3px;color:var(--faint)}
+  .gl-input{width:100%;border:1px solid var(--line-2);border-radius:var(--r);
+    padding:9px 11px;background:var(--card);outline:none}
+  .gl-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .gl-input.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12px}
+  .gl-input.bad{border-color:var(--danger)}
+  .gl-err{color:var(--danger);font-weight:600;font-size:12px}
+  .gl-hint{color:var(--mut);font-size:12px}
+  .gl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+  /* ---------- verification + waits ---------- */
+  .gl-note{border-radius:var(--r);padding:11px 13px;font-weight:600;
+    display:flex;align-items:flex-start;gap:9px}
+  .gl-note .ic{margin-top:1px}
+  .gl-note.ok{background:var(--ok-soft);color:var(--ok)}
+  .gl-note.warn{background:var(--warn-soft);color:var(--warn)}
+  .gl-note.bad{background:var(--danger-soft);color:var(--danger)}
+  .gl-note.plain{background:var(--bg);color:var(--mut)}
+  .gl-note div{min-width:0}
+  .gl-note p{margin:0}
+  .gl-note .gl-note-sub{font-weight:400;margin-top:3px}
+
+  /* ---------- the done canvas ---------- */
+  .gl-done{align-items:center;text-align:center;gap:16px;padding:40px 24px}
+  .gl-done .gl-done-mark{width:72px;height:72px;border-radius:50%;
+    background:var(--ok-soft);color:var(--ok);display:flex;align-items:center;
+    justify-content:center}
+  .gl-done .gl-done-mark .ic{width:34px;height:34px}
+  .gl-done .gl-done-mark.pending{background:var(--line);color:var(--mut)}
+  /* the shared status chip is `align-self:flex-start`; this canvas is centred */
+  .gl-done .gl-status{align-self:center}
+  .gl-done h2{margin:0;font-size:22px;font-weight:800}
+  .gl-done p{margin:0;color:var(--mut);max-width:60ch}
+  .gl-done ul{list-style:none;margin:0;padding:0;color:var(--mut);
+    display:flex;flex-direction:column;gap:4px}
+
+  /* ---------- refusal / errors ---------- */
+  .gl-denied{margin:auto;max-width:520px;background:var(--card);
+    border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh);
+    padding:32px;text-align:center;display:flex;flex-direction:column;
+    align-items:center;gap:12px}
+  .gl-denied .ic{width:30px;height:30px;color:var(--faint)}
+  .gl-denied h2{margin:0;font-size:16px;font-weight:800}
+  .gl-denied p{margin:0;color:var(--mut)}
+  .gl-alert{border-radius:var(--r);padding:11px 13px;margin:12px 24px 0;
+    font-weight:600;background:var(--danger-soft);color:var(--danger)}
+  .gl-empty{padding:40px 24px;color:var(--mut)}
+
+  @media (max-width:900px){
+    .gl-flow{flex-direction:column;gap:14px}
+    .gl-rail{width:100%}
+    .gl-rail-list{flex-direction:row;overflow-x:auto}
+    .gl-rail-item{flex:none;width:190px}
+  }
+  @media (max-width:640px){
+    .gl-home{grid-template-columns:1fr;padding:14px}
+    .gl-top{padding:16px 14px 10px}
+    .gl-flow{padding:14px}
+    .gl-canvas{padding:18px 16px 20px}
+  }
+}
+
+/* ===== dark theme =====
+   health_theme sets `data-theme="dark"` on <html>/<body>
+   (primary_variables.scss:322). The Studio owns a local palette, exactly as
+   the Center does, so it re-declares that palette here rather than inheriting
+   one it never used. Flat mono in both directions — the same hues, moved. */
+[data-theme='dark'] .o_golive_studio {
+  --navy:#83c5fa; --bg:#0e1626; --card:#16213a; --ink:#ffffff;
+  --mut:rgba(255,255,255,.72); --faint:rgba(255,255,255,.5);
+  --line:#243049; --line-2:#324063;
+  --accent:#42a5f5; --accent-soft:rgba(66,165,245,.16);
+  --ok:#7bc685; --ok-soft:rgba(123,198,133,.16);
+  --warn:#fcb24d; --warn-soft:rgba(252,178,77,.16);
+  --danger:#f07c75; --danger-soft:rgba(240,124,117,.16);
+  --art-line:#465575; --art-panel:#101a2c; --art-chrome:#1d2942;
+  --sh:0 2px 6px rgba(0,0,0,.4);
+
+  .gl-btn.primary{background:var(--accent);color:#0e1626}
+  .gl-btn.primary:hover:not([disabled]){background:var(--navy)}
+  .gl-ring .gl-ring-fg{stroke:var(--accent)}
+  .gl-rail-item.is-open .gl-bub{background:var(--accent);color:#0e1626}
+  .gl-rail-item.is-open.st-done .gl-bub{background:var(--ok);color:#0e1626}
+  /* The flash animation is NOT redeclared here: SASS bubbles a keyframes
+     block to the root, so a second one of the same name would win globally
+     and the light theme would animate towards the dark card colour. The one
+     declaration above interpolates `var(--card)`, which already resolves per
+     element, so it is correct in both themes. */
+  .gl-done .gl-done-mark{color:var(--ok)}
+}
+
+[data-theme='dark'] .o_channel_center .cc-golive-strip{
+  background:rgba(66,165,245,.16);color:#ffffff;border-color:#324063;
+}
+[data-theme='dark'] .o_channel_center .cc-golive-strip .ic{color:#83c5fa}

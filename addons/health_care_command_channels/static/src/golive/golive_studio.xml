@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!--
+  Channel Go-Live Studio (GL-2) — the journey map and the two provider flows.
+
+  Every server string (step title, body, estimate, validation error, preflight
+  detail) is rendered with `t-esc`. There is no `t-out` and no `t-raw` in this
+  file, deliberately: an escaped `<script>` written into a QWeb arch is served
+  to the browser as a LIVE element (ledger §5.64, this module's own history).
+
+  Every string written here in English is a UI string of ours and is carried in
+  i18n/vi.po with an `#. odoo-javascript` marker plus a `#:` occurrence on this
+  file (§5.58 + §5.67 — either one missing and the catalogue is inert).
+-->
+<t t-name="health_care_command_channels.GoliveStudio">
+  <div class="o_golive_studio">
+
+    <!-- ============ the operator refusal ============
+         Not an error dialog and not a retry storm: one honest card that says
+         whose console this is. `gl-denied` is the marker the tests probe. -->
+    <div t-if="state.denied" class="gl-denied">
+      <span class="ic ic-lock"/>
+      <h2>The Go-Live Studio is for the platform operator</h2>
+      <p>This console creates the provider applications every clinic signs in
+        through, so it stays with the team that owns those accounts. Ask your
+        Health19 administrator to run the go-live, or to give you platform
+        administrator access.</p>
+    </div>
+
+    <t t-else="">
+      <header class="gl-top">
+        <div class="gl-title">
+          <span class="ic ic-rocket"/>
+          <div>
+            <h1>Channel Go-Live Studio</h1>
+            <p>Create the provider applications the clinics sign in through.
+              One guided run per provider — we say what to do and where to do
+              it, and we watch for the proof that it worked.</p>
+          </div>
+        </div>
+        <div class="gl-top-actions">
+          <button t-if="state.view !== 'home'" class="gl-btn ghost gl-home-btn"
+                  t-on-click="() => this.goHome()">
+            <span class="ic ic-back"/><span>All providers</span>
+          </button>
+          <button class="gl-btn ghost gl-refresh" t-on-click="() => this.load()"
+                  t-att-disabled="state.loading or state.busy">
+            <span class="ic ic-refresh"/><span>Refresh</span>
+          </button>
+        </div>
+      </header>
+
+      <div t-if="state.error" class="gl-alert" role="alert" t-esc="state.error"/>
+      <div t-if="state.loading and !state.providers.length" class="gl-empty">Loading…</div>
+
+      <!-- ===================== home: the journey map ===================== -->
+      <div t-if="state.view === 'home' and state.providers.length" class="gl-home">
+        <t t-foreach="state.providers" t-as="card" t-key="card.provider">
+          <section class="gl-card gl-provider-card" t-att-data-provider="card.provider">
+
+            <div class="gl-card-head">
+              <svg class="gl-ring" viewBox="0 0 60 60" role="img"
+                   t-att-class="{'is-complete': isComplete(card), 'is-empty': isEmpty(card)}"
+                   t-att-aria-label="ringLabel(card)">
+                <circle class="gl-ring-bg" cx="30" cy="30" r="25"/>
+                <circle class="gl-ring-fg" cx="30" cy="30" r="25"
+                        t-att-stroke-dasharray="ringDash(card)"/>
+                <text x="30" y="31"><t t-esc="doneCount(card)"/>/<t t-esc="card.steps.length"/></text>
+              </svg>
+              <div class="gl-card-id">
+                <h2 t-esc="providerName(card)"/>
+                <div class="gl-chips">
+                  <t t-foreach="card.channels" t-as="channel" t-key="channel">
+                    <span class="gl-chip"
+                          t-att-class="{'tone-ok': card.platform_ready[channel]}"
+                          t-esc="channelName(channel)"/>
+                  </t>
+                </div>
+              </div>
+            </div>
+
+            <p class="gl-next" t-if="nextStep(card)">
+              <span class="gl-next-k" t-if="!isComplete(card)">Next</span>
+              <span class="gl-next-k" t-else="">Finished</span>
+              <span t-esc="nextStep(card).title"/>
+            </p>
+
+            <p class="gl-est">
+              <span class="ic ic-clock"/>
+              <span t-esc="estLine(card)"/>
+            </p>
+
+            <!-- ZNS is a capability of the Zalo app, never a second journey. -->
+            <p class="gl-est" t-if="card.provider === 'zalo'">
+              <span class="ic ic-plug"/>
+              <span>ZNS notifications ride this same app — there is nothing
+                separate to register for them.</span>
+            </p>
+
+            <details class="gl-prereq">
+              <summary>What you'll need before you start</summary>
+              <ul>
+                <t t-foreach="prerequisites(card)" t-as="item" t-key="item_index">
+                  <li t-esc="item"/>
+                </t>
+              </ul>
+            </details>
+
+            <div class="gl-actions">
+              <button class="gl-btn primary gl-start"
+                      t-on-click="() => this.openProvider(card)">
+                <span t-if="doneCount(card)">Continue</span>
+                <span t-else="">Start</span>
+              </button>
+            </div>
+          </section>
+        </t>
+      </div>
+
+      <!-- ===================== the provider flow ===================== -->
+      <div t-if="state.view !== 'home' and provider" class="gl-flow">
+
+        <!-- == milestone rail == -->
+        <aside class="gl-rail">
+          <ol class="gl-rail-list">
+            <t t-foreach="provider.steps" t-as="railStep" t-key="railStep.key">
+              <li>
+                <button t-att-class="railClass(railStep)"
+                        t-att-data-step="railStep.key"
+                        t-on-click="() => this.openStep(railStep.key)">
+                  <span class="gl-bub">
+                    <span t-if="railStep.status === 'done'" class="ic ic-check"/>
+                    <span t-elif="railStep.status === 'waiting'" class="ic ic-clock"/>
+                    <span t-elif="railStep.status === 'fail'" class="ic ic-warn"/>
+                    <t t-else="" t-esc="railStep_index + 1"/>
+                  </span>
+                  <span class="gl-rail-t">
+                    <span class="gl-rail-name" t-esc="railStep.title"/>
+                    <span class="gl-rail-sub"
+                          t-if="railStep.status === 'waiting' and railStep.marked_on">
+                      <span class="ic ic-clock"/>
+                      <span t-esc="submittedOn(railStep.marked_on)"/>
+                    </span>
+                  </span>
+                </button>
+              </li>
+            </t>
+          </ol>
+        </aside>
+
+        <!-- == canvas == -->
+        <main t-if="step" t-att-class="canvasClass" t-att-data-step="step.key">
+
+          <!-- ======= the completion canvas ======= -->
+          <t t-if="step.key === 'done'">
+            <div class="gl-done-mark" t-att-class="{'pending': step.status !== 'done'}">
+              <span t-if="step.status === 'done'" class="ic ic-check"/>
+              <span t-else="" class="ic ic-clock"/>
+            </div>
+            <span class="gl-status" t-att-class="'st-' + step.status">
+              <span t-if="step.status === 'done'" class="ic ic-check"/>
+              <span t-else="" class="ic ic-clock"/>
+              <span t-esc="statusLabel(step.status)"/>
+            </span>
+            <h2 t-esc="step.title"/>
+            <p t-if="step.status === 'done'" t-esc="step.body"/>
+            <p t-else="">Not yet. The milestones on the left that are not green
+              are what is still missing — this screen becomes the finish line the
+              moment the last one lands.</p>
+            <div class="gl-chips" t-if="step.status === 'done'">
+              <t t-foreach="provider.channels" t-as="channel" t-key="channel">
+                <span class="gl-chip"
+                      t-att-class="{'tone-ok': provider.platform_ready[channel]}"
+                      t-esc="channelName(channel)"/>
+              </t>
+            </div>
+            <button t-if="step.status === 'done'" class="gl-btn primary gl-open-center"
+                    t-on-click="() => this.openCenter()">
+              <span class="ic ic-plug"/><span>Open the Channel Center</span>
+            </button>
+          </t>
+
+          <!-- ======= every other step ======= -->
+          <t t-else="">
+            <div class="gl-canvas-head">
+              <span class="gl-status" t-att-class="'st-' + step.status">
+                <span t-if="step.status === 'done'" class="ic ic-check"/>
+                <span t-elif="step.status === 'waiting'" class="ic ic-clock"/>
+                <span t-elif="step.status === 'fail'" class="ic ic-warn"/>
+                <span t-esc="statusLabel(step.status)"/>
+              </span>
+              <h2 t-esc="stepHeading(step)"/>
+              <p t-esc="step.body"/>
+            </div>
+
+            <!-- == the stylised console screen (D2) == -->
+            <figure class="gl-art" t-if="art">
+              <t t-call="health_care_command_channels.GoliveArt"/>
+              <figcaption t-esc="artCaption"/>
+            </figure>
+
+            <!-- == deep link into the exact console page == -->
+            <div class="gl-row" t-if="step.console">
+              <a class="gl-btn primary gl-console" t-att-href="step.console"
+                 target="_blank" rel="noopener noreferrer">
+                <span class="ic ic-open"/><span t-esc="step.console_label"/>
+              </a>
+            </div>
+            <div class="gl-note plain gl-console-locked"
+                 t-if="!step.console and step.console_label">
+              <span class="ic ic-lock"/>
+              <div><p>Finish the App ID step first — then this button opens the
+                right page of the app.</p></div>
+            </div>
+
+            <!-- == copy chips == -->
+            <div class="gl-copies" t-if="copyChips.length">
+              <t t-foreach="copyChips" t-as="chip" t-key="chip.id">
+                <div class="gl-copy">
+                  <span class="gl-copy-id">
+                    <span class="gl-copy-l" t-esc="chip.label"/>
+                    <span t-if="chip.value" class="gl-copy-v" t-esc="chip.value"/>
+                    <span t-else="" class="gl-copy-v empty">Not created yet.</span>
+                  </span>
+                  <button class="gl-btn ghost gl-copy-btn" t-if="chip.value"
+                          t-on-click="() => this.copy(chip)">
+                    <span t-if="state.copied === chip.id" class="ic ic-check"/>
+                    <span t-else="" class="ic ic-copy"/>
+                    <span t-if="state.copied === chip.id">Copied</span>
+                    <span t-else="">Copy</span>
+                  </button>
+                </div>
+              </t>
+            </div>
+
+            <!-- The verify token is minted alongside the sign-in configuration
+                 ids, which is a LATER step — so offer it here, where it is
+                 first needed. -->
+            <div class="gl-row" t-if="needsVerifyToken">
+              <button class="gl-btn ghost gl-mint-token"
+                      t-on-click="() => this.generateVerifyToken()"
+                      t-att-disabled="state.busy">Create the verify token</button>
+              <span class="gl-hint">We generate it; you paste the same value into
+                both Meta products. It is not a secret — Meta and we must hold it
+                identically for the check to work at all.</span>
+            </div>
+
+            <!-- == paste-back fields == -->
+            <div class="gl-form" t-if="step.inputs.length" t-ref="form">
+              <t t-foreach="step.inputs" t-as="spec" t-key="spec.name">
+                <div class="gl-field">
+                  <label class="gl-label" t-att-for="'gl-in-' + spec.name"
+                         t-esc="spec.label"/>
+                  <input class="gl-input mono"
+                         t-att-id="'gl-in-' + spec.name"
+                         t-att-name="spec.name"
+                         t-att-type="spec.secret ? 'password' : 'text'"
+                         t-att-class="{'bad': state.inputErrors[spec.name]}"
+                         autocomplete="off" spellcheck="false"
+                         t-on-input="(ev) => this.onInput(spec, ev)"/>
+                  <span class="gl-err" t-if="state.inputErrors[spec.name]"
+                        t-esc="state.inputErrors[spec.name]"/>
+                  <span class="gl-hint gl-secret-hint"
+                        t-if="spec.secret and provider.secret_hint"
+                        t-esc="secretHint(provider.secret_hint)"/>
+                </div>
+              </t>
+              <div class="gl-err gl-form-error" t-if="state.formError" role="alert"
+                   t-esc="state.formError"/>
+              <div class="gl-row">
+                <button class="gl-btn primary gl-save" t-on-click="() => this.submit()"
+                        t-att-disabled="!canSubmit">Save</button>
+              </div>
+            </div>
+
+            <!-- == verify moment: the preflight == -->
+            <t t-if="step.verify === 'preflight'">
+              <div class="gl-note ok gl-preflight-ok"
+                   t-if="provider.preflight.status === 'pass'">
+                <span class="ic ic-check"/>
+                <div>
+                  <p>Meta confirmed this application.</p>
+                  <p class="gl-note-sub" t-esc="preflightEcho(provider.preflight.detail)"/>
+                </div>
+              </div>
+              <div class="gl-note bad gl-preflight-fail"
+                   t-elif="provider.preflight.status === 'fail'">
+                <span class="ic ic-warn"/>
+                <div>
+                  <p>Meta refused this application.</p>
+                  <p class="gl-note-sub" t-esc="provider.preflight.detail"/>
+                  <div class="gl-row">
+                    <button class="gl-btn ghost gl-check-again"
+                            t-on-click="() => this.checkAgain()"
+                            t-att-disabled="state.busy">Check again</button>
+                  </div>
+                </div>
+              </div>
+            </t>
+
+            <!-- == verify moment: the handshake == -->
+            <t t-if="step.verify === 'handshake'">
+              <div class="gl-note ok gl-handshake-ok" t-if="step.status === 'done'">
+                <span class="ic ic-check"/>
+                <div>
+                  <p>The provider's check reached us.</p>
+                  <p class="gl-note-sub" t-if="provider.last_handshake_at"
+                     t-esc="lastSeen(provider.last_handshake_at)"/>
+                </div>
+              </div>
+              <div class="gl-note warn gl-handshake-wait" t-else=""
+                   t-att-class="{'gl-polling': state.waiting}">
+                <span class="ic ic-clock"/>
+                <div>
+                  <p>Waiting for the provider's check to reach us…</p>
+                  <p class="gl-note-sub">Leave this screen open. It turns green by
+                    itself the moment the address you pasted is verified.</p>
+                </div>
+              </div>
+            </t>
+
+            <!-- == a provider review: submitted / not submitted == -->
+            <div class="gl-row" t-if="step.kind === 'wait'">
+              <button class="gl-btn ghost gl-mark" t-if="step.status !== 'waiting'"
+                      t-on-click="() => this.mark(true)"
+                      t-att-disabled="state.busy">Mark as submitted</button>
+              <t t-else="">
+                <span class="gl-hint gl-marked-on"
+                      t-esc="markedOnNote(step.marked_on)"/>
+                <button class="gl-btn ghost gl-unmark" t-on-click="() => this.mark(false)"
+                        t-att-disabled="state.busy">Not submitted yet</button>
+              </t>
+            </div>
+          </t>
+        </main>
+      </div>
+    </t>
+  </div>
+</t>
+
+
+<!--
+  ======================= D2 — the console illustrations =======================
+  Stylised flat-mono DIAGRAMS, not replicas: a window chrome bar, grey
+  placeholder rows, and exactly ONE element in the studio accent with a pointer
+  arrow. No provider logo, wordmark or trade dress appears anywhere — the
+  caption underneath carries the orientation instead ("Meta App Dashboard →
+  Settings → Basic"). Inline so `currentColor` and the CSS variables theme them,
+  and so the page makes no external request.
+-->
+<t t-name="health_care_command_channels.GoliveArt">
+
+  <!-- == Meta: create the app == -->
+  <svg t-if="art === 'meta_creation'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <circle class="gl-art-fill" cx="16" cy="13" r="4"/>
+    <circle class="gl-art-fill" cx="30" cy="13" r="4"/>
+    <circle class="gl-art-fill" cx="44" cy="13" r="4"/>
+    <path class="gl-art-line" d="M28 52h120M28 70h180M28 88h96"/>
+    <rect class="gl-art-hot" x="26" y="108" width="200" height="34" rx="8"/>
+    <circle class="gl-art-hot-fill" cx="46" cy="125" r="6"/>
+    <path class="gl-art-line" d="M62 125h108"/>
+    <path class="gl-art-hot" d="M262 125h-24M244 118l-8 7 8 7"/>
+    <path class="gl-art-line" d="M26 162h150"/>
+  </svg>
+
+  <!-- == Meta: settings → basic (the app secret) == -->
+  <svg t-elif="art === 'meta_basic'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h60"/>
+    <path class="gl-art-line" d="M26 50h70M26 68h150"/>
+    <rect class="gl-art-line" x="26" y="82" width="230" height="26" rx="6"/>
+    <path class="gl-art-line" d="M38 95h60"/>
+    <rect class="gl-art-hot" x="26" y="122" width="230" height="30" rx="6"/>
+    <path class="gl-art-line" d="M38 137h90"/>
+    <rect class="gl-art-hot-fill" x="196" y="130" width="48" height="14" rx="7"/>
+    <path class="gl-art-hot" d="M300 137h-28M278 130l-8 7 8 7"/>
+    <path class="gl-art-line" d="M26 172h120"/>
+  </svg>
+
+  <!-- == Meta: the Security Center (Business Verification) == -->
+  <svg t-elif="art === 'meta_security'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h80"/>
+    <path class="gl-art-line" d="M26 50h110"/>
+    <rect class="gl-art-line" x="26" y="66" width="140" height="86" rx="8"/>
+    <path class="gl-art-line" d="M40 88h100M40 106h72M40 124h88"/>
+    <rect class="gl-art-hot" x="192" y="66" width="142" height="86" rx="8"/>
+    <path class="gl-art-hot" d="M263 92v34M246 109h34"/>
+    <path class="gl-art-line" d="M206 140h114"/>
+    <path class="gl-art-line" d="M26 172h150"/>
+  </svg>
+
+  <!-- == Meta: App Review → permissions == -->
+  <svg t-elif="art === 'meta_review'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h70"/>
+    <path class="gl-art-line" d="M26 48h120"/>
+    <rect class="gl-art-line" x="26" y="62" width="308" height="22" rx="5"/>
+    <path class="gl-art-line" d="M38 73h140"/>
+    <rect class="gl-art-line" x="26" y="90" width="308" height="22" rx="5"/>
+    <path class="gl-art-line" d="M38 101h170"/>
+    <rect class="gl-art-hot" x="26" y="118" width="308" height="24" rx="5"/>
+    <path class="gl-art-line" d="M38 130h120"/>
+    <rect class="gl-art-hot-fill" x="268" y="123" width="54" height="14" rx="7"/>
+    <path class="gl-art-line" d="M26 168h180"/>
+  </svg>
+
+  <!-- == Meta: webhooks == -->
+  <svg t-elif="art === 'meta_webhooks'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h64"/>
+    <path class="gl-art-line" d="M26 48h90"/>
+    <rect class="gl-art-hot" x="26" y="62" width="230" height="28" rx="6"/>
+    <path class="gl-art-line" d="M38 76h150"/>
+    <rect class="gl-art-hot" x="26" y="98" width="230" height="28" rx="6"/>
+    <path class="gl-art-line" d="M38 112h96"/>
+    <rect class="gl-art-hot-fill" x="272" y="98" width="62" height="28" rx="8"/>
+    <path class="gl-art-line" d="M26 148h120M26 166h180"/>
+  </svg>
+
+  <!-- == Meta: the two sign-in configurations == -->
+  <svg t-elif="art === 'meta_config'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h58"/>
+    <rect class="gl-art-hot" x="26" y="48" width="146" height="104" rx="8"/>
+    <path class="gl-art-line" d="M40 74h100M40 94h72"/>
+    <rect class="gl-art-hot-fill" x="40" y="116" width="80" height="14" rx="7"/>
+    <rect class="gl-art-hot" x="188" y="48" width="146" height="104" rx="8"/>
+    <path class="gl-art-line" d="M202 74h100M202 94h72"/>
+    <rect class="gl-art-hot-fill" x="202" y="116" width="80" height="14" rx="7"/>
+    <path class="gl-art-line" d="M26 172h140"/>
+  </svg>
+
+  <!-- == Zalo: create the application == -->
+  <svg t-elif="art === 'zalo_create'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <circle class="gl-art-fill" cx="16" cy="13" r="4"/>
+    <circle class="gl-art-fill" cx="30" cy="13" r="4"/>
+    <path class="gl-art-line" d="M26 52h150M26 70h96"/>
+    <rect class="gl-art-line" x="26" y="84" width="230" height="26" rx="6"/>
+    <path class="gl-art-line" d="M38 97h120"/>
+    <rect class="gl-art-hot" x="26" y="124" width="140" height="32" rx="8"/>
+    <rect class="gl-art-hot-fill" x="58" y="133" width="76" height="14" rx="7"/>
+    <path class="gl-art-hot" d="M212 140h-26M192 133l-8 7 8 7"/>
+  </svg>
+
+  <!-- == Zalo: app settings (id / secret / callback) == -->
+  <svg t-elif="art === 'zalo_settings'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h72"/>
+    <path class="gl-art-line" d="M26 48h80"/>
+    <rect class="gl-art-hot" x="26" y="62" width="230" height="28" rx="6"/>
+    <path class="gl-art-line" d="M38 76h110"/>
+    <rect class="gl-art-hot-fill" x="196" y="69" width="48" height="14" rx="7"/>
+    <rect class="gl-art-line" x="26" y="100" width="230" height="26" rx="6"/>
+    <path class="gl-art-line" d="M38 113h140"/>
+    <path class="gl-art-hot" d="M300 76h-28M278 69l-8 7 8 7"/>
+    <path class="gl-art-line" d="M26 150h120M26 168h180"/>
+  </svg>
+
+  <!-- == Zalo: the one webhook address == -->
+  <svg t-elif="art === 'zalo_webhook'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h60"/>
+    <path class="gl-art-line" d="M26 48h100"/>
+    <rect class="gl-art-hot" x="26" y="62" width="308" height="30" rx="6"/>
+    <path class="gl-art-line" d="M38 77h200"/>
+    <path class="gl-art-line" d="M26 110h90"/>
+    <rect class="gl-art-line" x="26" y="122" width="120" height="18" rx="9"/>
+    <rect class="gl-art-hot-fill" x="166" y="122" width="42" height="18" rx="9"/>
+    <path class="gl-art-line" d="M26 166h180"/>
+  </svg>
+</t>
+
+</templates>

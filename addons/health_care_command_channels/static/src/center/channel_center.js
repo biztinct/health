@@ -74,6 +74,8 @@ export class ChannelCenter extends Component {
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
+        // GL-2: the operator strip's one button hands off to the Studio.
+        this.action = useService("action");
         this.CHANNEL_STYLE = CHANNEL_STYLE;
         this.modalRef = useRef("modal");
 
@@ -134,6 +136,10 @@ export class ChannelCenter extends Component {
             // whether its name is being edited.
             accountLabel: "",
             renaming: false,
+            // GL-2: the operator strip. `null` for everybody whose probe did
+            // not succeed, which is every tenant — the strip then does not
+            // exist and this view is what CC-G shipped.
+            golive: null,
         });
 
         // The ES popup posts its WABA / phone id back through postMessage.
@@ -177,6 +183,7 @@ export class ChannelCenter extends Component {
 
         onWillStart(async () => {
             await this.load();
+            await this._probeGolive();
             this._startPolling();
         });
         onWillUnmount(() => {
@@ -209,6 +216,41 @@ export class ChannelCenter extends Component {
         } finally {
             this.state.loading = false;
         }
+    }
+
+    /**
+     * GL-2 — the operator strip's data, and nothing else.
+     *
+     * `golive_state` raises a UserError for anyone who is not a platform
+     * operator, which is every tenant user this screen exists for. The catch
+     * is therefore the NORMAL path and must be airtight: a failure of any
+     * kind leaves `state.golive` null and the strip simply does not render.
+     * `orm.silent` keeps the failure out of the global error handler too.
+     */
+    async _probeGolive() {
+        try {
+            const providers = await this.orm.silent.call(
+                "channel.platform.app", "golive_state", []);
+            if (!Array.isArray(providers) || !providers.length) {
+                return;
+            }
+            const ready = providers.filter((p) => (p.steps || []).some(
+                (s) => s.key === "done" && s.status === "done")).length;
+            this.state.golive = { ready, total: providers.length };
+        } catch (e) {
+            // Not an operator (or anything else at all): no strip.
+        }
+    }
+
+    get goliveStripText() {
+        const golive = this.state.golive || { ready: 0, total: 0 };
+        return _t("%s of %s providers are ready. The Go-Live Studio walks you through the rest.",
+                  golive.ready, golive.total);
+    }
+
+    async openGoliveStudio() {
+        await this.action.doAction(
+            "health_care_command_channels.action_channel_golive_studio");
     }
 
     _startPolling() {

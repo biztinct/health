@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.8.0.0',
+    'version': '19.0.9.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -263,6 +263,42 @@ long it takes, and how we will know it happened.
   on the success path only, with the routes' bytes and status untouched.
 
 No UI (GL-2), no invitations (GL-3), no Google/Microsoft steps (GL-4).
+
+Go-Live Studio — Phase GL-2 (the Studio itself)
+===============================================
+
+The console GL-1's declaration was written for: one full-screen OWL client
+action (``channel_golive_studio``), operator-only, with a journey map at home
+and a milestone flow per provider.
+
+- **The home screen is a map, not a list.** One card per provider with a
+  progress ring over the steps that are really done, the channels it unlocks as
+  chips (green only where ``platform_ready`` says so), the honest time estimate
+  derived from the declared provider-review waits, and the prerequisites you
+  need before you start. A card works with no platform application at all —
+  that IS step one.
+- **The flow is a rail plus a canvas.** Every step's canvas carries the server's
+  own words, a stylised flat-mono DIAGRAM of the console screen it is about (no
+  logo, no wordmark, no trade dress — a caption carries the orientation), a deep
+  link to the exact page of the provider console, copy chips for every value we
+  generate, and paste-back fields that mirror the server's regex so the
+  DECLARED explanation appears before a round trip and the identical one after.
+- **The proof moments are live.** Storing the Meta secret runs the preflight and
+  the canvas answers with the app's real name, or with Meta's refusal in words
+  and a "Check again". On a webhook step the Studio polls every five seconds —
+  visible tab only, one interval, only while that step is open — and the
+  milestone flashes green the moment the provider's check reaches us.
+- **A non-operator gets a sentence, not a stack trace.** The refusal card names
+  whose console this is; the tenant Channel Center's new operator strip is
+  absent for everyone whose probe did not succeed, so that view is byte-identical
+  to what CC-G shipped for every clinic.
+
+Entry points: the CMS sidebar's ADMIN section (the surface these users actually
+have), a ``base.group_system`` menu item under Care Command Setup, a header
+button on the raw platform-application form, and the Center strip.
+
+No invitations (GL-3), no Google/Microsoft/VoIP24h flows (GL-4), and no change
+to any GL-1 payload.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',
@@ -290,6 +326,9 @@ No UI (GL-2), no invitations (GL-3), no Google/Microsoft steps (GL-4).
         'security/channel_hub_security.xml',
         'views/oauth_templates.xml',
         'views/webchat_templates.xml',
+        # GL-2: BEFORE platform_app_views.xml — that form's header button
+        # references this action with %(...)d, resolved as the view loads.
+        'views/golive_studio_views.xml',
         'views/platform_app_views.xml',
         'views/channel_connection_views.xml',
         'views/channel_message_views.xml',
@@ -300,6 +339,7 @@ No UI (GL-2), no invitations (GL-3), no Google/Microsoft steps (GL-4).
         'data/ir_cron.xml',
         'data/cms_sidebar_items_channel_center.xml',
         'data/cms_sidebar_items_contact_capture.xml',
+        'data/cms_sidebar_items_golive.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -309,6 +349,15 @@ No UI (GL-2), no invitations (GL-3), no Google/Microsoft steps (GL-4).
             'health_care_command_channels/static/src/center/channel_center.scss',
             'health_care_command_channels/static/src/center/channel_center.js',
             'health_care_command_channels/static/src/center/channel_center.xml',
+            # GL-2 — the Go-Live Studio. Same ordering rule: the plain CSS with
+            # the data-URI mask icons FIRST, the scss after it.
+            'health_care_command_channels/static/src/golive/golive_studio.css',
+            'health_care_command_channels/static/src/golive/golive_studio.scss',
+            'health_care_command_channels/static/src/golive/golive_studio.js',
+            'health_care_command_channels/static/src/golive/golive_studio.xml',
+        ],
+        'web.assets_tests': [
+            'health_care_command_channels/static/tests/tours/**/*',
         ],
     },
     'post_init_hook': 'post_init_hook',

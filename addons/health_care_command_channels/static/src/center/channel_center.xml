@@ -24,6 +24,19 @@
       </button>
     </header>
 
+    <!-- GL-2, the ONLY change this phase makes to the tenant Center: an
+         operator-only strip. `state.golive` is set solely by a probe that
+         succeeded, and the probe can only succeed for a platform operator —
+         so for every tenant this element does not exist and the view is
+         byte-identical to what CC-G shipped. -->
+    <div t-if="state.golive" class="cc-golive-strip">
+      <span class="ic ic-rocket"/>
+      <span class="cc-golive-txt" t-esc="goliveStripText"/>
+      <button class="cc-btn primary" t-on-click="() => this.openGoliveStudio()">
+        <span>Open the Go-Live Studio</span>
+      </button>
+    </div>
+
     <div t-if="state.loading and !state.cards.length" class="cc-empty">Loading…</div>
     <div t-if="state.error" class="cc-alert bad" role="alert" t-esc="state.error"/>
 

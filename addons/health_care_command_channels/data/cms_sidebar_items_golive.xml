@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Studio's REAL entry point.
+
+     The backend menuitem (views/golive_studio_views.xml) hangs under
+     "CRM Center → Care Command Setup" and is correct, group-gated, and — for
+     anyone who lives in the /bizapp CMS shell — unreachable: a real login
+     lands there, /odoo redirects straight back into it, and the shell's app
+     switcher lists only its own apps. That is ledger §5.69, whose price tag
+     was an entire phase reachable by deep link only.
+
+     A SIBLING with its own sequence, never a child: cms_sidebar.js:124 turns
+     any item that HAS children into a non-navigating expandable group, so
+     parenting this under an existing leaf would break that leaf. `parent_id`
+     is written explicitly FALSE because an XML data update only writes the
+     fields it names — dropping the field would leave an earlier value in
+     place (§5.69(b), which cost this module a deploy once already).
+
+     NO noupdate: the leaf stays updatable on upgrade. Ungated (no role_ids)
+     exactly like `item_channel_center` — sidebar role gating lives in DB rows
+     that carry no xmlid, and the component renders the server's own refusal
+     honestly rather than 404ing a curious user.
+
+     `match_models` is deliberately ABSENT (§5.94): `channel.platform.app`
+     already belongs to the Platform Applications surface, and a duplicate
+     entry in the last-wins model index would steal its highlight. -->
+<odoo>
+
+    <record id="item_golive_studio" model="cms.sidebar.item">
+        <field name="name">Channel Go-Live</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">93</field>
+        <field name="icon">fa fa-rocket</field>
+        <field name="action_xmlid">health_care_command_channels.action_channel_golive_studio</field>
+        <field name="action_tag">channel_golive_studio</field>
+        <field name="match_action_tags">channel_golive_studio</field>
+    </record>
+
+</odoo>

@@ -23,13 +23,15 @@ Two suites, deliberately:
 """
 import hashlib
 import json
+import os
 import time
 from functools import wraps
 from unittest.mock import patch
 from urllib.parse import urlencode
 
 from odoo.exceptions import UserError, ValidationError
-from odoo.tests import HttpCase, tagged
+from odoo.modules.module import get_manifest
+from odoo.tests import HttpCase, new_test_user, tagged
 
 from odoo.addons.health_care_command_channels.models.care_channel_connection import (
     INTERNAL_CTX,
@@ -620,3 +622,209 @@ class TestGoliveHandshakeHttp(HttpCase):
             headers={'Content-Type': 'application/json',
                      'X-ZEvent-Signature': 'mac=%s' % mac,
                      'X-ZEvent-Timestamp': ts})
+
+
+@tagged('post_install', '-at_install')
+class TestGoliveStudioUi(ChannelHubCase):
+    """T183–T185, T187 — GL-2: the Studio's entry points and its bundle.
+
+    None of this drives the component (that is the tour and the browser
+    evidence pack). What it defends is everything a UI phase can silently lose
+    between deploys: an action whose tag stops matching the registry line, a
+    menu that loses its group, a CMS leaf that never gets seeded — the §5.69
+    trap that made a whole phase deep-link-only — an asset line dropped from
+    the bundle, and a stylesheet that fails to compile and takes every
+    co-bundled module down with it (§5.68).
+    """
+
+    GOLIVE_ASSETS = (
+        'health_care_command_channels/static/src/golive/golive_studio.css',
+        'health_care_command_channels/static/src/golive/golive_studio.scss',
+        'health_care_command_channels/static/src/golive/golive_studio.js',
+        'health_care_command_channels/static/src/golive/golive_studio.xml',
+    )
+
+    # ==================================================================
+    # T183 — the three entry points exist and point at the same tag
+    # ==================================================================
+    def test_183_entry_points(self):
+        action = self.env.ref(
+            'health_care_command_channels.action_channel_golive_studio')
+        self.assertEqual(action._name, 'ir.actions.client')
+        self.assertEqual(action.tag, 'channel_golive_studio')
+        self.assertEqual(action.target, 'current')
+
+        menu = self.env.ref(
+            'health_care_command_channels.menu_channel_golive_studio')
+        self.assertIn(self.env.ref('base.group_system'), menu.group_ids,
+                      'the platform plane stays with the platform operator')
+        self.assertEqual(menu.parent_id,
+                         self.env.ref('health_care_command.menu_care_command_config'))
+
+        # §5.69: a backend menuitem is NOT a reachable surface for the users
+        # who live in the /bizapp shell. The sidebar leaf is part of "done".
+        item = self.env.ref('health_care_command_channels.item_golive_studio')
+        self.assertEqual(item.action_tag, 'channel_golive_studio')
+        self.assertEqual(item.match_action_tags, 'channel_golive_studio')
+        self.assertEqual(
+            item.action_xmlid,
+            'health_care_command_channels.action_channel_golive_studio')
+        self.assertEqual(item.section_id,
+                         self.env.ref('health_cms_sidebar.section_admin'))
+        # §5.69(a): a leaf with a parent turns that parent into a
+        # non-navigating accordion. This one is a sibling, explicitly.
+        self.assertFalse(item.parent_id)
+        # `cms.sidebar.item` declares no inverse One2many, so "has children"
+        # is a search, not a field — and it is the thing that matters here.
+        self.assertFalse(self.env['cms.sidebar.item'].with_context(
+            active_test=False).search_count([('parent_id', '=', item.id)]))
+        # §5.94: `match_models` in a last-wins index would steal the highlight
+        # of the model's one primary surface (Platform Applications).
+        self.assertFalse(item.match_models)
+
+        # The raw form keeps its escape-hatch button, pointing at this action.
+        arch = self.env.ref(
+            'health_care_command_channels.view_channel_platform_app_form'
+        ).get_combined_arch()
+        self.assertIn('name="%d"' % action.id, arch)
+
+    # ==================================================================
+    # T184 — the bundle lines, in the order libsass needs them
+    # ==================================================================
+    def test_184_assets_are_bundled(self):
+        manifest = get_manifest('health_care_command_channels')
+        backend = list(manifest['assets']['web.assets_backend'])
+        for path in self.GOLIVE_ASSETS:
+            self.assertIn(path, backend, 'lost from web.assets_backend: %s' % path)
+
+        # §5.51: the plain CSS carrying the data-URI mask icons must load
+        # BEFORE the scss, or libsass mangles them.
+        self.assertLess(backend.index(self.GOLIVE_ASSETS[0]),
+                        backend.index(self.GOLIVE_ASSETS[1]))
+
+        # The tour is only a test if it ships in the test bundle.
+        self.assertIn('health_care_command_channels/static/tests/tours/**/*',
+                      manifest['assets']['web.assets_tests'])
+
+    # ==================================================================
+    # T185 — the stylesheet really COMPILES, and does not take the bundle
+    #        down with it if it does not (ledger §5.68)
+    # ==================================================================
+    def test_185_backend_css_carries_both_consoles(self):
+        """Nothing else in this repo's suites compiles an asset bundle.
+
+        §5.68 was paid for live: one CSS-native `min()` in a `.scss` made
+        libsass fail the WHOLE bundle, which shipped every co-bundled module
+        unstyled — with a single WARNING in the log and a green test run. The
+        assertion that matters is the PAIR: our own selector AND a known-good
+        sibling. Our selector alone could pass on a bundle that had lost
+        everything else.
+        """
+        # `.css()` hands back the generated ir.attachment, not the text —
+        # measured on vietuat: /web/assets/<hash>/web.assets_web.min.css,
+        # 2.19 MB when the compilation is healthy, ~40 KB when it is not.
+        bundle = self.env['ir.qweb']._get_asset_bundle(
+            'web.assets_web', css=True, js=False, assets_params={})
+        css = (bundle.css().raw or b'').decode('utf-8', 'replace')
+        self.assertGreater(len(css), 500000,
+                           'the backend CSS bundle collapsed — a scss file in '
+                           'SOME module failed to compile (§5.68)')
+        self.assertIn('.o_golive_studio', css,
+                      'the Studio stylesheet did not reach the backend bundle')
+        self.assertIn('.o_channel_center', css,
+                      'a sibling stylesheet vanished — the whole scss '
+                      'compilation failed, not just ours')
+        # The mask icons live in the plain CSS and must survive verbatim.
+        self.assertIn('ic-rocket', css)
+
+    # ==================================================================
+    # T187 — the Center is untouched (regression tripwire for the strip)
+    # ==================================================================
+    def test_187_channel_center_action_untouched(self):
+        action = self.env.ref(
+            'health_care_command_channels.action_channel_center')
+        self.assertEqual(action.tag, 'channel_center')
+        self.assertEqual(action.target, 'current')
+        item = self.env.ref(
+            'health_care_command_channels.item_channel_center')
+        self.assertEqual(item.action_tag, 'channel_center')
+        self.assertEqual(item.section_id,
+                         self.env.ref('health_cms_sidebar.section_crm'))
+
+        # The strip is the only new element, and it is bound to a probe that
+        # can only succeed for an operator. Assert the shape structurally: the
+        # template renders it under `state.golive` and nothing else.
+        path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            'static', 'src', 'center', 'channel_center.xml')
+        with open(path, encoding='utf-8') as handle:
+            template = handle.read()
+        self.assertEqual(template.count('cc-golive-strip'), 1)
+        self.assertIn('t-if="state.golive" class="cc-golive-strip"', template)
+
+
+@tagged('post_install', '-at_install')
+class TestGoliveStudioHttp(HttpCase):
+    """T186, T188 — the Studio over HTTP.
+
+    T186 needs no browser: what the refusal card renders is whatever
+    `golive_state` answers a non-operator over the wire, and that is the thing
+    worth pinning. T188 is the OWL tour and runs only where a Chrome binary
+    exists — Odoo raises `unittest.SkipTest` otherwise, so a missing browser is
+    reported as a skip and never as a pass (§5.83).
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        env = cls.env
+        # §5.86: `admin/admin` is a fresh demo database's credentials, not
+        # this one's. Own the users. A login of 8+ characters keeps
+        # new_test_user's default password equal to the login.
+        province = env['health.catchment.province'].search([], limit=1)
+        extra = {'catchment_province_id': province.id} if province else {}
+        cls.operator = new_test_user(
+            env, login='gl2operator', groups='base.group_system,'
+            'health_crm.group_health_crm_manager', **extra)
+        cls.tenant = new_test_user(
+            env, login='gl2manager',
+            groups='health_crm.group_health_crm_manager', **extra)
+
+    def _call_kw(self, method):
+        return self.url_open(
+            '/web/dataset/call_kw',
+            data=json.dumps({
+                'jsonrpc': '2.0', 'method': 'call',
+                'params': {'model': 'channel.platform.app', 'method': method,
+                           'args': [], 'kwargs': {}}}),
+            headers={'Content-Type': 'application/json'})
+
+    # ==================================================================
+    # T186 — a non-operator is refused in words, over the wire
+    # ==================================================================
+    def test_186_non_operator_is_refused(self):
+        self.authenticate('gl2manager', 'gl2manager')
+        payload = self._call_kw('golive_state').json()
+        self.assertNotIn('result', payload,
+                         'a CRM manager must never receive the platform state')
+        error = payload['error']['data']
+        self.assertTrue(error['name'].endswith('UserError'),
+                        'the component keys its honest refusal card on the '
+                        'exception CLASS: %s' % error['name'])
+        self.assertIn('platform administrator', error['message'])
+
+        # ...and the operator gets the real thing on the same route.
+        self.authenticate('gl2operator', 'gl2operator')
+        payload = self._call_kw('golive_state').json()
+        self.assertIn('result', payload, payload.get('error'))
+        self.assertEqual([p['provider'] for p in payload['result']],
+                         list(GOLIVE_PROVIDERS))
+
+    # ==================================================================
+    # T188 — the journey map renders and the Meta rail opens
+    # ==================================================================
+    def test_188_studio_tour(self):
+        self.start_tour(
+            '/odoo/action-health_care_command_channels.'
+            'action_channel_golive_studio',
+            'channel_golive_studio_tour', login='gl2operator')

@@ -44,6 +44,22 @@ class ChannelHubCase(TransactionCase):
         env['care.channel.connection'].sudo().with_context(
             active_test=False).search([]).write({'active': False})
 
+        # FORCED FIXTURE EDIT (GL-2). The SAME trap, one plane up. A partial
+        # unique index makes `provider` unique among the ACTIVE
+        # `channel.platform.app` rows, and several suites create a `meta` one
+        # unconditionally (`common_spine.setUpClass`, `test_framework` T73) —
+        # so the moment a human uses the platform plane on the deployment,
+        # `An active platform application already exists for this provider`
+        # errors ELEVEN suites against perfectly correct code. Measured live on
+        # vietuat during GL-2's own browser QA: the Go-Live Studio exists
+        # precisely so an operator WILL create these rows, which turns a latent
+        # fixture assumption into a routine one. It belongs here rather than in
+        # common_spine because `test_framework.TestChannelFramework` derives
+        # from THIS class and creates its own. Archived, never deleted, inside
+        # the test transaction — it rolls back with the class (ledger §5.95).
+        cls.App.sudo().with_context(active_test=False).search([]).write(
+            {'active': False})
+
         cls.crm_user = cls._mk_user('chub_user', ['health_crm.group_health_crm_user'])
         cls.crm_mgr = cls._mk_user('chub_mgr', ['health_crm.group_health_crm_manager'])
 
