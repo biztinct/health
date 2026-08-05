@@ -2035,3 +2035,12 @@ a no-op.
     itself is broken, run `sudo -u odoo odoo-bin -c /etc/odoo-server.conf` in
     the foreground for 30s: it either serves traffic (the app is fine, the
     problem is daemonisation) or prints the real traceback.
+
+- **§5.123 — a page rendered in a DIFFERENT user's language is untestable
+    with English literals.** GL-3's public invite page renders the step copy
+    in the *sender's* language (`invited_by_id.lang`), so on a vi-VN
+    deployment a test asserting `'Create the app' in body` is green only on
+    an English database. Resolve every expectation through
+    `with_context(lang=<that user>.lang)` on the same model method the page
+    uses, and compare `markupsafe.escape()`d text (the page HTML-escapes).
+    Same family as §5.50. (GL-3.)
