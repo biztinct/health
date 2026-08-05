@@ -55,10 +55,17 @@ from .channel_platform_app import (
 
 _logger = logging.getLogger(__name__)
 
-# The two providers the Studio drives in GL-1. Google and Microsoft are GL-4:
-# their sign-in runs on Odoo's own mixins, so their steps are a different
-# shape and inventing them now would be guesswork with a UI attached.
-GOLIVE_PROVIDERS = ('meta', 'zalo')
+# Every provider the Studio drives, in home-screen order. GL-4 added google
+# and microsoft: their sign-in runs on Odoo's own mixins rather than on our
+# OAuth engine, which changes what the steps SAY and nothing about how they
+# are declared — the whole point of the framework GL-1 built.
+#
+# VoIP24h is deliberately absent and must stay absent: `CallAdapter` declares
+# `needs_platform_app: False`, so there is no provider application to create,
+# no console paperwork to guide, and a flow would be an invented lie. The
+# Studio home carries a static truth card for it instead (GL-4 D4), and
+# `_golive_step('call'|'voip24h', …)` raises.
+GOLIVE_PROVIDERS = ('meta', 'zalo', 'google', 'microsoft')
 
 # Which audit channels prove a provider's webhook handshake reached us. Meta
 # subscribes each product separately and either one proves the app's webhook
@@ -92,7 +99,8 @@ INVITE_COPY_KEYS = ('oauth_redirect_uri', 'webhook_urls', VERIFY_TOKEN_KEY)
 # Brand names, deliberately untranslated and deliberately NOT the Selection
 # label ("Meta (WhatsApp + Messenger)" is a picker label, not a sentence).
 # Mirrors PROVIDER_NAME in static/src/golive/golive_studio.js.
-GOLIVE_PROVIDER_NAMES = {'meta': 'Meta', 'zalo': 'Zalo'}
+GOLIVE_PROVIDER_NAMES = {'meta': 'Meta', 'zalo': 'Zalo',
+                         'google': 'Google', 'microsoft': 'Microsoft'}
 
 
 def mask_email(email):
@@ -596,6 +604,274 @@ class ChannelPlatformAppGoLive(models.Model):
                         'Everything Health19 needs from Zalo is in place. The '
                         'Zalo card is live for every clinic, and each one '
                         'signs in with its own Official Account.'),
+                    'console': False,
+                    'console_label': False,
+                    'copy_values': [],
+                    'inputs': [],
+                    'verify': 'manual',
+                    'est': False,
+                },
+            ],
+            # ==========================================================
+            # GL-4 — Google (Gmail). Five steps, one channel: email.
+            #
+            # Three facts shape every declaration below, and each one is a
+            # trap somebody would otherwise fall into:
+            #
+            # * **`store_secret` verifies `manual`, never `preflight`.**
+            #   `action_preflight` is Meta-only; every other provider answers
+            #   `unverifiable` (channel_platform_app.py:427). The status branch
+            #   only accepts a preflight-declared step when the status is
+            #   `pass`, so declaring `preflight` here would strand the step at
+            #   `todo` forever. `manual` is also the honest reading: Google
+            #   publishes no credentials-only check, and these credentials are
+            #   proven at the first real mailbox sign-in.
+            # * **The console links are STATIC.** Google's console does not key
+            #   on the OAuth client id in any stable public URL, so an
+            #   `{app_id}`-templated link would 404 in the operator's face.
+            # * **No `webhook_urls` in `copy_values`.** Email has no webhook at
+            #   all — mail arrives by IMAP poll — so `WEBHOOK_PATHS['google']`
+            #   is `[]` and the value would render as an empty block rather
+            #   than as an explanation.
+            # ==========================================================
+            'google': [
+                {
+                    'key': 'create_app',
+                    'kind': 'do',
+                    'title': _('Create the sign-in client'),
+                    'body': _(
+                        'Open the Google Cloud Console and create a project, '
+                        'or pick the one your company already uses. Turn on '
+                        'the Gmail API for that project. Then open '
+                        'Credentials, choose Create credentials, and pick '
+                        'OAuth client ID of type Web application, named after '
+                        'your company. Google shows a Client ID the moment it '
+                        'is created — copy it here.'),
+                    'console': ('https://console.cloud.google.com/apis/'
+                                'credentials'),
+                    'console_label': _('Open Google Cloud credentials'),
+                    'copy_values': [],
+                    'inputs': [{
+                        'name': 'client_id',
+                        'label': _('Client ID'),
+                        'secret': False,
+                        'regex': r'^\S+\.apps\.googleusercontent\.com$',
+                        'error': _('A Google client ID ends in '
+                                   '.apps.googleusercontent.com — copy it '
+                                   'from the Credentials page.'),
+                    }],
+                    'verify': 'manual',
+                    'est': _('about 15 minutes'),
+                },
+                {
+                    'key': 'store_secret',
+                    'kind': 'do',
+                    'title': _('Store the client secret'),
+                    'body': _(
+                        "The client's own page shows a Client secret beside "
+                        'the Client ID. Paste it here; we encrypt it and '
+                        'never show it again. Google gives us no harmless way '
+                        'to test these credentials from here, so this step '
+                        'turns green as soon as the secret is stored — they '
+                        'are really proven the first time a clinic connects '
+                        'its mailbox.'),
+                    'console': ('https://console.cloud.google.com/apis/'
+                                'credentials'),
+                    'console_label': _('Open Google Cloud credentials'),
+                    'copy_values': [],
+                    'inputs': [{
+                        'name': 'client_secret',
+                        'label': _('Client secret'),
+                        'secret': True,
+                        'regex': r'^\S{10,128}$',
+                        'error': _('The client secret is one run of '
+                                   'characters with no spaces, shown on the '
+                                   "OAuth client's own page."),
+                    }],
+                    'verify': 'manual',
+                    'est': _('about 5 minutes'),
+                },
+                {
+                    'key': 'redirect_uri',
+                    'kind': 'do',
+                    'title': _('Tell Google where to come back'),
+                    'body': _(
+                        'Open the OAuth client and add the address below to '
+                        'Authorised redirect URIs. Gmail sign-in runs on '
+                        "Odoo's own Gmail integration, so this is its "
+                        'address, and Google refuses the sign-in unless it '
+                        'matches exactly, character for character.'),
+                    'console': ('https://console.cloud.google.com/apis/'
+                                'credentials'),
+                    'console_label': _('Open Google Cloud credentials'),
+                    'copy_values': ['oauth_redirect_uri'],
+                    'inputs': [],
+                    'verify': 'manual',
+                    'est': _('about 5 minutes'),
+                },
+                {
+                    'key': 'consent_screen',
+                    'kind': 'wait',
+                    'title': _('Publish the consent screen'),
+                    'body': _(
+                        'A consent screen left in testing expires every '
+                        "mailbox's access after 7 days, which reaches the "
+                        'clinics as random sign-outs nobody can explain. '
+                        'Publish it. Google may come back with verification '
+                        'questions about the Gmail permissions, and answering '
+                        'them can take days. Mark this step once you have '
+                        'submitted it, so you can see where you are.'),
+                    'console': ('https://console.cloud.google.com/apis/'
+                                'credentials/consent'),
+                    'console_label': _('Open the consent screen'),
+                    'copy_values': [],
+                    'inputs': [],
+                    'verify': 'manual',
+                    'est': _('a few days if Google asks questions'),
+                },
+                {
+                    'key': 'done',
+                    'kind': 'check',
+                    'title': _('Gmail is ready to offer'),
+                    'body': _(
+                        'Email through Gmail is ready to offer. Each clinic '
+                        'connects its own mailbox from the Channel Center — '
+                        'nothing further is needed from you. You only need '
+                        'ONE of Google or Microsoft for the Email card to be '
+                        'available; doing both simply lets a clinic choose. '
+                        "The sign-in itself runs on Odoo's Gmail integration "
+                        '(the google_gmail addon), which has to be installed '
+                        'on this deployment for a mailbox to connect. This '
+                        'step reads the credentials we hold; whether the '
+                        "redirect address really reached Google's console is "
+                        "something we cannot see, so if a clinic's sign-in is "
+                        'refused, that is the first place to look.'),
+                    'console': False,
+                    'console_label': False,
+                    'copy_values': [],
+                    'inputs': [],
+                    'verify': 'manual',
+                    'est': False,
+                },
+            ],
+            # ==========================================================
+            # GL-4 — Microsoft (Outlook / Microsoft 365). Same three rules as
+            # google above, plus one of its own: the Entra console links are
+            # static because a deep link into an app registration needs the
+            # OBJECT id, which is not the Application (client) id we hold —
+            # a templated link would 404.
+            # ==========================================================
+            'microsoft': [
+                {
+                    'key': 'create_app',
+                    'kind': 'do',
+                    'title': _('Register the application'),
+                    'body': _(
+                        'In the Microsoft Entra admin center open App '
+                        'registrations, then New registration. Name it after '
+                        'your company. For supported account types choose '
+                        'accounts in any organisational directory and '
+                        'personal Microsoft accounts, unless every clinic '
+                        "mailbox lives in your own tenant. The app's Overview "
+                        'page then shows an Application (client) ID — copy it '
+                        'here.'),
+                    'console': 'https://entra.microsoft.com',
+                    'console_label': _('Open the Microsoft Entra admin center'),
+                    'copy_values': [],
+                    'inputs': [{
+                        'name': 'client_id',
+                        'label': _('Application (client) ID'),
+                        'secret': False,
+                        'regex': (r'^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}'
+                                  r'[0-9a-fA-F]{12}$'),
+                        'error': _('The Application (client) ID is a UUID '
+                                   'like 12345678-abcd-… — copy it from the '
+                                   "app's Overview page."),
+                    }],
+                    'verify': 'manual',
+                    'est': _('about 10 minutes'),
+                },
+                {
+                    'key': 'redirect_uri',
+                    'kind': 'do',
+                    'title': _('Tell Microsoft where to come back'),
+                    'body': _(
+                        'Open Authentication, then Add a platform, and choose '
+                        'Web. Paste the address below as the redirect URI. It '
+                        "belongs to Odoo's own Outlook integration, and "
+                        'Microsoft refuses the sign-in unless it matches '
+                        'exactly, character for character.'),
+                    'console': 'https://entra.microsoft.com',
+                    'console_label': _('Open the Microsoft Entra admin center'),
+                    'copy_values': ['oauth_redirect_uri'],
+                    'inputs': [],
+                    'verify': 'manual',
+                    'est': _('about 5 minutes'),
+                },
+                {
+                    'key': 'permissions',
+                    'kind': 'do',
+                    'title': _('Grant the mailbox permissions'),
+                    'body': _(
+                        'Open API permissions, then Add a permission, then '
+                        'Microsoft Graph, and choose Delegated. Add '
+                        'Mail.Send, Mail.ReadWrite, IMAP.AccessAsUser.All and '
+                        'offline_access. Then press Grant admin consent, or '
+                        'every clinic is asked to approve them one by one and '
+                        'most will not be allowed to.'),
+                    'console': 'https://entra.microsoft.com',
+                    'console_label': _('Open the Microsoft Entra admin center'),
+                    'copy_values': [],
+                    'inputs': [],
+                    'verify': 'manual',
+                    'est': _('about 10 minutes'),
+                },
+                {
+                    'key': 'store_secret',
+                    'kind': 'do',
+                    'title': _('Create and store a client secret'),
+                    'body': _(
+                        'Open Certificates & secrets, then New client secret. '
+                        'Copy the Value column, NOT the Secret ID — that is '
+                        'the classic mistake, and the Value is shown only '
+                        'once. Paste it here; we encrypt it and never show it '
+                        'again. Entra secrets expire after 24 months at the '
+                        'most, so write the expiry date into the note on the '
+                        'platform application while you have it.'),
+                    'console': 'https://entra.microsoft.com',
+                    'console_label': _('Open the Microsoft Entra admin center'),
+                    'copy_values': [],
+                    'inputs': [{
+                        'name': 'client_secret',
+                        'label': _('Client secret value'),
+                        'secret': True,
+                        'regex': r'^\S{10,128}$',
+                        'error': _('The secret Value is one run of characters '
+                                   'with no spaces. If what you pasted looks '
+                                   'like a UUID you copied the Secret ID '
+                                   'instead.'),
+                    }],
+                    'verify': 'manual',
+                    'est': _('about 5 minutes'),
+                },
+                {
+                    'key': 'done',
+                    'kind': 'check',
+                    'title': _('Outlook is ready to offer'),
+                    'body': _(
+                        'Email through Microsoft 365 is ready to offer. Each '
+                        'clinic connects its own mailbox from the Channel '
+                        'Center — nothing further is needed from you. You '
+                        'only need ONE of Google or Microsoft for the Email '
+                        'card to be available; doing both simply lets a '
+                        'clinic choose. The sign-in itself runs on Odoo\'s '
+                        'Outlook integration (the microsoft_outlook addon), '
+                        'which has to be installed on this deployment for a '
+                        'mailbox to connect. This step reads the credentials '
+                        'we hold; whether the redirect address and the four '
+                        'permissions really reached Entra is something we '
+                        "cannot see, so if a clinic's sign-in is refused, "
+                        'that is the first place to look.'),
                     'console': False,
                     'console_label': False,
                     'copy_values': [],

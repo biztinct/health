@@ -396,7 +396,9 @@ msgstr "Messenger"
 
 #. module: health_care_command_channels
 #. odoo-python
+#. odoo-javascript
 #: code:addons/health_care_command_channels/models/channel_center.py:0
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
 msgid "Calls"
 msgstr "Cuộc gọi"
 
@@ -3215,3 +3217,434 @@ msgstr "Thu hồi"
 #: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
 msgid "Send again"
 msgstr "Gửi lại"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Create the sign-in client"
+msgstr "Tạo ứng dụng khách đăng nhập"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Open the Google Cloud Console and create a project, or pick the one your "
+"company already uses. Turn on the Gmail API for that project. Then open "
+"Credentials, choose Create credentials, and pick OAuth client ID of type "
+"Web application, named after your company. Google shows a Client ID the "
+"moment it is created — copy it here."
+msgstr ""
+"Mở Google Cloud Console và tạo một dự án, hoặc chọn dự án công ty bạn đang "
+"dùng. Bật Gmail API cho dự án đó. Sau đó mở Credentials, chọn Create "
+"credentials và chọn OAuth client ID loại Web application, đặt tên theo "
+"công ty bạn. Google hiển thị Client ID ngay khi tạo xong — hãy sao chép "
+"vào đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open Google Cloud credentials"
+msgstr "Mở mục Credentials của Google Cloud"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Store the client secret"
+msgstr "Lưu khoá bí mật của ứng dụng khách"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"The client's own page shows a Client secret beside the Client ID. Paste it "
+"here; we encrypt it and never show it again. Google gives us no harmless "
+"way to test these credentials from here, so this step turns green as soon "
+"as the secret is stored — they are really proven the first time a clinic "
+"connects its mailbox."
+msgstr ""
+"Trang của ứng dụng khách hiển thị Client secret ngay cạnh Client ID. Hãy "
+"dán vào đây; chúng tôi mã hoá và không bao giờ hiển thị lại. Google không "
+"cung cấp cách nào an toàn để chúng tôi kiểm tra thông tin này từ đây, nên "
+"bước này chuyển sang xanh ngay khi khoá được lưu — thực sự chỉ lần đầu một "
+"phòng khám kết nối hộp thư mới chứng minh được."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Tell Google where to come back"
+msgstr "Cho Google biết địa chỉ quay lại"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Open the OAuth client and add the address below to Authorised redirect "
+"URIs. Gmail sign-in runs on Odoo's own Gmail integration, so this is its "
+"address, and Google refuses the sign-in unless it matches exactly, "
+"character for character."
+msgstr ""
+"Mở ứng dụng khách OAuth và thêm địa chỉ bên dưới vào Authorised redirect "
+"URIs. Đăng nhập Gmail chạy trên tích hợp Gmail của chính Odoo, nên đây là "
+"địa chỉ của nó, và Google sẽ từ chối đăng nhập nếu không khớp chính xác "
+"từng ký tự."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Publish the consent screen"
+msgstr "Công bố màn hình đồng ý"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"A consent screen left in testing expires every mailbox's access after 7 "
+"days, which reaches the clinics as random sign-outs nobody can explain. "
+"Publish it. Google may come back with verification questions about the "
+"Gmail permissions, and answering them can take days. Mark this step once "
+"you have submitted it, so you can see where you are."
+msgstr ""
+"Màn hình đồng ý để ở trạng thái thử nghiệm sẽ làm hết hạn quyền truy cập "
+"của mọi hộp thư sau 7 ngày, và phòng khám sẽ thấy điều đó như những lần bị "
+"đăng xuất bất chợt không ai giải thích được. Hãy công bố nó. Google có thể "
+"hỏi thêm về các quyền Gmail và việc trả lời có thể mất vài ngày. Hãy đánh "
+"dấu bước này sau khi bạn đã gửi, để biết mình đang ở đâu."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open the consent screen"
+msgstr "Mở màn hình đồng ý"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "a few days if Google asks questions"
+msgstr "vài ngày nếu Google đặt câu hỏi"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Gmail is ready to offer"
+msgstr "Gmail đã sẵn sàng để cung cấp"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Register the application"
+msgstr "Đăng ký ứng dụng"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"In the Microsoft Entra admin center open App registrations, then New "
+"registration. Name it after your company. For supported account types "
+"choose accounts in any organisational directory and personal Microsoft "
+"accounts, unless every clinic mailbox lives in your own tenant. The app's "
+"Overview page then shows an Application (client) ID — copy it here."
+msgstr ""
+"Trong Microsoft Entra admin center, mở App registrations rồi chọn New "
+"registration. Đặt tên theo công ty bạn. Ở phần loại tài khoản được hỗ trợ, "
+"hãy chọn tài khoản thuộc mọi thư mục tổ chức và tài khoản Microsoft cá "
+"nhân, trừ khi mọi hộp thư của phòng khám đều nằm trong tenant của bạn. "
+"Trang Overview của ứng dụng sau đó hiển thị Application (client) ID — hãy "
+"sao chép vào đây."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Open the Microsoft Entra admin center"
+msgstr "Mở Microsoft Entra admin center"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Tell Microsoft where to come back"
+msgstr "Cho Microsoft biết địa chỉ quay lại"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Open Authentication, then Add a platform, and choose Web. Paste the "
+"address below as the redirect URI. It belongs to Odoo's own Outlook "
+"integration, and Microsoft refuses the sign-in unless it matches exactly, "
+"character for character."
+msgstr ""
+"Mở Authentication, chọn Add a platform rồi chọn Web. Dán địa chỉ bên dưới "
+"làm redirect URI. Địa chỉ này thuộc về tích hợp Outlook của chính Odoo, và "
+"Microsoft sẽ từ chối đăng nhập nếu không khớp chính xác từng ký tự."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Grant the mailbox permissions"
+msgstr "Cấp quyền cho hộp thư"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Open API permissions, then Add a permission, then Microsoft Graph, and "
+"choose Delegated. Add Mail.Send, Mail.ReadWrite, IMAP.AccessAsUser.All and "
+"offline_access. Then press Grant admin consent, or every clinic is asked "
+"to approve them one by one and most will not be allowed to."
+msgstr ""
+"Mở API permissions, chọn Add a permission, chọn Microsoft Graph rồi chọn "
+"Delegated. Thêm Mail.Send, Mail.ReadWrite, IMAP.AccessAsUser.All và "
+"offline_access. Sau đó bấm Grant admin consent, nếu không mỗi phòng khám "
+"sẽ bị hỏi phê duyệt từng quyền một và phần lớn sẽ không được phép."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Create and store a client secret"
+msgstr "Tạo và lưu khoá bí mật của ứng dụng khách"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Open Certificates & secrets, then New client secret. Copy the Value "
+"column, NOT the Secret ID — that is the classic mistake, and the Value is "
+"shown only once. Paste it here; we encrypt it and never show it again. "
+"Entra secrets expire after 24 months at the most, so write the expiry date "
+"into the note on the platform application while you have it."
+msgstr ""
+"Mở Certificates & secrets rồi chọn New client secret. Hãy sao chép cột "
+"Value, KHÔNG phải Secret ID — đó là lỗi kinh điển, và Value chỉ hiện đúng "
+"một lần. Dán vào đây; chúng tôi mã hoá và không bao giờ hiển thị lại. Khoá "
+"bí mật của Entra hết hạn sau tối đa 24 tháng, nên hãy ghi ngày hết hạn vào "
+"ghi chú của ứng dụng nền tảng ngay khi bạn còn thấy nó."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Outlook is ready to offer"
+msgstr "Outlook đã sẵn sàng để cung cấp"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Client ID"
+msgstr "Client ID"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"A Google client ID ends in .apps.googleusercontent.com — copy it from the "
+"Credentials page."
+msgstr ""
+"Client ID của Google luôn kết thúc bằng .apps.googleusercontent.com — hãy "
+"sao chép từ trang Credentials."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Client secret"
+msgstr "Client secret"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"The client secret is one run of characters with no spaces, shown on the "
+"OAuth client's own page."
+msgstr ""
+"Client secret là một chuỗi ký tự liền không có khoảng trắng, hiển thị trên "
+"trang của chính ứng dụng khách OAuth."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Application (client) ID"
+msgstr "Application (client) ID"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"The Application (client) ID is a UUID like 12345678-abcd-… — copy it from "
+"the app's Overview page."
+msgstr ""
+"Application (client) ID là một UUID dạng 12345678-abcd-… — hãy sao chép từ "
+"trang Overview của ứng dụng."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid "Client secret value"
+msgstr "Giá trị Value của khoá bí mật"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"The secret Value is one run of characters with no spaces. If what you "
+"pasted looks like a UUID you copied the Secret ID instead."
+msgstr ""
+"Value của khoá bí mật là một chuỗi ký tự liền không có khoảng trắng. Nếu "
+"thứ bạn dán trông giống một UUID thì bạn đã sao chép nhầm Secret ID."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Calls (VoIP24h)"
+msgstr "Cuộc gọi (VoIP24h)"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid ""
+"No provider application is needed here. A clinic connects its phone system "
+"from the Channel Center with the webhook secret from its own VoIP24h "
+"portal, so there is nothing for you to register."
+msgstr ""
+"Ở đây không cần ứng dụng nhà cung cấp nào. Phòng khám tự kết nối tổng đài "
+"của mình từ Trung tâm Kênh bằng khoá webhook lấy trong cổng VoIP24h của "
+"họ, nên bạn không phải đăng ký gì cả."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid ""
+"Receiving calls works today. Placing calls and syncing call history wait "
+"on VoIP24h's API contract, which is still being captured."
+msgstr ""
+"Nhận cuộc gọi đã hoạt động. Gọi ra và đồng bộ lịch sử cuộc gọi còn chờ hợp "
+"đồng API của VoIP24h, thứ vẫn đang được thu thập."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Administrator access to your company's Google Cloud organisation."
+msgstr "Quyền quản trị tổ chức Google Cloud của công ty bạn."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Permission to publish a consent screen for that organisation."
+msgstr "Quyền công bố màn hình đồng ý cho tổ chức đó."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid ""
+"About an hour of your own time, plus a few days if Google asks questions "
+"about the consent screen."
+msgstr ""
+"Khoảng một giờ làm việc của bạn, cộng thêm vài ngày nếu Google hỏi về màn "
+"hình đồng ý."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Administrator access to your company's Microsoft Entra directory."
+msgstr "Quyền quản trị thư mục Microsoft Entra của công ty bạn."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Someone who can press Grant admin consent for the mailbox permissions."
+msgstr "Một người có thể bấm Grant admin consent cho các quyền hộp thư."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "About an hour, all of it yours — Microsoft reviews nothing here."
+msgstr ""
+"Khoảng một giờ, tất cả đều do bạn làm — Microsoft không xét duyệt gì ở đây."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Google Cloud Console → APIs & Services → Credentials"
+msgstr "Google Cloud Console → APIs & Services → Credentials"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid "Microsoft Entra admin center → App registrations → Overview"
+msgstr "Microsoft Entra admin center → App registrations → Overview"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid ""
+"Microsoft Entra admin center → your app → Certificates & secrets — copy "
+"the Value column, not the Secret ID"
+msgstr ""
+"Microsoft Entra admin center → ứng dụng của bạn → Certificates & secrets — "
+"sao chép cột Value, không phải Secret ID"
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Email through Gmail is ready to offer. Each clinic connects its own "
+"mailbox from the Channel Center — nothing further is needed from you. You "
+"only need ONE of Google or Microsoft for the Email card to be available; "
+"doing both simply lets a clinic choose. The sign-in itself runs on Odoo's "
+"Gmail integration (the google_gmail addon), which has to be installed on "
+"this deployment for a mailbox to connect. This step reads the credentials "
+"we hold; whether the redirect address really reached Google's console is "
+"something we cannot see, so if a clinic's sign-in is refused, that is the "
+"first place to look."
+msgstr ""
+"Email qua Gmail đã sẵn sàng để cung cấp. Mỗi phòng khám tự kết nối hộp thư "
+"của mình từ Trung tâm Kênh — bạn không phải làm gì thêm. Chỉ cần MỘT trong "
+"hai, Google hoặc Microsoft, là thẻ Email hoạt động; làm cả hai chỉ để "
+"phòng khám được chọn. Bản thân việc đăng nhập chạy trên tích hợp Gmail của "
+"Odoo (addon google_gmail), addon này phải được cài trên hệ thống thì hộp "
+"thư mới kết nối được. Bước này đọc thông tin đăng nhập mà chúng tôi đang "
+"giữ; còn địa chỉ chuyển hướng có thực sự được nhập vào console của Google "
+"hay không thì chúng tôi không thấy được, nên nếu một phòng khám bị từ chối "
+"đăng nhập, hãy kiểm tra chỗ đó trước tiên."
+
+#. module: health_care_command_channels
+#. odoo-python
+#: code:addons/health_care_command_channels/models/channel_golive.py:0
+msgid ""
+"Email through Microsoft 365 is ready to offer. Each clinic connects its "
+"own mailbox from the Channel Center — nothing further is needed from you. "
+"You only need ONE of Google or Microsoft for the Email card to be "
+"available; doing both simply lets a clinic choose. The sign-in itself runs "
+"on Odoo's Outlook integration (the microsoft_outlook addon), which has to "
+"be installed on this deployment for a mailbox to connect. This step reads "
+"the credentials we hold; whether the redirect address and the four "
+"permissions really reached Entra is something we cannot see, so if a "
+"clinic's sign-in is refused, that is the first place to look."
+msgstr ""
+"Email qua Microsoft 365 đã sẵn sàng để cung cấp. Mỗi phòng khám tự kết nối "
+"hộp thư của mình từ Trung tâm Kênh — bạn không phải làm gì thêm. Chỉ cần "
+"MỘT trong hai, Google hoặc Microsoft, là thẻ Email hoạt động; làm cả hai "
+"chỉ để phòng khám được chọn. Bản thân việc đăng nhập chạy trên tích hợp "
+"Outlook của Odoo (addon microsoft_outlook), addon này phải được cài trên "
+"hệ thống thì hộp thư mới kết nối được. Bước này đọc thông tin đăng nhập mà "
+"chúng tôi đang giữ; còn địa chỉ chuyển hướng và bốn quyền có thực sự được "
+"nhập vào Entra hay không thì chúng tôi không thấy được, nên nếu một phòng "
+"khám bị từ chối đăng nhập, hãy kiểm tra chỗ đó trước tiên."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.js:0
+msgid ""
+"Marked done on %s. This one leaves no trace we can see, so it is your own "
+"note."
+msgstr ""
+"Đã đánh dấu hoàn thành ngày %s. Việc này không để lại dấu vết nào chúng "
+"tôi thấy được, nên đây là ghi chú của riêng bạn."
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Mark as done"
+msgstr "Đánh dấu đã hoàn thành"
+
+#. module: health_care_command_channels
+#. odoo-javascript
+#: code:addons/health_care_command_channels/static/src/golive/golive_studio.xml:0
+msgid "Not done yet"
+msgstr "Chưa hoàn thành"

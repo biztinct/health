@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Care Command — Channel Connection Framework',
-    'version': '19.0.10.0.0',
+    'version': '19.0.11.0.0',
     'category': 'Healthcare/CRM',
     'summary': 'Provider-neutral channel connections + the WhatsApp / Messenger / '
                'Telegram / Web chat message spine',
@@ -336,6 +336,44 @@ console, as a tokenized page they open logged out.
 
 No Google/Microsoft/VoIP24h flows (GL-4), no change to any GL-1 payload (the
 ``invites`` key is additive), and no tenant-facing change.
+
+Go-Live Studio — Phase GL-4 (Google, Microsoft, and the truth about Calls)
+==========================================================================
+
+The last two provider journeys, and the proof of GL-1's promise: adding a
+provider is **declarations only**. Google and Microsoft are different from Meta
+in three ways at once — their sign-in runs on Odoo's own Gmail/Outlook mixins
+rather than on our OAuth engine, they have no webhook at all, and neither
+publishes a credentials-only check — and none of those differences needed a new
+status branch, a new model, a new endpoint or a new UI component.
+
+- **Five declared steps each**, in the same voice as Meta's and Zalo's. Google:
+  create the OAuth client, store the secret, add the redirect address, publish
+  the consent screen (a wait — an unpublished screen expires every mailbox
+  after 7 days, which reaches the clinics as random sign-outs), done.
+  Microsoft: register the application, add the redirect address, grant the four
+  Graph permissions with admin consent, create the client secret — copy the
+  **Value** column, never the Secret ID — done.
+- **`store_secret` verifies `manual`, deliberately.** ``action_preflight`` is
+  Meta-only; every other provider answers ``unverifiable``. A step declared
+  ``preflight`` here would sit at "to do" forever, so the honest declaration is
+  the one that says what is true: these credentials are proven the first time a
+  clinic connects a mailbox.
+- **The console links are static.** Google's console does not key on the client
+  id in any stable public URL, and an Entra deep link needs the app's *object*
+  id, which we never hold — a templated link would 404 in the operator's face.
+- **One provider is enough.** The Email card lights when EITHER a google or a
+  microsoft application is complete (plus Odoo's own addon), and both cards say
+  so rather than implying two go-lives.
+- **Calls gets a truth card, not a flow.** ``CallAdapter`` needs no platform
+  application: the channel is receive-only, proven by inbound traffic, and
+  VoIP24h's API contract is still uncaptured. There is no operator paperwork to
+  guide, so the Studio home carries one static card saying exactly that —
+  and ``_golive_step('call', …)`` still raises.
+
+``PROVIDER_EXTERNAL_STEPS`` is now empty: every provider's paperwork is
+declared exactly once. The constant and its fallback stay for the provider that
+arrives with a checklist before it has a flow.
     """,
     'author': 'I Am Dream Catcher Ltd',
     'website': 'https://vafhs.com',

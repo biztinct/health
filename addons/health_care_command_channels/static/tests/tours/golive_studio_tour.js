@@ -27,6 +27,20 @@ registry.category("web_tour.tours").add("channel_golive_studio_tour", {
             content: "both providers are mapped",
             trigger: ".gl-provider-card[data-provider='zalo']",
         },
+        // GL-4: the map is four providers plus the Calls truth card, which is
+        // a statement rather than a journey — it carries no Start button.
+        {
+            content: "google is mapped too",
+            trigger: ".gl-provider-card[data-provider='google']",
+        },
+        {
+            content: "microsoft is mapped too",
+            trigger: ".gl-provider-card[data-provider='microsoft']",
+        },
+        {
+            content: "calls tells the truth instead of pretending to be a flow",
+            trigger: ".gl-truth-card[data-provider='call'] .gl-truth-center",
+        },
         {
             content: "start the Meta journey",
             trigger: ".gl-provider-card[data-provider='meta'] .gl-start",

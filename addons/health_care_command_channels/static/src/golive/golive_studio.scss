@@ -98,6 +98,19 @@
   .gl-card .gl-actions{margin-top:auto;padding-top:4px}
   .gl-card .gl-actions .gl-btn{width:100%;justify-content:center}
 
+  /* ---------- the Calls truth card (GL-4 D4) ----------
+     A statement, not a journey: no progress ring, no Start, no rail behind
+     it. Styled a step quieter than a provider card — flat background, no
+     shadow — so the four cards that DO ask something of the operator keep the
+     visual weight. Same track as the provider cards, so the grid does not
+     wrap differently around it. */
+  .gl-truth-card{background:var(--bg);box-shadow:none;border-color:var(--line-2)}
+  .gl-truth-mark{width:56px;height:56px;flex:none;border-radius:50%;
+    background:var(--accent-soft);color:var(--navy);display:flex;
+    align-items:center;justify-content:center}
+  .gl-truth-mark .ic{width:22px;height:22px}
+  .gl-truth-body{margin:0;color:var(--mut)}
+
   /* ---------- provider flow ---------- */
   .gl-flow{display:flex;align-items:flex-start;gap:20px;padding:18px 24px 28px;
     min-height:0}

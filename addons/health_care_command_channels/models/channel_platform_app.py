@@ -91,27 +91,18 @@ PROVIDER_CONSOLE = {
 # can do anything. Deliberately terse: the authority is the provider's own
 # console, this is only the reminder of what to look for.
 #
-# GL-1: meta and zalo are GONE from here. Their steps are declared once, in
-# structured and translatable form, by ``_golive_steps()``
-# (models/channel_golive.py) — which the Go-Live Studio drives and which this
-# checklist now reads too. Two lists of the same paperwork is how they drift
-# apart. google and microsoft keep their entries until GL-4 declares them.
-PROVIDER_EXTERNAL_STEPS = {
-    'google': [
-        'Create an OAuth 2.0 Client ID (Web application) in Google Cloud '
-        'Console and enable the Gmail API.',
-        'Add the redirect URI above to the client\'s Authorised redirect URIs.',
-        'Publish the consent screen (or add every clinic mailbox as a test '
-        'user) — an unpublished screen expires refresh tokens in 7 days.',
-    ],
-    'microsoft': [
-        'Register an application in Microsoft Entra ID and add the Mail.Send, '
-        'Mail.ReadWrite, IMAP.AccessAsUser.All and offline_access permissions.',
-        'Add the redirect URI above as a Web redirect URI.',
-        'Create a client secret and paste it with "Set secret" — Entra secrets '
-        'expire, so note the expiry date in the note below.',
-    ],
-}
+# GL-1 emptied meta and zalo out of here; GL-4 emptied google and microsoft.
+# Every provider's paperwork is now declared exactly ONCE, in structured and
+# translatable form, by ``_golive_steps()`` (models/channel_golive.py) — which
+# the Go-Live Studio drives and which this checklist reads too. Two lists of
+# the same paperwork is how they drift apart, and these entries were already
+# a shorter, untranslatable copy of the declarations that replaced them.
+#
+# The constant and its fallback at ``_render_go_live_checklist`` STAY. A future
+# provider (GL-5) may want a checklist before it wants a guided flow, and the
+# mechanism costs one dict lookup; deleting it would make that phase reinvent
+# it. Empty is the honest state, not a dead branch.
+PROVIDER_EXTERNAL_STEPS = {}
 
 # Odoo's own addon behind each email provider. Model presence is the honest
 # test that it is installed (adapters.EmailAdapter._addon_installed).
@@ -349,6 +340,9 @@ class ChannelPlatformApp(models.Model):
         # steps, they are the steps — this checklist renders their titles
         # rather than a second, drifting copy of the same paperwork.
         declared = self._golive_steps().get(self.provider) or []
+        # GL-4: every provider in the catalogue is declared, so the fallback
+        # below never fires today. It is kept for the provider that arrives
+        # with paperwork before it has a flow.
         steps = ([step['title'] for step in declared] or
                  PROVIDER_EXTERNAL_STEPS.get(self.provider) or [])
         if steps:

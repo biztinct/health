@@ -43,12 +43,15 @@ const POLL_MS = 5000;
 const PROVIDER_NAME = {
     meta: "Meta",
     zalo: "Zalo",
+    google: "Google",
+    microsoft: "Microsoft",
 };
 const CHANNEL_NAME = {
     whatsapp: "WhatsApp",
     fb: "Messenger",
     zalo: "Zalo",
     zns: "ZNS",
+    email: "Email",
 };
 
 // Which stylised console screen belongs to which step (D2). A step with no
@@ -68,6 +71,49 @@ const STEP_ART = {
         oauth_redirect: "zalo_settings",
         webhook: "zalo_webhook",
     },
+    // GL-4. Google reuses ONE Credentials diagram across its three do-steps:
+    // all three happen on that same screen, and a second drawing of it would
+    // only imply the operator has to go somewhere else. The consent screen and
+    // Entra's Authentication / API permissions pages get no diagram at all —
+    // an invented one is worse than none, and the copy stands alone (the
+    // component already renders a step with no art).
+    google: {
+        create_app: "google_credentials",
+        store_secret: "google_credentials",
+        redirect_uri: "google_credentials",
+    },
+    // The "Certificates & secrets" drawing IS the not-the-Secret-ID lesson:
+    // the highlighted column is Value.
+    microsoft: {
+        create_app: "ms_register",
+        store_secret: "ms_secret",
+    },
+};
+
+/**
+ * D4 — the Calls truth card.
+ *
+ * Static, UI-only, and deliberately NOT a flow. `CallAdapter` declares
+ * `needs_platform_app: false`: calls never touch `channel.platform.app`, the
+ * channel is receive-only and proven by inbound traffic, and VoIP24h's API
+ * contract is still uncaptured. There is no operator paperwork to guide, so a
+ * guided journey would be an invented lie — this card says what is true
+ * instead. `_golive_step('call'|'voip24h', …)` raises on the server, and a
+ * test pins that it keeps raising.
+ *
+ * `_t` is lazy (translation.js returns a LazyTranslatedString before the
+ * catalogue is loaded), so a module-level constant is safe and is still
+ * rendered in the operator's language.
+ */
+const CALLS_CARD = {
+    title: "Calls (VoIP24h)",
+    body: _t(
+        "No provider application is needed here. A clinic connects its phone " +
+        "system from the Channel Center with the webhook secret from its own " +
+        "VoIP24h portal, so there is nothing for you to register."),
+    caveat: _t(
+        "Receiving calls works today. Placing calls and syncing call history " +
+        "wait on VoIP24h's API contract, which is still being captured."),
 };
 
 export class GoliveStudio extends Component {
@@ -335,7 +381,27 @@ export class GoliveStudio extends Component {
                 _t("About half an hour, all of it yours — Zalo reviews nothing here."),
             ];
         }
+        if (provider.provider === "google") {
+            return [
+                _t("Administrator access to your company's Google Cloud organisation."),
+                _t("Permission to publish a consent screen for that organisation."),
+                _t("About an hour of your own time, plus a few days if Google asks questions about the consent screen."),
+            ];
+        }
+        if (provider.provider === "microsoft") {
+            return [
+                _t("Administrator access to your company's Microsoft Entra directory."),
+                _t("Someone who can press Grant admin consent for the mailbox permissions."),
+                _t("About an hour, all of it yours — Microsoft reviews nothing here."),
+            ];
+        }
         return [];
+    }
+
+    /** D4 — the static Calls card. Not a provider, not a flow, not clickable
+     *  into a canvas: one honest paragraph and a link into the Center. */
+    get callsCard() {
+        return CALLS_CARD;
     }
 
     /** The step's illustration key, or false. */
@@ -360,6 +426,9 @@ export class GoliveStudio extends Component {
             zalo_create: _t("Zalo Developers → Create application"),
             zalo_settings: _t("Zalo Developers → your app → Settings"),
             zalo_webhook: _t("Zalo Developers → your app → Webhook"),
+            google_credentials: _t("Google Cloud Console → APIs & Services → Credentials"),
+            ms_register: _t("Microsoft Entra admin center → App registrations → Overview"),
+            ms_secret: _t("Microsoft Entra admin center → your app → Certificates & secrets — copy the Value column, not the Secret ID"),
         }[this.art] || "";
     }
 
@@ -704,6 +773,28 @@ export class GoliveStudio extends Component {
         return !!step && step.kind === "do";
     }
 
+    /**
+     * A do-step whose completion Health19 cannot observe at all.
+     *
+     * GL-4 DEVIATION (declared): the handover said the GL-2 canvas already
+     * offered this — it did not. `.gl-mark` renders only for `kind === 'wait'`,
+     * so a do-step that produces no artifact (paste our address into their
+     * console; tick four permissions) had NO way to be completed and sat at
+     * "to do" for ever, with the ring stuck one short. Zalo's redirect step
+     * has been in that state since GL-2; GL-4 would have added three more.
+     *
+     * The set is exactly "declared do + verify manual + nothing to type", which
+     * is the same condition `_golive_step_status` falls through to its
+     * mark-decides branch on. Steps with an artifact (a client id, a secret,
+     * a configuration id) all declare inputs and are excluded here, so a mark
+     * can never overrule an observation — the server refuses those anyway.
+     */
+    get canMarkDone() {
+        const step = this.step;
+        return !!step && step.kind === "do" && step.verify === "manual" &&
+            !(step.inputs || []).length && step.key !== "done";
+    }
+
     openInvite(email) {
         this.state.inviteOpen = true;
         this.state.inviteEmail = email || "";
@@ -811,6 +902,10 @@ export class GoliveStudio extends Component {
 
     markedOnNote(date) {
         return _t("Submitted on %s. We cannot see the provider's queue, so this date is your own note.", date);
+    }
+
+    markedDoneNote(date) {
+        return _t("Marked done on %s. This one leaves no trace we can see, so it is your own note.", date);
     }
 
     lastSeen(when) {

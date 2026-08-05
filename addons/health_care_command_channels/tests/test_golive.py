@@ -48,13 +48,13 @@ from odoo.addons.health_care_command_channels.models.care_channel_message import
     CareChannelMessage,
 )
 from odoo.addons.health_care_command_channels.models.channel_golive import (
-    GOLIVE_PROVIDERS, GOLIVE_STEP_KEYS,
+    GOLIVE_PROVIDERS, GOLIVE_STEP_KEYS, INVITE_COPY_KEYS,
 )
 from odoo.addons.health_care_command_channels.models.channel_platform_app import (
     PROVIDER_EXTERNAL_STEPS,
 )
 from odoo.addons.health_care_command_channels.services.adapters import (
-    ChannelSendError,
+    CHANNEL_ADAPTERS, ChannelSendError,
 )
 
 from .common import ChannelHubCase
@@ -454,8 +454,14 @@ class TestGoliveStudio(ChannelHubCase):
             self.App.golive_submit('meta', 'business_verification', {})
         with self.assertRaises(ValidationError):
             self.App.golive_mark('zalo', 'not_a_step', True)
+        # GL-4 DEVIATION (declared): this line used to read
+        # `golive_mark('microsoft', 'done', True)` — microsoft was not a
+        # driven provider, so the provider lookup refused it. It is one now,
+        # and `done` is a legal (inert) mark, so the assertion moved to a
+        # provider the Studio still does not drive. VoIP24h needs no platform
+        # application at all, which is why it never will (T204).
         with self.assertRaises(ValidationError):
-            self.App.golive_mark('microsoft', 'done', True)
+            self.App.golive_mark('voip24h', 'done', True)
         self.assertFalse(self.App.sudo().search_count([('active', '=', True)]),
                          'not one refusal created a row')
 
@@ -477,8 +483,8 @@ class TestGoliveStudio(ChannelHubCase):
     # T182 — one source of truth for the paperwork
     # ==================================================================
     def test_182_checklist_reads_the_declarations(self):
-        self.assertNotIn('meta', PROVIDER_EXTERNAL_STEPS)
-        self.assertNotIn('zalo', PROVIDER_EXTERNAL_STEPS)
+        # GL-4 emptied the last two entries: every provider is declared now.
+        self.assertEqual(PROVIDER_EXTERNAL_STEPS, {})
 
         app = self.App.create({'provider': 'meta', 'client_id': META_APP_ID})
         html = str(app._render_go_live_checklist())
@@ -490,12 +496,396 @@ class TestGoliveStudio(ChannelHubCase):
         zhtml = str(zalo._render_go_live_checklist())
         self.assertEqual(zhtml.count('<li>'), 5)
 
-        # google keeps the old dict until GL-4 declares its steps.
-        google = self.App.create({'provider': 'google'})
-        ghtml = str(google._render_go_live_checklist())
-        self.assertIn(PROVIDER_EXTERNAL_STEPS['google'][0], ghtml)
-        self.assertEqual(ghtml.count('<li>'),
-                         len(PROVIDER_EXTERNAL_STEPS['google']))
+
+# =====================================================================
+# GL-4 — Google + Microsoft, declared on the same framework
+# =====================================================================
+GOOGLE_CLIENT_ID = '123-abcdef.apps.googleusercontent.com'
+GOOGLE_SECRET = 'GOCSPX-gl4-fixture-client-secret'
+MS_CLIENT_ID = '3f2504e0-4f89-11d3-9a0c-0305e82c3301'
+MS_SECRET = 'ms-gl4-fixture-secret-value'
+
+LEGAL_KINDS = ('do', 'check', 'wait')
+LEGAL_VERIFY = ('preflight', 'handshake', 'manual')
+
+
+@tagged('post_install', '-at_install')
+class TestGoliveGoogleMicrosoft(ChannelHubCase):
+    """T196–T202, T204 — the phase's whole thesis, in one suite.
+
+    GL-1 promised that adding a provider would be **declarations only**. These
+    two providers are the test of it: their sign-in runs on Odoo's own Gmail /
+    Outlook mixins rather than on our OAuth engine, they have no webhook at
+    all, and no server-side credential check exists for either of them — three
+    ways to be different from Meta, and none of them needed a new status
+    branch.
+
+    The trap the suite exists to pin is `store_secret`: `action_preflight` is
+    Meta-only and answers `unverifiable` for everyone else, so a step declared
+    `verify: 'preflight'` here would sit at `todo` FOREVER — a green-looking
+    console that can never finish. T196 refuses the declaration outright and
+    T199 proves the honest path end to end.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.env['ir.config_parameter'].sudo().set_param('web.base.url',
+                                                         HTTPS_BASE)
+        # Same reasoning as TestGoliveStudio.setUp: `provider` is unique among
+        # the ACTIVE rows, and the deployment carries the operator's own.
+        self.App.sudo().with_context(active_test=False).search([]).write(
+            {'active': False})
+        self.env['channel.golive.progress'].sudo().with_context(
+            active_test=False).search([]).write({'active': False})
+
+    # -- helpers -------------------------------------------------------
+    def _state(self, provider):
+        return {p['provider']: p for p in self.App.golive_state()}[provider]
+
+    def _steps(self, provider, state=None):
+        state = state or self._state(provider)
+        return {s['key']: s for s in state['steps']}
+
+    def _complete_google(self):
+        self.App.golive_submit('google', 'create_app',
+                               {'client_id': GOOGLE_CLIENT_ID})
+        return self.App.golive_submit('google', 'store_secret',
+                                      {'client_secret': GOOGLE_SECRET})
+
+    # ==================================================================
+    # T196 — the declarations themselves
+    # ==================================================================
+    def test_196_declaration_shape(self):
+        declared = self.App._golive_steps()
+        self.assertEqual(set(declared), set(GOLIVE_PROVIDERS))
+        self.assertEqual(tuple(GOLIVE_PROVIDERS),
+                         ('meta', 'zalo', 'google', 'microsoft'),
+                         'the tuple order IS the home-screen order')
+
+        # -- the rules that hold for EVERY provider ---------------------
+        for provider, steps in declared.items():
+            keys = [step['key'] for step in steps]
+            self.assertEqual(len(set(keys)), len(keys), provider)
+            self.assertEqual(keys[0], 'create_app', provider)
+            self.assertEqual(keys[-1], 'done', provider)
+            for step in steps:
+                where = '%s/%s' % (provider, step['key'])
+                self.assertEqual(set(step), set(GOLIVE_STEP_KEYS), where)
+                self.assertIn(step['kind'], LEGAL_KINDS, where)
+                self.assertIn(step['verify'], LEGAL_VERIFY, where)
+                for key in step['copy_values']:
+                    self.assertIn(key, INVITE_COPY_KEYS, where)
+                for spec in step['inputs']:
+                    self.assertEqual(
+                        set(spec), {'name', 'label', 'secret', 'regex',
+                                    'error'}, where)
+                    re.compile(spec['regex'])
+                    self.assertTrue(spec['error'], where)
+                if step['console']:
+                    self.assertTrue(step['console'].startswith('https://'),
+                                    where)
+                    self.assertTrue(step['console_label'], where)
+
+        # -- and the rules that are specific to the two new ones --------
+        for provider in ('google', 'microsoft'):
+            steps = declared[provider]
+            self.assertEqual(len(steps), 5, provider)
+            for step in steps:
+                where = '%s/%s' % (provider, step['key'])
+                # THE trap of this phase. `action_preflight` is Meta-only
+                # (channel_platform_app.py:422) and the status branch only
+                # accepts a preflight-declared step on `preflight_status ==
+                # pass`, which these providers can never reach — the step
+                # would strand at `todo` forever.
+                self.assertNotEqual(step['verify'], 'preflight', where)
+                # Neither provider has a webhook (WEBHOOK_PATHS is []), so a
+                # handshake-verified step could never turn green either.
+                self.assertNotEqual(step['verify'], 'handshake', where)
+                self.assertEqual(step['verify'], 'manual', where)
+                # An empty copy value renders zero blocks, not an explanation
+                # (GL-3's lesson) — and `verify_token` is a Meta concept.
+                self.assertNotIn('webhook_urls', step['copy_values'], where)
+                self.assertNotIn('verify_token', step['copy_values'], where)
+                # Google's console does not key on the client id, and an Entra
+                # deep link needs the OBJECT id we never hold: a templated
+                # link would 404 in the operator's face.
+                self.assertNotIn('{app_id}', step['console'] or '', where)
+
+            by_key = {step['key']: step for step in steps}
+            self.assertEqual(by_key['store_secret']['inputs'][0]['secret'],
+                             True, provider)
+            self.assertEqual(by_key['done']['kind'], 'check', provider)
+            self.assertEqual(by_key['done']['copy_values'], [], provider)
+            self.assertEqual(by_key['done']['inputs'], [], provider)
+
+        self.assertEqual([s['key'] for s in declared['google']],
+                         ['create_app', 'store_secret', 'redirect_uri',
+                          'consent_screen', 'done'])
+        self.assertEqual([s['key'] for s in declared['microsoft']],
+                         ['create_app', 'redirect_uri', 'permissions',
+                          'store_secret', 'done'])
+        self.assertEqual(declared['google'][2]['copy_values'],
+                         ['oauth_redirect_uri'])
+        self.assertEqual(declared['microsoft'][1]['copy_values'],
+                         ['oauth_redirect_uri'])
+
+    # ==================================================================
+    # T197 — what the Studio is told about a provider with no row at all
+    # ==================================================================
+    def test_197_state_payload(self):
+        state = self.App.golive_state()
+        self.assertEqual([p['provider'] for p in state],
+                         list(GOLIVE_PROVIDERS))
+
+        for provider, path in (('google', '/google_gmail/confirm'),
+                               ('microsoft', '/microsoft_outlook/confirm')):
+            payload = {p['provider']: p for p in state}[provider]
+            self.assertEqual(payload['channels'], ['email'])
+            self.assertFalse(payload['app_id'])
+            self.assertFalse(payload['client_id'])
+            self.assertFalse(payload['secret_hint'])
+            self.assertEqual(payload['preflight']['status'], 'none')
+            # Odoo's own mixin owns the callback route, so the address we
+            # print is core's — printing ours is a paste Google refuses at the
+            # first sign-in (CC-G deviation D1).
+            self.assertEqual(payload['values']['oauth_redirect_uri'],
+                             HTTPS_BASE + path)
+            # No webhook exists for email — mail arrives by IMAP poll.
+            self.assertEqual(payload['values']['webhook_urls'], '')
+            self.assertEqual(set(payload['values']), {'oauth_redirect_uri',
+                                                      'webhook_urls'},
+                             'the Meta-only extras belong to Meta')
+            self.assertFalse(payload['last_handshake_at'])
+            self.assertEqual(payload['progress'], {})
+            self.assertEqual(payload['invites'], [])
+            for step in payload['steps']:
+                for key in GOLIVE_STEP_KEYS + ('status', 'marked_on'):
+                    self.assertIn(key, step, step['key'])
+                self.assertEqual(step['status'], 'todo',
+                                 '%s/%s' % (provider, step['key']))
+
+    # ==================================================================
+    # T198 — each declaration owns its own rule
+    # ==================================================================
+    def test_198_input_validation_is_per_declaration(self):
+        # Google accepts a Google client id and refuses a Meta-shaped number.
+        self.App.golive_submit('google', 'create_app',
+                               {'client_id': GOOGLE_CLIENT_ID})
+        self.assertEqual(self.App._get_for_provider('google').client_id,
+                         GOOGLE_CLIENT_ID)
+        with self.assertRaises(ValidationError):
+            self.App.golive_submit('google', 'create_app',
+                                   {'client_id': META_APP_ID})
+        try:
+            self.App.golive_submit('google', 'create_app',
+                                   {'client_id': '1234567890123'})
+        except ValidationError as exc:
+            self.assertIn('apps.googleusercontent.com', str(exc))
+
+        # Microsoft accepts a UUID and refuses the same number.
+        self.App.golive_submit('microsoft', 'create_app',
+                               {'client_id': MS_CLIENT_ID})
+        self.assertEqual(self.App._get_for_provider('microsoft').client_id,
+                         MS_CLIENT_ID)
+        with self.assertRaises(ValidationError):
+            self.App.golive_submit('microsoft', 'create_app',
+                                   {'client_id': META_APP_ID})
+
+        # ...and neither one accepts the OTHER's identifier: the regex belongs
+        # to the declaration, not to the framework.
+        with self.assertRaises(ValidationError):
+            self.App.golive_submit('microsoft', 'create_app',
+                                   {'client_id': GOOGLE_CLIENT_ID})
+        with self.assertRaises(ValidationError):
+            self.App.golive_submit('google', 'create_app',
+                                   {'client_id': MS_CLIENT_ID})
+
+        # A step that asks for nothing cannot be submitted to, and a value the
+        # step does not declare is refused.
+        with self.assertRaises(ValidationError):
+            self.App.golive_submit('google', 'redirect_uri',
+                                   {'client_id': GOOGLE_CLIENT_ID})
+        with self.assertRaises(ValidationError):
+            self.App.golive_submit('microsoft', 'permissions', {})
+
+        # The refusals changed nothing.
+        self.assertEqual(self.App._get_for_provider('google').client_id,
+                         GOOGLE_CLIENT_ID)
+        self.assertEqual(self.App._get_for_provider('microsoft').client_id,
+                         MS_CLIENT_ID)
+
+    # ==================================================================
+    # T199 — the secret: same one write path, and NO preflight lie
+    # ==================================================================
+    def test_199_google_secret_is_stored_without_a_preflight(self):
+        state = self._complete_google()
+        app = self.App._get_for_provider('google')
+
+        self.assertTrue(app.has_secret)
+        self.assertTrue(app.sudo().client_secret_enc.startswith('chs$1$'))
+        self.assertNotIn(GOOGLE_SECRET, app.sudo().client_secret_enc)
+        self.assertEqual(app.secret_hint, '••••' + GOOGLE_SECRET[-4:])
+
+        # Nothing pretended to check these credentials with Google.
+        self.assertEqual(app.preflight_status, 'none')
+        self.assertFalse(app.preflight_at)
+
+        steps = self._steps('google', {p['provider']: p
+                                       for p in state}['google'])
+        self.assertEqual(steps['create_app']['status'], 'done')
+        self.assertEqual(steps['store_secret']['status'], 'done',
+                         'a manual-verify secret step is done on the secret '
+                         'alone — Google publishes no check for us to run, '
+                         'and a preflight-declared step would never finish')
+
+        blob = json.dumps(state, default=str)
+        for forbidden in (GOOGLE_SECRET, app.sudo().client_secret_enc,
+                          'chs$1$'):
+            self.assertNotIn(forbidden, blob)
+
+    # ==================================================================
+    # T200 — the zero-glue thesis, end to end
+    # ==================================================================
+    def test_200_one_complete_provider_lights_the_email_card(self):
+        # The go-live is paperwork either way, but the SIGN-IN needs Odoo's
+        # own mixin: this assertion names the prerequisite rather than letting
+        # a missing addon look like a broken thesis.
+        self.assertIn('google.gmail.mixin', self.env,
+                      'the google_gmail addon must be installed for a clinic '
+                      'to connect a Gmail mailbox at all')
+
+        adapter = CHANNEL_ADAPTERS['email'](self.env, 'email')
+        self.assertFalse(adapter.platform_ready(),
+                         'no provider application yet — the Email card must '
+                         'stay dark')
+
+        state = self._complete_google()
+        google = {p['provider']: p for p in state}['google']
+        microsoft = {p['provider']: p for p in state}['microsoft']
+
+        self.assertEqual(self._steps('google', google)['done']['status'],
+                         'done')
+        self.assertFalse(self.App._get_for_provider('microsoft'),
+                         'no microsoft row exists — ONE of the two is enough')
+        self.assertEqual(self._steps('microsoft', microsoft)['done']['status'],
+                         'todo')
+
+        # The same call the tenant Email card makes, and it is now truthy —
+        # with no glue between the Studio and the Center at all.
+        self.assertTrue(adapter.platform_ready())
+        self.assertEqual(adapter.available_providers(), ['google'])
+        self.assertTrue(google['platform_ready']['email'])
+        # ...and the microsoft card says the CHANNEL is available while its
+        # own journey is not: the chip is about the channel, the ring is about
+        # the paperwork. Both statements are true at once.
+        self.assertTrue(microsoft['platform_ready']['email'])
+
+    # ==================================================================
+    # T201 — one source of truth for the paperwork, for every provider
+    # ==================================================================
+    def test_201_checklist_unification(self):
+        self.assertEqual(PROVIDER_EXTERNAL_STEPS, {},
+                         'every provider is declared now — a second, '
+                         'untranslatable list is how the two drift apart')
+
+        app = self.App.create({'provider': 'google',
+                               'client_id': GOOGLE_CLIENT_ID})
+        html = str(app._render_go_live_checklist())
+        for step in self.App._golive_steps()['google']:
+            self.assertIn('<li>%s</li>' % step['title'], html, step['key'])
+        self.assertEqual(html.count('<li>'), 5)
+        self.assertIn('console.cloud.google.com', html)
+
+        ms = self.App.create({'provider': 'microsoft',
+                              'client_id': MS_CLIENT_ID})
+        mshtml = str(ms._render_go_live_checklist())
+        for step in self.App._golive_steps()['microsoft']:
+            self.assertIn('<li>%s</li>' % step['title'], mshtml, step['key'])
+        self.assertEqual(mshtml.count('<li>'), 5)
+
+        # The checklist rows are the same prerequisites the `done` step reads,
+        # including Odoo's own addon.
+        labels = [label for label, _ok in app._go_live_rows()]
+        self.assertTrue(any('google.gmail.mixin' in label
+                            for label in labels), labels)
+
+    # ==================================================================
+    # T202 — marks: for what we cannot see, and inert everywhere else
+    # ==================================================================
+    def test_202_marks(self):
+        state = self.App.golive_mark('google', 'consent_screen', True)
+        google = {p['provider']: p for p in state}['google']
+        step = self._steps('google', google)['consent_screen']
+        self.assertEqual(step['status'], 'waiting',
+                         'submitted is not published — Google may still come '
+                         'back with questions')
+        self.assertTrue(step['marked_on'])
+        self.assertEqual(google['progress']['consent_screen']['marked_on'],
+                         step['marked_on'])
+
+        # Unmarking returns it to todo.
+        state = self.App.golive_mark('google', 'consent_screen', False)
+        self.assertEqual(
+            self._steps('google', {p['provider']: p
+                                   for p in state}['google'])[
+                'consent_screen']['status'], 'todo')
+
+        # GL-1's regression, re-run: Meta's derived steps refuse a hand-mark
+        # outright, because their verify is not `manual`.
+        for step_key in ('store_secret', 'webhooks'):
+            raised = False
+            try:
+                self.App.golive_mark('meta', step_key, True)
+            except (UserError, ValidationError):
+                raised = True
+            self.assertTrue(raised, step_key)
+
+        # Google's own do-steps take the mark — and it is INERT. The status
+        # branch reads the artifact, so a tick can never invent a client id or
+        # a stored secret. This is the difference the two providers make
+        # visible, and it is the safe half of it.
+        self.App.golive_mark('google', 'create_app', True)
+        self.App.golive_mark('google', 'store_secret', True)
+        steps = self._steps('google')
+        self.assertEqual(steps['create_app']['status'], 'todo')
+        self.assertEqual(steps['store_secret']['status'], 'todo')
+        self.assertEqual(steps['done']['status'], 'todo')
+
+        # The mark on a copy-only step IS what completes it — there is nothing
+        # for us to observe in Google's console (the Zalo redirect precedent).
+        self.App.golive_mark('microsoft', 'redirect_uri', True)
+        self.assertEqual(self._steps('microsoft')['redirect_uri']['status'],
+                         'done')
+
+        # One progress row per provider, whatever the traffic.
+        Progress = self.env['channel.golive.progress'].sudo()
+        self.assertEqual(Progress.search_count([('provider', '=', 'google'),
+                                                ('active', '=', True)]), 1)
+
+    # ==================================================================
+    # T204 — the Studio does not drive calls, and must not learn to
+    # ==================================================================
+    def test_204_calls_is_not_a_flow(self):
+        for provider in ('call', 'voip24h'):
+            with self.assertRaises(ValidationError, msg=provider):
+                self.App._golive_step(provider, 'create_app')
+            with self.assertRaises(ValidationError, msg=provider):
+                self.App._golive_step(provider, 'anything')
+            with self.assertRaises(ValidationError, msg=provider):
+                self.App.golive_submit(provider, 'create_app',
+                                       {'client_id': META_APP_ID})
+            self.assertNotIn(provider, GOLIVE_PROVIDERS)
+            self.assertNotIn(provider, self.App._golive_steps())
+
+        self.assertNotIn('call',
+                         [p['provider'] for p in self.App.golive_state()])
+        # The reason, stated where the reason lives: calls need no provider
+        # application, so there is no paperwork to guide. The Studio home
+        # carries a static truth card instead (D4, UI-only).
+        caps = CHANNEL_ADAPTERS['call'](
+            self.env, 'call').authorization_capabilities()
+        self.assertFalse(caps.get('needs_platform_app'))
+        self.assertFalse(caps.get('platform_providers'))
 
 
 @tagged('post_install', '-at_install')
@@ -879,6 +1269,20 @@ class TestGoliveInvite(ChannelHubCase):
         self.Invite = self.env['channel.golive.invite']
         self.Invite.sudo().with_context(active_test=False).search([]).write(
             {'active': False})
+        # GL-4 FIXTURE FIX (ledger §5.95's family). Archiving the deployment's
+        # own rows frees the ORM slot but hides them from NOTHING that reads
+        # with `active_test=False` — and an invitation is revoked, never
+        # deleted, so GL-3's own browser QA left a permanent row behind. An
+        # absolute "no invitation exists" count therefore measures the
+        # deployment's history, not this test's refusals. Baseline them.
+        self._invites_before = set(
+            self.Invite.sudo().with_context(active_test=False).search([]).ids)
+
+    def _new_invites(self):
+        """The invitations THIS test created — never the deployment's."""
+        now = set(
+            self.Invite.sudo().with_context(active_test=False).search([]).ids)
+        return now - self._invites_before
 
     # -- helpers -------------------------------------------------------
     def _mailbox(self):
@@ -929,8 +1333,14 @@ class TestGoliveInvite(ChannelHubCase):
             # Unknown step, unknown provider.
             with self.assertRaises(ValidationError):
                 self.App.golive_invite_send('meta', 'not_a_step', INVITE_EMAIL)
+            # GL-4 DEVIATION (declared): this line used to name 'google',
+            # which the Studio did not drive. It does now — and its steps
+            # delegate like every other (T203) — so the "unknown provider"
+            # case moved to VoIP24h, which needs no platform application at
+            # all and therefore has no step to send (T204).
             with self.assertRaises(ValidationError):
-                self.App.golive_invite_send('google', 'create_app', INVITE_EMAIL)
+                self.App.golive_invite_send('voip24h', 'create_app',
+                                            INVITE_EMAIL)
 
             # Addresses that are not addresses.
             for bad in ('', '   ', 'nobody', 'no@body', 'two@@at.com',
@@ -943,9 +1353,8 @@ class TestGoliveInvite(ChannelHubCase):
                 self.App.golive_invite_revoke(0)
 
         self.assertFalse(sink, 'not one refusal sent an email')
-        self.assertFalse(
-            self.Invite.sudo().with_context(active_test=False).search_count([]),
-            'not one refusal created an invitation')
+        self.assertFalse(self._new_invites(),
+                         'not one refusal created an invitation')
 
     # ==================================================================
     # T190 — one live link per step, and the token lives only in the email
@@ -1143,6 +1552,18 @@ class TestGoliveInvitePublic(HttpCase):
         cls.meta_app.action_set_secret(META_SECRET)
         cls.zalo_app = cls.App.create({'provider': 'zalo',
                                        'client_id': ZALO_APP_ID})
+        # GL-4 (T203). This row must EXIST and be active, and the reason is a
+        # live-data trap: `_golive_invite_values` refuses when a platform
+        # application exists for the provider but is archived (the operator
+        # took the go-live down, so its links die with it) — and setUpClass
+        # above archives every row the DEPLOYMENT carries. The first GL-4 test
+        # run passed only because vietuat had no google row yet; the moment
+        # browser QA created one, a correct T203 read the dead-end page.
+        # Owning the fixture makes the test independent of what the server
+        # happens to hold (§5.95's family). No secret: the public page must
+        # never show one, and this proves it with a real row present.
+        cls.google_app = cls.App.create({'provider': 'google',
+                                         'client_id': GOOGLE_CLIENT_ID})
 
         # The public page speaks the SENDER's language, not the anonymous
         # visitor's, so every expectation below has to be resolved in that
@@ -1361,3 +1782,69 @@ class TestGoliveInvitePublic(HttpCase):
         self._restore_rate()
         title = self.SenderApp._golive_step('meta', 'create_app')['title']
         self.assertIn(str(escape(title)), self._get(token).text)
+
+    # ==================================================================
+    # T203 — GL-4: delegation works for a declared provider, for free
+    # ==================================================================
+    def test_203_google_redirect_step_delegates(self):
+        """No invite code changed in GL-4, which is the point.
+
+        The public page keys on `kind == 'do'` plus `copy_values`, and
+        `oauth_redirect_uri` was already the ONLY value these flows publish —
+        so a google step travels with nothing added anywhere.
+        """
+        self.assertTrue(self.App._get_for_provider('google'),
+                        'the fixture row must be the ACTIVE one — an archived '
+                        'platform application is a deliberate dead end')
+        invite, token = self._mk_invite(provider='google',
+                                        step_key='redirect_uri')
+        resp = self._get(token)
+        self.assertEqual(resp.status_code, 200)
+        body = resp.text
+
+        # -- the sender's language, not the visitor's (§5.123) -------------
+        step = self.SenderApp._golive_step('google', 'redirect_uri')
+        self.assertIn(str(escape(step['title'])), body)
+        self.assertIn(str(escape(step['body'][:40])), body)
+
+        # -- exactly one copy block, and it is the redirect address --------
+        values = self.SenderApp.sudo()._golive_invite_values(invite)
+        self.assertEqual(len(values['blocks']), 1)
+        self.assertFalse(values['blocks'][0]['note'])
+        self.assertTrue(values['blocks'][0]['value'].endswith(
+            '/google_gmail/confirm'),
+            'Odoo\'s own Gmail mixin owns this route — printing ours is a '
+            'paste Google refuses at the first sign-in')
+        self.assertIn('/google_gmail/confirm', body)
+        self.assertNotIn('/care_channels/', body,
+                         'email has no webhook at all, so no webhook address '
+                         'may appear on this page')
+
+        # -- the console link is static: no half-interpolated URL ----------
+        self.assertIn('console.cloud.google.com', body)
+        self.assertNotIn('{app_id}', body)
+        self.assertIn('rel="noopener noreferrer"', body)
+
+        # -- nothing to type back, and no credential material --------------
+        self.assertNotIn('<input', body.lower())
+        self.assertNotIn('<form', body.lower())
+        for forbidden in ('chs$', 'client_secret', META_SECRET,
+                          'apps.googleusercontent.com'):
+            self.assertNotIn(forbidden, body, forbidden)
+
+        # -- and the dead end is still one answer, byte for byte -----------
+        revoked, revoked_token = self._mk_invite(provider='google',
+                                                 step_key='create_app',
+                                                 revoked=True)
+        bogus = secrets.token_urlsafe(32)
+        dead = [self._get(revoked_token), self._get(bogus)]
+        self.assertEqual({r.status_code for r in dead}, {200})
+        digests = {hashlib.sha256(r.text.encode('utf-8')).hexdigest()
+                   for r in dead}
+        self.assertEqual(len(digests), 1,
+                         'a new provider must not add a fifth dead end')
+        self.assertIn('no longer available', dead[0].text)
+        for word in ('google', 'redirect', 'gmail'):
+            self.assertNotIn(word, dead[0].text.lower())
+        revoked.invalidate_recordset()
+        self.assertEqual(revoked.view_count, 0)

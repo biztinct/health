@@ -116,6 +116,36 @@
             </div>
           </section>
         </t>
+
+        <!-- ==== D4: the Calls truth card ====
+             A card, not a journey. VoIP24h needs no provider application at
+             all (`CallAdapter.needs_platform_app` is false), so there is no
+             progress ring, no rail and nothing to start — offering one would
+             be an invented flow over paperwork that does not exist. It sits
+             last because it is the one entry here that asks nothing of the
+             operator. -->
+        <section class="gl-card gl-truth-card" data-provider="call">
+          <div class="gl-card-head">
+            <span class="gl-truth-mark"><span class="ic ic-plug"/></span>
+            <div class="gl-card-id">
+              <h2 t-esc="callsCard.title"/>
+              <div class="gl-chips">
+                <span class="gl-chip">Calls</span>
+              </div>
+            </div>
+          </div>
+          <p class="gl-truth-body" t-esc="callsCard.body"/>
+          <p class="gl-est">
+            <span class="ic ic-clock"/>
+            <span t-esc="callsCard.caveat"/>
+          </p>
+          <div class="gl-actions">
+            <button class="gl-btn ghost gl-truth-center"
+                    t-on-click="() => this.openCenter()">
+              <span class="ic ic-plug"/><span>Open the Channel Center</span>
+            </button>
+          </div>
+        </section>
       </div>
 
       <!-- ===================== the provider flow ===================== -->
@@ -374,6 +404,25 @@
               </div>
             </t>
 
+            <!-- == a do-step with nothing to observe: done / not done ==
+                 Pasting our address into somebody else's console leaves no
+                 trace here, so the operator's word is the only signal there
+                 is — and without this the step could never be finished at
+                 all. Never offered where an artifact exists: those steps
+                 declare inputs, and the server refuses to mark them. -->
+            <div class="gl-row" t-if="canMarkDone">
+              <button class="gl-btn ghost gl-mark-done" t-if="step.status !== 'done'"
+                      t-on-click="() => this.mark(true)"
+                      t-att-disabled="state.busy">Mark as done</button>
+              <t t-else="">
+                <span class="gl-hint gl-marked-done"
+                      t-esc="markedDoneNote(step.marked_on)"/>
+                <button class="gl-btn ghost gl-unmark-done"
+                        t-on-click="() => this.mark(false)"
+                        t-att-disabled="state.busy">Not done yet</button>
+              </t>
+            </div>
+
             <!-- == a provider review: submitted / not submitted == -->
             <div class="gl-row" t-if="step.kind === 'wait'">
               <button class="gl-btn ghost gl-mark" t-if="step.status !== 'waiting'"
@@ -534,6 +583,66 @@
     <rect class="gl-art-line" x="26" y="122" width="120" height="18" rx="9"/>
     <rect class="gl-art-hot-fill" x="166" y="122" width="42" height="18" rx="9"/>
     <path class="gl-art-line" d="M26 166h180"/>
+  </svg>
+
+  <!-- == GL-4 · Google: the Credentials list ==
+       A table of OAuth clients with one row picked out and its client-id cell
+       filled in the accent: the value the operator is looking for is a cell in
+       a list, not a button, which is exactly what people miss on that page. -->
+  <svg t-elif="art === 'google_credentials'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h76"/>
+    <path class="gl-art-line" d="M26 46h104"/>
+    <rect class="gl-art-line" x="26" y="60" width="308" height="22" rx="5"/>
+    <path class="gl-art-line" d="M38 71h56M150 71h64"/>
+    <rect class="gl-art-line" x="26" y="88" width="308" height="22" rx="5"/>
+    <path class="gl-art-line" d="M38 99h72M150 99h120"/>
+    <rect class="gl-art-hot" x="26" y="116" width="308" height="28" rx="5"/>
+    <path class="gl-art-line" d="M38 130h72"/>
+    <rect class="gl-art-hot-fill" x="150" y="123" width="112" height="14" rx="7"/>
+    <path class="gl-art-hot" d="M322 130h-38M288 123l-8 7 8 7"/>
+    <path class="gl-art-line" d="M26 168h150"/>
+  </svg>
+
+  <!-- == GL-4 · Microsoft: the app registration Overview == -->
+  <svg t-elif="art === 'ms_register'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h64"/>
+    <rect class="gl-art-line" x="26" y="40" width="84" height="114" rx="8"/>
+    <path class="gl-art-line" d="M38 60h56M38 80h42M38 100h58"/>
+    <path class="gl-art-line" d="M126 48h104"/>
+    <path class="gl-art-line" d="M126 74h64"/>
+    <path class="gl-art-line" d="M126 94h48"/>
+    <rect class="gl-art-hot" x="120" y="108" width="214" height="28" rx="6"/>
+    <path class="gl-art-line" d="M132 122h48"/>
+    <rect class="gl-art-hot-fill" x="194" y="115" width="78" height="14" rx="7"/>
+    <path class="gl-art-hot" d="M322 122h-30M296 115l-8 7 8 7"/>
+    <path class="gl-art-line" d="M126 154h120"/>
+  </svg>
+
+  <!-- == GL-4 · Microsoft: Certificates & secrets ==
+       This drawing IS the lesson. Two columns: the Secret ID column stays
+       grey, the Value column is the accent one, and the arrow points at it —
+       copying the wrong column is the single most common Entra mistake. -->
+  <svg t-elif="art === 'ms_secret'" viewBox="0 0 360 200" role="img"
+       t-att-aria-label="artLabel">
+    <rect class="gl-art-chrome" x="0" y="0" width="360" height="26" rx="6"/>
+    <path class="gl-art-line" d="M16 13h72"/>
+    <path class="gl-art-line" d="M26 44h112"/>
+    <path class="gl-art-line" d="M40 64h58"/>
+    <path class="gl-art-hot" d="M198 64h42"/>
+    <rect class="gl-art-line" x="26" y="74" width="150" height="30" rx="6"/>
+    <path class="gl-art-line" d="M40 89h104"/>
+    <rect class="gl-art-hot" x="186" y="74" width="148" height="30" rx="6"/>
+    <rect class="gl-art-hot-fill" x="198" y="82" width="112" height="14" rx="7"/>
+    <rect class="gl-art-line" x="26" y="112" width="150" height="30" rx="6"/>
+    <path class="gl-art-line" d="M40 127h92"/>
+    <rect class="gl-art-line" x="186" y="112" width="148" height="30" rx="6"/>
+    <path class="gl-art-line" d="M198 127h108"/>
+    <path class="gl-art-hot" d="M260 178v-26M252 160l8-8 8 8"/>
+    <path class="gl-art-line" d="M26 178h120"/>
   </svg>
 </t>
 
