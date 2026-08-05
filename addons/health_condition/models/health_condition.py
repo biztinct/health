@@ -29,7 +29,7 @@ _STATUS_GROUPS = (
 class HealthCondition(models.Model):
     _name = 'health.condition'
     _description = 'Condition / Diagnosis (Problem List)'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _order = 'recorded_date desc, id desc'
     _rec_name = 'display_name'
 

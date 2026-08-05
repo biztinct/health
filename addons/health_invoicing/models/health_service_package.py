@@ -15,7 +15,7 @@ class HealthServicePackage(models.Model):
     """
     _name = 'health.service.package'
     _description = 'Healthcare Service Package'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _order = 'create_date desc'
     _rec_name = 'name'
     

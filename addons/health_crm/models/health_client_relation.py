@@ -14,6 +14,7 @@ class HealthClientRelation(models.Model):
     Based on Odoo best practices for relationship modeling using association tables.
     """
     _name = "health.client.relation"
+    _inherit = ['health.lifecycle.mixin']
     _description = "Healthcare Client ↔ Representative Relationship"
     _rec_name = "display_name"
     _order = "client_id, role, is_primary desc, id"

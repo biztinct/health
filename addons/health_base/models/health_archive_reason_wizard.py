@@ -33,6 +33,20 @@ class HealthArchiveReasonWizard(models.TransientModel):
     record_count = fields.Integer('Records', compute='_compute_record_preview')
     record_preview = fields.Char('Selection', compute='_compute_record_preview')
 
+    @api.model
+    def get_lifecycle_models(self):
+        """Concrete models carrying health.lifecycle.mixin. Consumed by the
+        web policy layer (archive_delete_policy.js) so the Delete/Archive
+        buttons and cog entries follow newly mixed-in models automatically —
+        no client-side list to keep in sync."""
+        return sorted(
+            name
+            for name, model in self.env.registry.items()
+            if not model._abstract and not model._transient
+            and 'deleted' in model._fields
+            and hasattr(model, 'action_soft_delete')
+        )
+
     @api.depends('mode')
     @api.depends_context('active_ids', 'active_model')
     def _compute_record_preview(self):

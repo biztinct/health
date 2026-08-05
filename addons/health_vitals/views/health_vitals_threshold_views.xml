@@ -5,7 +5,7 @@
         <field name="name">health.vitals.threshold.list</field>
         <field name="model">health.vitals.threshold</field>
         <field name="arch" type="xml">
-            <list string="Vitals Thresholds" editable="bottom">
+            <list string="Vitals Thresholds" editable="bottom" decoration-muted="deleted" decoration-danger="deleted">
                 <field name="client_id"/>
                 <field name="vitals_type_id"/>
                 <field name="severity" widget="badge"
@@ -16,7 +16,20 @@
                 <field name="escalation_action"/>
                 <field name="notes" optional="show"/>
                 <field name="active" optional="hide"/>
-            </list>
+                            <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+</list>
         </field>
     </record>
 
@@ -42,6 +55,7 @@
     <record id="action_health_vitals_threshold" model="ir.actions.act_window">
         <field name="name">Vitals Thresholds</field>
         <field name="res_model">health.vitals.threshold</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list</field>
         <field name="search_view_id" ref="view_health_vitals_threshold_search"/>
         <field name="help" type="html">

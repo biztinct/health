@@ -42,7 +42,7 @@
       <field name="name">health.client.relation.tree</field>
       <field name="model">health.client.relation</field>
       <field name="arch" type="xml">
-        <list string="Healthcare Client Relationships">
+        <list string="Healthcare Client Relationships" decoration-muted="deleted" decoration-danger="deleted">
           <field name="client_id"/>
           <field name="representative_id"/>
           <field name="role"/>
@@ -52,7 +52,20 @@
           <field name="financial_responsibility" widget="percentage" optional="hide"/>
           <field name="can_make_medical_decisions" widget="boolean_toggle" optional="hide"/>
           <field name="active" widget="boolean_toggle"/>
-        </list>
+                        <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+</list>
       </field>
     </record>
 
@@ -132,6 +145,7 @@
     <record id="action_health_client_relation" model="ir.actions.act_window">
       <field name="name">Healthcare Relationships</field>
       <field name="res_model">health.client.relation</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
       <field name="view_mode">list,form,kanban</field>
       <field name="view_id" ref="view_health_client_relation_tree"/>
       <field name="search_view_id" ref="view_health_client_relation_search"/>

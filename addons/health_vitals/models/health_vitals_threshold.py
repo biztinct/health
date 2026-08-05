@@ -15,6 +15,7 @@ from odoo.exceptions import ValidationError
 
 class HealthVitalsThreshold(models.Model):
     _name = 'health.vitals.threshold'
+    _inherit = ['health.lifecycle.mixin']
     _description = 'Per-Client Vitals Alert Threshold'
     _order = 'client_id, vitals_type_id, severity'
 

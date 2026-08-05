@@ -197,7 +197,7 @@
         <field name="name">health.portable.equipment.list</field>
         <field name="model">health.portable.equipment</field>
         <field name="arch" type="xml">
-            <list string="Portable Medical Equipment">
+            <list string="Portable Medical Equipment" decoration-muted="deleted" decoration-danger="deleted">
                 <field name="name"/>
                 <field name="equipment_type"/>
                 <field name="status" decoration-success="status == 'available'"
@@ -208,7 +208,20 @@
                 <field name="is_maintenance_due" decoration-danger="is_maintenance_due"/>
                 <field name="usage_count"/>
                 <field name="active"/>
-            </list>
+                            <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+</list>
         </field>
     </record>
 
@@ -227,6 +240,7 @@
     <record id="action_health_portable_equipment" model="ir.actions.act_window">
         <field name="name">Portable Medical Equipment</field>
         <field name="res_model">health.portable.equipment</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_health_portable_equipment_search"/>
         <field name="help" type="html">

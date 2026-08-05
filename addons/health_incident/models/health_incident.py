@@ -65,7 +65,7 @@ SEVERITIES = [
 class HealthIncident(models.Model):
     _name = 'health.incident'
     _description = 'Incident / Adverse Event'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _order = 'incident_datetime desc'
     _rec_name = 'display_name'
 

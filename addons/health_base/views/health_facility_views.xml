@@ -6,7 +6,7 @@
         <field name="name">health.facility.list</field>
         <field name="model">health.facility</field>
         <field name="arch" type="xml">
-            <list string="Healthcare Facilities" decoration-warning="facility_status=='maintenance'" decoration-danger="facility_status in ['closed_temporary', 'closed_permanent']">
+            <list string="Healthcare Facilities" decoration-warning="facility_status=='maintenance'" decoration-danger="deleted or (facility_status in ['closed_temporary', 'closed_permanent'])" decoration-muted="deleted">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="catchment_province_id"/>
@@ -24,7 +24,20 @@
                 <button name="action_view_patients" type="object" icon="fa-users" title="View Patients" class="health-btn health-btn-sm"/>
                 <button name="action_view_appointments" type="object" icon="fa-calendar" title="View Appointments" class="health-btn health-btn-outline health-btn-sm"/>
                 <button name="action_check_license_expiry" type="object" icon="fa-certificate" title="Check License" class="health-btn health-btn-sm"/>
-            </list>
+                            <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+</list>
         </field>
     </record>
 
@@ -427,6 +440,7 @@
     <record id="action_health_facility" model="ir.actions.act_window">
         <field name="name">Healthcare Facilities</field>
         <field name="res_model">health.facility</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="view_id" ref="view_health_facility_kanban"/>
         <field name="search_view_id" ref="view_health_facility_search"/>

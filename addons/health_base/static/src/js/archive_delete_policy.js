@@ -22,6 +22,7 @@ import { ListController } from "@web/views/list/list_controller";
 import { FormController } from "@web/views/form/form_controller";
 import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
+import { rpc } from "@web/core/network/rpc";
 import { useState } from "@odoo/owl";
 
 const OWNER_GROUP = "health_base.group_healthcare_owner";
@@ -45,9 +46,11 @@ const GUARDED_EXACT = new Set([
 ]);
 const GUARDED_PREFIXES = ["advanced.pricing.", "health.", "misa."];
 
-// Models carrying health.lifecycle.mixin (the soft "Deleted" tier). Keep in
-// sync with the server-side mixin applications. Their list/form archs carry
-// an invisible `deleted` field so the per-record flag is readable here.
+// Models carrying health.lifecycle.mixin (the soft "Deleted" tier). Seeded
+// with the core five as an offline fallback, then replaced by the server's
+// authoritative registry answer so newly mixed-in models get the buttons
+// with zero client-side changes. Their main list/form archs carry an
+// invisible `deleted` field so the per-record flag is readable here.
 const LIFECYCLE_MODELS = new Set([
     "health.fieldservice.order",
     "res.partner",
@@ -55,11 +58,23 @@ const LIFECYCLE_MODELS = new Set([
     "account.move",
     "crm.lead",
 ]);
+rpc("/web/dataset/call_kw/health.archive.reason.wizard/get_lifecycle_models", {
+    model: "health.archive.reason.wizard",
+    method: "get_lifecycle_models",
+    args: [],
+    kwargs: {},
+}).then((models) => {
+    if (Array.isArray(models) && models.length) {
+        LIFECYCLE_MODELS.clear();
+        models.forEach((m) => LIFECYCLE_MODELS.add(m));
+    }
+}).catch(() => { /* keep the static fallback */ });
 
 function isGuardedModel(resModel) {
     return (
         GUARDED_EXACT.has(resModel) ||
-        GUARDED_PREFIXES.some((p) => resModel.startsWith(p))
+        GUARDED_PREFIXES.some((p) => resModel.startsWith(p)) ||
+        LIFECYCLE_MODELS.has(resModel)
     );
 }
 

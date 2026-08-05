@@ -13,6 +13,7 @@ from odoo import fields, models
 
 class CareReplyTemplate(models.Model):
     _name = "care.reply.template"
+    _inherit = ['health.lifecycle.mixin']
     _description = "Care Command Reply Template"
     _order = "sequence, id"
 

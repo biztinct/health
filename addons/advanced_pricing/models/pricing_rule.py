@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 class AdvancedPricingRule(models.Model):
     _name = 'advanced.pricing.rule'
     _description = 'Advanced Pricing Rule'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _order = 'sequence, id'
 
     name = fields.Char('Rule Name', required=True, tracking=True)

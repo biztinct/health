@@ -29,9 +29,12 @@ class HealthSoftDeleteGuard(models.AbstractModel):
 
     @api.model
     def _health_owner_only_delete_model(self):
+        # Any model carrying health.lifecycle.mixin is guarded regardless of
+        # its name — the mixin IS the opt-in to the governed lifecycle.
         return (
             self._name in self._health_owner_delete_exact_models
             or self._name.startswith(self._health_owner_delete_prefixes)
+            or 'deleted' in self._fields
         )
 
     def unlink(self):

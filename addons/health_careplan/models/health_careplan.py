@@ -39,7 +39,7 @@ MANAGER_GROUPS = (
 class HealthCareplan(models.Model):
     _name = 'health.careplan'
     _description = 'Care Plan'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _order = 'create_date desc'
     _rec_name = 'display_name'
 

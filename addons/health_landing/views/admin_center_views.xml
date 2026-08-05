@@ -61,6 +61,7 @@
     <record id="action_admin_facilities" model="ir.actions.act_window">
         <field name="name">Healthcare Facilities</field>
         <field name="res_model">health.facility</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_facility_list')})]"/>
@@ -273,6 +274,7 @@
     <record id="action_admin_pricelists" model="ir.actions.act_window">
         <field name="name">Pricing Engines</field>
         <field name="res_model">advanced.pricing.engine</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_pricelist_list')})]"/>
@@ -293,6 +295,7 @@
     <record id="action_admin_pricing_rules" model="ir.actions.act_window">
         <field name="name">Pricing Rules</field>
         <field name="res_model">advanced.pricing.rule</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_pricing_rule_list')})]"/>
@@ -314,6 +317,7 @@
     <record id="action_admin_quick_edit_rules" model="ir.actions.act_window">
         <field name="name">Quick Edit Rules</field>
         <field name="res_model">advanced.pricing.rule</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_quick_edit_list')})]"/>
@@ -416,6 +420,7 @@
     <record id="action_admin_equipment" model="ir.actions.act_window">
         <field name="name">Portable Equipment</field>
         <field name="res_model">health.portable.equipment</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('health_fieldservice.view_health_portable_equipment_list')})]"/>

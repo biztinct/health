@@ -6,13 +6,26 @@
         <field name="name">care.reply.template.list</field>
         <field name="model">care.reply.template</field>
         <field name="arch" type="xml">
-            <list string="Reply Templates" editable="bottom">
+            <list string="Reply Templates" editable="bottom" decoration-muted="deleted" decoration-danger="deleted">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="channel"/>
                 <field name="body"/>
                 <field name="active" widget="boolean_toggle"/>
-            </list>
+                            <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+</list>
         </field>
     </record>
 
@@ -51,6 +64,7 @@
     <record id="action_care_reply_template" model="ir.actions.act_window">
         <field name="name">Reply Templates</field>
         <field name="res_model">care.reply.template</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_care_reply_template_search"/>
         <field name="help" type="html">
@@ -65,16 +79,30 @@
         <field name="name">care.watch.phrase.list</field>
         <field name="model">care.watch.phrase</field>
         <field name="arch" type="xml">
-            <list string="Watchlist Phrases" editable="bottom">
+            <list string="Watchlist Phrases" editable="bottom" decoration-muted="deleted" decoration-danger="deleted">
                 <field name="phrase"/>
                 <field name="active" widget="boolean_toggle"/>
-            </list>
+                            <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+</list>
         </field>
     </record>
 
     <record id="action_care_watch_phrase" model="ir.actions.act_window">
         <field name="name">Watchlist Phrases</field>
         <field name="res_model">care.watch.phrase</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Add a watchlist phrase</p>

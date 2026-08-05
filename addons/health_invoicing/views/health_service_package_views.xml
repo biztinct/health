@@ -9,7 +9,7 @@
             <list string="Service Packages" default_order="create_date desc" 
                   decoration-success="state == 'active'" 
                   decoration-warning="state == 'exhausted'"
-                  decoration-muted="state in ('expired', 'cancelled', 'refunded')">
+                  decoration-muted="deleted or (state in ('expired', 'cancelled', 'refunded'))" decoration-danger="deleted">
                 <field name="display_name"/>
                 <field name="patient_id"/>
                 <field name="catchment_province_id" string="Catchment Area" optional="hide"/>
@@ -32,7 +32,20 @@
                        decoration-info="state == 'expired'"
                        decoration-muted="state in ('cancelled', 'refunded')"/>
                 <field name="currency_id" invisible="1"/>
-            </list>
+                            <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+</list>
         </field>
     </record>
 
@@ -232,6 +245,7 @@
     <record id="action_health_service_package" model="ir.actions.act_window">
         <field name="name">Service Packages</field>
         <field name="res_model">health.service.package</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">

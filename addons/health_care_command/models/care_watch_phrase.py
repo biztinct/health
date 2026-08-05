@@ -14,6 +14,7 @@ from odoo import fields, models
 
 class CareWatchPhrase(models.Model):
     _name = "care.watch.phrase"
+    _inherit = ['health.lifecycle.mixin']
     _description = "Care Command Watchlist Phrase"
     _order = "phrase"
 

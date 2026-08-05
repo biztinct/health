@@ -5,12 +5,14 @@
     <record id="action_advanced_pricing_engines" model="ir.actions.act_window">
         <field name="name">Pricing Engines</field>
         <field name="res_model">advanced.pricing.engine</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
     </record>
     
     <record id="action_advanced_pricing_rules" model="ir.actions.act_window">
         <field name="name">Pricing Rules</field>
         <field name="res_model">advanced.pricing.rule</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
     </record>
     
@@ -24,6 +26,7 @@
     <record id="action_pricing_rules_with_visual" model="ir.actions.act_window">
         <field name="name">Pricing Rules</field>
         <field name="res_model">advanced.pricing.rule</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list,form</field>
         <field name="view_id" ref="view_pricing_rule_list"/>
         <field name="search_view_id" ref="view_pricing_rule_search"/>
@@ -42,6 +45,7 @@
     <record id="action_pricing_rules_quick_edit" model="ir.actions.act_window">
         <field name="name">Quick Edit Rules</field>
         <field name="res_model">advanced.pricing.rule</field>
+        <field name="domain">['|', ('deleted', '=', False), ('deleted', '=', True)]</field>
         <field name="view_mode">list</field>
         <field name="view_id" ref="view_pricing_rule_list_quick_edit"/>
         <field name="search_view_id" ref="view_pricing_rule_search"/>

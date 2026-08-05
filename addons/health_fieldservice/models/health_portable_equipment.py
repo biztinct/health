@@ -8,7 +8,7 @@ class HealthPortableEquipment(models.Model):
     """
     _name = 'health.portable.equipment'
     _description = 'Portable Medical Equipment'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _order = 'name'
     
     name = fields.Char('Equipment Name', required=True, tracking=True)

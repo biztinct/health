@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class AdvancedPricingEngine(models.Model):
     _name = 'advanced.pricing.engine'
     _description = 'Advanced Pricing Calculation Engine'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _rec_name = 'name'
     _order = 'sequence, id'
 

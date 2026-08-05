@@ -232,8 +232,8 @@
             <list string="Pricing Rules" default_order="sequence"
                   decoration-success="approval_status == 'approved'"
                   decoration-warning="approval_status == 'pending'"
-                  decoration-danger="approval_status == 'rejected'"
-                  decoration-muted="approval_status == 'draft'">
+                  decoration-danger="deleted or (approval_status == 'rejected')"
+                  decoration-muted="deleted or (approval_status == 'draft')">
                 <header>
                     <button name="%(action_pricing_rule_bulk_submit)d" type="action"
                             string="Submit for Approval" class="btn-primary" icon="fa-paper-plane"
@@ -268,7 +268,20 @@
                 <field name="action_type"/>
                 <field name="action_value"/>
                 <field name="active" widget="boolean_toggle" optional="hide"/>
-            </list>
+                            <!-- Record lifecycle: Delete (user) / Archive (custodian) -->
+                <field name="deleted" column_invisible="1"/>
+                <button name="action_open_delete_wizard" type="object"
+                        icon="fa-trash" title="Delete (reason required)"
+                        invisible="deleted"/>
+                <button name="action_open_restore_wizard" type="object"
+                        icon="fa-undo" title="Restore this deleted record"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="not deleted"/>
+                <button name="action_open_archive_wizard" type="object"
+                        icon="fa-archive" title="Archive (custodian)"
+                        groups="health_base.group_healthcare_custodian"
+                        invisible="deleted"/>
+</list>
         </field>
     </record>
     

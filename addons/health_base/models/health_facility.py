@@ -11,7 +11,7 @@ class Facility(models.Model):
     """Healthcare facilities/clinics"""
     _name = 'health.facility'
     _description = 'Healthcare Facility'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'health.lifecycle.mixin']
     _order = 'name'
 
     name = fields.Char(
