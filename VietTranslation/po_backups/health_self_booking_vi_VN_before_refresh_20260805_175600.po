@@ -1,0 +1,196 @@
+# Vietnamese translation for health_self_booking
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_self_booking\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_self_booking
+#: model:ir.model,name:health_self_booking.model_health_selfbook_invite
+#: model:ir.model.fields.selection,name:health_self_booking.selection__health_outbound_message__purpose__selfbook_invite
+msgid "Client Self-Booking Invite"
+msgstr "Lời mời tự đặt lịch của khách hàng"
+
+#. module: health_self_booking
+#: model_terms:ir.ui.view,arch_db:health_self_booking.view_selfbook_invite_form
+msgid "Self-Booking Invite"
+msgstr "Lời mời tự đặt lịch"
+
+#. module: health_self_booking
+#: model:ir.actions.act_window,name:health_self_booking.action_selfbook_invite
+#: model:ir.ui.menu,name:health_self_booking.menu_selfbook_invite
+#: model_terms:ir.ui.view,arch_db:health_self_booking.view_selfbook_invite_list
+msgid "Self-Booking Invites"
+msgstr "Lời mời tự đặt lịch"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_health_selfbook_invite__patient_id
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_health_selfbook_invite__fso_id
+msgid "Booked Visit"
+msgstr "Lịch đã đặt"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_health_selfbook_invite__package_id
+msgid "Prepaid Package"
+msgstr "Gói trả trước"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_health_selfbook_invite__service_product_id
+msgid "Service Product"
+msgstr "Sản phẩm dịch vụ"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_health_selfbook_invite__slots_json
+msgid "Proposed Slots"
+msgstr "Khung giờ đề xuất"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_health_selfbook_invite__outbound_message_id
+msgid "Invite Message"
+msgstr "Tin nhắn lời mời"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_health_selfbook_invite__catchment_province_id
+#: model_terms:ir.ui.view,arch_db:health_self_booking.view_selfbook_invite_search
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_self_booking
+#: model:ir.model.fields.selection,name:health_self_booking.selection__health_selfbook_invite__state__sent
+#: model_terms:ir.ui.view,arch_db:health_self_booking.view_selfbook_invite_search
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_self_booking
+#: model:ir.model.fields.selection,name:health_self_booking.selection__health_selfbook_invite__state__booked
+#: model_terms:ir.ui.view,arch_db:health_self_booking.view_selfbook_invite_search
+msgid "Booked"
+msgstr "Đã đặt lịch"
+
+#. module: health_self_booking
+#: model:ir.model.fields.selection,name:health_self_booking.selection__health_selfbook_invite__state__revoked
+#: model_terms:ir.ui.view,arch_db:health_self_booking.view_selfbook_invite_search
+msgid "Revoked"
+msgstr "Đã thu hồi"
+
+#. module: health_self_booking
+#: model_terms:ir.ui.view,arch_db:health_self_booking.view_selfbook_invite_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/health_selfbook_invite.py:0
+msgid "Rebook invite: %(patient)s"
+msgstr "Lời mời đặt lại lịch: %(patient)s"
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/health_selfbook_invite.py:0
+msgid "Rebook invite"
+msgstr "Lời mời đặt lại lịch"
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/health_selfbook_invite.py:0
+msgid "gói của bạn (your package)"
+msgstr "gói của bạn"
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/health_selfbook_invite.py:0
+msgid "dịch vụ (service)"
+msgstr "dịch vụ"
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/res_partner.py:0
+msgid "Booking link ready"
+msgstr "Đã tạo link đặt lịch"
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/res_partner.py:0
+msgid "A self-booking link has been prepared for %s."
+msgstr "Đã chuẩn bị link tự đặt lịch cho %s."
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/res_partner.py:0
+msgid "Booking links can only be sent to patients."
+msgstr "Chỉ có thể gửi link đặt lịch cho bệnh nhân."
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/health_selfbook_invite.py:0
+msgid "No patient to send a booking link to."
+msgstr "Không có bệnh nhân để gửi link đặt lịch."
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/health_selfbook_invite.py:0
+msgid ""
+"Cannot create a booking link: this client has no active package, no previous "
+"booked service, and no fallback service product is configured."
+msgstr ""
+"Không thể tạo link đặt lịch: khách hàng này không có gói đang hoạt động, chưa "
+"từng đặt dịch vụ, và chưa cấu hình dịch vụ mặc định."
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/models/health_selfbook_invite.py:0
+msgid "No usable phone for the patient."
+msgstr "Không có số điện thoại hợp lệ cho bệnh nhân."
+
+#. module: health_self_booking
+#. odoo-python
+#: code:addons/health_self_booking/controllers/selfbook_public.py:0
+msgid ""
+"Khung giờ này không còn trống — vui lòng chọn giờ khác. (That time is no "
+"longer available — please pick another.)"
+msgstr ""
+"Khung giờ này không còn trống — vui lòng chọn giờ khác."
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_res_config_settings__sb_auto_invite_after_completion
+msgid "Auto-send Rebook Link After Visit"
+msgstr "Tự động gửi link đặt lại lịch sau khi thăm khám"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_res_config_settings__sb_zns_template_invite
+msgid "Self-Booking ZNS Template ID"
+msgstr "Mã mẫu ZNS tự đặt lịch"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_res_config_settings__sb_fallback_service_product_id
+msgid "Fallback Rebook Service"
+msgstr "Dịch vụ đặt lại mặc định"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_res_config_settings__sb_slot_count
+msgid "Rebook Slots Offered"
+msgstr "Số khung giờ đề xuất"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_res_config_settings__sb_horizon_days
+msgid "Rebook Slot Horizon (days)"
+msgstr "Phạm vi tìm khung giờ (ngày)"
+
+#. module: health_self_booking
+#: model:ir.model.fields,field_description:health_self_booking.field_res_config_settings__sb_invite_ttl_days
+msgid "Rebook Link Lifetime (days)"
+msgstr "Thời hạn link đặt lịch (ngày)"
+
+#. module: health_self_booking
+#: model_terms:ir.ui.view,arch_db:health_self_booking.res_config_settings_view_form_self_booking
+msgid "Client Self-Booking (Rebook)"
+msgstr "Khách hàng tự đặt lịch (đặt lại)"

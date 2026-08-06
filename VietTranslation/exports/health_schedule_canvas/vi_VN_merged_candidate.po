@@ -1,0 +1,193 @@
+# Vietnamese translation for health_schedule_canvas
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_schedule_canvas\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/schedule_canvas.esm.js:0
+msgid "Booking created — %s."
+msgstr "Đã tạo lịch hẹn — %s."
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Clear"
+msgstr "Xóa"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/quick_create_dialog.esm.js:0
+msgid "Clinic visit"
+msgstr "Khám tại phòng khám"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/quick_create_dialog.esm.js:0
+msgid "Consultation"
+msgstr "Tư vấn"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/quick_create_dialog.esm.js:0
+msgid "Could not create the booking."
+msgstr "Không thể tạo lịch hẹn."
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/schedule_canvas.esm.js:0
+msgid "Could not open the booking form."
+msgstr "Không thể mở biểu mẫu đặt lịch."
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Create booking"
+msgstr "Tạo lịch hẹn"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Creating…"
+msgstr "Đang tạo…"
+
+#. module: health_schedule_canvas
+#: model:ir.model.fields,field_description:health_schedule_canvas.field_health_staff_assignment__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Duration (h)"
+msgstr "Thời lượng (giờ)"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/quick_create_dialog.esm.js:0
+msgid "Follow-up"
+msgstr "Tái khám"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/quick_create_dialog.esm.js:0
+msgid "Home visit"
+msgstr "Thăm khám tại nhà"
+
+#. module: health_schedule_canvas
+#: model:ir.model.fields,field_description:health_schedule_canvas.field_health_staff_assignment__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_schedule_canvas
+#: model:ir.model,name:health_schedule_canvas.model_health_staff_assignment
+msgid "Intelligent Staff Assignment Record"
+msgstr "Tài liệu về việc bổ nhiệm nhân viên thông minh"
+
+#. module: health_schedule_canvas
+#. odoo-python
+#: code:addons/health_schedule_canvas/models/health_staff_assignment.py:0
+msgid "Invalid time."
+msgstr "Thời gian không hợp lệ."
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/quick_create_dialog.esm.js:0
+msgid "New booking"
+msgstr "Lịch hẹn mới"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Notes"
+msgstr "Ghi chú"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/schedule_canvas.esm.js:0
+msgid "Off-hours: hidden"
+msgstr "Giờ nghỉ: Ẩn"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/schedule_canvas.esm.js:0
+msgid "Off-hours: shown"
+msgstr "Giờ nghỉ: Hiện"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/schedule_canvas.esm.js:0
+msgid ""
+"Only operations staff can create bookings here — ask an operations manager "
+"or head nurse."
+msgstr ""
+"Chỉ nhân viên điều hành mới có thể tạo lịch hẹn tại đây — hãy hỏi quản lý "
+"điều hành hoặc điều dưỡng trưởng."
+
+#. module: health_schedule_canvas
+#. odoo-python
+#: code:addons/health_schedule_canvas/models/health_staff_assignment.py:0
+msgid "Outside working hours."
+msgstr "Ngoài giờ làm việc."
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Search name / phone / code…"
+msgstr "Tìm theo tên / điện thoại / mã…"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Searching…"
+msgstr "Đang tìm…"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "Service"
+msgstr "Dịch vụ"
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/schedule_canvas.esm.js:0
+msgid "Switch to Day or Week view to create a booking."
+msgstr "Chuyển sang chế độ Ngày hoặc Tuần để tạo lịch hẹn."
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/js/quick_create_dialog.esm.js:0
+msgid "Telemedicine"
+msgstr "Khám từ xa"
+
+#. module: health_schedule_canvas
+#. odoo-python
+#: code:addons/health_schedule_canvas/models/health_staff_assignment.py:0
+msgid "Unknown staff member."
+msgstr "Không tìm thấy nhân viên."
+
+#. module: health_schedule_canvas
+#. odoo-javascript
+#: code:addons/health_schedule_canvas/static/src/xml/quick_create_dialog.xml:0
+msgid "continuing anyway."
+msgstr "vẫn tiếp tục."

@@ -1,0 +1,3226 @@
+{
+  "How many times the retro-coding sweep has tried this note (capped so un-codable notes are not retried forever).": {
+    "draft": "Bao nhiêu lần việc mã hóa ngược đã thử nó (có vỏ để ghi lại nó không có mã hóa được thử lại mãi mãi)).",
+    "reason": "suspicious_output"
+  },
+  "ICD-10": {
+    "draft": "ICD-10",
+    "reason": "unchanged"
+  },
+  "Max prompt characters": {
+    "draft": "Max prompt characters",
+    "reason": "unchanged"
+  },
+  "Model-proposed codes not present in the ICD-10 catalog.": {
+    "draft": "Các mã được đề xuất theo mô hình không có trong danh mục ICD-10.",
+    "reason": "technical_identifier"
+  },
+  "Off by default. When on, a nightly sweep proposes ICD-10 codes for un-coded clinical notes into a review queue. The AI only ever suggests — a clinician click is the only thing that writes a code.": {
+    "draft": "Khi bật, một cuộc quét ban đêm đề xuất mã ICD-10 cho các ghi chú lâm sàng không được mã hóa vào hàng xếp hạng xem xét. AI chỉ cho thấy một cú nhấp chuột của bác sĩ là thứ duy nhất viết mã.",
+    "reason": "technical_identifier"
+  },
+  "The nightly retro-coding sweep proposes ICD-10 codes for\n               un-coded clinical notes here for a clinician to approve.": {
+    "draft": "Cuộc kiểm tra mã hóa ngược hàng đêm đề xuất mã ICD-10 cho các ghi chú lâm sàng không mã hóa ở đây để một bác sĩ lâm sàng phê duyệt.",
+    "reason": "technical_identifier"
+  },
+  "note_id": {
+    "draft": "note_id",
+    "reason": "unchanged"
+  },
+  "API Access Audit Log": {
+    "draft": "API Access Audit Log",
+    "reason": "unchanged"
+  },
+  "API Audit Log": {
+    "draft": "API Log kiểm toán",
+    "reason": "technical_identifier"
+  },
+  "API Gateway": {
+    "draft": "API Gateway",
+    "reason": "unchanged"
+  },
+  "API Gateway Access Token": {
+    "draft": "API Gateway Access Token",
+    "reason": "unchanged"
+  },
+  "API Gateway OAuth2 Client": {
+    "draft": "API Gateway OAuth2 Client",
+    "reason": "unchanged"
+  },
+  "API Gateway Rate Counter (fixed window fallback)": {
+    "draft": "API Gateway Rate Counter (đài cố định cửa sổ fallback))",
+    "reason": "technical_identifier"
+  },
+  "API Gateway: dispatch integration outbox": {
+    "draft": "API Gateway: hộp thư ra ngoài tích hợp gửi",
+    "reason": "technical_identifier"
+  },
+  "API Gateway: prune rate counters": {
+    "draft": "API Gateway: máy tính tốc độ cắt cỏ",
+    "reason": "technical_identifier"
+  },
+  "API Gateway: purge expired tokens": {
+    "draft": "API Gateway: thanh toán token hết hạn",
+    "reason": "technical_identifier"
+  },
+  "API Key": {
+    "draft": "Khóa API",
+    "reason": "technical_identifier"
+  },
+  "API Key Scope": {
+    "draft": "Khối lượng API",
+    "reason": "technical_identifier"
+  },
+  "API Keys": {
+    "draft": "Key API",
+    "reason": "no_vietnamese"
+  },
+  "API Scopes": {
+    "draft": "Khối diện API",
+    "reason": "technical_identifier"
+  },
+  "API audit log entries are append-only and can never be deleted.": {
+    "draft": "Các mục nhật ký kiểm toán API chỉ là phụ lục và không bao giờ có thể bị xóa.",
+    "reason": "technical_identifier"
+  },
+  "API audit log entries are append-only and can never be modified.": {
+    "draft": "Các mục đăng ký kiểm toán API chỉ là phụ lục và không bao giờ có thể được sửa đổi.",
+    "reason": "technical_identifier"
+  },
+  "API key id or OAuth client_id — never the secret.": {
+    "draft": "ID khóa API hoặc OAuth client_id  không bao giờ là bí mật.",
+    "reason": "technical_identifier"
+  },
+  "Advanced (SMART backend services, Phase 3)": {
+    "draft": "Dịch vụ hậu thuẫn nâng cao (SMART, giai đoạn 3))",
+    "reason": "technical_identifier"
+  },
+  "Attempt": {
+    "draft": "Cố gắng",
+    "reason": "technical_identifier"
+  },
+  "Count": {
+    "draft": "- Anh Count",
+    "reason": "no_vietnamese"
+  },
+  "Dead": {
+    "draft": "- Này.",
+    "reason": "technical_identifier"
+  },
+  "Deliveries": {
+    "draft": "Chuyển",
+    "reason": "technical_identifier"
+  },
+  "Dispatched": {
+    "draft": "Được gửi",
+    "reason": "technical_identifier"
+  },
+  "Events": {
+    "draft": "Các sự kiện",
+    "reason": "technical_identifier"
+  },
+  "FHIR All Resources Read": {
+    "draft": "FHIR Tất cả các tài nguyên đọc",
+    "reason": "technical_identifier"
+  },
+  "FHIR Appointment Read": {
+    "draft": "LƯC ĐI ĐU ĐN",
+    "reason": "technical_identifier"
+  },
+  "FHIR DocumentReference Read": {
+    "draft": "FHIR DocumentTài liệu tham chiếu",
+    "reason": "technical_identifier"
+  },
+  "FHIR Encounter Read": {
+    "draft": "Lần gặp gỡ",
+    "reason": "technical_identifier"
+  },
+  "FHIR Location Read": {
+    "draft": "Đọc tại chỗ",
+    "reason": "technical_identifier"
+  },
+  "FHIR Organization Read": {
+    "draft": "Tổ chức FHIR Đọc",
+    "reason": "technical_identifier"
+  },
+  "FHIR Patient Read": {
+    "draft": "TẠI khi bệnh nhân đọc",
+    "reason": "technical_identifier"
+  },
+  "FHIR Practitioner Read": {
+    "draft": "FHIR Tiến sĩ đọc",
+    "reason": "technical_identifier"
+  },
+  "FHIR ServiceRequest Read": {
+    "draft": "FHIR Dịch vụThiếu nại Đọc",
+    "reason": "technical_identifier"
+  },
+  "Gateway API Docs Reader": {
+    "draft": "Gateway API Docs Reader",
+    "reason": "unchanged"
+  },
+  "Gateway Active": {
+    "draft": "Gateway Active",
+    "reason": "unchanged"
+  },
+  "Gateway Administrator": {
+    "draft": "Gateway Administrator",
+    "reason": "unchanged"
+  },
+  "HMAC-SHA256 key used to sign delivery bodies (X-Health19-Signature).": {
+    "draft": "Chìa khóa HMAC-SHA256 được sử dụng để ký các cơ quan giao hàng (X-Health19-Signature)).",
+    "reason": "suspicious_output"
+  },
+  "Hashed client secret. The plaintext is shown exactly once, when (re)generated — it is never stored.": {
+    "draft": "Hached client secret. Các văn bản đơn được hiển thị chính xác một lần, khi (được tạo lại)  nó không bao giờ được lưu trữ.",
+    "reason": "english_residue"
+  },
+  "Health API Gateway access management": {
+    "draft": "Quản lý truy cập Gateway của Health API",
+    "reason": "technical_identifier"
+  },
+  "Invalid API key": {
+    "draft": "Key API không hợp lệ",
+    "reason": "technical_identifier"
+  },
+  "JWKS": {
+    "draft": "JWKS",
+    "reason": "unchanged"
+  },
+  "Key": {
+    "draft": "Chìa khóa",
+    "reason": "technical_identifier"
+  },
+  "Manage API keys, OAuth clients, webhook subscriptions and read the API audit log.": {
+    "draft": "Quản lý khóa API, khách hàng OAuth, đăng ký webhook và đọc nhật ký kiểm toán API.",
+    "reason": "technical_identifier"
+  },
+  "Manage webhook subscriptions via API.": {
+    "draft": "Quản lý đăng ký webhook thông qua API.",
+    "reason": "technical_identifier"
+  },
+  "May browse the human-readable API documentation.": {
+    "draft": "Có thể duyệt qua tài liệu API có thể đọc được bởi con người.",
+    "reason": "technical_identifier"
+  },
+  "OAuth Clients": {
+    "draft": "Khách hàng OAuth",
+    "reason": "technical_identifier"
+  },
+  "OAuth2 Token": {
+    "draft": "OAuth2 token",
+    "reason": "unchanged"
+  },
+  "Optional RFC 7523 client-assertion public keys (SMART backend services, Phase 3).": {
+    "draft": "Các khóa công cộng khẳng định khách hàng tùy chọn RFC 7523 (SMART backend services, Phase 3).",
+    "reason": "technical_identifier"
+  },
+  "PHI subjects touched — required for FHIR reads.": {
+    "draft": "Các đối tượng PHI được chạm vào  cần thiết cho việc đọc FHIR.",
+    "reason": "technical_identifier"
+  },
+  "PWA Read": {
+    "draft": "PWA Read",
+    "reason": "unchanged"
+  },
+  "Replay": {
+    "draft": "Chơi lại",
+    "reason": "technical_identifier"
+  },
+  "Resource": {
+    "draft": "Nguồn tài nguyên",
+    "reason": "technical_identifier"
+  },
+  "SMART backend-services read scope for FHIR Appointment.": {
+    "draft": "SMART backend-services đọc phạm vi của FHIR.",
+    "reason": "technical_identifier"
+  },
+  "SMART backend-services read scope for FHIR DocumentReference.": {
+    "draft": "SMART backend services đọc phạm vi cho FHIR DocumentReference.",
+    "reason": "technical_identifier"
+  },
+  "SMART backend-services read scope for FHIR Encounter.": {
+    "draft": "SMART backend-services đọc phạm vi cho FHIR Encounter.",
+    "reason": "technical_identifier"
+  },
+  "SMART backend-services read scope for FHIR Location.": {
+    "draft": "SMART backend services read scope for FHIR Location.",
+    "reason": "no_vietnamese"
+  },
+  "SMART backend-services read scope for FHIR Organization.": {
+    "draft": "Các dịch vụ hậu thuẫn SMART đọc phạm vi cho Tổ chức FHIR.",
+    "reason": "technical_identifier"
+  },
+  "SMART backend-services read scope for FHIR Patient.": {
+    "draft": "Các dịch vụ hậu thuẫn SMART đọc phạm vi cho bệnh nhân FHIR.",
+    "reason": "technical_identifier"
+  },
+  "SMART backend-services read scope for FHIR Practitioner.": {
+    "draft": "SMART backend-services read scope for FHIR Practitioner.",
+    "reason": "unchanged"
+  },
+  "SMART backend-services read scope for FHIR ServiceRequest.": {
+    "draft": "SMART backend services read scope for FHIR ServiceRequest.",
+    "reason": "no_vietnamese"
+  },
+  "SMART backend-services wildcard read scope (all FHIR resources).": {
+    "draft": "SMART backend services (tất cả các nguồn lực FHIR)).",
+    "reason": "technical_identifier"
+  },
+  "Scopes": {
+    "draft": "Khối cảnh",
+    "reason": "technical_identifier"
+  },
+  "Secret": {
+    "draft": "Bí mật",
+    "reason": "technical_identifier"
+  },
+  "Session": {
+    "draft": "Hội nghị",
+    "reason": "technical_identifier"
+  },
+  "Space-separated event codes from the catalog, e.g. \"booking.completed booking.cancelled\".": {
+    "draft": "Mã sự kiện tách biệt không gian từ danh mục, e.g. \"booking.completed booking.cancelled\".",
+    "reason": "english_residue"
+  },
+  "Subscription": {
+    "draft": "Đăng ký",
+    "reason": "technical_identifier"
+  },
+  "Timestamp": {
+    "draft": "Tiêu khắc thời gian",
+    "reason": "technical_identifier"
+  },
+  "Token Hash": {
+    "draft": "Token Hash",
+    "reason": "unchanged"
+  },
+  "Webhook target URL must use https://": {
+    "draft": "URL mục tiêu Webhook phải sử dụng https://",
+    "reason": "technical_identifier"
+  },
+  "booking.completed booking.cancelled": {
+    "draft": "booking.completed booking.cancelled",
+    "reason": "unchanged"
+  },
+  "e.g. booking.completed": {
+    "draft": "e.g. booking.completed",
+    "reason": "unchanged"
+  },
+  "e.g. pwa.read, booking.write, system/Patient.read": {
+    "draft": "e.g. pwa.read, booking.write, hệ thống/Patient.read",
+    "reason": "english_residue"
+  },
+  "https://partner.example.com/hooks/health19": {
+    "draft": "https://partner.example.com/hooks/sức khỏe19",
+    "reason": "technical_identifier"
+  },
+  "<span class=\"badge patient-badge badge-deceased text-danger\" invisible=\"not deceased\">\n                                    <i class=\"fa fa-user-times\" title=\"Deceased\"/>\n                                </span>\n                                <span class=\"badge patient-badge vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                                    <i class=\"fa fa-trash\" title=\"Deleted\"/> Deleted\n                                </span>": {
+    "draft": "<span class=\"badge patient-badge badge-deceased text-danger\" invisible=\"not deceased\">\n                                    <i class=\"fa fa-user-times\" title=\"Deceased\"/>\n                                </span>\n                                <span class=\"badge patient-badge vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                                    <i class=\"fa fa-trash\" title=\"Deleted\"/> Dỡ bỏ\n                                </span>",
+    "reason": "markup_or_template"
+  },
+  "<span>Selected Records</span>\n                                <small class=\"text-muted d-block\">What this action applies to</small>": {
+    "draft": "<span>Các hồ sơ được chọn</span>\n                                <small class=\"text-muted d-block\">Điều gì hành động này áp dụng</small>",
+    "reason": "markup_or_template"
+  },
+  "<span>Why?</span>\n                                <small class=\"text-muted d-block\">Mandatory — kept in the lifecycle audit trail</small>": {
+    "draft": "<span>Tại sao??</span>\n                                <small class=\"text-muted d-block\">Cần phải  được giữ trong vòng kiểm toán vòng đời</small>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Archive (custodian).</strong> The record is hidden from normal\n                        views but keeps counting in reports. Find it again with the\n                        \"Archived\" filter.": {
+    "draft": "<strong>Tệp (các người bảo vệ)).</strong> Các hồ sơ được ẩn khỏi các xem bình thường nhưng vẫn cứ đếm trong các báo cáo..",
+    "reason": "markup_or_template"
+  },
+  "<strong>Delete request.</strong> The record stays visible in its table\n                        with a <strong>DELETED</strong> badge and stops counting in reports.\n                        Once the purpose is verified, the custodian can remove it permanently.": {
+    "draft": "<strong>Xóa yêu cầu.</strong> Các hồ sơ vẫn còn hiển thị trong bảng của nó với một <strong>Deleted</strong> Một khi mục đích được xác minh, người bảo vệ có thể loại bỏ nó vĩnh viễn.",
+    "reason": "markup_or_template"
+  },
+  "<strong>Restore.</strong> The Deleted flag is removed and the record\n                        counts again everywhere.": {
+    "draft": "<strong>Khôi phục lại.</strong> Lập được xóa được xóa và hồ sơ được đếm lại ở khắp mọi nơi.",
+    "reason": "markup_or_template"
+  },
+  "<strong>Unarchive.</strong> The record returns to normal views.": {
+    "draft": "<strong>Không lưu trữ.</strong> Các hồ sơ trở lại với các hình ảnh bình thường.",
+    "reason": "markup_or_template"
+  },
+  "Archive (custodian)": {
+    "draft": "Tệp (các người bảo vệ))",
+    "reason": "suspicious_output"
+  },
+  "Delete (reason required)": {
+    "draft": "Xóa (tại lý yêu cầu))",
+    "reason": "suspicious_output"
+  },
+  "Driving Distance to Clinic (km)": {
+    "draft": "Khoảng cách lái xe đến phòng khám (km))",
+    "reason": "suspicious_output"
+  },
+  "Driving Time to Clinic (min)": {
+    "draft": "Thời gian lái xe đến phòng khám (mìn))",
+    "reason": "suspicious_output"
+  },
+  "HN_NS_Minh_Khai": {
+    "draft": "HN_NS_Minh_Khai",
+    "reason": "unchanged"
+  },
+  "HN_PK_PKGDVU": {
+    "draft": "HN_PK_PkGDVU",
+    "reason": "unchanged"
+  },
+  "Helper for the District domain (the City = catchment province).": {
+    "draft": "Người trợ giúp cho khu vực Quận (Thành phố = tỉnh lưu vực)).",
+    "reason": "suspicious_output"
+  },
+  "Mode": {
+    "draft": "Phương thức",
+    "reason": "technical_identifier"
+  },
+  "Record Lifecycle (Soft Delete)": {
+    "draft": "Lưu trữ vòng đời (Hóa mềm))",
+    "reason": "suspicious_output"
+  },
+  "Records": {
+    "draft": "Các hồ sơ",
+    "reason": "technical_identifier"
+  },
+  "Selection": {
+    "draft": "Sự lựa chọn",
+    "reason": "technical_identifier"
+  },
+  "TPHCM_PK_CSTNVU": {
+    "draft": "TPHCM_PK_CSTNVU",
+    "reason": "unchanged"
+  },
+  "True for staff whose record access is narrowed to their own catchment area. False for owners and for anyone who is not healthcare staff, so the global catchment rules leave them alone.": {
+    "draft": "Đúng đối với nhân viên có hồ sơ truy cập hạn chế đến khu vực lưu trữ của riêng họ..",
+    "reason": "long_message"
+  },
+  "Unarchived": {
+    "draft": "Không lưu trữ",
+    "reason": "technical_identifier"
+  },
+  "female": {
+    "draft": "nữ",
+    "reason": "technical_identifier"
+  },
+  "foreigner_doctor": {
+    "draft": "người nước ngoài_bác sĩ",
+    "reason": "technical_identifier"
+  },
+  "nursing_care": {
+    "draft": "chăm sóc y tế",
+    "reason": "technical_identifier"
+  },
+  "prefer_not_to_say": {
+    "draft": "prefer_not_to_say",
+    "reason": "unchanged"
+  },
+  "repeat": {
+    "draft": "lặp lại",
+    "reason": "technical_identifier"
+  },
+  "BHYT": {
+    "draft": "BHYT",
+    "reason": "unchanged"
+  },
+  "BHYT Card": {
+    "draft": "BHYT Card",
+    "reason": "unchanged"
+  },
+  "BHYT Claim Line": {
+    "draft": "BHYT Claim Line",
+    "reason": "unchanged"
+  },
+  "By": {
+    "draft": "- Nhờ",
+    "reason": "technical_identifier"
+  },
+  "Event": {
+    "draft": "Sự kiện",
+    "reason": "technical_identifier"
+  },
+  "Generated": {
+    "draft": "Được tạo ra",
+    "reason": "technical_identifier"
+  },
+  "Quantity": {
+    "draft": "Số lượng",
+    "reason": "technical_identifier"
+  },
+  "Scheme": {
+    "draft": "Chương trình",
+    "reason": "technical_identifier"
+  },
+  "Total (snapshot)": {
+    "draft": "Tổng (tiếng chụp))",
+    "reason": "suspicious_output"
+  },
+  "modify": {
+    "draft": "sửa đổi",
+    "reason": "technical_identifier"
+  },
+  "A Care Command conversation needs at least one anchor (contact, lead, Zalo conversation, phone or email).": {
+    "draft": "Một cuộc trò chuyện của Care Command cần ít nhất một bộ neo (contact, lead, Zalo conversation, phone or email)).",
+    "reason": "english_residue"
+  },
+  "Body": {
+    "draft": "Cơ thể",
+    "reason": "technical_identifier"
+  },
+  "Care Command Conversation (work item)": {
+    "draft": "Care Command Cuộc trò chuyện (về việc))",
+    "reason": "suspicious_output"
+  },
+  "Care Command Reply Template": {
+    "draft": "Care Command Template Reply",
+    "reason": "no_vietnamese"
+  },
+  "Deterministic substring rules. An inbound Zalo message or email whose\n               text contains an active phrase is flagged on the wall (+urgency).\n               No severity judgement — a plain phrase list you own.": {
+    "draft": "Các quy tắc phân định chủ yếu. Một tin nhắn hoặc email Zalo nhập mà văn bản của nó chứa một cụm từ hoạt động được đánh dấu trên tường (+ khẩn cấp). Không phán xét mức độ nghiêm trọng  danh sách cụm câu đơn giản bạn sở hữu.",
+    "reason": "long_message"
+  },
+  "Phrase": {
+    "draft": "Câu nói",
+    "reason": "technical_identifier"
+  },
+  "Reply Template": {
+    "draft": "Template trả lời",
+    "reason": "suspicious_output"
+  },
+  "Unread Count": {
+    "draft": "Không đọc Count",
+    "reason": "suspicious_output"
+  },
+  "Unrouted": {
+    "draft": "Không được định hướng",
+    "reason": "technical_identifier"
+  },
+  "client_id": {
+    "draft": "client_id",
+    "reason": "unchanged"
+  },
+  "AI": {
+    "draft": "AI",
+    "reason": "unchanged"
+  },
+  "AI Continuity Brief": {
+    "draft": "AI Continuity Brief",
+    "reason": "unchanged"
+  },
+  "123456789:AAG…": {
+    "draft": "123456789:AAG...",
+    "reason": "no_vietnamese"
+  },
+  "A connection records what a provider (Zalo, WhatsApp, Messenger,\n               Telegram, Email, Calls, Web chat) has actually authorised for this\n               company. \"Connected\" is derived from the readiness checks — never\n               from the existence of this record.": {
+    "draft": "Một kết nối ghi lại những gì một nhà cung cấp (Zalo, WhatsApp, Messenger, Telegram, Email, Calls, Web chat) đã thực sự ủy quyền cho công ty này. \"Connected\" được lấy từ kiểm tra sẵn sàng  không bao giờ từ sự tồn tại của hồ sơ này.",
+    "reason": "long_message"
+  },
+  "API base override": {
+    "draft": "Tỷ lệ vượt quá cơ sở API",
+    "reason": "technical_identifier"
+  },
+  "Account": {
+    "draft": "Tài khoản",
+    "reason": "technical_identifier"
+  },
+  "Application": {
+    "draft": "Ứng dụng",
+    "reason": "technical_identifier"
+  },
+  "Channel settings (JSON)": {
+    "draft": "Cài đặt kênh (JSON))",
+    "reason": "technical_identifier"
+  },
+  "Client / App ID": {
+    "draft": "Client / App ID",
+    "reason": "unchanged"
+  },
+  "Client Secret (encrypted)": {
+    "draft": "Bí mật khách hàng (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Comma-separated hostnames an OAuth authorization may return to, in addition to this instance's own base URL. Empty by default — an open redirect on a callback is a phishing primitive, so leave it empty unless the Channel Center is embedded elsewhere.": {
+    "draft": "Tên máy chủ được tách ra bằng dấu phím có thể được xác nhận bởi OAuth, ngoài URL cơ sở của bản ví dụ này. Không trống theo mặc định  một chuyển hướng mở trên một cuộc gọi trở lại là một nguyên thủy lừa đảo, vì vậy hãy để nó trống trừ khi Trung tâm kênh được nhúng ở nơi khác.",
+    "reason": "technical_identifier"
+  },
+  "Comma-separated hostnames, in addition to this instance's own base URL, that a channel authorization may return to. Empty by default — leave it empty unless the Channel Center is embedded in another front end.": {
+    "draft": "Tên máy chủ được tách bằng dấu phẩy, ngoài URL cơ sở của ví dụ này, mà phép kênh có thể quay lại..",
+    "reason": "long_message"
+  },
+  "Connection": {
+    "draft": "Kết nối",
+    "reason": "technical_identifier"
+  },
+  "Contacts that reached us but could not be matched to a\n                conversation land here — a message for an account that is not\n                connected yet, a call from a withheld number, a web-chat visitor\n                who left a phone number and nothing else. Nothing is discarded;\n                convert anything real in one click.": {
+    "draft": "Liên hệ đã đến với chúng tôi nhưng không thể được kết hợp với một cuộc trò chuyện đến đây  một tin nhắn cho một tài khoản chưa kết nối, một cuộc gọi từ một số bị giữ lại, một khách truy cập trò chuyện trên web đã để lại một số điện thoại và không có gì khác. Không có gì bị loại bỏ; chuyển đổi bất cứ điều gì thực trong một nhấp chuột.",
+    "reason": "long_message"
+  },
+  "Create the provider applications the clinics sign in through.\n              One guided run per provider — we say what to do and where to do\n              it, and we watch for the proof that it worked.": {
+    "draft": "Tạo ứng dụng nhà cung cấp các phòng khám đăng nhập thông qua. Một chạy hướng dẫn cho mỗi nhà cung ứng  chúng tôi nói phải làm gì và làm ở đâu, và chúng tôi xem xét bằng chứng rằng nó hoạt động.",
+    "reason": "long_message"
+  },
+  "Credential": {
+    "draft": "Giấy chứng nhận",
+    "reason": "technical_identifier"
+  },
+  "Delivery": {
+    "draft": "Chuyển",
+    "reason": "technical_identifier"
+  },
+  "Detail": {
+    "draft": "Chi tiết",
+    "reason": "technical_identifier"
+  },
+  "Disabled": {
+    "draft": "Khối khuyết tật",
+    "reason": "technical_identifier"
+  },
+  "Embed snippet:\n                        <br/>": {
+    "draft": "Nhúng snippet:\n                        <br/>",
+    "reason": "markup_or_template"
+  },
+  "Expiring": {
+    "draft": "Chấp hành",
+    "reason": "technical_identifier"
+  },
+  "External": {
+    "draft": "Bên ngoài",
+    "reason": "technical_identifier"
+  },
+  "Extra configuration (JSON)": {
+    "draft": "Tích cấu hình thêm (JSON))",
+    "reason": "technical_identifier"
+  },
+  "Extra configuration (non-secret)": {
+    "draft": "Thiết lập thêm (không bí mật))",
+    "reason": "suspicious_output"
+  },
+  "Fail": {
+    "draft": "Thất bại",
+    "reason": "technical_identifier"
+  },
+  "Failing": {
+    "draft": "Thất bại",
+    "reason": "technical_identifier"
+  },
+  "Go-Live Studio": {
+    "draft": "Studio Go-Live",
+    "reason": "no_vietnamese"
+  },
+  "Health19": {
+    "draft": "Y tế19",
+    "reason": "technical_identifier"
+  },
+  "Healthy": {
+    "draft": "Sức khỏe",
+    "reason": "technical_identifier"
+  },
+  "Meta": {
+    "draft": "Meta",
+    "reason": "unchanged"
+  },
+  "Meta (WhatsApp + Messenger)": {
+    "draft": "Meta (WhatsApp + Messenger))",
+    "reason": "no_vietnamese"
+  },
+  "Microsoft": {
+    "draft": "Microsoft",
+    "reason": "unchanged"
+  },
+  "One record per provider per deployment (Meta, Zalo, Google, Microsoft).\n               Tenants never see these credentials — they only sign in with the\n               provider. A channel with no platform application shows as\n               \"Not available yet\" rather than as an error.": {
+    "draft": "Một bản ghi cho mỗi nhà cung cấp cho mỗi triển khai (Meta, Zalo, Google, Microsoft). Người thuê nhà không bao giờ thấy các thông tin tín dụng này  họ chỉ đăng nhập với nhà cung ứng. Một kênh không có ứng dụng nền tảng hiển thị như \"Không có sẵn\" thay vì là lỗi.",
+    "reason": "long_message"
+  },
+  "Page id / phone_number_id / oa_id / bot id / mailbox / PBX account.": {
+    "draft": "Page id / phone_number_id / oa_id/bot id / mailbox / PBX account.",
+    "reason": "no_vietnamese"
+  },
+  "Pass": {
+    "draft": "Thêm qua",
+    "reason": "technical_identifier"
+  },
+  "Paste this into the provider application as the allowed OAuth redirect / callback URI.": {
+    "draft": "Nhập vào ứng dụng nhà cung cấp như OAuth chuyển hướng / gọi lại được phép URI.",
+    "reason": "technical_identifier"
+  },
+  "Pkce Verifier Enc": {
+    "draft": "Pkce Verifier Enc",
+    "reason": "unchanged"
+  },
+  "Provider": {
+    "draft": "Nhà cung cấp",
+    "reason": "technical_identifier"
+  },
+  "Readiness": {
+    "draft": "Lập sẵn sàng",
+    "reason": "technical_identifier"
+  },
+  "Rename": {
+    "draft": "Tên đổi",
+    "reason": "technical_identifier"
+  },
+  "Steps Json": {
+    "draft": "Bước Json",
+    "reason": "technical_identifier"
+  },
+  "Subscribed": {
+    "draft": "Đăng ký",
+    "reason": "technical_identifier"
+  },
+  "Testing": {
+    "draft": "Kiểm tra",
+    "reason": "technical_identifier"
+  },
+  "The area this channel account serves. Conversations arriving on it are scoped to this area, so staff only see their own area's chats. Leave empty for an account shared across all areas.": {
+    "draft": "Khu vực tài khoản kênh này phục vụ. Các cuộc trò chuyện đến nó được định hướng đến khu vực này, vì vậy nhân viên chỉ nhìn thấy các cuộc trò chơi của khu vực của riêng họ. Để trống cho một tài khoản được chia sẻ trên tất cả các khu vực.",
+    "reason": "long_message"
+  },
+  "This console creates the provider applications every clinic signs in\n        through, so it stays with the team that owns those accounts. Ask your\n        Health19 administrator to run the go-live, or to give you platform\n        administrator access.": {
+    "draft": "Công cụ này tạo ra các ứng dụng của nhà cung cấp mỗi khi phòng khám đăng nhập, vì vậy nó sẽ ở lại với nhóm sở hữu các tài khoản đó..",
+    "reason": "long_message"
+  },
+  "This message arrived for an account this system does not\n                        recognise. If it is one of yours, connect it in the\n                        Channel Center — every future message will then reach the\n                        wall by itself.": {
+    "draft": "Thông điệp này đến vì một tài khoản mà hệ thống này không nhận ra. Nếu nó là của bạn, kết nối nó trong Trung tâm kênh.",
+    "reason": "long_message"
+  },
+  "This page hosts the widget exactly as a tenant site would.\n                        Open the launcher in the bottom-right corner and send a\n                        message; it lands in Care Command as a new conversation.": {
+    "draft": "Trang này lưu trữ widget chính xác như một trang web thuê nhà. mở trình khởi động ở góc dưới bên phải và gửi tin nhắn; nó hạ cánh trong lệnh chăm sóc như một cuộc trò chuyện mới.",
+    "reason": "long_message"
+  },
+  "Traffic": {
+    "draft": "Giao thông",
+    "reason": "technical_identifier"
+  },
+  "Verified": {
+    "draft": "Được xác minh",
+    "reason": "technical_identifier"
+  },
+  "View Count": {
+    "draft": "Xem Count",
+    "reason": "no_vietnamese"
+  },
+  "We generate it; you paste the same value into\n                both Meta products. It is not a secret — Meta and we must hold it\n                identically for the check to work at all.": {
+    "draft": "Chúng tôi tạo ra nó; bạn dán cùng một giá trị vào cả hai sản phẩm Meta. Nó không phải là bí mật  Meta và chúng tôi phải giữ nó giống nhau để kiểm tra hoạt động ở tất cả.",
+    "reason": "long_message"
+  },
+  "Web chat pre-chat form only: the phone a visitor typed. DISPLAY-ONLY for ops — never an anchor and never trusted as identity: an anonymous visitor claiming a patient's number must not be merged onto the patient's thread (CC-B review).": {
+    "draft": "Chỉ có hình thức trò chuyện trực tuyến trước cuộc trò chuyện: điện thoại mà khách truy cập đã gõ. DISPLAY-ONLY cho các hoạt động  không bao giờ là một neo và không bao gồm sự xác định: một khách truyện ẩn danh tuyên bố số bệnh nhân không được kết hợp vào chuỗi bệnh nhân (CC-B review)).",
+    "reason": "long_message"
+  },
+  "Web chat — demo page": {
+    "draft": "Web chat  trang demo",
+    "reason": "no_vietnamese"
+  },
+  "continue": {
+    "draft": "tiếp tục",
+    "reason": "technical_identifier"
+  },
+  "e.g. Zalo OA — HCM": {
+    "draft": "e.g. Zalo OA  HCM",
+    "reason": "no_vietnamese"
+  },
+  "fix": {
+    "draft": "sửa chữa",
+    "reason": "technical_identifier"
+  },
+  "https://business.facebook.com/settings/security-center": {
+    "draft": "https://business.facebook.com/settings/security center",
+    "reason": "no_vietnamese"
+  },
+  "https://console.cloud.google.com/apis/credentials": {
+    "draft": "https://console.cloud.google.com/apis/người có giấy phép",
+    "reason": "technical_identifier"
+  },
+  "https://console.cloud.google.com/apis/credentials/consent": {
+    "draft": "https://console.cloud.google.com/apis/tài lệ/nghiên thuận",
+    "reason": "technical_identifier"
+  },
+  "https://developers.facebook.com/apps/{app_id}/app-review/permissions/": {
+    "draft": "https://developers.facebook.com/các ứng dụng/{app_id}/ app-review/permissions/",
+    "reason": "technical_identifier"
+  },
+  "https://developers.facebook.com/apps/{app_id}/settings/basic/": {
+    "draft": "https://developers.facebook.com/các ứng dụng/{app_id}/settings/basic/",
+    "reason": "technical_identifier"
+  },
+  "https://developers.facebook.com/apps/{app_id}/webhooks/": {
+    "draft": "https://developers.facebook.com/các ứng dụng/{app_id}/bằng webbook/",
+    "reason": "technical_identifier"
+  },
+  "https://vietuc.vn": {
+    "draft": "https://vietuc.vn",
+    "reason": "unchanged"
+  },
+  "json.dumps of the provider event. Behind ACLs; never logged.": {
+    "draft": "json.dumps của sự kiện nhà cung cấp..",
+    "reason": "technical_identifier"
+  },
+  "lienhe@vietuc.vn": {
+    "draft": "lienhe@vietuc.vn",
+    "reason": "unchanged"
+  },
+  "open": {
+    "draft": "mở",
+    "reason": "technical_identifier"
+  },
+  "reconnect": {
+    "draft": "kết nối lại",
+    "reason": "technical_identifier"
+  },
+  "wa_id / PSID / Telegram chat id / web-chat session uuid.": {
+    "draft": "wa_id / PSID / Telegram chat id / web chat session uuid.",
+    "reason": "no_vietnamese"
+  },
+  "wamid… / Messenger mid / \"<chat_id>:<message_id>\" / webchat uuid.": {
+    "draft": "- Thưa ông... - Thầy sứ... \"<chat_id>:<message_id>\" / webchat uuid.",
+    "reason": "technical_identifier"
+  },
+  "{\"es_config_id\": \"...\", \"flb_config_id\": \"...\"}": {
+    "draft": "{\"es_config_id\": \"...\", \"flb_configur_id:\" \"...\"}",
+    "reason": "no_vietnamese"
+  },
+  "<span class=\"o_stat_text\">Care Tasks</span>": {
+    "draft": "<span class=\"o_stat_text\">Nhiệm vụ chăm sóc</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"o_stat_text\">Client</span>": {
+    "draft": "<span class=\"o_stat_text\">Khách hàng</span>",
+    "reason": "markup_or_template"
+  },
+  "Activity label, FHIR Task.code.text": {
+    "draft": "Đồ ký hoạt động, FHIR Task.code.text",
+    "reason": "technical_identifier"
+  },
+  "Care plan drift detected (%(rate).0f%%): %(client)s": {
+    "draft": "Việc tìm thấy sự trôi dạt của kế hoạch chăm sóc (%(rate).0f%%): %(client)s",
+    "reason": "english_residue"
+  },
+  "Client %(client)s already has an active %(category)s care plan (%(plan)s). Complete or cancel it first.": {
+    "draft": "Khách hàng %(client)s đã có một hoạt động %(category)s kế hoạch chăm sóc (%(plan)s). Hoàn thành hoặc hủy bỏ trước.",
+    "reason": "english_residue"
+  },
+  "Every N days/weeks/months (ignored for every_visit / prn). FHIR Timing.repeat.period": {
+    "draft": "Mỗi N ngày/tuần/tháng (không được xem xét cho mỗi lần truy cập / prn). Timing.repeat.period",
+    "reason": "technical_identifier"
+  },
+  "FHIR CarePlan.author": {
+    "draft": "TỪ KHÓA CarePlan.author",
+    "reason": "no_vietnamese"
+  },
+  "FHIR CarePlan.category": {
+    "draft": "TỪ KHÓA CarePlan.category",
+    "reason": "no_vietnamese"
+  },
+  "FHIR CarePlan.description": {
+    "draft": "TỪ KHÓA CarePlan.description",
+    "reason": "no_vietnamese"
+  },
+  "FHIR CarePlan.instantiatesCanonical → PlanDefinition": {
+    "draft": "TỪ KHÓA CarePlan.instantiatesCanonical → Kế hoạchChương trình",
+    "reason": "technical_identifier"
+  },
+  "FHIR CarePlan.period.end": {
+    "draft": "TỪ KHÓA CarePlan.period.end",
+    "reason": "no_vietnamese"
+  },
+  "FHIR CarePlan.period.start": {
+    "draft": "TỪ KHÓA CarePlan.period.start",
+    "reason": "no_vietnamese"
+  },
+  "FHIR CarePlan.status (draft/active/completed/revoked; 'under_review' is a local sub-state of active).": {
+    "draft": "TỪ KHÓA CarePlan.status (draft/active/completed/revoked; \"under_review\" là một tiểu bang địa phương của active).",
+    "reason": "technical_identifier"
+  },
+  "FHIR CarePlan.subject": {
+    "draft": "TỪ KHÓA CarePlan.subject",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Goal.achievementStatus": {
+    "draft": "TỪ KHÓA Goal.achievementStatus",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Goal.description.text": {
+    "draft": "TỪ KHÓA Goal.description.text",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Goal.lifecycleStatus (codes verbatim, 'on_hold' maps to 'on-hold').": {
+    "draft": "TỪ KHÓA Goal.lifecycleStatus (mã theo nghĩa đen, 'on_hold' bản đồ đến 'on-hold'').",
+    "reason": "technical_identifier"
+  },
+  "FHIR Goal.priority": {
+    "draft": "TỪ KHÓA Goal.priority",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Goal.subject": {
+    "draft": "TỪ KHÓA Goal.subject",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Goal.target.detailRange.high": {
+    "draft": "TỪ KHÓA Goal.target.detailRange.high",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Goal.target.detailRange.low": {
+    "draft": "TỪ KHÓA Goal.target.detailRange.low",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Goal.target.dueDate": {
+    "draft": "TỪ KHÓA Goal.target.dueDate",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Goal.target.measure (LOINC via the type).": {
+    "draft": "TỪ KHÓA Goal.target.measure (LOINC thông qua loại).",
+    "reason": "technical_identifier"
+  },
+  "FHIR Task.encounter": {
+    "draft": "TỪ KHÓA Task.encounter",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Task.status (pending → requested, done → completed, not_done → failed with statusReason).": {
+    "draft": "TỪ KHÓA Task.status (chờ đợi → yêu cầu, hoàn thành → hoàn thành, không hoàn thành → thất bại với trạng tháiTại sao).",
+    "reason": "technical_identifier"
+  },
+  "FHIR Task.statusReason": {
+    "draft": "TỪ KHÓA Task.statusReason",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Timing.repeat.frequency": {
+    "draft": "TỪ KHÓA Timing.repeat.frequency",
+    "reason": "no_vietnamese"
+  },
+  "FHIR activity.detail.goal": {
+    "draft": "TỪ KHÓA activity.detail.goal",
+    "reason": "no_vietnamese"
+  },
+  "FHIR activity.detail.status ('not_started' maps to 'not-started').": {
+    "draft": "TỪ KHÓA activity.detail.status ('not_started' map to 'not-started').",
+    "reason": "no_vietnamese"
+  },
+  "Human title, FHIR CarePlan.title": {
+    "draft": "Nhân danh, FHIR CarePlan.title",
+    "reason": "technical_identifier"
+  },
+  "Informational service linkage; FHIR CarePlan.activity.detail.code": {
+    "draft": "Kết nối dịch vụ thông tin; FHIR CarePlan.activity.detail.code",
+    "reason": "technical_identifier"
+  },
+  "LOINC code (FHIR code.coding.code, system http://loinc.org).": {
+    "draft": "Mã LOINC (FHIR) code.coding.code, hệ thống http://loinc.org).",
+    "reason": "technical_identifier"
+  },
+  "Managing facility (defaults from the client's primary facility).": {
+    "draft": "Cơ sở quản lý (trong các lỗi từ cơ sở chính của khách hàng)).",
+    "reason": "suspicious_output"
+  },
+  "Nurse-facing instructions; FHIR activity.detail.description": {
+    "draft": "Chỉ thị đối với y tá; FHIR activity.detail.description",
+    "reason": "technical_identifier"
+  },
+  "PRN": {
+    "draft": "PRN",
+    "reason": "unchanged"
+  },
+  "Plan": {
+    "draft": "Kế hoạch",
+    "reason": "technical_identifier"
+  },
+  "Snapshot of the activity instructions at compile time (immutable per-visit instructions).": {
+    "draft": "Hình ảnh chụp nhanh của hướng dẫn hoạt động tại thời điểm biên soạn (hướng dẫn không thay đổi mỗi lần truy cập)).",
+    "reason": "suspicious_output"
+  },
+  "UCUM unit code (mm[Hg], Cel, kg, /min, %, cm, mmol/L) — FHIR valueQuantity.code.": {
+    "draft": "Mã đơn vị UCUM (mm[Hg], Cel, kg, /min, %, cm, mmol/L)  FHIR valueQuantity.code.",
+    "reason": "technical_identifier"
+  },
+  "Undo": {
+    "draft": "Tháo dỡ",
+    "reason": "technical_identifier"
+  },
+  "Unit (UCUM)": {
+    "draft": "Đơn vị (UCUM))",
+    "reason": "technical_identifier"
+  },
+  "Version": {
+    "draft": "Phiên bản",
+    "reason": "technical_identifier"
+  },
+  "careplan_id": {
+    "draft": "careplan_id",
+    "reason": "unchanged"
+  },
+  "goals": {
+    "draft": "mục tiêu",
+    "reason": "technical_identifier"
+  },
+  "Staff listed here would see empty lists everywhere, because\n                record access is scoped to the user's catchment area and theirs\n                is blank. Set one on each account.": {
+    "draft": "Nhân viên được liệt kê ở đây sẽ thấy các danh sách trống ở khắp mọi nơi, bởi vì truy cập ghi chép được định hướng đến khu vực lưu trữ của người dùng và của họ là trống..",
+    "reason": "long_message"
+  },
+  "share": {
+    "draft": "chia sẻ",
+    "reason": "technical_identifier"
+  },
+  "EMR Export (VN)": {
+    "draft": "Xuất khẩu EMR (VN))",
+    "reason": "suspicious_output"
+  },
+  "INTEROP & COMPLIANCE": {
+    "draft": "INTEROP & COMPLICATION",
+    "reason": "no_vietnamese"
+  },
+  "Thresholds": {
+    "draft": "Tỉ lệ",
+    "reason": "technical_identifier"
+  },
+  "FHIR Condition.clinicalStatus. Transitions are a human act — the coded-diagnosis sync never resolves or inactivates.": {
+    "draft": "TỪ KHÓA Condition.clinicalStatus. Chuyển đổi là hành động của con người  đồng bộ điều trị mã hóa không bao giờ giải quyết hoặc vô hiệu hóa.",
+    "reason": "technical_identifier"
+  },
+  "FHIR Condition.code (ICD-10).": {
+    "draft": "TỪ KHÓA Condition.code (ICD-10).",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Condition.subject.": {
+    "draft": "TỪ KHÓA Condition.subject.",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Condition.verificationStatus. Everything reaching the coded sidecar is human-asserted (manual tag or human-approved AI suggestion), so the default is confirmed.": {
+    "draft": "TỪ KHÓA Condition.verificationStatus. Mọi thứ đạt đến xe phụ có mã hóa được xác nhận bởi con người (chèn thẻ hoặc gợi ý AI được chấp thuận bởi con Người), vì vậy mặc định được xác định.",
+    "reason": "technical_identifier"
+  },
+  "First asserting note's author (provenance — never moved).": {
+    "draft": "Tác giả ghi chú đầu tiên (từ  không bao giờ di chuyển)).",
+    "reason": "suspicious_output"
+  },
+  "The clinical notes whose coded-diagnosis sidecar asserts this condition (FHIR Condition.evidence.detail → DocumentReference).": {
+    "draft": "Các ghi chú lâm sàng có chẩn đoán mã hóa khẳng định tình trạng này (FHIR) Condition.evidence.detail → Tài liệuTài liệu).",
+    "reason": "technical_identifier"
+  },
+  "The per-patient problem list — one entry per (patient, ICD-10\n                code), built additively from the coded-diagnosis sidecar on\n                clinical notes.": {
+    "draft": "Danh sách vấn đề cho mỗi bệnh nhân  một mục cho mỗi (chỉ số bệnh nhân, mã ICD-10), được xây dựng thêm từ xe phụ chẩn đoán có mã trên ghi chép lâm sàng.",
+    "reason": "technical_identifier"
+  },
+  "Caller tag (context key consent_check_source), e.g. \"pwa\", \"zalo\", \"fhir\".": {
+    "draft": "Tag người gọi (context key consent_check_source)), e.g. \"pwa,zalo,fhir\".",
+    "reason": "technical_identifier"
+  },
+  "Client %(client)s already has an active %(type)s consent (%(name)s). Grant supersedes it automatically — withdraw it first when editing manually.": {
+    "draft": "Khách hàng %(client)s đã có một hoạt động %(type)s đồng ý (%(name)s). Grant thay thế nó tự động  rút nó trước khi chỉnh sửa bằng tay.",
+    "reason": "english_residue"
+  },
+  "Client Mutation": {
+    "draft": "Client Mutation",
+    "reason": "unchanged"
+  },
+  "Consent expiring: %(client)s — %(type)s": {
+    "draft": "Sự đồng ý hết hạn: %(client)s  %(type)s",
+    "reason": "english_residue"
+  },
+  "Digital signature PNG (required for digital_signature on grant). FHIR sourceAttachment.": {
+    "draft": "Đăng ký kỹ thuật số PNG (được yêu cầu cho chữ ký kỹ nghệ khi cấp trợ cấp)..",
+    "reason": "technical_identifier"
+  },
+  "Expiry date (optional)": {
+    "draft": "Ngày hết hạn (không tùy chọn))",
+    "reason": "suspicious_output"
+  },
+  "FHIR Consent.patient": {
+    "draft": "TỪ KHÓA Consent.patient",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Consent.scope + category (local CodeSystem health19-consent-types).": {
+    "draft": "TỪ KHÓA Consent.scope + loại (local CodeSystem health19-consent-types).",
+    "reason": "technical_identifier"
+  },
+  "FHIR Consent.status: active→active, withdrawn→inactive (+ deny provision), expired→inactive, draft→draft.": {
+    "draft": "TỪ KHÓA Consent.status: hoạt động→hoạt động, rút lui→Không hoạt động (+ từ chối dự phòng), hết hạn→Không hoạt động, dự thảo→dự thảo.",
+    "reason": "technical_identifier"
+  },
+  "FHIR provision.period.end (empty = indefinite).": {
+    "draft": "TỪ KHÓA provision.period.end (trống = không định nghĩa).",
+    "reason": "technical_identifier"
+  },
+  "FHIR provision.period.start": {
+    "draft": "TỪ KHÓA provision.period.start",
+    "reason": "no_vietnamese"
+  },
+  "Free-text narrowing, e.g. \"photos for clinical record only, no social media\". FHIR provision narrative.": {
+    "draft": "Tới hạn văn bản tự do, e.g. \"hình ảnh chỉ cho hồ sơ lâm sàng, không có phương tiện truyền thông xã hội\"..",
+    "reason": "technical_identifier"
+  },
+  "Invalid consent_type: %s": {
+    "draft": "Type consent_valid: %s",
+    "reason": "no_vietnamese"
+  },
+  "Kinship grantor when the client did not consent personally. FHIR performer + relationship.": {
+    "draft": "Giúp gia đình khi khách hàng không đồng ý cá nhân..",
+    "reason": "technical_identifier"
+  },
+  "Missing": {
+    "draft": "Trừ tay",
+    "reason": "technical_identifier"
+  },
+  "Scanned form / photo (required for written on grant).": {
+    "draft": "Mô hình / ảnh được quét (cần phải được ghi trên tài trợ)).",
+    "reason": "suspicious_output"
+  },
+  "self": {
+    "draft": "tự",
+    "reason": "technical_identifier"
+  },
+  "<span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                            <i class=\"fa fa-trash\"/> Deleted\n                        </span>\n                        <span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--archived\" invisible=\"active or deleted\">\n                            <i class=\"fa fa-archive\"/> Archived\n                        </span>": {
+    "draft": "<span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                            <i class=\"fa fa-trash\"/> Dỡ bỏ\n                        </span>\n                        <span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--archived\" invisible=\"active or deleted\">\n                            <i class=\"fa fa-archive\"/> Được lưu trữ\n                        </span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"heart-pulse\"/>\n                                            <span>Personal Information</span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"heart-pulse\"/>\n                                            <span>Thông tin cá nhân</span>",
+    "reason": "markup_or_template"
+  },
+  "Primary point of contact — the person who first contacted us and from whom the booking was created (the client themselves or a payer/caregiver/guardian). Defaults to the first caller; editable.": {
+    "draft": "Điểm liên lạc chính  người liên hệ đầu tiên với chúng tôi và người mà đặt phòng đã được tạo ra (customer chính họ hoặc người thanh toán/giữ/cố vấn)..",
+    "reason": "long_message"
+  },
+  "catheter": {
+    "draft": "ống dẫn",
+    "reason": "technical_identifier"
+  },
+  "enema": {
+    "draft": "bơm",
+    "reason": "technical_identifier"
+  },
+  "existing": {
+    "draft": "hiện có",
+    "reason": "technical_identifier"
+  },
+  "former_client": {
+    "draft": "former_client",
+    "reason": "unchanged"
+  },
+  "google": {
+    "draft": "google",
+    "reason": "unchanged"
+  },
+  "imaging_procedures": {
+    "draft": "imaging_procedures",
+    "reason": "unchanged"
+  },
+  "inbox_email": {
+    "draft": "inbox_email",
+    "reason": "unchanged"
+  },
+  "injection": {
+    "draft": "tiêm",
+    "reason": "technical_identifier"
+  },
+  "iv_infusion": {
+    "draft": "IV_infusion",
+    "reason": "unchanged"
+  },
+  "lab_test": {
+    "draft": "lab_test",
+    "reason": "unchanged"
+  },
+  "no_answer": {
+    "draft": "không trả lời",
+    "reason": "technical_identifier"
+  },
+  "nursing_other": {
+    "draft": "y tế",
+    "reason": "technical_identifier"
+  },
+  "partner": {
+    "draft": "đối tác",
+    "reason": "technical_identifier"
+  },
+  "personal_care": {
+    "draft": "personal_care",
+    "reason": "unchanged"
+  },
+  "phone_inquiry": {
+    "draft": "điện thoại_sự hỏi",
+    "reason": "technical_identifier"
+  },
+  "recontact": {
+    "draft": "liên lạc lại",
+    "reason": "technical_identifier"
+  },
+  "referral_doctor": {
+    "draft": "referral_doctor",
+    "reason": "unchanged"
+  },
+  "referral_patient": {
+    "draft": "referral_patient",
+    "reason": "unchanged"
+  },
+  "service_inquiry": {
+    "draft": "service_inquiry",
+    "reason": "unchanged"
+  },
+  "service_used": {
+    "draft": "service_used",
+    "reason": "unchanged"
+  },
+  "sputum_care": {
+    "draft": "Sputum_care",
+    "reason": "unchanged"
+  },
+  "thinking": {
+    "draft": "suy nghĩ",
+    "reason": "technical_identifier"
+  },
+  "tiktok": {
+    "draft": "tiktok",
+    "reason": "unchanged"
+  },
+  "website_form": {
+    "draft": "website_form",
+    "reason": "unchanged"
+  },
+  "wound_care": {
+    "draft": "y tế thương",
+    "reason": "technical_identifier"
+  },
+  "zalo_marketing": {
+    "draft": "zalo_marketing",
+    "reason": "unchanged"
+  },
+  "A recorded tick was corrected by a head nurse+ (amendment audit — original values in the chatter)": {
+    "draft": "Một tick được ghi lại đã được sửa chữa bởi một y tá trưởng (tín hiệu sửa đổi  giá trị ban đầu trong trò chuyện))",
+    "reason": "suspicious_output"
+  },
+  "A valid reason is required (audit requirement).": {
+    "draft": "Một lý do hợp lệ là cần thiết (cần phải kiểm toán)).",
+    "reason": "suspicious_output"
+  },
+  "Administrations": {
+    "draft": "Quản lý",
+    "reason": "technical_identifier"
+  },
+  "Canonical code (FHIR Medication.code, system http://www.nlm.nih.gov/research/umls/rxnorm)": {
+    "draft": "Mã Canonical (FHIR) Medication.code, hệ thống http://www.nlm.nih.gov/research/umls/rxnorm)",
+    "reason": "technical_identifier"
+  },
+  "Capsule": {
+    "draft": "Cápsul",
+    "reason": "technical_identifier"
+  },
+  "Catalog entries carry RxNorm and DAV coding used by eMAR orders.": {
+    "draft": "Các mục danh mục có mã RxNorm và DAV được sử dụng bởi các lệnh eMAR.",
+    "reason": "technical_identifier"
+  },
+  "Display strength, e.g. '500 mg'; FHIR Medication.ingredient.strength (text)": {
+    "draft": "Năng lực hiển thị, e.g. '500 mg\"; FHIR Medication.ingredient.strength (văn bản)",
+    "reason": "technical_identifier"
+  },
+  "Dosage": {
+    "draft": "Liều lượng",
+    "reason": "technical_identifier"
+  },
+  "Dose": {
+    "draft": "Liều lượng",
+    "reason": "technical_identifier"
+  },
+  "Double-signoff (high-risk meds); FHIR performer with function code witness": {
+    "draft": "Tỷ lệ hai lần (tiện phẩm có nguy cơ cao); người biểu diễn FHIR với mã chức năng chứng nhân",
+    "reason": "technical_identifier"
+  },
+  "Drops": {
+    "draft": "Giọt",
+    "reason": "technical_identifier"
+  },
+  "External or internal prescribing doctor (contact record)": {
+    "draft": "Bác sĩ kê đơn bên ngoài hoặc bên trong (tài liệu liên lạc))",
+    "reason": "suspicious_output"
+  },
+  "FHIR Dosage.asNeededBoolean": {
+    "draft": "TỪ KHÓA Dosage.asNeededBoolean",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Dosage.asNeededCodeableConcept.text": {
+    "draft": "TỪ KHÓA Dosage.asNeededCodeableConcept.text",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Dosage.doseAndRate.doseQuantity.value": {
+    "draft": "TỪ KHÓA Dosage.doseAndRate.doseQuantity.value",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Dosage.patientInstruction": {
+    "draft": "TỪ KHÓA Dosage.patientInstruction",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Dosage.route": {
+    "draft": "TỪ KHÓA Dosage.route",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Dosage.timing": {
+    "draft": "TỪ KHÓA Dosage.timing",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Medication.doseForm": {
+    "draft": "TỪ KHÓA Medication.doseForm",
+    "reason": "no_vietnamese"
+  },
+  "FHIR MedicationAdministration.status: given→completed, not_given/refused→not-done (+statusReason), cancelled→stopped": {
+    "draft": "TỪ KHÓA MedicationAdministration.status: được đưa ra→hoàn thành, không_giữ/rước từ→Không được thực hiện (+statusReason), bị hủy bỏ→dừng lại",
+    "reason": "technical_identifier"
+  },
+  "FHIR MedicationRequest.medication": {
+    "draft": "TỪ KHÓA MedicationRequest.medication",
+    "reason": "no_vietnamese"
+  },
+  "FHIR MedicationRequest.status (on_hold maps to 'on-hold')": {
+    "draft": "TỪ KHÓA MedicationRequest.status (on_hold bản đồ để 'on-hold')",
+    "reason": "technical_identifier"
+  },
+  "FHIR MedicationRequest.subject": {
+    "draft": "TỪ KHÓA MedicationRequest.subject",
+    "reason": "no_vietnamese"
+  },
+  "FHIR dispenseRequest.validityPeriod.start / dosage boundsPeriod.start": {
+    "draft": "TỪ KHÓA dispenseRequest.validityPeriod.start / liều lượng boundsPeriod.start",
+    "reason": "technical_identifier"
+  },
+  "FHIR dosage.dose.value (may differ from ordered); defaults from the order dose on recording": {
+    "draft": "TỪ KHÓA dosage.dose.value (có thể khác với yêu cầu); không xác định liều yêu cầu khi ghi lại",
+    "reason": "technical_identifier"
+  },
+  "FHIR note": {
+    "draft": "Thông báo FHIR",
+    "reason": "technical_identifier"
+  },
+  "FHIR statusReason — aged-care audit requirement for not-given/refused ticks": {
+    "draft": "Tỷ lệ của FHIRTại lý  yêu cầu kiểm toán chăm sóc người già đối với những con bọ không được cấp/được từ chối",
+    "reason": "technical_identifier"
+  },
+  "Form": {
+    "draft": "Mô hình",
+    "reason": "technical_identifier"
+  },
+  "Four times daily (QID)": {
+    "draft": "4 lần mỗi ngày (QID))",
+    "reason": "suspicious_output"
+  },
+  "Given": {
+    "draft": "Được đưa ra",
+    "reason": "technical_identifier"
+  },
+  "Identification": {
+    "draft": "Định dạng",
+    "reason": "technical_identifier"
+  },
+  "Inhalation": {
+    "draft": "Hít thở",
+    "reason": "technical_identifier"
+  },
+  "Inhaler": {
+    "draft": "Máy hít",
+    "reason": "technical_identifier"
+  },
+  "Intramuscular": {
+    "draft": "Tiêm cơ",
+    "reason": "technical_identifier"
+  },
+  "Intravenous": {
+    "draft": "Tiêm tĩnh mạch",
+    "reason": "technical_identifier"
+  },
+  "Is Prn Dose": {
+    "draft": "Prn Dose",
+    "reason": "no_vietnamese"
+  },
+  "Nasal": {
+    "draft": "Môn",
+    "reason": "technical_identifier"
+  },
+  "Once daily (OD)": {
+    "draft": "Một lần mỗi ngày (OD))",
+    "reason": "suspicious_output"
+  },
+  "Ophthalmic": {
+    "draft": "Phương pháp chữa mắt",
+    "reason": "technical_identifier"
+  },
+  "Oral": {
+    "draft": "Tiếng nói",
+    "reason": "technical_identifier"
+  },
+  "Order": {
+    "draft": "Trật tự",
+    "reason": "technical_identifier"
+  },
+  "Otic": {
+    "draft": "Tấm",
+    "reason": "technical_identifier"
+  },
+  "Patch": {
+    "draft": "Dòng vá",
+    "reason": "technical_identifier"
+  },
+  "Patient instructions (FHIR Dosage.patientInstruction)": {
+    "draft": "Chỉ thị cho bệnh nhân (FHIR) Dosage.patientInstruction)",
+    "reason": "technical_identifier"
+  },
+  "Planned": {
+    "draft": "Kế hoạch",
+    "reason": "technical_identifier"
+  },
+  "Planned and recorded medication administrations\n                (FHIR MedicationAdministration). Ticks are recorded from\n                the nurse PWA visit checklist.": {
+    "draft": "Các chính quyền thuốc được lập kế hoạch và ghi lại (FHIR MedicationAdministration)..",
+    "reason": "technical_identifier"
+  },
+  "Reason \"%(reason)s\" does not apply to %(state)s administrations.": {
+    "draft": "Lý do \"%(reason)s\" không áp dụng cho %(state)s Quản lý.",
+    "reason": "english_residue"
+  },
+  "Recorded": {
+    "draft": "Được ghi lại",
+    "reason": "technical_identifier"
+  },
+  "Rectal": {
+    "draft": "Dòng trực tràng",
+    "reason": "technical_identifier"
+  },
+  "Refused": {
+    "draft": "Không được",
+    "reason": "technical_identifier"
+  },
+  "RxNorm RXCUI": {
+    "draft": "RxNorm RXCUI",
+    "reason": "unchanged"
+  },
+  "Safety": {
+    "draft": "An toàn",
+    "reason": "technical_identifier"
+  },
+  "Set on recording; FHIR performer": {
+    "draft": "Đặt trên ghi âm; người biểu diễn FHIR",
+    "reason": "technical_identifier"
+  },
+  "Set the reason first (audit requirement).": {
+    "draft": "Đặt lý do trước tiên (cần phải kiểm toán)).",
+    "reason": "suspicious_output"
+  },
+  "Strength": {
+    "draft": "Tăng cường",
+    "reason": "technical_identifier"
+  },
+  "Structured dosage orders (FHIR MedicationRequest) drive the\n                per-visit administration checklist in the nurse PWA.": {
+    "draft": "Các lệnh liều được cấu trúc (FHIR MedicationRequest) dẫn đến danh sách kiểm tra quản lý mỗi lần đến bệnh nhân PWA.",
+    "reason": "technical_identifier"
+  },
+  "Subcutaneous": {
+    "draft": "Phân da",
+    "reason": "technical_identifier"
+  },
+  "Sublingual": {
+    "draft": "Tiếng ngoại ngữ",
+    "reason": "technical_identifier"
+  },
+  "Suppository": {
+    "draft": "Giả sử",
+    "reason": "technical_identifier"
+  },
+  "Tablet": {
+    "draft": "Tablet",
+    "reason": "unchanged"
+  },
+  "The visit it is administered in; FHIR context": {
+    "draft": "Chuyến thăm được quản lý trong bối cảnh FHIR",
+    "reason": "technical_identifier"
+  },
+  "Three times daily (TDS)": {
+    "draft": "Ba lần mỗi ngày (TDS))",
+    "reason": "suspicious_output"
+  },
+  "Topical": {
+    "draft": "Hiện tại",
+    "reason": "technical_identifier"
+  },
+  "Twice daily (BD)": {
+    "draft": "Hai lần mỗi ngày (BD))",
+    "reason": "suspicious_output"
+  },
+  "UCUM or common unit: mg, mL, tablet, IU, puff": {
+    "draft": "UCUM hoặc đơn vị chung: mg, mL, viên, IU, puff",
+    "reason": "technical_identifier"
+  },
+  "VN drug-registry crosswalk (identifier system https://dav.gov.vn/so-dang-ky)": {
+    "draft": "VN drug registry crosswalk (hệ thống xác định https://dav.gov.vn/cũng như vậy)",
+    "reason": "technical_identifier"
+  },
+  "order_id": {
+    "draft": "order_id",
+    "reason": "unchanged"
+  },
+  "<strong>Addendum.</strong> This note amends": {
+    "draft": "<strong>Thêm.</strong> Thông báo này sửa đổi",
+    "reason": "markup_or_template"
+  },
+  "<strong>Signed medical record — locked.</strong>\n                    Signed by": {
+    "draft": "<strong>Hồ sơ y tế được ký  khóa.</strong>\n                    Được ký bởi:",
+    "reason": "markup_or_template"
+  },
+  "Draft (unsigned)": {
+    "draft": "Dự thảo (không ký))",
+    "reason": "suspicious_output"
+  },
+  "EMR": {
+    "draft": "EMR",
+    "reason": "unchanged"
+  },
+  "Manual = a clinician explicitly signed. Auto-authenticated = the system backstop locked an unsigned draft after the grace period (attributed to the author; NOT a legal digital signature).": {
+    "draft": "Hướng dẫn = một bác sĩ lâm sàng đã ký rõ ràng. tự động xác thực = hệ thống bảo vệ khóa một bản thảo không ký sau thời gian nghỉ phép (được gán cho tác giả; KHÔNG là chữ ký kỹ thuật số hợp pháp).",
+    "reason": "long_message"
+  },
+  "'EVV_Verification_%s' % (object.name)": {
+    "draft": "'EVV_Verification_%s' % (object.name)",
+    "reason": "unchanged"
+  },
+  "<p><strong>EVV chain validation failed</strong></p><p>Booking: %(booking)s</p><p>First bad sequence: %(sequence)s</p><p>The visit event chain no longer verifies — investigate for tampering.</p>": {
+    "draft": "<p><strong>Việc xác thực chuỗi EVV thất bại</strong></p><p>Đặt chỗ: %(booking)s</p><p>Lần thứ nhất không tốt: %(sequence)s</p><p>Các chuỗi sự kiện thăm không còn xác minh  điều tra về sự thao túng.</p>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Actual</strong>": {
+    "draft": "<strong>Thực tế</strong>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Client</strong>": {
+    "draft": "<strong>Khách hàng</strong>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Lead Staff</strong>": {
+    "draft": "<strong>Nhân viên lãnh đạo</strong>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Scheduled</strong>": {
+    "draft": "<strong>Chương trình</strong>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Verification fingerprint (last chain hash):</strong><br/>": {
+    "draft": "<strong>Bằng chứng dấu vân tay (hash chuỗi cuối cùng)):</strong><br/>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Verified Units</strong>": {
+    "draft": "<strong>Các đơn vị được xác minh</strong>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Verified</strong>": {
+    "draft": "<strong>Được xác minh</strong>",
+    "reason": "markup_or_template"
+  },
+  "Accuracy (m)": {
+    "draft": "Độ chính xác (m))",
+    "reason": "suspicious_output"
+  },
+  "BROKEN": {
+    "draft": "TROKEN",
+    "reason": "no_vietnamese"
+  },
+  "Chain": {
+    "draft": "Dòng dây",
+    "reason": "technical_identifier"
+  },
+  "Chain Hash": {
+    "draft": "Chain Hash",
+    "reason": "unchanged"
+  },
+  "Client Event UUID": {
+    "draft": "UUID Sự kiện khách hàng",
+    "reason": "technical_identifier"
+  },
+  "Client-generated UUIDv4 — idempotency key (unique per visit).": {
+    "draft": "Khóa IDempotency UUIDv4  được tạo bởi khách hàng (một số lần truy cập duy nhất)).",
+    "reason": "suspicious_output"
+  },
+  "Device UUID": {
+    "draft": "Đơn vị UUID thiết bị",
+    "reason": "technical_identifier"
+  },
+  "Distance (m)": {
+    "draft": "Khoảng cách (m))",
+    "reason": "suspicious_output"
+  },
+  "Distance from Geofence (m)": {
+    "draft": "Khoảng cách từ Geofence (m))",
+    "reason": "suspicious_output"
+  },
+  "EVV": {
+    "draft": "EVV",
+    "reason": "unchanged"
+  },
+  "EVV Check-in Event": {
+    "draft": "Sự kiện Check-in EVV",
+    "reason": "english_residue"
+  },
+  "EVV Geofence": {
+    "draft": "EVV Geofence",
+    "reason": "unchanged"
+  },
+  "EVV events are appended automatically by the nurse PWA at\n                check-in, check-out and signature capture. They are\n                hash-chained and can never be edited or deleted.": {
+    "draft": "Các sự kiện EVV được phụ gia tự động bởi y tá PWA khi đăng nhập, kiểm tra ra và chụp chữ ký..",
+    "reason": "long_message"
+  },
+  "GPS Accuracy (m)": {
+    "draft": "Độ chính xác GPS (m))",
+    "reason": "suspicious_output"
+  },
+  "Inside": {
+    "draft": "Bên trong",
+    "reason": "technical_identifier"
+  },
+  "No": {
+    "draft": "Không",
+    "reason": "technical_identifier"
+  },
+  "OK": {
+    "draft": "Được rồi.",
+    "reason": "technical_identifier"
+  },
+  "Origin": {
+    "draft": "Nguồn gốc",
+    "reason": "technical_identifier"
+  },
+  "Outside": {
+    "draft": "Bên ngoài",
+    "reason": "technical_identifier"
+  },
+  "Prev Hash": {
+    "draft": "Prev Hash",
+    "reason": "unchanged"
+  },
+  "Server Datetime": {
+    "draft": "Server DateTime",
+    "reason": "unchanged"
+  },
+  "Server receipt time (drift detection).": {
+    "draft": "Thời gian nhận máy chủ (khám phá drift)).",
+    "reason": "suspicious_output"
+  },
+  "Time (UTC)": {
+    "draft": "Thời gian (UTC))",
+    "reason": "suspicious_output"
+  },
+  "Verification": {
+    "draft": "Kiểm tra",
+    "reason": "technical_identifier"
+  },
+  "Verified service hours: check-in to check-out, floored to 0.25h, capped at scheduled duration + 0.5h; 0.0 when the visit is not verified.": {
+    "draft": "Thời gian phục vụ được xác minh: check-in đến check-out, sàn lên 0,25h, giới hạn thời gian theo kế hoạch + 0,5h; 0,0 khi chuyến thăm không được xác nhận.",
+    "reason": "english_residue"
+  },
+  "Yes": {
+    "draft": "- Phải.",
+    "reason": "technical_identifier"
+  },
+  "min)": {
+    "draft": "m)",
+    "reason": "no_vietnamese"
+  },
+  "<span class=\"fl-label\">Khung giờ (Time)</span>": {
+    "draft": "<span class=\"fl-label\">Khung giờ (Thời gian))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"fl-label\">Ngày (Date)</span>": {
+    "draft": "<span class=\"fl-label\">Ngày (Tang)</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"fl-label\">Nhân viên (Staff)</span>": {
+    "draft": "<span class=\"fl-label\">Nhân viên (Nhà nhân viên))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"fl-status arrived\">Đang thăm khám (In progress)</span>": {
+    "draft": "<span class=\"fl-status arrived\">Đang thăm khám (Trong quá trình))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"fl-status completed\">Đã hoàn thành (Completed)</span>": {
+    "draft": "<span class=\"fl-status completed\">Đã hoàn thành (Tại hoàn))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"fl-status upcoming\">Sắp diễn ra (Upcoming)</span>": {
+    "draft": "<span class=\"fl-status upcoming\">Sắp diễn ra (Trong tương lai))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span>Viet Uc Health</span>": {
+    "draft": "<span>Y tế Việt Nam</span>",
+    "reason": "markup_or_template"
+  },
+  "Opt this relation in to the tokenized family visit page + Zalo visit/snapshot notifications. Off by default. Medical snapshot content additionally requires \"Can Receive Medical Information\" and the client's data-sharing consent.": {
+    "draft": "Chọn liên hệ này vào trang truy cập gia đình được mã hóa + Zalo truy cập / thông báo chụp nhanh. Dừng mặc định. Nội dung chụp nhanh y tế cũng yêu cầu \"Có thể nhận thông tin y tế\" và sự đồng ý chia sẻ dữ liệu của khách hàng.",
+    "reason": "long_message"
+  },
+  "Purpose": {
+    "draft": "Mục đích",
+    "reason": "technical_identifier"
+  },
+  "Token": {
+    "draft": "Đơn hiệu",
+    "reason": "technical_identifier"
+  },
+  "%(patient)s ↔ %(rep)s": {
+    "draft": "%(patient)s  %(rep)s",
+    "reason": "no_vietnamese"
+  },
+  "Backlink so handling the thread (mark read / reply) clears the bell rows — today's app shell has no dismiss button for this type, so the backend lifecycle is the only way to clear them.": {
+    "draft": "Backlink để xử lý thread (chỉ dấu đọc / trả lời) xóa các dòng chuông  vỏ ứng dụng ngày nay không có nút từ chối cho loại này, vì vậy vòng đời backend là cách duy nhất để xóa chúng.",
+    "reason": "long_message"
+  },
+  "Body (encrypted)": {
+    "draft": "Cơ thể (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "New message from %(who)s about %(patient)s: %(preview)s": {
+    "draft": "Thông điệp mới từ %(who)s về %(patient)s: %(preview)s",
+    "reason": "english_residue"
+  },
+  "Secure family messaging is currently disabled\n                        (health_family_messages.enabled = False). Existing\n                        threads are read-only until it is enabled.": {
+    "draft": "Thông điệp an toàn của gia đình hiện đang bị vô hiệu hóa\n                        (health_family_messages.enabled = Phọ). Các chuỗi hiện có chỉ được đọc cho đến khi nó được bật.",
+    "reason": "long_message"
+  },
+  "Seen": {
+    "draft": "Được thấy",
+    "reason": "technical_identifier"
+  },
+  "Thread": {
+    "draft": "Dòng",
+    "reason": "technical_identifier"
+  },
+  "family": {
+    "draft": "gia đình",
+    "reason": "technical_identifier"
+  },
+  "Adapter": {
+    "draft": "Đáp ứng",
+    "reason": "technical_identifier"
+  },
+  "FHIR Country Adapter (interface)": {
+    "draft": "FHIR Country Adapter (công diện))",
+    "reason": "technical_identifier"
+  },
+  "Scope the coding-density figure to one facility (empty = all facilities).": {
+    "draft": "Lập quãng số mật độ mã hóa cho một cơ sở (không có = tất cả các cơ sở)).",
+    "reason": "suspicious_output"
+  },
+  "Vietnam FHIR EMR Adapter": {
+    "draft": "Động cơ chuyển động điện tử FHIR EMR Việt Nam",
+    "reason": "technical_identifier"
+  },
+  "FHIR Conformance Self-Check": {
+    "draft": "Phân tích tự kiểm tra phù hợp của FHIR",
+    "reason": "technical_identifier"
+  },
+  "FHIR: weekly conformance check": {
+    "draft": "FHIR: kiểm tra phù hợp hàng tuần",
+    "reason": "technical_identifier"
+  },
+  "The weekly FHIR conformance check found %s issue(s):": {
+    "draft": "Kiểm tra phù hợp hàng tuần của FHIR được tìm thấy %s vấn đề):",
+    "reason": "technical_identifier"
+  },
+  "2019": {
+    "draft": "2019",
+    "reason": "unchanged"
+  },
+  "CSV columns (fixed order):\n                        <strong>code,display,display_vi,parent_code,synonyms</strong>.\n                        Only <strong>code</strong> and <strong>display</strong>\n                        are mandatory per row. Import is idempotent — re-running\n                        updates existing codes instead of duplicating them.": {
+    "draft": "Cột CSV (định dạng cố định)):\n                        <strong>code,display,display_vi,parent_code,tên đồng nghĩa</strong>.\n                        Chỉ có <strong>mã</strong> và <strong>hiển thị</strong>\n                        Import là không có quyền  chạy lại cập nhật mã hiện có thay vì sao chép chúng.",
+    "reason": "markup_or_template"
+  },
+  "Canonical system URI (FHIR CodeSystem.url).": {
+    "draft": "Hệ thống URI (FHIR) CodeSystem.url).",
+    "reason": "technical_identifier"
+  },
+  "Delimiter": {
+    "draft": "Định hướng",
+    "reason": "technical_identifier"
+  },
+  "Display": {
+    "draft": "Khán giả",
+    "reason": "technical_identifier"
+  },
+  "Hierarchy (ICD-10 chapter/block).": {
+    "draft": "Tỷ lệ bậc cao (ICD-10 chương/ khối)).",
+    "reason": "technical_identifier"
+  },
+  "Human name, e.g. \"ICD-10 (WHO + MOH VN)\".": {
+    "draft": "Tên người, e.g. \"ICD-10 (WHO + MOH VN))\".",
+    "reason": "technical_identifier"
+  },
+  "ICD-10 (WHO + MOH VN)": {
+    "draft": "ICD-10 (WHO + MOH VN))",
+    "reason": "no_vietnamese"
+  },
+  "ICD-10 coded diagnoses (sidecar to the free-text diagnosis; Circular 13/2025 EMR export).": {
+    "draft": "Chẩn đoán có mã ICD-10 (các phương tiện phụ cho chẩn đoán văn bản tự do; Thông tư 13/2025 xuất khẩu EMR).",
+    "reason": "technical_identifier"
+  },
+  "LOINC": {
+    "draft": "LOINC",
+    "reason": "unchanged"
+  },
+  "RxNorm": {
+    "draft": "RxNorm",
+    "reason": "unchanged"
+  },
+  "SNOMED CT": {
+    "draft": "CT SNOMED",
+    "reason": "no_vietnamese"
+  },
+  "Search ICD-10 (Vietnamese or English)…": {
+    "draft": "Tìm kiếm ICD-10 (tiếng Việt hoặc tiếng Anh)...",
+    "reason": "technical_identifier"
+  },
+  "Short key: icd10, loinc, ucum, rxnorm, snomed, health19-services.": {
+    "draft": "Từ khóa ngắn: icd10, loinc, ucum, rxnorm, snomed, health19-services.",
+    "reason": "technical_identifier"
+  },
+  "Skipped Count": {
+    "draft": "Lượt qua Count",
+    "reason": "suspicious_output"
+  },
+  "Synonyms": {
+    "draft": "Ngôn ngữ",
+    "reason": "technical_identifier"
+  },
+  "UCUM": {
+    "draft": "UCUM",
+    "reason": "unchanged"
+  },
+  "Uri": {
+    "draft": "Uri",
+    "reason": "unchanged"
+  },
+  "e.g. I10, 8867-4.": {
+    "draft": "e.g. I10, 8867-4.",
+    "reason": "unchanged"
+  },
+  "http://hl7.org/fhir/sid/icd-10": {
+    "draft": "http://hl7.org/fhir/sid/icd-10",
+    "reason": "unchanged"
+  },
+  "icd10": {
+    "draft": "icd10",
+    "reason": "unchanged"
+  },
+  "<span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                                    <i class=\"fa fa-trash\"/> Deleted\n                                </span>\n                                <span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--archived\" invisible=\"active or deleted\">\n                                    <i class=\"fa fa-archive\"/> Archived\n                                </span>\n                                <span class=\"badge rounded-pill vu-urgency-badge vu-urgency--urgent\" invisible=\"urgency_level != 'urgent'\">\n                                    <i class=\"fa fa-arrow-up\"/> Urgent\n                                </span>\n                                <span class=\"badge rounded-pill vu-urgency-badge vu-urgency--emergency\" invisible=\"urgency_level != 'emergency'\">\n                                    <i class=\"fa fa-exclamation-triangle\"/> Emergency\n                                </span>": {
+    "draft": "<span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                                    <i class=\"fa fa-trash\"/> Dỡ bỏ\n                                </span>\n                                <span class=\"badge rounded-pill vu-lifecycle-badge vu-lifecycle--archived\" invisible=\"active or deleted\">\n                                    <i class=\"fa fa-archive\"/> Được lưu trữ\n                                </span>\n                                <span class=\"badge rounded-pill vu-urgency-badge vu-urgency--urgent\" invisible=\"urgency_level != 'urgent'\">\n                                    <i class=\"fa fa-arrow-up\"/> Tốc liệt\n                                </span>\n                                <span class=\"badge rounded-pill vu-urgency-badge vu-urgency--emergency\" invisible=\"urgency_level != 'emergency'\">\n                                    <i class=\"fa fa-exclamation-triangle\"/> Tình trạng khẩn cấp\n                                </span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"badge rounded-pill vu-service-tag vu-service-tag--home-visit\" invisible=\"service_type != 'home_visit'\">\n                                    <i class=\"fa fa-medkit\"/> Home Visit\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--clinic\" invisible=\"service_type != 'clinic_visit'\">\n                                    <i class=\"fa fa-hospital-o\"/> Clinic Visit\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--telehealth\" invisible=\"service_type != 'teleconsultation'\">\n                                    <i class=\"fa fa-video-camera\"/> Teleconsultation\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--hospital\" invisible=\"service_type != 'hospital_visit'\">\n                                    <i class=\"fa fa-h-square\"/> Hospital Visit\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--lab\" invisible=\"service_type != 'lab_visit'\">\n                                    <i class=\"fa fa-flask\"/> Lab Visit\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--rescheduled\" invisible=\"not is_rescheduled\">\n                                    <i class=\"fa fa-history\"/> Rescheduled\n                                </span>": {
+    "draft": "<span class=\"badge rounded-pill vu-service-tag vu-service-tag--home-visit\" invisible=\"service_type != 'home_visit'\">\n                                    <i class=\"fa fa-medkit\"/> Chuyến thăm nhà\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--clinic\" invisible=\"service_type != 'clinic_visit'\">\n                                    <i class=\"fa fa-hospital-o\"/> Chuyến thăm phòng khám\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--telehealth\" invisible=\"service_type != 'teleconsultation'\">\n                                    <i class=\"fa fa-video-camera\"/> Tiếp cận qua đường dây\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--hospital\" invisible=\"service_type != 'hospital_visit'\">\n                                    <i class=\"fa fa-h-square\"/> Chuyến thăm bệnh viện\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--lab\" invisible=\"service_type != 'lab_visit'\">\n                                    <i class=\"fa fa-flask\"/> Chuyến thăm phòng thí nghiệm\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--rescheduled\" invisible=\"not is_rescheduled\">\n                                    <i class=\"fa fa-history\"/> Tái lập lịch\n                                </span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"credit-card\"/>\n                                                <span>Additional Charges</span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"credit-card\"/>\n                                                <span>Thuế bổ sung</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"navigation\"/>\n                                            <span class=\"text-muted\">Driving distance to clinic: </span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"navigation\"/>\n                                            <span class=\"text-muted\">Khoảng cách lái xe đến phòng khám: </span>",
+    "reason": "markup_or_template"
+  },
+  "<strong><i class=\"fa fa-archive\"/> ARCHIVED:</strong>\n                        hidden from normal views, still counted in reports.": {
+    "draft": "<strong><i class=\"fa fa-archive\"/> TẠI LƯC:</strong>\n                        ẩn khỏi tầm nhìn bình thường, vẫn được tính trong các báo cáo.",
+    "reason": "markup_or_template"
+  },
+  "<strong><i class=\"fa fa-trash\"/> DELETED:</strong>\n                        this client record is a Delete request — it stays visible here\n                        but no longer counts in reports.": {
+    "draft": "<strong><i class=\"fa fa-trash\"/> Deleted:</strong>\n                        hồ sơ khách hàng này là yêu cầu xóa  nó vẫn còn hiển thị ở đây nhưng không còn tính trong các báo cáo.",
+    "reason": "markup_or_template"
+  },
+  "Overlaps %(staff)s's booking %(bk)s.": {
+    "draft": "Sự chồng chéo %(staff)s'Đặt chỗ %(bk)s.",
+    "reason": "english_residue"
+  },
+  "UNASSIGNED": {
+    "draft": "Không ký",
+    "reason": "technical_identifier"
+  },
+  "switch to Day view (or open the card) to change the time.": {
+    "draft": "chuyển sang Day View (hoặc mở thẻ) để thay đổi thời gian.",
+    "reason": "english_residue"
+  },
+  "Move": {
+    "draft": "Đi",
+    "reason": "technical_identifier"
+  },
+  "Reassign": {
+    "draft": "Đổi chức",
+    "reason": "technical_identifier"
+  },
+  "A form instance with this client UUID already exists (idempotency key must be unique).": {
+    "draft": "Một ví dụ biểu mẫu với UUID khách hàng này đã tồn tại (phím tự do phải là độc đáo).",
+    "reason": "technical_identifier"
+  },
+  "AMTS": {
+    "draft": "AMTS",
+    "reason": "unchanged"
+  },
+  "Answers": {
+    "draft": "Câu trả lời",
+    "reason": "technical_identifier"
+  },
+  "Barthel": {
+    "draft": "Barthel",
+    "reason": "unchanged"
+  },
+  "Bathing": {
+    "draft": "Tắm",
+    "reason": "technical_identifier"
+  },
+  "Bladder": {
+    "draft": "Bàng quang",
+    "reason": "technical_identifier"
+  },
+  "Body Mass Index (BMI)": {
+    "draft": "Chỉ số khối lượng cơ thể (BMI))",
+    "reason": "suspicious_output"
+  },
+  "Bowels": {
+    "draft": "Bệnh ruột",
+    "reason": "technical_identifier"
+  },
+  "Braden": {
+    "draft": "Braden",
+    "reason": "unchanged"
+  },
+  "Build versioned, scored assessment forms rendered in both\n                the backend and the nurse PWA from one JSON schema.": {
+    "draft": "Xây dựng các mẫu đánh giá được phiên bản, được ghi điểm được cung cấp trong cả nền và PWA y tá từ một sơ đồ JSON.",
+    "reason": "technical_identifier"
+  },
+  "Client Uuid": {
+    "draft": "Khách hàng Uuid",
+    "reason": "technical_identifier"
+  },
+  "Copy of the template schema_json at creation — the instance renders from this forever.": {
+    "draft": "Bản sao của template schema_json khi tạo  bản sao sẽ được render từ đây mãi mãi.",
+    "reason": "suspicious_output"
+  },
+  "Dressing": {
+    "draft": "Giải quần áo",
+    "reason": "technical_identifier"
+  },
+  "Extraction target for this question (overrides the LOINC lookup).": {
+    "draft": "Mục tiêu khai thác cho câu hỏi này (về tìm kiếm LOINC).",
+    "reason": "technical_identifier"
+  },
+  "FHIR Questionnaire.status (published maps to active).": {
+    "draft": "TỪ KHÓA Questionnaire.status (bản đồ được công bố đến hoạt động).",
+    "reason": "technical_identifier"
+  },
+  "FHIR Questionnaire.title": {
+    "draft": "TỪ KHÓA Questionnaire.title",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Questionnaire.version; unique together with code.": {
+    "draft": "TỪ KHÓA Questionnaire.version; độc đáo cùng với mã.",
+    "reason": "technical_identifier"
+  },
+  "FHIR QuestionnaireResponse.author": {
+    "draft": "TỪ KHÓA QuestionnaireResponse.author",
+    "reason": "no_vietnamese"
+  },
+  "FHIR QuestionnaireResponse.authored": {
+    "draft": "TỪ KHÓA QuestionnaireResponse.authored",
+    "reason": "no_vietnamese"
+  },
+  "FHIR QuestionnaireResponse.encounter": {
+    "draft": "TỪ KHÓA QuestionnaireResponse.encounter",
+    "reason": "no_vietnamese"
+  },
+  "FHIR QuestionnaireResponse.status (completed/amended verbatim, cancelled maps to stopped).": {
+    "draft": "TỪ KHÓA QuestionnaireResponse.status (Bản đồ đã hoàn thành/sửa đổi bằng chữ, bản đồ bị hủy bỏ để dừng lại).",
+    "reason": "technical_identifier"
+  },
+  "FHIR QuestionnaireResponse.subject": {
+    "draft": "TỪ KHÓA QuestionnaireResponse.subject",
+    "reason": "no_vietnamese"
+  },
+  "Family code (PAIN, BARTHEL, MNA_SF, BRADEN, AMTS); FHIR Questionnaire.name": {
+    "draft": "Mã gia đình (PAIN, BARTHEL, MNA_SF, BRADEN, AMTS); FHIR Questionnaire.name",
+    "reason": "technical_identifier"
+  },
+  "Feeding": {
+    "draft": "Chăn nuôi",
+    "reason": "technical_identifier"
+  },
+  "Form Template": {
+    "draft": "Template Form",
+    "reason": "no_vietnamese"
+  },
+  "Grooming": {
+    "draft": "Chế độ làm sạch",
+    "reason": "technical_identifier"
+  },
+  "Help": {
+    "draft": "Giúp",
+    "reason": "technical_identifier"
+  },
+  "Instances": {
+    "draft": "Các trường hợp",
+    "reason": "technical_identifier"
+  },
+  "Invalid JSON — value not saved.": {
+    "draft": "Giá trị JSON  không hợp lệ không lưu.",
+    "reason": "technical_identifier"
+  },
+  "JSON (editable)": {
+    "draft": "JSON (có thể chỉnh sửa))",
+    "reason": "technical_identifier"
+  },
+  "Label": {
+    "draft": "Đèn nhãn",
+    "reason": "technical_identifier"
+  },
+  "MNA-SF": {
+    "draft": "MNA-SF",
+    "reason": "unchanged"
+  },
+  "Mobility": {
+    "draft": "Phong trào",
+    "reason": "technical_identifier"
+  },
+  "Mobility (on level surfaces)": {
+    "draft": "Di động (trong bề mặt bằng))",
+    "reason": "suspicious_output"
+  },
+  "Moisture": {
+    "draft": "Sâm",
+    "reason": "technical_identifier"
+  },
+  "Nutrition": {
+    "draft": "Chế độ dinh dưỡng",
+    "reason": "technical_identifier"
+  },
+  "Options": {
+    "draft": "Các lựa chọn",
+    "reason": "technical_identifier"
+  },
+  "Pain": {
+    "draft": "Đau",
+    "reason": "technical_identifier"
+  },
+  "Per-question coded extraction (numeric / selection-with-scores only).": {
+    "draft": "Phân tích mã hóa theo câu hỏi (chỉ số / chọn số với điểm số)).",
+    "reason": "suspicious_output"
+  },
+  "Published": {
+    "draft": "Được xuất bản",
+    "reason": "technical_identifier"
+  },
+  "Remove": {
+    "draft": "Tắt",
+    "reason": "technical_identifier"
+  },
+  "Renderer widget.": {
+    "draft": "Widget renderer.",
+    "reason": "no_vietnamese"
+  },
+  "Score Label Vi": {
+    "draft": "Score Label Vi",
+    "reason": "unchanged"
+  },
+  "Screening": {
+    "draft": "Kiểm tra",
+    "reason": "technical_identifier"
+  },
+  "Stairs": {
+    "draft": "Đường cầu thang",
+    "reason": "technical_identifier"
+  },
+  "The shared JSON schema (§4.2) — the only thing renderers read.": {
+    "draft": "Các JSON chia sẻ sơ đồ (§4.2)  điều duy nhất các trình render đọc.",
+    "reason": "technical_identifier"
+  },
+  "template_id": {
+    "draft": "template_id",
+    "reason": "unchanged"
+  },
+  "{\"key\": \"<other question key>\", \"operator\": \"=|!=|in|>=|<=\", \"value\": ...} — single-condition show/hide.": {
+    "draft": "{\"khóa\"}\": \"<other question key>\", \"operator\": \"= uống!= uống>= uống<= uống\", \"value\":...}  show/họa đơn điều kiện.",
+    "reason": "markup_or_template"
+  },
+  "{key: value}; photo/signature values = {\"attachment_id\": id}.": {
+    "draft": "{key: value}; photo/signature values = {\"attachment_id\": id}.",
+    "reason": "unchanged"
+  },
+  "<p><strong>Fall incident %(incident)s</strong> for %(client)s.</p><p>Latest Morse assessment: %(last)s</p><p>A standing fall-risk Flag is derived for FHIR while this incident is open.</p>": {
+    "draft": "<p><strong>Chuyện mùa thu %(incident)s</strong> cho %(client)s.</p><p>Đánh giá Morse mới nhất: %(last)s</p><p>Một cờ đứng nguy cơ rơi được lấy cho FHIR trong khi sự cố này mở.</p>",
+    "reason": "technical_identifier"
+  },
+  "<p><strong>Severity %(severity)s incident</strong></p><p>Type: %(type)s</p><p>Client: %(client)s</p><p>When: %(datetime)s</p>": {
+    "draft": "<p><strong>Tâm trọng %(severity)s sự cố</strong></p><p>Loại: %(type)s</p><p>Khách hàng: %(client)s</p><p>Khi nào: %(datetime)s</p>",
+    "reason": "markup_or_template"
+  },
+  "<p>Incident: %(incident)s</p><p>%(detail)s</p>": {
+    "draft": "<p>Sự cố: %(incident)s</p><p>%(detail)s</p>",
+    "reason": "markup_or_template"
+  },
+  "FHIR AdverseEvent.date": {
+    "draft": "TỪ KHÓA AdverseEvent.date",
+    "reason": "no_vietnamese"
+  },
+  "FHIR AdverseEvent.detected / recordedDate": {
+    "draft": "TỪ KHÓA AdverseEvent.detected / ghi ngày",
+    "reason": "technical_identifier"
+  },
+  "FHIR AdverseEvent.outcome": {
+    "draft": "TỪ KHÓA AdverseEvent.outcome",
+    "reason": "no_vietnamese"
+  },
+  "FHIR AdverseEvent.recorder": {
+    "draft": "TỪ KHÓA AdverseEvent.recorder",
+    "reason": "no_vietnamese"
+  },
+  "FHIR AdverseEvent.severity (1-2 → mild, 3 → moderate, 4-5 → severe).": {
+    "draft": "TỪ KHÓA AdverseEvent.severity (1-2 → nhẹ, 3 → - Tâm trung bình, 4-5 → nghiêm trọng).",
+    "reason": "technical_identifier"
+  },
+  "FHIR AdverseEvent.subject (optional — staff-only incidents allowed).": {
+    "draft": "TỪ KHÓA AdverseEvent.subject (tùy chọn  Chỉ cho phép các sự cố của nhân viên).",
+    "reason": "technical_identifier"
+  },
+  "Findings": {
+    "draft": "Kết quả",
+    "reason": "technical_identifier"
+  },
+  "First response taken; FHIR mitigation narrative.": {
+    "draft": "Đáp lại đầu tiên được thực hiện; Nữ thuyết giảm thiểu FHIR.",
+    "reason": "technical_identifier"
+  },
+  "Investigation owner; FHIR AdverseEvent.contributor.": {
+    "draft": "Chủ sở hữu điều tra; FHIR AdverseEvent.contributor.",
+    "reason": "technical_identifier"
+  },
+  "NOTIFIABLE": {
+    "draft": "Không thể phủ nhận",
+    "reason": "technical_identifier"
+  },
+  "Photos (optional)": {
+    "draft": "Hình ảnh (không chọn lựa))",
+    "reason": "suspicious_output"
+  },
+  "Register slicing (defaults from the visit, else the client's primary facility).": {
+    "draft": "Việc cắt sổ (không đúng khi đến thăm, nếu không cơ sở chính của khách hàng)).",
+    "reason": "suspicious_output"
+  },
+  "Taxonomy; FHIR AdverseEvent.event (local CodeSystem health19-incident-types).": {
+    "draft": "Định dạng phân loại; FHIR AdverseEvent.event (Local CodeSystem health19-những loại sự cố).",
+    "reason": "technical_identifier"
+  },
+  "The visit; FHIR AdverseEvent.encounter.": {
+    "draft": "Chuyến thăm; AdverseEvent.encounter.",
+    "reason": "technical_identifier"
+  },
+  "Where it happened; FHIR AdverseEvent.location.display.": {
+    "draft": "- Vị trí của tôi. AdverseEvent.location.display.",
+    "reason": "technical_identifier"
+  },
+  "incident_id": {
+    "draft": "incident_id",
+    "reason": "unchanged"
+  },
+  "Bulk payment is only allowed for invoices of the same client, to prevent payment allocation errors.\n\nThe selection spans %(count)s clients: %(names)s.": {
+    "draft": "Việc thanh toán hàng loạt chỉ được phép cho hóa đơn của cùng một khách hàng, để ngăn chặn các lỗi phân bổ thanh toán. %(count)s Khách hàng: %(names)s.",
+    "reason": "suspicious_output"
+  },
+  "Delete (reason required; posted entries must be reversed first)": {
+    "draft": "Xóa (cần phải có lý do; các mục đăng phải được đảo ngược trước tiên))",
+    "reason": "suspicious_output"
+  },
+  "expires": {
+    "draft": "hết hạn",
+    "reason": "technical_identifier"
+  },
+  "<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n                <p>Kính gửi {{ object.patient_id.name or '' }},</p>\n                <p>Lịch hẹn của quý khách đã được xác nhận:</p>\n                <ul>\n                    <li><strong>Ngày:</strong> {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</li>\n                    <li><strong>Giờ:</strong> {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</li>\n                    <li><strong>Cơ sở:</strong> {{ object.facility_id.name or '' }}</li>\n                </ul>\n                <hr/>\n                <p>Dear {{ object.patient_id.name or '' }}, your visit is confirmed for\n                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n                    at {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}\n                    ({{ object.facility_id.name or '' }}).</p>\n            </div>\n        ": {
+    "draft": "<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n                <p>Quýnh gửi {{ object.patient_id.name or '' }},</p>\n                <p>Thời gian của khách đã được xác nhận.:</p>\n                <ul>\n                    <li><strong>Ngày:</strong> {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</li>\n                    <li><strong>Giờ thì:</strong> {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</li>\n                    <li><strong>Cơ sở:</strong> {{ object.facility_id.name or '' }}</li>\n                </ul>\n                <hr/>\n                <p>Con yêu {{ object.patient_id.name or '' }}, chuyến thăm của bạn được xác nhận cho\n                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n                    tại {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}\n                    ({{ object.facility_id.name or '' }}).</p>\n            </div>\n        ",
+    "reason": "markup_or_template"
+  },
+  "<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n                <p>Kính gửi {{ object.patient_id.name or '' }},</p>\n                <p>Lịch hẹn ngày\n                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</strong>\n                    lúc <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n                    ({{ object.facility_id.name or '' }}) đã được huỷ. Vui lòng liên hệ để đặt lại.</p>\n                <hr/>\n                <p>Dear {{ object.patient_id.name or '' }}, your visit on\n                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n                    ({{ object.facility_id.name or '' }}) has been cancelled. Please contact us to rebook.</p>\n            </div>\n        ": {
+    "draft": "<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n                <p>Quýnh gửi {{ object.patient_id.name or '' }},</p>\n                <p>Ngày nào cũng\n                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</strong>\n                    lúc <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n                    ({{ object.facility_id.name or '' }}) Được rồi, xin liên hệ để đặt lại..</p>\n                <hr/>\n                <p>Con yêu {{ object.patient_id.name or '' }}, chuyến thăm của bạn\n                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n                    ({{ object.facility_id.name or '' }}) đã bị hủy. Xin liên hệ với chúng tôi để đặt lại.</p>\n            </div>\n        ",
+    "reason": "markup_or_template"
+  },
+  "<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n                <p>Kính gửi {{ object.patient_id.name or '' }},</p>\n                <p>Quý khách có lịch hẹn hôm nay lúc\n                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n                    ({{ object.facility_id.name or '' }}).</p>\n                <hr/>\n                <p>Dear {{ object.patient_id.name or '' }}, your visit is today at\n                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}\n                    ({{ object.facility_id.name or '' }}).</p>\n            </div>\n        ": {
+    "draft": "<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n                <p>Quýnh gửi {{ object.patient_id.name or '' }},</p>\n                <p>Khách có lịch hẹn hôm nay lúc này\n                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n                    ({{ object.facility_id.name or '' }}).</p>\n                <hr/>\n                <p>Con yêu {{ object.patient_id.name or '' }}, chuyến thăm của bạn hôm nay tại\n                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}\n                    ({{ object.facility_id.name or '' }}).</p>\n            </div>\n        ",
+    "reason": "markup_or_template"
+  },
+  "<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n                <p>Kính gửi {{ object.patient_id.name or '' }},</p>\n                <p>Xin nhắc quý khách có lịch hẹn vào\n                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</strong>\n                    lúc <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n                    ({{ object.facility_id.name or '' }}).</p>\n                <hr/>\n                <p>Dear {{ object.patient_id.name or '' }}, this is a reminder of your visit on\n                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n                    at {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}.</p>\n            </div>\n        ": {
+    "draft": "<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n                <p>Quýnh gửi {{ object.patient_id.name or '' }},</p>\n                <p>Xin nhắc quý khách có lịch hẹn vào\n                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</strong>\n                    lúc <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n                    ({{ object.facility_id.name or '' }}).</p>\n                <hr/>\n                <p>Con yêu {{ object.patient_id.name or '' }}, Đây là một lời nhắc nhở về chuyến thăm của bạn\n                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n                    tại {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}.</p>\n            </div>\n        ",
+    "reason": "markup_or_template"
+  },
+  "Confirmation": {
+    "draft": "Đảm nhận",
+    "reason": "technical_identifier"
+  },
+  "Template Params": {
+    "draft": "Template Params",
+    "reason": "unchanged"
+  },
+  "ZNS template — Booking confirmation": {
+    "draft": "Template ZNS  Báo cáo đặt phòng",
+    "reason": "suspicious_output"
+  },
+  "ZNS template — Cancellation": {
+    "draft": "Template ZNS  Thủy bỏ",
+    "reason": "suspicious_output"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"archive\"/>\n                        <span>Legacy Record</span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"archive\"/>\n                        <span>Tài liệu di sản</span>",
+    "reason": "markup_or_template"
+  },
+  "Legacy service (not in price list)": {
+    "draft": "Dịch vụ thừa kế (không có trong danh sách giá))",
+    "reason": "suspicious_output"
+  },
+  "Legacy surcharge (priced by adjustment rules)": {
+    "draft": "Thuế phụ thừa (được tính theo quy tắc điều chỉnh))",
+    "reason": "suspicious_output"
+  },
+  "Pancake channel/ad identifiers kept as one JSON blob (page_id, ad_id, ad_id_fb, ad_id_tiktok, conversation_id, psid, facebook_link, pancake_customer_id).": {
+    "draft": "Các thông tin xác định kênh/ quảng cáo Pancake được lưu giữ như một điểm JSON (page_id, ad_id, ad_d_fb, ad _id_tiktok, conversation_id).",
+    "reason": "technical_identifier"
+  },
+  "Pancake channel/ad identifiers kept as one JSON blob.": {
+    "draft": "Các thông số xác định kênh/ quảng cáo được giữ như một điểm JSON.",
+    "reason": "technical_identifier"
+  },
+  "CCCD Number (encrypted)": {
+    "draft": "Số CCCD (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Clinical Notes (encrypted)": {
+    "draft": "Các ghi chú lâm sàng (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Condition After (encrypted)": {
+    "draft": "Tình trạng sau khi (đóng mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Condition Before (encrypted)": {
+    "draft": "Tình trạng trước (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Diagnosis (encrypted)": {
+    "draft": "Chẩn đoán (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Emergency Contact Name (encrypted)": {
+    "draft": "Tên liên lạc khẩn cấp (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Emergency Contact Phone (encrypted)": {
+    "draft": "Điện thoại liên lạc khẩn cấp (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Emergency Contact Relation (encrypted)": {
+    "draft": "Hàm liên hệ khẩn cấp (đóng mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Emergency Contact Relationship (encrypted)": {
+    "draft": "Hàm liên hệ khẩn cấp (đóng mã))",
+    "reason": "suspicious_output"
+  },
+  "Healthcare Notes (encrypted)": {
+    "draft": "Các ghi chú chăm sóc sức khỏe (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Intake Diagnosis (encrypted)": {
+    "draft": "Chẩn đoán nhập khẩu (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Intake Notes (encrypted)": {
+    "draft": "Các ghi chú nhập (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Known Allergies (encrypted)": {
+    "draft": "Các dị ứng được biết (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Medical History (encrypted)": {
+    "draft": "Lịch sử y tế (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Medications Prescribed (encrypted)": {
+    "draft": "Thuốc được kê đơn (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "National ID (encrypted)": {
+    "draft": "Đơn vị nhận dạng quốc gia (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Treatment Performed (encrypted)": {
+    "draft": "Điều trị được thực hiện (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "Vital Signs (encrypted)": {
+    "draft": "Các dấu hiệu quan trọng (được mã hóa))",
+    "reason": "suspicious_output"
+  },
+  "<span class=\"off\">Chưa đồng ý</span>": {
+    "draft": "<span class=\"off\">Chưa đồng ý</span>",
+    "reason": "unchanged"
+  },
+  "<span class=\"on\">Đã đồng ý</span>": {
+    "draft": "<span class=\"on\">Đã đồng ý</span>",
+    "reason": "unchanged"
+  },
+  "<span class=\"svc\">Ghi chú thăm khám</span>": {
+    "draft": "<span class=\"svc\">Ghi chú thăm khám</span>",
+    "reason": "unchanged"
+  },
+  "Access": {
+    "draft": "Phiên bản",
+    "reason": "technical_identifier"
+  },
+  "1.19.0": {
+    "draft": "1.19.0",
+    "reason": "unchanged"
+  },
+  "Client Action UUID": {
+    "draft": "Hành động khách hàng UUID",
+    "reason": "technical_identifier"
+  },
+  "PWA Sync Deletion Tombstone": {
+    "draft": "PWA Sync Deletion Tombstone",
+    "reason": "unchanged"
+  },
+  "Viet Uc Care v": {
+    "draft": "Viet Uc Care v",
+    "reason": "unchanged"
+  },
+  "Log Out": {
+    "draft": "Tham gia",
+    "reason": "no_vietnamese"
+  },
+  "<span class=\"fl-status ontheway\">Đang trên đường (On the way)</span>": {
+    "draft": "<span class=\"fl-status ontheway\">Đang trên đường (Trong đường))</span>",
+    "reason": "markup_or_template"
+  },
+  "Distance (km)": {
+    "draft": "Khoảng cách (km))",
+    "reason": "suspicious_output"
+  },
+  "Distance cache TTL (days)": {
+    "draft": "TTL cache khoảng cách (ngày))",
+    "reason": "suspicious_output"
+  },
+  "Sweep horizon (days)": {
+    "draft": "Tốc độ (ngày))",
+    "reason": "suspicious_output"
+  },
+  "Travel (minutes)": {
+    "draft": "Đi du lịch (tháng phút))",
+    "reason": "suspicious_output"
+  },
+  "Travel buffer (minutes)": {
+    "draft": "Tự động hành trình (tháng phút))",
+    "reason": "suspicious_output"
+  },
+  "Use external router (Google/OSRM)": {
+    "draft": "Sử dụng bộ định tuyến bên ngoài (Google/OSRM))",
+    "reason": "suspicious_output"
+  },
+  "google | osrm | approx | district | unknown": {
+    "draft": " Google OSRM  ",
+    "reason": "no_vietnamese"
+  },
+  "Full URL of the transcription endpoint, e.g. http://127.0.0.1:8123/v1/audio/transcriptions. Empty → recordings queue and wait. Must be a private host unless \"Allow cloud STT\".": {
+    "draft": "URL đầy đủ của điểm cuối sao chép, e.g. http://127.0.0.1:8123/v1/audio/transcriptions. Empty → ghi âm xếp hàng và chờ đợi. phải là một máy chủ riêng trừ khi \"Cho phép STT đám mây\".",
+    "reason": "technical_identifier"
+  },
+  "Language hint sent to the transcription backend (default vi).": {
+    "draft": "Nhận thức ngôn ngữ được gửi đến phần sau bản sao (tầm vi)).",
+    "reason": "suspicious_output"
+  },
+  "STT endpoint (OpenAI-compatible)": {
+    "draft": "STT Endpoint (đối hợp với OpenAI))",
+    "reason": "suspicious_output"
+  },
+  "e.g. http://127.0.0.1:8123/v1/audio/transcriptions. Empty → recordings queue and wait. Must be a private host unless cloud STT is allowed.": {
+    "draft": "e.g. http://127.0.0.1:8123/v1/audio/transcriptions. Empty → ghi âm xếp hàng và chờ đợi. phải là một máy chủ riêng trừ khi đám mây STT được phép.",
+    "reason": "technical_identifier"
+  },
+  "<i class=\"fa fa-paper-plane-o\"/> Gửi link đặt lịch (Send booking link)": {
+    "draft": "<i class=\"fa fa-paper-plane-o\"/> Gửi liên kết đặt lịch (Send booking link))",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"sb-label\">Khung giờ (Time)</span>": {
+    "draft": "<span class=\"sb-label\">Khung giờ (Thời gian))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"sb-label\">Ngày (Date)</span>": {
+    "draft": "<span class=\"sb-label\">Ngày (Tang)</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"sb-label\">Điều dưỡng (Nurse)</span>": {
+    "draft": "<span class=\"sb-label\">Điều dưỡng (Chỉ dưỡng))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"sb-status booked\">Đã đặt lịch (Booked)</span>": {
+    "draft": "<span class=\"sb-status booked\">Đã đặt lịch (đặt phòng))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"sb-status sent\">Đặt lịch (Book again)</span>": {
+    "draft": "<span class=\"sb-status sent\">Đặt lịch (Tài lại)</span>",
+    "reason": "markup_or_template"
+  },
+  "Billable service used when a client has no active package and no previous booked service to rebook. Empty = the manual button errors and auto-invite silently skips for such clients.": {
+    "draft": "Dịch vụ tính phí được sử dụng khi khách hàng không có gói hoạt động và không có dịch vụ đặt trước đó để đặt lại..",
+    "reason": "long_message"
+  },
+  "Fso Timezone": {
+    "draft": "Fso Timezone",
+    "reason": "unchanged"
+  },
+  "Rebook link lifetime (days)": {
+    "draft": "Thời gian sử dụng liên kết (ngày))",
+    "reason": "suspicious_output"
+  },
+  "Rebook slot horizon (days)": {
+    "draft": "Tự đặt lại chân trời khe (ngày))",
+    "reason": "suspicious_output"
+  },
+  "Zalo ZNS template ID for the rebook invite. Rides the messaging enabled/dry-run switches. Empty = ZNS step skipped (invite still created).": {
+    "draft": "Zalo ZNS ID mẫu cho lời mời tái đặt. Cụ thể chuyển đổi tin nhắn được bật / chạy khô. Không = bước ZNS bỏ qua (cảnh mời vẫn được tạo ra)).",
+    "reason": "suspicious_output"
+  },
+  "create + health_self_booking.invite_ttl_days. Checked at render time (no cron).": {
+    "draft": "tạo + health_self_booking.invite_ttl_days. Kiểm tra tại thời gian hiển thị (không cron)).",
+    "reason": "suspicious_output"
+  },
+  "<span class=\"tl-label\">Bác sĩ (Doctor)</span>": {
+    "draft": "<span class=\"tl-label\">Bác sĩ (Bác sĩ))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"tl-label\">Khung giờ (Time)</span>": {
+    "draft": "<span class=\"tl-label\">Khung giờ (Thời gian))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"tl-label\">Ngày (Date)</span>": {
+    "draft": "<span class=\"tl-label\">Ngày (Tang)</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"tl-status closed\">Đã kết thúc (Ended)</span>": {
+    "draft": "<span class=\"tl-status closed\">Đã kết thúc (Tại kết))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"tl-status open\">Đang diễn ra (Live)</span>": {
+    "draft": "<span class=\"tl-status open\">Đang diễn ra (Live))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"tl-status pending\">Sắp diễn ra (Upcoming)</span>": {
+    "draft": "<span class=\"tl-status pending\">Sắp diễn ra (Trong tương lai))</span>",
+    "reason": "markup_or_template"
+  },
+  "<span>Vào phòng khám (Join)</span>": {
+    "draft": "<span>Vào phòng khám (Thiêm vào))</span>",
+    "reason": "markup_or_template"
+  },
+  "Capability URL = <video_base_url>/<room_slug>. Not stored; never logged at info level.": {
+    "draft": "Capacity URL = <video_base_url>- Không.<room_slug>. Không lưu trữ; chưa bao giờ đăng nhập ở mức thông tin.",
+    "reason": "markup_or_template"
+  },
+  "Telehealth (Video Visits)": {
+    "draft": "Sức khỏe qua đường dây (Việc thăm video))",
+    "reason": "suspicious_output"
+  },
+  "When on, confirming an online (telemedicine) booking creates a video session and sends the join link (the send still rides the messaging enabled/dry-run switches).": {
+    "draft": "Khi bật, xác nhận đặt phòng trực tuyến (telemedicine) tạo ra một phiên video và gửi liên kết tham gia (the send still rides the messaging enabled/dry-run switches)).",
+    "reason": "english_residue"
+  },
+  "Zalo ZNS template ID for the join link. Rides the messaging enabled/dry-run switches. Empty = ZNS step skipped (session still created).": {
+    "draft": "Zalo ZNS template ID cho liên kết tham gia. Cầm các chuyển đổi tin nhắn được bật / chạy khô. Không = bước ZNS bị bỏ qua (phát họp vẫn được tạo).",
+    "reason": "suspicious_output"
+  },
+  "%(stub)s — %(name)s": {
+    "draft": "%(stub)s  %(name)s",
+    "reason": "no_vietnamese"
+  },
+  "%(type)s %(value)s%(unit)s — %(sev)s — %(name)s": {
+    "draft": "%(type)s %(value)s%(unit)s  %(sev)s  %(name)s",
+    "reason": "no_vietnamese"
+  },
+  "Anchor time of the scored set (latest triggering observation).": {
+    "draft": "Thời gian neo của bộ được ghi (trình sát kích hoạt cuối cùng)).",
+    "reason": "suspicious_output"
+  },
+  "Assembly": {
+    "draft": "Hội đồng",
+    "reason": "technical_identifier"
+  },
+  "Client Batch UUID": {
+    "draft": "Client Batch UUID",
+    "reason": "unchanged"
+  },
+  "Components": {
+    "draft": "Các thành phần",
+    "reason": "technical_identifier"
+  },
+  "Current": {
+    "draft": "Hiện tại",
+    "reason": "technical_identifier"
+  },
+  "Device": {
+    "draft": "Thiết bị",
+    "reason": "technical_identifier"
+  },
+  "Evidence (machine)": {
+    "draft": "Bằng chứng (cỗ máy))",
+    "reason": "suspicious_output"
+  },
+  "Run the nightly statistical baseline/trend sweep (HR drift, SBP drift, SpO2 decline, weight loss).": {
+    "draft": "Thực hiện các chuẩn cơ sở thống kê/ xu hướng mỗi đêm (HR drift, SBP drift, SpO2 giảm, giảm cân)).",
+    "reason": "suspicious_output"
+  },
+  "Scale 1": {
+    "draft": "Scale 1",
+    "reason": "unchanged"
+  },
+  "Scale 2": {
+    "draft": "Skala 2",
+    "reason": "no_vietnamese"
+  },
+  "Score": {
+    "draft": "Điểm số",
+    "reason": "technical_identifier"
+  },
+  "Scoring Window (minutes)": {
+    "draft": "Đánh giá cửa sổ (tháng phút))",
+    "reason": "suspicious_output"
+  },
+  "SpO₂ scale": {
+    "draft": "Skala SpO2",
+    "reason": "no_vietnamese"
+  },
+  "The identifier the partner/vendor sends per reading (device serial / uuid). Globally unique — partners address devices without a client context.": {
+    "draft": "Định dạng nhận dạng mà đối tác/người bán hàng gửi cho mỗi đọc (đơn vị thiết bị hàng loạt / uuid)..",
+    "reason": "technical_identifier"
+  },
+  "device_id": {
+    "draft": "device_id",
+    "reason": "unchanged"
+  },
+  "An Xu": {
+    "draft": "An Xu",
+    "reason": "unchanged"
+  },
+  "BK1230": {
+    "draft": "BK1230",
+    "reason": "unchanged"
+  },
+  "BK1235": {
+    "draft": "BK1235",
+    "reason": "unchanged"
+  },
+  "BK1238": {
+    "draft": "BK1238",
+    "reason": "unchanged"
+  },
+  "Buttons": {
+    "draft": "Dòng nút",
+    "reason": "technical_identifier"
+  },
+  "Editable JSON view of the token values.": {
+    "draft": "Khán giả JSON có thể chỉnh sửa của các giá trị token.",
+    "reason": "technical_identifier"
+  },
+  "Export": {
+    "draft": "Xuất khẩu",
+    "reason": "technical_identifier"
+  },
+  "Export theme JSON": {
+    "draft": "Xuất khẩu chủ đề JSON",
+    "reason": "technical_identifier"
+  },
+  "ID: 02 0024": {
+    "draft": "ID: 02 0024",
+    "reason": "unchanged"
+  },
+  "Import theme JSON": {
+    "draft": "Thêm chủ đề JSON",
+    "reason": "technical_identifier"
+  },
+  "Mitchell Admin": {
+    "draft": "Mitchell Admin",
+    "reason": "unchanged"
+  },
+  "Native form (dialogs, opted-out views)": {
+    "draft": "Hình thức bản địa (chương thoại, lượt xem không được chọn))",
+    "reason": "suspicious_output"
+  },
+  "Preset this theme started from (provenance).": {
+    "draft": "Preset chủ đề này bắt đầu từ (provenance)).",
+    "reason": "suspicious_output"
+  },
+  "Presets": {
+    "draft": "Pre-set",
+    "reason": "no_vietnamese"
+  },
+  "Redo": {
+    "draft": "Redo",
+    "reason": "unchanged"
+  },
+  "Reset": {
+    "draft": "Tái thiết",
+    "reason": "technical_identifier"
+  },
+  "Secondary": {
+    "draft": "Tỷ lệ phụ",
+    "reason": "technical_identifier"
+  },
+  "Theme Presets": {
+    "draft": "Theme Pre-Sets",
+    "reason": "no_vietnamese"
+  },
+  "Theme Studio": {
+    "draft": "Theme Studio",
+    "reason": "unchanged"
+  },
+  "Themes": {
+    "draft": "Chủ đề",
+    "reason": "technical_identifier"
+  },
+  "Tokens": {
+    "draft": "Các token",
+    "reason": "technical_identifier"
+  },
+  "Tokens (JSON)": {
+    "draft": "Các token (JSON))",
+    "reason": "technical_identifier"
+  },
+  "30d": {
+    "draft": "30d",
+    "reason": "unchanged"
+  },
+  "7d": {
+    "draft": "7d",
+    "reason": "unchanged"
+  },
+  "90d": {
+    "draft": "90d",
+    "reason": "unchanged"
+  },
+  "<span class=\"o_stat_text\">NEWS2</span>": {
+    "draft": "<span class=\"o_stat_text\">Tin tức 2</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"o_stat_text\">Patient</span>": {
+    "draft": "<span class=\"o_stat_text\">Bệnh nhân</span>",
+    "reason": "markup_or_template"
+  },
+  "<span> / 100 pts</span>": {
+    "draft": "<span> / 100 pts</span>",
+    "reason": "unchanged"
+  },
+  "Direction of the composite risk score versus the previous recompute (worsening = score rose beyond the noise band).": {
+    "draft": "Định hướng điểm rủi ro tổng hợp so với tính toán lại trước (cảm đạm = điểm tăng vượt ra khỏi dải tiếng ồn)).",
+    "reason": "suspicious_output"
+  },
+  "Keep an append-only trail of each client's risk score over time (the worklist trend arrows and the Risk Score trajectory chart). Turn off to stop appending new history points; existing points and the trend arrows still show.": {
+    "draft": "Giữ một dấu vết chỉ phụ lục của điểm rủi ro của mỗi khách hàng theo thời gian (những mũi tên xu hướng danh sách làm việc và biểu đồ quỹ đạo điểm rủi Ro)..",
+    "reason": "long_message"
+  },
+  "Machine breakdown (debug)": {
+    "draft": "Máy bị hỏng (debug))",
+    "reason": "suspicious_output"
+  },
+  "NEWS2": {
+    "draft": "Tin tức 2",
+    "reason": "technical_identifier"
+  },
+  "Project each client's risk trajectory forward with a transparent least-squares trend line (the worklist 'Rising' filter and the Risk Score forecast segment). Advisory only: it can raise attention but never lowers a current band. Turn off to stop projecting.": {
+    "draft": "Dự báo quỹ đạo rủi ro của mỗi khách hàng với một đường xu hướng nhỏ nhất minh bạch (trình lọc danh sách làm việc 'Tăng' và phân đoạn dự báo điểm rủi ro). Chỉ cần tư vấn: nó có thể làm tăng sự chú ý nhưng không bao giờ làm giảm một băng thông hiện tại..",
+    "reason": "long_message"
+  },
+  "Staleness": {
+    "draft": "Sự trì hoãn",
+    "reason": "technical_identifier"
+  },
+  "This worklist ranks clients by a transparent deterioration-risk\n               score derived from their current NEWS2 band, open alerts,\n               trend signals and visit recency. It is recomputed automatically\n               whenever a new score or alert lands, and by a periodic sweep.": {
+    "draft": "Danh sách làm việc này xếp hạng khách hàng theo điểm số nguy cơ suy giảm minh bạch bắt nguồn từ băng thông NEWS2 hiện tại của họ, báo cáo mở, tín hiệu xu hướng và gần đây của chuyến thăm. Nó được tính lại tự động bất cứ khi nào một điểm số hoặc cảnh báo mới hạ cánh, và bằng một quét định kỳ.",
+    "reason": "long_message"
+  },
+  "Why this point was appended (audit/debugging).": {
+    "draft": "Tại sao điểm này được thêm vào (trình toán/bỏ lỗi)).",
+    "reason": "suspicious_output"
+  },
+  "<p><strong>Vitals threshold breached</strong></p><p>Client: %(client)s</p><p>%(message)s</p><p>Observed: %(datetime)s</p>": {
+    "draft": "<p><strong>Đào cản thiết yếu bị vi phạm</strong></p><p>Khách hàng: %(client)s</p><p>%(message)s</p><p>Được quan sát: %(datetime)s</p>",
+    "reason": "markup_or_template"
+  },
+  "Coding": {
+    "draft": "Mã hóa",
+    "reason": "technical_identifier"
+  },
+  "Component-to-panel link (systolic → BP panel); FHIR Observation.component grouping.": {
+    "draft": "Liên kết thành phần sang bảng (systolic) → Phanele BP); FHIR Observation.component nhóm.",
+    "reason": "technical_identifier"
+  },
+  "Decimals": {
+    "draft": "Số thập phân",
+    "reason": "technical_identifier"
+  },
+  "English display name (FHIR code.coding.display).": {
+    "draft": "Tên hiển thị tiếng Anh (FHIR) code.coding.display).",
+    "reason": "technical_identifier"
+  },
+  "FHIR Observation.code": {
+    "draft": "TỪ KHÓA Observation.code",
+    "reason": "no_vietnamese"
+  },
+  "FHIR Observation.status ('entered_in_error' maps to 'entered-in-error').": {
+    "draft": "TỪ KHÓA Observation.status ('entered_in_error' map đến \"entered-in-error\"').",
+    "reason": "technical_identifier"
+  },
+  "FHIR Observation.subject": {
+    "draft": "TỪ KHÓA Observation.subject",
+    "reason": "no_vietnamese"
+  },
+  "FHIR device.display": {
+    "draft": "TỪ KHÓA device.display",
+    "reason": "no_vietnamese"
+  },
+  "FHIR effectiveDateTime": {
+    "draft": "FIR effectiveDateTime",
+    "reason": "no_vietnamese"
+  },
+  "FHIR encounter": {
+    "draft": "Hỗn gặp",
+    "reason": "technical_identifier"
+  },
+  "FHIR extension bodyPosition": {
+    "draft": "Cơ thể mở rộng FHIRTình trạng",
+    "reason": "technical_identifier"
+  },
+  "FHIR method.text": {
+    "draft": "TỪ KHÓA method.text",
+    "reason": "no_vietnamese"
+  },
+  "FHIR performer": {
+    "draft": "Người biểu diễn FHIR",
+    "reason": "technical_identifier"
+  },
+  "FHIR valueQuantity.value (required for numeric types, panels exempt).": {
+    "draft": "TỪ KHÓA valueQuantity.value (yêu cầu cho các loại số, các tấm miễn).",
+    "reason": "technical_identifier"
+  },
+  "FHIR valueString (text types).": {
+    "draft": "FHIR valueString (chất bản kiểu).",
+    "reason": "technical_identifier"
+  },
+  "Hard input-validation lower bound (not a clinical alert).": {
+    "draft": "Định nghĩa nhập nhập cứng giới hạn dưới (không phải cảnh báo lâm sàng)).",
+    "reason": "suspicious_output"
+  },
+  "Hard input-validation upper bound (not a clinical alert).": {
+    "draft": "Hạn chế xác thực đầu vào cứng (không phải cảnh báo lâm sàng)).",
+    "reason": "suspicious_output"
+  },
+  "Human-readable unit (mmHg, °C, bpm) — FHIR valueQuantity.unit.": {
+    "draft": "Đơn vị đọc được bởi con người (mmHg, °C, bpm)  FHIR valueQuantity.unit.",
+    "reason": "technical_identifier"
+  },
+  "LOINC-coded vital signs with per-client alert thresholds\n                and trending.": {
+    "draft": "Các dấu hiệu quan trọng có mã LOINC với ngưỡng cảnh báo và xu hướng cho mỗi khách hàng.",
+    "reason": "technical_identifier"
+  },
+  "Links": {
+    "draft": "Liên kết",
+    "reason": "technical_identifier"
+  },
+  "Member of the FHIR vital-signs profile (adds category 'vital-signs').": {
+    "draft": "Thành viên của hồ sơ các dấu hiệu quan trọng của FHIR (được thêm vào danh mục \"chứng chỉ quan trọng\"').",
+    "reason": "technical_identifier"
+  },
+  "Systolic/diastolic under a BP-panel row; FHIR Observation.component / hasMember.": {
+    "draft": "Systolic/diastolic dưới một hàng bảng BP; FHIR Observation.component / cóMember.",
+    "reason": "technical_identifier"
+  },
+  "e.g. 'oscillometric'": {
+    "draft": "e.g. 'Oscillometric'",
+    "reason": "unchanged"
+  },
+  "1-5 scale": {
+    "draft": "Skala 1-5",
+    "reason": "no_vietnamese"
+  },
+  "<i class=\"fa fa-clock-o\" title=\"Duration\"/>": {
+    "draft": "<i class=\"fa fa-clock-o\" title=\"Duration\"/>",
+    "reason": "unchanged"
+  },
+  "<i class=\"fa fa-info-circle\"/> Call Functionality Control": {
+    "draft": "<i class=\"fa fa-info-circle\"/> Kiểm soát chức năng gọi",
+    "reason": "markup_or_template"
+  },
+  "<i class=\"fa fa-warning\"/> ⚠️ Call Functionality Disabled": {
+    "draft": "<i class=\"fa fa-warning\"/> ⚠️ Tiện ích gọi bị vô hiệu hóa",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"o_stat_text\">Call via</span>\n                        <span class=\"o_stat_text\">VoIP</span>": {
+    "draft": "<span class=\"o_stat_text\">Gọi qua</span>\n                        <span class=\"o_stat_text\">VoIP</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"o_stat_text\">Calls Synced</span>": {
+    "draft": "<span class=\"o_stat_text\">Các cuộc gọi đồng bộ</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"o_stat_text\">Extensions</span>": {
+    "draft": "<span class=\"o_stat_text\">Các mở rộng</span>",
+    "reason": "markup_or_template"
+  },
+  "<strong>What remains active:</strong>": {
+    "draft": "<strong>Những gì vẫn còn hoạt động:</strong>",
+    "reason": "markup_or_template"
+  },
+  "<strong>What's disabled:</strong>": {
+    "draft": "<strong>Điều gì bị vô hiệu hóa:</strong>",
+    "reason": "markup_or_template"
+  },
+  "API Base URL": {
+    "draft": "URL cơ sở API",
+    "reason": "technical_identifier"
+  },
+  "API Secret": {
+    "draft": "API bí mật",
+    "reason": "technical_identifier"
+  },
+  "Abandoned": {
+    "draft": "Quên bỏ",
+    "reason": "technical_identifier"
+  },
+  "Call Count": {
+    "draft": "Cần Count",
+    "reason": "suspicious_output"
+  },
+  "Call log synchronization (every 15 minutes)": {
+    "draft": "Đồng bộ hóa nhật ký cuộc gọi (mỗi 15 phút))",
+    "reason": "suspicious_output"
+  },
+  "Complaint": {
+    "draft": "Sơn",
+    "reason": "technical_identifier"
+  },
+  "Downloaded": {
+    "draft": "Tải xuống",
+    "reason": "technical_identifier"
+  },
+  "Downloading": {
+    "draft": "Tải xuống",
+    "reason": "technical_identifier"
+  },
+  "Duration (seconds)": {
+    "draft": "Thời gian (thứ hai giây))",
+    "reason": "suspicious_output"
+  },
+  "Extension": {
+    "draft": "Sự mở rộng",
+    "reason": "technical_identifier"
+  },
+  "File Size (bytes)": {
+    "draft": "Kích thước tệp (byte))",
+    "reason": "suspicious_output"
+  },
+  "Format": {
+    "draft": "Phương thức",
+    "reason": "technical_identifier"
+  },
+  "How often to sync call history (in minutes)": {
+    "draft": "Bao nhiêu lần đồng bộ hóa lịch sử cuộc gọi (trong vài phút))",
+    "reason": "suspicious_output"
+  },
+  "IVR": {
+    "draft": "IVR",
+    "reason": "unchanged"
+  },
+  "Internal": {
+    "draft": "Nội bộ",
+    "reason": "technical_identifier"
+  },
+  "MIME Type": {
+    "draft": "MIME Type",
+    "reason": "unchanged"
+  },
+  "Original JSON data from VoIP24h API": {
+    "draft": "Dữ liệu JSON gốc từ VoIP24h API",
+    "reason": "technical_identifier"
+  },
+  "Please configure the VoIP24h API credentials first.": {
+    "draft": "Vui lòng cấu hình các thông tin tín dụng API VoIP24h trước.",
+    "reason": "technical_identifier"
+  },
+  "Processed": {
+    "draft": "Chuẩn bị xử lý",
+    "reason": "technical_identifier"
+  },
+  "Raw API Data": {
+    "draft": "Dữ liệu API nguyên liệu",
+    "reason": "technical_identifier"
+  },
+  "Recording Count": {
+    "draft": "Đếm",
+    "reason": "length_ratio"
+  },
+  "Recording File": {
+    "draft": "File ghi",
+    "reason": "no_vietnamese"
+  },
+  "Reviewed": {
+    "draft": "Đánh giá",
+    "reason": "technical_identifier"
+  },
+  "Secret key for webhook signature validation (HMAC-SHA256 of the raw body)": {
+    "draft": "Chìa khóa bí mật cho xác nhận chữ ký webhook (HMAC-SHA256 của cơ thể thô))",
+    "reason": "suspicious_output"
+  },
+  "Set up your VoIP24h API credentials and configure call functionality settings.": {
+    "draft": "Thiết lập thông tin tín dụng API VoIP24h của bạn và cấu hình cài đặt chức năng gọi.",
+    "reason": "technical_identifier"
+  },
+  "Sync Extensions": {
+    "draft": "Sync Extensions",
+    "reason": "unchanged"
+  },
+  "Sync History (Days)": {
+    "draft": "Lịch sử đồng bộ hóa (ngày))",
+    "reason": "suspicious_output"
+  },
+  "Sync Interval (Minutes)": {
+    "draft": "Interval đồng bộ (Chỉ phút))",
+    "reason": "suspicious_output"
+  },
+  "Talk Duration (seconds)": {
+    "draft": "Thời gian nói chuyện (thời gian nói))",
+    "reason": "suspicious_output"
+  },
+  "Toggle these settings to control whether users can make or receive calls through the system.\n                                   <strong>Data collection (call logs, recordings, analytics) continues regardless of these settings.</strong>": {
+    "draft": "Nhập mục này để kiểm soát liệu người dùng có thể thực hiện hoặc nhận cuộc gọi qua hệ thống.\n                                   <strong>Việc thu thập dữ liệu (tăng log gọi, ghi lại, phân tích) tiếp tục bất kể các thiết lập này.</strong>",
+    "reason": "markup_or_template"
+  },
+  "Total Duration (seconds)": {
+    "draft": "Tổng thời gian (thua))",
+    "reason": "suspicious_output"
+  },
+  "Total Talk Time (minutes)": {
+    "draft": "Tổng thời gian nói chuyện (tháng phút))",
+    "reason": "suspicious_output"
+  },
+  "Users cannot initiate outgoing calls (click-to-dial)": {
+    "draft": "Người dùng không thể khởi động cuộc gọi ra ngoài (click to dial))",
+    "reason": "english_residue"
+  },
+  "VoIP Extension/Line": {
+    "draft": "VoIP Extension/Line",
+    "reason": "unchanged"
+  },
+  "VoIP24h Domain": {
+    "draft": "VoIP24h Domain",
+    "reason": "unchanged"
+  },
+  "VoIP24h Manual Sync Wizard": {
+    "draft": "VoIP24h Hướng dẫn đồng bộ hóa Wizard",
+    "reason": "english_residue"
+  },
+  "Voicemail": {
+    "draft": "Điện thoại",
+    "reason": "technical_identifier"
+  },
+  "Wait Duration (seconds)": {
+    "draft": "Chờ thời gian (thua))",
+    "reason": "suspicious_output"
+  },
+  "Webhook Secret": {
+    "draft": "Webhook Secret",
+    "reason": "unchanged"
+  },
+  "Webhook URL": {
+    "draft": "URL Webhook",
+    "reason": "no_vietnamese"
+  },
+  "voip_config_id": {
+    "draft": "voip_config_id",
+    "reason": "unchanged"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"history\"/>\n                                    <span>Click identifiers</span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"history\"/>\n                                    <span>Click ID</span>",
+    "reason": "no_vietnamese"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"map-pin\"/>\n                                    <span>Pages</span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"map-pin\"/>\n                                    <span>Các trang</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"shield-check\"/>\n                                    <span>Consent claim</span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"shield-check\"/>\n                                    <span>Đơn xin đồng ý</span>",
+    "reason": "markup_or_template"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"tag\"/>\n                                    <span>Campaign detail</span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"tag\"/>\n                                    <span>Chi tiết chiến dịch</span>",
+    "reason": "markup_or_template"
+  },
+  "<span>Click identifiers and consent</span>\n                                <small class=\"text-muted d-block\">Kept for offline-conversion export; never edited by hand</small>": {
+    "draft": "<span>Nhấp vào các thông số nhận dạng và đồng ý</span>\n                                <small class=\"text-muted d-block\">Được lưu giữ để xuất chuyển đổi ngoài khơi; không bao giờ chỉnh sửa bằng tay</small>",
+    "reason": "markup_or_template"
+  },
+  "<span>Touchpoints</span>\n                                <small class=\"text-muted d-block\">Every touch behind this lead — the newest row is the last touch</small>": {
+    "draft": "<span>Các điểm chạm</span>\n                                <small class=\"text-muted d-block\">Mỗi lần chạm vào cái đầu tiên này, hàng mới nhất là lần chạm cuối cùng.</small>",
+    "reason": "markup_or_template"
+  },
+  "<span>Triage</span>\n                                <small class=\"text-muted d-block\">Why this lead may need a human look</small>": {
+    "draft": "<span>Triage</span>\n                                <small class=\"text-muted d-block\">Tại sao con đường dẫn này có thể cần một cái nhìn của con người</small>",
+    "reason": "markup_or_template"
+  },
+  "<span>Where the visit happened</span>\n                                <small class=\"text-muted d-block\">First touch, frozen at creation</small>": {
+    "draft": "<span>- Tại đâu chuyến thăm xảy ra</span>\n                                <small class=\"text-muted d-block\">Nhạm đầu tiên, đóng băng khi tạo ra</small>",
+    "reason": "markup_or_template"
+  },
+  "Google Click ID (gbraid)": {
+    "draft": "Google Click ID (graid))",
+    "reason": "no_vietnamese"
+  },
+  "Google Click ID (wbraid)": {
+    "draft": "Google Click ID (wbraid))",
+    "reason": "no_vietnamese"
+  },
+  "Referral Ref": {
+    "draft": "Referral Ref",
+    "reason": "unchanged"
+  },
+  "Web Leads: heartbeat (relay delivery canary)": {
+    "draft": "Web Lead: nhịp tim (canary chuyển tiếp liên lạc))",
+    "reason": "suspicious_output"
+  },
+  "{\"/lien-he-hanoi/\": \"HN\", \"/lien-he-tphcm/\": \"HCM\"}": {
+    "draft": "{\"/lien-he-hanoi/\": \"HN\", \"/lien -he-tphcm/\":",
+    "reason": "no_vietnamese"
+  },
+  "{\"15838\": \"HN\", \"15670\": \"HCM\"}": {
+    "draft": "{\"15838\": \"HN\", \"15670\": \" HCM\"}",
+    "reason": "no_vietnamese"
+  },
+  "Billable service line attached to a booking created from a first-visit offer (required for confirmation).": {
+    "draft": "Dòng dịch vụ thanh toán được gắn với một đặt phòng được tạo ra từ một lời đề nghị lần đầu tiên (cần để xác nhận)).",
+    "reason": "suspicious_output"
+  },
+  "Delta (minutes)": {
+    "draft": "Delta (tháng phút))",
+    "reason": "suspicious_output"
+  },
+  "Kind": {
+    "draft": "Tốt hơn",
+    "reason": "technical_identifier"
+  },
+  "Max Retries": {
+    "draft": "Max Retries",
+    "reason": "unchanged"
+  },
+  "Offer": {
+    "draft": "Chúc",
+    "reason": "technical_identifier"
+  },
+  "Quote Snapshot Json": {
+    "draft": "Quảng cáo chụp ảnh nhanh Json",
+    "reason": "technical_identifier"
+  },
+  "Resolution": {
+    "draft": "Nghị quyết",
+    "reason": "technical_identifier"
+  },
+  "SAFETY: off by default — writes payroll-adjacent hr.attendance from visit check-in/out.": {
+    "draft": "SÃAFETY: tắt theo mặc định  viết tiền lương lân cận hr.attendance từ khi check-in/out chuyến thăm.",
+    "reason": "english_residue"
+  },
+  "Slot": {
+    "draft": "Cửa",
+    "reason": "technical_identifier"
+  },
+  "Taken": {
+    "draft": "Được lấy",
+    "reason": "technical_identifier"
+  },
+  "Visit this attendance was auto-created from (PWA check-in/out).": {
+    "draft": "Chuyến thăm sự tham dự này được tự động tạo ra từ (PWA check-in/out)).",
+    "reason": "english_residue"
+  },
+  "Zalo ZNS template ID for the first-visit offer. Rides the messaging enabled/dry-run switches. Empty = ZNS step skipped (offer still created).": {
+    "draft": "Zalo ZNS ID mẫu cho lời đề nghị lần đầu tiên. Cụ thể chuyển đổi tin nhắn được bật / chạy khô. Không = bước ZNS bỏ qua (sự đề nghị vẫn được tạo ra)).",
+    "reason": "suspicious_output"
+  },
+  "<i class=\"fa fa-arrow-left\"/> Back to Zalo Settings": {
+    "draft": "<i class=\"fa fa-arrow-left\"/> Trở lại cài đặt Zalo",
+    "reason": "markup_or_template"
+  },
+  "<i class=\"fa fa-check text-success\"/> Check that your Zalo Official Account is approved": {
+    "draft": "<i class=\"fa fa-check text-success\"/> Kiểm tra xem tài khoản Zalo của bạn đã được chấp thuận",
+    "reason": "markup_or_template"
+  },
+  "<i class=\"fa fa-check text-success\"/> Ensure OAuth redirect URI matches in Zalo app settings": {
+    "draft": "<i class=\"fa fa-check text-success\"/> Đảm bảo OAuth chuyển hướng các kết hợp URI trong cài đặt ứng dụng Zalo",
+    "reason": "technical_identifier"
+  },
+  "<i class=\"fa fa-check text-success\"/> Try the connection again": {
+    "draft": "<i class=\"fa fa-check text-success\"/> Hãy thử kết nối lại.",
+    "reason": "markup_or_template"
+  },
+  "<i class=\"fa fa-check text-success\"/> Verify your App ID and App Secret are correct": {
+    "draft": "<i class=\"fa fa-check text-success\"/> Kiểm tra ID ứng dụng và bí mật ứng dụng của bạn là chính xác",
+    "reason": "markup_or_template"
+  },
+  "<i class=\"fa fa-comment\" title=\"Zalo Chat\"/> Zalo Chat": {
+    "draft": "<i class=\"fa fa-comment\" title=\"Zalo Chat\"/> Zalo Chat",
+    "reason": "unchanged"
+  },
+  "<i class=\"fa fa-phone\" title=\"Zalo Call\"/> Zalo Call": {
+    "draft": "<i class=\"fa fa-phone\" title=\"Zalo Call\"/> Zalo Call",
+    "reason": "unchanged"
+  },
+  "<span class=\"text-primary small fw-bold\">Zalo</span>": {
+    "draft": "<span class=\"text-primary small fw-bold\">Zalo</span>",
+    "reason": "unchanged"
+  },
+  "<span class=\"vu-summary-row__label\">Zalo</span>": {
+    "draft": "<span class=\"vu-summary-row__label\">Zalo</span>",
+    "reason": "unchanged"
+  },
+  "<strong>Description:</strong>": {
+    "draft": "<strong>Mô tả:</strong>",
+    "reason": "markup_or_template"
+  },
+  "<strong>Error Code:</strong>": {
+    "draft": "<strong>Mã lỗi:</strong>",
+    "reason": "markup_or_template"
+  },
+  "API Version": {
+    "draft": "Phiên bản API",
+    "reason": "technical_identifier"
+  },
+  "Avatar": {
+    "draft": "Avatar",
+    "reason": "unchanged"
+  },
+  "CSRF protection token for OAuth flow": {
+    "draft": "Các mã bảo vệ CSRF cho dòng OAuth",
+    "reason": "technical_identifier"
+  },
+  "Callback URL for OAuth flow (must match Zalo app settings)": {
+    "draft": "URL gọi lại cho dòng OAuth (được phù hợp với cài đặt ứng dụng Zalo))",
+    "reason": "technical_identifier"
+  },
+  "Following OA": {
+    "draft": "Sau OA",
+    "reason": "no_vietnamese"
+  },
+  "Link": {
+    "draft": "Liên kết",
+    "reason": "technical_identifier"
+  },
+  "Link Zalo to Contact Wizard": {
+    "draft": "Liên kết Zalo với Contact Wizard",
+    "reason": "english_residue"
+  },
+  "Logo": {
+    "draft": "Logo",
+    "reason": "unchanged"
+  },
+  "OAuth 2.0 access token for Zalo API calls": {
+    "draft": "OAuth 2.0 access token cho các cuộc gọi API Zalo",
+    "reason": "technical_identifier"
+  },
+  "OAuth 2.0 refresh token for obtaining new access tokens": {
+    "draft": "OAuth 2.0 refresh token để nhận được các token truy cập mới",
+    "reason": "technical_identifier"
+  },
+  "OAuth Redirect URI": {
+    "draft": "OAuth Redirect URI",
+    "reason": "unchanged"
+  },
+  "OAuth State": {
+    "draft": "Nhà nước xuất bản",
+    "reason": "technical_identifier"
+  },
+  "Phone number associated with Zalo account (if available)": {
+    "draft": "Số điện thoại liên kết với tài khoản Zalo (nếu có))",
+    "reason": "suspicious_output"
+  },
+  "Raw JSON data from Zalo API": {
+    "draft": "Dữ liệu JSON thô từ Zalo API",
+    "reason": "technical_identifier"
+  },
+  "Send Zalo Notification Wizard": {
+    "draft": "Gửi Zalo thông báo Wizard",
+    "reason": "english_residue"
+  },
+  "Sending": {
+    "draft": "Gửi",
+    "reason": "technical_identifier"
+  },
+  "Sticker": {
+    "draft": "Đèn dán",
+    "reason": "technical_identifier"
+  },
+  "Temporary code from OAuth callback (used once to obtain tokens)": {
+    "draft": "Mã tạm thời từ OAuth callback (được sử dụng một lần để nhận token)",
+    "reason": "technical_identifier"
+  },
+  "Thumbnail preview URL (for images/videos)": {
+    "draft": "URL xem trước hình ảnh nhỏ (đối với hình ảnh/video))",
+    "reason": "suspicious_output"
+  },
+  "Video": {
+    "draft": "Video",
+    "reason": "unchanged"
+  },
+  "Width": {
+    "draft": "Lượng",
+    "reason": "technical_identifier"
+  },
+  "Zalo Administrator": {
+    "draft": "Zalo Administrator",
+    "reason": "unchanged"
+  },
+  "Zalo Call": {
+    "draft": "Zalo Call",
+    "reason": "unchanged"
+  },
+  "Zalo Manager": {
+    "draft": "Zalo Manager",
+    "reason": "unchanged"
+  },
+  "Zalo Message ID": {
+    "draft": "Zalo Message ID",
+    "reason": "unchanged"
+  },
+  "Zalo OA %s": {
+    "draft": "Zalo OA %s",
+    "reason": "unchanged"
+  },
+  "Zalo OA Configuration": {
+    "draft": "Zalo OA Configuration",
+    "reason": "unchanged"
+  },
+  "Zalo OAuth Error": {
+    "draft": "lỗi OAuth Zalo",
+    "reason": "technical_identifier"
+  },
+  "Zalo Official Account App ID from https://developers.zalo.me. Empty for an account connected through the Channel Center, where the app lives on the platform application instead.": {
+    "draft": "ID ứng dụng tài khoản chính thức của Zalo từ https://developers.zalo.me. Không có tài khoản được kết nối thông qua Trung tâm kênh, nơi ứng dụng sống trên ứng dụng nền tảng thay vào đó.",
+    "reason": "technical_identifier"
+  },
+  "Zalo Official Account App Secret (only visible to administrators)": {
+    "draft": "Zalo Official Account App Secret (chỉ hiển thị cho người quản trị))",
+    "reason": "suspicious_output"
+  },
+  "Zalo User Avatar URL": {
+    "draft": "Zalo User Avatar URL",
+    "reason": "unchanged"
+  },
+  "Zalo User ID (optional)": {
+    "draft": "Zalo User ID (tự chọn))",
+    "reason": "suspicious_output"
+  },
+  "Zalo User Name": {
+    "draft": "Zalo User Name",
+    "reason": "unchanged"
+  },
+  "Zalo is connected from <b>Care Command Setup → Channel Center</b>.": {
+    "draft": "Zalo được kết nối từ <b>Cài đặt lệnh chăm sóc → Trung tâm kênh</b>.",
+    "reason": "markup_or_template"
+  },
+  "new": {
+    "draft": "mới",
+    "reason": "technical_identifier"
+  }
+}

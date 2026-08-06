@@ -1,0 +1,548 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_messaging
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-08-05 07:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "24h reminder"
+msgstr ""
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "2h reminder"
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,body_html:health_messaging.mail_template_booking_confirmation
+msgid ""
+"<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n"
+"                <p>Kính gửi {{ object.patient_id.name or '' }},</p>\n"
+"                <p>Lịch hẹn của quý khách đã được xác nhận:</p>\n"
+"                <ul>\n"
+"                    <li><strong>Ngày:</strong> {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</li>\n"
+"                    <li><strong>Giờ:</strong> {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</li>\n"
+"                    <li><strong>Cơ sở:</strong> {{ object.facility_id.name or '' }}</li>\n"
+"                </ul>\n"
+"                <hr/>\n"
+"                <p>Dear {{ object.patient_id.name or '' }}, your visit is confirmed for\n"
+"                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n"
+"                    at {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}\n"
+"                    ({{ object.facility_id.name or '' }}).</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,body_html:health_messaging.mail_template_cancellation_notice
+msgid ""
+"<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n"
+"                <p>Kính gửi {{ object.patient_id.name or '' }},</p>\n"
+"                <p>Lịch hẹn ngày\n"
+"                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</strong>\n"
+"                    lúc <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n"
+"                    ({{ object.facility_id.name or '' }}) đã được huỷ. Vui lòng liên hệ để đặt lại.</p>\n"
+"                <hr/>\n"
+"                <p>Dear {{ object.patient_id.name or '' }}, your visit on\n"
+"                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n"
+"                    ({{ object.facility_id.name or '' }}) has been cancelled. Please contact us to rebook.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,body_html:health_messaging.mail_template_reminder_2h
+msgid ""
+"<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n"
+"                <p>Kính gửi {{ object.patient_id.name or '' }},</p>\n"
+"                <p>Quý khách có lịch hẹn hôm nay lúc\n"
+"                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n"
+"                    ({{ object.facility_id.name or '' }}).</p>\n"
+"                <hr/>\n"
+"                <p>Dear {{ object.patient_id.name or '' }}, your visit is today at\n"
+"                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}\n"
+"                    ({{ object.facility_id.name or '' }}).</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,body_html:health_messaging.mail_template_reminder_24h
+msgid ""
+"<div style=\"font-family:Arial,sans-serif;color:#1e293b;\">\n"
+"                <p>Kính gửi {{ object.patient_id.name or '' }},</p>\n"
+"                <p>Xin nhắc quý khách có lịch hẹn vào\n"
+"                    <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}</strong>\n"
+"                    lúc <strong>{{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}</strong>\n"
+"                    ({{ object.facility_id.name or '' }}).</p>\n"
+"                <hr/>\n"
+"                <p>Dear {{ object.patient_id.name or '' }}, this is a reminder of your visit on\n"
+"                    {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}\n"
+"                    at {{ format_datetime(object.scheduled_datetime, tz=object.booking_timezone, dt_format='HH:mm') if object.scheduled_datetime else '' }}.</p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+
+#. module: health_messaging
+#. odoo-python
+#: code:addons/health_messaging/models/health_outbound_message.py:0
+msgid "An outbound message with dedup key \"%s\" already exists."
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__purpose__booking_confirmation
+msgid "Booking Confirmation"
+msgstr "Xác nhận đặt lịch"
+
+#. module: health_messaging
+#. odoo-python
+#: code:addons/health_messaging/models/health_outbound_message.py:0
+msgid "Call patient to confirm visit"
+msgstr "Gọi cho khách hàng để xác nhận lịch hẹn"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "Cancellation"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__purpose__cancellation_notice
+msgid "Cancellation Notice"
+msgstr "Thông báo huỷ lịch"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__catchment_province_id
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,help:health_messaging.field_health_outbound_message__catchment_province_id
+msgid "Catchment area used for filtering and access control"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__channel
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Channel"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__company_id
+msgid "Company"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,help:health_messaging.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_messaging
+#: model:ir.model,name:health_messaging.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "Confirmation"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__dedup_key
+msgid "Dedup Key"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__display_name
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__channel__email
+msgid "Email"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__messaging_enabled
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "Enable visit messaging"
+msgstr "Bật nhắn tin lịch hẹn"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_form
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__error_text
+msgid "Error Text"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__state__escalated
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Escalated"
+msgstr "Chuyển nhân viên"
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__state__failed
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Failed"
+msgstr "Thất bại"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "From"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model,name:health_messaging.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_messaging
+#: model:mail.template,subject:health_messaging.mail_template_cancellation_notice
+msgid ""
+"Huỷ lịch hẹn / Visit cancelled — {{ "
+"format_datetime(object.scheduled_datetime, tz=object.booking_timezone, "
+"dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__id
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid ""
+"Local wall-clock hours (24h, e.g. 21.0 and 7.0) during which messages are "
+"held until the window passes."
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,help:health_messaging.field_res_config_settings__messaging_enabled
+msgid ""
+"Master switch. Off by default — installing changes nothing until switched "
+"on."
+msgstr ""
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "Master switch. Off by default — nothing is sent until switched on."
+msgstr ""
+
+#. module: health_messaging
+#. odoo-python
+#: code:addons/health_messaging/models/health_fieldservice_order.py:0
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_health_fieldservice_order_form_messaging
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__name
+msgid "Name"
+msgstr ""
+
+#. module: health_messaging
+#. odoo-python
+#: code:addons/health_messaging/models/health_outbound_message.py:0
+msgid "New"
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,subject:health_messaging.mail_template_reminder_24h
+msgid ""
+"Nhắc lịch hẹn / Visit reminder — {{ "
+"format_datetime(object.scheduled_datetime, tz=object.booking_timezone, "
+"dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}"
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,subject:health_messaging.mail_template_reminder_2h
+msgid ""
+"Nhắc lịch hẹn hôm nay / Visit today — {{ "
+"format_datetime(object.scheduled_datetime, tz=object.booking_timezone, "
+"dt_format='HH:mm') if object.scheduled_datetime else '' }}"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,help:health_messaging.field_health_outbound_message__phone
+msgid "Normalized phone, as sent."
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model,name:health_messaging.model_health_outbound_message
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_form
+msgid "Outbound Message"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_fieldservice_order__outbound_message_count
+msgid "Outbound Message Count"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.actions.act_window,name:health_messaging.action_outbound_message
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_list
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Outbound Messages"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_form
+msgid "Payload"
+msgstr "Dữ liệu"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__phone
+msgid "Phone"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__purpose
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Purpose"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__state__queued
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Queued"
+msgstr "Đang chờ"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "Quiet hours"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__messaging_quiet_end
+msgid "Quiet hours end"
+msgstr "Giờ yên lặng kết thúc"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__messaging_quiet_start
+msgid "Quiet hours start"
+msgstr "Giờ yên lặng bắt đầu"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__partner_id
+msgid "Recipient"
+msgstr "Người nhận"
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__purpose__reminder_24h
+msgid "Reminder (24h)"
+msgstr "Nhắc lịch (24 giờ)"
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__purpose__reminder_2h
+msgid "Reminder (2h)"
+msgstr "Nhắc lịch (2 giờ)"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_form
+msgid "Retry"
+msgstr "Thử lại"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid ""
+"SAFETY: on by default. Runs the full pipeline but skips real sends (rows "
+"marked simulated)."
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,help:health_messaging.field_res_config_settings__messaging_dry_run
+msgid ""
+"SAFETY: on by default. The full pipeline runs but the real ZNS/email calls "
+"are skipped and rows are marked simulated."
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__state__sent
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__sent_at
+msgid "Sent At"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__state__simulated
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Simulated"
+msgstr "Mô phỏng"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "Simulation mode"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__messaging_dry_run
+msgid "Simulation mode (log only, no real sends)"
+msgstr "Chế độ mô phỏng (chỉ ghi log, không gửi thật)"
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__state__skipped
+msgid "Skipped"
+msgstr "Bỏ qua"
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__channel__staff_activity
+msgid "Staff Call Activity"
+msgstr "Nhiệm vụ gọi điện của nhân viên"
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__state
+msgid "State"
+msgstr ""
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.view_outbound_message_search
+msgid "Status"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__payload_json
+msgid "Template Params"
+msgstr ""
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "To"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_health_outbound_message__fso_id
+msgid "Visit"
+msgstr "Lịch hẹn"
+
+#. module: health_messaging
+#: model:ir.ui.menu,name:health_messaging.menu_outbound_message
+msgid "Visit Messages"
+msgstr "Tin nhắn lịch hẹn"
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "Visit Messaging (Zalo ZNS)"
+msgstr "Nhắn tin lịch hẹn (Zalo ZNS)"
+
+#. module: health_messaging
+#: model:ir.actions.server,name:health_messaging.cron_process_visit_messages_ir_actions_server
+msgid "Visit Messaging: process reminders + queue"
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,name:health_messaging.mail_template_reminder_24h
+msgid "Visit — 24h Reminder"
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,name:health_messaging.mail_template_reminder_2h
+msgid "Visit — 2h Reminder"
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,name:health_messaging.mail_template_booking_confirmation
+msgid "Visit — Booking Confirmation"
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,name:health_messaging.mail_template_cancellation_notice
+msgid "Visit — Cancellation Notice"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,help:health_messaging.field_health_outbound_message__channel
+msgid "Which cascade step actually ran."
+msgstr ""
+
+#. module: health_messaging
+#: model:mail.template,subject:health_messaging.mail_template_booking_confirmation
+msgid ""
+"Xác nhận lịch hẹn / Booking confirmed — {{ "
+"format_datetime(object.scheduled_datetime, tz=object.booking_timezone, "
+"dt_format='dd/MM/yyyy') if object.scheduled_datetime else '' }}"
+msgstr ""
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "ZNS template IDs"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__messaging_zns_template_reminder24
+msgid "ZNS template — 24h reminder"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__messaging_zns_template_reminder2
+msgid "ZNS template — 2h reminder"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__messaging_zns_template_confirmation
+msgid "ZNS template — Booking confirmation"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields,field_description:health_messaging.field_res_config_settings__messaging_zns_template_cancellation
+msgid "ZNS template — Cancellation"
+msgstr ""
+
+#. module: health_messaging
+#: model:ir.model.fields.selection,name:health_messaging.selection__health_outbound_message__channel__zns
+msgid "Zalo ZNS"
+msgstr ""
+
+#. module: health_messaging
+#: model_terms:ir.ui.view,arch_db:health_messaging.res_config_settings_view_form_messaging
+msgid "Zalo ZNS template IDs from the Zalo portal, per purpose."
+msgstr ""
+
+#. module: health_messaging
+#. odoo-python
+#: code:addons/health_messaging/models/health_fieldservice_order.py:0
+msgid "fso_id"
+msgstr ""

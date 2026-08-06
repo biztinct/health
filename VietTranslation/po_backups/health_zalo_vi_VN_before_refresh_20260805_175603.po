@@ -1,0 +1,742 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_zalo
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-25 06:15+0000\n"
+"PO-Revision-Date: 2026-02-25 06:15+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:52
+msgid "No Zalo Integration"
+msgstr "Chưa tích hợp Zalo"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:53
+msgid "This contact does not have a Zalo User ID configured. Please link their Zalo account first."
+msgstr "Liên hệ này chưa có ID Zalo. Vui lòng liên kết tài khoản Zalo trước."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:62
+msgid "This contact does not have a Zalo User ID. Please link their Zalo account first."
+msgstr "Liên hệ này chưa có ID Zalo. Vui lòng liên kết tài khoản Zalo trước."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:65
+msgid "Please enter a message to send."
+msgstr "Vui lòng nhập tin nhắn để gửi."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:89
+msgid "Message Sent"
+msgstr "Tin nhắn đã gửi"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:90
+msgid "Zalo message sent successfully to %s"
+msgstr "Đã gửi tin nhắn Zalo thành công đến %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:98
+msgid "Failed to send Zalo message: %s"
+msgstr "Không thể gửi tin nhắn Zalo: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:79
+msgid "Please enter a name for the new contact."
+msgstr "Vui lòng nhập tên cho liên hệ mới."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:91
+msgid "Created new contact and linked to Zalo conversation: %s"
+msgstr "Đã tạo liên hệ mới và liên kết với cuộc trò chuyện Zalo: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:96
+msgid "Please select a contact to link."
+msgstr "Vui lòng chọn liên hệ để liên kết."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:101
+msgid "Linked Zalo conversation to contact: %s"
+msgstr "Đã liên kết cuộc trò chuyện Zalo với liên hệ: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:107
+msgid "Success"
+msgstr "Thành công"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/health_patient.py:63
+msgid "Zalo Conversations"
+msgstr "Cuộc trò chuyện Zalo"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/health_patient.py:76
+msgid "Send Zalo Notification"
+msgstr "Gửi thông báo Zalo"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:157
+msgid "Only outgoing messages can be sent"
+msgstr "Chỉ có thể gửi tin nhắn đi"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:160
+msgid "Message has already been sent"
+msgstr "Tin nhắn đã được gửi"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:188
+msgid "No image attachment found"
+msgstr "Không tìm thấy hình ảnh đính kèm"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:198
+msgid "Message type %s not yet implemented"
+msgstr "Loại tin nhắn %s chưa được hỗ trợ"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:221
+msgid "Failed to send message: %s"
+msgstr "Không thể gửi tin nhắn: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:242
+msgid "Only failed messages can be retried"
+msgstr "Chỉ tin nhắn thất bại mới có thể gửi lại"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/crm_lead.py:42
+msgid "This contact does not have a Zalo User ID configured."
+msgstr "Liên hệ này chưa có ID Zalo."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/res_partner.py:186
+msgid "Link Zalo User"
+msgstr "Liên kết người dùng Zalo"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:191
+msgid "Please configure App ID and App Secret first."
+msgstr "Vui lòng cấu hình App ID và App Secret trước."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:233
+msgid "Failed to exchange authorization code for token: %s"
+msgstr "Không thể đổi mã ủy quyền lấy token: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:240
+msgid "No refresh token available. Please reconnect to Zalo."
+msgstr "Không có refresh token. Vui lòng kết nối lại Zalo."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:255
+msgid "Access token refreshed successfully"
+msgstr "Đã làm mới access token thành công"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:260
+msgid "Failed to refresh token: %s"
+msgstr "Không thể làm mới token: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:275
+msgid "Disconnected"
+msgstr "Ngắt kết nối"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:276
+msgid "Zalo account disconnected successfully"
+msgstr "Đã ngắt kết nối tài khoản Zalo thành công"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:285
+msgid "No access token available. Please connect to Zalo first."
+msgstr "Không có access token. Vui lòng kết nối Zalo trước."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:294
+msgid "Connection Successful"
+msgstr "Kết nối thành công"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:295
+msgid "Connected to Zalo OA: %s"
+msgstr "Đã kết nối Zalo OA: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:300
+msgid "Failed to fetch OA profile"
+msgstr "Không thể tải hồ sơ OA"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:303
+msgid "Connection test failed: %s"
+msgstr "Kiểm tra kết nối thất bại: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:356
+msgid "Webhook Enabled"
+msgstr "Đã bật Webhook"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:357
+msgid "Webhook URL: %s"
+msgstr "URL Webhook: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:370
+msgid "Webhook Disabled"
+msgstr "Đã tắt Webhook"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:371
+msgid "Webhook has been disabled"
+msgstr "Webhook đã được tắt"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_conversation.py:190
+msgid "Link to Contact"
+msgstr "Liên kết với liên hệ"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/services/zalo_api.py:46
+msgid "No valid access token available. Please connect to Zalo first."
+msgstr "Không có access token hợp lệ. Vui lòng kết nối Zalo trước."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/services/zalo_api.py:79
+msgid "Zalo API error: %s"
+msgstr "Lỗi API Zalo: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/services/zalo_api.py:91
+msgid "Failed to connect to Zalo API: %s"
+msgstr "Không thể kết nối API Zalo: %s"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Link Zalo to Contact"
+msgstr "Liên kết Zalo với liên hệ"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo User Information"
+msgstr "Thông tin người dùng Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Link to Existing Contact"
+msgstr "Liên kết với liên hệ hiện có"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Create New Contact"
+msgstr "Tạo liên hệ mới"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Link Contact"
+msgstr "Liên kết liên hệ"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Recipient"
+msgstr "Người nhận"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Message Type"
+msgstr "Loại tin nhắn"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Send Message"
+msgstr "Gửi tin nhắn"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Configuration"
+msgstr "Cấu hình Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Connect to Zalo"
+msgstr "Kết nối với Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Test Connection"
+msgstr "Kiểm tra kết nối"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Refresh Token"
+msgstr "Làm mới Token"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Disconnect"
+msgstr "Ngắt kết nối"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Enable Webhook"
+msgstr "Bật Webhook"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Disable Webhook"
+msgstr "Tắt Webhook"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Basic Information"
+msgstr "Thông tin cơ bản"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "API Information"
+msgstr "Thông tin API"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Official Account Credentials"
+msgstr "Thông tin xác thực tài khoản Zalo OA"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "OAuth Status"
+msgstr "Trạng thái OAuth"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Webhook Configuration"
+msgstr "Cấu hình Webhook"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Statistics"
+msgstr "Thống kê"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "OAuth Tokens"
+msgstr "Token OAuth"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Webhook Settings"
+msgstr "Cài đặt Webhook"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Configurations"
+msgstr "Cấu hình Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Chats"
+msgstr "Trò chuyện Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo User ID"
+msgstr "ID người dùng Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Integration"
+msgstr "Tích hợp Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Connection"
+msgstr "Kết nối Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "View Conversations"
+msgstr "Xem cuộc trò chuyện"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "View All Conversations"
+msgstr "Xem tất cả cuộc trò chuyện"
+
+#. module: health_zalo
+#: model:ir.ui.menu
+msgid "Zalo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.ui.menu
+msgid "Conversations"
+msgstr "Cuộc trò chuyện"
+
+#. module: health_zalo
+#: model:ir.ui.menu
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: health_zalo
+#: model:ir.ui.menu
+msgid "Configuration"
+msgstr "Cấu hình"
+
+#. module: health_zalo
+#: model:ir.ui.menu
+msgid "Zalo Settings"
+msgstr "Cài đặt Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Conversation"
+msgstr "Cuộc trò chuyện Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Open Chat"
+msgstr "Mở trò chuyện"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Mark as Read"
+msgstr "Đánh dấu đã đọc"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Archive"
+msgstr "Lưu trữ"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Unarchive"
+msgstr "Bỏ lưu trữ"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Block User"
+msgstr "Chặn người dùng"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo User"
+msgstr "Người dùng Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Linked Records"
+msgstr "Bản ghi liên kết"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Conversation Info"
+msgstr "Thông tin cuộc trò chuyện"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Last Message"
+msgstr "Tin nhắn cuối"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Search Conversations"
+msgstr "Tìm kiếm cuộc trò chuyện"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Message"
+msgstr "Tin nhắn Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Send"
+msgstr "Gửi"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Retry"
+msgstr "Thử lại"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Message Info"
+msgstr "Thông tin tin nhắn"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Sender/Recipient"
+msgstr "Người gửi/Người nhận"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Error Info"
+msgstr "Thông tin lỗi"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Content"
+msgstr "Nội dung"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Attachments"
+msgstr "Tệp đính kèm"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Zalo Messages"
+msgstr "Tin nhắn Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Search Messages"
+msgstr "Tìm kiếm tin nhắn"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Incoming"
+msgstr "Đến"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Outgoing"
+msgstr "Đi"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Unread"
+msgstr "Chưa đọc"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Failed"
+msgstr "Thất bại"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Group By"
+msgstr "Nhóm theo"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Conversation"
+msgstr "Cuộc trò chuyện"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Direction"
+msgstr "Hướng"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Type"
+msgstr "Loại"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Date"
+msgstr "Ngày"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Contact Type"
+msgstr "Loại liên hệ"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view
+msgid "Contact Reason"
+msgstr "Lý do liên hệ"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "Zalo Messages (Viet Uc)"
+msgstr "Tin nhắn Zalo (Viet Uc)"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "Loading conversations..."
+msgstr "Đang tải cuộc trò chuyện..."
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "No conversations yet"
+msgstr "Chưa có cuộc trò chuyện"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "No messages"
+msgstr "Không có tin nhắn"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Open Related Record"
+msgstr "Mở bản ghi liên quan"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "Enable Notifications"
+msgstr "Bật thông báo"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/js/zalo_chat_widget.js:0
+msgid "Failed to load conversation"
+msgstr "Không tải được cuộc trò chuyện"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Loading conversation..."
+msgstr "Đang tải cuộc trò chuyện..."
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Zalo Chat"
+msgstr "Trò chuyện Zalo"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Open Record"
+msgstr "Mở bản ghi"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "No messages yet. Start a conversation!"
+msgstr "Chưa có tin nhắn. Bắt đầu cuộc trò chuyện!"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Image"
+msgstr "Hình ảnh"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "File"
+msgstr "Tệp"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Delivered"
+msgstr "Đã giao"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Type a message..."
+msgstr "Nhập tin nhắn..."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Only a system administrator can change where Zalo requests are sent (%s)."
+msgstr "Chỉ quản trị viên hệ thống mới được thay đổi nơi gửi yêu cầu Zalo (%s)."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Connect Zalo from Care Command Setup → Channel Center. The old sign-in on this form has been retired: it did not use the security Zalo now requires."
+msgstr "Hãy kết nối Zalo từ Care Command Setup → Trung tâm Kênh. Cách đăng nhập cũ trên biểu mẫu này đã ngừng hoạt động: nó không dùng cơ chế bảo mật mà Zalo hiện yêu cầu."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Turn this channel off from Care Command Setup → Channel Center, so the conversations and the audit trail stay consistent."
+msgstr "Hãy tắt kênh này từ Care Command Setup → Trung tâm Kênh để cuộc trò chuyện và nhật ký kiểm toán luôn nhất quán."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/res_partner.py:0
+msgid "Zalo is not connected yet. Open Care Command Setup → Channel Center and connect your Official Account."
+msgstr "Zalo chưa được kết nối. Hãy mở Care Command Setup → Trung tâm Kênh và kết nối Official Account của bạn."

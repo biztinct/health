@@ -1,0 +1,1340 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_api_gateway
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-08-05 07:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_api_audit_log
+msgid "API Access Audit Log"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.act_window,name:health_api_gateway.action_api_audit_log
+#: model:ir.ui.menu,name:health_api_gateway.menu_api_audit_log
+msgid "API Audit Log"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.module.category,name:health_api_gateway.module_category_api_gateway
+#: model:ir.ui.menu,name:health_api_gateway.menu_gateway_root
+#: model:res.groups.privilege,name:health_api_gateway.res_groups_privilege_api_gateway
+msgid "API Gateway"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_gateway_token
+msgid "API Gateway Access Token"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_gateway_oauth_client
+msgid "API Gateway OAuth2 Client"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_gateway_rate_counter
+msgid "API Gateway Rate Counter (fixed window fallback)"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.server,name:health_api_gateway.ir_cron_outbox_dispatch_ir_actions_server
+msgid "API Gateway: dispatch integration outbox"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.server,name:health_api_gateway.ir_cron_rate_counter_prune_ir_actions_server
+msgid "API Gateway: prune rate counters"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.server,name:health_api_gateway.ir_cron_token_purge_ir_actions_server
+msgid "API Gateway: purge expired tokens"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__api_audit_log__auth_kind__apikey
+msgid "API Key"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_api_key_scope
+msgid "API Key Scope"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.act_window,name:health_api_gateway.action_res_users_apikeys_gateway
+#: model:ir.ui.menu,name:health_api_gateway.menu_res_users_apikeys_gateway
+msgid "API Keys"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.act_window,name:health_api_gateway.action_api_key_scope
+msgid "API Scopes"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/models/api_audit_log.py:0
+msgid "API audit log entries are append-only and can never be deleted."
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/models/api_audit_log.py:0
+msgid "API audit log entries are append-only and can never be modified."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_api_audit_log__key_or_client
+msgid "API key id or OAuth client_id — never the secret."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_needaction
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__active
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__active
+msgid "Active"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_ids
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_exception_decoration
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_state
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_type_icon
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_gateway_oauth_client_form
+msgid "Advanced (SMART backend services, Phase 3)"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__allowed_scope_ids
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_gateway_oauth_client_form
+msgid "Allowed Scopes"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_attachment_count
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__attempt
+msgid "Attempt"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__auth_kind
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_api_audit_log_search
+msgid "Auth Kind"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_booking_read
+msgid "Bookings Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_booking_write
+msgid "Bookings Write"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Cannot cancel service in %s state"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Cannot complete service in %s state"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__client_id
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_gateway_oauth_client_form
+msgid "Client"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__client_secret_hash
+msgid "Client Secret Hash"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/models/gateway_oauth_client.py:0
+msgid "Client secret generated"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Clinical note created successfully"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__code
+msgid "Code"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_auth_totp_device__ip_allowlist
+#: model:ir.model.fields,help:health_api_gateway.field_res_users_apikeys__ip_allowlist
+msgid ""
+"Comma-separated CIDRs (e.g. 10.0.0.0/8, 203.0.113.7/32). Empty = any IP."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_api_audit_log__resource_ids
+msgid "Comma-separated ids returned/affected."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__failure_count
+msgid ""
+"Consecutive delivery failures; the subscription is auto-deactivated at 50."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/models/gateway_oauth_client.py:0
+msgid ""
+"Copy it now — it will not be shown again:\n"
+"%s"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_rate_counter__count
+msgid "Count"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__created_at
+msgid "Created At"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__create_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__create_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__create_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__create_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__create_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__create_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__create_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__create_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__create_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__create_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__webhook_delivery__state__dead
+msgid "Dead"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__delivery_ids
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_webhook_subscription_form
+msgid "Deliveries"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__description
+msgid "Description"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__integration_outbox__state__dispatched
+msgid "Dispatched"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__dispatched_at
+msgid "Dispatched At"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_account_move__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_rate_counter__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_health_payment_transaction__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_health_staff_assignment__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_res_partner__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_res_users_apikeys__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__display_name
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_auth_totp_device__facility_ids
+#: model:ir.model.fields,help:health_api_gateway.field_res_users_apikeys__facility_ids
+msgid "Empty = all facilities the service user can see."
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_webhook_subscription_form
+msgid "Endpoint"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__integration_outbox__state__error
+msgid "Error"
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_api_audit_log_search
+msgid "Errors"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__event_code
+msgid "Event Code"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__event_codes
+msgid "Event Codes"
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_webhook_subscription_form
+msgid "Events"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__expires_at
+msgid "Expires At"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_all_read
+msgid "FHIR All Resources Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_appointment_read
+msgid "FHIR Appointment Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_document_reference_read
+msgid "FHIR DocumentReference Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_encounter_read
+msgid "FHIR Encounter Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_location_read
+msgid "FHIR Location Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_organization_read
+msgid "FHIR Organization Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_patient_read
+msgid "FHIR Patient Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_practitioner_read
+msgid "FHIR Practitioner Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_system_service_request_read
+msgid "FHIR ServiceRequest Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_auth_totp_device__facility_ids
+#: model:ir.model.fields,field_description:health_api_gateway.field_res_users_apikeys__facility_ids
+msgid "Facilities"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__webhook_delivery__state__failed
+msgid "Failed"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__failure_count
+msgid "Failure Count"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_follower_ids
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_partner_ids
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__activity_type_icon
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:res.groups,name:health_api_gateway.group_gateway_readonly_docs
+msgid "Gateway API Docs Reader"
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_res_users_apikeys_gateway_form
+msgid "Gateway Access"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_auth_totp_device__gateway_active
+#: model:ir.model.fields,field_description:health_api_gateway.field_res_users_apikeys__gateway_active
+msgid "Gateway Active"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:res.groups,name:health_api_gateway.group_gateway_admin
+msgid "Gateway Administrator"
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_gateway_oauth_client_form
+msgid "Generate Secret"
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_gateway_oauth_client_form
+msgid ""
+"Generates a new client secret and shows it once. Only the hash is stored."
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_gateway_oauth_client_form
+msgid "Grant"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_auth_totp_device__scope_ids
+#: model:ir.model.fields,field_description:health_api_gateway.field_res_users_apikeys__scope_ids
+msgid "Granted Scopes"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__secret
+msgid "HMAC-SHA256 key used to sign delivery bodies (X-Health19-Signature)."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__target_url
+msgid "HTTPS endpoint that receives event POSTs."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__has_message
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__client_secret_hash
+msgid ""
+"Hashed client secret. The plaintext is shown exactly once, when "
+"(re)generated — it is never stored."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.module.category,description:health_api_gateway.module_category_api_gateway
+msgid "Health API Gateway access management"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_health_payment_transaction
+msgid "Healthcare Payment Transaction"
+msgstr "Giao dịch thanh toán chăm sóc sức khỏe"
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_account_move__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_rate_counter__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_health_payment_transaction__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_health_staff_assignment__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_res_partner__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_res_users_apikeys__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__id
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__ip
+msgid "IP Address"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_auth_totp_device__ip_allowlist
+#: model:ir.model.fields,field_description:health_api_gateway.field_res_users_apikeys__ip_allowlist
+msgid "IP Allowlist"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_exception_icon
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__activity_exception_icon
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__message_needaction
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__message_has_error
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__message_has_sms_error
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__message_has_error
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.act_window,name:health_api_gateway.action_integration_outbox
+#: model:ir.ui.menu,name:health_api_gateway.menu_integration_outbox
+msgid "Integration Outbox"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_integration_outbox
+msgid "Integration Outbox Event"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_health_staff_assignment
+msgid "Intelligent Staff Assignment Record"
+msgstr "Tài liệu về việc bổ nhiệm nhân viên thông minh"
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Invalid API key"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Invalid cancellation reason"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Invalid date format. Use YYYY-MM-DD"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Invalid or expired access token"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_invoice_read
+msgid "Invoices Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_is_follower
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__jwks
+msgid "JWKS"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_account_move
+msgid "Journal Entry"
+msgstr "Đăng ký tạp chí"
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_res_users_apikeys_gateway_form
+msgid "Key"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__key_or_client
+msgid "Key Or Client"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_rate_counter__key_ref
+msgid "Key Ref"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_auth_totp_device__gateway_active
+#: model:ir.model.fields,help:health_api_gateway.field_res_users_apikeys__gateway_active
+msgid "Kill-switch for gateway access without deleting the key."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__write_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__write_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__write_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__write_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__write_uid
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__write_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__write_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__write_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__write_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__write_date
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__latency_ms
+msgid "Latency Ms"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:res.groups,comment:health_api_gateway.group_gateway_admin
+msgid ""
+"Manage API keys, OAuth clients, webhook subscriptions and read the API audit "
+"log."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_webhook_manage
+msgid "Manage webhook subscriptions via API."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:res.groups,comment:health_api_gateway.group_gateway_readonly_docs
+msgid "May browse the human-readable API documentation."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_has_error
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_ids
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__method
+msgid "Method"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Missing Bearer credentials"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Missing required field(s): %s"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__res_model
+msgid "Model"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__my_activity_date_deadline
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_key_scope__name
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__name
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__name
+msgid "Name"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_calendar_event_id
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_date_deadline
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_summary
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_type_id
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__next_attempt_at
+msgid "Next Attempt At"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "No quote found for this order"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_needaction_counter
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_has_error_counter
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__message_needaction_counter
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__message_has_error_counter
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__client_id
+msgid "OAuth Client"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.act_window,name:health_api_gateway.action_gateway_oauth_client
+#: model:ir.ui.menu,name:health_api_gateway.menu_gateway_oauth_client
+msgid "OAuth Clients"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__api_audit_log__auth_kind__oauth
+msgid "OAuth2 Token"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__jwks
+msgid ""
+"Optional RFC 7523 client-assertion public keys (SMART backend services, "
+"Phase 3)."
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Order not found"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__outbox_id
+msgid "Outbox Event"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_api_audit_log__patient_ids
+msgid "PHI subjects touched — required for FHIR reads."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_pwa_read
+msgid "PWA Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_pwa_write
+msgid "PWA Write"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__patient_ids
+msgid "Patient"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Patient not found"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_patient_read
+msgid "Patients Read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__payload
+msgid "Payload"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__integration_outbox__state__pending
+msgid "Pending"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__webhook_delivery__state__queued
+msgid "Queued"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Rate limit exceeded"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__rating_ids
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_pwa_read
+msgid "Read access for PWA-migrated routes."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_booking_read
+msgid "Read bookings, quotes and assignments."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_invoice_read
+msgid "Read invoice data."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_patient_read
+msgid "Read patient demographic data."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__res_id
+msgid "Record ID"
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_webhook_delivery_form
+msgid "Replay"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Request body is not valid JSON"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Request body must be a JSON object"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__resource_ids
+msgid "Resource"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__resource_type
+msgid "Resource Type"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__response_body
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_webhook_delivery_form
+msgid "Response Body"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__response_code
+msgid "Response Code"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__activity_user_id
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__route
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_api_audit_log_search
+msgid "Route"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_appointment_read
+msgid "SMART backend-services read scope for FHIR Appointment."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_document_reference_read
+msgid "SMART backend-services read scope for FHIR DocumentReference."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_encounter_read
+msgid "SMART backend-services read scope for FHIR Encounter."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_location_read
+msgid "SMART backend-services read scope for FHIR Location."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_organization_read
+msgid "SMART backend-services read scope for FHIR Organization."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_patient_read
+msgid "SMART backend-services read scope for FHIR Patient."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_practitioner_read
+msgid "SMART backend-services read scope for FHIR Practitioner."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_service_request_read
+msgid "SMART backend-services read scope for FHIR ServiceRequest."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_system_all_read
+msgid "SMART backend-services wildcard read scope (all FHIR resources)."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__message_has_sms_error
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__scope_codes
+msgid "Scope Codes"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.ui.menu,name:health_api_gateway.menu_api_key_scope
+msgid "Scopes"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__secret
+msgid "Secret"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__webhook_delivery__state__sent
+msgid "Sent"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_integration_outbox__payload
+msgid "Serialized snapshot at emit time."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__user_id
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__user_id
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__user_id
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_api_audit_log_search
+msgid "Service User"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid ""
+"Service cannot be started because the booking is still in Draft status. "
+"Please confirm or assign the booking before starting service."
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid ""
+"Service cannot be started in the current booking status. Please check the "
+"booking before starting service."
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Service completed - %s payment collected"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Service completed - %s payment noted"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Service completed - Invoice will be sent for later payment"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Service completed - No invoice created (zero amount)"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Service completed - No payment required"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Service completed successfully"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Service started successfully"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields.selection,name:health_api_gateway.selection__api_audit_log__auth_kind__session
+msgid "Session"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__signature
+msgid "Signature"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__event_codes
+msgid ""
+"Space-separated event codes from the catalog, e.g. \"booking.completed "
+"booking.cancelled\"."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_token__scope_codes
+msgid "Space-separated granted scope codes."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_booking_write
+msgid "Start/complete/cancel bookings and write clinical notes."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_integration_outbox__state
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__state
+msgid "State"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__status_code
+msgid "Status Code"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__activity_state
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_delivery__subscription_id
+msgid "Subscription"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/models/webhook_subscription.py:0
+msgid ""
+"Subscription \"%s\" was deactivated after 50 consecutive delivery failures. "
+"Fix the endpoint and re-activate."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__target_url
+msgid "Target Url"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_api_audit_log__ts
+msgid "Timestamp"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_token__token_hash
+msgid "Token Hash"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__token_lifetime
+msgid "Token Lifetime"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Token is missing a required scope (%s)"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__token_lifetime
+msgid "Token lifetime in seconds."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__user_id
+msgid ""
+"Tokens issued to this client act as this user (record rules apply naturally)."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_delivery__response_body
+msgid "Truncated to 2000 characters."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__activity_exception_decoration
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/gateway.py:0
+msgid "Unauthorized"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_res_users_apikeys
+msgid "Users API Keys"
+msgstr "Khóa API của Người dùng"
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/controllers/api_v1.py:0
+msgid "Visit cancelled successfully"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.act_window,name:health_api_gateway.action_webhook_delivery
+#: model:ir.ui.menu,name:health_api_gateway.menu_webhook_delivery
+msgid "Webhook Deliveries"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_webhook_delivery
+msgid "Webhook Delivery"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model,name:health_api_gateway.model_webhook_subscription
+msgid "Webhook Subscription"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.actions.act_window,name:health_api_gateway.action_webhook_subscription
+#: model:ir.ui.menu,name:health_api_gateway.menu_webhook_subscription
+msgid "Webhook Subscriptions"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/models/webhook_subscription.py:0
+msgid "Webhook subscription deactivated"
+msgstr ""
+
+#. module: health_api_gateway
+#. odoo-python
+#: code:addons/health_api_gateway/models/webhook_subscription.py:0
+msgid "Webhook target URL must use https://"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,name:health_api_gateway.scope_webhook_manage
+msgid "Webhooks Manage"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_oauth_client__website_message_ids
+#: model:ir.model.fields,field_description:health_api_gateway.field_webhook_subscription__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_gateway_oauth_client__website_message_ids
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_subscription__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,field_description:health_api_gateway.field_gateway_rate_counter__window_start
+msgid "Window Start"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:api.key.scope,description:health_api_gateway.scope_pwa_write
+msgid "Write access for PWA-migrated routes."
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_webhook_delivery__signature
+msgid "X-Health19-Signature sent with the last attempt."
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_webhook_subscription_form
+msgid "booking.completed booking.cancelled"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_api_audit_log__resource_type
+msgid "e.g. Patient, health.fieldservice.order"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_integration_outbox__event_code
+msgid "e.g. booking.completed"
+msgstr ""
+
+#. module: health_api_gateway
+#: model:ir.model.fields,help:health_api_gateway.field_api_key_scope__code
+msgid "e.g. pwa.read, booking.write, system/Patient.read"
+msgstr ""
+
+#. module: health_api_gateway
+#: model_terms:ir.ui.view,arch_db:health_api_gateway.view_webhook_subscription_form
+msgid "https://partner.example.com/hooks/health19"
+msgstr ""

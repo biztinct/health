@@ -1,0 +1,731 @@
+# Vietnamese translation for health_twin
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_twin\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+#: code:addons/health_twin/models/health_twin_risk_history.py:0
+msgid "%(name)s — risk %(score)s (%(band)s)"
+msgstr ""
+
+#. module: health_twin
+#. odoo-javascript
+#: code:addons/health_twin/static/src/xml/twin_trend_charts.xml:0
+msgid "30d"
+msgstr ""
+
+#. module: health_twin
+#. odoo-javascript
+#: code:addons/health_twin/static/src/xml/twin_trend_charts.xml:0
+msgid "7d"
+msgstr ""
+
+#. module: health_twin
+#. odoo-javascript
+#: code:addons/health_twin/static/src/xml/twin_trend_charts.xml:0
+msgid "90d"
+msgstr ""
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "<span class=\"o_stat_text\">NEWS2</span>"
+msgstr ""
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "<span class=\"o_stat_text\">Patient</span>"
+msgstr ""
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "<span> / 100 pts</span>"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__alert_points
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__alert_points
+msgid "Alert Points"
+msgstr "Điểm thành phần cảnh báo"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk_history__trigger__band_change
+msgid "Band change"
+msgstr "Thay đổi mức"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__trigger
+msgid "Captured Because"
+msgstr "Lý do ghi nhận"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__catchment_province_id
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__catchment_province_id
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__company_id
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__company_id
+msgid "Company"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__composite_score
+msgid ""
+"Composite 0-100 deterioration-risk score (weighted average of the NEWS2, "
+"alert, trend and staleness components)."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__computed_at
+msgid "Computed At"
+msgstr "Thời điểm tính toán"
+
+#. module: health_twin
+#: model:ir.model,name:health_twin.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__create_uid
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__create_date
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__forecast_band__critical
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__risk_band__critical
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk_history__risk_band__critical
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Critical"
+msgstr "Nguy kịch"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk_history__trigger__daily
+msgid "Daily"
+msgstr "Hằng ngày"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__days_since_last_visit
+msgid "Days Since Last Visit"
+msgstr "Số ngày kể từ lần thăm khám gần nhất"
+
+#. module: health_twin
+#: model:ir.model,name:health_twin.model_health_monitor_alert
+msgid "Deterioration Alert"
+msgstr "Cảnh báo diễn tiến xấu"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_res_config_settings__twin_forecast_enabled
+msgid "Deterioration Forecast"
+msgstr "Dự báo diễn tiến xấu"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Deterioration Risk"
+msgstr "Nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_res_config_settings__twin_enabled
+msgid "Deterioration Risk Engine"
+msgstr "Bộ tính nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+#: model:ir.model,name:health_twin.model_health_twin_risk_history
+msgid "Deterioration Risk History Point"
+msgstr "Điểm lịch sử nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+#: model:ir.model,name:health_twin.model_health_twin_risk
+msgid "Deterioration Risk Snapshot"
+msgstr "Ảnh chụp nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+#: model:ir.actions.act_window,name:health_twin.action_health_twin_risk
+#: model:ir.ui.menu,name:health_twin.menu_health_twin_worklist
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_list
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Deterioration Worklist"
+msgstr "Danh sách theo dõi diễn tiến xấu"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+msgid "Deterioration forecast"
+msgstr "Dự báo diễn tiến xấu"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+msgid "Deterioration risk engine"
+msgstr "Bộ tính nguy cơ diễn tiến xấu"
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk_history.py:0
+msgid "Deterioration risk history is append-only and cannot be deleted."
+msgstr ""
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk_history.py:0
+msgid "Deterioration risk history is append-only and cannot be edited."
+msgstr ""
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+msgid ""
+"Deterioration risk snapshots are system-generated and cannot be deleted."
+msgstr "Ảnh chụp nguy cơ do hệ thống tạo và không thể xóa."
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+msgid "Deterioration risk snapshots are system-generated and cannot be edited."
+msgstr "Ảnh chụp nguy cơ do hệ thống tạo và không thể chỉnh sửa."
+
+#. module: health_twin
+#: model:ir.actions.server,name:health_twin.cron_twin_history_gc_ir_actions_server
+msgid "Digital Twin: prune deterioration risk history"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.actions.server,name:health_twin.cron_twin_sweep_ir_actions_server
+msgid "Digital Twin: recompute deterioration risk worklist"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__trend_direction
+msgid ""
+"Direction of the composite risk score versus the previous recompute "
+"(worsening = score rose beyond the noise band)."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_ews_score__display_name
+#: model:ir.model.fields,field_description:health_twin.field_health_monitor_alert__display_name
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__display_name
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__display_name
+#: model:ir.model.fields,field_description:health_twin.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__forecast_eta_days
+msgid "ETA to Next Band (days)"
+msgstr "Thời gian đến mức kế tiếp (ngày)"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Factor breakdown (points → weighted contribution)"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__factors_json
+msgid "Factors (machine)"
+msgstr "Yếu tố (dạng máy)"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk_history__trigger__first
+msgid "First"
+msgstr "Đầu tiên"
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Forecast"
+msgstr "Dự báo"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__forecast_json
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Forecast (machine)"
+msgstr "Dự báo (máy)"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__forecast_band
+msgid "Forecast Band"
+msgstr "Mức dự báo"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__forecast_confidence
+msgid "Forecast Confidence"
+msgstr "Độ tin cậy dự báo"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__forecast_horizon_days
+msgid "Forecast Horizon (days)"
+msgstr "Tầm dự báo (ngày)"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__forecast_score
+msgid "Forecast Score"
+msgstr "Điểm dự báo"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__forecast_slope
+msgid "Forecast Slope"
+msgstr "Độ dốc dự báo"
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__factors_json
+msgid ""
+"Full machine breakdown (components + weights + raw inputs) for auditability/"
+"debugging."
+msgstr ""
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Has open alert"
+msgstr "Có cảnh báo đang mở"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Has open critical"
+msgstr "Có cảnh báo nguy kịch đang mở"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__forecast_band__high
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__forecast_confidence__high
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__risk_band__high
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk_history__risk_band__high
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "High"
+msgstr "Cao"
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__forecast_horizon_days
+msgid "How far ahead the projection looks (config echo, for display)."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_ews_score__id
+#: model:ir.model.fields,field_description:health_twin.field_health_monitor_alert__id
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__id
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__id
+#: model:ir.model.fields,field_description:health_twin.field_res_config_settings__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__trend_direction__improving
+msgid "Improving"
+msgstr "Đang cải thiện"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+msgid ""
+"Keep an append-only trail of each client's risk score over time (the "
+"worklist trend arrows and the Risk Score trajectory chart). Turn off to stop "
+"appending new history points; existing points and the trend arrows still "
+"show."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__last_visit_at
+msgid "Last Completed Visit"
+msgstr "Lần thăm khám hoàn tất gần nhất"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__write_uid
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__write_date
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__ews_score_id
+msgid "Latest NEWS2"
+msgstr "NEWS2 mới nhất"
+
+#. module: health_twin
+#. odoo-javascript
+#: code:addons/health_twin/static/src/xml/twin_trend_charts.xml:0
+msgid "Loading trends…"
+msgstr "Đang tải diễn biến…"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__forecast_band__low
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__forecast_confidence__low
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__risk_band__low
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk_history__risk_band__low
+msgid "Low"
+msgstr "Thấp"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Machine breakdown (debug)"
+msgstr ""
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+msgid ""
+"Maintain a per-client deterioration-risk snapshot (the ranked worklist) from "
+"the telemonitoring signals. Turn off to freeze recomputation entirely."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__forecast_confidence__medium
+msgid "Medium"
+msgstr "Trung bình"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__forecast_band__moderate
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__risk_band__moderate
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk_history__risk_band__moderate
+msgid "Moderate"
+msgstr "Trung bình"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "NEWS2"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__news2_band
+msgid "NEWS2 Band"
+msgstr "Mức NEWS2"
+
+#. module: health_twin
+#: model:ir.model,name:health_twin.model_health_ews_score
+msgid "NEWS2 Early-Warning Score"
+msgstr "Điểm cảnh báo sớm NEWS2"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__news2_points
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__news2_points
+msgid "NEWS2 Points"
+msgstr "Điểm thành phần NEWS2"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__news2_at
+msgid "NEWS2 Time"
+msgstr "Thời điểm NEWS2"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__news2_total
+msgid "NEWS2 Total"
+msgstr "Tổng điểm NEWS2"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__trend_direction__new
+msgid "New"
+msgstr "Mới"
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__score_delta
+msgid "New composite score minus the previous one (0 for a new row)."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_res_config_settings__twin_sweep_enabled
+msgid "Nightly Risk Sweep"
+msgstr "Quét nguy cơ định kỳ"
+
+#. module: health_twin
+#: model_terms:ir.actions.act_window,help:health_twin.action_health_twin_risk
+msgid "No clients trending down"
+msgstr "Không có khách hàng đang diễn tiến xấu"
+
+#. module: health_twin
+#. odoo-javascript
+#: code:addons/health_twin/static/src/js/twin_trend_charts.js:0
+#: code:addons/health_twin/static/src/xml/twin_trend_charts.xml:0
+msgid "No readings yet"
+msgstr "Chưa có dữ liệu đo"
+
+#. module: health_twin
+#. odoo-javascript
+#: code:addons/health_twin/static/src/xml/twin_trend_charts.xml:0
+msgid "No trend data available."
+msgstr "Không có dữ liệu diễn biến."
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__forecast_confidence__none
+msgid "None"
+msgstr "Không"
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__open_alert_count
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Open Alerts"
+msgstr "Cảnh báo đang mở"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__open_critical_count
+msgid "Open Critical"
+msgstr "Cảnh báo nguy kịch đang mở"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__trend_alert_count
+msgid "Open Trend Alerts"
+msgstr "Cảnh báo xu hướng đang mở"
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__patient_id
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__patient_id
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+msgid "Periodic risk sweep"
+msgstr "Quét nguy cơ định kỳ"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__computed_at
+msgid "Point Time"
+msgstr "Thời điểm ghi nhận"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__previous_computed_at
+msgid "Previous Computed At"
+msgstr "Tính toán trước đó lúc"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__previous_score
+msgid "Previous Score"
+msgstr "Điểm trước đó"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+msgid ""
+"Project each client's risk trajectory forward with a transparent least-"
+"squares trend line (the worklist 'Rising' filter and the Risk Score forecast "
+"segment). Advisory only: it can raise attention but never lowers a current "
+"band. Turn off to stop projecting."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__forecast_score
+msgid "Projected composite risk score at the forecast horizon."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__forecast_eta_days
+msgid ""
+"Projected days until a rising trend crosses into the next band up (0 when "
+"not rising into a higher band)."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__will_escalate
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Rising"
+msgstr "Đang tăng"
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Risk"
+msgstr "Nguy cơ"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__risk_band
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__risk_band
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Risk Band"
+msgstr "Mức nguy cơ"
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__composite_score
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__composite_score
+msgid "Risk Score"
+msgstr "Điểm nguy cơ"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_res_config_settings__twin_history_enabled
+msgid "Risk Trajectory History"
+msgstr "Lịch sử diễn tiến nguy cơ"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+msgid "Risk trajectory history"
+msgstr "Lịch sử diễn tiến nguy cơ"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.res_config_settings_view_form_twin
+msgid ""
+"Run the periodic sweep that refreshes the whole worklist and prunes stale "
+"snapshots. Event-driven recomputes still run when the engine is enabled."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk_history__trigger__delta
+msgid "Score move"
+msgstr "Điểm thay đổi"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__score_delta
+msgid "Score Δ"
+msgstr "Chênh lệch điểm"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Signals"
+msgstr "Tín hiệu"
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__trend_direction__stable
+msgid "Stable"
+msgstr "Ổn định"
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Stale > 10d"
+msgstr ""
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Staleness"
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__staleness_points
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__staleness_points
+msgid "Staleness Points"
+msgstr "Điểm thành phần lâu ngày"
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__news2_band
+msgid "The current NEWS2 band code snapshotted at recompute time."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__will_escalate
+msgid ""
+"The forecast projects this patient into a HIGHER risk band soon (advisory — "
+"it never lowers the current band or worklist sort)."
+msgstr ""
+
+#. module: health_twin
+#: model_terms:ir.actions.act_window,help:health_twin.action_health_twin_risk
+msgid ""
+"This worklist ranks clients by a transparent deterioration-risk\n"
+"               score derived from their current NEWS2 band, open alerts,\n"
+"               trend signals and visit recency. It is recomputed "
+"automatically\n"
+"               whenever a new score or alert lands, and by a periodic sweep."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__forecast_json
+msgid ""
+"Transparent forecast blob (points used, slope, r2, confidence, method) for "
+"auditability/explainability."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__trend_direction
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_form
+msgid "Trend"
+msgstr "Xu hướng"
+
+#. module: health_twin
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk__trend_points
+#: model:ir.model.fields,field_description:health_twin.field_health_twin_risk_history__trend_points
+msgid "Trend Points"
+msgstr "Điểm thành phần xu hướng"
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__forecast_slope
+msgid ""
+"Trend slope in risk-score points per day (from the OLS fit). Positive = "
+"rising."
+msgstr ""
+
+#. module: health_twin
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_patient_form_ops_twin_trends
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_patient_form_twin_trends
+msgid "Trends"
+msgstr "Diễn biến"
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk__forecast_confidence
+msgid "Trust in the projection ('none' = no usable trend)."
+msgstr ""
+
+# GB: no reference in this module — kept for history, inert by construction.
+#. module: health_twin
+#. odoo-javascript
+#: code:addons/health_twin/static/src/xml/twin_trend_charts.xml:0
+msgid "Vitals & NEWS2 Trends"
+msgstr "Diễn biến sinh hiệu & NEWS2"
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk_history__computed_at
+msgid "When this trajectory point was captured."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields,help:health_twin.field_health_twin_risk_history__trigger
+msgid "Why this point was appended (audit/debugging)."
+msgstr ""
+
+#. module: health_twin
+#: model:ir.model.fields.selection,name:health_twin.selection__health_twin_risk__trend_direction__worsening
+#: model_terms:ir.ui.view,arch_db:health_twin.view_health_twin_risk_search
+msgid "Worsening"
+msgstr "Đang xấu đi"
+
+#. module: health_twin
+#. odoo-python
+#: code:addons/health_twin/models/health_twin_risk.py:0
+msgid "client_id"
+msgstr ""
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Deterioration Worklist settings"
+#~ msgstr "Cài đặt danh sách theo dõi diễn tiến xấu"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Blood Pressure"
+#~ msgstr "Huyết áp"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Heart Rate"
+#~ msgstr "Nhịp tim"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Temperature"
+#~ msgstr "Nhiệt độ"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Weight"
+#~ msgstr "Cân nặng"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Blood Glucose"
+#~ msgstr "Đường huyết"

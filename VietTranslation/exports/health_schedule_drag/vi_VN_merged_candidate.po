@@ -1,0 +1,247 @@
+# Vietnamese translation for health_schedule_drag
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_schedule_drag\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid "%(who)s moved to %(staff)s — %(when)s."
+msgstr "%(who)s được chuyển sang %(staff)s — %(when)s."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid "%(who)s rescheduled to %(when)s."
+msgstr "%(who)s đã đổi lịch sang %(when)s."
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Blocked"
+msgstr "Bị chặn"
+
+#. module: health_schedule_drag
+#: model:ir.model.fields.selection,name:health_schedule_drag.selection__health_outbound_message__purpose__booking_rescheduled
+msgid "Booking Rescheduled"
+msgstr "Đã đổi lịch hẹn"
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid "Cannot reschedule — "
+msgstr ""
+
+#. module: health_schedule_drag
+#: model:ir.model.fields,help:health_schedule_drag.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_schedule_drag
+#: model:ir.model,name:health_schedule_drag.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Confirm"
+msgstr "Xác nhận"
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Confirm reschedule"
+msgstr "Xác nhận đổi lịch"
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Could not reschedule the booking."
+msgstr "Không thể đổi lịch hẹn."
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Could not save the change."
+msgstr "Không thể lưu thay đổi."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid ""
+"Cross-facility moves are not allowed — pick a staff member in the same "
+"facility."
+msgstr "Không cho phép chuyển giữa các cơ sở — hãy chọn nhân viên cùng cơ sở."
+
+#. module: health_schedule_drag
+#: model:ir.model.fields,field_description:health_schedule_drag.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_schedule_drag.field_health_outbound_message__display_name
+#: model:ir.model.fields,field_description:health_schedule_drag.field_health_staff_assignment__display_name
+#: model:ir.model.fields,field_description:health_schedule_drag.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Drop the assignment on a staff member's row."
+msgstr "Thả phân công vào dòng của một nhân viên."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid "Drop the block on a staff member."
+msgstr "Thả khối vào một nhân viên."
+
+#. module: health_schedule_drag
+#: model:ir.model,name:health_schedule_drag.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_schedule_drag
+#: model:ir.model.fields,field_description:health_schedule_drag.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_schedule_drag.field_health_outbound_message__id
+#: model:ir.model.fields,field_description:health_schedule_drag.field_health_staff_assignment__id
+#: model:ir.model.fields,field_description:health_schedule_drag.field_res_config_settings__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_schedule_drag
+#: model:ir.model,name:health_schedule_drag.model_health_staff_assignment
+msgid "Intelligent Staff Assignment Record"
+msgstr "Tài liệu về việc bổ nhiệm nhân viên thông minh"
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid "Invalid time."
+msgstr "Thời gian không hợp lệ."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_fieldservice_order.py:0
+msgid "No usable phone for the patient."
+msgstr "Không có số điện thoại hợp lệ cho bệnh nhân."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid ""
+"Only confirmed or assigned bookings can be rescheduled by dragging. This one "
+"is %s."
+msgstr ""
+"Chỉ có thể đổi lịch bằng kéo thả cho lịch hẹn đã xác nhận hoặc đã phân công. "
+"Lịch này đang ở trạng thái %s."
+
+#. module: health_schedule_drag
+#: model:ir.model,name:health_schedule_drag.model_health_outbound_message
+msgid "Outbound Message"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_schedule_drag
+#: model:ir.model.fields,field_description:health_schedule_drag.field_health_outbound_message__purpose
+msgid "Purpose"
+msgstr ""
+
+#. module: health_schedule_drag
+#: model:ir.model.fields,field_description:health_schedule_drag.field_res_config_settings__schedule_drag_zns_template_rescheduled
+msgid "Reschedule ZNS Template"
+msgstr "Mẫu ZNS đổi lịch"
+
+#. module: health_schedule_drag
+#: model_terms:ir.ui.view,arch_db:health_schedule_drag.res_config_settings_view_form_schedule_drag
+msgid "Reschedule ZNS template"
+msgstr "Mẫu ZNS đổi lịch"
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Reschedule this booking?"
+msgstr "Đổi lịch hẹn này?"
+
+#. module: health_schedule_drag
+#: model_terms:ir.ui.view,arch_db:health_schedule_drag.res_config_settings_view_form_schedule_drag
+msgid "Reschedule-by-Drag"
+msgstr "Đổi lịch bằng kéo thả"
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "Rescheduled."
+msgstr "Đã đổi lịch."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid ""
+"Rescheduling is an operations decision — ask an operations manager or head "
+"nurse."
+msgstr ""
+"Đổi lịch là quyết định của vận hành — vui lòng nhờ quản lý vận hành hoặc "
+"điều dưỡng trưởng."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid ""
+"Staff are already en route or on site for this visit — it can no longer be "
+"rescheduled by dragging."
+msgstr ""
+
+#. module: health_schedule_drag
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+#: code:addons/health_schedule_drag/static/src/js/schedule_drag.esm.js:0
+msgid "That change isn't allowed."
+msgstr "Không cho phép thay đổi này."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid "This block has no booking to reschedule."
+msgstr "Khối này không có lịch hẹn để đổi."
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid "Unknown assignment."
+msgstr "Không tìm thấy phân công."
+
+#. module: health_schedule_drag
+#: model:ir.model.fields,help:health_schedule_drag.field_res_config_settings__schedule_drag_zns_template_rescheduled
+msgid ""
+"Zalo ZNS template id sent to the patient when a booking is rescheduled by "
+"drag. Empty → no patient notification is queued. Rides "
+"health_messaging.enabled / dry_run."
+msgstr ""
+
+#. module: health_schedule_drag
+#: model_terms:ir.ui.view,arch_db:health_schedule_drag.res_config_settings_view_form_schedule_drag
+msgid ""
+"Zalo template id sent to the patient when their booking is rescheduled by "
+"drag. Empty → no patient notification. Rides health_messaging.enabled / "
+"dry_run."
+msgstr ""
+
+#. module: health_schedule_drag
+#. odoo-python
+#: code:addons/health_schedule_drag/models/health_staff_assignment.py:0
+msgid "booking"
+msgstr "lịch hẹn"

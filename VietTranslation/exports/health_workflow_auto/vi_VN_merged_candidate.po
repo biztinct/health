@@ -1,0 +1,877 @@
+# Vietnamese translation for health_workflow_auto
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_workflow_auto\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/redinvoice_batch.py:0
+msgid ""
+"%s Red Invoice submissions failed in the %s batch and were queued for retry. "
+"Check the Red Invoice Requests list for details."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_page
+msgid "<span>Viet Uc Health</span>"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_visit_offer__state__accepted
+msgid "Accepted"
+msgstr "Đã chấp nhận"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_needaction
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid ""
+"Adds a one-tap complete button on unchanged-quote visits (PWA). Safe: only "
+"adds a button."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_redinvoice_request__max_retries
+msgid "After this many attempts the request needs a manual issue."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_attachment_count
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_hr_attendance
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__attendance_id
+msgid "Attendance"
+msgstr "Chấm công"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_hr_attendance__attendance_source
+msgid "Attendance Source"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__kind__orphan_open
+msgid "Attendance never closed"
+msgstr "Chấm công chưa đóng"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/timecard_mismatch.py:0
+msgid "Attendance times rewritten from visit %s by %s."
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid ""
+"Automatic ZNS could not be sent for this first-visit offer. Please contact "
+"the client and offer a slot."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid ""
+"Billable service line attached to a booking created from a first-visit offer "
+"(required for confirmation)."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_res_config_settings__wf_offer_service_product_id
+msgid ""
+"Billable service line attached to a booking created from a first-visit offer."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_visit_offer__state__cancelled
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_confirmed
+msgid "Chúng tôi sẽ liên hệ để xác nhận. (We will contact you to confirm.)"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__company_id
+msgid "Company"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__confidence
+msgid "Confidence"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/crm_lead.py:0
+msgid ""
+"Could not auto-send a first-visit offer (no usable phone). Please contact "
+"the client."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,website_form_label:health_workflow_auto.model_crm_lead
+msgid "Create an Opportunity"
+msgstr "Hãy tạo ra cơ hội"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__create_uid
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__create_uid
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__create_date
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__create_date
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__date
+msgid "Date"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__delta_minutes
+msgid "Delta (minutes)"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_account_move__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_outbound_message__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_hr_attendance__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_redinvoice_request__display_name
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__employee_id
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_search
+msgid "Employee"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__kind__end_gap
+msgid "End gap >15m"
+msgstr "Lệch giờ kết thúc >15 phút"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_visit_offer__state__expired
+msgid "Expired"
+msgstr "Đã hết hạn"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__expires_at
+msgid "Expires At"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_visit_offer__fso_timezone
+msgid "Facility timezone snapshot used to render/parse slot wall-clock times."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__fso_id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_hr_attendance__fso_id
+msgid "Field Service Order"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_health_visit_offer
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_outbound_message__purpose__visit_offer
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_visit_offer_form
+msgid "First-Visit Offer"
+msgstr "Ưu đãi thăm khám đầu tiên"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__wf_offer_service_product_id
+msgid "First-Visit Offer Service"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_health_visit_offer_slot
+msgid "First-Visit Offer Slot"
+msgstr "Khung giờ ưu đãi thăm khám"
+
+#. module: health_workflow_auto
+#: model:ir.actions.act_window,name:health_workflow_auto.action_visit_offer
+#: model:ir.ui.menu,name:health_workflow_auto.menu_visit_offer
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_visit_offer_list
+msgid "First-Visit Offers"
+msgstr "Ưu đãi thăm khám đầu tiên"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid "First-visit offer ZNS template"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid "First-visit offer accepted — booking %s created for %s."
+msgstr "Đã chấp nhận ưu đãi thăm khám — tạo lịch %s cho %s."
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid "First-visit offer expired"
+msgstr "Ưu đãi thăm khám đã hết hạn"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid "First-visit offer service"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/crm_lead.py:0
+msgid "First-visit offer: no phone on file"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_follower_ids
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_partner_ids
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__fso_id
+msgid "Fso"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__fso_timezone
+msgid "Fso Timezone"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__has_message
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_hr_attendance__attendance_source
+msgid "How this attendance row was created."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_account_move__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_crm_lead__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_outbound_message__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_hr_attendance__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_redinvoice_request__id
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_timecard_mismatch__message_needaction
+#: model:ir.model.fields,help:health_workflow_auto.field_health_visit_offer__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_timecard_mismatch__message_has_error
+#: model:ir.model.fields,help:health_workflow_auto.field_health_timecard_mismatch__message_has_sms_error
+#: model:ir.model.fields,help:health_workflow_auto.field_health_visit_offer__message_has_error
+#: model:ir.model.fields,help:health_workflow_auto.field_health_visit_offer__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_is_follower
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_account_move
+msgid "Journal Entry"
+msgstr "Đăng ký tạp chí"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_form
+msgid "Keep Attendance"
+msgstr "Giữ chấm công"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__resolution__keep_attendance
+msgid "Keep attendance"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__kind
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_search
+msgid "Kind"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__write_uid
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__write_uid
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__write_date
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__write_date
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_crm_lead
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__lead_id
+msgid "Lead"
+msgstr "Khách hàng tiềm năng"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_expired
+msgid "Liên kết không còn hiệu lực"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__hr_attendance__attendance_source__manual
+msgid "Manual"
+msgstr "Thủ công"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_redinvoice_request__max_retries
+msgid "Max Retries"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_has_error
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_ids
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/timecard_mismatch.py:0
+msgid "Mismatch resolved: kept attendance times."
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/timecard_mismatch.py:0
+msgid "Mismatch resolved: used visit times."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_confirmed
+msgid "Mã đặt lịch:"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__name
+msgid "Name"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_redinvoice_request__next_retry_at
+msgid "Next Retry At"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__wf_redinvoice_batch_enabled
+msgid "Nightly Red Invoice Batch"
+msgstr "Xuất hóa đơn đỏ hàng đêm"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid "Nightly Red Invoice batch"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid "No ZNS template configured or no phone."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_needaction_counter
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_has_error_counter
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_timecard_mismatch__message_needaction_counter
+#: model:ir.model.fields,help:health_workflow_auto.field_health_visit_offer__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_timecard_mismatch__message_has_error_counter
+#: model:ir.model.fields,help:health_workflow_auto.field_health_visit_offer__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__offer_id
+msgid "Offer"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__wf_onetap_enabled
+msgid "One-Tap Visit Completion"
+msgstr "Hoàn tất thăm khám một chạm"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/fso_onetap.py:0
+msgid "One-tap completion is not available for this visit (%s)."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid "One-tap visit completion"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__state__open
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_search
+msgid "Open"
+msgstr "Đang mở"
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_health_outbound_message
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__outbound_message_id
+msgid "Outbound Message"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__hr_attendance__attendance_source__pwa_visit
+msgid "PWA Visit"
+msgstr "Thăm khám qua ứng dụng"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__partner_id
+msgid "Partner"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_outbound_message__purpose
+msgid "Purpose"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_fieldservice_order__quote_is_unchanged
+msgid "Quote Is Unchanged"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_fieldservice_order__quote_snapshot_hash
+msgid "Quote Snapshot Hash"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_fieldservice_order__quote_snapshot_json
+msgid "Quote Snapshot Json"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__rating_ids
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_redinvoice_request
+msgid "Red Invoice Request"
+msgstr "Yêu cầu hóa đơn đỏ"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/redinvoice_batch.py:0
+msgid "Red Invoice batch: %s failure(s)"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/redinvoice_batch.py:0
+msgid "Red Invoice for %s"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.actions.server,name:health_workflow_auto.cron_redinvoice_batch_submit_ir_actions_server
+msgid "Red Invoice: nightly batch submit"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.actions.server,name:health_workflow_auto.cron_redinvoice_retry_ir_actions_server
+msgid "Red Invoice: retry failed submissions"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__resolution
+msgid "Resolution"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__state__resolved
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_search
+msgid "Resolved"
+msgstr "Đã xử lý"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__resolved_by
+msgid "Resolved By"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid ""
+"SAFETY: off by default — talks to Viettel production. Submits eligible "
+"posted invoices nightly with a retry queue."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid ""
+"SAFETY: off by default — writes payroll-adjacent hr.attendance from visit "
+"check-in/out."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_fieldservice_order__quote_snapshot_hash
+msgid "SHA-256 of the sale order lines captured at booking confirmation."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__message_has_sms_error
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid "Send first-visit offer manually"
+msgstr "Gửi ưu đãi thăm khám thủ công"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_visit_offer__state__sent
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/controllers/onetap_api.py:0
+msgid "Service completed"
+msgstr "Đã hoàn tất dịch vụ"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/controllers/onetap_api.py:0
+msgid "Service completed - %s payment collected"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/controllers/onetap_api.py:0
+msgid "Service completed - %s payment noted"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/controllers/onetap_api.py:0
+msgid "Service completed - Invoice will be sent for later payment"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/controllers/onetap_api.py:0
+msgid "Service completed - No invoice created (zero amount)"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/controllers/onetap_api.py:0
+msgid "Service completed - No payment required"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__slot_ids
+msgid "Slot"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__index
+msgid "Slot #"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__slot_date
+msgid "Slot Date"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_visit_offer_form
+msgid "Slots"
+msgstr "Khung giờ"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__staff_id
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__start_time
+msgid "Start Time"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__kind__start_gap
+msgid "Start gap >15m"
+msgstr "Lệch giờ bắt đầu >15 phút"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__state
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__state
+msgid "State"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__taken
+msgid "Taken"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/controllers/offer_public.py:0
+msgid "That time is no longer available — please pick another."
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid ""
+"The first-visit offer expired without a booking. Please call the client."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_expired
+msgid ""
+"This offer link is no longer available.\n"
+"                               Please contact us to book your visit."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__wf_timecard_sync_enabled
+msgid "Timecard Auto-Fill from Visits"
+msgstr "Tự động điền chấm công từ thăm khám"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_form
+msgid "Timecard Mismatch"
+msgstr "Sai lệch chấm công"
+
+#. module: health_workflow_auto
+#: model:ir.actions.act_window,name:health_workflow_auto.action_timecard_mismatch
+#: model:ir.ui.menu,name:health_workflow_auto.menu_timecard_mismatch
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_list
+msgid "Timecard Mismatches"
+msgstr "Sai lệch chấm công"
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_health_timecard_mismatch
+msgid "Timecard Reconciliation Mismatch"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid "Timecard auto-fill from visits"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.actions.server,name:health_workflow_auto.cron_reconcile_timecards_ir_actions_server
+msgid "Timecards: reconcile visits vs attendance"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__token
+msgid "Token"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_fieldservice_order__quote_is_unchanged
+msgid "True when the current quote lines match the confirmation snapshot."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_form
+msgid "Use Visit Times"
+msgstr "Dùng giờ thăm khám"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__resolution__use_fso
+msgid "Use visit times"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_expired
+msgid "Viet Uc Health"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_crm_lead__visit_offer_ids
+msgid "Visit Offer"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_crm_lead__visit_offer_count
+msgid "Visit Offer Count"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__wf_zns_template_visit_offer
+msgid "Visit Offer ZNS Template ID"
+msgstr ""
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/fso_onetap.py:0
+msgid "Visit completed - no exceptions reported (one-tap complete)"
+msgstr "Đã hoàn tất thăm khám - không có ngoại lệ (hoàn tất một chạm)"
+
+#. module: health_workflow_auto
+#: model:ir.actions.server,name:health_workflow_auto.cron_expire_offers_ir_actions_server
+msgid "Visit offers: expire"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_hr_attendance__fso_id
+msgid "Visit this attendance was auto-created from (PWA check-in/out)."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__kind__missing_attendance
+msgid "Visit w/o attendance"
+msgstr "Thăm khám không có chấm công"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_visit_offer_slot__start_time
+msgid "Wall-clock start hour (24h float) in the facility tz."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_timecard_mismatch__website_message_ids
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_health_timecard_mismatch__website_message_ids
+#: model:ir.model.fields,help:health_workflow_auto.field_health_visit_offer__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,help:health_workflow_auto.field_redinvoice_request__next_retry_at
+msgid "When this failed request becomes eligible for the retry cron."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model:ir.ui.menu,name:health_workflow_auto.menu_workflow_auto_root
+msgid "Workflow Automations"
+msgstr "Tự động hóa quy trình"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid "Workflow Automations (H0)"
+msgstr "Tự động hóa quy trình (H0)"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_page
+msgid "Xin chào"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid ""
+"Zalo ZNS template ID for the first-visit offer. Rides the messaging enabled/"
+"dry-run switches. Empty = ZNS step skipped (offer still created)."
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_confirmed
+msgid "Đã đặt lịch! (Booked!)"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_page
+msgid ""
+"Đặt lịch thăm khám đầu tiên của bạn — chọn khung giờ phù hợp.\n"
+"                               <br/>(Book your first visit — pick a time "
+"that suits you.)"
+msgstr ""
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.offer_page
+msgid "Ưu đãi có hiệu lực đến"
+msgstr ""

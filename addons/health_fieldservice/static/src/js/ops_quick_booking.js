@@ -292,7 +292,14 @@ class OpsQuickBooking extends Component {
                 "health.fieldservice.order",
                 "get_quick_booking_options",
                 [],
-                { patient_id: this.patientId }
+                {
+                    patient_id: this.patientId,
+                    // Without these the server cannot know the booking's
+                    // catchment area, and the service catalog comes back
+                    // holding BOTH regions' services.
+                    facility_id: this.state.facilityId || false,
+                    lead_id: this.leadId || false,
+                }
             );
             this.state.serviceTypes = data.service_types || [];
             this.state.facilities = data.facilities || [];
@@ -303,7 +310,11 @@ class OpsQuickBooking extends Component {
             this.state.doctorList = data.doctor_list || [];
             this.state.products = data.products || [];
             this.state.productCategories = data.product_categories || [];
-            if (!this.state.facilityId) {
+            // The facility list is limited to the booking's catchment area, so a
+            // facility picked before the client was known can fall outside it —
+            // snap back to the area's default rather than showing a blank select.
+            const offered = new Set(this.state.facilities.map(f => f.id));
+            if (!this.state.facilityId || !offered.has(this.state.facilityId)) {
                 this.state.facilityId = data.default_facility_id
                     || (data.facilities.length > 0 ? data.facilities[0].id : false);
             }
@@ -593,7 +604,14 @@ class OpsQuickBooking extends Component {
         try {
             const pdata = await this.orm.call(
                 "health.fieldservice.order", "get_quick_booking_products",
-                [this.state.facilityId || false]
+                [],
+                {
+                    facility_id: this.state.facilityId || false,
+                    // Keep the catalog scoped to the client's / contact's area
+                    // even when the facility is cleared.
+                    patient_id: this.patientId || false,
+                    lead_id: this.leadId || false,
+                }
             );
             this.state.products = pdata.products || [];
             this.state.productCategories = pdata.product_categories || [];

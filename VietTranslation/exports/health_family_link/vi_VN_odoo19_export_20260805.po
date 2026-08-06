@@ -1,0 +1,364 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_family_link
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-08-05 07:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid ""
+".\n"
+"                                       (Your nurse arrived at"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid ""
+".\n"
+"                                    (Need to change? Call"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "<span class=\"fl-label\">Khung giờ (Time)</span>"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "<span class=\"fl-label\">Ngày (Date)</span>"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "<span class=\"fl-label\">Nhân viên (Staff)</span>"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "<span class=\"fl-status arrived\">Đang thăm khám (In progress)</span>"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "<span class=\"fl-status completed\">Đã hoàn thành (Completed)</span>"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "<span class=\"fl-status upcoming\">Sắp diễn ra (Upcoming)</span>"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_brand
+msgid "<span>Viet Uc Health</span>"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,help:health_family_link.field_health_family_link__token
+msgid ""
+"Capability token — the page URL is a capability URL. Never logged at info "
+"level."
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__catchment_province_id
+#: model_terms:ir.ui.view,arch_db:health_family_link.view_family_link_search
+msgid "Catchment Area"
+msgstr "Khu vực quản lý"
+
+#. module: health_family_link
+#: model:ir.model.fields,help:health_family_link.field_health_family_link__catchment_province_id
+msgid "Catchment area used for access control."
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__company_id
+msgid "Company"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,help:health_family_link.field_health_client_relation__display_name
+msgid "Computed display name for this relationship"
+msgstr "Computed display Tên cho này mối quan hệ"
+
+#. module: health_family_link
+#: model:ir.model.fields,help:health_family_link.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Cần thay đổi lịch? Gọi"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_client_relation__display_name
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__display_name
+#: model:ir.model.fields,field_description:health_family_link.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_family_link.field_health_outbound_message__display_name
+msgid "Display Name"
+msgstr "Display Tên"
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__expires_at
+msgid "Expires At"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields.selection,name:health_family_link.selection__health_outbound_message__purpose__family_snapshot
+msgid "Family Post-Visit Snapshot"
+msgstr "Tóm tắt sau thăm khám cho gia đình"
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__relation_id
+msgid "Family Relation"
+msgstr "Quan hệ gia đình"
+
+#. module: health_family_link
+#: model:ir.model,name:health_family_link.model_health_family_link
+#: model:ir.model.fields.selection,name:health_family_link.selection__health_outbound_message__purpose__family_visit_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.view_family_link_form
+msgid "Family Visit Link"
+msgstr "Liên kết thăm khám cho gia đình"
+
+#. module: health_family_link
+#: model:ir.actions.act_window,name:health_family_link.action_family_link
+#: model:ir.ui.menu,name:health_family_link.menu_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.view_family_link_list
+msgid "Family Visit Links"
+msgstr "Liên kết thăm khám cho gia đình"
+
+#. module: health_family_link
+#. odoo-python
+#: code:addons/health_family_link/models/health_family_link.py:0
+msgid "Family link"
+msgstr "Liên kết gia đình"
+
+#. module: health_family_link
+#. odoo-python
+#: code:addons/health_family_link/models/health_family_link.py:0
+msgid "Family link: %(patient)s -> %(rep)s"
+msgstr "Liên kết gia đình: %(patient)s -> %(rep)s"
+
+#. module: health_family_link
+#: model:ir.model,name:health_family_link.model_health_client_relation
+msgid "Healthcare Client ↔ Representative Relationship"
+msgstr "Y tế Khách hàng ↔ Người đại diện Mối quan hệ"
+
+#. module: health_family_link
+#: model:ir.model,name:health_family_link.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_client_relation__id
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__id
+#: model:ir.model.fields,field_description:health_family_link.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_family_link.field_health_outbound_message__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_neutral
+msgid "Không có thông tin để hiển thị"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Kết thúc thăm khám cho"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.actions.act_window,help:health_family_link.action_family_link
+msgid ""
+"Links are created automatically when a booking is confirmed for a\n"
+"                client whose relation is opted in to visit updates."
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_neutral
+msgid ""
+"Liên kết này không còn hiệu lực hoặc chưa có thông tin.\n"
+"                               Vui lòng liên hệ với chúng tôi nếu cần hỗ trợ.\n"
+"                               <br/>(This link is no longer available. Please contact us if you need help.)"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Lịch thăm khám của"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.actions.act_window,help:health_family_link.action_family_link
+msgid "No family visit links yet."
+msgstr ""
+
+#. module: health_family_link
+#. odoo-python
+#: code:addons/health_family_link/models/health_family_link.py:0
+msgid "No usable phone for the recipient."
+msgstr "Không có số điện thoại hợp lệ cho người nhận."
+
+#. module: health_family_link
+#: model:ir.model.fields,help:health_family_link.field_health_client_relation__receives_visit_updates
+msgid ""
+"Opt this relation in to the tokenized family visit page + Zalo "
+"visit/snapshot notifications. Off by default. Medical snapshot content "
+"additionally requires \"Can Receive Medical Information\" and the client's "
+"data-sharing consent."
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model,name:health_family_link.model_health_outbound_message
+msgid "Outbound Message"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_outbound_message__purpose
+msgid "Purpose"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_client_relation__receives_visit_updates
+msgid "Receives Visit Updates"
+msgstr "Nhận thông báo thăm khám"
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__partner_id
+msgid "Recipient"
+msgstr "Người nhận"
+
+#. module: health_family_link
+#: model:ir.model.fields.selection,name:health_family_link.selection__health_family_link__state__revoked
+#: model_terms:ir.ui.view,arch_db:health_family_link.view_family_link_search
+msgid "Revoked"
+msgstr "Đã thu hồi"
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.view_family_link_search
+msgid "Search Family Links"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields.selection,name:health_family_link.selection__health_family_link__state__sent
+#: model_terms:ir.ui.view,arch_db:health_family_link.view_family_link_search
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__snapshot_message_id
+msgid "Snapshot Message"
+msgstr "Tin nhắn tóm tắt sau thăm khám"
+
+#. module: health_family_link
+#: model:ir.model.fields,help:health_family_link.field_health_family_link__partner_id
+msgid "Snapshot of relation.representative_id at link creation."
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__state
+msgid "State"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.view_family_link_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Thăm khám đã hoàn thành. (Visit completed.)"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__token
+msgid "Token"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Tóm tắt tình trạng (Summary):"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_neutral
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Viet Uc Health"
+msgstr ""
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__fso_id
+msgid "Visit"
+msgstr "Lượt thăm khám"
+
+#. module: health_family_link
+#: model:ir.model.fields,field_description:health_family_link.field_health_family_link__visit_link_message_id
+msgid "Visit-Link Message"
+msgstr "Tin nhắn liên kết thăm khám"
+
+#. module: health_family_link
+#: model:ir.model.fields,help:health_family_link.field_health_family_link__expires_at
+msgid ""
+"scheduled end + 24h; re-extended to actual end + 24h at completion. Checked "
+"at render time (no cron)."
+msgstr ""
+
+#. module: health_family_link
+#. odoo-python
+#: code:addons/health_family_link/models/health_family_link.py:0
+msgid "y tá"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid ""
+"Điều dưỡng sẽ đến theo lịch dưới đây.\n"
+"                                   (Your nurse will visit at the time below.)"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Điều dưỡng đang thực hiện thăm khám. (Visit in progress.)"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Điều dưỡng đã đến"
+msgstr ""
+
+#. module: health_family_link
+#: model_terms:ir.ui.view,arch_db:health_family_link.family_page
+msgid "Điều dưỡng đã đến lúc"
+msgstr ""

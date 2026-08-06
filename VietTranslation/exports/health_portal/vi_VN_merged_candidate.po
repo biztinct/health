@@ -1,0 +1,540 @@
+# Translation of Odoo Server.
+# 	* health_portal
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consents
+msgid "<span class=\"off\">Chưa đồng ý</span>"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consents
+msgid "<span class=\"on\">Đã đồng ý</span>"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_record
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_records
+msgid "<span class=\"svc\">Ghi chú thăm khám</span>"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access_log__access_id
+msgid "Access"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__access_count
+msgid "Access Count"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields.selection,name:health_portal.selection__health_portal_access__state__active
+msgid "Active"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__catchment_province_id
+msgid ""
+"Area of the patient this portal access belongs to. Staff only see access "
+"records for their own area."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__token
+msgid ""
+"Capability token — the /my/care URL is a capability URL. Never logged; "
+"visible to ops only."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__catchment_province_id
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_layout
+msgid "Chăm sóc của tôi"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_health
+msgid "Chưa có chẩn đoán được ghi nhận."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_records
+msgid "Chưa có hồ sơ đã hoàn tất."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Chưa có lịch hẹn sắp tới."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Chưa có lịch sử thăm khám."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_health
+msgid "Chưa có sinh hiệu được ghi nhận."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_health
+msgid "Chẩn đoán đang theo dõi"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.actions.act_window,help:health_portal.action_portal_access
+msgid ""
+"Create an access record for a patient to generate their standing\n"
+"               /my/care link. Rotate or revoke it any time."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__display_name
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access_log__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__expires_at
+msgid "Expires At"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_records
+msgid "Hồ sơ bệnh án của tôi"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Hồ sơ bệnh án của tôi →"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__id
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access_log__id
+msgid "ID"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access_log__ip
+msgid "IP Address"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__message_has_error
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.actions.act_window,help:health_portal.action_portal_access
+msgid "Issue a My Care link."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_record
+msgid "Không có nội dung."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_record
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_records
+msgid "Ký bởi:"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__last_access_datetime
+msgid "Last Access"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Liên hệ đội chăm sóc:"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_neutral
+msgid "Liên kết không khả dụng"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_neutral
+msgid ""
+"Liên kết này không còn hiệu lực hoặc không đúng.\n"
+"                    Vui lòng liên hệ cơ sở chăm sóc của bạn để được cấp liên "
+"kết mới."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Lịch hẹn sắp tới"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Lịch sử thăm khám"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_list
+msgid "My Care Access"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.actions.act_window,name:health_portal.action_portal_access_log
+#: model:ir.ui.menu,name:health_portal.menu_portal_access_log
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_log_list
+msgid "My Care Access Log"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
+msgid "My Care Link (share with the patient)"
+msgstr "Liên kết Chăm sóc của tôi (chia sẻ cho bệnh nhân)"
+
+#. module: health_portal
+#: model:ir.ui.menu,name:health_portal.menu_portal_access
+msgid "My Care Portal"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.actions.act_window,name:health_portal.action_portal_access
+msgid "My Care Portal Access"
+msgstr "Truy cập Cổng Chăm sóc"
+
+#. module: health_portal
+#: model:ir.model,name:health_portal.model_health_portal_access_log
+msgid "My Care Portal Access Log"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__portal_url
+msgid "My Care URL"
+msgstr ""
+
+#. module: health_portal
+#. odoo-python
+#: code:addons/health_portal/models/health_portal_access.py:0
+msgid "My Care token rotated — the previous link no longer works."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__expires_at
+msgid "Optional. Empty = standing link. Checked at render time."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__patient_id
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access_log__patient_id
+msgid "Patient"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model,name:health_portal.model_health_portal_access
+msgid "Patient My Care Portal Access"
+msgstr ""
+
+#. module: health_portal
+#. odoo-python
+#: code:addons/health_portal/models/health_portal_access.py:0
+msgid "Portal access log entries are append-only."
+msgstr "Nhật ký truy cập cổng chỉ ghi thêm, không thể sửa."
+
+#. module: health_portal
+#. odoo-python
+#: code:addons/health_portal/models/health_portal_access.py:0
+msgid "Portal access log entries cannot be deleted."
+msgstr "Không thể xóa nhật ký truy cập cổng."
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
+msgid "Reactivate"
+msgstr "Kích hoạt lại"
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
+msgid "Revoke"
+msgstr "Thu hồi"
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
+msgid "Revoke access? The My Care link will stop working."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields.selection,name:health_portal.selection__health_portal_access__state__revoked
+msgid "Revoked"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
+msgid "Rotate Token"
+msgstr "Đổi mã truy cập"
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.view_portal_access_form
+msgid ""
+"Rotate the token? The current My Care link will stop working immediately."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access_log__section
+msgid "Section"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_health
+msgid "Sinh hiệu gần đây"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__state
+msgid "State"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Số buổi còn lại"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Sức khỏe của tôi →"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consents
+msgid "Thu hồi"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consents
+msgid ""
+"Thu hồi “Chia sẻ dữ liệu y tế” sẽ dừng việc chia sẻ hồ sơ của bạn ra bên "
+"ngoài."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access_log__ts
+msgid "Timestamp"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__token
+msgid "Token"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_layout
+msgid "Trang này chỉ dành cho bạn. Vui lòng không chia sẻ liên kết."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_record
+msgid "Tải xuống (.txt)"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consent_grant
+msgid "Vui lòng ký trước khi gửi."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consent_grant
+msgid "Vui lòng ký tên vào ô bên dưới để xác nhận đồng ý."
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Vui lòng liên hệ cơ sở chăm sóc của bạn để đặt lịch hẹn."
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,field_description:health_portal.field_health_portal_access__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_portal
+#: model:ir.model.fields,help:health_portal.field_health_portal_access__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consent_grant
+msgid "Xác nhận đồng ý"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consent_grant
+msgid "Xóa"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_health
+msgid "từ"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "ĐT cơ sở:"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Điều dưỡng:"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Đặt lịch &amp; liên hệ"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Đặt lịch hẹn"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consents
+msgid "Đồng ý"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consents
+msgid "Đồng ý &amp; quyền riêng tư"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_hub
+msgid "Đồng ý &amp; quyền riêng tư →"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consent_grant
+msgid "Đồng ý:"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_record
+msgid "← Hồ sơ bệnh án"
+msgstr ""
+
+#. module: health_portal
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consent_grant
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_consents
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_health
+#: model_terms:ir.ui.view,arch_db:health_portal.portal_records
+msgid "← Quay lại"
+msgstr ""

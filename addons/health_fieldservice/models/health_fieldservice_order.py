@@ -4622,6 +4622,19 @@ class HealthFieldServiceOrderUnified(models.Model):
             return {'success': False, 'error': str(e)}
 
     @api.model
+    def _catchment_area_key(self, name):
+        """Map a province/city/facility name to a product catchment-area key
+        ('hanoi' / 'tphcm'), matching product.product.catalog_catchment_area.
+        Returns '' when the region is unknown."""
+        name = (name or '').lower()
+        if 'hanoi' in name or 'ha noi' in name or 'hà nội' in name:
+            return 'hanoi'
+        if ('chi minh' in name or 'hcm' in name or 'tphcm'
+                in name or 'ho chi minh' in name or 'hồ chí minh' in name):
+            return 'tphcm'
+        return ''
+
+    @api.model
     def _resolve_facility_catchment_area(self, facility_id):
         """Map a facility to a product catchment-area key ('hanoi' / 'tphcm'),
         matching product.product.catalog_catchment_area. Returns '' when the
@@ -4631,28 +4644,58 @@ class HealthFieldServiceOrderUnified(models.Model):
         fac = self.env['health.facility'].browse(facility_id)
         if not fac.exists():
             return ''
-        name = ((fac.catchment_province_id.name if fac.catchment_province_id else '')
-                or fac.city or fac.name or '').lower()
-        if 'hanoi' in name or 'ha noi' in name or 'hà nội' in name:
-            return 'hanoi'
-        if ('chi minh' in name or 'hcm' in name or 'tphcm'
-                in name or 'ho chi minh' in name or 'hồ chí minh' in name):
-            return 'tphcm'
-        return ''
+        return self._catchment_area_key(
+            (fac.catchment_province_id.name if fac.catchment_province_id else '')
+            or fac.city or fac.name or ''
+        )
 
     @api.model
-    def get_quick_booking_products(self, facility_id=False):
+    def _resolve_booking_catchment_province(self, patient=False, lead_id=False):
+        """The catchment area a booking belongs to when the caller passed no
+        facility: the client's own area, else the contact's (a client created
+        from a crm.lead does not exist yet), else the booking user's area.
+        Drives BOTH the preselected facility and the service catalog, so the
+        picker never offers another region's services."""
+        Province = self.env['health.catchment.province']
+        province = Province
+        if patient and patient.exists():
+            province = (getattr(patient, 'catchment_province_id', Province)
+                        or getattr(patient.primary_facility_id, 'catchment_province_id', Province))
+        # crm is not a dependency of this module — only read the lead when the
+        # CRM layer is actually installed.
+        if not province and lead_id and 'crm.lead' in self.env:
+            lead = self.env['crm.lead'].sudo().browse(int(lead_id))
+            if lead.exists():
+                province = getattr(lead, 'catchment_province_id', Province) or Province
+        if not province:
+            province = getattr(self.env.user, 'catchment_province_id', Province) or Province
+        return province
+
+    @api.model
+    def _default_facility_for_province(self, province):
+        """First active facility in a catchment area, for preselection."""
+        if not province:
+            return False
+        fac = self.env['health.facility'].sudo().search([
+            ('active', '=', True),
+            ('catchment_province_id', '=', province.id),
+        ], order='name', limit=1)
+        return fac.id if fac else False
+
+    @api.model
+    def get_quick_booking_products(self, facility_id=False, patient_id=False, lead_id=False):
         """Return just the service catalog + categories scoped to a facility's
         catchment area, for refreshing the Add Services list when the user
         changes the Facility in the quick booking wizard."""
-        data = self.get_recurring_booking_options(facility_id=facility_id)
+        data = self.get_recurring_booking_options(
+            patient_id=patient_id, facility_id=facility_id, lead_id=lead_id)
         return {
             'products': data.get('products', []),
             'product_categories': data.get('product_categories', []),
         }
 
     @api.model
-    def get_recurring_booking_options(self, patient_id=False, facility_id=False):
+    def get_recurring_booking_options(self, patient_id=False, facility_id=False, lead_id=False):
         """Return option lists for the recurring booking OWL wizard.
         When facility_id is provided, staff/doctor lists are limited to that facility."""
         service_types = [
@@ -4664,18 +4707,17 @@ class HealthFieldServiceOrderUnified(models.Model):
             {'key': 'preventive', 'label': 'Preventive Care'},
             {'key': 'rehabilitation', 'label': 'Rehabilitation'},
         ]
-        facilities = []
-        try:
-            for f in self.env['health.facility'].search([('active', '=', True)], order='name', limit=50):
-                facilities.append({'id': f.id, 'name': f.name or ''})
-        except Exception:
-            pass
+        # What the CALLER asked for, as opposed to a facility we derive below
+        # from the client's profile — only the former survives the area check.
+        explicit_facility_id = facility_id
 
         patient = {}
         preferred_staff_id = False
+        patient_rec = self.env['res.partner']
         if patient_id:
             p = self.env['res.partner'].browse(patient_id)
             if p.exists():
+                patient_rec = p
                 initials = ''
                 if p.name:
                     parts = p.name.split()
@@ -4702,6 +4744,50 @@ class HealthFieldServiceOrderUnified(models.Model):
                           or getattr(p, 'facility_id', False))
                     if pf:
                         facility_id = pf.id
+
+        # THE BOOKING'S CATCHMENT AREA IS THE CLIENT'S — the facility is only a
+        # carrier of that area. Resolve the area first (client → contact → user);
+        # it drives the facility choices, the preselected facility AND the
+        # service catalog, so the three can never disagree and put a booking on
+        # another region's price list.
+        Facility = self.env['health.facility']
+        booking_province = self._resolve_booking_catchment_province(patient_rec, lead_id)
+        if not booking_province and facility_id:
+            booking_province = Facility.browse(facility_id).catchment_province_id
+        # A facility derived from the client's profile loses to the client's own
+        # area (profiles do drift); a facility the caller passed explicitly is
+        # kept, so reopening an existing booking never silently moves it.
+        if booking_province and facility_id and not explicit_facility_id:
+            if Facility.browse(facility_id).catchment_province_id != booking_province:
+                facility_id = self._default_facility_for_province(booking_province) or facility_id
+        if not facility_id:
+            facility_id = self._default_facility_for_province(booking_province) or facility_id
+
+        # Facility choices are HARD-LIMITED to the booking's area.
+        facilities = []
+        try:
+            fac_domain = [('active', '=', True)]
+            if booking_province:
+                fac_domain.append(('catchment_province_id', '=', booking_province.id))
+            found = Facility.search(fac_domain, order='name', limit=50)
+            if not found and booking_province:
+                # Area with no facility configured — offer all rather than
+                # leaving the user unable to book at all.
+                found = Facility.search([('active', '=', True)], order='name', limit=50)
+            # An explicitly requested facility stays selectable even if it sits
+            # outside the area, so an existing booking keeps its own facility.
+            if facility_id and facility_id not in found.ids:
+                found |= Facility.browse(facility_id).exists()
+            facilities = sorted(
+                ({'id': f.id, 'name': f.name or ''} for f in found),
+                key=lambda f: f['name'],
+            )
+        except Exception:
+            pass
+
+        # Last resort when no area is known at all.
+        if not facility_id and facilities:
+            facility_id = facilities[0]['id']
 
         # Optional facility scope: limit staff/doctors to the facility.
         # Graceful fallback: if no staff are linked to the facility (data not
@@ -4784,7 +4870,10 @@ class HealthFieldServiceOrderUnified(models.Model):
         # staff only see services that belong to that region (Hanoi vs HCMC).
         # Region-agnostic services (no _hanoi/_tphcm suffix) always show.
         catchment_clause = []
-        region = self._resolve_facility_catchment_area(facility_id)
+        # Region from the booking facility; when the area is known but has no
+        # facility configured, still scope the catalog by that area.
+        region = (self._resolve_facility_catchment_area(facility_id)
+                  or self._catchment_area_key(booking_province.name if booking_province else ''))
         if region:
             catchment_clause = ['|',
                                 ('catalog_catchment_area', '=', region),
@@ -5190,11 +5279,13 @@ class HealthFieldServiceOrderUnified(models.Model):
     # =====================================================================
 
     @api.model
-    def get_quick_booking_options(self, patient_id=False, facility_id=False):
+    def get_quick_booking_options(self, patient_id=False, facility_id=False, lead_id=False):
         """Return option lists for the quick booking OWL wizard.
         Reuses recurring booking logic; staff/doctors are scoped to the
-        client's (or given) facility."""
-        return self.get_recurring_booking_options(patient_id=patient_id, facility_id=facility_id)
+        client's (or given) facility. `lead_id` carries the contact's catchment
+        area for a client that will only be created when the booking is saved."""
+        return self.get_recurring_booking_options(
+            patient_id=patient_id, facility_id=facility_id, lead_id=lead_id)
 
     @api.model
     def get_quick_booking_staff(self, facility_id=False):

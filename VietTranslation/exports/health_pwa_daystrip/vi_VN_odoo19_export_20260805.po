@@ -1,0 +1,97 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_pwa_daystrip
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"PO-Revision-Date: 2026-08-05 07:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_pwa_daystrip
+#: model_terms:ir.ui.view,arch_db:health_pwa_daystrip.family_page_on_the_way
+msgid ""
+".\n"
+"                    (Need help? Call"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model_terms:ir.ui.view,arch_db:health_pwa_daystrip.family_page_on_the_way
+msgid ""
+".\n"
+"                   (Your nurse is on the way to"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model_terms:ir.ui.view,arch_db:health_pwa_daystrip.family_page_on_the_way
+msgid "<span class=\"fl-label\">Nhân viên (Staff)</span>"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model_terms:ir.ui.view,arch_db:health_pwa_daystrip.family_page_on_the_way
+msgid "<span class=\"fl-status ontheway\">Đang trên đường (On the way)</span>"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model_terms:ir.ui.view,arch_db:health_pwa_daystrip.family_page_on_the_way
+msgid "Cần hỗ trợ? Gọi"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model:ir.model.fields,field_description:health_pwa_daystrip.field_health_evv_event__display_name
+#: model:ir.model.fields,field_description:health_pwa_daystrip.field_health_family_link__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model_terms:ir.ui.view,arch_db:health_pwa_daystrip.family_page_on_the_way
+msgid "Dự kiến đến sau"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model:ir.model,name:health_pwa_daystrip.model_health_evv_event
+msgid "EVV Event"
+msgstr "Sự kiện EVV"
+
+#. module: health_pwa_daystrip
+#: model:ir.model.fields,field_description:health_pwa_daystrip.field_health_evv_event__event_type
+msgid "Event Type"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model:ir.model,name:health_pwa_daystrip.model_health_family_link
+msgid "Family Visit Link"
+msgstr "Liên kết thăm khám cho gia đình"
+
+#. module: health_pwa_daystrip
+#: model:ir.model.fields,field_description:health_pwa_daystrip.field_health_evv_event__id
+#: model:ir.model.fields,field_description:health_pwa_daystrip.field_health_family_link__id
+msgid "ID"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model:ir.model.fields.selection,name:health_pwa_daystrip.selection__health_evv_event__event_type__travel_cancel
+msgid "Travel Cancel"
+msgstr "Hủy di chuyển"
+
+#. module: health_pwa_daystrip
+#: model:ir.model.fields.selection,name:health_pwa_daystrip.selection__health_evv_event__event_type__travel_start
+msgid "Travel Start"
+msgstr "Bắt đầu di chuyển"
+
+#. module: health_pwa_daystrip
+#: model_terms:ir.ui.view,arch_db:health_pwa_daystrip.family_page_on_the_way
+msgid "Điều dưỡng đang di chuyển đến chỗ"
+msgstr ""
+
+#. module: health_pwa_daystrip
+#: model_terms:ir.ui.view,arch_db:health_pwa_daystrip.family_page_on_the_way
+msgid "Điều dưỡng đang trên đường"
+msgstr ""

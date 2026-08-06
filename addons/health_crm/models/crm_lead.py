@@ -212,12 +212,20 @@ class HealthLead(models.Model):
              'client, otherwise the linked client (payer/caregiver/guardian…).'
     )
 
-    # Display-only Patient ID for outreach screens: the converted client's
-    # patient_code, falling back to this contact's unique_contact_code (Client ID).
+    # Display-only Patient ID for outreach screens: the client's patient_code,
+    # empty until the client record exists.
     patient_display_id = fields.Char(
         string='Patient ID',
         compute='_compute_patient_display_id',
-        help='Client patient code once converted; otherwise the contact Client ID.'
+        help='The client patient code — empty until a client record exists.'
+    )
+
+    # The client's own id, for lists that sit next to the contact id. Empty
+    # until conversion: the contact code is NOT a client id.
+    client_patient_code = fields.Char(
+        string='Client ID',
+        compute='_compute_client_patient_code',
+        help='The client patient code — empty until a client record exists.'
     )
 
     # Healthcare relationships
@@ -846,35 +854,55 @@ class HealthLead(models.Model):
             if record.patient_id and not record.client_name:
                 record.client_name = record.patient_id.name
 
-    @api.depends('patient_id', 'contact_relationship_type', 'name', 'client_name', 'partner_id')
-    def _compute_related_client_name(self):
-        """Resolve the client this contact belongs to, for list display.
-        1. patient_id set (converted)  -> authoritative client name
-        2. contact IS the client       -> their own name
-        3. representative (payer/…)     -> client via health.client.relation
-        4. fallback                     -> free-text client_name captured at intake
-        """
-        Relation = self.env['health.client.relation']
-        for lead in self:
-            if lead.patient_id:
-                lead.related_client_name = lead.patient_id.name
-            elif lead.contact_relationship_type == 'client':
-                lead.related_client_name = lead.name or (lead.partner_id.name or False)
-            else:
-                rel = Relation.search(
-                    [('representative_id', '=', lead.partner_id.id)], limit=1
-                ) if lead.partner_id else False
-                lead.related_client_name = (rel.client_id.name if rel else False) or lead.client_name or False
+    def _resolve_client_partner(self):
+        """The res.partner CLIENT RECORD this contact belongs to, or an empty
+        recordset when no client exists yet.
 
-    @api.depends('patient_id.patient_code', 'unique_contact_code')
-    def _compute_patient_display_id(self):
-        """Patient ID for outreach: converted client's patient_code, else the
-        contact's own unique_contact_code (Client ID)."""
+        A contact declaring itself the client, or naming one at intake, does NOT
+        make a client: the record is only created at booking/conversion. This is
+        the single resolution behind both the Client Name and Client ID columns,
+        so neither can ever claim a client the other cannot find.
+        """
+        self.ensure_one()
+        Partner = self.env['res.partner']
+        if self.patient_id:
+            return self.patient_id
+        if self.contact_relationship_type == 'client':
+            # The contact themselves — but only once their own partner record
+            # exists AND is a client.
+            if self.partner_id and self.partner_id.is_patient:
+                return self.partner_id
+            return Partner
+        if self.partner_id:
+            rel = self.env['health.client.relation'].search(
+                [('representative_id', '=', self.partner_id.id)], limit=1)
+            if rel.client_id:
+                return rel.client_id
+        return Partner
+
+    @api.depends('patient_id', 'contact_relationship_type', 'partner_id',
+                 'partner_id.is_patient')
+    def _compute_related_client_name(self):
+        """Name of the client record this contact belongs to — empty until one
+        exists (the free-text name captured at intake is NOT a client)."""
         for lead in self:
-            lead.patient_display_id = (
-                (lead.patient_id.patient_code if lead.patient_id else False)
-                or lead.unique_contact_code or ''
-            )
+            lead.related_client_name = lead._resolve_client_partner().name or False
+
+    @api.depends('patient_id.patient_code', 'contact_relationship_type',
+                 'partner_id', 'partner_id.is_patient')
+    def _compute_client_patient_code(self):
+        """The client's patient code — empty until a client record exists.
+        Never falls back to unique_contact_code: that is the CONTACT's id."""
+        for lead in self:
+            lead.client_patient_code = lead._resolve_client_partner().patient_code or False
+
+    @api.depends('patient_id.patient_code', 'contact_relationship_type',
+                 'partner_id', 'partner_id.is_patient')
+    def _compute_patient_display_id(self):
+        """Patient ID for outreach — the client's patient_code, empty until the
+        client record exists."""
+        for lead in self:
+            lead.patient_display_id = lead._resolve_client_partner().patient_code or ''
 
     @api.depends('create_date')
     def _compute_days_open(self):

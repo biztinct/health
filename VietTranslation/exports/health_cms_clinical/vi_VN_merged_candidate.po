@@ -1,0 +1,57 @@
+# Vietnamese translation for health_cms_clinical
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_cms_clinical\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_cms_clinical
+#: model_terms:ir.ui.view,arch_db:health_cms_clinical.view_ops_profile_clinical_tabs
+msgid "Active Consents"
+msgstr "Đồng thuận đang hiệu lực"
+
+#. module: health_cms_clinical
+#: model_terms:ir.ui.view,arch_db:health_cms_clinical.view_ops_profile_clinical_tabs
+msgid "Alert Thresholds"
+msgstr "Ngưỡng cảnh báo"
+
+#. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_care_intel
+msgid "Care Intelligence"
+msgstr "Thông tin lâm sàng"
+
+#. module: health_cms_clinical
+#: model_terms:ir.ui.view,arch_db:health_cms_clinical.view_ops_profile_clinical_tabs
+msgid "Consents"
+msgstr "Đồng thuận"
+
+#. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_alerts
+msgid "Deterioration Alerts"
+msgstr "Cảnh báo suy giảm"
+
+#. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_worklist
+msgid "Deterioration Worklist"
+msgstr "Danh sách theo dõi suy giảm"
+
+#. module: health_cms_clinical
+#: model_terms:ir.ui.view,arch_db:health_cms_clinical.view_ops_profile_clinical_tabs
+msgid "Granted By"
+msgstr ""
+
+#. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_devices
+msgid "Monitoring Devices"
+msgstr "Thiết bị giám sát"
+
+#. module: health_cms_clinical
+#: model:cms.sidebar.item,name:health_cms_clinical.item_clin_news2
+msgid "NEWS2 Scores"
+msgstr "Điểm NEWS2"

@@ -1,0 +1,310 @@
+# Vietnamese translation for health_ai_coding
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_ai_coding\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_ai_coding
+#: model:ir.ui.menu,name:health_ai_coding.menu_ai_coding_root
+msgid "AI Coding"
+msgstr "Mã hóa AI"
+
+#. module: health_ai_coding
+#. odoo-python
+#: code:addons/health_ai_coding/models/health_clinical_note.py:0
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_clinical_note__ai_suggestion_ids
+#: model:ir.ui.menu,name:health_ai_coding.menu_ai_code_suggestion
+#: model:ir.actions.act_window,name:health_ai_coding.action_ai_code_suggestion
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_list
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_search
+msgid "AI Code Suggestions"
+msgstr "Đề xuất mã AI"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_form
+msgid "AI Code Suggestion"
+msgstr "Đề xuất mã AI"
+
+#. module: health_ai_coding
+#: model:ir.model,name:health_ai_coding.model_health_ai_code_suggestion
+msgid "AI ICD-10 Code Suggestion"
+msgstr "Đề xuất mã ICD-10 của AI"
+
+#. module: health_ai_coding
+#: model:ir.ui.menu,name:health_ai_coding.menu_ai_coding_log
+msgid "AI Call Log"
+msgstr "Nhật ký gọi AI"
+
+#. module: health_ai_coding
+#: model:ir.model,name:health_ai_coding.model_health_ai_coding_log
+#: model:ir.actions.act_window,name:health_ai_coding.action_ai_coding_log
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_coding_log_list
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_coding_log_form
+msgid "AI Coding Call Log"
+msgstr "Nhật ký gọi mã hóa AI"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__note_id
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__note_id
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_search
+msgid "Clinical Note"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__fso_id
+msgid "Service Order"
+msgstr "Đơn dịch vụ"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__patient_id
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_search
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__catchment_province_id
+msgid "Catchment Province"
+msgstr "Tỉnh phụ trách"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__code_id
+msgid "ICD-10 Code"
+msgstr "Mã ICD-10"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__code_display
+msgid "Code"
+msgstr "Mã"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__confidence
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_list
+msgid "Confidence"
+msgstr "Độ tin cậy"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__confidence_pct
+msgid "Confidence %"
+msgstr "Độ tin cậy %"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__evidence
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_ai_coding
+#: model:ir.model.fields.selection,name:health_ai_coding.selection__health_ai_code_suggestion__state__suggested
+msgid "Suggested"
+msgstr "Đã đề xuất"
+
+#. module: health_ai_coding
+#: model:ir.model.fields.selection,name:health_ai_coding.selection__health_ai_code_suggestion__state__approved
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_search
+msgid "Approved"
+msgstr "Đã duyệt"
+
+#. module: health_ai_coding
+#: model:ir.model.fields.selection,name:health_ai_coding.selection__health_ai_code_suggestion__state__rejected
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_search
+msgid "Rejected"
+msgstr "Đã từ chối"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_search
+msgid "Pending"
+msgstr "Chờ duyệt"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__reviewed_by
+msgid "Reviewed By"
+msgstr "Người duyệt"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__reviewed_at
+msgid "Reviewed At"
+msgstr "Thời điểm duyệt"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_list
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_form
+msgid "Approve"
+msgstr "Duyệt"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_list
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_form
+msgid "Reject"
+msgstr "Từ chối"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_list
+msgid "Approve selected"
+msgstr "Duyệt các mục đã chọn"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_list
+msgid "Reject selected"
+msgstr "Từ chối các mục đã chọn"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__note_diagnosis
+msgid "Diagnosis"
+msgstr "Chẩn đoán"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__note_clinical_notes
+msgid "Clinical Notes"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_code_suggestion__note_date
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_list
+msgid "Note Date"
+msgstr "Ngày ghi chú"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_form
+msgid "Source Note (read-only)"
+msgstr "Ghi chú nguồn (chỉ đọc)"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_form
+msgid "Proposed Code"
+msgstr "Mã được đề xuất"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_form
+msgid "Context"
+msgstr "Bối cảnh"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_health_clinical_note_form_ai_coding
+msgid "AI codes"
+msgstr "Mã AI"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_clinical_note__ai_pending_count
+msgid "Pending AI Codes"
+msgstr "Mã AI chờ duyệt"
+
+#. module: health_ai_coding
+#. odoo-python
+#: code:addons/health_ai_coding/models/health_clinical_note.py:0
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_clinical_note__ai_suggestion_ids
+#: model:ir.ui.menu,name:health_ai_coding.menu_ai_code_suggestion
+#: model:ir.actions.act_window,name:health_ai_coding.action_ai_code_suggestion
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_list
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_code_suggestion_search
+msgid "AI Code Suggestions"
+msgstr "Đề xuất mã AI"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_res_config_settings__ai_coding_provider_id
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__provider_id
+msgid "AI Provider"
+msgstr "Nhà cung cấp AI"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__duration_ms
+msgid "Duration (ms)"
+msgstr "Thời lượng (ms)"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__suggested_count
+msgid "Suggestions Created"
+msgstr "Số đề xuất đã tạo"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__dropped_codes
+msgid "Dropped Codes"
+msgstr "Mã bị loại"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__error
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__request_json
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_coding_log_form
+msgid "Request (redacted)"
+msgstr "Yêu cầu (đã ẩn danh)"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__response_json
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.view_ai_coding_log_form
+msgid "Raw Response"
+msgstr "Phản hồi thô"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_health_ai_coding_log__created_at
+msgid "Created At"
+msgstr "Thời điểm tạo"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_res_config_settings__ai_coding_enabled
+msgid "Enable AI Retro-Coding"
+msgstr "Bật mã hóa hồi cứu bằng AI"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_res_config_settings__ai_coding_allow_cloud
+msgid "Allow Cloud AI Providers"
+msgstr "Cho phép nhà cung cấp AI đám mây"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_res_config_settings__ai_coding_batch_cap
+msgid "Notes per Sweep"
+msgstr "Số ghi chú mỗi lần quét"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_res_config_settings__ai_coding_max_prompt_chars
+msgid "Max Prompt Characters"
+msgstr "Số ký tự tối đa của prompt"
+
+#. module: health_ai_coding
+#: model:ir.model.fields,field_description:health_ai_coding.field_res_config_settings__ai_coding_max_attempts
+msgid "Max Attempts per Note"
+msgstr "Số lần thử tối đa mỗi ghi chú"
+
+#. module: health_ai_coding
+#: model_terms:ir.ui.view,arch_db:health_ai_coding.res_config_settings_view_form_ai_coding
+msgid "AI Retro-Coding (ICD-10)"
+msgstr "Mã hóa hồi cứu bằng AI (ICD-10)"
+
+#. module: health_ai_coding
+#: model_terms:ir.actions.act_window,help:health_ai_coding.action_ai_code_suggestion
+msgid "No AI code suggestions yet"
+msgstr "Chưa có đề xuất mã AI nào"
+
+#. module: health_ai_coding
+#. odoo-python
+#: code:addons/health_ai_coding/models/ai_code_suggestion.py:0
+msgid ""
+"Only a doctor, head nurse, or manager may approve or reject AI code "
+"suggestions."
+msgstr ""
+"Chỉ bác sĩ, điều dưỡng trưởng hoặc quản lý mới có thể duyệt hoặc từ chối đề "
+"xuất mã AI."
+
+#. module: health_ai_coding
+#. odoo-python
+#: code:addons/health_ai_coding/models/ai_coding_log.py:0
+msgid "AI coding log entries are append-only and cannot be modified."
+msgstr "Các mục nhật ký mã hóa AI chỉ được thêm và không thể chỉnh sửa."
+
+#. module: health_ai_coding
+#. odoo-python
+#: code:addons/health_ai_coding/models/ai_coding_log.py:0
+msgid "AI coding log entries are append-only and cannot be deleted."
+msgstr "Các mục nhật ký mã hóa AI chỉ được thêm và không thể xóa."

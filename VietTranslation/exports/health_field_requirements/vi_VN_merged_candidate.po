@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 09:29+0000\n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
 "PO-Revision-Date: 2026-05-07 22:52+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,6 +17,20 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "AR Management"
+msgstr "Quản lý công nợ"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Accounts Receivable"
+msgstr "Các khoản phải thu"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__active
 #: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_search
 msgid "Active"
@@ -28,6 +42,51 @@ msgid ""
 "Add rules to make specific fields mandatory - globally or per role,\n"
 "                always or only in certain states."
 msgstr ""
+"Thêm quy tắc để bắt buộc các trường cụ thể - áp dụng toàn cục hoặc theo vai "
+"trò,\n"
+"                luôn bắt buộc hoặc chỉ trong một số trạng thái."
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Admin"
+msgstr "Quản trị"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/form_required_popup.js:0
+msgid "Admin Configured"
+msgstr "Do quản trị viên cấu hình"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/form_required_popup.js:0
+msgid "Admin Rule"
+msgstr "Quy tắc quản trị"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "All Bookings"
+msgstr "Tất cả lịch hẹn"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "All Clients"
+msgstr "Tất cả khách hàng"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "All Contacts"
+msgstr "Tất cả liên hệ"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "All roles"
+msgstr "Tất cả vai trò"
 
 #. module: health_field_requirements
 #. odoo-python
@@ -38,7 +97,7 @@ msgstr "Luôn luôn"
 #. module: health_field_requirements
 #: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_form
 msgid "Archived"
-msgstr ""
+msgstr "Đã lưu trữ"
 
 #. module: health_field_requirements
 #: model:ir.model,name:health_field_requirements.model_base
@@ -46,26 +105,41 @@ msgid "Base"
 msgstr "Cơ sở"
 
 #. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Bookings & Assignments"
+msgstr "Lịch hẹn & Phân công"
+
+#. module: health_field_requirements
 #: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__state_values
 msgid ""
 "Comma-separated list of state values where this field is required. Leave "
 "empty for \"always required\". Example: confirmed,assigned,in_progress"
 msgstr ""
+"Danh sách các giá trị trạng thái được phân tách bằng dấu phẩy mà trường này "
+"bắt buộc. Để trống nếu \"luôn bắt buộc\". Ví dụ: "
+"confirmed,assigned,in_progress"
 
 #. module: health_field_requirements
 #: model_terms:ir.actions.act_window,help:health_field_requirements.action_field_requirement_rules
 msgid "Configure mandatory fields for your forms"
-msgstr ""
+msgstr "Cấu hình các trường bắt buộc cho biểu mẫu"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Contacts"
+msgstr "Liên hệ"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "Được tạo bởi"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__create_date
 msgid "Created on"
-msgstr ""
+msgstr "Được tạo vào"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_ir_ui_view__display_name
@@ -97,6 +171,8 @@ msgid "Failed to save rule"
 msgstr "Không thể lưu quy tắc"
 
 #. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__field_id
 msgid "Field"
 msgstr "Trường"
@@ -104,12 +180,12 @@ msgstr "Trường"
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__field_label
 msgid "Field Label"
-msgstr ""
+msgstr "Nhãn trường"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__field_name
 msgid "Field Name"
-msgstr ""
+msgstr "Tên trường"
 
 #. module: health_field_requirements
 #: model:ir.model,name:health_field_requirements.model_field_requirement_rule
@@ -123,6 +199,8 @@ msgid "Field Requirement Rules"
 msgstr "Quy tắc yêu cầu trường"
 
 #. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
 #: model:ir.actions.act_window,name:health_field_requirements.action_field_requirement_rules
 #: model:ir.actions.client,name:health_field_requirements.action_field_requirements_dashboard
 #: model:ir.ui.menu,name:health_field_requirements.menu_field_requirements_root
@@ -130,6 +208,26 @@ msgid "Field Requirements"
 msgstr "Yêu cầu trường"
 
 #. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Finance"
+msgstr "Tài chính"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Follow-up Activities"
+msgstr "Hoạt động theo dõi"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/form_required_popup.js:0
+msgid "Form Required"
+msgstr "Bắt buộc theo biểu mẫu"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__is_global
 msgid "Global (All Roles)"
 msgstr "Toàn cục (tất cả vai trò)"
@@ -140,10 +238,22 @@ msgid "Global Rules"
 msgstr "Quy tắc toàn cục"
 
 #. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/form_required_popup.js:0
+msgid "Go back and fill fields"
+msgstr "Quay lại và điền các trường"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Healthcare Staff"
+msgstr "Nhân viên y tế"
+
+#. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__id
 #: model:ir.model.fields,field_description:health_field_requirements.field_ir_ui_view__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__is_global
@@ -151,31 +261,63 @@ msgid ""
 "If checked, this rule applies to ALL users. If unchecked, only applies to "
 "users with the selected roles."
 msgstr ""
+"Nếu chọn, quy tắc này áp dụng cho TẤT CẢ người dùng. Nếu bỏ chọn, quy tắc "
+"chỉ áp dụng cho người dùng có các vai trò đã chọn."
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Invoices"
+msgstr "Hóa đơn"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "Cập nhật lần cuối bởi"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "Cập nhật lần cuối vào"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Loading fields..."
+msgstr "Đang tải các trường..."
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Loading..."
+msgstr "Đang tải..."
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Master Data"
+msgstr "Dữ liệu danh mục"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/form_required_popup.js:0
+msgid "Missing Required Fields"
+msgstr "Các trường bắt buộc còn thiếu"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__model_id
 msgid "Model"
-msgstr ""
+msgstr "Mô hình"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__model_name
 msgid "Model Name"
-msgstr ""
+msgstr "Tên mô hình"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__display_name
 msgid "Name"
-msgstr ""
+msgstr "Tên"
 
 #. module: health_field_requirements
 #. odoo-python
@@ -184,12 +326,64 @@ msgid "New Rule"
 msgstr "Quy tắc mới"
 
 #. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Package Products"
+msgstr "Sản phẩm gói"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Patient Categories"
+msgstr "Nhóm bệnh nhân"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Payment Transactions"
+msgstr "Giao dịch thanh toán"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Portable Equipment"
+msgstr "Thiết bị di động"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Pricelist"
+msgstr "Bảng giá"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Pricing Rules"
+msgstr "Quy tắc định giá"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Remove rule"
+msgstr "Xóa quy tắc"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/form_required_popup.js:0
+msgid "Required"
+msgstr "Bắt buộc"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__state_values
 #: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_list
 msgid "Required in States"
 msgstr "Bắt buộc trong trạng thái"
 
 #. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__role_ids
 msgid "Roles"
 msgstr "Vai trò"
@@ -197,13 +391,19 @@ msgstr "Vai trò"
 #. module: health_field_requirements
 #: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__role_ids
 msgid "Roles this rule applies to (only when Global is unchecked)"
-msgstr ""
+msgstr "Các vai trò áp dụng quy tắc này (chỉ khi bỏ chọn Toàn cục)"
 
 #. module: health_field_requirements
 #. odoo-javascript
 #: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
 msgid "Rule removed"
 msgstr "Đã xóa quy tắc"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Sales & CRM"
+msgstr "Bán hàng & CRM"
 
 #. module: health_field_requirements
 #: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_form
@@ -216,9 +416,45 @@ msgid "Search Requirement Rules"
 msgstr "Tìm kiếm quy tắc yêu cầu"
 
 #. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Search fields..."
+msgstr "Tìm kiếm trường..."
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Select a model to configure its field requirements"
+msgstr "Chọn một mô hình để cấu hình các trường bắt buộc"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Select a section to configure field requirements"
+msgstr "Chọn một phần để cấu hình các trường bắt buộc"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Select a tile to see its models"
+msgstr "Chọn một mục để xem các mô hình"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Staff Assignment"
+msgstr "Phân công nhân viên"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "Staff Workload"
+msgstr "Khối lượng công việc của nhân viên"
+
+#. module: health_field_requirements
 #: model:ir.model.fields,field_description:health_field_requirements.field_field_requirement_rule__state_values_display
 msgid "States"
-msgstr ""
+msgstr "Trạng thái"
 
 #. module: health_field_requirements
 #: model_terms:ir.ui.view,arch_db:health_field_requirements.view_field_requirement_rule_form
@@ -228,7 +464,7 @@ msgstr "Đối tượng"
 #. module: health_field_requirements
 #: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__field_id
 msgid "The field that should be mandatory"
-msgstr ""
+msgstr "Trường cần được đặt là bắt buộc"
 
 #. module: health_field_requirements
 #. odoo-python
@@ -238,73 +474,64 @@ msgid ""
 "\n"
 "%(fields)s"
 msgstr ""
+"Các trường bắt buộc sau phải được điền trên %(model)s:\n"
+"\n"
+"%(fields)s"
 
 #. module: health_field_requirements
 #: model:ir.model.fields,help:health_field_requirements.field_field_requirement_rule__model_id
 msgid "The model (form) this rule applies to"
-msgstr ""
+msgstr "Mô hình (biểu mẫu) áp dụng quy tắc này"
+
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "Type"
+msgstr "Loại"
+
+#. module: health_field_requirements
+#. odoo-python
+#: code:addons/health_field_requirements/models/field_requirement_rule.py:0
+msgid "User Management"
+msgstr "Quản lý người dùng"
 
 #. module: health_field_requirements
 #: model:ir.model,name:health_field_requirements.model_ir_ui_view
 msgid "View"
 msgstr "Chế độ xem"
 
-#~ msgid "Loading..."
-#~ msgstr "Đang tải..."
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "e.g. draft, confirmed"
+msgstr "ví dụ: nháp, đã xác nhận"
 
-#~ msgid "Select a section to configure field requirements"
-#~ msgstr "Chọn một phần để cấu hình yêu cầu trường"
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/form_required_popup.js:0
+msgid "field(s)"
+msgstr "trường"
 
-#~ msgid "tiles"
-#~ msgstr "ô"
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "model(s)"
+msgstr "mô hình"
 
-#~ msgid "rules"
-#~ msgstr "quy tắc"
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/form_required_popup.js:0
+msgid "must be filled before saving."
+msgstr "phải được điền trước khi lưu."
 
-#~ msgid "Select a tile to see its models"
-#~ msgstr "Chọn một ô để xem các mô hình"
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "rules"
+msgstr "quy tắc"
 
-#~ msgid "model(s)"
-#~ msgstr "mô hình"
-
-#~ msgid "Select a model to configure its field requirements"
-#~ msgstr "Chọn một mô hình để cấu hình yêu cầu trường"
-
-#~ msgid "Search fields..."
-#~ msgstr "Tìm kiếm trường..."
-
-#~ msgid "Loading fields..."
-#~ msgstr "Đang tải trường..."
-
-#~ msgid "Type"
-#~ msgstr "Loại"
-
-#~ msgid "All roles"
-#~ msgstr "Tất cả vai trò"
-
-#~ msgid "e.g. draft, confirmed"
-#~ msgstr "ví dụ: draft, confirmed"
-
-#~ msgid "Remove rule"
-#~ msgstr "Xóa quy tắc"
-
-#~ msgid "Missing Required Fields"
-#~ msgstr "Thiếu các trường bắt buộc"
-
-#~ msgid "field(s)"
-#~ msgstr "trường"
-
-#~ msgid "must be filled before saving."
-#~ msgstr "phải được điền trước khi lưu."
-
-#~ msgid "Form Required"
-#~ msgstr "Bắt buộc trên biểu mẫu"
-
-#~ msgid "Admin Configured"
-#~ msgstr "Quản trị viên cấu hình"
-
-#~ msgid "Admin Rule"
-#~ msgstr "Quy tắc quản trị"
-
-#~ msgid "Go back and fill fields"
-#~ msgstr "Quay lại và điền các trường"
+#. module: health_field_requirements
+#. odoo-javascript
+#: code:addons/health_field_requirements/static/src/js/field_requirements_dashboard.js:0
+msgid "tiles"
+msgstr "mục"

@@ -1,0 +1,126 @@
+# Vietnamese translation for health_fhir_adapter_base
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_fhir_adapter_base\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_fhir_adapter_base
+#: model:ir.ui.menu,name:health_fhir_adapter_base.menu_fhir_adapter_root
+msgid "EMR Export"
+msgstr "Xuất hồ sơ bệnh án điện tử"
+
+#. module: health_fhir_adapter_base
+#: model:ir.actions.act_window,name:health_fhir_adapter_base.action_fhir_submission_log
+#: model:ir.ui.menu,name:health_fhir_adapter_base.menu_fhir_submission_log
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_base.view_fhir_submission_log_list
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_base.view_fhir_submission_log_search
+msgid "EMR Submissions"
+msgstr "Hồ sơ đã xuất"
+
+#. module: health_fhir_adapter_base
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_base.view_fhir_submission_log_form
+msgid "EMR Submission"
+msgstr "Hồ sơ đã xuất"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model,name:health_fhir_adapter_base.model_fhir_submission_log
+#: model:ir.sequence,name:health_fhir_adapter_base.seq_fhir_submission_log
+msgid "FHIR Submission Log"
+msgstr "Nhật ký gửi FHIR"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__name
+msgid "Reference"
+msgstr "Mã tham chiếu"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__patient_id
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__bundle_sha256
+msgid "Bundle SHA-256"
+msgstr "Mã băm SHA-256 của gói"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__entry_count
+msgid "Entry Count"
+msgstr "Số lượng bản ghi"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields.selection,name:health_fhir_adapter_base.selection__fhir_submission_log__state__draft
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields.selection,name:health_fhir_adapter_base.selection__fhir_submission_log__state__exported
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_base.view_fhir_submission_log_search
+msgid "Exported"
+msgstr "Đã xuất"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields.selection,name:health_fhir_adapter_base.selection__fhir_submission_log__state__submitted
+msgid "Submitted"
+msgstr "Đã gửi"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields.selection,name:health_fhir_adapter_base.selection__fhir_submission_log__state__acked
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_base.view_fhir_submission_log_search
+msgid "Acknowledged"
+msgstr "Đã xác nhận"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__error_text
+#: model:ir.model.fields.selection,name:health_fhir_adapter_base.selection__fhir_submission_log__state__error
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_base.view_fhir_submission_log_form
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_base.view_fhir_submission_log_search
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__receipt_ref
+msgid "Receipt Reference"
+msgstr "Mã biên nhận"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__issue_text
+#: model_terms:ir.ui.view,arch_db:health_fhir_adapter_base.view_fhir_submission_log_form
+msgid "Profile Validation Issues"
+msgstr "Vấn đề kiểm tra hồ sơ"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__exported_by_id
+msgid "Exported By"
+msgstr "Người xuất"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__exported_at
+msgid "Exported At"
+msgstr "Thời điểm xuất"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__attachment_id
+msgid "Bundle Attachment"
+msgstr "Tệp đính kèm gói"
+
+#. module: health_fhir_adapter_base
+#: model:ir.model.fields,field_description:health_fhir_adapter_base.field_fhir_submission_log__catchment_province_id
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_fhir_adapter_base
+#. odoo-python
+#: code:addons/health_fhir_adapter_base/models/fhir_submission_log.py:0
+msgid ""
+"Only draft submission logs can be deleted — exported logs are audit "
+"evidence (%s)."
+msgstr ""
+"Chỉ có thể xóa nhật ký ở trạng thái nháp — nhật ký đã xuất là bằng chứng "
+"kiểm toán (%s)."

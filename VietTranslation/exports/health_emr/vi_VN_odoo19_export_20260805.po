@@ -1,0 +1,530 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_emr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-08-05 07:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid ""
+")\n"
+"                    on"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "<strong>Addendum.</strong> This note amends"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid ""
+"<strong>Signed medical record — locked.</strong>\n"
+"                    Signed by"
+msgstr ""
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "A clinical note cannot amend itself."
+msgstr "Một ghi chú lâm sàng không thể tự đính chính chính nó."
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__amendment_ids
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Addenda"
+msgstr "Các phụ lục"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__amends_note_id
+msgid "Amends Note"
+msgstr "Đính chính ghi chú"
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "An addendum can only amend a finalized (signed) note."
+msgstr "Phụ lục chỉ có thể đính chính một ghi chú đã hoàn tất (đã ký)."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "An addendum must concern the same patient as the note it amends."
+msgstr ""
+"Phụ lục phải liên quan đến cùng một bệnh nhân với ghi chú mà nó đính chính."
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_search_emr
+msgid "Author"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields.selection,name:health_emr.selection__health_clinical_note__signed_method__auto
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_search_emr
+msgid "Auto-authenticated"
+msgstr ""
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid ""
+"Auto-authenticated by the system backstop after the signing grace period. "
+"Recorded against the author %(author)s. This is a content lock, not a "
+"clinician signature."
+msgstr ""
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid ""
+"Cannot finalize an empty clinical note — record the clinical content first."
+msgstr ""
+"Không thể hoàn tất ghi chú lâm sàng trống — hãy ghi nội dung lâm sàng trước."
+
+#. module: health_emr
+#: model:ir.model,name:health_emr.model_health_clinical_note
+msgid "Clinical Note"
+msgstr "Lưu ý lâm sàng"
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_search_emr
+msgid "Clinical Notes"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields.selection,name:health_emr.selection__health_clinical_note__signed_method__manual
+msgid "Clinician-signed"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__signature_ref
+msgid "Digital Signature Ref"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__display_name
+#: model:ir.model.fields,field_description:health_emr.field_health_fieldservice_order__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_emr
+#: model:ir.model.fields.selection,name:health_emr.selection__health_clinical_note__emr_state__draft
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_search_emr
+msgid "Draft (unsigned)"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.actions.act_window,help:health_emr.action_unsigned_clinical_notes
+msgid ""
+"Draft clinical notes still need a clinician to finalize &amp; sign them."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__emr_state
+msgid ""
+"Draft notes are editable. A finalized note is a signed, immutable medical "
+"record."
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_list_emr
+msgid "EMR"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__emr_state
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_search_emr
+msgid "EMR Status"
+msgstr "Trạng thái bệnh án"
+
+#. module: health_emr
+#: model:ir.actions.server,name:health_emr.cron_process_unsigned_notes_ir_actions_server
+msgid "EMR: process unsigned clinical notes"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Finalize & Sign"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid ""
+"Finalize and sign this clinical note? Once signed it becomes a locked, "
+"permanent medical record and can no longer be edited — corrections must be "
+"added as an addendum."
+msgstr ""
+"Hoàn tất và ký ghi chú lâm sàng này? Sau khi ký, ghi chú trở thành hồ sơ "
+"bệnh án cố định, bị khóa và không thể chỉnh sửa — mọi đính chính phải được "
+"thêm dưới dạng phụ lục."
+
+#. module: health_emr
+#: model:ir.model.fields.selection,name:health_emr.selection__health_clinical_note__emr_state__final
+msgid "Finalized"
+msgstr "Đã hoàn tất"
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid ""
+"Finalized & signed by %(signer)s (%(role)s) at %(ts)s. Integrity seal "
+"%(algo)s:%(hash)s…"
+msgstr ""
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid ""
+"Finalized clinical notes are permanent medical records and cannot be deleted"
+" (%(names)s). Archive the record instead."
+msgstr ""
+"Ghi chú lâm sàng đã hoàn tất là hồ sơ bệnh án vĩnh viễn và không thể xóa "
+"(%(names)s). Hãy lưu trữ hồ sơ thay vì xóa."
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model,name:health_emr.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__id
+#: model:ir.model.fields,field_description:health_emr.field_health_fieldservice_order__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__message_has_error
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__content_hash
+msgid "Integrity Seal (SHA-256)"
+msgstr "Niêm phong toàn vẹn (SHA-256)"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__is_amendment
+msgid "Is Addendum"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__signed_method
+msgid ""
+"Manual = a clinician explicitly signed. Auto-authenticated = the system "
+"backstop locked an unsigned draft after the grace period (attributed to the "
+"author; NOT a legal digital signature)."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.actions.act_window,help:health_emr.action_unsigned_clinical_notes
+msgid "No unsigned clinical notes."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid ""
+"Only the note author or a head nurse can finalize and sign this clinical "
+"note."
+msgstr ""
+"Chỉ tác giả ghi chú hoặc điều dưỡng trưởng mới có thể hoàn tất và ký ghi chú"
+" lâm sàng này."
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Record Integrity"
+msgstr "Tính toàn vẹn hồ sơ"
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__signature_ref
+msgid ""
+"Reserved for the CA (VNPT-CA/Viettel-CA) digital signature attached to a "
+"finalized note (Phase 3)."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__hash_version
+msgid "Seal Version"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__amends_note_id
+msgid ""
+"Set on an addendum: the finalized note this one corrects or supplements. The"
+" original is never modified."
+msgstr ""
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "Sign this clinical note"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__signed_method
+msgid "Signature Method"
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_search_emr
+msgid "Signed"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__signed_by_id
+msgid "Signed By"
+msgstr "Người ký"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__signed_datetime
+msgid "Signed On"
+msgstr "Ngày ký"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__signed_role
+msgid "Signer Role"
+msgstr "Vai trò người ký"
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__signed_role
+msgid "Snapshot of the signer role at the moment of finalization."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Tamper-Evident Seal"
+msgstr "Niêm phong chống giả mạo"
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__content_hash
+msgid ""
+"Tamper-evident hash of the sealed content, computed at finalization. Anchors"
+" the Phase-3 CA digital signature."
+msgstr ""
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_fieldservice_order.py:0
+msgid ""
+"These service orders have finalized (signed) clinical notes that are "
+"permanent medical records and cannot be deleted (%(names)s). Archive or "
+"cancel the order instead."
+msgstr ""
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "This clinical note is already finalized."
+msgstr "Ghi chú lâm sàng này đã được hoàn tất."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid ""
+"This clinical note is finalized and signed (%(names)s); its content is a "
+"locked medical record and cannot be changed. Create an addendum to add or "
+"correct information."
+msgstr ""
+"Ghi chú lâm sàng này đã hoàn tất và đã ký (%(names)s); nội dung là hồ sơ "
+"bệnh án bị khóa và không thể thay đổi. Hãy tạo phụ lục để bổ sung hoặc đính "
+"chính thông tin."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid ""
+"This clinical note is still a draft. Finalize & sign it to make it a "
+"permanent medical record."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: health_emr
+#: model:ir.actions.act_window,name:health_emr.action_unsigned_clinical_notes
+#: model:ir.ui.menu,name:health_emr.menu_unsigned_clinical_notes
+msgid "Unsigned Clinical Notes"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_emr
+#: model:ir.model.fields,help:health_emr.field_health_clinical_note__website_message_ids
+msgid "Website communication history"
+msgstr ""

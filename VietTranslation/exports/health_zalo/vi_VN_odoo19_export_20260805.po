@@ -1,0 +1,1857 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_zalo
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"PO-Revision-Date: 2026-08-05 07:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid "<i class=\"fa fa-arrow-left\"/> Back to Zalo Settings"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid ""
+"<i class=\"fa fa-check text-success\"/> Check that your Zalo Official "
+"Account is approved"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid ""
+"<i class=\"fa fa-check text-success\"/> Ensure OAuth redirect URI matches in"
+" Zalo app settings"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid "<i class=\"fa fa-check text-success\"/> Try the connection again"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid ""
+"<i class=\"fa fa-check text-success\"/> Verify your App ID and App Secret "
+"are correct"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+msgid "<i class=\"fa fa-comment\" title=\"Zalo Chat\"/> Zalo Chat"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+msgid "<i class=\"fa fa-phone\" title=\"Zalo Call\"/> Zalo Call"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_crm_lead_kanban_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_kanban_zalo
+msgid "<span class=\"text-primary small fw-bold\">Zalo</span>"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+msgid "<span class=\"vu-summary-row__label\">Zalo</span>"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid "<strong>Description:</strong>"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid "<strong>Error Code:</strong>"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__api_base_url
+msgid "API Base URL"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "API Information"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__api_version
+msgid "API Version"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__access_token
+msgid "Access Token"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Access token refreshed successfully"
+msgstr "Đã làm mới access token thành công"
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_needaction
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__active
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__active
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_conversation__state__active
+msgid "Active"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_res_partner__zalo_conversation_id
+#: model:ir.model.fields,help:health_zalo.field_res_users__zalo_conversation_id
+msgid "Active Zalo conversation with this contact"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_ids
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_exception_decoration
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_state
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_type_icon
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__app_id
+msgid "App ID"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__app_secret
+msgid "App Secret"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Archive"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_conversation__state__archived
+msgid "Archived"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_attachment_count
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__attachment_url
+msgid "Attachment URL"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__attachment_count
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__attachment_ids
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Attachments"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_attachment__attachment_type__audio
+msgid "Audio"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__oauth_code
+msgid "Authorization Code"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_kanban
+msgid "Avatar"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Basic Information"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Block User"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_conversation__state__blocked
+msgid "Blocked"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__oauth_state
+msgid "CSRF protection token for OAuth flow"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_healthcare_opportunity_form_zalo
+msgid "Call via Zalo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__oauth_redirect_uri
+msgid "Callback URL for OAuth flow (must match Zalo app settings)"
+msgstr ""
+
+#. module: health_zalo
+#: model:res.groups,comment:health_zalo.group_zalo_manager
+msgid "Can configure Zalo integration and manage conversations"
+msgstr ""
+
+#. module: health_zalo
+#: model:res.groups,comment:health_zalo.group_zalo_user
+msgid "Can view and send Zalo messages"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_link_partner_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_send_notification_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__company_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__company_id
+msgid "Company"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.ui.menu,name:health_zalo.menu_zalo_configuration
+msgid "Configuration"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__name
+msgid "Configuration Name"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.actions.act_window,help:health_zalo.zalo_config_action
+msgid "Configure Zalo Official Account Integration"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_config__state__connected
+msgid "Connected"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Connected to Zalo OA: %s"
+msgstr "Đã kết nối Zalo OA: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Connection Successful"
+msgstr "Kết nối thành công"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Connection test failed: %s"
+msgstr "Kiểm tra kết nối thất bại: %s"
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_res_partner
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__partner_id
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__new_partner_name
+msgid "Contact Name"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_healthcare_opportunity_form_zalo
+msgid "Contact Reason"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_healthcare_opportunity_form_zalo
+msgid "Contact Type"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Content"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__conversation_id
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Conversation"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Conversation Info"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__name
+msgid "Conversation Name"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__created_date
+msgid "Conversation Started"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.ui.menu,name:health_zalo.menu_zalo_conversations
+msgid "Conversations"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__create_new_partner
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_link_partner_wizard_form
+msgid "Create New Contact"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,website_form_label:health_zalo.model_crm_lead
+msgid "Create an Opportunity"
+msgstr "Hãy tạo ra cơ hội"
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__create_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__create_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__create_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__create_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__create_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:0
+msgid "Created new contact and linked to Zalo conversation: %s"
+msgstr "Đã tạo liên hệ mới và liên kết với cuộc trò chuyện Zalo: %s"
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__create_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__create_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__create_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__create_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__create_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Date"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__state__delivered
+msgid "Delivered"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__delivered_date
+msgid "Delivered Date"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__direction
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Direction"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_config__state__disconnected
+msgid "Disconnected"
+msgstr "Ngắt kết nối"
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_res_partner__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message_handler__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_token_manager__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__zalo_user_name
+#: model:ir.model.fields,help:health_zalo.field_zalo_link_partner_wizard__zalo_user_name
+msgid "Display name from Zalo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__downloaded
+msgid "Downloaded"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__downloaded_date
+msgid "Downloaded Date"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_attachment__datas
+msgid "Downloaded file content stored in Odoo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_config__state__draft
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__state__draft
+msgid "Draft"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__new_partner_email
+msgid "Email"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__webhook_enabled
+msgid "Enable webhook for receiving real-time message notifications"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_send_notification_wizard_form
+msgid "Enter your message here..."
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_config__state__error
+msgid "Error"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid "Error Details:"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Error Info"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__error_message
+msgid "Error Message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__state__failed
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Failed"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/services/zalo_api.py:0
+msgid "Failed to connect to Zalo API: %s"
+msgstr "Không thể kết nối API Zalo: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Failed to fetch OA profile"
+msgstr "Không thể tải hồ sơ OA"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/js/zalo_chat_widget.js:0
+msgid "Failed to load conversation"
+msgstr "Không tải được cuộc trò chuyện"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Failed to refresh token: %s"
+msgstr "Không thể làm mới token: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:0
+msgid "Failed to send Zalo message: %s"
+msgstr "Không thể gửi tin nhắn Zalo: %s"
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:0
+msgid "Failed to send message: %s"
+msgstr "Không thể gửi tin nhắn: %s"
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_attachment__attachment_type__file
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__message_type__file
+msgid "File"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__datas
+msgid "File Content"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__file_size
+msgid "File Size (bytes)"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__name
+msgid "Filename"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_follower_ids
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_partner_ids
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__is_follower
+msgid "Following OA"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__activity_type_icon
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__last_message_preview
+msgid "Formatted preview of last message for UI display"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__from_id
+msgid "From ID"
+msgstr ""
+
+#. module: health_zalo
+#: model:res.groups,comment:health_zalo.group_zalo_admin
+msgid "Full access to Zalo configuration and settings"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__has_message
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_crm_lead__has_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_res_partner__has_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_res_users__has_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__has_zalo
+msgid "Has Zalo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__height
+msgid "Height"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_crm_lead__id
+#: model:ir.model.fields,field_description:health_zalo.field_res_partner__id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message_handler__id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_token_manager__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_exception_icon
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__activity_exception_icon
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__message_needaction
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__message_has_error
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__message_has_sms_error
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__message_has_error
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_attachment__attachment_type__image
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__message_type__image
+msgid "Image"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__direction__incoming
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Incoming"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_is_follower
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__new_partner_is_patient
+msgid "Is Patient"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__last_message_date
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Last Message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__last_message_from_us
+msgid "Last Message From Us"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__last_message_text
+msgid "Last Message Text"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__last_sync_date
+msgid "Last Sync"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__write_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__write_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__write_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__write_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__write_uid
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__write_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__write_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__write_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__write_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__write_date
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_res_partner__zalo_last_message_date
+#: model:ir.model.fields,field_description:health_zalo.field_res_users__zalo_last_message_date
+msgid "Last Zalo Message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__latitude
+msgid "Latitude"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_crm_lead
+msgid "Lead"
+msgstr "Khách hàng tiềm năng"
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__message_type__link
+msgid "Link"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_link_partner_wizard_form
+msgid "Link Contact"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_link_partner_wizard_form
+msgid "Link Zalo to Contact"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_zalo_link_partner_wizard
+msgid "Link Zalo to Contact Wizard"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_conversation.py:0
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__partner_id
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Link to Contact"
+msgstr "Liên kết với liên hệ"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_link_partner_wizard_form
+msgid "Link to Existing Contact"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__partner_id
+msgid "Linked Odoo contact/patient"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Linked Records"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:0
+msgid "Linked Zalo conversation to contact: %s"
+msgstr "Đã liên kết cuộc trò chuyện Zalo với liên hệ: %s"
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_attachment__attachment_type__location
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__message_type__location
+msgid "Location"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__location_name
+msgid "Location Name"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "Logo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__longitude
+msgid "Longitude"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__mimetype
+msgid "MIME Type"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.module.category,description:health_zalo.module_category_zalo
+msgid "Manage Zalo messaging and integration access"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Mark as Read"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__message_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__display_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__message_text
+msgid "Message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_count
+msgid "Message Count"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_has_error
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Message Info"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__last_message_preview
+msgid "Message Preview"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:0
+msgid "Message Sent"
+msgstr "Tin nhắn đã gửi"
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__text
+msgid "Message Text"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__message_type
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__message_type
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_send_notification_wizard_form
+msgid "Message Type"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_message__quote_message_id
+msgid "Message being replied to"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:0
+msgid "Message has already been sent"
+msgstr "Tin nhắn đã được gửi"
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_send_notification_wizard__message_text
+msgid "Message to send to the contact via Zalo"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:0
+msgid "Message type %s not yet implemented"
+msgstr "Loại tin nhắn %s chưa được hỗ trợ"
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_ids
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_ids
+#: model:ir.ui.menu,name:health_zalo.menu_zalo_messages
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Messages"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__total_messages_received
+msgid "Messages Received"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__total_messages_sent
+msgid "Messages Sent"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.actions.act_window,help:health_zalo.zalo_message_action
+msgid "Messages sent and received via Zalo will appear here."
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__my_activity_date_deadline
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_calendar_event_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_date_deadline
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_summary
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_type_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:0
+msgid "No Zalo Integration"
+msgstr "Chưa tích hợp Zalo"
+
+#. module: health_zalo
+#: model_terms:ir.actions.act_window,help:health_zalo.zalo_conversation_action
+msgid "No Zalo conversations yet"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "No access token available. Please connect to Zalo first."
+msgstr "Không có access token. Vui lòng kết nối Zalo trước."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:0
+msgid "No image attachment found"
+msgstr "Không tìm thấy hình ảnh đính kèm"
+
+#. module: health_zalo
+#: model_terms:ir.actions.act_window,help:health_zalo.zalo_message_action
+msgid "No messages yet"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "No refresh token available. Please reconnect to Zalo."
+msgstr "Không có refresh token. Vui lòng kết nối lại Zalo."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/services/zalo_api.py:0
+msgid "No valid access token available. Please connect to Zalo first."
+msgstr "Không có access token hợp lệ. Vui lòng kết nối Zalo trước."
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_needaction_counter
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_has_error_counter
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__message_needaction_counter
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__message_has_error_counter
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__unread_count
+msgid "Number of unread messages from user"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__oa_id
+msgid "OA ID"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__access_token
+msgid "OAuth 2.0 access token for Zalo API calls"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__refresh_token
+msgid "OAuth 2.0 refresh token for obtaining new access tokens"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__oauth_redirect_uri
+msgid "OAuth Redirect URI"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__oauth_state
+msgid "OAuth State"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "OAuth Status"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "OAuth Tokens"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid ""
+"Only a system administrator can change where Zalo requests are sent (%s)."
+msgstr ""
+"Chỉ quản trị viên hệ thống mới được thay đổi nơi gửi yêu cầu Zalo (%s)."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:0
+msgid "Only failed messages can be retried"
+msgstr "Chỉ tin nhắn thất bại mới có thể gửi lại"
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__active
+msgid "Only one configuration can be active per company"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_message.py:0
+msgid "Only outgoing messages can be sent"
+msgstr "Chỉ có thể gửi tin nhắn đi"
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Open Chat"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_healthcare_opportunity_form_zalo
+msgid "Open Zalo Chat"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__direction__outgoing
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Outgoing"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__new_partner_phone
+msgid "Phone"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__zalo_phone_number
+msgid "Phone number associated with Zalo account (if available)"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:0
+msgid "Please enter a message to send."
+msgstr "Vui lòng nhập tin nhắn để gửi."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:0
+msgid "Please enter a name for the new contact."
+msgstr "Vui lòng nhập tên cho liên hệ mới."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:0
+msgid "Please select a contact to link."
+msgstr "Vui lòng chọn liên hệ để liên kết."
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__last_message_text
+msgid "Preview of last message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__zalo_user_avatar
+msgid "Profile picture URL from Zalo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__quote_message_id
+msgid "Quoted Message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__rating_ids
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__raw_data
+msgid "Raw Data"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_message__raw_data
+msgid "Raw JSON data from Zalo API"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__is_read
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__state__read
+msgid "Read"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__read_date
+msgid "Read Date"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_send_notification_wizard_form
+msgid "Recipient"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__refresh_token
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Refresh Token"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__partner_id
+msgid "Related Contact"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__activity_user_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Retry"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__message_has_sms_error
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_search
+msgid "Search Conversations"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Search Messages"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__webhook_secret
+msgid "Secret key for validating webhook signatures"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_link_partner_wizard__partner_id
+msgid "Select existing contact to link to this Zalo conversation"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Send"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_send_notification_wizard_form
+msgid "Send Message"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/health_patient.py:0
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_send_notification_wizard_form
+msgid "Send Zalo Notification"
+msgstr "Gửi thông báo Zalo"
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_zalo_send_notification_wizard
+msgid "Send Zalo Notification Wizard"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Sender/Recipient"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__state__sending
+msgid "Sending"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__state__sent
+msgid "Sent"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__sent_date
+msgid "Sent Date"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.actions.act_window,help:health_zalo.zalo_config_action
+msgid ""
+"Set up your Zalo Official Account credentials to enable messaging and "
+"notifications."
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Statistics"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__state
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__state
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__state
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Status"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__activity_state
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__message_type__sticker
+msgid "Sticker"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+#: code:addons/health_zalo/wizard/zalo_link_partner_wizard.py:0
+msgid "Success"
+msgstr "Thành công"
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__message_type__template
+msgid "Template"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__oauth_code
+msgid "Temporary code from OAuth callback (used once to obtain tokens)"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Test Connection"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_message__message_type__text
+msgid "Text"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_send_notification_wizard__message_type__text
+msgid "Text Message"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid ""
+"There is already an unconfigured Zalo configuration for this company. Finish"
+" or deactivate it first."
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid "There was a problem connecting to Zalo."
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid ""
+"This Zalo Official Account is already configured. Please deactivate the "
+"existing configuration first."
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/crm_lead.py:0
+#: code:addons/health_zalo/models/res_partner.py:0
+msgid "This contact does not have a Zalo User ID configured."
+msgstr "Liên hệ này chưa có ID Zalo."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:0
+msgid ""
+"This contact does not have a Zalo User ID configured. Please link their Zalo"
+" account first."
+msgstr "Liên hệ này chưa có ID Zalo. Vui lòng liên kết tài khoản Zalo trước."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:0
+msgid ""
+"This contact does not have a Zalo User ID. Please link their Zalo account "
+"first."
+msgstr "Liên hệ này chưa có ID Zalo. Vui lòng liên kết tài khoản Zalo trước."
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__thumbnail_url
+msgid "Thumbnail URL"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_attachment__thumbnail_url
+msgid "Thumbnail preview URL (for images/videos)"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_res_partner__zalo_last_message_date
+#: model:ir.model.fields,help:health_zalo.field_res_users__zalo_last_message_date
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__last_message_date
+msgid "Timestamp of most recent message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__to_id
+msgid "To ID"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__token_expires_at
+msgid "Token Expires At"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__token_type
+msgid "Token Type"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__last_message_from_us
+msgid "True if last message was sent by us"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid ""
+"Turn this channel off from Care Command Setup → Channel Center, so the "
+"conversations and the audit trail stay consistent."
+msgstr ""
+"Hãy tắt kênh này từ Care Command Setup → Trung tâm Kênh để cuộc trò chuyện "
+"và nhật ký kiểm toán luôn nhất quán."
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__attachment_type
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Type"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__activity_exception_decoration
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_attachment__attachment_url
+msgid "URL to download attachment from Zalo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__webhook_url
+msgid "URL where Zalo will send incoming message notifications"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Unarchive"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__zalo_user_id
+#: model:ir.model.fields,help:health_zalo.field_zalo_link_partner_wizard__zalo_user_id
+msgid "Unique Zalo user identifier"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_res_partner__zalo_user_id
+#: model:ir.model.fields,help:health_zalo.field_res_users__zalo_user_id
+#: model:ir.model.fields,help:health_zalo.field_zalo_send_notification_wizard__zalo_user_id
+msgid "Unique Zalo user identifier for this contact"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_crm_lead__zalo_user_id
+msgid "Unique Zalo user identifier for this lead/contact"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_message__zalo_message_id
+msgid "Unique message identifier from Zalo"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_search
+msgid "Unread"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__unread_count
+msgid "Unread Messages"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields.selection,name:health_zalo.selection__zalo_attachment__attachment_type__video
+msgid "Video"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Viet Uc"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+msgid "View All Conversations"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+msgid "View Conversations"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Webhook Configuration"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__webhook_enabled
+msgid "Webhook Enabled"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__webhook_secret
+msgid "Webhook Secret"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Webhook Settings"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__webhook_url
+msgid "Webhook URL"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_config__website_message_ids
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__website_message_ids
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid "What to do next:"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__token_expires_at
+msgid "When the current access token will expire"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_attachment__downloaded
+msgid "Whether file has been downloaded from Zalo to Odoo"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_message__is_read
+msgid "Whether message has been read (for incoming messages)"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_res_partner__has_zalo
+#: model:ir.model.fields,help:health_zalo.field_res_users__has_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_send_notification_wizard__has_zalo
+msgid "Whether this contact has Zalo integration"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_crm_lead__has_zalo
+msgid "Whether this lead has Zalo integration"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_conversation__is_follower
+msgid "Whether user is following the Official Account"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_attachment__width
+msgid "Width"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.ui.menu,name:health_zalo.menu_zalo_root
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+msgid "Zalo"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/services/zalo_api.py:0
+msgid "Zalo API error: %s"
+msgstr "Lỗi API Zalo: %s"
+
+#. module: health_zalo
+#: model:res.groups,name:health_zalo.group_zalo_admin
+msgid "Zalo Administrator"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_crm_lead_kanban_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_kanban_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_healthcare_opportunity_form_zalo
+msgid "Zalo Call"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_crm_lead_kanban_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_kanban_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_healthcare_opportunity_form_zalo
+msgid "Zalo Chat"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+msgid "Zalo Chats"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.actions.act_window,name:health_zalo.zalo_config_action
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__config_id
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Zalo Configuration"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_list
+msgid "Zalo Configurations"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+msgid "Zalo Connection"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_zalo_conversation
+#: model:ir.model.fields,field_description:health_zalo.field_res_partner__zalo_conversation_id
+#: model:ir.model.fields,field_description:health_zalo.field_res_users__zalo_conversation_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__conversation_id
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Zalo Conversation"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/health_patient.py:0
+#: code:addons/health_zalo/models/res_partner.py:0
+#: model:ir.actions.act_window,name:health_zalo.zalo_conversation_action
+#: model:ir.model.fields,field_description:health_zalo.field_res_partner__zalo_conversation_count
+#: model:ir.model.fields,field_description:health_zalo.field_res_users__zalo_conversation_count
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_list
+msgid "Zalo Conversations"
+msgstr "Cuộc trò chuyện Zalo"
+
+#. module: health_zalo
+#: model:ir.module.category,name:health_zalo.module_category_zalo
+#: model:res.groups.privilege,name:health_zalo.res_groups_privilege_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+msgid "Zalo Integration"
+msgstr ""
+
+#. module: health_zalo
+#: model:res.groups,name:health_zalo.group_zalo_manager
+msgid "Zalo Manager"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_zalo_message
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_form
+msgid "Zalo Message"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_zalo_attachment
+msgid "Zalo Message Attachment"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_zalo_message_handler
+msgid "Zalo Message Handler Service"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_message__zalo_message_id
+msgid "Zalo Message ID"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.actions.act_window,name:health_zalo.zalo_message_action
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_message_view_list
+msgid "Zalo Messages"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Zalo OA %s"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_zalo_config
+msgid "Zalo OA Configuration"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.oauth_error
+msgid "Zalo OAuth Error"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__app_id
+msgid ""
+"Zalo Official Account App ID from https://developers.zalo.me. Empty for an "
+"account connected through the Channel Center, where the app lives on the "
+"platform application instead."
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__app_secret
+msgid "Zalo Official Account App Secret (only visible to administrators)"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Zalo Official Account Credentials"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_config__oa_id
+msgid "Zalo Official Account ID"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/crm_lead.py:0
+#: code:addons/health_zalo/models/res_partner.py:0
+msgid ""
+"Zalo Official Account is not configured.\n"
+"\n"
+"Please configure Zalo integration first by going to:\n"
+"Zalo > Configuration > Zalo Settings"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__zalo_phone_number
+msgid "Zalo Phone Number"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.ui.menu,name:health_zalo.menu_zalo_config
+msgid "Zalo Settings"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model,name:health_zalo.model_zalo_token_manager
+msgid "Zalo Token Manager Service"
+msgstr ""
+
+#. module: health_zalo
+#: model:res.groups,name:health_zalo.group_zalo_user
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_form
+msgid "Zalo User"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__zalo_user_avatar
+msgid "Zalo User Avatar URL"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_crm_lead__zalo_user_id
+#: model:ir.model.fields,field_description:health_zalo.field_res_partner__zalo_user_id
+#: model:ir.model.fields,field_description:health_zalo.field_res_users__zalo_user_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__zalo_user_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__zalo_user_id
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_send_notification_wizard__zalo_user_id
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_healthcare_opportunity_form_zalo
+msgid "Zalo User ID"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.res_partner_view_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_health_patient_form_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.view_healthcare_opportunity_form_zalo
+msgid "Zalo User ID (optional)"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_link_partner_wizard_form
+msgid "Zalo User Information"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_conversation__zalo_user_name
+#: model:ir.model.fields,field_description:health_zalo.field_zalo_link_partner_wizard__zalo_user_name
+msgid "Zalo User Name"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/zalo_config.py:0
+msgid "Zalo account disconnected successfully"
+msgstr "Đã ngắt kết nối tài khoản Zalo thành công"
+
+#. module: health_zalo
+#: model_terms:ir.actions.act_window,help:health_zalo.zalo_conversation_action
+msgid ""
+"Zalo conversations will appear here when users send messages to your "
+"Official Account."
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_config_view_form
+msgid "Zalo is connected from <b>Care Command Setup → Channel Center</b>."
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/crm_lead.py:0
+#: code:addons/health_zalo/models/res_partner.py:0
+msgid ""
+"Zalo is not connected yet. Open Care Command Setup → Channel Center and "
+"connect your Official Account."
+msgstr ""
+"Zalo chưa được kết nối. Hãy mở Care Command Setup → Trung tâm Kênh và kết "
+"nối Official Account của bạn."
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/wizard/zalo_send_notification_wizard.py:0
+msgid "Zalo message sent successfully to %s"
+msgstr "Đã gửi tin nhắn Zalo thành công đến %s"
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_message__to_id
+msgid "Zalo user ID of recipient"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.model.fields,help:health_zalo.field_zalo_message__from_id
+msgid "Zalo user ID of sender"
+msgstr ""
+
+#. module: health_zalo
+#: model:ir.actions.server,name:health_zalo.ir_cron_zalo_refresh_tokens_ir_actions_server
+msgid "Zalo: Refresh Expiring Tokens"
+msgstr ""
+
+#. module: health_zalo
+#: model_terms:ir.ui.view,arch_db:health_zalo.zalo_conversation_view_kanban
+msgid "new"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/res_partner.py:0
+msgid "partner_id"
+msgstr ""
+
+#. module: health_zalo
+#. odoo-python
+#: code:addons/health_zalo/models/health_patient.py:0
+msgid "patient_id"
+msgstr ""

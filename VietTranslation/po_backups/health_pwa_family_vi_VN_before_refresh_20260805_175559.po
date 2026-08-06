@@ -1,0 +1,64 @@
+# Vietnamese translation for health_pwa_family
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_pwa_family\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_pwa_family
+#: model:ir.model.fields.selection,name:health_pwa_family.selection__health_outbound_message__purpose__family_update
+msgid "Family Update (post-visit)"
+msgstr "Cập nhật gia đình (sau thăm khám)"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Access denied"
+msgstr "Truy cập bị từ chối"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Not assigned to this visit"
+msgstr "Bạn không được phân công cho lượt thăm khám này"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Messaging is disabled"
+msgstr "Tính năng nhắn tin đang tắt"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Invalid thread"
+msgstr "Kênh tin nhắn không hợp lệ"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Thread not found for this visit"
+msgstr "Không tìm thấy kênh tin nhắn cho lượt thăm khám này"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Please write an update first."
+msgstr "Vui lòng nhập nội dung cập nhật trước."
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "No eligible family recipients for this patient."
+msgstr "Không có người thân đủ điều kiện nhận tin cho bệnh nhân này."
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Update sent to %s family recipient(s)."
+msgstr "Đã gửi cập nhật đến %s người thân."

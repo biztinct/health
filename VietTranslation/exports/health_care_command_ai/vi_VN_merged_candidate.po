@@ -1,0 +1,213 @@
+# Vietnamese translation for health_care_command_ai
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_care_command_ai\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/xml/care_command_ai.xml:0
+msgid "AI"
+msgstr ""
+
+#. module: health_care_command_ai
+#: model:ir.model.fields,field_description:health_care_command_ai.field_res_config_settings__care_ai_brief
+msgid "AI Continuity Brief"
+msgstr ""
+
+#. module: health_care_command_ai
+#: model:ir.model.fields,field_description:health_care_command_ai.field_res_config_settings__care_ai_provider_id
+msgid "AI Provider"
+msgstr ""
+
+#. module: health_care_command_ai
+#: model:ir.model.fields,field_description:health_care_command_ai.field_res_config_settings__care_ai_drafts
+msgid "AI Reply Drafts"
+msgstr ""
+
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/xml/care_command_ai.xml:0
+msgid "AI assist"
+msgstr "Trợ lý AI"
+
+#. module: health_care_command_ai
+#. odoo-python
+#: code:addons/health_care_command_ai/models/care_ai.py:0
+msgid "AI briefing is not enabled."
+msgstr "Tóm tắt bằng AI chưa được bật."
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid "AI continuity brief"
+msgstr "Tóm tắt bàn giao bằng AI"
+
+# ---------------------------------------------------------------------------
+# JS + QWeb — the .ai-only affordances
+# ---------------------------------------------------------------------------
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/js/care_command_ai.js:0
+#: code:addons/health_care_command_ai/static/src/xml/care_command_ai.xml:0
+msgid "AI draft — review before sending"
+msgstr "Bản nháp AI — hãy xem lại trước khi gửi"
+
+#. module: health_care_command_ai
+#. odoo-python
+#: code:addons/health_care_command_ai/models/care_ai.py:0
+msgid "AI drafting is not enabled."
+msgstr "Soạn thảo bằng AI chưa được bật."
+
+# ---------------------------------------------------------------------------
+# Python — service messages
+# ---------------------------------------------------------------------------
+#. module: health_care_command_ai
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_care_command_ai/models/care_ai.py:0
+#: code:addons/health_care_command_ai/static/src/js/care_command_ai.js:0
+msgid "AI is unavailable — continue manually."
+msgstr "AI hiện không khả dụng — vui lòng tiếp tục thủ công."
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid "AI provider"
+msgstr "Nhà cung cấp AI"
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid "AI reply drafts"
+msgstr "Bản nháp trả lời bằng AI"
+
+#. module: health_care_command_ai
+#: model:ir.model.fields,field_description:health_care_command_ai.field_res_config_settings__care_ai_allow_cloud
+msgid "Allow Cloud AI Providers"
+msgstr ""
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid "Allow cloud AI providers"
+msgstr "Cho phép nhà cung cấp AI đám mây"
+
+# ---------------------------------------------------------------------------
+# Settings (view terms)
+# ---------------------------------------------------------------------------
+#. module: health_care_command_ai
+#: model:ir.model,name:health_care_command_ai.model_care_ai_assist
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid "Care Command AI Assist"
+msgstr "Trợ lý AI Care Command"
+
+#. module: health_care_command_ai
+#: model:ir.model,name:health_care_command_ai.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/xml/care_command_ai.xml:0
+msgid "Dismiss"
+msgstr "Đóng"
+
+#. module: health_care_command_ai
+#: model:ir.model.fields,field_description:health_care_command_ai.field_care_ai_assist__display_name
+#: model:ir.model.fields,field_description:health_care_command_ai.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/xml/care_command_ai.xml:0
+msgid "Draft"
+msgstr "Soạn nháp"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/xml/care_command_ai.xml:0
+msgid "Drafting…"
+msgstr "Đang soạn…"
+
+#. module: health_care_command_ai
+#: model:ir.model.fields,field_description:health_care_command_ai.field_res_config_settings__care_ai_enabled
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid "Enable Care Command AI"
+msgstr "Bật Trợ lý AI Care Command"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/xml/care_command_ai.xml:0
+msgid "Generate brief"
+msgstr "Tạo tóm tắt"
+
+#. module: health_care_command_ai
+#. odoo-python
+#: code:addons/health_care_command_ai/models/care_ai.py:0
+msgid "Generated just now by %s"
+msgstr "Vừa được tạo bởi %s"
+
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/xml/care_command_ai.xml:0
+msgid "Generating…"
+msgstr "Đang tạo…"
+
+#. module: health_care_command_ai
+#: model:ir.model.fields,field_description:health_care_command_ai.field_care_ai_assist__id
+#: model:ir.model.fields,field_description:health_care_command_ai.field_res_config_settings__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid ""
+"Off by default (data sovereignty): only an Ollama (local) provider is "
+"called. A cloud provider is refused unless this is on."
+msgstr ""
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid ""
+"Off by default. When on, the Care Command wall gains an optional 'Draft' "
+"button and a continuity 'AI' card. The AI only ever fills the composer or a "
+"card — it never sends."
+msgstr ""
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid ""
+"Show the composer 'Draft' button (only when the master switch above is on)."
+msgstr ""
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid ""
+"Show the on-demand 'AI' summary card (only when the master switch above is "
+"on)."
+msgstr ""
+
+#. module: health_care_command_ai
+#. odoo-javascript
+#: code:addons/health_care_command_ai/static/src/js/care_command_ai.js:0
+msgid "The AI returned nothing — continue manually."
+msgstr "AI không trả về nội dung — vui lòng tiếp tục thủ công."
+
+#. module: health_care_command_ai
+#: model_terms:ir.ui.view,arch_db:health_care_command_ai.res_config_settings_view_form_care_ai
+msgid ""
+"The bi.ai.provider used for drafts and briefs. Ollama (local) is the "
+"sovereignty path."
+msgstr ""
+
+#. module: health_care_command_ai
+#: model:ir.model.fields,help:health_care_command_ai.field_res_config_settings__care_ai_allow_cloud
+msgid ""
+"When off (default) only an Ollama (local) provider is called; a cloud "
+"provider is refused. Data-sovereignty control."
+msgstr ""

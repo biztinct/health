@@ -1,0 +1,1023 @@
+# Vietnamese translation for health_care_command
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_care_command\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+#: model:cms.sidebar.item,name:health_care_command.item_care_command
+#: model:ir.actions.client,name:health_care_command.action_care_command
+#: model:ir.ui.menu,name:health_care_command.menu_care_command
+msgid "Care Command"
+msgstr "Care Command"
+
+# ---------------------------------------------------------------------------
+# Status values
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__status__needs_reply
+msgid "Needs reply"
+msgstr "Cần trả lời"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__status__waiting
+msgid "Waiting"
+msgstr "Đang chờ khách"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__status__junk_suspect
+msgid "Junk?"
+msgstr "Rác?"
+
+#. module: health_care_command
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__status__closed
+msgid "Closed"
+msgstr "Đã đóng"
+
+# ---------------------------------------------------------------------------
+# Channel labels + short (dock) forms
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__zalo
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__zalo
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__zalo
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_reply_template__channel__zalo
+msgid "Zalo"
+msgstr "Zalo"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "ZALO"
+msgstr "ZALO"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__call
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__call
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__call
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_reply_template__channel__call
+msgid "Calls"
+msgstr "Cuộc gọi"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "CALLS"
+msgstr "CUỘC GỌI"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields,field_description:health_care_command.field_care_conversation__email_normalized
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__email
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__email
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__email
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_reply_template__channel__email
+msgid "Email"
+msgstr "Email"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "EMAIL"
+msgstr "EMAIL"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__zns
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__zns
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__zns
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_reply_template__channel__zns
+msgid "ZNS"
+msgstr "ZNS"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__whatsapp
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__whatsapp
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__whatsapp
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "WHATSAPP"
+msgstr "WHATSAPP"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__fb
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__fb
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__fb
+msgid "Messenger"
+msgstr "Messenger"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "FB MSGR"
+msgstr "FB MSGR"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__telegram
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__telegram
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__telegram
+msgid "Telegram"
+msgstr "Telegram"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "TELEGRAM"
+msgstr "TELEGRAM"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_primary__webchat
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_declared__webchat
+#: model:ir.model.fields.selection,name:health_care_command.selection__care_conversation__channel_effective__webchat
+msgid "Web chat"
+msgstr "Chat web"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "WEB CHAT"
+msgstr "CHAT WEB"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+#: model:ir.model.fields,field_description:health_care_command.field_care_conversation__partner_id
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "CONTACT"
+msgstr "LIÊN HỆ"
+
+# ---------------------------------------------------------------------------
+# Chat-list section headers
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Needs reply — mine"
+msgstr "Cần trả lời — của tôi"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Unclaimed — anyone can take"
+msgstr "Chưa ai nhận — ai cũng có thể nhận"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "With teammates"
+msgstr "Đồng nghiệp đang xử lý"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Waiting / done for now"
+msgstr "Đang chờ / tạm xong"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Junk — confirm to archive"
+msgstr "Rác — xác nhận để lưu trữ"
+
+# ---------------------------------------------------------------------------
+# Wall reason lines + snippets
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "New"
+msgstr "Mới"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Booking in %sh"
+msgstr "Lịch hẹn sau %s giờ"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Missed call — callback due"
+msgstr "Cuộc gọi nhỡ — cần gọi lại"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "New lead · first message"
+msgstr "Khách mới · tin nhắn đầu tiên"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Waiting on customer"
+msgstr "Đang chờ khách hàng"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Marked as junk"
+msgstr "Đã đánh dấu rác"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Open"
+msgstr "Đang mở"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Missed call · rang recently"
+msgstr "Cuộc gọi nhỡ · vừa đổ chuông"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Call logged"
+msgstr "Đã ghi nhận cuộc gọi"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Unknown contact"
+msgstr "Liên hệ chưa xác định"
+
+# ---------------------------------------------------------------------------
+# Header-strip actions + care rail (Python service results)
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "%(role)s of %(client)s"
+msgstr "%(role)s của %(client)s"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Quick Booking"
+msgstr "Đặt lịch nhanh"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "No client or lead on this conversation to book."
+msgstr "Cuộc hội thoại này không có khách hàng hay lead để đặt lịch."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Callback — Care Command"
+msgstr "Gọi lại — Care Command"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Callback scheduled for today."
+msgstr "Đã lên lịch gọi lại hôm nay."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "No lead or contact to schedule a callback on."
+msgstr "Không có lead hay liên hệ để lên lịch gọi lại."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Internal note logged."
+msgstr "Đã ghi chú nội bộ."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "The note is empty."
+msgstr "Ghi chú trống."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Care Command lead"
+msgstr "Lead từ Care Command"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Lead created and linked."
+msgstr "Đã tạo và liên kết lead."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "This conversation already has a lead."
+msgstr "Cuộc hội thoại này đã có lead."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Only a lead-anchored conversation can be logged."
+msgstr "Chỉ cuộc hội thoại gắn với lead mới có thể ghi nhận."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "New Client"
+msgstr "Khách hàng mới"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Escalation needs a lead anchor."
+msgstr "Việc chuyển tiếp cần gắn với một lead."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Unsupported status."
+msgstr "Trạng thái không được hỗ trợ."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Notification"
+msgstr "Thông báo"
+
+# ---------------------------------------------------------------------------
+# Access / validation errors (Python)
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Care Command is restricted to CRM staff."
+msgstr "Care Command chỉ dành cho nhân viên CRM."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Conversation not found."
+msgstr "Không tìm thấy cuộc hội thoại."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Message is empty."
+msgstr "Tin nhắn trống."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "This conversation has no Zalo channel."
+msgstr "Cuộc hội thoại này không có kênh Zalo."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "This conversation has no email recipient."
+msgstr "Cuộc hội thoại này không có người nhận email."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Only the owner or a manager can release this conversation."
+msgstr "Chỉ chủ sở hữu hoặc quản lý mới có thể nhả cuộc hội thoại này."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Only a CRM manager can take over an owned conversation."
+msgstr "Chỉ quản lý CRM mới có thể tiếp quản cuộc hội thoại đã có chủ."
+
+# ---------------------------------------------------------------------------
+# JS toasts + loading/error copy
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Could not load Care Command."
+msgstr "Không thể tải Care Command."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Could not load the conversation."
+msgstr "Không thể tải cuộc hội thoại."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Something went wrong."
+msgstr "Đã có lỗi xảy ra."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "now"
+msgstr "vừa xong"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Claimed — it's yours now."
+msgstr "Đã nhận — giờ là của bạn."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "someone"
+msgstr "người khác"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Already claimed by %s"
+msgstr "Đã được %s nhận"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Released."
+msgstr "Đã nhả."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Taken over."
+msgstr "Đã tiếp quản."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Marked as junk (reversible)."
+msgstr "Đã đánh dấu rác (có thể hoàn tác)."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Updated."
+msgstr "Đã cập nhật."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Type the note in the message box, then tap Note."
+msgstr "Nhập ghi chú vào ô tin nhắn, rồi bấm Ghi chú."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "No phone number on this conversation."
+msgstr "Cuộc hội thoại này không có số điện thoại."
+
+# ---------------------------------------------------------------------------
+# QWeb chrome (workspace shell)
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Channels"
+msgstr "Kênh"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "ALL"
+msgstr "TẤT CẢ"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Wall"
+msgstr "Bảng tin"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Conversation"
+msgstr "Hội thoại"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Mine"
+msgstr "Của tôi"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Everyone"
+msgstr "Mọi người"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "New Contact"
+msgstr "Liên hệ mới"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Loading…"
+msgstr "Đang tải…"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "No open conversations"
+msgstr "Không có cuộc hội thoại đang mở"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "No conversations."
+msgstr "Không có cuộc hội thoại."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Tile size = urgency · click a tile to open · amber dashed = unclaimed"
+msgstr "Kích thước ô = độ khẩn · bấm vào ô để mở · viền vàng đứt = chưa ai nhận"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Clear channel filter ×"
+msgstr "Xóa bộ lọc kênh ×"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Search people, phones, messages…"
+msgstr "Tìm người, số điện thoại, tin nhắn…"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "CLAIM"
+msgstr "NHẬN"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Claim"
+msgstr "Nhận"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "ARCHIVE"
+msgstr "LƯU TRỮ"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Pick a conversation."
+msgstr "Chọn một cuộc hội thoại."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Assign to me"
+msgstr "Giao cho tôi"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Take over"
+msgstr "Tiếp quản"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Release"
+msgstr "Nhả"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Call"
+msgstr "Gọi"
+
+# ---- header action strip ----
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Book"
+msgstr "Đặt lịch"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Callback"
+msgstr "Gọi lại"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Note"
+msgstr "Ghi chú"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Log"
+msgstr "Ghi nhận"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+#: model:ir.model.fields,field_description:health_care_command.field_care_conversation__lead_id
+msgid "Lead"
+msgstr "Lead"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Escalate"
+msgstr "Chuyển tiếp"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Junk"
+msgstr "Rác"
+
+# ---- care rail ----
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Care"
+msgstr "Chăm sóc"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "History"
+msgstr "Lịch sử"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Care snapshot"
+msgstr "Tổng quan chăm sóc"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Relationships"
+msgstr "Quan hệ"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "No identity linked yet — matches once a phone/email is shared."
+msgstr "Chưa liên kết danh tính — sẽ khớp khi có số điện thoại/email."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Bookings"
+msgstr "Lịch hẹn"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "NEXT"
+msgstr "KẾ TIẾP"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "DONE"
+msgstr "ĐÃ XONG"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Lifetime"
+msgstr "Trọn đời"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Code"
+msgstr "Mã"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Age"
+msgstr "Tuổi"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Area"
+msgstr "Khu vực"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "All interactions · every channel"
+msgstr "Mọi tương tác · mọi kênh"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "No history yet."
+msgstr "Chưa có lịch sử."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "No messages yet."
+msgstr "Chưa có tin nhắn."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Internal note"
+msgstr "Ghi chú nội bộ"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "ZNS notification"
+msgstr "Thông báo ZNS"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "This channel is read-only in Phase 1."
+msgstr "Kênh này chỉ đọc trong Giai đoạn 1."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Replies for this channel arrive in Phase 2 — use Call"
+msgstr "Tính năng trả lời kênh này có ở Giai đoạn 2 — hãy gọi điện"
+
+# ---------------------------------------------------------------------------
+# Phase 3 — reply templates + watchlist + reminder + consent + ringing/ticker
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Quick replies"
+msgstr "Trả lời nhanh"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Reminder"
+msgstr "Nhắc hẹn"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Consent"
+msgstr "Đồng ý"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Schedule a reminder"
+msgstr "Lên lịch nhắc hẹn"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "In (days)"
+msgstr "Sau (ngày)"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Note (optional)…"
+msgstr "Ghi chú (không bắt buộc)…"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Schedule"
+msgstr "Lên lịch"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Open"
+msgstr "Mở"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Ringing now…"
+msgstr "Đang đổ chuông…"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Ringing %s"
+msgstr "Đang gọi %s"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Incoming call"
+msgstr "Cuộc gọi đến"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Unknown caller"
+msgstr "Người gọi chưa xác định"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "No open conversation yet for this caller."
+msgstr "Chưa có cuộc hội thoại đang mở cho người gọi này."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Claimed by %s"
+msgstr "%s đã nhận"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/js/care_command.js:0
+msgid "Conversation updated"
+msgstr "Cuộc hội thoại đã cập nhật"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Care Command reminder"
+msgstr "Nhắc hẹn Care Command"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Reminder scheduled."
+msgstr "Đã lên lịch nhắc hẹn."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "No lead or contact to set a reminder on."
+msgstr "Không có lead hay liên hệ để đặt nhắc hẹn."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Consent records"
+msgstr "Hồ sơ đồng ý"
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "Consent records are not available on this server."
+msgstr "Hồ sơ đồng ý không khả dụng trên máy chủ này."
+
+#. module: health_care_command
+#. odoo-python
+#: code:addons/health_care_command/models/care_conversation.py:0
+msgid "This conversation has no client to show consent for."
+msgstr "Cuộc hội thoại này không có khách hàng để xem hồ sơ đồng ý."
+
+# ---------------------------------------------------------------------------
+# Phase-4 core touch: the two Phase-3 gear-button tooltips (QWeb title=)
+# were missing from this catalog (declared one-line i18n touch, §7).
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Manage reply templates"
+msgstr "Quản lý mẫu trả lời"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Manage watchlist phrases"
+msgstr "Quản lý cụm từ theo dõi"
+
+# ---------------------------------------------------------------------------
+# Phase-5 "Surface Truth": channel-truth field labels + Leads bucket / views
+# ---------------------------------------------------------------------------
+#. module: health_care_command
+#: model:ir.model.fields,field_description:health_care_command.field_care_conversation__channel_declared
+msgid "Declared Channel"
+msgstr "Kênh khai báo"
+
+#. module: health_care_command
+#: model:ir.model.fields,field_description:health_care_command.field_care_conversation__channel_effective
+msgid "Effective Channel"
+msgstr "Kênh hiệu lực"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Leads"
+msgstr "Khách tiềm năng"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Live wall"
+msgstr "Bảng trực tiếp"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Live conversations"
+msgstr "Hội thoại trực tiếp"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "not yet reached on any channel"
+msgstr "chưa liên hệ được qua kênh nào"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Not yet reached on any channel"
+msgstr "Chưa liên hệ được qua kênh nào"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "need reply"
+msgstr "cần trả lời"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "These contacts declared how they'd reach us but no message, call or email has landed yet."
+msgstr "Những liên hệ này đã khai báo cách họ sẽ liên hệ nhưng chưa có tin nhắn, cuộc gọi hay email nào."
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "not yet reached on any channel — open ›"
+msgstr "chưa liên hệ được qua kênh nào — mở ›"
+
+#. module: health_care_command
+#. odoo-javascript
+#: code:addons/health_care_command/static/src/xml/care_command.xml:0
+msgid "Contacts not yet reached on any channel — reply, call or message to move them onto the live wall."
+msgstr "Liên hệ chưa được tiếp cận qua kênh nào — trả lời, gọi hoặc nhắn tin để đưa họ lên bảng trực tiếp."

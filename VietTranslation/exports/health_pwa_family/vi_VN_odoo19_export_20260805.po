@@ -1,0 +1,108 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_pwa_family
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"PO-Revision-Date: 2026-08-05 07:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Access denied"
+msgstr "Truy cập bị từ chối"
+
+#. module: health_pwa_family
+#: model:ir.model.fields,field_description:health_pwa_family.field_health_family_thread__display_name
+#: model:ir.model.fields,field_description:health_pwa_family.field_health_outbound_message__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: health_pwa_family
+#: model:ir.model,name:health_pwa_family.model_health_family_thread
+msgid "Family Message Thread"
+msgstr "Kênh tin nhắn gia đình"
+
+#. module: health_pwa_family
+#: model:ir.model.fields.selection,name:health_pwa_family.selection__health_outbound_message__purpose__family_update
+msgid "Family Update (post-visit)"
+msgstr "Cập nhật gia đình (sau thăm khám)"
+
+#. module: health_pwa_family
+#: model:ir.model.fields,field_description:health_pwa_family.field_health_family_thread__id
+#: model:ir.model.fields,field_description:health_pwa_family.field_health_outbound_message__id
+msgid "ID"
+msgstr ""
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Internal error"
+msgstr ""
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Invalid thread"
+msgstr "Kênh tin nhắn không hợp lệ"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Messaging is disabled"
+msgstr "Tính năng nhắn tin đang tắt"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "No eligible family recipients for this patient."
+msgstr "Không có người thân đủ điều kiện nhận tin cho bệnh nhân này."
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/models/health_family_thread.py:0
+msgid "No usable phone for the recipient."
+msgstr ""
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Not assigned to this visit"
+msgstr "Bạn không được phân công cho lượt thăm khám này"
+
+#. module: health_pwa_family
+#: model:ir.model,name:health_pwa_family.model_health_outbound_message
+msgid "Outbound Message"
+msgstr "Tin nhắn gửi đi"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Please write an update first."
+msgstr "Vui lòng nhập nội dung cập nhật trước."
+
+#. module: health_pwa_family
+#: model:ir.model.fields,field_description:health_pwa_family.field_health_outbound_message__purpose
+msgid "Purpose"
+msgstr ""
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Thread not found for this visit"
+msgstr "Không tìm thấy kênh tin nhắn cho lượt thăm khám này"
+
+#. module: health_pwa_family
+#. odoo-python
+#: code:addons/health_pwa_family/controllers/pwa_family_api.py:0
+msgid "Update sent to %s family recipient(s)."
+msgstr "Đã gửi cập nhật đến %s người thân."

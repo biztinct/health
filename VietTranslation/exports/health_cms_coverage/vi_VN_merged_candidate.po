@@ -1,0 +1,110 @@
+# Vietnamese translation for health_cms_coverage
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_cms_coverage\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-07-30 08:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_fin_bhyt_claims
+msgid "BHYT Claims"
+msgstr "Hồ sơ BHYT"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_crm_channels_setup
+msgid "Channels (setup)"
+msgstr "Kênh (thiết lập)"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_clin_coding_review
+msgid "Coding Review"
+msgstr "Duyệt mã bệnh"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_clin_consent_log
+msgid "Consent Check Log"
+msgstr "Nhật ký kiểm tra đồng thuận"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_clin_diagnoses
+msgid "Diagnoses"
+msgstr "Chẩn đoán"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_ops_family_links
+msgid "Family Links"
+msgstr "Liên kết gia đình"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_ops_family_messages
+msgid "Family Messages"
+msgstr "Tin nhắn gia đình"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_crm_followup_calendar
+msgid "Follow-up Calendar"
+msgstr "Lịch theo dõi"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_clin_patient_portal
+msgid "Patient Portal"
+msgstr "Cổng bệnh nhân"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_fin_red_invoice_log
+msgid "Red Invoice Log"
+msgstr "Nhật ký hoá đơn đỏ"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_crm_relationships
+msgid "Relationships"
+msgstr "Quan hệ"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_crm_reply_templates
+msgid "Reply Templates"
+msgstr "Mẫu trả lời"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_ops_route_feasibility
+msgid "Route Feasibility"
+msgstr "Khả thi lộ trình"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_ops_selfbooking
+msgid "Self-Booking Invites"
+msgstr "Lời mời tự đặt lịch"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_fin_service_packages
+msgid "Service Packages"
+msgstr "Gói dịch vụ"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_ops_telehealth
+msgid "Telehealth"
+msgstr "Khám từ xa"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_clin_unsigned_notes
+msgid "Unsigned Notes"
+msgstr "Ghi chép chưa ký"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_clin_visit_tasks
+msgid "Visit Tasks"
+msgstr "Công việc theo ca thăm"
+
+#. module: health_cms_coverage
+#: model:cms.sidebar.item,name:health_cms_coverage.item_clin_voice_notes
+msgid "Voice Notes"
+msgstr "Ghi âm bệnh án"

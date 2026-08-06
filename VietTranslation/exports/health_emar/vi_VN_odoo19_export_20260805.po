@@ -1,0 +1,1507 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_emar
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-08-05 07:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid ""
+"A reason is required when recording a dose as not given or refused (audit "
+"requirement)."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__is_amended
+msgid ""
+"A recorded tick was corrected by a head nurse+ (amendment audit — original "
+"values in the chatter)"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "A valid reason is required (audit requirement)."
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Acknowledge Interaction"
+msgstr "Xác nhận tương tác thuốc"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid ""
+"Acknowledge major interaction first: a major drug interaction was detected. "
+"A head nurse, doctor or manager must acknowledge it before activation."
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid ""
+"Acknowledge this major drug interaction? The acknowledgement is logged."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__interaction_ack_by_id
+msgid "Acknowledged By"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__interaction_ack_date
+msgid "Acknowledged On"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_needaction
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Activate"
+msgstr "Kích hoạt"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__active
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__active
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__state__active
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_search
+msgid "Active"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__actual_datetime
+msgid "Actual Time"
+msgstr "Giờ thực tế"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "Ad-hoc doses are only allowed for PRN orders."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__administration_count
+msgid "Administration Count"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.actions.act_window,name:health_emar.action_health_medication_administration
+#: model:ir.ui.menu,name:health_emar.menu_health_emar_administrations
+msgid "Administration Register"
+msgstr "Sổ thực hiện thuốc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__admin_times
+msgid "Administration Times"
+msgstr "Giờ dùng thuốc"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "Administration amended by %(user)s. Previous values — %(before)s"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__administration_ids
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Administrations"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__amended_by_id
+msgid "Amended By"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__amended_date
+msgid "Amended On"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid ""
+"Amended record — the correction trail is preserved\n"
+"                        in the log below."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__applies_to
+msgid "Applies To"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_search_emar
+msgid "Archived"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_attachment_count
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_notgiven_reason__applies_to__both
+msgid "Both"
+msgstr ""
+
+#. module: health_emar
+#. odoo-javascript
+#: code:addons/health_emar/static/src/js/emar-components.js:0
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Cancel Slot"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid ""
+"Cancel this medication order? Future planned administrations will be "
+"cancelled."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_administration__state__cancelled
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__state__cancelled
+msgid "Cancelled"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Cannot activate this order — missing: %s"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication__rxnorm_code
+msgid ""
+"Canonical code (FHIR Medication.code, system "
+"http://www.nlm.nih.gov/research/umls/rxnorm)"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__capsule
+msgid "Capsule"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.actions.act_window,help:health_emar.action_health_medication_emar
+msgid "Catalog entries carry RxNorm and DAV coding used by eMAR orders."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__catchment_province_id
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__catchment_province_id
+msgid "Catchment Area"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__catchment_province_id
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__catchment_province_id
+msgid "Catchment area used for filtering and access control"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__client_id
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__client_id
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_search
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_search
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Client & Medication"
+msgstr ""
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_asleep
+msgid "Client asleep/unavailable"
+msgstr "Khách hàng ngủ/vắng mặt"
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_refused_client
+msgid "Client refused"
+msgstr "Khách hàng từ chối"
+
+#. module: health_emar
+#. odoo-javascript
+#: code:addons/health_emar/static/src/js/emar-components.js:0
+msgid "Close"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__code
+msgid "Code"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__admin_times
+msgid ""
+"Comma-separated local times HH:MM, e.g. 08:00,20:00. Optional; defaults per "
+"frequency."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__company_id
+msgid "Company"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Complete"
+msgstr "Hoàn tất"
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__state__completed
+msgid "Completed"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__cream
+msgid "Cream/Ointment"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.actions.act_window,help:health_emar.action_health_medication_emar
+msgid "Create a medication"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.actions.act_window,help:health_emar.action_health_medication_order
+msgid "Create a medication order"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__is_prn_dose
+msgid "Created ad-hoc for a PRN order"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__create_uid
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__create_uid
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__create_date
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__create_date
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication__dav_reg_no
+msgid "DAV Registration No. (số đăng ký)"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_emar.field_health_medication__display_name
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__display_name
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__display_name
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__display_name
+#: model:ir.model.fields,field_description:health_emar.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication__strength
+msgid ""
+"Display strength, e.g. '500 mg'; FHIR Medication.ingredient.strength (text)"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Dosage"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_list
+msgid "Dose"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__dose_given
+msgid "Dose Given"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__dose_quantity
+msgid "Dose Quantity"
+msgstr "Liều lượng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__dose_unit
+msgid "Dose Unit"
+msgstr "Đơn vị liều"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Dose must be positive."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "Doses can only be recorded against an active order."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__witness_id
+msgid ""
+"Double-signoff (high-risk meds); FHIR performer with function code witness"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__state__draft
+msgid "Draft"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__drops
+msgid "Drops"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__end_date
+msgid "End Date"
+msgstr "Ngày kết thúc"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "End date must be on/after start date."
+msgstr ""
+
+#. module: health_emar
+#. odoo-javascript
+#: code:addons/health_emar/static/src/js/emar-components.js:0
+msgid "Error"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__q12h
+msgid "Every 12 hours"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__q4h
+msgid "Every 4 hours"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__q6h
+msgid "Every 6 hours"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__q8h
+msgid "Every 8 hours"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__prescriber_id
+msgid "External or internal prescribing doctor (contact record)"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__is_prn
+msgid "FHIR Dosage.asNeededBoolean"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__prn_reason
+msgid "FHIR Dosage.asNeededCodeableConcept.text"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__dose_quantity
+msgid "FHIR Dosage.doseAndRate.doseQuantity.value"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__instructions
+msgid "FHIR Dosage.patientInstruction"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__route
+msgid "FHIR Dosage.route"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__frequency
+msgid "FHIR Dosage.timing"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication__form
+msgid "FHIR Medication.doseForm"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__state
+msgid ""
+"FHIR MedicationAdministration.status: given→completed, "
+"not_given/refused→not-done (+statusReason), cancelled→stopped"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__medication_id
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__medication_id
+msgid "FHIR MedicationRequest.medication"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__state
+msgid "FHIR MedicationRequest.status (on_hold maps to 'on-hold')"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__client_id
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__client_id
+msgid "FHIR MedicationRequest.subject"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__start_date
+msgid "FHIR dispenseRequest.validityPeriod.start / dosage boundsPeriod.start"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__dose_given
+msgid ""
+"FHIR dosage.dose.value (may differ from ordered); defaults from the order "
+"dose on recording"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__notes
+msgid "FHIR note"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__reason_id
+msgid ""
+"FHIR statusReason — aged-care audit requirement for not-given/refused ticks"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_follower_ids
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_partner_ids
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication__form
+msgid "Form"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__qid
+msgid "Four times daily (QID)"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__prescriber_name
+msgid "Free-text fallback when no contact exists"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__frequency
+msgid "Frequency"
+msgstr "Tần suất"
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_administration__state__given
+msgid "Given"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__has_message
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__interaction_ack
+msgid "Head-nurse/doctor acknowledgement of major interactions"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__interaction_severity
+msgid "Highest severity found"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_emar.field_health_medication__id
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__id
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__id
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__id
+#: model:ir.model.fields,field_description:health_emar.field_res_partner__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_form_emar
+msgid "Identification"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__message_needaction
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__message_has_error
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__message_has_sms_error
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__message_has_error
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__inhalation
+msgid "Inhalation"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__inhaler
+msgid "Inhaler"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__injection
+msgid "Injection"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__instructions
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Instructions"
+msgstr "Hướng dẫn dùng thuốc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__interaction_ack
+msgid "Interaction Acknowledged"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__interaction_severity
+msgid "Interaction Severity"
+msgstr "Mức độ tương tác"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__interaction_warning
+msgid "Interaction Warning"
+msgstr "Cảnh báo tương tác thuốc"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Interaction check unavailable"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__intramuscular
+msgid "Intramuscular"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__intravenous
+msgid "Intravenous"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid ""
+"Invalid administration time %(chunk)s — use comma-separated HH:MM local "
+"times, e.g. 08:00,20:00."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__is_amended
+msgid "Is Amended"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_is_follower
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__is_prn_dose
+msgid "Is Prn Dose"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__write_uid
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__write_uid
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__write_date
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__write_date
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__liquid
+msgid "Liquid/Syrup"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Local catalog"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__interaction_severity__major
+msgid "Major"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_search
+msgid "Major Interaction"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid ""
+"Major drug interaction acknowledged by %(user)s. Warning at acknowledgement:"
+" %(warning)s"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_health_medication
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__medication_id
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__medication_id
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_form_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_search
+msgid "Medication"
+msgstr "Thuốc"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Medication Administration"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_health_medication_administration
+msgid "Medication Administration Record"
+msgstr "Phiếu thực hiện thuốc"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_fieldservice_order.py:0
+#: model:ir.model.fields,field_description:health_emar.field_health_fieldservice_order__medication_administration_ids
+msgid "Medication Administrations"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.actions.act_window,name:health_emar.action_health_medication_emar
+#: model:ir.ui.menu,name:health_emar.menu_health_emar_medication_catalog
+msgid "Medication Catalog"
+msgstr "Danh mục thuốc"
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_health_medication_notgiven_reason
+msgid "Medication Not-Given Reason"
+msgstr "Lý do không cho dùng thuốc"
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_health_medication_order
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__order_id
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Medication Order"
+msgstr "Y lệnh thuốc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_res_partner__medication_order_count
+#: model:ir.model.fields,field_description:health_emar.field_res_users__medication_order_count
+msgid "Medication Order Count"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/res_partner.py:0
+#: model:ir.actions.act_window,name:health_emar.action_health_medication_order
+#: model:ir.model.fields,field_description:health_emar.field_res_partner__medication_order_ids
+#: model:ir.model.fields,field_description:health_emar.field_res_users__medication_order_ids
+#: model:ir.ui.menu,name:health_emar.menu_health_emar_orders
+msgid "Medication Orders"
+msgstr "Y lệnh thuốc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_fieldservice_order__medication_admin_count
+msgid "Medication Slots"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_form_emar
+msgid "Medication name"
+msgstr ""
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_unavailable
+msgid "Medication unavailable"
+msgstr "Không có thuốc"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_fieldservice_order_form_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_list_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_search_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_partner_form_emar
+msgid "Medications"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.ui.menu,name:health_emar.menu_health_emar
+msgid "Medications (eMAR)"
+msgstr "Thuốc (eMAR)"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_fieldservice_order__medication_admin_done_count
+msgid "Medications Done"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_has_error
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_ids
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__interaction_severity__minor
+msgid "Minor"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_search
+msgid "Missed"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__interaction_severity__moderate
+msgid "Moderate"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__name
+msgid "Name"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__nasal
+msgid "Nasal"
+msgstr ""
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_nausea
+msgid "Nausea or vomiting"
+msgstr "Buồn nôn hoặc nôn"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "New"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_npo
+msgid "Nil by mouth (NPO)"
+msgstr "Nhịn ăn uống"
+
+#. module: health_emar
+#. odoo-javascript
+#: code:addons/health_emar/static/src/js/emar-components.js:0
+msgid "No reasons available — go online once to sync"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__interaction_severity__none
+msgid "None"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_administration__state__not_given
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_notgiven_reason__applies_to__not_given
+msgid "Not Given"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.actions.act_window,name:health_emar.action_health_medication_notgiven_reason
+#: model:ir.ui.menu,name:health_emar.menu_health_emar_notgiven_reasons
+msgid "Not-Given Reasons"
+msgstr "Lý do không cho dùng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__notes
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Notes"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_needaction_counter
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_has_error_counter
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__message_needaction_counter
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__message_has_error_counter
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__nurse_id
+msgid "Nurse"
+msgstr "Điều dưỡng"
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__state__on_hold
+msgid "On Hold"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__od
+msgid "Once daily (OD)"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only active orders can be completed."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only active orders can be put on hold."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only cancelled orders can be reset to draft."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only draft orders can be activated."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only draft, active or on-hold orders can be cancelled."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "Only head nurses and above can cancel planned administration slots."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only head nurses, doctors and managers can manage medication orders."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only managers can reset a cancelled order to draft."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only on-hold orders can be resumed."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "Only planned administrations can be cancelled."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__ophthalmic
+msgid "Ophthalmic"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__oral
+msgid "Oral"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_search
+msgid "Order"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid ""
+"Order auto-completed by eMAR maintenance: end date passed and no planned "
+"administrations remain."
+msgstr ""
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_other
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__other
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__other
+msgid "Other"
+msgstr "Khác"
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__other
+msgid "Other — see instructions"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__otic
+msgid "Otic"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__is_prn
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_search
+msgid "PRN"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__prn
+msgid "PRN / As needed"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__prn_reason
+msgid "PRN Reason"
+msgstr "Lý do PRN"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "PRN doses can only be created for active orders."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "PRN orders require a PRN reason."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__patch
+msgid "Patch"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Patient instructions (FHIR Dosage.patientInstruction)"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Period"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_administration__state__planned
+msgid "Planned"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__planned_datetime
+msgid "Planned Time"
+msgstr "Giờ dự kiến"
+
+#. module: health_emar
+#: model_terms:ir.actions.act_window,help:health_emar.action_health_medication_administration
+msgid ""
+"Planned and recorded medication administrations\n"
+"                (FHIR MedicationAdministration). Ticks are recorded from\n"
+"                the nurse PWA visit checklist."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__prescriber_id
+msgid "Prescriber"
+msgstr "Bác sĩ kê đơn"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__prescriber_name
+msgid "Prescriber Name"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Put On Hold"
+msgstr "Tạm ngừng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__rating_ids
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__reason_id
+msgid "Reason"
+msgstr "Lý do"
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "Reason \"%(reason)s\" does not apply to %(state)s administrations."
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Record Given"
+msgstr "Ghi nhận đã dùng"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Record Not Given"
+msgstr "Ghi nhận không dùng"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Record Refused"
+msgstr "Ghi nhận từ chối"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_fieldservice_order_form_emar
+msgid "Recorded"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid ""
+"Recorded administrations are append-only: only the notes may be edited. Ask "
+"a head nurse to amend the record (correction is logged, never silent)."
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid ""
+"Recorded administrations cannot be deleted (clinical record integrity)."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__rectal
+msgid "Rectal"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__name
+msgid "Reference"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_administration__state__refused
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_notgiven_reason__applies_to__refused
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_search
+msgid "Refused"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Reset to Draft"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Resume"
+msgstr "Tiếp tục"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__route
+msgid "Route"
+msgstr "Đường dùng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication__rxnorm_code
+msgid "RxNorm RXCUI"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__message_has_sms_error
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Safety"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__planned_datetime
+msgid ""
+"Scheduled slot (UTC; generated from admin_times in the booking timezone — "
+"fso.booking_timezone when linked, else facility/catchment timezone, "
+"Asia/Ho_Chi_Minh fallback)"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__nurse_id
+msgid "Set on recording; FHIR performer"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "Set the reason first (audit requirement)."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__start_date
+msgid "Start Date"
+msgstr "Ngày bắt đầu"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__state
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__state
+msgid "State"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_search
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_search
+msgid "Status"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication__strength
+msgid "Strength"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.actions.act_window,help:health_emar.action_health_medication_order
+msgid ""
+"Structured dosage orders (FHIR MedicationRequest) drive the\n"
+"                per-visit administration checklist in the nurse PWA."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__subcutaneous
+msgid "Subcutaneous"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__sublingual
+msgid "Sublingual"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__suppository
+msgid "Suppository"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication__form__tablet
+msgid "Tablet"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.actions.act_window,help:health_emar.action_health_medication_administration
+msgid "The MAR register"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__fso_id
+msgid "The visit it is administered in; FHIR context"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid ""
+"This administration is already recorded (%s) — administrations are append-"
+"only."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__tds
+msgid "Three times daily (TDS)"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Timing & Outcome"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_search
+msgid "Today"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__route__topical
+msgid "Topical"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__bd
+msgid "Twice daily (BD)"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__dose_unit
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__dose_unit
+msgid "UCUM or common unit: mg, mL, tablet, IU, puff"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__dose_unit
+msgid "Unit"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication__dav_reg_no
+msgid ""
+"VN drug-registry crosswalk (identifier system https://dav.gov.vn/so-dang-ky)"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_notgiven_reason__name_vi
+msgid "Vietnamese Name"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__fso_id
+msgid "Visit"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__website_message_ids
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__website_message_ids
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields.selection,name:health_emar.selection__health_medication_order__frequency__weekly
+msgid "Weekly"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_administration__actual_datetime
+msgid "When actually given/attempted"
+msgstr ""
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_clinical_hold
+msgid "Withheld — clinical judgement"
+msgstr "Tạm ngừng theo đánh giá lâm sàng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__witness_id
+msgid "Witness"
+msgstr "Người chứng kiến"
+
+#. module: health_emar
+#: model:ir.model.fields,help:health_emar.field_health_medication_order__end_date
+msgid "boundsPeriod.end (open = long-term)"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/res_partner.py:0
+msgid "client_id"
+msgstr ""
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_form_emar
+msgid "eMAR Coding"
+msgstr ""
+
+#. module: health_emar
+#: model:ir.actions.server,name:health_emar.ir_cron_emar_maintenance_ir_actions_server
+msgid "eMAR: schedule maintenance"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_fieldservice_order.py:0
+msgid "fso_id"
+msgstr ""
+
+#. module: health_emar
+#. odoo-python
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "order_id"
+msgstr ""

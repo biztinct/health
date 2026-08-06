@@ -1,0 +1,180 @@
+# Vietnamese translation for health_workflow_auto
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_workflow_auto\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_workflow_auto
+#: model:ir.ui.menu,name:health_workflow_auto.menu_workflow_auto_root
+msgid "Workflow Automations"
+msgstr "Tự động hóa quy trình"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.res_config_settings_view_form_workflow_auto
+msgid "Workflow Automations (H0)"
+msgstr "Tự động hóa quy trình (H0)"
+
+#. module: health_workflow_auto
+#: model:ir.ui.menu,name:health_workflow_auto.menu_visit_offer
+#: model:ir.actions.act_window,name:health_workflow_auto.action_visit_offer
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_visit_offer_list
+msgid "First-Visit Offers"
+msgstr "Ưu đãi thăm khám đầu tiên"
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_health_visit_offer
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_outbound_message__purpose__visit_offer
+#: model:ir.sequence,name:health_workflow_auto.seq_visit_offer
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_visit_offer_form
+msgid "First-Visit Offer"
+msgstr "Ưu đãi thăm khám đầu tiên"
+
+#. module: health_workflow_auto
+#: model:ir.model,name:health_workflow_auto.model_health_visit_offer_slot
+msgid "First-Visit Offer Slot"
+msgstr "Khung giờ ưu đãi thăm khám"
+
+#. module: health_workflow_auto
+#: model:ir.ui.menu,name:health_workflow_auto.menu_timecard_mismatch
+#: model:ir.actions.act_window,name:health_workflow_auto.action_timecard_mismatch
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_list
+msgid "Timecard Mismatches"
+msgstr "Sai lệch chấm công"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_form
+msgid "Timecard Mismatch"
+msgstr "Sai lệch chấm công"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_visit_offer_form
+msgid "Slots"
+msgstr "Khung giờ"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_health_visit_offer_slot__staff_id
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_visit_offer__state__sent
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_visit_offer__state__accepted
+msgid "Accepted"
+msgstr "Đã chấp nhận"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_visit_offer__state__expired
+msgid "Expired"
+msgstr "Đã hết hạn"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_visit_offer__state__cancelled
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__state__open
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_search
+msgid "Open"
+msgstr "Đang mở"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__state__resolved
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_search
+msgid "Resolved"
+msgstr "Đã xử lý"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_form
+msgid "Use Visit Times"
+msgstr "Dùng giờ thăm khám"
+
+#. module: health_workflow_auto
+#: model_terms:ir.ui.view,arch_db:health_workflow_auto.view_timecard_mismatch_form
+msgid "Keep Attendance"
+msgstr "Giữ chấm công"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__hr_attendance__attendance_source__manual
+msgid "Manual"
+msgstr "Thủ công"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__hr_attendance__attendance_source__pwa_visit
+msgid "PWA Visit"
+msgstr "Thăm khám qua ứng dụng"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__kind__start_gap
+msgid "Start gap >15m"
+msgstr "Lệch giờ bắt đầu >15 phút"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__kind__end_gap
+msgid "End gap >15m"
+msgstr "Lệch giờ kết thúc >15 phút"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__kind__missing_attendance
+msgid "Visit w/o attendance"
+msgstr "Thăm khám không có chấm công"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields.selection,name:health_workflow_auto.selection__health_timecard_mismatch__kind__orphan_open
+msgid "Attendance never closed"
+msgstr "Chấm công chưa đóng"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__wf_onetap_enabled
+msgid "One-Tap Visit Completion"
+msgstr "Hoàn tất thăm khám một chạm"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__wf_redinvoice_batch_enabled
+msgid "Nightly Red Invoice Batch"
+msgstr "Xuất hóa đơn đỏ hàng đêm"
+
+#. module: health_workflow_auto
+#: model:ir.model.fields,field_description:health_workflow_auto.field_res_config_settings__wf_timecard_sync_enabled
+msgid "Timecard Auto-Fill from Visits"
+msgstr "Tự động điền chấm công từ thăm khám"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid "First-visit offer accepted — booking %s created for %s."
+msgstr "Đã chấp nhận ưu đãi thăm khám — tạo lịch %s cho %s."
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid "First-visit offer expired"
+msgstr "Ưu đãi thăm khám đã hết hạn"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/visit_offer.py:0
+msgid "Send first-visit offer manually"
+msgstr "Gửi ưu đãi thăm khám thủ công"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/controllers/onetap_api.py:0
+msgid "Service completed"
+msgstr "Đã hoàn tất dịch vụ"
+
+#. module: health_workflow_auto
+#. odoo-python
+#: code:addons/health_workflow_auto/models/fso_onetap.py:0
+msgid "Visit completed - no exceptions reported (one-tap complete)"
+msgstr "Đã hoàn tất thăm khám - không có ngoại lệ (hoàn tất một chạm)"

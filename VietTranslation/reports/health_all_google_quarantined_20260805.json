@@ -1,0 +1,482 @@
+{
+  "How many times the retro-coding sweep has tried this note (capped so un-codable notes are not retried forever).": {
+    "draft": "Đã bao nhiêu lần quá trình quét mã hóa retro đã thử ghi chú này (được giới hạn để các ghi chú không thể mã hóa sẽ không được thử lại mãi mãi)).",
+    "corrected": "Đã bao nhiêu lần quá trình quét mã hóa retro đã thử ghi chú này (được giới hạn để các ghi chú không thể mã hóa sẽ không được thử lại mãi mãi)).",
+    "reason": "suspicious_word_sense"
+  },
+  "The bi.ai.provider used by the sweep. Ollama (local) is the sovereignty path.": {
+    "draft": "các bi.ai.provider được sử dụng bởi quá trình quét. Ollama (địa phương) là con đường chủ quyền.",
+    "corrected": "các bi.ai.provider được sử dụng bởi quá trình quét. Ollama (địa phương) là con đường chủ quyền.",
+    "reason": "english_residue"
+  },
+  "note_id": {
+    "draft": "ghi chú_id",
+    "corrected": "ghi chú_id",
+    "reason": "identifier_changed"
+  },
+  "FHIR DocumentReference Read": {
+    "draft": "FHIR Đọc tài liệu tham khảo",
+    "corrected": "FHIR Đọc tài liệu tham khảo",
+    "reason": "identifier_changed"
+  },
+  "FHIR Practitioner Read": {
+    "draft": "FHIR Học viên đọc",
+    "corrected": "FHIR Học viên đọc",
+    "reason": "suspicious_word_sense"
+  },
+  "FHIR ServiceRequest Read": {
+    "draft": "FHIR Dịch vụYêu cầu đọc",
+    "corrected": "FHIR Dịch vụYêu cầu đọc",
+    "reason": "identifier_changed"
+  },
+  "HMAC-SHA256 key used to sign delivery bodies (X-Health19-Signature).": {
+    "draft": "Khóa HMAC-SHA256 dùng để ký các cơ quan giao hàng (X-Health19-Signature).",
+    "corrected": "Khóa HMAC-SHA256 dùng để ký các cơ quan giao hàng (X-Health19-Signature).",
+    "reason": "suspicious_word_sense"
+  },
+  "SMART backend-services read scope for FHIR DocumentReference.": {
+    "draft": "SMART phạm vi đọc dịch vụ phụ trợ cho FHIR Tài liệuTham khảo.",
+    "corrected": "SMART phạm vi đọc dịch vụ phụ trợ cho FHIR Tài liệuTham khảo.",
+    "reason": "identifier_changed"
+  },
+  "SMART backend-services read scope for FHIR ServiceRequest.": {
+    "draft": "SMART phạm vi đọc dịch vụ phụ trợ cho FHIR Yêu cầu dịch vụ.",
+    "corrected": "SMART phạm vi đọc dịch vụ phụ trợ cho FHIR Yêu cầu dịch vụ.",
+    "reason": "identifier_changed"
+  },
+  "Space-separated event codes from the catalog, e.g. \"booking.completed booking.cancelled\".": {
+    "draft": "Mã sự kiện được phân tách bằng dấu cách từ danh mục, e.g. \"booking.completed booking.cancelled\".",
+    "corrected": "Mã sự kiện được phân tách bằng dấu cách từ danh mục, e.g. \"booking.completed booking.cancelled\".",
+    "reason": "english_residue"
+  },
+  "e.g. pwa.read, booking.write, system/Patient.read": {
+    "draft": "e.g. pwa.read, booking.write, hệ thống/Patient.read",
+    "corrected": "e.g. pwa.read, booking.write, hệ thống/Patient.read",
+    "reason": "english_residue"
+  },
+  "<span class=\"badge patient-badge badge-deceased text-danger\" invisible=\"not deceased\">\n                                    <i class=\"fa fa-user-times\" title=\"Deceased\"/>\n                                </span>\n                                <span class=\"badge patient-badge vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                                    <i class=\"fa fa-trash\" title=\"Deleted\"/> Deleted\n                                </span>": {
+    "draft": "<span class=\"badge patient-badge badge-deceased text-danger\" invisible=\"not deceased\">\n                                    <i class=\"fa fa-user-times\" title=\"Deceased\"/>\n                                </span>\n                                <span class=\"badge patient-badge vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                                    <i class=\"fa fa-trash\" title=\"Deleted\"/> Đã xóa\n                                </span>",
+    "corrected": "<span class=\"badge patient-badge badge-deceased text-danger\" invisible=\"not deceased\">\n                                    <i class=\"fa fa-user-times\" title=\"Deceased\"/>\n                                </span>\n                                <span class=\"badge patient-badge vu-lifecycle-badge vu-lifecycle--deleted\" invisible=\"not deleted\">\n                                    <i class=\"fa fa-trash\" title=\"Deleted\"/> Đã xóa\n                                </span>",
+    "reason": "english_residue"
+  },
+  "Helper for the District domain (the City = catchment province).": {
+    "draft": "Người trợ giúp cho miền Quận (Thành phố = tỉnh lưu vực)).",
+    "corrected": "Người trợ giúp cho miền Quận (Thành phố = tỉnh lưu vực)).",
+    "reason": "suspicious_word_sense"
+  },
+  "TPHCM_PK_CSTNVU": {
+    "draft": "TpHCM_PK_CSTNVU",
+    "corrected": "TpHCM_PK_CSTNVU",
+    "reason": "unchanged"
+  },
+  "foreigner_doctor": {
+    "draft": "người nước ngoài_bác sĩ",
+    "corrected": "người nước ngoài_bác sĩ",
+    "reason": "identifier_changed"
+  },
+  "nursing_care": {
+    "draft": "điều dưỡng_care",
+    "corrected": "điều dưỡng_care",
+    "reason": "identifier_changed"
+  },
+  "prefer_not_to_say": {
+    "draft": "thích_không_nói",
+    "corrected": "thích_không_nói",
+    "reason": "identifier_changed"
+  },
+  "The bi.ai.provider used for drafts and briefs. Ollama (local) is the sovereignty path.": {
+    "draft": "các bi.ai.provider được sử dụng cho các bản nháp và tóm tắt. Ollama (địa phương) là con đường chủ quyền.",
+    "corrected": "các bi.ai.provider được sử dụng cho các bản nháp và tóm tắt. Ollama (địa phương) là con đường chủ quyền.",
+    "reason": "english_residue"
+  },
+  "Health19": {
+    "draft": "Sức khỏe19",
+    "corrected": "Sức khỏe19",
+    "reason": "identifier_changed"
+  },
+  "Health19 ·": {
+    "draft": "Sức khỏe19 ·",
+    "corrected": "Sức khỏe19 ·",
+    "reason": "identifier_changed"
+  },
+  "Provider-specific ids that are NOT secrets: Embedded Signup / Login-for-Business config ids, webhook verify token name, etc.": {
+    "draft": "Id dành riêng cho nhà cung cấp KHÔNG phải là bí mật: Id cấu hình đăng ký nhúng / Đăng nhập dành cho doanh nghiệp, tên mã thông báo xác minh webhook, v.v..",
+    "corrected": "Id dành riêng cho nhà cung cấp KHÔNG phải là bí mật: Id cấu hình đăng ký nhúng / Đăng nhập dành cho doanh nghiệp, tên mã thông báo xác minh webhook, v.v..",
+    "reason": "suspicious_word_sense"
+  },
+  "e.g. Zalo OA — HCM": {
+    "draft": "e.g. Zalo OA — TP.HCM",
+    "corrected": "e.g. Zalo OA — TP.HCM",
+    "reason": "no_vietnamese"
+  },
+  "· Health19": {
+    "draft": "· Sức khỏe19",
+    "corrected": "· Sức khỏe19",
+    "reason": "identifier_changed"
+  },
+  "Care plan drift detected (%(rate).0f%%): %(client)s": {
+    "draft": "Đã phát hiện sai lệch kế hoạch chăm sóc (%(rate).0f%%): %(client)s",
+    "corrected": "Đã phát hiện sai lệch kế hoạch chăm sóc (%(rate).0f%%): %(client)s",
+    "reason": "english_residue"
+  },
+  "Client %(client)s already has an active %(category)s care plan (%(plan)s). Complete or cancel it first.": {
+    "draft": "Khách hàng %(client)s đã có một hoạt động %(category)s kế hoạch chăm sóc (%(plan)s). Hoàn thành hoặc hủy nó trước.",
+    "corrected": "Khách hàng %(client)s đã có một hoạt động %(category)s kế hoạch chăm sóc (%(plan)s). Hoàn thành hoặc hủy nó trước.",
+    "reason": "english_residue"
+  },
+  "Every N days/weeks/months (ignored for every_visit / prn). FHIR Timing.repeat.period": {
+    "draft": "N ngày/tuần/tháng một lần (bỏ qua đối với each_visit / prn). FHIR Timing.repeat.period",
+    "corrected": "N ngày/tuần/tháng một lần (bỏ qua đối với each_visit / prn). FHIR Timing.repeat.period",
+    "reason": "identifier_changed"
+  },
+  "FHIR CarePlan.status (draft/active/completed/revoked; 'under_review' is a local sub-state of active).": {
+    "draft": "FHIR CarePlan.status (dự thảo/đang hoạt động/đã hoàn thành/bị thu hồi; 'under_review' là trạng thái phụ cục bộ của hoạt động).",
+    "corrected": "FHIR CarePlan.status (dự thảo/đang hoạt động/đã hoàn thành/bị thu hồi; 'under_review' là trạng thái phụ cục bộ của hoạt động).",
+    "reason": "english_residue"
+  },
+  "FHIR Task.status (pending → requested, done → completed, not_done → failed with statusReason).": {
+    "draft": "FHIR Task.status (chưa giải quyết → yêu cầu, thực hiện → đã hoàn thành, chưa_xong → thất bại với trạng tháiLý do).",
+    "corrected": "FHIR Task.status (chưa giải quyết → yêu cầu, thực hiện → đã hoàn thành, chưa_xong → thất bại với trạng tháiLý do).",
+    "reason": "identifier_changed"
+  },
+  "FHIR activity.detail.status ('not_started' maps to 'not-started').": {
+    "draft": "FHIR activity.detail.status ('not_started' ánh xạ tới 'chưa bắt đầu').",
+    "corrected": "FHIR activity.detail.status ('not_started' ánh xạ tới 'chưa bắt đầu').",
+    "reason": "english_residue"
+  },
+  "Informational service linkage; FHIR CarePlan.activity.detail.code": {
+    "draft": "Liên kết dịch vụ thông tin; FHIR CarePlan.activity.detail.code",
+    "corrected": "Liên kết dịch vụ thông tin; FHIR CarePlan.activity.detail.code",
+    "reason": "english_residue"
+  },
+  "Nurse-facing instructions; FHIR activity.detail.description": {
+    "draft": "Hướng dẫn đối mặt với y tá; FHIR activity.detail.description",
+    "corrected": "Hướng dẫn đối mặt với y tá; FHIR activity.detail.description",
+    "reason": "english_residue"
+  },
+  "Which visits receive tasks (matched against the FSO service_type Selection).": {
+    "draft": "Những lượt truy cập nào nhận được nhiệm vụ (khớp với Lựa chọn loại_dịch vụ của FSO).",
+    "corrected": "Những lượt truy cập nào nhận được nhiệm vụ (khớp với Lựa chọn loại_dịch vụ của FSO).",
+    "reason": "identifier_changed"
+  },
+  "careplan_id": {
+    "draft": "kế hoạch chăm sóc_id",
+    "corrected": "kế hoạch chăm sóc_id",
+    "reason": "identifier_changed"
+  },
+  "The clinical notes whose coded-diagnosis sidecar asserts this condition (FHIR Condition.evidence.detail → DocumentReference).": {
+    "draft": "Các ghi chú lâm sàng có sidecar chẩn đoán được mã hóa khẳng định tình trạng này (FHIR Condition.evidence.detail → Tài liệuTham khảo).",
+    "corrected": "Các ghi chú lâm sàng có sidecar chẩn đoán được mã hóa khẳng định tình trạng này (FHIR Condition.evidence.detail → Tài liệuTham khảo).",
+    "reason": "identifier_changed"
+  },
+  "Caller tag (context key consent_check_source), e.g. \"pwa\", \"zalo\", \"fhir\".": {
+    "draft": "Thẻ người gọi (khóa ngữ cảnh sự đồng ý_check_source), e.g. \"pwa\", \"zalo\", \"fhir\".",
+    "corrected": "Thẻ người gọi (khóa ngữ cảnh sự đồng ý_check_source), e.g. \"pwa\", \"zalo\", \"fhir\".",
+    "reason": "identifier_changed"
+  },
+  "Client %(client)s already has an active %(type)s consent (%(name)s). Grant supersedes it automatically — withdraw it first when editing manually.": {
+    "draft": "Khách hàng %(client)s đã có một hoạt động %(type)s bằng lòng (%(name)s). Cấp sẽ tự động thay thế - rút tiền trước khi chỉnh sửa thủ công.",
+    "corrected": "Khách hàng %(client)s đã có một hoạt động %(type)s bằng lòng (%(name)s). Cấp sẽ tự động thay thế - rút tiền trước khi chỉnh sửa thủ công.",
+    "reason": "english_residue"
+  },
+  "Consent expiring: %(client)s — %(type)s": {
+    "draft": "Sự đồng ý đã hết hạn: %(client)s — %(type)s",
+    "corrected": "Sự đồng ý đã hết hạn: %(client)s — %(type)s",
+    "reason": "english_residue"
+  },
+  "Digital signature PNG (required for digital_signature on grant). FHIR sourceAttachment.": {
+    "draft": "Chữ ký số PNG (bắt buộc đối với chữ ký số khi được cấp). FHIR nguồnĐính kèm.",
+    "corrected": "Chữ ký số PNG (bắt buộc đối với chữ ký số khi được cấp). FHIR nguồnĐính kèm.",
+    "reason": "identifier_changed"
+  },
+  "FHIR Consent.status: active→active, withdrawn→inactive (+ deny provision), expired→inactive, draft→draft.": {
+    "draft": "FHIR Consent.status: tích cực→đang hoạt động, đã rút→không hoạt động (+ từ chối cung cấp), đã hết hạn→không hoạt động, dự thảo→bản nháp.",
+    "corrected": "FHIR Consent.status: tích cực→đang hoạt động, đã rút→không hoạt động (+ từ chối cung cấp), đã hết hạn→không hoạt động, dự thảo→bản nháp.",
+    "reason": "english_residue"
+  },
+  "Invalid consent_type: %s": {
+    "draft": "Sự đồng ý_type không hợp lệ: %s",
+    "corrected": "Sự đồng ý_type không hợp lệ: %s",
+    "reason": "identifier_changed"
+  },
+  "Plain-text per-type active-consent glance, e.g. \"service ✓, data_sharing ✗, photography ✓\".": {
+    "draft": "Xem qua sự đồng ý tích cực theo từng loại văn bản thuần túy, e.g. \"dịch vụ ✓, chia sẻ dữ liệu ✗, chụp ảnh ✓\".",
+    "corrected": "Xem qua sự đồng ý tích cực theo từng loại văn bản thuần túy, e.g. \"dịch vụ ✓, chia sẻ dữ liệu ✗, chụp ảnh ✓\".",
+    "reason": "identifier_changed"
+  },
+  "Scanned form / photo (required for written on grant).": {
+    "draft": "Bản scan/ảnh (bắt buộc khi viết đơn xin trợ cấp)).",
+    "corrected": "Bản scan/ảnh (bắt buộc khi viết đơn xin trợ cấp)).",
+    "reason": "suspicious_word_sense"
+  },
+  "former_client": {
+    "draft": "cựu_khách hàng",
+    "corrected": "cựu_khách hàng",
+    "reason": "identifier_changed"
+  },
+  "google": {
+    "draft": "Google",
+    "corrected": "Google",
+    "reason": "unchanged"
+  },
+  "imaging_procedures": {
+    "draft": "hình ảnh_thủ tục",
+    "corrected": "hình ảnh_thủ tục",
+    "reason": "identifier_changed"
+  },
+  "inbox_email": {
+    "draft": "hộp thư đến_email",
+    "corrected": "hộp thư đến_email",
+    "reason": "identifier_changed"
+  },
+  "no_answer": {
+    "draft": "không_trả lời",
+    "corrected": "không_trả lời",
+    "reason": "identifier_changed"
+  },
+  "nursing_other": {
+    "draft": "điều dưỡng_other",
+    "corrected": "điều dưỡng_other",
+    "reason": "identifier_changed"
+  },
+  "personal_care": {
+    "draft": "chăm sóc cá nhân",
+    "corrected": "chăm sóc cá nhân",
+    "reason": "identifier_changed"
+  },
+  "phone_inquiry": {
+    "draft": "điện thoại_inquiry",
+    "corrected": "điện thoại_inquiry",
+    "reason": "identifier_changed"
+  },
+  "referral_doctor": {
+    "draft": "giới thiệu_bác sĩ",
+    "corrected": "giới thiệu_bác sĩ",
+    "reason": "identifier_changed"
+  },
+  "referral_patient": {
+    "draft": "giới thiệu_bệnh nhân",
+    "corrected": "giới thiệu_bệnh nhân",
+    "reason": "identifier_changed"
+  },
+  "service_inquiry": {
+    "draft": "dịch vụ_inquiry",
+    "corrected": "dịch vụ_inquiry",
+    "reason": "identifier_changed"
+  },
+  "service_used": {
+    "draft": "dịch vụ_sử dụng",
+    "corrected": "dịch vụ_sử dụng",
+    "reason": "identifier_changed"
+  },
+  "sputum_care": {
+    "draft": "chăm sóc đờm",
+    "corrected": "chăm sóc đờm",
+    "reason": "identifier_changed"
+  },
+  "website_form": {
+    "draft": "trang web_form",
+    "corrected": "trang web_form",
+    "reason": "identifier_changed"
+  },
+  "wound_care": {
+    "draft": "chăm sóc vết thương",
+    "corrected": "chăm sóc vết thương",
+    "reason": "identifier_changed"
+  },
+  "zalo_marketing": {
+    "draft": "zalo_tiếp thị",
+    "corrected": "zalo_tiếp thị",
+    "reason": "identifier_changed"
+  },
+  "FHIR MedicationAdministration.status: given→completed, not_given/refused→not-done (+statusReason), cancelled→stopped": {
+    "draft": "FHIR MedicationAdministration.status: được cho→đã hoàn thành, chưa được/từ chối→chưa hoàn thành (+statusLý do), đã hủy→dừng lại",
+    "corrected": "FHIR MedicationAdministration.status: được cho→đã hoàn thành, chưa được/từ chối→chưa hoàn thành (+statusLý do), đã hủy→dừng lại",
+    "reason": "identifier_changed"
+  },
+  "FHIR MedicationRequest.status (on_hold maps to 'on-hold')": {
+    "draft": "FHIR MedicationRequest.status (on_hold ánh xạ tới 'tạm dừng')",
+    "corrected": "FHIR MedicationRequest.status (on_hold ánh xạ tới 'tạm dừng')",
+    "reason": "english_residue"
+  },
+  "Reason \"%(reason)s\" does not apply to %(state)s administrations.": {
+    "draft": "Lý do \"%(reason)s\" không áp dụng cho %(state)s chính quyền.",
+    "corrected": "Lý do \"%(reason)s\" không áp dụng cho %(state)s chính quyền.",
+    "reason": "english_residue"
+  },
+  "Structured dosage orders (FHIR MedicationRequest) drive the\n                per-visit administration checklist in the nurse PWA.": {
+    "draft": "Đơn đặt hàng liều lượng có cấu trúc (FHIR MedicineRequest) lái xe\n                danh sách kiểm tra quản lý mỗi lần thăm khám tại y tá PWA.",
+    "corrected": "Đơn đặt hàng liều lượng có cấu trúc (FHIR MedicineRequest) lái xe\n                danh sách kiểm tra quản lý mỗi lần thăm khám tại y tá PWA.",
+    "reason": "identifier_changed"
+  },
+  "Reserved for the CA (VNPT-CA/Viettel-CA) digital signature attached to a finalized note (Phase 3).": {
+    "draft": "Dành riêng cho chữ ký số CA (VNPT-CA/viettel-CA) đính kèm công hàm hoàn thiện (Giai đoạn 3)).",
+    "corrected": "Dành riêng cho chữ ký số CA (VNPT-CA/viettel-CA) đính kèm công hàm hoàn thiện (Giai đoạn 3)).",
+    "reason": "suspicious_word_sense"
+  },
+  "<p><strong>EVV chain validation failed</strong></p><p>Booking: %(booking)s</p><p>First bad sequence: %(sequence)s</p><p>The visit event chain no longer verifies — investigate for tampering.</p>": {
+    "draft": "<p><strong>EVV xác thực chuỗi không thành công</strong></p><p>Đặt chỗ: %(booking)s</p><p>Chuỗi xấu đầu tiên: %(sequence)s</p><p>Chuỗi sự kiện truy cập không còn xác minh nữa — điều tra hành vi giả mạo.</p>",
+    "corrected": "<p><strong>EVV xác thực chuỗi không thành công</strong></p><p>Đặt chỗ: %(booking)s</p><p>Chuỗi xấu đầu tiên: %(sequence)s</p><p>Chuỗi sự kiện truy cập không còn xác minh nữa — điều tra hành vi giả mạo.</p>",
+    "reason": "english_residue"
+  },
+  "BROKEN": {
+    "draft": "VỠ",
+    "corrected": "VỠ",
+    "reason": "no_vietnamese"
+  },
+  "Geofence radius in metres around the geocoded home location (partner_latitude / partner_longitude) used for EVV check-in/check-out verification.": {
+    "draft": "Bán kính hàng rào địa lý tính bằng mét xung quanh vị trí nhà được mã hóa địa lý (partner_latitude / Partner_longitude) được sử dụng cho EVV xác minh nhận phòng/trả phòng.",
+    "corrected": "Bán kính hàng rào địa lý tính bằng mét xung quanh vị trí nhà được mã hóa địa lý (partner_latitude / Partner_longitude) được sử dụng cho EVV xác minh nhận phòng/trả phòng.",
+    "reason": "identifier_changed"
+  },
+  "Type-specific payload. signature: {signer_name, signer_relationship, attachment_id, png_sha256}; task_attest: {task_code, done}; photo: {attachment_id, caption}.": {
+    "draft": "Tải trọng theo loại cụ thể. chữ ký: {signer_name, signer_relationship, attachment_id, png_sha256}; task_attest: {task_code, done}; ảnh: {đính kèm_id, chú thích}.",
+    "corrected": "Tải trọng theo loại cụ thể. chữ ký: {signer_name, signer_relationship, attachment_id, png_sha256}; task_attest: {task_code, done}; ảnh: {đính kèm_id, chú thích}.",
+    "reason": "identifier_changed"
+  },
+  "New message from %(who)s about %(patient)s: %(preview)s": {
+    "draft": "Tin nhắn mới từ %(who)s Về %(patient)s: %(preview)s",
+    "corrected": "Tin nhắn mới từ %(who)s Về %(patient)s: %(preview)s",
+    "reason": "english_residue"
+  },
+  "SNOMED CT": {
+    "draft": "CT CT",
+    "corrected": "CT CT",
+    "reason": "no_vietnamese"
+  },
+  "health19 Services": {
+    "draft": "sức khỏe19 Dịch vụ",
+    "corrected": "sức khỏe19 Dịch vụ",
+    "reason": "suspicious_word_sense"
+  },
+  "<span class=\"badge rounded-pill vu-service-tag vu-service-tag--home-visit\" invisible=\"service_type != 'home_visit'\">\n                                    <i class=\"fa fa-medkit\"/> Home Visit\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--clinic\" invisible=\"service_type != 'clinic_visit'\">\n                                    <i class=\"fa fa-hospital-o\"/> Clinic Visit\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--telehealth\" invisible=\"service_type != 'teleconsultation'\">\n                                    <i class=\"fa fa-video-camera\"/> Teleconsultation\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--hospital\" invisible=\"service_type != 'hospital_visit'\">\n                                    <i class=\"fa fa-h-square\"/> Hospital Visit\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--lab\" invisible=\"service_type != 'lab_visit'\">\n                                    <i class=\"fa fa-flask\"/> Lab Visit\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--rescheduled\" invisible=\"not is_rescheduled\">\n                                    <i class=\"fa fa-history\"/> Rescheduled\n                                </span>": {
+    "draft": "<span class=\"badge rounded-pill vu-service-tag vu-service-tag--home-visit\" invisible=\"service_type != 'home_visit'\">\n                                    <i class=\"fa fa-medkit\"/> Thăm nhà\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--clinic\" invisible=\"service_type != 'clinic_visit'\">\n                                    <i class=\"fa fa-hospital-o\"/> Thăm khám tại phòng khám\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--telehealth\" invisible=\"service_type != 'teleconsultation'\">\n                                    <i class=\"fa fa-video-camera\"/> Tư vấn từ xa\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--hospital\" invisible=\"service_type != 'hospital_visit'\">\n                                    <i class=\"fa fa-h-square\"/> Thăm bệnh viện\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--lab\" invisible=\"service_type != 'lab_visit'\">\n                                    <i class=\"fa fa-flask\"/> thăm phòng thí nghiệm\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--rescheduled\" invisible=\"not is_rescheduled\">\n                                    <i class=\"fa fa-history\"/> Đã lên lịch lại\n                                </span>",
+    "corrected": "<span class=\"badge rounded-pill vu-service-tag vu-service-tag--home-visit\" invisible=\"service_type != 'home_visit'\">\n                                    <i class=\"fa fa-medkit\"/> Thăm nhà\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--clinic\" invisible=\"service_type != 'clinic_visit'\">\n                                    <i class=\"fa fa-hospital-o\"/> Thăm khám tại phòng khám\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--telehealth\" invisible=\"service_type != 'teleconsultation'\">\n                                    <i class=\"fa fa-video-camera\"/> Tư vấn từ xa\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--hospital\" invisible=\"service_type != 'hospital_visit'\">\n                                    <i class=\"fa fa-h-square\"/> Thăm bệnh viện\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--lab\" invisible=\"service_type != 'lab_visit'\">\n                                    <i class=\"fa fa-flask\"/> thăm phòng thí nghiệm\n                                </span>\n                                <span class=\"badge rounded-pill vu-service-tag vu-service-tag--rescheduled\" invisible=\"not is_rescheduled\">\n                                    <i class=\"fa fa-history\"/> Đã lên lịch lại\n                                </span>",
+    "reason": "english_residue"
+  },
+  "Overlaps %(staff)s's booking %(bk)s.": {
+    "draft": "Chồng chéo %(staff)s'đặt phòng %(bk)s.",
+    "corrected": "Chồng chéo %(staff)s'đặt phòng %(bk)s.",
+    "reason": "english_residue"
+  },
+  "Copy of the template schema_json at creation — the instance renders from this forever.": {
+    "draft": "Bản sao của mẫu lược đồ_json khi tạo - phiên bản sẽ hiển thị vĩnh viễn từ đây.",
+    "corrected": "Bản sao của mẫu lược đồ_json khi tạo - phiên bản sẽ hiển thị vĩnh viễn từ đây.",
+    "reason": "identifier_changed"
+  },
+  "FHIR Questionnaire.status (published maps to active).": {
+    "draft": "FHIR Questionnaire.status (đã xuất bản bản đồ để hoạt động).",
+    "corrected": "FHIR Questionnaire.status (đã xuất bản bản đồ để hoạt động).",
+    "reason": "english_residue"
+  },
+  "FHIR QuestionnaireResponse.status (completed/amended verbatim, cancelled maps to stopped).": {
+    "draft": "FHIR QuestionnaireResponse.status (đã hoàn thành/sửa đổi nguyên văn, bản đồ bị hủy để dừng).",
+    "corrected": "FHIR QuestionnaireResponse.status (đã hoàn thành/sửa đổi nguyên văn, bản đồ bị hủy để dừng).",
+    "reason": "english_residue"
+  },
+  "Historic date — year of national reunification (1975)": {
+    "draft": "Ngày lịch sử - năm thống nhất đất nước (1975))",
+    "corrected": "Ngày lịch sử - năm thống nhất đất nước (1975))",
+    "reason": "suspicious_word_sense"
+  },
+  "template_id": {
+    "draft": "mẫu_id",
+    "corrected": "mẫu_id",
+    "reason": "identifier_changed"
+  },
+  "<p><strong>Fall incident %(incident)s</strong> for %(client)s.</p><p>Latest Morse assessment: %(last)s</p><p>A standing fall-risk Flag is derived for FHIR while this incident is open.</p>": {
+    "draft": "<p><strong>Sự cố té ngã %(incident)s</strong> vì %(client)s.</p><p>Đánh giá Morse mới nhất: %(last)s</p><p>Cờ đứng có nguy cơ rơi có nguồn gốc từ FHIR trong khi sự việc này đang diễn ra.</p>",
+    "corrected": "<p><strong>Sự cố té ngã %(incident)s</strong> vì %(client)s.</p><p>Đánh giá Morse mới nhất: %(last)s</p><p>Cờ đứng có nguy cơ rơi có nguồn gốc từ FHIR trong khi sự việc này đang diễn ra.</p>",
+    "reason": "english_residue"
+  },
+  "<p><strong>Severity %(severity)s incident</strong></p><p>Type: %(type)s</p><p>Client: %(client)s</p><p>When: %(datetime)s</p>": {
+    "draft": "<p><strong>Mức độ nghiêm trọng %(severity)s sự cố</strong></p><p>Kiểu: %(type)s</p><p>Khách hàng: %(client)s</p><p>Khi: %(datetime)s</p>",
+    "corrected": "<p><strong>Mức độ nghiêm trọng %(severity)s sự cố</strong></p><p>Kiểu: %(type)s</p><p>Khách hàng: %(client)s</p><p>Khi: %(datetime)s</p>",
+    "reason": "english_residue"
+  },
+  "Taxonomy; FHIR AdverseEvent.event (local CodeSystem health19-incident-types).": {
+    "draft": "Phân loại; FHIR AdverseEvent.event (CodeSystem cục bộ sức khỏe19-sự cố-loại).",
+    "corrected": "Phân loại; FHIR AdverseEvent.event (CodeSystem cục bộ sức khỏe19-sự cố-loại).",
+    "reason": "suspicious_word_sense"
+  },
+  "incident_id": {
+    "draft": "sự cố_id",
+    "corrected": "sự cố_id",
+    "reason": "identifier_changed"
+  },
+  "Legacy service (not in price list)": {
+    "draft": "Dịch vụ cũ (không có trong bảng giá))",
+    "corrected": "Dịch vụ cũ (không có trong bảng giá))",
+    "reason": "suspicious_word_sense"
+  },
+  "Pancake channel/ad identifiers kept as one JSON blob (page_id, ad_id, ad_id_fb, ad_id_tiktok, conversation_id, psid, facebook_link, pancake_customer_id).": {
+    "draft": "Kênh Pancake/số nhận dạng quảng cáo được giữ nguyên JSON blob (page_id, ad_id, ad_id_fb, ad_id_tiktok, Conversation_id, psid, facebook_link, pancake_customer_id).",
+    "corrected": "Kênh Pancake/số nhận dạng quảng cáo được giữ nguyên JSON blob (page_id, ad_id, ad_id_fb, ad_id_tiktok, Conversation_id, psid, facebook_link, pancake_customer_id).",
+    "reason": "identifier_changed"
+  },
+  "Send a booking link from a patient's form (Send booking link), or\n                enable auto-invite after visit completion in Settings.": {
+    "draft": "Gửi liên kết đặt chỗ từ biểu mẫu của bệnh nhân (Send booking link), hoặc\n                bật tự động mời sau khi hoàn thành lượt truy cập trong Cài đặt.",
+    "corrected": "Gửi liên kết đặt chỗ từ biểu mẫu của bệnh nhân (Send booking link), hoặc\n                bật tự động mời sau khi hoàn thành lượt truy cập trong Cài đặt.",
+    "reason": "english_residue"
+  },
+  "Snapshot of proposed {date, start_time, staff_id, staff_name, confidence} slots at invite creation.": {
+    "draft": "Ảnh chụp nhanh các vị trí {ngày, thời gian bắt đầu, nhân viên_id, tên nhân viên, niềm tin} được đề xuất khi tạo lời mời.",
+    "corrected": "Ảnh chụp nhanh các vị trí {ngày, thời gian bắt đầu, nhân viên_id, tên nhân viên, niềm tin} được đề xuất khi tạo lời mời.",
+    "reason": "identifier_changed"
+  },
+  "device_id": {
+    "draft": "id_thiết bị",
+    "corrected": "id_thiết bị",
+    "reason": "identifier_changed"
+  },
+  "81 years old": {
+    "draft": "81 tuổi",
+    "corrected": "81 tuổi",
+    "reason": "no_vietnamese"
+  },
+  "Native form (dialogs, opted-out views)": {
+    "draft": "Biểu mẫu gốc (hộp thoại, chế độ xem chọn không tham gia))",
+    "corrected": "Biểu mẫu gốc (hộp thoại, chế độ xem chọn không tham gia))",
+    "reason": "suspicious_word_sense"
+  },
+  "Trend slope in risk-score points per day (from the OLS fit). Positive = rising.": {
+    "draft": "Trend slope in risk-score points per day (from the OLS fit). Tích cực = tăng.",
+    "corrected": "Trend slope in risk-score points per day (from the OLS fit). Tích cực = tăng.",
+    "reason": "english_residue"
+  },
+  "<p><strong>Vitals threshold breached</strong></p><p>Client: %(client)s</p><p>%(message)s</p><p>Observed: %(datetime)s</p>": {
+    "draft": "<p><strong>Ngưỡng quan trọng bị vi phạm</strong></p><p>Khách hàng: %(client)s</p><p>%(message)s</p><p>quan sát: %(datetime)s</p>",
+    "corrected": "<p><strong>Ngưỡng quan trọng bị vi phạm</strong></p><p>Khách hàng: %(client)s</p><p>%(message)s</p><p>quan sát: %(datetime)s</p>",
+    "reason": "english_residue"
+  },
+  "FHIR Observation.status ('entered_in_error' maps to 'entered-in-error').": {
+    "draft": "FHIR Observation.status ('đã nhập_in_error' ánh xạ tới 'đã nhập lỗi').",
+    "corrected": "FHIR Observation.status ('đã nhập_in_error' ánh xạ tới 'đã nhập lỗi').",
+    "reason": "identifier_changed"
+  },
+  "Call log synchronization (every 15 minutes)": {
+    "draft": "Đồng bộ nhật ký cuộc gọi (15 phút một lần))",
+    "corrected": "Đồng bộ nhật ký cuộc gọi (15 phút một lần))",
+    "reason": "suspicious_word_sense"
+  },
+  "How often to sync call history (in minutes)": {
+    "draft": "Tần suất đồng bộ lịch sử cuộc gọi (tính bằng phút))",
+    "corrected": "Tần suất đồng bộ lịch sử cuộc gọi (tính bằng phút))",
+    "reason": "suspicious_word_sense"
+  },
+  "Webhook URL": {
+    "draft": "URL webhook",
+    "corrected": "URL webhook",
+    "reason": "no_vietnamese"
+  },
+  "<span class=\"vu-section__icon\" data-icon=\"map-pin\"/>\n                                    <span>Pages</span>": {
+    "draft": "<span class=\"vu-section__icon\" data-icon=\"map-pin\"/>\n                                    <span>Trang</span>",
+    "corrected": "<span class=\"vu-section__icon\" data-icon=\"map-pin\"/>\n                                    <span>Trang</span>",
+    "reason": "no_vietnamese"
+  },
+  "Zalo OA %s": {
+    "draft": "Zalo viêm khớp %s",
+    "corrected": "Zalo OA %s",
+    "reason": "unchanged"
+  }
+}

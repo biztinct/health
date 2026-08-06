@@ -1,0 +1,1088 @@
+# Vietnamese translation for health_consent
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_consent\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"%(rep)s cannot grant %(type)s consent: the relation lacks \"Can Make Medical "
+"Decisions\"."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"%(rep)s cannot grant %(type)s consent: the relation may neither make medical "
+"decisions nor receive medical information."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"A consent not granted by the client personally requires a grantor relation."
+msgstr "Đồng ý không do khách hàng trực tiếp đưa ra cần có người đồng ý thay."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"A consent with this client mutation id already exists (idempotency key must "
+"be unique)."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/controllers/api.py:0
+msgid "Access denied"
+msgstr "Truy cập bị từ chối"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__active
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__state__active
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Active"
+msgstr "Hiệu lực"
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_patient_form_consent
+msgid "Active Consents"
+msgstr "Đồng ý đang hiệu lực"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__at_date
+msgid "At Date"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent_check_log__source
+msgid ""
+"Caller tag (context key consent_check_source), e.g. \"pwa\", \"zalo\", "
+"\"fhir\"."
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Cancel"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Capture now"
+msgstr ""
+
+#. module: health_consent
+#: model_terms:ir.actions.act_window,help:health_consent.action_health_consent
+msgid ""
+"Capture service, data sharing, photography, emergency\n"
+"                treatment and marketing consents — verbal, written or\n"
+"                digitally signed."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__catchment_province_id
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__catchment_province_id
+msgid "Catchment Area"
+msgstr "Khu vực phục vụ"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__catchment_province_id
+msgid "Catchment area used for filtering and access control"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__user_id
+msgid "Checked By"
+msgstr "Người kiểm tra"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent_check_log__consent_type
+msgid ""
+"Checked consent type (Char, not Selection: stays valid when new types such "
+"as data_sharing_family are added)."
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Clear"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__client_id
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__client_id
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_check_log_search
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"Client %(client)s already has an active %(type)s consent (%(name)s). Grant "
+"supersedes it automatically — withdraw it first when editing manually."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__client_ref
+msgid "Client (at check time)"
+msgstr "Khách hàng (tại thời điểm kiểm tra)"
+
+#. module: health_consent
+#: model:ir.model,name:health_consent.model_health_consent
+msgid "Client Consent"
+msgstr "Đồng ý của khách hàng"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__client_mutation_id
+msgid "Client Mutation"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Close"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__company_id
+msgid "Company"
+msgstr ""
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_form
+msgid "Consent"
+msgstr "Đồng ý"
+
+#. module: health_consent
+#: model:ir.actions.act_window,name:health_consent.action_health_consent_check_log
+#: model:ir.model,name:health_consent.model_health_consent_check_log
+#: model:ir.ui.menu,name:health_consent.menu_health_consent_check_log
+msgid "Consent Check Log"
+msgstr "Nhật ký kiểm tra đồng ý"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_res_partner__consent_summary
+#: model:ir.model.fields,field_description:health_consent.field_res_users__consent_summary
+msgid "Consent Summary"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__consent_type
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__consent_type
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_check_log_search
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Consent Type"
+msgstr "Loại đồng ý"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/controllers/api.py:0
+msgid "Consent already recorded (idempotent replay)"
+msgstr "Đồng ý đã được ghi nhận (phát lại idempotent)"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent_check_log.py:0
+msgid ""
+"Consent check logs are append-only compliance evidence and can never be "
+"modified or deleted."
+msgstr ""
+"Nhật ký kiểm tra đồng ý là bằng chứng tuân thủ chỉ ghi thêm, không thể sửa "
+"hoặc xóa."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Consent expired automatically (expiry %s)."
+msgstr "Đồng ý đã tự động hết hạn (ngày hết hạn %s)."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Consent expiring: %(client)s — %(type)s"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_consent/controllers/api.py:0
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Consent granted"
+msgstr "Đã ghi nhận đồng ý"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/controllers/api.py:0
+msgid "Consent not found"
+msgstr "Không tìm thấy đồng ý"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__name
+msgid "Consent reference (sequence health.consent, prefix CNS)."
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Consent type"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.actions.server,name:health_consent.ir_cron_consent_expiry_ir_actions_server
+msgid "Consent: Expiry lifecycle"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#. odoo-python
+#: code:addons/health_consent/models/res_partner.py:0
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+#: model:ir.actions.act_window,name:health_consent.action_health_consent
+#: model:ir.model.fields,field_description:health_consent.field_res_partner__consent_count
+#: model:ir.model.fields,field_description:health_consent.field_res_partner__consent_ids
+#: model:ir.model.fields,field_description:health_consent.field_res_users__consent_count
+#: model:ir.model.fields,field_description:health_consent.field_res_users__consent_ids
+#: model:ir.ui.menu,name:health_consent.menu_health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_patient_form_consent
+msgid "Consents"
+msgstr "Đồng ý điều trị"
+
+#. module: health_consent
+#: model:ir.model,name:health_consent.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__create_uid
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__create_date
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__consent_type__data_sharing
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Data Sharing"
+msgstr "Chia sẻ dữ liệu"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent_check_log__at_date
+msgid "Date the consent window was evaluated against."
+msgstr ""
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_check_log_search
+msgid "Denied"
+msgstr "Bị từ chối"
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__method__digital_signature
+msgid "Digital Signature"
+msgstr "Chữ ký điện tử"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__signature
+msgid ""
+"Digital signature PNG (required for digital_signature on grant). FHIR "
+"sourceAttachment."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Digital signature consent requires a signature image."
+msgstr "Đồng ý bằng chữ ký điện tử cần có hình ảnh chữ ký."
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Dismiss"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__display_name
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__display_name
+#: model:ir.model.fields,field_description:health_consent.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__state__draft
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__effective_date
+msgid "Effective Date"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__consent_type__emergency_treatment
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Emergency Treatment"
+msgstr "Điều trị khẩn cấp"
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Error"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__evidence_attachment_ids
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_form
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__method
+msgid "Evidence class."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"Evidence fields (%(fields)s) are locked once a consent leaves draft (%"
+"(names)s)."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__state__expired
+msgid "Expired"
+msgstr "Hết hạn"
+
+#. module: health_consent
+#: model:ir.actions.act_window,name:health_consent.action_health_consent_expiring
+#: model:ir.ui.menu,name:health_consent.menu_health_consent_expiring
+msgid "Expiring Consents"
+msgstr "Đồng ý sắp hết hạn"
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Expiring ≤30d"
+msgstr "Hết hạn ≤30 ngày"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__expiry_date
+msgid "Expiry Date"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Expiry date (optional)"
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Expiry must be after effective date."
+msgstr "Ngày hết hạn phải sau ngày hiệu lực."
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__client_id
+msgid "FHIR Consent.patient"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__consent_type
+msgid ""
+"FHIR Consent.scope + category (local CodeSystem health19-consent-types)."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__state
+msgid ""
+"FHIR Consent.status: active→active, withdrawn→inactive (+ deny provision), "
+"expired→inactive, draft→draft."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__expiry_date
+msgid "FHIR provision.period.end (empty = indefinite)."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__effective_date
+msgid "FHIR provision.period.start"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__scope_note
+msgid ""
+"Free-text narrowing, e.g. \"photos for clinical record only, no social "
+"media\". FHIR provision narrative."
+msgstr ""
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_form
+msgid "Grant"
+msgstr "Ghi nhận đồng ý"
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_list
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_patient_form_consent
+msgid "Granted By"
+msgstr "Người đồng ý"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__granted_by_relation_id
+msgid "Granted By (Relation)"
+msgstr "Người đồng ý thay (quan hệ)"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__self_granted
+msgid "Granted by Client"
+msgstr "Do khách hàng đồng ý"
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Granted by client"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__granted_by_partner_id
+msgid "Grantor"
+msgstr "Người đồng ý thay"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__granted_by_role
+msgid "Grantor Role"
+msgstr "Vai trò người đồng ý"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__id
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__id
+#: model:ir.model.fields,field_description:health_consent.field_res_partner__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__message_has_error
+#: model:ir.model.fields,help:health_consent.field_health_consent__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/controllers/api.py:0
+msgid "Invalid JSON body"
+msgstr "Nội dung JSON không hợp lệ"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/controllers/api.py:0
+msgid "Invalid consent_type: %s"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__granted_by_relation_id
+msgid ""
+"Kinship grantor when the client did not consent personally. FHIR performer + "
+"relationship."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__write_uid
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__write_date
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Marketing"
+msgstr "Tiếp thị"
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__consent_type__marketing
+msgid "Marketing Communications"
+msgstr "Truyền thông tiếp thị"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__consent_id
+msgid "Matched Consent"
+msgstr "Đồng ý khớp"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__method
+msgid "Method"
+msgstr "Phương thức"
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Missing"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "New"
+msgstr "Mới"
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "New consent"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"No active %(type)s consent on file for this client (consent enforcement is "
+"enabled)."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__notes
+msgid "Notes"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Only a draft consent can be granted."
+msgstr "Chỉ có thể ghi nhận đồng ý ở trạng thái nháp."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Only an active consent can be withdrawn."
+msgstr "Chỉ có thể thu hồi đồng ý đang hiệu lực."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"Only draft consents can be deleted — active/withdrawn/expired consents are "
+"audit records (%s)."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Only front-line healthcare staff may capture or withdraw consents."
+msgstr "Chỉ nhân viên y tế tuyến đầu mới được ghi nhận hoặc thu hồi đồng ý."
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__client_mutation_id
+msgid ""
+"PWA offline idempotency key — the server no-ops on replay (interop §6.7 "
+"append-only discipline)."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/controllers/api.py:0
+msgid "Patient not found"
+msgstr "Không tìm thấy bệnh nhân"
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__consent_type__photography
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Photography/Media"
+msgstr "Chụp ảnh/Truyền thông"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_res_partner__consent_summary
+#: model:ir.model.fields,help:health_consent.field_res_users__consent_summary
+msgid ""
+"Plain-text per-type active-consent glance, e.g. \"service ✓, data_sharing ✗, "
+"photography ✓\"."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Provide a withdrawal reason before withdrawing the consent."
+msgstr "Vui lòng nhập lý do thu hồi trước khi thu hồi đồng ý."
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_consent
+#: model_terms:ir.actions.act_window,help:health_consent.action_health_consent
+msgid "Record a client consent"
+msgstr "Ghi nhận đồng ý của khách hàng"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__name
+msgid "Reference"
+msgstr "Mã tham chiếu"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__result
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_check_log_search
+msgid "Result"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Save"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Saved offline — will sync when online"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__evidence_attachment_ids
+msgid "Scanned form / photo (required for written on grant)."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__scope
+msgid "Scope"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__scope_note
+msgid "Scope / Limitations"
+msgstr "Phạm vi / giới hạn"
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Scope / limitations"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent_check_log__scope
+msgid "Scope requested by the caller, when any."
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Select a grantor relation"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__consent_type__service
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Service Delivery"
+msgstr "Cung cấp dịch vụ"
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Service consent missing"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Sign here"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__signature
+msgid "Signature"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Signature is required"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent_check_log__source
+msgid "Source"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__verbal_witness_id
+msgid ""
+"Staff who heard the verbal consent (defaults to the current user for verbal "
+"method)."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__state
+msgid "State"
+msgstr ""
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent_check_log__client_ref
+msgid ""
+"Subject label frozen when the check was made — \"Name [code]\" — so a "
+"surviving row still names its subject after the partner record is deleted. "
+"Empty on rows created before this field existed (GC-3): no backfill was run "
+"for the handful of live rows, and a fabricated label would be worse evidence "
+"than an honest blank."
+msgstr ""
+"Nhãn đối tượng được lưu cố định tại thời điểm kiểm tra — \"Tên [mã]\" — để "
+"dòng dữ liệu còn lại vẫn nêu rõ đối tượng sau khi hồ sơ đối tác bị xóa. "
+"Trống với các dòng được tạo trước khi có trường này (GC-3): không chạy bù dữ "
+"liệu cho số ít dòng hiện có, và một nhãn bịa đặt còn tệ hơn một ô trống "
+"trung thực."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Superseded"
+msgstr "Đã bị thay thế"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Superseded by %s."
+msgstr "Đã bị thay thế bởi %s."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Supersedes %s."
+msgstr "Thay thế %s."
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__self_granted
+msgid "The client consented personally."
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"The grantor relation is archived — only active relations may grant consent."
+msgstr ""
+"Quan hệ người đồng ý thay đã lưu trữ — chỉ quan hệ đang hoạt động mới được "
+"đồng ý thay."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "The grantor relation must belong to the consent client."
+msgstr "Quan hệ người đồng ý thay phải thuộc về khách hàng của đồng ý này."
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__granted_by_partner_id
+msgid "The person representing or supporting the client"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__granted_by_role
+msgid "The role this representative plays for the client"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent_check_log__result
+msgid "True = an active consent covered the check."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Undo"
+msgstr ""
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_form
+msgid "Validity"
+msgstr "Hiệu lực"
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__method__verbal
+msgid "Verbal"
+msgstr "Bằng lời"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__verbal_witness_id
+msgid "Verbal Witness"
+msgstr "Nhân chứng lời nói"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "Verbal consent requires a witness (staff who heard the consent)."
+msgstr "Đồng ý bằng lời cần có nhân chứng (nhân viên đã nghe sự đồng ý)."
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,help:health_consent.field_health_consent__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_form
+msgid "Withdraw"
+msgstr "Thu hồi"
+
+#. module: health_consent
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_form
+msgid ""
+"Withdraw this consent? Provide the withdrawal reason on the record first."
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__withdrawal_date
+msgid "Withdrawal Date"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__withdrawal_reason
+msgid "Withdrawal Reason"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "Withdrawal reason"
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/controllers/api.py:0
+msgid "Withdrawal reason is required"
+msgstr "Cần có lý do thu hồi"
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__state__withdrawn
+#: model_terms:ir.ui.view,arch_db:health_consent.view_health_consent_search
+msgid "Withdrawn"
+msgstr "Đã thu hồi"
+
+#. module: health_consent
+#: model:ir.model.fields,field_description:health_consent.field_health_consent__withdrawn_by_id
+msgid "Withdrawn By"
+msgstr ""
+
+#. module: health_consent
+#: model:ir.model.fields.selection,name:health_consent.selection__health_consent__method__written
+msgid "Written (paper)"
+msgstr "Văn bản (giấy)"
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid ""
+"Written consent requires at least one evidence attachment (scanned form or "
+"photo)."
+msgstr ""
+"Đồng ý bằng văn bản cần ít nhất một tệp bằng chứng (bản quét hoặc ảnh)."
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/health_consent.py:0
+msgid "a new consent"
+msgstr ""
+
+#. module: health_consent
+#. odoo-python
+#: code:addons/health_consent/models/res_partner.py:0
+msgid "client_id"
+msgstr ""
+
+#. module: health_consent
+#. odoo-javascript
+#: code:addons/health_consent/static/src/js/consent-components.js:0
+msgid "self"
+msgstr ""
+
+#~ msgid ""
+#~ "Capture service, data sharing, photography, emergency treatment and "
+#~ "marketing consents — verbal, written or digitally signed."
+#~ msgstr ""
+#~ "Ghi nhận đồng ý về dịch vụ, chia sẻ dữ liệu, chụp ảnh, điều trị khẩn cấp "
+#~ "và tiếp thị — bằng lời, văn bản hoặc chữ ký điện tử."

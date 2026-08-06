@@ -1,0 +1,200 @@
+# Vietnamese translation for health_family_messages
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_family_messages\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_family_messages
+#: model:ir.actions.act_window,name:health_family_messages.action_family_messages
+#: model:ir.ui.menu,name:health_family_messages.menu_ops_family_messages
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_list
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_search
+msgid "Family Messages"
+msgstr "Tin nhắn gia đình"
+
+#. module: health_family_messages
+#: model:ir.model,name:health_family_messages.model_health_family_thread
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_form
+msgid "Family Message Thread"
+msgstr "Kênh tin nhắn gia đình"
+
+#. module: health_family_messages
+#: model:ir.model,name:health_family_messages.model_health_family_message
+#: model:ir.model.fields.selection,name:health_family_messages.selection__health_pwa_staff_notification__notification_type__family_message
+msgid "Family Message"
+msgstr "Tin nhắn gia đình"
+
+#. module: health_family_messages
+#: model:ir.model.fields.selection,name:health_family_messages.selection__health_outbound_message__purpose__family_message_reply
+msgid "Family Message Reply"
+msgstr "Phản hồi tin nhắn gia đình"
+
+#. module: health_family_messages
+#. odoo-python
+#: code:addons/health_family_messages/models/health_family_thread.py:0
+msgid "Family thread"
+msgstr "Kênh gia đình"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_thread__patient_id
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_thread__relation_id
+msgid "Family Relation"
+msgstr "Quan hệ gia đình"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_thread__facility_id
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_search
+msgid "Facility"
+msgstr "Cơ sở"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_thread__catchment_province_id
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_family_messages
+#: model:ir.model.fields.selection,name:health_family_messages.selection__health_family_thread__state__active
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_search
+msgid "Active"
+msgstr "Đang mở"
+
+#. module: health_family_messages
+#: model:ir.model.fields.selection,name:health_family_messages.selection__health_family_thread__state__closed
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_search
+msgid "Closed"
+msgstr "Đã đóng"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_thread__message_ids
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_form
+msgid "Messages"
+msgstr "Tin nhắn"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_thread__last_message_at
+msgid "Last Message"
+msgstr "Tin nhắn cuối"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_thread__unread_ops_count
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_list
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_search
+msgid "Unread"
+msgstr "Chưa đọc"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_thread__reply_text
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_form
+msgid "Reply"
+msgstr "Phản hồi"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_message__body
+msgid "Message"
+msgstr "Tin nhắn"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_message__fso_id
+msgid "Visit Context"
+msgstr "Lượt thăm khám liên quan"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_message__author_label
+msgid "Author"
+msgstr "Người gửi"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_message__author_user_id
+msgid "Author (team)"
+msgstr "Người gửi (đội chăm sóc)"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_message__read_by_ops
+msgid "Read by team"
+msgstr "Đội chăm sóc đã đọc"
+
+#. module: health_family_messages
+#: model:ir.model.fields,field_description:health_family_messages.field_health_family_message__read_by_family
+msgid "Read by family"
+msgstr "Gia đình đã đọc"
+
+#. module: health_family_messages
+#: model:ir.model.fields.selection,name:health_family_messages.selection__health_family_message__direction__in
+msgid "Family → Team"
+msgstr "Gia đình → Đội chăm sóc"
+
+#. module: health_family_messages
+#: model:ir.model.fields.selection,name:health_family_messages.selection__health_family_message__direction__out
+msgid "Team → Family"
+msgstr "Đội chăm sóc → Gia đình"
+
+#. module: health_family_messages
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_form
+msgid "Send reply"
+msgstr "Gửi phản hồi"
+
+#. module: health_family_messages
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_form
+msgid "Mark read"
+msgstr "Đánh dấu đã đọc"
+
+#. module: health_family_messages
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_form
+msgid "Conversation"
+msgstr "Cuộc trò chuyện"
+
+#. module: health_family_messages
+#: model_terms:ir.ui.view,arch_db:health_family_messages.view_family_thread_form
+msgid "Type a reply to the family…"
+msgstr "Nhập phản hồi cho gia đình…"
+
+#. module: health_family_messages
+#: model_terms:ir.actions.act_window,help:health_family_messages.action_family_messages
+msgid "No family messages yet"
+msgstr "Chưa có tin nhắn gia đình"
+
+#. module: health_family_messages
+#. odoo-python
+#: code:addons/health_family_messages/models/health_family_thread.py:0
+msgid "New family message"
+msgstr "Có tin nhắn gia đình mới"
+
+#. module: health_family_messages
+#. odoo-python
+#: code:addons/health_family_messages/models/health_family_thread.py:0
+msgid "Reply to family message"
+msgstr "Phản hồi tin nhắn gia đình"
+
+#. module: health_family_messages
+#. odoo-python
+#: code:addons/health_family_messages/models/health_family_thread.py:0
+msgid "Please type a reply first."
+msgstr "Vui lòng nhập nội dung phản hồi trước."
+
+#. module: health_family_messages
+#. odoo-python
+#: code:addons/health_family_messages/models/health_family_thread.py:0
+msgid "No usable phone for the recipient."
+msgstr "Không có số điện thoại hợp lệ cho người nhận."
+
+#. module: health_family_messages
+#. odoo-python
+#: code:addons/health_family_messages/models/health_family_thread.py:0
+msgid "A message thread already exists for this patient and family relation."
+msgstr "Đã tồn tại kênh tin nhắn cho bệnh nhân và quan hệ gia đình này."
+
+#. module: health_family_messages
+#. odoo-python
+#: code:addons/health_family_messages/models/health_family_message.py:0
+msgid "Family messages are append-only and cannot be deleted."
+msgstr "Tin nhắn gia đình chỉ ghi thêm và không thể xóa."

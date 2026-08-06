@@ -1,0 +1,140 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_emr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Finalize &amp; Sign"
+msgstr "Hoàn tất &amp; Ký"
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Finalize and sign this clinical note? Once signed it becomes a locked, permanent medical record and can no longer be edited — corrections must be added as an addendum."
+msgstr "Hoàn tất và ký ghi chú lâm sàng này? Sau khi ký, ghi chú trở thành hồ sơ bệnh án cố định, bị khóa và không thể chỉnh sửa — mọi đính chính phải được thêm dưới dạng phụ lục."
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Signed medical record — locked."
+msgstr "Hồ sơ bệnh án đã ký — đã khóa."
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Addendum."
+msgstr "Phụ lục."
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Record Integrity"
+msgstr "Tính toàn vẹn hồ sơ"
+
+#. module: health_emr
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Tamper-Evident Seal"
+msgstr "Niêm phong chống giả mạo"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__amendment_ids
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_form_emr
+msgid "Addenda"
+msgstr "Các phụ lục"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__emr_state
+#: model_terms:ir.ui.view,arch_db:health_emr.view_health_clinical_note_search_emr
+msgid "EMR Status"
+msgstr "Trạng thái bệnh án"
+
+#. module: health_emr
+#: model:ir.model.fields.selection,name:health_emr.selection__health_clinical_note__emr_state__draft
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: health_emr
+#: model:ir.model.fields.selection,name:health_emr.selection__health_clinical_note__emr_state__final
+msgid "Finalized"
+msgstr "Đã hoàn tất"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__signed_by_id
+msgid "Signed By"
+msgstr "Người ký"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__signed_role
+msgid "Signer Role"
+msgstr "Vai trò người ký"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__signed_datetime
+msgid "Signed On"
+msgstr "Ngày ký"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__content_hash
+msgid "Integrity Seal (SHA-256)"
+msgstr "Niêm phong toàn vẹn (SHA-256)"
+
+#. module: health_emr
+#: model:ir.model.fields,field_description:health_emr.field_health_clinical_note__amends_note_id
+msgid "Amends Note"
+msgstr "Đính chính ghi chú"
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "This clinical note is already finalized."
+msgstr "Ghi chú lâm sàng này đã được hoàn tất."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "Cannot finalize an empty clinical note — record the clinical content first."
+msgstr "Không thể hoàn tất ghi chú lâm sàng trống — hãy ghi nội dung lâm sàng trước."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "Only the note author or a head nurse can finalize and sign this clinical note."
+msgstr "Chỉ tác giả ghi chú hoặc điều dưỡng trưởng mới có thể hoàn tất và ký ghi chú lâm sàng này."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "A clinical note cannot amend itself."
+msgstr "Một ghi chú lâm sàng không thể tự đính chính chính nó."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "An addendum can only amend a finalized (signed) note."
+msgstr "Phụ lục chỉ có thể đính chính một ghi chú đã hoàn tất (đã ký)."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "An addendum must concern the same patient as the note it amends."
+msgstr "Phụ lục phải liên quan đến cùng một bệnh nhân với ghi chú mà nó đính chính."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "This clinical note is finalized and signed (%(names)s); its content is a locked medical record and cannot be changed. Create an addendum to add or correct information."
+msgstr "Ghi chú lâm sàng này đã hoàn tất và đã ký (%(names)s); nội dung là hồ sơ bệnh án bị khóa và không thể thay đổi. Hãy tạo phụ lục để bổ sung hoặc đính chính thông tin."
+
+#. module: health_emr
+#. odoo-python
+#: code:addons/health_emr/models/health_clinical_note.py:0
+msgid "Finalized clinical notes are permanent medical records and cannot be deleted (%(names)s). Archive the record instead."
+msgstr "Ghi chú lâm sàng đã hoàn tất là hồ sơ bệnh án vĩnh viễn và không thể xóa (%(names)s). Hãy lưu trữ hồ sơ thay vì xóa."

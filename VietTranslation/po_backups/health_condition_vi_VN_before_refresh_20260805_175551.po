@@ -1,0 +1,182 @@
+# Vietnamese translation for health_condition
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_condition\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_condition
+#: model:ir.actions.act_window,name:health_condition.action_health_condition
+#: model:ir.ui.menu,name:health_condition.menu_health_condition
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_search
+msgid "Diagnoses"
+msgstr "Chẩn đoán"
+
+#. module: health_condition
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_form
+msgid "Diagnosis"
+msgstr "Chẩn đoán"
+
+#. module: health_condition
+#: model:ir.model,name:health_condition.model_health_condition
+msgid "Condition / Diagnosis (Problem List)"
+msgstr "Chẩn đoán (Danh sách vấn đề)"
+
+#. module: health_condition
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_list
+msgid "Problem List"
+msgstr "Danh sách vấn đề"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__patient_id
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_search
+msgid "Patient"
+msgstr "Bệnh nhân"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__code_id
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_search
+msgid "ICD-10 Code"
+msgstr "Mã ICD-10"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__clinical_status
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_search
+msgid "Clinical Status"
+msgstr "Trạng thái lâm sàng"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__verification_status
+msgid "Verification Status"
+msgstr "Trạng thái xác minh"
+
+#. module: health_condition
+#: model:ir.model.fields.selection,name:health_condition.selection__health_condition__clinical_status__active
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_search
+msgid "Active"
+msgstr "Đang hoạt động"
+
+#. module: health_condition
+#: model:ir.model.fields.selection,name:health_condition.selection__health_condition__clinical_status__inactive
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_search
+msgid "Inactive"
+msgstr "Không hoạt động"
+
+#. module: health_condition
+#: model:ir.model.fields.selection,name:health_condition.selection__health_condition__clinical_status__resolved
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_search
+msgid "Resolved"
+msgstr "Đã khỏi"
+
+#. module: health_condition
+#: model:ir.model.fields.selection,name:health_condition.selection__health_condition__verification_status__provisional
+msgid "Provisional"
+msgstr "Tạm thời"
+
+#. module: health_condition
+#: model:ir.model.fields.selection,name:health_condition.selection__health_condition__verification_status__confirmed
+msgid "Confirmed"
+msgstr "Đã xác nhận"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__recorded_date
+msgid "Recorded Date"
+msgstr "Ngày ghi nhận"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__last_asserted_date
+msgid "Last Asserted"
+msgstr "Khẳng định gần nhất"
+
+#. module: health_condition
+#. odoo-python
+#: code:addons/health_condition/models/health_condition.py:0
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__note_ids
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_form
+msgid "Evidence Notes"
+msgstr "Ghi chú bằng chứng"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__note_count
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_form
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_list
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__recorder_id
+msgid "Recorder"
+msgstr "Người ghi nhận"
+
+#. module: health_condition
+#: model:ir.model.fields,field_description:health_condition.field_health_condition__catchment_province_id
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_condition
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_form
+msgid "Provenance"
+msgstr "Nguồn gốc"
+
+#. module: health_condition
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_form
+msgid "Mark Resolved"
+msgstr "Đánh dấu đã khỏi"
+
+#. module: health_condition
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_form
+msgid "Mark Inactive"
+msgstr "Đánh dấu không hoạt động"
+
+#. module: health_condition
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_form
+msgid "Reactivate"
+msgstr "Kích hoạt lại"
+
+#. module: health_condition
+#. odoo-python
+#: code:addons/health_condition/models/health_condition.py:0
+msgid "Diagnosis marked resolved."
+msgstr "Chẩn đoán được đánh dấu đã khỏi."
+
+#. module: health_condition
+#. odoo-python
+#: code:addons/health_condition/models/health_condition.py:0
+msgid "Diagnosis marked inactive."
+msgstr "Chẩn đoán được đánh dấu không hoạt động."
+
+#. module: health_condition
+#. odoo-python
+#: code:addons/health_condition/models/health_condition.py:0
+msgid "Diagnosis reactivated."
+msgstr "Chẩn đoán được kích hoạt lại."
+
+#. module: health_condition
+#: model_terms:ir.actions.act_window,help:health_condition.action_health_condition
+msgid "No diagnoses yet"
+msgstr "Chưa có chẩn đoán"
+
+#. module: health_condition
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_form
+#: model_terms:ir.ui.view,arch_db:health_condition.view_health_condition_search
+msgid "Archived"
+msgstr "Đã lưu trữ"
+
+#. module: health_condition
+#. odoo-python
+#: code:addons/health_condition/models/health_condition.py:0
+msgid ""
+"This patient already has a problem-list entry for this ICD-10 code."
+msgstr "Bệnh nhân này đã có mục danh sách vấn đề cho mã ICD-10 này."
+
+#. module: health_condition
+#. odoo-python
+#: code:addons/health_condition/models/health_condition.py:0
+msgid ""
+"Only a doctor, head nurse or manager may change a diagnosis status."
+msgstr "Chỉ bác sĩ, điều dưỡng trưởng hoặc quản lý mới có thể thay đổi trạng thái chẩn đoán."

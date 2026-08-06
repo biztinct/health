@@ -1,0 +1,329 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_migration
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-08-05 07:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_migration
+#: model_terms:ir.ui.view,arch_db:health_migration.view_health_fso_form_ops_legacy
+msgid ""
+"<span class=\"vu-section__icon\" data-icon=\"archive\"/>\n"
+"                        <span>Legacy Record</span>"
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__archived_at
+msgid "Archived At"
+msgstr "Thời điểm lưu trữ"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__auto_created
+msgid "Auto-created by migration"
+msgstr "Được tự động tạo khi di chuyển dữ liệu"
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_res_partner__legacy_client_code
+#: model:ir.model.fields,help:health_migration.field_res_users__legacy_client_code
+msgid "Client ID from the previous system (e.g. \"02 0006826\")."
+msgstr "Mã khách hàng từ hệ thống cũ (ví dụ: \"02 0006826\")."
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_health_fieldservice_order__legacy_owner
+msgid ""
+"Clinic owner/person in charge recorded in the previous system (phòng khám "
+"Owner)."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_health_fieldservice_order__display_name
+msgid "Computed display name for views"
+msgstr "Tên hiển thị tính toán cho các xem"
+
+#. module: health_migration
+#: model:ir.model,name:health_migration.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_crm_lead__legacy_contact_guid
+msgid "Contact ID (GUID) from the previous system."
+msgstr "Mã liên hệ (GUID) từ hệ thống cũ."
+
+#. module: health_migration
+#: model:ir.model,website_form_label:health_migration.model_crm_lead
+msgid "Create an Opportunity"
+msgstr "Hãy tạo ra cơ hội"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__create_uid
+#: model:ir.model.fields,field_description:health_migration.field_migration_lookup_seeder__create_uid
+#: model:ir.model.fields,field_description:health_migration.field_migration_runner__create_uid
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__create_uid
+msgid "Created by"
+msgstr "Được tạo bởi"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__create_date
+#: model:ir.model.fields,field_description:health_migration.field_migration_lookup_seeder__create_date
+#: model:ir.model.fields,field_description:health_migration.field_migration_runner__create_date
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__create_date
+msgid "Created on"
+msgstr "Ngày tạo"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_crm_lead__display_name
+#: model:ir.model.fields,field_description:health_migration.field_health_fieldservice_order__display_name
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__display_name
+#: model:ir.model.fields,field_description:health_migration.field_migration_lookup_seeder__display_name
+#: model:ir.model.fields,field_description:health_migration.field_migration_runner__display_name
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__display_name
+#: model:ir.model.fields,field_description:health_migration.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_migration
+#: model:ir.model,name:health_migration.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+"Trật tự dịch vụ thực địa chăm sóc sức khỏe (Nền thống lịch hẹn thống nhất))"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_crm_lead__id
+#: model:ir.model.fields,field_description:health_migration.field_health_fieldservice_order__id
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__id
+#: model:ir.model.fields,field_description:health_migration.field_migration_lookup_seeder__id
+#: model:ir.model.fields,field_description:health_migration.field_migration_runner__id
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__id
+#: model:ir.model.fields,field_description:health_migration.field_res_partner__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__write_uid
+#: model:ir.model.fields,field_description:health_migration.field_migration_lookup_seeder__write_uid
+#: model:ir.model.fields,field_description:health_migration.field_migration_runner__write_uid
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__write_uid
+msgid "Last Updated by"
+msgstr "Cập nhật lần cuối bởi"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__write_date
+#: model:ir.model.fields,field_description:health_migration.field_migration_lookup_seeder__write_date
+#: model:ir.model.fields,field_description:health_migration.field_migration_runner__write_date
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__write_date
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối vào"
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_health_fieldservice_order__legacy_modified_on
+msgid "Last modification timestamp from the previous system."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_crm_lead__legacy_lastcontactuser
+msgid "Last operator who contacted this lead in the previous system."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model,name:health_migration.model_crm_lead
+msgid "Lead"
+msgstr "Khách hàng tiềm năng"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_health_fieldservice_order__legacy_booking_ref
+msgid "Legacy Booking Ref"
+msgstr "Tham chiếu lịch hẹn cũ"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_res_partner__legacy_client_code
+#: model:ir.model.fields,field_description:health_migration.field_res_users__legacy_client_code
+msgid "Legacy Client Code"
+msgstr "Mã khách hàng cũ"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_crm_lead__legacy_contact_guid
+msgid "Legacy Contact GUID"
+msgstr "GUID liên hệ cũ"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_crm_lead__legacy_created_by
+#: model:ir.model.fields,field_description:health_migration.field_health_fieldservice_order__legacy_created_by
+msgid "Legacy Created By"
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__legacy_key
+msgid "Legacy Key"
+msgstr "Khóa dữ liệu cũ"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_crm_lead__legacy_lastcontactuser
+msgid "Legacy Last Contact User"
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model,name:health_migration.model_migration_lookup_seeder
+msgid "Legacy Lookup Fidelity Seeder"
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_crm_lead__legacy_ad_ids
+#: model:ir.model.fields,field_description:health_migration.field_res_partner__legacy_ad_ids
+#: model:ir.model.fields,field_description:health_migration.field_res_users__legacy_ad_ids
+msgid "Legacy Marketing IDs"
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model,name:health_migration.model_migration_runner
+msgid "Legacy Migration Runner"
+msgstr "Trình chạy di chuyển dữ liệu cũ"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_health_fieldservice_order__legacy_modified_by
+msgid "Legacy Modified By"
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_health_fieldservice_order__legacy_modified_on
+msgid "Legacy Modified On"
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_crm_lead__legacy_owner
+#: model:ir.model.fields,field_description:health_migration.field_health_fieldservice_order__legacy_owner
+msgid "Legacy Owner"
+msgstr ""
+
+#. module: health_migration
+#: model:product.template,name:health_migration.product_legacy_unmapped
+msgid "Legacy service (not in price list)"
+msgstr ""
+
+#. module: health_migration
+#: model:product.template,name:health_migration.product_legacy_surcharge
+msgid "Legacy surcharge (priced by adjustment rules)"
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model,name:health_migration.model_migration_baseline
+msgid "Migration Archive Baseline"
+msgstr "Mốc lưu trữ di chuyển dữ liệu"
+
+#. module: health_migration
+#: model:ir.model,name:health_migration.model_migration_xref
+msgid "Migration Crosswalk"
+msgstr "Bảng ánh xạ di chuyển dữ liệu"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__target_model
+msgid "Model"
+msgstr "Mô hình"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_lookup_seeder__name
+#: model:ir.model.fields,field_description:health_migration.field_migration_runner__name
+msgid "Name"
+msgstr "Tên"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__notes
+msgid "Notes"
+msgstr "Ghi chú"
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_health_fieldservice_order__legacy_created_by
+msgid "Operator who created the booking in the previous system."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_crm_lead__legacy_created_by
+msgid "Operator who created the record in the previous system."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_health_fieldservice_order__legacy_modified_by
+msgid "Operator who last modified the booking in the previous system."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_crm_lead__legacy_owner
+msgid ""
+"Owner recorded in the previous system when it could not be matched to a "
+"platform user."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_res_partner__legacy_ad_ids
+#: model:ir.model.fields,help:health_migration.field_res_users__legacy_ad_ids
+msgid ""
+"Pancake channel/ad identifiers kept as one JSON blob (page_id, ad_id, "
+"ad_id_fb, ad_id_tiktok, conversation_id, psid, facebook_link, "
+"pancake_customer_id)."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_crm_lead__legacy_ad_ids
+msgid "Pancake channel/ad identifiers kept as one JSON blob."
+msgstr ""
+
+#. module: health_migration
+#: model:product.template,description_sale:health_migration.product_legacy_unmapped
+msgid ""
+"Placeholder for a legacy service with no price-list item. The original "
+"service wording is kept on the invoice line."
+msgstr ""
+
+#. module: health_migration
+#: model:product.template,description_sale:health_migration.product_legacy_surcharge
+msgid ""
+"Placeholder for a legacy travel/after-hours/weekend surcharge. The original "
+"wording is kept on the invoice line."
+msgstr ""
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__raw_value
+msgid "Raw Legacy Value"
+msgstr "Giá trị gốc từ hệ thống cũ"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__res_id
+msgid "Record ID"
+msgstr "Mã bản ghi"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_baseline__run
+msgid "Run Tag"
+msgstr "Nhãn lần chạy"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__source
+msgid "Source File/Run"
+msgstr "Tệp nguồn / Lần chạy"
+
+#. module: health_migration
+#: model:ir.model.fields,help:health_migration.field_health_fieldservice_order__legacy_booking_ref
+msgid "Stable hash of the legacy booking row for idempotent re-import."
+msgstr ""
+"Mã băm ổn định của dòng lịch hẹn cũ để có thể nhập lại mà không tạo trùng "
+"lặp."
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__target_model
+msgid "Target Model"
+msgstr "Mô hình đích"
+
+#. module: health_migration
+#: model:ir.model.fields,field_description:health_migration.field_migration_xref__res_id
+msgid "Target Record ID"
+msgstr "Mã bản ghi đích"

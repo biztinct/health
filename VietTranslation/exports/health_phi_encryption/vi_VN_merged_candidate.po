@@ -1,0 +1,273 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_phi_encryption
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:53+0000\n"
+"PO-Revision-Date: 2026-08-05 07:53+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,help:health_phi_encryption.field_res_partner__intake_notes
+#: model:ir.model.fields,help:health_phi_encryption.field_res_users__intake_notes
+msgid "Additional notes from intake assessment"
+msgstr "Ghi chú bổ sung từ đánh giá tiếp nhận"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__cccd_number
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__cccd_number
+msgid "CCCD Number"
+msgstr "CCCD Số"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__cccd_number_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__cccd_number_enc
+msgid "CCCD Number (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__cccd_number_bidx
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__cccd_number_bidx
+msgid "CCCD Number Index"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model,name:health_phi_encryption.model_health_clinical_note
+msgid "Clinical Note"
+msgstr "Lưu ý lâm sàng"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__clinical_notes
+msgid "Clinical Notes"
+msgstr "Ghi chú lâm sàng"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__clinical_notes_enc
+msgid "Clinical Notes (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__patient_condition_after_enc
+msgid "Condition After (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__patient_condition_before_enc
+msgid "Condition Before (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model,name:health_phi_encryption.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__diagnosis
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__intake_diagnosis
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__intake_diagnosis
+msgid "Diagnosis"
+msgstr "Chẩn đoán"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__diagnosis_enc
+msgid "Diagnosis (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__display_name
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__emergency_contact_name
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__emergency_contact_name
+msgid "Emergency Contact Name"
+msgstr "Tên người liên hệ khẩn cấp"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__emergency_contact_name_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__emergency_contact_name_enc
+msgid "Emergency Contact Name (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__emergency_contact_phone
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__emergency_contact_phone
+msgid "Emergency Contact Phone"
+msgstr "Số điện thoại liên hệ khẩn cấp"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__emergency_contact_phone_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__emergency_contact_phone_enc
+msgid "Emergency Contact Phone (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__emergency_contact_relation_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__emergency_contact_relation_enc
+msgid "Emergency Contact Relation (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__emergency_contact_relationship
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__emergency_contact_relationship
+msgid "Emergency Contact Relationship"
+msgstr "Liên hệ khẩn cấp Mối quan hệ"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__emergency_contact_relationship_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__emergency_contact_relationship_enc
+msgid "Emergency Contact Relationship (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,help:health_phi_encryption.field_res_partner__healthcare_notes
+#: model:ir.model.fields,help:health_phi_encryption.field_res_users__healthcare_notes
+msgid "General healthcare-related notes"
+msgstr "Chung Y tế-Liên quan Ghi chú"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__healthcare_notes
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__healthcare_notes
+msgid "Healthcare Notes"
+msgstr "Y tế Ghi chú"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__healthcare_notes_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__healthcare_notes_enc
+msgid "Healthcare Notes (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__id
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__intake_diagnosis_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__intake_diagnosis_enc
+msgid "Intake Diagnosis (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__intake_notes
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__intake_notes
+msgid "Intake Notes"
+msgstr "Ghi chú Tiếp nhận"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__intake_notes_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__intake_notes_enc
+msgid "Intake Notes (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__allergies
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__allergies
+msgid "Known Allergies"
+msgstr "Dị ứng đã biết"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__allergies_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__allergies_enc
+msgid "Known Allergies (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__medical_history_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__medical_history_enc
+msgid "Medical History (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__medical_history
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__medical_history
+msgid "Medical History Summary"
+msgstr "Tóm tắt tiền sử bệnh"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,help:health_phi_encryption.field_res_partner__intake_diagnosis
+#: model:ir.model.fields,help:health_phi_encryption.field_res_users__intake_diagnosis
+msgid "Medical diagnosis from intake"
+msgstr "Chẩn đoán y tế từ lúc tiếp nhận"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__medications_prescribed
+msgid "Medications Prescribed"
+msgstr "Thuốc được kê đơn"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__medications_prescribed_enc
+msgid "Medications Prescribed (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__national_id
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__national_id
+msgid "National ID (CCCD/CMND)"
+msgstr "Căn cước công dân (CCCD/CMND)"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__national_id_enc
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__national_id_enc
+msgid "National ID (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__national_id_bidx
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__national_id_bidx
+msgid "National ID Index"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__patient_condition_after
+msgid "Patient Condition (After)"
+msgstr "Tình trạng bệnh nhân (sau)"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__patient_condition_before
+msgid "Patient Condition (Before)"
+msgstr "Tình trạng bệnh nhân (trước đó))"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_partner__emergency_contact_relation
+#: model:ir.model.fields,field_description:health_phi_encryption.field_res_users__emergency_contact_relation
+msgid "Relation to Patient"
+msgstr "Mối quan hệ với bệnh nhân"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__treatment_performed
+msgid "Treatment Performed"
+msgstr "Điều trị được thực hiện"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__treatment_performed_enc
+msgid "Treatment Performed (encrypted)"
+msgstr ""
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,help:health_phi_encryption.field_res_partner__cccd_number
+#: model:ir.model.fields,help:health_phi_encryption.field_res_users__cccd_number
+msgid "Vietnamese Citizen Identification Card Number (from Excel CMF)"
+msgstr "Tiếng Việt Công dân Định danh Thẻ Số (Từ Excel CMF)"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__vital_signs
+msgid "Vital Signs"
+msgstr "Các dấu hiệu quan trọng"
+
+#. module: health_phi_encryption
+#: model:ir.model.fields,field_description:health_phi_encryption.field_health_clinical_note__vital_signs_enc
+msgid "Vital Signs (encrypted)"
+msgstr ""

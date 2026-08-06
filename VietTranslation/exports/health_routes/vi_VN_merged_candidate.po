@@ -1,0 +1,359 @@
+# Vietnamese translation for health_routes
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_routes\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-05 07:54+0000\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_routes
+#. odoo-python
+#: code:addons/health_routes/models/route_transition.py:0
+msgid "%(a)s → %(b)s: needs ~%(t)s min travel, only %(g)s min gap"
+msgstr "%(a)s → %(b)s: cần ~%(t)s phút di chuyển, chỉ còn %(g)s phút"
+
+#. module: health_routes
+#. odoo-python
+#: code:addons/health_routes/models/route_transition.py:0
+msgid "%(staff)s — infeasible route on %(date)s (%(n)s critical transition(s))"
+msgstr ""
+"%(staff)s — lịch trình không khả thi ngày %(date)s (%(n)s chuyển tiếp nghiêm "
+"trọng)"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__buffer_min
+msgid "Buffer (min)"
+msgstr "Đệm (phút)"
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid "Cached leg distances older than this are recomputed on next lookup."
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__catchment_province_id
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__computed_at
+msgid "Computed At"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model,name:health_routes.model_res_config_settings
+msgid "Config Settings"
+msgstr "Thiết lập"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__create_uid
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__create_date
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.view_route_transition_search
+msgid "Critical"
+msgstr "Nghiêm trọng"
+
+#. module: health_routes
+#: model:ir.model.fields.selection,name:health_routes.selection__health_route_transition__status__critical
+msgid "Critical (infeasible)"
+msgstr "Nghiêm trọng (không khả thi)"
+
+#. module: health_routes
+#. odoo-python
+#: code:addons/health_routes/models/route_transition.py:0
+msgid ""
+"Cần ~%(t)s phút di chuyển, chỉ còn %(g)s phút (needs ~%(t)s min travel, only "
+"%(g)s min gap)"
+msgstr "Cần ~%(t)s phút di chuyển, chỉ còn %(g)s phút"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__date
+#: model_terms:ir.ui.view,arch_db:health_routes.view_route_transition_search
+msgid "Date"
+msgstr "Ngày"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__d_lat
+msgid "Dest Lat"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__d_lng
+msgid "Dest Lng"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_family_link__display_name
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__display_name
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__display_name
+#: model:ir.model.fields,field_description:health_routes.field_health_staff_assignment__display_name
+#: model:ir.model.fields,field_description:health_routes.field_health_visit_offer__display_name
+#: model:ir.model.fields,field_description:health_routes.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__km
+msgid "Distance (km)"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.actions.act_window,name:health_routes.action_route_leg
+#: model:ir.ui.menu,name:health_routes.menu_route_leg
+msgid "Distance Cache"
+msgstr "Bộ nhớ đệm khoảng cách"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_res_config_settings__rt_leg_ttl_days
+msgid "Distance Cache TTL (days)"
+msgstr "Thời hạn bộ nhớ đệm khoảng cách (ngày)"
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid "Distance cache TTL (days)"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_res_config_settings__rt_enabled
+msgid "Enable Travel-Feasibility Warnings"
+msgstr "Bật cảnh báo khả thi lịch trình"
+
+#. module: health_routes
+#: model:ir.model,name:health_routes.model_health_family_link
+msgid "Family Visit Link"
+msgstr "Liên kết thăm khám cho gia đình"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_res_config_settings__rt_horizon_days
+msgid "Feasibility Sweep Horizon (days)"
+msgstr "Phạm vi quét khả thi (ngày)"
+
+#. module: health_routes
+#: model:ir.model,name:health_routes.model_health_visit_offer
+msgid "First-Visit Offer"
+msgstr "Ưu đãi thăm khám đầu tiên"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__prev_fso_id
+msgid "From Visit"
+msgstr "Từ lượt khám"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__gap_min
+msgid "Gap (min)"
+msgstr "Khoảng trống (phút)"
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid "How many days ahead the nightly feasibility sweep checks."
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_family_link__id
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__id
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__id
+#: model:ir.model.fields,field_description:health_routes.field_health_staff_assignment__id
+#: model:ir.model.fields,field_description:health_routes.field_health_visit_offer__id
+#: model:ir.model.fields,field_description:health_routes.field_res_config_settings__id
+msgid "ID"
+msgstr "Đơn vị nhận dạng"
+
+#. module: health_routes
+#. odoo-python
+#: code:addons/health_routes/models/route_transition.py:0
+msgid "Infeasible route"
+msgstr "Lịch trình không khả thi"
+
+#. module: health_routes
+#: model:ir.model,name:health_routes.model_health_staff_assignment
+msgid "Intelligent Staff Assignment Record"
+msgstr "Tài liệu về việc bổ nhiệm nhân viên thông minh"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__write_uid
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__write_date
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__method
+msgid "Method"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,help:health_routes.field_res_config_settings__rt_buffer_minutes
+msgid ""
+"Minutes of slack added on top of travel time before a transition is "
+"considered comfortably feasible."
+msgstr ""
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid ""
+"Off by default: distances use the local straight-line approximation (no "
+"network). Leave off unless a Google key is configured."
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__o_lat
+msgid "Origin Lat"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__o_lng
+msgid "Origin Lng"
+msgstr ""
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid ""
+"Passive warnings only: the nightly sweep, the timeline drop note and the "
+"slot guard. Nothing here ever blocks a booking or moves an assignment."
+msgstr ""
+
+#. module: health_routes
+#: model:ir.actions.act_window,name:health_routes.action_route_transition
+#: model:ir.ui.menu,name:health_routes.menu_route_transition
+msgid "Route Feasibility"
+msgstr "Khả thi lịch trình"
+
+#. module: health_routes
+#: model:ir.model,name:health_routes.model_health_route_leg
+msgid "Route Leg Distance Cache"
+msgstr "Bộ nhớ đệm khoảng cách chặng"
+
+#. module: health_routes
+#: model:ir.model,name:health_routes.model_health_route_transition
+msgid "Route Transition Feasibility"
+msgstr "Khả thi chuyển tiếp lịch trình"
+
+#. module: health_routes
+#: model:ir.ui.menu,name:health_routes.menu_routes_root
+msgid "Routes"
+msgstr "Lịch trình di chuyển"
+
+#. module: health_routes
+#: model:ir.actions.server,name:health_routes.cron_route_feasibility_sweep_ir_actions_server
+msgid "Routes: nightly travel-feasibility sweep"
+msgstr ""
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid ""
+"Slack added on top of travel time before a transition is considered "
+"comfortably feasible."
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__staff_id
+#: model_terms:ir.ui.view,arch_db:health_routes.view_route_transition_search
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__status
+#: model_terms:ir.ui.view,arch_db:health_routes.view_route_transition_search
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__sweep_batch
+msgid "Sweep Batch"
+msgstr ""
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid "Sweep horizon (days)"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__next_fso_id
+msgid "To Visit"
+msgstr "Đến lượt khám"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__travel_min
+msgid "Travel (min)"
+msgstr "Di chuyển (phút)"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_leg__minutes
+msgid "Travel (minutes)"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_res_config_settings__rt_buffer_minutes
+msgid "Travel Buffer (minutes)"
+msgstr "Thời gian đệm di chuyển (phút)"
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_health_route_transition__method
+msgid "Travel Method"
+msgstr "Phương pháp tính"
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid "Travel buffer (minutes)"
+msgstr ""
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid "Travel-Feasible Days (Routes)"
+msgstr "Ngày làm việc khả thi (Lịch trình)"
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid "Travel-feasibility warnings"
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,field_description:health_routes.field_res_config_settings__rt_use_external_router
+msgid "Use External Router (Google/OSRM)"
+msgstr "Dùng bộ định tuyến bên ngoài (Google/OSRM)"
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.res_config_settings_view_form_routes
+msgid "Use external router (Google/OSRM)"
+msgstr ""
+
+#. module: health_routes
+#: model_terms:ir.ui.view,arch_db:health_routes.view_route_transition_search
+msgid "Warning"
+msgstr "Cảnh báo"
+
+#. module: health_routes
+#: model:ir.model.fields.selection,name:health_routes.selection__health_route_transition__status__warn
+msgid "Warning (tight)"
+msgstr "Cảnh báo (sát giờ)"
+
+#. module: health_routes
+#: model:ir.model.fields,help:health_routes.field_res_config_settings__rt_use_external_router
+msgid ""
+"When off, distances use the local straight-line approximation (no network). "
+"Leave off unless a Google key is configured."
+msgstr ""
+
+#. module: health_routes
+#: model:ir.model.fields,help:health_routes.field_health_route_leg__method
+msgid "google | osrm | approx | district | unknown"
+msgstr ""

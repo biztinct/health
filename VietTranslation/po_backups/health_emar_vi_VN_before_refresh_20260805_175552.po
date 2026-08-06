@@ -1,0 +1,281 @@
+# Vietnamese translation of health_emar
+# Copyright (C) 2026 VAFHS Development Team
+# This file is distributed under the same license as the health_emar package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-07 00:00+0000\n"
+"PO-Revision-Date: 2026-07-07 00:00+0700\n"
+"Last-Translator: VAFHS Development Team\n"
+"Language-Team: Vietnamese\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_health_medication_order
+msgid "Medication Order"
+msgstr "Y lệnh thuốc"
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_health_medication_administration
+msgid "Medication Administration Record"
+msgstr "Phiếu thực hiện thuốc"
+
+#. module: health_emar
+#: model:ir.model,name:health_emar.model_health_medication_notgiven_reason
+msgid "Medication Not-Given Reason"
+msgstr "Lý do không cho dùng thuốc"
+
+#. module: health_emar
+#: model:ir.ui.menu,name:health_emar.menu_health_emar
+msgid "Medications (eMAR)"
+msgstr "Thuốc (eMAR)"
+
+#. module: health_emar
+#: model:ir.ui.menu,name:health_emar.menu_health_emar_orders
+msgid "Medication Orders"
+msgstr "Y lệnh thuốc"
+
+#. module: health_emar
+#: model:ir.ui.menu,name:health_emar.menu_health_emar_administrations
+msgid "Administration Register"
+msgstr "Sổ thực hiện thuốc"
+
+#. module: health_emar
+#: model:ir.ui.menu,name:health_emar.menu_health_emar_medication_catalog
+msgid "Medication Catalog"
+msgstr "Danh mục thuốc"
+
+#. module: health_emar
+#: model:ir.ui.menu,name:health_emar.menu_health_emar_notgiven_reasons
+msgid "Not-Given Reasons"
+msgstr "Lý do không cho dùng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__client_id
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__medication_id
+msgid "Medication"
+msgstr "Thuốc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__prescriber_id
+msgid "Prescriber"
+msgstr "Bác sĩ kê đơn"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__dose_quantity
+msgid "Dose Quantity"
+msgstr "Liều lượng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__dose_unit
+msgid "Dose Unit"
+msgstr "Đơn vị liều"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__route
+msgid "Route"
+msgstr "Đường dùng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__frequency
+msgid "Frequency"
+msgstr "Tần suất"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__admin_times
+msgid "Administration Times"
+msgstr "Giờ dùng thuốc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__prn_reason
+msgid "PRN Reason"
+msgstr "Lý do PRN"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__start_date
+msgid "Start Date"
+msgstr "Ngày bắt đầu"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__end_date
+msgid "End Date"
+msgstr "Ngày kết thúc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__instructions
+msgid "Instructions"
+msgstr "Hướng dẫn dùng thuốc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__interaction_warning
+msgid "Interaction Warning"
+msgstr "Cảnh báo tương tác thuốc"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_order__interaction_severity
+msgid "Interaction Severity"
+msgstr "Mức độ tương tác"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__planned_datetime
+msgid "Planned Time"
+msgstr "Giờ dự kiến"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__actual_datetime
+msgid "Actual Time"
+msgstr "Giờ thực tế"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__nurse_id
+msgid "Nurse"
+msgstr "Điều dưỡng"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__witness_id
+msgid "Witness"
+msgstr "Người chứng kiến"
+
+#. module: health_emar
+#: model:ir.model.fields,field_description:health_emar.field_health_medication_administration__reason_id
+msgid "Reason"
+msgstr "Lý do"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Activate"
+msgstr "Kích hoạt"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Acknowledge Interaction"
+msgstr "Xác nhận tương tác thuốc"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Put On Hold"
+msgstr "Tạm ngừng"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Resume"
+msgstr "Tiếp tục"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Complete"
+msgstr "Hoàn tất"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_order_form
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Record Given"
+msgstr "Ghi nhận đã dùng"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Record Not Given"
+msgstr "Ghi nhận không dùng"
+
+#. module: health_emar
+#: model_terms:ir.ui.view,arch_db:health_emar.view_health_medication_administration_form
+msgid "Record Refused"
+msgstr "Ghi nhận từ chối"
+
+#. module: health_emar
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Only draft orders can be activated."
+msgstr "Chỉ y lệnh nháp mới có thể kích hoạt."
+
+#. module: health_emar
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "PRN orders require a PRN reason."
+msgstr "Y lệnh PRN cần có lý do PRN."
+
+#. module: health_emar
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "End date must be on/after start date."
+msgstr "Ngày kết thúc phải bằng/sau ngày bắt đầu."
+
+#. module: health_emar
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Dose must be positive."
+msgstr "Liều lượng phải là số dương."
+
+#. module: health_emar
+#: code:addons/health_emar/models/health_medication_order.py:0
+msgid "Interaction check unavailable"
+msgstr "Không kiểm tra được tương tác thuốc"
+
+#. module: health_emar
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid ""
+"A reason is required when recording a dose as not given or refused "
+"(audit requirement)."
+msgstr ""
+"Cần có lý do khi ghi nhận liều thuốc không dùng hoặc bị từ chối "
+"(yêu cầu kiểm toán)."
+
+#. module: health_emar
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid ""
+"Recorded administrations are append-only: only the notes may be edited. "
+"Ask a head nurse to amend the record (correction is logged, never silent)."
+msgstr ""
+"Phiếu thực hiện thuốc đã ghi nhận chỉ được bổ sung: chỉ ghi chú có thể "
+"chỉnh sửa. Cần điều dưỡng trưởng để hiệu chỉnh (mọi hiệu chỉnh đều được "
+"ghi log)."
+
+#. module: health_emar
+#: code:addons/health_emar/models/health_medication_administration.py:0
+msgid "Recorded administrations cannot be deleted (clinical record integrity)."
+msgstr "Không thể xóa phiếu thực hiện thuốc đã ghi nhận (toàn vẹn hồ sơ lâm sàng)."
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_refused_client
+msgid "Client refused"
+msgstr "Khách hàng từ chối"
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_asleep
+msgid "Client asleep/unavailable"
+msgstr "Khách hàng ngủ/vắng mặt"
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_nausea
+msgid "Nausea or vomiting"
+msgstr "Buồn nôn hoặc nôn"
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_npo
+msgid "Nil by mouth (NPO)"
+msgstr "Nhịn ăn uống"
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_unavailable
+msgid "Medication unavailable"
+msgstr "Không có thuốc"
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_clinical_hold
+msgid "Withheld — clinical judgement"
+msgstr "Tạm ngừng theo đánh giá lâm sàng"
+
+#. module: health_emar
+#: model:health.medication.notgiven.reason,name:health_emar.notgiven_reason_other
+msgid "Other"
+msgstr "Khác"

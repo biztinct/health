@@ -1,0 +1,581 @@
+# Vietnamese translation for health_incident
+# Copyright (C) 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0 health_incident\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_incident
+#: model:ir.model,name:health_incident.model_health_incident
+msgid "Incident / Adverse Event"
+msgstr "Sự cố / Biến cố bất lợi"
+
+#. module: health_incident
+#. odoo-javascript
+#: code:addons/health_incident/static/src/js/incident-components.js:0
+#: model:ir.model.fields,field_description:health_incident.field_health_incident_action__incident_id
+#: model:ir.sequence,name:health_incident.seq_health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_search
+msgid "Incident"
+msgstr "Sự cố"
+
+#. module: health_incident
+#: model:ir.ui.menu,name:health_incident.menu_health_incident_root
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_graph
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Incidents"
+msgstr "Sự cố"
+
+#. module: health_incident
+#: model:ir.actions.act_window,name:health_incident.action_health_incident
+#: model:ir.ui.menu,name:health_incident.menu_health_incident_register
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_list
+msgid "Incident Register"
+msgstr "Sổ đăng ký sự cố"
+
+#. module: health_incident
+#: model:ir.model,name:health_incident.model_health_incident_action
+msgid "Incident Corrective Action"
+msgstr "Hành động khắc phục sự cố"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__action_ids
+#: model:ir.actions.act_window,name:health_incident.action_health_incident_action
+#: model:ir.ui.menu,name:health_incident.menu_health_incident_actions
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_list
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_search
+msgid "Corrective Actions"
+msgstr "Hành động khắc phục"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_form
+msgid "Corrective Action"
+msgstr "Hành động khắc phục"
+
+#. module: health_incident
+#: model:ir.ui.menu,name:health_incident.menu_health_incident_analysis
+msgid "Analysis"
+msgstr "Phân tích"
+
+#. module: health_incident
+#: model:ir.actions.act_window,name:health_incident.action_health_incident_analysis
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_pivot
+msgid "Incident Analysis"
+msgstr "Phân tích sự cố"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__incident_type__fall
+msgid "Fall"
+msgstr "Té ngã"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__incident_type__medication_error
+msgid "Medication Error"
+msgstr "Sai sót thuốc"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__incident_type__injury
+msgid "Injury"
+msgstr "Chấn thương"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__incident_type__behaviour
+msgid "Behaviour"
+msgstr "Hành vi"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__incident_type__property
+msgid "Property Damage/Loss"
+msgstr "Hư hỏng/mất tài sản"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__incident_type__near_miss
+msgid "Near Miss"
+msgstr "Suýt xảy ra"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__incident_type__other
+msgid "Other"
+msgstr "Khác"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__severity__1
+msgid "1 — Negligible"
+msgstr "1 — Không đáng kể"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__severity__2
+msgid "2 — Minor"
+msgstr "2 — Nhẹ"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__severity__3
+msgid "3 — Moderate"
+msgstr "3 — Trung bình"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__severity__4
+msgid "4 — Major"
+msgstr "4 — Nặng"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__severity__5
+msgid "5 — Catastrophic"
+msgstr "5 — Thảm khốc"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__state__reported
+msgid "Reported"
+msgstr "Đã báo cáo"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__state__under_review
+msgid "Under Review"
+msgstr "Đang xem xét"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__state__investigation
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Investigation"
+msgstr "Điều tra"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__state__actions_assigned
+msgid "Actions Assigned"
+msgstr "Đã giao hành động"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__state__closed
+msgid "Closed"
+msgstr "Đã đóng"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident_action__state__open
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_search
+msgid "Open"
+msgstr "Mở"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident_action__state__in_progress
+msgid "In Progress"
+msgstr "Đang thực hiện"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident_action__state__done
+msgid "Done"
+msgstr "Hoàn thành"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident_action__state__cancelled
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__outcome__no_harm
+msgid "No Harm"
+msgstr "Không tổn hại"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__outcome__minor_harm
+msgid "Minor Harm"
+msgstr "Tổn hại nhẹ"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__outcome__moderate_harm
+msgid "Moderate Harm"
+msgstr "Tổn hại trung bình"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__outcome__severe_harm
+msgid "Severe Harm"
+msgstr "Tổn hại nặng"
+
+#. module: health_incident
+#: model:ir.model.fields.selection,name:health_incident.selection__health_incident__outcome__death
+msgid "Death"
+msgstr "Tử vong"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__incident_type
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Type"
+msgstr "Loại"
+
+#. module: health_incident
+#. odoo-javascript
+#: code:addons/health_incident/static/src/js/incident-components.js:0
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Severity"
+msgstr "Mức độ nghiêm trọng"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__client_id
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__order_id
+msgid "Visit"
+msgstr "Lượt thăm khám"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__facility_id
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Facility"
+msgstr "Cơ sở"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident_action__catchment_province_id
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__catchment_province_id
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Location"
+#~ msgstr "Vị trí"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__incident_datetime
+msgid "Incident Date/Time"
+msgstr "Ngày/giờ sự cố"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__reporter_id
+msgid "Reporter"
+msgstr "Người báo cáo"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__reported_datetime
+msgid "Reported On"
+msgstr "Báo cáo lúc"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Description"
+msgstr "Mô tả"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Immediate Actions"
+msgstr "Hành động xử lý ngay"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Witnesses"
+#~ msgstr "Nhân chứng"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__investigator_id
+msgid "Investigator"
+msgstr "Người điều tra"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Root Cause"
+#~ msgstr "Nguyên nhân gốc"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Contributing Factors"
+#~ msgstr "Yếu tố góp phần"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Outcome"
+#~ msgstr "Kết cục"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Notifiable"
+msgstr "Phải báo cáo cơ quan chức năng"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Notified Authority"
+#~ msgstr "Cơ quan đã báo cáo"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Notified Date"
+#~ msgstr "Ngày báo cáo"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Notification"
+msgstr "Báo cáo cơ quan"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident__attachment_ids
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Evidence"
+msgstr "Bằng chứng"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident_action__assignee_id
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_search
+msgid "Assignee"
+msgstr "Người phụ trách"
+
+# GB: no reference in this module — kept for history, inert by construction.
+#~ msgid "Due Date"
+#~ msgstr "Hạn hoàn thành"
+
+#. module: health_incident
+#: model:ir.model.fields,field_description:health_incident.field_health_incident_action__name
+msgid "Action"
+msgstr "Hành động"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Actions"
+msgstr "Hành động"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_form
+msgid "Effectiveness Review"
+msgstr "Đánh giá hiệu quả"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Start Review"
+msgstr "Bắt đầu xem xét"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Start Investigation"
+msgstr "Bắt đầu điều tra"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Assign Actions"
+msgstr "Giao hành động"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Fast-Close (Minor)"
+msgstr "Đóng nhanh (nhẹ)"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_form
+msgid "Reopen"
+msgstr "Mở lại"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_form
+msgid "Start"
+msgstr "Bắt đầu"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_form
+msgid "Mark Done"
+msgstr "Đánh dấu hoàn thành"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_form
+msgid "Cancel Action"
+msgstr "Hủy hành động"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_search
+msgid "My Actions"
+msgstr "Hành động của tôi"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_action_search
+msgid "Overdue"
+msgstr "Quá hạn"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Overdue Actions"
+msgstr "Hành động quá hạn"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Severe"
+msgstr "Nghiêm trọng"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Falls"
+msgstr "Té ngã"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "Medication Errors"
+msgstr "Sai sót thuốc"
+
+#. module: health_incident
+#: model_terms:ir.ui.view,arch_db:health_incident.view_health_incident_search
+msgid "This Month"
+msgstr "Tháng này"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Severe incident reported: %s"
+msgstr "Đã báo cáo sự cố nghiêm trọng: %s"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Reassess fall risk (Morse): %s"
+msgstr "Đánh giá lại nguy cơ té ngã (Morse): %s"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident_action.py:0
+msgid "Corrective action due: %s"
+msgstr "Hạn hành động khắc phục: %s"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Only a reported incident can be put under review."
+msgstr "Chỉ sự cố đã báo cáo mới có thể được đưa vào xem xét."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Only an incident under review can move to investigation."
+msgstr "Chỉ sự cố đang xem xét mới có thể chuyển sang điều tra."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Assign an investigator before starting the investigation."
+msgstr "Chỉ định người điều tra trước khi bắt đầu điều tra."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Record the root cause before assigning corrective actions."
+msgstr "Ghi nhận nguyên nhân gốc trước khi giao hành động khắc phục."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Add at least one open corrective action before moving to actions assigned."
+msgstr "Thêm ít nhất một hành động khắc phục đang mở trước khi chuyển sang đã giao hành động."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "This incident cannot be closed: %(count)s corrective action(s) are still open."
+msgstr "Không thể đóng sự cố này: còn %(count)s hành động khắc phục đang mở."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "This incident is notifiable: record the notified authority and notification date before closing (compliance evidence)."
+msgstr "Sự cố này phải báo cáo cơ quan chức năng: ghi nhận cơ quan đã báo cáo và ngày báo cáo trước khi đóng (bằng chứng tuân thủ)."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Fast-close is only available for severity 1-2 incidents."
+msgstr "Đóng nhanh chỉ áp dụng cho sự cố mức độ 1-2."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Fast-close is only available from Reported or Under Review."
+msgstr "Đóng nhanh chỉ áp dụng từ trạng thái Đã báo cáo hoặc Đang xem xét."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Only a closed incident can be reopened."
+msgstr "Chỉ sự cố đã đóng mới có thể được mở lại."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "Only managers may reopen a closed incident."
+msgstr "Chỉ quản lý mới có thể mở lại sự cố đã đóng."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident_action.py:0
+msgid "Only an open action can be started."
+msgstr "Chỉ hành động đang mở mới có thể bắt đầu."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident_action.py:0
+msgid "Only an open or in-progress action can be marked done."
+msgstr "Chỉ hành động đang mở hoặc đang thực hiện mới có thể đánh dấu hoàn thành."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident_action.py:0
+msgid "A completed action cannot be cancelled."
+msgstr "Hành động đã hoàn thành không thể bị hủy."
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "no client"
+msgstr "không có khách hàng"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "none on record"
+msgstr "chưa có hồ sơ"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/models/health_incident.py:0
+msgid "New"
+msgstr "Mới"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/controllers/api.py:0
+msgid "Access denied"
+msgstr "Từ chối truy cập"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/controllers/api.py:0
+msgid "Invalid JSON body"
+msgstr "Nội dung JSON không hợp lệ"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/controllers/api.py:0
+msgid "Client not found"
+msgstr "Không tìm thấy khách hàng"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/controllers/api.py:0
+msgid "Order not found"
+msgstr "Không tìm thấy lượt thăm khám"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/controllers/api.py:0
+msgid "incident_type and description are required"
+msgstr "Bắt buộc phải có loại sự cố và mô tả"
+
+#. module: health_incident
+#. odoo-python
+#: code:addons/health_incident/controllers/api.py:0
+msgid "Incident already recorded (duplicate mutation ignored)"
+msgstr "Sự cố đã được ghi nhận (bỏ qua bản trùng lặp)"
+
+#. module: health_incident
+#: model_terms:ir.actions.act_window,help:health_incident.action_health_incident
+msgid "Report an incident"
+msgstr "Báo cáo sự cố"
