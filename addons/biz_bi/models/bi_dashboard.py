@@ -260,6 +260,9 @@ class BiDashboard(models.Model):
     def add_chart(self, chart_id):
         """Place a chart on the dashboard below existing widgets."""
         self.ensure_one()
+        if isinstance(chart_id, (list, tuple)):
+            # the web ORM's create() hands back a list of ids
+            chart_id = chart_id[0]
         chart = self.env['bi.chart'].browse(int(chart_id))
         chart.check_access('read')
         bottom = max(

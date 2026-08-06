@@ -111,4 +111,4 @@ class BiChart(models.Model):
 
     def action_duplicate(self):
         self.ensure_one()
-        return self.copy({'name': _("%s (copy)", self.name)})
+        return self.copy({'name': _("%s (copy)", self.name)}).id

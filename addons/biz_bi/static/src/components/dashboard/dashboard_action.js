@@ -420,7 +420,7 @@ export class DashboardAction extends Component {
         const chartId = await this.orm.call(
             "bi.chart", "action_duplicate", [[widget.chart_id]]);
         await this.orm.call("bi.dashboard", "add_chart",
-            [[this.dashboardId], chartId.id || chartId]);
+            [[this.dashboardId], chartId]);
         await this.reloadFull();
     }
 

@@ -499,7 +499,8 @@ export class ExploreAction extends Component {
             if (this.state.chartId) {
                 await this.orm.write("bi.chart", [this.state.chartId], values);
             } else {
-                this.state.chartId = await this.orm.create("bi.chart", [values]);
+                [this.state.chartId] = await this.orm.create(
+                    "bi.chart", [values]);
             }
             this.notification.add(_t("Chart saved."), { type: "success" });
         } finally {
