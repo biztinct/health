@@ -1,0 +1,143 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* biz_bi_cms
+#
+# Shape notes (conventions §4, ledger §5.29 / §5.58 / §5.67 / §5.84 / §5.85):
+#   * every entry carries `#. module: biz_bi_cms` — without it the PO importer
+#     dies with AttributeError during registry load, not with a test failure;
+#   * every entry carries at least one `#:` occurrence — PoFileReader yields
+#     one row PER OCCURRENCE and has no fallback, so an entry without one is
+#     read by nothing;
+#   * a `#. odoo-javascript` marker is always paired with a
+#     `#: code:addons/biz_bi_cms/...` occurrence — the marker chooses the
+#     catalogue, the occurrence is what makes the entry exist;
+#   * a data-record label is NOT a code translation: it needs a `model:` style
+#     occurrence instead, which is loaded into the jsonb column at upgrade.
+#     "Analytics" is both, so it carries both kinds.
+#   * the filename is `vi.po` because `get_po_paths()` only ever opens
+#     `i18n/vi.po` and `i18n/vi_VN.po`.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-07 00:00+0000\n"
+"PO-Revision-Date: 2026-08-07 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_action.js:0
+msgid "%(dashboards)s dashboards · %(datasets)s datasets"
+msgstr "%(dashboards)s bảng thông tin · %(datasets)s tập dữ liệu"
+
+#. module: biz_bi_cms
+#: model:cms.sidebar.section,name:biz_bi_cms.section_analytics
+msgid "ANALYTICS"
+msgstr "PHÂN TÍCH"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_action.js:0
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+#: model:cms.sidebar.item,name:biz_bi_cms.item_analytics_hub
+#: model:ir.actions.client,name:biz_bi_cms.action_bi_hub
+msgid "Analytics"
+msgstr "Phân tích"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "Analytics access has not been set up for your account yet"
+msgstr "Tài khoản của bạn chưa được cấp quyền Phân tích"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid ""
+"Ask an administrator to give you an Analytics role, and your dashboards will"
+" appear here."
+msgstr ""
+"Hãy đề nghị quản trị viên cấp vai trò Phân tích cho bạn, các bảng thông tin "
+"sẽ hiển thị tại đây."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_action.js:0
+msgid "Clear search"
+msgstr "Xoá tìm kiếm"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "Continue where you left off"
+msgstr "Tiếp tục công việc đang dở"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "Create Report"
+msgstr "Tạo báo cáo"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "Create one"
+msgstr "Tạo mới"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "Every dashboard you can see, in one place."
+msgstr "Mọi bảng thông tin bạn có quyền xem, gom về một nơi."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "No dashboard matches your search."
+msgstr "Không có bảng thông tin nào khớp với từ khoá tìm kiếm."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "No dashboards yet"
+msgstr "Chưa có bảng thông tin nào"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "No workspace is shared with you yet"
+msgstr "Chưa có không gian làm việc nào được chia sẻ với bạn"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid ""
+"Once a workspace is shared with you, its dashboards will be listed here."
+msgstr ""
+"Khi một không gian làm việc được chia sẻ với bạn, các bảng thông tin của nó "
+"sẽ xuất hiện tại đây."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "Results"
+msgstr "Kết quả"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_action.js:0
+msgid "Search dashboards…"
+msgstr "Tìm bảng thông tin…"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "Workspaces"
+msgstr "Không gian làm việc"

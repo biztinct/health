@@ -1,0 +1,14 @@
+=== RESULT LINE (verbatim)
+2026-08-07 02:47:42,311 2398894 INFO vietuat odoo.tests.stats: biz_bi_cms: 8 tests 2.59s 1741 queries 
+2026-08-07 02:47:42,311 2398894 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 6 tests when loading database 'vietuat' 
+
+=== EXECUTED TEST METHODS
+Starting TestAnalyticsHub.test_ai_probe_degrades_for_a_creator
+Starting TestAnalyticsHub.test_creator_group_grant
+Starting TestAnalyticsHub.test_hub_data_respects_workspace_rules
+Starting TestAnalyticsHub.test_hub_data_shape
+Starting TestAnalyticsHub.test_role_gate_idempotent
+Starting TestAnalyticsHub.test_sidebar_wiring
+
+=== any FAIL/ERROR/CRITICAL
+0

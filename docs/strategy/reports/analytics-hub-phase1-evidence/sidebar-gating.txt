@@ -1,0 +1,18 @@
+SIDEBAR ITEM: id=105 name=Analytics section=analytics(seq 37) icon=fa fa-bar-chart action_xmlid=biz_bi_cms.action_bi_hub action_tag=biz_bi.hub match_tags=biz_bi.hub,biz_bi.dashboard,biz_bi.explore match_models=False parent=False
+GATE role_ids: ['Owner', 'Operations Manager', 'Branch Manager', 'Accountant']
+ACTION: 1723 biz_bi.hub
+
+SECTION ORDER (technical_key, sequence):
+   crm        10
+   ops        20
+   finance    30
+   clinical   32
+   interop    35
+   analytics  37
+   admin      40
+
+ahp1_qa_ops    role=Operations Manager   sections=['crm', 'ops', 'finance', 'interop', 'analytics', 'admin']  ANALYTICS_VISIBLE=True
+khoa.bv        role=Nurse                sections=['crm', 'interop', 'admin']  ANALYTICS_VISIBLE=False
+nurse          role=Nurse                sections=['crm', 'interop', 'admin']  ANALYTICS_VISIBLE=False
+crm            role=CRM                  sections=['crm', 'ops', 'interop', 'admin']  ANALYTICS_VISIBLE=False
+EXIT:0

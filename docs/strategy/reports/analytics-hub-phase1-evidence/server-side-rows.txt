@@ -1,0 +1,27 @@
+AUDIT_ROWS_FOR_QA_USER:
+  id=742 event=dashboard_view res_model=bi.dashboard res_id=1 at=2026-08-07 02:38:43
+  id=743 event=query res_model=False res_id=0 at=2026-08-07 02:38:43
+  id=744 event=query res_model=False res_id=0 at=2026-08-07 02:38:43
+  id=745 event=query res_model=False res_id=0 at=2026-08-07 02:38:43
+  id=746 event=query res_model=False res_id=0 at=2026-08-07 02:38:43
+  id=747 event=query res_model=False res_id=0 at=2026-08-07 02:38:43
+  id=748 event=query res_model=False res_id=0 at=2026-08-07 02:38:43
+  id=749 event=query res_model=False res_id=0 at=2026-08-07 02:38:43
+  id=750 event=query res_model=False res_id=0 at=2026-08-07 02:38:43
+RECENTS_PAYLOAD: [{'id': 1, 'name': 'Operations Overview', 'workspace': 'Operations'}]
+HUB_WORKSPACES: [(1, 'General Analytics', 'layout-grid', 1, 2), (2, 'Operations', 'stethoscope', 0, 3), (3, 'Finance', 'credit-card', 2, 2), (4, 'Growth', 'target', 1, 0)]
+HUB_FLAGS: is_creator=True is_modeler=False is_admin=False ai_available=False
+AI_PROBE_AS_CREATOR: False
+EXIT:0
+SECOND DRIVE — audit rows written by the QA persona (uid 7756):
+  id=751 event=dashboard_view res_model=bi.dashboard res_id=1 at=2026-08-07 02:50:45
+  id=752 event=query res_model=False res_id=0 at=2026-08-07 02:50:45
+  id=753 event=query res_model=False res_id=0 at=2026-08-07 02:50:45
+  id=754 event=query res_model=False res_id=0 at=2026-08-07 02:50:45
+  id=755 event=query res_model=False res_id=0 at=2026-08-07 02:50:45
+  id=756 event=query res_model=False res_id=0 at=2026-08-07 02:50:45
+  id=757 event=query res_model=False res_id=0 at=2026-08-07 02:50:45
+  id=758 event=query res_model=False res_id=0 at=2026-08-07 02:50:45
+  id=759 event=query res_model=False res_id=0 at=2026-08-07 02:50:45
+RECENTS: [{'id': 1, 'name': 'Operations Overview', 'workspace': 'Operations'}]
+EXIT:0

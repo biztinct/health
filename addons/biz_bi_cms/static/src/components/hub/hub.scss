@@ -1,0 +1,432 @@
+// ============================================================================
+// Analytics Hub — the CMS landing for biz_bi.
+//
+// Everything is namespaced under `.bi-hub`, and every colour is a flat mono
+// token: no gradients, no dual-tone. The `--vu-*` theme tokens are consumed
+// with fallbacks (the biz_bi convention) so the module stays theme-independent
+// and looks identical wherever the theme is installed.
+//
+// Two structural rules, both from the ledger:
+//   * no `position: absolute; inset: 0` on the root — under the /bizapp shell
+//     the action host is not a positioned ancestor, so the left edge would
+//     slide under the CMS sidebar (§5.52). Flex + 100% instead.
+//   * no `contain`, `transform`, `filter` or `container-type` on anything that
+//     could ever hold a form field: those make an ancestor the containing
+//     block for the inline-rendered autocomplete popup and over-paint it
+//     (§5.96, guarded repo-wide by health_theme). The root's `overflow-y:
+//     auto` is deliberate and safe: overflow alone does NOT create a
+//     containing block for a `position: fixed` popup, which is exactly why
+//     §5.96 says to walk the ancestor chain for containment rather than to
+//     hunt `overflow`. No card or card ancestor scrolls.
+// And no CSS `min()` / `max()` / `clamp()` anywhere: libsass reads them as
+// SASS functions and ONE bad rule drops every co-bundled stylesheet (§5.68).
+// ============================================================================
+
+.bi-hub {
+    --bih-primary: var(--vu-brand-primary, #1565C0);
+    --bih-primary-dark: var(--vu-brand-primary-dark, #0D47A1);
+    --bih-app: var(--vu-surface-app, #F7F8FA);
+    --bih-card: var(--vu-surface-card, #FFFFFF);
+    --bih-muted: var(--vu-surface-muted, #EEF1F5);
+    --bih-hover: var(--vu-surface-hover, #E8F1FB);
+    --bih-text: var(--vu-text-primary, #1F2937);
+    --bih-text-soft: var(--vu-text-secondary, #6B7280);
+    --bih-border: var(--vu-border-color, #E3E7ED);
+    --bih-radius-sm: var(--vu-radius-sm, 4px);
+    --bih-radius-md: var(--vu-radius-md, 8px);
+    --bih-radius-lg: var(--vu-radius-lg, 12px);
+    --bih-accent: var(--bih-primary);
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background: var(--bih-app);
+    color: var(--bih-text);
+    font-size: 13px;
+
+    .bi-hub-page {
+        width: 100%;
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 28px 32px 48px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    // ------------------------------------------------------------- header
+    .bi-hub-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .bi-hub-h1 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+    }
+
+    .bi-hub-sub {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--bih-text-soft);
+    }
+
+    // ------------------------------------------------------------ buttons
+    .bi-hub-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--bih-border);
+        background: var(--bih-card);
+        color: var(--bih-text);
+        border-radius: var(--bih-radius-md);
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s, border-color 0.15s;
+
+        &:hover { background: var(--bih-hover); }
+
+        &.bi-hub-btn-primary {
+            background: var(--bih-primary);
+            border-color: var(--bih-primary);
+            color: #FFFFFF;
+
+            &:hover {
+                background: var(--bih-primary-dark);
+                border-color: var(--bih-primary-dark);
+            }
+        }
+    }
+
+    .bi-hub-btn-ico {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .bi-hub-link {
+        border: 0;
+        background: none;
+        padding: 0;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--bih-primary);
+        cursor: pointer;
+
+        &:hover { text-decoration: underline; }
+    }
+
+    // ------------------------------------------------------------- search
+    .bi-hub-search {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: var(--bih-card);
+        border: 1px solid var(--bih-border);
+        border-radius: var(--bih-radius-md);
+        padding: 0 12px;
+
+        &:focus-within { border-color: var(--bih-primary); }
+    }
+
+    .bi-hub-search-ico {
+        display: inline-flex;
+        align-items: center;
+        color: var(--bih-text-soft);
+        flex: 0 0 auto;
+    }
+
+    .bi-hub-search-input {
+        flex: 1 1 auto;
+        border: 0;
+        outline: none;
+        background: transparent;
+        color: var(--bih-text);
+        font-size: 13px;
+        padding: 10px 10px;
+
+        &::placeholder { color: var(--bih-text-soft); }
+    }
+
+    .bi-hub-search-clear {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        border: 0;
+        background: none;
+        padding: 4px;
+        border-radius: var(--bih-radius-sm);
+        color: var(--bih-text-soft);
+        cursor: pointer;
+
+        &:hover { background: var(--bih-muted); color: var(--bih-text); }
+    }
+
+    // ------------------------------------------------------------ section
+    .bi-hub-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .bi-hub-section-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--bih-text-soft);
+    }
+
+    // ------------------------------------------------------------ recents
+    .bi-hub-recents {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .bi-hub-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--bih-border);
+        background: var(--bih-card);
+        border-radius: var(--bih-radius-md);
+        padding: 9px 14px;
+        cursor: pointer;
+        text-align: left;
+        color: var(--bih-text);
+
+        &:hover { border-color: var(--bih-primary); background: var(--bih-hover); }
+    }
+
+    .bi-hub-chip-ico { color: var(--bih-text-soft); display: inline-flex; }
+
+    .bi-hub-chip-text { display: flex; flex-direction: column; }
+
+    .bi-hub-chip-name { font-size: 13px; font-weight: 600; }
+
+    .bi-hub-chip-ws { font-size: 11px; color: var(--bih-text-soft); }
+
+    // -------------------------------------------------------------- grid
+    .bi-hub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 16px;
+        align-items: start;
+    }
+
+    .bi-hub-card {
+        display: flex;
+        background: var(--bih-card);
+        border: 1px solid var(--bih-border);
+        border-radius: var(--bih-radius-lg);
+    }
+
+    // The left mono colour bar. One flat colour per workspace colour index —
+    // never a gradient.
+    .bi-hub-card-bar {
+        flex: 0 0 4px;
+        background: var(--bih-accent);
+        border-radius: var(--bih-radius-lg) 0 0 var(--bih-radius-lg);
+    }
+
+    .bi-hub-accent-0 { --bih-accent: #1565C0; }
+    .bi-hub-accent-1 { --bih-accent: #00897B; }
+    .bi-hub-accent-2 { --bih-accent: #F57C00; }
+    .bi-hub-accent-3 { --bih-accent: #6A1B9A; }
+    .bi-hub-accent-4 { --bih-accent: #C62828; }
+    .bi-hub-accent-5 { --bih-accent: #2E7D32; }
+
+    .bi-hub-card-body {
+        flex: 1 1 auto;
+        padding: 16px 18px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        // A grid cell defaults to min-width:auto, which lets a long dashboard
+        // name push the card wider than its column instead of ellipsing.
+        min-width: 0;
+    }
+
+    .bi-hub-card-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .bi-hub-card-ico {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--bih-radius-md);
+        background: var(--bih-muted);
+        color: var(--bih-accent);
+    }
+
+    .bi-hub-card-titles { min-width: 0; }
+
+    .bi-hub-card-name {
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .bi-hub-card-desc {
+        margin-top: 2px;
+        font-size: 12px;
+        color: var(--bih-text-soft);
+    }
+
+    .bi-hub-card-counts {
+        font-size: 11px;
+        color: var(--bih-text-soft);
+    }
+
+    .bi-hub-card-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        border-top: 1px solid var(--bih-border);
+        padding-top: 8px;
+    }
+
+    .bi-hub-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        border: 0;
+        background: none;
+        border-radius: var(--bih-radius-sm);
+        padding: 6px 8px;
+        font-size: 13px;
+        color: var(--bih-text);
+        text-align: left;
+        cursor: pointer;
+
+        &:hover { background: var(--bih-hover); color: var(--bih-primary); }
+    }
+
+    .bi-hub-row-dot {
+        flex: 0 0 auto;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--bih-accent);
+    }
+
+    .bi-hub-row-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .bi-hub-none {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        font-size: 12px;
+        color: var(--bih-text-soft);
+    }
+
+    // ----------------------------------------------------------- results
+    .bi-hub-results {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        background: var(--bih-card);
+        border: 1px solid var(--bih-border);
+        border-radius: var(--bih-radius-lg);
+        padding: 8px;
+    }
+
+    .bi-hub-result {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 0;
+        background: none;
+        border-radius: var(--bih-radius-md);
+        padding: 9px 10px;
+        text-align: left;
+        color: var(--bih-text);
+        cursor: pointer;
+
+        &:hover { background: var(--bih-hover); }
+    }
+
+    .bi-hub-result-dot {
+        flex: 0 0 auto;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--bih-primary);
+    }
+
+    .bi-hub-result-text { display: flex; flex-direction: column; min-width: 0; }
+
+    .bi-hub-result-name { font-size: 13px; font-weight: 600; }
+
+    .bi-hub-result-ws { font-size: 11px; color: var(--bih-text-soft); }
+
+    // ------------------------------------------------------------- empty
+    .bi-hub-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
+        background: var(--bih-card);
+        border: 1px solid var(--bih-border);
+        border-radius: var(--bih-radius-lg);
+        padding: 48px 24px;
+        color: var(--bih-text-soft);
+    }
+
+    .bi-hub-empty-ico { color: var(--bih-border); display: inline-flex; }
+
+    .bi-hub-empty-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--bih-text);
+    }
+
+    .bi-hub-empty-text { font-size: 13px; }
+
+    // --------------------------------------------------------- skeletons
+    // A skeleton, not a spinner: the page's shape is known before its data
+    // is, so show the shape.
+    .bi-hub-skeleton-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .bi-hub-skeleton {
+        background: var(--bih-muted);
+        border-radius: var(--bih-radius-lg);
+        animation: bi-hub-pulse 1.4s ease-in-out infinite;
+    }
+
+    .bi-hub-skeleton-strip { height: 46px; }
+
+    .bi-hub-skeleton-card { height: 180px; }
+}
+
+@keyframes bi-hub-pulse {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.55; }
+    100% { opacity: 1; }
+}

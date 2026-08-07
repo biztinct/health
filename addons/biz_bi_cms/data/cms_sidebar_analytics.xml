@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Analytics application's REAL entry point.
+
+     biz_bi ships a backend `menuitem` root (views/bi_menus.xml). That is
+     correct and, on this deployment, unreachable: a login lands in the
+     /bizapp CMS shell, whose app switcher offers only its own apps, and
+     /odoo redirects straight back into it. Ledger §5.69 — the same trap the
+     Channel Center and the clinical menus hit; the fix is a cms.sidebar.item.
+
+     Conventions below, each cloned from the siblings in
+     health_cms_sidebar/data/, health_care_command/data/ and
+     health_cms_coverage/data/ — every one of them paid for by a live failure:
+
+       * NO noupdate: the section and the leaf stay updatable on upgrade
+         (ledger noupdate-seed-cutover). `role_ids` is deliberately NOT set
+         here — access.role rows carry no xml-id on this platform, so the gate
+         is written by hooks.py.
+       * A ROOT leaf, `parent_id` explicitly FALSE. Explicit because an XML
+         data update writes only the fields it names: dropping `parent_id`
+         from a record leaves an earlier value in place (§5.69b, hit live).
+         And a root because an item WITH children becomes a non-navigating
+         expander (§5.69a).
+       * `icon` is rendered as <i t-att-class="item.icon"/>
+         (cms_sidebar.xml:53,61), so it must be a font-awesome class here —
+         the repo's hf-wt-ico SVG masks have no render path in this template.
+         Inside the hub's own body the convention flips back to inline SVG.
+       * NO `match_models`: the frontend model index is last-wins, so a leaf
+         declaring a model another leaf already owns steals its highlight for
+         every action without an xml_id (§5.94). Tags only.
+     -->
+<odoo>
+
+    <!-- Sequences on this database: CRM 10, OPERATIONS MANAGER 20,
+         FINANCE 30, CLINICAL 32, INTEROP & COMPLIANCE 35, ADMIN 40.
+         37 is the only slot that is both after FINANCE and before ADMIN
+         without reordering anything that already exists. -->
+    <record id="section_analytics" model="cms.sidebar.section">
+        <field name="name">ANALYTICS</field>
+        <field name="technical_key">analytics</field>
+        <field name="sequence">37</field>
+        <field name="icon">fa fa-area-chart</field>
+    </record>
+
+    <record id="item_analytics_hub" model="cms.sidebar.item">
+        <field name="name">Analytics</field>
+        <field name="section_id" ref="section_analytics"/>
+        <field name="parent_id" eval="False"/>
+        <field name="sequence">10</field>
+        <field name="icon">fa fa-bar-chart</field>
+        <field name="action_xmlid">biz_bi_cms.action_bi_hub</field>
+        <field name="action_tag">biz_bi.hub</field>
+        <!-- The chrome must survive where the hub SENDS you: opening a
+             dashboard and opening the advanced Explore builder are both
+             navigations away from the hub's own tag, and without these the
+             user is dropped into the bare Odoo backend mid-task. -->
+        <field name="match_action_tags">biz_bi.hub,biz_bi.dashboard,biz_bi.explore</field>
+    </record>
+
+</odoo>

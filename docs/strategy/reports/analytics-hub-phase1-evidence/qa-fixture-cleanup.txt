@@ -1,0 +1,19 @@
+--- FRESH CURSOR (psql) VERIFICATION AFTER QA CLEANUP ---
+res_users ahp1_qa_ops = 0
+res_partner AHP1 QA% = 0
+bi_audit_log for uids 7743/7756 = 0
+bi_workspace HUB% = 0
+bi_dashboard HUB% = 0
+res_users bihub_% = 0
+--- group_bi_creator members (the phase effect, NOT a fixture) ---
+accounts / Accountant
+dung / Owner
+minh.nv / Branch Manager
+om / Operations Manager
+owner / Owner
+qa_catch_owner / Owner
+qa_catch_staff / Owner
+trainer / Owner
+vijay / Owner
+--- server health ---
+HTTP /web/login: 200
