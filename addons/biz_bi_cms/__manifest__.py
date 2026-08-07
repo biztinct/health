@@ -34,6 +34,14 @@ This glue module closes it:
   Explore writes, and "Open in advanced builder" hands the same state to the
   full builder at any point.
 
+Both surfaces answer honestly when there is nothing to show: a tenant whose
+workspaces hold no dashboard yet gets one first-run card instead of a grid of
+empty boxes, the wizard's step-3 list offers only the dashboards the user may
+actually WRITE to (the same predicate the dashboard screen publishes as
+``can_edit``, rather than the read-scoped list that used to refuse at Save
+time), and the recents strip drops dashboards that have been deleted or moved
+out of reach since they were viewed.
+
 The existing backend Analytics application is left completely untouched for
 power users; the hub is an additional, calmer front door.
 

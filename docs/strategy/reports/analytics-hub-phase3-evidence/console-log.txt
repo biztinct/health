@@ -1,0 +1,42 @@
+AH-3 — browser console, per screen
+==================================
+
+Collected with chrome-devtools `list_console_messages` over the whole drive
+(the isolated context was never reloaded between screens except at the three
+server restarts, so this is the accumulated log for the run).
+
+
+Login page                       : no errors, no warnings
+/bizapp shell                    : no errors, no warnings
+Hub landing (1440 en)            : no errors, no warnings
+Hub landing (1440 vi)            : no errors, no warnings
+Hub landing (1024 en / vi)       : no errors, no warnings
+Wizard step 1                    : no errors, no warnings
+Wizard step 2 (AI box visible)   : no errors, no warnings
+Wizard step 2 after an AI ask    : no errors, no warnings
+Wizard step 3 (preview + save)   : no errors, no warnings
+Saved dashboard screen           : no errors, no warnings
+First-run card (creator)         : no errors, no warnings
+First-run card (viewer only)     : no errors, no warnings
+AccessError fallback state       : no errors, no warnings
+
+Full message list at the end of the run:
+
+    Showing 1-1 of 1 (Page 1 of 1).
+    msgid=55 [issue] A form field element should have an id or name
+             attribute (count: 1)
+
+That single advisory is PRE-EXISTING and it is measured, not assumed. A DOM
+sweep of every form element on the page while the wizard was open:
+
+    {"unlabelled":[{"tag":"SELECT","type":"select-one",
+                    "cls":"cms-catchment-select","owner":"other"}],
+     "total":6}
+
+— i.e. of the six form controls on screen, exactly one lacks an id/name, and
+it belongs to the CMS shell's catchment picker, not to `.bi-hub` or
+`.bi-wizard`. Every control this module renders carries both attributes.
+
+No `ConnectionLostError` and no 502 burst occurred during this pass: the three
+service restarts between pixel cycles were our own and the browser was
+re-navigated after each (§5.130's advice, applied pre-emptively).

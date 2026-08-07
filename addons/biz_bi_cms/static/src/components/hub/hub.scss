@@ -36,6 +36,10 @@
     --bih-radius-md: var(--vu-radius-md, 8px);
     --bih-radius-lg: var(--vu-radius-lg, 12px);
     --bih-accent: var(--bih-primary);
+    // ONE focus indicator, the repo's own shape (§5.97): a solid 1px ring
+    // flush against the control plus a soft halo. Never an extra `outline` on
+    // top of it — that is the four-rectangles trap the ledger describes.
+    --bih-ring: 0 0 0 1px var(--bih-primary), 0 0 0 4px rgba(21, 101, 192, 0.16);
 
     display: flex;
     flex-direction: column;
@@ -50,7 +54,7 @@
         width: 100%;
         max-width: 1180px;
         margin: 0 auto;
-        padding: 28px 32px 48px;
+        padding: 24px 32px 48px;
         display: flex;
         flex-direction: column;
         gap: 24px;
@@ -152,7 +156,8 @@
         background: transparent;
         color: var(--bih-text);
         font-size: 13px;
-        padding: 10px 10px;
+        // 8/8 makes the search bar exactly as tall as the header button.
+        padding: 8px;
 
         &::placeholder { color: var(--bih-text-soft); }
     }
@@ -190,17 +195,17 @@
     .bi-hub-recents {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
     }
 
     .bi-hub-chip {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         border: 1px solid var(--bih-border);
         background: var(--bih-card);
         border-radius: var(--bih-radius-md);
-        padding: 9px 14px;
+        padding: 8px 16px;
         cursor: pointer;
         text-align: left;
         color: var(--bih-text);
@@ -221,7 +226,12 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 16px;
-        align-items: start;
+        // PIXEL CYCLE 1: `align-items: start` let every card size to its own
+        // content, so a row of three measured 203 / 210 / 179 px and the row
+        // read as three unrelated boxes. Stretch (the grid default) makes a
+        // row one object; the list inside flows from the top and the slack
+        // falls to the bottom where it is invisible.
+        align-items: stretch;
     }
 
     .bi-hub-card {
@@ -248,10 +258,13 @@
 
     .bi-hub-card-body {
         flex: 1 1 auto;
-        padding: 16px 18px 14px;
+        // 8px rhythm: 16 everywhere (was 16/18/14) — minus the 4px the
+        // colour bar already adds on the left, so the content is optically
+        // inset by the same 16 on both sides (PIXEL CYCLE 2).
+        padding: 16px 16px 16px 12px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         // A grid cell defaults to min-width:auto, which lets a long dashboard
         // name push the card wider than its column instead of ellipsing.
         min-width: 0;
@@ -260,7 +273,7 @@
     .bi-hub-card-head {
         display: flex;
         align-items: flex-start;
-        gap: 10px;
+        gap: 12px;
     }
 
     .bi-hub-card-ico {
@@ -283,10 +296,19 @@
         line-height: 1.3;
     }
 
+    // Always rendered, even when the workspace has no description: measured
+    // at 1440, the card without one put its counts line 7px above its
+    // neighbours' and the divider with it. One reserved line costs nothing and
+    // makes the row read as a table.
     .bi-hub-card-desc {
         margin-top: 2px;
+        min-height: 17px;
         font-size: 12px;
+        line-height: 17px;
         color: var(--bih-text-soft);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .bi-hub-card-counts {
@@ -297,7 +319,7 @@
     .bi-hub-card-list {
         display: flex;
         flex-direction: column;
-        gap: 1px;
+        gap: 2px;
         border-top: 1px solid var(--bih-border);
         padding-top: 8px;
     }
@@ -305,11 +327,11 @@
     .bi-hub-row {
         display: flex;
         align-items: center;
-        gap: 9px;
+        gap: 8px;
         border: 0;
         background: none;
         border-radius: var(--bih-radius-sm);
-        padding: 6px 8px;
+        padding: 8px;
         font-size: 13px;
         color: var(--bih-text);
         text-align: left;
@@ -336,7 +358,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 8px;
+        padding: 8px;
         font-size: 12px;
         color: var(--bih-text-soft);
     }
@@ -355,11 +377,11 @@
     .bi-hub-result {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         border: 0;
         background: none;
         border-radius: var(--bih-radius-md);
-        padding: 9px 10px;
+        padding: 8px;
         text-align: left;
         color: var(--bih-text);
         cursor: pointer;
@@ -397,6 +419,45 @@
 
     .bi-hub-empty-ico { color: var(--bih-border); display: inline-flex; }
 
+    // --------------------------------------------------------- first run
+    // Workspaces exist and hold nothing yet. One card, one sentence, one
+    // action — not a grid of identical "No dashboards yet" boxes.
+    .bi-hub-firstrun {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+        background: var(--bih-card);
+        border: 1px solid var(--bih-border);
+        border-radius: var(--bih-radius-lg);
+        padding: 48px 24px;
+    }
+
+    .bi-hub-firstrun-ico {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--bih-muted);
+        color: var(--bih-primary);
+    }
+
+    .bi-hub-firstrun-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--bih-text);
+    }
+
+    .bi-hub-firstrun-text {
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--bih-text-soft);
+        max-width: 460px;
+    }
+
     .bi-hub-empty-title {
         font-size: 15px;
         font-weight: 600;
@@ -423,6 +484,26 @@
     .bi-hub-skeleton-strip { height: 46px; }
 
     .bi-hub-skeleton-card { height: 180px; }
+
+    // ------------------------------------------------------------- focus
+    // Every interactive element draws the SAME ring, and only that ring
+    // (§5.97: one control, one boundary). Declared last so it wins over the
+    // hover rules above without !important.
+    .bi-hub-btn,
+    .bi-hub-link,
+    .bi-hub-chip,
+    .bi-hub-row,
+    .bi-hub-result,
+    .bi-hub-search-clear {
+        &:focus-visible {
+            outline: none;
+            box-shadow: var(--bih-ring);
+        }
+    }
+
+    .bi-hub-search:focus-within {
+        box-shadow: var(--bih-ring);
+    }
 }
 
 @keyframes bi-hub-pulse {

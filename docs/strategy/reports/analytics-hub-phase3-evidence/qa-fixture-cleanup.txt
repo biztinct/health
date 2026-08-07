@@ -1,0 +1,88 @@
+AH-3 — QA fixtures created, and the fresh-cursor proof they are gone
+====================================================================
+
+§5.34 (verify the revert from a SEPARATE cursor) and §5.128 (an append-only
+log keyed on res.users makes the persona undeletable until its rows go out
+with a raw scoped DELETE).
+
+
+1. Everything this pass created
+-------------------------------
+
+Inventory taken from psql before cleanup:
+
+     kind    | id  |              label
+    ---------+-----+---------------------------------
+     chart   | 74  | Monthly Total Price by Facility
+     dashboard| 445| AH3 QA Dashboard
+     widget  | 51  | (on dashboard 445)
+     audit   | 969 | ai_request
+     audit   | 970 | query
+     audit   | 971 | query
+     audit   | 972 | chart_save
+     audit   | 973 | dashboard_view
+     audit   | 974 | query
+     audit   | 975 | query
+     ai_log  | 28  | nlq        (2026-08-07 04:14:35, accepted t)
+     res.users 8128 "AH3 QA Creator" (login ah3_qa) + its res.partner
+
+ai_log ids 16-26 are OLDER rows belonging to earlier sessions (00:00-01:28);
+they were left alone. Only id 28 (04:14:35) is this pass's.
+
+Two temporary DATA changes, both reverted:
+
+  a. `res_users.lang` on 8128 flipped en_US -> vi_VN -> en_US for the
+     Vietnamese screenshots (the account is now deleted, so moot);
+  b. `bi_workspace_groups_rel` rows (1,637) (2,637) (3,637) inserted to give
+     the persona an empty slate for the first-run card, then DELETEd. The
+     table is back to **0 rows**, which is the state it was in before
+     (verified below) — no workspace on this deployment is group-scoped.
+
+Also temporary: `group_bi_creator` was removed from 8128 and
+`group_bi_viewer` added for the non-creator first-run screenshot, then
+reversed through the ORM. NOTE for the next phase: a group write made from a
+separate `odoo-bin shell` does NOT reach the running HTTP workers' group
+cache — `has_group` kept answering the old value until the service was
+restarted (see the report's new ledger entry).
+
+
+2. Cleanup, executed
+--------------------
+
+    dashboard exists: AH3 QA Dashboard
+    chart exists: Monthly Total Price by Facility
+    ai_log rows deleted: 1
+    audit rows deleted: 7
+    CLEANUP COMMITTED
+
+`bi.audit.log.unlink()` raises by design and `user_id` is a required Many2one
+(ON DELETE RESTRICT), so those 7 rows had to be removed with
+`DELETE FROM bi_audit_log WHERE user_id = 8128` before `res.users.unlink()`
+could succeed — exactly the §5.128 blocker, planned for in advance this time.
+
+
+3. Fresh-cursor verification
+----------------------------
+
+Run from psql (a different process and a different connection from the shell
+that did the deleting):
+
+               what            | count
+    ---------------------------+-------
+     users(8128)               |     0
+     users(login ah3_qa)       |     0
+     chart 74                  |     0
+     dashboard 445             |     0
+     widget 51                 |     0
+     audit uid 8128            |     0
+     ai_log 28                 |     0
+     workspace group scopes    |     0
+     partner AH3 QA Creator    |     0
+     provider AH3 Local Ollama |     0
+
+The last line is the in-test `bi.ai.provider` fixture from
+`test_ah3_01_ai_available_for_creator`: it is a TransactionCase, so it rolled
+back and never touched the database — confirmed rather than assumed.
+
+Server after the final restart: listener present on :8069 and
+`curl -s -o /dev/null -w "HTTP:%{http_code}" localhost:8069/web/login` -> HTTP:200.

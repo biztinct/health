@@ -25,6 +25,7 @@ where they exist instead of shadowing them with duplicates.
 """
 from unittest.mock import patch
 
+from odoo.exceptions import AccessError
 from odoo.fields import Command
 from odoo.tests import TransactionCase, tagged
 
@@ -252,26 +253,49 @@ class TestAnalyticsHub(TransactionCase):
         self.assertEqual(set(gated_user.group_ids.ids), gated_before)
 
     # ------------------------------------------------------------------
-    # T6 — the AI probe answers "no" for a creator instead of raising
+    # T6 — the AI probe never raises at a creator
     # ------------------------------------------------------------------
     def test_ai_probe_degrades_for_a_creator(self):
         """Found by driving the phase's own CTA, not by reading code.
 
-        ``bi.ai.is_available()`` searches ``bi.ai.provider``, whose ACL starts
-        at ``group_bi_modeler``, and ``explore_action.js`` fires it in
+        ``bi.ai.is_available()`` searched ``bi.ai.provider``, whose ACL starts
+        at ``group_bi_modeler``, and ``explore_action.js`` fired it in
         ``onWillStart`` with no ``.catch`` — so a creator-only user opening
         Explore got a raw "You are not allowed to access 'BI AI Provider'"
         modal. Pre-existing in biz_bi, unreachable until this module granted
         the creator group to ten business users.
+
+        AH-3 fixed the cause rather than the symptom: the probe resolves the
+        provider under ``sudo`` (biz_bi §4.1), so a creator now gets the
+        CONFIGURATION answer — True on a database with a usable provider —
+        instead of a permission answer. What this test pins is unchanged in
+        substance and is the thing that actually mattered: for a user who
+        cannot read one provider row, the probe RETURNS rather than raises,
+        and the whole landing survives whatever it returns.
         """
         self.assertFalse(
             self.creator.has_group('biz_bi.group_bi_modeler'),
             'fixture guard: the persona must NOT be able to read the '
             'provider table, or this test proves nothing')
-        self.assertIs(
-            self.env['bi.ai'].with_user(self.creator).is_available(), False)
-        # ... and the whole landing survives it.
-        self.assertIs(self._hub(self.creator)['ai_available'], False)
+        with self.assertRaises(AccessError):
+            self.env['bi.ai.provider'].with_user(self.creator).search([])
+
+        answer = self.env['bi.ai'].with_user(self.creator).is_available()
+        self.assertIsInstance(answer, bool)
+        self.assertIs(self._hub(self.creator)['ai_available'], answer)
+
+        # ... and this module's defensive override (AH-1 D4) still turns any
+        # future AccessError on that path into an honest "no" rather than a
+        # modal — it is vestigial now, deliberately kept, so it is tested.
+        Provider = type(self.env['bi.ai.provider'])
+
+        def _denied(self):
+            raise AccessError('provider table is out of reach')
+
+        with patch.object(Provider, 'get_default', _denied):
+            self.assertIs(
+                self.env['bi.ai'].with_user(self.creator).is_available(), False)
+            self.assertIs(self._hub(self.creator)['ai_available'], False)
 
     # ------------------------------------------------------------------
     # T5 — the sidebar wiring: chrome persistence + role visibility

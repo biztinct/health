@@ -1,0 +1,86 @@
+AH-3 — what a plain BI creator's RPC can and cannot reach after §4.1
+====================================================================
+
+Measured from the QA persona's OWN authenticated browser session on
+care.biztinct.com (uid 8128, access_role_id = "Operations Manager",
+group_bi_creator = True, group_bi_modeler = False), by calling
+/web/dataset/call_kw directly from the page. Nothing below is inferred from
+source.
+
+
+A. The AI surface
+-----------------
+
+    bi.ai.is_available()                    ->  true
+    bi.ai.provider.search_read([], [...])   ->  odoo.exceptions.AccessError
+    bi.ai.provider.search_count([])         ->  odoo.exceptions.AccessError
+    bi.ai.log.search_read([], ['id'])       ->  odoo.exceptions.AccessError
+
+Raw result of the probe:
+
+    {"writable_targets": [],
+     "readable_dashboards": [{"id":6,"name":"BI Usage Analytics"},
+                             {"id":5,"name":"Báo cáo hoạt động điều hành"},
+                             {"id":10,"name":"Facility Analytics"},
+                             {"id":9,"name":"Monthly Revenue by Facility"},
+                             {"id":1,"name":"Operations Overview"},
+                             {"id":2,"name":"Revenue & Receivables"},
+                             {"id":7,"name":"Visit Margin"}],
+     "ai_is_available": true,
+     "provider_search_read":  {"error":"odoo.exceptions.AccessError"},
+     "provider_search_count": {"error":"odoo.exceptions.AccessError"},
+     "ai_log_search_read":    {"error":"odoo.exceptions.AccessError"}}
+
+So the ONLY thing that crossed the boundary is the boolean `true`. No provider
+record, no provider field, no endpoint, no model name, no key material — the
+ACL on `bi.ai.provider` is untouched and still refuses this user every read.
+`nlq_chart` returns a validated chart config over the caller's own dataset and
+nothing else; the completion runs server-side inside `_complete_validated`,
+where `_api_key()` is read on a sudo'd provider recordset that never leaves
+the method.
+
+A real `nlq_chart` call by this user succeeded end-to-end (`bi_ai_log` id 28,
+kind `nlq`, accepted `t`, 2026-08-07 04:14:35 UTC) — so the capability is
+genuinely usable, not merely un-refused.
+
+
+B. Writable dashboard targets (§4.3)
+------------------------------------
+
+Same session, before this persona owned anything:
+
+    bi.dashboard.get_wizard_targets()  ->  []            (writable)
+    bi.dashboard.search_read([],[...]) ->  7 dashboards  (readable)
+
+after it saved one report of its own:
+
+    {"writable_after_save": [{"id":445,"name":"AH3 QA Dashboard"}],
+     "readable_count": 8,
+     "readable": ["AH3 QA Dashboard","BI Usage Analytics",
+                  "Báo cáo hoạt động điều hành","Facility Analytics",
+                  "Monthly Revenue by Facility","Operations Overview",
+                  "Revenue & Receivables","Visit Margin"]}
+
+The wizard now offers the 1, not the 8. The predicate is the same one
+`bi_dashboard.get_dashboard_data()` publishes as `can_edit`
+(`biz_bi/models/bi_dashboard.py:213-216`); `test_ah3_03_wizard_targets`
+asserts the two agree record by record.
+
+
+C. What was NOT widened
+-----------------------
+
+* no `ir.model.access` row was added, changed or removed anywhere;
+* no `ir.rule` was added, changed or removed anywhere;
+* no group was granted to anybody by this phase;
+* `nlq_chart` / `compose_report` still call `dataset.check_access('read')` as
+  the REAL user before anything else happens — `test_ah3_02` proves the
+  refusal fires before a provider is even resolved;
+* the sudo is scoped to the `bi.ai.provider` recordset (`self` is never
+  sudo'd), so `bi.ai._log`'s bookkeeping is byte-for-byte what it was.
+
+Known, deliberate, and worth stating plainly: after §4.1 the *boolean*
+"is an AI provider configured on this database?" is answerable by any
+internal user who can reach `bi.ai.is_available` over RPC, where before they
+got an AccessError. That is the intended trade — a capability probe must have
+an answer for everyone (ledger §5.127b) — and it discloses one bit, not a row.

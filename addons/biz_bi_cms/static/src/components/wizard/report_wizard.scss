@@ -33,6 +33,8 @@
     --biw-radius-sm: var(--vu-radius-sm, 4px);
     --biw-radius-md: var(--vu-radius-md, 8px);
     --biw-radius-lg: var(--vu-radius-lg, 12px);
+    // One focus indicator for the whole overlay (§5.97).
+    --biw-ring: 0 0 0 1px var(--biw-primary), 0 0 0 4px rgba(21, 101, 192, 0.16);
 
     position: fixed;
     top: 0;
@@ -128,7 +130,7 @@
     .bi-wizard-ghost {
         display: inline-flex;
         align-items: center;
-        gap: 7px;
+        gap: 8px;
         border: 0;
         background: none;
         padding: 6px 10px;
@@ -170,6 +172,10 @@
         flex-direction: column;
         gap: 18px;
         animation: bi-wizard-in 0.22s ease-out;
+
+        // The pane takes focus on every step change so Tab starts inside the
+        // new content. It is a container, not a control: no visible ring.
+        &:focus { outline: none; }
     }
 
     .bi-wizard-h2 {
@@ -200,7 +206,7 @@
         background: var(--biw-card);
         border: 1px solid var(--biw-border);
         border-radius: var(--biw-radius-lg);
-        padding: 14px 16px;
+        padding: 16px;
         color: var(--biw-text);
         cursor: pointer;
         transition: border-color 0.15s, background 0.15s;
@@ -225,17 +231,44 @@
     .bi-wizard-dscard-text {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
         min-width: 0;
         flex: 1 1 auto;
+        align-self: stretch;
+    }
+
+    // PIXEL CYCLE 1 moved the badge out of the card's top-level flex row so
+    // it stopped stealing width from the name. CYCLE 2 finished the job: on
+    // one line the badge still landed inline for a short name and wrapped
+    // under a long one, so its position changed card by card down the grid.
+    // It now has a row of its own, pushed to the bottom of the (stretched)
+    // card, which is the same place in all six.
+    .bi-wizard-dscard-nameline {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
     }
 
     .bi-wizard-dscard-name { font-size: 14px; font-weight: 700; }
 
-    .bi-wizard-dscard-desc { font-size: 12px; color: var(--biw-text-soft); }
+    // Two lines, then an ellipsis; the full text is on the title attribute.
+    // One dataset card's description is 180 characters and made its row
+    // twice as tall as the others.
+    .bi-wizard-dscard-desc {
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--biw-text-soft);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
 
     .bi-wizard-badge {
         flex: 0 0 auto;
+        align-self: flex-start;
+        margin-top: auto;
+        padding-top: 4px;
         display: inline-flex;
         align-items: center;
         gap: 4px;
@@ -250,11 +283,11 @@
     .bi-wizard-ai {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         background: var(--biw-card);
         border: 1px solid var(--biw-border);
         border-radius: var(--biw-radius-lg);
-        padding: 16px 18px;
+        padding: 16px;
     }
 
     .bi-wizard-ai-head {
@@ -301,7 +334,7 @@
         background: var(--biw-card);
         border: 1px solid var(--biw-border);
         border-radius: var(--biw-radius-lg);
-        padding: 18px;
+        padding: 16px;
     }
 
     .bi-wizard-field {
@@ -309,6 +342,14 @@
         flex-direction: column;
         gap: 8px;
         min-width: 0;
+    }
+
+    // The date-range picker owns a 13-chip row. Left in one column it forced
+    // the row ~150px taller than its neighbour, and the left column below
+    // "Split by" was empty space that read as a missing field. Full width, the
+    // chips wrap into two rows and the block loses that hole entirely.
+    .bi-wizard-field-wide {
+        grid-column: 1 / -1;
     }
 
     .bi-wizard-label {
@@ -355,7 +396,7 @@
         border: 1px solid var(--biw-border);
         background: var(--biw-card);
         border-radius: 999px;
-        padding: 4px 11px;
+        padding: 4px 12px;
         font-size: 12px;
         color: var(--biw-text-soft);
         cursor: pointer;
@@ -381,11 +422,11 @@
         flex-direction: column;
         align-items: center;
         gap: 5px;
-        width: 84px;
+        width: 88px;
         border: 1px solid var(--biw-border);
         background: var(--biw-card);
         border-radius: var(--biw-radius-md);
-        padding: 10px 6px;
+        padding: 12px 8px;
         color: var(--biw-text-soft);
         font-size: 11px;
         cursor: pointer;
@@ -431,11 +472,11 @@
     .bi-wizard-save {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 18px;
+        gap: 16px;
         background: var(--biw-card);
         border: 1px solid var(--biw-border);
         border-radius: var(--biw-radius-lg);
-        padding: 18px;
+        padding: 16px;
     }
 
     .bi-wizard-dashlist {
@@ -449,9 +490,9 @@
     .bi-wizard-dashrow {
         display: flex;
         align-items: center;
-        gap: 9px;
+        gap: 8px;
         margin: 0;
-        padding: 7px 9px;
+        padding: 8px;
         border-radius: var(--biw-radius-md);
         font-size: 13px;
         font-weight: 400;
@@ -465,18 +506,33 @@
     .bi-wizard-dashnew {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         flex: 1 1 auto;
         min-width: 0;
+
+        // "New dashboard" wrapped onto two lines beside its input at 1440.
+        > span:first-child { white-space: nowrap; }
     }
 
     // --------------------------------------------------------------- footer
+    // The pane is a 900px column centred in the viewport; a footer whose
+    // Back sat at x=20 and whose Save sat at x=1420 read as a different page.
+    // Same column, same edges.
     .bi-wizard-foot {
         flex: 0 0 auto;
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 12px 20px;
+        gap: 8px;
+        width: 100%;
+        max-width: 900px; // exactly the pane's own box, padding included
+        margin: 0 auto;
+        padding: 12px 24px;
+    }
+
+    // ... and the bar behind it still spans the window, so the top rule is
+    // full-width rather than a floating 948px line.
+    .bi-wizard-footbar {
+        flex: 0 0 auto;
         background: var(--biw-card);
         border-top: 1px solid var(--biw-border);
     }
@@ -557,6 +613,42 @@
     }
 
     .bi-wizard-skeleton-preview { height: 300px; }
+
+    // ------------------------------------------------------------------ focus
+    // One ring, applied to every focusable control in the overlay, declared
+    // last so it beats the hover rules above without !important (§5.97).
+    .bi-wizard-btn,
+    .bi-wizard-ghost,
+    .bi-wizard-close,
+    .bi-wizard-step.is-clickable,
+    .bi-wizard-dscard,
+    .bi-wizard-chip,
+    .bi-wizard-gitem,
+    .bi-wizard-select,
+    .bi-wizard-input,
+    .bi-wizard-textarea {
+        &:focus-visible {
+            outline: none;
+            box-shadow: var(--biw-ring);
+        }
+    }
+
+    // A select/input matches :focus on a mouse click too, and it must not draw
+    // two different boundaries depending on how it was reached.
+    .bi-wizard-select,
+    .bi-wizard-input,
+    .bi-wizard-textarea {
+        &:focus {
+            outline: none;
+            border-color: var(--biw-primary);
+            box-shadow: var(--biw-ring);
+        }
+    }
+
+    .bi-wizard-dashrow:focus-within {
+        background: var(--biw-hover);
+        box-shadow: var(--biw-ring);
+    }
 }
 
 @keyframes bi-wizard-pulse {

@@ -2,7 +2,8 @@
 <templates xml:space="preserve">
 
     <t t-name="biz_bi_cms.ReportWizard">
-        <div class="bi-wizard" role="dialog" aria-modal="true">
+        <div class="bi-wizard" role="dialog" aria-modal="true"
+             t-on-keydown="onKeydown">
             <div class="bi-wizard-shell">
 
                 <!-- ================================================ CHROME -->
@@ -40,7 +41,8 @@
                 <div class="bi-wizard-body">
 
                     <!-- ========================================== STEP 1 -->
-                    <div t-if="state.step === 1" class="bi-wizard-pane" t-key="'s1'">
+                    <div t-if="state.step === 1" class="bi-wizard-pane" t-key="'s1'"
+                         t-ref="pane" tabindex="-1">
                         <h2 class="bi-wizard-h2">What do you want to look at?</h2>
                         <p class="bi-wizard-lead">Pick the information this report should be built from.</p>
 
@@ -56,22 +58,31 @@
                                     t-att-class="state.datasetId === ds.id ? 'is-active' : ''"
                                     t-on-click="() => this.selectDataset(ds.id)">
                                 <span class="bi-wizard-dscard-ico" t-out="uiIcon('data', 18)"/>
+                                <!-- PIXEL CYCLE 1: the badge used to be a
+                                     sibling of the text column, so it took
+                                     horizontal space from it and every
+                                     two-word dataset name wrapped. It belongs
+                                     on the name's own line. -->
                                 <span class="bi-wizard-dscard-text">
-                                    <span class="bi-wizard-dscard-name" t-esc="ds.name"/>
+                                    <span class="bi-wizard-dscard-nameline">
+                                        <span class="bi-wizard-dscard-name" t-esc="ds.name"/>
+                                    </span>
                                     <span t-if="datasetSubtitle(ds)"
                                           class="bi-wizard-dscard-desc"
+                                          t-att-title="datasetSubtitle(ds)"
                                           t-esc="datasetSubtitle(ds)"/>
-                                </span>
-                                <span t-if="ds.is_certified" class="bi-wizard-badge">
-                                    <span t-out="uiIcon('certified', 12)"/>
-                                    <span>Certified</span>
+                                    <span t-if="ds.is_certified" class="bi-wizard-badge">
+                                        <span t-out="uiIcon('certified', 12)"/>
+                                        <span>Certified</span>
+                                    </span>
                                 </span>
                             </button>
                         </div>
                     </div>
 
                     <!-- ========================================== STEP 2 -->
-                    <div t-elif="state.step === 2" class="bi-wizard-pane" t-key="'s2'">
+                    <div t-elif="state.step === 2" class="bi-wizard-pane" t-key="'s2'"
+                         t-ref="pane" tabindex="-1">
                         <h2 class="bi-wizard-h2">Describe it, or build it</h2>
                         <p class="bi-wizard-lead" t-esc="state.metadata ? state.metadata.name : ''"/>
 
@@ -157,7 +168,8 @@
                                 </select>
                             </div>
 
-                            <div t-if="dateFields.length" class="bi-wizard-field">
+                            <div t-if="dateFields.length"
+                                 class="bi-wizard-field bi-wizard-field-wide">
                                 <label class="bi-wizard-label" for="bi_wizard_datefield">
                                     Date range <span class="bi-wizard-opt">optional</span>
                                 </label>
@@ -202,7 +214,8 @@
                     </div>
 
                     <!-- ========================================== STEP 3 -->
-                    <div t-else="" class="bi-wizard-pane" t-key="'s3'">
+                    <div t-else="" class="bi-wizard-pane" t-key="'s3'"
+                         t-ref="pane" tabindex="-1">
                         <h2 class="bi-wizard-h2">Preview &amp; save</h2>
                         <p class="bi-wizard-lead">This is exactly what will land on the dashboard.</p>
 
@@ -240,12 +253,15 @@
                                        t-att-placeholder="namePlaceholder"
                                        t-att-aria-label="namePlaceholder"
                                        t-model="state.chartName"
-                                       t-on-keydown="onNameTouched"
+                                       t-on-keydown="onNameKeydown"
                                        t-on-change="onNameTouched"/>
                             </div>
 
                             <div class="bi-wizard-field">
                                 <div class="bi-wizard-label">Add it to</div>
+                                <div t-if="hasNoTargets" class="bi-wizard-hint">
+                                    You don't have a dashboard of your own yet — this report will start one.
+                                </div>
                                 <div class="bi-wizard-dashlist">
                                     <label class="bi-wizard-dashrow"
                                            t-att-class="!state.targetDashboardId ? 'is-active' : ''">
@@ -281,6 +297,10 @@
                 </div>
 
                 <!-- ================================================ FOOTER -->
+                <!-- The bar spans the window; the row inside it is the same
+                     900px column as the pane, so Back and Save line up with
+                     the content instead of with the screen edges. -->
+                <div class="bi-wizard-footbar">
                 <div class="bi-wizard-foot">
                     <button t-if="state.step > 1" type="button" class="bi-wizard-btn"
                             t-on-click="() => this.goToStep(state.step - 1)">
@@ -304,6 +324,7 @@
                         <t t-if="state.saving">Saving…</t>
                         <t t-else="">Save report</t>
                     </button>
+                </div>
                 </div>
 
             </div>

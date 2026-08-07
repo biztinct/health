@@ -2147,3 +2147,77 @@ a no-op.
     server will show the outage as a 502 burst plus `ConnectionLostError` —
     flag it in the evidence pack, do not attribute it to your own code, and
     re-drive the affected step. (AH-2.)
+
+- **§5.131 — a landing page that composes N reads is only as available as its
+    least-entitled compartment, and "the user owns this record" does not mean
+    "the user can read what the record points at".** AH-3's hub calls
+    `bi.audit.log.get_recents()`, whose last line is `d.workspace_id.name`.
+    The `bi.dashboard` read rule grants `('owner_id','=',user.id)` on its own,
+    while the `bi.workspace` rule has no such clause — so a dashboard the user
+    OWNS can sit in a workspace they cannot read, and that one chip raised
+    `AccessError` out of `get_hub_data`, sending the entire Analytics landing
+    to the "analytics access has not been set up for your account" state.
+    Nothing about it was theoretical: it fired on the first attempt to stage
+    the phase's own first-run screenshot, i.e. the moment a workspace was
+    group-scoped, which is the ordinary configuration a multi-team tenant will
+    reach on day one. This is §5.47 ("wrap the per-model read in
+    `except AccessError`, OMIT that compartment, and declare the omission") in
+    a UI landing rather than a FHIR bundle, plus a rule-asymmetry lesson worth
+    generalising: whenever a record rule grants access through OWNERSHIP,
+    every relation that record dereferences is a second, unrelated
+    authorisation question, and a helper that dereferences one for display
+    will 403 for exactly the users the ownership clause exists to serve. Grep
+    any get-my-recent-things helper for `.name` on a Many2one before trusting
+    it. (AH-3; fixed in `biz_bi_cms/models/bi_workspace.py::_hub_recents`,
+    pinned by `test_ah3_04b`.)
+
+- **§5.132 — a group change made from `odoo-bin shell` is invisible to the
+    running HTTP workers until a restart, exactly like §5.48's config
+    parameter.** §5.114 is right that `res.groups.write({'implied_ids': …})`
+    (and any ORM group write) runs `ir.model.access.call_cache_clearing_
+    methods()` and `registry.clear_cache('groups')` — but it clears the cache
+    of **the process that made the write**. AH-3 re-granted
+    `biz_bi.group_bi_creator` to a QA persona through the ORM in a separate
+    shell, saw the row present in `res_groups_users_rel` in psql, and watched
+    `has_group()` keep answering **False** in the live workers for as long as
+    they stayed up; the hub correspondingly kept hiding the creator CTA. Two
+    consequences: (a) any browser QA that toggles a group must restart the
+    service between the toggle and the drive, or it is measuring the old
+    closure; (b) an audit that "proves" a group change did not take effect,
+    without restarting first, has proved nothing. Same family as §5.48
+    (ir.config_parameter ormcache) and §5.45 (cross-process state on a live
+    server is never seen for free). (AH-3.)
+
+- **§5.133 — a module's own suite being green is a hypothesis about THIS
+    database, and `biz_bi`'s is not.** The AH-3 handover asked for
+    "biz_bi's own suite must stay green after §4.1/§4.2"; on vietuat it was
+    already 5 failed + 1 error before the phase touched anything. The way to
+    settle a question like this without guessing is a **pristine baseline
+    run**: copy the module's files back from `git show HEAD:` onto the server
+    (grep the changed line to confirm the revert took), run the same tag, keep
+    the log, then restore and re-run — identical counts and identical failure
+    NAMES is proof, and it costs one extra `--stop-after-init` cycle. All six
+    are the §5.50/§5.95 family: `biz_bi/tests/common.py` builds its dataset
+    over `res.partner`, and this deployment has 77 partners carrying a
+    latitude, while `res_country.name` is jsonb (`{"en_US":"Vietnam",
+    "vi_VN":"Việt Nam"}`) so a row rule built from `country.name` in the
+    caller's language matches nothing in the silver view. Corollary for
+    designers: do not write "module X's suite must stay green" into a handover
+    without having run it; write "must not REGRESS against a baseline you
+    capture first". Corollary for reviewers: three of the six are in the RLS
+    suite and every one of them fails **closed** (the restricted user sees
+    `None`, never the unrestricted total), so a red RLS suite here is a broken
+    fixture, not a leak — but that distinction has to be checked, not assumed.
+    (AH-3.)
+
+- **§5.134 — `code_translations.get_web_translations()` returns a
+    `ReadonlyDict`, which is NOT a `dict` subclass, so the usual
+    `isinstance(x, dict)` guard silently measures the wrong object.** An i18n
+    verification script that falls back to `len(x)` on the container reports
+    **1 message** for a catalogue holding 83, which reads exactly like "the
+    .po is inert" — the fourth distinct way (with §5.58, §5.67, §5.84) to
+    conclude a healthy catalogue is dead. Index it directly:
+    `get_web_translations(mod, lang)["messages"]` is a tuple of
+    `{'id', 'string'}` mappings. Also note the import moved: it is
+    `from odoo.tools.translate import code_translations`, not
+    `from odoo.tools import code_translations`. (AH-3.)

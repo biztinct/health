@@ -55,6 +55,10 @@ const UI_ICONS = {
     clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
     empty: '<path d="M3 3v18h18"/><path d="M7 16h.01"/><path d="M12 16h.01"/>' +
         '<path d="M17 16h.01"/>',
+    // The first-run glyph: a chart being drawn rather than a chart that is
+    // missing — the state is "nothing yet", not "something went wrong".
+    spark: '<path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/>' +
+        '<path d="M19 4v4"/><path d="M17 6h4"/>',
 };
 
 // Six flat mono accents, indexed by `bi.workspace.color`. Flat single colours
@@ -127,6 +131,35 @@ export class BiHubAction extends Component {
 
     get bigEmptyIcon() {
         return svgIcon(UI_ICONS.empty, 40);
+    }
+
+    get firstRunIcon() {
+        return svgIcon(UI_ICONS.spark, 40);
+    }
+
+    // ------------------------------------------------------------------
+    // First run
+    //
+    // A tenant whose workspaces exist but hold no dashboard at all gets one
+    // friendly card instead of a grid of identical "No dashboards yet" boxes —
+    // repeating the same absence per workspace reads as a fault, and the one
+    // thing the user can actually do about it (or the one thing they should
+    // ask for) gets lost in it.
+    //
+    // "No workspace is shared with you yet" stays a separate state on purpose:
+    // that is an access answer, not an empty one, and it needs a different
+    // sentence.
+    // ------------------------------------------------------------------
+
+    get totalDashboards() {
+        return this.state.workspaces.reduce(
+            (total, workspace) => total + (workspace.dashboards || []).length,
+            0
+        );
+    }
+
+    get isFirstRun() {
+        return this.state.workspaces.length > 0 && this.totalDashboards === 0;
     }
 
     // ------------------------------------------------------------------

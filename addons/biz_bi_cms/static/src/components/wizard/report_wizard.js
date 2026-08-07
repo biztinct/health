@@ -1,6 +1,14 @@
 /** @odoo-module **/
 
-import { Component, markup, onWillStart, onWillUnmount, useState } from "@odoo/owl";
+import {
+    Component,
+    markup,
+    onWillStart,
+    onWillUnmount,
+    useEffect,
+    useRef,
+    useState,
+} from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 
@@ -132,6 +140,12 @@ export class ReportWizard extends Component {
         this.grains = DATE_GRAINS;
         this.relativeRanges = RELATIVE_RANGES;
 
+        // Keyboard: the pane takes focus every time the step changes, so Tab
+        // starts at the top of the content the user just advanced to instead
+        // of at the browser chrome, and Escape (handled on the root) is live
+        // from the moment the overlay opens.
+        this.paneRef = useRef("pane");
+
         this.state = useState({
             step: 1,
             datasets: [],
@@ -180,7 +194,40 @@ export class ReportWizard extends Component {
             }
         });
 
+        useEffect(
+            () => {
+                if (this.paneRef.el) {
+                    this.paneRef.el.focus({ preventScroll: true });
+                }
+            },
+            () => [this.state.step]
+        );
+
         onWillUnmount(() => clearTimeout(this._debounce));
+    }
+
+    // ------------------------------------------------------------------
+    // Keyboard
+    // ------------------------------------------------------------------
+
+    /** Escape closes the overlay. Nothing else is trapped: the pane holds
+     *  focus, every control is a real focusable element, and Tab / Enter are
+     *  the browser's own. */
+    onKeydown(ev) {
+        if (ev.key === "Escape") {
+            ev.preventDefault();
+            ev.stopPropagation();
+            this.close();
+        }
+    }
+
+    /** Enter in the name field saves, the way it would in a one-field form. */
+    onNameKeydown(ev) {
+        this.onNameTouched();
+        if (ev.key === "Enter" && !this.state.saving) {
+            ev.preventDefault();
+            this.saveReport();
+        }
     }
 
     // ------------------------------------------------------------------
@@ -456,11 +503,32 @@ export class ReportWizard extends Component {
     }
 
     async loadDashboards() {
-        // The record rules scope this to what the user may SEE; whether they
-        // may write is only known when add_chart is called, which is why the
-        // save path has to handle an AccessError gracefully.
-        this.state.dashboards = await this.orm.searchRead(
-            "bi.dashboard", [], ["name"]);
+        // AH-3: the list is now what the user may WRITE, not merely what they
+        // may see — `get_wizard_targets` applies the same predicate the
+        // dashboard screen publishes as `can_edit`. Offering a dashboard the
+        // save would refuse was the last "discovered at Save time" surprise
+        // left in the wizard.
+        //
+        // The save path KEEPS its AccessError branch: ownership can change
+        // between this call and the click, and a viewer legitimately gets an
+        // empty list here.
+        try {
+            this.state.dashboards = await this.orm.call(
+                "bi.dashboard", "get_wizard_targets", []);
+        } catch {
+            this.state.dashboards = [];
+        }
+        if (!this.state.dashboards.some(
+            (dash) => dash.id === this.state.targetDashboardId)) {
+            // Nothing writable (or the preselection went away): "New
+            // dashboard" is the only honest default.
+            this.state.targetDashboardId = 0;
+        }
+    }
+
+    /** Step 3 says so out loud when there is nothing to add to. */
+    get hasNoTargets() {
+        return !this.state.dashboards.length;
     }
 
     close() {

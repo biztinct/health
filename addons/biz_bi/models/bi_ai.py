@@ -261,7 +261,11 @@ class BiAi(models.AbstractModel):
 
     @api.model
     def is_available(self):
-        provider = self.env['bi.ai.provider'].get_default()
+        # Provider config is server-side infrastructure: asking "can I use AI?"
+        # must not require permission to read the provider records (or the key
+        # material on them). The sudo is scoped to the provider recordset and
+        # nothing but a boolean crosses back.
+        provider = self.env['bi.ai.provider'].sudo().get_default()
         return bool(provider and provider._is_usable())
 
     @api.model
@@ -398,7 +402,13 @@ class BiAi(models.AbstractModel):
             else 'English'
 
     def _complete_validated(self, dataset, system, prompt, kind, validate):
-        provider = self.env['bi.ai.provider'].get_default()
+        # Provider config is server-side infrastructure; invoking AI must not
+        # require reading provider records. The caller has already checked the
+        # DATASET as the real user (nlq_chart / compose_report); the sudo is
+        # scoped to the provider recordset only — `self` keeps the real user,
+        # so nothing about logging or validation changes — and the RPC still
+        # returns only a validated chart config, never a provider field.
+        provider = self.env['bi.ai.provider'].sudo().get_default()
         if not provider:
             return None, _("No AI provider configured.")
         card = dataset.get_dataset_card()

@@ -112,6 +112,16 @@ msgstr "Hỏi bằng ngôn ngữ của bạn"
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid ""
+"Ask your administrator to set up Analytics, and the dashboards prepared "
+"for you will be listed here."
+msgstr ""
+"Hãy đề nghị quản trị viên thiết lập Phân tích, các bảng thông tin dành "
+"cho bạn sẽ được liệt kê tại đây."
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
 msgid "Back"
 msgstr "Quay lại"
@@ -320,6 +330,16 @@ msgstr ""
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid ""
+"Nothing has been built yet. Pick what you want to see, and it will be "
+"waiting on this page next time."
+msgstr ""
+"Chưa có gì được dựng. Hãy chọn nội dung bạn muốn xem, lần sau nó sẽ chờ "
+"sẵn trên trang này."
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
 msgid "Open in advanced builder"
 msgstr "Mở trong trình dựng nâng cao"
@@ -497,6 +517,21 @@ msgid ""
 msgstr ""
 "Bạn không thể thêm báo cáo vào bảng thông tin đó. Hãy chọn bảng khác hoặc "
 "tạo bảng của riêng bạn."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid ""
+"You don't have a dashboard of your own yet — this report will start one."
+msgstr ""
+"Bạn chưa có bảng thông tin nào của riêng mình — báo cáo này sẽ tạo bảng "
+"đầu tiên."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
+msgid "Your first report starts here"
+msgstr "Báo cáo đầu tiên của bạn bắt đầu từ đây"
 
 #. module: biz_bi_cms
 #. odoo-javascript

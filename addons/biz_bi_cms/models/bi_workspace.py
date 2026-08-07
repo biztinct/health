@@ -51,12 +51,50 @@ class BiWorkspace(models.Model):
 
         return {
             'workspaces': workspaces,
-            'recents': self.env['bi.audit.log'].get_recents(),
+            'recents': self._hub_recents(),
             'is_creator': home['is_creator'],
             'is_modeler': home['is_modeler'],
             'is_admin': home['is_admin'],
             'ai_available': self._hub_ai_available(),
         }
+
+    def _hub_recents(self):
+        """"Continue where you left off", with the dead entries removed.
+
+        ``bi.audit.log`` is append-only: a `dashboard_view` row survives the
+        dashboard it refers to, and it survives that dashboard being moved into
+        a workspace the user can no longer see. A recents strip is the one place
+        on the landing where a stale id turns into a chip that 404s (or, worse,
+        a name the user is no longer entitled to read), so the ids are re-read
+        through the ORM as the CURRENT user and anything that does not come
+        back is dropped rather than shown.
+
+        ``get_recents`` (``bi_audit_log.py:57-72``) already re-searches the ids
+        it collected, which makes the prune below a no-op on today's biz_bi —
+        that is the point: the hub states the guarantee at its own boundary
+        instead of inheriting it from a helper it does not own, and the test
+        pins it here.
+
+        The ``AccessError`` guard is NOT belt and braces; it was earned. That
+        same helper finishes with ``d.workspace_id.name``, and a dashboard can
+        be readable while its workspace is not — the dashboard rule grants
+        ``owner_id = user`` on its own, the workspace rule has no such clause.
+        Measured live on vietuat while staging the first-run card: scoping the
+        workspaces to a group turned the user's OWN recent dashboard into an
+        AccessError on the workspace read, and the whole landing went to the
+        "no analytics access" state over one stale chip. §5.47's rule applied
+        to a landing page: catch AccessError ONLY, drop the compartment that
+        refused, and keep the page.
+        """
+        try:
+            recents = self.env['bi.audit.log'].get_recents() or []
+        except AccessError:
+            return []
+        ids = [row['id'] for row in recents if row.get('id')]
+        if not ids:
+            return []
+        alive = set(self.env['bi.dashboard'].search([('id', 'in', ids)]).ids)
+        return [row for row in recents if row['id'] in alive]
 
     def _hub_ai_available(self):
         """Whether the AI report composer can run — Phase 2 needs this.

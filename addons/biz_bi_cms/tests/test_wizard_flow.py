@@ -261,17 +261,25 @@ class TestReportWizard(BiCase):
 
         # A plain function, never `autospec=True` — a re-patched autospec mock
         # silently stops binding `self` (§5.76).
-        with patch.object(Provider, 'get_default', _no_provider):
-            self.assertIs(self.env['bi.ai'].is_available(), False)
-
-        # And for a creator the probe answers False instead of raising, which
-        # is what lets the wizard call it with no guard (Phase-1 D4 / §5.127).
         self.assertFalse(
             self.creator.has_group('biz_bi.group_bi_modeler'),
             'fixture guard: the persona must not be able to read the '
             'provider table, or this proves nothing')
-        self.assertIs(
-            self.env['bi.ai'].with_user(self.creator).is_available(), False)
+
+        with patch.object(Provider, 'get_default', _no_provider):
+            self.assertIs(self.env['bi.ai'].is_available(), False)
+            # AH-3: the creator gets the SAME answer as an administrator now
+            # — "no provider is configured" — where before the ACL answered
+            # for the configuration and always said no. Nothing here depends
+            # on the permission any more, which is the point.
+            self.assertIs(
+                self.env['bi.ai'].with_user(self.creator).is_available(), False)
+
+        # And with the deployment's real providers back in play the call still
+        # returns a plain boolean to that same creator rather than raising,
+        # which is what lets the wizard call it with no guard (§5.127b).
+        self.assertIsInstance(
+            self.env['bi.ai'].with_user(self.creator).is_available(), bool)
 
     # ------------------------------------------------------------------
     # T5 — the auto-grant on role assignment

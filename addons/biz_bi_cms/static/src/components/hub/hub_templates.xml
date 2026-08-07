@@ -105,6 +105,25 @@
                                 <div class="bi-hub-empty-text">Once a workspace is shared with you, its dashboards will be listed here.</div>
                             </div>
 
+                            <!-- ==================== FIRST RUN -->
+                            <!-- Workspaces exist, not one dashboard does. -->
+                            <div t-elif="isFirstRun" class="bi-hub-firstrun">
+                                <span class="bi-hub-firstrun-ico" t-out="firstRunIcon"/>
+                                <div class="bi-hub-firstrun-title">Your first report starts here</div>
+                                <div t-if="state.isCreator" class="bi-hub-firstrun-text">
+                                    Nothing has been built yet. Pick what you want to see, and it will be waiting on this page next time.
+                                </div>
+                                <div t-else="" class="bi-hub-firstrun-text">
+                                    Ask your administrator to set up Analytics, and the dashboards prepared for you will be listed here.
+                                </div>
+                                <button t-if="state.isCreator" type="button"
+                                        class="bi-hub-btn bi-hub-btn-primary"
+                                        t-on-click="createReport">
+                                    <span class="bi-hub-btn-ico" t-out="uiIcon('plus')"/>
+                                    <span>Create Report</span>
+                                </button>
+                            </div>
+
                             <div t-else="" class="bi-hub-grid">
                                 <section t-foreach="state.workspaces" t-as="ws" t-key="ws.id"
                                          class="bi-hub-card"
@@ -116,9 +135,15 @@
                                                   t-out="workspaceIcon(ws.icon)"/>
                                             <div class="bi-hub-card-titles">
                                                 <div class="bi-hub-card-name" t-esc="ws.name"/>
-                                                <div t-if="ws.description"
-                                                     class="bi-hub-card-desc"
-                                                     t-esc="ws.description"/>
+                                                <!-- Always rendered (reserved
+                                                     line): a card without a
+                                                     description otherwise
+                                                     lifted its counts row and
+                                                     divider 7px above its
+                                                     neighbours'. -->
+                                                <div class="bi-hub-card-desc"
+                                                     t-att-title="ws.description"
+                                                     t-esc="ws.description or ''"/>
                                             </div>
                                         </div>
                                         <div class="bi-hub-card-counts" t-esc="countsLabel(ws)"/>

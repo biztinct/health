@@ -1,0 +1,131 @@
+AH-3 — test results on vietuat, verbatim
+========================================
+
+Deploy per conventions §2, with §5.130's concurrent-run check before every
+`service stop` (`pgrep -c -f '^python3 /odoo/odoo-server/odoo-bin'` = 4, i.e.
+the running service only, and `idle in transaction` = 0, every time).
+
+Upgrade set: `-u biz_bi_cms,biz_bi`. Two runs so that each module's tag gets
+its own `odoo.tests.result` line (a combined run emits one line for both).
+
+
+1. biz_bi_cms  —  /tmp/ahp3/final_cms.log, EXIT:0
+-------------------------------------------------
+
+    2026-08-07 04:38:06,302 2413492 INFO vietuat odoo.tests.stats: biz_bi_cms: 24 tests 6.86s 4827 queries
+    2026-08-07 04:38:06,303 2413492 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 18 tests when loading database 'vietuat'
+
+The eighteen that executed (§5.83/§5.90 — a count of failures is not evidence,
+a count of executed methods is):
+
+    Starting TestAnalyticsHub.test_ai_probe_degrades_for_a_creator
+    Starting TestAnalyticsHub.test_creator_group_grant
+    Starting TestAnalyticsHub.test_hub_data_respects_workspace_rules
+    Starting TestAnalyticsHub.test_hub_data_shape
+    Starting TestAnalyticsHub.test_role_gate_idempotent
+    Starting TestAnalyticsHub.test_sidebar_wiring
+    Starting TestAnalyticsHubAh3.test_ah3_01_ai_available_for_creator
+    Starting TestAnalyticsHubAh3.test_ah3_02_nlq_permission_shape
+    Starting TestAnalyticsHubAh3.test_ah3_03_wizard_targets
+    Starting TestAnalyticsHubAh3.test_ah3_04_recents_pruned
+    Starting TestAnalyticsHubAh3.test_ah3_04b_recents_accesserror_does_not_kill_the_hub
+    Starting TestReportWizard.test_01_wizard_config_roundtrip
+    Starting TestReportWizard.test_01b_relative_range_vocabulary_is_shared
+    Starting TestReportWizard.test_02_wizard_save_flow
+    Starting TestReportWizard.test_03_creator_cannot_add_to_foreign_dashboard
+    Starting TestReportWizard.test_04_nlq_unavailable_is_clean
+    Starting TestReportWizard.test_05_auto_grant_on_role_assign
+    Starting TestReportWizard.test_06_migration_reruns_gates
+
+`grep -ac "FAIL:\|ERROR:\|CRITICAL"` over the whole log: **0**.
+13 tests before this phase, 18 after: +4 from the handover's §5 list, +1
+(`test_ah3_04b`) for the defect the browser pass found.
+
+
+2. biz_bi  —  /tmp/ahp3/final_bi.log, EXIT:1
+--------------------------------------------
+
+    2026-08-07 04:38:35,130 2413506 INFO vietuat odoo.tests.stats: biz_bi: 75 tests 10.07s 4930 queries
+    2026-08-07 04:38:35,130 2413506 ERROR vietuat odoo.tests.result: 5 failed, 1 error(s) of 59 tests when loading database 'vietuat'
+
+    ERROR: TestRls.test_column_mask_null
+    FAIL:  TestPipeline.test_dataset_reads_clean_view
+    FAIL:  TestQueryEngine.test_compare_request_runs
+    FAIL:  TestRls.test_rls_users_never_share_cache
+    FAIL:  TestRls.test_row_rule_filters_rows
+    FAIL:  TestSnapshot.test_snapshot_xlsx_builds
+
+These six are **PRE-EXISTING on this deployment and are not caused by AH-3.**
+That is measured, not argued: before the final run, the two AH-3-edited files
+were replaced on the server with their `git show HEAD:` originals and the same
+suite was run again.
+
+
+3. The baseline that proves it  —  /tmp/ahp3/baseline.log, EXIT:1
+-----------------------------------------------------------------
+
+Pristine `biz_bi` (0 occurrences of `sudo().get_default` in
+`models/bi_ai.py`, verified by grep immediately before the run; the `.catch()`
+absent from `explore_action.js`):
+
+    2026-08-07 04:07:31,130 2410420 INFO vietuat odoo.tests.stats: biz_bi: 75 tests 10.06s 4930 queries
+    2026-08-07 04:07:31,131 2410420 ERROR vietuat odoo.tests.result: 5 failed, 1 error(s) of 59 tests when loading database 'vietuat'
+
+    ERROR: TestRls.test_column_mask_null
+    FAIL:  TestPipeline.test_dataset_reads_clean_view
+    FAIL:  TestQueryEngine.test_compare_request_runs
+    FAIL:  TestRls.test_rls_users_never_share_cache
+    FAIL:  TestRls.test_row_rule_filters_rows
+    FAIL:  TestSnapshot.test_snapshot_xlsx_builds
+
+Identical count, identical six names, before and after. The AH-3 edits change
+nothing in biz_bi's own suite.
+
+Root cause of the six (diagnosed, NOT fixed — out of sanction):
+they are the §5.50/§5.95 family, live deployment data leaking into fixtures.
+`biz_bi/tests/common.py` builds a dataset over **res.partner** and expects its
+own three rows; this database has 77 partners carrying a latitude
+(`sum = 897.31`). And `res_country.name` is jsonb —
+`{"en_US": "Vietnam", "vi_VN": "Việt Nam"}` — so `TestRls`'s row rule, built
+from `country_a.name` in the caller's language, matches no row in the silver
+view and the restricted total comes back NULL instead of 30.0.
+
+Security note, since three of the six are in the RLS suite: every one of them
+fails **closed** (the restricted user sees `None`, never the unrestricted
+60.0), so none of them is evidence of a leak.
+
+
+4. Server health after the final restart
+----------------------------------------
+
+    ss -lntp | grep -c :8069   ->  1
+    curl -s -o /dev/null -w "HTTP:%{http_code}" localhost:8069/web/login  ->  HTTP:200
+
+
+5. i18n, loader-verified on the server
+--------------------------------------
+
+    WEB_MESSAGES: 83
+    KEY 'Your first report starts here' -> 'Báo cáo đầu tiên của bạn bắt đầu từ đây'
+    KEY 'Ask your administrator to set up Analytics, and the dashbo…' -> 'Hãy đề nghị quản trị viên thiết lập Phân tích, các bảng thông tin dành cho bạn sẽ được liệt kê tại đây.'
+    KEY 'Nothing has been built yet. Pick what you want to see, and…' -> 'Chưa có gì được dựng. Hãy chọn nội dung bạn muốn xem, lần sau nó sẽ chờ sẵn trên trang này.'
+    KEY "You don't have a dashboard of your own yet — this report w…" -> 'Bạn chưa có bảng thông tin nào của riêng mình — báo cáo này sẽ tạo bảng đầu tiên.'
+    KEY 'Create Report' -> 'Tạo báo cáo'
+    KEY 'Save report' -> 'Lưu báo cáo'
+    KEY 'Certified' -> 'Đã kiểm định'
+    PYTHON_MESSAGES: 0
+    SIDEBAR_ITEM_VI: Phân tích
+    SECTION_VI: PHÂN TÍCH
+
+(`PYTHON_MESSAGES: 0` is correct: the module still ships no python `_()`
+string. Note for the next session — `get_web_translations` returns a
+`ReadonlyDict`, which is NOT a `dict` subclass, so an `isinstance(x, dict)`
+guard silently measures the wrong object and reports 1 message instead of 83.)
+
+Shape check over the catalogue (all 84 entries): every entry carries
+`#. module: biz_bi_cms`, every entry carries a `#:` occurrence, and every
+`#. odoo-javascript` marker is paired with a `#: code:addons/biz_bi_cms/…`
+occurrence. Every msgid was matched back against the source file its
+occurrence names: 0 unmatched. And in reverse — every translatable literal in
+the two QWeb templates and both component JS files is present in the
+catalogue: 0 missing.

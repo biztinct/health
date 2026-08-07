@@ -85,9 +85,17 @@ export class ExploreAction extends Component {
                 [["state", "=", "published"]],
                 ["name", "description", "is_certified", "storage_mode"]
             );
-            this.orm.call("bi.ai", "is_available", []).then((available) => {
-                this.state.aiAvailable = available;
-            });
+            this.orm.call("bi.ai", "is_available", [])
+                .then((available) => {
+                    this.state.aiAvailable = available;
+                })
+                // A fire-and-forget probe in onWillStart has no error path of
+                // its own: any rejection reaches the global handler as a modal
+                // on a screen that otherwise works (ledger §5.127c). "Can I use
+                // AI?" always has an answer, and on failure it is "no".
+                .catch(() => {
+                    this.state.aiAvailable = false;
+                });
             const params = this.props.action?.params || {};
             if (params.chart_id) {
                 await this.loadChart(params.chart_id);
