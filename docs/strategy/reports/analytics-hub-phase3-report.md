@@ -15,7 +15,7 @@ sanctioned edits in **`addons/biz_bi`**.
 |---|---|---|
 | `biz_bi/models/bi_ai.py` | +10/−2 | **sanctioned edit 1** — both `get_default()` call sites resolve the provider through `.sudo()` |
 | `biz_bi/static/src/components/explore/explore_action.js` | +11/−3 | **sanctioned edit 2** — `.catch()` on the `is_available` probe |
-| `biz_bi_cms/models/bi_dashboard.py` | **new**, 39 | `get_wizard_targets()` — the writable-dashboard list, on `can_edit`'s own predicate |
+| `biz_bi_cms/models/bi_dashboard.py` | **new**, 40 | `get_wizard_targets()` — the writable-dashboard list, on `can_edit`'s own predicate |
 | `biz_bi_cms/models/bi_workspace.py` | +40/−3 | `_hub_recents()` — prune dead/unreadable recents, and never let the strip take the landing down |
 | `biz_bi_cms/models/__init__.py` | +1 | registers `bi_dashboard` |
 | `biz_bi_cms/static/src/components/hub/hub_action.js` | +33 | `totalDashboards` / `isFirstRun` / `firstRunIcon` + the first-run glyph |
@@ -24,7 +24,7 @@ sanctioned edits in **`addons/biz_bi`**.
 | `biz_bi_cms/static/src/components/wizard/report_wizard.js` | +72/−8 | `get_wizard_targets` instead of the read-scoped list, `hasNoTargets`, Escape/`onKeydown`, Enter-to-save, pane focus on step change |
 | `biz_bi_cms/static/src/components/wizard/report_wizard.xml` | +34/−9 | dataset-card restructure, no-targets hint, `t-ref`/`tabindex` panes, footer bar |
 | `biz_bi_cms/static/src/components/wizard/report_wizard.scss` | +111/−15 | pixel cycles 1–3 + the focus ring |
-| `biz_bi_cms/tests/test_ah3.py` | **new**, 232 | `TestAnalyticsHubAh3`, 5 methods |
+| `biz_bi_cms/tests/test_ah3.py` | **new**, 274 | `TestAnalyticsHubAh3`, 5 methods |
 | `biz_bi_cms/tests/test_hub.py` | +30/−8 | T6 re-pointed at the new semantics (deviation **D3**) |
 | `biz_bi_cms/tests/test_wizard_flow.py` | +15/−7 | T4 likewise (deviation **D3**) |
 | `biz_bi_cms/tests/__init__.py` | +1 | registers the new suite |
