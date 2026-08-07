@@ -85,7 +85,9 @@ export function formatDimensionValue(value, column, lang = "en_US") {
     if (value === "__bi_others__") {
         return _t("Others");
     }
-    const labels = column.selection_labels || {};
+    // value_labels: many2one ids resolved to record names server-side, per
+    // reader. selection_labels: baked at scan time. Same lookup contract.
+    const labels = column.value_labels || column.selection_labels || {};
     if (labels[value] !== undefined) {
         return labels[value];
     }

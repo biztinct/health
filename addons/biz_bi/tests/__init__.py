@@ -7,3 +7,4 @@ from . import test_pipeline
 from . import test_insights
 from . import test_lifecycle_predicate
 from . import test_ai_coerce
+from . import test_relation_labels

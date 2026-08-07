@@ -34,7 +34,10 @@ class BiQueryCache(models.Model):
         return hashlib.sha256(raw.encode()).hexdigest()
 
     @api.model
-    def fetch(self, cache_key):
+    def fetch_result(self, cache_key):
+        # NOT named fetch(): that is BaseModel.fetch(field_names), and
+        # shadowing it with a different signature breaks every ORM read of
+        # this model (a list view of the cache crashed on result_json).
         self.env.cr.execute("""
             UPDATE bi_query_cache
             SET hit_count = hit_count + 1

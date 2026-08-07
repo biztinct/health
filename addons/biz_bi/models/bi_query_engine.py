@@ -21,7 +21,7 @@ import time
 from dateutil.relativedelta import relativedelta
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 from odoo.tools import SQL
 
 from .bi_expression import ExpressionCompiler, ExpressionError
@@ -41,6 +41,12 @@ ALLOWED_AGGS = {
 }
 
 ALLOWED_GRAINS = {'year', 'quarter', 'month', 'week', 'day'}
+
+# A many2one column groups by id (distinct entities) but must READ as the
+# record's name. Resolution is per-user and never cached, so the comodel's
+# own record rules decide whose name is shown; above this many distinct
+# values a legend of names is useless anyway, so we leave the raw ids.
+MAX_LABEL_LOOKUP = 2000
 
 RELATIVE_RANGES = {
     'today': lambda today: (today, today + relativedelta(days=1)),
@@ -117,10 +123,10 @@ class BiQueryEngine(models.AbstractModel):
         fingerprint = self._rls_fingerprint(dataset)
         Cache = self.env['bi.query.cache'].sudo()
         cache_key = Cache.make_key(request, fingerprint, lang)
-        cached = Cache.fetch(cache_key)
+        cached = Cache.fetch_result(cache_key)
         if cached is not None:
             cached.setdefault('meta', {})['cache'] = 'hit'
-            return cached
+            return self._attach_relation_labels(cached)
 
         started = time.monotonic()
         spec = self._resolve_request(dataset, request)
@@ -151,10 +157,50 @@ class BiQueryEngine(models.AbstractModel):
 
         ttl = (self._ttl_until_next_refresh(dataset)
                if spec['target'] == 'gold' else 60)
+        # stored WITHOUT relation labels: the cache is shared by every user
+        # with the same RLS fingerprint, but the comodel's record rules are
+        # not part of that fingerprint — so names are resolved per reader.
         Cache.store(cache_key, dataset.id, envelope, ttl)
         self.env['bi.audit.log'].sudo().log(
             'query', dataset=dataset,
             payload={'duration_ms': duration_ms, 'rows': len(rows)})
+        return self._attach_relation_labels(envelope)
+
+    def _attach_relation_labels(self, envelope):
+        """Give many2one dimension columns a `value_labels` map so the
+        frontend renders 'Ho Chi Minh City' where the column stores 4.
+
+        Grouping still happens on the id — two records that share a name
+        stay two groups. Ids the reader may not read keep their raw value
+        rather than borrowing someone else's name.
+        """
+        columns = envelope.get('columns') or []
+        rows = envelope.get('rows') or []
+        if not rows:
+            return envelope
+        BiField = self.env['bi.field']
+        for index, column in enumerate(columns):
+            if not str(column.get('ref') or '').startswith('d'):
+                continue
+            field = BiField.browse(column.get('field_id')).exists()
+            model_name = field.relation_model
+            if not model_name or model_name not in self.env:
+                continue
+            ids = {row[index] for row in rows
+                   if isinstance(row[index], int)
+                   and not isinstance(row[index], bool)}
+            if not ids or len(ids) > MAX_LABEL_LOOKUP:
+                continue
+            try:
+                records = self.env[model_name].search([('id', 'in', list(ids))])
+                # JSON object keys are strings — match how the client looks
+                # them up (the same contract as selection_labels).
+                labels = {str(record.id): record.display_name
+                          for record in records}
+            except AccessError:
+                continue  # no read access to the lookup model — show ids
+            if labels:
+                column['value_labels'] = labels
         return envelope
 
     # ==================================================================

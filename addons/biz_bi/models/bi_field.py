@@ -72,6 +72,11 @@ class BiField(models.Model):
     is_translated_column = fields.Boolean(
         help="Underlying column is a translated jsonb — the engine extracts "
              "the user language with en_US fallback.")
+    relation_model = fields.Char(
+        string='Lookup Model',
+        help="Set for many2one columns: the model the stored id points at. "
+             "The column still groups by id, but results are LABELLED with "
+             "the record's name instead of showing the raw id.")
 
     # Governance
     visibility = fields.Selection([
@@ -119,6 +124,35 @@ class BiField(models.Model):
         return validate_expression(
             self.expression, known,
             allow_aggregates=self.role == 'measure')
+
+    @api.model
+    def _backfill_relation_models(self):
+        """Fill relation_model on stored columns scanned before the field
+        existed. Idempotent — safe to re-run after new datasets are added.
+
+        MUST run with the full registry loaded (an `end-` migration, not
+        `post-`): at post- time only biz_bi's own dependency closure is in
+        the registry, so every many2one added by a health_* module is
+        invisible and silently skipped.
+        """
+        candidates = self.search([
+            ('origin', '=', 'stored'),
+            ('relation_model', '=', False),
+            ('node_id.source_id.type', '=', 'odoo_model'),
+        ])
+        filled = 0
+        for bi_field in candidates:
+            model = self.env.get(bi_field.node_id.source_id.model_name)
+            if model is None:
+                continue
+            odoo_field = model._fields.get(bi_field.technical_name)
+            if (odoo_field is None or odoo_field.type != 'many2one'
+                    or not odoo_field.comodel_name
+                    or self.env.get(odoo_field.comodel_name) is None):
+                continue
+            bi_field.relation_model = odoo_field.comodel_name
+            filled += 1
+        return filled
 
     def _selection_labels_for(self, lang=None):
         """Selection labels in the given (or user) language, with en_US then

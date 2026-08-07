@@ -158,6 +158,9 @@ class BiDatasetNode(models.Model):
                     'is_filterable': role in ('dimension', 'date', 'geo'),
                     'is_translated_column': col['translated'],
                     'selection_labels_json': col['selection'] or False,
+                    'relation_model': (col.get('comodel')
+                                       if col['odoo_type'] == 'many2one'
+                                       else False),
                 })
             if values_list:
                 BiField.create(values_list)
@@ -587,6 +590,7 @@ class BiDataset(models.Model):
                 'node': field.node_id.name,
                 'format': field.format_json or {},
                 'selection_labels': field._selection_labels_for(),
+                'relation_model': field.relation_model or '',
                 'glossary': field.glossary_term_id.definition or '',
             })
         return {
