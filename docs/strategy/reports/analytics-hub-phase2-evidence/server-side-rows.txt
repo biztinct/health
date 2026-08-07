@@ -1,0 +1,109 @@
+AH-2 browser evidence — the rows the drive created on vietuat, BY ID
+====================================================================
+Captured live with psql (fresh cursor, not the session that made them),
+2026-08-07, immediately after the Save-report click and before cleanup.
+
+QA persona
+----------
+res.users id 7996, login `ahp2_qa_ops`, access.role id 2 = "Operations
+Manager" (one of the four Analytics roles), created 2026-08-07 03:37 —
+i.e. AFTER the module was installed, which is exactly the drift Phase 1
+measured as broken:
+
+    ROLE: 2 Operations Manager
+    QA_UID: 7996
+    HAS_CREATOR (auto-grant at create): True     <-- AH-2 res.users hook
+    HAS_MODELER: False
+    AI is_available as QA: False
+    AI is_available as admin: True
+
+  Phase 1 measured `HAS_CREATOR: False` for the equivalent persona and had
+  to re-run `grant_creator_group(env)` by hand. The `True` above is the
+  auto-grant working on a real user through the real create path.
+
+  Fresh-cursor confirmation of the group before the drive:
+
+    $ psql -tAc "select g.name->>'en_US' from res_groups g
+                 join res_groups_users_rel r on r.gid=g.id where r.uid=7996
+                 and g.name->>'en_US' like 'BI%'"
+    BI Dashboard Creator
+
+
+1. The chart the wizard saved  (bi_chart)
+-----------------------------------------
+ id |              name              | dataset_id | chart_type | owner_id
+----+--------------------------------+------------+------------+----------
+ 49 | AH2 QA Total Price by Facility |          5 | bar        |     7996
+
+config_json exactly as written by `ReportWizard.buildConfigJson()`:
+
+ {"sort": [], "limit": 500,
+  "slots": {"x":      [{"field_id": 892}],
+            "series": [],
+            "values": [{"agg": "sum", "field_id": 650}]},
+  "display": {},
+  "filters": [{"op": "relative", "value": "last_12_months", "field_id": 593}],
+  "version": 1,
+  "chart_type": "bar"}
+
+  * field 650 = "Total Price" (role measure, dataset 5 Bookings & Service
+    Orders), field 892 = "Facility" (dimension), field 593 = "Scheduled
+    Date" (date).
+  * THE DATE-RANGE FORMAT the handover asked to be reported:
+        {"field_id": <bi.field id>, "op": "relative", "value": "<range key>"}
+    where <range key> is a key of `RELATIVE_RANGES`
+    (biz_bi/static/src/core/range_labels.js — mirrored 1:1 by
+    biz_bi/models/bi_query_engine.py:45-75). Here: `last_12_months`.
+  * `x[0]` carries NO `grain` key, because the group-by is not a date and
+    JSON.stringify drops the `undefined`. That asymmetry is pinned by
+    `test_01_wizard_config_roundtrip`.
+
+2. The dashboard it created  (bi_dashboard)
+-------------------------------------------
+ id  |       name       | workspace_id | owner_id | share_mode
+-----+------------------+--------------+----------+------------
+ 243 | AH2 QA Dashboard |            1 |     7996 | workspace
+
+  Created through the wizard's "New dashboard" radio + name input.
+  workspace_id 1 = "General Analytics" (bi.dashboard's own default).
+
+3. The widget that placed it  (bi_dashboard_widget)
+---------------------------------------------------
+ id | dashboard_id | chart_id | grid_x | grid_y | grid_w | grid_h
+----+--------------+----------+--------+--------+--------+--------
+ 41 |          243 |       49 |      0 |      0 |      6 |      5
+
+  Written by `bi.dashboard.add_chart` — the wizard calls it with the
+  DESTRUCTURED chart id, not the list `orm.create` returns (the 5e91455e
+  bug); the 6x5 default is add_chart's for a non-kpi/table chart.
+
+4. The live AI call  (bi_ai_log) — AI IS configured on vietuat
+--------------------------------------------------------------
+ id | kind | provider_id | user_id | duration_ms |     created_at
+----+------+-------------+---------+-------------+---------------------
+ 27 | nlq  |           2 |    7996 |        4000 | 2026-08-07 03:40:28
+
+  provider 2 = "OpenAI" / gpt-4o-mini, active, is_default, api key present.
+  Prompt driven from the wizard's "Ask in your own words" box:
+  "total price by service type over the last 6 months".
+  response_json:
+
+ {"name": "Total Price by Service Type",
+  "slots": {"x": [{"grain": "month", "field_id": 576}], "series": [],
+            "values": [{"agg": "sum", "field_id": 650}]},
+  "filters": [{"op": "relative", "value": "last_6_months", "field_id": 593}],
+  "chart_type": "bar"}
+
+  ...and `materializeConfig` turned that into wizard state, read back out
+  of the live DOM after clicking Back to step 2:
+
+    {"activeChips": ["Last 6 months"], "measure": "Total Price",
+     "groupBy": "Service Type", "dateField": "Scheduled Date"}
+
+  (The AI's `grain: "month"` on field 576, a non-date Selection column, is
+  carried but ignored by the engine — biz_bi's documented behaviour, see
+  its own `test_rejects_bad_grain`.)
+
+  This report was NOT saved: the wizard was closed with the ✕ so the
+  evidence pack leaves exactly one chart/dashboard/widget behind, all of
+  which are deleted in qa-fixture-cleanup.txt.

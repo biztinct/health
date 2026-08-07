@@ -1,0 +1,54 @@
+AH-2 — QA fixture cleanup, verified in a FRESH cursor (§5.34)
+=============================================================
+
+What the drive created
+----------------------
+  res.users 7996            ahp2_qa_ops (+ its res.partner 19090)
+  bi.chart 49               AH2 QA Total Price by Facility
+  bi.dashboard 243          AH2 QA Dashboard
+  bi.dashboard.widget 41    243 <- 49
+  bi.ai.log 27              the one live nlq call
+  bi.audit.log x6           chart_save / dashboard_view / query rows
+
+Plus one temporary privilege change, made and then reverted with the user:
+`biz_bi.group_bi_modeler` was linked onto 7996 for the AI-box step (a
+creator cannot read `bi.ai.provider`, so `is_available()` is honestly False
+for them and the box is hidden — see server-side-rows.txt). It went away
+with the account.
+
+How it was removed
+------------------
+`bi.audit.log` is append-only: its `unlink()` raises, and `user_id` is a
+required Many2one, which PostgreSQL materialises as ON DELETE RESTRICT — so
+the QA account cannot be deleted through the ORM until its rows are gone
+(the same trap Phase 1 recorded). The BI rows were therefore removed with a
+raw DELETE scoped to this one uid, in one transaction; the account itself
+was then unlinked through the ORM.
+
+  psql -d vietuat -c "
+  BEGIN;
+  DELETE FROM bi_dashboard_widget WHERE dashboard_id IN
+      (SELECT id FROM bi_dashboard WHERE owner_id=7996);   -- DELETE 1
+  DELETE FROM bi_dashboard WHERE owner_id=7996;            -- DELETE 1
+  DELETE FROM bi_chart     WHERE owner_id=7996;            -- DELETE 1
+  DELETE FROM bi_ai_log    WHERE user_id=7996;             -- DELETE 1
+  DELETE FROM bi_audit_log WHERE user_id=7996;             -- DELETE 6
+  COMMIT;"
+
+  odoo-bin shell:  env['res.users'].browse(7996).unlink()
+                   partner.unlink(); flush_all(); cr.commit()
+  -> UNLINKING ahp2_qa_ops partner 19090
+  -> DONE
+
+No audit row belonging to any other user was touched.
+
+Fresh-cursor proof (a separate psql process, not the shell that deleted)
+------------------------------------------------------------------------
+  qa_users | qa_partner | qa_charts | qa_dashboards | qa_widgets | qa_audit | qa_ailog
+  ---------+------------+-----------+---------------+------------+----------+----------
+         0 |          0 |         0 |             0 |          0 |        0 |        0
+
+Server after the cleanup
+------------------------
+  curl -s -o /dev/null -w "HTTP:%{http_code}" localhost:8069/web/login
+  HTTP:200

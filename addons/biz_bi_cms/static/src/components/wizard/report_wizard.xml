@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="biz_bi_cms.ReportWizard">
+        <div class="bi-wizard" role="dialog" aria-modal="true">
+            <div class="bi-wizard-shell">
+
+                <!-- ================================================ CHROME -->
+                <div class="bi-wizard-top">
+                    <div class="bi-wizard-steps">
+                        <button t-foreach="steps" t-as="entry" t-key="entry.index"
+                                type="button" class="bi-wizard-step"
+                                t-att-class="(state.step === entry.index ? 'is-active ' : '') + (state.step > entry.index ? 'is-done ' : '') + (entry.index &lt; state.step ? 'is-clickable' : '')"
+                                t-att-disabled="entry.index >= state.step"
+                                t-on-click="() => this.goToStep(entry.index)">
+                            <span class="bi-wizard-dot">
+                                <span t-if="state.step > entry.index"
+                                      t-out="uiIcon('check', 13)"/>
+                                <t t-else="" t-esc="entry.index"/>
+                            </span>
+                            <span class="bi-wizard-step-label" t-esc="entry.label"/>
+                        </button>
+                    </div>
+                    <div class="bi-wizard-top-right">
+                        <button t-if="state.step > 1 and state.datasetId"
+                                type="button" class="bi-wizard-ghost"
+                                t-on-click="openAdvanced">
+                            <span t-out="uiIcon('external', 14)"/>
+                            <span>Open in advanced builder</span>
+                        </button>
+                        <button type="button" class="bi-wizard-close"
+                                t-att-title="closeLabel" t-att-aria-label="closeLabel"
+                                t-on-click="close">
+                            <span t-out="uiIcon('close', 18)"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ================================================== BODY -->
+                <div class="bi-wizard-body">
+
+                    <!-- ========================================== STEP 1 -->
+                    <div t-if="state.step === 1" class="bi-wizard-pane" t-key="'s1'">
+                        <h2 class="bi-wizard-h2">What do you want to look at?</h2>
+                        <p class="bi-wizard-lead">Pick the information this report should be built from.</p>
+
+                        <div t-if="!state.datasets.length" class="bi-wizard-empty">
+                            <span class="bi-wizard-empty-ico" t-out="bigEmptyIcon"/>
+                            <div class="bi-wizard-empty-title">No data is published for you yet</div>
+                            <div class="bi-wizard-empty-text">Ask an administrator to publish a dataset, and it will appear here.</div>
+                        </div>
+
+                        <div t-else="" class="bi-wizard-grid">
+                            <button t-foreach="state.datasets" t-as="ds" t-key="ds.id"
+                                    type="button" class="bi-wizard-dscard"
+                                    t-att-class="state.datasetId === ds.id ? 'is-active' : ''"
+                                    t-on-click="() => this.selectDataset(ds.id)">
+                                <span class="bi-wizard-dscard-ico" t-out="uiIcon('data', 18)"/>
+                                <span class="bi-wizard-dscard-text">
+                                    <span class="bi-wizard-dscard-name" t-esc="ds.name"/>
+                                    <span t-if="datasetSubtitle(ds)"
+                                          class="bi-wizard-dscard-desc"
+                                          t-esc="datasetSubtitle(ds)"/>
+                                </span>
+                                <span t-if="ds.is_certified" class="bi-wizard-badge">
+                                    <span t-out="uiIcon('certified', 12)"/>
+                                    <span>Certified</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== STEP 2 -->
+                    <div t-elif="state.step === 2" class="bi-wizard-pane" t-key="'s2'">
+                        <h2 class="bi-wizard-h2">Describe it, or build it</h2>
+                        <p class="bi-wizard-lead" t-esc="state.metadata ? state.metadata.name : ''"/>
+
+                        <!-- AI -->
+                        <div t-if="state.aiAvailable" class="bi-wizard-ai">
+                            <div class="bi-wizard-ai-head">
+                                <span class="bi-wizard-ai-ico" t-out="uiIcon('spark', 16)"/>
+                                <span class="bi-wizard-ai-title">Ask in your own words</span>
+                            </div>
+                            <textarea class="bi-wizard-textarea" rows="2"
+                                      id="bi_wizard_ai_prompt" name="bi_wizard_ai_prompt"
+                                      t-att-placeholder="aiPlaceholder"
+                                      t-att-aria-label="aiPlaceholder"
+                                      t-model="state.aiPrompt"/>
+                            <div class="bi-wizard-ai-actions">
+                                <button type="button" class="bi-wizard-btn bi-wizard-btn-primary"
+                                        t-att-disabled="state.aiBusy"
+                                        t-on-click="askAi">
+                                    <t t-if="state.aiBusy">Thinking…</t>
+                                    <t t-else="">Build it for me</t>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div t-if="state.aiAvailable" class="bi-wizard-divider">
+                            <span>or build it yourself</span>
+                        </div>
+
+                        <!-- Manual pickers -->
+                        <div class="bi-wizard-fields">
+                            <div class="bi-wizard-field">
+                                <label class="bi-wizard-label" for="bi_wizard_measure">
+                                    What do you want to measure?
+                                </label>
+                                <select class="bi-wizard-select"
+                                        id="bi_wizard_measure" name="bi_wizard_measure"
+                                        t-on-change="onMeasureChange">
+                                    <option value="" t-att-selected="!state.measure">— choose —</option>
+                                    <option t-foreach="measureFields" t-as="f" t-key="f.id"
+                                            t-att-value="f.id"
+                                            t-att-selected="state.measure and state.measure.id === f.id"
+                                            t-esc="f.name"/>
+                                </select>
+                                <div t-if="!measureFields.length" class="bi-wizard-hint">
+                                    This dataset has no numeric measure.
+                                </div>
+                            </div>
+
+                            <div class="bi-wizard-field">
+                                <label class="bi-wizard-label" for="bi_wizard_groupby">
+                                    Break it down by
+                                </label>
+                                <select class="bi-wizard-select"
+                                        id="bi_wizard_groupby" name="bi_wizard_groupby"
+                                        t-on-change="onGroupByChange">
+                                    <option value="" t-att-selected="!state.groupBy">— choose —</option>
+                                    <option t-foreach="dimensionFields" t-as="f" t-key="f.id"
+                                            t-att-value="f.id"
+                                            t-att-selected="state.groupBy and state.groupBy.id === f.id"
+                                            t-esc="f.name"/>
+                                </select>
+                                <div t-if="isDate(state.groupBy)" class="bi-wizard-chips">
+                                    <button t-foreach="grains" t-as="g" t-key="g"
+                                            type="button" class="bi-wizard-chip"
+                                            t-att-class="state.grain === g ? 'is-active' : ''"
+                                            t-on-click="() => this.setGrain(g)"
+                                            t-esc="grainLabel(g)"/>
+                                </div>
+                            </div>
+
+                            <div class="bi-wizard-field">
+                                <label class="bi-wizard-label" for="bi_wizard_splitby">
+                                    Split by <span class="bi-wizard-opt">optional</span>
+                                </label>
+                                <select class="bi-wizard-select"
+                                        id="bi_wizard_splitby" name="bi_wizard_splitby"
+                                        t-on-change="onSplitByChange">
+                                    <option value="" t-att-selected="!state.splitBy">— none —</option>
+                                    <option t-foreach="dimensionFields" t-as="f" t-key="f.id"
+                                            t-att-value="f.id"
+                                            t-att-selected="state.splitBy and state.splitBy.id === f.id"
+                                            t-esc="f.name"/>
+                                </select>
+                            </div>
+
+                            <div t-if="dateFields.length" class="bi-wizard-field">
+                                <label class="bi-wizard-label" for="bi_wizard_datefield">
+                                    Date range <span class="bi-wizard-opt">optional</span>
+                                </label>
+                                <select t-if="dateFields.length > 1" class="bi-wizard-select"
+                                        id="bi_wizard_datefield" name="bi_wizard_datefield"
+                                        t-on-change="onDateFieldChange">
+                                    <option t-foreach="dateFields" t-as="f" t-key="f.id"
+                                            t-att-value="f.id"
+                                            t-att-selected="state.dateField and state.dateField.id === f.id"
+                                            t-esc="f.name"/>
+                                </select>
+                                <div class="bi-wizard-chips">
+                                    <button type="button" class="bi-wizard-chip"
+                                            t-att-class="!state.dateRange ? 'is-active' : ''"
+                                            t-on-click="() => this.setDateRange('')">All time</button>
+                                    <button t-foreach="relativeRanges" t-as="range" t-key="range[0]"
+                                            type="button" class="bi-wizard-chip"
+                                            t-att-class="state.dateRange === range[0] ? 'is-active' : ''"
+                                            t-on-click="() => this.setDateRange(range[0])"
+                                            t-esc="range[1]"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart type -->
+                        <div class="bi-wizard-field">
+                            <div class="bi-wizard-label">How should it look?</div>
+                            <div class="bi-wizard-gallery">
+                                <t t-foreach="gallery" t-as="entry" t-key="entry.type">
+                                    <t t-set="gstate" t-value="galleryEntryState(entry.type)"/>
+                                    <button type="button" class="bi-wizard-gitem"
+                                            t-att-class="(gstate.active ? 'is-active ' : '') + (gstate.ok ? '' : 'is-disabled ') + (gstate.recommended ? 'is-recommended' : '')"
+                                            t-att-disabled="!gstate.ok"
+                                            t-att-title="gstate.ok ? entry.label : gstate.reason"
+                                            t-on-click="() => this.pickChartType(entry.type)">
+                                        <span class="bi-wizard-gitem-ico" t-out="galleryIcon(entry)"/>
+                                        <span class="bi-wizard-gitem-label" t-esc="entry.label"/>
+                                    </button>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== STEP 3 -->
+                    <div t-else="" class="bi-wizard-pane" t-key="'s3'">
+                        <h2 class="bi-wizard-h2">Preview &amp; save</h2>
+                        <p class="bi-wizard-lead">This is exactly what will land on the dashboard.</p>
+
+                        <div class="bi-wizard-preview">
+                            <div t-if="state.loading" class="bi-wizard-skeleton bi-wizard-skeleton-preview"/>
+                            <t t-elif="hasRows">
+                                <KpiCard t-if="rendererKind === 'kpi'"
+                                         envelope="state.envelope" config="chartConfig"/>
+                                <DataTable t-elif="rendererKind === 'table'"
+                                           envelope="state.envelope" config="chartConfig"/>
+                                <PivotTable t-elif="rendererKind === 'pivot'"
+                                            envelope="state.envelope" config="chartConfig"/>
+                                <ChartRenderer t-else=""
+                                               envelope="state.envelope" config="chartConfig"/>
+                            </t>
+                            <div t-elif="state.envelope and state.envelope.error"
+                                 class="bi-wizard-empty">
+                                <span class="bi-wizard-empty-ico" t-out="bigEmptyIcon"/>
+                                <div class="bi-wizard-empty-title">That combination can't be charted</div>
+                                <div class="bi-wizard-empty-text" t-esc="state.envelope.error"/>
+                            </div>
+                            <div t-else="" class="bi-wizard-empty">
+                                <span class="bi-wizard-empty-ico" t-out="bigEmptyIcon"/>
+                                <div class="bi-wizard-empty-title">No data for this combination yet</div>
+                                <div class="bi-wizard-empty-text">Go back and try another breakdown or a wider date range.</div>
+                            </div>
+                        </div>
+
+                        <div class="bi-wizard-save">
+                            <div class="bi-wizard-field">
+                                <label class="bi-wizard-label" for="bi_wizard_name">Report name</label>
+                                <input type="text" class="bi-wizard-input"
+                                       id="bi_wizard_name" name="bi_wizard_name"
+                                       autocomplete="off"
+                                       t-att-placeholder="namePlaceholder"
+                                       t-att-aria-label="namePlaceholder"
+                                       t-model="state.chartName"
+                                       t-on-keydown="onNameTouched"
+                                       t-on-change="onNameTouched"/>
+                            </div>
+
+                            <div class="bi-wizard-field">
+                                <div class="bi-wizard-label">Add it to</div>
+                                <div class="bi-wizard-dashlist">
+                                    <label class="bi-wizard-dashrow"
+                                           t-att-class="!state.targetDashboardId ? 'is-active' : ''">
+                                        <input type="radio" name="bi_wizard_dashboard"
+                                               id="bi_wizard_dashboard_new"
+                                               t-att-checked="!state.targetDashboardId"
+                                               t-on-change="() => this.selectDashboard(0)"/>
+                                        <span class="bi-wizard-dashnew">
+                                            <span>New dashboard</span>
+                                            <input type="text" class="bi-wizard-input bi-wizard-input-sm"
+                                                   id="bi_wizard_new_dashboard_name"
+                                                   name="bi_wizard_new_dashboard_name"
+                                                   autocomplete="off"
+                                                   t-att-placeholder="newDashboardPlaceholder"
+                                                   t-att-aria-label="newDashboardPlaceholder"
+                                                   t-model="state.newDashboardName"
+                                                   t-on-focus="() => this.selectDashboard(0)"/>
+                                        </span>
+                                    </label>
+                                    <label t-foreach="state.dashboards" t-as="dash" t-key="dash.id"
+                                           class="bi-wizard-dashrow"
+                                           t-att-class="state.targetDashboardId === dash.id ? 'is-active' : ''">
+                                        <input type="radio" name="bi_wizard_dashboard"
+                                               t-att-id="'bi_wizard_dashboard_' + dash.id"
+                                               t-att-checked="state.targetDashboardId === dash.id"
+                                               t-on-change="() => this.selectDashboard(dash.id)"/>
+                                        <span t-esc="dash.name"/>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================================================ FOOTER -->
+                <div class="bi-wizard-foot">
+                    <button t-if="state.step > 1" type="button" class="bi-wizard-btn"
+                            t-on-click="() => this.goToStep(state.step - 1)">
+                        <span t-out="uiIcon('back', 14)"/>
+                        <span>Back</span>
+                    </button>
+                    <span t-if="state.step === 1 and state.datasets.length"
+                          class="bi-wizard-foot-hint">Pick a dataset to continue</span>
+                    <span class="bi-wizard-foot-spacer"/>
+                    <button t-if="state.step === 2" type="button"
+                            class="bi-wizard-btn bi-wizard-btn-primary"
+                            t-att-disabled="!canPreview"
+                            t-on-click="goToPreview">
+                        <span>Preview</span>
+                        <span t-out="uiIcon('next', 14)"/>
+                    </button>
+                    <button t-if="state.step === 3" type="button"
+                            class="bi-wizard-btn bi-wizard-btn-primary"
+                            t-att-disabled="state.saving"
+                            t-on-click="saveReport">
+                        <t t-if="state.saving">Saving…</t>
+                        <t t-else="">Save report</t>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+</templates>

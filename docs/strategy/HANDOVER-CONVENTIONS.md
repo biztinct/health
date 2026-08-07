@@ -2067,3 +2067,83 @@ a no-op.
     `evaluate_script`-driven clicks can "prove" a handler didn't fire (e.g.
     a validation error not rendering) when it renders fine under the real
     click tool. Drive QA with trusted input events. (GL-4.)
+
+- **§5.127 — a phase that GRANTS a group inherits every latent ACL bug on
+    every screen that group can now reach, and the ones that bite are in
+    other modules' JS.** AH-1's whole job was to give nine business users
+    `biz_bi.group_bi_creator`. The module itself was clean; the first thing
+    the new audience saw on the phase's own CTA was *"You are not allowed to
+    access 'BI AI Provider' (bi.ai.provider) records."* — `biz_bi`'s
+    `explore_action.js` fires `orm.call("bi.ai", "is_available")` in
+    `onWillStart` **without awaiting it and without a `.catch`**, so the
+    rejection reaches the global error handler as a modal, and
+    `bi.ai.provider`'s ACL starts one rung higher (`group_bi_modeler`) than
+    the group being granted. The bug had existed since biz_bi shipped and had
+    never once fired, because the only two accounts on the database holding
+    any BI group were both BI *administrators* — a population of two, both
+    privileged, is a test fixture, not a test. Three rules: (a) when a phase
+    grants a group, enumerate the screens that group newly unlocks and DRIVE
+    them as a member of exactly that group — not as admin, and not as the
+    next rung up (this is §5.102's blind spot moved from API tokens to the
+    UI); (b) a capability *probe* ("is feature X available to me?") must
+    never be able to raise — it has an honest answer for every user, and for
+    someone who cannot read the configuration table the answer is "no";
+    (c) a fire-and-forget `orm.call(...).then(...)` in `onWillStart` has no
+    error path at all, so an ACL failure in it becomes a modal on a screen
+    that otherwise works perfectly — grep for `.then(` without `.catch(`
+    when auditing a newly-reachable component. Fixed additively from the
+    granting module by `_inherit`ing the model and catching `AccessError`
+    (`biz_bi_cms/models/bi_ai.py`); the caller-side `.catch()` still belongs
+    in biz_bi and is still open. Corollary measured in AH-2: the honest "no"
+    means the AI box the wizard offers is **hidden for every plain creator**
+    even though a usable provider is configured — a capability gate is not a
+    bug, but say so in the evidence rather than letting a reviewer read the
+    absence as breakage. (AH-1; corollary AH-2.)
+
+- **§5.128 — an append-only log keyed on `res.users` makes a QA persona
+    undeletable, and `search()`-based cleanup will not tell you.**
+    `bi.audit.log.unlink()` raises (correctly — it is evidence), and its
+    `user_id` is a `required=True` Many2one, which Odoo materialises as
+    `ON DELETE RESTRICT`. So a throwaway QA account that merely *opens a
+    dashboard* can no longer be removed through the ORM, and §5.34's "delete
+    your fixtures" needs a raw `DELETE` scoped to that uid before the
+    `unlink()`. Check for this class of blocker BEFORE creating a QA persona
+    on any module with an append-only log keyed on the user (`bi.audit.log`,
+    `bi.ai.log`, `health.evv.event`, `health.consent.check.log`), and record
+    the raw delete in the evidence pack rather than leaving an orphan
+    account behind. (AH-1, repeated in AH-2.)
+
+- **§5.129 — a `.po` occurrence of the `model:<model>,name:<module>.<xmlid>`
+    form works for arbitrary BUSINESS models, not only `ir.*` ones.**
+    §5.85 lists the three occurrence *types*; this is the confirmation that
+    the model half is not limited to core models —
+    `model:cms.sidebar.item,name:biz_bi_cms.item_analytics_hub` correctly
+    lands `Phân tích` in the jsonb column at upgrade, and the same works for
+    `cms.sidebar.section`. Verify the xmlid exists in `ir_model_data` first
+    (§5.67); a guessed reference passes a shape test and translates nothing.
+    (AH-1.)
+
+- **§5.130 — a second `odoo-bin` on the SAME database does not have to be
+    yours, and its symptom is a serialization error in code that never
+    touches the same table.** AH-2's second test run died in
+    `setUpClass` with `could not serialize access due to concurrent update`
+    on an ordinary `INSERT INTO bi_source … RETURNING id` — a table with no
+    unique index and no contention of its own. The row's `model_id` FK takes
+    a row-share lock on `ir_model`, and a concurrent
+    `-u <module>` upgrade started by **another implementer's session**
+    rewrites `ir_model`; under Odoo's REPEATABLE READ that is a
+    serialization failure, not a lock wait, so nothing hangs and nothing
+    names the real cause. Same run: the post-deploy `service odoo-server
+    start` was a silent no-op (§5.122) and `/web/login` answered 500, then
+    nothing. Rules: (a) §5.45's "exactly one odoo process on the DB" is a
+    property of the DATABASE, not of your terminal — re-check
+    `pgrep -c -f '^python3 /odoo/odoo-server/odoo-bin'` immediately before
+    `service stop`, and treat a serialization error in unrelated fixture
+    code as evidence that somebody else is deploying; (b) confirm recovery
+    on the LISTENER (`ss -lntp | grep :8069`), never on `systemctl
+    is-active`, which said `active` with no process at all; (c) the
+    stop → `rm -f /var/run/odoo-server.pid` → start sequence is what
+    actually brings it back. A browser QA session running against the same
+    server will show the outage as a 502 burst plus `ConnectionLostError` —
+    flag it in the evidence pack, do not attribute it to your own code, and
+    re-drive the affected step. (AH-2.)

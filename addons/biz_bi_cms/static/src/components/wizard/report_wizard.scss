@@ -1,0 +1,580 @@
+// ============================================================================
+// Guided report wizard — the three-step consolidation of Explore.
+//
+// Same rules as hub.scss, and for the same reasons:
+//   * flat mono colours only, `--vu-*` theme tokens with fallbacks;
+//   * NO `contain` / `transform` / `filter` / `container-type` on anything
+//     that can hold a form field — those become the containing block for the
+//     inline-rendered AutoComplete popup and over-paint it (§5.96). The step
+//     transition therefore animates OPACITY and a translate that lives only
+//     for the 220 ms of a non-`forwards` keyframe, on a wrapper that holds no
+//     Odoo field widget;
+//   * no CSS `min()` / `max()` / `clamp()` — libsass reads them as SASS
+//     functions and ONE bad rule drops every co-bundled stylesheet (§5.68);
+//   * icons are inline SVG coloured by `currentColor`, never font-awesome.
+//
+// The root is `position: fixed` on purpose: this is a full-viewport overlay,
+// not a pane inside the action host, so §5.52 (never `absolute; inset: 0` on
+// an action root) does not apply — there is no ancestor whose padding it
+// could escape. z-index sits below Bootstrap's modal layer (1055) so a real
+// Dialog and the notification stack still land on top of it.
+// ============================================================================
+
+.bi-wizard {
+    --biw-primary: var(--vu-brand-primary, #1565C0);
+    --biw-primary-dark: var(--vu-brand-primary-dark, #0D47A1);
+    --biw-app: var(--vu-surface-app, #F7F8FA);
+    --biw-card: var(--vu-surface-card, #FFFFFF);
+    --biw-muted: var(--vu-surface-muted, #EEF1F5);
+    --biw-hover: var(--vu-surface-hover, #E8F1FB);
+    --biw-text: var(--vu-text-primary, #1F2937);
+    --biw-text-soft: var(--vu-text-secondary, #6B7280);
+    --biw-border: var(--vu-border-color, #E3E7ED);
+    --biw-radius-sm: var(--vu-radius-sm, 4px);
+    --biw-radius-md: var(--vu-radius-md, 8px);
+    --biw-radius-lg: var(--vu-radius-lg, 12px);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1040;
+    display: flex;
+    background: var(--biw-app);
+    color: var(--biw-text);
+    font-size: 13px;
+
+    .bi-wizard-shell {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+    }
+
+    // --------------------------------------------------------------- chrome
+    .bi-wizard-top {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 20px;
+        background: var(--biw-card);
+        border-bottom: 1px solid var(--biw-border);
+    }
+
+    .bi-wizard-steps {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .bi-wizard-step {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 0;
+        background: none;
+        padding: 4px 10px 4px 4px;
+        border-radius: 999px;
+        color: var(--biw-text-soft);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: default;
+
+        &.is-clickable {
+            cursor: pointer;
+
+            &:hover { background: var(--biw-hover); }
+        }
+
+        &.is-active { color: var(--biw-text); }
+    }
+
+    .bi-wizard-dot {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 1px solid var(--biw-border);
+        background: var(--biw-card);
+        color: var(--biw-text-soft);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .bi-wizard-step.is-active .bi-wizard-dot {
+        border-color: var(--biw-primary);
+        background: var(--biw-primary);
+        color: #FFFFFF;
+    }
+
+    .bi-wizard-step.is-done .bi-wizard-dot {
+        border-color: var(--biw-primary);
+        background: var(--biw-card);
+        color: var(--biw-primary);
+    }
+
+    .bi-wizard-top-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .bi-wizard-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border: 0;
+        background: none;
+        padding: 6px 10px;
+        border-radius: var(--biw-radius-md);
+        color: var(--biw-text-soft);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+
+        &:hover { background: var(--biw-muted); color: var(--biw-text); }
+    }
+
+    .bi-wizard-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        background: none;
+        padding: 6px;
+        border-radius: var(--biw-radius-md);
+        color: var(--biw-text-soft);
+        cursor: pointer;
+
+        &:hover { background: var(--biw-muted); color: var(--biw-text); }
+    }
+
+    // ----------------------------------------------------------------- body
+    .bi-wizard-body {
+        flex: 1 1 auto;
+        overflow-y: auto;
+    }
+
+    .bi-wizard-pane {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 24px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        animation: bi-wizard-in 0.22s ease-out;
+    }
+
+    .bi-wizard-h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+
+    .bi-wizard-lead {
+        margin: -10px 0 0;
+        font-size: 13px;
+        color: var(--biw-text-soft);
+    }
+
+    // ------------------------------------------------------- dataset cards
+    .bi-wizard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+    }
+
+    .bi-wizard-dscard {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        text-align: left;
+        background: var(--biw-card);
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-lg);
+        padding: 14px 16px;
+        color: var(--biw-text);
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+
+        &:hover { border-color: var(--biw-primary); background: var(--biw-hover); }
+
+        &.is-active { border-color: var(--biw-primary); }
+    }
+
+    .bi-wizard-dscard-ico {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--biw-radius-md);
+        background: var(--biw-muted);
+        color: var(--biw-primary);
+    }
+
+    .bi-wizard-dscard-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    .bi-wizard-dscard-name { font-size: 14px; font-weight: 700; }
+
+    .bi-wizard-dscard-desc { font-size: 12px; color: var(--biw-text-soft); }
+
+    .bi-wizard-badge {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--biw-primary);
+    }
+
+    // ------------------------------------------------------------------- AI
+    .bi-wizard-ai {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: var(--biw-card);
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-lg);
+        padding: 16px 18px;
+    }
+
+    .bi-wizard-ai-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--biw-primary);
+    }
+
+    .bi-wizard-ai-ico { display: inline-flex; align-items: center; }
+
+    .bi-wizard-ai-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--biw-text);
+    }
+
+    .bi-wizard-ai-actions { display: flex; justify-content: flex-end; }
+
+    .bi-wizard-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--biw-text-soft);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+
+        &::before,
+        &::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: var(--biw-border);
+        }
+    }
+
+    // -------------------------------------------------------------- pickers
+    .bi-wizard-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+        background: var(--biw-card);
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-lg);
+        padding: 18px;
+    }
+
+    .bi-wizard-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .bi-wizard-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--biw-text);
+    }
+
+    .bi-wizard-opt {
+        font-weight: 500;
+        color: var(--biw-text-soft);
+    }
+
+    .bi-wizard-hint { font-size: 12px; color: var(--biw-text-soft); }
+
+    .bi-wizard-select,
+    .bi-wizard-input,
+    .bi-wizard-textarea {
+        width: 100%;
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-md);
+        background: var(--biw-card);
+        color: var(--biw-text);
+        font-size: 13px;
+        padding: 8px 10px;
+
+        &:focus {
+            outline: none;
+            border-color: var(--biw-primary);
+        }
+    }
+
+    .bi-wizard-textarea { resize: vertical; }
+
+    .bi-wizard-input-sm { padding: 5px 8px; font-size: 12px; }
+
+    .bi-wizard-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .bi-wizard-chip {
+        border: 1px solid var(--biw-border);
+        background: var(--biw-card);
+        border-radius: 999px;
+        padding: 4px 11px;
+        font-size: 12px;
+        color: var(--biw-text-soft);
+        cursor: pointer;
+
+        &:hover { border-color: var(--biw-primary); color: var(--biw-text); }
+
+        &.is-active {
+            border-color: var(--biw-primary);
+            background: var(--biw-primary);
+            color: #FFFFFF;
+        }
+    }
+
+    // -------------------------------------------------------------- gallery
+    .bi-wizard-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .bi-wizard-gitem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        width: 84px;
+        border: 1px solid var(--biw-border);
+        background: var(--biw-card);
+        border-radius: var(--biw-radius-md);
+        padding: 10px 6px;
+        color: var(--biw-text-soft);
+        font-size: 11px;
+        cursor: pointer;
+
+        &:hover { border-color: var(--biw-primary); color: var(--biw-text); }
+
+        &.is-active {
+            border-color: var(--biw-primary);
+            color: var(--biw-primary);
+            background: var(--biw-hover);
+        }
+
+        &.is-recommended { box-shadow: inset 0 -2px 0 0 var(--biw-primary); }
+
+        &.is-disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+
+            &:hover { border-color: var(--biw-border); color: var(--biw-text-soft); }
+        }
+    }
+
+    .bi-wizard-gitem-ico { display: inline-flex; }
+
+    .bi-wizard-gitem-label { text-align: center; }
+
+    // -------------------------------------------------------------- preview
+    .bi-wizard-preview {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 320px;
+        background: var(--biw-card);
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-lg);
+        padding: 16px;
+
+        .bi-chart-host { width: 100%; height: 300px; }
+
+        .bi-table-wrap { max-height: 320px; overflow: auto; }
+    }
+
+    .bi-wizard-save {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        background: var(--biw-card);
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-lg);
+        padding: 18px;
+    }
+
+    .bi-wizard-dashlist {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        max-height: 220px;
+        overflow-y: auto;
+    }
+
+    .bi-wizard-dashrow {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0;
+        padding: 7px 9px;
+        border-radius: var(--biw-radius-md);
+        font-size: 13px;
+        font-weight: 400;
+        cursor: pointer;
+
+        &:hover { background: var(--biw-hover); }
+
+        &.is-active { background: var(--biw-hover); }
+    }
+
+    .bi-wizard-dashnew {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    // --------------------------------------------------------------- footer
+    .bi-wizard-foot {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        background: var(--biw-card);
+        border-top: 1px solid var(--biw-border);
+    }
+
+    .bi-wizard-foot-spacer { flex: 1 1 auto; }
+
+    .bi-wizard-foot-hint {
+        font-size: 12px;
+        color: var(--biw-text-soft);
+    }
+
+    .bi-wizard-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--biw-border);
+        background: var(--biw-card);
+        color: var(--biw-text);
+        border-radius: var(--biw-radius-md);
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover { background: var(--biw-hover); }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+
+            &:hover { background: var(--biw-card); }
+        }
+
+        &.bi-wizard-btn-primary {
+            background: var(--biw-primary);
+            border-color: var(--biw-primary);
+            color: #FFFFFF;
+
+            &:hover {
+                background: var(--biw-primary-dark);
+                border-color: var(--biw-primary-dark);
+            }
+
+            &:disabled:hover {
+                background: var(--biw-primary);
+                border-color: var(--biw-primary);
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- empty
+    .bi-wizard-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
+        padding: 40px 24px;
+        color: var(--biw-text-soft);
+    }
+
+    .bi-wizard-empty-ico { color: var(--biw-border); display: inline-flex; }
+
+    .bi-wizard-empty-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--biw-text);
+    }
+
+    .bi-wizard-empty-text { font-size: 13px; }
+
+    // ------------------------------------------------------------ skeletons
+    .bi-wizard-skeleton {
+        background: var(--biw-muted);
+        border-radius: var(--biw-radius-lg);
+        animation: bi-wizard-pulse 1.4s ease-in-out infinite;
+    }
+
+    .bi-wizard-skeleton-preview { height: 300px; }
+}
+
+@keyframes bi-wizard-pulse {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.55; }
+    100% { opacity: 1; }
+}
+
+// The step transition: a short fade with a 6px rise. The translate exists
+// only while the keyframe runs (no `forwards`), so the pane is never a
+// lasting containing block for anything inside it (§5.96).
+@keyframes bi-wizard-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bi-wizard .bi-wizard-pane { animation: none; }
+
+    .bi-wizard .bi-wizard-skeleton { animation: none; }
+}

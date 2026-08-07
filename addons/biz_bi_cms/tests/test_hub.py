@@ -25,6 +25,7 @@ where they exist instead of shadowing them with duplicates.
 """
 from unittest.mock import patch
 
+from odoo.fields import Command
 from odoo.tests import TransactionCase, tagged
 
 from odoo.addons.biz_bi_cms import hooks
@@ -221,8 +222,19 @@ class TestAnalyticsHub(TransactionCase):
                                 role=self.role_gated)
         ungated_user = self._user('bihub_nurse', 'HUB Nurse',
                                   role=self.role_ungated)
+        # AH-2 note: `models/res_users.py` now grants the group at create
+        # time, so this user already holds it — which is a different
+        # guarantee from the one under test here. Strip it back off, so what
+        # is measured below is still the BACKFILL sweep (the migration path
+        # for users who predate the module), not the per-record hook.
+        # test_05_auto_grant_on_role_assign covers the hook.
+        self.assertIn(self.creator_group, gated_user.all_group_ids,
+                      'AH-2: a user created with a gated role is granted the '
+                      'BI group immediately')
+        gated_user.sudo().write(
+            {'group_ids': [Command.unlink(self.creator_group.id)]})
         self.assertNotIn(self.creator_group, gated_user.all_group_ids,
-                         'fixture guard: the role must not already grant it')
+                         'fixture guard: the backfill must have work to do')
 
         granted = grant_creator_group(self.env)
         self.assertGreaterEqual(granted, 1)

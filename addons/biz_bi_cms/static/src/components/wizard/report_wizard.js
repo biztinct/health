@@ -1,0 +1,774 @@
+/** @odoo-module **/
+
+import { Component, markup, onWillStart, onWillUnmount, useState } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
+
+import { ChartRenderer } from "@biz_bi/components/explore/chart_renderer";
+import { KpiCard } from "@biz_bi/components/explore/kpi_card";
+import { DataTable } from "@biz_bi/components/explore/data_table";
+import { PivotTable } from "@biz_bi/components/explore/pivot_table";
+import {
+    checkCompatibility,
+    recommendChartType,
+} from "@biz_bi/core/chart_recommender";
+import { RELATIVE_RANGES } from "@biz_bi/core/range_labels";
+
+// ---------------------------------------------------------------------------
+// Inline SVG icons — repo convention (never emoji, never font-awesome inside
+// our own body markup). Same helper shape as the hub's, kept local so the two
+// components stay independently editable.
+// ---------------------------------------------------------------------------
+
+function svgIcon(body, size) {
+    return markup(
+        `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" ` +
+            `stroke="currentColor" stroke-width="2" stroke-linecap="round" ` +
+            `stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`
+    );
+}
+
+const UI_ICONS = {
+    close: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    back: '<path d="m15 18-6-6 6-6"/>',
+    next: '<path d="m9 18 6-6-6-6"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    spark: '<path d="M12 3v4"/><path d="M12 17v4"/><path d="M3 12h4"/>' +
+        '<path d="M17 12h4"/><path d="m5.6 5.6 2.8 2.8"/>' +
+        '<path d="m15.6 15.6 2.8 2.8"/><path d="m18.4 5.6-2.8 2.8"/>' +
+        '<path d="m8.4 15.6-2.8 2.8"/>',
+    data: '<ellipse cx="12" cy="6" rx="8" ry="3"/>' +
+        '<path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/>' +
+        '<path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+    certified: '<path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/>' +
+        '<path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/>',
+    empty: '<path d="M3 3v18h18"/><path d="M7 16h.01"/><path d="M12 16h.01"/>' +
+        '<path d="M17 16h.01"/>',
+    external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/>' +
+        '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+};
+
+// A deliberately approachable subset of biz_bi's nineteen chart types. The
+// full gallery stays in the advanced builder, one click away.
+const CHART_GALLERY = [
+    {
+        type: "bar",
+        label: _t("Bar"),
+        icon: '<path d="M3 21h18"/><rect x="5" y="10" width="4" height="8"/>' +
+            '<rect x="10" y="6" width="4" height="12"/>' +
+            '<rect x="15" y="13" width="4" height="5"/>',
+    },
+    {
+        type: "bar_stacked",
+        label: _t("Stacked"),
+        icon: '<path d="M3 21h18"/><rect x="6" y="12" width="5" height="6"/>' +
+            '<rect x="6" y="6" width="5" height="6"/>' +
+            '<rect x="14" y="14" width="5" height="4"/>' +
+            '<rect x="14" y="9" width="5" height="5"/>',
+    },
+    {
+        type: "line",
+        label: _t("Line"),
+        icon: '<path d="M3 21h18"/><polyline points="4,16 9,10 13,13 20,5"/>',
+    },
+    {
+        type: "area",
+        label: _t("Area"),
+        icon: '<path d="M3 21h18"/><path d="M4 18v-3l5-5 4 3 7-7v12z"/>',
+    },
+    {
+        type: "donut",
+        label: _t("Donut"),
+        icon: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
+    },
+    {
+        type: "kpi",
+        label: _t("Big number"),
+        icon: '<rect x="3" y="5" width="18" height="14" rx="2"/>' +
+            '<path d="M7 10h6"/><path d="M7 14h10"/>',
+    },
+    {
+        type: "table",
+        label: _t("Table"),
+        icon: '<rect x="3" y="4" width="18" height="16" rx="2"/>' +
+            '<path d="M3 10h18"/><path d="M9 4v16"/>',
+    },
+    {
+        type: "pivot",
+        label: _t("Matrix"),
+        icon: '<rect x="3" y="4" width="18" height="16" rx="2"/>' +
+            '<path d="M3 9h18"/><path d="M3 14h18"/><path d="M9 4v16"/>' +
+            '<path d="M15 4v16"/>',
+    },
+];
+
+const DATE_GRAINS = ["year", "quarter", "month", "week", "day"];
+const DATE_TYPES = ["date", "datetime"];
+
+/**
+ * The guided three-step report builder.
+ *
+ * It is a consolidation of `biz_bi`'s Explore builder for people who do not
+ * think in measures and dimensions: pick a dataset, answer two questions,
+ * look at the result, save it onto a dashboard. Everything it produces is an
+ * ordinary `bi.chart` with an ordinary `config_json`, byte-compatible with
+ * what Explore writes (`explore_action.js:466`) — so "Open in advanced
+ * builder" is a lossless hand-off in both directions and nothing downstream
+ * has to know a wizard exists.
+ */
+export class ReportWizard extends Component {
+    static template = "biz_bi_cms.ReportWizard";
+    static components = { ChartRenderer, KpiCard, DataTable, PivotTable };
+    static props = { onClose: Function };
+
+    setup() {
+        this.orm = useService("orm");
+        this.actionService = useService("action");
+        this.notification = useService("notification");
+        this.biData = useService("bi_data");
+
+        this.gallery = CHART_GALLERY;
+        this.grains = DATE_GRAINS;
+        this.relativeRanges = RELATIVE_RANGES;
+
+        this.state = useState({
+            step: 1,
+            datasets: [],
+            datasetId: null,
+            metadata: null,
+            measure: null,
+            agg: "sum",
+            groupBy: null,
+            grain: "month",
+            splitBy: null,
+            dateField: null,
+            dateRange: "",
+            chartType: "bar",
+            userPickedType: false,
+            envelope: null,
+            loading: false,
+            chartName: "",
+            aiPrompt: "",
+            aiBusy: false,
+            dashboards: [],
+            targetDashboardId: 0, // 0 == the "New dashboard" option
+            newDashboardName: "",
+            saving: false,
+            // --- bookkeeping beyond the handover's state list ---------------
+            aiAvailable: false,
+            chartId: null, // survives a failed add_chart so a retry cannot
+            // create a second chart
+            nameTouched: false,
+        });
+        this._debounce = null;
+
+        onWillStart(async () => {
+            this.state.newDashboardName = _t("My dashboard").toString();
+            this.state.datasets = await this.orm.searchRead(
+                "bi.dataset",
+                [["state", "=", "published"]],
+                ["name", "description", "is_certified", "storage_mode"]
+            );
+            // AWAITED, and safe to call unguarded: biz_bi_cms/models/bi_ai.py
+            // makes the probe answer False instead of raising for a user who
+            // cannot read bi.ai.provider (ledger §5.127b).
+            this.state.aiAvailable = !!(await this.orm.call(
+                "bi.ai", "is_available", []));
+            if (this.state.datasets.length === 1) {
+                await this.selectDataset(this.state.datasets[0].id);
+            }
+        });
+
+        onWillUnmount(() => clearTimeout(this._debounce));
+    }
+
+    // ------------------------------------------------------------------
+    // Icons & labels
+    // ------------------------------------------------------------------
+
+    uiIcon(name, size = 16) {
+        return svgIcon(UI_ICONS[name] || UI_ICONS.empty, size);
+    }
+
+    galleryIcon(entry) {
+        return svgIcon(entry.icon, 20);
+    }
+
+    get bigEmptyIcon() {
+        return svgIcon(UI_ICONS.empty, 40);
+    }
+
+    get steps() {
+        return [
+            { index: 1, label: _t("Choose data") },
+            { index: 2, label: _t("Build") },
+            { index: 3, label: _t("Preview & save") },
+        ];
+    }
+
+    /** The engine's grain keys are technical; the wizard shows words. */
+    grainLabel(grain) {
+        return {
+            year: _t("Year"),
+            quarter: _t("Quarter"),
+            month: _t("Month"),
+            week: _t("Week"),
+            day: _t("Day"),
+        }[grain] || grain;
+    }
+
+    get closeLabel() {
+        return _t("Close");
+    }
+
+    get namePlaceholder() {
+        return _t("Report name");
+    }
+
+    get aiPlaceholder() {
+        return _t("e.g. monthly revenue by facility");
+    }
+
+    get newDashboardPlaceholder() {
+        return _t("New dashboard name");
+    }
+
+    // ------------------------------------------------------------------
+    // Field groups
+    // ------------------------------------------------------------------
+
+    get fields() {
+        return (this.state.metadata && this.state.metadata.fields) || [];
+    }
+
+    isDate(field) {
+        return !!field && DATE_TYPES.includes(field.data_type);
+    }
+
+    /** Measures aggregate; `role === "id"` join keys are never offered
+     *  (Explore skips them too — explore_action.js:228). */
+    get measureFields() {
+        return this.fields.filter((f) => f.role === "measure");
+    }
+
+    get dimensionFields() {
+        return this.fields.filter((f) => f.role !== "measure" && f.role !== "id");
+    }
+
+    get dateFields() {
+        return this.fields.filter((f) => this.isDate(f) && f.role !== "id");
+    }
+
+    // ------------------------------------------------------------------
+    // Step 1 — dataset
+    // ------------------------------------------------------------------
+
+    async selectDataset(datasetId) {
+        this.state.metadata = await this.orm.call(
+            "bi.dataset", "get_builder_metadata", [[datasetId]]);
+        this.state.datasetId = datasetId;
+        this.state.measure = null;
+        this.state.agg = "sum";
+        this.state.groupBy = null;
+        this.state.grain = "month";
+        this.state.splitBy = null;
+        this.state.dateRange = "";
+        this.state.envelope = null;
+        this.state.chartId = null;
+        this.state.chartName = "";
+        this.state.nameTouched = false;
+        this.state.userPickedType = false;
+        this.state.chartType = "bar";
+        const dates = this.dateFields;
+        this.state.dateField = dates.length ? dates[0] : null;
+        this.state.step = 2;
+        // Seed the recommendation so the gallery never opens with a
+        // highlighted-but-impossible type.
+        this.afterChange();
+    }
+
+    datasetSubtitle(dataset) {
+        return dataset.description || "";
+    }
+
+    // ------------------------------------------------------------------
+    // Step 2 — pickers
+    // ------------------------------------------------------------------
+
+    _fieldById(rawId) {
+        const id = parseInt(rawId, 10);
+        return this.fields.find((f) => f.id === id) || null;
+    }
+
+    onMeasureChange(ev) {
+        const field = this._fieldById(ev.target.value);
+        this.state.measure = field;
+        // "picking sets agg = default_agg || sum" — `none` is biz_bi's way of
+        // saying "no opinion", so it falls through to sum as well.
+        this.state.agg =
+            field && field.default_agg && field.default_agg !== "none"
+                ? field.default_agg
+                : "sum";
+        this.afterChange();
+    }
+
+    onGroupByChange(ev) {
+        this.state.groupBy = this._fieldById(ev.target.value);
+        if (this.isDate(this.state.groupBy) && !this.state.grain) {
+            this.state.grain = "month";
+        }
+        this.afterChange();
+    }
+
+    onSplitByChange(ev) {
+        this.state.splitBy = this._fieldById(ev.target.value);
+        this.afterChange();
+    }
+
+    onDateFieldChange(ev) {
+        this.state.dateField = this._fieldById(ev.target.value);
+        this.afterChange();
+    }
+
+    setGrain(grain) {
+        this.state.grain = grain;
+        this.afterChange();
+    }
+
+    /** Chips toggle: clicking the active range clears it back to All time. */
+    setDateRange(value) {
+        this.state.dateRange = this.state.dateRange === value ? "" : value;
+        this.afterChange();
+    }
+
+    /** Once the user has touched the name, `afterChange` stops re-deriving
+     *  it from the pickers — going Back and changing the breakdown must not
+     *  silently overwrite a title somebody typed. */
+    onNameTouched() {
+        this.state.nameTouched = true;
+    }
+
+    afterChange() {
+        if (!this.state.userPickedType) {
+            this.state.chartType = recommendChartType(
+                this.dimChips, this.measureChips);
+        }
+        if (!this.state.nameTouched) {
+            this.state.chartName = this.defaultName;
+        }
+        if (this.state.step === 3) {
+            this.state.envelope = null;
+            this.schedulePreview();
+        }
+    }
+
+    // Explore's chip shapes, exactly: dims [{id, grain?, ...field}],
+    // measures [{id, agg, ...field}].
+    get dimChips() {
+        const chips = [];
+        if (this.state.groupBy) {
+            chips.push({
+                ...this.state.groupBy,
+                grain: this.isDate(this.state.groupBy)
+                    ? this.state.grain : undefined,
+            });
+        }
+        if (this.state.splitBy) {
+            chips.push({
+                ...this.state.splitBy,
+                grain: this.isDate(this.state.splitBy) ? "month" : undefined,
+            });
+        }
+        return chips;
+    }
+
+    get measureChips() {
+        return this.state.measure
+            ? [{ ...this.state.measure, agg: this.state.agg }]
+            : [];
+    }
+
+    get defaultName() {
+        const measure = this.state.measure ? this.state.measure.name : "";
+        const group = this.state.groupBy ? this.state.groupBy.name : "";
+        if (measure && group) {
+            return _t("%(measure)s by %(group)s",
+                      { measure: measure, group: group }).toString();
+        }
+        return measure || _t("New report").toString();
+    }
+
+    // ------------------------------------------------------------------
+    // Chart type gallery
+    // ------------------------------------------------------------------
+
+    galleryEntryState(type) {
+        const compat = checkCompatibility(type, this.dimChips, this.measureChips);
+        return {
+            ok: compat.ok,
+            reason: compat.reason || "",
+            recommended:
+                recommendChartType(this.dimChips, this.measureChips) === type,
+            active: this.state.chartType === type,
+        };
+    }
+
+    pickChartType(type) {
+        this.state.chartType = type;
+        this.state.userPickedType = true;
+        if (this.state.step === 3) {
+            this.state.envelope = null;
+            this.schedulePreview();
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Navigation
+    // ------------------------------------------------------------------
+
+    /** Step dots are clickable BACKWARDS only — going forward has
+     *  preconditions and belongs to the explicit buttons. */
+    goToStep(index) {
+        if (index < this.state.step) {
+            this.state.step = index;
+        }
+    }
+
+    get canPreview() {
+        if (!this.state.measure) {
+            return false;
+        }
+        // A big number needs a measure and nothing else.
+        return this.state.chartType === "kpi" || !!this.state.groupBy;
+    }
+
+    async goToPreview() {
+        if (!this.canPreview) {
+            return;
+        }
+        this.state.step = 3;
+        if (!this.state.chartName) {
+            this.state.chartName = this.defaultName;
+        }
+        await this.loadDashboards();
+        this.schedulePreview();
+    }
+
+    async loadDashboards() {
+        // The record rules scope this to what the user may SEE; whether they
+        // may write is only known when add_chart is called, which is why the
+        // save path has to handle an AccessError gracefully.
+        this.state.dashboards = await this.orm.searchRead(
+            "bi.dashboard", [], ["name"]);
+    }
+
+    close() {
+        this.props.onClose();
+    }
+
+    /** The escape hatch: hand the exact same state to the full builder. */
+    openAdvanced() {
+        const params = this.state.chartId
+            ? { chart_id: this.state.chartId }
+            : { dataset_id: this.state.datasetId };
+        this.props.onClose();
+        this.actionService.doAction({
+            type: "ir.actions.client",
+            tag: "biz_bi.explore",
+            params,
+        });
+    }
+
+    // ------------------------------------------------------------------
+    // AI
+    // ------------------------------------------------------------------
+
+    async askAi() {
+        const prompt = String(this.state.aiPrompt || "").trim();
+        if (!prompt || this.state.aiBusy) {
+            return;
+        }
+        this.state.aiBusy = true;
+        let materialized = false;
+        try {
+            const result = await this.orm.call(
+                "bi.ai", "nlq_chart", [this.state.datasetId, prompt]);
+            if (result.error) {
+                this.notification.add(result.error, { type: "warning" });
+                return;
+            }
+            materialized = this.materializeConfig(result.config || {});
+        } catch (error) {
+            // Never blocking: the pickers below are always a complete answer.
+            this.notification.add(
+                _t("The assistant could not build that chart. Use the pickers below."),
+                { type: "warning" });
+        } finally {
+            this.state.aiBusy = false;
+        }
+        if (materialized) {
+            await this.goToPreview();
+        }
+    }
+
+    /**
+     * Turn an AI chart config into wizard state, the way Explore's
+     * `materializeConfig` turns it into chips: every `field_id` is resolved
+     * back through this dataset's metadata, and anything that does not
+     * resolve is DROPPED with a warning rather than sent to the engine.
+     */
+    materializeConfig(config) {
+        const byId = Object.fromEntries(this.fields.map((f) => [f.id, f]));
+        const dropped = [];
+        const resolve = (entry) => {
+            if (!entry || !entry.field_id) {
+                return null;
+            }
+            if (!byId[entry.field_id]) {
+                dropped.push(entry.field_id);
+                return null;
+            }
+            return byId[entry.field_id];
+        };
+        const slots = config.slots || {};
+        const valueEntry = (slots.values || [])[0];
+        const xEntry = (slots.x || [])[0];
+        const seriesEntry = (slots.series || [])[0];
+
+        const measure = resolve(valueEntry);
+        if (measure) {
+            this.state.measure = measure;
+            this.state.agg =
+                valueEntry.agg ||
+                (measure.default_agg !== "none" && measure.default_agg) ||
+                "sum";
+        }
+        const groupBy = resolve(xEntry);
+        this.state.groupBy = groupBy;
+        if (groupBy && xEntry.grain) {
+            this.state.grain = xEntry.grain;
+        }
+        this.state.splitBy = resolve(seriesEntry);
+
+        // The wizard offers exactly one filter row, so the first resolvable
+        // relative date filter is the one it can represent.
+        this.state.dateRange = "";
+        for (const filter of config.filters || []) {
+            const field = byId[filter.field_id];
+            if (field && filter.op === "relative" && filter.value) {
+                this.state.dateField = field;
+                this.state.dateRange = filter.value;
+                break;
+            }
+            if (!field && filter.field_id) {
+                dropped.push(filter.field_id);
+            }
+        }
+        if (config.chart_type) {
+            this.state.chartType = config.chart_type;
+            this.state.userPickedType = true;
+        }
+        if (config.name) {
+            this.state.chartName = config.name;
+            this.state.nameTouched = true;
+        }
+        if (dropped.length) {
+            this.notification.add(
+                _t("%s suggested field(s) are not in this dataset and were dropped.",
+                   dropped.length),
+                { type: "info" });
+        }
+        if (!this.state.measure) {
+            this.notification.add(
+                _t("The assistant did not choose a measure — pick one below."),
+                { type: "warning" });
+            return false;
+        }
+        return true;
+    }
+
+    // ------------------------------------------------------------------
+    // Preview
+    // ------------------------------------------------------------------
+
+    get filterEntries() {
+        if (!this.state.dateField || !this.state.dateRange) {
+            return [];
+        }
+        // The engine's relative-range contract: op "relative", value one of
+        // RELATIVE_RANGES' keys (bi_query_engine.py:46-74).
+        return [{
+            field_id: this.state.dateField.id,
+            op: "relative",
+            value: this.state.dateRange,
+        }];
+    }
+
+    buildRequest() {
+        return {
+            dataset_id: this.state.datasetId,
+            dimensions: this.dimChips.map((chip) => ({
+                field_id: chip.id,
+                grain: chip.grain || undefined,
+            })),
+            measures: this.measureChips.map((chip) => ({
+                field_id: chip.id,
+                agg: chip.agg,
+            })),
+            filters: this.filterEntries,
+            sort: this.measureChips.length && this.state.chartType !== "line"
+                ? [{ ref: "m0", dir: "desc" }]
+                : [],
+            limit: 500,
+        };
+    }
+
+    schedulePreview() {
+        clearTimeout(this._debounce);
+        // Synchronously, not inside the timeout: otherwise the 400 ms of
+        // debounce render as the "no data" empty state before the skeleton
+        // ever appears.
+        this.state.loading = true;
+        this._debounce = setTimeout(async () => {
+            try {
+                this.state.envelope = await this.biData.query(
+                    this.buildRequest(), { noCache: false });
+            } finally {
+                this.state.loading = false;
+            }
+        }, 400);
+    }
+
+    get rendererKind() {
+        if (this.state.chartType === "kpi") {
+            return "kpi";
+        }
+        if (this.state.chartType === "table") {
+            return "table";
+        }
+        if (this.state.chartType === "pivot") {
+            return "pivot";
+        }
+        return "chart";
+    }
+
+    get chartConfig() {
+        return { chart_type: this.state.chartType, display: {} };
+    }
+
+    get hasRows() {
+        const envelope = this.state.envelope;
+        return !!(envelope && !envelope.error && (envelope.rows || []).length);
+    }
+
+    // ------------------------------------------------------------------
+    // Save
+    // ------------------------------------------------------------------
+
+    /** Byte-for-byte the shape Explore writes (explore_action.js:466-483). */
+    buildConfigJson() {
+        const groupBy = this.state.groupBy;
+        const splitBy = this.state.splitBy;
+        return {
+            version: 1,
+            chart_type: this.state.chartType,
+            slots: {
+                x: groupBy
+                    ? [{
+                        field_id: groupBy.id,
+                        grain: this.isDate(groupBy) ? this.state.grain : undefined,
+                    }]
+                    : [],
+                values: this.state.measure
+                    ? [{ field_id: this.state.measure.id, agg: this.state.agg }]
+                    : [],
+                series: splitBy
+                    ? [{
+                        field_id: splitBy.id,
+                        grain: this.isDate(splitBy) ? "month" : undefined,
+                    }]
+                    : [],
+            },
+            filters: this.filterEntries,
+            sort: [],
+            limit: 500,
+            display: {},
+        };
+    }
+
+    selectDashboard(dashboardId) {
+        this.state.targetDashboardId = dashboardId;
+    }
+
+    async saveReport() {
+        const name = String(this.state.chartName || "").trim();
+        if (!name) {
+            this.notification.add(_t("Give the report a name first."),
+                                  { type: "warning" });
+            return;
+        }
+        if (!this.state.measure) {
+            this.notification.add(_t("Pick a measure first."),
+                                  { type: "warning" });
+            return;
+        }
+        this.state.saving = true;
+        let landedOn = null;
+        try {
+            if (!this.state.chartId) {
+                // orm.create returns a LIST of ids — destructure it. Handing
+                // the list on to add_chart is the 5e91455e bug.
+                const [chartId] = await this.orm.create("bi.chart", [{
+                    name,
+                    dataset_id: this.state.datasetId,
+                    chart_type: this.state.chartType,
+                    config_json: this.buildConfigJson(),
+                }]);
+                this.state.chartId = chartId;
+            }
+            let dashboardId = this.state.targetDashboardId;
+            if (!dashboardId) {
+                const dashboardName =
+                    String(this.state.newDashboardName || "").trim() ||
+                    _t("My dashboard").toString();
+                const [createdId] = await this.orm.create(
+                    "bi.dashboard", [{ name: dashboardName }]);
+                dashboardId = createdId;
+                // A retry after a later failure must not create a second one.
+                this.state.targetDashboardId = dashboardId;
+            }
+            await this.orm.call("bi.dashboard", "add_chart",
+                                [[dashboardId], this.state.chartId]);
+            landedOn = dashboardId;
+        } catch (error) {
+            const kind = (error && error.data && error.data.name) || "";
+            if (kind.includes("AccessError")) {
+                this.notification.add(
+                    _t("You can't add a report to that dashboard. Pick another one, or create your own."),
+                    { type: "warning" });
+            } else {
+                const message =
+                    (error && error.data && error.data.message) ||
+                    (error && error.message) || "";
+                this.notification.add(
+                    message || _t("The report could not be saved."),
+                    { type: "danger" });
+            }
+        } finally {
+            this.state.saving = false;
+        }
+        // Navigate only on success, and only AFTER the last state write —
+        // unmounting the component first and then touching `this.state`
+        // is a write to a destroyed reactive.
+        if (landedOn) {
+            this.notification.add(_t("Report saved."), { type: "success" });
+            this.props.onClose();
+            this.actionService.doAction({
+                type: "ir.actions.client",
+                tag: "biz_bi.dashboard",
+                params: { dashboard_id: landedOn },
+            });
+        }
+    }
+}

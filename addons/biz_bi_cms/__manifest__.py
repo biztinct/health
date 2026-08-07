@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Analytics Hub (CMS)',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Analytics',
     'summary': 'Puts the BI platform into the /bizapp sidebar and lands CMS '
                'users on a friendly Analytics hub.',
@@ -26,7 +26,13 @@ This glue module closes it:
   on the BI group ladder;
 * an **Analytics Hub** client action (``biz_bi.hub``) — one RPC, a search
   box, a recents strip and a workspace grid listing **every** dashboard the
-  user may see.
+  user may see;
+* a guided **three-step report wizard** behind that hub's "Create Report"
+  button — pick a dataset, answer two questions (or ask in your own words
+  where an AI provider is configured), preview, save onto a dashboard. It
+  writes ordinary ``bi.chart`` rows in the exact ``config_json`` shape
+  Explore writes, and "Open in advanced builder" hands the same state to the
+  full builder at any point.
 
 The existing backend Analytics application is left completely untouched for
 power users; the hub is an additional, calmer front door.

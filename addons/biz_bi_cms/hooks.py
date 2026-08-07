@@ -77,33 +77,35 @@ def apply_role_gates(env):
     return gated
 
 
-def grant_creator_group(env):
-    """Give every gated-role user ``biz_bi.group_bi_creator``.
+def gated_role_ids(env):
+    """Ids of the ``access.role`` rows that get Analytics, on THIS database.
 
-    Additive only. Returns the number of users who gained the group, so the
-    caller (and the tests) can assert that a second run adds nothing.
+    One resolver, three consumers (the backfill below, the ``res.users``
+    auto-grant, and the tests) — the role list must never be re-typed.
+    """
+    if 'access.role' not in env:
+        return []
+    return env['access.role'].sudo().search(
+        [('name', 'in', list(ANALYTICS_ROLE_NAMES))]).ids
+
+
+def grant_creator_to_users(env, users):
+    """Link ``biz_bi.group_bi_creator`` onto ``users``. Additive, idempotent.
+
+    Returns the number of users who actually gained it. Callers pass whatever
+    set they care about; the eligibility test (gated role, internal, active)
+    belongs to the caller, because the ``res.users`` hook already knows the
+    answer for the records it is writing.
     """
     group = env.ref(CREATOR_GROUP_XMLID, raise_if_not_found=False)
-    if not group:
-        _logger.warning('biz_bi_cms: %s does not exist — no BI group granted',
-                        CREATOR_GROUP_XMLID)
+    if not group or not users:
+        if not group:
+            _logger.warning(
+                'biz_bi_cms: %s does not exist — no BI group granted',
+                CREATOR_GROUP_XMLID)
         return 0
-
-    roles = env['access.role'].sudo().search(
-        [('name', 'in', list(ANALYTICS_ROLE_NAMES))])
-    if not roles:
-        _logger.warning('biz_bi_cms: none of the roles %s exist on this '
-                        'database — no BI group granted',
-                        list(ANALYTICS_ROLE_NAMES))
-        return 0
-
-    users = env['res.users'].sudo().search([
-        ('access_role_id', 'in', roles.ids),
-        ('share', '=', False),
-        ('active', '=', True),
-    ])
     granted = 0
-    for user in users:
+    for user in users.sudo():
         # all_group_ids is the READ-TIME closure (§5.114): a user already
         # holding group_bi_admin reaches creator transitively and must not be
         # handed a redundant direct row.
@@ -111,6 +113,32 @@ def grant_creator_group(env):
             continue
         user.write({'group_ids': [Command.link(group.id)]})
         granted += 1
+    return granted
+
+
+def grant_creator_group(env):
+    """Backfill: give every gated-role user ``biz_bi.group_bi_creator``.
+
+    Additive only. Returns the number of users who gained the group, so the
+    caller (and the tests) can assert that a second run adds nothing.
+
+    This is the sweep. The per-record equivalent lives in
+    ``models/res_users.py`` and keeps new hires and re-roled staff current
+    without waiting for the next upgrade.
+    """
+    role_ids = gated_role_ids(env)
+    if not role_ids:
+        _logger.warning('biz_bi_cms: none of the roles %s exist on this '
+                        'database — no BI group granted',
+                        list(ANALYTICS_ROLE_NAMES))
+        return 0
+
+    users = env['res.users'].sudo().search([
+        ('access_role_id', 'in', role_ids),
+        ('share', '=', False),
+        ('active', '=', True),
+    ])
+    granted = grant_creator_to_users(env, users)
     _logger.info('biz_bi_cms: granted %s to %s of %s role users',
                  CREATOR_GROUP_XMLID, granted, len(users))
     return granted

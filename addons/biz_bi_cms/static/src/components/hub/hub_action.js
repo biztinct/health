@@ -4,6 +4,7 @@ import { registry } from "@web/core/registry";
 import { Component, markup, onWillStart, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { ReportWizard } from "../wizard/report_wizard";
 
 // ---------------------------------------------------------------------------
 // Inline SVG icons.
@@ -62,6 +63,7 @@ const ACCENT_COUNT = 6;
 
 export class BiHubAction extends Component {
     static template = "biz_bi_cms.Hub";
+    static components = { ReportWizard };
     static props = { "*": true };
     static displayName = _t("Analytics");
 
@@ -79,6 +81,7 @@ export class BiHubAction extends Component {
             isAdmin: false,
             aiAvailable: false,
             query: "",
+            wizardOpen: false,
         });
 
         onWillStart(async () => {
@@ -201,15 +204,17 @@ export class BiHubAction extends Component {
     }
 
     /**
-     * Phase 1: the CTA opens the existing full Explore builder. Phase 2
-     * replaces this target with the guided three-step report builder — the
-     * button, its gating and its placement do not change.
+     * Phase 2: the CTA opens the guided three-step report wizard as an
+     * overlay on the hub. The button, its creator gating and its placement
+     * are unchanged from Phase 1; only the target moved. The raw Explore
+     * builder is still one click away, from inside the wizard.
      */
     createReport() {
-        this.actionService.doAction({
-            type: "ir.actions.client",
-            tag: "biz_bi.explore",
-        });
+        this.state.wizardOpen = true;
+    }
+
+    closeWizard() {
+        this.state.wizardOpen = false;
     }
 }
 

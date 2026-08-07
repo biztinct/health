@@ -38,9 +38,33 @@ msgid "%(dashboards)s dashboards · %(datasets)s datasets"
 msgstr "%(dashboards)s bảng thông tin · %(datasets)s tập dữ liệu"
 
 #. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "%(measure)s by %(group)s"
+msgstr "%(measure)s theo %(group)s"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "%s suggested field(s) are not in this dataset and were dropped."
+msgstr "%s trường được gợi ý không có trong tập dữ liệu này và đã bị bỏ qua."
+
+#. module: biz_bi_cms
 #: model:cms.sidebar.section,name:biz_bi_cms.section_analytics
 msgid "ANALYTICS"
 msgstr "PHÂN TÍCH"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Add it to"
+msgstr "Thêm vào"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "All time"
+msgstr "Toàn bộ thời gian"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -59,6 +83,12 @@ msgstr "Tài khoản của bạn chưa được cấp quyền Phân tích"
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Area"
+msgstr "Vùng"
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
 msgid ""
 "Ask an administrator to give you an Analytics role, and your dashboards will"
@@ -69,9 +99,76 @@ msgstr ""
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Ask an administrator to publish a dataset, and it will appear here."
+msgstr ""
+"Hãy đề nghị quản trị viên xuất bản một tập dữ liệu, nó sẽ xuất hiện tại đây."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Ask in your own words"
+msgstr "Hỏi bằng ngôn ngữ của bạn"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Back"
+msgstr "Quay lại"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Bar"
+msgstr "Cột"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Big number"
+msgstr "Số lớn"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Break it down by"
+msgstr "Phân tách theo"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Build"
+msgstr "Dựng báo cáo"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Build it for me"
+msgstr "Dựng giúp tôi"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Certified"
+msgstr "Đã kiểm định"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Choose data"
+msgstr "Chọn dữ liệu"
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/hub/hub_action.js:0
 msgid "Clear search"
 msgstr "Xoá tìm kiếm"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Close"
+msgstr "Đóng"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -93,9 +190,106 @@ msgstr "Tạo mới"
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Date range"
+msgstr "Khoảng thời gian"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Day"
+msgstr "Ngày"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Describe it, or build it"
+msgstr "Mô tả, hoặc tự dựng"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Donut"
+msgstr "Vành khuyên"
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
 msgid "Every dashboard you can see, in one place."
 msgstr "Mọi bảng thông tin bạn có quyền xem, gom về một nơi."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Give the report a name first."
+msgstr "Hãy đặt tên cho báo cáo trước."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Go back and try another breakdown or a wider date range."
+msgstr ""
+"Hãy quay lại và thử cách phân tách khác hoặc khoảng thời gian rộng hơn."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "How should it look?"
+msgstr "Bạn muốn hiển thị thế nào?"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Line"
+msgstr "Đường"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Matrix"
+msgstr "Ma trận"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Month"
+msgstr "Tháng"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "My dashboard"
+msgstr "Bảng thông tin của tôi"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "New dashboard"
+msgstr "Bảng thông tin mới"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "New dashboard name"
+msgstr "Tên bảng thông tin mới"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "New report"
+msgstr "Báo cáo mới"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "No data for this combination yet"
+msgstr "Chưa có dữ liệu cho lựa chọn này"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "No data is published for you yet"
+msgstr "Chưa có dữ liệu nào được xuất bản cho bạn"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -126,9 +320,77 @@ msgstr ""
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Open in advanced builder"
+msgstr "Mở trong trình dựng nâng cao"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Pick a measure first."
+msgstr "Hãy chọn một chỉ số trước."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Pick a dataset to continue"
+msgstr "Chọn một tập dữ liệu để tiếp tục"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Pick the information this report should be built from."
+msgstr "Chọn nguồn thông tin để dựng báo cáo này."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Preview"
+msgstr "Xem trước"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Preview & save"
+msgstr "Xem trước & lưu"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Quarter"
+msgstr "Quý"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Report name"
+msgstr "Tên báo cáo"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Report saved."
+msgstr "Đã lưu báo cáo."
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
 msgid "Results"
 msgstr "Kết quả"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Save report"
+msgstr "Lưu báo cáo"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Saving…"
+msgstr "Đang lưu…"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -138,6 +400,130 @@ msgstr "Tìm bảng thông tin…"
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Split by"
+msgstr "Tách theo"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Stacked"
+msgstr "Cột chồng"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Table"
+msgstr "Bảng"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "That combination can't be charted"
+msgstr "Không thể vẽ biểu đồ cho lựa chọn này"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "The assistant could not build that chart. Use the pickers below."
+msgstr "Trợ lý không dựng được biểu đồ đó. Hãy dùng các lựa chọn bên dưới."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "The assistant did not choose a measure — pick one below."
+msgstr "Trợ lý chưa chọn chỉ số — hãy chọn một chỉ số bên dưới."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "The report could not be saved."
+msgstr "Không thể lưu báo cáo."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Thinking…"
+msgstr "Đang xử lý…"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "This dataset has no numeric measure."
+msgstr "Tập dữ liệu này không có chỉ số dạng số."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "This is exactly what will land on the dashboard."
+msgstr "Đây chính là những gì sẽ hiển thị trên bảng thông tin."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Week"
+msgstr "Tuần"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "What do you want to look at?"
+msgstr "Bạn muốn xem dữ liệu nào?"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "What do you want to measure?"
+msgstr "Bạn muốn đo lường điều gì?"
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
 msgid "Workspaces"
 msgstr "Không gian làm việc"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Year"
+msgstr "Năm"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid ""
+"You can't add a report to that dashboard. Pick another one, or create your "
+"own."
+msgstr ""
+"Bạn không thể thêm báo cáo vào bảng thông tin đó. Hãy chọn bảng khác hoặc "
+"tạo bảng của riêng bạn."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "e.g. monthly revenue by facility"
+msgstr "ví dụ: doanh thu hàng tháng theo cơ sở"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "optional"
+msgstr "không bắt buộc"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "or build it yourself"
+msgstr "hoặc tự dựng"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "— choose —"
+msgstr "— chọn —"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "— none —"
+msgstr "— không —"

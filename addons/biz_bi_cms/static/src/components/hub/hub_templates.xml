@@ -147,6 +147,12 @@
                 </t>
 
             </div>
+
+            <!-- ========================================== CREATE WIZARD -->
+            <!-- A full-viewport overlay, mounted only while it is open so
+                 that closing it disposes the ECharts instance and the
+                 debounced preview timer with it. -->
+            <ReportWizard t-if="state.wizardOpen" onClose.bind="closeWizard"/>
         </div>
     </t>
 

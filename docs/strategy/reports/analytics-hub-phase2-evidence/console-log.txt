@@ -1,0 +1,74 @@
+AH-2 browser evidence — full console log per screen
+===================================================
+Tool: chrome-devtools `list_console_messages` with
+`includePreservedMessages: true` (the last 3 navigations), read after each
+step of the drive. Everything below is the COMPLETE output, not a filtered
+excerpt.
+
+Screen                                   | Console
+-----------------------------------------|-------------------------------------------------
+login page                               | (empty)
+/bizapp/action-1417 CMS shell            | [issue] A form field element should have an id
+                                         |   or name attribute (count: 1)
+hub /bizapp/action-1723                  | [issue] ... (count: 1)
+wizard step 1 (dataset cards)            | [issue] ... (count: 1)
+wizard step 2 (pickers)                  | [issue] ... (count: 1)
+wizard step 3 (live preview)             | [issue] ... (count: 1)
+saved dashboard /…/action-biz_bi.dashboard| [issue] ... (count: 1)
+wizard step 2 with AI box + one AI ask   | [issue] ... (count: 1)
+                                         | [debug] web_debranding: field_upgrade.js loaded
+                                         |   (Odoo 19 compatibility mode)
+                                         | [log]   Zalo Bus Service initialized
+Explore via "Open in advanced builder"   | [issue] ... (count: 1)
+                                         | [issue] ... (count: 4)
+
+ZERO errors and ZERO warnings on every screen of the drive.
+
+Pre-existing vs new
+-------------------
+* `[issue] A form field element should have an id or name attribute` is a
+  Chrome accessibility advisory and is **pre-existing**: it is already
+  present on the CMS shell BEFORE Analytics is opened. Measured directly
+  rather than assumed — with the wizard open on the hub:
+
+      document.querySelectorAll('input,select,textarea')
+        .filter(e => !e.id && !e.name)
+      -> {"total": 1, "inWizard": 0, "sample": ["SELECT.cms-catchment-select"]}
+
+  The single offender is the CMS shell's catchment picker. **The wizard
+  contributes none** — every input, select, textarea and radio it renders
+  carries both `id` and `name`.
+
+  On the Explore screen the same query returns 4, all of them somebody
+  else's:
+
+      ["SELECT.cms-catchment-select",      (CMS shell)
+       "SELECT.bi-select",                 (biz_bi Explore dataset picker)
+       "INPUT.bi-input bi-chart-name",     (biz_bi Explore)
+       "INPUT.bi-input bi-field-search"]   (biz_bi Explore)
+
+* `[debug] web_debranding: field_upgrade.js loaded` and
+  `[log] Zalo Bus Service initialized` are pre-existing boot messages from
+  `biz_debranding` and `health_zalo`; they appear on any full page load and
+  have nothing to do with this phase.
+
+One interruption, flagged honestly
+----------------------------------
+During the FIRST pass of the escape-hatch step the page logged:
+
+    [error] Failed to load resource: the server responded with a status of 502
+    [error] OwlError ... Caused by: ConnectionLostError: Connection to
+            "/web/dataset/call_kw/bi.dataset/search_read" couldn't be
+            established or was interrupted
+    [error] OwlError ... Caused by: ConnectionLostError: Connection to
+            "/web/dataset/call_kw/bi.workspace/get_hub_data" ...
+
+  Cause: **another session was mid-deploy on vietuat and had stopped the
+  Odoo service** (`odoo.service.server: Stopping workers gracefully` at
+  03:28:03 in /var/log/odoo/odoo-server.log, followed by an
+  `-u health_self_booking,…,health_fieldservice` run belonging to a
+  different implementer). nginx answered 502 while the service was down, so
+  the browser's in-flight RPCs failed. Not caused by this phase and not
+  reproducible once the server was back: the escape hatch was re-driven
+  afterwards on a healthy server and landed in Explore correctly
+  (10-escape-hatch-explore-with-chrome.png), with the console above.

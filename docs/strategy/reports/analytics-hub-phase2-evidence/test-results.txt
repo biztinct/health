@@ -1,0 +1,28 @@
+2026-08-07 03:35:15,402 2408149 INFO vietuat odoo.tests.stats: biz_bi_cms: 17 tests 4.69s 3510 queries 
+2026-08-07 03:35:15,402 2408149 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 13 tests when loading database 'vietuat' 
+
+--- executed test methods (ledger 5.83/5.90) ---
+Starting TestAnalyticsHub.test_ai_probe_degrades_for_a_creator
+Starting TestAnalyticsHub.test_creator_group_grant
+Starting TestAnalyticsHub.test_hub_data_respects_workspace_rules
+Starting TestAnalyticsHub.test_hub_data_shape
+Starting TestAnalyticsHub.test_role_gate_idempotent
+Starting TestAnalyticsHub.test_sidebar_wiring
+Starting TestReportWizard.test_01_wizard_config_roundtrip
+Starting TestReportWizard.test_01b_relative_range_vocabulary_is_shared
+Starting TestReportWizard.test_02_wizard_save_flow
+Starting TestReportWizard.test_03_creator_cannot_add_to_foreign_dashboard
+Starting TestReportWizard.test_04_nlq_unavailable_is_clean
+Starting TestReportWizard.test_05_auto_grant_on_role_assign
+Starting TestReportWizard.test_06_migration_reruns_gates
+
+--- FAIL/ERROR/CRITICAL lines in the deploy log ---
+0
+
+--- migration 19.0.1.1.0 (from deploy1, the run that moved the version) ---
+2026-08-07 03:20:11,659 2405640 INFO vietuat odoo.modules.migration: module biz_bi_cms: Running migration [19.0.1.1.0>] post-apply-role-gates 
+2026-08-07 03:20:11,660 2405640 INFO vietuat post-apply-role-gates: biz_bi_cms 19.0.1.1.0: re-applying role gates and the creator-group grant (from version 19.0.1.0.0) 
+2026-08-07 03:20:11,690 2405640 INFO vietuat post-apply-role-gates: biz_bi_cms 19.0.1.1.0: 1 leaf(s) gated, 0 user(s) granted the BI creator group 
+
+--- installed module version ---
+biz_bi_cms|19.0.1.1.0|installed
