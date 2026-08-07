@@ -1,0 +1,93 @@
+RT-2 — test results, verbatim from the server log
+=================================================
+
+Deploy per conventions §2 (`-u biz_bi_cms`, `--test-enable
+--test-tags /biz_bi_cms --stop-after-init --workers=0 --http-port=8169`,
+own logfile). §5.130's concurrent-run check
+(`pgrep -c -f '^python3 /odoo/odoo-server/odoo-bin'`) was taken immediately
+after every `service stop` and read **0** on all four runs.
+
+
+Run 1 — /tmp/rt2/deploy1.log, EXIT:1
+------------------------------------
+    2026-08-07 09:47:58,553 2428685 INFO vietuat odoo.tests.stats: biz_bi_cms: 29 tests 7.34s 5577 queries 
+    2026-08-07 09:47:58,553 2428685 ERROR vietuat odoo.tests.result: 0 failed, 1 error(s) of 21 tests when loading database 'vietuat' 
+
+One error, and it was the test's own bug, not the code's:
+`test_records_column_order_preserved` read `col['name']` from the envelope's
+column metadata, which is keyed `label` (`bi_query_engine.py:343`). Fixed by
+asserting BOTH `field_id` order and `label` order.
+
+
+Run 2 — /tmp/rt2/deploy2.log, EXIT:0
+------------------------------------
+    2026-08-07 09:48:48,614 2428983 INFO vietuat odoo.tests.stats: biz_bi_cms: 29 tests 7.19s 5581 queries 
+    2026-08-07 09:48:48,614 2428983 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 21 tests when loading database 'vietuat' 
+
+
+Run 3 — after the pixel pass; the build every screenshot was taken on
+        — /tmp/rt2/deploy3.log, EXIT:0
+-----------------------------------------------------------------------
+    2026-08-07 10:02:04,755 2430222 INFO vietuat odoo.tests.stats: biz_bi_cms: 29 tests 7.87s 5581 queries 
+    2026-08-07 10:02:04,756 2430222 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 21 tests when loading database 'vietuat' 
+
+
+Run 4 — the SHIPPED build — /tmp/rt2/deploy4.log, EXIT:0
+--------------------------------------------------------
+    2026-08-07 10:23:56,615 2431905 INFO vietuat odoo.tests.stats: biz_bi_cms: 29 tests 7.56s 5581 queries 
+    2026-08-07 10:23:56,615 2431905 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 21 tests when loading database 'vietuat' 
+
+Run 4 differs from run 3 by exactly two private getter names
+(`moveUpLabel`/`moveDownLabel` -> `moveLeftLabel`/`moveRightLabel`, renamed at
+self-review because the glyphs and the tooltips are left/right) and one
+comment. The *strings* those getters return, and every other rendered byte,
+are unchanged — which is why the screenshots were not re-taken a third time.
+`git diff deploy3..deploy4` is 6 lines, all of them names.
+
+`grep -ac "FAIL:\|ERROR:\|CRITICAL"` over deploy3.log and deploy4.log: **0** each.
+
+
+The 21 methods that actually EXECUTED (§5.83/§5.90 — a count of failures is
+not evidence, a count of executed methods is; `grep -a "Starting Test"`):
+
+    TestAnalyticsHub.test_ai_probe_degrades_for_a_creator
+    TestAnalyticsHub.test_creator_group_grant
+    TestAnalyticsHub.test_hub_data_respects_workspace_rules
+    TestAnalyticsHub.test_hub_data_shape
+    TestAnalyticsHub.test_role_gate_idempotent
+    TestAnalyticsHub.test_sidebar_wiring
+    TestAnalyticsHubAh3.test_ah3_01_ai_available_for_creator
+    TestAnalyticsHubAh3.test_ah3_02_nlq_permission_shape
+    TestAnalyticsHubAh3.test_ah3_03_wizard_targets
+    TestAnalyticsHubAh3.test_ah3_04_recents_pruned
+    TestAnalyticsHubAh3.test_ah3_04b_recents_accesserror_does_not_kill_the_hub
+    TestReportWizard.test_01_wizard_config_roundtrip
+    TestReportWizard.test_01b_relative_range_vocabulary_is_shared
+    TestReportWizard.test_02_wizard_save_flow
+    TestReportWizard.test_03_creator_cannot_add_to_foreign_dashboard
+    TestReportWizard.test_04_nlq_unavailable_is_clean
+    TestReportWizard.test_05_auto_grant_on_role_assign
+    TestReportWizard.test_06_migration_reruns_gates
+    TestWizardRecords.test_records_column_order_preserved     <- new
+    TestWizardRecords.test_records_config_shape               <- new
+    TestWizardRecords.test_records_save_flow                  <- new
+
+(18 executed before this phase, 21 after: the three RT-2 tests are additive
+and nothing pre-existing was dropped.)
+
+
+Server after the final restart
+------------------------------
+    ss -lntp | grep -c :8069        -> 1
+    curl localhost:8069/web/login   -> HTTP:200
+
+
+Deployed == committed source (md5, both directions)
+---------------------------------------------------
+    65f565c227276bb8afbfdb86e3fb956d  static/src/components/wizard/report_wizard.js
+    c2ec5d570d18d02c347a84c3d8c54300  static/src/components/wizard/report_wizard.xml
+    25b147e8140d4fceaa05a1f9db5c968d  static/src/components/wizard/report_wizard.scss
+    9af6d410fc58a38bdffd3460e24c4314  i18n/vi.po
+    2a25c2198de37eab2f20088660c68ea0  tests/test_wizard_records.py
+    0305cf2f08e8e3fdc28308cca595c417  tests/test_wizard_flow.py
+    5b7d8818fc68f609483b8b3465616a89  __manifest__.py

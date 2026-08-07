@@ -2320,3 +2320,49 @@ a no-op.
     it with a unit test — the same applies to `ir.attachment` filenames built
     from record names, where the offending set is different but the reflex is
     the same. (records-table RT-1.)
+
+- **§5.141 — a `res.users.lang` written from a separate `odoo-bin shell` is not
+    honoured by a fresh LOGIN in the running workers, and whether it is
+    honoured is a coin toss.** §5.48 (config parameter) and §5.132 (groups) both
+    end in "restart the service"; `lang` belongs in the same family, but it
+    hides better because a language change *feels* like something a re-login
+    must pick up. RT-2 set `lang = vi_VN` on a QA persona from a shell,
+    committed, logged the browser out and back in — and got Vietnamese. It did
+    the identical thing on a second persona twenty minutes later and got
+    **English**, from the same code, with `res_partner.lang = 'vi_VN'` visible
+    in psql the whole time. The difference is only which worker served the
+    login and whether that worker had already cached that user/partner: the
+    first persona had never been read by any worker, the second had been read
+    all through the English drive. So the failure is intermittent, which is
+    worse than consistent — a vi_VN evidence screenshot can be silently
+    English on a re-run of the exact same steps. Rules: restart the service
+    between a `lang` write and the drive (never merely re-login), assert the
+    language in the page (`document.title`, or a known translated string)
+    before you take the screenshot, and prefer flipping the language through
+    the UI where a surface offers it. (records-table RT-2.)
+
+- **§5.142 — not every Odoo table has `create_uid`/`write_uid`, and a raw
+    `DELETE` against one that does not will roll back the ORM `unlink()`s your
+    cleanup script has already printed as done.** RT-2's QA cleanup unlinked the
+    widgets, the dashboard and the charts, printed a line for each, then ran
+    `DELETE FROM bi_query_cache WHERE create_uid = %s`. `bi.query.cache` sets
+    `_log_access = False` (its columns are `cache_key / created_at /
+    dataset_id / expires_at / hit_count / id / result_json`), so psycopg2
+    raised `UndefinedColumn`, the whole transaction aborted, and **nothing was
+    deleted** — while stdout said `widgets unlinked / dashboards unlinked /
+    charts unlinked`. A cleanup script's own log is not evidence that it
+    cleaned anything; only the fresh-cursor check of §5.34 is, which is
+    exactly why that rule exists. Two habits: check
+    `information_schema.columns` before writing a raw `DELETE` against a model
+    you did not author, and put the raw SQL FIRST (or in its own committed
+    step) so an ORM unlink is never the thing a later SQL error undoes.
+    (records-table RT-2.)
+
+- **§5.143 — a `bi.query.engine` envelope names its columns `label`, not
+    `name`.** `columns_meta` is `{ref, field_id, label, type, role, grain,
+    format, selection_labels}` (+ `agg` for a measure, `value_labels` after
+    label attachment, `nulled` for a masked one) —
+    `bi_query_engine.py:337-373`. `bi.field.name` becomes `label` on the way
+    out, so a consumer or a test that reads `column['name']` gets a bare
+    `KeyError`, not a wrong value. Assert on `field_id` for identity and
+    `label` for display. (records-table RT-2.)

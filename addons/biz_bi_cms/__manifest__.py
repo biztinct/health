@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Analytics Hub (CMS)',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Analytics',
     'summary': 'Puts the BI platform into the /bizapp sidebar and lands CMS '
                'users on a friendly Analytics hub.',
@@ -32,7 +32,15 @@ This glue module closes it:
   where an AI provider is configured), preview, save onto a dashboard. It
   writes ordinary ``bi.chart`` rows in the exact ``config_json`` shape
   Explore writes, and "Open in advanced builder" hands the same state to the
-  full builder at any point.
+  full builder at any point;
+* a **Chart | Records list** choice on the wizard's build step, for the
+  people who do not want a chart at all: tick the columns you want, keep the
+  same date range, look at the rows, download them as a real ``.xlsx``, save
+  the list onto a dashboard. It writes ``biz_bi``'s records shape
+  (``chart_type: 'table'``, ``mode: 'detail'``, an ordered ``slots.columns``)
+  so a wizard-made records report and an Explore-made one are the same row,
+  and the export goes through ``biz_bi``'s own server-capped, audit-logged
+  ``/bi/export/xlsx`` — record **names** in the cells, never ids.
 
 Both surfaces answer honestly when there is nothing to show: a tenant whose
 workspaces hold no dashboard yet gets one first-run card instead of a grid of

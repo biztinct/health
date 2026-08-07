@@ -83,11 +83,100 @@
                     <!-- ========================================== STEP 2 -->
                     <div t-elif="state.step === 2" class="bi-wizard-pane" t-key="'s2'"
                          t-ref="pane" tabindex="-1">
-                        <h2 class="bi-wizard-h2">Describe it, or build it</h2>
+                        <h2 t-if="isRecords" class="bi-wizard-h2">Which columns do you want?</h2>
+                        <h2 t-else="" class="bi-wizard-h2">Describe it, or build it</h2>
                         <p class="bi-wizard-lead" t-esc="state.metadata ? state.metadata.name : ''"/>
 
+                        <!-- ===================================== PATH CHOICE
+                             Chart is the default and is exactly the pre-RT-2
+                             screen; Records list swaps the pickers for a
+                             column checklist and hides the gallery. -->
+                        <div class="bi-wizard-modes" role="group"
+                             t-att-aria-label="modeGroupLabel">
+                            <button t-foreach="modeEntries" t-as="entry" t-key="entry.key"
+                                    type="button" class="bi-wizard-mode"
+                                    t-att-class="state.buildMode === entry.key ? 'is-active' : ''"
+                                    t-att-aria-pressed="state.buildMode === entry.key ? 'true' : 'false'"
+                                    t-on-click="() => this.setBuildMode(entry.key)">
+                                <span class="bi-wizard-mode-ico" t-out="uiIcon(entry.icon, 15)"/>
+                                <span t-esc="entry.label"/>
+                            </button>
+                        </div>
+
+                        <!-- ================================ RECORDS COLUMNS -->
+                        <div t-if="isRecords" class="bi-wizard-records">
+                            <div class="bi-wizard-field">
+                                <div class="bi-wizard-label">Your columns</div>
+                                <div t-if="!state.recordColumns.length"
+                                     class="bi-wizard-hint">
+                                    Tick the columns below and they will line up here, in order.
+                                </div>
+                                <div t-else="" class="bi-wizard-picked">
+                                    <span t-foreach="state.recordColumns" t-as="col"
+                                          t-key="col.id" class="bi-wizard-pickchip">
+                                        <span class="bi-wizard-pickchip-pos"
+                                              t-esc="col_index + 1"/>
+                                        <span class="bi-wizard-pickchip-name" t-esc="col.name"/>
+                                        <button type="button" class="bi-wizard-pickchip-btn"
+                                                t-att-title="moveLeftLabel"
+                                                t-att-aria-label="moveLeftLabel"
+                                                t-att-disabled="col_index === 0"
+                                                t-on-click="() => this.moveColumn(col_index, -1)">
+                                            <span t-out="uiIcon('left', 13)"/>
+                                        </button>
+                                        <button type="button" class="bi-wizard-pickchip-btn"
+                                                t-att-title="moveRightLabel"
+                                                t-att-aria-label="moveRightLabel"
+                                                t-att-disabled="col_index === state.recordColumns.length - 1"
+                                                t-on-click="() => this.moveColumn(col_index, 1)">
+                                            <span t-out="uiIcon('right', 13)"/>
+                                        </button>
+                                        <button type="button" class="bi-wizard-pickchip-btn bi-wizard-pickchip-x"
+                                                t-att-title="removeColumnLabel"
+                                                t-att-aria-label="removeColumnLabel"
+                                                t-on-click="() => this.removeColumn(col_index)">
+                                            <span t-out="uiIcon('close', 13)"/>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="bi-wizard-field">
+                                <div class="bi-wizard-label">Available columns</div>
+                                <div class="bi-wizard-folders">
+                                    <div t-foreach="columnFolders" t-as="folder"
+                                         t-key="folder.name" class="bi-wizard-folder">
+                                        <button type="button" class="bi-wizard-folder-head"
+                                                t-att-aria-expanded="isFolderOpen(folder.name) ? 'true' : 'false'"
+                                                t-on-click="() => this.toggleFolder(folder.name)">
+                                            <span class="bi-wizard-folder-caret"
+                                                  t-att-class="isFolderOpen(folder.name) ? 'is-open' : ''"
+                                                  t-out="uiIcon('caret', 13)"/>
+                                            <span t-esc="folder.name"/>
+                                            <span class="bi-wizard-folder-count"
+                                                  t-esc="folder.fields.length"/>
+                                        </button>
+                                        <div t-if="isFolderOpen(folder.name)"
+                                             class="bi-wizard-checklist">
+                                            <label t-foreach="folder.fields" t-as="f" t-key="f.id"
+                                                   class="bi-wizard-checkrow"
+                                                   t-att-class="isColumnPicked(f) ? 'is-active' : ''"
+                                                   t-att-title="f.description or f.name">
+                                                <input type="checkbox"
+                                                       t-att-id="'bi_wizard_col_' + f.id"
+                                                       t-att-name="'bi_wizard_col_' + f.id"
+                                                       t-att-checked="isColumnPicked(f)"
+                                                       t-on-change="() => this.toggleColumn(f)"/>
+                                                <span t-esc="f.name"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- AI -->
-                        <div t-if="state.aiAvailable" class="bi-wizard-ai">
+                        <div t-if="state.aiAvailable and !isRecords" class="bi-wizard-ai">
                             <div class="bi-wizard-ai-head">
                                 <span class="bi-wizard-ai-ico" t-out="uiIcon('spark', 16)"/>
                                 <span class="bi-wizard-ai-title">Ask in your own words</span>
@@ -107,13 +196,15 @@
                             </div>
                         </div>
 
-                        <div t-if="state.aiAvailable" class="bi-wizard-divider">
+                        <div t-if="state.aiAvailable and !isRecords" class="bi-wizard-divider">
                             <span>or build it yourself</span>
                         </div>
 
-                        <!-- Manual pickers -->
+                        <!-- Manual pickers. The date-range row is shared by
+                             both paths: the same filter applies to a records
+                             list, so it stays exactly as it is. -->
                         <div class="bi-wizard-fields">
-                            <div class="bi-wizard-field">
+                            <div t-if="!isRecords" class="bi-wizard-field">
                                 <label class="bi-wizard-label" for="bi_wizard_measure">
                                     What do you want to measure?
                                 </label>
@@ -131,7 +222,7 @@
                                 </div>
                             </div>
 
-                            <div class="bi-wizard-field">
+                            <div t-if="!isRecords" class="bi-wizard-field">
                                 <label class="bi-wizard-label" for="bi_wizard_groupby">
                                     Break it down by
                                 </label>
@@ -153,7 +244,7 @@
                                 </div>
                             </div>
 
-                            <div class="bi-wizard-field">
+                            <div t-if="!isRecords" class="bi-wizard-field">
                                 <label class="bi-wizard-label" for="bi_wizard_splitby">
                                     Split by <span class="bi-wizard-opt">optional</span>
                                 </label>
@@ -194,8 +285,9 @@
                             </div>
                         </div>
 
-                        <!-- Chart type -->
-                        <div class="bi-wizard-field">
+                        <!-- Chart type — the chart path only; a records list
+                             is a table by construction. -->
+                        <div t-if="!isRecords" class="bi-wizard-field">
                             <div class="bi-wizard-label">How should it look?</div>
                             <div class="bi-wizard-gallery">
                                 <t t-foreach="gallery" t-as="entry" t-key="entry.type">
@@ -219,13 +311,31 @@
                         <h2 class="bi-wizard-h2">Preview &amp; save</h2>
                         <p class="bi-wizard-lead">This is exactly what will land on the dashboard.</p>
 
+                        <!-- Records: the honest headline, then the export the
+                             banner is promising. Both sit ABOVE the table so
+                             they are read before the rows are. -->
+                        <div t-if="isRecords and !state.loading and hasRows"
+                             class="bi-wizard-previewbar">
+                            <div t-if="recordsTruncation" class="bi-wizard-banner"
+                                 t-esc="recordsTruncation"/>
+                            <span t-else="" class="bi-wizard-foot-spacer"/>
+                            <button type="button" class="bi-wizard-btn bi-wizard-export"
+                                    t-att-disabled="state.exporting"
+                                    t-on-click="exportExcel">
+                                <span t-out="uiIcon('xlsx', 14)"/>
+                                <t t-if="state.exporting">Preparing…</t>
+                                <t t-else="">Excel</t>
+                            </button>
+                        </div>
+
                         <div class="bi-wizard-preview">
                             <div t-if="state.loading" class="bi-wizard-skeleton bi-wizard-skeleton-preview"/>
                             <t t-elif="hasRows">
                                 <KpiCard t-if="rendererKind === 'kpi'"
                                          envelope="state.envelope" config="chartConfig"/>
                                 <DataTable t-elif="rendererKind === 'table'"
-                                           envelope="state.envelope" config="chartConfig"/>
+                                           envelope="state.envelope" config="chartConfig"
+                                           maxRows="previewMaxRows"/>
                                 <PivotTable t-elif="rendererKind === 'pivot'"
                                             envelope="state.envelope" config="chartConfig"/>
                                 <ChartRenderer t-else=""

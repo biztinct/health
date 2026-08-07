@@ -1,0 +1,112 @@
+RT-2 — QA fixtures created, and the fresh-cursor proof they are gone
+====================================================================
+
+§5.34 (verify the revert from a SEPARATE cursor) and §5.128 (an append-only
+log keyed on `res.users` makes the persona undeletable until its rows go out
+with a raw scoped DELETE — planned for BEFORE the persona was created).
+
+Two throwaway personas were used, both cloned from the live `om` account
+(uid 29), one per build:
+
+    uid 8219  rt2_qa   (partner 19660)  first drive
+    uid 8236  rt2_qa2  (partner 19686)  re-drive of 01/02/07/15/16 on the
+                                        SHIPPED build, after 8219 was deleted
+
+Both were Operations Manager role, `group_bi_creator` only. The service was
+restarted after creating each of them and again after each `lang` flip
+(§5.132 / §5.48 / new §5.141 — a write from a separate shell is invisible to
+the running workers until then, and for `lang` a fresh LOGIN is not enough).
+
+
+1. Everything the pass created
+------------------------------
+
+    bi.chart             138, 147   ("RT2 QA: Booking Records [wizard]")
+    bi.dashboard         611        ("RT2 QA Records Dashboard")
+    bi.dashboard.widget  68, 72
+    bi.audit.log         14 rows on uid 8219 + 1 row on uid 8236
+                                             (query / export / chart_save /
+                                              dashboard_view)
+    res.device.log       3 rows on 8219 + 2 on 8236
+    res.users            8219, 8236 + res.partner 19660, 19686
+
+The second persona created no chart, dashboard or widget: its drive stopped
+at the step-3 preview (screens 15/16), which is why its cleanup reports
+`widgets [] dashboards [] charts []`.
+
+Temporary changes, all reverted:
+
+    a. `res.users(8219).lang` set to `vi_VN` for the two-language pass and
+       back to `en_US`; `res.users(8236).lang` set to `vi_VN`. Both users are
+       now deleted entirely, so neither setting survives.
+    b. NOTHING else. In particular the truncation banner did NOT have to be
+       staged this time (RT-1 had to lower a constant for it): the wizard's
+       render cap is 100 and every dataset on this deployment is larger, so
+       the banner fires from a real envelope — and the vi_VN drive, with no
+       date filter, also produced the genuine ENGINE truncation
+       (`meta.truncated`, 1,000 fetched of 1,271). No deployed file was
+       edited, no `ir.config_parameter` was written, no `ir.rule` was
+       created outside the test transaction.
+
+`bi.query.cache` was NOT touched: it is keyed on the request, carries no
+`create_uid`/`write_uid` column at all, and is TTL-managed — there is nothing
+to scope to a persona. (The first cleanup attempt tried to delete from it by
+`create_uid`, got `UndefinedColumn`, and the whole transaction rolled back
+uncommitted; the corrected script below is the one that ran.)
+
+
+2. Cleanup, executed
+--------------------
+
+    persona uid=8219 partner=19660
+    widgets [68, 72] dashboards [611] charts [147, 138]
+    widgets unlinked
+    dashboards unlinked
+    charts unlinked
+    audit rows deleted 14
+    device log rows deleted 3
+    user unlinked
+    partner unlinked
+    CLEANUP COMMITTED
+
+    persona uid=8236 partner=19686
+    widgets [] dashboards [] charts []
+    audit rows deleted 1
+    device log rows deleted 2
+    user unlinked
+    partner unlinked
+    CLEANUP COMMITTED
+
+
+3. Fresh-cursor verification
+----------------------------
+
+psql as `postgres` — a different process and a different connection from the
+`odoo-bin shell` that did the deleting:
+
+    what                     |count
+    users rt2_qa%            |0
+    users id 8219/8236       |0
+    partners RT2 QA%         |0
+    partners id 19660/19686  |0
+    charts RT2 QA%           |0
+    dashboards RT2 QA%       |0
+    widgets 68/72            |0
+    audit uid 8219/8236      |0
+    device log uid 8219/8236 |0
+    cfg biz_bi.export_row_cap|0
+    ir_rule RT2              |0
+
+Dashboard widget counts, back to their pre-pass values (RT-1's report records
+the same seven rows with the same counts):
+
+    id | name                                | widgets
+     1 | Operations Overview                 |       6
+     2 | Revenue & Receivables               |       4
+     5 | Báo cáo hoạt động điều hành         |       5
+     6 | BI Usage Analytics                  |       3
+     7 | Visit Margin                        |       9
+     9 | Monthly Revenue by Facility         |       3
+    10 | Facility Analytics                  |       1
+
+Server after the cleanup: listener on :8069 present, `/web/login` -> 200.

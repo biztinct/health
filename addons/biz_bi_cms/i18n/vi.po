@@ -40,6 +40,12 @@ msgstr "%(dashboards)s bảng thông tin · %(datasets)s tập dữ liệu"
 #. module: biz_bi_cms
 #. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "%(dataset)s records"
+msgstr "Bản ghi %(dataset)s"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
 msgid "%(measure)s by %(group)s"
 msgstr "%(measure)s theo %(group)s"
 
@@ -123,6 +129,12 @@ msgstr ""
 #. module: biz_bi_cms
 #. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Available columns"
+msgstr "Các cột có sẵn"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
 msgid "Back"
 msgstr "Quay lại"
 
@@ -161,6 +173,12 @@ msgstr "Dựng giúp tôi"
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
 msgid "Certified"
 msgstr "Đã kiểm định"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Chart"
+msgstr "Biểu đồ"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -230,6 +248,24 @@ msgstr "Mọi bảng thông tin bạn có quyền xem, gom về một nơi."
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Excel"
+msgstr "Excel"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Export failed."
+msgstr "Xuất tệp thất bại."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "General"
+msgstr "Chung"
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
 msgid "Give the report a name first."
 msgstr "Hãy đặt tên cho báo cáo trước."
@@ -264,6 +300,18 @@ msgstr "Ma trận"
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
 msgid "Month"
 msgstr "Tháng"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Move left"
+msgstr "Chuyển sang trái"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Move right"
+msgstr "Chuyển sang phải"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -321,6 +369,12 @@ msgstr "Chưa có không gian làm việc nào được chia sẻ với bạn"
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Nothing to export yet."
+msgstr "Chưa có gì để xuất."
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/hub/hub_templates.xml:0
 msgid ""
 "Once a workspace is shared with you, its dashboards will be listed here."
@@ -358,9 +412,21 @@ msgstr "Chọn một tập dữ liệu để tiếp tục"
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Pick at least one column first."
+msgstr "Hãy chọn ít nhất một cột trước."
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
 msgid "Pick the information this report should be built from."
 msgstr "Chọn nguồn thông tin để dựng báo cáo này."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Preparing…"
+msgstr "Đang chuẩn bị…"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -380,6 +446,24 @@ msgstr "Xem trước & lưu"
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
 msgid "Quarter"
 msgstr "Quý"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Records"
+msgstr "Bản ghi"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Records list"
+msgstr "Danh sách bản ghi"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "Remove column"
+msgstr "Xóa cột"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -417,6 +501,16 @@ msgstr "Đang lưu…"
 #: code:addons/biz_bi_cms/static/src/components/hub/hub_action.js:0
 msgid "Search dashboards…"
 msgstr "Tìm bảng thông tin…"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid ""
+"Showing first %(shown)s of %(total)s records — the saved report and Excel "
+"export include more."
+msgstr ""
+"Đang hiển thị %(shown)s bản ghi đầu tiên trong tổng số %(total)s — báo cáo "
+"đã lưu và tệp Excel xuất ra bao gồm nhiều hơn."
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -480,6 +574,14 @@ msgstr "Đây chính là những gì sẽ hiển thị trên bảng thông tin."
 
 #. module: biz_bi_cms
 #. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Tick the columns below and they will line up here, in order."
+msgstr ""
+"Đánh dấu các cột bên dưới và chúng sẽ lần lượt xuất hiện ở đây, theo đúng "
+"thứ tự."
+
+#. module: biz_bi_cms
+#. odoo-javascript
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
 msgid "Week"
 msgstr "Tuần"
@@ -495,6 +597,18 @@ msgstr "Bạn muốn xem dữ liệu nào?"
 #: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
 msgid "What do you want to measure?"
 msgstr "Bạn muốn đo lường điều gì?"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.js:0
+msgid "What kind of report?"
+msgstr "Loại báo cáo nào?"
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Which columns do you want?"
+msgstr "Bạn muốn xem những cột nào?"
 
 #. module: biz_bi_cms
 #. odoo-javascript
@@ -526,6 +640,12 @@ msgid ""
 msgstr ""
 "Bạn chưa có bảng thông tin nào của riêng mình — báo cáo này sẽ tạo bảng "
 "đầu tiên."
+
+#. module: biz_bi_cms
+#. odoo-javascript
+#: code:addons/biz_bi_cms/static/src/components/wizard/report_wizard.xml:0
+msgid "Your columns"
+msgstr "Các cột của bạn"
 
 #. module: biz_bi_cms
 #. odoo-javascript

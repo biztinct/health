@@ -1,0 +1,65 @@
+RT-2 — i18n loader check (conventions §4, ledger §5.134)
+========================================================
+
+`biz_bi_cms/i18n/vi.po`: 85 -> **104** entries (+19, every new user-visible
+string on the Records path). Filename is a language code `get_po_paths()`
+actually opens (§5.84). `msgfmt --check` passes.
+
+Verified on the SERVER through the real loader, indexing
+`get_web_translations(...)["messages"]` directly — never `len()` on the
+`ReadonlyDict`, which is what §5.134 is about:
+
+    from odoo.tools.translate import code_translations
+    web = code_translations.get_web_translations("biz_bi_cms", "vi_VN")["messages"]
+
+Output:
+
+    WEB messages: 102  PY messages: 0
+    MISSING: []
+      Chart                                                        -> Biểu đồ
+      Records list                                                 -> Danh sách bản ghi
+      What kind of report?                                         -> Loại báo cáo nào?
+      Which columns do you want?                                   -> Bạn muốn xem những cột nào?
+      Your columns                                                 -> Các cột của bạn
+      Available columns                                            -> Các cột có sẵn
+      Tick the columns below and they will line up here, in orde   -> Đánh dấu các cột bên dưới và chúng sẽ lần lượt xuất hiện ở đây, theo đúng thứ tự.
+      Move left                                                    -> Chuyển sang trái
+      Move right                                                   -> Chuyển sang phải
+      Remove column                                                -> Xóa cột
+      General                                                      -> Chung
+      %(dataset)s records                                          -> Bản ghi %(dataset)s
+      Records                                                      -> Bản ghi
+      Showing first %(shown)s of %(total)s records — the saved r   -> Đang hiển thị %(shown)s bản ghi đầu tiên trong tổng số %(total)s — báo cáo đã lưu và tệp Excel xuất ra bao gồm nhiều hơn.
+      Excel                                                        -> Excel
+      Preparing…                                                   -> Đang chuẩn bị…
+      Nothing to export yet.                                       -> Chưa có gì để xuất.
+      Export failed.                                               -> Xuất tệp thất bại.
+      Pick at least one column first.                              -> Hãy chọn ít nhất một cột trước.
+
+102 of the 104 entries are web (code) messages; the two that are not are the
+`ANALYTICS` section label and `Analytics` leaf, which are `model:` occurrences
+loaded into the jsonb column at upgrade (§5.85/§5.129) rather than code
+translations. `PY messages: 0` is correct: this module has no `_()` in python.
+
+`Excel` translates to `Excel` on purpose — it is a product name, and an entry
+with an identical msgstr still has to EXIST or the loader reports it missing,
+which is the check above.
+
+Proven in the browser too, not only in the loader: screenshots 15 and 16 are
+the wizard's Records path under `lang=vi_VN`, driven by logging the QA persona
+out and back in after the language change (a page rendered in another user's
+language is not testable from your own session — §5.123). The banner there
+reads
+
+    Đang hiển thị 100 bản ghi đầu tiên trong tổng số 1.271 — báo cáo đã lưu và
+    tệp Excel xuất ra bao gồm nhiều hơn.
+
+i.e. the interpolation and the Vietnamese thousands separator (1.271) both
+survive the translation.
+
+What is NOT translated on that screen, and why: the folder names
+(`Client`, `Dates`, `Financial`, …) and some field labels are `bi.field` DATA
+on this deployment, not code strings — they live in the dataset's own rows and
+are a modelling decision, not an i18n defect. The Vietnamese field labels that
+DO appear (`Khách hàng`, `Ngày hẹn`, `Trạng thái`, `Điều dưỡng chính`) are the
+ones whose data translations exist.

@@ -1,0 +1,38 @@
+RT-2 — the workbook the wizard's Excel button produced
+======================================================
+
+File: records-export.xlsx (32,204 bytes), produced by POST /bi/export/xlsx
+from the wizard's step-3 Excel button (server log 200; audit rows 1641/1642/1673).
+
+Workbook name : Bookings & Service Orders recor
+Freeze panes  : [('1', 'A2')]
+Autofilter    : A1:E1230
+Rows          : 1230 (1 header + 1,229 records — the whole result set,
+                 not the 100 the preview renders nor the 1,000 it fetches:
+                 the server re-runs the request at biz_bi.export_row_cap)
+
+First 12 rows (value | number-format):
+  r1     Client [builtin#0] | Catchment Area [builtin#0] | Scheduled Date [builtin#0] | Total Price [builtin#0] | Status [builtin#0]
+  r2     An Xu [] | Hà Nội [] | 46120 [yyyy-mm-dd] | 80000 [#,##0.00] | Completed []
+  r3     An Xu [] | Hà Nội [] | 46211 [yyyy-mm-dd] | 0 [#,##0.00] | Completed []
+  r4     An Xu [] | Hà Nội [] | 46211 [yyyy-mm-dd] | 0 [#,##0.00] | Confirmed []
+  r5     An Xu [] | Hà Nội [] | 46255 [yyyy-mm-dd] | 0 [#,##0.00] | Confirmed []
+  r6     An Xu [] | Hà Nội [] | 46212 [yyyy-mm-dd] | 0 [#,##0.00] | Draft []
+  r7     An Xu [] | Hà Nội [] | 46136 [yyyy-mm-dd] | 0 [#,##0.00] | Completed []
+  r8     An Xu [] | Hà Nội [] | 46216 [yyyy-mm-dd] | 0 [#,##0.00] | Confirmed []
+  r9     An Xu [] | Hà Nội [] | 46135 [yyyy-mm-dd] | 0 [#,##0.00] | Completed []
+  r10    An Xu [] | Hà Nội [] | 46134 [yyyy-mm-dd] | 0 [#,##0.00] | Completed []
+  r11    An Xu [] | Hà Nội [] | 46225 [yyyy-mm-dd] | 0 [#,##0.00] | Confirmed []
+  r12    An Xu [] | Hà Nội [] | 46239 [yyyy-mm-dd] | 0 [#,##0.00] | Confirmed []
+
+Last 2 rows:
+  r1229  Đỗ Vă [] | Hà Nội [] | 46126 [yyyy-mm-dd] | 0 [#,##0.00] | Completed []
+  r1230  Đỗ Vă [] | Hà Nội [] | 46136 [yyyy-mm-dd] | 0 [#,##0.00] | Completed []
+
+The headline: column B is `Catchment Area`, a many2one that STORES ids 1 and 2,
+and every cell reads `Hà Nội` / `TPHCM`. Column C is a real Excel date serial
+with a yyyy-mm-dd format, column D a real number. No cell anywhere in the sheet
+is the raw id of a relation column.
+
+Distinct strings in the Catchment Area column: ['Hà Nội', 'TPHCM']
+'1' or '2' present as a string cell anywhere: False

@@ -27,6 +27,7 @@ presence or absence of its own records — except ``test_06``, which is
 deliberately a statement about the deployment, because convergence is what the
 migration is for.
 """
+import ast
 import json
 import os
 import re
@@ -328,10 +329,18 @@ class TestReportWizard(BiCase):
     def test_06_migration_reruns_gates(self):
         module = self.env['ir.module.module'].sudo().search(
             [('name', '=', 'biz_bi_cms')], limit=1)
+        # RT-2: this was the literal '19.0.1.1.0'. The statement worth making
+        # is not "the module is at the version AH-2 shipped" — that goes red
+        # on the next phase that bumps the manifest, for no defect — but "the
+        # database is at the version THIS CHECKOUT declares", which is exactly
+        # the condition under which any migration directory named for it runs.
+        with open(os.path.join(MODULE_DIR, '__manifest__.py'),
+                  encoding='utf-8') as handle:
+            declared = ast.literal_eval(handle.read())['version']
         self.assertEqual(
-            module.latest_version, '19.0.1.1.0',
-            'the installed version must have moved, or no migration script '
-            'runs at all (Phase-1 report §6)')
+            module.latest_version, declared,
+            'the installed version must have moved to the declared one, or '
+            'no migration script runs at all (Phase-1 report §6)')
         self.assertTrue(
             os.path.isdir(os.path.join(MODULE_DIR, 'migrations', '19.0.1.1.0')),
             'the migration directory must be named for the version Odoo is '

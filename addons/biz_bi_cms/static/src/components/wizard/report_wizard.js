@@ -10,6 +10,7 @@ import {
     useState,
 } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 
 import { ChartRenderer } from "@biz_bi/components/explore/chart_renderer";
@@ -55,6 +56,18 @@ const UI_ICONS = {
         '<path d="M17 16h.01"/>',
     external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/>' +
         '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+    chart: '<path d="M3 21h18"/><rect x="5" y="10" width="4" height="8"/>' +
+        '<rect x="10" y="6" width="4" height="12"/>' +
+        '<rect x="15" y="13" width="4" height="5"/>',
+    rows: '<rect x="3" y="4" width="18" height="16" rx="2"/>' +
+        '<path d="M3 9h18"/><path d="M3 14h18"/>',
+    caret: '<path d="m6 9 6 6 6-6"/>',
+    // The picked-columns row runs left→right, so the reorder affordances are
+    // left/right chevrons — an up/down pair would contradict its own tooltip.
+    left: '<path d="m15 18-6-6 6-6"/>',
+    right: '<path d="m9 18 6-6-6-6"/>',
+    xlsx: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+        '<path d="M14 2v6h6"/><path d="m9 13 6 6"/><path d="m15 13-6 6"/>',
 };
 
 // A deliberately approachable subset of biz_bi's nineteen chart types. The
@@ -113,6 +126,23 @@ const CHART_GALLERY = [
 
 const DATE_GRAINS = ["year", "quarter", "month", "week", "day"];
 const DATE_TYPES = ["date", "datetime"];
+
+// --- Records path ----------------------------------------------------------
+// Three different numbers, deliberately:
+//   * RECORDS_PREVIEW_LIMIT is what the PREVIEW asks the engine for. The
+//     envelope still carries the honest `meta.total_count`, so a small number
+//     here costs nothing in honesty and keeps the wizard snappy.
+//   * RECORDS_PREVIEW_MAX_ROWS is what the preview RENDERS (ledger §5.139 —
+//     bound the node count, never silently).
+//   * RECORDS_SAVED_LIMIT is what the SAVED chart carries, matching the limit
+//     Explore writes for a Records chart (`explore_action.js`'s
+//     RECORDS_PREVIEW_LIMIT), so a wizard-made and an Explore-made records
+//     chart are the same row on the dashboard.
+// The Excel export is bounded by neither: the server re-runs the request at
+// `biz_bi.export_row_cap`.
+const RECORDS_PREVIEW_LIMIT = 1000;
+const RECORDS_PREVIEW_MAX_ROWS = 100;
+const RECORDS_SAVED_LIMIT = 5000;
 
 /**
  * The guided three-step report builder.
@@ -174,6 +204,11 @@ export class ReportWizard extends Component {
             chartId: null, // survives a failed add_chart so a retry cannot
             // create a second chart
             nameTouched: false,
+            // --- RT-2: the Records list path -------------------------------
+            buildMode: "chart", // "chart" | "records"
+            recordColumns: [], // ORDERED — the column order is the report
+            closedFolders: {}, // folders open by default, closed by exception
+            exporting: false,
         });
         this._debounce = null;
 
@@ -269,6 +304,22 @@ export class ReportWizard extends Component {
         return _t("Close");
     }
 
+    get modeGroupLabel() {
+        return _t("What kind of report?");
+    }
+
+    get moveLeftLabel() {
+        return _t("Move left");
+    }
+
+    get moveRightLabel() {
+        return _t("Move right");
+    }
+
+    get removeColumnLabel() {
+        return _t("Remove column");
+    }
+
     get namePlaceholder() {
         return _t("Report name");
     }
@@ -308,6 +359,104 @@ export class ReportWizard extends Component {
     }
 
     // ------------------------------------------------------------------
+    // Step 2 — the path choice (Chart | Records list)
+    // ------------------------------------------------------------------
+
+    get isRecords() {
+        return this.state.buildMode === "records";
+    }
+
+    get modeEntries() {
+        return [
+            { key: "chart", label: _t("Chart"), icon: "chart" },
+            { key: "records", label: _t("Records list"), icon: "rows" },
+        ];
+    }
+
+    /** Switching path throws away the preview, never the pickers: going
+     *  Records → Chart → Records must not lose the columns somebody ticked,
+     *  and the date range is shared by both paths on purpose. */
+    setBuildMode(mode) {
+        if (this.state.buildMode === mode) {
+            return;
+        }
+        this.state.buildMode = mode;
+        this.state.envelope = null;
+        this.state.chartId = null; // a saved chart is one shape or the other
+        this.state.userPickedType = false;
+        if (mode === "records") {
+            this.state.chartType = "table";
+        }
+        this.afterChange();
+    }
+
+    // ------------------------------------------------------------------
+    // Records: the column checklist
+    // ------------------------------------------------------------------
+
+    /** Everything a record can show. `role === "id"` join keys are skipped
+     *  exactly as Explore's field well skips them
+     *  (explore_action.js:284). */
+    get columnFolders() {
+        const folders = new Map();
+        for (const field of this.fields) {
+            if (field.role === "id") {
+                continue;
+            }
+            const name = field.folder || _t("General").toString();
+            if (!folders.has(name)) {
+                folders.set(name, []);
+            }
+            folders.get(name).push(field);
+        }
+        return [...folders.entries()]
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map(([name, fields]) => ({ name, fields }));
+    }
+
+    isFolderOpen(name) {
+        return !this.state.closedFolders[name];
+    }
+
+    toggleFolder(name) {
+        this.state.closedFolders[name] = this.isFolderOpen(name);
+    }
+
+    isColumnPicked(field) {
+        return this.state.recordColumns.some((chip) => chip.id === field.id);
+    }
+
+    toggleColumn(field) {
+        const columns = this.state.recordColumns;
+        const index = columns.findIndex((chip) => chip.id === field.id);
+        if (index === -1) {
+            columns.push({ id: field.id, name: field.name });
+        } else {
+            columns.splice(index, 1);
+        }
+        this.afterChange();
+    }
+
+    removeColumn(index) {
+        this.state.recordColumns.splice(index, 1);
+        this.afterChange();
+    }
+
+    /** ‹/› in the picked-columns row. `delta` is -1 (earlier) or +1 (later);
+     *  the ends are no-ops rather than wraps. */
+    moveColumn(index, delta) {
+        const columns = this.state.recordColumns;
+        const target = index + delta;
+        if (index < 0 || index >= columns.length ||
+                target < 0 || target >= columns.length) {
+            return;
+        }
+        const [chip] = columns.splice(index, 1);
+        columns.splice(target, 0, chip);
+        this.afterChange();
+    }
+
+    // ------------------------------------------------------------------
     // Step 1 — dataset
     // ------------------------------------------------------------------
 
@@ -327,6 +476,11 @@ export class ReportWizard extends Component {
         this.state.nameTouched = false;
         this.state.userPickedType = false;
         this.state.chartType = "bar";
+        // A new dataset means new field ids: a column picked against the
+        // previous one would be a foreign key into another dataset.
+        this.state.buildMode = "chart";
+        this.state.recordColumns = [];
+        this.state.closedFolders = {};
         const dates = this.dateFields;
         this.state.dateField = dates.length ? dates[0] : null;
         this.state.step = 2;
@@ -397,7 +551,11 @@ export class ReportWizard extends Component {
     }
 
     afterChange() {
-        if (!this.state.userPickedType) {
+        if (this.isRecords) {
+            // A records report IS a table — the gallery is hidden on this
+            // path, so nothing may re-recommend a chart type underneath it.
+            this.state.chartType = "table";
+        } else if (!this.state.userPickedType) {
             this.state.chartType = recommendChartType(
                 this.dimChips, this.measureChips);
         }
@@ -437,6 +595,13 @@ export class ReportWizard extends Component {
     }
 
     get defaultName() {
+        if (this.isRecords) {
+            const dataset =
+                (this.state.metadata && this.state.metadata.name) || "";
+            return dataset
+                ? _t("%(dataset)s records", { dataset }).toString()
+                : _t("Records").toString();
+        }
         const measure = this.state.measure ? this.state.measure.name : "";
         const group = this.state.groupBy ? this.state.groupBy.name : "";
         if (measure && group) {
@@ -483,6 +648,11 @@ export class ReportWizard extends Component {
     }
 
     get canPreview() {
+        if (this.isRecords) {
+            // "require ≥1 column to continue" — nothing else is mandatory:
+            // a records list with no date range is every record, honestly.
+            return this.state.recordColumns.length > 0;
+        }
         if (!this.state.measure) {
             return false;
         }
@@ -674,6 +844,23 @@ export class ReportWizard extends Component {
     }
 
     buildRequest() {
+        if (this.isRecords) {
+            // The RT-1 detail contract: ordered dimensions, no measures, no
+            // grain, `mode: 'detail'`. The envelope comes back with
+            // `meta.total_count` + `meta.truncated`, which is what makes the
+            // banner honest.
+            return {
+                dataset_id: this.state.datasetId,
+                dimensions: this.state.recordColumns.map((chip) => ({
+                    field_id: chip.id,
+                })),
+                measures: [],
+                filters: this.filterEntries,
+                sort: [],
+                limit: RECORDS_PREVIEW_LIMIT,
+                mode: "detail",
+            };
+        }
         return {
             dataset_id: this.state.datasetId,
             dimensions: this.dimChips.map((chip) => ({
@@ -709,6 +896,9 @@ export class ReportWizard extends Component {
     }
 
     get rendererKind() {
+        if (this.isRecords) {
+            return "table";
+        }
         if (this.state.chartType === "kpi") {
             return "kpi";
         }
@@ -730,12 +920,123 @@ export class ReportWizard extends Component {
         return !!(envelope && !envelope.error && (envelope.rows || []).length);
     }
 
+    /** The dashboard tile and the wizard preview both bound what they draw
+     *  (§5.139). 0 means "no cap", which is exactly today's chart path. */
+    get previewMaxRows() {
+        return this.isRecords ? RECORDS_PREVIEW_MAX_ROWS : 0;
+    }
+
+    /**
+     * The honest headline above a records preview.
+     *
+     * Two different truncations can be in play and the user must not have to
+     * tell them apart: the ENGINE may have cut the result at
+     * `RECORDS_PREVIEW_LIMIT` (`meta.truncated`), and the TABLE renders at
+     * most `RECORDS_PREVIEW_MAX_ROWS` of whatever came back. Either one means
+     * the same thing to the person reading it — what is on screen is not all
+     * of it, and the saved report and the export are wider.
+     */
+    get recordsTruncation() {
+        if (!this.isRecords || !this.hasRows) {
+            return null;
+        }
+        const envelope = this.state.envelope;
+        const meta = envelope.meta || {};
+        const fetched = (envelope.rows || []).length;
+        const shown = Math.min(fetched, RECORDS_PREVIEW_MAX_ROWS);
+        const total = meta.total_count || fetched;
+        if (!meta.truncated && total <= shown) {
+            return null;
+        }
+        const locale = (user.lang || "en_US").replace("_", "-");
+        const num = (value) => Number(value).toLocaleString(locale);
+        return _t(
+            "Showing first %(shown)s of %(total)s records — the saved report and Excel export include more.",
+            { shown: num(shown), total: num(total) }
+        );
+    }
+
+    // ------------------------------------------------------------------
+    // Excel export (records path) — the RT-1 POST route, verbatim pattern
+    // ------------------------------------------------------------------
+
+    get exportTitle() {
+        return String(this.state.chartName || "").trim() || this.defaultName;
+    }
+
+    async exportExcel() {
+        if (this.state.exporting) {
+            return;
+        }
+        if (!this.state.envelope || this.state.envelope.error) {
+            this.notification.add(_t("Nothing to export yet."),
+                                  { type: "warning" });
+            return;
+        }
+        this.state.exporting = true;
+        try {
+            const body = new FormData();
+            // The server decides the row ceiling itself
+            // (`biz_bi.export_row_cap`) and strips anything the client sends,
+            // so the preview's small limit does not shrink the workbook.
+            body.append("request_json", JSON.stringify(this.buildRequest()));
+            body.append("title", this.exportTitle);
+            body.append("csrf_token", odoo.csrf_token);
+            const response = await fetch("/bi/export/xlsx", {
+                method: "POST",
+                body,
+            });
+            if (!response.ok) {
+                throw new Error((await response.text()) || "");
+            }
+            // a POST cannot window.open — go through a blob + <a download>
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${this.exportTitle}.xlsx`.replace(/[/\\]/g, "-");
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            this.notification.add(
+                (error && error.message) || _t("Export failed."),
+                { type: "danger" });
+        } finally {
+            this.state.exporting = false;
+        }
+    }
+
     // ------------------------------------------------------------------
     // Save
     // ------------------------------------------------------------------
 
     /** Byte-for-byte the shape Explore writes (explore_action.js:466-483). */
     buildConfigJson() {
+        if (this.isRecords) {
+            // The RT-1 saved shape, verbatim: `chart_type: 'table'`,
+            // `mode: 'detail'`, an ORDERED `slots.columns`, the empty
+            // aggregate slots so nothing downstream has to test for their
+            // absence, and the same 5 000-row limit Explore writes.
+            return {
+                version: 1,
+                chart_type: "table",
+                mode: "detail",
+                slots: {
+                    x: [],
+                    values: [],
+                    series: [],
+                    columns: this.state.recordColumns.map((chip) => ({
+                        field_id: chip.id,
+                    })),
+                },
+                filters: this.filterEntries,
+                sort: [],
+                limit: RECORDS_SAVED_LIMIT,
+                display: {},
+            };
+        }
         const groupBy = this.state.groupBy;
         const splitBy = this.state.splitBy;
         return {
@@ -776,7 +1077,13 @@ export class ReportWizard extends Component {
                                   { type: "warning" });
             return;
         }
-        if (!this.state.measure) {
+        if (this.isRecords) {
+            if (!this.state.recordColumns.length) {
+                this.notification.add(_t("Pick at least one column first."),
+                                      { type: "warning" });
+                return;
+            }
+        } else if (!this.state.measure) {
             this.notification.add(_t("Pick a measure first."),
                                   { type: "warning" });
             return;

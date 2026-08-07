@@ -410,6 +410,218 @@
         }
     }
 
+    // ---------------------------------------------------- path choice (RT-2)
+    // Chart | Records list. One flat segmented control, same vocabulary as
+    // biz_bi's `.bi-segmented` in Explore, restated here so the two components
+    // stay independently editable (the wizard owns no biz_bi class).
+    .bi-wizard-modes {
+        display: inline-flex;
+        align-self: flex-start;
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-md);
+        background: var(--biw-card);
+        overflow: hidden;
+    }
+
+    .bi-wizard-mode {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border: 0;
+        background: transparent;
+        color: var(--biw-text-soft);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 7px 14px;
+        cursor: pointer;
+
+        + .bi-wizard-mode { border-left: 1px solid var(--biw-border); }
+
+        &:hover { background: var(--biw-hover); color: var(--biw-text); }
+
+        &.is-active {
+            background: var(--biw-primary);
+            color: #FFFFFF;
+        }
+    }
+
+    .bi-wizard-mode-ico { display: inline-flex; align-items: center; }
+
+    // ------------------------------------------------------ records columns
+    .bi-wizard-records {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        background: var(--biw-card);
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-lg);
+        padding: 16px;
+    }
+
+    // "Your columns" — the ORDER of this row is the order of the report, so
+    // the position number is part of the chip, not decoration.
+    .bi-wizard-picked {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .bi-wizard-pickchip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border: 1px solid var(--biw-primary);
+        border-radius: 999px;
+        background: var(--biw-hover);
+        color: var(--biw-text);
+        font-size: 12px;
+        padding: 3px 5px 3px 4px;
+    }
+
+    .bi-wizard-pickchip-pos {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 17px;
+        height: 17px;
+        border-radius: 999px;
+        background: var(--biw-primary);
+        color: #FFFFFF;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .bi-wizard-pickchip-name {
+        padding: 0 4px;
+        font-weight: 600;
+    }
+
+    .bi-wizard-pickchip-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--biw-radius-sm);
+        background: transparent;
+        color: var(--biw-text-soft);
+        cursor: pointer;
+
+        &:hover { background: var(--biw-card); color: var(--biw-text); }
+
+        &:disabled {
+            opacity: 0.35;
+            cursor: default;
+            background: transparent;
+        }
+    }
+
+    .bi-wizard-pickchip-x:hover { color: var(--biw-primary-dark); }
+
+    // PIXEL CYCLE: a `grid` here aligned every folder card to the tallest one
+    // in its row, so a one-field folder next to the twenty-field "Dates"
+    // folder left a 250 px hole that read as a rendering fault. A multi-column
+    // flow packs them instead. `column-*` creates a fragmentation context, not
+    // a containing block, so §5.96 does not apply — and nothing inside is an
+    // Odoo field widget anyway.
+    .bi-wizard-folders {
+        column-width: 250px;
+        column-gap: 12px;
+    }
+
+    .bi-wizard-folder {
+        break-inside: avoid;
+        margin-bottom: 12px;
+        border: 1px solid var(--biw-border);
+        border-radius: var(--biw-radius-md);
+        background: var(--biw-app);
+        overflow: hidden;
+    }
+
+    .bi-wizard-folder-head {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--biw-text);
+        font-size: 12px;
+        font-weight: 700;
+        text-align: left;
+        padding: 8px 10px;
+        cursor: pointer;
+
+        &:hover { background: var(--biw-hover); }
+    }
+
+    // A rotation on a caret span: the span holds no field widget, so §5.96
+    // does not apply to it.
+    .bi-wizard-folder-caret {
+        display: inline-flex;
+        align-items: center;
+        color: var(--biw-text-soft);
+        transform: rotate(-90deg);
+        transition: transform 120ms ease;
+
+        &.is-open { transform: rotate(0deg); }
+    }
+
+    .bi-wizard-folder-count {
+        margin-left: auto;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--biw-text-soft);
+    }
+
+    .bi-wizard-checklist {
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid var(--biw-border);
+        background: var(--biw-card);
+        max-height: 220px;
+        overflow-y: auto;
+    }
+
+    .bi-wizard-checkrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        padding: 6px 10px;
+        font-size: 12px;
+        color: var(--biw-text);
+        cursor: pointer;
+
+        &:hover { background: var(--biw-hover); }
+
+        &.is-active { font-weight: 600; }
+
+        input { cursor: pointer; }
+    }
+
+    // ------------------------------------------------- records preview bar
+    .bi-wizard-previewbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .bi-wizard-banner {
+        flex: 1 1 auto;
+        border: 1px solid var(--biw-border);
+        border-left: 3px solid var(--biw-primary);
+        border-radius: var(--biw-radius-md);
+        background: var(--biw-card);
+        color: var(--biw-text-soft);
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .bi-wizard-export { flex: 0 0 auto; }
+
     // -------------------------------------------------------------- gallery
     .bi-wizard-gallery {
         display: flex;
@@ -624,6 +836,9 @@
     .bi-wizard-dscard,
     .bi-wizard-chip,
     .bi-wizard-gitem,
+    .bi-wizard-mode,
+    .bi-wizard-folder-head,
+    .bi-wizard-pickchip-btn,
     .bi-wizard-select,
     .bi-wizard-input,
     .bi-wizard-textarea {
@@ -631,6 +846,13 @@
             outline: none;
             box-shadow: var(--biw-ring);
         }
+    }
+
+    // A checkbox row is reached by tabbing to its input, so the ring belongs
+    // on the row, not on the 13px box inside it.
+    .bi-wizard-checkrow:focus-within {
+        background: var(--biw-hover);
+        box-shadow: var(--biw-ring);
     }
 
     // A select/input matches :focus on a mouse click too, and it must not draw
@@ -669,4 +891,6 @@
     .bi-wizard .bi-wizard-pane { animation: none; }
 
     .bi-wizard .bi-wizard-skeleton { animation: none; }
+
+    .bi-wizard .bi-wizard-folder-caret { transition: none; }
 }

@@ -1,0 +1,92 @@
+RT-2 — the rows the browser drive created, by id
+================================================
+
+Read back with `odoo-bin shell` after the drive, before cleanup.
+
+Persona (cloned from the live `om` account, uid 29, so the pass runs as the
+population AH-1 actually granted):
+
+    USER uid=8219 partner=19660 login=rt2_qa lang=en_US role=Operations Manager
+       has_group biz_bi.group_bi_creator      True
+       has_group biz_bi.group_bi_modeler      False      <- no masking bypass
+       has_group biz_bi.group_bi_admin        False      <- no RLS bypass
+
+The service was RESTARTED after the persona was created and again after the
+language flip: a group/lang write from a separate `odoo-bin shell` is
+invisible to the running workers until then (§5.132 / §5.48).
+
+
+Charts — the config the wizard wrote, verbatim
+----------------------------------------------
+
+    CHART 138 'RT2 QA: Booking Records [wizard]' type=table dataset=5 owner=rt2_qa
+       {"chart_type": "table", "display": {},
+        "filters": [{"field_id": 593, "op": "relative", "value": "last_12_months"}],
+        "limit": 5000, "mode": "detail",
+        "slots": {"columns": [{"field_id": 712}, {"field_id": 574},
+                              {"field_id": 593}, {"field_id": 650},
+                              {"field_id": 620}],
+                  "series": [], "values": [], "x": []},
+        "sort": [], "version": 1}
+
+    CHART 147 'RT2 QA: Booking Records [wizard]' type=table dataset=5 owner=rt2_qa
+       ... byte-identical config_json ...
+
+Chart 138 came from the first drive, chart 147 from the re-drive on the
+SHIPPED build after the pixel pass. Their `config_json` is identical
+character for character — the wizard is deterministic across the two builds,
+and the pixel pass changed no behaviour.
+
+Read against RT-1's saved shape: `chart_type: 'table'`, `mode: 'detail'`, an
+ORDERED `slots.columns` (712 Client, 574 Catchment Area, 593 Scheduled Date,
+650 Total Price, 620 Status — the order after the user moved Catchment Area
+one place left, NOT the order the boxes were ticked in), the empty aggregate
+slots, `sort: []`, `limit: 5000`, and the date-range filter in the exact
+`{field_id, op: 'relative', value}` shape the engine's `RELATIVE_RANGES`
+table accepts.
+
+
+Dashboard and widgets
+---------------------
+
+    DASHBOARD 611 'RT2 QA Records Dashboard' workspace=General Analytics owner=rt2_qa
+    WIDGET 68 dashboard=611 chart=138     (saved via "New dashboard")
+    WIDGET 72 dashboard=611 chart=147     (saved onto the EXISTING dashboard,
+                                           which get_wizard_targets offered
+                                           only because the user now owns it)
+
+
+Audit trail (bi.audit.log, uid 8219)
+------------------------------------
+
+    1639 query                        {"rows": 1000, "duration_ms": 47}
+    1640 query                        {"rows": 1229, "duration_ms": 28}
+    1641 export                       {"mode": "detail", "rows": 1229, "capped": false, "format": "xlsx", "columns": 5}
+    1642 export                       {"mode": "detail", "rows": 1229, "capped": false, "format": "xlsx", "columns": 5}
+    1643 chart_save  bi.chart 138     {}
+    1644 dashboard_view bi.dashboard 611 {}
+    1645 query                        {"rows": 1229, "duration_ms": 19}
+    1646 query                        {"rows": 1000, "duration_ms": 23}
+    1671 query                        {"rows": 1000, "duration_ms": 28}
+    1672 query                        {"rows": 1229, "duration_ms": 19}
+    1673 export                       {"mode": "detail", "rows": 1229, "capped": false, "format": "xlsx", "columns": 5}
+    1674 chart_save  bi.chart 147     {}
+    1675 dashboard_view bi.dashboard 611 {}
+    1676 query                        {"rows": 1229, "duration_ms": 21}
+
+Reading it as the phase's own proof:
+
+* `rows: 1000` is a PREVIEW — the wizard's `RECORDS_PREVIEW_LIMIT`. 1639 and
+  1671 are the last-12-months preview (1,229 available, clamped to 1,000);
+  1646 is the vi_VN drive with no date filter (1,271 available, clamped to
+  1,000), which is why that banner reads "1.271" and why `meta.truncated`
+  fired NATURALLY there — nothing had to be staged.
+* `rows: 1229` on an `export` is the whole result set: the export route
+  ignores the preview limit and re-runs at `biz_bi.export_row_cap`
+  (`capped: false` because 1,229 < 20,000). Three exports: the button click
+  on each drive, plus one byte-capture replay of the identical POST from the
+  same authenticated session (the headless context does not persist
+  downloads to disk).
+* `rows: 1229` on a `query` right after a `dashboard_view` is the saved
+  widget fetching at its `limit: 5000` and rendering 200 (§5.139's cap, whose
+  overflow row the tile states out loud).

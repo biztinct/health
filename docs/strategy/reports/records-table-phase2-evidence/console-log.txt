@@ -1,0 +1,45 @@
+RT-2 — console, per screen
+==========================
+
+Collected with chrome-devtools `list_console_messages`
+(`includePreservedMessages: true`, i.e. across the whole drive, not just the
+last navigation), in an isolated browser context named `rt2qa`.
+
+    Screens 01-14 (English drive, login -> hub -> wizard -> dashboard,
+                   persona rt2_qa)
+        1 message, repeated once per navigation:
+            [issue] A form field element should have an id or name attribute (count: 1)
+        0 errors, 0 warnings, 0 unhandled rejections.
+
+    Screens 01/02/07 + 15-16 (re-drive on the shipped build, persona rt2_qa2,
+                              the last two under lang=vi_VN)
+        2 messages, both the same advisory (one per navigation).
+        0 errors, 0 warnings, 0 unhandled rejections.
+
+The advisory is PRE-EXISTING and it is MEASURED, not assumed. On the wizard's
+own step-2 Records screen:
+
+    () => {
+      const all = [...document.querySelectorAll('input,select,textarea')];
+      const bad = all.filter(e => !e.id && !e.name);
+      return {total: all.length, bad: bad.length,
+              badInWizard: bad.filter(e => e.closest('.bi-wizard')).length,
+              offender: bad.map(e => e.className)};
+    }
+
+    {"total": 6, "bad": 1, "badInWizard": 0,
+     "offender": ["cms-catchment-select"]}
+
+The single offender is the CMS shell's catchment-area `<select>`, which this
+phase does not touch. Every control RT-2 adds carries an id and a name —
+the column checkboxes are `bi_wizard_col_<field id>`, and the reorder /
+remove controls are `<button>`s, not form fields.
+
+No 502 burst and no `ConnectionLostError` reached the browser during this
+pass (§5.130's symptom of a concurrent deploy); the only service restarts in
+the window were this phase's own, and the drive was re-started from
+`/web/login` after each of them. One of those restarts WAS a §5.122 silent
+no-op — `service odoo-server restart` returned success, `ss -lntp` showed no
+listener and `curl` answered nothing at all; the documented recovery
+(stop -> `rm -f /var/run/odoo-server.pid` -> start) brought it back, and the
+affected step was re-driven afterwards.
