@@ -16,6 +16,8 @@ import requests
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
+from .bi_query_engine import ALLOWED_AGGS, ALLOWED_GRAINS
+
 _logger = logging.getLogger(__name__)
 
 AI_TIMEOUT_DEFAULT = 60
@@ -355,7 +357,10 @@ class BiAi(models.AbstractModel):
     @staticmethod
     def _coerce_config(config):
         """Normalize sloppy-but-recoverable LLM output: bare refs in slots
-        become proper entry objects; non-dict filters are dropped."""
+        become proper entry objects; non-dict filters are dropped; junk
+        grain/agg sentinels ('none', 'null', …) are stripped rather than
+        failing the whole proposal — the engine stays strict, coercion
+        only removes what a human would obviously ignore."""
         slots = config.get('slots') or {}
         for slot_name in ('x', 'values', 'series'):
             entries = slots.get(slot_name) or []
@@ -365,6 +370,11 @@ class BiAi(models.AbstractModel):
                     normalized.append(entry)
                 elif isinstance(entry, (int, str)) and str(entry).isdigit():
                     normalized.append({'field_id': int(entry)})
+            for entry in normalized:
+                if entry.get('grain') not in ALLOWED_GRAINS:
+                    entry.pop('grain', None)
+                if entry.get('agg') not in ALLOWED_AGGS:
+                    entry.pop('agg', None)  # engine falls back to default_agg
             slots[slot_name] = normalized
         config['slots'] = slots
         config['filters'] = [f for f in (config.get('filters') or [])
