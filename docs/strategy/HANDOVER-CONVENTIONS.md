@@ -2221,3 +2221,31 @@ a no-op.
     `{'id', 'string'}` mappings. Also note the import moved: it is
     `from odoo.tools.translate import code_translations`, not
     `from odoo.tools import code_translations`. (AH-3.)
+
+- **§5.135 — a `post-` migration sees only its OWN dependency closure of
+    the registry; use `end-` when you need every installed module.** A
+    biz_bi post-migration backfilling many2one metadata filled **27 of 252**
+    columns: at post- time `account.move._fields` has no
+    `catchment_province_id`, because the health_* module that adds it loads
+    *after* biz_bi. Nothing raises — `_fields.get()` simply returns None and
+    the loop skips on, so the script reports success and half the data is
+    silently untouched. `end-` scripts run in `load_module_graph` STEP 3.5,
+    after `registry._setup_models__()` and after every module in the graph
+    has loaded (`odoo/modules/loading.py:489-493`); `migrate_module` accepts
+    `('pre', 'post', 'end')`. Rule of thumb: touching only your own models →
+    `post-`; introspecting `env[other_model]._fields` or `env.get(...)` for
+    models you do not depend on → `end-`. Put the logic in a model method so
+    it is testable and re-runnable, and have the script be a two-liner.
+    (Analytics-hub follow-up.)
+
+- **§5.136 — never name a model method `fetch`, `search`, `read`, or
+    `browse` with a non-ORM signature.** `bi.query.cache` defined
+    `@api.model def fetch(self, cache_key)`, which shadows
+    `BaseModel.fetch(field_names)` — so ANY ORM field read of that model
+    (`record.result_json`, a list view, a `search_read`) blew up with
+    `operator does not exist: character varying = text[]`, the field-name
+    list arriving where a cache key was expected. The model had an admin ACL
+    with read=1, i.e. a UI path straight into the crash, and it went
+    unnoticed because every caller used the custom method. Renamed to
+    `fetch_result`. When adding a helper, check it against `BaseModel`'s
+    method names first. (Analytics-hub follow-up.)
