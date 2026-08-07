@@ -40,3 +40,25 @@ it belongs to the CMS shell's catchment picker, not to `.bi-hub` or
 No `ConnectionLostError` and no 502 burst occurred during this pass: the three
 service restarts between pixel cycles were our own and the browser was
 re-navigated after each (§5.130's advice, applied pre-emptively).
+
+
+Server-side log during the drive (independent check, not the browser)
+---------------------------------------------------------------------
+
+`grep -a "ERROR\|CRITICAL\|Traceback" /var/log/odoo/odoo-server.log` over the
+window of this pass returns exactly one repeating entry, and it is NOT ours:
+
+    ERROR vietuat odoo.addons.health_zalo.controllers.chat: Error fetching
+    active conversations: You are not allowed to access 'Zalo OA
+    Configuration' (zalo.config) records.
+
+It fires on a timer from the CMS shell's Zalo widget for any user who lacks
+`zalo.config` read access — our QA persona did — and it stops the moment that
+persona is gone (04:34, last occurrence). Pre-existing, in a different module,
+already caught and logged by its own controller; flagged here rather than
+attributed to this phase (§5.130's discipline). Worth a ticket against
+health_zalo: a polling widget should ask "may I?" once, not log a traceback
+every 60 seconds.
+
+Zero `biz_bi` / `biz_bi_cms` errors, tracebacks or criticals in the server log
+for the whole window.

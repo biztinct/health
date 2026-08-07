@@ -365,6 +365,14 @@ before/after screenshots are in the evidence pack (§4 of its README).
   `-u health_theme`, whose upgrade cascade is far riskier than the check);
   both were replicated locally instead, and the theme guard skips glob asset
   entries, which is how this module ships its stylesheets.
+* **A pre-existing `health_zalo` error was observed in the server log** while
+  the QA persona browsed: `health_zalo.controllers.chat: Error fetching active
+  conversations: You are not allowed to access 'Zalo OA Configuration'
+  (zalo.config) records`, on a timer, for any CMS-shell user without
+  `zalo.config` read access. Different module, already caught and logged by
+  its own controller, gone the moment the persona was deleted — flagged, not
+  attributed, and worth a ticket (a polling widget should ask once, not log a
+  traceback a minute). Zero `biz_bi` / `biz_bi_cms` errors in the same window.
 * **`docs/strategy/handovers/analytics-hub-phase{2,3}.md` are untracked** in
   the working tree; they are outside this phase's sanctioned paths, so the
   commit does not add them.
