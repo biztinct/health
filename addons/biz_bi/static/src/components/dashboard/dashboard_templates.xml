@@ -119,8 +119,12 @@
                                                  envelope="envelope" config="widgetConfig(widget)"
                                                  compareEnvelope="state.compareEnvelopes[widget.id]"
                                                  showLabel="false"/>
+                                        <!-- maxRows: a gridstack tile re-lays
+                                             out as the table grows and the cost
+                                             is super-linear — see DataTable. -->
                                         <DataTable t-elif="rendererFor(widget) === 'table'"
-                                                   envelope="envelope" config="widgetConfig(widget)"/>
+                                                   envelope="envelope" config="widgetConfig(widget)"
+                                                   maxRows="200"/>
                                         <PivotTable t-elif="rendererFor(widget) === 'pivot'"
                                                     envelope="envelope" config="widgetConfig(widget)"/>
                                         <ChartRenderer t-else=""

@@ -1,0 +1,92 @@
+§3.9 / §4.1 masking fix — the aggregate-mode nulled-DIMENSION hole, live
+=======================================================================
+
+The probe (`mask_probe2.py`, reproduced at the bottom) is run through
+`odoo-bin shell` on vietuat. It builds a throwaway dataset over res.partner
+with three known rows, creates a NON-admin BI viewer, attaches a
+`bi.access.rule` of `rule_type='column'`, `mask_mode='null'` on the **Name**
+field, and then asks for that field as a **DIMENSION** — first in aggregate
+mode, then in detail mode. Nothing is committed: the last statement is
+`env.cr.rollback()`.
+
+(The probe also inserts a permissive `res.partner` read rule, because this
+deployment's live partner rules pin a plain internal user to their OWN
+partner — which is why the fourth row, the reader's own partner, appears.)
+
+
+BEFORE — the code deployed at 07:33 UTC, i.e. HEAD before this phase
+--------------------------------------------------------------------
+
+    AGGREGATE nulled-DIMENSION rows:
+      [["MASKPROBE Alpha", 10.0],
+       ["MASKPROBE Beta", 20.0],
+       ["MASKPROBE Gamma", 30.0],
+       ["MaskProbe Reader", null]]
+
+    AGGREGATE column meta:
+      {"ref": "d0", "field_id": 14158, "label": "Name", "type": "text",
+       "role": "dimension", "grain": null, "format": {},
+       "selection_labels": {}}
+
+    DETAIL rows (mode:'detail' in the request):
+      [["MASKPROBE Alpha", 10.0], ["MASKPROBE Beta", 20.0],
+       ["MASKPROBE Gamma", 30.0], ["MaskProbe Reader", null]]
+
+    DETAIL meta: {"row_count": 4, "truncated": false, ... }
+
+Three facts in that output:
+  1. every masked value was returned IN FULL — `_nulled_field_ids` was applied
+     to MEASURES only (`_resolve_request:251`, `_build_sql:365-366`);
+  2. `columns_meta` carried no `nulled` marker, so no client could even tell;
+  3. `mode: 'detail'` was silently IGNORED and answered as an aggregate — the
+     unknown key was never validated.
+
+
+AFTER — the shipped build, same probe, same database
+-----------------------------------------------------
+
+    AGGREGATE nulled-DIMENSION rows:
+      [[null, 60.0]]
+
+    AGGREGATE column meta:
+      {"ref": "d0", "field_id": 17516, "label": "Name", "type": "text",
+       "role": "dimension", "grain": null, "format": {},
+       "selection_labels": {}, "nulled": true}
+
+    DETAIL rows:
+      [[null, 10.0], [null, 20.0], [null, 30.0], [null, null]]
+
+    DETAIL meta:
+      {"row_count": 4, "truncated": false, "duration_ms": 5,
+       "freshness_at": "...", "source": "live", "cache": "miss",
+       "mode": "detail", "total_count": 4, "export_cap": 20000}
+
+  1. the aggregate query collapses to ONE row keyed on NULL — not one row per
+     masked value, so the column leaks neither the values nor their
+     cardinality;
+  2. the SUM is still 60.0: only the masked column is emptied, the rest of the
+     query is untouched;
+  3. `"nulled": true` reaches the client, so the UI can say *why* the column
+     is empty (the header carries the "Emptied by a data policy" hint);
+  4. detail mode is a first-class mode with an honest `total_count`.
+
+
+How the SQL does it
+-------------------
+
+`_dimension_expr` returns `SQL("NULL::text")` for a nulled field in BOTH
+roles and BOTH modes. In aggregate mode that same constant expression also
+goes into the GROUP BY, which is what collapses the groups —
+`SELECT NULL::text AS d0 … GROUP BY NULL::text` is valid Postgres and yields
+exactly one group (verified in psql before the code was written). Detail mode
+emits no GROUP BY at all, so the column is simply a column of NULLs.
+
+
+Pinned by test
+--------------
+
+`biz_bi/tests/test_detail_mode.py::TestDetailMode::
+test_detail_nulls_masked_dimension` asserts both halves — the detail rows are
+all None with `columns[0]['nulled']` true, AND the aggregate request over the
+same field returns exactly one row `(None, 60.0)` with `nulled` set. Run
+against the pre-phase engine that test fails on its very first assertion.

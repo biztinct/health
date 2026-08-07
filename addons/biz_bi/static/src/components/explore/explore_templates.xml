@@ -32,6 +32,57 @@
                             t-att-class="table.columns[cell_index].role === 'measure' ? 'bi-num' : ''"
                             t-esc="cell"/>
                     </tr>
+                    <tr t-if="table.overflow">
+                        <td t-att-colspan="table.columns.length"
+                            class="bi-table-overflow" t-esc="table.overflow"/>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="biz_bi.RecordsTable">
+        <div class="bi-table-wrap bi-records-wrap"
+             t-att-class="state.over ? 'bi-records-over' : ''"
+             t-on-dragover="onBodyDragOver"
+             t-on-dragleave="onDragLeave"
+             t-on-drop="onDrop">
+            <div t-if="!props.columns.length" class="bi-records-empty">
+                <div class="bi-empty-art"/>
+                <p class="bi-records-empty-title" t-esc="labels.empty"/>
+                <p class="bi-records-empty-sub" t-esc="labels.emptySub"/>
+            </div>
+            <table t-else="" class="bi-table bi-records-table">
+                <thead>
+                    <tr t-on-dragover="onHeaderDragOver">
+                        <th t-foreach="props.columns" t-as="chip" t-key="chip.id"
+                            draggable="true"
+                            t-att-class="(chip.role === 'measure' ? 'bi-num ' : '') + caretClass(chip_index)"
+                            t-att-title="metaFor(chip_index).nulled ? labels.policy : labels.sortHint"
+                            t-on-dragstart="(ev) => this.onColumnDragStart(ev, chip_index)"
+                            t-on-click="() => this.props.onToggleSort(chip_index)">
+                            <span class="bi-colchip">
+                                <span class="bi-colchip-name" t-esc="chip.name"/>
+                                <span t-if="metaFor(chip_index).nulled"
+                                      class="bi-colchip-policy" t-esc="'●'"/>
+                                <span t-if="sortDirFor(chip)" class="bi-colchip-sort"
+                                      t-esc="sortDirFor(chip) === 'asc' ? '▲' : '▼'"/>
+                                <button class="bi-colchip-remove" t-att-title="labels.remove"
+                                        t-on-click.stop="() => this.props.onRemoveColumn(chip_index)">×</button>
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="rows" t-as="row" t-key="row_index">
+                        <td t-foreach="row" t-as="cell" t-key="cell_index"
+                            t-att-class="(envelopeColumns[cell_index] and envelopeColumns[cell_index].role === 'measure') ? 'bi-num' : ''"
+                            t-esc="cell"/>
+                    </tr>
+                    <tr t-if="!rows.length">
+                        <td t-att-colspan="props.columns.length"
+                            class="bi-records-norows" t-esc="labels.noRows"/>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -93,6 +144,17 @@
                 <button class="btn btn-secondary" t-on-click="() => this.props.close()">Cancel</button>
             </t>
         </Dialog>
+    </t>
+
+    <t t-name="biz_bi.ExportButton">
+        <button class="bi-btn bi-btn-sm bi-export-btn"
+                t-att-title="labels.exportTitle"
+                t-att-disabled="state.exporting"
+                t-on-click="exportExcel">
+            <span t-if="state.exporting" class="bi-spinner bi-spinner-xs"/>
+            <span t-else="" class="bi-ico-xlsx"/>
+            <span t-esc="state.exporting ? labels.exporting : labels.excel"/>
+        </button>
     </t>
 
     <t t-name="biz_bi.Explore">
@@ -167,7 +229,7 @@
                                      draggable="true"
                                      t-att-title="field.description or field.glossary or field.name"
                                      t-on-dragstart="(ev) => this.onFieldDragStart(ev, field)"
-                                     t-on-dblclick="() => this.addToSlot(field.role === 'measure' ? 'values' : 'x', field)">
+                                     t-on-dblclick="() => this.onFieldActivate(field)">
                                     <span class="bi-field-ico"/>
                                     <span class="bi-field-name" t-esc="field.name"/>
                                 </div>
@@ -178,10 +240,44 @@
 
                 <!-- Center: preview -->
                 <div class="bi-preview">
+                    <div t-if="state.chartType === 'table'" class="bi-preview-head">
+                        <div class="bi-segmented">
+                            <button class="bi-seg-btn"
+                                    t-att-class="state.tableMode === 'records' ? 'active' : ''"
+                                    t-on-click="() => this.setTableMode('records')"
+                                    t-esc="labels.records"/>
+                            <button class="bi-seg-btn"
+                                    t-att-class="state.tableMode === 'summary' ? 'active' : ''"
+                                    t-on-click="() => this.setTableMode('summary')"
+                                    t-esc="labels.summary"/>
+                        </div>
+                    </div>
+                    <div t-if="truncation" class="bi-truncation" t-esc="truncation"/>
                     <div t-if="state.loading" class="bi-preview-loading">
                         <div class="bi-spinner"/>
                     </div>
-                    <t t-if="state.envelope and !state.envelope.error">
+                    <t t-if="isRecords">
+                        <RecordsTable envelope="state.envelope"
+                                      columns="state.recordColumns"
+                                      sort="state.recordSort"
+                                      onDropField.bind="addRecordColumn"
+                                      onMoveColumn.bind="moveRecordColumn"
+                                      onRemoveColumn.bind="removeRecordColumn"
+                                      onToggleSort.bind="toggleRecordSort"/>
+                        <div t-if="state.envelope and state.envelope.error"
+                             class="bi-preview-error">
+                            <span t-esc="state.envelope.error"/>
+                        </div>
+                        <div t-elif="state.envelope" class="bi-preview-meta">
+                            <span>
+                                <span t-esc="state.envelope.meta.row_count"/> rows ·
+                                <span t-esc="state.envelope.meta.duration_ms"/> ms ·
+                                <span t-esc="state.envelope.meta.source"/>
+                            </span>
+                            <t t-call="biz_bi.ExportButton"/>
+                        </div>
+                    </t>
+                    <t t-elif="state.envelope and !state.envelope.error">
                         <KpiCard t-if="rendererKind === 'kpi'"
                                  envelope="state.envelope" config="chartConfig"/>
                         <DataTable t-elif="rendererKind === 'table'"
@@ -191,9 +287,14 @@
                         <ChartRenderer t-else=""
                                        envelope="state.envelope" config="chartConfig"/>
                         <div class="bi-preview-meta">
-                            <span t-esc="state.envelope.meta.row_count"/> rows ·
-                            <span t-esc="state.envelope.meta.duration_ms"/> ms ·
-                            <span t-esc="state.envelope.meta.source"/>
+                            <span>
+                                <span t-esc="state.envelope.meta.row_count"/> rows ·
+                                <span t-esc="state.envelope.meta.duration_ms"/> ms ·
+                                <span t-esc="state.envelope.meta.source"/>
+                            </span>
+                            <t t-if="state.chartType === 'table'">
+                                <t t-call="biz_bi.ExportButton"/>
+                            </t>
                         </div>
                     </t>
                     <div t-elif="state.envelope and state.envelope.error"

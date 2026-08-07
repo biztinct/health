@@ -31,6 +31,16 @@ _logger = logging.getLogger(__name__)
 MAX_ROWS = 5000
 GOLD_ALIAS = 'g'
 
+# 'aggregate' = one row per group (GROUP BY); 'detail' = one row per
+# underlying record (Records table + Excel export). Anything else is a
+# client bug and must not silently fall back to a mode the caller did not ask
+# for — the two have different egress volumes.
+ALLOWED_MODES = ('aggregate', 'detail')
+
+# Server-side ceiling for /bi/export/xlsx. Overridable with the
+# `biz_bi.export_row_cap` ir.config_parameter; NEVER from a client payload.
+DEFAULT_EXPORT_ROW_CAP = 20000
+
 ALLOWED_AGGS = {
     'sum': "SUM(%s)",
     'avg': "AVG(%s)",
@@ -106,7 +116,28 @@ class BiQueryEngine(models.AbstractModel):
         return results
 
     @api.model
-    def run(self, request):
+    def export_row_cap(self):
+        """Row ceiling for a server-side export run. Not named `read`/`fetch`
+        /`search`/`browse` — see ledger §5.136."""
+        raw = self.env['ir.config_parameter'].sudo().get_param(
+            'biz_bi.export_row_cap')
+        # get_param returns False (not None) for a missing key, and
+        # int(False) is a perfectly silent 0 — which max(1, …)ed the export
+        # down to a single row. Treat every falsy read as "not configured".
+        try:
+            cap = int(raw) if raw else DEFAULT_EXPORT_ROW_CAP
+        except (TypeError, ValueError):
+            cap = DEFAULT_EXPORT_ROW_CAP
+        return max(1, cap)
+
+    @api.model
+    def run(self, request, hard_cap=None):
+        """`hard_cap` replaces MAX_ROWS as the row clamp. It is a SERVER-side
+        argument (the export controller passes the configured cap) and is
+        deliberately stripped from the request payload: a client must never be
+        able to raise its own row ceiling by adding a key to the JSON body."""
+        request = dict(request or {})
+        request.pop('hard_cap', None)
         dataset = self.env['bi.dataset'].browse(
             int(request.get('dataset_id') or 0))
         if not dataset.exists():
@@ -122,15 +153,22 @@ class BiQueryEngine(models.AbstractModel):
         lang = self.env.user.lang or 'en_US'
         fingerprint = self._rls_fingerprint(dataset)
         Cache = self.env['bi.query.cache'].sudo()
-        cache_key = Cache.make_key(request, fingerprint, lang)
+        # the clamp is part of the result identity: the same request run with
+        # a 5k preview clamp and a 20k export clamp are different answers, and
+        # without this a client could prime the cache at 5k and have the
+        # export serve it back (or vice versa).
+        key_payload = dict(request, __hard_cap__=int(hard_cap)) \
+            if hard_cap else request
+        cache_key = Cache.make_key(key_payload, fingerprint, lang)
         cached = Cache.fetch_result(cache_key)
         if cached is not None:
             cached.setdefault('meta', {})['cache'] = 'hit'
             return self._attach_relation_labels(cached)
 
         started = time.monotonic()
-        spec = self._resolve_request(dataset, request)
-        top_n = spec['top_n'] if len(spec['dimensions']) == 1 else None
+        spec = self._resolve_request(dataset, request, hard_cap=hard_cap)
+        top_n = spec['top_n'] if (spec['mode'] == 'aggregate'
+                                  and len(spec['dimensions']) == 1) else None
         if top_n:
             ref = top_n.get('ref') or ('m0' if spec['measures'] else 'd0')
             spec['sort'] = [{'ref': ref, 'dir': 'desc'}]
@@ -141,18 +179,30 @@ class BiQueryEngine(models.AbstractModel):
             rows = rows + self._others_row(dataset, spec, rows)
         duration_ms = int((time.monotonic() - started) * 1000)
 
+        meta = {
+            'row_count': len(rows),
+            'truncated': len(rows) >= spec['limit'],
+            'duration_ms': duration_ms,
+            'freshness_at': fields.Datetime.to_string(
+                dataset.freshness_at),
+            'source': spec['target'],
+            'cache': 'miss',
+        }
+        if spec['mode'] == 'detail':
+            # an honest total: how many records the filters actually match,
+            # independent of the row clamp, so the UI never implies that the
+            # capped page IS the result set.
+            total_count = self._count_detail_rows(dataset, spec)
+            meta.update({
+                'mode': 'detail',
+                'total_count': total_count,
+                'truncated': total_count > len(rows),
+                'export_cap': self.export_row_cap(),
+            })
         envelope = {
             'columns': spec['columns_meta'],
             'rows': [self._json_safe_row(row) for row in rows],
-            'meta': {
-                'row_count': len(rows),
-                'truncated': len(rows) >= spec['limit'],
-                'duration_ms': duration_ms,
-                'freshness_at': fields.Datetime.to_string(
-                    dataset.freshness_at),
-                'source': spec['target'],
-                'cache': 'miss',
-            },
+            'meta': meta,
         }
 
         ttl = (self._ttl_until_next_refresh(dataset)
@@ -207,9 +257,14 @@ class BiQueryEngine(models.AbstractModel):
     # Request resolution & authorization
     # ==================================================================
 
-    def _resolve_request(self, dataset, request):
+    def _resolve_request(self, dataset, request, hard_cap=None):
         masked = self.env['bi.access.rule']._masked_field_ids(dataset)
         nulled = self.env['bi.access.rule']._nulled_field_ids(dataset)
+
+        mode = request.get('mode') or 'aggregate'
+        if mode not in ALLOWED_MODES:
+            raise UserError(_("Unknown query mode '%s'.", mode))
+        detail = mode == 'detail'
 
         def browse_field(field_id, usage):
             field = self.env['bi.field'].browse(int(field_id))
@@ -224,15 +279,24 @@ class BiQueryEngine(models.AbstractModel):
         for dim in request.get('dimensions') or []:
             field = browse_field(dim.get('field_id'), _("dimensions"))
             grain = dim.get('grain')
-            if grain and grain not in ALLOWED_GRAINS:
-                raise UserError(_("Invalid date grain '%s'.", grain))
-            if field.data_type not in ('date', 'datetime'):
-                grain = None  # grain is only meaningful on dates — ignore
-            dimensions.append({'field': field, 'grain': grain})
+            if detail:
+                # records show the real date — a grain would bucket them
+                grain = None
+            else:
+                if grain and grain not in ALLOWED_GRAINS:
+                    raise UserError(_("Invalid date grain '%s'.", grain))
+                if field.data_type not in ('date', 'datetime'):
+                    grain = None  # grain is only meaningful on dates — ignore
+            dimensions.append({'field': field, 'grain': grain,
+                               'nulled': field.id in nulled})
 
         fanout_unsafe = (dataset._fanout_unsafe_node_ids()
                          if dataset.has_fanout else set())
         measures = []
+        if detail and (request.get('measures') or []):
+            raise UserError(_(
+                "Records mode returns one row per record — remove the "
+                "aggregated measures, or switch back to Summary."))
         for meas in request.get('measures') or []:
             field = browse_field(meas.get('field_id'), _("measures"))
             agg = meas.get('agg') or field.default_agg or 'sum'
@@ -259,7 +323,8 @@ class BiQueryEngine(models.AbstractModel):
             filters.append({'field': field, 'op': filt.get('op'),
                             'value': filt.get('value')})
 
-        limit = min(int(request.get('limit') or 1000), MAX_ROWS)
+        limit = min(int(request.get('limit') or 1000),
+                    int(hard_cap) if hard_cap else MAX_ROWS)
         sort = request.get('sort') or []
         top_n = (request.get('options') or {}).get('top_n')
 
@@ -272,7 +337,7 @@ class BiQueryEngine(models.AbstractModel):
         columns_meta = []
         for index, dim in enumerate(dimensions):
             field = dim['field']
-            columns_meta.append({
+            column = {
                 'ref': 'd%d' % index,
                 'field_id': field.id,
                 'label': field.name,
@@ -281,7 +346,14 @@ class BiQueryEngine(models.AbstractModel):
                 'grain': dim['grain'],
                 'format': field.format_json or {},
                 'selection_labels': field._selection_labels_for(),
-            })
+            }
+            if dim['nulled']:
+                # a 'null' column mask used to apply to MEASURES only, so the
+                # same field used as a DIMENSION was returned in full. It is
+                # nulled in both roles now; the flag lets the UI say why the
+                # column is empty instead of looking broken.
+                column['nulled'] = True
+            columns_meta.append(column)
         for index, meas in enumerate(measures):
             field = meas['field']
             if meas['agg'] == 'count':
@@ -301,6 +373,7 @@ class BiQueryEngine(models.AbstractModel):
             })
 
         return {
+            'mode': mode,
             'dimensions': dimensions,
             'measures': measures,
             'filters': filters,
@@ -343,22 +416,44 @@ class BiQueryEngine(models.AbstractModel):
             resolver, allow_aggregates=allow_aggregates)
         return compiler.compile(field.expression), compiler.uses_aggregates
 
+    def _dimension_expr(self, dim, spec, target, lang):
+        """SELECT/GROUP BY expression for one dimension, in either mode.
+
+        A 'null'-masked field yields a typed NULL constant in BOTH roles and
+        BOTH modes — grouping by it still collapses to a single bucket, so no
+        value ever leaves the database.
+        """
+        field = dim['field']
+        if dim.get('nulled'):
+            return SQL("NULL::text")
+        if field.origin == 'calculated':
+            try:
+                expr, _uses_agg = self._calc_expr(field, target, lang, False)
+            except ExpressionError:
+                if spec['mode'] == 'detail':
+                    raise UserError(_(
+                        "Calculated field %s aggregates rows, so it cannot be "
+                        "a Records column. Use Summary mode for it.",
+                        field.name))
+                raise
+        else:
+            expr = self._field_expr(field, target, lang)
+        if dim['grain']:
+            expr = SQL("DATE_TRUNC('" + dim['grain'] + "', %s)", expr)
+        return expr
+
     def _build_sql(self, dataset, spec):
         lang = self.env.user.lang or 'en_US'
         target = spec['target']
+        detail = spec['mode'] == 'detail'
 
         select_parts, group_parts = [], []
         for index, dim in enumerate(spec['dimensions']):
-            field = dim['field']
-            if field.origin == 'calculated':
-                expr, _uses_agg = self._calc_expr(field, target, lang, False)
-            else:
-                expr = self._field_expr(field, target, lang)
-            if dim['grain']:
-                expr = SQL("DATE_TRUNC('" + dim['grain'] + "', %s)", expr)
+            expr = self._dimension_expr(dim, spec, target, lang)
             select_parts.append(SQL(
                 "%s AS %s", expr, SQL.identifier('d%d' % index)))
-            group_parts.append(expr)
+            if not detail:
+                group_parts.append(expr)
 
         for index, meas in enumerate(spec['measures']):
             field = meas['field']
@@ -392,6 +487,21 @@ class BiQueryEngine(models.AbstractModel):
         query = SQL("%s LIMIT %s OFFSET %s", query,
                     spec['limit'], spec['offset'])
         return query
+
+    def _count_detail_rows(self, dataset, spec):
+        """How many records match, ignoring the row clamp. Same FROM and the
+        same (unchanged) WHERE chain as the page query — no GROUP BY, no
+        ORDER BY, no LIMIT — so the banner's total is the real total."""
+        lang = self.env.user.lang or 'en_US'
+        target = spec['target']
+        query = SQL("SELECT COUNT(*) FROM %s",
+                    self._build_from(dataset, target))
+        where_parts = self._build_where(dataset, spec, target, lang)
+        if where_parts:
+            query = SQL("%s WHERE %s", query,
+                        SQL(" AND ").join(where_parts))
+        rows = self._execute(query)
+        return int(rows[0][0]) if rows else 0
 
     def _build_from(self, dataset, target):
         if target == 'gold':
@@ -472,13 +582,7 @@ class BiQueryEngine(models.AbstractModel):
             return []
         lang = self.env.user.lang or 'en_US'
         dim = spec['dimensions'][0]
-        field = dim['field']
-        if field.origin == 'calculated':
-            expr, _uses_agg = self._calc_expr(field, spec['target'], lang, False)
-        else:
-            expr = self._field_expr(field, spec['target'], lang)
-        if dim['grain']:
-            expr = SQL("DATE_TRUNC('" + dim['grain'] + "', %s)", expr)
+        expr = self._dimension_expr(dim, spec, spec['target'], lang)
         top_values = [row[0] for row in rows if row[0] is not None]
         if not top_values:
             return []
@@ -634,8 +738,15 @@ class BiQueryEngine(models.AbstractModel):
                 result.append(value.isoformat())
             elif hasattr(value, 'quantize'):  # Decimal
                 result.append(float(value))
-            else:
+            elif isinstance(value, (bytes, memoryview)):
+                # detail mode selects raw columns; a bytea from a sql_view
+                # source would blow up JSON serialization
+                result.append(None)
+            elif value is None or isinstance(value, (str, int, float, bool)):
                 result.append(value)
+            else:
+                # time/interval/uuid/… — stringify rather than 500
+                result.append(str(value))
         return result
 
     def _rls_fingerprint(self, dataset):

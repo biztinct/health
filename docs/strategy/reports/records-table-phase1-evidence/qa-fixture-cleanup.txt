@@ -1,0 +1,101 @@
+RT-1 — QA fixtures created, and the fresh-cursor proof they are gone
+====================================================================
+
+§5.34 (verify the revert from a SEPARATE cursor) and §5.128 (an append-only
+log keyed on res.users makes the persona undeletable until its rows go out
+with a raw scoped DELETE).
+
+Three throwaway personas were used, one per build re-drive:
+
+  uid 8166  rt1_qa   (partner 19529)   first pass
+  uid 8185  rt1_qa2  (partner 19608)   after the drop-effect + tile fixes
+  uid 8186  rt1_qa3  (partner 19609)   the dashboard screen, re-driven
+
+Each was created by cloning the live `om` account's groups + access role +
+catchment province, and the service was RESTARTED after each creation —
+a group write from a separate `odoo-bin shell` is invisible to the running
+workers until then (§5.132).
+
+
+1. Everything the pass created
+-------------------------------
+
+  bi.chart            100, 121, 122   ("RT1 QA …")
+  bi.dashboard        501, 504        ("RT1 QA Records Dashboard")
+  bi.dashboard.widget 57, 61          (+ one transient widget on dashboard 6,
+                                       see note below)
+  bi.audit.log        63 rows across the three uids (query / chart_save /
+                                       dashboard_view / export)
+  bi.query.cache      41 rows         (transient, TTL-managed)
+  res.device.log      3 rows
+  res.users           8166, 8185, 8186 + their res.partner rows
+
+Note on dashboard 6 ("BI Usage Analytics"): in the second pass the
+Add-to-Dashboard picker's new-name radio was not selected, so the QA widget
+was appended to that existing dashboard instead of a new one. It was removed
+with the chart (the widget's `chart_id` cascades) and dashboard 6 is back to
+its original **3** widgets — verified below.
+
+Temporary changes, all reverted:
+  a. deployed `bi_query_engine.MAX_ROWS` 5000 → 3, to stage the truncation
+     banner; restored (grep on the deployed file: `MAX_ROWS = 5000`);
+  b. `ir.config_parameter biz_bi.export_row_cap` set to 5, then to 2 in the
+     test; the row is DELETED (the parameter does not exist by default);
+  c. `bi_chart.config_json.limit` on chart 100 edited in psql (50 / 500 /
+     5000) while diagnosing the tile freeze; the chart is deleted.
+  d. an `ir.rule` granting read on all partners exists only INSIDE the test
+     transaction (`_allow_all_partners`) and inside the rolled-back probe —
+     0 rows on the database.
+
+
+2. Cleanup, executed (three runs of the same script)
+-----------------------------------------------------
+
+    widgets [57] / [] / [61]     unlinked
+    dashboards [501] / [] / [504] unlinked
+    charts [100] / [121] / [122]  unlinked
+    audit rows deleted 39 / 17 / 7
+    query cache rows deleted 23 / 13 / 5
+    device log rows deleted 1 / 1 / 1
+    user unlinked ; partner unlinked
+    CLEANUP COMMITTED
+
+`bi.audit.log.unlink()` raises by design and `user_id` is a required Many2one
+(ON DELETE RESTRICT), so those rows had to go out with
+`DELETE FROM bi_audit_log WHERE user_id = %s` before `res.users.unlink()`
+could succeed — exactly the §5.128 blocker, planned for in advance.
+
+
+3. Fresh-cursor verification (psql — a different process and connection
+   from the odoo-bin shell that did the deleting)
+------------------------------------------------------------------------
+
+               what            | count
+    ---------------------------+-------
+     users rt1_qa*             |     0
+     users id 8166/8185/8186   |     0
+     partners RT1 QA%          |     0
+     charts RT1%               |     0
+     dashboards RT1%           |     0
+     widgets id>55             |     0
+     audit uid 8166/8185/8186  |     0
+     cfg biz_bi.export_row_cap |     0
+     ir_rule BI detail test    |     0
+     ir_rule MaskProbe         |     0
+     MASKPROBE partners        |     0
+
+Dashboard widget counts, back to their pre-pass values:
+
+     id |                name                 | widgets
+    ----+-------------------------------------+---------
+      1 | Operations Overview                 |       6
+      2 | Revenue & Receivables               |       4
+      5 | Báo cáo hoạt động điều hành         |       5
+      6 | BI Usage Analytics                  |       3
+      7 | Visit Margin                        |       9
+      9 | Monthly Revenue by Facility         |       3
+     10 | Facility Analytics                  |       1
+
+Deployed files == committed source (md5sum compared, both directions) for
+`bi_query_engine.py`, `records_table.js`, `data_table.js`.
+Server after the final restart: listener on :8069 present, `/web/login` → 200.

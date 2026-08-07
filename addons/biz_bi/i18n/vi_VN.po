@@ -496,7 +496,9 @@ msgstr "Năm trước"
 
 #. module: biz_bi
 #. odoo-javascript
+#. odoo-python
 #: code:addons/biz_bi/static/src/components:0
+#: code:addons/biz_bi/controllers/main.py:0
 msgid "Others"
 msgstr "Khác"
 
@@ -811,3 +813,162 @@ msgstr "Thêm vào bảng điều khiển nào?"
 #: code:addons/biz_bi/static/src/components:0
 msgid "New dashboard name…"
 msgstr "Tên bảng điều khiển mới…"
+
+#. module: biz_bi
+#. odoo-javascript
+#. odoo-python
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+#: code:addons/biz_bi/controllers/main.py:0
+msgid "Records"
+msgstr "Bản ghi"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid "Summary"
+msgstr "Tổng hợp"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid "Excel"
+msgstr "Excel"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid "Exporting…"
+msgstr "Đang xuất…"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid "Download these rows as an Excel file"
+msgstr "Tải các dòng này về dưới dạng tệp Excel"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid "Switch to Summary for charts"
+msgstr "Chuyển sang Tổng hợp để vẽ biểu đồ"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid ""
+"Showing %(shown)s of %(total)s — refine filters, or export up to %(cap)s "
+"rows."
+msgstr ""
+"Đang hiển thị %(shown)s trong số %(total)s — hãy lọc bớt, hoặc xuất tối đa "
+"%(cap)s dòng."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid "Chart"
+msgstr "Biểu đồ"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid "Nothing to export yet."
+msgstr "Chưa có gì để xuất."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/explore_action.js:0
+msgid "Export failed."
+msgstr "Xuất tệp thất bại."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/records_table.js:0
+msgid "Drag any fields here — one row per record"
+msgstr "Kéo bất kỳ trường nào vào đây — mỗi bản ghi một dòng"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/records_table.js:0
+msgid "Every row is one underlying record. The filters you set still apply."
+msgstr "Mỗi dòng là một bản ghi gốc. Các bộ lọc bạn đặt vẫn được áp dụng."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/records_table.js:0
+msgid "Remove column"
+msgstr "Xóa cột"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/records_table.js:0
+msgid "Click to sort"
+msgstr "Nhấp để sắp xếp"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/records_table.js:0
+msgid "Emptied by a data policy"
+msgstr "Bị làm trống bởi chính sách dữ liệu"
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/records_table.js:0
+msgid "No records match the current filters."
+msgstr "Không có bản ghi nào khớp với bộ lọc hiện tại."
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/models/bi_query_engine.py:0
+msgid "Unknown query mode '%s'."
+msgstr "Chế độ truy vấn '%s' không hợp lệ."
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/models/bi_query_engine.py:0
+msgid ""
+"Records mode returns one row per record — remove the aggregated measures, "
+"or switch back to Summary."
+msgstr ""
+"Chế độ Bản ghi trả về mỗi bản ghi một dòng — hãy bỏ các chỉ số tổng hợp, "
+"hoặc quay lại chế độ Tổng hợp."
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/models/bi_query_engine.py:0
+msgid ""
+"Calculated field %s aggregates rows, so it cannot be a Records column. Use "
+"Summary mode for it."
+msgstr ""
+"Trường tính toán %s tổng hợp nhiều dòng nên không thể làm cột Bản ghi. Hãy "
+"dùng chế độ Tổng hợp cho trường này."
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/controllers/main.py:0
+msgid "Nothing to export."
+msgstr "Không có gì để xuất."
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/controllers/main.py:0
+msgid ""
+"Showing first %(shown)s of %(total)s rows — refine filters for the full set."
+msgstr ""
+"Đang hiển thị %(shown)s dòng đầu trong tổng số %(total)s — hãy lọc bớt để "
+"lấy toàn bộ."
+
+#. module: biz_bi
+#. odoo-python
+#: code:addons/biz_bi/controllers/main.py:0
+msgid "Showing the first %s rows — refine filters for the full set."
+msgstr "Đang hiển thị %s dòng đầu tiên — hãy lọc bớt để lấy toàn bộ."
+
+#. module: biz_bi
+#. odoo-javascript
+#: code:addons/biz_bi/static/src/components/explore/data_table.js:0
+msgid ""
+"Showing the first %(shown)s of %(total)s rows — open in Explore or export "
+"for the full set."
+msgstr ""
+"Đang hiển thị %(shown)s dòng đầu trong tổng số %(total)s — hãy mở trong "
+"Khám phá hoặc xuất tệp để xem toàn bộ."

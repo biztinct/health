@@ -1,0 +1,23 @@
+RT-1 browser console log — every screen driven on https://care.biztinct.com
+===========================================================================
+
+Collected with chrome-devtools `list_console_messages`
+(includePreservedMessages=true, i.e. across the last navigations) at three
+points of the pass:
+
+  a. after Explore → Records → 4 drags → reorder → sort → Excel export
+  b. after Save chart → Add to Dashboard → the dashboard rendered
+  c. after the truncation-banner staging pass + the Records/Summary
+     round trip
+
+Result, all three times — ZERO errors, zero warnings, zero uncaught
+rejections. The only entries are Chrome's own a11y ADVISORY issue, which
+is raised by Odoo's core inputs and is pre-existing everywhere in the
+product (it is an [issue], not a console error):
+
+  msgid=16 [issue] A form field element should have an id or name attribute (count: 5)
+  msgid=10 [issue] A form field element should have an id or name attribute (count: 1)
+  msgid=11 [issue] A form field element should have an id or name attribute (count: 6)
+
+Nothing from biz_bi. In particular no OWL prop-validation warning from the
+new RecordsTable component and no unhandled rejection from the export fetch.

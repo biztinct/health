@@ -3,11 +3,13 @@
 import { registry } from "@web/core/registry";
 import { Component, onWillStart, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 import { ChartRenderer } from "./chart_renderer";
 import { KpiCard } from "./kpi_card";
 import { DataTable } from "./data_table";
 import { PivotTable } from "./pivot_table";
+import { RecordsTable } from "./records_table";
 import { AddToDashboardDialog } from "./add_to_dashboard_dialog";
 import {
     checkCompatibility,
@@ -40,9 +42,13 @@ const CHART_GALLERY = [
 const DATE_GRAINS = ["year", "quarter", "month", "week", "day"];
 const AGGS = ["sum", "avg", "min", "max", "count", "count_distinct"];
 
+// Records preview cap. The engine clamps to MAX_ROWS anyway; asking for it
+// explicitly keeps the "showing X of Y" banner honest about what we asked for.
+const RECORDS_PREVIEW_LIMIT = 5000;
+
 export class ExploreAction extends Component {
     static template = "biz_bi.Explore";
-    static components = { ChartRenderer, KpiCard, DataTable, PivotTable };
+    static components = { ChartRenderer, KpiCard, DataTable, PivotTable, RecordsTable };
     static props = { "*": true };
     static displayName = _t("Explore");
 
@@ -76,7 +82,22 @@ export class ExploreAction extends Component {
             aiAvailable: false,
             aiPrompt: "",
             aiBusy: false,
+            // Records mode. recordColumns is kept SEPARATE from the aggregate
+            // slots (which are never touched here) so toggling back to
+            // Summary restores the previous chart exactly.
+            tableMode: "summary",
+            recordColumns: [],
+            recordsSeeded: false,
+            recordSort: null, // {fieldId, dir}
+            exporting: false,
         });
+        this.labels = {
+            records: _t("Records"),
+            summary: _t("Summary"),
+            excel: _t("Excel"),
+            exporting: _t("Exporting…"),
+            exportTitle: _t("Download these rows as an Excel file"),
+        };
         this._debounce = null;
 
         onWillStart(async () => {
@@ -127,6 +148,7 @@ export class ExploreAction extends Component {
         this.state.slots = { x: [], values: [], series: [], filters: [] };
         this.state.envelope = null;
         this.state.chartId = null;
+        this.resetRecordsState();
         this.state.metadata = await this.orm.call(
             "bi.dataset", "get_builder_metadata", [[datasetId]]);
         // open every folder by default
@@ -167,6 +189,32 @@ export class ExploreAction extends Component {
         };
         this.state.chartType = chartType || config.chart_type || "bar";
         this.state.userPickedType = true;
+        this.resetRecordsState();
+        if ((config.mode || "aggregate") === "detail") {
+            this.state.tableMode = "records";
+            this.state.recordsSeeded = true;
+            this.state.recordColumns = (slots.columns || [])
+                .filter((e) => byId[e.field_id])
+                .map((e) => ({ ...byId[e.field_id] }));
+            const saved = (config.sort || [])[0];
+            if (saved && /^d\d+$/.test(saved.ref || "")) {
+                const chip = this.state.recordColumns[
+                    parseInt(saved.ref.slice(1), 10)];
+                if (chip) {
+                    this.state.recordSort = {
+                        fieldId: chip.id,
+                        dir: saved.dir === "desc" ? "desc" : "asc",
+                    };
+                }
+            }
+        }
+    }
+
+    resetRecordsState() {
+        this.state.tableMode = "summary";
+        this.state.recordColumns = [];
+        this.state.recordsSeeded = false;
+        this.state.recordSort = null;
     }
 
     // ------------------------------------------------------------------
@@ -327,6 +375,183 @@ export class ExploreAction extends Component {
         this.afterSlotChange();
     }
 
+    // ------------------------------------------------------------------
+    // Records mode
+    // ------------------------------------------------------------------
+
+    get isRecords() {
+        return this.state.chartType === "table" &&
+            this.state.tableMode === "records";
+    }
+
+    setTableMode(mode) {
+        if (this.state.tableMode === mode) {
+            return;
+        }
+        this.state.tableMode = mode;
+        if (mode === "records" && !this.state.recordsSeeded) {
+            // first switch: seed the columns from whatever the user already
+            // configured, in the order they read on screen
+            this.state.recordsSeeded = true;
+            const seen = new Set();
+            const seeded = [];
+            for (const chip of [
+                ...this.state.slots.x,
+                ...this.state.slots.series,
+                ...this.state.slots.values,
+            ]) {
+                if (seen.has(chip.id)) {
+                    continue;
+                }
+                seen.add(chip.id);
+                seeded.push({ ...chip });
+            }
+            this.state.recordColumns = seeded;
+        }
+        this.refresh();
+    }
+
+    onFieldActivate(field) {
+        if (this.isRecords) {
+            this.addRecordColumn(field);
+            return;
+        }
+        this.addToSlot(field.role === "measure" ? "values" : "x", field);
+    }
+
+    addRecordColumn(field, index = null) {
+        const columns = this.state.recordColumns;
+        if (columns.some((chip) => chip.id === field.id)) {
+            return;
+        }
+        const at = index === null
+            ? columns.length
+            : Math.max(0, Math.min(index, columns.length));
+        columns.splice(at, 0, { ...field });
+        this.refresh();
+    }
+
+    moveRecordColumn(from, to) {
+        const columns = this.state.recordColumns;
+        if (from < 0 || from >= columns.length) {
+            return;
+        }
+        const [chip] = columns.splice(from, 1);
+        // `to` was computed against the pre-removal layout
+        const target = Math.max(0, Math.min(to > from ? to - 1 : to,
+                                            columns.length));
+        columns.splice(target, 0, chip);
+        this.refresh();
+    }
+
+    removeRecordColumn(index) {
+        const [removed] = this.state.recordColumns.splice(index, 1);
+        if (removed && this.state.recordSort &&
+                this.state.recordSort.fieldId === removed.id) {
+            this.state.recordSort = null;
+        }
+        this.refresh();
+    }
+
+    toggleRecordSort(index) {
+        const chip = this.state.recordColumns[index];
+        if (!chip) {
+            return;
+        }
+        const current = this.state.recordSort;
+        if (!current || current.fieldId !== chip.id) {
+            this.state.recordSort = { fieldId: chip.id, dir: "asc" };
+        } else if (current.dir === "asc") {
+            this.state.recordSort = { fieldId: chip.id, dir: "desc" };
+        } else {
+            this.state.recordSort = null;
+        }
+        this.refresh();
+    }
+
+    recordSortSpec() {
+        const sort = this.state.recordSort;
+        if (!sort) {
+            return [];
+        }
+        const index = this.state.recordColumns.findIndex(
+            (chip) => chip.id === sort.fieldId);
+        return index === -1 ? [] : [{ ref: "d" + index, dir: sort.dir }];
+    }
+
+    get truncation() {
+        const meta = this.state.envelope && this.state.envelope.meta;
+        if (!meta || !meta.truncated || !meta.total_count) {
+            return null;
+        }
+        const lang = (user.lang || "en_US").replace("_", "-");
+        const num = (value) => Number(value).toLocaleString(lang);
+        return _t(
+            "Showing %(shown)s of %(total)s — refine filters, or export up to %(cap)s rows.",
+            {
+                shown: num(meta.row_count),
+                total: num(meta.total_count),
+                cap: num(meta.export_cap || 20000),
+            }
+        );
+    }
+
+    // ------------------------------------------------------------------
+    // Excel export (works for a saved OR an unsaved chart, both modes)
+    // ------------------------------------------------------------------
+
+    get exportTitle() {
+        const name = (this.state.chartName || "").trim();
+        if (name) {
+            return name;
+        }
+        const dataset = this.state.datasets.find(
+            (entry) => entry.id === this.state.datasetId);
+        const prefix = this.isRecords ? _t("Records") : _t("Chart");
+        return dataset ? `${prefix} - ${dataset.name}` : String(prefix);
+    }
+
+    async exportExcel() {
+        if (this.state.exporting) {
+            return;
+        }
+        if (!this.state.envelope || this.state.envelope.error) {
+            this.notification.add(_t("Nothing to export yet."),
+                { type: "warning" });
+            return;
+        }
+        this.state.exporting = true;
+        try {
+            const body = new FormData();
+            body.append("request_json", JSON.stringify(this.buildRequest()));
+            body.append("title", this.exportTitle);
+            body.append("csrf_token", odoo.csrf_token);
+            const response = await fetch("/bi/export/xlsx", {
+                method: "POST",
+                body,
+            });
+            if (!response.ok) {
+                throw new Error((await response.text()) || "");
+            }
+            // a POST cannot window.open — go through a blob + <a download>
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${this.exportTitle}.xlsx`.replace(/[/\\]/g, "-");
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            this.notification.add(
+                (error && error.message) || _t("Export failed."),
+                { type: "danger" });
+        } finally {
+            this.state.exporting = false;
+        }
+    }
+
     defaultOpFor(field) {
         if (field.data_type === "date" || field.data_type === "datetime") {
             return "relative";
@@ -370,7 +595,7 @@ export class ExploreAction extends Component {
     }
 
     afterSlotChange() {
-        if (!this.state.userPickedType) {
+        if (!this.state.userPickedType && !this.isRecords) {
             this.state.chartType = recommendChartType(
                 this.dimChips, this.state.slots.values);
         }
@@ -386,6 +611,15 @@ export class ExploreAction extends Component {
     // ------------------------------------------------------------------
 
     galleryEntryState(type) {
+        if (this.isRecords) {
+            // records are rows, not a shape — the gallery collapses to Table
+            return {
+                ok: type === "table",
+                reason: _t("Switch to Summary for charts"),
+                recommended: false,
+                active: type === "table",
+            };
+        }
         const compat = checkCompatibility(
             type, this.dimChips, this.state.slots.values);
         return {
@@ -400,6 +634,9 @@ export class ExploreAction extends Component {
     pickChartType(type) {
         this.state.chartType = type;
         this.state.userPickedType = true;
+        if (type !== "table") {
+            this.state.tableMode = "summary";
+        }
         this.refresh();
     }
 
@@ -407,8 +644,31 @@ export class ExploreAction extends Component {
     // Query & preview
     // ------------------------------------------------------------------
 
+    get filterEntries() {
+        return this.state.slots.filters
+            .filter((chip) => chip.op && chip.value !== "" && chip.value !== undefined)
+            .map((chip) => ({
+                field_id: chip.id,
+                op: chip.op,
+                value: chip.value,
+            }));
+    }
+
     buildRequest() {
         const slots = this.state.slots;
+        if (this.isRecords) {
+            return {
+                dataset_id: this.state.datasetId,
+                dimensions: this.state.recordColumns.map((chip) => ({
+                    field_id: chip.id,
+                })),
+                measures: [],
+                filters: this.filterEntries,
+                sort: this.recordSortSpec(),
+                limit: RECORDS_PREVIEW_LIMIT,
+                mode: "detail",
+            };
+        }
         return {
             dataset_id: this.state.datasetId,
             dimensions: this.dimChips.map((chip) => ({
@@ -419,13 +679,7 @@ export class ExploreAction extends Component {
                 field_id: chip.id,
                 agg: chip.agg,
             })),
-            filters: slots.filters
-                .filter((chip) => chip.op && chip.value !== "" && chip.value !== undefined)
-                .map((chip) => ({
-                    field_id: chip.id,
-                    op: chip.op,
-                    value: chip.value,
-                })),
+            filters: this.filterEntries,
             sort: slots.values.length && this.state.chartType !== "line"
                 ? [{ ref: "m0", dir: "desc" }]
                 : [],
@@ -435,7 +689,13 @@ export class ExploreAction extends Component {
 
     refresh() {
         clearTimeout(this._debounce);
-        if (!this.state.slots.values.length && this.state.chartType !== "table") {
+        if (this.isRecords) {
+            if (!this.state.recordColumns.length) {
+                this.state.envelope = null;
+                return;
+            }
+        } else if (!this.state.slots.values.length &&
+                   this.state.chartType !== "table") {
             this.state.envelope = null;
             return;
         }
@@ -473,7 +733,7 @@ export class ExploreAction extends Component {
 
     buildConfigJson() {
         const slots = this.state.slots;
-        return {
+        const config = {
             version: 1,
             chart_type: this.state.chartType,
             slots: {
@@ -481,13 +741,19 @@ export class ExploreAction extends Component {
                 values: slots.values.map((c) => ({ field_id: c.id, agg: c.agg })),
                 series: slots.series.map((c) => ({ field_id: c.id, grain: c.grain })),
             },
-            filters: slots.filters
-                .filter((c) => c.op && c.value !== "" && c.value !== undefined)
-                .map((c) => ({ field_id: c.id, op: c.op, value: c.value })),
+            filters: this.filterEntries,
             sort: [],
             limit: 500,
             display: {},
         };
+        if (this.isRecords) {
+            config.mode = "detail";
+            config.slots.columns = this.state.recordColumns.map(
+                (c) => ({ field_id: c.id }));
+            config.sort = this.recordSortSpec();
+            config.limit = RECORDS_PREVIEW_LIMIT;
+        }
+        return config;
     }
 
     async saveChart() {

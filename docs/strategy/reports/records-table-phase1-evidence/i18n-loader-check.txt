@@ -1,0 +1,27 @@
+WEB messages: 151  PY messages: 8
+MISSING: []
+JS  OK | Records -> Bản ghi
+JS  OK | Summary -> Tổng hợp
+JS  OK | Excel -> Excel
+JS  OK | Exporting… -> Đang xuất…
+JS  OK | Download these rows as an Excel file -> Tải các dòng này về dưới dạng tệp Excel
+JS  OK | Switch to Summary for charts -> Chuyển sang Tổng hợp để vẽ biểu đồ
+JS  OK | Showing %(shown)s of %(total)s — refine filters, or  -> Đang hiển thị %(shown)s trong số %(total)s — hãy lọc bớt, ho
+JS  OK | Chart -> Biểu đồ
+JS  OK | Nothing to export yet. -> Chưa có gì để xuất.
+JS  OK | Export failed. -> Xuất tệp thất bại.
+JS  OK | Drag any fields here — one row per record -> Kéo bất kỳ trường nào vào đây — mỗi bản ghi một dòng
+JS  OK | Every row is one underlying record. The filters you  -> Mỗi dòng là một bản ghi gốc. Các bộ lọc bạn đặt vẫn được áp 
+JS  OK | Remove column -> Xóa cột
+JS  OK | Click to sort -> Nhấp để sắp xếp
+JS  OK | Emptied by a data policy -> Bị làm trống bởi chính sách dữ liệu
+JS  OK | No records match the current filters. -> Không có bản ghi nào khớp với bộ lọc hiện tại.
+JS  OK | Showing the first %(shown)s of %(total)s rows — open -> Đang hiển thị %(shown)s dòng đầu trong tổng số %(total)s — h
+PY  OK | Records -> Bản ghi
+PY  OK | Others -> Khác
+PY  OK | Nothing to export. -> Không có gì để xuất.
+PY  OK | Unknown query mode '%s'. -> Chế độ truy vấn '%s' không hợp lệ.
+PY  OK | Records mode returns one row per record — remove the -> Chế độ Bản ghi trả về mỗi bản ghi một dòng — hãy bỏ các chỉ 
+PY  OK | Calculated field %s aggregates rows, so it cannot be -> Trường tính toán %s tổng hợp nhiều dòng nên không thể làm cộ
+PY  OK | Showing first %(shown)s of %(total)s rows — refine f -> Đang hiển thị %(shown)s dòng đầu trong tổng số %(total)s — h
+PY  OK | Showing the first %s rows — refine filters for the f -> Đang hiển thị %s dòng đầu tiên — hãy lọc bớt để lấy toàn bộ.

@@ -61,33 +61,47 @@ class BiChart(models.Model):
         config = self.config_json or {}
         slots = config.get('slots') or {}
         overrides = {int(k): v for k, v in (grain_overrides or {}).items()}
+        mode = config.get('mode') or 'aggregate'
 
         dimensions = []
-        seen = set()
-        for slot_name in ('x', 'series'):
-            for entry in (slots.get(slot_name) or []):
+        measures = []
+        if mode == 'detail':
+            # Records chart: slots.columns is an ORDERED list of columns and
+            # there are no measures. Grain overrides are meaningless here —
+            # records already carry the real date.
+            seen = set()
+            for entry in (slots.get('columns') or []):
                 field_id = entry.get('field_id')
-                grain = overrides.get(field_id, entry.get('grain'))
-                key = (field_id, grain)
-                if key in seen:
-                    continue  # same field+grain in x and series adds nothing
-                seen.add(key)
-                dimensions.append({'field_id': field_id, 'grain': grain})
-        measures = [{
-            'field_id': entry.get('field_id'),
-            'agg': entry.get('agg'),
-        } for entry in (slots.get('values') or [])]
+                if field_id in seen:
+                    continue  # a column added twice is still one column
+                seen.add(field_id)
+                dimensions.append({'field_id': field_id})
+        else:
+            seen = set()
+            for slot_name in ('x', 'series'):
+                for entry in (slots.get(slot_name) or []):
+                    field_id = entry.get('field_id')
+                    grain = overrides.get(field_id, entry.get('grain'))
+                    key = (field_id, grain)
+                    if key in seen:
+                        continue  # same field+grain in x and series adds nothing
+                    seen.add(key)
+                    dimensions.append({'field_id': field_id, 'grain': grain})
+            measures = [{
+                'field_id': entry.get('field_id'),
+                'agg': entry.get('agg'),
+            } for entry in (slots.get('values') or [])]
 
-        if not measures and self.chart_type != 'table':
-            raise UserError(_(
-                "Chart %s has no measure configured.", self.name))
+            if not measures and self.chart_type != 'table':
+                raise UserError(_(
+                    "Chart %s has no measure configured.", self.name))
 
         filters = list(config.get('filters') or [])
         for extra in (extra_filters or []):
             if extra.get('field_id') and extra.get('op'):
                 filters.append(extra)
 
-        return {
+        request = {
             'dataset_id': self.dataset_id.id,
             'dimensions': dimensions,
             'measures': measures,
@@ -96,6 +110,11 @@ class BiChart(models.Model):
             'limit': config.get('limit') or 500,
             'options': config.get('options') or {},
         }
+        if mode == 'detail':
+            # only set on Records charts, so an aggregate chart's request
+            # (and therefore its cache key) is byte-identical to before
+            request['mode'] = 'detail'
+        return request
 
     def _to_compare_request(self, extra_filters=None):
         """Same query shifted one period back (KPI comparison). Returns None

@@ -2249,3 +2249,74 @@ a no-op.
     unnoticed because every caller used the custom method. Renamed to
     `fetch_result`. When adding a helper, check it against `BaseModel`'s
     method names first. (Analytics-hub follow-up.)
+
+- **§5.137 — `int(ir.config_parameter.get_param(key))` is a silent 0 when the
+    key does not exist, because `get_param` defaults to `False`, not `None`.**
+    biz_bi's export ceiling read
+    `try: cap = int(raw) except (TypeError, ValueError): cap = 20000` — which
+    looks exhaustive and is not: an ABSENT parameter returns `False`,
+    `int(False)` is `0`, no exception fires, and the following `max(1, cap)`
+    turned the 20 000-row export into a **one-row** export. It never showed up
+    as an error; the xlsx simply had one data row and an honest-looking
+    "showing first 1 of N" notice, and the only reason it was caught is that a
+    test asserted an exact row count. The same shape bites any integer setting
+    (`timeout_ms`, page size, retry count) and is the read-side twin of §5.36
+    (which is the write side: a falsy value UNLINKS the parameter, so
+    "configured then cleared" lands you right back here). Rule: treat every
+    falsy read as "not configured" — `int(raw) if raw else DEFAULT` — and pin
+    it with a test that asserts the DEFAULT, not merely a truthy value.
+    (records-table RT-1.)
+
+- **§5.138 — an HTML5 drop is REJECTED outright when `dropEffect` and
+    `effectAllowed` disagree, and the only symptom is that nothing happens.**
+    The Records table accepts two gestures on one target: a new field dragged
+    out of the field well (a *copy*) and a header dragged to reorder (a
+    *move*). `dragstart` set `effectAllowed = "move"` for the header while the
+    shared `dragover` handler set `dropEffect = "copy"`; the browser then
+    silently declines the drop — no `drop` event, no console message, no
+    visual cue. It reads exactly like a broken handler and it was only caught
+    by DRIVING the reorder in a real browser (a unit test on the handler would
+    have passed, because the handler is never called). Fix: set
+    `effectAllowed = "copyMove"` on the drag source and pick the effect per
+    payload in `dragover` —
+    `dataTransfer.dropEffect = [...dataTransfer.types].includes('bi/column') ?
+    'move' : 'copy'` (`dataTransfer.types` IS readable during dragover, only
+    `getData` is blocked). Corollary for evidence packs: the chrome-devtools
+    `drag` helper drives the real CDP drag machinery, so it reproduces this;
+    a hand-dispatched `DragEvent` sequence does NOT (it bypasses the
+    effect negotiation) — so verify drag UIs with the real helper, and use
+    hand-dispatched events only to freeze a mid-drag state for a screenshot.
+    (records-table RT-1.)
+
+- **§5.139 — a plain HTML table inside a GridStack dashboard tile costs
+    super-linear time in the row count; ~50 rows is fine and 500 never
+    finishes.** RT-1 saved a Records chart (one row per booking) and dropped it
+    on a dashboard. Measured on vietuat, same component, same data:
+    **50 rows → 1.8 s**, **500 rows → 133 s**, **1 271 rows → the page never
+    became responsive again** (CDP `Runtime.evaluate` timed out for minutes
+    while `Page.captureScreenshot` still painted, i.e. the thread was pegged,
+    not the renderer). The identical `DataTable` component renders 1 271 rows
+    full-width in Explore instantly, so the cost is the TILE, not the table:
+    the tile grows with its content, GridStack re-lays out the grid, OWL
+    re-renders, the getter re-formats every cell, repeat. Two defences, both
+    cheap: (a) memoise the formatting getter on `(envelope, lang)` so a
+    re-render is not a re-format; (b) give the widget host a `maxRows` render
+    cap (200) with an honest final row stating the overflow — never a silent
+    slice. Generalise: any component that can be dropped into a
+    resize-observed / auto-layout container needs a bound on its rendered
+    node count, and "the query is capped at 5 000" is not that bound. Same
+    family as §5.28 (vis-timeline backgrounds); diagnose the same way — a
+    main-thread block detector, not the network panel. (records-table RT-1.)
+
+- **§5.140 — `xlsxwriter.add_worksheet()` RAISES on a sheet name containing
+    `[ ] : * ? / \`, and a sheet name is usually user input.** Odoo BI names
+    the export sheet after the chart, and a chart called `Q1: Revenue [VN]`
+    would have 500'd `/bi/export/xlsx` — the crash is in workbook
+    construction, so nothing downstream ever runs and the user gets an Odoo
+    error page instead of a file. Excel's rules: those six characters are
+    forbidden, the name is capped at 31 characters, it may not start or end
+    with an apostrophe, and it may not be empty. Sanitise every sheet name
+    from user input (`_sheet_name()` in `biz_bi/controllers/main.py`) and pin
+    it with a unit test — the same applies to `ir.attachment` filenames built
+    from record names, where the offending set is different but the reflex is
+    the same. (records-table RT-1.)

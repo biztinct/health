@@ -1,0 +1,51 @@
+RT-1 — test results on vietuat, verbatim
+========================================
+
+Deploy: conventions §2, db `vietuat`, `-u biz_bi`, `--workers=0`,
+`--http-port=8169`, own logfile, no `--no-http`.
+§5.130 concurrent-run check before every `service stop`:
+`pgrep -c -f '^python3 /odoo/odoo-server/odoo-bin'` → **REMAINING:0** each time.
+
+
+1. Scoped run — the phase's own tests  (/tmp/rt1/scoped3.log, EXIT:0)
+---------------------------------------------------------------------
+
+    2026-08-07 09:11:49,538 2425651 INFO vietuat odoo.tests.stats: biz_bi: 15 tests 4.23s 2394 queries
+    2026-08-07 09:11:49,538 2425651 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 11 tests when loading database 'vietuat'
+
+`--test-tags /biz_bi:TestDetailMode,/biz_bi:TestExportXlsx`.
+HttpCase really executed (§2's "verify the suites ran"):
+`grep -ac "Starting TestExportXlsx"` → **4**, `grep -ac "ERROR: setUpClass"` → **0**.
+
+
+2. Full biz_bi suite  (/tmp/rt1/full3.log, EXIT:1)
+--------------------------------------------------
+
+    2026-08-07 09:12:38,361 2425750 INFO vietuat odoo.tests.stats: biz_bi: 103 tests 15.53s 8455 queries
+    2026-08-07 09:12:38,361 2425750 ERROR vietuat odoo.tests.result: 5 failed, 1 error(s) of 79 tests when loading database 'vietuat'
+
+The six failures are EXACTLY the six documented in
+`analytics-hub-phase3-report.md:207-212`, no more and no others:
+
+    ERROR: TestRls.test_column_mask_null
+    FAIL:  TestPipeline.test_dataset_reads_clean_view
+    FAIL:  TestQueryEngine.test_compare_request_runs
+    FAIL:  TestRls.test_rls_users_never_share_cache
+    FAIL:  TestRls.test_row_rule_filters_rows
+    FAIL:  TestSnapshot.test_snapshot_xlsx_builds
+
+Count arithmetic: the AH-3 baseline was "of 59 tests"; `test_relation_labels`
+(+6, commit e6ae2b40) and `test_ai_coerce` (+3, commit f5a8be33) landed after
+that baseline, and this phase adds 10 → 59 + 6 + 3 + 10 = **78**, plus the
+`test_sheet_name_is_sanitised` added at self-review = **79**. Every biz_bi
+test method was counted by hand against the source to confirm.
+
+
+3. Server health after the final restart
+----------------------------------------
+
+    ss -lntp | grep -c :8069                       -> 1
+    curl -s -o /dev/null -w "HTTP:%{http_code}"
+        localhost:8069/web/login                   -> HTTP:200
+
+(`systemctl is-active` is NOT used as the health check — §5.130b.)

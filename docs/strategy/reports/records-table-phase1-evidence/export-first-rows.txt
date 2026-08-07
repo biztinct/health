@@ -1,0 +1,64 @@
+==============================================================================
+records-export.xlsx — the Excel button in Records mode
+==============================================================================
+Title typed by the user: "RT1 QA: Booking Records [final]".
+Audit row 1576: {"mode":"detail","rows":1271,"capped":false,"format":"xlsx","columns":4}, user 8185, dataset 5.
+
+sheet name  : 'RT1 QA- Booking Records -final-'
+dimensions  : A1:D1272
+freeze_panes: A2
+autofilter  : A1:D1272
+
+rows — value [excel number format]
+------------------------------------------------------------------------------
+Client [General] | Catchment Area [General] | Scheduled Date [General] | Total Price [General]
+Mai B [General] | TPHCM [General] | 2026-04-18 00:00:00 [yyyy-mm-dd] | 160000 [#,##0.00]
+Nguyễ [General] | Hà Nội [General] | 2026-04-26 00:00:00 [yyyy-mm-dd] | 80000 [#,##0.00]
+Trần [General] | TPHCM [General] | 2026-04-24 00:00:00 [yyyy-mm-dd] | 80000 [#,##0.00]
+Trần [General] | TPHCM [General] | 2026-04-25 00:00:00 [yyyy-mm-dd] | 80000 [#,##0.00]
+Nguyễ [General] | Hà Nội [General] | 2026-04-23 00:00:00 [yyyy-mm-dd] | 80000 [#,##0.00]
+An Xu [General] | Hà Nội [General] | 2026-04-08 00:00:00 [yyyy-mm-dd] | 80000 [#,##0.00]
+Vũ Th [General] | Hà Nội [General] | 2026-04-22 00:00:00 [yyyy-mm-dd] | 80000 [#,##0.00]
+Nguyễ [General] | TPHCM [General] | 2026-04-10 00:00:00 [yyyy-mm-dd] | 80000 [#,##0.00]
+Nguyễ [General] | TPHCM [General] | 2026-04-16 00:00:00 [yyyy-mm-dd] | 80000 [#,##0.00]
+Đặng [General] | Hà Nội [General] | 2026-04-12 00:00:00 [yyyy-mm-dd] | 50000 [#,##0.00]
+Trần [General] | TPHCM [General] | 2026-04-08 00:00:00 [yyyy-mm-dd] | 50000 [#,##0.00]
+...
+Client Mar8 | TPHCM | None | None
+
+==============================================================================
+records-export-capped.xlsx — the same button with the cap lowered
+==============================================================================
+Staged with ir.config_parameter biz_bi.export_row_cap = 5 (deleted
+afterwards). The POST body deliberately carried hard_cap=999999 and
+limit=5000; the server ignored both. Audit rows 1349/1350:
+{"mode":"detail","rows":5,"capped":true,"format":"xlsx","columns":1}.
+
+sheet name  : 'Records - Bookings & Service Or'
+dimensions  : A1:A7
+freeze_panes: A2
+autofilter  : A1:A6
+
+rows — value [excel number format]
+------------------------------------------------------------------------------
+Client [General]
+An Xu [General]
+An Xu [General]
+An Xu [General]
+An Xu [General]
+An Xu [General]
+Showing first 5 of 1271 rows — refine filters for the full set. [General]
+
+==============================================================================
+WHY THIS IS THE 'NAMES, NOT IDS' PROOF
+==============================================================================
+'Catchment Area' is bi.field 574, a many2one onto health.catchment.province
+(ids 1 and 2 in the database). The pre-existing GET export wrote
+str(value) — i.e. "1" / "2". Both files above carry "TPHCM" / "Hà Nội",
+because both routes now build the workbook from the POST-label envelope
+(engine.run -> _attach_relation_labels) and _write_cell looks the value up
+in column['value_labels'] before anything else.
+
+'Scheduled Date' is a real Excel date (num_format yyyy-mm-dd), not a string,
+and 'Total Price' is a real number (#,##0.00) — so sorting and SUM() work in
+Excel without touching the file.
