@@ -279,16 +279,16 @@ const SCREENS = {
       </div>
       <div class="grid g6" style="margin-bottom:var(--sp4)">${cards}</div>
       <div class="grid g2">
-        <div class="panel"><h3>${ic("pie")}${esc(tx(B("Contact Pipeline · this month", "Quy trình liên hệ · tháng này")))}</h3>
+        <div class="panel" data-a="db-pipeline"><h3>${ic("pie")}${esc(tx(B("Contact Pipeline · this month", "Quy trình liên hệ · tháng này")))}</h3>
           <div class="stack">${stack}</div><div class="legend">${leg}</div>
           <p style="font-size:12px;color:var(--muted);margin:var(--sp3) 0 0">${esc(tx(B(
             `${N(m.total)} enquiries = ${N(m.spam)} spam + ${N(m.real)} real; ${N(m.real)} = ${N(m.booking)} booked + ${N(m.lead)} leads + ${N(m.lost)} lost.`,
             `${N(m.total)} yêu cầu = ${N(m.spam)} thư rác + ${N(m.real)} thật; ${N(m.real)} = ${N(m.booking)} đã đặt lịch + ${N(m.lead)} KHTN + ${N(m.lost)} mất cơ hội.`)))}</p>
         </div>
-        <div class="panel"><h3>${ic("bar-chart")}${esc(tx(B("Source Channels · this month", "Các kênh nguồn · tháng này")))}</h3>
+        <div class="panel" data-a="db-channels"><h3>${ic("bar-chart")}${esc(tx(B("Source Channels · this month", "Các kênh nguồn · tháng này")))}</h3>
           <div class="hbars">${bars}</div></div>
       </div>
-      <div class="panel"><h3>${ic("clock")}${esc(tx(B("Recent Contacts", "Liên hệ gần đây")))}</h3>
+      <div class="panel" data-a="db-recent"><h3>${ic("clock")}${esc(tx(B("Recent Contacts", "Liên hệ gần đây")))}</h3>
         <div class="rows">
           ${recentRows()}
         </div>
@@ -442,7 +442,7 @@ const SCREENS = {
       <tr><td>${esc(typeof a.c === "string" ? a.c : tx(a.c))}</td>
         <td>${esc(typeof a.src === "string" ? a.src : tx(a.src))}</td>
         <td>pkgdvietuc.com/dich-vu/…</td><td class="n">${N(a.n)}</td></tr>`).join("");
-    return `<div class="panel">
+    return `<div class="panel" data-a="tp-table">
         <h3>${ic("crosshair")}${esc(tx(B("Website arrivals · this month", "Lượt đến từ website · tháng này")))}
           <span class="chip a" style="margin-left:auto" data-a="tp-unmatched">${ic("alert-triangle")}${esc(T("unmatched"))} · 4</span></h3>
         <div class="tblwrap"><table class="tbl">
