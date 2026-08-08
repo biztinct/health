@@ -483,7 +483,7 @@
     <record id="intent_consent" model="learn.intent">
         <field name="key">consent</field>
         <field name="label">The daughter is asking about her mother's wound — can I answer?</field>
-        <field name="screens">carecommand,contacts</field>
+        <field name="screens">carecommand,contacts,ops_family</field>
         <field name="dynamic">none</field>
         <field name="show_me">cc-consent</field>
         <field name="practice_key">m1</field>
@@ -1691,6 +1691,519 @@
         <field name="capability">any</field>
         <field name="kind">source</field>
         <field name="body">This tutorial's worked example only. Your real prices live in the price list, which I do not read.</field>
+    </record>
+
+    <record id="intent_ops_unassigned" model="learn.intent">
+        <field name="key">ops_unassigned</field>
+        <field name="label">What do I do about an unassigned booking?</field>
+        <field name="screens">ops_dashboard,ops_bookings,ops_schedule</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">od-unassigned</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_ops_unassigned_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="text">unassigned</field>
+    </record>
+
+    <record id="intent_ops_unassigned_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="text">nobody assigned</field>
+    </record>
+
+    <record id="intent_ops_unassigned_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="text">no nurse</field>
+    </record>
+
+    <record id="intent_ops_unassigned_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="text">chưa phân công</field>
+    </record>
+
+    <record id="intent_ops_unassigned_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="text">chưa có ai</field>
+    </record>
+
+    <record id="intent_ops_unassigned_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="text">What do I do about an unassigned booking?</field>
+    </record>
+
+    <record id="intent_ops_unassigned_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="text">Lịch hẹn chưa phân công thì xử lý thế nào?</field>
+    </record>
+
+    <record id="intent_ops_unassigned_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Assign somebody to it, and do it while it is still a scheduling task rather than a phone call. Unassigned in the morning is administration; unassigned in the afternoon is a family wondering where the nurse is.</field>
+    </record>
+
+    <record id="intent_ops_unassigned_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_ops_unassigned_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_ops_unassigned_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Open the booking from the Unassigned list.</field>
+        <field name="anchor">od-unassigned-list</field>
+    </record>
+
+    <record id="intent_ops_unassigned_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_ops_unassigned_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Check who has room on the Staff Schedule for that time.</field>
+        <field name="anchor">os-grid</field>
+    </record>
+
+    <record id="intent_ops_unassigned_b020_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_ops_unassigned_b020"/>
+        <field name="sequence">30</field>
+        <field name="text">Check the districts on either side before you commit.</field>
+        <field name="anchor">orf-check</field>
+    </record>
+
+    <record id="intent_ops_unassigned_b020_s03" model="learn.intent.step">
+        <field name="block_id" ref="intent_ops_unassigned_b020"/>
+        <field name="sequence">40</field>
+        <field name="text">Assign.</field>
+        <field name="anchor">ob-assign</field>
+    </record>
+
+    <record id="intent_ops_unassigned_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Do not leave it because it is not urgent yet. The whole cost of this task is measured in how late you start it.</field>
+    </record>
+
+    <record id="intent_ops_unassigned_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_unassigned"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The Operations Dashboard's unassigned count and the booking list behind it.</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule" model="learn.intent">
+        <field name="key">ops_cancel_vs_reschedule</field>
+        <field name="label">Should I cancel this or reschedule it?</field>
+        <field name="screens">ops_bookings</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ob-cancel</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="text">cancel</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="text">reschedule</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="text">move the visit</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="text">hủy</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="text">đổi lịch</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="text">dời lịch</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="text">Should I cancel this or reschedule it?</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="text">Nên hủy hay đổi lịch?</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Reschedule unless the visit genuinely is not needed. Reschedule keeps the booking, the client link and the revenue and simply moves them; cancel ends all three and the family has to start again from an enquiry.</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">A cancelled booking is not un-cancelled. A replacement is a new booking, and the patient has already been told nobody is coming.</field>
+    </record>
+
+    <record id="intent_ops_cancel_vs_reschedule_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_cancel_vs_reschedule"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The booking actions on the Bookings screen.</field>
+    </record>
+
+    <record id="intent_ops_leave" model="learn.intent">
+        <field name="key">ops_leave</field>
+        <field name="label">If I approve leave, what happens to that day's visits?</field>
+        <field name="screens">ops_timeoff,ops_schedule</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">os-timeoff</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_ops_leave_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">approve leave</field>
+    </record>
+
+    <record id="intent_ops_leave_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">time off</field>
+    </record>
+
+    <record id="intent_ops_leave_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">sick</field>
+    </record>
+
+    <record id="intent_ops_leave_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">holiday</field>
+    </record>
+
+    <record id="intent_ops_leave_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">duyệt nghỉ</field>
+    </record>
+
+    <record id="intent_ops_leave_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">nghỉ phép</field>
+    </record>
+
+    <record id="intent_ops_leave_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">báo ốm</field>
+    </record>
+
+    <record id="intent_ops_leave_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">If I approve leave, what happens to that day's visits?</field>
+    </record>
+
+    <record id="intent_ops_leave_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="text">Nếu tôi duyệt nghỉ, các lượt của ngày đó ra sao?</field>
+    </record>
+
+    <record id="intent_ops_leave_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Nothing happens to them. Approving makes the person unavailable and leaves every visit exactly where it is, still on their row, looking completely normal.</field>
+    </record>
+
+    <record id="intent_ops_leave_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_ops_leave_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_ops_leave_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Open the Staff Schedule for every date being requested.</field>
+        <field name="anchor">os-grid</field>
+    </record>
+
+    <record id="intent_ops_leave_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_ops_leave_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Reassign the visits that fall on those dates.</field>
+        <field name="anchor">ob-assign</field>
+    </record>
+
+    <record id="intent_ops_leave_b020_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_ops_leave_b020"/>
+        <field name="sequence">30</field>
+        <field name="text">Then approve, once nothing depends on that person.</field>
+        <field name="anchor">ot-approve</field>
+    </record>
+
+    <record id="intent_ops_leave_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Approving first is the single most common way a fully-booked day becomes an unstaffed one, precisely because nothing on any screen complains.</field>
+    </record>
+
+    <record id="intent_ops_leave_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_leave"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The approval flow on Time Off, and the schedule it does not touch.</field>
+    </record>
+
+    <record id="intent_ops_capacity" model="learn.intent">
+        <field name="key">ops_capacity</field>
+        <field name="label">Who actually has room today?</field>
+        <field name="screens">ops_workload,ops_schedule,ops_dashboard,ops_routes</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ow-bars</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_ops_capacity_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">workload</field>
+    </record>
+
+    <record id="intent_ops_capacity_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">capacity</field>
+    </record>
+
+    <record id="intent_ops_capacity_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">who is free</field>
+    </record>
+
+    <record id="intent_ops_capacity_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">fair</field>
+    </record>
+
+    <record id="intent_ops_capacity_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">khối lượng</field>
+    </record>
+
+    <record id="intent_ops_capacity_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">năng lực</field>
+    </record>
+
+    <record id="intent_ops_capacity_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">ai đang rảnh</field>
+    </record>
+
+    <record id="intent_ops_capacity_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">Who actually has room today?</field>
+    </record>
+
+    <record id="intent_ops_capacity_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="text">Hôm nay ai thật sự còn chỗ trống?</field>
+    </record>
+
+    <record id="intent_ops_capacity_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">The workload bars answer capacity, not proximity. Somebody at 1 of 6 has room on paper; whether they can reach a visit in another district at that time is a different question with a different screen.</field>
+    </record>
+
+    <record id="intent_ops_capacity_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Equal counts across unequal distances is not fairness — it is just a tidier chart. Read the bars next to the districts.</field>
+    </record>
+
+    <record id="intent_ops_capacity_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_capacity"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Load against capacity on Workload, and the district column on Bookings.</field>
+    </record>
+
+    <record id="intent_ops_cash" model="learn.intent">
+        <field name="key">ops_cash</field>
+        <field name="label">Who reconciles the cash, and what if it does not balance?</field>
+        <field name="screens">ops_collections</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ocl-list</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_ops_cash_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">cash</field>
+    </record>
+
+    <record id="intent_ops_cash_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">collection</field>
+    </record>
+
+    <record id="intent_ops_cash_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">reconcile</field>
+    </record>
+
+    <record id="intent_ops_cash_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">does not balance</field>
+    </record>
+
+    <record id="intent_ops_cash_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">tiền mặt</field>
+    </record>
+
+    <record id="intent_ops_cash_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">đối soát</field>
+    </record>
+
+    <record id="intent_ops_cash_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">không khớp</field>
+    </record>
+
+    <record id="intent_ops_cash_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">Who reconciles the cash, and what if it does not balance?</field>
+    </record>
+
+    <record id="intent_ops_cash_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="text">Ai đối soát tiền mặt, và nếu không khớp thì sao?</field>
+    </record>
+
+    <record id="intent_ops_cash_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Operations does, at end of shift. Finance receives one already-balanced figure and never chases an individual nurse — if it does not balance, it is settled here first.</field>
+    </record>
+
+    <record id="intent_ops_cash_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Sending an unbalanced figure onward to be sorted out is the one thing this screen exists to prevent.</field>
+    </record>
+
+    <record id="intent_ops_cash_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_cash"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The cash held per member of staff, against today's visits.</field>
+    </record>
+
+    <record id="intent_ops_no_access" model="learn.intent">
+        <field name="key">ops_no_access</field>
+        <field name="label">Why can't I see the Operations screens?</field>
+        <field name="screens">*</field>
+        <field name="dynamic">none</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_ops_no_access_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="text">why can't I see bookings</field>
+    </record>
+
+    <record id="intent_ops_no_access_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="text">no operations menu</field>
+    </record>
+
+    <record id="intent_ops_no_access_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="text">cannot open schedule</field>
+    </record>
+
+    <record id="intent_ops_no_access_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="text">không thấy lịch hẹn</field>
+    </record>
+
+    <record id="intent_ops_no_access_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="text">không mở được lịch nhân sự</field>
+    </record>
+
+    <record id="intent_ops_no_access_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="text">Why can't I see the Operations screens?</field>
+    </record>
+
+    <record id="intent_ops_no_access_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="text">Vì sao tôi không thấy các màn hình Vận hành?</field>
+    </record>
+
+    <record id="intent_ops_no_access_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">refusal</field>
+        <field name="body">Every Operations screen except Clients is gated to the Operations Manager and Owner roles in the database. A nurse or a CRM operator does not see them at all — that is the design, not a fault.</field>
+    </record>
+
+    <record id="intent_ops_no_access_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">who</field>
+        <field name="body">The {{roleOpsManager}}, and the Owner.</field>
+    </record>
+
+    <record id="intent_ops_no_access_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">how</field>
+        <field name="body">Ask {{accessRequestPath}}. If what you actually need is one answer rather than the screen — where a visit is, who is going — the person holding that role can tell you in a sentence.</field>
+    </record>
+
+    <record id="intent_ops_no_access_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_ops_no_access"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The role gate on each Operations sidebar leaf.</field>
     </record>
 
 </odoo>

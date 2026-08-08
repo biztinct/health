@@ -450,7 +450,9 @@ def gen_screens(data, tr):
                     if s['id'] == key:
                         station = s
         name = en_of(station['title']) if station else key
-        suggest = data['qaSuggest'].get(key) or []
+        all_suggest = dict(data['qaSuggest'])
+        all_suggest.update(data.get('opsQaSuggest') or {})
+        suggest = all_suggest.get(key) or []
         doc.rec('learn.screen', xmlid, [
             ('key', key),
             ('sequence', (i + 1) * 10),
@@ -490,7 +492,7 @@ def gen_intents(data, tr):
     doc = Xml('Coach intents. Every answer the Coach can give is a block here; '
               'there is no path from a question to the screen that skips this '
               'file, which is what lets it promise never to invent a fact.')
-    for intent in data['qa']:
+    for intent in list(data['qa']) + list(data.get('opsQa') or []):
         key = intent['id']
         xmlid = _intent_xmlid(key)
         screens = intent.get('screens')
@@ -670,7 +672,9 @@ def gen_columns(data, tr):
     doc = Xml('Column glossary. Written, not derived from ir.model.fields: '
               'measured on this database, only 126 of 239 crm.lead fields carry '
               'any help and the one a learner actually asked about has none.')
-    for screen, cols in (data.get('columns') or {}).items():
+    all_cols = dict(data.get('columns') or {})
+    all_cols.update(data.get('opsColumns') or {})
+    for screen, cols in all_cols.items():
         for i, (key, label, body) in enumerate(cols):
             xmlid = 'col_%s_%s' % (
                 re.sub(r'[^a-z0-9]+', '_', screen.lower()).strip('_'),

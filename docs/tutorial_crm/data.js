@@ -1702,6 +1702,209 @@ const OPS_M1_STEPS = [
   },
 ];
 
+/* OPS columns. Same rule as the CRM set: written, not derived — one honest
+   sentence saying what it is for and, where it matters, what it is not. */
+const OPS_COLUMNS = {
+  ops_bookings: [
+    ["time", B("Visit time", "Giờ hẹn"),
+      B("When the visit is promised for. The list is ordered by this, not by urgency — the row that needs you is rarely at the top.",
+        "Giờ đã hẹn cho lượt thăm khám. Danh sách sắp theo cột này, không theo mức khẩn — dòng cần bạn xử lý hiếm khi nằm ở trên cùng.")],
+    ["patient", B("Patient", "Bệnh nhân"),
+      B("Who the visit is for. This is the client record, not the person who rang to book it — in home care those are often different people.",
+        "Lượt thăm khám dành cho ai. Đây là hồ sơ khách hàng, không phải người đã gọi đặt lịch — trong chăm sóc tại nhà, đó thường là hai người khác nhau.")],
+    ["service", B("Service", "Dịch vụ"),
+      B("What is being done, which decides how long it takes and who is qualified to do it.",
+        "Việc sẽ được thực hiện, quyết định thời lượng và ai đủ điều kiện làm.")],
+    ["district", B("District", "Quận"),
+      B("Where the visit is. The single most useful column when reassigning, and the one the calendar cannot see.",
+        "Lượt thăm khám ở đâu. Đây là cột hữu ích nhất khi phân công lại, và là thứ lịch không nhìn thấy được.")],
+    ["assigned", B("Nurse assigned", "Điều dưỡng phụ trách"),
+      B("Who is going. Empty means nobody is — and empty in the afternoon is a phone call from a family.",
+        "Ai sẽ đi. Để trống nghĩa là chưa có ai — và để trống vào buổi chiều là một cuộc gọi từ gia đình.")],
+    ["state", B("Status", "Trạng thái"),
+      B("New Booking, Assigned, In Progress, Completed, Cancelled or Closed. Assigned is a plan; only the nurse turns it into In Progress by starting the service.",
+        "Lịch hẹn mới, Đã phân công, Đang thực hiện, Hoàn thành, Đã hủy hoặc Đã đóng. Đã phân công là kế hoạch; chỉ điều dưỡng mới chuyển nó thành Đang thực hiện bằng cách bắt đầu dịch vụ.")],
+  ],
+  ops_schedule: [
+    ["person", B("Person", "Nhân sự"),
+      B("One row per member of staff on shift today. Somebody with no row is not working today at all.",
+        "Mỗi dòng là một nhân viên trong ca hôm nay. Người không có dòng nghĩa là hôm nay không đi làm.")],
+    ["load", B("Load", "Khối lượng"),
+      B("Visits assigned against capacity for the day, as 5/6. Capacity is visits, not hours, so it says nothing about distance.",
+        "Số lượt được phân công so với năng lực trong ngày, dạng 5/6. Năng lực tính theo lượt, không theo giờ, nên nó không nói gì về khoảng cách.")],
+    ["chips", B("Visit chips", "Các lượt trong ngày"),
+      B("Each visit on that person's day with its time and district. The gaps between them are travel, not free time.",
+        "Từng lượt trong ngày của người đó kèm giờ và quận. Khoảng trống giữa chúng là thời gian di chuyển, không phải thời gian rảnh.")],
+    ["timeoff", B("Time off", "Nghỉ phép"),
+      B("Approved and requested leave touching this week. Approving one does not move the visits already booked for those days.",
+        "Nghỉ phép đã duyệt và đang chờ duyệt ảnh hưởng tuần này. Việc duyệt không dời các lượt đã đặt cho những ngày đó.")],
+  ],
+  ops_dashboard: [
+    ["unassigned", B("Unassigned", "Chưa phân công"),
+      B("Bookings with nobody on them. Five of the six cards here are reassurance; this is the one that becomes a phone call, and the only one you can still fix today.",
+        "Các lịch hẹn chưa có ai nhận. Năm trong sáu thẻ ở đây chỉ để yên tâm; đây là thẻ sẽ biến thành cuộc gọi, và là thẻ duy nhất bạn còn kịp xử lý hôm nay.")],
+    ["inprogress", B("In progress", "Đang thực hiện"),
+      B("Visits a nurse has actually started. If this stays at zero through the morning, the day has not begun whatever the schedule says.",
+        "Các lượt mà điều dưỡng đã thật sự bắt đầu. Nếu con số này vẫn là 0 suốt buổi sáng, thì ngày làm việc chưa bắt đầu, dù lịch có ghi gì đi nữa.")],
+    ["completed", B("Completed", "Đã hoàn thành"),
+      B("Visits finished today. Read it against the clock: two at 11:00 is normal, two at 16:00 means the afternoon has not started.",
+        "Các lượt đã xong hôm nay. Hãy đọc cùng với giờ: hai lượt lúc 11:00 là bình thường, hai lượt lúc 16:00 nghĩa là buổi chiều chưa bắt đầu.")],
+    ["cancelled", B("Cancelled", "Đã hủy"),
+      B("Cancelled today. Not a neutral number — each one consumed a slot somebody else could have had, and has a reason worth reading.",
+        "Số lượt hủy hôm nay. Không phải con số trung tính — mỗi lượt đã chiếm một khung giờ mà người khác có thể dùng, và có lý do đáng đọc.")],
+  ],
+  ops_workload: [
+    ["capacity", B("Capacity", "Năng lực"),
+      B("How many visits this person can do in a day. It counts visits, so five inside one district and five across the city look identical here and are not.",
+        "Số lượt người này có thể làm trong một ngày. Nó đếm số lượt, nên năm lượt trong cùng một quận và năm lượt rải khắp thành phố trông giống nhau ở đây nhưng không giống nhau.")],
+  ],
+  ops_timeoff: [
+    ["dates", B("Dates", "Ngày nghỉ"),
+      B("The days the person will be away. Open the Staff Schedule for every one of them before approving, not after.",
+        "Những ngày người đó vắng mặt. Hãy mở Lịch nhân sự cho từng ngày TRƯỚC khi duyệt, không phải sau.")],
+    ["approval", B("State", "Trạng thái"),
+      B("Requested or Approved. Approving makes the person unavailable — it does not reassign a single visit already booked for those dates.",
+        "Chờ duyệt hoặc Đã duyệt. Việc duyệt khiến người đó không còn khả dụng — nhưng không phân công lại bất kỳ lượt nào đã đặt cho những ngày đó.")],
+  ],
+  ops_collections: [
+    ["amount", B("Amount held", "Số tiền đang giữ"),
+      B("Cash this person is carrying from today's visits. It exists physically and has to end up matching the visits that produced it.",
+        "Tiền mặt người này đang giữ từ các lượt hôm nay. Khoản này tồn tại dưới dạng vật lý và cuối cùng phải khớp với các lượt đã tạo ra nó.")],
+    ["total", B("Total", "Tổng"),
+      B("The figure Operations reconciles at end of shift and hands to Finance. Finance receives it already balanced and never chases an individual nurse.",
+        "Con số mà bộ phận Vận hành đối soát cuối ca rồi chuyển cho Tài chính. Tài chính nhận về khi đã khớp và không bao giờ truy một điều dưỡng cụ thể.")],
+  ],
+  ops_routes: [
+    ["travel", B("Travel time", "Thời gian di chuyển"),
+      B("How long the journey between two consecutive visits takes. It knows distance; it does not know weather, lifts, or how long a family keeps you at the door.",
+        "Quãng đường giữa hai lượt liên tiếp mất bao lâu. Nó biết khoảng cách; nó không biết thời tiết, thang máy, hay việc gia đình giữ bạn lại ở cửa bao lâu.")],
+    ["verdict", B("Verdict", "Kết luận"),
+      B("Whether the leg fits. It WARNS and still lets you save — a manager on the phone often knows something the map does not.",
+        "Chặng đó có vừa hay không. Nó CẢNH BÁO nhưng vẫn cho phép lưu — người quản lý đang gọi điện thường biết điều mà bản đồ không biết.")],
+  ],
+  ops_family: [
+    ["sender", B("From", "Người gửi"),
+      B("The family member writing, and their relationship to the patient. Relationship is not consent — what you may tell them is a recorded permission.",
+        "Người nhà đang nhắn, và quan hệ của họ với bệnh nhân. Quan hệ không phải là đồng thuận — việc bạn được nói gì với họ là một quyền đã ghi nhận.")],
+  ],
+  ops_clients: [
+    ["client", B("Client", "Khách hàng"),
+      B("The patient record a visit is booked against — the only place their consents, history and balance live together.",
+        "Hồ sơ bệnh nhân mà lịch hẹn được đặt cho — nơi duy nhất lưu cùng nhau đồng thuận, lịch sử và công nợ của họ.")],
+  ],
+};
+
+/* OPS coach intents. Weighted towards "why can't I…", because the gating here
+   is tight and most people who ask are people who cannot open the screen. */
+const OPS_QA = [
+  {
+    id: "ops_unassigned", screens: ["ops_dashboard", "ops_bookings", "ops_schedule"],
+    match: ["unassigned", "nobody assigned", "no nurse", "chưa phân công", "chưa có ai"],
+    label: B("What do I do about an unassigned booking?", "Lịch hẹn chưa phân công thì xử lý thế nào?"),
+    blocks: [
+      { k: "p", v: B("Assign somebody to it, and do it while it is still a scheduling task rather than a phone call. Unassigned in the morning is administration; unassigned in the afternoon is a family wondering where the nurse is.",
+                     "Hãy phân công người thực hiện, và làm khi nó còn là việc sắp xếp chứ chưa thành cuộc gọi. Chưa phân công vào buổi sáng là việc hành chính; chưa phân công vào buổi chiều là một gia đình đang chờ không biết điều dưỡng ở đâu.") },
+      { k: "steps", v: [
+        { t: B("Open the booking from the Unassigned list.", "Mở lịch hẹn từ danh sách Chưa phân công."), a: "od-unassigned-list" },
+        { t: B("Check who has room on the Staff Schedule for that time.", "Xem ai còn chỗ trống vào giờ đó trên Lịch nhân sự."), a: "os-grid" },
+        { t: B("Check the districts on either side before you commit.", "Kiểm tra quận ở hai phía trước khi chốt."), a: "orf-check" },
+        { t: B("Assign.", "Phân công."), a: "ob-assign" },
+      ] },
+      { k: "warn", v: B("Do not leave it because it is not urgent yet. The whole cost of this task is measured in how late you start it.",
+                        "Đừng để đó chỉ vì chưa gấp. Toàn bộ cái giá của việc này nằm ở chỗ bạn bắt đầu muộn đến đâu.") },
+      { k: "source", v: B("The Operations Dashboard's unassigned count and the booking list behind it.",
+                          "Số Chưa phân công trên Bảng điều hành và danh sách lịch hẹn phía sau nó.") },
+    ],
+    showMe: ["od-unassigned"],
+  },
+  {
+    id: "ops_cancel_vs_reschedule", screens: ["ops_bookings"],
+    match: ["cancel", "reschedule", "move the visit", "hủy", "đổi lịch", "dời lịch"],
+    label: B("Should I cancel this or reschedule it?", "Nên hủy hay đổi lịch?"),
+    blocks: [
+      { k: "p", v: B("Reschedule unless the visit genuinely is not needed. Reschedule keeps the booking, the client link and the revenue and simply moves them; cancel ends all three and the family has to start again from an enquiry.",
+                     "Hãy đổi lịch trừ khi lượt thăm khám thật sự không còn cần thiết. Đổi lịch giữ lại lịch hẹn, liên kết khách hàng và doanh thu, chỉ chuyển sang giờ khác; hủy sẽ kết thúc cả ba và gia đình phải bắt đầu lại từ một yêu cầu mới.") },
+      { k: "warn", v: B("A cancelled booking is not un-cancelled. A replacement is a new booking, and the patient has already been told nobody is coming.",
+                        "Một lịch hẹn đã hủy không thể phục hồi. Thay thế nghĩa là một lịch hẹn mới, và bệnh nhân thì đã được báo là không có ai tới.") },
+      { k: "source", v: B("The booking actions on the Bookings screen.", "Các thao tác trên màn hình Lịch hẹn.") },
+    ],
+    showMe: ["ob-cancel"],
+  },
+  {
+    id: "ops_leave", screens: ["ops_timeoff", "ops_schedule"],
+    match: ["approve leave", "time off", "sick", "holiday", "duyệt nghỉ", "nghỉ phép", "báo ốm"],
+    label: B("If I approve leave, what happens to that day's visits?", "Nếu tôi duyệt nghỉ, các lượt của ngày đó ra sao?"),
+    blocks: [
+      { k: "p", v: B("Nothing happens to them. Approving makes the person unavailable and leaves every visit exactly where it is, still on their row, looking completely normal.",
+                     "Không có gì xảy ra với chúng. Việc duyệt khiến người đó không còn khả dụng nhưng để nguyên mọi lượt ở đúng chỗ cũ, vẫn nằm trên dòng của họ và trông hoàn toàn bình thường.") },
+      { k: "steps", v: [
+        { t: B("Open the Staff Schedule for every date being requested.", "Mở Lịch nhân sự cho từng ngày được xin nghỉ."), a: "os-grid" },
+        { t: B("Reassign the visits that fall on those dates.", "Phân công lại các lượt rơi vào những ngày đó."), a: "ob-assign" },
+        { t: B("Then approve, once nothing depends on that person.", "Sau đó mới duyệt, khi không còn gì phụ thuộc vào người đó."), a: "ot-approve" },
+      ] },
+      { k: "warn", v: B("Approving first is the single most common way a fully-booked day becomes an unstaffed one, precisely because nothing on any screen complains.",
+                        "Duyệt trước là cách phổ biến nhất khiến một ngày kín lịch trở thành ngày không có người, đúng vì không màn hình nào lên tiếng phàn nàn.") },
+      { k: "source", v: B("The approval flow on Time Off, and the schedule it does not touch.",
+                          "Luồng duyệt trên màn hình Nghỉ phép, và bảng phân công mà nó không đụng tới.") },
+    ],
+    showMe: ["os-timeoff"],
+  },
+  {
+    id: "ops_capacity", screens: ["ops_workload", "ops_schedule", "ops_dashboard", "ops_routes"],
+    match: ["workload", "capacity", "who is free", "fair", "khối lượng", "năng lực", "ai đang rảnh"],
+    label: B("Who actually has room today?", "Hôm nay ai thật sự còn chỗ trống?"),
+    blocks: [
+      { k: "p", v: B("The workload bars answer capacity, not proximity. Somebody at 1 of 6 has room on paper; whether they can reach a visit in another district at that time is a different question with a different screen.",
+                     "Các thanh khối lượng trả lời về năng lực, không phải khoảng cách. Người ở mức 1/6 còn chỗ trên giấy tờ; còn việc họ có tới kịp một lượt ở quận khác vào giờ đó hay không là câu hỏi khác, ở màn hình khác.") },
+      { k: "warn", v: B("Equal counts across unequal distances is not fairness — it is just a tidier chart. Read the bars next to the districts.",
+                        "Số lượt bằng nhau trên những quãng đường không bằng nhau không phải là công bằng — đó chỉ là một biểu đồ trông gọn hơn. Hãy đọc các thanh cùng với thông tin quận.") },
+      { k: "source", v: B("Load against capacity on Workload, and the district column on Bookings.",
+                          "Khối lượng so với năng lực trên màn hình Khối lượng công việc, và cột Quận trên màn hình Lịch hẹn.") },
+    ],
+    showMe: ["ow-bars"],
+  },
+  {
+    id: "ops_cash", screens: ["ops_collections"],
+    match: ["cash", "collection", "reconcile", "does not balance", "tiền mặt", "đối soát", "không khớp"],
+    label: B("Who reconciles the cash, and what if it does not balance?", "Ai đối soát tiền mặt, và nếu không khớp thì sao?"),
+    blocks: [
+      { k: "p", v: B("Operations does, at end of shift. Finance receives one already-balanced figure and never chases an individual nurse — if it does not balance, it is settled here first.",
+                     "Bộ phận Vận hành, vào cuối ca. Tài chính nhận về một con số đã khớp và không bao giờ truy một điều dưỡng cụ thể — nếu không khớp, việc đó được xử lý ở đây trước.") },
+      { k: "warn", v: B("Sending an unbalanced figure onward to be sorted out is the one thing this screen exists to prevent.",
+                        "Chuyển tiếp một con số chưa khớp để người khác xử lý chính là điều mà màn hình này sinh ra để ngăn chặn.") },
+      { k: "source", v: B("The cash held per member of staff, against today's visits.",
+                          "Số tiền mặt từng nhân viên đang giữ, đối chiếu với các lượt hôm nay.") },
+    ],
+    showMe: ["ocl-list"],
+  },
+  {
+    id: "ops_no_access", screens: "*",
+    match: ["why can't I see bookings", "no operations menu", "cannot open schedule",
+            "không thấy lịch hẹn", "không mở được lịch nhân sự"],
+    label: B("Why can't I see the Operations screens?", "Vì sao tôi không thấy các màn hình Vận hành?"),
+    blocks: [
+      { k: "refusal", v: B("Every Operations screen except Clients is gated to the Operations Manager and Owner roles in the database. A nurse or a CRM operator does not see them at all — that is the design, not a fault.",
+                           "Mọi màn hình Vận hành trừ Khách hàng đều được phân quyền cho vai trò Quản lý vận hành và Chủ sở hữu trong cơ sở dữ liệu. Điều dưỡng hay nhân viên CRM hoàn toàn không thấy chúng — đó là thiết kế, không phải lỗi.") },
+      { k: "who", v: B("The {{roleOpsManager}}, and the Owner.", "{{roleOpsManager}}, và Chủ sở hữu.") },
+      { k: "how", v: B("Ask {{accessRequestPath}}. If what you actually need is one answer rather than the screen — where a visit is, who is going — the person holding that role can tell you in a sentence.",
+                       "Hãy hỏi {{accessRequestPath}}. Nếu điều bạn thật sự cần chỉ là một câu trả lời chứ không phải cả màn hình — lượt thăm khám ở đâu, ai sẽ đi — thì người giữ vai trò đó có thể nói cho bạn trong một câu.") },
+      { k: "source", v: B("The role gate on each Operations sidebar leaf.", "Phân quyền vai trò trên từng mục Vận hành trong thanh bên.") },
+    ],
+  },
+];
+
+const OPS_QA_SUGGEST = {
+  ops_dashboard: ["ops_unassigned", "ops_capacity", "whatpage", "whatnext"],
+  ops_bookings: ["ops_cancel_vs_reschedule", "ops_unassigned", "safeactions", "whatpage"],
+  ops_schedule: ["ops_leave", "ops_capacity", "ops_unassigned", "whatpage"],
+  ops_workload: ["ops_capacity", "whatpage", "whatnext"],
+  ops_timeoff: ["ops_leave", "whatpage", "whatnext"],
+  ops_collections: ["ops_cash", "whatpage", "whatnext"],
+  ops_routes: ["ops_capacity", "whatpage", "whatnext"],
+  ops_family: ["consent", "whatpage", "whatnext"],
+  ops_clients: ["whatpage", "whatnext"],
+};
+
 /* OPS screen blurbs — what the Coach says it is grounded on. */
 const OPS_SCREEN_CTX = {
   ops_dashboard: B("The day in six numbers for one catchment area, with the unassigned bookings listed underneath.",
@@ -2215,7 +2418,7 @@ const QA = [
     showMe: ["cc-junk"],
   },
   {
-    id: "consent", screens: ["carecommand", "contacts"],
+    id: "consent", screens: ["carecommand", "contacts", "ops_family"],
     match: ["consent", "family member", "daughter", "can i tell", "đồng thuận", "người nhà", "con gái", "được nói không"],
     label: B("The daughter is asking about her mother's wound — can I answer?", "Người con gái hỏi về vết thương của mẹ — tôi trả lời được không?"),
     blocks: [

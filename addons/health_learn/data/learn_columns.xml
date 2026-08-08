@@ -285,4 +285,188 @@
         <field name="body">How many arrivals this campaign produced. It is a volume, not an outcome — whether they became bookings is on Lead Analysis.</field>
     </record>
 
+    <record id="col_ops_bookings_time" model="learn.column">
+        <field name="screen">ops_bookings</field>
+        <field name="key">time</field>
+        <field name="sequence">10</field>
+        <field name="label">Visit time</field>
+        <field name="body">When the visit is promised for. The list is ordered by this, not by urgency — the row that needs you is rarely at the top.</field>
+    </record>
+
+    <record id="col_ops_bookings_patient" model="learn.column">
+        <field name="screen">ops_bookings</field>
+        <field name="key">patient</field>
+        <field name="sequence">20</field>
+        <field name="label">Patient</field>
+        <field name="body">Who the visit is for. This is the client record, not the person who rang to book it — in home care those are often different people.</field>
+    </record>
+
+    <record id="col_ops_bookings_service" model="learn.column">
+        <field name="screen">ops_bookings</field>
+        <field name="key">service</field>
+        <field name="sequence">30</field>
+        <field name="label">Service</field>
+        <field name="body">What is being done, which decides how long it takes and who is qualified to do it.</field>
+    </record>
+
+    <record id="col_ops_bookings_district" model="learn.column">
+        <field name="screen">ops_bookings</field>
+        <field name="key">district</field>
+        <field name="sequence">40</field>
+        <field name="label">District</field>
+        <field name="body">Where the visit is. The single most useful column when reassigning, and the one the calendar cannot see.</field>
+    </record>
+
+    <record id="col_ops_bookings_assigned" model="learn.column">
+        <field name="screen">ops_bookings</field>
+        <field name="key">assigned</field>
+        <field name="sequence">50</field>
+        <field name="label">Nurse assigned</field>
+        <field name="body">Who is going. Empty means nobody is — and empty in the afternoon is a phone call from a family.</field>
+    </record>
+
+    <record id="col_ops_bookings_state" model="learn.column">
+        <field name="screen">ops_bookings</field>
+        <field name="key">state</field>
+        <field name="sequence">60</field>
+        <field name="label">Status</field>
+        <field name="body">New Booking, Assigned, In Progress, Completed, Cancelled or Closed. Assigned is a plan; only the nurse turns it into In Progress by starting the service.</field>
+    </record>
+
+    <record id="col_ops_schedule_person" model="learn.column">
+        <field name="screen">ops_schedule</field>
+        <field name="key">person</field>
+        <field name="sequence">10</field>
+        <field name="label">Person</field>
+        <field name="body">One row per member of staff on shift today. Somebody with no row is not working today at all.</field>
+    </record>
+
+    <record id="col_ops_schedule_load" model="learn.column">
+        <field name="screen">ops_schedule</field>
+        <field name="key">load</field>
+        <field name="sequence">20</field>
+        <field name="label">Load</field>
+        <field name="body">Visits assigned against capacity for the day, as 5/6. Capacity is visits, not hours, so it says nothing about distance.</field>
+    </record>
+
+    <record id="col_ops_schedule_chips" model="learn.column">
+        <field name="screen">ops_schedule</field>
+        <field name="key">chips</field>
+        <field name="sequence">30</field>
+        <field name="label">Visit chips</field>
+        <field name="body">Each visit on that person's day with its time and district. The gaps between them are travel, not free time.</field>
+    </record>
+
+    <record id="col_ops_schedule_timeoff" model="learn.column">
+        <field name="screen">ops_schedule</field>
+        <field name="key">timeoff</field>
+        <field name="sequence">40</field>
+        <field name="label">Time off</field>
+        <field name="body">Approved and requested leave touching this week. Approving one does not move the visits already booked for those days.</field>
+    </record>
+
+    <record id="col_ops_dashboard_unassigned" model="learn.column">
+        <field name="screen">ops_dashboard</field>
+        <field name="key">unassigned</field>
+        <field name="sequence">10</field>
+        <field name="label">Unassigned</field>
+        <field name="body">Bookings with nobody on them. Five of the six cards here are reassurance; this is the one that becomes a phone call, and the only one you can still fix today.</field>
+    </record>
+
+    <record id="col_ops_dashboard_inprogress" model="learn.column">
+        <field name="screen">ops_dashboard</field>
+        <field name="key">inprogress</field>
+        <field name="sequence">20</field>
+        <field name="label">In progress</field>
+        <field name="body">Visits a nurse has actually started. If this stays at zero through the morning, the day has not begun whatever the schedule says.</field>
+    </record>
+
+    <record id="col_ops_dashboard_completed" model="learn.column">
+        <field name="screen">ops_dashboard</field>
+        <field name="key">completed</field>
+        <field name="sequence">30</field>
+        <field name="label">Completed</field>
+        <field name="body">Visits finished today. Read it against the clock: two at 11:00 is normal, two at 16:00 means the afternoon has not started.</field>
+    </record>
+
+    <record id="col_ops_dashboard_cancelled" model="learn.column">
+        <field name="screen">ops_dashboard</field>
+        <field name="key">cancelled</field>
+        <field name="sequence">40</field>
+        <field name="label">Cancelled</field>
+        <field name="body">Cancelled today. Not a neutral number — each one consumed a slot somebody else could have had, and has a reason worth reading.</field>
+    </record>
+
+    <record id="col_ops_workload_capacity" model="learn.column">
+        <field name="screen">ops_workload</field>
+        <field name="key">capacity</field>
+        <field name="sequence">10</field>
+        <field name="label">Capacity</field>
+        <field name="body">How many visits this person can do in a day. It counts visits, so five inside one district and five across the city look identical here and are not.</field>
+    </record>
+
+    <record id="col_ops_timeoff_dates" model="learn.column">
+        <field name="screen">ops_timeoff</field>
+        <field name="key">dates</field>
+        <field name="sequence">10</field>
+        <field name="label">Dates</field>
+        <field name="body">The days the person will be away. Open the Staff Schedule for every one of them before approving, not after.</field>
+    </record>
+
+    <record id="col_ops_timeoff_approval" model="learn.column">
+        <field name="screen">ops_timeoff</field>
+        <field name="key">approval</field>
+        <field name="sequence">20</field>
+        <field name="label">State</field>
+        <field name="body">Requested or Approved. Approving makes the person unavailable — it does not reassign a single visit already booked for those dates.</field>
+    </record>
+
+    <record id="col_ops_collections_amount" model="learn.column">
+        <field name="screen">ops_collections</field>
+        <field name="key">amount</field>
+        <field name="sequence">10</field>
+        <field name="label">Amount held</field>
+        <field name="body">Cash this person is carrying from today's visits. It exists physically and has to end up matching the visits that produced it.</field>
+    </record>
+
+    <record id="col_ops_collections_total" model="learn.column">
+        <field name="screen">ops_collections</field>
+        <field name="key">total</field>
+        <field name="sequence">20</field>
+        <field name="label">Total</field>
+        <field name="body">The figure Operations reconciles at end of shift and hands to Finance. Finance receives it already balanced and never chases an individual nurse.</field>
+    </record>
+
+    <record id="col_ops_routes_travel" model="learn.column">
+        <field name="screen">ops_routes</field>
+        <field name="key">travel</field>
+        <field name="sequence">10</field>
+        <field name="label">Travel time</field>
+        <field name="body">How long the journey between two consecutive visits takes. It knows distance; it does not know weather, lifts, or how long a family keeps you at the door.</field>
+    </record>
+
+    <record id="col_ops_routes_verdict" model="learn.column">
+        <field name="screen">ops_routes</field>
+        <field name="key">verdict</field>
+        <field name="sequence">20</field>
+        <field name="label">Verdict</field>
+        <field name="body">Whether the leg fits. It WARNS and still lets you save — a manager on the phone often knows something the map does not.</field>
+    </record>
+
+    <record id="col_ops_family_sender" model="learn.column">
+        <field name="screen">ops_family</field>
+        <field name="key">sender</field>
+        <field name="sequence">10</field>
+        <field name="label">From</field>
+        <field name="body">The family member writing, and their relationship to the patient. Relationship is not consent — what you may tell them is a recorded permission.</field>
+    </record>
+
+    <record id="col_ops_clients_client" model="learn.column">
+        <field name="screen">ops_clients</field>
+        <field name="key">client</field>
+        <field name="sequence">10</field>
+        <field name="label">Client</field>
+        <field name="body">The patient record a visit is booked against — the only place their consents, history and balance live together.</field>
+    </record>
+
 </odoo>

@@ -81,6 +81,9 @@ const out = {
     opsLessons: grab("OPS_LESSONS"),
     opsMissions: grab("OPS_MISSIONS"),
     opsM1Steps: grab("OPS_M1_STEPS"),
+    opsColumns: grab("OPS_COLUMNS"),
+    opsQa: grab("OPS_QA"),
+    opsQaSuggest: grab("OPS_QA_SUGGEST"),
 };
 
 process.stdout.write(JSON.stringify(out, null, 1));
