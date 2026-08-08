@@ -336,10 +336,41 @@
         </field>
     </record>
 
+    <!-- Lead Analysis's own list.
+
+         WHY THIS EXISTS: health_landing patches `action_open_lead_hub` onto
+         the SHARED opportunity list (health_landing/views/lead_hub_views.xml),
+         so every crm.lead list that does not pin a primary view of its own
+         opens the old Lead Hub page on row click instead of the record.
+         Contacts escapes it by pinning `view_crm_contact_list_crm_center`;
+         Lead Analysis pinned nothing, so clicking a lead here landed on the
+         retired hub.
+
+         This inherits the same opportunity list — so the columns, the delete /
+         restore / archive buttons and the Email / SMS actions are all
+         unchanged — and clears ONLY the two attributes that hijack the click.
+         An empty attribute value removes the attribute in Odoo's inheritance.
+
+         Scoped deliberately: the hub patch is left in place everywhere else
+         until it is confirmed dead on those screens too. -->
+    <record id="view_crm_lead_web_funnel_list" model="ir.ui.view">
+        <field name="name">crm.lead.list.web.funnel</field>
+        <field name="model">crm.lead</field>
+        <field name="mode">primary</field>
+        <field name="priority">50</field>
+        <field name="inherit_id" ref="health_crm.view_healthcare_opportunity_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="action"/>
+                <attribute name="type"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="action_web_leads_funnel" model="ir.actions.act_window">
         <field name="name">Lead Analysis</field>
         <field name="res_model">crm.lead</field>
-        <field name="view_mode">list,pivot,graph</field>
+        <field name="view_mode">list,pivot,graph,form</field>
         <field name="domain">[]</field>
         <!-- `search_view_id` is pinned: `crm.lead` carries TWO primary
              search views on this database (ledger §5.91) and the one the
@@ -357,9 +388,10 @@
         <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
         <field name="context">{}</field>
         <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'list'}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_lead_web_funnel_list')}),
             (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_crm_lead_web_funnel_pivot')}),
             (0, 0, {'view_mode': 'graph', 'view_id': ref('view_crm_lead_web_funnel_graph')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('health_crm.view_crm_contact_form_crm_center')}),
         ]"/>
         <field name="help" type="html"><p class="o_view_nocontent_smiling_face">No leads to analyse yet</p></field>
     </record>
