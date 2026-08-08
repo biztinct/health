@@ -1383,6 +1383,325 @@ const OPS_STATIONS = {
   },
 };
 
+/* =============================================================================
+   OPS LESSONS — O1 Bookings, O2 Staff Schedule.
+   Every figure comes from OPS in practice-data.js and reconciles there.
+   ========================================================================== */
+const OPS_LESSONS = {
+  O1: {
+    id: "O1", station: "ops_bookings", mins: 7,
+    steps: [
+      {
+        screen: "ops_bookings", anchor: "ob-list",
+        kicker: B("THE WHOLE DAY", "TOÀN BỘ MỘT NGÀY"),
+        title: B("Fourteen visits, and one of them has nobody", "Mười bốn lượt, và một lượt chưa có ai"),
+        body: B("Every visit for <b>Wednesday 12 August</b> in Hà Nội: <b>13 assigned</b> and <b>1 unassigned</b>. Each row carries the time, the patient, the service, the district and who is on it — a visit exists here as a whole thing, not as a row on somebody's schedule.",
+                "Mọi lượt thăm khám của <b>Thứ Tư 12 tháng 8</b> tại Hà Nội: <b>13 đã phân công</b> và <b>1 chưa phân công</b>. Mỗi dòng có giờ, bệnh nhân, dịch vụ, quận và người phụ trách — ở đây một lượt tồn tại như một chỉnh thể, không phải một dòng trong lịch của ai đó."),
+        tip: B("The row order is time, not priority. The one that needs you is not at the top.",
+               "Thứ tự dòng là theo giờ, không theo mức ưu tiên. Lượt cần bạn xử lý không nằm ở trên cùng."),
+      },
+      {
+        screen: "ops_bookings", anchor: "ob-unassigned",
+        kicker: B("THE ONE THAT MATTERS", "LƯỢT QUAN TRỌNG"),
+        title: B("Unassigned at 15:00 is a phone call waiting to happen", "Chưa phân công lúc 15:00 là một cuộc gọi sắp xảy ra"),
+        body: B("<b>B-4474</b>, Hoàng Thị Yến, an injection in Cầu Giấy at 15:00, with nobody on it. Unassigned in the morning is a scheduling task. Unassigned in the afternoon is a family ringing to ask where the nurse is.",
+                "<b>B-4474</b>, Hoàng Thị Yến, tiêm tại Cầu Giấy lúc 15:00, chưa có ai nhận. Chưa phân công vào buổi sáng là một việc sắp xếp. Chưa phân công vào buổi chiều là một gia đình gọi điện hỏi điều dưỡng đâu."),
+        tip: B("This is the same booking the Operations Dashboard counts in its Unassigned card. One number, one list, one job.",
+               "Đây chính là lịch hẹn mà thẻ Chưa phân công trên Bảng điều hành đang đếm. Một con số, một danh sách, một việc cần làm."),
+      },
+      {
+        screen: "ops_bookings", anchor: "ob-actions",
+        kicker: B("FOUR DOORS", "BỐN LỐI"),
+        title: B("Assign, Reschedule, Start, Cancel", "Phân công, Đổi lịch, Bắt đầu, Hủy"),
+        body: B("<b>Assign</b> puts a person on it. <b>Reschedule</b> moves it in time and keeps everything else. <b>Start service</b> moves it to In Progress. <b>Cancel</b> ends it — the visit, the slot and the revenue together.",
+                "<b>Phân công</b> gán người thực hiện. <b>Đổi lịch</b> dời thời gian và giữ nguyên mọi thứ khác. <b>Bắt đầu dịch vụ</b> chuyển sang Đang thực hiện. <b>Hủy</b> kết thúc tất cả — lượt thăm khám, khung giờ và cả doanh thu."),
+        moment: { kind: "pipeline", chain: "booking" },
+      },
+      {
+        screen: "ops_bookings", anchor: "ob-cancel",
+        kicker: B("THE RISKY ONE", "THAO TÁC RỦI RO"),
+        title: B("Cancel is not a stronger reschedule", "Hủy không phải là một dạng đổi lịch mạnh hơn"),
+        body: B("Cancelling ends the visit. The patient is not rebooked, the slot is not offered to anyone else, and the revenue is gone. If what you actually want is a different time or a different person, those are two other buttons.",
+                "Hủy sẽ kết thúc lượt thăm khám. Bệnh nhân không được đặt lại, khung giờ không được mời cho ai khác, và khoản doanh thu mất đi. Nếu điều bạn thật sự muốn là đổi giờ hoặc đổi người, đó là hai nút khác."),
+        consequence: B("Scope: this visit, the slot it occupied, and the money attached to it. Reversible: no — a new booking is a new booking, and the patient has already been told. Check first: whether the family wants a different time rather than no visit, and whether another person could take it.",
+                       "Phạm vi: lượt thăm khám này, khung giờ nó chiếm, và khoản tiền đi kèm. Hoàn tác: không — một lịch hẹn mới là một lịch hẹn mới, và bệnh nhân thì đã được báo rồi. Kiểm tra trước: gia đình muốn đổi giờ hay thật sự không cần thăm khám, và liệu có người khác nhận được không."),
+      },
+      {
+        screen: "ops_bookings", anchor: "ob-row-4471",
+        kicker: B("THE SAME PATIENT", "CÙNG MỘT BỆNH NHÂN"),
+        title: B("B-4471 is conversation #4172 from the CRM desk", "B-4471 chính là cuộc hội thoại #4172 bên bàn CRM"),
+        body: B("<b>Nguyễn Thị Hoa</b>, wound care at home, <b>16:30</b> in Cầu Giấy. On the CRM desk this is the booking that pushed her conversation to <b>110</b> — a visit inside 24 hours adds <b>+30</b>. Same patient, same day, two screens.",
+                "<b>Nguyễn Thị Hoa</b>, chăm sóc vết thương tại nhà, <b>16:30</b> tại Cầu Giấy. Bên bàn CRM, đây chính là lịch hẹn đã đẩy cuộc hội thoại của bà lên <b>110</b> — một lịch hẹn trong vòng 24 giờ cộng <b>+30</b>. Cùng bệnh nhân, cùng ngày, hai màn hình."),
+        tip: B("Moving this booking changes that urgency score. Operations and the CRM desk are looking at one day from two sides.",
+               "Dời lịch hẹn này sẽ làm thay đổi điểm ưu tiên đó. Vận hành và bàn CRM đang nhìn cùng một ngày từ hai phía."),
+      },
+      {
+        screen: "ops_bookings", anchor: "ob-start",
+        kicker: B("WHAT THE STATES MEAN", "CÁC TRẠNG THÁI NGHĨA LÀ GÌ"),
+        title: B("Assigned is a plan; In Progress is a fact", "Đã phân công là kế hoạch; Đang thực hiện là sự thật"),
+        body: B("Today: <b>2 completed</b>, <b>3 in progress</b>, <b>8</b> still assigned or new, <b>1 cancelled</b>. Only the nurse can turn Assigned into In Progress by starting the service — if that never happens, the visit did not happen, whatever the schedule says.",
+                "Hôm nay: <b>2 hoàn thành</b>, <b>3 đang thực hiện</b>, <b>8</b> vẫn đang ở trạng thái đã phân công hoặc mới, <b>1 đã hủy</b>. Chỉ điều dưỡng mới chuyển được Đã phân công thành Đang thực hiện bằng cách bắt đầu dịch vụ — nếu điều đó không xảy ra, lượt thăm khám đã không diễn ra, dù lịch có ghi gì đi nữa."),
+      },
+    ],
+    quiz: {
+      question: B("A family rings at 14:00: the patient has gone to hospital and will not be home for the 15:00 visit. What do you do to booking B-4474?",
+                  "Một gia đình gọi lúc 14:00: bệnh nhân đã vào viện và sẽ không có nhà cho lượt 15:00. Bạn xử lý lịch hẹn B-4474 thế nào?"),
+      options: [
+        {
+          text: B("Reschedule it, so the visit and the money survive and the family is not asked to start again.",
+                  "Đổi lịch, để lượt thăm khám và khoản tiền vẫn còn, và gia đình không phải bắt đầu lại từ đầu."),
+          correct: true,
+          explanation: B("Yes. Nothing about this says the patient no longer needs the visit — only that today does not work. Reschedule keeps the booking, the client link and the revenue, and frees the slot for someone else today.",
+                         "Đúng. Không có gì cho thấy bệnh nhân không còn cần thăm khám — chỉ là hôm nay không tiện. Đổi lịch giữ lại lịch hẹn, liên kết khách hàng và doanh thu, đồng thời giải phóng khung giờ hôm nay cho người khác."),
+        },
+        {
+          text: B("Cancel it — the visit is not happening today, and that is what cancel is for.",
+                  "Hủy — hôm nay không thăm khám được, và hủy là để dùng cho việc đó."),
+          correct: false,
+          explanation: B("Let's rethink that. Cancel ends the visit, the slot and the revenue, and the family has to start again from an enquiry. What actually changed is the time, not the need — and there is a button for exactly that.",
+                         "Cùng suy nghĩ lại nhé. Hủy sẽ kết thúc lượt thăm khám, khung giờ và doanh thu, còn gia đình thì phải bắt đầu lại từ một yêu cầu mới. Thứ thật sự thay đổi là thời gian, không phải nhu cầu — và có một nút dành đúng cho việc đó."),
+        },
+        {
+          text: B("Leave it and let the nurse find out when she arrives — she may be able to see someone else nearby.",
+                  "Cứ để vậy và để điều dưỡng tự biết khi tới nơi — có thể cô ấy sẽ thăm được người khác gần đó."),
+          correct: false,
+          explanation: B("Let's rethink that. A nurse travelling to an empty house costs the visit anyway, plus her time and the next patient's punctuality. You know now; the schedule can still be changed now.",
+                         "Cùng suy nghĩ lại nhé. Một điều dưỡng di chuyển tới ngôi nhà không có người thì vẫn mất lượt đó, cộng thêm thời gian của cô ấy và sự đúng giờ của bệnh nhân kế tiếp. Bạn đã biết ngay bây giờ; lịch vẫn còn kịp thay đổi ngay bây giờ."),
+        },
+      ],
+    },
+  },
+
+  O2: {
+    id: "O2", station: "ops_schedule", mins: 7,
+    steps: [
+      {
+        screen: "ops_schedule", anchor: "os-grid",
+        kicker: B("THE DAY AS PEOPLE", "MỘT NGÀY NHÌN THEO CON NGƯỜI"),
+        title: B("Four people, thirteen visits", "Bốn người, mười ba lượt"),
+        body: B("Ngọc <b>5</b>, Lan <b>4</b>, Hà <b>3</b>, Tuấn <b>1</b>. Bookings tells you what was promised; this tells you whether it can be done by the people who are actually here today.",
+                "Ngọc <b>5</b>, Lan <b>4</b>, Hà <b>3</b>, Tuấn <b>1</b>. Màn hình Lịch hẹn cho biết đã hứa gì; màn hình này cho biết việc đó có làm được bởi những người thật sự đang có mặt hôm nay hay không."),
+        tip: B("Thirteen, not fourteen. The unassigned booking is on nobody's row — which is exactly why it is easy to miss here.",
+               "Mười ba, không phải mười bốn. Lịch hẹn chưa phân công không nằm trên dòng của ai — và đó chính là lý do rất dễ bỏ sót nó ở màn hình này."),
+      },
+      {
+        screen: "ops_schedule", anchor: "os-row-tuan",
+        kicker: B("THE TRAP", "CÁI BẪY"),
+        title: B("An empty row is not a free nurse", "Một dòng trống không phải là điều dưỡng đang rảnh"),
+        body: B("Tuấn has one visit and a lot of white space. That white space is not availability — it is a person in Long Biên with travel time on either side of everything you might add.",
+                "Tuấn có một lượt và rất nhiều khoảng trắng. Khoảng trắng đó không phải là sự sẵn sàng — đó là một người ở Long Biên, với thời gian di chuyển ở cả hai phía của bất cứ việc gì bạn định thêm vào."),
+      },
+      {
+        screen: "ops_workload", anchor: "ow-bars",
+        kicker: B("FAIR, NOT EQUAL", "CÔNG BẰNG, KHÔNG PHẢI BẰNG NHAU"),
+        title: B("Capacity is visits, not hours", "Năng lực tính theo lượt, không theo giờ"),
+        body: B("Ngọc is at <b>5 of 6</b> and Tuấn at <b>1 of 6</b>. That looks unbalanced and might not be: five visits inside Ba Đình is a lighter day than three spread across the city. Read the bars next to the districts, never alone.",
+                "Ngọc ở mức <b>5/6</b> còn Tuấn ở mức <b>1/6</b>. Nhìn có vẻ mất cân đối nhưng có thể không phải vậy: năm lượt trong nội bộ Ba Đình là một ngày nhẹ hơn ba lượt rải khắp thành phố. Hãy đọc các thanh này cùng với thông tin quận, đừng đọc riêng lẻ."),
+        tip: B("Equal counts across unequal distances is not fairness. It is just a tidier chart.",
+               "Số lượt bằng nhau trên những quãng đường không bằng nhau không phải là công bằng. Đó chỉ là một biểu đồ trông gọn hơn."),
+      },
+      {
+        screen: "ops_routes", anchor: "orf-check",
+        kicker: B("WHAT THE CALENDAR CANNOT SEE", "ĐIỀU MÀ LỊCH KHÔNG NHÌN THẤY"),
+        title: B("Long Biên at 15:00, Cầu Giấy at 16:30", "Long Biên lúc 15:00, Cầu Giấy lúc 16:30"),
+        body: B("A <b>90-minute</b> gap and a <b>50-minute</b> journey. It fits — with 40 minutes of slack in Hà Nội afternoon traffic. The schedule would have shown you a comfortable gap and told you nothing about the distance.",
+                "Khoảng trống <b>90 phút</b> và quãng đường <b>50 phút</b>. Vừa đủ — dư 40 phút trong giờ cao điểm buổi chiều ở Hà Nội. Bảng phân công sẽ cho bạn thấy một khoảng trống thoải mái mà không nói gì về khoảng cách."),
+        consequence: B("Scope: nothing is changed by looking. But a reassignment made without looking becomes a nurse who is late, a family who waited, and a next visit that starts behind. Reversible: the assignment is, the afternoon is not. Check first: the district on both visits, not just the times.",
+                       "Phạm vi: việc xem không thay đổi gì. Nhưng một lần phân công lại mà không xem sẽ dẫn tới điều dưỡng đến muộn, gia đình phải chờ, và lượt kế tiếp bắt đầu trễ. Hoàn tác: việc phân công thì có, còn cả buổi chiều thì không. Kiểm tra trước: quận của cả hai lượt, không chỉ giờ giấc."),
+      },
+      {
+        screen: "ops_routes", anchor: "orf-verdict",
+        kicker: B("WARNS, NEVER BLOCKS", "CẢNH BÁO, KHÔNG CHẶN"),
+        title: B("You can save an infeasible leg on purpose", "Bạn có thể cố ý lưu một chặng không khả thi"),
+        body: B("The checker tells you and then lets you proceed. That is deliberate: a manager on the phone to a family often knows something the map does not — that they will wait, or that the building has a lift, or that this nurse lives on that street.",
+                "Công cụ kiểm tra sẽ báo cho bạn rồi vẫn để bạn tiếp tục. Đó là chủ ý: người quản lý đang gọi cho gia đình thường biết điều mà bản đồ không biết — rằng họ sẽ chờ, rằng tòa nhà có thang máy, hoặc rằng điều dưỡng này sống ngay phố đó."),
+        tip: B("The absence of a warning is not a promise either. It knows distance; it does not know weather, lifts, or how long a family keeps you at the door.",
+               "Việc không có cảnh báo cũng không phải một lời bảo đảm. Nó biết khoảng cách; nó không biết thời tiết, thang máy, hay việc gia đình giữ bạn lại ở cửa bao lâu."),
+      },
+      {
+        screen: "ops_schedule", anchor: "os-timeoff",
+        kicker: B("THE QUIET ONE", "ĐIỀU ÂM THẦM"),
+        title: B("Approving leave moves nobody's visits", "Duyệt nghỉ phép không dời lượt của ai cả"),
+        body: B("Hà has requested the <b>13th</b>; Tuấn is approved for the <b>14th to 16th</b>. Approving a request makes that person unavailable — it does <b>not</b> reassign the visits already booked for those days. Those stay exactly where they are until somebody moves them.",
+                "Hà đã xin nghỉ ngày <b>13</b>; Tuấn đã được duyệt nghỉ từ <b>14 đến 16</b>. Duyệt một đơn sẽ khiến người đó không còn khả dụng — nhưng <b>không</b> phân công lại các lượt đã đặt cho những ngày đó. Chúng vẫn nằm nguyên ở đó cho tới khi có người dời đi."),
+        consequence: B("Scope: one person's availability, across the dates approved. Reversible: the approval is, but the days between now and then are not. Check first: open this schedule for every approved date before you approve, not after — that is the only moment the cost is still cheap.",
+                       "Phạm vi: khả dụng của một người, trong những ngày được duyệt. Hoàn tác: việc duyệt thì có, nhưng những ngày từ giờ đến đó thì không. Kiểm tra trước: mở bảng phân công cho từng ngày được duyệt TRƯỚC khi duyệt, không phải sau — đó là thời điểm duy nhất mà cái giá còn rẻ."),
+      },
+    ],
+    quiz: {
+      question: B("Hà asks for the 13th off. You open the schedule for the 13th and she has three visits booked, two of them in Hai Bà Trưng. What is the right order of actions?",
+                  "Hà xin nghỉ ngày 13. Bạn mở bảng phân công ngày 13 và thấy cô ấy có ba lượt đã đặt, hai lượt ở Hai Bà Trưng. Trình tự hành động đúng là gì?"),
+      options: [
+        {
+          text: B("Find who can take the three visits first, then approve the leave once they have somewhere to go.",
+                  "Tìm người nhận được ba lượt đó trước, rồi mới duyệt nghỉ khi các lượt đã có chỗ."),
+          correct: true,
+          explanation: B("Yes. Approval does not move a visit, so approving first creates three visits belonging to someone who will not be there — and nothing on any screen will shout about it. Reassign first and the approval costs nothing.",
+                         "Đúng. Việc duyệt không dời lượt nào, nên duyệt trước sẽ tạo ra ba lượt thuộc về một người sẽ không có mặt — và không màn hình nào lên tiếng về điều đó. Phân công lại trước thì việc duyệt chẳng tốn gì cả."),
+        },
+        {
+          text: B("Approve the leave first so the schedule is accurate, then reassign from the gap it creates.",
+                  "Duyệt nghỉ trước để bảng phân công chính xác, rồi phân công lại từ khoảng trống mà nó tạo ra."),
+          correct: false,
+          explanation: B("Let's rethink that. It sounds orderly, but approval does not create a gap — it leaves three visits assigned to someone who is on leave, and they look completely normal on the schedule. The accuracy you are hoping for is the thing that does not happen.",
+                         "Cùng suy nghĩ lại nhé. Nghe thì có vẻ ngăn nắp, nhưng việc duyệt không tạo ra khoảng trống — nó để lại ba lượt vẫn gán cho một người đang nghỉ, và chúng trông hoàn toàn bình thường trên bảng phân công. Sự chính xác mà bạn mong đợi lại chính là thứ không xảy ra."),
+        },
+        {
+          text: B("Approve it and tell Hà to hand the three visits over herself before she goes.",
+                  "Duyệt và bảo Hà tự bàn giao ba lượt đó trước khi nghỉ."),
+          correct: false,
+          explanation: B("Let's rethink that. Reassigning someone else's visit needs Operations — it is not available to the nurse whose visit it is, so you would be asking her to do something the system will not let her do. The handover has to happen on this screen.",
+                         "Cùng suy nghĩ lại nhé. Phân công lại lượt của người khác cần quyền Vận hành — điều dưỡng sở hữu lượt đó không làm được, nên bạn đang nhờ cô ấy làm việc mà hệ thống không cho phép. Việc bàn giao phải diễn ra trên màn hình này."),
+        },
+      ],
+    },
+  },
+};
+
+/* =============================================================================
+   OPS MISSION — the day a nurse calls in sick.
+   Runs on the practice replica, like every mission: "cancel this booking" on a
+   live screen would be a real cancellation.
+   ========================================================================== */
+const OPS_MISSIONS = [
+  {
+    id: "om1", group: "ops_day", icon: "users", mins: 6, full: true,
+    conf: { key: "scheduling", gain: 30 },
+    title: B("Lan calls in sick — move her day", "Lan báo ốm — sắp xếp lại ngày của cô ấy"),
+    desc: B("Four visits belonging to someone who will not be there, one of them the 16:30 that a family is already asking about.",
+            "Bốn lượt thăm khám thuộc về một người sẽ không có mặt, trong đó có lượt 16:30 mà một gia đình đang hỏi tới."),
+    consequence: {
+      title: B("You are about to cancel a real visit", "Bạn sắp hủy một lượt thăm khám thật"),
+      scope: B("This booking, the slot it holds, the revenue attached to it, and a patient who has been told someone is coming. It also changes the urgency score on the CRM desk, because a visit inside 24 hours is worth +30 there.",
+               "Lịch hẹn này, khung giờ nó giữ, khoản doanh thu đi kèm, và một bệnh nhân đã được báo là sẽ có người tới. Nó cũng làm thay đổi điểm ưu tiên bên bàn CRM, vì một lịch hẹn trong vòng 24 giờ được cộng +30 ở đó."),
+      reversible: B("No. A cancelled booking is not un-cancelled — a replacement is a new booking, and the family has already had the call. Reassigning and rescheduling are both reversible; this is the one that is not.",
+                    "Không. Một lịch hẹn đã hủy không thể phục hồi — thay thế nghĩa là tạo lịch hẹn mới, và gia đình thì đã nhận cuộc gọi rồi. Phân công lại và đổi lịch đều hoàn tác được; chỉ thao tác này thì không."),
+      verify: B("That nobody else can take it, at any time today. Cancel is what is left when reassigning and rescheduling have both been tried — not the first thing you reach for when a nurse is unavailable.",
+                "Rằng không ai khác nhận được, vào bất kỳ giờ nào hôm nay. Hủy là thứ còn lại sau khi đã thử cả phân công lại và đổi lịch — không phải thứ bạn với tay tới đầu tiên khi một điều dưỡng vắng mặt."),
+    },
+    anomaly: {
+      title: B("The person who looks free is the one to check hardest", "Người trông có vẻ rảnh nhất lại là người cần kiểm tra kỹ nhất"),
+      body: B("Tuấn is on 1 of 6 and his row is nearly empty, so he is the obvious answer — and he is the right one. But he is right by 40 minutes, not by a mile: he finishes in Long Biên at 15:00 and B-4471 is in Cầu Giấy at 16:30, a 50-minute journey into the Hà Nội afternoon. The workload bar said yes; only the map said how nearly. An empty row is capacity, not proximity, and the two are different questions.",
+              "Tuấn đang ở mức 1/6 và dòng của anh gần như trống, nên anh là lựa chọn hiển nhiên — và đúng là lựa chọn đúng. Nhưng đúng với biên độ 40 phút, chứ không dư dả: anh kết thúc ở Long Biên lúc 15:00 còn B-4471 ở Cầu Giấy lúc 16:30, quãng đường 50 phút vào buổi chiều Hà Nội. Thanh khối lượng nói được; chỉ có bản đồ mới cho biết sát đến mức nào. Một dòng trống là năng lực, không phải khoảng cách, và đó là hai câu hỏi khác nhau."),
+    },
+    debrief: {
+      did: [
+        B("Read the day before touching it — 14 booked, 13 assigned, 1 already with nobody on it.",
+          "Đọc cả ngày trước khi động vào — 14 lịch hẹn, 13 đã phân công, 1 vốn đã chưa có ai."),
+        B("Found Lan's four visits on the schedule rather than hunting them one at a time in the booking list.",
+          "Tìm bốn lượt của Lan trên bảng phân công thay vì lần mò từng cái trong danh sách lịch hẹn."),
+        B("Chose reassignment over cancellation, so the visits, the patients and the revenue all survived.",
+          "Chọn phân công lại thay vì hủy, nhờ vậy giữ được cả lượt thăm khám, bệnh nhân và doanh thu."),
+        B("Checked travel feasibility across districts before promising a time to anyone.",
+          "Kiểm tra khả năng di chuyển giữa các quận trước khi hứa giờ giấc với bất kỳ ai."),
+        B("Looked at workload afterwards, so the rescue did not quietly become somebody else's overload.",
+          "Xem lại khối lượng công việc sau đó, để việc chữa cháy không âm thầm trở thành quá tải của người khác."),
+      ],
+      checklist: [
+        B("Open the schedule for the affected day BEFORE approving anything or cancelling anything.",
+          "Mở bảng phân công cho ngày bị ảnh hưởng TRƯỚC khi duyệt hay hủy bất cứ điều gì."),
+        B("Reassign, then reschedule, and only then consider cancelling. Cancel is the last door, not the first.",
+          "Phân công lại, rồi đổi lịch, và chỉ sau đó mới cân nhắc hủy. Hủy là lối cuối cùng, không phải lối đầu tiên."),
+        B("Check the district on both sides of a gap, not just the clock.",
+          "Kiểm tra quận ở cả hai phía của khoảng trống, không chỉ nhìn đồng hồ."),
+        B("Tell the family before they ring you. The 16:30 already has someone asking about it.",
+          "Báo cho gia đình trước khi họ gọi tới. Lượt 16:30 vốn đã có người đang hỏi."),
+        B("Re-read the workload bars when you are done — a rescue that overloads one person is tomorrow's sick day.",
+          "Đọc lại các thanh khối lượng khi xong việc — một lần chữa cháy làm quá tải một người sẽ là ngày nghỉ ốm của ngày mai."),
+      ],
+    },
+  },
+  {
+    id: "om2", group: "ops_people", icon: "receipt", mins: 5, full: false,
+    conf: { key: "money", gain: 20 },
+    title: B("Close the day's cash without a shortfall", "Chốt tiền mặt cuối ngày mà không thiếu hụt"),
+    desc: B("Reconcile 1,350,000 ₫ held across three nurses against the visits that produced it, and find the one that does not match.",
+            "Đối soát 1.350.000 ₫ do ba điều dưỡng đang giữ với các lượt thăm khám đã tạo ra khoản đó, và tìm ra khoản không khớp."),
+    outlineNote: B("Outline. The full version adds the reconciliation itself, the consequence card for sending an unbalanced figure to Finance, and the seeded case where a nurse collected the right total for the wrong visit. Everything described here is real and usable now.",
+                   "Đề cương. Bản đầy đủ sẽ có phần đối soát, thẻ hệ quả cho việc gửi con số chưa khớp sang Tài chính, và tình huống được cài sẵn khi một điều dưỡng thu đúng tổng nhưng cho nhầm lượt. Mọi nội dung mô tả ở đây đều có thật và dùng được ngay."),
+  },
+];
+
+const OPS_M1_STEPS = [
+  {
+    id: "read", nav: "ops_dashboard", target: "od-day",
+    instruction: B("Read the day before you change it.", "Đọc cả ngày trước khi thay đổi nó."),
+    detail: B("14 booked, 1 already unassigned. Whatever you do next adds to that, so it is worth knowing the number you started from.",
+              "14 lịch hẹn, 1 vốn đã chưa phân công. Bất cứ điều gì bạn làm tiếp theo đều cộng thêm vào con số đó, nên biết mình bắt đầu từ đâu là điều đáng làm."),
+    hint: B("The Unassigned card is the one that becomes a phone call. It reads 1 right now.",
+            "Thẻ Chưa phân công là thẻ sẽ biến thành cuộc gọi. Ngay lúc này nó là 1."),
+  },
+  {
+    id: "find", nav: "ops_schedule", target: "os-row-lan",
+    instruction: B("Find Lan's row and see what is actually on it.", "Tìm dòng của Lan và xem thật sự có gì trên đó."),
+    detail: B("Four visits: 09:00 completed, and three still ahead — 16:30, 17:00 and 18:00. Only the three ahead are your problem.",
+              "Bốn lượt: 09:00 đã xong, và ba lượt còn ở phía trước — 16:30, 17:00 và 18:00. Chỉ ba lượt phía trước mới là vấn đề của bạn."),
+    hint: B("The completed one at 09:00 already happened. You cannot move a visit that has been done.",
+            "Lượt 09:00 đã hoàn thành. Bạn không thể dời một lượt đã được thực hiện."),
+  },
+  {
+    id: "decide", decision: true,
+    instruction: B("Three visits belong to someone who will not be there. What do you do first?",
+                   "Ba lượt thuộc về một người sẽ không có mặt. Bạn làm gì trước?"),
+    detail: B("One decision. Two of these feel decisive and cost you the day.",
+              "Một quyết định. Hai trong số này nghe có vẻ dứt khoát nhưng sẽ khiến bạn mất cả ngày."),
+    hint: B("Ask which action can be undone tomorrow if you get it wrong today.",
+            "Hãy tự hỏi thao tác nào có thể hoàn tác vào ngày mai nếu hôm nay bạn làm sai."),
+    options: [
+      { id: "ok", correct: true,
+        label: B("Reassign them one at a time, checking travel before each, starting with the 16:30 a family is already asking about.",
+                 "Phân công lại từng lượt một, kiểm tra khả năng di chuyển trước mỗi lượt, bắt đầu từ lượt 16:30 mà một gia đình đang hỏi tới.") },
+      { id: "cancel", correct: false,
+        label: B("Cancel all three and let the families rebook when Lan is back.",
+                 "Hủy cả ba và để các gia đình đặt lại khi Lan đi làm lại.") },
+      { id: "approve", correct: false,
+        label: B("Approve Lan's sick leave first so the schedule shows the day accurately, then work from the gap.",
+                 "Duyệt đơn nghỉ ốm của Lan trước để bảng phân công phản ánh đúng ngày, rồi xử lý từ khoảng trống đó.") },
+    ],
+    recovery: {
+      cancel: B("Hold on. Three cancellations is three patients told not to expect anyone, three slots that earn nothing, and three families who have to start again from an enquiry — and Lan is back tomorrow. Cancel is the last door here, not the first: reassignment keeps the visit, the patient and the money, and it can be undone if you get it wrong.",
+                "Khoan đã. Ba lượt hủy là ba bệnh nhân được báo đừng chờ ai, ba khung giờ không tạo ra doanh thu, và ba gia đình phải bắt đầu lại từ một yêu cầu mới — trong khi Lan mai đã đi làm lại. Ở đây hủy là lối cuối cùng, không phải lối đầu tiên: phân công lại giữ được lượt thăm khám, bệnh nhân và cả khoản tiền, và có thể hoàn tác nếu bạn làm sai."),
+      approve: B("Hold on. Approving does not create a gap — it makes Lan unavailable while leaving all three visits sitting on her row, looking completely normal. The screen becomes <i>less</i> accurate, not more, and the visits are now invisible problems. Move the work first; the approval costs nothing once nothing depends on her.",
+                 "Khoan đã. Việc duyệt không tạo ra khoảng trống — nó khiến Lan không còn khả dụng trong khi cả ba lượt vẫn nằm trên dòng của cô ấy, trông hoàn toàn bình thường. Màn hình trở nên <i>kém</i> chính xác hơn chứ không phải chính xác hơn, và ba lượt đó giờ là những vấn đề vô hình. Hãy chuyển việc trước; khi không còn gì phụ thuộc vào cô ấy thì việc duyệt chẳng tốn gì."),
+    },
+  },
+  {
+    id: "route", nav: "ops_routes", target: "orf-check",
+    instruction: B("Before you put the 16:30 on Tuấn, check he can get there.",
+                   "Trước khi giao lượt 16:30 cho Tuấn, hãy kiểm tra anh ấy có tới kịp không."),
+    detail: B("He finishes in Long Biên at 15:00. B-4471 is in Cầu Giấy at 16:30. A 90-minute gap and a 50-minute journey.",
+              "Anh ấy kết thúc ở Long Biên lúc 15:00. B-4471 ở Cầu Giấy lúc 16:30. Khoảng trống 90 phút và quãng đường 50 phút."),
+    hint: B("It fits. The point of looking is that you now know by how little.",
+            "Vừa đủ. Ý nghĩa của việc kiểm tra là giờ bạn biết nó sát đến mức nào."),
+  },
+  {
+    id: "cancelcard", nav: "ops_bookings", target: "ob-cancel", consequence: true,
+    instruction: B("One of Lan's visits genuinely has nobody who can take it. Open Cancel and read what it costs.",
+                   "Một trong các lượt của Lan thật sự không có ai nhận được. Mở Hủy và đọc xem nó tốn những gì."),
+    detail: B("This is the one action in the mission that cannot be undone. The card appears before it happens — that is the point of it.",
+              "Đây là thao tác duy nhất trong nhiệm vụ này không thể hoàn tác. Thẻ hệ quả xuất hiện trước khi nó diễn ra — đó chính là mục đích của nó."),
+    hint: B("Read all three parts. Reversibility is the one people skip, and it is the one that matters here.",
+            "Hãy đọc cả ba phần. Phần Hoàn tác là phần người ta hay bỏ qua, và ở đây nó là phần quan trọng nhất."),
+  },
+  {
+    id: "fair", nav: "ops_workload", target: "ow-bars",
+    instruction: B("Check what your rescue did to everybody else.", "Kiểm tra xem việc chữa cháy của bạn ảnh hưởng thế nào tới những người còn lại."),
+    detail: B("Moving three visits onto whoever was nearest is how one person ends the week at 6 of 6 every day. The bars are the check on the decisions you just made.",
+              "Dồn ba lượt cho bất kỳ ai ở gần nhất là cách khiến một người kết thúc cả tuần ở mức 6/6 mỗi ngày. Các thanh này là phép kiểm tra với những quyết định bạn vừa đưa ra."),
+    hint: B("Fair is not equal. Read the bars next to the districts.",
+            "Công bằng không có nghĩa là bằng nhau. Hãy đọc các thanh cùng với thông tin quận."),
+  },
+  {
+    id: "undo", nav: "ops_bookings", target: "ob-assign", undo: true,
+    instruction: B("Change your mind about one of them, and put it on somebody else.",
+                   "Hãy đổi ý về một trong các lượt đó, và giao cho người khác."),
+    detail: B("This is the undo worth having in your hands: an assignment can be changed as many times as the day needs. A cancellation cannot be changed at all — which is the whole reason it is the last door.",
+              "Đây là thao tác hoàn tác đáng để bạn nắm chắc: một lần phân công có thể đổi bao nhiêu lần tùy theo nhu cầu trong ngày. Một lần hủy thì không đổi được gì cả — và đó chính là lý do nó là lối cuối cùng."),
+    hint: B("Assign again on the same booking. Nothing is lost — that is what you are proving to yourself.",
+            "Phân công lại trên chính lịch hẹn đó. Không mất gì cả — và đó là điều bạn đang tự chứng minh cho mình."),
+  },
+];
+
 /* OPS screen blurbs — what the Coach says it is grounded on. */
 const OPS_SCREEN_CTX = {
   ops_dashboard: B("The day in six numbers for one catchment area, with the unassigned bookings listed underneath.",

@@ -248,6 +248,8 @@ def _station_xmlid(sid):
 def gen_stations(data, tr):
     doc = Xml('Stations — the nodes on the Guided Journey map.')
     lesson_of = {l['station']: l['id'] for l in data['lessons'].values()}
+    lesson_of.update({l['station']: l['id']
+                      for l in (data.get('opsLessons') or {}).values()})
     seq = 0
     trees = [('crm', data['stations'])]
     if data.get('opsStations'):
@@ -326,17 +328,20 @@ def _step_lines(step, data):
 
 def gen_lessons(data, tr):
     doc = Xml('Lessons, steps and understanding checks.')
-    for lkey in sorted(data['lessons']):
-        lesson = data['lessons'][lkey]
+    all_lessons = dict(data['lessons'])
+    all_lessons.update(data.get('opsLessons') or {})
+    for lkey in sorted(all_lessons):
+        lesson = all_lessons[lkey]
         lx = 'lesson_' + lkey.lower()
         station_x = _station_xmlid(lesson['station'])
         # A lesson's own name/goal are not authored separately in the
         # prototype — the station carries them. Reuse rather than invent.
         st = None
-        for line in data['stations'].values():
-            for s in line['stations']:
-                if s['id'] == lesson['station']:
-                    st = s
+        for tree in (data['stations'], data.get('opsStations') or {}):
+            for line in tree.values():
+                for s in line['stations']:
+                    if s['id'] == lesson['station']:
+                        st = s
         doc.rec('learn.lesson', lx, [
             ('key', lkey),
             ('station_id', ('ref', station_x)),
@@ -561,16 +566,19 @@ def _mission_xmlid(key):
 
 # Which practice screen each mission opens on.
 MISSION_SCREEN = {'m1': 'carecommand', 'm2': 'channelcenter',
-                  'm3': 'contacts', 'm4': 'touchpoints'}
+                  'm3': 'contacts', 'm4': 'touchpoints',
+                  'om1': 'ops_schedule', 'om2': 'ops_collections'}
 
 
 def gen_missions(data, tr):
     doc = Xml('Practice missions. These run on the REPLICA, never a live screen: '
               'a step that says "press Junk" would otherwise be a real spam flag '
               'on a real number.')
-    steps_by_mission = {'m1': data['m1Steps'], 'm2': data['m2Steps']}
+    steps_by_mission = {'m1': data['m1Steps'], 'm2': data['m2Steps'],
+                        'om1': data.get('opsM1Steps') or []}
+    missions = list(data['missions']) + list(data.get('opsMissions') or [])
 
-    for i, m in enumerate(data['missions']):
+    for i, m in enumerate(missions):
         key = m['id']
         xmlid = _mission_xmlid(key)
         full = bool(m.get('full'))

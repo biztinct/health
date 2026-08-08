@@ -169,3 +169,15 @@ class TestMission(TransactionCase):
         self.assertFalse(calls - allowed,
                          "The Journey calls models outside the learning spine: %s"
                          % (calls - allowed))
+
+    def test_13_mission_lines_exist_on_the_map(self):
+        """A mission on a line the Journey does not draw is unreachable.
+
+        The two selections are separate fields on separate models, so they can
+        drift apart silently — and the symptom is a mission that simply never
+        appears rather than an error.
+        """
+        station_lines = {k for k, _l in self.env['learn.station']._selection_line()}
+        mission_lines = {m.line for m in self.missions}
+        orphans = mission_lines - station_lines
+        self.assertFalse(orphans, "Missions on lines the map has no heading for: %s" % orphans)

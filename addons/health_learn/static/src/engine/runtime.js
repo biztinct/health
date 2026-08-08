@@ -24,10 +24,14 @@
    The rule: never leave a literal space directly after a closing `}`. Put it
    inside its own interpolation instead:
 
-       `${esc(T("fullLesson"))}${" "}· ${mins}${" "}${esc(T("min"))}`
+       `${esc(T("fullLesson"))}${SP}· ${mins}${SP}${esc(T("min"))}`
 
-   tests/test_assets.py enforces this, because it is the kind of thing that
-   comes straight back the next time someone writes a sentence.
+   SP is a bare identifier on purpose — see its definition below. Writing the
+   space as a quoted literal inside the braces fixes this bug and causes a
+   worse one.
+
+   tests/test_assets.py enforces both, because this is exactly the kind of
+   thing that comes straight back the next time someone writes a sentence.
    ========================================================================== */
 
 export const RT = {
@@ -108,6 +112,15 @@ export function initial(name) {
     const parts = tx(name).trim().split(/\s+/);
     return ((parts[parts.length - 1] || "?")[0] || "?").toUpperCase();
 }
+
+/** A literal space, safe to interpolate.
+ *
+ *  A quoted space in the braces also survives brace-stripping — but the QUOTE
+ *  makes rjsmin lose track of the enclosing template literal, and it then
+ *  strips whitespace in the REST of that string as if it were code:
+ *  "13 visits across 4 people. The one" shipped as "…people.The one".
+ *  A bare identifier has no quote, so the parser stays oriented. */
+export const SP = " ";
 
 export const $ = (sel, root) => (root || document).querySelector(sel);
 export const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));

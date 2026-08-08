@@ -53,6 +53,30 @@ class TestAssets(TransactionCase):
                          "Write `}${\" \"}` instead:\n  %s"
                          % (len(offenders), "\n  ".join(offenders[:25])))
 
+    def test_01c_no_quoted_space_inside_an_interpolation(self):
+        """`${" "}` fixes one minifier bug and causes a worse one.
+
+        The quote inside the braces makes rjsmin lose track of the enclosing
+        template literal, and it then strips whitespace in the REST of that
+        string as if it were code — "13 visits across 4 people. The one"
+        shipped as "…people.The one". MEASURED in the served bundle.
+
+        Use the bare identifier SP instead: no quote, so the parser stays
+        oriented.
+        """
+        offenders = []
+        for rel, path in self._js_files():
+            with open(path, encoding='utf-8') as fh:
+                src = fh.read()
+            for n, line in enumerate(src.split('\n'), 1):
+                if '${"' in line or "${'" in line:
+                    if line.strip().startswith('*') or line.strip().startswith('//'):
+                        continue
+                    offenders.append('%s:%d %s' % (rel, n, line.strip()[:70]))
+        self.assertFalse(offenders,
+                         "Quoted string inside a template interpolation — use SP:\n  "
+                         + "\n  ".join(offenders))
+
     def test_01b_no_sass_hostile_min_max(self):
         """`min(400px, calc(100vw - 44px))` takes the WHOLE bundle down.
 

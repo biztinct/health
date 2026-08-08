@@ -7,7 +7,7 @@
    card is placed in whichever direction has room — right, left, below, above —
    clamped to the viewport and above the control bar.
    ========================================================================== */
-import { $, reduced } from "./runtime";
+import { $, reduced, SP} from "./runtime";
 
 let OVER = null;
 
@@ -51,7 +51,7 @@ export const Trace = {
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.setAttribute("class", "lrn-tracelayer");
         svg.innerHTML =
-            `<path d="M ${x1}${" "}${y1}${" "}C ${mx}${" "}${y1}, ${mx}${" "}${y2}, ${x2}${" "}${y2}"/>` +
+            `<path d="M ${x1}${SP}${y1}${SP}C ${mx}${SP}${y1}, ${mx}${SP}${y2}, ${x2}${SP}${y2}"/>` +
             `<circle r="6" cx="${x1}" cy="${y1}"/>`;
         OVER.appendChild(svg);
         this.svg = svg;

@@ -977,4 +977,226 @@
         <field name="feedback">Let's rethink that. The Dashboard's rate is every channel combined, so it cannot say anything about referrals specifically — comparing a single row against it would just be comparing referrals with themselves plus everyone else. This grid is already the per-channel view.</field>
     </record>
 
+    <record id="lesson_o1" model="learn.lesson">
+        <field name="key">O1</field>
+        <field name="station_id" ref="station_ops_bookings"/>
+        <field name="sequence">10</field>
+        <field name="name">Bookings</field>
+        <field name="goal">Every visit for the day, and the four things you can do to one.</field>
+        <field name="duration_min">7</field>
+    </record>
+
+    <record id="lesson_o1_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_o1"/>
+        <field name="sequence">10</field>
+        <field name="kicker">THE WHOLE DAY</field>
+        <field name="title">Fourteen visits, and one of them has nobody</field>
+        <field name="body">Every visit for &lt;b&gt;Wednesday 12 August&lt;/b&gt; in Hà Nội: &lt;b&gt;13 assigned&lt;/b&gt; and &lt;b&gt;1 unassigned&lt;/b&gt;. Each row carries the time, the patient, the service, the district and who is on it — a visit exists here as a whole thing, not as a row on somebody's schedule.</field>
+        <field name="tip">The row order is time, not priority. The one that needs you is not at the top.</field>
+        <field name="screen">ops_bookings</field>
+        <field name="anchor">ob-list</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o1_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_o1"/>
+        <field name="sequence">20</field>
+        <field name="kicker">THE ONE THAT MATTERS</field>
+        <field name="title">Unassigned at 15:00 is a phone call waiting to happen</field>
+        <field name="body">&lt;b&gt;B-4474&lt;/b&gt;, Hoàng Thị Yến, an injection in Cầu Giấy at 15:00, with nobody on it. Unassigned in the morning is a scheduling task. Unassigned in the afternoon is a family ringing to ask where the nurse is.</field>
+        <field name="tip">This is the same booking the Operations Dashboard counts in its Unassigned card. One number, one list, one job.</field>
+        <field name="screen">ops_bookings</field>
+        <field name="anchor">ob-unassigned</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o1_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_o1"/>
+        <field name="sequence">30</field>
+        <field name="kicker">FOUR DOORS</field>
+        <field name="title">Assign, Reschedule, Start, Cancel</field>
+        <field name="body">&lt;b&gt;Assign&lt;/b&gt; puts a person on it. &lt;b&gt;Reschedule&lt;/b&gt; moves it in time and keeps everything else. &lt;b&gt;Start service&lt;/b&gt; moves it to In Progress. &lt;b&gt;Cancel&lt;/b&gt; ends it — the visit, the slot and the revenue together.</field>
+        <field name="screen">ops_bookings</field>
+        <field name="anchor">ob-actions</field>
+        <field name="visual">pipeline</field>
+        <field name="moment_chain">booking</field>
+    </record>
+
+    <record id="lesson_o1_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_o1"/>
+        <field name="sequence">40</field>
+        <field name="kicker">THE RISKY ONE</field>
+        <field name="title">Cancel is not a stronger reschedule</field>
+        <field name="body">Cancelling ends the visit. The patient is not rebooked, the slot is not offered to anyone else, and the revenue is gone. If what you actually want is a different time or a different person, those are two other buttons.</field>
+        <field name="consequence">Scope: this visit, the slot it occupied, and the money attached to it. Reversible: no — a new booking is a new booking, and the patient has already been told. Check first: whether the family wants a different time rather than no visit, and whether another person could take it.</field>
+        <field name="screen">ops_bookings</field>
+        <field name="anchor">ob-cancel</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o1_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_o1"/>
+        <field name="sequence">50</field>
+        <field name="kicker">THE SAME PATIENT</field>
+        <field name="title">B-4471 is conversation #4172 from the CRM desk</field>
+        <field name="body">&lt;b&gt;Nguyễn Thị Hoa&lt;/b&gt;, wound care at home, &lt;b&gt;16:30&lt;/b&gt; in Cầu Giấy. On the CRM desk this is the booking that pushed her conversation to &lt;b&gt;110&lt;/b&gt; — a visit inside 24 hours adds &lt;b&gt;+30&lt;/b&gt;. Same patient, same day, two screens.</field>
+        <field name="tip">Moving this booking changes that urgency score. Operations and the CRM desk are looking at one day from two sides.</field>
+        <field name="screen">ops_bookings</field>
+        <field name="anchor">ob-row-4471</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o1_step_05" model="learn.step">
+        <field name="lesson_id" ref="lesson_o1"/>
+        <field name="sequence">60</field>
+        <field name="kicker">WHAT THE STATES MEAN</field>
+        <field name="title">Assigned is a plan; In Progress is a fact</field>
+        <field name="body">Today: &lt;b&gt;2 completed&lt;/b&gt;, &lt;b&gt;3 in progress&lt;/b&gt;, &lt;b&gt;8&lt;/b&gt; still assigned or new, &lt;b&gt;1 cancelled&lt;/b&gt;. Only the nurse can turn Assigned into In Progress by starting the service — if that never happens, the visit did not happen, whatever the schedule says.</field>
+        <field name="screen">ops_bookings</field>
+        <field name="anchor">ob-start</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o1_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_o1"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">A family rings at 14:00: the patient has gone to hospital and will not be home for the 15:00 visit. What do you do to booking B-4474?</field>
+    </record>
+
+    <record id="lesson_o1_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_o1_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Reschedule it, so the visit and the money survive and the family is not asked to start again.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. Nothing about this says the patient no longer needs the visit — only that today does not work. Reschedule keeps the booking, the client link and the revenue, and frees the slot for someone else today.</field>
+    </record>
+
+    <record id="lesson_o1_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_o1_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Cancel it — the visit is not happening today, and that is what cancel is for.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Cancel ends the visit, the slot and the revenue, and the family has to start again from an enquiry. What actually changed is the time, not the need — and there is a button for exactly that.</field>
+    </record>
+
+    <record id="lesson_o1_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_o1_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Leave it and let the nurse find out when she arrives — she may be able to see someone else nearby.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. A nurse travelling to an empty house costs the visit anyway, plus her time and the next patient's punctuality. You know now; the schedule can still be changed now.</field>
+    </record>
+
+    <record id="lesson_o2" model="learn.lesson">
+        <field name="key">O2</field>
+        <field name="station_id" ref="station_ops_schedule"/>
+        <field name="sequence">10</field>
+        <field name="name">Staff Schedule</field>
+        <field name="goal">Who is doing what, all day — the screen an Operations Manager lives in.</field>
+        <field name="duration_min">7</field>
+    </record>
+
+    <record id="lesson_o2_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_o2"/>
+        <field name="sequence">10</field>
+        <field name="kicker">THE DAY AS PEOPLE</field>
+        <field name="title">Four people, thirteen visits</field>
+        <field name="body">Ngọc &lt;b&gt;5&lt;/b&gt;, Lan &lt;b&gt;4&lt;/b&gt;, Hà &lt;b&gt;3&lt;/b&gt;, Tuấn &lt;b&gt;1&lt;/b&gt;. Bookings tells you what was promised; this tells you whether it can be done by the people who are actually here today.</field>
+        <field name="tip">Thirteen, not fourteen. The unassigned booking is on nobody's row — which is exactly why it is easy to miss here.</field>
+        <field name="screen">ops_schedule</field>
+        <field name="anchor">os-grid</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o2_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_o2"/>
+        <field name="sequence">20</field>
+        <field name="kicker">THE TRAP</field>
+        <field name="title">An empty row is not a free nurse</field>
+        <field name="body">Tuấn has one visit and a lot of white space. That white space is not availability — it is a person in Long Biên with travel time on either side of everything you might add.</field>
+        <field name="screen">ops_schedule</field>
+        <field name="anchor">os-row-tuan</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o2_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_o2"/>
+        <field name="sequence">30</field>
+        <field name="kicker">FAIR, NOT EQUAL</field>
+        <field name="title">Capacity is visits, not hours</field>
+        <field name="body">Ngọc is at &lt;b&gt;5 of 6&lt;/b&gt; and Tuấn at &lt;b&gt;1 of 6&lt;/b&gt;. That looks unbalanced and might not be: five visits inside Ba Đình is a lighter day than three spread across the city. Read the bars next to the districts, never alone.</field>
+        <field name="tip">Equal counts across unequal distances is not fairness. It is just a tidier chart.</field>
+        <field name="screen">ops_workload</field>
+        <field name="anchor">ow-bars</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o2_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_o2"/>
+        <field name="sequence">40</field>
+        <field name="kicker">WHAT THE CALENDAR CANNOT SEE</field>
+        <field name="title">Long Biên at 15:00, Cầu Giấy at 16:30</field>
+        <field name="body">A &lt;b&gt;90-minute&lt;/b&gt; gap and a &lt;b&gt;50-minute&lt;/b&gt; journey. It fits — with 40 minutes of slack in Hà Nội afternoon traffic. The schedule would have shown you a comfortable gap and told you nothing about the distance.</field>
+        <field name="consequence">Scope: nothing is changed by looking. But a reassignment made without looking becomes a nurse who is late, a family who waited, and a next visit that starts behind. Reversible: the assignment is, the afternoon is not. Check first: the district on both visits, not just the times.</field>
+        <field name="screen">ops_routes</field>
+        <field name="anchor">orf-check</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o2_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_o2"/>
+        <field name="sequence">50</field>
+        <field name="kicker">WARNS, NEVER BLOCKS</field>
+        <field name="title">You can save an infeasible leg on purpose</field>
+        <field name="body">The checker tells you and then lets you proceed. That is deliberate: a manager on the phone to a family often knows something the map does not — that they will wait, or that the building has a lift, or that this nurse lives on that street.</field>
+        <field name="tip">The absence of a warning is not a promise either. It knows distance; it does not know weather, lifts, or how long a family keeps you at the door.</field>
+        <field name="screen">ops_routes</field>
+        <field name="anchor">orf-verdict</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o2_step_05" model="learn.step">
+        <field name="lesson_id" ref="lesson_o2"/>
+        <field name="sequence">60</field>
+        <field name="kicker">THE QUIET ONE</field>
+        <field name="title">Approving leave moves nobody's visits</field>
+        <field name="body">Hà has requested the &lt;b&gt;13th&lt;/b&gt;; Tuấn is approved for the &lt;b&gt;14th to 16th&lt;/b&gt;. Approving a request makes that person unavailable — it does &lt;b&gt;not&lt;/b&gt; reassign the visits already booked for those days. Those stay exactly where they are until somebody moves them.</field>
+        <field name="consequence">Scope: one person's availability, across the dates approved. Reversible: the approval is, but the days between now and then are not. Check first: open this schedule for every approved date before you approve, not after — that is the only moment the cost is still cheap.</field>
+        <field name="screen">ops_schedule</field>
+        <field name="anchor">os-timeoff</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_o2_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_o2"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">Hà asks for the 13th off. You open the schedule for the 13th and she has three visits booked, two of them in Hai Bà Trưng. What is the right order of actions?</field>
+    </record>
+
+    <record id="lesson_o2_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_o2_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Find who can take the three visits first, then approve the leave once they have somewhere to go.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. Approval does not move a visit, so approving first creates three visits belonging to someone who will not be there — and nothing on any screen will shout about it. Reassign first and the approval costs nothing.</field>
+    </record>
+
+    <record id="lesson_o2_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_o2_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Approve the leave first so the schedule is accurate, then reassign from the gap it creates.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. It sounds orderly, but approval does not create a gap — it leaves three visits assigned to someone who is on leave, and they look completely normal on the schedule. The accuracy you are hoping for is the thing that does not happen.</field>
+    </record>
+
+    <record id="lesson_o2_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_o2_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Approve it and tell Hà to hand the three visits over herself before she goes.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Reassigning someone else's visit needs Operations — it is not available to the nurse whose visit it is, so you would be asking her to do something the system will not let her do. The handover has to happen on this screen.</field>
+    </record>
+
 </odoo>

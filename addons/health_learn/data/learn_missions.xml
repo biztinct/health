@@ -427,4 +427,231 @@
         <field name="confidence_gain">20</field>
     </record>
 
+    <record id="mission_om1" model="learn.mission">
+        <field name="key">om1</field>
+        <field name="sequence">50</field>
+        <field name="line">ops_day</field>
+        <field name="icon">users</field>
+        <field name="name">Lan calls in sick — move her day</field>
+        <field name="summary">Four visits belonging to someone who will not be there, one of them the 16:30 that a family is already asking about.</field>
+        <field name="duration_min">6</field>
+        <field name="kind">full</field>
+        <field name="screen">ops_schedule</field>
+        <field name="confidence_key">scheduling</field>
+        <field name="confidence_gain">30</field>
+        <field name="consequence_title">You are about to cancel a real visit</field>
+        <field name="consequence_scope">This booking, the slot it holds, the revenue attached to it, and a patient who has been told someone is coming. It also changes the urgency score on the CRM desk, because a visit inside 24 hours is worth +30 there.</field>
+        <field name="consequence_reversible">No. A cancelled booking is not un-cancelled — a replacement is a new booking, and the family has already had the call. Reassigning and rescheduling are both reversible; this is the one that is not.</field>
+        <field name="consequence_verify">That nobody else can take it, at any time today. Cancel is what is left when reassigning and rescheduling have both been tried — not the first thing you reach for when a nurse is unavailable.</field>
+        <field name="anomaly_title">The person who looks free is the one to check hardest</field>
+        <field name="anomaly_body">Tuấn is on 1 of 6 and his row is nearly empty, so he is the obvious answer — and he is the right one. But he is right by 40 minutes, not by a mile: he finishes in Long Biên at 15:00 and B-4471 is in Cầu Giấy at 16:30, a 50-minute journey into the Hà Nội afternoon. The workload bar said yes; only the map said how nearly. An empty row is capacity, not proximity, and the two are different questions.</field>
+    </record>
+
+    <record id="mission_om1_did_00" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">10</field>
+        <field name="kind">did</field>
+        <field name="body">Read the day before touching it — 14 booked, 13 assigned, 1 already with nobody on it.</field>
+    </record>
+
+    <record id="mission_om1_did_01" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">20</field>
+        <field name="kind">did</field>
+        <field name="body">Found Lan's four visits on the schedule rather than hunting them one at a time in the booking list.</field>
+    </record>
+
+    <record id="mission_om1_did_02" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">30</field>
+        <field name="kind">did</field>
+        <field name="body">Chose reassignment over cancellation, so the visits, the patients and the revenue all survived.</field>
+    </record>
+
+    <record id="mission_om1_did_03" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">40</field>
+        <field name="kind">did</field>
+        <field name="body">Checked travel feasibility across districts before promising a time to anyone.</field>
+    </record>
+
+    <record id="mission_om1_did_04" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">50</field>
+        <field name="kind">did</field>
+        <field name="body">Looked at workload afterwards, so the rescue did not quietly become somebody else's overload.</field>
+    </record>
+
+    <record id="mission_om1_check_00" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">10</field>
+        <field name="kind">check</field>
+        <field name="body">Open the schedule for the affected day BEFORE approving anything or cancelling anything.</field>
+    </record>
+
+    <record id="mission_om1_check_01" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">20</field>
+        <field name="kind">check</field>
+        <field name="body">Reassign, then reschedule, and only then consider cancelling. Cancel is the last door, not the first.</field>
+    </record>
+
+    <record id="mission_om1_check_02" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">30</field>
+        <field name="kind">check</field>
+        <field name="body">Check the district on both sides of a gap, not just the clock.</field>
+    </record>
+
+    <record id="mission_om1_check_03" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">40</field>
+        <field name="kind">check</field>
+        <field name="body">Tell the family before they ring you. The 16:30 already has someone asking about it.</field>
+    </record>
+
+    <record id="mission_om1_check_04" model="learn.mission.note">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">50</field>
+        <field name="kind">check</field>
+        <field name="body">Re-read the workload bars when you are done — a rescue that overloads one person is tomorrow's sick day.</field>
+    </record>
+
+    <record id="mission_om1_step_00" model="learn.mission.step">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">10</field>
+        <field name="key">read</field>
+        <field name="nav">ops_dashboard</field>
+        <field name="target">od-day</field>
+        <field name="instruction">Read the day before you change it.</field>
+        <field name="detail">14 booked, 1 already unassigned. Whatever you do next adds to that, so it is worth knowing the number you started from.</field>
+        <field name="hint">The Unassigned card is the one that becomes a phone call. It reads 1 right now.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_om1_step_01" model="learn.mission.step">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">20</field>
+        <field name="key">find</field>
+        <field name="nav">ops_schedule</field>
+        <field name="target">os-row-lan</field>
+        <field name="instruction">Find Lan's row and see what is actually on it.</field>
+        <field name="detail">Four visits: 09:00 completed, and three still ahead — 16:30, 17:00 and 18:00. Only the three ahead are your problem.</field>
+        <field name="hint">The completed one at 09:00 already happened. You cannot move a visit that has been done.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_om1_step_02" model="learn.mission.step">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">30</field>
+        <field name="key">decide</field>
+        <field name="instruction">Three visits belong to someone who will not be there. What do you do first?</field>
+        <field name="detail">One decision. Two of these feel decisive and cost you the day.</field>
+        <field name="hint">Ask which action can be undone tomorrow if you get it wrong today.</field>
+        <field name="is_decision" eval="True"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_om1_step_02_opt_ok" model="learn.mission.option">
+        <field name="step_id" ref="mission_om1_step_02"/>
+        <field name="sequence">10</field>
+        <field name="key">ok</field>
+        <field name="label">Reassign them one at a time, checking travel before each, starting with the 16:30 a family is already asking about.</field>
+        <field name="is_correct" eval="True"/>
+    </record>
+
+    <record id="mission_om1_step_02_opt_cancel" model="learn.mission.option">
+        <field name="step_id" ref="mission_om1_step_02"/>
+        <field name="sequence">20</field>
+        <field name="key">cancel</field>
+        <field name="label">Cancel all three and let the families rebook when Lan is back.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="recovery">Hold on. Three cancellations is three patients told not to expect anyone, three slots that earn nothing, and three families who have to start again from an enquiry — and Lan is back tomorrow. Cancel is the last door here, not the first: reassignment keeps the visit, the patient and the money, and it can be undone if you get it wrong.</field>
+    </record>
+
+    <record id="mission_om1_step_02_opt_approve" model="learn.mission.option">
+        <field name="step_id" ref="mission_om1_step_02"/>
+        <field name="sequence">30</field>
+        <field name="key">approve</field>
+        <field name="label">Approve Lan's sick leave first so the schedule shows the day accurately, then work from the gap.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="recovery">Hold on. Approving does not create a gap — it makes Lan unavailable while leaving all three visits sitting on her row, looking completely normal. The screen becomes &lt;i&gt;less&lt;/i&gt; accurate, not more, and the visits are now invisible problems. Move the work first; the approval costs nothing once nothing depends on her.</field>
+    </record>
+
+    <record id="mission_om1_step_03" model="learn.mission.step">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">40</field>
+        <field name="key">route</field>
+        <field name="nav">ops_routes</field>
+        <field name="target">orf-check</field>
+        <field name="instruction">Before you put the 16:30 on Tuấn, check he can get there.</field>
+        <field name="detail">He finishes in Long Biên at 15:00. B-4471 is in Cầu Giấy at 16:30. A 90-minute gap and a 50-minute journey.</field>
+        <field name="hint">It fits. The point of looking is that you now know by how little.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_om1_step_04" model="learn.mission.step">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">50</field>
+        <field name="key">cancelcard</field>
+        <field name="nav">ops_bookings</field>
+        <field name="target">ob-cancel</field>
+        <field name="instruction">One of Lan's visits genuinely has nobody who can take it. Open Cancel and read what it costs.</field>
+        <field name="detail">This is the one action in the mission that cannot be undone. The card appears before it happens — that is the point of it.</field>
+        <field name="hint">Read all three parts. Reversibility is the one people skip, and it is the one that matters here.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="True"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_om1_step_05" model="learn.mission.step">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">60</field>
+        <field name="key">fair</field>
+        <field name="nav">ops_workload</field>
+        <field name="target">ow-bars</field>
+        <field name="instruction">Check what your rescue did to everybody else.</field>
+        <field name="detail">Moving three visits onto whoever was nearest is how one person ends the week at 6 of 6 every day. The bars are the check on the decisions you just made.</field>
+        <field name="hint">Fair is not equal. Read the bars next to the districts.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_om1_step_06" model="learn.mission.step">
+        <field name="mission_id" ref="mission_om1"/>
+        <field name="sequence">70</field>
+        <field name="key">undo</field>
+        <field name="nav">ops_bookings</field>
+        <field name="target">ob-assign</field>
+        <field name="instruction">Change your mind about one of them, and put it on somebody else.</field>
+        <field name="detail">This is the undo worth having in your hands: an assignment can be changed as many times as the day needs. A cancellation cannot be changed at all — which is the whole reason it is the last door.</field>
+        <field name="hint">Assign again on the same booking. Nothing is lost — that is what you are proving to yourself.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="True"/>
+    </record>
+
+    <record id="mission_om2" model="learn.mission">
+        <field name="key">om2</field>
+        <field name="sequence">60</field>
+        <field name="line">ops_people</field>
+        <field name="icon">receipt</field>
+        <field name="name">Close the day's cash without a shortfall</field>
+        <field name="summary">Reconcile 1,350,000 ₫ held across three nurses against the visits that produced it, and find the one that does not match.</field>
+        <field name="duration_min">5</field>
+        <field name="kind">outline</field>
+        <field name="outline_note">Outline. The full version adds the reconciliation itself, the consequence card for sending an unbalanced figure to Finance, and the seeded case where a nurse collected the right total for the wrong visit. Everything described here is real and usable now.</field>
+        <field name="screen">ops_collections</field>
+        <field name="confidence_key">money</field>
+        <field name="confidence_gain">20</field>
+    </record>
+
 </odoo>

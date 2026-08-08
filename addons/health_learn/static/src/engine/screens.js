@@ -16,7 +16,7 @@
    first product rename.
    ========================================================================== */
 import { B, CASE, MENU, OPS, PRACTICE, STATUS_LABELS } from "./fixture";
-import { esc, ic, initial, tx, T, N, P } from "./runtime";
+import { esc, ic, initial, tx, T, N, P, SP} from "./runtime";
 import { pipeHTML } from "./visuals";
 
 /* Which screen the shell is showing. Phase 2's Coach grounds on this. */
@@ -68,7 +68,7 @@ function wallRows() {
             <span class="lrn-avatar">${esc(initial(r.name))}</span>
             <span><span class="lrn-nm">${esc(tx(r.name))}
                     <span class="lrn-faint">#${r.id}</span></span><br>
-                <span class="lrn-sub2">${esc(channelName(r.channel))}${" "}· ${esc(tx(r.note))}</span></span>
+                <span class="lrn-sub2">${esc(channelName(r.channel))}${SP}· ${esc(tx(r.note))}</span></span>
             <span class="lrn-rr">${statusChip("conversation", r.status)}</span>
         </div>`).join("");
 }
@@ -111,7 +111,7 @@ export const SCREENS = {
         const stack = segs.map(([n, c]) =>
             `<i style="width:${(n / m.total * 100).toFixed(1)}%;background:${c}"></i>`).join("");
         const leg = segs.map(([n, c, l]) =>
-            `<span><em style="background:${c}"></em>${esc(tx(l))}${" "}· <b>${N(n)}</b></span>`).join("");
+            `<span><em style="background:${c}"></em>${esc(tx(l))}${SP}· <b>${N(n)}</b></span>`).join("");
         const max = Math.max(...CASE.channels.map((c) => c.n));
         const bars = CASE.channels.map((c) => `
             <div class="lrn-hbar"><span>${esc(tx(c.label))}</span>
@@ -128,8 +128,8 @@ export const SCREENS = {
                 <div class="lrn-panel" data-a="db-pipeline"><h3>${ic("pie")}${esc(tx(B("Contact Pipeline · this month", "Quy trình liên hệ · tháng này")))}</h3>
                     <div class="lrn-stack">${stack}</div><div class="lrn-legend">${leg}</div>
                     <p class="lrn-note">${esc(tx(B(
-                        `${N(m.total)}${" "}enquiries = ${N(m.spam)}${" "}spam + ${N(m.real)}${" "}real; ${N(m.real)}${" "}= ${N(m.booking)}${" "}booked + ${N(m.lead)}${" "}leads + ${N(m.lost)}${" "}lost.`,
-                        `${N(m.total)}${" "}yêu cầu = ${N(m.spam)}${" "}thư rác + ${N(m.real)}${" "}thật; ${N(m.real)}${" "}= ${N(m.booking)}${" "}đã đặt lịch + ${N(m.lead)}${" "}KHTN + ${N(m.lost)}${" "}mất cơ hội.`)))}</p>
+                        `${N(m.total)}${SP}enquiries = ${N(m.spam)}${SP}spam + ${N(m.real)}${SP}real; ${N(m.real)}${SP}= ${N(m.booking)}${SP}booked + ${N(m.lead)}${SP}leads + ${N(m.lost)}${SP}lost.`,
+                        (N(m.total)) + (SP) + "yêu cầu = " + (N(m.spam)) + (SP) + "thư rác + " + (N(m.real)) + (SP) + "thật; " + (N(m.real)) + (SP) + "= " + (N(m.booking)) + (SP) + "đã đặt lịch + " + (N(m.lead)) + (SP) + "KHTN + " + (N(m.lost)) + (SP) + "mất cơ hội.")))}</p>
                 </div>
                 <div class="lrn-panel" data-a="db-channels"><h3>${ic("bar-chart")}${esc(tx(B("Source Channels · this month", "Các kênh nguồn · tháng này")))}</h3>
                     <div class="lrn-hbars">${bars}</div></div>
@@ -149,21 +149,21 @@ export const SCREENS = {
 
         return `
             <div class="lrn-tabs" data-a="cc-tabs">
-                <button aria-selected="true">${esc(T("attention"))}${" "}· ${CASE.wall.needsReply}</button>
+                <button aria-selected="true">${esc(T("attention"))}${SP}· ${CASE.wall.needsReply}</button>
                 <button aria-selected="false">${esc(T("leadsTab"))}</button>
-                <button aria-selected="false">${esc(T("allTab"))}${" "}· ${CASE.wall.open}</button>
+                <button aria-selected="false">${esc(T("allTab"))}${SP}· ${CASE.wall.open}</button>
                 <span class="lrn-chip b lrn-push" data-a="cc-catchment">${ic("map-pin")}${esc(T("catchment"))}: ${esc(T("hanoi"))}</span>
             </div>
             <div class="lrn-grid g2 top">
                 <div class="lrn-panel" data-a="cc-wall">
                     <h3>${ic("zap")}${esc(tx(B("Attention wall", "Bảng cần chú ý")))}
                         <span class="lrn-chip lrn-push">${esc(tx(B(
-                            `${CASE.wall.open}${" "}open · ${CASE.wall.unclaimed}${" "}unclaimed`,
-                            `${CASE.wall.open}${" "}đang mở · ${CASE.wall.unclaimed}${" "}chưa ai nhận`)))}</span></h3>
+                            `${CASE.wall.open}${SP}open · ${CASE.wall.unclaimed}${SP}unclaimed`,
+                            `${CASE.wall.open}${SP}đang mở · ${CASE.wall.unclaimed}${SP}chưa ai nhận`)))}</span></h3>
                     <div class="lrn-rows">${wallRows()}</div>
                 </div>
                 <div class="lrn-panel">
-                    <h3>${ic("message-circle")}#${CASE.convId}${" "}· ${esc(tx(CASE.sender))}</h3>
+                    <h3>${ic("message-circle")}#${CASE.convId}${SP}· ${esc(tx(CASE.sender))}</h3>
                     <div class="lrn-claimbar" data-a="cc-claim">${ic("user-plus")}
                         <span>${esc(T("unclaimed"))}</span>
                         <button class="lrn-btn sm pri" data-act="sim-claim" data-a="cc-release">${esc(T("claim"))}</button></div>
@@ -305,7 +305,7 @@ export const SCREENS = {
                 <td>pkgdvietuc.com/dich-vu/…</td><td class="n">${N(a.n)}</td></tr>`).join("");
         return `<div class="lrn-panel" data-a="tp-table">
                 <h3>${ic("crosshair")}${esc(tx(B("Website arrivals · this month", "Lượt đến từ website · tháng này")))}
-                    <span class="lrn-chip a lrn-push" data-a="tp-unmatched">${ic("alert-triangle")}${esc(T("unmatched"))}${" "}· 4</span></h3>
+                    <span class="lrn-chip a lrn-push" data-a="tp-unmatched">${ic("alert-triangle")}${esc(T("unmatched"))}${SP}· 4</span></h3>
                 <div class="lrn-tblwrap"><table class="lrn-tbl">
                     <thead><tr><th>${esc(tx(B("UTM campaign", "Chiến dịch UTM")))}</th>
                         <th>${esc(tx(B("Source / medium", "Nguồn / phương tiện")))}</th>
@@ -341,8 +341,8 @@ export const SCREENS = {
                         <td class="n">${N(m.total)}</td></tr></tbody>
             </table></div>
             <p class="lrn-note">${esc(tx(B(
-                `Reconciles with the Dashboard only at the same period and catchment: ${N(m.booking)}${" "}÷ ${N(m.real)}${" "}real enquiries = ${P(m.conversion)}${" "}conversion; ${N(m.spam)}${" "}÷ ${N(m.total)}${" "}= ${P(m.spamRate)}${" "}spam.`,
-                `Chỉ khớp với Bảng điều khiển khi cùng khoảng thời gian và cùng khu vực: ${N(m.booking)}${" "}÷ ${N(m.real)}${" "}yêu cầu thật = ${P(m.conversion)}${" "}chuyển đổi; ${N(m.spam)}${" "}÷ ${N(m.total)}${" "}= ${P(m.spamRate)}${" "}thư rác.`)))}</p>
+                `Reconciles with the Dashboard only at the same period and catchment: ${N(m.booking)}${SP}÷ ${N(m.real)}${SP}real enquiries = ${P(m.conversion)}${SP}conversion; ${N(m.spam)}${SP}÷ ${N(m.total)}${SP}= ${P(m.spamRate)}${SP}spam.`,
+                "Chỉ khớp với Bảng điều khiển khi cùng khoảng thời gian và cùng khu vực: " + (N(m.booking)) + (SP) + "÷ " + (N(m.real)) + (SP) + "yêu cầu thật = " + (P(m.conversion)) + (SP) + "chuyển đổi; " + (N(m.spam)) + (SP) + "÷ " + (N(m.total)) + (SP) + "= " + (P(m.spamRate)) + (SP) + "thư rác.")))}</p>
         </div>`;
     },
 
@@ -368,8 +368,8 @@ export const SCREENS = {
             </div>
             <div class="lrn-grid g2" data-a="ac-groups">${groups}</div>
             <div class="lrn-panel"><p class="lrn-note">${esc(tx(B(
-                `These ${CASE.kpis.pendingFollowups}${" "}open follow-ups are exactly the Dashboard's “Pending Follow-ups” card. If the two disagree, an activity was closed without the contact's status being updated.`,
-                `${CASE.kpis.pendingFollowups}${" "}việc theo dõi đang mở này chính là thẻ “Đang chờ theo dõi” trên Bảng điều khiển. Nếu hai nơi lệch nhau, tức là một hoạt động đã được đóng mà chưa cập nhật trạng thái liên hệ.`)))}</p></div>`;
+                `These ${CASE.kpis.pendingFollowups}${SP}open follow-ups are exactly the Dashboard's “Pending Follow-ups” card. If the two disagree, an activity was closed without the contact's status being updated.`,
+                (CASE.kpis.pendingFollowups) + (SP) + "việc theo dõi đang mở này chính là thẻ “Đang chờ theo dõi” trên Bảng điều khiển. Nếu hai nơi lệch nhau, tức là một hoạt động đã được đóng mà chưa cập nhật trạng thái liên hệ.")))}</p></div>`;
     },
 };
 
@@ -407,7 +407,7 @@ function opsBookingRows(list) {
             <span class="lrn-urg lo">${esc(b.time)}</span>
             <span><span class="lrn-nm">${esc(tx(b.client))}
                     <span class="lrn-faint">${esc(b.ref)}</span></span><br>
-                <span class="lrn-sub2">${esc(tx(b.svc))}${" "}· ${esc(tx(b.district))}${" "}·
+                <span class="lrn-sub2">${esc(tx(b.svc))}${SP}· ${esc(tx(b.district))}${SP}·
                     ${esc(opsStaffName(b.staff))}</span></span>
             <span class="lrn-rr"><span class="lrn-chip ${OPS_STATE_TONE[b.state] || ""}"
                 >${esc(opsStateLabel(b.state))}</span></span>
@@ -447,16 +447,16 @@ Object.assign(SCREENS, {
     ops_bookings() {
         return `
             <div class="lrn-tabs" data-a="ob-filters">
-                <button aria-selected="true">${esc(tx(B("Today", "Hôm nay")))}${" "}· ${OPS.totals.bookings}</button>
-                <button aria-selected="false">${esc(tx(B("Unassigned", "Chưa phân công")))}${" "}· ${OPS.totals.unassigned}</button>
+                <button aria-selected="true">${esc(tx(B("Today", "Hôm nay")))}${SP}· ${OPS.totals.bookings}</button>
+                <button aria-selected="false">${esc(tx(B("Unassigned", "Chưa phân công")))}${SP}· ${OPS.totals.unassigned}</button>
                 <button aria-selected="false">${esc(tx(B("This week", "Tuần này")))}</button>
                 <span class="lrn-chip b lrn-push">${ic("map-pin")}${esc(tx(OPS.area))}</span>
             </div>
             <div class="lrn-panel" data-a="ob-list">
                 <h3>${ic("calendar")}${esc(tx(OPS.day))}
                     <span class="lrn-chip lrn-push">${esc(tx(B(
-                        `${OPS.totals.assigned}${" "}assigned · ${OPS.totals.unassigned}${" "}unassigned`,
-                        `${OPS.totals.assigned}${" "}đã phân công · ${OPS.totals.unassigned}${" "}chưa phân công`)))}</span></h3>
+                        `${OPS.totals.assigned}${SP}assigned · ${OPS.totals.unassigned}${SP}unassigned`,
+                        `${OPS.totals.assigned}${SP}đã phân công · ${OPS.totals.unassigned}${SP}chưa phân công`)))}</span></h3>
                 <div class="lrn-rows">${opsBookingRows(OPS.bookings)}</div>
             </div>
             <div class="lrn-panel" data-a="ob-actions">
@@ -474,12 +474,12 @@ Object.assign(SCREENS, {
         const rows = OPS.staff.map((st) => {
             const mine = OPS.bookings.filter((b) => b.staff === st.id && b.state !== "cancelled");
             const chips = mine.map((b) => `<span class="lrn-chip ${OPS_STATE_TONE[b.state] || ""}"
-                >${esc(b.time)}${" "}${esc(tx(b.district))}</span>`).join("");
+                >${esc(b.time)}${SP}${esc(tx(b.district))}</span>`).join("");
             return `
             <div class="lrn-row" data-a="os-row-${esc(st.id)}">
                 <span class="lrn-avatar">${esc(initial(st.name))}</span>
                 <span><span class="lrn-nm">${esc(tx(st.name))}</span><br>
-                    <span class="lrn-sub2">${esc(tx(st.role))}${" "}· ${st.load}/${st.cap}</span></span>
+                    <span class="lrn-sub2">${esc(tx(st.role))}${SP}· ${st.load}/${st.cap}</span></span>
                 <span class="lrn-rr">${chips}</span>
             </div>`;
         }).join("");
@@ -492,15 +492,15 @@ Object.assign(SCREENS, {
                 <h3>${ic("calendar")}${esc(tx(B("Who is doing what", "Ai đang làm gì")))}</h3>
                 <div class="lrn-rows">${rows}</div>
                 <p class="lrn-note">${esc(tx(B(
-                    `${OPS.totals.assigned}${" "}visits across ${OPS.totals.staffOnShift}${" "}people. The one that is not here is the unassigned booking — an empty row is not the same as a free nurse.`,
-                    `${OPS.totals.assigned}${" "}lượt thăm khám chia cho ${OPS.totals.staffOnShift}${" "}người. Lượt không có ở đây là lịch hẹn chưa phân công — một dòng trống không đồng nghĩa với một điều dưỡng đang rảnh.`)))}</p>
+                    (N(OPS.totals.assigned) + " visits across " + N(OPS.totals.staffOnShift) + " people. The one that is not here is the unassigned booking — an empty row is not the same as a free nurse."),
+                    N(OPS.totals.assigned) + " lượt thăm khám chia cho " + N(OPS.totals.staffOnShift) + " người. Lượt không có ở đây là lịch hẹn chưa phân công — một dòng trống không đồng nghĩa với một điều dưỡng đang rảnh.")))}</p>
             </div>
             <div class="lrn-panel" data-a="os-timeoff">
                 <h3>${ic("clock")}${esc(tx(B("Time off that touches this week", "Nghỉ phép ảnh hưởng tuần này")))}</h3>
                 <div class="lrn-rows">${OPS.timeoff.map((t) => `
                     <div class="lrn-row"><span class="lrn-avatar">${esc(initial(B(opsStaffName(t.who), opsStaffName(t.who))))}</span>
                         <span><span class="lrn-nm">${esc(opsStaffName(t.who))}</span><br>
-                            <span class="lrn-sub2">${esc(t.from)}${" "}→ ${esc(t.to)}${" "}· ${esc(tx(t.kind))}</span></span>
+                            <span class="lrn-sub2">${esc(t.from)}${SP}→ ${esc(t.to)}${SP}· ${esc(tx(t.kind))}</span></span>
                         <span class="lrn-rr"><span class="lrn-chip">${esc(tx(t.state))}</span></span></div>`).join("")}</div>
             </div>`;
     },
@@ -542,7 +542,7 @@ Object.assign(SCREENS, {
             <div class="lrn-rows">${OPS.timeoff.map((t) => `
                 <div class="lrn-row"><span class="lrn-avatar">${esc(initial(B(opsStaffName(t.who), opsStaffName(t.who))))}</span>
                     <span><span class="lrn-nm">${esc(opsStaffName(t.who))}</span><br>
-                        <span class="lrn-sub2">${esc(t.from)}${" "}→ ${esc(t.to)}${" "}· ${esc(tx(t.kind))}</span></span>
+                        <span class="lrn-sub2">${esc(t.from)}${SP}→ ${esc(t.to)}${SP}· ${esc(tx(t.kind))}</span></span>
                     <span class="lrn-rr"><span class="lrn-chip a">${esc(tx(t.state))}</span>
                         <button class="lrn-btn sm pri" data-a="ot-approve">${esc(tx(B("Approve", "Duyệt")))}</button></span></div>`).join("")}</div>
             <p class="lrn-note">${esc(tx(B(
@@ -555,7 +555,7 @@ Object.assign(SCREENS, {
         const rows = OPS.collections.map((c) => `
             <div class="lrn-row"><span class="lrn-avatar">${esc(initial(B(opsStaffName(c.who), opsStaffName(c.who))))}</span>
                 <span><span class="lrn-nm">${esc(opsStaffName(c.who))}</span><br>
-                    <span class="lrn-sub2">${esc(tx(B(`${c.visits}${" "}visit(s)`, `${c.visits}${" "}lượt`)))}</span></span>
+                    <span class="lrn-sub2">${esc(tx(B(`${c.visits}${SP}visit(s)`, `${c.visits}${SP}lượt`)))}</span></span>
                 <span class="lrn-rr"><b>${M(c.amount)}</b></span></div>`).join("");
         return `<div class="lrn-panel" data-a="ocl-list">
             <h3>${ic("receipt")}${esc(tx(B("Cash held by staff right now", "Tiền mặt nhân viên đang giữ")))}
@@ -571,7 +571,7 @@ Object.assign(SCREENS, {
         const rows = OPS.family.map((f) => `
             <div class="lrn-row"><span class="lrn-avatar">${esc(initial(f.client))}</span>
                 <span><span class="lrn-nm">${esc(tx(f.from))}</span><br>
-                    <span class="lrn-sub2">${esc(tx(B("about", "về"))) }${" "}${esc(tx(f.client))}${" "}· ${esc(tx(f.text))}</span></span>
+                    <span class="lrn-sub2">${esc(tx(B("about", "về"))) }${SP}${esc(tx(f.client))}${SP}· ${esc(tx(f.text))}</span></span>
                 <span class="lrn-rr">${f.unread
                     ? `<span class="lrn-chip a">${esc(tx(B("Unread", "Chưa đọc")))}</span>` : ""}</span></div>`).join("");
         return `<div class="lrn-panel" data-a="ofm-list">
@@ -620,7 +620,7 @@ export function shellHTML(screen, opts) {
             // it is before asking for access.
             const off = !inScope || (!seen && !o.guided);
             const on = it.id === screen;
-            return `<button class="lrn-item ${on ? "on" : ""}${" "}${off ? "off" : ""}" data-nav="${esc(it.id)}"
+            return `<button class="lrn-item ${on ? "on" : ""}${SP}${off ? "off" : ""}" data-nav="${esc(it.id)}"
                 ${off ? 'tabindex="-1" aria-disabled="true"' : ""}>${ic(it.icon)}
                 <span>${esc(tx(it.label))}</span></button>`;
         }).join("");

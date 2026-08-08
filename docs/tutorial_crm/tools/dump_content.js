@@ -78,6 +78,9 @@ const out = {
     opsStations: grab("OPS_STATIONS"),
     ops: grab("OPS"),
     opsScreenCtx: grab("OPS_SCREEN_CTX"),
+    opsLessons: grab("OPS_LESSONS"),
+    opsMissions: grab("OPS_MISSIONS"),
+    opsM1Steps: grab("OPS_M1_STEPS"),
 };
 
 process.stdout.write(JSON.stringify(out, null, 1));

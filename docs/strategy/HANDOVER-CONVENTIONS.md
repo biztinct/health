@@ -2367,8 +2367,8 @@ a no-op.
     `KeyError`, not a wrong value. Assert on `field_id` for identity and
     `label` for display. (records-table RT-2.)
 
-- **§5.144 — Odoo's JS minifier deletes whitespace directly after `}`, inside
-    template literals too.** `` `${esc(T("fullLesson"))} · ${mins} ${esc(T("min"))}` ``
+- **§5.144 (CORRECTED by §5.149 — read that one) — Odoo's JS minifier deletes
+    whitespace directly after `}`, inside template literals too.** `` `${esc(T("fullLesson"))} · ${mins} ${esc(T("min"))}` ``
     reaches the browser as `Full lesson· 7min`. MEASURED by diffing
     `/web/assets/<hash>/web.assets_web.js` against the `.min.js` beside it: the
     non-minified bundle has the spaces and the minified one does not — so it is
@@ -2425,3 +2425,27 @@ a no-op.
     a compile failure, and the `css_error_message` content names the offending
     expression. Declare the expression as a CSS custom property; Sass passes
     those through verbatim. (learn Phase 2.)
+
+- **§5.149 — the minifier mis-parses the WHOLE REMAINDER of a template literal
+    after an interpolation, not just the space after `}`.** §5.144 got the
+    symptom right and the cause wrong, and the incomplete fix produced a second
+    bug that took two more rounds to see. What actually happens: once rjsmin
+    passes a `${...}`, it treats the following literal text as CODE until it
+    re-syncs — so it strips whitespace anywhere JS would allow it. A space after
+    `}` goes; so does the space after a full stop, because `people. The` reads
+    as property access. `"13 visits across 4 people. The one"` shipped as
+    `"…people.The one"` while an identical sentence with no interpolation in it
+    was untouched.
+
+    Two consequences:
+    * `${" "}` is NOT a general fix. It repairs the space it replaces and
+      leaves every later `. ` in the same string broken.
+    * **Build prose with concatenation, not interpolation.**
+      `N(a) + " visits across " + N(b) + " people. The one…"` is ordinary JS and
+      the minifier parses it correctly. Keep template literals for HTML
+      structure, where the only text between interpolations is markup.
+
+    Diagnose by fetching the served bundle FROM THE PAGE and reading the actual
+    bytes — `fetch(src).then(t => t.slice(i - 90, i + 120))`. Three rounds were
+    spent on hypotheses that a single look at the output would have killed.
+    (learn Phase 4.)

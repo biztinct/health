@@ -351,7 +351,7 @@
         <field name="sequence">100</field>
         <field name="summary">Every visit for the day, and the four things you can do to one.</field>
         <field name="icon">calendar</field>
-        <field name="kind">outline</field>
+        <field name="kind">lesson</field>
         <field name="sidebar_key">health_cms_sidebar.item_ops_bookings</field>
         <field name="duration_min">7</field>
         <field name="required" eval="True"/>
@@ -388,7 +388,7 @@
         <field name="sequence">110</field>
         <field name="summary">Who is doing what, all day — the screen an Operations Manager lives in.</field>
         <field name="icon">users</field>
-        <field name="kind">outline</field>
+        <field name="kind">lesson</field>
         <field name="sidebar_key">health_cms_sidebar.item_ops_roster</field>
         <field name="duration_min">7</field>
         <field name="required" eval="True"/>

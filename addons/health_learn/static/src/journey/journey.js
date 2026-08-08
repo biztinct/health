@@ -18,7 +18,7 @@ import { Component, markup, onMounted, onPatched, onWillStart, onWillUnmount, us
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
-import { RT, T, tx, esc, ic, reduced } from "../engine/runtime";
+import { RT, T, tx, esc, ic, reduced, SP} from "../engine/runtime";
 import { Spot, Trace, setOverlayRoot } from "../engine/spotlight";
 import { shellHTML } from "../engine/screens";
 import { morphHTML, calcHTML, pipeHTML, runPipeline } from "../engine/visuals";
@@ -264,7 +264,7 @@ export class LearnJourney extends Component {
                 <div class="lrn-ring" style="--p:${pctDone}"><span>${pctDone}%</span></div>
                 <div class="lrn-pmeta">
                     <b>${esc(T("overall"))}</b>
-                    <span>${this.doneCount}${" "}/ ${total}</span>
+                    <span>${this.doneCount}${SP}/ ${total}</span>
                     ${this.badgeEarned
                         ? `<span class="lrn-chip ok">${ic("award")}${esc(T("badgeGot"))}</span>`
                         : `<span class="lrn-chip">${ic("award")}${esc(T("badge"))}</span>`}
@@ -296,7 +296,7 @@ export class LearnJourney extends Component {
                 ? `<span class="lrn-chip warn">${ic("lock")}${esc(T("notVisible"))}</span>`
                 : "");
         return `
-        <button class="lrn-card ${s.star ? "star" : ""}${" "}${st === "done" ? "done" : ""}"
+        <button class="lrn-card ${s.star ? "star" : ""}${SP}${st === "done" ? "done" : ""}"
                 data-station="${esc(s.key)}">
             <span class="lrn-cardico">${ic(s.icon)}</span>
             <span class="lrn-cardmain">
@@ -304,7 +304,7 @@ export class LearnJourney extends Component {
                     ${st === "done" ? ic("check-circle", "ok") : ""}</span>
                 <span class="lrn-carddesc">${esc(tx(s.summary))}</span>
                 <span class="lrn-cardmeta">${badge}${need}${gate}
-                    <span class="lrn-chip">${ic("clock")}${esc(T("est"))}${" "}${s.duration_min}${" "}${esc(T("min"))}</span>
+                    <span class="lrn-chip">${ic("clock")}${esc(T("est"))}${SP}${s.duration_min}${SP}${esc(T("min"))}</span>
                 </span>
             </span>
         </button>`;
@@ -347,7 +347,7 @@ export class LearnJourney extends Component {
             <ul class="lrn-mistakes">${mistakes}</ul></div>` : ""}
         ${s.kind === "lesson"
             ? `<div class="lrn-cta"><button class="lrn-btn pri" data-act="start-lesson">
-                 ${ic("play")}${esc(T("fullLesson"))}${" "}· ${s.duration_min}${" "}${esc(T("min"))}</button></div>`
+                 ${ic("play")}${esc(T("fullLesson"))}${SP}· ${s.duration_min}${SP}${esc(T("min"))}</button></div>`
             : ""}`;
     }
 
@@ -366,7 +366,7 @@ export class LearnJourney extends Component {
         return `${shell}
         <div class="lrn-playbar" role="group" aria-label="${esc(T("step"))}">
             <span class="lrn-meter"><i style="width:${pctDone}%"></i></span>
-            <span class="lrn-stepno">${esc(T("step"))}${" "}${this.state.step + 1}${" "}${esc(T("of"))}${" "}${steps.length}</span>
+            <span class="lrn-stepno">${esc(T("step"))}${SP}${this.state.step + 1}${SP}${esc(T("of"))}${SP}${steps.length}</span>
             <button class="lrn-btn sm" data-act="l-back" ${this.state.step === 0 ? "disabled" : ""}>
                 ${ic("chevron-left")}${esc(T("back"))}</button>
             <button class="lrn-btn sm pri" data-act="l-next">
@@ -458,7 +458,7 @@ export class LearnJourney extends Component {
             const done = (this.progress[`mission:${m.key}`] || {}).state === "done";
             const full = m.kind === "full";
             return `
-            <button class="lrn-card ${full ? "star" : ""}${" "}${done ? "done" : ""}"
+            <button class="lrn-card ${full ? "star" : ""}${SP}${done ? "done" : ""}"
                     data-mission="${esc(m.key)}">
                 <span class="lrn-cardico">${ic(m.icon)}</span>
                 <span class="lrn-cardmain">
@@ -966,7 +966,7 @@ export class LearnJourney extends Component {
             return "";
         }
         const st = this.steps[this.state.step];
-        return st ? `${T("step")}${" "}${this.state.step + 1}${" "}${T("of")}${" "}${this.steps.length}. ${tx(st.title)}` : "";
+        return st ? (T("step")) + (SP) + (this.state.step + 1) + (SP) + (T("of")) + (SP) + (this.steps.length) + ". " + (tx(st.title)) : "";
     }
 }
 

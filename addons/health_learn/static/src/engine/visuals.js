@@ -13,7 +13,7 @@
    inside a lesson.
    ========================================================================== */
 import { B, CASE } from "./fixture";
-import { $, $$, esc, ic, reduced, tx, N } from "./runtime";
+import { $, $$, esc, ic, reduced, tx, N, SP} from "./runtime";
 
 /* Lifecycle vocabularies. Product statuses, so they live beside the fixture's
    other product facts rather than in the content spine. */
@@ -30,6 +30,14 @@ export const CHAINS = {
             B("Testing", "Đang kiểm thử"), B("Connected", "Đã kết nối"),
         ],
         branch: B("Action required", "Cần xử lý"),
+    },
+    booking: {
+        nodes: [
+            B("New Booking", "Lịch hẹn mới"), B("Assigned", "Đã phân công"),
+            B("In Progress", "Đang thực hiện"), B("Completed", "Hoàn thành"),
+            B("Closed", "Đã đóng"),
+        ],
+        branch: B("Cancelled", "Đã hủy"),
     },
     contact: {
         nodes: [
@@ -101,7 +109,7 @@ export function calcKpiHTML() {
         [B("Converted to a booking", "Đã chuyển thành lịch hẹn"), N(m.booking)],
     ].map(([l, v]) => `<div class="lrn-cr"><span>${esc(tx(l))}</span><b>${v}</b></div>`).join("");
     return `<div class="lrn-calc">${rows}
-        <div class="lrn-cr tot"><span>${N(m.booking)}${" "}÷ ${N(m.real)}</span>
+        <div class="lrn-cr tot"><span>${N(m.booking)}${SP}÷ ${N(m.real)}</span>
         <b>${m.conversion.toFixed(1)}%</b></div></div>`;
 }
 

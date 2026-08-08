@@ -71,8 +71,13 @@ class LearnMission(models.Model):
 
     @api.model
     def _selection_line(self):
+        # Mirrors learn.station._selection_line — one vocabulary for the map
+        # and the missions, so a mission cannot belong to a line the Journey
+        # does not draw.
         return [('daily', self.env._('Daily work line')),
-                ('reach', self.env._('Reach & setup line'))]
+                ('reach', self.env._('Reach & setup line')),
+                ('ops_day', self.env._('Running today')),
+                ('ops_people', self.env._('People, money and reach'))]
 
     @api.model
     def _selection_kind(self):
