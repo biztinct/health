@@ -13,7 +13,7 @@
         <field name="sequence">10</field>
         <field name="summary">Start of shift: what came in, what is waiting, how conversion is going.</field>
         <field name="icon">grid</field>
-        <field name="kind">outline</field>
+        <field name="kind">lesson</field>
         <field name="sidebar_key">health_cms_sidebar.item_crm_dashboard</field>
         <field name="duration_min">4</field>
         <field name="required" eval="True"/>
@@ -87,7 +87,7 @@
         <field name="sequence">30</field>
         <field name="summary">The record behind the conversation: status tabs, quick actions, and the booking wizard.</field>
         <field name="icon">phone</field>
-        <field name="kind">outline</field>
+        <field name="kind">lesson</field>
         <field name="sidebar_key">health_cms_sidebar.item_crm_contacts</field>
         <field name="duration_min">6</field>
         <field name="required" eval="True"/>
@@ -125,7 +125,7 @@
         <field name="sequence">40</field>
         <field name="summary">The team's shared follow-up board — every scheduled call, meeting, email and task.</field>
         <field name="icon">list-checks</field>
-        <field name="kind">outline</field>
+        <field name="kind">lesson</field>
         <field name="sidebar_key">health_cms_sidebar.item_crm_activities</field>
         <field name="duration_min">3</field>
         <field name="required" eval="True"/>
@@ -163,7 +163,7 @@
         <field name="sequence">50</field>
         <field name="summary">Things that arrived on a channel but carried too little to become a conversation.</field>
         <field name="icon">inbox</field>
-        <field name="kind">outline</field>
+        <field name="kind">lesson</field>
         <field name="sidebar_key">health_care_command_channels.item_contact_capture</field>
         <field name="duration_min">3</field>
         <field name="required" eval="False"/>
@@ -238,7 +238,7 @@
         <field name="sequence">70</field>
         <field name="summary">Every arrival from the website, with the advert or link that produced it.</field>
         <field name="icon">crosshair</field>
-        <field name="kind">outline</field>
+        <field name="kind">lesson</field>
         <field name="sidebar_key">health_web_leads.item_web_touchpoints</field>
         <field name="duration_min">4</field>
         <field name="required" eval="False"/>
@@ -276,7 +276,7 @@
         <field name="sequence">80</field>
         <field name="summary">The pivot: enquiries by source, status, service and area — the whole funnel in one grid.</field>
         <field name="icon">bar-chart</field>
-        <field name="kind">outline</field>
+        <field name="kind">lesson</field>
         <field name="sidebar_key">health_web_leads.item_lead_analysis</field>
         <field name="duration_min">4</field>
         <field name="required" eval="False"/>

@@ -590,7 +590,7 @@ export class LearnJourney extends Component {
         ${step.detail ? `<div class="lrn-cbody">${esc(tx(step.detail))}</div>` : ""}
         <div class="lrn-opts">${opts}</div>
         ${picked && !picked.correct
-            ? `<div class="lrn-explain warn"><p>${esc(tx(picked.recovery))}</p></div>` : ""}
+            ? `<div class="lrn-explain warn"><p>${tx(picked.recovery)}</p></div>` : ""}
         ${this.state.mHint && step.hint && !chosen
             ? `<div class="lrn-tip">${ic("lightbulb")}<span>${esc(tx(step.hint))}</span></div>` : ""}
         <div class="lrn-ctools">
@@ -752,7 +752,12 @@ export class LearnJourney extends Component {
 
     startLesson() {
         const p = this.progress[this.state.stationKey] || {};
-        this.state.step = Math.min(p.step_index || 0, Math.max(0, this.steps.length - 1));
+        // Resume ONLY a lesson that is genuinely mid-flight. Re-opening a
+        // finished one used to jump straight to step 10 of 10, which reads as
+        // the app skipping the lesson rather than remembering your place.
+        const resumable = p.state === "in_progress"
+            && (p.step_index || 0) < this.steps.length - 1;
+        this.state.step = resumable ? p.step_index : 0;
         this.state.quiz = false;
         this.state.answered = null;
         this.state.morphSide = "before";

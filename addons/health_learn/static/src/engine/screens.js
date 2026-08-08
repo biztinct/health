@@ -125,16 +125,16 @@ export const SCREENS = {
             </div>
             <div class="lrn-grid g6">${cards}</div>
             <div class="lrn-grid g2">
-                <div class="lrn-panel"><h3>${ic("pie")}${esc(tx(B("Contact Pipeline · this month", "Quy trình liên hệ · tháng này")))}</h3>
+                <div class="lrn-panel" data-a="db-pipeline"><h3>${ic("pie")}${esc(tx(B("Contact Pipeline · this month", "Quy trình liên hệ · tháng này")))}</h3>
                     <div class="lrn-stack">${stack}</div><div class="lrn-legend">${leg}</div>
                     <p class="lrn-note">${esc(tx(B(
                         `${N(m.total)}${" "}enquiries = ${N(m.spam)}${" "}spam + ${N(m.real)}${" "}real; ${N(m.real)}${" "}= ${N(m.booking)}${" "}booked + ${N(m.lead)}${" "}leads + ${N(m.lost)}${" "}lost.`,
                         `${N(m.total)}${" "}yêu cầu = ${N(m.spam)}${" "}thư rác + ${N(m.real)}${" "}thật; ${N(m.real)}${" "}= ${N(m.booking)}${" "}đã đặt lịch + ${N(m.lead)}${" "}KHTN + ${N(m.lost)}${" "}mất cơ hội.`)))}</p>
                 </div>
-                <div class="lrn-panel"><h3>${ic("bar-chart")}${esc(tx(B("Source Channels · this month", "Các kênh nguồn · tháng này")))}</h3>
+                <div class="lrn-panel" data-a="db-channels"><h3>${ic("bar-chart")}${esc(tx(B("Source Channels · this month", "Các kênh nguồn · tháng này")))}</h3>
                     <div class="lrn-hbars">${bars}</div></div>
             </div>
-            <div class="lrn-panel"><h3>${ic("clock")}${esc(tx(B("Recent Contacts", "Liên hệ gần đây")))}</h3>
+            <div class="lrn-panel" data-a="db-recent"><h3>${ic("clock")}${esc(tx(B("Recent Contacts", "Liên hệ gần đây")))}</h3>
                 <div class="lrn-rows">${recentRows()}</div></div>`;
     },
 
@@ -287,14 +287,14 @@ export const SCREENS = {
                     <span class="lrn-sub2">${esc(tx(c.meta))}</span></span>
                 <span class="lrn-rr">
                     ${statusChip("contact", c.status)}
-                    <button class="lrn-btn sm">${esc(T("bookBtn"))}</button>
+                    <button class="lrn-btn sm" data-a="co-book">${esc(T("bookBtn"))}</button>
                     <button class="lrn-btn sm ghost">${esc(T("escalate"))}</button>
                     <button class="lrn-btn sm ghost">${esc(T("markJunk"))}</button>
                 </span>
             </div>`).join("");
-        return `<div class="lrn-tabs">${tabs}</div>
-            <div class="lrn-panel"><div class="lrn-rows">${rows}</div></div>
-            <div class="lrn-panel"><h3>${ic("git-branch")}${esc(tx(B("Contact lifecycle", "Vòng đời liên hệ")))}</h3>
+        return `<div class="lrn-tabs" data-a="co-tabs">${tabs}</div>
+            <div class="lrn-panel" data-a="co-rows"><div class="lrn-rows">${rows}</div></div>
+            <div class="lrn-panel" data-a="co-pipeline"><h3>${ic("git-branch")}${esc(tx(B("Contact lifecycle", "Vòng đời liên hệ")))}</h3>
                 ${pipeHTML("contact", 2)}</div>`;
     },
 
@@ -303,7 +303,7 @@ export const SCREENS = {
             <tr><td>${esc(typeof a.c === "string" ? a.c : tx(a.c))}</td>
                 <td>${esc(typeof a.src === "string" ? a.src : tx(a.src))}</td>
                 <td>pkgdvietuc.com/dich-vu/…</td><td class="n">${N(a.n)}</td></tr>`).join("");
-        return `<div class="lrn-panel">
+        return `<div class="lrn-panel" data-a="tp-table">
                 <h3>${ic("crosshair")}${esc(tx(B("Website arrivals · this month", "Lượt đến từ website · tháng này")))}
                     <span class="lrn-chip a lrn-push" data-a="tp-unmatched">${ic("alert-triangle")}${esc(T("unmatched"))}${" "}· 4</span></h3>
                 <div class="lrn-tblwrap"><table class="lrn-tbl">
@@ -329,13 +329,13 @@ export const SCREENS = {
             ${[r.booked, r.lead, r.lost, r.spam].map((v) => `<td class="n">${N(v)}</td>`).join("")}
             <td class="n lrn-strong">${N(r.total)}</td></tr>`).join("");
         const m = CASE.month;
-        return `<div class="lrn-panel">
+        return `<div class="lrn-panel" data-a="la-pivot">
             <h3>${ic("bar-chart")}${esc(tx(B("Enquiries by channel × status · this month", "Yêu cầu theo kênh × trạng thái · tháng này")))}</h3>
             <div class="lrn-tblwrap"><table class="lrn-tbl">
                 <thead><tr><th>${esc(tx(B("Effective channel", "Kênh hiệu lực")))}</th>
                     ${head.map((h) => `<th class="n">${esc(tx(h))}</th>`).join("")}</tr></thead>
                 <tbody>${rows}
-                    <tr class="lrn-tot"><td>${esc(tx(B("Total", "Tổng")))}</td>
+                    <tr class="lrn-tot" data-a="la-total"><td>${esc(tx(B("Total", "Tổng")))}</td>
                         <td class="n">${N(m.booking)}</td><td class="n">${N(m.lead)}</td>
                         <td class="n">${N(m.lost)}</td><td class="n">${N(m.spam)}</td>
                         <td class="n">${N(m.total)}</td></tr></tbody>
@@ -359,14 +359,14 @@ export const SCREENS = {
                                 <span class="lrn-sub2">${esc(tx(B("Due 13 Aug · assigned to the CRM team", "Đến hạn 13/8 · giao cho nhóm CRM")))}</span></span>
                         </div>`).join("")}
                 </div></div>`).join("");
-        return `<div class="lrn-tabs">
+        return `<div class="lrn-tabs" data-a="ac-filter">
                 <button aria-selected="true">${esc(T("all"))}</button>
                 <button aria-selected="false">${esc(T("today"))}</button>
                 <button aria-selected="false">${esc(T("week"))}</button>
                 <button aria-selected="false">${esc(T("month"))}</button>
                 <button class="lrn-btn sm pri lrn-push">${ic("plus")}${esc(tx(B("Schedule activity", "Lên lịch hoạt động")))}</button>
             </div>
-            <div class="lrn-grid g2">${groups}</div>
+            <div class="lrn-grid g2" data-a="ac-groups">${groups}</div>
             <div class="lrn-panel"><p class="lrn-note">${esc(tx(B(
                 `These ${CASE.kpis.pendingFollowups}${" "}open follow-ups are exactly the Dashboard's “Pending Follow-ups” card. If the two disagree, an activity was closed without the contact's status being updated.`,
                 `${CASE.kpis.pendingFollowups}${" "}việc theo dõi đang mở này chính là thẻ “Đang chờ theo dõi” trên Bảng điều khiển. Nếu hai nơi lệch nhau, tức là một hoạt động đã được đóng mà chưa cập nhật trạng thái liên hệ.`)))}</p></div>`;

@@ -392,4 +392,589 @@
         <field name="feedback">Let's rethink that. Re-authorising takes a connection out of the connected states while it walks the path again — and nothing queues while it is down, so you would add a real outage on both cities to a routing problem in one. Diagnose from the account selection first; re-authorisation is the fix for an expiring or lost grant, not a diagnostic.</field>
     </record>
 
+    <record id="lesson_l3" model="learn.lesson">
+        <field name="key">L3</field>
+        <field name="station_id" ref="station_dashboard"/>
+        <field name="sequence">10</field>
+        <field name="name">Dashboard</field>
+        <field name="goal">Start of shift: what came in, what is waiting, how conversion is going.</field>
+        <field name="duration_min">5</field>
+    </record>
+
+    <record id="lesson_l3_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_l3"/>
+        <field name="sequence">10</field>
+        <field name="kicker">READ THIS FIRST</field>
+        <field name="title">Every number here belongs to a period</field>
+        <field name="body">Nothing on this screen means anything without the selector at the top. &lt;b&gt;Contacts Today&lt;/b&gt; is a day figure; &lt;b&gt;Conversion Rate&lt;/b&gt; is a month figure. They are never describing the same window, and reading one as if it were the other is the most common mistake this screen produces.</field>
+        <field name="tip">The period also scopes the charts and the feeds below, not just the six cards.</field>
+        <field name="screen">dashboard</field>
+        <field name="anchor">db-period</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l3_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_l3"/>
+        <field name="sequence">20</field>
+        <field name="kicker">THE EARLY WARNING</field>
+        <field name="title">Pending Follow-ups is the early warning</field>
+        <field name="body">Today it reads &lt;b&gt;9&lt;/b&gt;. That is the count of promises made and not yet kept. It is the earliest visible sign that somebody will be forgotten — long before a complaint arrives, and long before conversion moves.</field>
+        <field name="tip">Compare it with your team's capacity, not with zero. Nine across four people is a normal morning; nine across one person is not.</field>
+        <field name="screen">dashboard</field>
+        <field name="anchor">db-pending_followups</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l3_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_l3"/>
+        <field name="sequence">30</field>
+        <field name="kicker">WHERE THE NUMBERS COME FROM</field>
+        <field name="title">224 enquiries, and every one is in exactly one bucket</field>
+        <field name="body">This month: &lt;b&gt;224&lt;/b&gt; enquiries = &lt;b&gt;14&lt;/b&gt; spam + &lt;b&gt;210&lt;/b&gt; real. Those 210 split into &lt;b&gt;63&lt;/b&gt; booked, &lt;b&gt;129&lt;/b&gt; leads and &lt;b&gt;18&lt;/b&gt; lost. Nothing is counted twice and nothing is missing — if the donut and the cards ever disagree, one of them is filtered differently.</field>
+        <field name="screen">dashboard</field>
+        <field name="anchor">db-pipeline</field>
+        <field name="visual">calcKpi</field>
+    </record>
+
+    <record id="lesson_l3_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_l3"/>
+        <field name="sequence">40</field>
+        <field name="kicker">THE DENOMINATOR MATTERS</field>
+        <field name="title">Conversion is measured against real enquiries, not all of them</field>
+        <field name="body">&lt;b&gt;63 ÷ 210 = 30.0%&lt;/b&gt;. The denominator is &lt;b&gt;210&lt;/b&gt; — real enquiries — not 224. Spam is excluded on purpose: counting it would let a bad month look better simply because more junk arrived.</field>
+        <field name="consequence">If nobody marks spam, the 14 stays in the real pile and conversion is quietly understated all month. A low Spam Rate is not automatically good news — it can simply mean nobody is marking.</field>
+        <field name="screen">dashboard</field>
+        <field name="anchor">db-conversion_rate</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l3_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_l3"/>
+        <field name="sequence">50</field>
+        <field name="kicker">WHERE PEOPLE ACTUALLY COME FROM</field>
+        <field name="title">Zalo is 96 of the 224</field>
+        <field name="body">Zalo &lt;b&gt;96&lt;/b&gt;, hotline &lt;b&gt;58&lt;/b&gt;, web chat &lt;b&gt;34&lt;/b&gt;, Facebook &lt;b&gt;21&lt;/b&gt;, walk-in &lt;b&gt;9&lt;/b&gt;, referral &lt;b&gt;6&lt;/b&gt;. They sum to 224. This is the chart that tells you which channel going quiet would actually hurt.</field>
+        <field name="tip">A channel dropping to zero rarely raises an error. This chart is usually the first place it shows.</field>
+        <field name="screen">dashboard</field>
+        <field name="anchor">db-channels</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l3_step_05" model="learn.step">
+        <field name="lesson_id" ref="lesson_l3"/>
+        <field name="sequence">60</field>
+        <field name="kicker">FROM NUMBER TO PERSON</field>
+        <field name="title">Every figure opens the records behind it</field>
+        <field name="body">Cards and chart segments are clickable, and the feeds below are the same records in a list. A surprising number should always be opened, never explained away at the dashboard.</field>
+        <field name="screen">dashboard</field>
+        <field name="anchor">db-recent</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l3_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_l3"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">Spam Rate has fallen from 6.3% to 1.1% this month and Conversion Rate has fallen too. What is the most likely explanation?</field>
+    </record>
+
+    <record id="lesson_l3_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l3_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Nobody has been marking spam, so junk is sitting in the real-enquiry denominator and dragging conversion down.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. Conversion divides by real enquiries, so unmarked junk inflates the denominator and lowers the rate. The two numbers moving down together is the signature of a marking problem, not a demand problem.</field>
+    </record>
+
+    <record id="lesson_l3_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l3_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Fewer spam messages arrived, which is good news, and conversion fell for an unrelated reason.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. It is possible, but the two falling together points somewhere more specific: spam that is never marked stays in the real pile, which is exactly what pushes conversion down. Check whether anyone has used Junk? this month before concluding demand changed.</field>
+    </record>
+
+    <record id="lesson_l3_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l3_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">The period selector is on Today for one figure and Month for the other.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. It is the right instinct — period mismatches cause a lot of confusion here — but both of these are month figures by definition, so one selector governs them together. The denominator is the thing to look at.</field>
+    </record>
+
+    <record id="lesson_l4" model="learn.lesson">
+        <field name="key">L4</field>
+        <field name="station_id" ref="station_contacts"/>
+        <field name="sequence">10</field>
+        <field name="name">Contacts</field>
+        <field name="goal">The record behind the conversation: status tabs, quick actions, and the booking wizard.</field>
+        <field name="duration_min">5</field>
+    </record>
+
+    <record id="lesson_l4_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_l4"/>
+        <field name="sequence">10</field>
+        <field name="kicker">QUEUE VERSUS LEDGER</field>
+        <field name="title">Care Command is the queue; this is the ledger</field>
+        <field name="body">A conversation can be closed while the person still needs something. The &lt;b&gt;contact&lt;/b&gt; is what the Dashboard counts and what the next operator inherits, and these tabs are its lifecycle.</field>
+        <field name="screen">contacts</field>
+        <field name="anchor">co-tabs</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l4_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_l4"/>
+        <field name="sequence">20</field>
+        <field name="kicker">THE LIFECYCLE</field>
+        <field name="title">New → Lead → Appointment Scheduled → Service Used</field>
+        <field name="body">Four forward states and one branch off to the side for &lt;b&gt;Cancelled / Spam&lt;/b&gt;. Moving forward happens because something real happened; it is never a tidy-up.</field>
+        <field name="screen">contacts</field>
+        <field name="anchor">co-pipeline</field>
+        <field name="visual">pipeline</field>
+        <field name="moment_chain">contact</field>
+    </record>
+
+    <record id="lesson_l4_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_l4"/>
+        <field name="sequence">30</field>
+        <field name="kicker">READ THE STATUSES</field>
+        <field name="title">Six people, six different next actions</field>
+        <field name="body">The same list holds a booked client, a lead, an active enquiry, someone still thinking, someone to re-contact and a spam entry. The status is what tells you what to do next — the row order does not.</field>
+        <field name="screen">contacts</field>
+        <field name="anchor">co-rows</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l4_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_l4"/>
+        <field name="sequence">40</field>
+        <field name="kicker">THE RISKY ONE</field>
+        <field name="title">Book runs a duplicate check — read it</field>
+        <field name="body">The wizard offers plausible matches before it creates anything. Confirming the wrong suggested client writes the visit — and later the clinical note — into &lt;b&gt;another person's record&lt;/b&gt;.</field>
+        <field name="consequence">Scope: a real visit, a real slot on a real nurse's day, and the money that follows it. Reversible: the booking can be cancelled, but a clinical note written against the wrong client is a correction someone has to make by hand. Check first: the phone number, not the name — two people can share a surname and a district.</field>
+        <field name="screen">contacts</field>
+        <field name="anchor">co-book</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l4_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_l4"/>
+        <field name="sequence">50</field>
+        <field name="kicker">BIGGER THAN IT LOOKS</field>
+        <field name="title">Spam is not a way to clear the list</field>
+        <field name="body">Marking spam also flags the phone number, so a real family member starts pre-judged the next time they call. Use it for junk, not for tidiness.</field>
+        <field name="screen">contacts</field>
+        <field name="anchor">co-rows</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l4_step_05" model="learn.step">
+        <field name="lesson_id" ref="lesson_l4"/>
+        <field name="sequence">60</field>
+        <field name="kicker">THE HABIT THAT PAYS</field>
+        <field name="title">A lost booking without a reason is invisible</field>
+        <field name="body">&lt;b&gt;Booking Lost&lt;/b&gt; with no reason cannot be analysed, so the same cause repeats all quarter. Eighteen were lost this month; a reason on each is what turns that into something you can fix.</field>
+        <field name="screen">contacts</field>
+        <field name="anchor">co-rows</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l4_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_l4"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">You are booking a home visit. The duplicate check offers two clients with the same surname in the same district; one has the phone number the caller just gave you. What do you do?</field>
+    </record>
+
+    <record id="lesson_l4_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l4_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Match on the phone number, and if anything still looks off, confirm the date of birth before creating the booking.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. The phone number is the identifier the caller just confirmed; the name is the one that collides. Anything still ambiguous is worth thirty seconds of checking, because the alternative is a clinical note in the wrong record.</field>
+    </record>
+
+    <record id="lesson_l4_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l4_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Pick the first suggestion — the wizard ranks the most likely match at the top.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Ranking is a guess about likelihood, not a statement of identity, and it has no access to the number the caller just read out to you. The check exists precisely because the top suggestion is sometimes the wrong person.</field>
+    </record>
+
+    <record id="lesson_l4_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l4_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Create a new contact to be safe, and merge the records later.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. A new record splits this person's history in two: their consents, their past visits and their balance stay on the old one. "Merge later" is work that usually never happens, and until it does the next operator sees half a patient.</field>
+    </record>
+
+    <record id="lesson_l5" model="learn.lesson">
+        <field name="key">L5</field>
+        <field name="station_id" ref="station_activities"/>
+        <field name="sequence">10</field>
+        <field name="name">Activities</field>
+        <field name="goal">The team's shared follow-up board — every scheduled call, meeting, email and task.</field>
+        <field name="duration_min">4</field>
+    </record>
+
+    <record id="lesson_l5_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_l5"/>
+        <field name="sequence">10</field>
+        <field name="kicker">WHAT THIS BOARD IS</field>
+        <field name="title">Nine open promises, grouped by kind</field>
+        <field name="body">&lt;b&gt;4&lt;/b&gt; to-dos, &lt;b&gt;3&lt;/b&gt; calls, &lt;b&gt;1&lt;/b&gt; meeting, &lt;b&gt;1&lt;/b&gt; email — nine in total. That is exactly the Dashboard's &lt;b&gt;Pending Follow-ups&lt;/b&gt; card. If the two ever disagree, an activity was closed without the contact's status being updated.</field>
+        <field name="screen">activities</field>
+        <field name="anchor">ac-groups</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l5_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_l5"/>
+        <field name="sequence">20</field>
+        <field name="kicker">WHY IT EXISTS</field>
+        <field name="title">A promise made on Monday is only kept if it is visible on Thursday</field>
+        <field name="body">This board is the difference between “we'll call you back” and being called back. Nothing else in CRM remembers a commitment that has no message attached to it.</field>
+        <field name="screen">activities</field>
+        <field name="anchor">ac-groups</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l5_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_l5"/>
+        <field name="sequence">30</field>
+        <field name="kicker">THE TRAP</field>
+        <field name="title">Overdue items are not inside Today</field>
+        <field name="body">Filtering to &lt;b&gt;Today&lt;/b&gt; shows what is due today — not what was due yesterday and never happened. The overdue work is the work most likely to become a complaint, and it is exactly what that filter hides.</field>
+        <field name="consequence">Scope: nothing changes when you filter — but what you cannot see, you will not do. Reversible: yes, immediately. Check first: clear the date filter at least once a shift, and again before handover.</field>
+        <field name="screen">activities</field>
+        <field name="anchor">ac-filter</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l5_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_l5"/>
+        <field name="sequence">40</field>
+        <field name="kicker">A HABIT WORTH BREAKING</field>
+        <field name="title">Scheduling on yourself hides the work</field>
+        <field name="body">An activity assigned to one person is invisible as team work. If that person is off sick, the promise simply does not happen and nobody finds out until the client calls.</field>
+        <field name="tip">Two lines in the note — what was promised, and by when — is what makes an activity handoverable.</field>
+        <field name="screen">activities</field>
+        <field name="anchor">ac-groups</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l5_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_l5"/>
+        <field name="sequence">50</field>
+        <field name="kicker">CLOSING PROPERLY</field>
+        <field name="title">Close the activity and update the contact</field>
+        <field name="body">Closing an activity without recording the outcome turns the board green while the contact's status stays wrong — and then the Dashboard reports something that is not true.</field>
+        <field name="screen">activities</field>
+        <field name="anchor">ac-groups</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l5_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_l5"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">It is 16:50, just before handover at 17:00. The Activities board filtered to Today is empty. What should you do before you leave?</field>
+    </record>
+
+    <record id="lesson_l5_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l5_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Clear the date filter and check for overdue items, then hand over anything still open by name.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. An empty Today is not an empty board — overdue work sits outside that filter, and it is the work most likely to become tomorrow's complaint. Handing it over by name is what stops it waiting another day.</field>
+    </record>
+
+    <record id="lesson_l5_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l5_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Nothing — an empty board means the day's follow-ups are done.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Today shows what is due today, and it says nothing about what was due yesterday and never happened. The filter is doing exactly what it says; the risk is reading it as "nothing outstanding".</field>
+    </record>
+
+    <record id="lesson_l5_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l5_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Schedule tomorrow's follow-ups on yourself so nothing is forgotten overnight.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Scheduling ahead is good, but putting it all on yourself is what makes it invisible as team work — and you are about to be off shift. Assign it where the next person will see it.</field>
+    </record>
+
+    <record id="lesson_l6" model="learn.lesson">
+        <field name="key">L6</field>
+        <field name="station_id" ref="station_unrouted"/>
+        <field name="sequence">10</field>
+        <field name="name">Unrouted Contacts</field>
+        <field name="goal">Things that arrived on a channel but carried too little to become a conversation.</field>
+        <field name="duration_min">4</field>
+    </record>
+
+    <record id="lesson_l6_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_l6"/>
+        <field name="sequence">10</field>
+        <field name="kicker">WHAT LANDS HERE</field>
+        <field name="title">Real people who arrived with too little</field>
+        <field name="body">Three arrivals today: a Facebook comment with no phone number, a half-finished web form, and a Zalo message to an account still in setup. Each is somebody who reached out and would otherwise vanish between systems.</field>
+        <field name="screen">unrouted</field>
+        <field name="anchor">ur-list</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l6_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_l6"/>
+        <field name="sequence">20</field>
+        <field name="kicker">WHY YOU CANNOT EDIT THEM</field>
+        <field name="title">These records are evidence, not drafts</field>
+        <field name="body">They hold exactly what the channel sent, and nothing else. That immutability is what lets you tell the difference between “the customer gave no number” and “someone deleted it”.</field>
+        <field name="screen">unrouted</field>
+        <field name="anchor">ur-list</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l6_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_l6"/>
+        <field name="sequence">30</field>
+        <field name="kicker">WHY CONVERT IS GREYED OUT</field>
+        <field name="title">Converting needs at least one anchor</field>
+        <field name="body">A contact, a phone number or an email address — at least one. The first row has none, so Convert is &lt;b&gt;refused rather than allowed to create an unreachable record&lt;/b&gt;. A contact nobody can call is worse than no contact at all.</field>
+        <field name="tip">For that first row the useful action is on Facebook, not here: reply to the comment and ask for a number.</field>
+        <field name="screen">unrouted</field>
+        <field name="anchor">ur-convert</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l6_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_l6"/>
+        <field name="sequence">40</field>
+        <field name="kicker">DISMISS IS AN ANSWER</field>
+        <field name="title">Dismissing is a judgement, and it has your name on it</field>
+        <field name="body">Dismiss records “this was not a patient”. It is recorded against you, and it is the right action when it is true. What it is not is a way to clear the badge count.</field>
+        <field name="consequence">Scope: this arrival only — no contact is created and no message is sent. Reversible: the record stays and can be reviewed, but the person is not contacted in the meantime. Check first: is there really no way to reach them, or is the anchor just on another channel?</field>
+        <field name="screen">unrouted</field>
+        <field name="anchor">ur-dismiss</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l6_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_l6"/>
+        <field name="sequence">50</field>
+        <field name="kicker">WHEN TO LOOK</field>
+        <field name="title">Once or twice a shift — and always after a campaign</field>
+        <field name="body">Campaign traffic is where half-identified arrivals come from. The volume here jumping is usually the first sign that an advert is pointing somewhere that does not capture a phone number.</field>
+        <field name="screen">unrouted</field>
+        <field name="anchor">ur-list</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l6_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_l6"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">A Facebook comment arrives: “có nhận chăm sóc tại nhà không ạ?” with no phone number and no linked profile. Convert is greyed out. What is the right move?</field>
+    </record>
+
+    <record id="lesson_l6_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l6_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Reply on Facebook asking how to reach them, and leave the arrival here until there is an anchor.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. The missing piece is a way to reach the person, and the place to get it is the channel they used. The arrival stays visible so it does not get lost while you wait.</field>
+    </record>
+
+    <record id="lesson_l6_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l6_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Dismiss it — without a number there is nothing this desk can do.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Dismiss records that this was not a patient, and that is not what happened here: this is a real enquiry that simply arrived without a number. Ask for one on the channel it came from — the comment is still open.</field>
+    </record>
+
+    <record id="lesson_l6_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l6_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Create a contact by hand with the Facebook name so it stops sitting in this queue.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. That produces a contact nobody can call, which is exactly what Convert refuses to do for you — and it now counts in the Dashboard as a real enquiry that can never convert. The queue is not the problem; the missing number is.</field>
+    </record>
+
+    <record id="lesson_l7" model="learn.lesson">
+        <field name="key">L7</field>
+        <field name="station_id" ref="station_touchpoints"/>
+        <field name="sequence">10</field>
+        <field name="name">Web Touchpoints</field>
+        <field name="goal">Every arrival from the website, with the advert or link that produced it.</field>
+        <field name="duration_min">4</field>
+    </record>
+
+    <record id="lesson_l7_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_l7"/>
+        <field name="sequence">10</field>
+        <field name="kicker">WHAT THIS SCREEN ANSWERS</field>
+        <field name="title">Which advert produced which enquiry</field>
+        <field name="body">Thirty-four website enquiries this month: &lt;b&gt;19&lt;/b&gt; from the Hà Nội home-nursing campaign, &lt;b&gt;11&lt;/b&gt; from the August wound-care advert, and &lt;b&gt;4&lt;/b&gt; with no UTM captured at all.</field>
+        <field name="tip">34 is the same Website row you will see on Lead Analysis. If they differ, one of the two is filtered to a different period.</field>
+        <field name="screen">touchpoints</field>
+        <field name="anchor">tp-table</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l7_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_l7"/>
+        <field name="sequence">20</field>
+        <field name="kicker">THE FOUR THAT MATTER MOST</field>
+        <field name="title">Unmatched campaigns is a leak, not a rounding error</field>
+        <field name="body">Four arrivals carry no campaign. They are real enquiries whose source is unknown, which means the advert that paid for them gets no credit — and the one wasting money keeps running.</field>
+        <field name="consequence">Scope: nothing here changes a record — this screen is read-only. Reversible: not applicable. Check first: before you conclude a campaign is failing, check how many of its arrivals landed in Unmatched instead.</field>
+        <field name="screen">touchpoints</field>
+        <field name="anchor">tp-unmatched</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l7_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_l7"/>
+        <field name="sequence">30</field>
+        <field name="kicker">THE JOIN THAT SURPRISES PEOPLE</field>
+        <field name="title">A touchpoint joins by phone number, not by channel</field>
+        <field name="body">Trần Mỹ Linh clicked a Google advert on 10 August and read the wound-care page without filling in the form. Two days later she messaged the Zalo OA — and the touchpoint attached to that conversation &lt;b&gt;by phone number&lt;/b&gt;.</field>
+        <field name="tip">This is why a Zalo enquiry can legitimately be credited to a website campaign. The channel it arrived on is not always the thing that produced it.</field>
+        <field name="screen">touchpoints</field>
+        <field name="anchor">tp-table</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l7_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_l7"/>
+        <field name="sequence">40</field>
+        <field name="kicker">HOW TO USE IT</field>
+        <field name="title">Read it next to Lead Analysis, never alone</field>
+        <field name="body">This screen tells you where arrivals came from. It does not tell you whether they became bookings — that is the pivot on Lead Analysis. Volume without outcome is how a busy campaign gets mistaken for a good one.</field>
+        <field name="screen">touchpoints</field>
+        <field name="anchor">tp-table</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l7_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_l7"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">The wound-care advert shows 11 arrivals and your manager says it is underperforming against the 19 from the home-nursing campaign. What do you check first?</field>
+    </record>
+
+    <record id="lesson_l7_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l7_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">How many of the 4 unmatched arrivals belong to it, and how many of each campaign's arrivals actually became bookings.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. Eleven versus nineteen is a volume comparison, and volume is not the outcome. Unmatched arrivals can belong to either campaign, and a campaign with fewer arrivals that converts better is the one you want more of.</field>
+    </record>
+
+    <record id="lesson_l7_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l7_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Nothing to check — 11 is fewer than 19, so the advert is underperforming.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. That compares how many people arrived, not how many became patients. Four arrivals this month carry no campaign at all, so the two counts are not even complete — and neither one says anything about bookings.</field>
+    </record>
+
+    <record id="lesson_l7_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l7_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Check the Dashboard's Conversion Rate to see whether the adverts are working.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Conversion Rate is one number for every channel together — Zalo, hotline, walk-in and all. It cannot separate two website campaigns from each other. The pivot on Lead Analysis is where that comparison lives.</field>
+    </record>
+
+    <record id="lesson_l8" model="learn.lesson">
+        <field name="key">L8</field>
+        <field name="station_id" ref="station_leadanalysis"/>
+        <field name="sequence">10</field>
+        <field name="name">Lead Analysis</field>
+        <field name="goal">The pivot: enquiries by source, status, service and area — the whole funnel in one grid.</field>
+        <field name="duration_min">4</field>
+    </record>
+
+    <record id="lesson_l8_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_l8"/>
+        <field name="sequence">10</field>
+        <field name="kicker">THE WHOLE FUNNEL IN ONE GRID</field>
+        <field name="title">Channel down the side, outcome across the top</field>
+        <field name="body">Every enquiry this month appears exactly once, at the intersection of the channel it belongs to and what happened to it. Zalo &lt;b&gt;96&lt;/b&gt;, hotline &lt;b&gt;58&lt;/b&gt;, website &lt;b&gt;34&lt;/b&gt;, Facebook &lt;b&gt;21&lt;/b&gt;, walk-in &lt;b&gt;9&lt;/b&gt;, referral &lt;b&gt;6&lt;/b&gt;.</field>
+        <field name="screen">leadanalysis</field>
+        <field name="anchor">la-pivot</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l8_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_l8"/>
+        <field name="sequence">20</field>
+        <field name="kicker">THE RECONCILIATION</field>
+        <field name="title">It must add up to the Dashboard, or one of them is filtered differently</field>
+        <field name="body">The totals row reads &lt;b&gt;63&lt;/b&gt; booked, &lt;b&gt;129&lt;/b&gt; leads, &lt;b&gt;18&lt;/b&gt; lost, &lt;b&gt;14&lt;/b&gt; spam, &lt;b&gt;224&lt;/b&gt; in all — the same four numbers as the Dashboard. When they disagree, the cause is almost always a different period or a different catchment area, not a broken report.</field>
+        <field name="screen">leadanalysis</field>
+        <field name="anchor">la-total</field>
+        <field name="visual">calcKpi</field>
+    </record>
+
+    <record id="lesson_l8_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_l8"/>
+        <field name="sequence">30</field>
+        <field name="kicker">WHAT THE GRID IS FOR</field>
+        <field name="title">Compare rates, not volumes</field>
+        <field name="body">Zalo brings 96 enquiries and books 31. The hotline brings 58 and books 19. Zalo is bigger; the hotline converts at almost the same rate on half the volume. Those are two different pieces of information and only one of them is on the Dashboard.</field>
+        <field name="tip">The interesting column is usually Lost, not Booked: it is where a fixable cause hides.</field>
+        <field name="screen">leadanalysis</field>
+        <field name="anchor">la-pivot</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l8_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_l8"/>
+        <field name="sequence">40</field>
+        <field name="kicker">BEFORE YOU ACT ON IT</field>
+        <field name="title">A cell is a group of people, not a verdict</field>
+        <field name="body">Every cell opens the records behind it. Before recommending that a channel be cut, open its Lost column and read why those enquiries were lost — the reason is often nothing to do with the channel.</field>
+        <field name="consequence">Scope: reading changes nothing here, but a recommendation made from this grid changes where the clinic spends. Reversible: a decision is, the quarter is not. Check first: that the period and catchment match the figures you are comparing against, and that Lost has reasons recorded.</field>
+        <field name="screen">leadanalysis</field>
+        <field name="anchor">la-pivot</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l8_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_l8"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">Referral shows 6 enquiries, 1 booked and 2 spam. Someone proposes dropping referrals from the reporting entirely. What is the best response?</field>
+    </record>
+
+    <record id="lesson_l8_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l8_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Open the six records first — with numbers this small, two spam entries could be one mis-marked caller, and the conclusion changes completely.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. Six is small enough to read individually, and at that size a single mis-marking moves the rate enormously. Decisions about a channel deserve the records, not just the row.</field>
+    </record>
+
+    <record id="lesson_l8_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l8_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Agree — one booking out of six is a poor return and the volume is negligible.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. At six enquiries, one record either way swings the rate by a sixth, so the number is too small to carry a decision on its own. Referrals also tend to arrive already trusting the clinic — worth reading before removing.</field>
+    </record>
+
+    <record id="lesson_l8_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l8_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Compare it with the Dashboard's Conversion Rate to settle the question.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. The Dashboard's rate is every channel combined, so it cannot say anything about referrals specifically — comparing a single row against it would just be comparing referrals with themselves plus everyone else. This grid is already the per-channel view.</field>
+    </record>
+
 </odoo>

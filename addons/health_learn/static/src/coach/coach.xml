@@ -9,6 +9,11 @@
 <t t-name="health_learn.CoachHost">
     <div class="lrn-coachhost" t-on-click="onClick">
 
+        <!-- The Coach is on EVERY screen, so it cannot borrow the Journey's
+             sprite: off the Journey the launcher rendered as a blank circle
+             with no icon at all. Same symbols, injected wherever it mounts. -->
+        <t t-call="health_learn.IconSprite"/>
+
         <button class="lrn-fab" t-on-click="toggle"
                 t-att-class="{ open: state.open }"
                 t-att-aria-expanded="state.open"

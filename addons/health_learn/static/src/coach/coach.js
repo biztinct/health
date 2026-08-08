@@ -306,7 +306,11 @@ export class CoachHost extends Component {
     }
 
     _blockHTML(b) {
-        const body = esc(tx(b.body));
+        // Authored prose carries inline <b>/<i> — the same markup lesson bodies
+        // use — so it is inserted as markup rather than escaped. These strings
+        // ship in the module and are never learner input; escaping them printed
+        // the tags to the reader.
+        const body = tx(b.body);
         switch (b.kind) {
             case "steps":
                 return `<ol class="lrn-csteps">${(b.steps || []).map((s) =>

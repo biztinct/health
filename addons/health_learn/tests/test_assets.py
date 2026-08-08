@@ -115,3 +115,22 @@ class TestAssets(TransactionCase):
 
         missing = sorted(used - available)
         self.assertFalse(missing, "Icons referenced but not in the sprite: %s" % missing)
+
+    def test_03_every_surface_carries_its_own_icon_sprite(self):
+        """A surface that uses the sprite must inject it.
+
+        The Coach mounts on EVERY screen, including ones where the Journey is
+        not rendered — and there it drew a blank circle with no icon, because
+        it was relying on the Journey's copy of the sprite. Symptom: a launcher
+        that looks broken, no error anywhere.
+        """
+        base = get_module_path('health_learn')
+        surfaces = ('static/src/journey/journey.xml', 'static/src/coach/coach.xml')
+        missing = []
+        for rel in surfaces:
+            with open(os.path.join(base, rel), encoding='utf-8') as fh:
+                src = fh.read()
+            if '#lrn-i-' in src and 'health_learn.IconSprite' not in src:
+                missing.append(rel)
+        self.assertFalse(missing,
+                         "Templates using the sprite without injecting it: %s" % missing)
