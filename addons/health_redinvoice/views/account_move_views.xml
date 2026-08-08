@@ -65,7 +65,15 @@
                 <button name="action_open_red_invoice_pdf" type="object" string="Open Red Invoice"
                         class="btn-secondary"
                         invisible="not red_invoice_enabled or red_invoice_state != 'issued' or move_type not in ('out_invoice','out_refund')"/>
+                <!-- Cancelling an ISSUED red invoice is a filing event with the tax
+                     authority, not an edit: it calls Viettel's
+                     cancelTransactionInvoice against a document the buyer may
+                     already hold. It was reachable by anyone who could open a
+                     posted customer invoice. Gated to the group that already
+                     exists for exactly this — "Users who can submit invoices to
+                     Vietnamese Tax Authorities and manage compliance". -->
                 <button name="action_redinvoice_cancel" type="object" string="Cancel Red Invoice"
+                        groups="health_invoicing.group_vietnamese_tax_compliance"
                         invisible="not red_invoice_enabled or red_invoice_state != 'issued' or move_type not in ('out_invoice','out_refund')"/>
             </header>
 

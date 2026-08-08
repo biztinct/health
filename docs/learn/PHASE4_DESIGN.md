@@ -118,17 +118,48 @@ and it is why the estimate is not "just content".
 
 ---
 
-## 5. Open questions — FINANCE only, needed before that half is written
+## 5. FINANCE — answered
 
-1. **Red Invoice**: under what circumstances may one be cancelled and
-   reissued, and who is allowed to? This is the single most consequential
-   action in the product and I will not write a consequence card from a guess.
-2. **VAT Log**: is it a record of what was filed, or a working document?
-3. **BHYT Claims**: what does a rejection look like operationally, and who
-   fixes it?
-4. **Cash In Transit**: who reconciles it, and what happens when it does not
-   balance?
-5. **Refunds**: prepaid, package and transaction are three code paths — are
-   they three different business situations, or one with three entry points?
+All five settled with the product owner. Recorded here because the consequence
+cards in the FINANCE lessons are written FROM these answers, and a card that
+contradicts the business rule is worse than no card.
 
-None of these block OPS.
+**1. Red Invoice — when may one be cancelled and reissued?**
+When the buyer details, the amount or the service description are **wrong**,
+and only **within the current filing period**. After the period closes the
+route is a credit note, not a cancellation.
+
+> Acted on separately: the "Cancel Red Invoice" button had **no group
+> restriction at all** — anyone who could open a posted customer invoice could
+> cancel a live tax document via Viettel's `cancelTransactionInvoice`. It is
+> now gated to `health_invoicing.group_vietnamese_tax_compliance`, the group
+> that already existed for this purpose (13 holders).
+
+**2. VAT Log — record or working document?**
+A **read-only record of what was posted**. Answered from the code rather than
+asked: the action is `account.move` filtered to `move_type = out_invoice` and
+`state = posted`, list-only, with no form view pinned.
+
+**3. Cash In Transit — who reconciles it?**
+**Operations**, at end of shift. Finance receives an already-balanced figure
+and never chases an individual nurse. That makes Cash In Transit an OPS lesson
+with a FINANCE consequence, not the other way round — and the lesson must not
+teach an accountant to go looking for a nurse.
+
+**4. BHYT Claims — what happens on rejection?**
+**Not live yet.** The screen is written honestly as not-yet-in-use rather than
+teaching a workflow nobody runs. No mission, no consequence card, an outline
+that says plainly what it will do when it is switched on.
+
+**5. Refunds — three paths or one?**
+**Three genuinely different situations**, so the lesson teaches *choosing the
+route* as the decision:
+
+| Route | Situation |
+|---|---|
+| Prepaid | unused credit returned |
+| Package | an unfinished course of visits, refunded pro-rata |
+| Transaction | reversing a specific mistaken payment — a correction, not a refund |
+
+That distinction is the seeded anomaly for the FINANCE mission: the obvious
+route is the screen you happen to be on, and it is often the wrong one.
