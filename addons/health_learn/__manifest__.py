@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Learn — CareJioX in-app learning',
-    'version': '19.0.3.0.0',
+    'version': '19.0.4.0.0',
     'category': 'Healthcare',
     'summary': 'Guided Journey, bilingual lesson spine and anchor registry for the CRM desk',
     'author': 'Biztinct',
@@ -51,6 +51,7 @@ it, never hand-edited here).
         # Phase 2 — the Coach. Intents first: screens reference them.
         'data/learn_intents.xml',
         'data/learn_screens.xml',
+        'data/learn_columns.xml',
         # Phase 3 — practice missions. They run on the REPLICA only.
         'data/learn_missions.xml',
         # Hand-written.

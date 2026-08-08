@@ -74,6 +74,7 @@ const out = {
     caseData: grab("CASE"),
     morphs: grab("MORPHS"),
     chains: grab("CHAINS"),
+    columns: grab("COLUMNS"),
 };
 
 process.stdout.write(JSON.stringify(out, null, 1));

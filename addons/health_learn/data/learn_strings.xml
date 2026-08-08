@@ -20,6 +20,11 @@
         <field name="value">After:</field>
     </record>
 
+    <record id="str_aicomposed" model="learn.string">
+        <field name="key">aiComposed</field>
+        <field name="value">Composed from the guide</field>
+    </record>
+
     <record id="str_all" model="learn.string">
         <field name="key">all</field>
         <field name="value">All</field>
@@ -143,6 +148,11 @@
     <record id="str_coachnoscreen" model="learn.string">
         <field name="key">coachNoScreen</field>
         <field name="value">I don't have lessons for this screen yet. I only answer about the CRM section for now.</field>
+    </record>
+
+    <record id="str_columnanswer" model="learn.string">
+        <field name="key">columnAnswer</field>
+        <field name="value">Column</field>
     </record>
 
     <record id="str_comp" model="learn.string">

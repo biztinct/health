@@ -41,3 +41,5 @@ access_mission_option_author,learn.mission.option author,model_learn_mission_opt
 access_mission_note_user,learn.mission.note user,model_learn_mission_note,base.group_user,1,0,0,0
 access_mission_note_author,learn.mission.note author,model_learn_mission_note,group_learn_author,1,1,1,1
 access_confidence_user,learn.confidence own,model_learn_confidence,base.group_user,1,1,1,0
+access_learn_column_user,learn.column user,model_learn_column,base.group_user,1,0,0,0
+access_learn_column_author,learn.column author,model_learn_column,group_learn_author,1,1,1,1

@@ -295,7 +295,16 @@ export class CoachHost extends Component {
         const simplerBlock = this.state.simpler && a.simpler
             ? `<div class="lrn-cblock p simpler">${esc(tx(a.simpler))}</div>` : "";
 
+        // A composed answer is written by a model FROM our material. The
+        // learner is entitled to know which kind of answer they are reading —
+        // saying so is cheaper than being caught not saying so.
+        const badge = a.source_kind === "composed"
+            ? `<span class="lrn-chip a">${ic("sparkles")}${esc(T("aiComposed"))}</span>`
+            : a.source_kind === "column"
+                ? `<span class="lrn-chip b">${ic("book-open")}${esc(T("columnAnswer"))}</span>`
+                : "";
         return `<div class="lrn-canswer">
+            ${badge}
             <h4>${esc(tx(a.label))}</h4>
             ${simplerBlock || blocks}
             ${a.pointFailed ? `<div class="lrn-cblock warn">${ic("info")}

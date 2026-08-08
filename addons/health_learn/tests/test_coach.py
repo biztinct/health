@@ -374,3 +374,70 @@ class TestCoach(TransactionCase):
                              "%s is claimed by more than one screen: %s — the "
                              "broad pass would pick one arbitrarily"
                              % (model, owners))
+
+    # ---------------------------------------------------- column glossary
+    def test_18_a_column_question_gets_a_column_answer(self):
+        """The exact miss found in review: "what is activity date used for?"
+        on Lead Analysis, which has a full lesson and still could not answer."""
+        res = self.Intent.ask("what is activity date used for", 'leadanalysis')
+        self.assertTrue(res['matched'], "still cannot answer a column question")
+        self.assertEqual(res.get('source_kind'), 'column')
+        body = res['blocks'][0]['body']
+        self.assertIn('follow-up', body['en'].lower())
+        self.assertTrue(body['vi'] and body['vi'] != body['en'],
+                        "the column answer is not translated")
+
+    def test_19_column_matching_is_narrow(self):
+        """A loose match would answer "what is the status of my request" with a
+        column definition, which is worse than missing."""
+        Column = self.env['learn.column']
+        self.assertIsNotNone(Column.match("what is activity date", 'leadanalysis'))
+        # Wrong screen: Lead Analysis columns must not answer on Care Command.
+        self.assertIsNone(Column.match("what is activity date", 'carecommand'))
+        # No screen at all: nothing to scope by, so no answer.
+        self.assertIsNone(Column.match("what is activity date", None))
+
+    def test_20_every_column_is_written_in_both_languages(self):
+        thin = []
+        for col in self.env['learn.column'].search([]):
+            for lang in ('en_US', 'vi_VN'):
+                body = col.with_context(lang=lang).body
+                if not body or len(body) < 40:
+                    thin.append('%s/%s [%s]' % (col.screen, col.key, lang))
+            if col.with_context(lang='vi_VN').body == col.with_context(lang='en_US').body:
+                thin.append('%s/%s untranslated' % (col.screen, col.key))
+        self.assertFalse(thin, "Columns with thin or untranslated definitions:\n  "
+                               + "\n  ".join(thin))
+
+    # ------------------------------------------------------- the composer
+    def test_21_the_composer_scrubs_record_references(self):
+        """A user can type a patient's name or number into a help box. What
+        leaves this server must not carry it."""
+        scrubbed = self.Intent._scrub(
+            "why can't I see conversation #4172 for nguyen@example.com on 0912345678")
+        self.assertNotIn('4172', scrubbed)
+        self.assertNotIn('nguyen@example.com', scrubbed)
+        self.assertNotIn('0912345678', scrubbed)
+        self.assertIn('[record]', scrubbed)
+        self.assertIn('[email]', scrubbed)
+
+    def test_22_the_composer_corpus_contains_no_patient_data(self):
+        """The material sent to a provider is OUR OWN written text. If a
+        contact name ever appears in it, something is reading the wrong table."""
+        corpus = self.Intent._corpus('carecommand', 'en_US')
+        self.assertTrue(corpus.strip(), "empty corpus for a covered screen")
+        leads = self.env['crm.lead'].sudo().search([], limit=25)
+        for name in leads.mapped('contact_name'):
+            if name and len(name) > 6:
+                self.assertNotIn(name, corpus,
+                                 "a real contact name reached the composer corpus")
+
+    def test_23_no_provider_means_no_composed_answer(self):
+        """With nothing configured the Coach must fall back to the honest miss
+        it gave before — never break, never invent."""
+        self.assertIsNone(self.Intent._compose("anything at all", 'carecommand')
+                          if not self.Intent._provider() else None)
+        res = self.Intent.ask("how do I export the payroll ledger to excel", 'carecommand')
+        if not self.Intent._provider():
+            self.assertFalse(res['matched'])
+            self.assertTrue(res['suggest'])

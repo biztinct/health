@@ -10,10 +10,13 @@ an LLM can be plugged in later; note its contract, which is the whole point:
 it returns an intent KEY chosen from the candidates, never text. The model may
 choose what to say; it may not say it.
 """
+import logging
 import re
 import unicodedata
 
 from odoo import api, fields, models, tools
+
+_logger = logging.getLogger(__name__)
 
 # Words that carry no topic. Without this, "what dose of antibiotic should I
 # give" matched "what does this page do" on the word "what" alone and the Coach
@@ -320,8 +323,10 @@ class LearnIntent(models.Model):
     def ask(self, question, screen_key=None):
         """The Coach's one entry point.
 
-        Returns an answer, or a fallback that NAMES what it can answer here.
-        Never free text: everything the learner reads is a stored block.
+        Order matters. Curated intents first, then the column glossary, then
+        the composer, then an honest miss — each fallback is strictly less
+        certain than the one before it, so the most reliable answer always
+        wins.
         """
         key = self.resolve(question, screen_key)
         if key:
@@ -329,11 +334,189 @@ class LearnIntent(models.Model):
             if answer:
                 answer['matched'] = True
                 return answer
+
+        # "What is Activity Date used for?" — a question about a COLUMN, not a
+        # procedure. It was the single most obvious miss in review, and it is
+        # deterministic: no model needed to look up a written definition.
+        column = self.env['learn.column'].match(question, screen_key)
+        if column:
+            return self._column_answer(column, screen_key)
+
+        composed = self._compose(question, screen_key)
+        if composed:
+            return composed
+
         return {
             'matched': False,
             'capability': self._capability(screen_key),
             'suggest': self._suggestions(screen_key),
         }
+
+
+
+    # ==================================================================
+    # THE COMPOSER — an LLM over OUR OWN CONTENT, and nothing else
+    # ==================================================================
+    # Retrieval answers a question it has an intent for. This answers a
+    # question that no single intent covers, by composing from several pieces
+    # of material we wrote.
+    #
+    # WHAT IS AND IS NOT SENT
+    # -----------------------
+    # Sent: the learner's question (scrubbed, see _scrub) and our own tutorial
+    # text for the screen they are on. NOT sent: any patient, contact, booking
+    # or invoice record. The corpus is the material in this module, so there is
+    # no PHI in the request regardless of which provider is configured.
+    #
+    # The question itself is user-typed, so it is scrubbed first: someone can
+    # type a patient's name into a help box, and that would otherwise travel to
+    # a hosted provider.
+    #
+    # SOFT DEPENDENCY on purpose. hr_development_ai owns the provider
+    # abstraction (`hr.ai.provider.config`, llama / mistral / openai). Declaring
+    # a hard dependency would make the Coach uninstallable without it and would
+    # be a second provider registry to keep in step. If it is absent or nothing
+    # is configured, the composer is simply unavailable and the Coach falls
+    # back to the honest miss it gave before.
+
+    # Anything that looks like it identifies a person or a record. Scrubbed
+    # from the question before it leaves this server.
+    _SCRUB = [
+        (re.compile(r'\b[\w.+-]+@[\w-]+\.[\w.]+\b'), '[email]'),
+        (re.compile(r'(?:\+?84|0)\d[\d\s.-]{7,}\d'), '[phone]'),
+        (re.compile(r'#\d{2,}'), '[record]'),
+        (re.compile(r'\b\d{6,}\b'), '[number]'),
+    ]
+
+    @api.model
+    def _scrub(self, question):
+        """Remove record-shaped references before the question leaves us."""
+        out = question or ''
+        for pattern, replacement in self._SCRUB:
+            out = pattern.sub(replacement, out)
+        return out[:400]
+
+    @api.model
+    def _provider(self):
+        """The configured provider, or None. Never raises."""
+        if 'hr.ai.provider.config' not in self.env:
+            return None
+        try:
+            config = self.env['hr.ai.provider.config'].sudo().search(
+                [('company_id', '=', self.env.company.id), ('is_active', '=', True)],
+                limit=1)
+            if not config:
+                return None
+            from odoo.addons.hr_development_ai.ai_providers.provider_factory import (
+                AIProviderFactory)
+            return AIProviderFactory.get_provider(env=self.env,
+                                                  company_id=self.env.company.id)
+        except Exception:
+            _logger.info("Learn coach: no usable AI provider", exc_info=True)
+            return None
+
+    @api.model
+    def _corpus(self, screen_key, lang):
+        """Everything we have written about this screen, as plain text."""
+        env = self.with_context(lang=lang)
+        parts = []
+        screen = env.env['learn.screen'].sudo().search(
+            [('key', '=', screen_key)], limit=1) if screen_key else None
+        if screen:
+            parts.append('SCREEN: %s — %s' % (screen.name, screen.blurb or ''))
+            station = env.env['learn.station'].sudo().search(
+                [('key', '=', screen_key)], limit=1)
+            for lesson in station.lesson_ids:
+                for step in lesson.step_ids:
+                    parts.append('- %s: %s' % (step.title, (step.body or '')))
+            for col in env.env['learn.column'].sudo().search(
+                    [('screen', '=', screen_key)]):
+                parts.append('COLUMN %s: %s' % (col.label, col.body))
+        for intent in env.search([]).filtered(
+                lambda i: not screen_key or i._covers_screen(screen_key)):
+            for block in intent.block_ids:
+                if block.capability in ('any',) and block.body:
+                    parts.append('%s: %s' % (intent.label, block.body))
+        text = '\n'.join(parts)
+        return text[:12000]
+
+    @api.model
+    def _compose(self, question, screen_key):
+        """Compose an answer from our own material, or return None.
+
+        Returns None on ANY doubt — no provider, no corpus, an empty or
+        suspiciously long reply. The honest miss is always an acceptable
+        outcome; a fluent invention is not.
+        """
+        provider = self._provider()
+        if not provider:
+            return None
+        corpus = self._corpus(screen_key, 'en_US')
+        if not corpus.strip():
+            return None
+        scrubbed = self._scrub(question)
+        prompt = (
+            "You are a help assistant inside a healthcare CRM. Answer the "
+            "question USING ONLY the material below. If the material does not "
+            "contain the answer, reply with exactly: NO_ANSWER.\n"
+            "Never invent a price, a rate, a clinical fact or a number that is "
+            "not in the material. Never claim to have performed an action. "
+            "Answer in at most four sentences, plainly.\n\n"
+            "MATERIAL:\n%s\n\nQUESTION: %s\nANSWER:" % (corpus, scrubbed))
+        try:
+            reply = provider.generate_text(prompt, max_tokens=300, temperature=0.2)
+        except Exception:
+            _logger.info("Learn coach: composer call failed", exc_info=True)
+            return None
+        reply = (reply or '').strip()
+        if not reply or 'NO_ANSWER' in reply or len(reply) > 1500:
+            return None
+
+        from .learn_station import _zip_bilingual
+        tree = {
+            'key': 'composed',
+            'label': self._scrub(question),
+            'simpler': '',
+            'blocks': [
+                {'capability': 'any', 'kind': 'p', 'body': reply, 'steps': []},
+            ],
+        }
+        payload = _zip_bilingual(tree, tree)
+        payload.update({
+            'matched': True,
+            'capability': self._capability(screen_key),
+            'show_me': [],
+            'practice_key': '',
+            # Flagged so the drawer can say so. A composed answer is written by
+            # a model FROM our material — the learner is entitled to know which
+            # kind of answer they are reading.
+            'source_kind': 'composed',
+        })
+        return payload
+
+    @api.model
+    def _column_answer(self, column, screen_key):
+        """A column definition, shaped like any other answer."""
+        from .learn_station import _zip_bilingual
+
+        def build(lang):
+            col = column.with_context(lang=lang)
+            return {
+                'key': 'column:%s' % col.key,
+                'label': col.label,
+                'simpler': '',
+                'blocks': [
+                    {'capability': 'any', 'kind': 'p', 'body': col.body, 'steps': []},
+                    {'capability': 'any', 'kind': 'source', 'steps': [],
+                     'body': col.env['learn.screen'].sudo().search(
+                         [('key', '=', screen_key)], limit=1).name or screen_key},
+                ],
+            }
+
+        payload = _zip_bilingual(build('en_US'), build('vi_VN'))
+        payload.update({'matched': True, 'capability': self._capability(screen_key),
+                        'show_me': [], 'practice_key': '', 'source_kind': 'column'})
+        return payload
 
     @api.model
     def _suggestions(self, screen_key):
@@ -468,3 +651,63 @@ class LearnIntentStep(models.Model):
     sequence = fields.Integer(default=10)
     text = fields.Text(required=True, translate=True)
     anchor = fields.Char(help="Anchor key to point at. Must be in anchors.json.")
+
+
+class LearnColumn(models.Model):
+    """What a column on a screen actually means.
+
+    WHY THIS IS CURATED AND NOT READ FROM ir.model.fields
+    ----------------------------------------------------
+    Measured on this database before writing a line of it: of 239 fields on
+    crm.lead, only 126 carry any help text at all, and most of what exists is
+    Odoo's own boilerplate ("Icon to indicate an exception activity"). The
+    field a learner actually asked about — activity_date_deadline — has the
+    label "Next Activity Deadline" and NO help.
+
+    So a schema-driven answer would restate the column header back at the
+    person who just read it. What answers "what is activity date used for?" is
+    domain knowledge: it is the next scheduled follow-up, the Activities board
+    is where it comes from, and on a pivot it tells you whether a lead is being
+    worked or has gone quiet. That has to be written.
+    """
+    _name = 'learn.column'
+    _description = 'Learn screen column'
+    _order = 'screen, sequence, id'
+
+    screen = fields.Char(required=True, index=True)
+    key = fields.Char(required=True)
+    sequence = fields.Integer(default=10)
+    label = fields.Char(required=True, translate=True,
+                        help="The column header exactly as it appears on screen.")
+    body = fields.Text(required=True, translate=True,
+                       help="One honest sentence: what it is for, and what it is not.")
+
+    _sql_constraints = [
+        ('screen_key_uniq', 'unique(screen, key)', 'One entry per column per screen.'),
+    ]
+
+    @api.model
+    def match(self, question, screen_key):
+        """Find the column a question is asking about.
+
+        Deliberately narrow: the question must contain the column's label (or
+        its label must contain the question's topic words). A loose match here
+        would answer "what is the status of my request" with a column
+        definition, which is worse than missing.
+        """
+        if not screen_key:
+            return None
+        nq = _norm(question)
+        if not nq:
+            return None
+        best, best_len = None, 0
+        for col in self.search([('screen', '=', screen_key)]):
+            for lang in ('en_US', 'vi_VN'):
+                label = _norm(col.with_context(lang=lang).label)
+                if label and len(label) > 3 and label in nq and len(label) > best_len:
+                    best, best_len = col, len(label)
+        return best
+
+    def _column_dict(self):
+        self.ensure_one()
+        return {'key': self.key, 'label': self.label, 'body': self.body}

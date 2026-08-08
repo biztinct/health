@@ -640,6 +640,27 @@ def gen_missions(data, tr):
     return doc.render()
 
 
+def gen_columns(data, tr):
+    doc = Xml('Column glossary. Written, not derived from ir.model.fields: '
+              'measured on this database, only 126 of 239 crm.lead fields carry '
+              'any help and the one a learner actually asked about has none.')
+    for screen, cols in (data.get('columns') or {}).items():
+        for i, (key, label, body) in enumerate(cols):
+            xmlid = 'col_%s_%s' % (
+                re.sub(r'[^a-z0-9]+', '_', screen.lower()).strip('_'),
+                re.sub(r'[^a-z0-9]+', '_', key.lower()).strip('_'))
+            doc.rec('learn.column', xmlid, [
+                ('screen', screen),
+                ('key', key),
+                ('sequence', (i + 1) * 10),
+                ('label', en_of(label)),
+                ('body', en_of(body)),
+            ])
+            tr.add('learn.column', 'label', xmlid, en_of(label), vi_of(label))
+            tr.add('learn.column', 'body', xmlid, en_of(body), vi_of(body))
+    return doc.render()
+
+
 def gen_overrides(data, tr):
     doc = Xml('Tenant slots — the shipped defaults. A key with no row here does '
               'not exist, so this file is also the declaration the override '
@@ -696,6 +717,7 @@ def main():
         'data/learn_tenant_slots.xml': gen_overrides(data, tr),
         'data/learn_intents.xml': gen_intents(data, tr),
         'data/learn_screens.xml': gen_screens(data, tr),
+        'data/learn_columns.xml': gen_columns(data, tr),
         'data/learn_missions.xml': gen_missions(data, tr),
         'static/src/engine/fixture.js': gen_fixture(data),
     }

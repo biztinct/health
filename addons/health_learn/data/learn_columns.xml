@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED FILE. Do not edit.
+         Source: docs/tutorial_crm/ · Regenerate: python3 docs/tutorial_crm/tools/gen_learn_data.py
+         Hand edits are erased on the next run and fail the CI check. -->
+<!-- Column glossary. Written, not derived from ir.model.fields: measured on this database, only 126 of 239 crm.lead fields carry any help and the one a learner actually asked about has none. -->
+<odoo>
+
+    <record id="col_leadanalysis_contact" model="learn.column">
+        <field name="screen">leadanalysis</field>
+        <field name="key">contact</field>
+        <field name="sequence">10</field>
+        <field name="label">Contact Name</field>
+        <field name="body">The person who enquired. On this pivot it is one row per enquiry, so the same person can appear twice if they came back in a later month.</field>
+    </record>
+
+    <record id="col_leadanalysis_client" model="learn.column">
+        <field name="screen">leadanalysis</field>
+        <field name="key">client</field>
+        <field name="sequence">20</field>
+        <field name="label">Client Name</field>
+        <field name="body">The patient record this enquiry was matched to. Empty means the enquiry was never linked to a client — usually because it never became a booking.</field>
+    </record>
+
+    <record id="col_leadanalysis_email" model="learn.column">
+        <field name="screen">leadanalysis</field>
+        <field name="key">email</field>
+        <field name="sequence">30</field>
+        <field name="label">Email</field>
+        <field name="body">Whatever address arrived with the enquiry. Often blank on Zalo and hotline arrivals, which is normal, not missing data.</field>
+    </record>
+
+    <record id="col_leadanalysis_salesperson" model="learn.column">
+        <field name="screen">leadanalysis</field>
+        <field name="key">salesperson</field>
+        <field name="sequence">40</field>
+        <field name="label">Salesperson</field>
+        <field name="body">Who owns this enquiry. Not who replied to it — ownership and the last reply can be two different people.</field>
+    </record>
+
+    <record id="col_leadanalysis_status" model="learn.column">
+        <field name="screen">leadanalysis</field>
+        <field name="key">status</field>
+        <field name="sequence">50</field>
+        <field name="label">Contact Status</field>
+        <field name="body">Where this enquiry reached in the lifecycle: New, Lead, Appointment Scheduled, Service Used, or the Cancelled / Spam branch. It is what the Dashboard counts.</field>
+    </record>
+
+    <record id="col_leadanalysis_activity_date" model="learn.column">
+        <field name="screen">leadanalysis</field>
+        <field name="key">activity_date</field>
+        <field name="sequence">60</field>
+        <field name="label">Activity Date</field>
+        <field name="body">The date of the next scheduled follow-up on this contact — the one the Activities board manages. Blank means nothing is scheduled, which on a Lead is the thing to notice: it is how a lead goes quiet without anyone deciding to drop it. Red means overdue.</field>
+    </record>
+
+    <record id="col_contacts_name" model="learn.column">
+        <field name="screen">contacts</field>
+        <field name="key">name</field>
+        <field name="sequence">10</field>
+        <field name="label">Contact Name</field>
+        <field name="body">The person as they identified themselves. In home care this is often a son or daughter rather than the patient.</field>
+    </record>
+
+    <record id="col_contacts_status" model="learn.column">
+        <field name="screen">contacts</field>
+        <field name="key">status</field>
+        <field name="sequence">20</field>
+        <field name="label">Contact Status</field>
+        <field name="body">The lifecycle state this record is in. Moving it forward should record something that really happened; it is not a way to tidy the list.</field>
+    </record>
+
+    <record id="col_contacts_channel" model="learn.column">
+        <field name="screen">contacts</field>
+        <field name="key">channel</field>
+        <field name="sequence">30</field>
+        <field name="label">Source / Channel</field>
+        <field name="body">Where this enquiry arrived from. It is the channel it came in on, which is not always what produced it — a website advert can produce a Zalo message.</field>
+    </record>
+
+    <record id="col_contacts_phone" model="learn.column">
+        <field name="screen">contacts</field>
+        <field name="key">phone</field>
+        <field name="sequence">40</field>
+        <field name="label">Phone</field>
+        <field name="body">The number to reach them on, and the identifier the duplicate check matches against. Match on this, never on the name.</field>
+    </record>
+
+    <record id="col_contacts_salesperson" model="learn.column">
+        <field name="screen">contacts</field>
+        <field name="key">salesperson</field>
+        <field name="sequence">50</field>
+        <field name="label">Salesperson</field>
+        <field name="body">Who is responsible for this contact today. Reassigning it is how work moves at handover.</field>
+    </record>
+
+    <record id="col_carecommand_urgency" model="learn.column">
+        <field name="screen">carecommand</field>
+        <field name="key">urgency</field>
+        <field name="sequence">10</field>
+        <field name="label">Urgency score</field>
+        <field name="body">A triage number computed from status, waiting time and watch phrases. It is a queue position, never a clinical severity — a 110 means look now, not that the patient is critical.</field>
+    </record>
+
+    <record id="col_carecommand_status" model="learn.column">
+        <field name="screen">carecommand</field>
+        <field name="key">status</field>
+        <field name="sequence">20</field>
+        <field name="label">Status</field>
+        <field name="body">Needs reply, Waiting or Closed — plus Junk? as a branch off to the side. Sending a reply moves it to Waiting automatically.</field>
+    </record>
+
+    <record id="col_carecommand_channel" model="learn.column">
+        <field name="screen">carecommand</field>
+        <field name="key">channel</field>
+        <field name="sequence">30</field>
+        <field name="label">Channel</field>
+        <field name="body">Which channel the latest message arrived on. One conversation can span several — the row merges them.</field>
+    </record>
+
+    <record id="col_carecommand_owner" model="learn.column">
+        <field name="screen">carecommand</field>
+        <field name="key">owner</field>
+        <field name="sequence">40</field>
+        <field name="label">Owned by</field>
+        <field name="body">Who claimed this conversation. Unclaimed means anyone can take it; claimed means everyone else should leave it alone.</field>
+    </record>
+
+    <record id="col_carecommand_watch" model="learn.column">
+        <field name="screen">carecommand</field>
+        <field name="key">watch</field>
+        <field name="sequence">50</field>
+        <field name="label">Watch phrase</field>
+        <field name="body">A phrase on the clinic's watch list appeared in an inbound message. It raises the queue position; it says nothing about what is wrong with the patient.</field>
+    </record>
+
+    <record id="col_dashboard_period" model="learn.column">
+        <field name="screen">dashboard</field>
+        <field name="key">period</field>
+        <field name="sequence">10</field>
+        <field name="label">Period</field>
+        <field name="body">The window every figure on this screen is filtered to — cards, charts and feeds alike. Read no number here without checking it.</field>
+    </record>
+
+    <record id="col_dashboard_contacts_today" model="learn.column">
+        <field name="screen">dashboard</field>
+        <field name="key">contacts_today</field>
+        <field name="sequence">20</field>
+        <field name="label">Contacts Today</field>
+        <field name="body">How many enquiries arrived today. A day figure — it never describes the same window as Conversion Rate.</field>
+    </record>
+
+    <record id="col_dashboard_pending" model="learn.column">
+        <field name="screen">dashboard</field>
+        <field name="key">pending</field>
+        <field name="sequence">30</field>
+        <field name="label">Pending Follow-ups</field>
+        <field name="body">Promises made and not yet kept. Compare it with your team's capacity, not with zero — it is the earliest sign someone will be forgotten.</field>
+    </record>
+
+    <record id="col_dashboard_conversion" model="learn.column">
+        <field name="screen">dashboard</field>
+        <field name="key">conversion</field>
+        <field name="sequence">40</field>
+        <field name="label">Conversion Rate</field>
+        <field name="body">Bookings divided by REAL enquiries — spam is excluded from the denominator on purpose, so that a month with more junk cannot look better.</field>
+    </record>
+
+    <record id="col_dashboard_spam_rate" model="learn.column">
+        <field name="screen">dashboard</field>
+        <field name="key">spam_rate</field>
+        <field name="sequence">50</field>
+        <field name="label">Spam Rate</field>
+        <field name="body">Spam as a share of everything that arrived. A low rate is not automatically good news: it can simply mean nobody is marking spam, which quietly inflates every other number.</field>
+    </record>
+
+    <record id="col_activities_type" model="learn.column">
+        <field name="screen">activities</field>
+        <field name="key">type</field>
+        <field name="sequence">10</field>
+        <field name="label">Type</field>
+        <field name="body">To-Do, Call, Meeting, Email or Document. The type decides nothing on its own — it is there so a shift can scan for the work it can actually do now.</field>
+    </record>
+
+    <record id="col_activities_due" model="learn.column">
+        <field name="screen">activities</field>
+        <field name="key">due</field>
+        <field name="sequence">20</field>
+        <field name="label">Due date</field>
+        <field name="body">When this was promised for. Filtering to Today hides everything that was due yesterday and never happened — which is the work most likely to become a complaint.</field>
+    </record>
+
+    <record id="col_activities_assigned" model="learn.column">
+        <field name="screen">activities</field>
+        <field name="key">assigned</field>
+        <field name="sequence">30</field>
+        <field name="label">Assigned to</field>
+        <field name="body">Who will do it. Assigning everything to yourself makes it invisible as team work, and it simply does not happen if you are off sick.</field>
+    </record>
+
+    <record id="col_activities_contact" model="learn.column">
+        <field name="screen">activities</field>
+        <field name="key">contact</field>
+        <field name="sequence">40</field>
+        <field name="label">Contact</field>
+        <field name="body">The person this promise was made to. An activity cannot exist on its own — it always hangs off a contact.</field>
+    </record>
+
+    <record id="col_channelcenter_state" model="learn.column">
+        <field name="screen">channelcenter</field>
+        <field name="key">state</field>
+        <field name="sequence">10</field>
+        <field name="label">State</field>
+        <field name="body">Where this channel is in its connection lifecycle. It is derived from the readiness checks and audited — never typed in by hand.</field>
+    </record>
+
+    <record id="col_channelcenter_account" model="learn.column">
+        <field name="screen">channelcenter</field>
+        <field name="key">account</field>
+        <field name="sequence">20</field>
+        <field name="label">Account / Resource</field>
+        <field name="body">Which account this connection actually points at — the Zalo OA, the Facebook page. This is where a catchment area comes from for channel traffic.</field>
+    </record>
+
+    <record id="col_channelcenter_checks" model="learn.column">
+        <field name="screen">channelcenter</field>
+        <field name="key">checks</field>
+        <field name="sequence">30</field>
+        <field name="label">Readiness checks</field>
+        <field name="body">What has been proven about this connection. They show it is capable; only real traffic shows it works.</field>
+    </record>
+
+    <record id="col_unrouted_what" model="learn.column">
+        <field name="screen">unrouted</field>
+        <field name="key">what</field>
+        <field name="sequence">10</field>
+        <field name="label">What arrived</field>
+        <field name="body">Exactly what the channel sent, unedited. These records cannot be changed — that is what lets you tell 'no number was given' apart from 'someone removed it'.</field>
+    </record>
+
+    <record id="col_unrouted_anchor" model="learn.column">
+        <field name="screen">unrouted</field>
+        <field name="key">anchor</field>
+        <field name="sequence">20</field>
+        <field name="label">Convert</field>
+        <field name="body">Available only when there is something to reach the person by — a contact, a phone number or an email. Greyed out means the arrival carries none, so converting would create a contact nobody can call.</field>
+    </record>
+
+    <record id="col_unrouted_dismiss" model="learn.column">
+        <field name="screen">unrouted</field>
+        <field name="key">dismiss</field>
+        <field name="sequence">30</field>
+        <field name="label">Dismiss</field>
+        <field name="body">Records a judgement — 'this was not a patient' — against your name. It is the right action when that is true, and not a way to clear the badge count.</field>
+    </record>
+
+    <record id="col_touchpoints_campaign" model="learn.column">
+        <field name="screen">touchpoints</field>
+        <field name="key">campaign</field>
+        <field name="sequence">10</field>
+        <field name="label">UTM campaign</field>
+        <field name="body">Which advert or link produced this arrival. Blank means the tag never reached us, and those land in Unmatched campaigns.</field>
+    </record>
+
+    <record id="col_touchpoints_source" model="learn.column">
+        <field name="screen">touchpoints</field>
+        <field name="key">source</field>
+        <field name="sequence">20</field>
+        <field name="label">Source / medium</field>
+        <field name="body">Where the click came from and how — google/cpc, facebook/social. It describes the click, not the person.</field>
+    </record>
+
+    <record id="col_touchpoints_landing" model="learn.column">
+        <field name="screen">touchpoints</field>
+        <field name="key">landing</field>
+        <field name="sequence">30</field>
+        <field name="label">Landing page</field>
+        <field name="body">The page they actually read. Useful when a campaign brings volume but the page it points at does not ask for a phone number.</field>
+    </record>
+
+    <record id="col_touchpoints_enquiries" model="learn.column">
+        <field name="screen">touchpoints</field>
+        <field name="key">enquiries</field>
+        <field name="sequence">40</field>
+        <field name="label">Enquiries</field>
+        <field name="body">How many arrivals this campaign produced. It is a volume, not an outcome — whether they became bookings is on Lead Analysis.</field>
+    </record>
+
+</odoo>
