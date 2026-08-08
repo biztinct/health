@@ -409,18 +409,11 @@ ROLE_TO_CAPABILITY = {
     'owner': 'owner',       # plus every catchment area
 }
 
-# Product action tags per screen, so the Coach can tell which screen the user
-# is on from the action manager. Verified against the sidebar data files.
-SCREEN_ACTION_TAGS = {
-    'dashboard': 'crm_dashboard',
-    'carecommand': 'care_command',
-    'channelcenter': 'channel_center',
-    'unrouted': 'contact_capture',
-    'contacts': 'crm_new_contact,crm_booking_wizard',
-    'touchpoints': 'web_touchpoints',
-    'leadanalysis': 'lead_analysis',
-    'activities': 'crm_activity_list',
-}
+# Only screens WITHOUT a sidebar leaf need a manual tag here. Everything else
+# reads its matchers from the leaf itself at bundle time — five of the eight CRM
+# leaves are act_windows with no tag at all, so a hard-coded tag map silently
+# failed to detect them.
+SCREEN_ACTION_TAGS = {}
 
 
 def gen_screens(data, tr):

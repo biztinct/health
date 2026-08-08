@@ -99,12 +99,41 @@ class LearnScreen(models.Model):
         translate=True,
         help="The honest answer to 'what should I do next here'.")
     action_tags = fields.Char(
-        help="Comma-separated product action tags that resolve to this screen. "
-             "Data rather than a hard-coded map, so a new tag is a data change.")
+        help="Optional manual override. Normally EMPTY: the matchers are read "
+             "from the sidebar leaf named by sidebar_key, so the Coach and the "
+             "sidebar can never disagree about which screen is showing.")
     sidebar_key = fields.Char(help="xml-id of the leaf, for the visibility check.")
     suggest_ids = fields.Many2many('learn.intent', string='Suggested questions')
 
     _sql_constraints = [('key_uniq', 'unique(key)', 'A screen key must be unique.')]
+
+    def _matchers(self):
+        """How to tell that THIS screen is the one on display.
+
+        Read from the sidebar leaf rather than hard-coded here. Only three of
+        the eight CRM leaves are client actions with a tag; the rest are
+        act_windows identified by xml-id or model — so a tag-only map silently
+        failed to detect five of eight screens, and the Coach told the learner
+        it had no lessons for a screen it had a full lesson for.
+
+        Reusing the leaf's own declaration means the Coach resolves the screen
+        exactly the way the sidebar decides which leaf to highlight.
+        """
+        self.ensure_one()
+        tags, xmlids, models_ = set(), set(), set()
+
+        def split(val):
+            return {v.strip() for v in (val or '').split(',') if v.strip()}
+
+        tags |= split(self.action_tags)
+        if self.sidebar_key:
+            item = self.env.ref(self.sidebar_key, raise_if_not_found=False)
+            if item:
+                item = item.sudo()
+                tags |= split(item.action_tag) | split(item.match_action_tags)
+                xmlids |= split(item.action_xmlid) | split(item.match_action_xmlids)
+                models_ |= split(item.match_models)
+        return sorted(tags), sorted(xmlids), sorted(models_)
 
 
 class LearnIntent(models.Model):
@@ -339,7 +368,9 @@ class LearnIntent(models.Model):
                     'name': s.name,
                     'blurb': s.blurb or '',
                     'next_step': s.next_step or '',
-                    'action_tags': [t.strip() for t in (s.action_tags or '').split(',') if t.strip()],
+                    'action_tags': s._matchers()[0],
+                    'action_xmlids': s._matchers()[1],
+                    'models': s._matchers()[2],
                     'suggest': [{'key': i.key, 'label': i.label} for i in s.suggest_ids],
                 } for s in env.search([])],
                 # What the Coach can answer ANYWHERE. Without this, a screen it

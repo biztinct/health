@@ -25,7 +25,8 @@ _RAW_KEYS = frozenset({
     # Phase 2. `capability` and `action_tags` are structure inside a structural
     # tree; the flat map of UI labels is zipped by _zip_prose instead, so these
     # cannot repeat the collision that hid three chrome strings (ledger §5.146).
-    'capability', 'action_tags', 'show_me', 'practice_key', 'matched',
+    'capability', 'action_tags', 'action_xmlids', 'models',
+    'show_me', 'practice_key', 'matched',
     # Phase 3 mission structure.
     # NOT 'did' / 'check': those are LISTS OF PROSE (the debrief), and marking
     # them raw would ship the whole debrief in English — the same class of bug

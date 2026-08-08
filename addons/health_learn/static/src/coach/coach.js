@@ -89,11 +89,21 @@ export class CoachHost extends Component {
      *  signal SidebarHost already resolves on. */
     _resolveScreen() {
         const controller = this.action.currentController;
-        const tag = controller?.action?.tag;
+        const action = controller?.action;
         const screens = this.bundle?.screens || [];
-        const found = tag
-            ? screens.find((s) => (s.action_tags || []).includes(tag))
+        // TWO PASSES, exactly as SidebarHost._resolve does it: exact matches
+        // (tag, xml-id) across ALL screens first, and only then the broad model
+        // match. One pass with || inside is order-dependent and wrong here —
+        // Lead Analysis is a crm.lead pivot, so it matched Contacts' model
+        // matcher and the Coach confidently grounded on the wrong screen.
+        const exact = action ? screens.find((s) =>
+            (action.tag && (s.action_tags || []).includes(action.tag))
+            || (action.xml_id && (s.action_xmlids || []).includes(action.xml_id))
+        ) : null;
+        const byModel = !exact && action?.res_model
+            ? screens.find((s) => (s.models || []).includes(action.res_model))
             : null;
+        const found = exact || byModel;
         const key = found ? found.key : null;
         if (key !== this.state.screen) {
             this.state.screen = key;

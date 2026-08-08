@@ -279,11 +279,39 @@ class TestCoach(TransactionCase):
         self.assertFalse(unknown, "Coach anchors nothing registers:\n  "
                                   + "\n  ".join(sorted(set(unknown))))
 
-    def test_14_every_screen_maps_to_a_product_action(self):
-        """A screen with no action tag can never be detected, so its answers
-        can never be offered — a whole screen's content, silently unreachable."""
-        orphans = [s.key for s in self.Screen.search([]) if not (s.action_tags or '').strip()]
-        self.assertFalse(orphans, "Screens the Coach can never detect: %s" % orphans)
+    def test_14_every_screen_can_actually_be_detected(self):
+        """A screen the Coach cannot recognise is a whole screen's content,
+        silently unreachable — and it fails in the most misleading way: the
+        Coach says "I don't have lessons for this screen yet" while sitting on
+        a screen that has a full lesson.
+
+        Asserts a matcher of ANY kind, because only three of the eight CRM
+        leaves are client actions with a tag; the rest are act_windows found by
+        xml-id or model.
+        """
+        blind = []
+        for screen in self.Screen.search([]):
+            tags, xmlids, models_ = screen._matchers()
+            if not (tags or xmlids or models_):
+                blind.append(screen.key)
+        self.assertFalse(blind, "Screens the Coach can never detect: %s" % blind)
+
+    def test_14b_matchers_come_from_the_real_sidebar_leaf(self):
+        """Not from a copy. If the leaf's action changes, the Coach follows."""
+        checked = 0
+        for screen in self.Screen.search([]):
+            if not screen.sidebar_key:
+                continue
+            item = self.env.ref(screen.sidebar_key, raise_if_not_found=False)
+            if not item:
+                continue
+            checked += 1
+            tags, xmlids, models_ = screen._matchers()
+            declared = {(item.sudo().action_xmlid or '').strip()}
+            self.assertTrue(
+                declared & set(xmlids) or (item.sudo().action_tag or '') in tags,
+                "%s does not inherit its leaf's own action" % screen.key)
+        self.assertGreaterEqual(checked, 8, "expected every CRM screen to name a leaf")
 
     def test_15_refusals_are_reachable_but_never_advertised(self):
         """Offering "ask me something clinical" invites the exact question the
@@ -296,3 +324,53 @@ class TestCoach(TransactionCase):
         for screen in self.Screen.search([]):
             self.assertNotIn(clinical, screen.suggest_ids,
                              "%s suggests the clinical refusal" % screen.key)
+
+    def _resolve_screen(self, tag, xmlid, model):
+        """Server-side mirror of the frontend's two-pass resolution."""
+        screens = self.Screen.search([])
+        matchers = {s.key: s._matchers() for s in screens}
+        for s in screens:                      # pass 1: exact
+            tags, xmlids, _models = matchers[s.key]
+            if (tag and tag in tags) or (xmlid and xmlid in xmlids):
+                return s.key
+        for s in screens:                      # pass 2: broad model
+            _tags, _xmlids, models_ = matchers[s.key]
+            if model and model in models_:
+                return s.key
+        return None
+
+    def test_16_each_screen_resolves_to_ITSELF_from_its_own_leaf(self):
+        """The bug this replaces was the worst kind: confidently wrong.
+
+        Lead Analysis is a crm.lead pivot, so a single-pass matcher hit
+        Contacts' broad model rule and the Coach grounded on the wrong screen —
+        offering Contacts' questions to someone reading a funnel. Exact matches
+        must win across ALL screens before any model match is considered.
+        """
+        wrong = []
+        for screen in self.Screen.search([]):
+            if not screen.sidebar_key:
+                continue
+            item = self.env.ref(screen.sidebar_key, raise_if_not_found=False)
+            if not item:
+                continue
+            item = item.sudo()
+            got = self._resolve_screen(item.action_tag, item.action_xmlid, None)
+            if got != screen.key:
+                wrong.append('%s (its own action) -> %s' % (screen.key, got))
+        self.assertFalse(wrong, "Screens that do not resolve to themselves:\n  "
+                                + "\n  ".join(wrong))
+
+    def test_17_a_broad_model_rule_never_shadows_an_exact_one(self):
+        """crm.lead is claimed by Contacts, but four CRM screens are crm.lead
+        views. Only the ones with no exact matcher may fall through to it."""
+        model_owners = {}
+        for screen in self.Screen.search([]):
+            _t, _x, models_ = screen._matchers()
+            for m in models_:
+                model_owners.setdefault(m, []).append(screen.key)
+        for model, owners in model_owners.items():
+            self.assertEqual(len(owners), 1,
+                             "%s is claimed by more than one screen: %s — the "
+                             "broad pass would pick one arbitrarily"
+                             % (model, owners))

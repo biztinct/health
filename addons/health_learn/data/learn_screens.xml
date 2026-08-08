@@ -10,7 +10,6 @@
         <field name="sequence">10</field>
         <field name="name">Dashboard</field>
         <field name="blurb">Six KPI cards, a status donut and a source-channel chart for one period and one catchment area.</field>
-        <field name="action_tags">crm_dashboard</field>
         <field name="sidebar_key">health_cms_sidebar.item_crm_dashboard</field>
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_whatpage'), ref('intent_kpis'), ref('intent_catchmentq'), ref('intent_whatnext')])]"/>
     </record>
@@ -20,7 +19,6 @@
         <field name="sequence">20</field>
         <field name="name">Care Command</field>
         <field name="blurb">The triage wall: one work item per person across all channels, ordered by urgency score.</field>
-        <field name="action_tags">care_command</field>
         <field name="sidebar_key">health_care_command.item_care_command</field>
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_urgency'), ref('intent_consent'), ref('intent_junk'), ref('intent_escalate'), ref('intent_safeactions'), ref('intent_claimfirst')])]"/>
     </record>
@@ -30,7 +28,6 @@
         <field name="sequence">30</field>
         <field name="name">Channel Center</field>
         <field name="blurb">The channel catalogue: lifecycle state, readiness checks and go-live for every connectable channel.</field>
-        <field name="action_tags">channel_center</field>
         <field name="sidebar_key">health_care_command_channels.item_channel_center</field>
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_whatpage'), ref('intent_quiet'), ref('intent_catchmentq'), ref('intent_whatnext')])]"/>
     </record>
@@ -40,7 +37,6 @@
         <field name="sequence">40</field>
         <field name="name">Unrouted Contacts</field>
         <field name="blurb">Immutable records of channel arrivals too thin to become a conversation. Convert or dismiss.</field>
-        <field name="action_tags">contact_capture</field>
         <field name="sidebar_key">health_care_command_channels.item_contact_capture</field>
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_unroutedq'), ref('intent_whatpage'), ref('intent_whatnext')])]"/>
     </record>
@@ -50,7 +46,6 @@
         <field name="sequence">50</field>
         <field name="name">Contacts</field>
         <field name="blurb">Every enquiry as a record, by lifecycle status, with Book · Log Activity · Escalate · Spam on each row.</field>
-        <field name="action_tags">crm_new_contact,crm_booking_wizard</field>
         <field name="sidebar_key">health_cms_sidebar.item_crm_contacts</field>
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_junk'), ref('intent_consent'), ref('intent_reminder'), ref('intent_escalate'), ref('intent_whatnext')])]"/>
     </record>
@@ -60,7 +55,6 @@
         <field name="sequence">60</field>
         <field name="name">Web Touchpoints</field>
         <field name="blurb">One row per website arrival with its UTM tags and click ids, plus the unmatched-campaign chip.</field>
-        <field name="action_tags">web_touchpoints</field>
         <field name="sidebar_key">health_web_leads.item_web_touchpoints</field>
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_attrib'), ref('intent_whatpage'), ref('intent_whatnext')])]"/>
     </record>
@@ -70,7 +64,6 @@
         <field name="sequence">70</field>
         <field name="name">Lead Analysis</field>
         <field name="blurb">The contact records as a pivot — cross source, status, service and area for one period.</field>
-        <field name="action_tags">lead_analysis</field>
         <field name="sidebar_key">health_web_leads.item_lead_analysis</field>
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_kpis'), ref('intent_attrib'), ref('intent_whatpage')])]"/>
     </record>
@@ -80,7 +73,6 @@
         <field name="sequence">80</field>
         <field name="name">Activities</field>
         <field name="blurb">The shared follow-up board: every scheduled call, meeting, email and task, grouped by type.</field>
-        <field name="action_tags">crm_activity_list</field>
         <field name="sidebar_key">health_cms_sidebar.item_crm_activities</field>
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_reminder'), ref('intent_whatpage'), ref('intent_whatnext')])]"/>
     </record>
