@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_condition.ClientDiagnosesWidget">
+    <div class="vu-section">
+        <div class="vu-detail-card">
+            <div class="vu-card__title">
+                <span class="vu-section__icon" data-icon="stethoscope"/>
+                <span>Problem List</span>
+                <t t-if="activeCount">
+                    <span class="badge text-bg-danger ms-2">
+                        <t t-esc="activeCount"/> active
+                    </span>
+                </t>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted p-3">Loading diagnoses…</div>
+            </t>
+
+            <t t-elif="state.conditions.length === 0">
+                <div class="text-muted p-3">
+                    No diagnoses recorded for this client.
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>ICD-10</th>
+                                <th>Verification</th>
+                                <th>Recorded</th>
+                                <th>Last asserted</th>
+                                <th class="text-end">Evidence</th>
+                                <th>Recorder</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.conditions" t-as="cond"
+                                t-key="cond.id" style="cursor: pointer;"
+                                t-on-click="() => this.openCondition(cond.id)">
+                                <td>
+                                    <span class="badge"
+                                          t-att-class="badgeClass(cond.clinical_status)"
+                                          t-esc="cond.clinical_status_label"/>
+                                </td>
+                                <td t-esc="cond.code_name"/>
+                                <td t-esc="cond.verification_status_label"/>
+                                <td t-esc="cond.recorded_date"/>
+                                <td t-esc="cond.last_asserted_date"/>
+                                <td class="text-end" t-esc="cond.note_count"/>
+                                <td t-esc="cond.recorder"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

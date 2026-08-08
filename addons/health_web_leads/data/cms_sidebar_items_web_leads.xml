@@ -25,19 +25,42 @@
         <field name="sequence">21</field>
         <field name="icon">fa fa-crosshairs</field>
         <field name="action_xmlid">health_web_leads.action_health_lead_touchpoint</field>
-        <field name="match_action_xmlids">health_web_leads.action_health_lead_touchpoint</field>
+        <!-- Campaign Review was retired by the 19.0.1.2.0 menu consolidation —
+             it was this same model with a different domain, and is now the
+             "Unmatched Campaigns" chip on this list. Its action must stay in
+             the shell allowlist or that screen opens outside the CMS chrome.
+
+             Declared HERE, in the owning module's own seed, rather than
+             appended by health_cms_coverage's hook: this file is noupdate="0",
+             so every upgrade of health_web_leads rewrites this record and would
+             silently wipe an externally-appended value. (Measured — that is
+             exactly what happened on the first UAT run.) -->
+        <field name="match_action_xmlids">health_web_leads.action_health_lead_touchpoint,health_web_leads.action_campaign_review</field>
         <field name="match_models">health.lead.touchpoint</field>
     </record>
 
-    <!-- W2.5. Sequence 13 is free (Channel Center is 12, Web Touchpoints
-         21); `fa fa-plug` is already the Channel Center's icon, so this one
+    <!-- W2.5. `fa fa-plug` is already the Channel Center's icon, so this one
          takes `fa fa-globe`. Same two §5.69 traps avoided as above: a leaf
          SIBLING, and no `parent_id` field at all. Ungated — the
-         `web.leads.connector` ACLs are what govern who sees rows. -->
+         `web.leads.connector` ACLs are what govern who sees rows.
+
+         SECTION: ADMIN, not CRM. The 19.0.1.2.0 menu consolidation moved the
+         configuration tables out of the daily-work sections; this is a
+         singleton config record ("Website connector"), not something anyone
+         opens during a shift.
+
+         Declared HERE rather than relocated by health_cms_coverage's hook
+         because this file is noupdate="0": every upgrade of health_web_leads
+         rewrites this record and would drag it back into CRM. (Measured — that
+         is exactly what happened on the UAT run.)
+
+         Moving it also resolves the sequence-13 collision it had with
+         health_care_command_channels' "Unrouted Contacts", where ordering fell
+         through to `id`. -->
     <record id="item_web_leads_connector" model="cms.sidebar.item">
         <field name="name">Website Connector</field>
-        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
-        <field name="sequence">13</field>
+        <field name="section_id" ref="health_cms_sidebar.section_admin"/>
+        <field name="sequence">112</field>
         <field name="icon">fa fa-globe</field>
         <field name="action_xmlid">health_web_leads.action_web_leads_connector</field>
         <field name="match_action_xmlids">health_web_leads.action_web_leads_connector</field>
@@ -61,8 +84,23 @@
          Touchpoints (21), and a higher sequence would silently STEAL their
          highlight on every action opened without an xml_id. The action
          xml-ids below are the exact index and are checked first. -->
+    <!-- RETIRED by the 19.0.1.2.0 menu consolidation. This was the same
+         health.lead.touchpoint model as Web Touchpoints (seq 21) with only a
+         different domain, so it is now the "Unmatched Campaigns" chip on that
+         list (static/src/js/touchpoint_list_view.js) — one screen instead of
+         two menu items for the same records.
+
+         Kept as a row with active="False" rather than deleted: the action and
+         the backend menuitem still exist, so deep links keep resolving, and
+         the retirement is one field away from being undone.
+
+         `active` is declared HERE rather than written by
+         health_cms_coverage's hook because this file is noupdate="0" — an
+         upgrade of this module rewrites the record and would resurrect the
+         leaf. (Guarded by test_05b_hook_never_writes_an_updatable_record.) -->
     <record id="item_campaign_review" model="cms.sidebar.item">
         <field name="name">Campaign Review</field>
+        <field name="active" eval="False"/>
         <field name="section_id" ref="health_cms_sidebar.section_crm"/>
         <field name="sequence">22</field>
         <field name="icon">fa fa-bullhorn</field>

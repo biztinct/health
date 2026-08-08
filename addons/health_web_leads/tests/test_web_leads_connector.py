@@ -611,11 +611,21 @@ class TestWebLeadsConnector(ConnectorCaseMixin, TransactionCase):
             [('parent_id', '=', item.id)]))
         self.assertEqual(item.action_xmlid,
                          '%s.action_web_leads_connector' % MODULE)
+        # ADMIN, not CRM: the 19.0.1.2.0 menu consolidation moved the
+        # configuration tables out of the daily-work sections, and this is a
+        # singleton config record. Moving it also resolved the sequence-13
+        # collision it had with health_care_command_channels' Unrouted
+        # Contacts, where ordering fell through to `id`.
         self.assertEqual(item.section_id,
-                         self.env.ref('health_cms_sidebar.section_crm'))
+                         self.env.ref('health_cms_sidebar.section_admin'))
         other = self.env.ref('%s.item_web_touchpoints' % MODULE)
         self.assertNotEqual(item.sequence, other.sequence,
                             'two sidebar leaves must not share a sequence')
+        siblings = self.env['cms.sidebar.item'].search(
+            [('section_id', '=', item.section_id.id),
+             ('sequence', '=', item.sequence), ('id', '!=', item.id)])
+        self.assertFalse(siblings,
+                         'sequence %s is shared in ADMIN' % item.sequence)
 
         # The view must RENDER, not merely load: `get_view` runs the
         # field/attribute validator that a raw arch read skips.

@@ -451,3 +451,66 @@ class HealthFamilyThread(models.Model):
             return normalize_vn_phone(phone) or ''
         except ValidationError:
             return ''
+
+    # ------------------------------------------------------------------
+    # Ops client-profile tab (lazy fetch — see the widget in
+    # static/src/js/client_family_widget.js)
+    #
+    # Not an x2many on the ops arch: the client page loads every arch field in
+    # one web_read, and this is the heaviest of the consolidated tabs (every
+    # body is decrypted). Fetching in the widget's onWillStart keeps that cost
+    # on the users who actually open the tab.
+    # ------------------------------------------------------------------
+    @api.model
+    def get_client_threads(self, patient_id, message_limit=30):
+        """Threads + recent messages for one patient, as plain dicts.
+
+        Bodies are read through the computed ``body`` field so decryption goes
+        through phi_crypto and the model's own ACL applies. ``body_enc`` is
+        never touched here.
+        """
+        if not patient_id:
+            return {'threads': []}
+        threads = self.search([('patient_id', '=', patient_id)])
+        out = []
+        for thread in threads:
+            messages = thread.message_ids[-message_limit:]
+            out.append({
+                'id': thread.id,
+                'relation': thread.relation_id.display_name or '',
+                'state': thread.state,
+                'messaging_enabled': bool(thread.messaging_enabled),
+                'unread_ops_count': thread.unread_ops_count,
+                'last_message_at': _tab_dt(thread, thread.last_message_at),
+                'messages': [{
+                    'id': m.id,
+                    'direction': m.direction,
+                    'body': m.body or '',
+                    'author': m.author_label or '',
+                    'read_by_ops': m.read_by_ops,
+                    'created': _tab_dt(m, m.create_date),
+                } for m in messages],
+            })
+        return {'threads': out}
+
+
+# ---------------------------------------------------------------------------
+# Display formatting for the ops record tabs.
+#
+# Stored datetimes are naive UTC; context_timestamp converts to the user's
+# timezone (Asia/Ho_Chi_Minh here) so a tab does not show a visit as 7 hours
+# earlier than every other surface. Raw ``to_string`` output ("2026-07-08
+# 09:17:30") was also the only place in the ops forms not using the
+# "Aug 21, 4:30 PM" house format.
+# ---------------------------------------------------------------------------
+def _tab_dt(record, value):
+    """Naive-UTC datetime -> user-timezone display string."""
+    if not value:
+        return ''
+    return fields.Datetime.context_timestamp(record, value).strftime(
+        '%b %d, %Y %I:%M %p')
+
+
+def _tab_date(value):
+    """Date -> display string (dates carry no timezone)."""
+    return value.strftime('%b %d, %Y') if value else ''

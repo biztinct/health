@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Family threads on the client chart. Injected into the OPS profile view
+         (health_fieldservice.view_health_patient_form_ops) — the standard
+         partner form is not what the CMS renders, so a page added there would
+         be masked. One widget, no <field>: the ops arch is loaded eagerly in a
+         single web_read, and every body in this tab is decrypted on read. -->
+    <record id="view_ops_profile_family_tab" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.family</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Family" name="family_ops"
+                      groups="health_base.group_healthcare_base">
+                    <widget name="vu_client_family"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

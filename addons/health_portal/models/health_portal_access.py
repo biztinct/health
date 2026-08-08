@@ -500,3 +500,66 @@ class HealthPortalAccessLog(models.Model):
 
     def unlink(self):
         raise UserError(_('Portal access log entries cannot be deleted.'))
+
+
+class HealthPortalAccessOpsTab(models.Model):
+    """Read helper for the ops client-profile "Portal Access" tab.
+
+    Re-opens the record model rather than introducing an AbstractModel, so the
+    RPC entry point carries the same ACL and record rules as the data it reads
+    — and matches the other seven consolidated tabs, which all put their read
+    method on the model that owns the records.
+    """
+    _inherit = 'health.portal.access'
+
+    # ------------------------------------------------------------------
+    # Ops client-profile tab (lazy fetch — client_portal_access_widget.js)
+    #
+    # Not an x2many on the ops arch: the client page loads every arch field in
+    # one web_read, so a <field> list would tax every open.
+    # ------------------------------------------------------------------
+    @api.model
+    def get_client_portal_access(self, patient_id):
+        """Portal-access status for one patient, as plain dicts.
+
+        SECURITY: ``token`` is group-restricted
+        (health_base.group_healthcare_operations_manager) and ``portal_url`` is
+        derived from it — the /my/care URL is a capability URL. Neither is ever
+        put in this payload; the tab reports status only. Use the record form
+        (ops-manager gated) to read or rotate the link.
+        """
+        if not patient_id:
+            return {'access': []}
+        records = self.search([('patient_id', '=', patient_id)])
+        rows = []
+        for rec in records:
+            rows.append({
+                'id': rec.id,
+                'state': rec.state,
+                'expires_at': _tab_dt(rec, rec.expires_at),
+                'last_access_datetime': _tab_dt(rec, rec.last_access_datetime),
+                'access_count': rec.access_count,
+            })
+        return {'access': rows}
+
+
+# ---------------------------------------------------------------------------
+# Display formatting for the ops record tabs.
+#
+# Stored datetimes are naive UTC; context_timestamp converts to the user's
+# timezone (Asia/Ho_Chi_Minh here) so a tab does not show a visit as 7 hours
+# earlier than every other surface. Raw ``to_string`` output ("2026-07-08
+# 09:17:30") was also the only place in the ops forms not using the
+# "Aug 21, 4:30 PM" house format.
+# ---------------------------------------------------------------------------
+def _tab_dt(record, value):
+    """Naive-UTC datetime -> user-timezone display string."""
+    if not value:
+        return ''
+    return fields.Datetime.context_timestamp(record, value).strftime(
+        '%b %d, %Y %I:%M %p')
+
+
+def _tab_date(value):
+    """Date -> display string (dates carry no timezone)."""
+    return value.strftime('%b %d, %Y') if value else ''

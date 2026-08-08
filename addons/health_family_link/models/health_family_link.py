@@ -364,3 +364,58 @@ class HealthFamilyLink(models.Model):
                  else 'snapshot_message_id')
         if self[field].id != msg.id:
             self.sudo().write({field: msg.id})
+
+    # ------------------------------------------------------------------
+    # Ops booking tab (lazy fetch — booking_family_widget.js)
+    #
+    # Not a <field> on the ops booking arch: that arch is loaded whole in a
+    # single web_read on page open, so an x2many list would tax every open.
+    # ------------------------------------------------------------------
+    @api.model
+    def get_booking_links(self, fso_id):
+        """Family visit links for one booking, as plain dicts.
+
+        SECURITY: ``token`` is the capability credential for the public family
+        page and is never put in this payload.
+        """
+        if not fso_id:
+            return {'links': []}
+        links = self.search([('fso_id', '=', fso_id)])
+        state_sel = dict(
+            self._fields['state']._description_selection(self.env))
+        rows = []
+        for link in links:
+            rows.append({
+                'id': link.id,
+                'state': link.state,
+                'state_label': state_sel.get(link.state, link.state),
+                'relation': link.relation_id.display_name or '',
+                'recipient': link.partner_id.display_name or '',
+                'expires_at': _tab_dt(link, link.expires_at),
+                'created': _tab_dt(link, link.create_date),
+                'visit_link_sent': bool(link.visit_link_message_id),
+                'snapshot_sent': bool(link.snapshot_message_id),
+            })
+        return {'links': rows}
+
+
+# ---------------------------------------------------------------------------
+# Display formatting for the ops record tabs.
+#
+# Stored datetimes are naive UTC; context_timestamp converts to the user's
+# timezone (Asia/Ho_Chi_Minh here) so a tab does not show a visit as 7 hours
+# earlier than every other surface. Raw ``to_string`` output ("2026-07-08
+# 09:17:30") was also the only place in the ops forms not using the
+# "Aug 21, 4:30 PM" house format.
+# ---------------------------------------------------------------------------
+def _tab_dt(record, value):
+    """Naive-UTC datetime -> user-timezone display string."""
+    if not value:
+        return ''
+    return fields.Datetime.context_timestamp(record, value).strftime(
+        '%b %d, %Y %I:%M %p')
+
+
+def _tab_date(value):
+    """Date -> display string (dates carry no timezone)."""
+    return value.strftime('%b %d, %Y') if value else ''

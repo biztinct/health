@@ -113,6 +113,12 @@ Handovers: docs/strategy/handovers/web-leads-phaseW1.md, …-phaseW2.md,
         # after the views: the sidebar items reference the actions by xmlid
         'data/cms_sidebar_items_web_leads.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'health_web_leads/static/src/js/touchpoint_list_view.js',
+            'health_web_leads/static/src/xml/touchpoint_list_view.xml',
+        ],
+    },
     'installable': True,
     'application': False,
     'license': 'LGPL-3',

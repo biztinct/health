@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_careplan.BookingVisitTasksWidget">
+    <div class="vu-section">
+        <div class="vu-detail-card">
+            <div class="vu-card__title">
+                <span class="vu-section__icon" data-icon="clipboard-list"/>
+                <span>Visit Tasks</span>
+                <t t-if="state.tasks.length">
+                    <span class="badge text-bg-secondary ms-2">
+                        <t t-esc="doneCount"/> / <t t-esc="state.tasks.length"/> done
+                    </span>
+                </t>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted p-3">Loading visit tasks…</div>
+            </t>
+
+            <t t-elif="state.tasks.length === 0">
+                <div class="text-muted p-3">
+                    No care-plan tasks are scheduled for this visit.
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Task</th>
+                                <th>Care plan</th>
+                                <th>Completed by</th>
+                                <th>Completed at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.tasks" t-as="task" t-key="task.id">
+                                <td>
+                                    <span class="badge"
+                                          t-att-class="badgeClass(task.state)"
+                                          t-esc="task.state_label"/>
+                                </td>
+                                <td>
+                                    <t t-esc="task.name"/>
+                                    <t t-if="task.is_prn">
+                                        <span class="badge text-bg-info ms-1">PRN</span>
+                                    </t>
+                                    <t t-if="task.not_done_reason">
+                                        <div class="small text-muted">
+                                            <t t-esc="task.not_done_reason"/>
+                                            <t t-if="task.not_done_note">
+                                                — <t t-esc="task.not_done_note"/>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </td>
+                                <td>
+                                    <a href="#"
+                                       t-on-click.prevent="() => this.openCareplan(task.careplan_id)"
+                                       t-esc="task.careplan_name"/>
+                                </td>
+                                <td t-esc="task.completed_by"/>
+                                <td t-esc="task.completed_datetime"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

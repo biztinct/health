@@ -43,8 +43,15 @@ the first-visit offer / family-link pages, not part of the nurse PWA.
         'views/selfbook_templates.xml',
         'views/selfbook_invite_views.xml',
         'views/res_partner_views.xml',
+        'views/ops_client_booking_links_tab.xml',
         'views/res_config_settings_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'health_self_booking/static/src/js/client_booking_links_widget.js',
+            'health_self_booking/static/src/xml/client_booking_links_widget.xml',
+        ],
+    },
     'installable': True,
     'application': False,
     'sequence': 147,

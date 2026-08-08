@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CareJioX Learn — analysis, coverage and roadmap</title>
+<style>
+:root{
+  --primary:#1565C0;--primary-soft:#E8F0FB;--hero:#0F1E45;
+  --ink:#101728;--muted:#6B7280;--faint:#9CA3AF;--line:#E5E7EB;--line-soft:#F1F0F7;
+  --bg:#F4F6FB;--surface:#fff;
+  --ok:#10B981;--ok-bg:#E7F6EF;--ok-ink:#05614A;
+  --warn:#B45309;--warn-bg:#FDF3E2;--danger:#DC2626;--danger-bg:#FDECEC;
+  --r:12px;--sh:0 1px 2px rgba(16,12,40,.05);
+  --font:"Inter","Segoe UI",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.62}
+header.top{background:var(--hero);color:#fff;padding:44px 24px}
+header.top .in{max-width:1080px;margin:0 auto}
+header.top h1{margin:0 0 10px;font-size:30px;letter-spacing:-.02em}
+header.top p{margin:0;color:#B9C7DE;max-width:74ch}
+header.top a{color:#8FBBEE}
+main{max-width:1080px;margin:0 auto;padding:36px 24px 80px}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:var(--sh)}
+h2{font-size:20px;margin:0 0 6px;letter-spacing:-.01em}
+h2 .n{color:var(--primary);font-weight:800;margin-right:8px}
+h3{font-size:15px;margin:26px 0 8px}
+.sub{color:var(--muted);margin:0 0 20px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:6px}
+th{text-align:left;background:var(--line-soft);color:var(--muted);font-size:11.5px;
+   letter-spacing:.05em;text-transform:uppercase;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:bottom}
+td{padding:10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+td.c,th.c{text-align:center}
+tr:last-child td{border-bottom:0}
+.wrapx{overflow-x:auto}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.full{background:var(--ok-bg);color:var(--ok-ink)}
+.out{background:var(--warn-bg);color:var(--warn)}
+.no{background:var(--line-soft);color:var(--faint)}
+.yes{background:var(--primary-soft);color:var(--primary)}
+.score{font-weight:800;font-variant-numeric:tabular-nums}
+.win{background:var(--ok-bg)}
+.callout{border-left:3px solid var(--primary);background:var(--primary-soft);padding:14px 18px;border-radius:0 10px 10px 0;margin:0 0 16px}
+.callout.w{border-color:var(--warn);background:var(--warn-bg)}
+.callout.g{border-color:var(--ok);background:var(--ok-bg)}
+.callout b{display:block;margin-bottom:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.k{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;background:var(--line-soft);padding:1px 5px;border-radius:5px}
+.phase{border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+.phase h4{margin:0 0 4px;font-size:14.5px;display:flex;align-items:center;gap:10px}
+.phase .tag{font-size:11px;font-weight:800;color:#fff;background:var(--primary);padding:2px 8px;border-radius:999px}
+.phase .tag.done{background:var(--ok-ink)}
+.phase p{margin:0 0 8px;color:var(--muted);font-size:14px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+.toc a{font-size:13px;font-weight:600;text-decoration:none;color:var(--primary);background:var(--primary-soft);
+  padding:6px 12px;border-radius:999px}
+footer{max-width:1080px;margin:0 auto;padding:0 24px 60px;color:var(--muted);font-size:13px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}header.top h1{font-size:24px}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="in">
+  <h1>CareJioX Learn — analysis, coverage and roadmap</h1>
+  <p>Why a staged hybrid of three cooperating surfaces is the right shape for the CareJioX
+  <b>CRM</b> section, what it costs, and how it lands in the real product.
+  Prototype: <a href="index.html">index.html</a> · <a href="README.md">README.md</a></p>
+</div></header>
+
+<main>
+
+<section>
+  <h2><span class="n">§1</span>Scope and what was re-derived</h2>
+  <p class="sub">The strategy came from the portable spec. Everything else was rebuilt from this codebase.</p>
+  <p>In scope: the <b>eight active leaves of the CRM section</b> of the CMS sidebar, exactly
+  as the database holds them today — after the <span class="k">19.0.1.2.0</span> menu
+  consolidation, not as the XML seeds alone would suggest.</p>
+  <div class="wrapx"><table>
+    <thead><tr><th>Seq</th><th>Label (EN)</th><th>Label (VI, as shipped)</th><th>Owning module</th><th>Role gate (DB)</th></tr></thead>
+    <tbody>
+      <tr><td>10</td><td>Dashboard</td><td>Bảng điều khiển</td><td>health_cms_sidebar</td><td><span class="pill yes">Owner + CRM</span></td></tr>
+      <tr><td>11</td><td>Care Command</td><td><i>untranslated</i> — “Care Command”</td><td>health_care_command</td><td><span class="pill yes">Owner + CRM</span></td></tr>
+      <tr><td>12</td><td>Channel Center</td><td>Trung tâm kênh</td><td>health_care_command_channels</td><td><span class="pill no">ungated</span></td></tr>
+      <tr><td>13</td><td>Unrouted Contacts</td><td>Danh bạ chưa được định tuyến</td><td>health_care_command_channels</td><td><span class="pill no">ungated</span></td></tr>
+      <tr><td>20</td><td>Contacts</td><td>Liên hệ</td><td>health_cms_sidebar</td><td><span class="pill yes">Owner + CRM</span></td></tr>
+      <tr><td>21</td><td>Web Touchpoints</td><td>Điểm chạm web</td><td>health_web_leads</td><td><span class="pill no">ungated</span></td></tr>
+      <tr><td>23</td><td>Lead Analysis</td><td>Phân tích khách tiềm năng</td><td>health_web_leads</td><td><span class="pill no">ungated</span></td></tr>
+      <tr><td>50</td><td>Activities</td><td>Hoạt động</td><td>health_cms_sidebar</td><td><span class="pill yes">Owner + CRM</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout g"><b>The role gate is real and was verified in the browser.</b>
+  Signed in to the live UAT deployment without the Owner/CRM role, the CRM section renders
+  exactly four leaves: Trung tâm kênh, Danh bạ chưa được định tuyến, Điểm chạm web, Phân
+  tích khách tiềm năng — precisely the four seeded with no <span class="k">role_ids</span>.
+  The prototype's role switcher reproduces this rather than approximating it.</div>
+
+  <h3>Retired from CRM — covered as redirects, not silently dropped</h3>
+  <p>The consolidation moved or retired six leaves. A learner who read a six-month-old
+  screenshot still needs to be told where they went, so they are content, not omissions:</p>
+  <div class="wrapx"><table>
+    <thead><tr><th>Was in CRM</th><th>Where it is now</th></tr></thead>
+    <tbody>
+      <tr><td>Follow-up Calendar / Lịch theo dõi</td><td>A calendar view mode on <b>Contacts</b></td></tr>
+      <tr><td>Relationships</td><td>The <b>Client › Healthcare Relationships</b> tab</td></tr>
+      <tr><td>Campaign Review</td><td>The <b>“Unmatched campaigns”</b> chip on Web Touchpoints</td></tr>
+      <tr><td>Channels (setup) / Kênh (thiết lập)</td><td>Moved to <b>ADMIN</b></td></tr>
+      <tr><td>Reply Templates</td><td>Moved to <b>ADMIN</b></td></tr>
+      <tr><td>Website Connector / Kết nối website</td><td>Moved to <b>ADMIN</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Also re-derived from the codebase</h3>
+  <ul>
+    <li><b>Domain arithmetic</b> — the urgency score is not invented: it is the stored
+      compute on <span class="k">care.conversation</span> (needs-reply 40, booking-within-24h 30,
+      unread 15, unhandled missed call 10, watch phrase 15, ageing <span class="k">min(20, hours)</span>).
+      The worked case totals <b>110</b> in every lesson, mission and coach answer.</li>
+    <li><b>The risky actions</b> — send reply, mark <i>Junk?</i>, book from a conversation,
+      take over, re-authorise a channel (§4).</li>
+    <li><b>Roles</b> — the <span class="k">access.role</span> rows this deployment actually has
+      (Owner, Operations Manager, Branch Manager, Banker, Nurse, Doctor, Accountant, Admin, CRM),
+      plus the <span class="k">group_health_crm_manager</span> gate on take-over.</li>
+    <li><b>State pipelines</b> — conversation status, connection lifecycle, contact lifecycle.</li>
+    <li><b>Terminology</b> — the shipped bilingual user manual chapter, so the tutorial and
+      the manual use the same Vietnamese words for the same things.</li>
+    <li><b>Design tokens</b> — <span class="k">vu_tokens.scss</span>. Brand <span class="k">#1565C0</span>,
+      coach layer navy <span class="k">#0F1E45</span>. No gradients: the source token file
+      makes that a hard rule, so the pipeline donut became a segmented bar.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">§2</span>Coverage matrix — every in-scope leaf × every surface</h2>
+  <p class="sub"><span class="pill full">full</span> built and playable ·
+    <span class="pill out">outline</span> content written, step machine not built ·
+    <span class="pill no">—</span> intentionally not covered</p>
+  <div class="wrapx"><table>
+    <thead><tr>
+      <th>CRM leaf</th><th class="c">Journey<br/>lesson</th><th class="c">Outline<br/>(parts 1–4, 7)</th>
+      <th class="c">Practice<br/>mission</th><th class="c">Coach<br/>context</th><th class="c">Coach<br/>intents</th><th>Consequence preview</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><b>Care Command</b> ★</td><td class="c"><span class="pill full">10 steps + quiz</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">M1 full</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">5</span></td>
+        <td>Send reply · Junk? · consent before disclosure</td></tr>
+      <tr><td><b>Channel Center</b> ★</td><td class="c"><span class="pill full">9 steps + quiz</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">M2 full</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">2</span></td>
+        <td>Re-authorise / disconnect a live channel</td></tr>
+      <tr><td>Dashboard</td><td class="c"><span class="pill out">outline</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill no">—</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">3</span></td>
+        <td>— (read-only screen)</td></tr>
+      <tr><td>Contacts</td><td class="c"><span class="pill out">outline</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill out">M3 outline</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">3</span></td>
+        <td>Book (duplicate client) · Spam (flags the number)</td></tr>
+      <tr><td>Activities</td><td class="c"><span class="pill out">outline</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill no">—</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">2</span></td>
+        <td>— (no irreversible action)</td></tr>
+      <tr><td>Unrouted Contacts</td><td class="c"><span class="pill out">outline</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill no">—</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">3</span></td>
+        <td>Dismiss (recorded against your name)</td></tr>
+      <tr><td>Web Touchpoints</td><td class="c"><span class="pill out">outline</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill out">M4 outline</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">3</span></td>
+        <td>— (read-only screen)</td></tr>
+      <tr><td>Lead Analysis</td><td class="c"><span class="pill out">outline</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill no">—</span></td>
+        <td class="c"><span class="pill full">yes</span></td><td class="c"><span class="pill full">3</span></td>
+        <td>— (read-only screen)</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:14px"><b>8 / 8 leaves covered.</b> 2 full lessons, 6 written outlines,
+  2 full missions, 2 outline missions, 12 coach intents, 15 glossary terms — all complete in
+  both languages. Every outline and outline-mission is <i>labelled as one in the UI</i>; the
+  system never pretends to teach something it has not built.</p>
+  <div class="callout w"><b>Honest gaps, stated up front.</b>
+  Six lessons are outlines. Two missions are outlines. The practice tenant is a faithful
+  shell, not the real OWL components — in production the missions must drive the real screens
+  through the anchor registry (§7). None of this is hidden behind a “coming soon”.</div>
+</section>
+
+<section>
+  <h2><span class="n">§3</span>Decision table — re-scored for CareJioX CRM</h2>
+  <p class="sub">Four candidate shapes, scored 1–5 against what this section actually demands.
+  Weights reflect CRM-desk reality, not general e-learning theory.</p>
+  <div class="wrapx"><table>
+    <thead><tr>
+      <th>Criterion</th><th class="c">w</th>
+      <th class="c">A. Guided<br/>Journey only</th><th class="c">B. Simulator<br/>only</th>
+      <th class="c">C. AI Companion<br/>only</th><th class="c">D. Staged<br/>hybrid</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Replaces the trainer for a new receptionist in week one</td><td class="c">3</td>
+        <td class="c">4</td><td class="c">2</td><td class="c">2</td><td class="c win score">5</td></tr>
+      <tr><td>Prevents an irreversible first mistake (a sent message, a wrongly-pointed channel)</td><td class="c">3</td>
+        <td class="c">2</td><td class="c win score">5</td><td class="c">2</td><td class="c win score">5</td></tr>
+      <tr><td>Answers at 07:43 on a live wall, without leaving the screen</td><td class="c">3</td>
+        <td class="c">1</td><td class="c">1</td><td class="c win score">5</td><td class="c win score">5</td></tr>
+      <tr><td>Teaches judgement under a consent/PHI constraint</td><td class="c">3</td>
+        <td class="c">3</td><td class="c win score">5</td><td class="c">3</td><td class="c win score">5</td></tr>
+      <tr><td>Survives a screen redesign without silent rot</td><td class="c">2</td>
+        <td class="c">2</td><td class="c">2</td><td class="c">3</td><td class="c win score">4</td></tr>
+      <tr><td>Bilingual parity is affordable to maintain</td><td class="c">2</td>
+        <td class="c">4</td><td class="c">3</td><td class="c">2</td><td class="c win score">4</td></tr>
+      <tr><td>Works for the low-volume roles (Nurse, Ops) without building them a course</td><td class="c">2</td>
+        <td class="c">2</td><td class="c">1</td><td class="c win score">5</td><td class="c win score">5</td></tr>
+      <tr><td>Time to first shippable value</td><td class="c">2</td>
+        <td class="c win score">5</td><td class="c">2</td><td class="c">3</td><td class="c">4</td></tr>
+      <tr><td>Build + content cost (5 = cheapest)</td><td class="c">1</td>
+        <td class="c win score">5</td><td class="c">2</td><td class="c">3</td><td class="c">2</td></tr>
+      <tr style="font-weight:800;background:var(--line-soft)"><td>Weighted total (max 105)</td><td class="c">21</td>
+        <td class="c score">57</td><td class="c score">57</td><td class="c score">63</td><td class="c score win">96</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Why the singles lose, specifically here</h3>
+  <div class="grid2">
+    <div>
+      <p><b>A — Journey only.</b> Cheapest and fastest, and it does teach the map. But CRM's
+      damage is done by <i>actions</i>, not by ignorance of where a menu is. Nothing in a
+      lesson stops an operator sending a clinical detail to a family member whose consent was
+      withdrawn. Watching is not deciding.</p>
+      <p><b>B — Simulator only.</b> The strongest single surface for judgement, and it carries
+      the two things that matter most (consequence interception, seeded anomaly). But it is
+      useless as a reference at 07:43, teaches nothing about the five screens with no risky
+      action, and is the most expensive thing to build first.</p>
+    </div>
+    <div>
+      <p><b>C — Companion only.</b> Best marginal value per pound and the only one that helps
+      the Nurse and Ops roles, who need three answers a month, not a course. But an answer
+      engine cannot give someone a mental model they have never had, and “ask a question” is
+      exactly what a nervous new operator will not do.</p>
+      <p><b>D — Staged hybrid.</b> Wins because the three surfaces cover each other's blind
+      spots and — this is the part that makes it affordable — they consume <b>one</b> content
+      spine. The urgency arithmetic is authored once and appears as a lesson step, a coach
+      calc-block and a mission fact. Three separate content systems would cost roughly triple
+      to keep in two languages; this costs one.</p>
+    </div>
+  </div>
+  <div class="callout"><b>Recommendation: build D, in the order Journey → Companion → Simulator.</b>
+  Journey first because it ships value in one phase and forces the content spine to exist.
+  Companion second because it reuses that spine almost for free and is what actually deflects
+  tickets. Simulator last because it is the most expensive and it depends on both.</div>
+</section>
+
+<section>
+  <h2><span class="n">§4</span>The risky actions this section actually has</h2>
+  <p class="sub">These drove the consequence previews and the missions. Each is a real code path.</p>
+  <div class="wrapx"><table>
+    <thead><tr><th>Action</th><th>Blast radius beyond the obvious</th><th>Reversible?</th><th>Where it is taught</th></tr></thead>
+    <tbody>
+      <tr><td><b>Send reply</b> (Zalo / email) from the wall</td>
+        <td>Reaches a real phone from the clinic's official account, with no draft state. The
+          account is very often a family member's, so it is also a potential PHI disclosure
+          governed by a Data Sharing consent.</td>
+        <td><span class="pill no">No</span></td>
+        <td>L1 step 10 · M1 consequence interception</td></tr>
+      <tr><td><b>Mark “Junk?”</b></td>
+        <td>Zeroes urgency and drops the row <i>and</i> marks the linked contact as spam
+          <i>and</i> flags the phone number for every future call. Three records, one button.</td>
+        <td><span class="pill out">Partly</span></td>
+        <td>L1 step 8 (morph) · coach intent · M1 wrong-option recovery</td></tr>
+      <tr><td><b>Book</b> from a conversation</td>
+        <td>Creates a real visit (a nurse's day, and money). The duplicate check is the moment a
+          visit — and later a clinical note — can land in the wrong client's record.</td>
+        <td><span class="pill out">Partly</span></td>
+        <td>Contacts outline · M3 (outline mission)</td></tr>
+      <tr><td><b>Take over</b> an owned conversation</td>
+        <td>Silently reassigns work a colleague may be mid-reply on. Manager permission only.</td>
+        <td><span class="pill yes">Yes</span></td>
+        <td>Coach role-aware refusal (4 role variants)</td></tr>
+      <tr><td><b>Re-authorise / disconnect</b> a channel</td>
+        <td>A channel outside the connected states neither sends nor receives, and
+          <b>nothing queues</b>. Messages sent during the gap never arrive. Re-selecting the
+          wrong Official Account re-routes a whole catchment area with no error at all.</td>
+        <td><span class="pill out">Connection yes,<br/>traffic no</span></td>
+        <td>L2 steps 5–7 · M2 consequence + seeded anomaly</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The two seeded anomalies</h3>
+  <div class="grid2">
+    <div class="callout w"><b>M1 — the tempting answer is the wrong one.</b>
+      Conversation #4172 screams urgency: score 110, a watch phrase, a missed call, a visit in
+      eight hours. The message asks a clinical question. The Zalo account belongs to the
+      patient's daughter, and the patient <i>withdrew</i> her Data Sharing consent for that
+      daughter in June. Speed and permission are different questions, and only one of them can
+      be undone. The correct path is still fast — acknowledge, don't disclose, escalate, and
+      call the client's own number.</div>
+    <div class="callout w"><b>M2 — every check passes and it is still wrong.</b>
+      Re-authorising the Hà Nội Zalo connection, the provider returns both Official Accounts
+      sorted by creation date, so TPHCM is listed first. Choose it and all four readiness
+      checks still pass: the connection is perfectly healthy and pointed at the wrong city.
+      No error, no warning — the Hà Nội desk simply has a quiet week while TPHCM drowns.</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">§5</span>Phased roadmap</h2>
+
+  <div class="phase"><h4><span class="tag done">Phase 0</span>Prototype — done</h4>
+    <p>This artifact. Proves the interaction quality, the bilingual parity and the content
+    schema on real inventory and real arithmetic.</p></div>
+
+  <div class="phase"><h4><span class="tag">Phase 1</span>Content model + anchor lint + Journey (≈ 5 weeks)</h4>
+    <p>The phase that makes everything else cheap.</p>
+    <ul>
+      <li>A translatable <span class="k">carejiox.learn.content</span> model with the schema in
+        <span class="k">data.js</span>; exported to the frontend as JSON; one record per station,
+        lesson step, quiz, mission and coach intent.</li>
+      <li><b>Anchor registry + CI lint</b> — <span class="k">data-a="…"</span> on every referenced
+        control; the lint fails the build when content names an anchor no template has. Do this
+        first or the system rots within two releases.</li>
+      <li>Journey map + the two flagship lessons + six outlines, both languages, progress,
+        resume, reduced motion.</li>
+      <li>Ship to CRM/Reception users in one catchment area first.</li>
+    </ul></div>
+
+  <div class="phase"><h4><span class="tag">Phase 2</span>Care Coach on the same spine (≈ 4 weeks)</h4>
+    <p>Highest deflection per unit of work, because the content already exists.</p>
+    <ul>
+      <li>Dock on all eight CRM screens; retrieval grounded on the Phase-1 records only.</li>
+      <li>Rich-answer blocks (steps with point-at, calc breakdowns, warn/ok callouts, source line).</li>
+      <li>Role-aware answers wired to the real <span class="k">access.role</span> rows and the
+        CRM manager group — including honest refusals for Nurse and Ops.</li>
+      <li>Binding honesty rules enforced in code: never claims to have acted, never invents a
+        price/rate/clinical fact, fallback states what it <i>can</i> answer.</li>
+      <li><b>Always-on, not a destination</b>: a persistent launcher on every in-scope screen plus a
+        <span class="k">?</span> shortcut, opening a drawer that does not dim or block the screen
+        behind it. You reach for it <i>because</i> you are stuck on that screen, so the screen has to
+        stay readable.</li>
+      <li><b>One resolver seam</b> so an LLM can be plugged in later (answered in §9) without touching
+        the content spine or the honesty rules. Retrieval stays the default, because it is what lets
+        the Coach promise never to invent a fact.</li>
+    </ul></div>
+
+  <div class="phase"><h4><span class="tag">Phase 3</span>Practice Clinic + personalisation (≈ 6 weeks)</h4>
+    <ul>
+      <li><b>No practice tenant needed</b> (answered in §9): the practice clinic is the versioned
+        JS fixture, which is <i>structurally</i> incapable of touching production because there is no
+        server behind it. The banner became the last line of defence rather than the only one — and
+        Phase 3 lost its biggest cost driver.</li>
+      <li>Mission engine driving the <b>real</b> screens through the anchor registry.</li>
+      <li>M1 and M2 first, then M3/M4 and one Dashboard-reading mission. 5–8 total, never one
+        per menu item.</li>
+      <li>Starting modes, struggled-twice → simpler explanation + practice hand-off,
+        confidence scoring.</li>
+    </ul></div>
+
+  <div class="phase"><h4><span class="tag">Phase 4</span>Extend to OPS / CLINICAL / FINANCE + optimisation</h4>
+    <ul>
+      <li>Same spine, new lines on the same map. Marginal cost per section falls sharply.</li>
+      <li>Abandonment funnels, question clustering → new content, quiz-item analysis,
+        EN-vs-VI comprehension deltas, ticket deflection.</li>
+    </ul></div>
+</section>
+
+<section>
+  <h2><span class="n">§6</span>Success metrics</h2>
+  <div class="callout"><b>Decision: a self-referential baseline. Month 1 is the reference period.</b>
+  There is no onboarding history and no ticket record, and manufacturing a control group by
+  withholding training from the first cohort would be both slow and wrong. So: <b>instrument on
+  release day, treat month 1 as the baseline, and set every relative target against it from month 2
+  onward.</b> The provisional numbers below exist so the team has something to steer by from week
+  one — they are stated assumptions, and each is replaced by a measurement after four weeks.
+  <br/><br/>The two safety metrics are the exception: they are <b>absolute from day one</b>, because
+  "fewer consent breaches than last month" is not a standard anyone should accept.
+  <br/><br/>The only hard requirement this places on Phase 1: <b>the event log ships in release 1</b>,
+  not release 4. It is a handful of event types, and if it slips, the pre-tutorial reference period is
+  gone permanently.</div>
+  <h3>Provisional targets — assumptions until week 4 replaces them</h3>
+  <div class="wrapx"><table>
+    <thead><tr><th>Metric</th><th class="c">From day one</th><th>Replaced by</th></tr></thead>
+    <tbody>
+      <tr><td>Consent-breach near-misses <span class="pill no">safety</span></td>
+        <td class="c"><b>0</b> — absolute</td><td>Never. This one stays absolute.</td></tr>
+      <tr><td>Mis-routed channel incidents <span class="pill no">safety</span></td>
+        <td class="c"><b>0</b>, detected within <b>1 business day</b></td>
+        <td>Never. Today these are invisible until someone notices a quiet week — detecting them at all is the first win.</td></tr>
+      <tr><td>Time to first correctly-handled urgent conversation, unsupervised</td>
+        <td class="c">≤ <b>3 working days</b></td><td>The month-1 median</td></tr>
+      <tr><td>Duplicate clients created per 100 bookings</td>
+        <td class="c">≤ <b>2</b></td><td>The month-1 actual</td></tr>
+      <tr><td>Question-type tickets per active CRM user per week</td>
+        <td class="c">measure only</td><td>Month-1 actual, then <b>−30% by month 3</b></td></tr>
+      <tr><td>Self-service resolution (coach answer, no ticket in 24h)</td>
+        <td class="c">measure only</td><td>≥ <b>60% by month 3</b></td></tr>
+      <tr><td>Flagship lesson completion by new CRM users within 2 weeks</td>
+        <td class="c">≥ <b>80%</b></td><td>Holds; it is a rollout-health metric, not a learning one</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Two content-quality bands — these judge the material, not the learner</h3>
+  <ul>
+    <li><b>Quiz first-try correctness, per item: healthy band 50–80%.</b> Above 80% the question is
+      teaching nothing and should be replaced. Below 50% it is ambiguous or unfair, not hard. Either
+      way the item is the problem.</li>
+    <li><b>Mission recovery-dialog frequency: healthy band 30–70%.</b> Below 30% the seeded anomaly is
+      too obvious to be worth seeding. Above 70% it is a trap rather than a judgement. <b>Zero is a
+      failure, not a success</b> — it means nobody is being taught anything they did not already know.</li>
+  </ul>
+
+  <div class="grid2">
+    <div>
+      <h3>Primary — establish first, then improve</h3>
+      <ul>
+        <li><b>Time to first correctly-handled urgent conversation</b> for a new CRM operator
+          (claim → appropriate reply → correct disposition), unsupervised. <i>Establish.</i></li>
+        <li><b>Consent-breach near-misses</b> — replies containing clinical content sent to a
+          non-patient account. The one metric with an absolute target from day one: <b>zero</b>,
+          measured by sampling.</li>
+        <li><b>Mis-routed channel incidents per quarter</b> (a connection pointed at the wrong
+          catchment area). Currently invisible until someone notices a quiet week — so instrumenting
+          it is itself a win, independent of the tutorial.</li>
+        <li><b>Duplicate client records created per 100 bookings.</b> <i>Establish.</i></li>
+        <li><b>Question-type support requests per active CRM user.</b> <i>Establish over four weeks,
+          then target a reduction.</i></li>
+        <li><b>Self-service resolution rate</b> — a coach answer not followed by a ticket in 24h.
+          Measurable from the first release, since both sides are instrumented by us.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Secondary</h3>
+      <ul>
+        <li>Lesson completion and the exact step where people abandon.</li>
+        <li>Quiz first-try correctness <i>per item</i> — a question everyone gets right is
+          teaching nothing.</li>
+        <li>Mission recovery-dialog frequency. <b>Healthy is above zero</b>: nobody ever hitting
+          the seeded anomaly means the anomaly is too obvious.</li>
+        <li>Confidence score vs. supervisor sign-off — do they agree?</li>
+        <li>Repeat coach visits per user per screen (should fall for the same user, stay flat
+          across new users).</li>
+        <li>EN vs VI completion and comprehension delta. A gap means the Vietnamese is
+          machine-literal somewhere.</li>
+        <li>Anchor-lint failures per release — the leading indicator of tutorial rot.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">§7</span>Integration checklist into the real product</h2>
+  <ol>
+    <li><b>Anchor registry first.</b> Add <span class="k">data-a</span> to every control the
+      content points at, starting with Care Command's wall rows, claim banner, action strip and
+      composer, and the Channel Center's connection cards and readiness panel. Then the CI lint.</li>
+    <li><b>Content model.</b> <span class="k">carejiox.learn.*</span>, translatable fields, shipped as
+      module data files with <b><span class="k">noupdate="0"</span></b> (§8), delivered to the browser
+      as one ETag-cached JSON bundle per language. Port <span class="k">data.js</span>'s shape verbatim;
+      replace nothing but the delivery mechanism.</li>
+    <li><b>Practice fixture stays a static asset</b>, never ORM records (§8), and
+      <span class="k">check_contract.py</span> runs in CI beside the anchor lint.</li>
+    <li><b>Mount the Coach launcher in the CMS shell</b>, not per screen — that is what makes it present
+      everywhere for free, and it is the only mount point that survives new screens being added.</li>
+    <li><b>Reuse the real gates.</b> Read visibility from <span class="k">cms.sidebar.item.role_ids</span>
+      and permissions from <span class="k">group_health_crm_user</span> /
+      <span class="k">group_health_crm_manager</span>. Do not re-declare a second role model for
+      the tutorial — it will drift.</li>
+    <li><b>Mount points.</b> The Journey belongs in a new sidebar leaf; the Coach dock belongs in
+      the CMS shell so it is present on every in-scope screen without per-screen work.</li>
+    <li><b>Vietnamese labels.</b> The tutorial must read menu labels from the same translated
+      records the sidebar renders, never from its own copies, or the two will disagree after the
+      first rename.</li>
+    <li><b>Translate the four untranslated CRM strings</b> (below) before Phase 1 ships — a
+      learning system that names a menu item the sidebar does not is worse than no learning
+      system.</li>
+    <li><b>Practice tenant isolation.</b> Separate company, no channel credentials, outbound
+      adapters stubbed at the service layer. Prove with a test that a practice-tenant send
+      raises rather than sends.</li>
+    <li><b>Progress storage.</b> Per-user records, not localStorage; keep the same state shape so
+      the prototype's resume/badge logic ports unchanged.</li>
+    <li><b>Accessibility gate in CI.</b> Reduced-motion, keyboard path through the lesson player
+      and quiz, aria-live narration, visible focus. The prototype passes all four; keep it that way.</li>
+  </ol>
+</section>
+
+<section id="deployment">
+  <h2><span class="n">§8</span>Where this is installed, and where the data lives</h2>
+  <p class="sub">Settled after the open questions in §9 were answered. These are decisions, not options.</p>
+
+  <h3>What tenancy actually is here</h3>
+  <p>Tenancy is <b><span class="k">res.company</span> inside one Odoo database</b>, not database-per-tenant.
+  Two structural facts decide everything below:</p>
+  <ul>
+    <li><span class="k">cms.sidebar.item</span> has <b>no <span class="k">company_id</span></b> — navigation is
+      database-global, gated only by <span class="k">role_ids</span>.</li>
+    <li><span class="k">access.role</span> has no <span class="k">company_id</span> either — roles are global,
+      attached to users by many2many.</li>
+    <li>Only transactional models (<span class="k">care.conversation</span>, watch phrases, reply templates)
+      carry <span class="k">company_id</span>. <b>Data is company-scoped; configuration and navigation are not.</b></li>
+  </ul>
+
+  <h3>Recommendation: installed in every tenant, authored centrally, no master training tenant</h3>
+  <div class="wrapx"><table>
+    <thead><tr><th>Part</th><th>Where it lives</th><th>Why there</th></tr></thead>
+    <tbody>
+      <tr><td><b>Content spine</b><br/><span class="k">carejiox.learn.*</span></td>
+        <td>Odoo records, shipped as <b>module data files</b></td>
+        <td>Translatable fields + the <span class="k">.po</span> workflow are the only maintainable EN/VI path. Identical in every tenant, versioned with the release, guarded by the contract check.</td></tr>
+      <tr><td><b>Journey + Coach</b></td>
+        <td><b>Every tenant, always on</b></td>
+        <td>Both are screen-grounded: they answer about the user's actual screen, with their role gate and their catchment. A separate tenant degrades them into a video.</td></tr>
+      <tr><td><b>Practice clinic</b></td>
+        <td>A <b>static JSON/JS asset</b> in the module. Never the ORM.</td>
+        <td>If practice records were ORM rows, one day a report picks them up or an export includes a fake patient. As a frontend asset that is structurally impossible.</td></tr>
+      <tr><td><b>Learner state</b><br/>progress · confidence · attempts</td>
+        <td>Odoo records, per user</td>
+        <td>Real data. Must survive, and Product needs it in <span class="k">biz_bi</span> for §6's metrics.</td></tr>
+      <tr><td><b>Anchors</b></td>
+        <td>The OWL templates — i.e. code</td>
+        <td>Not data at all. The registry in <span class="k">contract.json</span> is what the lint compares against.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout"><b>The rule that makes this robust: never make tutorial content a tenant-editable record set.</b>
+  If content is authored <i>in a database</i>, one tenant ends up holding "the good version" and the rest
+  silently drift — and the anchor lint cannot guard what it cannot see. Ship content in the module;
+  Product controls it by release. The single concession is a small, explicitly-scoped override table for
+  genuinely local facts (a clinic's own hotline number, its escalation names). The moment it can override a
+  lesson step, you have a fork.</div>
+
+  <div class="callout g"><b>Keep the training tenant — for a different job.</b>
+  Sales demos, an onboarding day where someone clicks around a realistic system with consequences they
+  don't own, and release rehearsal where Product exercises new content against real screens before shipping.
+  That is a demo/sandbox environment, complementary to the in-app system. "Both catchments see the same
+  data" belongs there as configuration — not in the product.</div>
+
+  <h3>Two things to watch</h3>
+  <ol>
+    <li><b>If you later split to database-per-tenant</b> — likely when you sell to multiple clinics — this
+      design survives unchanged, because content travels in the module rather than in tenant data. That
+      robustness is the main reason to choose it now, while it is still cheap.</li>
+    <li><b>When a second real clinic joins this database</b>, the Training leaf appears for everyone (correct),
+      but tenant-specific content has nowhere to live, because the sidebar has no
+      <span class="k">company_id</span>. Design the override table before the second tenant, not after.</li>
+  </ol>
+
+  <h3>Two traps from this repo that apply directly to the content model</h3>
+  <ul>
+    <li>Content data files must be <b><span class="k">noupdate="0"</span></b>, so every upgrade rewrites them.
+      This repo's own noupdate seed-cutover gotcha is exactly this failure: edit a
+      <span class="k">noupdate="1"</span> record and the upgrade silently does not apply it.</li>
+    <li>Any <span class="k">Selection</span> on the content model must use the callable
+      <span class="k">env._()</span> form. Static lists and jsonb writes do not translate here — measured in
+      this codebase.</li>
+  </ul>
+  <p>Delivery to the browser: <b>one controller endpoint returning the whole bundle as JSON</b>, cached with
+  an ETag keyed on module version + language. Not N queries per screen.</p>
+
+  <h3>Keeping a fixture honest without a tenant</h3>
+  <p>A fixture drifts. That cost is paid by <span class="k">contract.json</span> — which declares every fact the
+  tutorial asserts, where it came from, which fixture entries hold it and which lessons quote it — plus
+  <span class="k">tools/check_contract.py</span>, which re-reads the addons and fails when a declaration
+  stops holding. 21 checks today, covering the urgency weights, four selection sets, the sidebar inventory,
+  the shipped Vietnamese labels, the role gate, and the anchor registry.</p>
+  <div class="callout w"><b>Verified by breaking it on purpose.</b>
+  Re-weighting the watch-phrase term from 15 to 25 in the real model made the checker fail and name
+  <span class="k">CASE.urgency</span> plus the six pieces of content that quote it. Translating
+  "Care Command" in the <span class="k">.po</span> made the known-gap check fail with
+  <i>"GOOD NEWS: … update MENU and delete this entry"</i>. The addons were restored afterwards.
+  <br/><br/>The first version of the check was <i>presence-only</i> and stayed green through the re-weight,
+  because <span class="k">score += 15</span> appears twice and the other one still matched. It now asserts
+  exact occurrence counts — which also fires when a new term is added, as it should.</div>
+</section>
+
+<section>
+  <h2><span class="n">§9</span>Assumptions, findings and answered questions</h2>
+
+  <h3>Findings worth acting on regardless of this project</h3>
+  <div class="callout w"><b>“Care Command” ships untranslated.</b>
+  <span class="k">health_care_command/i18n/vi.po</span> carries
+  <span class="k">msgstr "Care Command"</span> for the sidebar item, the client action and the
+  menu. Vietnamese-speaking operators see an English product name for the screen they live in
+  all day. Three sibling strings in the same section — Dashboard, Contacts, Activities — are
+  translated. The prototype keeps the shipped label rather than inventing one; it should be
+  translated in the product, and the tutorial will follow automatically once it reads the same
+  records.</div>
+  <div class="callout w"><b>The CRM section's role gate is invisible in the source.</b>
+  Because <span class="k">access.role</span> rows have no xml-id, the gate is written in Python
+  and cannot be read from the XML seeds. Anyone reasoning about “what does a receptionist see”
+  from <span class="k">grep role_ids</span> will get the wrong answer — as we nearly did, until
+  the live sidebar was checked. Worth a comment in the seed files pointing at the hook.</div>
+
+  <h3>Assumptions made (each one is cheap to correct)</h3>
+  <ul>
+    <li><b>The worked case is invented, the arithmetic is not.</b> Nguyễn Thị Hoa, her daughter,
+      the 08:00 Wednesday timestamp and the August figures are fictional; every calculation over
+      them follows the real code. The month reconciles: 224 enquiries = 14 spam + 210 real;
+      210 = 63 booked + 129 leads + 18 lost; conversion 63÷210 = 30.0%; spam 14÷224 = 6.3%;
+      the six source channels sum to 224.</li>
+    <li><b>Prices are illustrative.</b> 450.000 ₫ for a 60-minute home wound-care visit and
+      3.400.000 ₫ for the 8-visit package are placeholders. The coach explicitly refuses to quote
+      a real price, and says why.</li>
+    <li><b>Four roles in the switcher</b> (CRM, Nurse, Ops, Owner) out of the nine that exist —
+      the four whose CRM experience differs. Branch Manager, Banker, Doctor, Accountant and Admin
+      behave as one of these four for this section.</li>
+    <li><b>“CareJioX”</b> is used as the product name per the brief. The repository and the live
+      deployment brand as <i>Viet Uc Care / CMS Việt Úc</i>. One search-and-replace either way.</li>
+  </ul>
+
+  <h3>Answered — and what each answer changed</h3>
+  <div class="wrapx"><table>
+    <thead><tr><th style="width:26%">Question</th><th style="width:30%">Answer</th><th>What changed as a result</th></tr></thead>
+    <tbody>
+      <tr><td>Is there a practice/demo tenant?</td>
+        <td><b>No.</b> Use JS-based sample data instead — but keep the flexibility to update the
+          tutorial when code or the data model changes.</td>
+        <td>Practice data became <span class="k">practice-data.js</span>, a versioned fixture, and the
+          screens now render from it rather than from literals. The drift cost is paid by
+          <span class="k">contract.json</span> + <span class="k">check_contract.py</span> (§8), which
+          names the fixture entries <i>and</i> the lessons to update when a check fails. Phase 3 loses
+          its biggest cost driver.</td></tr>
+      <tr><td>Who owns content after launch?</td>
+        <td><b>Product.</b></td>
+        <td>Content ships in the module and is controlled by release, not edited per tenant. Confirms
+          the rule in §8 and removes any need for an in-app content editor in Phases 1–3.</td></tr>
+      <tr><td>What is the onboarding baseline today?</td>
+        <td><b>New company — unknown.</b></td>
+        <td>The "−40% on tickets" target was unmeasurable, so §6 no longer claims it. Phase 1 now
+          <i>establishes</i> the baseline in its first four weeks, and targets are set against that.</td></tr>
+      <tr><td>Are the VI labels authoritative in <span class="k">.po</span> or the database?</td>
+        <td><b>Both are in sync.</b> No production yet; it follows data cleanup and migration.</td>
+        <td>Removed as a risk for now, but the divergence remains <i>possible</i> under this repo's
+          noupdate seed-cutover pattern — so the contract check asserts the shipped
+          <span class="k">.po</span> strings, and the tutorial must read whatever the sidebar reads.
+          Pre-production is also the cheapest moment to translate "Care Command".</td></tr>
+      <tr><td>LLM-backed Coach, or retrieval?</td>
+        <td><b>Retrieval for now</b>, with the widest coverage possible — and pluggable into an LLM
+          later if needed.</td>
+        <td>The Coach keeps its guarantee that it never invents a fact. Its retrieval is being widened,
+          and the answer path is being isolated behind a single seam so an LLM can be dropped in
+          without touching the content spine or the honesty rules.</td></tr>
+      <tr><td>Which cohort ships first?</td>
+        <td><b>Any one catchment area</b> is enough; for demo both areas may see the same data.</td>
+        <td>Phase 1's rollout is unblocked. The relaxed catchment scoping is demo-environment
+          configuration and stays out of the product (§8).</td></tr>
+      <tr><td>Per-tenant install, or one master training tenant?</td>
+        <td><b>Asked and answered in §8</b> — installed per tenant, authored centrally; the existing
+          tenant is kept as a demo/sandbox environment.</td>
+        <td>Settles where every category of data lives, and makes the design survive a future move to
+          database-per-tenant.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Second round — answered</h3>
+  <div class="wrapx"><table>
+    <thead><tr><th style="width:26%">Question</th><th style="width:30%">Answer</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr><td>Who translates "Care Command"?</td>
+        <td><b>Owner will, in a separate session.</b></td>
+        <td>Nothing to build. The <span class="k">care-command-untranslated</span> contract check is
+          watching: the day the translation lands it fails on purpose with
+          <i>"GOOD NEWS: … update MENU and delete this entry"</i>, naming the one fixture line and the
+          two places that quote it. That is the whole handover.</td></tr>
+      <tr><td>What goes in the tenant override table?</td>
+        <td><b>As much as makes the coaching robust</b> — and it does not touch tenant business data.</td>
+        <td><b>38 named slots</b> now ship with defaults (identity, contact routes, geography,
+          escalation titles, access paths, shift times, policy names, locale). Content writes
+          <span class="k">{{key}}</span>; <span class="k">tx()</span> resolves tenant value → default →
+          the visible key. 8 are in use, 30 are spare capacity. A new
+          <span class="k">token-lint</span> check fails on an undeclared slot.
+          <br/><br/><b>One correction:</b> overrides are <i>not</i> the JS fixture. They are real
+          per-tenant facts (this clinic's actual hotline), and a module ships identical bytes to every
+          tenant — so in production they are one small DB row per tenant holding exactly these keys.
+          JSON-shaped and authored like JSON, but DB-resident. They never read or write a patient, a
+          booking or an invoice, which is what makes them safe to hand to a tenant admin.</td></tr>
+      <tr><td>When does baseline measurement start?</td>
+        <td><b>Decide it yourself</b> — release comes after this work, then production.</td>
+        <td>Decided in §6: a <b>self-referential baseline</b> — month 1 is the reference period,
+          relative targets apply from month 2, and the two safety metrics are absolute from day one.
+          Provisional numbers are published so the team can steer from week one, each labelled as an
+          assumption to be replaced. The one hard requirement: <b>the event log ships in release 1</b>.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Still open</h3>
+  <ol>
+    <li><b>Which of the 30 spare tenant slots are real?</b> They cost nothing to carry, but each one a
+      tenant can see and cannot meaningfully change is a small confusion. Worth pruning once a second
+      clinic exists and it is clear which actually differ.</li>
+    <li><b>Who reviews content-quality bands?</b> The 50–80% quiz band and 30–70% recovery band only
+      work if somebody looks at them monthly and retires the items that fall outside. Product owns the
+      content; this is the recurring task that comes with it.</li>
+  </ol>
+</section>
+
+</main>
+
+<footer>
+  CareJioX Learn prototype · strategy ported from
+  <span class="k">docs/tutorial_poc/DESIGN_SPEC.md</span> · all content re-derived from this
+  repository and verified against the live deployment. Run
+  <span class="k">docs/tutorial_crm/index.html</span>.
+</footer>
+
+</body>
+</html>

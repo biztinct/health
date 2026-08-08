@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_portal.ClientPortalAccessWidget">
+    <div class="vu-section">
+        <div class="vu-detail-card">
+            <div class="vu-card__title">
+                <span class="vu-section__icon" data-icon="globe"/>
+                <span>My Care Portal</span>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted p-3">Loading portal access…</div>
+            </t>
+
+            <t t-elif="state.access.length === 0">
+                <div class="text-muted p-3">
+                    This client has no My Care portal link yet.
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Expires</th>
+                                <th>Last access</th>
+                                <th class="text-end">Times opened</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.access" t-as="acc" t-key="acc.id"
+                                style="cursor: pointer;"
+                                t-on-click="() => this.openAccess(acc.id)">
+                                <td>
+                                    <span class="badge"
+                                          t-att-class="badgeClass(acc.state)"
+                                          t-esc="acc.state"/>
+                                </td>
+                                <td>
+                                    <t t-if="acc.expires_at">
+                                        <t t-esc="acc.expires_at"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="text-muted">Standing link</span>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-if="acc.last_access_datetime">
+                                        <t t-esc="acc.last_access_datetime"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="text-muted">Never opened</span>
+                                    </t>
+                                </td>
+                                <td class="text-end" t-esc="acc.access_count"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="small text-muted mt-2 px-1">
+                    The My Care link is a capability URL. Open the record to
+                    view or rotate it.
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

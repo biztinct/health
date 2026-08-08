@@ -48,6 +48,14 @@ can self-host later without a code change).
         'views/res_config_settings_views.xml',
         'views/pwa_shell_inherit.xml',
     ],
+    # NB: static/src/js/telehealth.js + css are PWA/public-page assets loaded by
+    # <script>/<link> tags, not by a bundle. These two are backend-only.
+    'assets': {
+        'web.assets_backend': [
+            'health_telehealth/static/src/js/booking_telehealth_widget.js',
+            'health_telehealth/static/src/xml/booking_telehealth_widget.xml',
+        ],
+    },
     'installable': True,
     'application': False,
     'sequence': 150,

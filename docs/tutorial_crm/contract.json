@@ -1,0 +1,477 @@
+{
+  "_readme": [
+    "Every fact the tutorial teaches about CareJioX is declared here, together with",
+    "where it came from. `tools/check_contract.py` re-reads the addons and fails when a",
+    "declaration no longer holds, naming the fixture entries and lesson content that",
+    "quote it. This is the mechanism that keeps a JS-fixture practice clinic honest",
+    "without an isolated tenant.",
+    "",
+    "When a check fails you have two correct responses, and one wrong one:",
+    "  1. The product changed on purpose  -> update `expect` here, then practice-data.js,",
+    "     then the `taughtIn` content listed on the entry.",
+    "  2. The product changed by accident -> fix the product.",
+    "  3. WRONG: relax the check. A green checker that proves nothing is worse than no",
+    "     checker, because it buys false confidence in a tutorial people trust."
+  ],
+  "schemaVersion": "1.1.0",
+  "repoRoot": "../..",
+  "checks": [
+    {
+      "id": "urgency-terms",
+      "why": "The whole worked case sums to 110. If any weight moves, every lesson step, coach calc-block and mission fact that quotes it becomes wrong at once.",
+      "kind": "constants",
+      "file": "addons/health_care_command/models/care_conversation.py",
+      "within": "_compute_urgency_score",
+      "expect": {
+        "score += 40": {
+          "means": "needs_reply",
+          "count": 1
+        },
+        "score += 30": {
+          "means": "booking within 24h",
+          "count": 1
+        },
+        "score += 15": {
+          "means": "unread>0 AND watch phrase — two separate terms",
+          "count": 2
+        },
+        "score += 10": {
+          "means": "unhandled missed call",
+          "count": 1
+        },
+        "min(20,": {
+          "means": "ageing cap",
+          "count": 1
+        }
+      },
+      "fixture": [
+        "CASE.urgency",
+        "CASE.urgencyTotal",
+        "CASE.urgencyLater"
+      ],
+      "taughtIn": [
+        "L1 step 4",
+        "L1 step 5",
+        "L1 quiz",
+        "QA:urgency",
+        "M1 step 1",
+        "glossary:urgency"
+      ]
+    },
+    {
+      "id": "conversation-status",
+      "why": "The lifecycle pipeline animation and the Junk? consequence both name these values.",
+      "kind": "selection",
+      "file": "addons/health_care_command/models/care_conversation.py",
+      "expect": [
+        "needs_reply",
+        "waiting",
+        "junk_suspect",
+        "closed"
+      ],
+      "fixture": [
+        "PRACTICE.conversations[].status",
+        "STATUS_LABELS.conversation"
+      ],
+      "taughtIn": [
+        "L1 step 7 (pipeline)",
+        "QA:junk",
+        "M1"
+      ]
+    },
+    {
+      "id": "junk-side-effect",
+      "why": "L1's morph and M1's recovery both claim that marking Junk? ALSO spams the linked lead. If that call is removed, the tutorial is teaching a consequence that no longer exists.",
+      "kind": "contains",
+      "file": "addons/health_care_command/models/care_conversation.py",
+      "expect": [
+        "action_mark_spam"
+      ],
+      "fixture": [],
+      "taughtIn": [
+        "L1 step 8 (morph)",
+        "QA:junk",
+        "M1 recovery:junk",
+        "Contacts outline mistake #2"
+      ]
+    },
+    {
+      "id": "takeover-manager-gate",
+      "why": "The Coach gives a role-aware refusal for Take over. It must stay manager-only.",
+      "kind": "contains",
+      "file": "addons/health_care_command/models/care_conversation.py",
+      "expect": [
+        "def action_take_over",
+        "_is_manager"
+      ],
+      "fixture": [],
+      "taughtIn": [
+        "QA:takeover (4 role variants)",
+        "L1 step 6 tip",
+        "glossary:claim"
+      ]
+    },
+    {
+      "id": "channel-selection",
+      "why": "The channel catalogue and the Dashboard's source-channel chart both enumerate these.",
+      "kind": "selection",
+      "file": "addons/health_care_command/models/care_conversation.py",
+      "within": "CHANNEL_SELECTION",
+      "expect": [
+        "zalo",
+        "call",
+        "email",
+        "zns",
+        "whatsapp",
+        "fb",
+        "telegram",
+        "webchat",
+        "walk_in"
+      ],
+      "fixture": [
+        "CASE.channels",
+        "PRACTICE.channels",
+        "PRACTICE.conversations[].channel"
+      ],
+      "taughtIn": [
+        "L2 step 1",
+        "Channel Center outline",
+        "QA:whatpage"
+      ]
+    },
+    {
+      "id": "walk-in-not-connectable",
+      "why": "L2 step 1 teaches specifically that walk-in is a conversation channel but not a connectable one. That distinction is a deliberate design decision and worth guarding.",
+      "kind": "contains",
+      "file": "addons/health_care_command/models/care_conversation.py",
+      "expect": [
+        "CONNECTABLE_SELECTION",
+        "!= \"walk_in\""
+      ],
+      "fixture": [
+        "PRACTICE.channels"
+      ],
+      "taughtIn": [
+        "L2 step 1"
+      ]
+    },
+    {
+      "id": "connection-states",
+      "why": "L2's pipeline animation walks this exact chain, and M2's consequence depends on which states can still send or receive.",
+      "kind": "selection",
+      "file": "addons/health_care_command_channels/models/care_channel_connection.py",
+      "within": "STATES",
+      "expect": [
+        "not_connected",
+        "authorizing",
+        "select_resource",
+        "configuring",
+        "testing",
+        "ready",
+        "action_required",
+        "expiring",
+        "error",
+        "disabled",
+        "legacy"
+      ],
+      "fixture": [
+        "PRACTICE.channels[].state",
+        "STATUS_LABELS.connection"
+      ],
+      "taughtIn": [
+        "L2 step 2 (pipeline)",
+        "L2 steps 7-8",
+        "M2 consequence"
+      ]
+    },
+    {
+      "id": "sendable-states",
+      "why": "L2 step 7 teaches that 'Expiring soon' still sends today, and M2's consequence teaches that nothing queues while a channel is out. Both are exactly these two sets.",
+      "kind": "contains",
+      "file": "addons/health_care_command_channels/models/care_channel_connection.py",
+      "expect": [
+        "SENDABLE_STATES",
+        "INGESTABLE_STATES"
+      ],
+      "fixture": [],
+      "taughtIn": [
+        "L2 step 7",
+        "M2 consequence",
+        "QA:quiet"
+      ]
+    },
+    {
+      "id": "contact-status",
+      "why": "The Contacts screen, its lifecycle pipeline and the Dashboard donut all label these.",
+      "kind": "selection",
+      "file": "addons/health_crm/models/crm_lead.py",
+      "within": "_selection_contact_status",
+      "expect": [
+        "active",
+        "booking",
+        "lead",
+        "lost_booking",
+        "spam",
+        "thinking",
+        "recontact",
+        "service_used",
+        "existing"
+      ],
+      "fixture": [
+        "PRACTICE.contacts[].status",
+        "STATUS_LABELS.contact"
+      ],
+      "taughtIn": [
+        "Contacts outline",
+        "Contacts pipeline",
+        "Dashboard donut"
+      ]
+    },
+    {
+      "id": "dashboard-kpis",
+      "why": "Six KPI cards are taught by name, and the conversion calc-block reconciles against them.",
+      "kind": "contains",
+      "file": "addons/health_crm/static/src/js/crm_dashboard.js",
+      "expect": [
+        "contacts_today",
+        "pending_followups",
+        "active_leads",
+        "bookings_this_week",
+        "conversion_rate",
+        "spam_rate"
+      ],
+      "fixture": [
+        "CASE.kpis",
+        "CASE.month"
+      ],
+      "taughtIn": [
+        "Dashboard outline",
+        "QA:kpis (calc block)",
+        "Lead Analysis reconciliation note"
+      ]
+    },
+    {
+      "id": "consent-types",
+      "why": "M1's seeded anomaly turns on a Data Sharing consent existing as a distinct, withdrawable type.",
+      "kind": "selection",
+      "file": "addons/health_consent/models/health_consent.py",
+      "within": "consent_type",
+      "expect": [
+        "service",
+        "data_sharing",
+        "photography",
+        "emergency_treatment",
+        "marketing"
+      ],
+      "fixture": [
+        "CASE.consentType"
+      ],
+      "taughtIn": [
+        "L1 step 10",
+        "L1 quiz",
+        "M1 step 3-4",
+        "QA:consent",
+        "glossary:consent"
+      ]
+    },
+    {
+      "id": "consent-states",
+      "why": "The anomaly needs 'withdrawn' to be a real state, distinct from a missing record.",
+      "kind": "selection",
+      "file": "addons/health_consent/models/health_consent.py",
+      "within": "state",
+      "expect": [
+        "draft",
+        "active",
+        "withdrawn",
+        "expired"
+      ],
+      "fixture": [
+        "CASE.consentState"
+      ],
+      "taughtIn": [
+        "M1 anomaly",
+        "QA:consent"
+      ]
+    },
+    {
+      "id": "crm-sidebar-items",
+      "why": "The station map IS the menu. A leaf added, renamed or retired without updating the map produces a tutorial for a product that no longer exists.",
+      "kind": "xmlids",
+      "files": [
+        "addons/health_cms_sidebar/data/cms_sidebar_items_crm.xml",
+        "addons/health_care_command/data/cms_sidebar_items_care_command.xml",
+        "addons/health_care_command_channels/data/cms_sidebar_items_channel_center.xml",
+        "addons/health_care_command_channels/data/cms_sidebar_items_contact_capture.xml",
+        "addons/health_web_leads/data/cms_sidebar_items_web_leads.xml"
+      ],
+      "expect": [
+        "item_crm_dashboard",
+        "item_care_command",
+        "item_channel_center",
+        "item_contact_capture",
+        "item_crm_contacts",
+        "item_web_touchpoints",
+        "item_lead_analysis",
+        "item_crm_activities"
+      ],
+      "fixture": [
+        "MENU[0].items"
+      ],
+      "taughtIn": [
+        "Journey station map (all 8 stations)",
+        "the simulated sidebar on every screen"
+      ]
+    },
+    {
+      "id": "crm-sidebar-labels-vi",
+      "why": "The prototype ships the product's OWN Vietnamese strings, not translations of its own. If the .po changes, the tutorial must follow or the two disagree on screen.",
+      "kind": "po",
+      "expect": {
+        "addons/health_cms_sidebar/i18n/vi_VN.po": {
+          "Dashboard": "Bảng điều khiển",
+          "Contacts": "Liên hệ",
+          "Activities": "Hoạt động"
+        },
+        "addons/health_care_command_channels/i18n/vi.po": {
+          "Channel Center": "Trung tâm kênh",
+          "Unrouted Contacts": "Danh bạ chưa được định tuyến"
+        },
+        "addons/health_web_leads/i18n/vi.po": {
+          "Web Touchpoints": "Điểm chạm web",
+          "Lead Analysis": "Phân tích khách tiềm năng"
+        }
+      },
+      "fixture": [
+        "MENU[0].items[].label.vi"
+      ],
+      "taughtIn": [
+        "every screen title and sidebar leaf in VI"
+      ]
+    },
+    {
+      "id": "care-command-untranslated",
+      "why": "KNOWN GAP, tracked deliberately. 'Care Command' has no Vietnamese translation. The fixture ships the English label because that is what the product shows. When this is finally translated, this check FAILS ON PURPOSE — that is the signal to update MENU and drop this entry.",
+      "kind": "po-expect-missing",
+      "file": "addons/health_care_command/i18n/vi.po",
+      "expect": {
+        "Care Command": "Care Command"
+      },
+      "fixture": [
+        "MENU[0].items[1].label.vi"
+      ],
+      "taughtIn": [
+        "Care Command station title",
+        "analysis.html §8 finding"
+      ]
+    },
+    {
+      "id": "crm-role-gate",
+      "why": "The role switcher reproduces a gate that cannot be read from the XML seeds, because access.role rows have no xml-id. Verified in the browser; guarded here so the hook is not quietly removed.",
+      "kind": "contains",
+      "file": "addons/health_cms_coverage/hooks.py",
+      "expect": [
+        "ROLE_GATES",
+        "def apply_role_gates",
+        "'Owner', 'CRM'"
+      ],
+      "fixture": [
+        "MENU[0].items[].roles"
+      ],
+      "taughtIn": [
+        "role switcher",
+        "QA:takeover nurse variant",
+        "blocked-screen panel"
+      ]
+    },
+    {
+      "id": "crm-retired",
+      "why": "Six leaves left CRM in the 19.0.1.2.0 consolidation. The tutorial teaches where they went; if the consolidation is reverted or extended, that content is wrong.",
+      "kind": "contains",
+      "file": "addons/health_cms_coverage/hooks.py",
+      "expect": [
+        "item_crm_relationships",
+        "item_crm_followup_calendar",
+        "item_crm_channels_setup",
+        "item_crm_reply_templates"
+      ],
+      "fixture": [
+        "RETIRED"
+      ],
+      "taughtIn": [
+        "analysis.html §1 retired table"
+      ]
+    },
+    {
+      "id": "crm-groups",
+      "why": "The Coach's role-aware answers name these two groups as the real permission boundary.",
+      "kind": "contains",
+      "file": "addons/health_crm/security/health_crm_security.xml",
+      "expect": [
+        "group_health_crm_user",
+        "group_health_crm_manager"
+      ],
+      "fixture": [],
+      "taughtIn": [
+        "QA:takeover",
+        "Care Command outline prerequisites"
+      ]
+    },
+    {
+      "id": "catchment-routing",
+      "why": "L2's trace and morph, and M2's entire anomaly, depend on the catchment area being derived from the channel account the traffic arrived on.",
+      "kind": "contains",
+      "file": "addons/health_care_command/models/care_conversation.py",
+      "expect": [
+        "catchment_province_id",
+        "_catchment_from_anchors"
+      ],
+      "fixture": [
+        "CASE.area"
+      ],
+      "taughtIn": [
+        "L1 step 2",
+        "L2 steps 4-5 (trace + morph)",
+        "M2 anomaly",
+        "glossary:catchment"
+      ]
+    },
+    {
+      "id": "capture-immutability",
+      "why": "The Unrouted Contacts outline teaches that the record cannot be edited, only converted or dismissed.",
+      "kind": "contains",
+      "file": "addons/health_care_command_channels/models/care_contact_capture.py",
+      "expect": [
+        "IMMUTABLE_FIELDS",
+        "def action_convert",
+        "def action_dismiss"
+      ],
+      "fixture": [
+        "PRACTICE.captures"
+      ],
+      "taughtIn": [
+        "Unrouted Contacts outline",
+        "QA:unroutedq",
+        "glossary:unroutedC"
+      ]
+    }
+  ],
+  "anchorLint": {
+    "why": "The binding rule of DESIGN_SPEC §4. Content points at controls by name; a renamed screen must break the build, not the lesson.",
+    "contentFiles": [
+      "data.js"
+    ],
+    "templateFiles": [
+      "app.js",
+      "practice-data.js"
+    ],
+    "note": "In production, contentFiles become the learn-content records and templateFiles become the OWL templates."
+  },
+  "tokenLint": {
+    "why": "Tenant overrides fill NAMED SLOTS in content. A typo renders `{{roleDutyDoctor}}` to a learner instead of the clinic's own escalation title — and unlike a broken anchor, nothing crashes, so it ships.",
+    "contentFiles": [
+      "data.js"
+    ],
+    "declaredIn": "practice-data.js"
+  }
+}

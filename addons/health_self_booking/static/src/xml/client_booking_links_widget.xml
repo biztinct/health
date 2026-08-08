@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- Client profile → Booking Links tab. Markup reuses the ops form's existing
+     vu-* wrappers and Bootstrap table/badge utilities, so this tab ships no
+     stylesheet. Icons are the theme's CSS-mask set (data-icon), never
+     font-awesome and never emoji. -->
+<t t-name="health_self_booking.ClientBookingLinksWidget">
+    <div class="vu-section">
+        <div class="vu-detail-card">
+            <div class="vu-card__title">
+                <span class="vu-section__icon" data-icon="calendar"/>
+                <span>Self-Booking Invites</span>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted p-3">Loading booking links…</div>
+            </t>
+
+            <t t-elif="state.invites.length === 0">
+                <div class="text-muted p-3">
+                    No booking links have been sent to this client yet.
+                    Use <b>Send booking link</b> in the header to create one.
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Service</th>
+                                <th>Package</th>
+                                <th>Sent</th>
+                                <th>Expires</th>
+                                <th>Resulting booking</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.invites" t-as="inv" t-key="inv.id"
+                                style="cursor: pointer;"
+                                t-on-click="() => this.openInvite(inv.id)">
+                                <td>
+                                    <span class="badge"
+                                          t-att-class="badgeClass(inv.state)"
+                                          t-esc="inv.state_label"/>
+                                </td>
+                                <td t-esc="inv.service"/>
+                                <td t-esc="inv.package"/>
+                                <td t-esc="inv.created"/>
+                                <td t-esc="inv.expires_at"/>
+                                <td>
+                                    <t t-if="inv.fso_id">
+                                        <a href="#"
+                                           t-on-click.stop.prevent="() => this.openBooking(inv.fso_id)"
+                                           t-esc="inv.fso_name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="text-muted">—</span>
+                                    </t>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

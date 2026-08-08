@@ -346,3 +346,59 @@ class HealthTelehealthSession(models.Model):
         self.ensure_one()
         if self.outbound_message_id.id != msg.id:
             self.sudo().write({'outbound_message_id': msg.id})
+
+    # ------------------------------------------------------------------
+    # Ops booking tab (lazy fetch — booking_telehealth_widget.js)
+    #
+    # One session per FSO (unique index above), so this returns a single dict
+    # or None rather than a list. Not a <field> on the ops arch: that arch is
+    # loaded whole in one web_read on booking-page open.
+    # ------------------------------------------------------------------
+    @api.model
+    def get_booking_session(self, fso_id):
+        """Session status for one booking, as a plain dict.
+
+        SECURITY: ``patient_token`` and the derived ``room_url`` are capability
+        credentials for the public waiting room — neither is ever put in this
+        payload. Joining goes through ``action_tele_join`` on the FSO, which
+        re-checks access server-side.
+        """
+        if not fso_id:
+            return {'session': None}
+        session = self.search([('fso_id', '=', fso_id)], limit=1)
+        if not session:
+            return {'session': None}
+        state_sel = dict(
+            self._fields['state']._description_selection(self.env))
+        return {'session': {
+            'id': session.id,
+            'state': session.state,
+            'state_label': state_sel.get(session.state, session.state),
+            'opened_at': _tab_dt(session, session.opened_at),
+            'closed_at': _tab_dt(session, session.closed_at),
+            'expires_at': _tab_dt(session, session.expires_at),
+            'created': _tab_dt(session, session.create_date),
+            'invite_sent': bool(session.outbound_message_id),
+        }}
+
+
+# ---------------------------------------------------------------------------
+# Display formatting for the ops record tabs.
+#
+# Stored datetimes are naive UTC; context_timestamp converts to the user's
+# timezone (Asia/Ho_Chi_Minh here) so a tab does not show a visit as 7 hours
+# earlier than every other surface. Raw ``to_string`` output ("2026-07-08
+# 09:17:30") was also the only place in the ops forms not using the
+# "Aug 21, 4:30 PM" house format.
+# ---------------------------------------------------------------------------
+def _tab_dt(record, value):
+    """Naive-UTC datetime -> user-timezone display string."""
+    if not value:
+        return ''
+    return fields.Datetime.context_timestamp(record, value).strftime(
+        '%b %d, %Y %I:%M %p')
+
+
+def _tab_date(value):
+    """Date -> display string (dates carry no timezone)."""
+    return value.strftime('%b %d, %Y') if value else ''

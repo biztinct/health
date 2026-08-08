@@ -782,6 +782,18 @@
                 &[name="cancellation"]::before { content: "\f05e"; }
                 &[name="completion"]::before { content: "\f058"; }
                 &[name="communication"]::before { content: "\f0e0"; }
+
+                // Tabs added by the 19.0.1.2.0 menu consolidation. The pages
+                // themselves live in health_careplan / health_family_link /
+                // health_telehealth, but every tab-icon rule on this form is
+                // keyed by page name and lives here — splitting them across
+                // four modules would make the set impossible to read as a
+                // whole. Font-awesome glyphs to match the eight rules above:
+                // this selector set predates the hf-wt-ico convention, and a
+                // lone CSS-mask icon here would look wrong beside them.
+                &[name="visit_tasks_ops"]::before { content: "\f046"; }
+                &[name="family_updates_ops"]::before { content: "\f0c0"; }
+                &[name="telehealth_ops"]::before { content: "\f03d"; }
             }
         }
 

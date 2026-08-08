@@ -49,15 +49,27 @@ class CmsSidebarItem(models.Model):
 
     @api.model
     def get_match_keys(self):
-        """Union of every active item's action tags / action xml-ids / models
+        """Union of every item's action tags / action xml-ids / models
         (own + match_* hints). The frontend feeds these into the custom-sidebar
         registry so navigating to ANY wired screen keeps the CMS shell — no
-        hardcoded allowlist edit needed when a new item is added."""
+        hardcoded allowlist edit needed when a new item is added.
+
+        INACTIVE ITEMS ARE INCLUDED, deliberately. This payload answers "is
+        this screen part of the CMS?", which is not the same question as "is
+        this menu drawn?". The 19.0.1.2.0 menu consolidation retired a dozen
+        leaves whose records became tabs on the client/booking record — those
+        screens are still reached (the tabs navigate to them), and filtering on
+        active would have dropped them from the allowlist, so opening one threw
+        the user out of the CMS shell into the bare Odoo backend.
+
+        This does NOT affect which item is highlighted: the active-item index
+        is built from get_sidebar_data(), which is active-only.
+        """
         def _split(val):
             return [v.strip() for v in (val or '').split(',') if v.strip()]
 
         tags, xmlids, models = set(), set(), set()
-        for item in self.search([('active', '=', True)]):
+        for item in self.with_context(active_test=False).search([]):
             if item.action_tag:
                 tags.add(item.action_tag)
             if item.action_xmlid:

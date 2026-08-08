@@ -20,4 +20,36 @@
         </field>
     </record>
 
+    <!-- The record above inherits view_health_fieldservice_order_form — the
+         STANDARD FSO form. The CMS booking page renders a different primary
+         view (view_health_fso_form_ops, mode primary / inherit_id False), so
+         the Join Video button above was masked there and never appeared on the
+         surface ops actually uses. Re-declare it on the ops view, and add the
+         session tab. Same masking trap that created health_cms_clinical.
+
+         The page holds ONE widget and no <field>: the ops booking arch is
+         loaded whole by a single web_read on page open, so an x2many list
+         would tax every booking open. -->
+    <record id="view_fso_form_ops_telehealth" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops.telehealth</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="telehealth_session_state" invisible="1"/>
+                <button name="action_tele_join" type="object"
+                        string="Join Video" icon="fa-video-camera"
+                        class="oe_highlight"
+                        invisible="telehealth_session_state != 'open'"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Telehealth" name="telehealth_ops"
+                      groups="health_base.group_healthcare_base">
+                    <widget name="vu_booking_telehealth"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

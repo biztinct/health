@@ -24,8 +24,20 @@
         'views/health_careplan_task_views.xml',
         'views/health_fieldservice_order_views.xml',
         'views/health_careplan_menus.xml',
+        'views/ops_careplan_tabs.xml',
         'views/pwa_shell_inherit.xml',
     ],
+    # NB: careplan-service.js / careplan-components.js are PWA scripts loaded
+    # by plain <script> tags in pwa_shell_inherit.xml, NOT by a bundle. These
+    # two are backend-only and belong in web.assets_backend.
+    'assets': {
+        'web.assets_backend': [
+            'health_careplan/static/src/js/client_careplans_widget.js',
+            'health_careplan/static/src/xml/client_careplans_widget.xml',
+            'health_careplan/static/src/js/booking_visit_tasks_widget.js',
+            'health_careplan/static/src/xml/booking_visit_tasks_widget.xml',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,

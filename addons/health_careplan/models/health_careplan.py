@@ -584,3 +584,59 @@ class HealthCareplan(models.Model):
             _logger.error(
                 'Care plan activity scheduling failed for plan %s: %s',
                 self.id, exc)
+
+    # ------------------------------------------------------------------
+    # Ops client-profile tab (lazy fetch — client_careplans_widget.js)
+    #
+    # Not an x2many on the ops arch: that arch is loaded whole by the single
+    # web_read on client-page open, so a <field> list would cost every open.
+    # ------------------------------------------------------------------
+    @api.model
+    def get_client_careplans(self, patient_id):
+        """Return this patient's care plans as plain dicts for the tab."""
+        if not patient_id:
+            return {'careplans': []}
+        plans = self.search([('client_id', '=', patient_id)], limit=50)
+        state_sel = dict(
+            self._fields['state']._description_selection(self.env))
+        cat_sel = dict(
+            self._fields['category']._description_selection(self.env))
+        rows = []
+        for plan in plans:
+            rows.append({
+                'id': plan.id,
+                'title': plan.title or plan.name or '',
+                'state': plan.state,
+                'state_label': state_sel.get(plan.state, plan.state),
+                'category_label': cat_sel.get(plan.category, plan.category or ''),
+                'period_start': _tab_date(plan.period_start),
+                'period_end': _tab_date(plan.period_end),
+                'next_review_date': _tab_date(plan.next_review_date),
+                'goal_count': plan.goal_count,
+                'task_count': plan.task_count,
+                'adherence_rate': round(plan.adherence_rate or 0.0, 1),
+                'drift_flag': bool(plan.drift_flag),
+            })
+        return {'careplans': rows}
+
+
+# ---------------------------------------------------------------------------
+# Display formatting for the ops record tabs.
+#
+# Stored datetimes are naive UTC; context_timestamp converts to the user's
+# timezone (Asia/Ho_Chi_Minh here) so a tab does not show a visit as 7 hours
+# earlier than every other surface. Raw ``to_string`` output ("2026-07-08
+# 09:17:30") was also the only place in the ops forms not using the
+# "Aug 21, 4:30 PM" house format.
+# ---------------------------------------------------------------------------
+def _tab_dt(record, value):
+    """Naive-UTC datetime -> user-timezone display string."""
+    if not value:
+        return ''
+    return fields.Datetime.context_timestamp(record, value).strftime(
+        '%b %d, %Y %I:%M %p')
+
+
+def _tab_date(value):
+    """Date -> display string (dates carry no timezone)."""
+    return value.strftime('%b %d, %Y') if value else ''

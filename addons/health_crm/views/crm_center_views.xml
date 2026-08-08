@@ -224,6 +224,13 @@
                 <separator/>
                 <filter name="today" string="Today" domain="[('create_date', '&gt;=', (context_today()).strftime('%%Y-%%m-%%d'))]"/>
                 <filter name="overdue" string="Overdue Follow-ups" domain="[('next_follow_up_date', '&lt;', context_today().strftime('%%Y-%%m-%%d')), ('contact_status', '=', 'lead')]"/>
+                <!-- Absorbs the retired standalone "Follow-up Calendar" leaf.
+                     That action carried domain [('calendar_date','!=',False)],
+                     which is NARROWER than this action's — so it ships as a
+                     named filter next to the calendar view mode rather than as
+                     a bare view switch, which would have silently widened what
+                     the calendar showed. -->
+                <filter name="has_followup" string="Follow-up Scheduled" domain="[('calendar_date', '!=', False)]"/>
                 <filter name="group_by_status" string="Status" context="{'group_by': 'contact_status'}"/>
                 <filter name="group_by_area" string="Area" context="{'group_by': 'catchment_province_id'}"/>
                 <filter name="group_by_channel" string="Channel" context="{'group_by': 'mode_of_contact'}"/>
@@ -297,6 +304,29 @@
                 <field name="activity_type_id" invisible="1"/>
             </calendar>
         </field>
+    </record>
+
+    <!-- ===== Contacts gains the calendar view mode =====
+         Menu consolidation: the standalone "Follow-up Calendar" sidebar leaf is
+         retired and its calendar becomes a view mode on Contacts — same
+         records, one fewer menu item.
+
+         This is a SECOND write to action_crm_contact_list_native rather than an
+         edit of the record above, because `ref()` inside `view_ids` eval
+         resolves at load time and view_crm_followup_calendar_crm_center is
+         defined further down this file than that record.
+
+         The retired action carried domain [('calendar_date','!=',False)], which
+         is narrower than the Contacts action's. That is NOT baked in here — it
+         ships as the "Follow-up Scheduled" filter in
+         view_crm_contact_search_crm_center, so switching to the calendar cannot
+         silently widen what used to be shown. -->
+    <record id="action_crm_contact_list_native" model="ir.actions.act_window">
+        <field name="view_mode">list,calendar,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_contact_list_crm_center')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_crm_followup_calendar_crm_center')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
     </record>
 
     <!-- Calendar list fallback view -->

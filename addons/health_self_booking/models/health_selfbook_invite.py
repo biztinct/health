@@ -608,3 +608,58 @@ class HealthSelfbookInvite(models.Model):
         if invite:
             invite._send_invite_zns()
         return invite
+
+    # ------------------------------------------------------------------
+    # Ops client-profile tab (lazy fetch — see the widget in
+    # static/src/js/client_booking_links_widget.js)
+    #
+    # Deliberately NOT an x2many on the arch: every field in the ops client
+    # arch is loaded by the single web_read on page open, so a <field> list
+    # here would tax every client-page open forever. The widget only calls
+    # this when the tab is actually clicked.
+    # ------------------------------------------------------------------
+    @api.model
+    def get_client_invites(self, patient_id):
+        """Return this patient's booking invites as plain dicts for the tab."""
+        if not patient_id:
+            return {'invites': []}
+        invites = self.search([('patient_id', '=', patient_id)], limit=50)
+        rows = []
+        for inv in invites:
+            rows.append({
+                'id': inv.id,
+                'state': inv.state,
+                'state_label': dict(
+                    self._fields['state']._description_selection(self.env)
+                ).get(inv.state, inv.state),
+                'service': inv.service_type or (
+                    inv.service_product_id.display_name or ''),
+                'package': inv.package_id.display_name or '',
+                'expires_at': _tab_dt(inv, inv.expires_at),
+                'created': _tab_dt(inv, inv.create_date),
+                'fso_id': inv.fso_id.id or False,
+                'fso_name': inv.fso_id.display_name or '',
+            })
+        return {'invites': rows}
+
+
+# ---------------------------------------------------------------------------
+# Display formatting for the ops record tabs.
+#
+# Stored datetimes are naive UTC; context_timestamp converts to the user's
+# timezone (Asia/Ho_Chi_Minh here) so a tab does not show a visit as 7 hours
+# earlier than every other surface. Raw ``to_string`` output ("2026-07-08
+# 09:17:30") was also the only place in the ops forms not using the
+# "Aug 21, 4:30 PM" house format.
+# ---------------------------------------------------------------------------
+def _tab_dt(record, value):
+    """Naive-UTC datetime -> user-timezone display string."""
+    if not value:
+        return ''
+    return fields.Datetime.context_timestamp(record, value).strftime(
+        '%b %d, %Y %I:%M %p')
+
+
+def _tab_date(value):
+    """Date -> display string (dates carry no timezone)."""
+    return value.strftime('%b %d, %Y') if value else ''

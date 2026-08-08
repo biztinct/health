@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Both tabs go on the OPS primary views, not the standard forms: the CMS
+         renders view_health_patient_form_ops / view_health_fso_form_ops, so a
+         page added to the standard form would be masked (the trap that created
+         health_cms_clinical). Each page holds ONE widget and no <field> —
+         both ops archs are loaded whole in a single web_read on page open, so
+         an x2many list here would cost every open. -->
+
+    <!-- Client profile → Care Plans -->
+    <record id="view_ops_profile_careplans_tab" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.careplans</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Care Plans" name="careplans_ops"
+                      groups="health_base.group_healthcare_base">
+                    <widget name="vu_client_careplans"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Booking → Visit Tasks -->
+    <record id="view_ops_booking_visit_tasks_tab" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops.visit.tasks</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Visit Tasks" name="visit_tasks_ops"
+                      groups="health_base.group_healthcare_base">
+                    <widget name="vu_booking_visit_tasks"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

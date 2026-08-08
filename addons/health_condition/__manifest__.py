@@ -23,7 +23,14 @@
         'security/ir.model.access.csv',
         'views/health_condition_views.xml',
         'views/health_condition_menus.xml',
+        'views/ops_client_diagnoses_tab.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'health_condition/static/src/js/client_diagnoses_widget.js',
+            'health_condition/static/src/xml/client_diagnoses_widget.xml',
+        ],
+    },
     'post_init_hook': 'post_init_hook',
     'installable': True,
     'application': False,

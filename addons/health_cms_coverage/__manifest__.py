@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare CMS — Shipped-Feature Sidebar Coverage',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.1',
     'category': 'Healthcare',
     'summary': 'Puts nineteen already-shipped features into the /bizapp sidebar '
                '(CRM, Operations, Clinical, Finance). Data glue plus a role-'
@@ -88,6 +88,13 @@ answered "You are not allowed to access 'BHYT Insurance Claim'". See
         'health_bhyt',
         'health_invoicing',
         'health_redinvoice',
+        # Added for the 19.0.1.2.0 menu consolidation: it WRITES sidebar rows
+        # owned by these two (relocating Monitoring Devices out of the Care
+        # Intelligence expander; re-homing Campaign Review's match target onto
+        # the Web Touchpoints leaf), so it must load after them. Neither
+        # depends on this module, so there is no loop.
+        'health_cms_clinical',
+        'health_web_leads',
     ],
     'data': [
         'data/cms_sidebar_items_features.xml',

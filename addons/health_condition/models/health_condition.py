@@ -195,3 +195,60 @@ class HealthCondition(models.Model):
             'view_mode': 'list,form',
             'domain': [('id', 'in', self.note_ids.ids)],
         }
+
+    # ------------------------------------------------------------------
+    # Ops client-profile tab (lazy fetch — client_diagnoses_widget.js)
+    #
+    # Not an x2many on the ops arch: the client page loads every arch field in
+    # one web_read, so a <field> list would tax every open.
+    # ------------------------------------------------------------------
+    @api.model
+    def get_client_conditions(self, patient_id):
+        """Return this patient's problem list as plain dicts for the tab."""
+        if not patient_id:
+            return {'conditions': []}
+        conditions = self.search([('patient_id', '=', patient_id)])
+        clin_sel = dict(
+            self._fields['clinical_status']._description_selection(self.env))
+        ver_sel = dict(
+            self._fields['verification_status']._description_selection(
+                self.env))
+        rows = []
+        for cond in conditions:
+            rows.append({
+                'id': cond.id,
+                'code': cond.code_id.code or '',
+                'code_name': cond.code_id.display_name or '',
+                'clinical_status': cond.clinical_status,
+                'clinical_status_label': clin_sel.get(
+                    cond.clinical_status, cond.clinical_status),
+                'verification_status_label': ver_sel.get(
+                    cond.verification_status, cond.verification_status),
+                'recorded_date': _tab_date(cond.recorded_date),
+                'last_asserted_date': _tab_date(cond.last_asserted_date),
+                'note_count': cond.note_count,
+                'recorder': cond.recorder_id.display_name or '',
+            })
+        return {'conditions': rows}
+
+
+# ---------------------------------------------------------------------------
+# Display formatting for the ops record tabs.
+#
+# Stored datetimes are naive UTC; context_timestamp converts to the user's
+# timezone (Asia/Ho_Chi_Minh here) so a tab does not show a visit as 7 hours
+# earlier than every other surface. Raw ``to_string`` output ("2026-07-08
+# 09:17:30") was also the only place in the ops forms not using the
+# "Aug 21, 4:30 PM" house format.
+# ---------------------------------------------------------------------------
+def _tab_dt(record, value):
+    """Naive-UTC datetime -> user-timezone display string."""
+    if not value:
+        return ''
+    return fields.Datetime.context_timestamp(record, value).strftime(
+        '%b %d, %Y %I:%M %p')
+
+
+def _tab_date(value):
+    """Date -> display string (dates carry no timezone)."""
+    return value.strftime('%b %d, %Y') if value else ''

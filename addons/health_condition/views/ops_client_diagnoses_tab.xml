@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Injected into the OPS profile view (health_fieldservice.
+         view_health_patient_form_ops), not the standard partner form — the CMS
+         renders the ops view, so a page added to the standard form would be
+         masked (the trap that created health_cms_clinical).
+
+         health_condition reaches health_fieldservice transitively via
+         health_fhir_terminology, so this ref resolves in load order without a
+         new direct dependency (which would point the clinical spine at ops
+         scheduling).
+
+         One widget, no <field>: the ops arch is loaded whole in a single
+         web_read on client-page open. -->
+    <record id="view_ops_profile_diagnoses_tab" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.diagnoses</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Diagnoses" name="diagnoses_ops"
+                      groups="health_base.group_healthcare_base">
+                    <widget name="vu_client_diagnoses"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

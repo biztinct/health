@@ -40,7 +40,14 @@ write hooks into health_consent are needed.
         'views/family_templates.xml',
         'views/family_link_views.xml',
         'views/health_client_relation_views.xml',
+        'views/ops_booking_family_tab.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'health_family_link/static/src/js/booking_family_widget.js',
+            'health_family_link/static/src/xml/booking_family_widget.xml',
+        ],
+    },
     'installable': True,
     'application': False,
     'sequence': 146,

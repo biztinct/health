@@ -505,12 +505,18 @@ class TestWebLeadsW3(TransactionCase):
 
         # Ledger §5.69 — a sidebar item WITH children stops navigating and
         # breaks its parent, and two leaves must not share a sequence.
-        items = [self.env.ref('%s.%s' % (MODULE, name)) for name in
-                 ('item_campaign_review', 'item_lead_analysis')]
+        #
+        # `item_campaign_review` no longer belongs here: the 19.0.1.2.0 menu
+        # consolidation retired it, because it was the same
+        # health.lead.touchpoint model as Web Touchpoints with only a different
+        # domain — it is now the "Unmatched Campaigns" chip on that list
+        # (health_web_leads/static/src/js/touchpoint_list_view.js). It is
+        # asserted separately below, since a retired leaf is invisible to the
+        # active_test search that the sequence-uniqueness check runs.
         section = self.env.ref('health_cms_sidebar.section_crm')
         siblings = self.env['cms.sidebar.item'].search(
             [('section_id', '=', section.id)])
-        for item in items:
+        for item in [self.env.ref('%s.item_lead_analysis' % MODULE)]:
             self.assertFalse(item.parent_id, 'the leaf must be a sibling')
             self.assertFalse(self.env['cms.sidebar.item'].search_count(
                 [('parent_id', '=', item.id)]))
@@ -523,6 +529,18 @@ class TestWebLeadsW3(TransactionCase):
             # `match_models` would land in a LAST-WINS index and steal the
             # highlight from Contacts / Web Touchpoints (cms_sidebar.js:65).
             self.assertFalse(item.match_models)
+
+        # Campaign Review: retired, not deleted — and its action must still be
+        # in the shell allowlist via the Web Touchpoints leaf, or the chip that
+        # replaced it would open outside the CMS chrome.
+        review = self.env.ref('%s.item_campaign_review' % MODULE)
+        self.assertFalse(review.active,
+                         'Campaign Review is retired into the Web Touchpoints '
+                         'chip bar')
+        self.assertIn(
+            '%s.action_campaign_review' % MODULE,
+            self.env['cms.sidebar.item'].get_match_keys()['xmlids'],
+            'the Campaign Review action must stay in the shell allowlist')
 
         # The back-fill gate, negatively. §5.88 first: name the edge before
         # asserting the denial, so a live implication that grants access

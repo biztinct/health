@@ -23,8 +23,6 @@ class TestCmsClinical(TransactionCase):
                 'health_twin.action_health_twin_risk',
             'health_cms_clinical.item_clin_alerts':
                 'health_telemonitoring.action_health_monitor_alert',
-            'health_cms_clinical.item_clin_devices':
-                'health_telemonitoring.action_health_monitor_device',
             'health_cms_clinical.item_clin_news2':
                 'health_telemonitoring.action_health_ews_score',
         }
@@ -36,6 +34,22 @@ class TestCmsClinical(TransactionCase):
             action = self.env.ref(action_xmlid)
             self.assertEqual(action._name, 'ir.actions.act_window',
                              "%s must resolve to an act_window" % action_xmlid)
+
+        # Monitoring Devices is a device INVENTORY table, not a deterioration
+        # queue. The 19.0.1.2.0 menu consolidation moved it out of Care
+        # Intelligence into ADMIN with the other config tables
+        # (health_cms_coverage.hooks.RELOCATE_TO_ADMIN), which also required
+        # detaching it from this expander — leaving parent_id set would both
+        # mis-nest it and keep it counting as a child here.
+        devices = self.env.ref('health_cms_clinical.item_clin_devices')
+        self.assertEqual(devices.section_id,
+                         self.env.ref('health_cms_sidebar.section_admin'),
+                         'Monitoring Devices is relocated to ADMIN')
+        self.assertFalse(devices.parent_id,
+                         'a relocated leaf must be detached from its old '
+                         'expander')
+        self.assertEqual(devices.action_xmlid,
+                         'health_telemonitoring.action_health_monitor_device')
 
     def test_02_get_sidebar_data_returns_group(self):
         """get_sidebar_data() exposes the Care Intelligence parent with its 4

@@ -9,7 +9,12 @@
         <field name="name">health.lead.touchpoint.list</field>
         <field name="model">health.lead.touchpoint</field>
         <field name="arch" type="xml">
+            <!-- js_class mounts the filter-chip bar (touchpoint_list_view.js),
+                 cloned from the Clients list so the chrome matches the rest of
+                 the CMS. The "Unmatched Campaigns" chip absorbs the retired
+                 standalone Campaign Review leaf. -->
             <list string="Web Touchpoints" create="0" edit="0" delete="0"
+                  js_class="touchpoint_list_view"
                   decoration-muted="not lead_id">
                 <!-- W3 §4.2. A list `<header>` button acts on the SELECTED
                      rows and only appears once something is selected. The

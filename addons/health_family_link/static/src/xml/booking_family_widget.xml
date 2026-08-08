@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_family_link.BookingFamilyWidget">
+    <div class="vu-section">
+        <div class="vu-detail-card">
+            <div class="vu-card__title">
+                <span class="vu-section__icon" data-icon="users-group"/>
+                <span>Family Updates</span>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted p-3">Loading family links…</div>
+            </t>
+
+            <t t-elif="state.links.length === 0">
+                <div class="text-muted p-3">
+                    No family members have been sent a link for this visit.
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Relationship</th>
+                                <th>Recipient</th>
+                                <th>Sent</th>
+                                <th>Expires</th>
+                                <th>Visit link</th>
+                                <th>Post-visit summary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.links" t-as="link" t-key="link.id"
+                                style="cursor: pointer;"
+                                t-on-click="() => this.openLink(link.id)">
+                                <td>
+                                    <span class="badge"
+                                          t-att-class="badgeClass(link.state)"
+                                          t-esc="link.state_label"/>
+                                </td>
+                                <td t-esc="link.relation"/>
+                                <td t-esc="link.recipient"/>
+                                <td t-esc="link.created"/>
+                                <td t-esc="link.expires_at"/>
+                                <td t-esc="link.visit_link_sent ? 'Sent' : '—'"/>
+                                <td t-esc="link.snapshot_sent ? 'Sent' : '—'"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="small text-muted mt-2 px-1">
+                    Family page links are capability URLs and are not shown
+                    here. Open a row to manage one.
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

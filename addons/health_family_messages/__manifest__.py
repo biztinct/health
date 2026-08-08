@@ -40,7 +40,14 @@ backend "Family Messages" inbox in the Operations Center.
         'data/family_messages_config_params.xml',
         'views/family_messages_templates.xml',
         'views/family_messages_views.xml',
+        'views/ops_client_family_tab.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'health_family_messages/static/src/js/client_family_widget.js',
+            'health_family_messages/static/src/xml/client_family_widget.xml',
+        ],
+    },
     'installable': True,
     'application': False,
     'sequence': 147,

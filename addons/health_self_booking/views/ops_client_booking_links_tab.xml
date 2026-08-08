@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- The client chart the CMS actually renders is the standalone OPS profile
+         view (health_fieldservice.view_health_patient_form_ops), NOT the
+         standard partner form — a page added to the standard form is masked
+         (the trap that created health_cms_clinical; see its header comment).
+         So the tab is injected here.
+
+         The page holds ONE widget and no <field>: every field in this arch is
+         pulled by the single web_read on client-page open, so an x2many list
+         would tax every open. The widget fetches in onWillStart, which the
+         Notebook only runs when the tab is clicked. -->
+    <record id="view_ops_profile_booking_links_tab" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.booking.links</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Booking Links" name="booking_links_ops">
+                    <widget name="vu_client_booking_links"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

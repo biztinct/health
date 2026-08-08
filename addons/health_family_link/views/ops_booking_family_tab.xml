@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Injected into the OPS booking view (view_health_fso_form_ops), which is
+         a separate primary view — a page added to the standard FSO form would
+         be masked on the surface ops actually uses. One widget, no <field>:
+         the ops arch is loaded whole in one web_read on booking-page open. -->
+    <record id="view_ops_booking_family_tab" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops.family</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Family Updates" name="family_updates_ops"
+                      groups="health_base.group_healthcare_base">
+                    <widget name="vu_booking_family"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

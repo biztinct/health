@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- Client profile → Family tab. Reuses the ops form's vu-* wrappers and
+     Bootstrap utilities; ships no stylesheet. Bodies are escaped by t-esc. -->
+<t t-name="health_family_messages.ClientFamilyWidget">
+    <div class="vu-section">
+        <div class="vu-detail-card">
+            <div class="vu-card__title">
+                <span class="vu-section__icon" data-icon="users-group"/>
+                <span>Family Messages</span>
+                <t t-if="totalUnread">
+                    <span class="badge text-bg-danger ms-2">
+                        <t t-esc="totalUnread"/> unread
+                    </span>
+                </t>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted p-3">Loading family threads…</div>
+            </t>
+
+            <t t-elif="state.threads.length === 0">
+                <div class="text-muted p-3">
+                    No family message threads for this client. Threads are
+                    created from a family relationship with messaging enabled.
+                </div>
+            </t>
+
+            <t t-else="">
+                <div t-foreach="state.threads" t-as="thread" t-key="thread.id"
+                     class="mb-4">
+
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <a href="#" class="fw-bold"
+                           t-on-click.prevent="() => this.openThread(thread.id)"
+                           t-esc="thread.relation"/>
+                        <t t-if="thread.unread_ops_count">
+                            <span class="badge text-bg-danger"
+                                  t-esc="thread.unread_ops_count"/>
+                        </t>
+                        <t t-if="!thread.messaging_enabled">
+                            <span class="badge text-bg-secondary">
+                                Messaging off
+                            </span>
+                        </t>
+                        <span class="text-muted small ms-auto"
+                              t-esc="thread.last_message_at"/>
+                    </div>
+
+                    <t t-if="thread.messages.length === 0">
+                        <div class="text-muted small ps-2">
+                            No messages in this thread yet.
+                        </div>
+                    </t>
+
+                    <div t-foreach="thread.messages" t-as="msg" t-key="msg.id"
+                         t-attf-class="d-flex mb-2 #{msg.direction === 'out' ? 'justify-content-end' : ''}">
+                        <div t-attf-class="p-2 rounded #{msg.direction === 'out' ? 'bg-body-secondary' : 'border'}"
+                             style="max-width: 70%;">
+                            <div class="small text-muted">
+                                <t t-esc="msg.author"/> ·
+                                <t t-esc="msg.created"/>
+                            </div>
+                            <div t-esc="msg.body"/>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

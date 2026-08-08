@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Injected into the OPS profile view, not the standard partner form —
+         the CMS renders view_health_patient_form_ops, so a page added to the
+         standard form would be masked. One widget, no <field>: the ops arch is
+         loaded whole in a single web_read on client-page open. -->
+    <record id="view_ops_profile_portal_tab" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.portal.access</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Portal Access" name="portal_access_ops"
+                      groups="health_base.group_healthcare_base">
+                    <widget name="vu_client_portal_access"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

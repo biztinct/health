@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_telehealth.BookingTelehealthWidget">
+    <div class="vu-section">
+        <div class="vu-detail-card">
+            <div class="vu-card__title">
+                <span class="vu-section__icon" data-icon="activity"/>
+                <span>Video Visit</span>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted p-3">Loading video session…</div>
+            </t>
+
+            <t t-elif="!state.session">
+                <div class="text-muted p-3">
+                    No video session for this booking. Sessions are created when
+                    a telemedicine visit is scheduled.
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge"
+                          t-att-class="badgeClass(state.session.state)"
+                          t-esc="state.session.state_label"/>
+                    <t t-if="state.session.state === 'open'">
+                        <button class="btn btn-primary btn-sm"
+                                t-on-click="joinVideo">
+                            Join Video
+                        </button>
+                    </t>
+                    <button class="btn btn-link btn-sm ms-auto"
+                            t-on-click="openSession">
+                        Open session record
+                    </button>
+                </div>
+
+                <div class="vu-summary-row">
+                    <span class="vu-summary-row__label">Created</span>
+                    <span class="vu-summary-row__value"
+                          t-esc="state.session.created"/>
+                </div>
+                <div class="vu-summary-row">
+                    <span class="vu-summary-row__label">Opened</span>
+                    <span class="vu-summary-row__value">
+                        <t t-if="state.session.opened_at">
+                            <t t-esc="state.session.opened_at"/>
+                        </t>
+                        <t t-else="">—</t>
+                    </span>
+                </div>
+                <div class="vu-summary-row">
+                    <span class="vu-summary-row__label">Closed</span>
+                    <span class="vu-summary-row__value">
+                        <t t-if="state.session.closed_at">
+                            <t t-esc="state.session.closed_at"/>
+                        </t>
+                        <t t-else="">—</t>
+                    </span>
+                </div>
+                <div class="vu-summary-row">
+                    <span class="vu-summary-row__label">Expires</span>
+                    <span class="vu-summary-row__value"
+                          t-esc="state.session.expires_at"/>
+                </div>
+                <div class="vu-summary-row">
+                    <span class="vu-summary-row__label">Join link sent</span>
+                    <span class="vu-summary-row__value">
+                        <t t-esc="state.session.invite_sent ? 'Yes' : 'No'"/>
+                    </span>
+                </div>
+
+                <div class="small text-muted mt-2">
+                    The waiting-room link is a capability URL and is not shown
+                    here. Use Join Video, or open the session record.
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

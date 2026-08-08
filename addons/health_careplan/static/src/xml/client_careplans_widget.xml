@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_careplan.ClientCareplansWidget">
+    <div class="vu-section">
+        <div class="vu-detail-card">
+            <div class="vu-card__title">
+                <span class="vu-section__icon" data-icon="clipboard-list"/>
+                <span>Care Plans</span>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted p-3">Loading care plans…</div>
+            </t>
+
+            <t t-elif="state.careplans.length === 0">
+                <div class="text-muted p-3">
+                    No care plans for this client yet.
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Period</th>
+                                <th>Next review</th>
+                                <th class="text-end">Goals</th>
+                                <th class="text-end">Tasks</th>
+                                <th class="text-end">Adherence</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.careplans" t-as="plan"
+                                t-key="plan.id" style="cursor: pointer;"
+                                t-on-click="() => this.openCareplan(plan.id)">
+                                <td>
+                                    <span class="badge"
+                                          t-att-class="badgeClass(plan.state)"
+                                          t-esc="plan.state_label"/>
+                                </td>
+                                <td>
+                                    <t t-esc="plan.title"/>
+                                    <t t-if="plan.drift_flag">
+                                        <span class="badge text-bg-warning ms-1">
+                                            Drift
+                                        </span>
+                                    </t>
+                                </td>
+                                <td t-esc="plan.category_label"/>
+                                <td>
+                                    <t t-esc="plan.period_start"/>
+                                    <t t-if="plan.period_end"> → <t t-esc="plan.period_end"/></t>
+                                </td>
+                                <td t-esc="plan.next_review_date"/>
+                                <td class="text-end" t-esc="plan.goal_count"/>
+                                <td class="text-end" t-esc="plan.task_count"/>
+                                <td class="text-end">
+                                    <t t-esc="plan.adherence_rate"/>%
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

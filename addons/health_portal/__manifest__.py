@@ -15,7 +15,14 @@
         'security/catchment_rules.xml',
         'views/portal_templates.xml',
         'views/health_portal_views.xml',
+        'views/ops_client_portal_tab.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'health_portal/static/src/js/client_portal_access_widget.js',
+            'health_portal/static/src/xml/client_portal_access_widget.xml',
+        ],
+    },
     'installable': True,
     'application': False,
     'license': 'LGPL-3',

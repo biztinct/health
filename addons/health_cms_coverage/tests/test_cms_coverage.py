@@ -89,6 +89,41 @@ EXPECTED = {
 SECTIONS_TOUCHED = {'section_crm', 'section_ops', 'section_clinical',
                     'section_finance'}
 
+# --------------------------------------------------------------------------
+# MENU CONSOLIDATION (19.0.1.2.0) — hooks.consolidate_sidebar reshapes some of
+# the leaves above after they are seeded. EXPECTED stays the record of what
+# this module SEEDS (and its action xmlids, which never change); these two sets
+# say what consolidation then did to them, so the assertions below can tell a
+# deliberate retirement from a regression.
+# --------------------------------------------------------------------------
+
+# Retired because the records are now tabs on the client or booking record.
+# active=False, never unlinked — the action stays reachable and deep links keep
+# resolving.
+CONSOLIDATED_RETIRED = {
+    'item_crm_relationships',      # -> Client > Healthcare Relationships
+    'item_crm_followup_calendar',  # -> Contacts (calendar view + saved filter)
+    'item_ops_telehealth',         # -> Booking > Telehealth
+    'item_ops_selfbooking',        # -> Client > Booking Links
+    'item_ops_family_links',       # -> Booking > Family Updates
+    'item_clin_diagnoses',         # -> Client > Diagnoses
+    'item_clin_patient_portal',    # -> Client > Portal Access
+    'item_clin_visit_tasks',       # -> Booking > Visit Tasks
+}
+
+# Config tables moved out of the daily-work sections into ADMIN.
+CONSOLIDATED_TO_ADMIN = {
+    'item_crm_channels_setup',
+    'item_crm_reply_templates',
+    'item_clin_consent_log',
+}
+
+# Kept as a work queue, renamed: unread_ops_count / last_message_at exist to
+# drive a cross-client reply queue that the per-client tab cannot replace.
+CONSOLIDATED_RENAMED = {
+    'item_ops_family_messages': 'Family Inbox',
+}
+
 
 @tagged('post_install', '-at_install')
 class TestCmsCoverage(TransactionCase):
@@ -104,10 +139,25 @@ class TestCmsCoverage(TransactionCase):
         self.assertEqual(len(EXPECTED), 19)
         for key, (section_key, action_xmlid, matches) in EXPECTED.items():
             item = self._item(key)
-            self.assertEqual(
-                item.section_id,
-                self.env.ref('health_cms_sidebar.%s' % section_key), key)
-            self.assertTrue(item.active, key)
+            # Consolidation may have moved or retired a leaf, but it never
+            # touches the action or the match targets — which is what this
+            # test is actually about: a leaf that draws and opens nothing.
+            if key in CONSOLIDATED_TO_ADMIN:
+                self.assertEqual(
+                    item.section_id,
+                    self.env.ref('health_cms_sidebar.section_admin'),
+                    '%s: consolidation moves this config leaf to ADMIN' % key)
+            else:
+                self.assertEqual(
+                    item.section_id,
+                    self.env.ref('health_cms_sidebar.%s' % section_key), key)
+            if key in CONSOLIDATED_RETIRED:
+                self.assertFalse(
+                    item.active,
+                    '%s: consolidation retires this leaf (its records are now '
+                    'a record tab) — it must be inactive, not deleted' % key)
+            else:
+                self.assertTrue(item.active, key)
             self.assertEqual(item.action_xmlid, action_xmlid, key)
 
             action = self.env.ref(action_xmlid, raise_if_not_found=False)
@@ -154,25 +204,42 @@ class TestCmsCoverage(TransactionCase):
         somebody's sidebar, or a leaf accidentally landing in ADMIN — the two
         sections the user explicitly ruled out stay exactly as they were.
         """
-        Item = self.env['cms.sidebar.item']
+        Item = self.env['cms.sidebar.item'].with_context(active_test=False)
         ours = {self._item(k).id for k in EXPECTED}
+        relocated = {self._item(k).id for k in CONSOLIDATED_TO_ADMIN}
 
-        # (a) The excluded sections gained nothing.
-        for section_key in ('section_admin', 'section_interop'):
-            section = self.env.ref('health_cms_sidebar.%s' % section_key)
-            in_section = Item.search([('section_id', '=', section.id)])
-            self.assertFalse(
-                ours & set(in_section.ids),
-                '%s must not have gained a leaf from this module' % section_key)
+        # (a) INTEROP still gains nothing. ADMIN deliberately receives the
+        #     three config leaves that consolidation moved there — and nothing
+        #     else from this module.
+        interop = self.env.ref('health_cms_sidebar.section_interop')
+        self.assertFalse(
+            ours & set(Item.search([('section_id', '=', interop.id)]).ids),
+            'section_interop must not have gained a leaf from this module')
+
+        admin = self.env.ref('health_cms_sidebar.section_admin')
+        in_admin = ours & set(
+            Item.search([('section_id', '=', admin.id)]).ids)
+        self.assertEqual(
+            in_admin, relocated,
+            'ADMIN must hold exactly the config leaves consolidation moved '
+            'there — no more, no less')
 
         # (b) In every section we DID touch, our sequences are strictly above
-        #     the pre-existing ones, so no existing item moves.
+        #     the pre-existing ones, so no existing item moves. Leaves that
+        #     consolidation relocated are no longer in these sections, and
+        #     retired ones no longer render, so both are excluded.
+        retired = {self._item(k).id for k in CONSOLIDATED_RETIRED}
         for section_key in SECTIONS_TOUCHED:
             section = self.env.ref('health_cms_sidebar.%s' % section_key)
             in_section = Item.search([('section_id', '=', section.id)])
-            mine = in_section.filtered(lambda i: i.id in ours)
-            theirs = in_section - mine
-            self.assertTrue(mine, section_key)
+            mine = in_section.filtered(
+                lambda i: i.id in ours and i.id not in retired)
+            theirs = in_section.filtered(
+                lambda i: i.id not in ours and i.active)
+            if not mine:
+                # Every leaf this module put in the section was retired or
+                # relocated — nothing left to interleave.
+                continue
             self.assertTrue(theirs, '%s: fixture guard — the section must '
                                     'still hold its original leaves'
                                     % section_key)
@@ -193,7 +260,14 @@ class TestCmsCoverage(TransactionCase):
         keys = self.env['cms.sidebar.item'].get_match_keys()
         xmlids = set(keys['xmlids'])
         for key, (_section, action_xmlid, matches) in EXPECTED.items():
-            self.assertIn(action_xmlid, xmlids, key)
+            # get_match_keys() filters active=True, so a retired leaf no longer
+            # carries its own action. That action MUST still be in the payload
+            # via ATTACH_MATCH on the parent leaf, or the consolidated tab that
+            # navigates to it would drop the CMS shell.
+            self.assertIn(
+                action_xmlid, xmlids,
+                '%s: action missing from the shell allowlist — opening it '
+                'would kick the user into the bare Odoo backend' % key)
             for xmlid in matches:
                 self.assertIn(xmlid, xmlids, '%s: %s' % (key, xmlid))
 
@@ -207,8 +281,12 @@ class TestCmsCoverage(TransactionCase):
         # Returns a LIST of section dicts (not a dict with a 'sections' key).
         data = self.env['cms.sidebar.item'].get_sidebar_data()
         self.assertIsInstance(data, list)
-        for expected in ('Diagnoses', 'Unsigned Notes', 'Coding Review',
-                         'Visit Tasks', 'Patient Portal', 'Consent Check Log'):
+        # Consolidation (19.0.1.2.0) retired 'Diagnoses', 'Visit Tasks' and
+        # 'Patient Portal' (now client/booking tabs) and moved 'Consent Check
+        # Log' to ADMIN. The point of this test — a role-less user is still
+        # served the ungated CLINICAL leaves — is asserted on the ones that
+        # remain in the section.
+        for expected in ('Unsigned Notes', 'Coding Review', 'Observations'):
             self.assertIn(expected, self._names(data),
                           '%r is not in the sidebar payload' % expected)
 
@@ -273,8 +351,14 @@ class TestCmsCoverage(TransactionCase):
             self.assertNotIn(hidden, names,
                              '%r must not be offered to the CRM role — it '
                              'cannot open it' % hidden)
-        for shown in ('Channels (setup)', 'Reply Templates',
-                      'Follow-up Calendar', 'Relationships', 'Diagnoses'):
+        # Menu consolidation (19.0.1.2.0) retired 'Follow-up Calendar' (now a
+        # calendar view mode + saved filter on Contacts), 'Relationships' (the
+        # client profile already had the tab) and 'Diagnoses' (now a client
+        # tab), and moved 'Channels (setup)' / 'Reply Templates' to ADMIN. What
+        # this test is really about — the CRM role reaching what it can open —
+        # is now asserted against the leaves that stayed in CRM.
+        for shown in ('Contacts', 'Activities', 'Web Touchpoints',
+                      'Lead Analysis'):
             self.assertIn(shown, names,
                           '%r must still reach the CRM role' % shown)
 
