@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- The launcher and the drawer.
+
+     Note what is NOT here: no backdrop, no o_dialog, no focus trap. The screen
+     behind the drawer stays readable and clickable, because the whole reason
+     someone opens this is that they are stuck on that screen. -->
+<t t-name="health_learn.CoachHost">
+    <div class="lrn-coachhost" t-on-click="onClick">
+
+        <button class="lrn-fab" t-on-click="toggle"
+                t-att-class="{ open: state.open }"
+                t-att-aria-expanded="state.open"
+                aria-haspopup="dialog"
+                t-attf-title="#{state.open ? '' : 'Care Coach (?)'}">
+            <svg class="lrn-ic" aria-hidden="true">
+                <use t-attf-href="#lrn-i-#{state.open ? 'x' : 'bot'}"/>
+            </svg>
+        </button>
+
+        <aside class="lrn-drawer" t-if="state.open" role="dialog"
+               aria-label="Care Coach">
+            <header class="lrn-dhead">
+                <span class="lrn-dtitle">
+                    <svg class="lrn-ic" aria-hidden="true"><use href="#lrn-i-bot"/></svg>
+                    <b t-esc="coachName"/>
+                </span>
+                <!-- Routed through the delegated handler on the root, like every
+                     other control in this drawer. A direct t-on-click here did not
+                     fire and cost three rounds to notice, while data-act has worked
+                     from the first build — so use the path that is already proven
+                     rather than the one that should work. -->
+                <button class="lrn-btn sm ghost" data-act="c-lang">
+                    <span t-esc="langLabel"/>
+                </button>
+                <button class="lrn-btn sm ghost" data-act="c-close" aria-label="Close">
+                    <svg class="lrn-ic" aria-hidden="true"><use href="#lrn-i-x"/></svg>
+                </button>
+            </header>
+
+            <!-- The standing promise, on screen rather than in a policy doc. -->
+            <p class="lrn-dhonest">
+                <svg class="lrn-ic" aria-hidden="true"><use href="#lrn-i-shield-check"/></svg>
+                <span t-esc="honestText"/>
+            </p>
+
+            <div class="lrn-dbody" t-out="bodyHTML"/>
+
+            <form class="lrn-dask" t-on-submit="onSubmit">
+                <input type="text" t-ref="input" t-att-value="state.question"
+                       t-on-input="onInput" t-att-disabled="state.busy"
+                       t-att-placeholder="askPlaceholder" t-att-aria-label="askPlaceholder"/>
+                <button class="lrn-btn sm pri" type="submit" t-att-disabled="state.busy">
+                    <svg class="lrn-ic" aria-hidden="true"><use href="#lrn-i-send"/></svg>
+                </button>
+            </form>
+        </aside>
+    </div>
+</t>
+
+</templates>

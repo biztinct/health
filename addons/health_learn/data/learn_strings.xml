@@ -140,6 +140,11 @@
         <field name="value">Care Coach</field>
     </record>
 
+    <record id="str_coachnoscreen" model="learn.string">
+        <field name="key">coachNoScreen</field>
+        <field name="value">I don't have lessons for this screen yet. I only answer about the CRM section for now.</field>
+    </record>
+
     <record id="str_comp" model="learn.string">
         <field name="key">comp</field>
         <field name="value">Care Coach</field>
@@ -293,6 +298,11 @@
     <record id="str_howask" model="learn.string">
         <field name="key">howAsk</field>
         <field name="value">How to get access:</field>
+    </record>
+
+    <record id="str_howinstead" model="learn.string">
+        <field name="key">howInstead</field>
+        <field name="value">What to do instead:</field>
     </record>
 
     <record id="str_hublead" model="learn.string">
@@ -498,6 +508,11 @@
     <record id="str_playing" model="learn.string">
         <field name="key">playing</field>
         <field name="value">Autoplay on</field>
+    </record>
+
+    <record id="str_pointnothere" model="learn.string">
+        <field name="key">pointNotHere</field>
+        <field name="value">That one is a teaching view inside the practice clinic, not a control on this screen.</field>
     </record>
 
     <record id="str_practicebanner" model="learn.string">

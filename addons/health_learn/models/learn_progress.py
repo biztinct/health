@@ -112,6 +112,12 @@ class LearnEvent(models.Model):
             ('quiz_answer', self.env._('Understanding check answered')),
             ('lesson_complete', self.env._('Lesson completed')),
             ('lesson_abandon', self.env._('Lesson abandoned')),
+            # Phase 2 — the Coach. coach_miss is the most valuable row in this
+            # table: it is a question a real person asked that the content does
+            # not answer, which is the next piece of content to write.
+            ('coach_open', self.env._('Coach opened')),
+            ('coach_hit', self.env._('Coach answered')),
+            ('coach_miss', self.env._('Coach had no answer')),
         ]
 
     # -- append-only ------------------------------------------------------

@@ -1,0 +1,1696 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED FILE. Do not edit.
+         Source: docs/tutorial_crm/ · Regenerate: python3 docs/tutorial_crm/tools/gen_learn_data.py
+         Hand edits are erased on the next run and fail the CI check. -->
+<!-- Coach intents. Every answer the Coach can give is a block here; there is no path from a question to the screen that skips this file, which is what lets it promise never to invent a fact. -->
+<odoo>
+
+    <record id="intent_whatpage" model="learn.intent">
+        <field name="key">whatpage</field>
+        <field name="label">What does this screen do?</field>
+        <field name="screens">*</field>
+        <field name="dynamic">screen_blurb</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_whatpage_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatpage"/>
+        <field name="text">what does this page do</field>
+    </record>
+
+    <record id="intent_whatpage_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatpage"/>
+        <field name="text">what is this screen</field>
+    </record>
+
+    <record id="intent_whatpage_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatpage"/>
+        <field name="text">what page</field>
+    </record>
+
+    <record id="intent_whatpage_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatpage"/>
+        <field name="text">trang này</field>
+    </record>
+
+    <record id="intent_whatpage_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatpage"/>
+        <field name="text">màn hình này</field>
+    </record>
+
+    <record id="intent_whatpage_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatpage"/>
+        <field name="text">màn hình này làm gì</field>
+    </record>
+
+    <record id="intent_whatpage_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatpage"/>
+        <field name="text">What does this screen do?</field>
+    </record>
+
+    <record id="intent_whatpage_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatpage"/>
+        <field name="text">Màn hình này dùng để làm gì?</field>
+    </record>
+
+    <record id="intent_urgency" model="learn.intent">
+        <field name="key">urgency</field>
+        <field name="label">Why is conversation #4172 at 110?</field>
+        <field name="screens">carecommand</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">cc-score-4172,cc-watch-4172</field>
+        <field name="simpler">Six things each add points: it needs a reply (40), there's a visit today (30), unread messages (15), a missed call (10), and it used a phrase we watch for (15). 40+30+15+10+15 = 110. Waiting longer adds more.</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_urgency_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">why is this 110</field>
+    </record>
+
+    <record id="intent_urgency_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">urgency</field>
+    </record>
+
+    <record id="intent_urgency_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">score</field>
+    </record>
+
+    <record id="intent_urgency_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">why is the score</field>
+    </record>
+
+    <record id="intent_urgency_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">điểm ưu tiên</field>
+    </record>
+
+    <record id="intent_urgency_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">vì sao 110</field>
+    </record>
+
+    <record id="intent_urgency_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">điểm này</field>
+    </record>
+
+    <record id="intent_urgency_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">Why is conversation #4172 at 110?</field>
+    </record>
+
+    <record id="intent_urgency_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="text">Vì sao cuộc hội thoại #4172 là 110?</field>
+    </record>
+
+    <record id="intent_urgency_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">The urgency score is arithmetic, not an opinion. For #4172 six terms add up:</field>
+    </record>
+
+    <record id="intent_urgency_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">calc</field>
+    </record>
+
+    <record id="intent_urgency_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">It is a queue position, not a clinical severity. A 110 tells you to look now; it tells you nothing about the patient's condition.</field>
+    </record>
+
+    <record id="intent_urgency_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">At 11:42 the same conversation reads &lt;b&gt;114&lt;/b&gt;: the ageing term becomes +4, one point per whole hour of waiting, capped at 20.</field>
+    </record>
+
+    <record id="intent_urgency_b050" model="learn.intent.block">
+        <field name="intent_id" ref="intent_urgency"/>
+        <field name="sequence">50</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Care Command's stored urgency computation, and conversation #4172 in this practice tenant.</field>
+    </record>
+
+    <record id="intent_claimfirst" model="learn.intent">
+        <field name="key">claimfirst</field>
+        <field name="label">Why must I claim before replying?</field>
+        <field name="screens">carecommand</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">cc-claim,cc-release</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_claimfirst_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="text">claim</field>
+    </record>
+
+    <record id="intent_claimfirst_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="text">why claim</field>
+    </record>
+
+    <record id="intent_claimfirst_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="text">nhận xử lý</field>
+    </record>
+
+    <record id="intent_claimfirst_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="text">vì sao phải nhận</field>
+    </record>
+
+    <record id="intent_claimfirst_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="text">Why must I claim before replying?</field>
+    </record>
+
+    <record id="intent_claimfirst_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="text">Vì sao phải nhận xử lý trước khi trả lời?</field>
+    </record>
+
+    <record id="intent_claimfirst_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Claiming makes you the single owner of the conversation. Without it, two operators can answer the same family within a minute of each other — the most common complaint this wall exists to prevent.</field>
+    </record>
+
+    <record id="intent_claimfirst_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_claimfirst_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_claimfirst_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Open the conversation from the wall.</field>
+        <field name="anchor">cc-row-4172</field>
+    </record>
+
+    <record id="intent_claimfirst_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_claimfirst_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Press Claim on the ownership banner.</field>
+        <field name="anchor">cc-claim</field>
+    </record>
+
+    <record id="intent_claimfirst_b020_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_claimfirst_b020"/>
+        <field name="sequence">30</field>
+        <field name="text">Reply, book or escalate as the owner.</field>
+        <field name="anchor">cc-actions</field>
+    </record>
+
+    <record id="intent_claimfirst_b020_s03" model="learn.intent.step">
+        <field name="block_id" ref="intent_claimfirst_b020"/>
+        <field name="sequence">40</field>
+        <field name="text">Release when you go off shift.</field>
+        <field name="anchor">cc-release</field>
+    </record>
+
+    <record id="intent_claimfirst_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">ok</field>
+        <field name="body">If two of you claim in the same second, exactly one wins and the other is shown who owns it. Nothing is lost and nothing is duplicated.</field>
+    </record>
+
+    <record id="intent_claimfirst_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_claimfirst"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Care Command's claim, release and take-over service methods.</field>
+    </record>
+
+    <record id="intent_takeover" model="learn.intent">
+        <field name="key">takeover</field>
+        <field name="label">Can I take a conversation off a colleague?</field>
+        <field name="screens">carecommand</field>
+        <field name="dynamic">none</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_takeover_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="text">take over</field>
+    </record>
+
+    <record id="intent_takeover_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="text">take it off</field>
+    </record>
+
+    <record id="intent_takeover_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="text">someone else has it</field>
+    </record>
+
+    <record id="intent_takeover_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="text">tiếp quản</field>
+    </record>
+
+    <record id="intent_takeover_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="text">người khác đang giữ</field>
+    </record>
+
+    <record id="intent_takeover_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="text">Can I take a conversation off a colleague?</field>
+    </record>
+
+    <record id="intent_takeover_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="text">Tôi có tiếp quản được cuộc hội thoại của đồng nghiệp không?</field>
+    </record>
+
+    <record id="intent_takeover_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">10</field>
+        <field name="capability">operator</field>
+        <field name="kind">refusal</field>
+        <field name="body">Taking an owned conversation off someone else needs the CRM Manager permission. Your CRM / Reception role can claim unclaimed conversations and release your own, but not take one from a colleague.</field>
+    </record>
+
+    <record id="intent_takeover_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">20</field>
+        <field name="capability">operator</field>
+        <field name="kind">who</field>
+        <field name="body">A CRM Manager, or the Owner.</field>
+    </record>
+
+    <record id="intent_takeover_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">30</field>
+        <field name="capability">operator</field>
+        <field name="kind">how</field>
+        <field name="body">Ask the owner to press Release, or ask {{accessRequestPath}} to take it over. If the owner is off shift and the item is urgent, escalate it — that reaches a clinician without changing ownership.</field>
+    </record>
+
+    <record id="intent_takeover_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">40</field>
+        <field name="capability">no_access</field>
+        <field name="kind">refusal</field>
+        <field name="body">Care Command is not in your sidebar. This leaf is gated to the Owner and CRM roles in the database, so a Nurse account does not see the wall at all.</field>
+    </record>
+
+    <record id="intent_takeover_b050" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">50</field>
+        <field name="capability">no_access</field>
+        <field name="kind">who</field>
+        <field name="body">Owner, CRM / Reception, and CRM Managers.</field>
+    </record>
+
+    <record id="intent_takeover_b060" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">60</field>
+        <field name="capability">no_access</field>
+        <field name="kind">how</field>
+        <field name="body">You do not need it for clinical work — escalations reach you through your own queue. If you genuinely need the wall, {{accessRequestPath}} can request the CRM role for your account.</field>
+    </record>
+
+    <record id="intent_takeover_b070" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">70</field>
+        <field name="capability">manager</field>
+        <field name="kind">ok</field>
+        <field name="body">Yes. As Operations Manager you hold the CRM Manager permission, so Take over is available to you on any owned conversation in your catchment area.</field>
+    </record>
+
+    <record id="intent_takeover_b080" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">80</field>
+        <field name="capability">manager</field>
+        <field name="kind">warn</field>
+        <field name="body">It reassigns silently. The previous owner is not asked, and if they are mid-reply you can both end up answering. Say something first.</field>
+    </record>
+
+    <record id="intent_takeover_b090" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">90</field>
+        <field name="capability">manager</field>
+        <field name="kind">source</field>
+        <field name="body">Care Command's take-over method, which refuses any caller without the CRM Manager permission.</field>
+    </record>
+
+    <record id="intent_takeover_b100" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">100</field>
+        <field name="capability">owner</field>
+        <field name="kind">ok</field>
+        <field name="body">Yes — the Owner role carries every CRM permission, including Take over across all catchment areas.</field>
+    </record>
+
+    <record id="intent_takeover_b110" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">110</field>
+        <field name="capability">owner</field>
+        <field name="kind">warn</field>
+        <field name="body">Same caution as any manager: it reassigns silently, so tell the previous owner.</field>
+    </record>
+
+    <record id="intent_takeover_b120" model="learn.intent.block">
+        <field name="intent_id" ref="intent_takeover"/>
+        <field name="sequence">120</field>
+        <field name="capability">owner</field>
+        <field name="kind">source</field>
+        <field name="body">Care Command's take-over method, and the Owner role's CRM permissions.</field>
+    </record>
+
+    <record id="intent_junk" model="learn.intent">
+        <field name="key">junk</field>
+        <field name="label">What actually happens if I mark this Junk?</field>
+        <field name="screens">carecommand,contacts</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">cc-junk</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_junk_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="text">junk</field>
+    </record>
+
+    <record id="intent_junk_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="text">spam</field>
+    </record>
+
+    <record id="intent_junk_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="text">mark as spam</field>
+    </record>
+
+    <record id="intent_junk_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="text">thư rác</field>
+    </record>
+
+    <record id="intent_junk_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="text">đánh dấu thư rác</field>
+    </record>
+
+    <record id="intent_junk_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="text">What actually happens if I mark this Junk?</field>
+    </record>
+
+    <record id="intent_junk_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="text">Đánh dấu Thư rác? thì thật ra chuyện gì xảy ra?</field>
+    </record>
+
+    <record id="intent_junk_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">It does two things, not one. It zeroes the urgency score and takes the row off the wall — &lt;b&gt;and&lt;/b&gt; it marks the linked contact as spam and flags the phone number for the future.</field>
+    </record>
+
+    <record id="intent_junk_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">The consequence lands on the next operator: the same number calls in three weeks and arrives pre-judged. In home care, a family member messaging on a patient's behalf is the normal case, so “this is not the patient's account” is never on its own a reason to mark junk.</field>
+    </record>
+
+    <record id="intent_junk_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_junk_b030_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_junk_b030"/>
+        <field name="sequence">10</field>
+        <field name="text">Check whether the number matches an existing client first.</field>
+        <field name="anchor">cc-consent</field>
+    </record>
+
+    <record id="intent_junk_b030_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_junk_b030"/>
+        <field name="sequence">20</field>
+        <field name="text">If it is a real person you cannot help, use Closed, not Junk?.</field>
+        <field name="anchor">cc-pipeline</field>
+    </record>
+
+    <record id="intent_junk_b030_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_junk_b030"/>
+        <field name="sequence">30</field>
+        <field name="text">Reserve Junk? for advertising, wrong numbers and bots.</field>
+        <field name="anchor">cc-junk</field>
+    </record>
+
+    <record id="intent_junk_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_junk"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Care Command's set-status method, which additionally runs the CRM spam path on the linked lead.</field>
+    </record>
+
+    <record id="intent_consent" model="learn.intent">
+        <field name="key">consent</field>
+        <field name="label">The daughter is asking about her mother's wound — can I answer?</field>
+        <field name="screens">carecommand,contacts</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">cc-consent</field>
+        <field name="practice_key">m1</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_consent_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">consent</field>
+    </record>
+
+    <record id="intent_consent_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">family member</field>
+    </record>
+
+    <record id="intent_consent_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">daughter</field>
+    </record>
+
+    <record id="intent_consent_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">can i tell</field>
+    </record>
+
+    <record id="intent_consent_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">đồng thuận</field>
+    </record>
+
+    <record id="intent_consent_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">người nhà</field>
+    </record>
+
+    <record id="intent_consent_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">con gái</field>
+    </record>
+
+    <record id="intent_consent_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">được nói không</field>
+    </record>
+
+    <record id="intent_consent_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">The daughter is asking about her mother's wound — can I answer?</field>
+    </record>
+
+    <record id="intent_consent_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="text">Người con gái hỏi về vết thương của mẹ — tôi trả lời được không?</field>
+    </record>
+
+    <record id="intent_consent_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Not from the clinical detail. Family relationship is not consent. What you may share with a named other person is a recorded permission — a Data Sharing consent — with a state you must actually look at.</field>
+    </record>
+
+    <record id="intent_consent_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">For this case the consent exists but was &lt;b&gt;withdrawn on 30 June 2026&lt;/b&gt;, which is an explicit “no” from the patient herself, not a missing record.</field>
+    </record>
+
+    <record id="intent_consent_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_consent_b030_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_consent_b030"/>
+        <field name="sequence">10</field>
+        <field name="text">Open Consents on the action strip and read the state and the date.</field>
+        <field name="anchor">cc-consent</field>
+    </record>
+
+    <record id="intent_consent_b030_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_consent_b030"/>
+        <field name="sequence">20</field>
+        <field name="text">Reply acknowledging the concern, without clinical content.</field>
+        <field name="anchor">cc-composer</field>
+    </record>
+
+    <record id="intent_consent_b030_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_consent_b030"/>
+        <field name="sequence">30</field>
+        <field name="text">Escalate the clinical question to the {{roleDutyDoctor}}.</field>
+        <field name="anchor">cc-escalate</field>
+    </record>
+
+    <record id="intent_consent_b030_s03" model="learn.intent.step">
+        <field name="block_id" ref="intent_consent_b030"/>
+        <field name="sequence">40</field>
+        <field name="text">Call the client's own registered number — that route needs no third-party consent.</field>
+        <field name="anchor">cc-actions</field>
+    </record>
+
+    <record id="intent_consent_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">ok</field>
+        <field name="body">Being fast is still right. Reply inside {{replySlaMinutes}} minutes — just not with the thing you are not permitted to say.</field>
+    </record>
+
+    <record id="intent_consent_b050" model="learn.intent.block">
+        <field name="intent_id" ref="intent_consent"/>
+        <field name="sequence">50</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The consent record for Nguyễn Thị Hoa in this practice tenant, and the Data Sharing consent type.</field>
+    </record>
+
+    <record id="intent_quiet" model="learn.intent">
+        <field name="key">quiet</field>
+        <field name="label">The wall has gone quiet — where do I look?</field>
+        <field name="screens">channelcenter,carecommand,dashboard</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ch-catalogue,ch-area-zalo-hn</field>
+        <field name="practice_key">m2</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_quiet_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">quiet</field>
+    </record>
+
+    <record id="intent_quiet_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">no messages</field>
+    </record>
+
+    <record id="intent_quiet_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">stopped getting</field>
+    </record>
+
+    <record id="intent_quiet_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">why is the wall empty</field>
+    </record>
+
+    <record id="intent_quiet_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">không có tin nhắn</field>
+    </record>
+
+    <record id="intent_quiet_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">vì sao bảng trống</field>
+    </record>
+
+    <record id="intent_quiet_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">yên ắng</field>
+    </record>
+
+    <record id="intent_quiet_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">The wall has gone quiet — where do I look?</field>
+    </record>
+
+    <record id="intent_quiet_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="text">Bảng bỗng yên ắng — tôi phải xem ở đâu?</field>
+    </record>
+
+    <record id="intent_quiet_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Two very different shapes, and they need opposite responses:</field>
+    </record>
+
+    <record id="intent_quiet_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_quiet_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_quiet_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Volume DISAPPEARED — check the Channel Center states. A channel outside Connected or Expiring soon neither sends nor receives, and nothing queues.</field>
+        <field name="anchor">ch-catalogue</field>
+    </record>
+
+    <record id="intent_quiet_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_quiet_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Volume MOVED to another team — check the catchment area on each Official Account. That field is the routing rule.</field>
+        <field name="anchor">ch-area-zalo-hn</field>
+    </record>
+
+    <record id="intent_quiet_b020_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_quiet_b020"/>
+        <field name="sequence">30</field>
+        <field name="text">Neither? Check your own catchment filter at the top of the wall before you conclude anything.</field>
+        <field name="anchor">cc-catchment</field>
+    </record>
+
+    <record id="intent_quiet_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Do not re-authorise as a diagnostic. It takes the channel out of service while it walks the path again, so you would add a real outage to whatever you were investigating.</field>
+    </record>
+
+    <record id="intent_quiet_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_quiet"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Channel connection lifecycle states, and the catchment derivation that prefers the channel account the traffic arrived on.</field>
+    </record>
+
+    <record id="intent_kpis" model="learn.intent">
+        <field name="key">kpis</field>
+        <field name="label">How is Conversion Rate calculated?</field>
+        <field name="screens">dashboard,leadanalysis</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">db-conversion_rate,db-spam_rate</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_kpis_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">conversion</field>
+    </record>
+
+    <record id="intent_kpis_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">conversion rate</field>
+    </record>
+
+    <record id="intent_kpis_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">kpi</field>
+    </record>
+
+    <record id="intent_kpis_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">spam rate</field>
+    </record>
+
+    <record id="intent_kpis_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">numbers</field>
+    </record>
+
+    <record id="intent_kpis_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">tỷ lệ chuyển đổi</field>
+    </record>
+
+    <record id="intent_kpis_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">tỷ lệ thư rác</field>
+    </record>
+
+    <record id="intent_kpis_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">con số</field>
+    </record>
+
+    <record id="intent_kpis_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">How is Conversion Rate calculated?</field>
+    </record>
+
+    <record id="intent_kpis_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="text">Tỷ lệ chuyển đổi được tính thế nào?</field>
+    </record>
+
+    <record id="intent_kpis_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Conversion Rate is a &lt;b&gt;month&lt;/b&gt; figure — bookings as a share of real enquiries, with spam excluded from the denominator. This month:</field>
+    </record>
+
+    <record id="intent_kpis_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">calc_kpi</field>
+    </record>
+
+    <record id="intent_kpis_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Do not compare it with Contacts Today, which is a day figure. Different windows, always. Lead Analysis only reconciles with this card when you match both the period and the catchment filter.</field>
+    </record>
+
+    <record id="intent_kpis_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">A falling Spam Rate is not automatically good news: it can also mean nobody is marking spam, which inflates the denominator and quietly depresses conversion.</field>
+    </record>
+
+    <record id="intent_kpis_b050" model="learn.intent.block">
+        <field name="intent_id" ref="intent_kpis"/>
+        <field name="sequence">50</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The six KPI definitions on the CRM Dashboard, and this practice tenant's August figures.</field>
+    </record>
+
+    <record id="intent_attrib" model="learn.intent">
+        <field name="key">attrib</field>
+        <field name="label">Why are four enquiries in “Unmatched campaigns”?</field>
+        <field name="screens">touchpoints,leadanalysis</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">tp-unmatched</field>
+        <field name="practice_key">m4</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_attrib_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">unmatched</field>
+    </record>
+
+    <record id="intent_attrib_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">utm</field>
+    </record>
+
+    <record id="intent_attrib_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">campaign</field>
+    </record>
+
+    <record id="intent_attrib_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">attribution</field>
+    </record>
+
+    <record id="intent_attrib_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">chưa khớp</field>
+    </record>
+
+    <record id="intent_attrib_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">chiến dịch</field>
+    </record>
+
+    <record id="intent_attrib_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">quy nguồn</field>
+    </record>
+
+    <record id="intent_attrib_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">Why are four enquiries in “Unmatched campaigns”?</field>
+    </record>
+
+    <record id="intent_attrib_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="text">Vì sao có bốn yêu cầu nằm trong “Chiến dịch chưa khớp”?</field>
+    </record>
+
+    <record id="intent_attrib_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Because they arrived with no UTM tags and no click id, so nothing identifies the advert. Of this month's 34 website enquiries: &lt;b&gt;19&lt;/b&gt; google / cpc, &lt;b&gt;11&lt;/b&gt; facebook / paid, &lt;b&gt;4&lt;/b&gt; unmatched.</field>
+    </record>
+
+    <record id="intent_attrib_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">ok</field>
+        <field name="body">This is almost always fixable at the source: somebody published a link without tags. It is a repeating leak, not noise.</field>
+    </record>
+
+    <record id="intent_attrib_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Do not assume the touchpoint and the conversation share a channel. Someone can click a Google advert on Monday and message Zalo on Wednesday — the two are joined by phone number, not by channel.</field>
+    </record>
+
+    <record id="intent_attrib_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_attrib"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The web touchpoint records for August in this practice tenant.</field>
+    </record>
+
+    <record id="intent_unroutedq" model="learn.intent">
+        <field name="key">unroutedq</field>
+        <field name="label">What do I do with an unrouted contact?</field>
+        <field name="screens">unrouted,carecommand</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">ur-list</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_unroutedq_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">unrouted</field>
+    </record>
+
+    <record id="intent_unroutedq_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">convert</field>
+    </record>
+
+    <record id="intent_unroutedq_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">dismiss</field>
+    </record>
+
+    <record id="intent_unroutedq_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">capture</field>
+    </record>
+
+    <record id="intent_unroutedq_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">chưa được định tuyến</field>
+    </record>
+
+    <record id="intent_unroutedq_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">chuyển đổi</field>
+    </record>
+
+    <record id="intent_unroutedq_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">bỏ qua</field>
+    </record>
+
+    <record id="intent_unroutedq_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">What do I do with an unrouted contact?</field>
+    </record>
+
+    <record id="intent_unroutedq_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="text">Tôi phải làm gì với một liên hệ chưa được định tuyến?</field>
+    </record>
+
+    <record id="intent_unroutedq_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Convert it if it carries at least one anchor — a contact, a phone number or an email address. Dismiss it if it genuinely was not a patient. You cannot edit it: the record is evidence of exactly what the channel sent.</field>
+    </record>
+
+    <record id="intent_unroutedq_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Dismissal is recorded against your name with a reason. It is an answer, not a way to clear the badge count.</field>
+    </record>
+
+    <record id="intent_unroutedq_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_unroutedq_b030_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_unroutedq_b030"/>
+        <field name="sequence">10</field>
+        <field name="text">Read what actually arrived — page, comment text, whatever identity the provider sent.</field>
+        <field name="anchor">ur-list</field>
+    </record>
+
+    <record id="intent_unroutedq_b030_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_unroutedq_b030"/>
+        <field name="sequence">20</field>
+        <field name="text">Convert if there is an anchor; the item becomes a conversation on the wall.</field>
+        <field name="anchor">ur-convert</field>
+    </record>
+
+    <record id="intent_unroutedq_b030_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_unroutedq_b030"/>
+        <field name="sequence">30</field>
+        <field name="text">Otherwise dismiss with a reason a colleague could audit.</field>
+        <field name="anchor">ur-dismiss</field>
+    </record>
+
+    <record id="intent_unroutedq_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_unroutedq"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The unrouted-contact model, whose fields are immutable outside the server paths.</field>
+    </record>
+
+    <record id="intent_escalate" model="learn.intent">
+        <field name="key">escalate</field>
+        <field name="label">When should I escalate, and to whom?</field>
+        <field name="screens">carecommand,contacts</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">cc-escalate</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_escalate_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">escalate</field>
+    </record>
+
+    <record id="intent_escalate_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">escalation</field>
+    </record>
+
+    <record id="intent_escalate_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">head nurse</field>
+    </record>
+
+    <record id="intent_escalate_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">duty doctor</field>
+    </record>
+
+    <record id="intent_escalate_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">who do i tell</field>
+    </record>
+
+    <record id="intent_escalate_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">chuyển cấp</field>
+    </record>
+
+    <record id="intent_escalate_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">điều dưỡng trưởng</field>
+    </record>
+
+    <record id="intent_escalate_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">bác sĩ trực</field>
+    </record>
+
+    <record id="intent_escalate_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">báo cho ai</field>
+    </record>
+
+    <record id="intent_escalate_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">When should I escalate, and to whom?</field>
+    </record>
+
+    <record id="intent_escalate_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="text">Khi nào nên chuyển cấp, và cho ai?</field>
+    </record>
+
+    <record id="intent_escalate_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Escalate when the question needs clinical judgement you are not qualified to give, or when someone is describing something that may not wait. It routes to the &lt;b&gt;{{roleHeadNurse}}&lt;/b&gt;, the &lt;b&gt;{{roleOpsManager}}&lt;/b&gt; or the &lt;b&gt;{{roleDutyDoctor}}&lt;/b&gt;.</field>
+    </record>
+
+    <record id="intent_escalate_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">It needs a lead on the conversation and it pages a real person. That is the cost — and it is a much smaller cost than a wound question answered by reception.</field>
+    </record>
+
+    <record id="intent_escalate_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">ok</field>
+        <field name="body">Escalating is never the wrong call when you are unsure. Guessing is.</field>
+    </record>
+
+    <record id="intent_escalate_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_escalate"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Care Command's escalate action and the CRM escalation targets.</field>
+    </record>
+
+    <record id="intent_walkin" model="learn.intent">
+        <field name="key">walkin</field>
+        <field name="label">Someone just walked in — how do I log it?</field>
+        <field name="screens">carecommand,contacts,dashboard</field>
+        <field name="dynamic">none</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_walkin_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">walk in</field>
+    </record>
+
+    <record id="intent_walkin_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">walkin</field>
+    </record>
+
+    <record id="intent_walkin_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">someone at the desk</field>
+    </record>
+
+    <record id="intent_walkin_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">came to the clinic</field>
+    </record>
+
+    <record id="intent_walkin_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">đến trực tiếp</field>
+    </record>
+
+    <record id="intent_walkin_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">khách đến quầy</field>
+    </record>
+
+    <record id="intent_walkin_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">đến phòng khám</field>
+    </record>
+
+    <record id="intent_walkin_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">Someone just walked in — how do I log it?</field>
+    </record>
+
+    <record id="intent_walkin_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="text">Có khách đến trực tiếp — ghi nhận thế nào?</field>
+    </record>
+
+    <record id="intent_walkin_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Log a walk-in from the wall. It needs a contact, a phone number or an email so the person can be followed up — a walk-in with no way to reach them afterwards is not a record, it is a memory.</field>
+    </record>
+
+    <record id="intent_walkin_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Walk-in is the one channel a human logs by hand, and the only conversation channel you cannot connect in the Channel Center — a person coming through the door has no provider and no credentials.</field>
+    </record>
+
+    <record id="intent_walkin_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_walkin"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Care Command's walk-in action, and the connectable-channel list that deliberately excludes it.</field>
+    </record>
+
+    <record id="intent_reminder" model="learn.intent">
+        <field name="key">reminder</field>
+        <field name="label">How do I make sure this gets followed up?</field>
+        <field name="screens">carecommand,activities,contacts</field>
+        <field name="dynamic">none</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_reminder_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">reminder</field>
+    </record>
+
+    <record id="intent_reminder_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">follow up later</field>
+    </record>
+
+    <record id="intent_reminder_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">call back</field>
+    </record>
+
+    <record id="intent_reminder_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">remind me</field>
+    </record>
+
+    <record id="intent_reminder_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">nhắc hẹn</field>
+    </record>
+
+    <record id="intent_reminder_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">nhắc lại</field>
+    </record>
+
+    <record id="intent_reminder_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">gọi lại sau</field>
+    </record>
+
+    <record id="intent_reminder_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">theo dõi sau</field>
+    </record>
+
+    <record id="intent_reminder_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">How do I make sure this gets followed up?</field>
+    </record>
+
+    <record id="intent_reminder_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="text">Làm sao để chắc chắn việc này được theo dõi?</field>
+    </record>
+
+    <record id="intent_reminder_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Set a &lt;b&gt;Reminder&lt;/b&gt; on the conversation. It schedules a real activity on the lead or contact, which then appears on the shared Activities board — that board is what turns “we'll call you back” into being called back.</field>
+    </record>
+
+    <record id="intent_reminder_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Closing an activity without updating the contact's status makes the board go green while the Dashboard stays wrong. Do both.</field>
+    </record>
+
+    <record id="intent_reminder_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">ok</field>
+        <field name="body">Reminder and Internal note are the two safe actions when you are not sure what to say. Neither reaches the patient.</field>
+    </record>
+
+    <record id="intent_reminder_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_reminder"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Care Command's reminder action and the shared activity board.</field>
+    </record>
+
+    <record id="intent_catchmentq" model="learn.intent">
+        <field name="key">catchmentq</field>
+        <field name="label">Why can't I see a conversation a colleague can?</field>
+        <field name="screens">*</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">cc-catchment</field>
+        <field name="practice_key">m2</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_catchmentq_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">catchment</field>
+    </record>
+
+    <record id="intent_catchmentq_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">why cant i see</field>
+    </record>
+
+    <record id="intent_catchmentq_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">why can i not see</field>
+    </record>
+
+    <record id="intent_catchmentq_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">missing conversations</field>
+    </record>
+
+    <record id="intent_catchmentq_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">area</field>
+    </record>
+
+    <record id="intent_catchmentq_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">khu vực</field>
+    </record>
+
+    <record id="intent_catchmentq_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">vì sao tôi không thấy</field>
+    </record>
+
+    <record id="intent_catchmentq_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">thiếu cuộc hội thoại</field>
+    </record>
+
+    <record id="intent_catchmentq_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">địa bàn</field>
+    </record>
+
+    <record id="intent_catchmentq_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">Why can't I see a conversation a colleague can?</field>
+    </record>
+
+    <record id="intent_catchmentq_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="text">Vì sao đồng nghiệp thấy cuộc hội thoại mà tôi không thấy?</field>
+    </record>
+
+    <record id="intent_catchmentq_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Almost always the &lt;b&gt;catchment area&lt;/b&gt;. Every count and every list on these screens is filtered to your area, and for channel traffic the area comes from the &lt;b&gt;channel account the message arrived on&lt;/b&gt; — one Zalo Official Account per area.</field>
+    </record>
+
+    <record id="intent_catchmentq_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_catchmentq_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_catchmentq_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Check the catchment chip at the top of the wall — that is your current filter.</field>
+        <field name="anchor">cc-catchment</field>
+    </record>
+
+    <record id="intent_catchmentq_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_catchmentq_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">If the whole team is missing traffic, check the area on the channel account itself.</field>
+        <field name="anchor">ch-area-zalo-hn</field>
+    </record>
+
+    <record id="intent_catchmentq_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">The second case is the dangerous one: a connection pointed at the wrong area re-routes a whole city with no error and no warning.</field>
+    </record>
+
+    <record id="intent_catchmentq_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_catchmentq"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The catchment derivation, which prefers the channel account the traffic arrived on.</field>
+    </record>
+
+    <record id="intent_safeactions" model="learn.intent">
+        <field name="key">safeactions</field>
+        <field name="label">Which actions here can I not undo?</field>
+        <field name="screens">*</field>
+        <field name="dynamic">none</field>
+        <field name="practice_key">m1</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_safeactions_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">what is safe</field>
+    </record>
+
+    <record id="intent_safeactions_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">cant undo</field>
+    </record>
+
+    <record id="intent_safeactions_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">reversible</field>
+    </record>
+
+    <record id="intent_safeactions_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">what can i undo</field>
+    </record>
+
+    <record id="intent_safeactions_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">am i allowed</field>
+    </record>
+
+    <record id="intent_safeactions_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">an toàn</field>
+    </record>
+
+    <record id="intent_safeactions_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">hoàn tác</field>
+    </record>
+
+    <record id="intent_safeactions_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">không thu hồi</field>
+    </record>
+
+    <record id="intent_safeactions_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">được phép</field>
+    </record>
+
+    <record id="intent_safeactions_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">Which actions here can I not undo?</field>
+    </record>
+
+    <record id="intent_safeactions_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="text">Thao tác nào ở đây không hoàn tác được?</field>
+    </record>
+
+    <record id="intent_safeactions_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">&lt;b&gt;Cannot be undone:&lt;/b&gt; sending a reply — it reaches a real phone from the clinic's official account, with no draft and no recall.</field>
+    </record>
+
+    <record id="intent_safeactions_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">&lt;b&gt;Partly reversible:&lt;/b&gt; “Junk?” (the status can be set back, but the phone number stays flagged) and booking (the visit can be cancelled, but a wrongly-matched client has already been written to).</field>
+    </record>
+
+    <record id="intent_safeactions_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">ok</field>
+        <field name="body">&lt;b&gt;Freely reversible:&lt;/b&gt; claim and release, internal notes, reminders, opening consents. When you are unsure, these are where to start.</field>
+    </record>
+
+    <record id="intent_safeactions_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_safeactions"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The reversibility of each Care Command action, as the service methods implement it.</field>
+    </record>
+
+    <record id="intent_whatnext" model="learn.intent">
+        <field name="key">whatnext</field>
+        <field name="label">What should I do next?</field>
+        <field name="screens">*</field>
+        <field name="dynamic">next_step</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_whatnext_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatnext"/>
+        <field name="text">what should i do next</field>
+    </record>
+
+    <record id="intent_whatnext_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatnext"/>
+        <field name="text">next</field>
+    </record>
+
+    <record id="intent_whatnext_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatnext"/>
+        <field name="text">where do i start</field>
+    </record>
+
+    <record id="intent_whatnext_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatnext"/>
+        <field name="text">làm gì tiếp</field>
+    </record>
+
+    <record id="intent_whatnext_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatnext"/>
+        <field name="text">bắt đầu từ đâu</field>
+    </record>
+
+    <record id="intent_whatnext_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatnext"/>
+        <field name="text">tiếp theo</field>
+    </record>
+
+    <record id="intent_whatnext_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatnext"/>
+        <field name="text">What should I do next?</field>
+    </record>
+
+    <record id="intent_whatnext_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_whatnext"/>
+        <field name="text">Tiếp theo tôi nên làm gì?</field>
+    </record>
+
+    <record id="intent_clinical" model="learn.intent">
+        <field name="key">clinical</field>
+        <field name="label">Can you tell me something clinical about this patient?</field>
+        <field name="screens">*</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">cc-escalate</field>
+        <field name="offer" eval="False"/>
+    </record>
+
+    <record id="intent_clinical_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">is the wound infected</field>
+    </record>
+
+    <record id="intent_clinical_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">what dose</field>
+    </record>
+
+    <record id="intent_clinical_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">blood pressure</field>
+    </record>
+
+    <record id="intent_clinical_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">diagnosis</field>
+    </record>
+
+    <record id="intent_clinical_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">vết thương có nhiễm trùng không</field>
+    </record>
+
+    <record id="intent_clinical_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">liều dùng</field>
+    </record>
+
+    <record id="intent_clinical_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">huyết áp</field>
+    </record>
+
+    <record id="intent_clinical_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">chẩn đoán</field>
+    </record>
+
+    <record id="intent_clinical_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">Can you tell me something clinical about this patient?</field>
+    </record>
+
+    <record id="intent_clinical_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="text">Bạn có thể cho tôi biết thông tin lâm sàng về bệnh nhân này không?</field>
+    </record>
+
+    <record id="intent_clinical_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">refusal</field>
+        <field name="body">No — I do not answer clinical questions, and I never will. I explain how CareJioX works; I hold no view on a wound, a dose, a reading or a diagnosis, and a confident-sounding answer from me about any of those would be worth nothing.</field>
+    </record>
+
+    <record id="intent_clinical_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">who</field>
+        <field name="body">A clinician. The {{roleDutyDoctor}} or the {{roleHeadNurse}}.</field>
+    </record>
+
+    <record id="intent_clinical_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">how</field>
+        <field name="body">Use Escalate on the conversation — it reaches a clinician and records that you asked, which a phone call does not. If nobody is on shift and it cannot wait, ring the client's own number and follow the clinic's escalation route.</field>
+    </record>
+
+    <record id="intent_clinical_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Answering a clinical question yourself, even a small one, is the single fastest way this desk causes harm. Speed is met by escalating fast, not by answering.</field>
+    </record>
+
+    <record id="intent_clinical_b050" model="learn.intent.block">
+        <field name="intent_id" ref="intent_clinical"/>
+        <field name="sequence">50</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">CareJioX's escalation route. Nothing clinical: this answer exists to refuse, not to inform.</field>
+    </record>
+
+    <record id="intent_price" model="learn.intent">
+        <field name="key">price</field>
+        <field name="label">How much is wound care at home?</field>
+        <field name="screens">*</field>
+        <field name="dynamic">none</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_price_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="text">price</field>
+    </record>
+
+    <record id="intent_price_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="text">cost</field>
+    </record>
+
+    <record id="intent_price_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="text">how much</field>
+    </record>
+
+    <record id="intent_price_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="text">giá</field>
+    </record>
+
+    <record id="intent_price_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="text">bao nhiêu tiền</field>
+    </record>
+
+    <record id="intent_price_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="text">chi phí</field>
+    </record>
+
+    <record id="intent_price_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="text">How much is wound care at home?</field>
+    </record>
+
+    <record id="intent_price_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="text">Chăm sóc vết thương tại nhà giá bao nhiêu?</field>
+    </record>
+
+    <record id="intent_price_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">In this practice tenant, a 60-minute wound-care visit at home is priced at {PRICE}, and the 8-visit package at {PACK} — which is {SAVE} less than eight single visits.</field>
+    </record>
+
+    <record id="intent_price_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">These are the practice tenant's figures, not your clinic's price list. I will not quote a real price: prices vary by facility, service and area, and quoting a wrong one to a patient is a promise you then have to break.</field>
+    </record>
+
+    <record id="intent_price_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_price"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">This tutorial's worked example only. Your real prices live in the price list, which I do not read.</field>
+    </record>
+
+</odoo>

@@ -167,6 +167,8 @@ class Xml:
                 self.lines.append('        <field name="%s">%d</field>' % (name, val))
             elif isinstance(val, tuple) and val[0] == 'ref':
                 self.lines.append('        <field name="%s" ref="%s"/>' % (name, val[1]))
+            elif isinstance(val, tuple) and val[0] == 'eval':
+                self.lines.append('        <field name="%s" eval="%s"/>' % (name, val[1]))
             else:
                 self.lines.append('        <field name="%s">%s</field>' % (name, x(val)))
         self.lines.append('    </record>')
@@ -389,6 +391,159 @@ def gen_lessons(data, tr):
     return doc.render()
 
 
+def _intent_xmlid(key):
+    return 'intent_' + re.sub(r'[^a-z0-9]+', '_', key.lower()).strip('_')
+
+
+def _screen_xmlid(key):
+    return 'screen_' + re.sub(r'[^a-z0-9]+', '_', key.lower()).strip('_')
+
+
+# The prototype's four role names, mapped onto capabilities the product can
+# actually CHECK. This is the whole point of the Phase-2 capability model: a
+# role name is a copy that drifts, a group membership is the thing itself.
+ROLE_TO_CAPABILITY = {
+    'nurse': 'no_access',   # the leaf is not in their sidebar
+    'crm': 'operator',      # sees the screen, no CRM Manager group
+    'om': 'manager',        # holds the CRM Manager permission
+    'owner': 'owner',       # plus every catchment area
+}
+
+# Product action tags per screen, so the Coach can tell which screen the user
+# is on from the action manager. Verified against the sidebar data files.
+SCREEN_ACTION_TAGS = {
+    'dashboard': 'crm_dashboard',
+    'carecommand': 'care_command',
+    'channelcenter': 'channel_center',
+    'unrouted': 'contact_capture',
+    'contacts': 'crm_new_contact,crm_booking_wizard',
+    'touchpoints': 'web_touchpoints',
+    'leadanalysis': 'lead_analysis',
+    'activities': 'crm_activity_list',
+}
+
+
+def gen_screens(data, tr):
+    doc = Xml('Screens the Coach knows, with the questions it offers before '
+              'anything is typed.')
+    for i, (key, blurb) in enumerate(data['screenCtx'].items()):
+        xmlid = _screen_xmlid(key)
+        station = None
+        for line in data['stations'].values():
+            for s in line['stations']:
+                if s['id'] == key:
+                    station = s
+        name = en_of(station['title']) if station else key
+        suggest = data['qaSuggest'].get(key) or []
+        doc.rec('learn.screen', xmlid, [
+            ('key', key),
+            ('sequence', (i + 1) * 10),
+            ('name', name),
+            ('blurb', en_of(blurb)),
+            ('action_tags', SCREEN_ACTION_TAGS.get(key, '')),
+            ('sidebar_key', SIDEBAR_KEYS.get(key, '')),
+            ('suggest_ids', ('eval', '[(6, 0, [%s])]' % ', '.join(
+                "ref('%s')" % _intent_xmlid(k) for k in suggest))),
+        ])
+        tr.add('learn.screen', 'name', xmlid, name,
+               vi_of(station['title']) if station else name)
+        tr.add('learn.screen', 'blurb', xmlid, en_of(blurb), vi_of(blurb))
+        # "What should I do next here" is derived from the station's own
+        # "when to use it" — the honest answer, already written and checked.
+        if station:
+            nxt = (station.get('outline') or {}).get('when')
+            if nxt:
+                tr.add('learn.screen', 'next_step', xmlid, en_of(nxt), vi_of(nxt))
+    return doc.render()
+
+
+def _blocks_of(intent):
+    """(capability, blocks) pairs — one for a plain intent, four for a
+    capability-aware one."""
+    if intent.get('roleVariants'):
+        return [(ROLE_TO_CAPABILITY[r], blocks)
+                for r, blocks in intent['roleVariants'].items()
+                if r in ROLE_TO_CAPABILITY]
+    return [('any', intent.get('blocks') or [])]
+
+
+BLOCK_KIND = {'calcKpi': 'calc_kpi'}
+
+
+def gen_intents(data, tr):
+    doc = Xml('Coach intents. Every answer the Coach can give is a block here; '
+              'there is no path from a question to the screen that skips this '
+              'file, which is what lets it promise never to invent a fact.')
+    for intent in data['qa']:
+        key = intent['id']
+        xmlid = _intent_xmlid(key)
+        screens = intent.get('screens')
+        screens_csv = '*' if screens == '*' else ','.join(screens or [])
+        doc.rec('learn.intent', xmlid, [
+            ('key', key),
+            ('label', en_of(intent['label'])),
+            ('screens', screens_csv),
+            ('dynamic', {'screenCtx': 'screen_blurb',
+                         'nextStep': 'next_step'}.get(intent.get('dynamic'), 'none')),
+            ('show_me', ','.join(intent.get('showMe') or [])),
+            ('simpler', en_of(intent.get('simpler'))),
+            ('practice_key', intent.get('practice') or ''),
+            # A refusal stays reachable but is never advertised.
+            ('offer', False if intent.get('offer') is False else True),
+        ])
+        tr.add('learn.intent', 'label', xmlid, en_of(intent['label']), vi_of(intent['label']))
+        if intent.get('simpler'):
+            tr.add('learn.intent', 'simpler', xmlid,
+                   en_of(intent['simpler']), vi_of(intent['simpler']))
+
+        # The label is ALWAYS a trigger phrase, in both languages. The
+        # suggestion buttons submit the label verbatim, so a label that does
+        # not resolve to its own intent is a dead button — and that is exactly
+        # what six of them were, because a hand-written match list does not
+        # reliably overlap the question it is offered as.
+        phrases = list(intent.get('match') or [])
+        for lab in (en_of(intent['label']), vi_of(intent['label'])):
+            if lab and lab not in phrases:
+                phrases.append(lab)
+
+        for j, phrase in enumerate(phrases):
+            doc.rec('learn.intent.phrase', '%s_p%02d' % (xmlid, j), [
+                ('intent_id', ('ref', xmlid)),
+                ('text', phrase),
+            ])
+
+        seq = 0
+        for capability, blocks in _blocks_of(intent):
+            for b in blocks:
+                seq += 10
+                bx = '%s_b%03d' % (xmlid, seq)
+                kind = BLOCK_KIND.get(b['k'], b['k'])
+                body = ''
+                if kind != 'steps' and b.get('v') is not None:
+                    body = en_of(b['v'])
+                doc.rec('learn.intent.block', bx, [
+                    ('intent_id', ('ref', xmlid)),
+                    ('sequence', seq),
+                    ('capability', capability),
+                    ('kind', kind),
+                    ('body', body),
+                ])
+                if body:
+                    tr.add('learn.intent.block', 'body', bx, body, vi_of(b['v']))
+                if kind == 'steps':
+                    for k, st in enumerate(b['v']):
+                        sx = '%s_s%02d' % (bx, k)
+                        doc.rec('learn.intent.step', sx, [
+                            ('block_id', ('ref', bx)),
+                            ('sequence', (k + 1) * 10),
+                            ('text', en_of(st['t'])),
+                            ('anchor', st.get('a') or ''),
+                        ])
+                        tr.add('learn.intent.step', 'text', sx,
+                               en_of(st['t']), vi_of(st['t']))
+    return doc.render()
+
+
 def gen_overrides(data, tr):
     doc = Xml('Tenant slots — the shipped defaults. A key with no row here does '
               'not exist, so this file is also the declaration the override '
@@ -443,6 +598,8 @@ def main():
         'data/learn_stations.xml': gen_stations(data, tr),
         'data/learn_lessons.xml': gen_lessons(data, tr),
         'data/learn_tenant_slots.xml': gen_overrides(data, tr),
+        'data/learn_intents.xml': gen_intents(data, tr),
+        'data/learn_screens.xml': gen_screens(data, tr),
         'static/src/engine/fixture.js': gen_fixture(data),
     }
     files['i18n/vi_VN.po'] = tr.render()

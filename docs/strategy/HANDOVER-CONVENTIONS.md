@@ -2403,3 +2403,25 @@ a no-op.
     translatable: `{"en": "", "vi": ""}` is truthy, and every
     `field ? card : ""` in the frontend then draws an empty card.
     (learn Phase 1.)
+
+- **§5.147 — on this UAT box, JS and QWeb template assets invalidate
+    INDEPENDENTLY, and the pair you are served can be mismatched.** Observed
+    repeatedly while building the Coach: the bundle contained a brand-new
+    method while the DOM still rendered the previous template, and later the
+    reverse. Every symptom looked like an application bug — a handler that
+    "does not fire", state that "does not update" — and cost three wrong
+    diagnoses. **Before concluding anything about frontend behaviour on UAT,
+    verify what was actually SERVED**: `fetch` the bundle URL from the page and
+    grep it for the symbol you just added. If it is missing, the problem is the
+    cache, not the code. The reliable flush is
+    `delete from ir_attachment where name like '%assets%'` followed by a
+    stop/start — `-u <module>` alone is not enough. (learn Phase 2.)
+
+- **§5.148 — a `min()`/`max()` wrapping a `calc()` kills the WHOLE asset
+    bundle, and the only symptom is a screen that looks unstyled.** Already in
+    this ledger as prose, and it still caught a new module — so it is now a
+    test: `health_learn/tests/test_assets.py::test_01b`. Diagnose with the
+    bundle SIZE: ~40 KB and starting with `/* ## CSS error message ##*/` means
+    a compile failure, and the `css_error_message` content names the offending
+    expression. Declare the expression as a CSS custom property; Sass passes
+    those through verbatim. (learn Phase 2.)

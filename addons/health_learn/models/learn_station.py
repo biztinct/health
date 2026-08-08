@@ -22,6 +22,10 @@ _RAW_KEYS = frozenset({
     'role', 'value', 'sidebar_key', 'sequence', 'duration_min', 'required',
     'star', 'after', 'visible', 'lesson_key', 'station_key', 'correct',
     'moment_kind', 'moment_chain', 'moment_which', 'moment_from', 'moment_to',
+    # Phase 2. `capability` and `action_tags` are structure inside a structural
+    # tree; the flat map of UI labels is zipped by _zip_prose instead, so these
+    # cannot repeat the collision that hid three chrome strings (ledger §5.146).
+    'capability', 'action_tags', 'show_me', 'practice_key', 'matched',
 })
 
 

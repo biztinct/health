@@ -15,7 +15,7 @@ from odoo.tests.common import TransactionCase, tagged
 # template literals included.
 BRACE_SPACE_RE = re.compile(r"\$\{[^{}]*\}[ ]+(?=\S)")
 
-JS_DIRS = ('static/src/engine', 'static/src/journey')
+JS_DIRS = ('static/src/engine', 'static/src/journey', 'static/src/coach')
 
 
 @tagged('post_install', '-at_install')
@@ -53,6 +53,46 @@ class TestAssets(TransactionCase):
                          "Write `}${\" \"}` instead:\n  %s"
                          % (len(offenders), "\n  ".join(offenders[:25])))
 
+    def test_01b_no_sass_hostile_min_max(self):
+        """`min(400px, calc(100vw - 44px))` takes the WHOLE bundle down.
+
+        Bootstrap's Sass min()/max() intercept the CSS function and fail with
+        "calc(...) is not a number for min". Odoo then keeps serving the
+        PREVIOUS stylesheet, so the only symptom is that a new screen looks
+        unstyled — no error in the console, nothing in the page. It is in this
+        repo's ledger and it still caught this module, which is the argument
+        for a test rather than a note.
+
+        The fix is a CSS custom property: Sass passes those through verbatim.
+        """
+        base = get_module_path('health_learn')
+        pattern = re.compile(r'(?<!var\()\b(min|max)\(\s*[^;]*calc\(', re.I)
+        offenders = []
+        for root, _dirs, files in os.walk(os.path.join(base, 'static/src')):
+            for name in files:
+                if not name.endswith('.scss'):
+                    continue
+                path = os.path.join(root, name)
+                with open(path, encoding='utf-8') as fh:
+                    src = fh.read()
+                # Comments explain the hazard by quoting it, so scanning them
+                # makes the guard fail on its own documentation — the same
+                # false positive the anchor lint hit. Blank them out, keeping
+                # the line count so the reported line number is still right.
+                src = re.sub(r'/\*.*?\*/', lambda m: '\n' * m.group(0).count('\n'),
+                             src, flags=re.S)
+                src = re.sub(r'//[^\n]*', '', src)
+                for n, line in enumerate(src.split('\n'), 1):
+                    # A declaration OF a custom property is exactly the fix,
+                    # so only flag ordinary properties.
+                    if line.strip().startswith('--'):
+                        continue
+                    if pattern.search(line):
+                        offenders.append('%s:%d %s' % (name, n, line.strip()[:70]))
+        self.assertFalse(offenders,
+                         "min()/max() wrapping a calc() in a normal property. This "
+                         "silently kills the whole asset bundle:\n  " + "\n  ".join(offenders))
+
     def test_02_every_icon_referenced_exists_in_the_sprite(self):
         """A missing symbol renders as nothing at all — no error, no fallback,
         just a label with a gap where its icon should be."""
@@ -69,7 +109,7 @@ class TestAssets(TransactionCase):
             used |= set(re.findall(r'\bic\("([a-z0-9-]+)"', src))
             # block(icon, ...) and the other helpers that take a bare name
             used |= set(re.findall(r'\bblock\("([a-z0-9-]+)"', src))
-        for tmpl in ('static/src/journey/journey.xml',):
+        for tmpl in ('static/src/journey/journey.xml', 'static/src/coach/coach.xml'):
             with open(os.path.join(base, tmpl), encoding='utf-8') as fh:
                 used |= set(re.findall(r'href="#lrn-i-([a-z0-9-]+)"', fh.read()))
 

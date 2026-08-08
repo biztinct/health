@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Learn — CareJioX in-app learning',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Healthcare',
     'summary': 'Guided Journey, bilingual lesson spine and anchor registry for the CRM desk',
     'author': 'Biztinct',
@@ -48,6 +48,9 @@ it, never hand-edited here).
         'data/learn_tenant_slots.xml',
         'data/learn_stations.xml',
         'data/learn_lessons.xml',
+        # Phase 2 — the Coach. Intents first: screens reference them.
+        'data/learn_intents.xml',
+        'data/learn_screens.xml',
         # Hand-written.
         'views/learn_actions.xml',
         'data/learn_sidebar_item.xml',
@@ -62,6 +65,13 @@ it, never hand-edited here).
             'health_learn/static/src/journey/journey.js',
             'health_learn/static/src/journey/icons.xml',
             'health_learn/static/src/journey/journey.xml',
+            # Phase 2 — the always-on Coach, mounted in the web client
+            # shell so it reaches every screen without per-screen work.
+            'health_learn/static/src/coach/coach.scss',
+            'health_learn/static/src/coach/coach.js',
+            'health_learn/static/src/coach/coach.xml',
+            'health_learn/static/src/coach/coach_patch.js',
+            'health_learn/static/src/coach/coach_patch.xml',
         ],
     },
     'installable': True,

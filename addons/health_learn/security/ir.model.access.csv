@@ -22,3 +22,13 @@ access_learn_override_admin,learn.tenant.override tenant admin,model_learn_tenan
 access_learn_override_author,learn.tenant.override author,model_learn_tenant_override,group_learn_author,1,1,1,1
 access_learn_progress_user,learn.progress own,model_learn_progress,base.group_user,1,1,1,0
 access_learn_event_user,learn.event own,model_learn_event,base.group_user,1,0,1,0
+access_learn_screen_user,learn.screen user,model_learn_screen,base.group_user,1,0,0,0
+access_learn_screen_author,learn.screen author,model_learn_screen,group_learn_author,1,1,1,1
+access_learn_intent_user,learn.intent user,model_learn_intent,base.group_user,1,0,0,0
+access_learn_intent_author,learn.intent author,model_learn_intent,group_learn_author,1,1,1,1
+access_learn_intent_phrase_user,learn.intent.phrase user,model_learn_intent_phrase,base.group_user,1,0,0,0
+access_learn_intent_phrase_author,learn.intent.phrase author,model_learn_intent_phrase,group_learn_author,1,1,1,1
+access_learn_intent_block_user,learn.intent.block user,model_learn_intent_block,base.group_user,1,0,0,0
+access_learn_intent_block_author,learn.intent.block author,model_learn_intent_block,group_learn_author,1,1,1,1
+access_learn_intent_step_user,learn.intent.step user,model_learn_intent_step,base.group_user,1,0,0,0
+access_learn_intent_step_author,learn.intent.step author,model_learn_intent_step,group_learn_author,1,1,1,1

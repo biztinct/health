@@ -74,6 +74,8 @@ const I18N = {
     coachName: "Care Coach", groundedIn: "Grounded in this screen:",
     stuck: "Stuck?", stuckTip: "Open the Care Coach for this screen  (?)",
     coachAlways: "The Coach is on every screen — press ? or use the button, bottom right.",
+    coachNoScreen: "I don't have lessons for this screen yet. I only answer about the CRM section for now.",
+    pointNotHere: "That one is a teaching view inside the practice clinic, not a control on this screen.",
     honest: "I guide — you act. I never send a message, book a visit or change a record for you.",
     youreOn: "YOU'RE ON:", suggested: "SUGGESTED FOR THIS SCREEN",
     askPlaceholder: "Ask about this screen…",
@@ -85,6 +87,7 @@ const I18N = {
     canAnswer: "Things I can answer here:",
     refusal: "Your role can't do that here",
     whoCan: "Who can:", howAsk: "How to get access:",
+    howInstead: "What to do instead:",
     roleNote: "Viewing as",
     roles: { crm: "CRM / Reception", nurse: "Nurse", om: "Operations Manager", owner: "Owner" },
     rolesShort: { crm: "CRM", nurse: "Nurse", om: "Ops", owner: "Owner" },
@@ -156,6 +159,8 @@ const I18N = {
     coachName: "Trợ lý Care Coach", groundedIn: "Dựa trên màn hình này:",
     stuck: "Cần trợ giúp?", stuckTip: "Mở Trợ lý Care Coach cho màn hình này  (?)",
     coachAlways: "Trợ lý có mặt trên mọi màn hình — nhấn ? hoặc dùng nút ở góc dưới bên phải.",
+    coachNoScreen: "Tôi chưa có bài học cho màn hình này. Hiện tại tôi chỉ trả lời về khu vực CRM.",
+    pointNotHere: "Mục đó là phần minh họa trong phòng thực hành, không phải một nút trên màn hình này.",
     honest: "Tôi hướng dẫn — bạn thực hiện. Tôi không bao giờ gửi tin nhắn, đặt lịch hay thay đổi hồ sơ thay bạn.",
     youreOn: "BẠN ĐANG Ở:", suggested: "GỢI Ý CHO MÀN HÌNH NÀY",
     askPlaceholder: "Hỏi về màn hình này…",
@@ -167,6 +172,7 @@ const I18N = {
     canAnswer: "Những điều tôi có thể trả lời ở đây:",
     refusal: "Vai trò của bạn không thực hiện được thao tác này",
     whoCan: "Ai làm được:", howAsk: "Cách xin quyền:",
+    howInstead: "Nên làm gì thay vào đó:",
     roleNote: "Đang xem với vai trò",
     roles: { crm: "CRM / Lễ tân", nurse: "Điều dưỡng", om: "Quản lý vận hành", owner: "Chủ sở hữu" },
     rolesShort: { crm: "CRM", nurse: "Điều dưỡng", om: "QLVH", owner: "Chủ sở hữu" },
@@ -1019,6 +1025,11 @@ const QA = [
                         "Có — vai trò Chủ sở hữu có mọi quyền CRM, bao gồm Tiếp quản trên tất cả các khu vực phụ trách.") },
         { k: "warn", v: B("Same caution as any manager: it reassigns silently, so tell the previous owner.",
                           "Vẫn cần lưu ý như mọi quản lý: nó chuyển giao âm thầm, nên hãy báo cho người phụ trách trước.") },
+        // Every variant cites its source. This one did not, and an answer
+        // without provenance is indistinguishable from a guess — which is
+        // exactly what the Coach promises never to give.
+        { k: "source", v: B("Care Command's take-over method, and the Owner role's CRM permissions.",
+                            "Phương thức tiếp quản của Care Command, và các quyền CRM của vai trò Chủ sở hữu.") },
       ],
     },
   },
@@ -1099,7 +1110,7 @@ const QA = [
       { k: "source", v: B("The six KPI definitions on the CRM Dashboard, and this practice tenant's August figures.",
                           "Sáu định nghĩa KPI trên Bảng điều khiển CRM, và số liệu tháng 8 của dữ liệu thực hành này.") },
     ],
-    showMe: ["db-conv", "db-spam"],
+    showMe: ["db-conversion_rate", "db-spam_rate"],
   },
   {
     id: "attrib", screens: ["touchpoints", "leadanalysis"],
@@ -1225,6 +1236,34 @@ const QA = [
     match: ["what should i do next", "next", "where do i start", "làm gì tiếp", "bắt đầu từ đâu", "tiếp theo"],
     label: B("What should I do next?", "Tiếp theo tôi nên làm gì?"),
     dynamic: "nextStep",
+  },
+  /* The clinical-safety refusal. Reached by a deterministic guard in the
+     resolver, never by scoring: a retrieval score is a guess, and a guess
+     about a patient's condition is the one thing this system must never make.
+     It refuses, and then it routes — a dead end would leave a worried person
+     exactly where they started. */
+  {
+    id: "clinical", screens: "*",
+    match: ["is the wound infected", "what dose", "blood pressure", "diagnosis",
+            "vết thương có nhiễm trùng không", "liều dùng", "huyết áp", "chẩn đoán"],
+    label: B("Can you tell me something clinical about this patient?",
+             "Bạn có thể cho tôi biết thông tin lâm sàng về bệnh nhân này không?"),
+    blocks: [
+      { k: "refusal", v: B("No — I do not answer clinical questions, and I never will. I explain how CareJioX works; I hold no view on a wound, a dose, a reading or a diagnosis, and a confident-sounding answer from me about any of those would be worth nothing.",
+                           "Không — tôi không trả lời câu hỏi lâm sàng, và sẽ không bao giờ. Tôi giải thích cách CareJioX hoạt động; tôi không có ý kiến về vết thương, liều dùng, chỉ số hay chẩn đoán, và một câu trả lời nghe có vẻ chắc chắn từ tôi về những điều đó sẽ chẳng có giá trị gì.") },
+      { k: "who", v: B("A clinician. The {{roleDutyDoctor}} or the {{roleHeadNurse}}.",
+                       "Người có chuyên môn. {{roleDutyDoctor}} hoặc {{roleHeadNurse}}.") },
+      { k: "how", v: B("Use Escalate on the conversation — it reaches a clinician and records that you asked, which a phone call does not. If nobody is on shift and it cannot wait, ring the client's own number and follow the clinic's escalation route.",
+                       "Dùng Chuyển cấp trên cuộc hội thoại — nó đến được người có chuyên môn và ghi nhận rằng bạn đã hỏi, điều mà một cuộc gọi không làm được. Nếu không ai trực và việc không thể chờ, hãy gọi vào số của chính khách hàng và theo quy trình chuyển cấp của phòng khám.") },
+      { k: "warn", v: B("Answering a clinical question yourself, even a small one, is the single fastest way this desk causes harm. Speed is met by escalating fast, not by answering.",
+                        "Tự trả lời một câu hỏi lâm sàng, dù nhỏ, là cách nhanh nhất khiến bàn làm việc này gây hại. Yêu cầu về tốc độ được đáp ứng bằng chuyển cấp nhanh, không phải bằng việc trả lời.") },
+      { k: "source", v: B("CareJioX's escalation route. Nothing clinical: this answer exists to refuse, not to inform.",
+                          "Quy trình chuyển cấp của CareJioX. Không có nội dung lâm sàng: câu trả lời này tồn tại để từ chối, không phải để cung cấp thông tin.") },
+    ],
+    showMe: ["cc-escalate"],
+    /* Reachable, never advertised: offering "ask me something clinical" as a
+       suggestion invites exactly the question this intent exists to decline. */
+    offer: false,
   },
   {
     id: "price", screens: "*",
