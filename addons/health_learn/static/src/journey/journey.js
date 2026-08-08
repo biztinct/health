@@ -1,0 +1,649 @@
+/** @odoo-module **/
+/* =============================================================================
+   The Guided Journey — CareJioX Learn, Phase 1.
+
+   OWL owns the shell and the state; the engine builds the inner HTML. That
+   split is deliberate: the spotlight, trace and morph work by measuring and
+   decorating live DOM, which is imperative work that reactive re-rendering
+   fights rather than helps. So OWL renders one host node per view, and the
+   post-render hook runs the visual effects.
+
+   Binding rules from the brief, enforced here rather than left to the CSS:
+     * the spotlight never covers the control it explains (see spotlight.js)
+     * completion needs a right answer, never a click on Next
+     * a wrong answer is a recovery, never a rejection
+     * both languages switch live, without a reload or a lost place
+   ========================================================================== */
+import { Component, markup, onMounted, onPatched, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
+import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
+
+import { RT, T, tx, esc, ic, reduced } from "../engine/runtime";
+import { Spot, Trace, setOverlayRoot } from "../engine/spotlight";
+import { shellHTML } from "../engine/screens";
+import { morphHTML, calcHTML, pipeHTML, runPipeline } from "../engine/visuals";
+
+const LOCAL_PREFS = "cjxLearnPrefs";
+
+export class LearnJourney extends Component {
+    static template = "health_learn.Journey";
+    static props = {};
+
+    setup() {
+        this.orm = useService("orm");
+        this.overlayRef = useRef("overlay");
+
+        this.state = useState({
+            ready: false,
+            view: "map",            // map | outline | lesson
+            stationKey: null,
+            step: 0,
+            quiz: false,
+            answered: null,         // index of the option chosen
+            morphSide: "before",
+            search: "",
+            lang: "en",
+            motion: "auto",
+            error: "",
+        });
+
+        this.bundle = null;
+        this.progress = {};
+        this.visible = new Set();
+        this._onKey = this._onKey.bind(this);
+
+        onWillStart(async () => {
+            this._restorePrefs();
+            await this._loadBundle();
+        });
+        onMounted(() => {
+            setOverlayRoot(this.overlayRef.el);
+            document.addEventListener("keydown", this._onKey);
+            document.body.classList.add("lrn-open");
+            this._log("journey_open");
+        });
+        onPatched(() => this._afterPaint());
+        onWillUnmount(() => {
+            Spot.hide();
+            document.removeEventListener("keydown", this._onKey);
+            document.body.classList.remove("lrn-open");
+        });
+    }
+
+    // ---------------------------------------------------------------- loading
+    _restorePrefs() {
+        // Only the two preferences live in the browser. Progress is a server
+        // record: a learner who moves to the ward laptop keeps their place, and
+        // Product can measure completion at all (analysis §6).
+        try {
+            const p = JSON.parse(window.localStorage.getItem(LOCAL_PREFS) || "{}");
+            const sessionLang = window.odoo?.session_info?.user_context?.lang || "";
+            this.state.lang = p.lang || (sessionLang.startsWith("vi") ? "vi" : "en");
+            this.state.motion = p.motion || "auto";
+        } catch {
+            this.state.lang = "en";
+            this.state.motion = "auto";
+        }
+        RT.lang = this.state.lang;
+        RT.motion = this.state.motion;
+    }
+
+    _savePrefs() {
+        try {
+            window.localStorage.setItem(LOCAL_PREFS, JSON.stringify({
+                lang: this.state.lang, motion: this.state.motion,
+            }));
+        } catch {
+            // A locked-down browser profile must not break the lesson.
+        }
+    }
+
+    async _loadBundle() {
+        try {
+            this.bundle = await this.orm.call("learn.station", "get_bundle", []);
+        } catch (e) {
+            this.state.error = e?.message?.data?.message || String(e);
+            return;
+        }
+        RT.tokens = this.bundle.tokens || {};
+        RT.chrome = this.bundle.chrome || {};
+        this.progress = this.bundle.progress || {};
+        this.visible = new Set(
+            this.bundle.stations.filter((s) => s.visible).map((s) => s.key));
+        // The server knows the user's own language; honour it the first time
+        // and let the toggle win afterwards.
+        if (!window.localStorage.getItem(LOCAL_PREFS)) {
+            this.state.lang = this.bundle.user?.lang || "en";
+            RT.lang = this.state.lang;
+        }
+        this.state.ready = true;
+    }
+
+    // ----------------------------------------------------------------- lookups
+    get stations() {
+        return this.bundle ? this.bundle.stations : [];
+    }
+
+    station(key) {
+        return this.stations.find((s) => s.key === key) || null;
+    }
+
+    get current() {
+        return this.station(this.state.stationKey);
+    }
+
+    get lesson() {
+        const st = this.current;
+        return st && st.lessons.length ? st.lessons[0] : null;
+    }
+
+    get steps() {
+        const l = this.lesson;
+        return l ? l.steps : [];
+    }
+
+    stateOf(key) {
+        return (this.progress[key] || {}).state || "not_started";
+    }
+
+    get doneCount() {
+        return this.stations.filter((s) => this.stateOf(s.key) === "done").length;
+    }
+
+    get badgeEarned() {
+        return this.stations
+            .filter((s) => s.star)
+            .every((s) => this.stateOf(s.key) === "done");
+    }
+
+    // ------------------------------------------------------------- persistence
+    async _saveProgress(key, vals) {
+        this.progress[key] = Object.assign({}, this.progress[key], vals);
+        try {
+            await this.orm.call("learn.progress", "record", [key, vals]);
+        } catch {
+            // Losing a progress write must never interrupt a lesson. The local
+            // copy still drives the UI; the next write re-syncs it.
+        }
+    }
+
+    async _log(kind, detail) {
+        try {
+            await this.orm.call("learn.event", "log", [kind], {
+                station_key: this.state.stationKey || null,
+                screen: this.steps[this.state.step]?.screen || null,
+                detail: detail === undefined ? null : detail,
+                lang: this.state.lang,
+            });
+        } catch {
+            // Measurement must never be able to break the thing it measures.
+        }
+    }
+
+    // -------------------------------------------------------------- rendering
+    get body() {
+        if (this.state.error) {
+            return markup(`<div class="lrn-panel lrn-blocked"><h3>${ic("alert-triangle")}
+                ${esc(T("noAnswer"))}</h3><p class="lrn-note">${esc(this.state.error)}</p></div>`);
+        }
+        if (!this.state.ready) {
+            return markup(`<div class="lrn-skeleton" aria-busy="true"></div>`);
+        }
+        if (this.state.view === "lesson") {
+            return markup(this._lessonBody());
+        }
+        if (this.state.view === "outline") {
+            return markup(this._outlineBody());
+        }
+        return markup(this._mapBody());
+    }
+
+    /* -------------------------------------------------------------- map view */
+    _mapBody() {
+        const q = this.state.search.trim().toLowerCase();
+        const lines = {};
+        for (const s of this.stations) {
+            (lines[s.line] = lines[s.line] || []).push(s);
+        }
+        const match = (s) =>
+            !q || tx(s.name).toLowerCase().includes(q) || tx(s.summary).toLowerCase().includes(q);
+
+        const lineHTML = Object.keys(lines).map((lineKey) => {
+            const items = lines[lineKey].filter(match);
+            if (!items.length) {
+                return "";
+            }
+            return `<section class="lrn-line">
+                <h3 class="lrn-linehead">${ic(lineKey === "daily" ? "zap" : "plug")}
+                    ${esc(T("lines." + lineKey))}</h3>
+                <div class="lrn-cards">${items.map((s) => this._cardHTML(s)).join("")}</div>
+            </section>`;
+        }).join("");
+
+        const total = this.stations.length;
+        const pctDone = total ? Math.round(this.doneCount / total * 100) : 0;
+
+        return `
+        <header class="lrn-hero">
+            <div>
+                <h1>${esc(T("hubTitle"))}</h1>
+                <p class="lrn-lead">${esc(T("hubLead"))}</p>
+            </div>
+            <div class="lrn-progress" role="group" aria-label="${esc(T("overall"))}">
+                <div class="lrn-ring" style="--p:${pctDone}"><span>${pctDone}%</span></div>
+                <div class="lrn-pmeta">
+                    <b>${esc(T("overall"))}</b>
+                    <span>${this.doneCount}${" "}/ ${total}</span>
+                    ${this.badgeEarned
+                        ? `<span class="lrn-chip ok">${ic("award")}${esc(T("badgeGot"))}</span>`
+                        : `<span class="lrn-chip">${ic("award")}${esc(T("badge"))}</span>`}
+                </div>
+            </div>
+        </header>
+        <div class="lrn-toolbar">
+            <label class="lrn-search">${ic("search")}
+                <input type="search" data-act="search" value="${esc(this.state.search)}"
+                       placeholder="${esc(T("search"))}" aria-label="${esc(T("search"))}"/>
+            </label>
+        </div>
+        ${lineHTML || `<p class="lrn-note">${esc(T("noAnswer"))}</p>`}`;
+    }
+
+    _cardHTML(s) {
+        const st = this.stateOf(s.key);
+        const badge = s.kind === "lesson"
+            ? `<span class="lrn-chip b">${ic("play")}${esc(T("fullLesson"))}</span>`
+            : `<span class="lrn-chip">${ic("list-checks")}${esc(T("outline"))}</span>`;
+        const need = s.required
+            ? `<span class="lrn-chip a">${esc(T("required"))}</span>`
+            : `<span class="lrn-chip">${esc(T("optional"))}</span>`;
+        const gate = s.missing
+            ? `<span class="lrn-chip warn">${ic("lock")}${esc(T("notVisible"))}</span>`
+            : (!s.visible
+                ? `<span class="lrn-chip warn">${ic("lock")}${esc(T("notVisible"))}</span>`
+                : "");
+        return `
+        <button class="lrn-card ${s.star ? "star" : ""}${" "}${st === "done" ? "done" : ""}"
+                data-station="${esc(s.key)}">
+            <span class="lrn-cardico">${ic(s.icon)}</span>
+            <span class="lrn-cardmain">
+                <span class="lrn-cardtitle">${esc(tx(s.name))}
+                    ${st === "done" ? ic("check-circle", "ok") : ""}</span>
+                <span class="lrn-carddesc">${esc(tx(s.summary))}</span>
+                <span class="lrn-cardmeta">${badge}${need}${gate}
+                    <span class="lrn-chip">${ic("clock")}${esc(T("est"))}${" "}${s.duration_min}${" "}${esc(T("min"))}</span>
+                </span>
+            </span>
+        </button>`;
+    }
+
+    /* ---------------------------------------------------------- outline view */
+    _outlineBody() {
+        const s = this.current;
+        if (!s) {
+            return "";
+        }
+        const o = s.outline;
+        const block = (icon, label, value) => value
+            ? `<div class="lrn-obl"><h4>${ic(icon)}${esc(label)}</h4><p>${esc(tx(value))}</p></div>`
+            : "";
+        const mistakes = (o.mistakes || []).map((m) =>
+            `<li>${esc(tx(m))}</li>`).join("");
+
+        return `
+        <div class="lrn-back"><button class="lrn-btn ghost sm" data-act="to-map">
+            ${ic("chevron-left")}${esc(T("yourJourney"))}</button></div>
+        <header class="lrn-ohead">
+            <span class="lrn-cardico big">${ic(s.icon)}</span>
+            <div>
+                <h1>${esc(tx(s.name))}</h1>
+                <p class="lrn-lead">${esc(tx(s.summary))}</p>
+            </div>
+        </header>
+        ${s.kind !== "lesson"
+            ? `<p class="lrn-callout">${ic("info")}${esc(T("outlineNote"))}</p>` : ""}
+        ${!s.visible
+            ? `<p class="lrn-callout warn">${ic("lock")}${esc(T("notVisibleBody"))}</p>` : ""}
+        <div class="lrn-obls">
+            ${block("help-circle", T("whatIs"), o.what)}
+            ${block("target", T("whyMatters"), o.why)}
+            ${block("clock", T("whenUse"), o.when)}
+            ${block("lock", T("prereq"), o.prereq)}
+        </div>
+        ${mistakes ? `<div class="lrn-panel"><h3>${ic("alert-triangle")}${esc(T("mistakes"))}</h3>
+            <ul class="lrn-mistakes">${mistakes}</ul></div>` : ""}
+        ${s.kind === "lesson"
+            ? `<div class="lrn-cta"><button class="lrn-btn pri" data-act="start-lesson">
+                 ${ic("play")}${esc(T("fullLesson"))}${" "}· ${s.duration_min}${" "}${esc(T("min"))}</button></div>`
+            : ""}`;
+    }
+
+    /* ----------------------------------------------------------- lesson view */
+    _lessonBody() {
+        const steps = this.steps;
+        if (!steps.length) {
+            return "";
+        }
+        if (this.state.quiz) {
+            return this._quizBody();
+        }
+        const st = steps[this.state.step];
+        const shell = shellHTML(st.screen, { guided: true, visible: this.visible });
+        const pctDone = Math.round((this.state.step + 1) / steps.length * 100);
+        return `${shell}
+        <div class="lrn-playbar" role="group" aria-label="${esc(T("step"))}">
+            <span class="lrn-meter"><i style="width:${pctDone}%"></i></span>
+            <span class="lrn-stepno">${esc(T("step"))}${" "}${this.state.step + 1}${" "}${esc(T("of"))}${" "}${steps.length}</span>
+            <button class="lrn-btn sm" data-act="l-back" ${this.state.step === 0 ? "disabled" : ""}>
+                ${ic("chevron-left")}${esc(T("back"))}</button>
+            <button class="lrn-btn sm pri" data-act="l-next">
+                ${esc(this.state.step === steps.length - 1 ? T("check") : T("next"))}${ic("chevron-right")}</button>
+            <button class="lrn-btn sm ghost" data-act="l-replay" title="${esc(T("replay"))}"
+                aria-label="${esc(T("replay"))}">${ic("rotate-ccw")}</button>
+            <button class="lrn-btn sm ghost" data-act="l-exit">${ic("x")}${esc(T("exit"))}</button>
+        </div>`;
+    }
+
+    /** The card the spotlight places. Built here, not in the template, because
+     *  it is positioned against a measured rectangle. */
+    _coachCardHTML() {
+        const st = this.steps[this.state.step];
+        if (!st) {
+            return "";
+        }
+        let moment = "";
+        if (st.visual === "calc") {
+            moment = `<div class="lrn-moment">${calcHTML()}</div>`;
+        } else if (st.visual === "pipeline") {
+            moment = `<div class="lrn-moment">${pipeHTML(st.moment_chain, 0)}</div>`;
+        } else if (st.visual === "morph") {
+            moment = `<div class="lrn-moment">${morphHTML(st, this.state.morphSide)}</div>`;
+        }
+        return `
+        ${st.kicker ? `<div class="lrn-kicker">${esc(tx(st.kicker))}</div>` : ""}
+        <h3>${esc(tx(st.title))}</h3>
+        <div class="lrn-cbody">${tx(st.body)}</div>
+        ${moment}
+        ${st.consequence ? `<div class="lrn-conseq"><h4>${ic("alert-triangle")}${esc(T("consequence"))}</h4>
+            <p>${esc(tx(st.consequence))}</p></div>` : ""}
+        ${st.tip ? `<div class="lrn-tip">${ic("info")}<span>${esc(tx(st.tip))}</span></div>` : ""}`;
+    }
+
+    /* ------------------------------------------------------------- quiz view */
+    _quizBody() {
+        const l = this.lesson;
+        const quiz = l.quizzes[0];
+        if (!quiz) {
+            return this._debriefBody();
+        }
+        const chosen = this.state.answered;
+        const opts = quiz.options.map((o, i) => {
+            const picked = chosen === i;
+            const cls = picked ? (o.correct ? "right" : "wrong") : "";
+            // No verdict heading above the explanation. Every explanation is
+            // authored to open with its own — "Yes.", "Exactly.", "Let's
+            // rethink that." — in both languages, so a heading made the app
+            // say the same sentence twice. The colour and the option's own
+            // mark carry the signal; the words are the content's job.
+            return `
+            <button class="lrn-opt ${cls}" data-opt="${i}" ${chosen !== null ? "disabled" : ""}>
+                <span class="lrn-optmark">${picked ? ic(o.correct ? "check" : "rotate-ccw") : String.fromCharCode(65 + i)}</span>
+                <span>${esc(tx(o.label))}</span>
+            </button>
+            ${picked ? `<div class="lrn-explain ${o.correct ? "ok" : "warn"}">
+                <p>${esc(tx(o.feedback))}</p></div>` : ""}`;
+        }).join("");
+
+        const answeredRight = chosen !== null && quiz.options[chosen].correct;
+        return `
+        <div class="lrn-quizwrap">
+            <header class="lrn-quizhead">
+                <span class="lrn-chip b">${ic("help-circle")}${esc(T("check"))}</span>
+                <p class="lrn-note">${esc(T("checkNote"))}</p>
+            </header>
+            <h2>${esc(tx(quiz.prompt))}</h2>
+            <div class="lrn-opts">${opts}</div>
+            <div class="lrn-quizfoot">
+                ${chosen === null
+                    ? `<button class="lrn-btn ghost" data-act="l-backstep">${ic("chevron-left")}${esc(T("back"))}</button>`
+                    : answeredRight
+                        ? `<button class="lrn-btn pri" data-act="l-finish">${ic("check")}${esc(T("finish"))}</button>`
+                        : `<button class="lrn-btn pri" data-act="l-retry">${ic("rotate-ccw")}${esc(T("tryAgain"))}</button>`}
+            </div>
+        </div>`;
+    }
+
+    _debriefBody() {
+        return `<div class="lrn-quizwrap"><h2>${esc(T("finish"))}</h2>
+            <button class="lrn-btn pri" data-act="l-finish">${esc(T("continueBtn"))}</button></div>`;
+    }
+
+    // ---------------------------------------------------------- post-render fx
+    _afterPaint() {
+        if (this.state.view !== "lesson" || this.state.quiz) {
+            Spot.hide();
+            return;
+        }
+        const st = this.steps[this.state.step];
+        if (!st) {
+            return;
+        }
+        Spot.show(st.anchor, this._coachCardHTML());
+        if (st.visual === "trace") {
+            // After the spotlight's own scroll has settled, or the line is
+            // drawn between two rectangles that are about to move.
+            setTimeout(() => Trace.run(st.moment_from, st.moment_to), reduced() ? 0 : 420);
+        } else if (st.visual === "pipeline" && Spot.card) {
+            runPipeline(Spot.card, st.moment_chain);
+        }
+    }
+
+    // -------------------------------------------------------------- behaviour
+    onClick(ev) {
+        const stationBtn = ev.target.closest("[data-station]");
+        if (stationBtn) {
+            this.openStation(stationBtn.dataset.station);
+            return;
+        }
+        const opt = ev.target.closest("[data-opt]");
+        if (opt) {
+            this.answer(parseInt(opt.dataset.opt, 10));
+            return;
+        }
+        const act = ev.target.closest("[data-act]");
+        if (!act) {
+            return;
+        }
+        const a = act.dataset.act;
+        const fn = {
+            "to-map": () => this.toMap(),
+            "start-lesson": () => this.startLesson(),
+            "l-next": () => this.next(),
+            "l-back": () => this.back(),
+            "l-backstep": () => this.back(),
+            "l-replay": () => this.replay(),
+            "l-exit": () => this.exitLesson(),
+            "l-retry": () => this.retry(),
+            "l-finish": () => this.finish(),
+            "morph-before": () => { this.state.morphSide = "before"; },
+            "morph-after": () => { this.state.morphSide = "after"; },
+        }[a];
+        if (fn) {
+            ev.preventDefault();
+            fn();
+        }
+    }
+
+    onInput(ev) {
+        const el = ev.target.closest('[data-act="search"]');
+        if (el) {
+            this.state.search = el.value;
+        }
+    }
+
+    _onKey(ev) {
+        if (this.state.view !== "lesson") {
+            return;
+        }
+        const typing = /^(INPUT|TEXTAREA)$/.test(ev.target.tagName);
+        if (typing) {
+            return;
+        }
+        if (ev.key === "Escape") {
+            ev.preventDefault();
+            this.exitLesson();
+        } else if (ev.key === "ArrowRight") {
+            ev.preventDefault();
+            this.next();
+        } else if (ev.key === "ArrowLeft") {
+            ev.preventDefault();
+            this.back();
+        }
+    }
+
+    // ------------------------------------------------------------ navigation
+    toMap() {
+        Spot.hide();
+        this.state.view = "map";
+        this.state.stationKey = null;
+    }
+
+    openStation(key) {
+        this.state.stationKey = key;
+        this.state.view = "outline";
+        this._log("station_open");
+    }
+
+    startLesson() {
+        const p = this.progress[this.state.stationKey] || {};
+        this.state.step = Math.min(p.step_index || 0, Math.max(0, this.steps.length - 1));
+        this.state.quiz = false;
+        this.state.answered = null;
+        this.state.morphSide = "before";
+        this.state.view = "lesson";
+        this._saveProgress(this.state.stationKey, { state: "in_progress", lang: this.state.lang });
+        this._log("lesson_start");
+    }
+
+    next() {
+        if (this.state.quiz) {
+            return;
+        }
+        if (this.state.step < this.steps.length - 1) {
+            this.state.step += 1;
+            this.state.morphSide = "before";
+            this._saveProgress(this.state.stationKey, { step_index: this.state.step });
+            this._log("step_view", this.state.step);
+        } else {
+            this.state.quiz = true;
+            this.state.answered = null;
+        }
+    }
+
+    back() {
+        if (this.state.quiz) {
+            this.state.quiz = false;
+            this.state.answered = null;
+            return;
+        }
+        if (this.state.step > 0) {
+            this.state.step -= 1;
+            this.state.morphSide = "before";
+        }
+    }
+
+    replay() {
+        // Re-run this step's effect without changing position — the single
+        // most-used control for a learner reading in their second language.
+        this._afterPaint();
+    }
+
+    exitLesson() {
+        Spot.hide();
+        this.state.view = "outline";
+        this.state.quiz = false;
+        this._log("lesson_abandon", this.state.step);
+    }
+
+    answer(i) {
+        if (this.state.answered !== null) {
+            return;
+        }
+        const quiz = this.lesson.quizzes[0];
+        const correct = !!quiz.options[i].correct;
+        this.state.answered = i;
+        const p = this.progress[this.state.stationKey] || {};
+        const attempts = (p.attempts || 0) + 1;
+        this._saveProgress(this.state.stationKey, {
+            attempts,
+            first_try_correct: attempts === 1 && correct ? true : !!p.first_try_correct,
+        });
+        this._log("quiz_answer", `${i}:${correct ? "y" : "n"}`);
+    }
+
+    retry() {
+        // Recovery, not rejection: the learner returns to the same question
+        // with the explanation still readable above it.
+        this.state.answered = null;
+    }
+
+    finish() {
+        this._saveProgress(this.state.stationKey, {
+            state: "done",
+            completed_at: this._nowServer(),
+            lang: this.state.lang,
+        });
+        this._log("lesson_complete");
+        Spot.hide();
+        this.state.view = "outline";
+        this.state.quiz = false;
+        this.state.answered = null;
+    }
+
+    _nowServer() {
+        // Odoo stores naive UTC. Send the same shape rather than an ISO string
+        // with a Z, which the ORM would reject.
+        return new Date().toISOString().slice(0, 19).replace("T", " ");
+    }
+
+    // -------------------------------------------------------------- settings
+    toggleLang() {
+        this.state.lang = this.state.lang === "en" ? "vi" : "en";
+        RT.lang = this.state.lang;
+        this._savePrefs();
+    }
+
+    toggleMotion() {
+        this.state.motion = this.state.motion === "reduced" ? "auto" : "reduced";
+        RT.motion = this.state.motion;
+        this._savePrefs();
+    }
+
+    // ------------------------------------------------------- template helpers
+    get langLabel() {
+        return this.state.lang === "en" ? "Tiếng Việt" : "English";
+    }
+
+    get motionLabel() {
+        return this.state.motion === "reduced" ? T("motionOn") : T("reduceMotion");
+    }
+
+    get brandLabel() {
+        return this.state.ready ? T("brand") : "CareJioX";
+    }
+
+    get learnLabel() {
+        return this.state.ready ? T("learn") : "";
+    }
+
+    /** Narration for screen readers: the step title, announced on change. */
+    get narration() {
+        if (this.state.view !== "lesson" || this.state.quiz) {
+            return "";
+        }
+        const st = this.steps[this.state.step];
+        return st ? `${T("step")}${" "}${this.state.step + 1}${" "}${T("of")}${" "}${this.steps.length}. ${tx(st.title)}` : "";
+    }
+}
+
+registry.category("actions").add("learn_journey", LearnJourney);

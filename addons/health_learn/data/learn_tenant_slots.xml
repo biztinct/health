@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED FILE. Do not edit.
+         Source: docs/tutorial_crm/ · Regenerate: python3 docs/tutorial_crm/tools/gen_learn_data.py
+         Hand edits are erased on the next run and fail the CI check. -->
+<!-- Tenant slots — the shipped defaults. A key with no row here does not exist, so this file is also the declaration the override constraint validates against. -->
+<odoo>
+
+    <record id="slot_accessrequestpath" model="learn.tenant.override">
+        <field name="key">accessRequestPath</field>
+        <field name="value">your Operations Manager</field>
+    </record>
+
+    <record id="slot_areanorth" model="learn.tenant.override">
+        <field name="key">areaNorth</field>
+        <field name="value">Hà Nội</field>
+    </record>
+
+    <record id="slot_areasouth" model="learn.tenant.override">
+        <field name="key">areaSouth</field>
+        <field name="value">TPHCM</field>
+    </record>
+
+    <record id="slot_clinicname" model="learn.tenant.override">
+        <field name="key">clinicName</field>
+        <field name="value">Việt Úc Care</field>
+    </record>
+
+    <record id="slot_clinicshort" model="learn.tenant.override">
+        <field name="key">clinicShort</field>
+        <field name="value">Việt Úc</field>
+    </record>
+
+    <record id="slot_consentpolicyname" model="learn.tenant.override">
+        <field name="key">consentPolicyName</field>
+        <field name="value">the Data Sharing consent</field>
+    </record>
+
+    <record id="slot_contentowner" model="learn.tenant.override">
+        <field name="key">contentOwner</field>
+        <field name="value">Product</field>
+    </record>
+
+    <record id="slot_currency" model="learn.tenant.override">
+        <field name="key">currency</field>
+        <field name="value">₫</field>
+    </record>
+
+    <record id="slot_handovertime" model="learn.tenant.override">
+        <field name="key">handoverTime</field>
+        <field name="value">17:00</field>
+    </record>
+
+    <record id="slot_hotline" model="learn.tenant.override">
+        <field name="key">hotline</field>
+        <field name="value">1900 xxxx</field>
+    </record>
+
+    <record id="slot_itcontact" model="learn.tenant.override">
+        <field name="key">itContact</field>
+        <field name="value">the IT team</field>
+    </record>
+
+    <record id="slot_oanamenorth" model="learn.tenant.override">
+        <field name="key">oaNameNorth</field>
+        <field name="value">Việt Úc Care – Hà Nội</field>
+    </record>
+
+    <record id="slot_oanamesouth" model="learn.tenant.override">
+        <field name="key">oaNameSouth</field>
+        <field name="value">Việt Úc Care – TPHCM</field>
+    </record>
+
+    <record id="slot_phipolicyname" model="learn.tenant.override">
+        <field name="key">phiPolicyName</field>
+        <field name="value">the patient information policy</field>
+    </record>
+
+    <record id="slot_productname" model="learn.tenant.override">
+        <field name="key">productName</field>
+        <field name="value">CareJioX</field>
+    </record>
+
+    <record id="slot_quiethours" model="learn.tenant.override">
+        <field name="key">quietHours</field>
+        <field name="value">13:00–14:00</field>
+    </record>
+
+    <record id="slot_replyslaminutes" model="learn.tenant.override">
+        <field name="key">replySlaMinutes</field>
+        <field name="value">15</field>
+    </record>
+
+    <record id="slot_roledutydoctor" model="learn.tenant.override">
+        <field name="key">roleDutyDoctor</field>
+        <field name="value">Duty Doctor</field>
+    </record>
+
+    <record id="slot_roleheadnurse" model="learn.tenant.override">
+        <field name="key">roleHeadNurse</field>
+        <field name="value">Head Nurse</field>
+    </record>
+
+    <record id="slot_roleopsmanager" model="learn.tenant.override">
+        <field name="key">roleOpsManager</field>
+        <field name="value">Operations Manager</field>
+    </record>
+
+    <record id="slot_rolereception" model="learn.tenant.override">
+        <field name="key">roleReception</field>
+        <field name="value">CRM / Reception</field>
+    </record>
+
+    <record id="slot_shiftend" model="learn.tenant.override">
+        <field name="key">shiftEnd</field>
+        <field name="value">17:30</field>
+    </record>
+
+    <record id="slot_shiftstart" model="learn.tenant.override">
+        <field name="key">shiftStart</field>
+        <field name="value">07:30</field>
+    </record>
+
+    <record id="slot_supportemail" model="learn.tenant.override">
+        <field name="key">supportEmail</field>
+        <field name="value">cskh@vietuccare.vn</field>
+    </record>
+
+    <record id="slot_website" model="learn.tenant.override">
+        <field name="key">website</field>
+        <field name="value">pkgdvietuc.com</field>
+    </record>
+
+</odoo>

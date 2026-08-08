@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED FILE. Do not edit.
+         Source: docs/tutorial_crm/ · Regenerate: python3 docs/tutorial_crm/tools/gen_learn_data.py
+         Hand edits are erased on the next run and fail the CI check. -->
+<!-- Lessons, steps and understanding checks. -->
+<odoo>
+
+    <record id="lesson_l1" model="learn.lesson">
+        <field name="key">L1</field>
+        <field name="station_id" ref="station_carecommand"/>
+        <field name="sequence">10</field>
+        <field name="name">Care Command</field>
+        <field name="goal">The triage wall: every open conversation across every channel, most urgent first.</field>
+        <field name="duration_min">7</field>
+    </record>
+
+    <record id="lesson_l1_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">10</field>
+        <field name="kicker">CARE COACH · WHAT &amp; WHY</field>
+        <field name="title">One wall, every channel</field>
+        <field name="body">Care Command shows &lt;b&gt;one work item per person&lt;/b&gt;, not per message. Zalo, calls, email and web chat for the same family collapse into a single row. Right now this desk has &lt;b&gt;12 open conversations&lt;/b&gt;, &lt;b&gt;7 needing a reply&lt;/b&gt; and &lt;b&gt;3 nobody has claimed&lt;/b&gt;.</field>
+        <field name="tip">The row stores no message text. It points at the Zalo thread and the call log, and builds the timeline when you open it.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-wall</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l1_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">20</field>
+        <field name="kicker">SCOPE</field>
+        <field name="title">You are looking at one area, not the country</field>
+        <field name="body">Every count on this screen is filtered to your &lt;b&gt;catchment area&lt;/b&gt; — here, Hà Nội. For channel traffic the area comes from the &lt;b&gt;channel account the message arrived on&lt;/b&gt;: one Zalo Official Account per area. This is why the same wall looks empty to a colleague in Hồ Chí Minh City.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-catchment</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l1_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">30</field>
+        <field name="kicker">THE CASE</field>
+        <field name="title">Top of the wall: conversation #4172</field>
+        <field name="body">&lt;b&gt;Trần Mỹ Linh&lt;/b&gt; messaged the Hà Nội Zalo OA at 07:42 about her mother, &lt;b&gt;Nguyễn Thị Hoa&lt;/b&gt; (78). Two unread messages, one missed call at 07:55, and Hoa has a wound-care visit booked for &lt;b&gt;16:30 today&lt;/b&gt;. Score: &lt;b&gt;110&lt;/b&gt;.</field>
+        <field name="tip">Note who is typing. The Zalo account is the daughter's, not the patient's. Hold that thought.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-row-4172</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l1_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">40</field>
+        <field name="kicker">HOW THE NUMBER IS MADE</field>
+        <field name="title">110 is arithmetic, not opinion</field>
+        <field name="body">Six terms add up. Needs reply &lt;b&gt;+40&lt;/b&gt;, booking within 24 hours &lt;b&gt;+30&lt;/b&gt;, unread messages &lt;b&gt;+15&lt;/b&gt;, unhandled missed call &lt;b&gt;+10&lt;/b&gt;, watch phrase matched &lt;b&gt;+15&lt;/b&gt;, ageing &lt;b&gt;+0&lt;/b&gt; — because only 18 minutes have passed. Every operator sees the same 110 for the same facts.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-score-4172</field>
+        <field name="visual">calc</field>
+    </record>
+
+    <record id="lesson_l1_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">50</field>
+        <field name="kicker">CAUSE AND EFFECT</field>
+        <field name="title">A watch phrase moved this to the top</field>
+        <field name="body">The phrase &lt;b&gt;“khó thở”&lt;/b&gt; (shortness of breath) is on the clinic's watch list. When it appears in an inbound message it adds &lt;b&gt;+15&lt;/b&gt;. Watch the line: the phrase in the message travels to the term in the score.</field>
+        <field name="consequence">A watch phrase is triage, never a diagnosis. It changes the queue position; it does not tell you what is wrong with the patient.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-watch-4172</field>
+        <field name="visual">trace</field>
+        <field name="moment_from">cc-watch-4172</field>
+        <field name="moment_to">cc-term-watch</field>
+    </record>
+
+    <record id="lesson_l1_step_05" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">60</field>
+        <field name="kicker">THE FIRST ACTION</field>
+        <field name="title">Claim before you type</field>
+        <field name="body">Claiming makes you the owner. If a colleague claims the same second, exactly one of you wins and the other is told who. Everything after this — replying, booking, escalating — assumes one owner.</field>
+        <field name="tip">Only a CRM Manager can take a claimed conversation off someone else. That is deliberate.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-claim</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l1_step_06" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">70</field>
+        <field name="kicker">THE LIFECYCLE</field>
+        <field name="title">Where a conversation goes</field>
+        <field name="body">&lt;b&gt;Needs reply&lt;/b&gt; → you answer → &lt;b&gt;Waiting&lt;/b&gt; → they are dealt with → &lt;b&gt;Closed&lt;/b&gt;. &lt;b&gt;Junk?&lt;/b&gt; is a branch off to the side, not a step forward. Sending a reply moves the item to Waiting automatically and clears the unread count.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-pipeline</field>
+        <field name="visual">pipeline</field>
+        <field name="moment_chain">conv</field>
+    </record>
+
+    <record id="lesson_l1_step_07" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">80</field>
+        <field name="kicker">BIGGER THAN IT LOOKS</field>
+        <field name="title">“Junk?” does two things, not one</field>
+        <field name="body">It zeroes the urgency score and drops the row off the wall — and it &lt;b&gt;also marks the linked contact as spam and flags the phone number&lt;/b&gt;. Toggle the panel to see the same record before and after.</field>
+        <field name="consequence">Scope: the conversation, the contact record, and the phone number. Reversible: the status can be set back, but the number stays flagged until someone clears it, and the next operator sees a pre-judged caller.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-junk</field>
+        <field name="visual">morph</field>
+        <field name="moment_which">junk</field>
+    </record>
+
+    <record id="lesson_l1_step_07_line_00" model="learn.step.line">
+        <field name="step_id" ref="lesson_l1_step_07"/>
+        <field name="sequence">10</field>
+        <field name="role">morph_before</field>
+        <field name="label">Before</field>
+        <field name="value">head|110</field>
+    </record>
+
+    <record id="lesson_l1_step_07_line_01" model="learn.step.line">
+        <field name="step_id" ref="lesson_l1_step_07"/>
+        <field name="sequence">20</field>
+        <field name="role">morph_before</field>
+        <field name="label">On the wall · contact status “New” · number not flagged</field>
+        <field name="value">detail</field>
+    </record>
+
+    <record id="lesson_l1_step_07_line_02" model="learn.step.line">
+        <field name="step_id" ref="lesson_l1_step_07"/>
+        <field name="sequence">30</field>
+        <field name="role">morph_after</field>
+        <field name="label">After “Junk?”</field>
+        <field name="value">head|0</field>
+    </record>
+
+    <record id="lesson_l1_step_07_line_03" model="learn.step.line">
+        <field name="step_id" ref="lesson_l1_step_07"/>
+        <field name="sequence">40</field>
+        <field name="role">morph_after</field>
+        <field name="label">Off the wall · contact status “Spam Call” · +84 912 345 678 flagged for every future call</field>
+        <field name="value">detail</field>
+    </record>
+
+    <record id="lesson_l1_step_07_line_04" model="learn.step.line">
+        <field name="step_id" ref="lesson_l1_step_07"/>
+        <field name="sequence">50</field>
+        <field name="role">morph_after</field>
+        <field name="label">3 records changed, not 1</field>
+        <field name="value">delta</field>
+    </record>
+
+    <record id="lesson_l1_step_08" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">90</field>
+        <field name="kicker">THE ACTION STRIP</field>
+        <field name="title">Six doors out of a conversation</field>
+        <field name="body">&lt;b&gt;Book&lt;/b&gt; opens the booking flow with the duplicate check. &lt;b&gt;Log as lead&lt;/b&gt; keeps them for later. &lt;b&gt;Escalate&lt;/b&gt; pages the {{roleHeadNurse}}, the {{roleOpsManager}} or the {{roleDutyDoctor}} — and needs a lead on the conversation. &lt;b&gt;Reminder&lt;/b&gt;, &lt;b&gt;Internal note&lt;/b&gt; and &lt;b&gt;Consents&lt;/b&gt; leave no trace with the patient.</field>
+        <field name="tip">Internal note and Reminder are the two safe actions when you are not sure. Use them instead of guessing in a reply.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-actions</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l1_step_09" model="learn.step">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">100</field>
+        <field name="kicker">BEFORE YOU REPLY</field>
+        <field name="title">Who is actually on the other end?</field>
+        <field name="body">The Zalo account belongs to &lt;b&gt;Linh&lt;/b&gt;. The patient is &lt;b&gt;Hoa&lt;/b&gt;. Whether you may discuss Hoa's wound with Linh is a recorded permission — &lt;b&gt;{{consentPolicyName}}&lt;/b&gt; — not a judgement call. Open Consents and look before you answer a clinical question.</field>
+        <field name="consequence">Scope: a message you cannot recall, to a person who may not be permitted to receive it. Reversible: no — a sent Zalo message is gone. Check first: the client's Data Sharing consent for this named relation, and whether it is still active.</field>
+        <field name="screen">carecommand</field>
+        <field name="anchor">cc-consent</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l1_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_l1"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">It is 08:05. Conversation #4172 sits at 110 and asks whether the mother's wound is infected. The Zalo account is the daughter's, and the client's Data Sharing consent for her was withdrawn in June. What do you do?</field>
+    </record>
+
+    <record id="lesson_l1_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l1_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Claim it, reply that you cannot discuss the details over this account, and escalate to the {{roleDutyDoctor}} while calling the client's own number.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. You answer the person — quickly, because the urgency is real — without disclosing anything you are not permitted to. The clinical question goes to a clinician, and the client's own line is the route that needs no third-party consent.</field>
+    </record>
+
+    <record id="lesson_l1_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l1_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Reply straight away with what the last visit note said about the wound — she is family and the score is 110, so speed matters most.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. The 110 is a queue position, not permission. Family relationship is not consent, and a withdrawn consent is an explicit “no”. A sent Zalo message cannot be recalled, and this one would disclose a patient's clinical detail to someone the patient has said no to. Speed is satisfied by replying fast — just not with that content.</field>
+    </record>
+
+    <record id="lesson_l1_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l1_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Mark it Junk? — the account is not the patient's, so it does not belong on the wall.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Junk? is for junk, and this is a real family in distress. Worse, it would also mark the contact as spam and flag that phone number, so the next time this daughter calls she starts pre-judged. Family members messaging on a patient's behalf is normal in home care — it is a consent question, not a spam question.</field>
+    </record>
+
+    <record id="lesson_l2" model="learn.lesson">
+        <field name="key">L2</field>
+        <field name="station_id" ref="station_channelcenter"/>
+        <field name="sequence">10</field>
+        <field name="name">Channel Center</field>
+        <field name="goal">Connect, prove and watch every channel. The most consequential setup screen in CRM.</field>
+        <field name="duration_min">7</field>
+    </record>
+
+    <record id="lesson_l2_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">10</field>
+        <field name="kicker">CARE COACH · WHAT &amp; WHY</field>
+        <field name="title">Eight channels, one truth about each</field>
+        <field name="body">This is the catalogue of every channel a clinic can connect: Zalo, Calls, Email, ZNS, WhatsApp, Messenger, Telegram and Web chat. &lt;b&gt;Walk-in is not here&lt;/b&gt; — a person coming through the door has no provider and no credentials, so offering a “Connect” button for it could only ever fail.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-catalogue</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l2_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">20</field>
+        <field name="kicker">THE LIFECYCLE</field>
+        <field name="title">Configured is not connected</field>
+        <field name="body">A connection walks a fixed path: &lt;b&gt;Not connected → Signing in → Choosing what to connect → Setting things up → Testing → Connected&lt;/b&gt;. It becomes Connected only when every required readiness check passes. You never type a state in; one server path writes it and audits every move.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-pipeline</field>
+        <field name="visual">pipeline</field>
+        <field name="moment_chain">conn</field>
+    </record>
+
+    <record id="lesson_l2_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">30</field>
+        <field name="kicker">THE CASE</field>
+        <field name="title">The account that produced conversation #4172</field>
+        <field name="body">&lt;b&gt;{{oaNameNorth}}&lt;/b&gt; is a Zalo Official Account in the &lt;b&gt;Connected&lt;/b&gt; state, carrying the Hà Nội catchment. Every message that arrives on it becomes a Hà Nội conversation — including Linh's at 07:42 this morning.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-card-zalo-hn</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l2_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">40</field>
+        <field name="kicker">CAUSE AND EFFECT</field>
+        <field name="title">One setting decides whose wall it lands on</field>
+        <field name="body">The area on this account is not a label — it is the routing rule. Follow the line from the account's catchment to the Hà Nội wall count. Change this field and yesterday's conversations do not move, but every new one does.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-area-zalo-hn</field>
+        <field name="visual">trace</field>
+        <field name="moment_from">ch-area-zalo-hn</field>
+        <field name="moment_to">ch-wall-hn</field>
+    </record>
+
+    <record id="lesson_l2_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">50</field>
+        <field name="kicker">MAGNITUDE</field>
+        <field name="title">Point it at the wrong city</field>
+        <field name="body">Toggle the panel. Re-pointing this one account at TPHCM takes the Hà Nội wall from &lt;b&gt;12 open conversations to 4&lt;/b&gt;, and hands &lt;b&gt;8&lt;/b&gt; to a desk 1,700 km away that has never met these families. Nothing errors. Nothing warns. The Hà Nội desk simply has a quiet morning.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-wall-hn</field>
+        <field name="visual">morph</field>
+        <field name="moment_which">area</field>
+    </record>
+
+    <record id="lesson_l2_step_04_line_00" model="learn.step.line">
+        <field name="step_id" ref="lesson_l2_step_04"/>
+        <field name="sequence">10</field>
+        <field name="role">morph_before</field>
+        <field name="label">OA catchment = Hà Nội</field>
+        <field name="value">head|12 · 7</field>
+    </record>
+
+    <record id="lesson_l2_step_04_line_01" model="learn.step.line">
+        <field name="step_id" ref="lesson_l2_step_04"/>
+        <field name="sequence">20</field>
+        <field name="role">morph_before</field>
+        <field name="label">Hà Nội wall open · HCMC wall open</field>
+        <field name="value">detail</field>
+    </record>
+
+    <record id="lesson_l2_step_04_line_02" model="learn.step.line">
+        <field name="step_id" ref="lesson_l2_step_04"/>
+        <field name="sequence">30</field>
+        <field name="role">morph_after</field>
+        <field name="label">OA catchment = TPHCM</field>
+        <field name="value">head|4 · 15</field>
+    </record>
+
+    <record id="lesson_l2_step_04_line_03" model="learn.step.line">
+        <field name="step_id" ref="lesson_l2_step_04"/>
+        <field name="sequence">40</field>
+        <field name="role">morph_after</field>
+        <field name="label">8 conversations move to a desk 1,700 km away that has never met these families</field>
+        <field name="value">detail</field>
+    </record>
+
+    <record id="lesson_l2_step_04_line_04" model="learn.step.line">
+        <field name="step_id" ref="lesson_l2_step_04"/>
+        <field name="sequence">50</field>
+        <field name="role">morph_after</field>
+        <field name="label">No error. No warning. Just a quiet morning.</field>
+        <field name="value">delta</field>
+    </record>
+
+    <record id="lesson_l2_step_05" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">60</field>
+        <field name="kicker">PROOF</field>
+        <field name="title">What a green tick does and does not prove</field>
+        <field name="body">Readiness checks are the reason a connection may call itself Connected: credentials valid, webhook verified, send permission granted, account selected. They prove the connection is &lt;b&gt;capable&lt;/b&gt;. Only real inbound traffic proves it &lt;b&gt;works&lt;/b&gt;.</field>
+        <field name="tip">After connecting, send yourself one message from a personal account and watch it appear on the wall. That is the only test that counts.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-checks</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l2_step_06" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">70</field>
+        <field name="kicker">THE ONE TO WATCH</field>
+        <field name="title">“Expiring soon” still works today</field>
+        <field name="body">The TPHCM account's grant dies in &lt;b&gt;6 days&lt;/b&gt;. It is deliberately still allowed to send — refusing to reply to patients today would be a worse failure than the warning. That is exactly why this state gets ignored until the morning it becomes &lt;b&gt;Action required&lt;/b&gt; and the inbox goes silent.</field>
+        <field name="consequence">Scope: every future message on that channel, in both directions. Reversible: yes, by re-authorising — but nothing queues while it is down, so the messages sent during the gap are simply lost to you. Check first: who holds the provider login, before the day you need it.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-card-zalo-hcm</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l2_step_07" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">80</field>
+        <field name="kicker">HONEST STATE</field>
+        <field name="title">Action required means a human must go somewhere else</field>
+        <field name="body">Messenger lost a permission at the provider. Nothing in CareJioX can fix that — someone has to sign in to the platform and grant it again. Until then this channel neither sends nor receives, and the screen says so rather than showing a hopeful green.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-card-fb</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l2_step_08" model="learn.step">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">90</field>
+        <field name="kicker">GO-LIVE</field>
+        <field name="title">Availability is not a promise</field>
+        <field name="body">A channel shown as connectable is only offered when this deployment actually has an adapter and the tenant has credentials. If nothing is configured yet, the console says nothing is configured — it never draws a Connect button that could only fail.</field>
+        <field name="tip">This is the screen to open first when someone says “we stopped getting enquiries”. Nine times in ten the answer is here, not in the advertising.</field>
+        <field name="screen">channelcenter</field>
+        <field name="anchor">ch-golive</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_l2_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_l2"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">A colleague reports that the Hà Nội wall has been unusually quiet since Tuesday, while the TPHCM desk says it is drowning. Both Zalo accounts show Connected. What is the first thing you check?</field>
+    </record>
+
+    <record id="lesson_l2_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l2_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">The catchment area recorded on each Zalo Official Account — including which account is selected on each connection.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Exactly. Both channels being healthy and the volume moving from one wall to another is the signature of a routing change, not an outage. The area on the account is the routing rule, and re-selecting the wrong account during a re-authorisation is the usual cause.</field>
+    </record>
+
+    <record id="lesson_l2_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l2_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Whether the Hà Nội operators have the right role, since they may simply have lost visibility of the leaves.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. A role change would hide the whole screen from those users, not move the volume onto a different team's wall. And it would not explain TPHCM receiving more. When work moves rather than disappears, look at routing before permissions.</field>
+    </record>
+
+    <record id="lesson_l2_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_l2_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Re-authorise both accounts to be safe, then see whether the balance corrects itself.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. Re-authorising takes a connection out of the connected states while it walks the path again — and nothing queues while it is down, so you would add a real outage on both cities to a routing problem in one. Diagnose from the account selection first; re-authorisation is the fix for an expiring or lost grant, not a diagnostic.</field>
+    </record>
+
+</odoo>

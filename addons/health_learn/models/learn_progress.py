@@ -1,0 +1,144 @@
+# -*- coding: utf-8 -*-
+"""Learner state, and the event log.
+
+The event log ships in release 1 on purpose. The measurement plan (analysis §6)
+uses a *self-referential* baseline: month 1 is the reference period. If the log
+slips to a later release that reference period is gone permanently, and the
+system is pre-production exactly once — which is the only moment this is free.
+
+It is deliberately thin. No free text, bounded ``detail``, no PHI-shaped field
+anywhere: an event log that can hold a patient's name eventually holds one.
+"""
+from odoo import api, fields, models
+from odoo.exceptions import AccessError
+
+
+class LearnProgress(models.Model):
+    _name = 'learn.progress'
+    _description = 'Learn progress'
+    _order = 'write_date desc'
+
+    user_id = fields.Many2one('res.users', required=True, index=True,
+                              default=lambda self: self.env.user, ondelete='cascade')
+    company_id = fields.Many2one('res.company', required=True, index=True,
+                                 default=lambda self: self.env.company)
+    station_id = fields.Many2one('learn.station', required=True,
+                                 index=True, ondelete='cascade')
+    state = fields.Selection(
+        selection=lambda self: self._selection_state(),
+        required=True, default='not_started')
+    step_index = fields.Integer(default=0)
+    attempts = fields.Integer(default=0, help="Understanding-check answers submitted.")
+    first_try_correct = fields.Boolean(default=False)
+    completed_at = fields.Datetime()
+    lang = fields.Char(help="Language the learner was reading when they finished.")
+
+    _sql_constraints = [
+        ('user_station_uniq', 'unique(user_id, station_id)',
+         'One progress row per learner per station.'),
+    ]
+
+    @api.model
+    def _selection_state(self):
+        return [('not_started', self.env._('Not started')),
+                ('in_progress', self.env._('In progress')),
+                ('done', self.env._('Completed'))]
+
+    @api.model
+    def my_progress(self):
+        rows = self.search([('user_id', '=', self.env.uid)])
+        return {
+            r.station_id.key: {
+                'state': r.state,
+                'step_index': r.step_index,
+                'attempts': r.attempts,
+                'first_try_correct': r.first_try_correct,
+                'completed_at': r.completed_at and r.completed_at.isoformat() or '',
+            }
+            for r in rows
+        }
+
+    @api.model
+    def record(self, station_key, values):
+        """Upsert this user's progress for one station.
+
+        Always writes as the calling user, never sudo: a learner updating their
+        own progress is the only write path, and the record rule is what proves
+        it. ``station_key`` is resolved here so the frontend never sends an id.
+        """
+        station = self.env['learn.station'].sudo().search(
+            [('key', '=', station_key)], limit=1)
+        if not station:
+            return False
+        allowed = {'state', 'step_index', 'attempts', 'first_try_correct',
+                   'completed_at', 'lang'}
+        vals = {k: v for k, v in (values or {}).items() if k in allowed}
+        row = self.search([('user_id', '=', self.env.uid),
+                           ('station_id', '=', station.id)], limit=1)
+        if row:
+            row.write(vals)
+        else:
+            row = self.create(dict(vals, user_id=self.env.uid, station_id=station.id))
+        return True
+
+
+class LearnEvent(models.Model):
+    _name = 'learn.event'
+    _description = 'Learn event'
+    _order = 'occurred_at desc, id desc'
+
+    user_id = fields.Many2one('res.users', required=True, index=True,
+                              default=lambda self: self.env.user, ondelete='cascade')
+    company_id = fields.Many2one('res.company', required=True, index=True,
+                                 default=lambda self: self.env.company)
+    station_id = fields.Many2one('learn.station', index=True, ondelete='set null')
+    kind = fields.Selection(
+        selection=lambda self: self._selection_kind(),
+        required=True, index=True)
+    screen = fields.Char()
+    detail = fields.Char(size=64, help="Bounded. An option index, a step key, a ms bucket.")
+    lang = fields.Char(size=8)
+    occurred_at = fields.Datetime(required=True, default=fields.Datetime.now, index=True)
+
+    @api.model
+    def _selection_kind(self):
+        # Phase 2 appends coach_*, Phase 3 appends mission_*. Kept in one
+        # selection so the metrics queries in §6 never have to union tables.
+        return [
+            ('journey_open', self.env._('Journey opened')),
+            ('station_open', self.env._('Station opened')),
+            ('lesson_start', self.env._('Lesson started')),
+            ('step_view', self.env._('Step viewed')),
+            ('quiz_answer', self.env._('Understanding check answered')),
+            ('lesson_complete', self.env._('Lesson completed')),
+            ('lesson_abandon', self.env._('Lesson abandoned')),
+        ]
+
+    # -- append-only ------------------------------------------------------
+    def write(self, vals):
+        raise AccessError(self.env._("The learning event log is append-only."))
+
+    def unlink(self):
+        raise AccessError(self.env._("The learning event log is append-only."))
+
+    @api.model
+    def log(self, kind, station_key=None, screen=None, detail=None, lang=None):
+        """The frontend's only write into the log.
+
+        Unknown kinds are dropped rather than raised: a stale browser tab
+        emitting a retired event name must never break a lesson the learner is
+        in the middle of.
+        """
+        valid = {k for k, _label in self._selection_kind()}
+        if kind not in valid:
+            return False
+        station = self.env['learn.station'].sudo().search(
+            [('key', '=', station_key)], limit=1) if station_key else None
+        self.create({
+            'kind': kind,
+            'station_id': station.id if station else False,
+            'screen': (screen or '')[:64] or False,
+            'detail': (str(detail) if detail is not None else '')[:64] or False,
+            'lang': (lang or '')[:8] or False,
+        })
+        return True

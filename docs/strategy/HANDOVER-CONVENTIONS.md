@@ -2366,3 +2366,40 @@ a no-op.
     out, so a consumer or a test that reads `column['name']` gets a bare
     `KeyError`, not a wrong value. Assert on `field_id` for identity and
     `label` for display. (records-table RT-2.)
+
+- **§5.144 — Odoo's JS minifier deletes whitespace directly after `}`, inside
+    template literals too.** `` `${esc(T("fullLesson"))} · ${mins} ${esc(T("min"))}` ``
+    reaches the browser as `Full lesson· 7min`. MEASURED by diffing
+    `/web/assets/<hash>/web.assets_web.js` against the `.min.js` beside it: the
+    non-minified bundle has the spaces and the minified one does not — so it is
+    invisible in development and invisible in code review, and only ever shows
+    up as text that looks slightly wrong in production. Never leave a literal
+    space after a closing `}`; put it in its own interpolation, `${" "}`. Guard
+    it with a test that scans the source, not by remembering
+    (`health_learn/tests/test_assets.py::test_01`). (learn Phase 1.)
+
+- **§5.145 — `res.groups.category_id` is gone in Odoo 19; it is
+    `privilege_id`.** A `<record model="res.groups">` carrying `category_id`
+    fails the whole module install with `ValueError: Invalid field
+    'category_id' in 'res.groups'` — and because it happens during data load,
+    the traceback names the XML line, not the field, until you read three
+    frames up. Use `privilege_id` pointing at a `res.groups.privilege`; this
+    repo's is `health_base.res_groups_privilege_healthcare`. Same release also
+    renamed `res.users.groups_id` to `group_ids`, which bites in tests that
+    create a user. And `<group expand="0">` inside a search view is no longer
+    valid arch — one invalid attribute invalidates the entire view.
+    (learn Phase 1.)
+
+- **§5.146 — a "translate everything" zipper keyed on FIELD NAME will skip a
+    translatable string whose name collides with a structural key.** Merging an
+    English and a Vietnamese read of the same records into `{en, vi}` leaves
+    pass through keys like `key`, `icon`, `screen` untouched. A flat map of UI
+    labels is keyed by CONTENT name, and three of ours — `required`, `correct`,
+    `after` — collided with that list, so they shipped as bare English beside
+    translated neighbours. Two lessons: zip structural trees and flat prose maps
+    with SEPARATE functions, and make the parity test assert that nothing
+    arrives as a bare string — a test that walks `{en, vi}` pairs is blind to
+    the value that never became one. Also return `''` for an empty
+    translatable: `{"en": "", "vi": ""}` is truthy, and every
+    `field ? card : ""` in the frontend then draws an empty card.
+    (learn Phase 1.)

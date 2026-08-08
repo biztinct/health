@@ -43,7 +43,7 @@
         <!-- Which area's inbox this is. Care Command is a client action, so it
              gets no search facet — without this the operator has no way to
              tell a quiet wall from a scoped one. -->
-        <div class="cc-catchment" t-if="catchmentLabel"
+        <div class="cc-catchment" data-a="cc-catchment" t-if="catchmentLabel"
              t-att-class="{ empty: catchmentEmpty }">
           <span class="ic ic-user"/><t t-esc="catchmentLabel"/>
         </div>
@@ -104,7 +104,7 @@
       <div class="content">
 
         <!-- ========== WALL ========== -->
-        <div class="wallwrap">
+        <div class="wallwrap" data-a="cc-wall">
           <!-- live ringing hero(es) — resolve to a conversation, open on click -->
           <div t-if="state.rings.length" class="ringrow">
             <div t-foreach="state.rings" t-as="ring" t-key="ring.key"
@@ -142,6 +142,7 @@
           </div>
           <div t-else="" class="wall">
             <div t-foreach="conversations" t-as="c" t-key="c.id"
+                 t-attf-data-a="cc-row-#{c.id}"
                  t-att-class="tileClass(c)" t-att-style="'--cv:' + chan(c.channel).cv"
                  t-on-click="() => this.openChat(c.id)">
               <div class="t-top">
@@ -255,7 +256,7 @@
             <t t-else="">
               <t t-set="h" t-value="state.detail.header"/>
               <header class="th-head">
-                <div t-if="!h.owner and h.status !== 'junk_suspect'" class="claimbanner">
+                <div t-if="!h.owner and h.status !== 'junk_suspect'" class="claimbanner" data-a="cc-claim">
                   <span class="ic ic-warn"/>Unclaimed — reply or claim to own this conversation
                   <button class="claimbtn" t-on-click="() => this.claim(state.selected)"><span class="ic ic-hand"/>Claim</button>
                 </div>
@@ -264,7 +265,8 @@
                   <div class="th-id">
                     <div class="th-nm"><t t-esc="h.name"/>
                       <span t-if="h.chips.length" class="chip" t-att-class="h.chips[0].kind" t-esc="h.chips[0].label"/>
-                      <span t-if="h.watch" class="watchflag" t-att-title="h.watch.terms">
+                      <span t-if="h.watch" class="watchflag" t-attf-data-a="cc-watch-#{state.selected}"
+                            t-att-title="h.watch.terms">
                         <span class="ic ic-warn"/><t t-esc="h.watch.terms"/></span>
                     </div>
                     <div class="th-sub">
@@ -285,7 +287,7 @@
                   </div>
                 </div>
                 <!-- header action strip -->
-                <div class="th-act2">
+                <div class="th-act2" data-a="cc-actions">
                   <button class="abtn" t-on-click="() => this.doBook()"><span class="ic ic-cal"/>Book</button>
                   <button class="abtn" t-on-click="() => this.doCallback()"><span class="ic ic-clock"/>Callback</button>
                   <!-- Reminder: schedules a todo activity on the anchor (Phase 3) -->
@@ -312,10 +314,10 @@
                   <button t-if="!h.has_lead" class="abtn" t-on-click="() => this.doLead()"><span class="ic ic-bolt"/>Lead</button>
                   <button t-if="!h.is_client" class="abtn" t-on-click="() => this.doClient()"><span class="ic ic-user"/>Client</button>
                   <!-- Consent: navigates to the backend consent records (soft dep) -->
-                  <button t-if="h.can_consent" class="abtn" t-on-click="() => this.doConsent()"><span class="ic ic-shield"/>Consent</button>
+                  <button t-if="h.can_consent" class="abtn" data-a="cc-consent" t-on-click="() => this.doConsent()"><span class="ic ic-shield"/>Consent</button>
                   <span class="adiv"/>
-                  <button t-if="h.has_lead" class="abtn" t-on-click="() => this.doEscalate()"><span class="ic ic-warn"/>Escalate</button>
-                  <button class="abtn gray" t-on-click="() => this.doJunk()"><span class="ic ic-ban"/>Junk</button>
+                  <button t-if="h.has_lead" class="abtn" data-a="cc-escalate" t-on-click="() => this.doEscalate()"><span class="ic ic-warn"/>Escalate</button>
+                  <button class="abtn gray" data-a="cc-junk" t-on-click="() => this.doJunk()"><span class="ic ic-ban"/>Junk</button>
                 </div>
               </header>
 
@@ -379,7 +381,7 @@
 
               <!-- composer -->
               <div class="comp">
-                <div class="comp-row">
+                <div class="comp-row" data-a="cc-composer">
                   <div class="comp-box" t-att-class="{ disabled: !canReply }">
                     <span class="ic ic-clip"/>
                     <input t-if="canReply" type="text" t-att-value="state.composer"

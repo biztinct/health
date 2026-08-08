@@ -11,7 +11,7 @@
                 <span class="cd-subtitle">Sales &amp; Contact Management</span>
             </div>
             <div class="cd-header-right">
-                <div class="cd-period-toggle">
+                <div class="cd-period-toggle" data-a="db-period">
                     <button t-attf-class="cd-period-btn #{state.period === 'today' ? 'active' : ''}"
                             t-on-click="() => this.onPeriodChange('today')">Today</button>
                     <button t-attf-class="cd-period-btn #{state.period === 'week' ? 'active' : ''}"
@@ -46,9 +46,10 @@
         <div t-if="!state.isLoading" class="cd-body">
 
             <!-- ZONE 1: KPI STRIP -->
-            <div class="cd-kpi-strip">
+            <div class="cd-kpi-strip" data-a="db-kpis">
                 <t t-foreach="kpiCards" t-as="kpi" t-key="kpi.key">
                     <div class="cd-kpi-card" t-att-data-kpi-key="kpi.key"
+                         t-attf-data-a="db-#{kpi.key}"
                          t-on-click="() => this.onKpiClick(kpi.key)">
                         <div class="cd-kpi-icon">
                             <i t-attf-class="fa #{kpi.icon}"/>

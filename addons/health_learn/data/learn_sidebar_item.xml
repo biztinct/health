@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- The Journey's front door.
+
+         role_ids is deliberately EMPTY. Every gated leaf in this sidebar hides
+         itself from roles that cannot use it, which is right for a working
+         screen and wrong for a learning one: a nurse who cannot open Care
+         Command is exactly the person who needs to read what it is before
+         asking for access. The Journey itself marks each station the learner
+         cannot see as "not in your sidebar" rather than hiding it.
+
+         Sits last in CRM for Phase 1. When OPS/CLINICAL/FINANCE lines exist it
+         moves to its own section — a one-line change, which is why it is not
+         worth designing for now. -->
+    <record id="item_learn_journey" model="cms.sidebar.item">
+        <field name="name">Training</field>
+        <field name="section_id" ref="health_cms_sidebar.section_crm"/>
+        <field name="sequence">90</field>
+        <field name="icon">fa fa-graduation-cap</field>
+        <field name="action_xmlid">health_learn.action_learn_journey</field>
+        <field name="action_tag">learn_journey</field>
+        <field name="match_action_tags">learn_journey</field>
+    </record>
+
+</odoo>

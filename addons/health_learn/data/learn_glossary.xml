@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED FILE. Do not edit.
+         Source: docs/tutorial_crm/ · Regenerate: python3 docs/tutorial_crm/tools/gen_learn_data.py
+         Hand edits are erased on the next run and fail the CI check. -->
+<!-- Glossary. One entry per term the CRM desk uses differently from ordinary Vietnamese or English. -->
+<odoo>
+
+    <record id="gloss_conversation" model="learn.glossary.term">
+        <field name="key">conversation</field>
+        <field name="sequence">10</field>
+        <field name="term">Conversation</field>
+        <field name="definition">one work item per person, not per message. It stores no message bodies; it points at the Zalo thread, the call log and the lead, and composes the timeline when you open it.</field>
+    </record>
+
+    <record id="gloss_urgency" model="learn.glossary.term">
+        <field name="key">urgency</field>
+        <field name="sequence">20</field>
+        <field name="term">Urgency score</field>
+        <field name="definition">a deterministic number, not an opinion. Six terms add up: needs-reply 40, booking within 24h 30, unread 15, unhandled missed call 10, watch phrase 15, plus one point per whole hour of waiting up to 20.</field>
+    </record>
+
+    <record id="gloss_claim" model="learn.glossary.term">
+        <field name="key">claim</field>
+        <field name="sequence">30</field>
+        <field name="term">Claim</field>
+        <field name="definition">taking ownership of a conversation so nobody else replies at the same time. One winner only; if two people claim together, the second is told who won.</field>
+    </record>
+
+    <record id="gloss_catchment" model="learn.glossary.term">
+        <field name="key">catchment</field>
+        <field name="sequence">40</field>
+        <field name="term">Catchment area</field>
+        <field name="definition">the geography an operator works. It keeps a Hà Nội desk out of a Hồ Chí Minh City inbox. For channel traffic it is derived from the channel account the message arrived on.</field>
+    </record>
+
+    <record id="gloss_channeleffective" model="learn.glossary.term">
+        <field name="key">channelEffective</field>
+        <field name="sequence">50</field>
+        <field name="term">Effective channel</field>
+        <field name="definition">traffic wins over declaration. If real messages arrived on Zalo, the channel is Zalo, even if the lead form said “phone”. A declared channel is only used when there is no traffic yet.</field>
+    </record>
+
+    <record id="gloss_oa" model="learn.glossary.term">
+        <field name="key">oa</field>
+        <field name="sequence">60</field>
+        <field name="term">OA (Official Account)</field>
+        <field name="definition">the clinic's verified Zalo identity that patients message. One OA per catchment area.</field>
+    </record>
+
+    <record id="gloss_watch" model="learn.glossary.term">
+        <field name="key">watch</field>
+        <field name="sequence">70</field>
+        <field name="term">Watch phrase</field>
+        <field name="definition">a term that, if it appears in an inbound message, adds 15 to urgency. It is triage, never a severity judgement: it moves the item up the list, it does not diagnose.</field>
+    </record>
+
+    <record id="gloss_touchpoint" model="learn.glossary.term">
+        <field name="key">touchpoint</field>
+        <field name="sequence">80</field>
+        <field name="term">Touchpoint</field>
+        <field name="definition">one recorded arrival from the website: the page, the referrer, and the UTM/click ids. A person can have several before they ever message you.</field>
+    </record>
+
+    <record id="gloss_utm" model="learn.glossary.term">
+        <field name="key">utm</field>
+        <field name="sequence">90</field>
+        <field name="term">UTM</field>
+        <field name="definition">the tags on an ad link (source, medium, campaign) that say which advert brought someone. Without them the visit lands in “Unmatched campaigns”.</field>
+    </record>
+
+    <record id="gloss_consent" model="learn.glossary.term">
+        <field name="key">consent</field>
+        <field name="sequence">100</field>
+        <field name="term">Data-sharing consent</field>
+        <field name="definition">the client's recorded permission to discuss their health information with a named other person. It has states (draft / active / withdrawn / expired) and it is checked, not assumed.</field>
+    </record>
+
+    <record id="gloss_escalation" model="learn.glossary.term">
+        <field name="key">escalation</field>
+        <field name="sequence">110</field>
+        <field name="term">Escalation</field>
+        <field name="definition">handing a contact to the Head Nurse, the Operations Manager or the Duty Doctor. It needs a lead on the conversation, and it pages a real clinician.</field>
+    </record>
+
+    <record id="gloss_unroutedc" model="learn.glossary.term">
+        <field name="key">unroutedC</field>
+        <field name="sequence">120</field>
+        <field name="term">Unrouted contact</field>
+        <field name="definition">something arrived on a channel with too little information to become a conversation. It records exactly what came in and cannot be edited; you convert it or dismiss it.</field>
+    </record>
+
+    <record id="gloss_spamflag" model="learn.glossary.term">
+        <field name="key">spamFlag</field>
+        <field name="sequence">130</field>
+        <field name="term">Spam flag</field>
+        <field name="definition">marking a contact as spam also flags its phone number for the future, so the same number is pre-judged the next time it calls.</field>
+    </record>
+
+</odoo>

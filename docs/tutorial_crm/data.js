@@ -37,9 +37,6 @@ const I18N = {
     hubTitle: "Learn the CRM desk without a trainer.",
     hubLead: "Three cooperating surfaces for the CRM section of CareJioX — Dashboard, Care Command, Channel Center, Unrouted Contacts, Contacts, Web Touchpoints, Lead Analysis and Activities. Open each one, compare, and pick a direction.",
     modeQ: "How do you want to learn today?",
-    modes: {
-      full: B("Give me the complete guided journey", ""),
-    },
     allConcepts: "All surfaces", readAnalysis: "Read the analysis", reset: "Reset progress",
     reduceMotion: "Reduce motion", motionOn: "Motion reduced",
     explore: "Open surface",
@@ -101,7 +98,10 @@ const I18N = {
     refresh: "Refresh", viewAll: "View all",
     catchment: "Catchment area", hanoi: "Hà Nội", hcmc: "TPHCM", allAreas: "All areas",
     needsReply: "Needs reply", waiting: "Waiting", junk: "Junk?", closed: "Closed",
-    claim: "Claim", release: "Release", takeOver: "Take over", owner: "Owner",
+    // "Owned by", not "Owner": the role filter is also called Owner, and one
+    // English word that needs two different Vietnamese ones is ambiguous in
+    // English too. Caught by gen_learn_data.py's msgid collision check.
+    claim: "Claim", release: "Release", takeOver: "Take over", owner: "Owned by",
     unclaimed: "Unclaimed", urgency: "Urgency",
     sendReply: "Send reply", addNote: "Internal note", bookBtn: "Book",
     escalate: "Escalate", logLead: "Log as lead", markJunk: "Mark Junk?",
@@ -119,7 +119,6 @@ const I18N = {
     hubTitle: "Thành thạo khu vực CRM mà không cần người hướng dẫn.",
     hubLead: "Ba bề mặt học tập phối hợp cho khu vực CRM của CareJioX — Bảng điều khiển, Care Command, Trung tâm kênh, Danh bạ chưa được định tuyến, Liên hệ, Điểm chạm web, Phân tích khách tiềm năng và Hoạt động. Hãy mở từng bề mặt, so sánh và chọn hướng đi.",
     modeQ: "Hôm nay bạn muốn học theo cách nào?",
-    modes: { full: B("", "") },
     allConcepts: "Tất cả bề mặt", readAnalysis: "Đọc bản phân tích", reset: "Đặt lại tiến độ",
     reduceMotion: "Giảm chuyển động", motionOn: "Đã giảm chuyển động",
     explore: "Mở bề mặt",
@@ -170,7 +169,7 @@ const I18N = {
     whoCan: "Ai làm được:", howAsk: "Cách xin quyền:",
     roleNote: "Đang xem với vai trò",
     roles: { crm: "CRM / Lễ tân", nurse: "Điều dưỡng", om: "Quản lý vận hành", owner: "Chủ sở hữu" },
-    rolesShort: { crm: "CRM", nurse: "Điều dưỡng", om: "QLVH", owner: "Chủ" },
+    rolesShort: { crm: "CRM", nurse: "Điều dưỡng", om: "QLVH", owner: "Chủ sở hữu" },
     langNote: "Ngôn ngữ",
     notVisible: "Không có trong thanh bên của bạn",
     notVisibleBody: "Mục này được phân quyền theo vai trò trong cơ sở dữ liệu. Vai trò của bạn không nhìn thấy nó.",

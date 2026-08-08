@@ -1,0 +1,24 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_learn_string_user,learn.string user,model_learn_string,base.group_user,1,0,0,0
+access_learn_string_author,learn.string author,model_learn_string,group_learn_author,1,1,1,1
+access_learn_glossary_user,learn.glossary.term user,model_learn_glossary_term,base.group_user,1,0,0,0
+access_learn_glossary_author,learn.glossary.term author,model_learn_glossary_term,group_learn_author,1,1,1,1
+access_learn_station_user,learn.station user,model_learn_station,base.group_user,1,0,0,0
+access_learn_station_author,learn.station author,model_learn_station,group_learn_author,1,1,1,1
+access_learn_station_mistake_user,learn.station.mistake user,model_learn_station_mistake,base.group_user,1,0,0,0
+access_learn_station_mistake_author,learn.station.mistake author,model_learn_station_mistake,group_learn_author,1,1,1,1
+access_learn_lesson_user,learn.lesson user,model_learn_lesson,base.group_user,1,0,0,0
+access_learn_lesson_author,learn.lesson author,model_learn_lesson,group_learn_author,1,1,1,1
+access_learn_step_user,learn.step user,model_learn_step,base.group_user,1,0,0,0
+access_learn_step_author,learn.step author,model_learn_step,group_learn_author,1,1,1,1
+access_learn_step_line_user,learn.step.line user,model_learn_step_line,base.group_user,1,0,0,0
+access_learn_step_line_author,learn.step.line author,model_learn_step_line,group_learn_author,1,1,1,1
+access_learn_quiz_user,learn.quiz user,model_learn_quiz,base.group_user,1,0,0,0
+access_learn_quiz_author,learn.quiz author,model_learn_quiz,group_learn_author,1,1,1,1
+access_learn_quiz_option_user,learn.quiz.option user,model_learn_quiz_option,base.group_user,1,0,0,0
+access_learn_quiz_option_author,learn.quiz.option author,model_learn_quiz_option,group_learn_author,1,1,1,1
+access_learn_override_user,learn.tenant.override user,model_learn_tenant_override,base.group_user,1,0,0,0
+access_learn_override_admin,learn.tenant.override tenant admin,model_learn_tenant_override,health_user_admin.group_health_user_admin,1,1,1,1
+access_learn_override_author,learn.tenant.override author,model_learn_tenant_override,group_learn_author,1,1,1,1
+access_learn_progress_user,learn.progress own,model_learn_progress,base.group_user,1,1,1,0
+access_learn_event_user,learn.event own,model_learn_event,base.group_user,1,0,1,0

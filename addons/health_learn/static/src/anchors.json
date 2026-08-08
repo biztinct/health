@@ -1,0 +1,148 @@
+{
+  "_doc": [
+    "The anchor registry. One name for one control, whichever surface it is on.",
+    "",
+    "KINDS",
+    "  product   the control exists once in a real template; data-a=\"key\" must be",
+    "            found there verbatim.",
+    "  pattern   the control exists once PER RECORD. The template emits the key",
+    "            with t-attf-data-a, so the registry declares the prefix and the",
+    "            test looks for that prefix rather than a literal key.",
+    "  practice  a TEACHING view with no product counterpart — an arithmetic",
+    "            breakdown, a lifecycle stepper. It exists only on the practice",
+    "            replica. Declared so the gap is visible: Phase 2's Coach must",
+    "            never claim to point at one of these on a live screen.",
+    "",
+    "tests/test_anchor_registry.py enforces all three directions:",
+    "  every product/pattern key exists in its template · every practice key",
+    "  exists in the replica · every data-a in a scanned file is declared here."
+  ],
+
+  "product": {
+    "cc-catchment": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "The catchment pill. Every count on the wall is scoped by it."
+    },
+    "cc-wall": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "The triage wall — one tile per person, most urgent first."
+    },
+    "cc-claim": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "The unclaimed banner and its Claim button."
+    },
+    "cc-actions": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "The action strip: the doors out of a conversation."
+    },
+    "cc-composer": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "The reply box. What is typed here cannot be recalled."
+    },
+    "cc-consent": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "Consent. The check before answering a clinical question to a relative."
+    },
+    "cc-escalate": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "Escalate. Needs a lead on the conversation."
+    },
+    "cc-junk": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "Junk. Risky action — also marks the contact and flags the number."
+    },
+    "ch-catalogue": {
+      "screen": "channelcenter",
+      "file": "health_care_command_channels/static/src/center/channel_center.xml",
+      "desc": "The catalogue of connectable channels."
+    },
+    "ch-checks": {
+      "screen": "channelcenter",
+      "file": "health_care_command_channels/static/src/center/channel_center.xml",
+      "desc": "Readiness checks. 'Connected' is derived from these, never typed in."
+    },
+    "ch-golive": {
+      "screen": "channelcenter",
+      "file": "health_care_command_channels/static/src/center/channel_center.xml",
+      "desc": "The operator-only go-live strip."
+    },
+    "db-kpis": {
+      "screen": "dashboard",
+      "file": "health_crm/static/src/xml/crm_dashboard.xml",
+      "desc": "The KPI strip."
+    },
+    "db-period": {
+      "screen": "dashboard",
+      "file": "health_crm/static/src/xml/crm_dashboard.xml",
+      "desc": "The period selector every figure on the screen is filtered by.",
+      "practice_only_note": "The real selector lives in the dashboard header; declared as product because the tutorial points at it."
+    }
+  },
+
+  "pattern": {
+    "cc-row-": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "One wall tile per conversation; the suffix is the conversation id."
+    },
+    "cc-watch-": {
+      "screen": "carecommand",
+      "file": "health_care_command/static/src/xml/care_command.xml",
+      "desc": "The watch-phrase flag on the open thread; suffix is the conversation id."
+    },
+    "db-": {
+      "screen": "dashboard",
+      "file": "health_crm/static/src/xml/crm_dashboard.xml",
+      "desc": "One KPI tile per card; the suffix is the product's own KPI key."
+    },
+    "ch-card-": {
+      "screen": "channelcenter",
+      "file": "health_care_command_channels/static/src/center/channel_center.xml",
+      "desc": "One card per channel; the suffix is the channel key."
+    }
+  },
+
+  "practice": {
+    "cc-tabs":        {"screen": "carecommand", "desc": "Attention / Leads / All tabs on the replica."},
+    "cc-release":     {"screen": "carecommand", "desc": "The Claim button inside the replica's claim bar."},
+    "cc-pipeline":    {"screen": "carecommand", "desc": "Conversation lifecycle stepper — a teaching view."},
+    "cc-score-4172":  {"screen": "carecommand", "desc": "Urgency breakdown panel for the worked case."},
+    "cc-term-watch":  {"screen": "carecommand", "desc": "The watch-phrase term inside that breakdown."},
+    "ch-pipeline":    {"screen": "channelcenter", "desc": "Connection lifecycle stepper — a teaching view."},
+    "ch-prove":       {"screen": "channelcenter", "desc": "The 'prove it works' panel."},
+    "ch-wall-hn":     {"screen": "channelcenter", "desc": "Per-area wall volumes, to show where traffic lands."},
+    "ch-area-zalo-hn": {
+      "screen": "channelcenter",
+      "desc": "The area line on the Hà Nội Zalo card. The replica models two OAs as two cards; the product groups them under one channel card with accounts inside, so this has no 1:1 product control."
+    },
+    "ch-card-zalo-hn":  {"screen": "channelcenter", "desc": "Replica card for the Hà Nội OA (see ch-area-zalo-hn)."},
+    "ch-card-zalo-hcm": {"screen": "channelcenter", "desc": "Replica card for the TPHCM OA."},
+    "ch-card-fb":       {"screen": "channelcenter", "desc": "Replica card for Facebook."},
+    "ch-reauth":        {"screen": "channelcenter", "desc": "Re-authorise on the replica's Hà Nội card."},
+    "ch-disable":       {"screen": "channelcenter", "desc": "Disconnect on the replica's Hà Nội card."},
+    "ur-list":          {"screen": "unrouted", "desc": "The unrouted arrivals list."},
+    "ur-convert":       {"screen": "unrouted", "desc": "Convert — refused without an anchor."},
+    "ur-dismiss":       {"screen": "unrouted", "desc": "Dismiss — an answer, recorded against your name."},
+    "tp-unmatched":     {"screen": "touchpoints", "desc": "Unmatched campaigns chip."}
+  },
+
+  "scan": {
+    "templates": [
+      "health_care_command/static/src/xml/care_command.xml",
+      "health_care_command_channels/static/src/center/channel_center.xml",
+      "health_crm/static/src/xml/crm_dashboard.xml"
+    ],
+    "replica": [
+      "health_learn/static/src/engine/screens.js",
+      "health_learn/static/src/engine/fixture.js"
+    ]
+  }
+}

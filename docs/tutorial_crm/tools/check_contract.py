@@ -89,7 +89,13 @@ def region(text, symbol):
         return None
     tail = text[i:]
     stop = len(tail)
-    for pat in (r"\ndef ", r"\n@api", r"\nclass ", r"\n[A-Z_]{3,} = ", r"\n    def "):
+    # `\n};` is the JS one and it earns its place: without it a top-level object
+    # literal has no stop pattern at all in a .js file, so the region ran to EOF
+    # and TENANT_DEFAULTS "declared" every two-space key in CASE and PRACTICE as
+    # well — inflating the count AND letting an undeclared token pass because a
+    # same-named fixture key happened to look like a declaration.
+    for pat in (r"\ndef ", r"\n@api", r"\nclass ", r"\n[A-Z_]{3,} = ",
+                r"\n    def ", r"\n\};"):
         m = re.search(pat, tail[40:])
         if m:
             stop = min(stop, m.start() + 40)
