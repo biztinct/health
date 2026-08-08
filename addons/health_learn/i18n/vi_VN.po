@@ -169,6 +169,11 @@ msgstr ""
 "Một hàng đợi không ai tìm thấy là hàng đợi không tồn tại. Đây là những người thật đã liên hệ và nếu không có màn hình này sẽ biến mất giữa các hệ thống."
 
 #. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m1_step_04
+msgid "A suggested wording is loaded. Read the consequence card before it goes."
+msgstr "Đã có sẵn một mẫu câu. Hãy đọc thẻ hệ quả trước khi gửi."
+
+#. module: health_learn
 #: model:learn.step,consequence:health_learn.lesson_l1_step_04
 msgid ""
 "A watch phrase is triage, never a diagnosis. It changes the queue position; it does not tell you what is wrong with the patient."
@@ -242,6 +247,11 @@ msgid ""
 "Almost always the <b>catchment area</b>. Every count and every list on these screens is filtered to your area, and for channel traffic the area comes from the <b>channel account the message arrived on</b> — one Zalo Official Account per area."
 msgstr ""
 "Gần như luôn là do <b>khu vực phụ trách</b>. Mọi con số và danh sách trên các màn hình này đều lọc theo khu vực của bạn, và với lưu lượng từ kênh, khu vực được lấy từ <b>tài khoản kênh mà tin nhắn đi vào</b> — mỗi khu vực một Zalo Official Account."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_check_02
+msgid "Am I about to state something clinical that a nurse or doctor should state?"
+msgstr "Tôi có sắp nói điều gì thuộc lâm sàng mà lẽ ra điều dưỡng hoặc bác sĩ phải nói không?"
 
 #. module: health_learn
 #: model:learn.station,outline_what:health_learn.station_unrouted
@@ -374,6 +384,11 @@ msgid "Before"
 msgstr "Trước"
 
 #. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m1_step_02
+msgid "Before answering a clinical question, check who you are allowed to answer."
+msgstr "Trước khi trả lời câu hỏi lâm sàng, hãy kiểm tra bạn được phép trả lời ai."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_checklist
 msgid "Before doing this for real, always check"
 msgstr "Trước khi làm thật, luôn kiểm tra"
@@ -394,6 +409,11 @@ msgstr ""
 #: model:learn.string,value:health_learn.str_bookbtn
 msgid "Book"
 msgstr "Đặt lịch"
+
+#. module: health_learn
+#: model:learn.mission,name:health_learn.mission_m3
+msgid "Book without creating a duplicate client"
+msgstr "Đặt lịch mà không tạo hồ sơ khách hàng trùng"
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_l1_step_00
@@ -580,6 +600,13 @@ msgid "Check whether the number matches an existing client first."
 msgstr "Trước tiên hãy kiểm tra số này có khớp khách hàng hiện có không."
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_did_01
+msgid ""
+"Checked the Data Sharing consent before answering a clinical question — and found it withdrawn."
+msgstr ""
+"Đã kiểm tra đồng thuận chia sẻ dữ liệu trước khi trả lời câu hỏi lâm sàng — và phát hiện nó đã bị thu hồi."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_channelcenter_mistake_0
 msgid ""
 "Choosing the wrong Official Account at the “choose what to connect” step. One OA serves one catchment area, so the wrong one routes a whole city's messages into another city's wall."
@@ -598,11 +625,28 @@ msgid "Claim before you type"
 msgstr "Nhận xử lý trước khi gõ"
 
 #. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m1_step_01
+msgid "Claim it before you do anything else."
+msgstr "Nhận xử lý trước khi làm bất cứ điều gì khác."
+
+#. module: health_learn
 #: model:learn.quiz.option,label:health_learn.lesson_l1_quiz_opt_0
 msgid ""
 "Claim it, reply that you cannot discuss the details over this account, and escalate to the {{roleDutyDoctor}} while calling the client's own number."
 msgstr ""
 "Nhận xử lý, trả lời rằng bạn không thể trao đổi chi tiết qua tài khoản này, đồng thời chuyển cấp cho {{roleDutyDoctor}} và gọi vào số của chính khách hàng."
+
+#. module: health_learn
+#: model:learn.mission,summary:health_learn.mission_m1
+msgid ""
+"Claim the most urgent conversation, discover who is actually on the other end, and answer fast without disclosing what you may not."
+msgstr ""
+"Nhận xử lý cuộc hội thoại gấp nhất, phát hiện ai thật sự ở đầu bên kia, và phản hồi nhanh mà không tiết lộ điều không được phép."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_did_00
+msgid "Claimed #4172 so no colleague could reply over the top of you."
+msgstr "Đã nhận xử lý #4172 để không đồng nghiệp nào trả lời đè lên bạn."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l1_step_05
@@ -699,6 +743,11 @@ msgid "Consents"
 msgstr "Đồng thuận"
 
 #. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m1_step_02
+msgid "Consents is the shield icon, next to Reminder."
+msgstr "Đồng thuận là biểu tượng khiên, cạnh Nhắc hẹn."
+
+#. module: health_learn
 #: model:learn.screen,name:health_learn.screen_contacts
 #: model:learn.station,name:health_learn.station_contacts
 msgid "Contacts"
@@ -779,9 +828,21 @@ msgid "Data-sharing consent"
 msgstr "Đồng thuận chia sẻ dữ liệu"
 
 #. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m2_step_05
+msgid "Disable is the quiet button at the bottom of the card."
+msgstr "Tắt là nút mờ ở cuối thẻ."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_disabled
 msgid "Disabled"
 msgstr "Đã tắt"
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m2_step_05
+msgid ""
+"Disabling is reversible and audited. Knowing where the off switch is — and what it costs — is part of owning this screen."
+msgstr ""
+"Tắt kết nối là thao tác có thể hoàn tác và được ghi nhật ký. Biết công tắc tắt ở đâu — và cái giá của nó — là một phần của việc làm chủ màn hình này."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_disconnect
@@ -808,6 +869,11 @@ msgstr ""
 "Bỏ qua chỉ để xóa huy hiệu đếm. Bỏ qua là một câu trả lời — “đây không phải bệnh nhân” — và nó được ghi nhận dưới tên bạn."
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_check_00
+msgid "Do I have the provider login in front of me before I start?"
+msgstr "Tôi đã có thông tin đăng nhập của nhà cung cấp trước mặt chưa?"
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_attrib_b030
 msgid ""
 "Do not assume the touchpoint and the conversation share a channel. Someone can click a Google advert on Monday and message Zalo on Wednesday — the two are joined by phone number, not by channel."
@@ -827,6 +893,11 @@ msgid ""
 "Do not re-authorise as a diagnostic. It takes the channel out of service while it walks the path again, so you would add a real outage to whatever you were investigating."
 msgstr ""
 "Đừng dùng cấp quyền lại để chẩn đoán. Nó đưa kênh ra khỏi trạng thái phục vụ trong lúc đi lại lộ trình, nên bạn sẽ thêm một sự cố thật vào vấn đề đang điều tra."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_check_04
+msgid "Does the catchment area on the account still say what it should?"
+msgstr "Khu vực phụ trách trên tài khoản có còn đúng như phải có không?"
 
 #. module: health_learn
 #: model:learn.tenant.override,value:health_learn.slot_roledutydoctor
@@ -849,6 +920,19 @@ msgid "Escalate"
 msgstr "Chuyển cấp"
 
 #. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m1_step_05
+msgid "Escalate is on the action strip. It needs a lead on the conversation — this one has one."
+msgstr ""
+"Chuyển cấp nằm trên dải thao tác. Nó cần có khách hàng tiềm năng gắn với cuộc hội thoại — cuộc này đã có."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m1_step_05
+msgid ""
+"Escalate routes to the {{roleHeadNurse}}, the {{roleOpsManager}} or the {{roleDutyDoctor}}."
+msgstr ""
+"Chuyển cấp sẽ định tuyến tới {{roleHeadNurse}}, {{roleOpsManager}} hoặc {{roleDutyDoctor}}."
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_consent_b030_s02
 msgid "Escalate the clinical question to the {{roleDutyDoctor}}."
 msgstr "Chuyển câu hỏi lâm sàng cho {{roleDutyDoctor}}."
@@ -859,6 +943,11 @@ msgid ""
 "Escalate when the question needs clinical judgement you are not qualified to give, or when someone is describing something that may not wait. It routes to the <b>{{roleHeadNurse}}</b>, the <b>{{roleOpsManager}}</b> or the <b>{{roleDutyDoctor}}</b>."
 msgstr ""
 "Hãy chuyển cấp khi câu hỏi cần nhận định lâm sàng ngoài phạm vi chuyên môn của bạn, hoặc khi ai đó mô tả điều có thể không chờ được. Nó định tuyến tới <b>Điều dưỡng trưởng</b>, <b>Quản lý vận hành</b> hoặc <b>Bác sĩ trực</b>."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_did_03
+msgid "Escalated the clinical question to the {{roleDutyDoctor}}, where it belongs."
+msgstr "Đã chuyển câu hỏi lâm sàng cho {{roleDutyDoctor}}, đúng nơi cần đến."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_escalate_b030
@@ -897,6 +986,20 @@ msgstr ""
 "Mọi yêu cầu tư vấn dưới dạng bản ghi, lọc theo trạng thái vòng đời, với Đặt lịch · Ghi nhận hoạt động · Ghi nhận là KHTN · Chuyển cấp · Thư rác · Mất cơ hội trên từng dòng và trên biểu mẫu."
 
 #. module: health_learn
+#: model:learn.mission,consequence_scope:health_learn.mission_m2
+msgid ""
+"Every inbound and outbound message on the Hà Nội Zalo Official Account, for as long as the connection is walking the path back to Connected."
+msgstr ""
+"Mọi tin nhắn đến và đi trên Zalo Official Account Hà Nội, trong suốt thời gian kết nối đi lại lộ trình để trở về trạng thái Đã kết nối."
+
+#. module: health_learn
+#: model:learn.mission,anomaly_body:health_learn.mission_m1
+msgid ""
+"Everything about #4172 says “hurry”: 110, a watch phrase, a missed call, a visit in eight hours. The consent record says the patient withdrew permission for this exact person in June. Speed and permission are two different questions, and only one of them can be undone."
+msgstr ""
+"Mọi thứ ở #4172 đều nói “nhanh lên”: 110 điểm, một cụm từ cảnh báo, một cuộc gọi nhỡ, một lịch hẹn sau tám giờ nữa. Hồ sơ đồng thuận nói rằng bệnh nhân đã thu hồi quyền cho đúng người này hồi tháng 6. Tốc độ và sự cho phép là hai câu hỏi khác nhau, và chỉ một trong hai có thể sửa lại."
+
+#. module: health_learn
 #: model:learn.station,outline_what:health_learn.station_activities
 msgid ""
 "Everything anyone scheduled on a contact, grouped by type (To-Do · Email · Call · Meeting · Document) with a type filter and a date filter."
@@ -926,9 +1029,19 @@ msgid "Filtering to Today and forgetting overdue items are not in that filter."
 msgstr "Lọc theo Hôm nay rồi quên rằng các mục quá hạn không nằm trong bộ lọc đó."
 
 #. module: health_learn
+#: model:learn.mission,name:health_learn.mission_m4
+msgid "Find the leak in “Unmatched campaigns”"
+msgstr "Tìm chỗ rò trong “Chiến dịch chưa khớp”"
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_finish
 msgid "Finish"
 msgstr "Hoàn thành"
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m2_step_00
+msgid "First card in the Zalo group, the one showing Connected."
+msgstr "Thẻ đầu tiên trong nhóm Zalo, thẻ đang hiển thị Đã kết nối."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_consent_b020
@@ -936,6 +1049,24 @@ msgid ""
 "For this case the consent exists but was <b>withdrawn on 30 June 2026</b>, which is an explicit “no” from the patient herself, not a missing record."
 msgstr ""
 "Trong tình huống này, đồng thuận có tồn tại nhưng đã <b>bị thu hồi ngày 30/6/2026</b>, tức là lời “không” rõ ràng từ chính bệnh nhân, chứ không phải hồ sơ bị thiếu."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_did_04
+msgid "Found the disable switch and saw that it is reversible and audited."
+msgstr "Đã tìm ra công tắc tắt và thấy rằng nó có thể hoàn tác và được ghi nhật ký."
+
+#. module: health_learn
+#: model:learn.mission,summary:health_learn.mission_m4
+msgid ""
+"Four of this month's 34 website enquiries arrived with no UTM tags at all. Trace them back to the untagged link and fix the source."
+msgstr ""
+"Bốn trong số 34 yêu cầu từ website tháng này đến mà không có thẻ UTM nào. Hãy truy ngược về liên kết chưa gắn thẻ và sửa từ nguồn."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m2_step_03
+msgid "Four required checks. The connection cannot reach Connected until all four pass."
+msgstr ""
+"Bốn bước bắt buộc. Kết nối không thể đạt trạng thái Đã kết nối cho tới khi cả bốn đều đạt."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_fulllesson
@@ -985,14 +1116,61 @@ msgid "HOW THE NUMBER IS MADE"
 msgstr "CON SỐ ĐƯỢC TẠO RA NHƯ THẾ NÀO"
 
 #. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m1_step_05
+msgid "Hand the clinical question to a clinician."
+msgstr "Chuyển câu hỏi lâm sàng cho người có chuyên môn."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_check_03
+msgid "Have I claimed it, so nobody replies twice?"
+msgstr "Tôi đã nhận xử lý chưa, để không ai trả lời trùng?"
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_check_03
+msgid "Have I sent one real test message and watched it land on the right wall?"
+msgstr "Tôi đã gửi một tin nhắn thử thật và thấy nó rơi vào đúng bảng chưa?"
+
+#. module: health_learn
 #: model:learn.tenant.override,value:health_learn.slot_roleheadnurse
 msgid "Head Nurse"
 msgstr "Điều dưỡng trưởng"
 
 #. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m1_step_00
+msgid "Highest urgency first. You are looking for #4172, at 110."
+msgstr "Việc gấp nhất lên trước. Bạn tìm #4172, điểm 110."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_hint
 msgid "Hint"
 msgstr "Gợi ý"
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m1_step_03
+msgid "Hoa's Data Sharing consent for Linh was withdrawn on 30 June. Decide how to respond."
+msgstr ""
+"Đồng thuận chia sẻ dữ liệu của bà Hoa cho Linh đã bị thu hồi ngày 30/6. Hãy quyết định cách phản hồi."
+
+#. module: health_learn
+#: model:learn.mission.option,recovery:health_learn.mission_m2_step_02_opt_hcm
+msgid ""
+"Hold on — that is the Hồ Chí Minh City account, and it is listed first only because the provider sorts by creation date. Selecting it here would leave the Hà Nội connection pointing at the TPHCM OA: from the next message onward, Hà Nội's traffic would land on the TPHCM wall. Every check would still pass, because the connection would be perfectly healthy — just pointed at the wrong city. This is the mistake that produced the quiet Tuesday in the lesson."
+msgstr ""
+"Khoan đã — đó là tài khoản TPHCM, và nó được liệt kê trước chỉ vì nhà cung cấp sắp xếp theo ngày tạo. Chọn nó ở đây sẽ khiến kết nối Hà Nội trỏ tới OA TPHCM: kể từ tin nhắn kế tiếp, lưu lượng Hà Nội sẽ rơi vào bảng TPHCM. Mọi bước kiểm tra vẫn sẽ đạt, vì kết nối hoàn toàn khỏe mạnh — chỉ là trỏ nhầm thành phố. Đây chính là sai lầm đã tạo ra buổi thứ Ba yên ắng trong bài học."
+
+#. module: health_learn
+#: model:learn.mission.option,recovery:health_learn.mission_m1_step_03_opt_bad
+msgid ""
+"Hold on. Family relationship is not consent, and a withdrawn consent is an explicit “no” from the patient herself. A sent Zalo message cannot be recalled — this one would put Hoa's clinical detail in front of someone she has refused. Urgency justifies replying <i>fast</i>; it never justifies replying with <i>that</i>. Let's take the path that is both quick and permitted."
+msgstr ""
+"Khoan đã. Quan hệ gia đình không phải đồng thuận, và đồng thuận đã thu hồi là lời “không” rõ ràng từ chính bệnh nhân. Tin nhắn Zalo đã gửi thì không thu hồi được — tin này sẽ đưa chi tiết lâm sàng của bà Hoa tới người mà bà đã từ chối. Mức khẩn biện minh cho việc trả lời <i>nhanh</i>; nó không bao giờ biện minh cho việc trả lời <i>nội dung đó</i>. Hãy chọn hướng vừa nhanh vừa được phép."
+
+#. module: health_learn
+#: model:learn.mission.option,recovery:health_learn.mission_m1_step_03_opt_junk
+msgid ""
+"Hold on. Junk? would zero the urgency, drop a distressed family off the wall, mark the contact as spam and flag that phone number for every future call. In home care, a son or daughter messaging on a patient's behalf is the normal case — the question it raises is consent, not spam."
+msgstr ""
+"Khoan đã. Thư rác? sẽ đưa điểm ưu tiên về 0, loại một gia đình đang lo lắng khỏi bảng, đánh dấu liên hệ là thư rác và ghi nhận số điện thoại đó cho mọi cuộc gọi sau này. Trong chăm sóc tại nhà, con trai hay con gái nhắn thay bệnh nhân là chuyện bình thường — câu hỏi đặt ra là đồng thuận, không phải tin rác."
 
 #. module: health_learn
 #: model:learn.intent,label:health_learn.intent_reminder
@@ -1059,6 +1237,11 @@ msgid "I understand — proceed"
 msgstr "Tôi đã hiểu — tiếp tục"
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_check_04
+msgid "If I go off shift, is it released rather than left owned and silent?"
+msgstr "Nếu tôi hết ca, việc này đã được trả lại chưa, thay vì để nguyên tên tôi và im lặng?"
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_junk_b030_s01
 msgid "If it is a real person you cannot help, use Closed, not Junk?."
 msgstr "Nếu là người thật mà bạn không giúp được, hãy dùng Đã đóng, không dùng Thư rác?."
@@ -1109,6 +1292,21 @@ msgstr ""
 "Ghi chú nội bộ và Nhắc hẹn là hai thao tác an toàn khi bạn chưa chắc. Hãy dùng chúng thay vì đoán trong câu trả lời."
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_check_00
+msgid "Is the account I am replying to the patient's, or someone else's?"
+msgstr "Tài khoản tôi đang trả lời là của bệnh nhân hay của người khác?"
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_check_01
+msgid "Is there an active Data Sharing consent for that person, today?"
+msgstr "Hôm nay có đồng thuận chia sẻ dữ liệu còn hiệu lực cho người đó không?"
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_check_02
+msgid "Is this the quietest hour I can pick?"
+msgstr "Đây có phải khung giờ vắng nhất tôi có thể chọn không?"
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_junk_b010
 msgid ""
 "It does two things, not one. It zeroes the urgency score and takes the row off the wall — <b>and</b> it marks the linked contact as spam and flags the phone number for the future."
@@ -1130,6 +1328,11 @@ msgstr ""
 "Đây là vị trí trong hàng đợi, không phải mức độ nặng về y khoa. 110 bảo bạn phải xem ngay; nó không nói gì về tình trạng của bệnh nhân."
 
 #. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m2_step_00
+msgid "It is due for re-authorisation before its grant lapses."
+msgstr "Tài khoản này cần cấp quyền lại trước khi quyền hết hạn."
+
+#. module: health_learn
 #: model:learn.station,outline_why:health_learn.station_touchpoints
 msgid ""
 "It is the only honest answer to “which advert is actually producing bookings”. Without it, budget follows opinion."
@@ -1142,6 +1345,11 @@ msgid ""
 "It is the only screen that tells you whether the desk is keeping up. Pending Follow-ups above your team's capacity is the earliest visible sign that somebody will be forgotten."
 msgstr ""
 "Đây là màn hình duy nhất cho biết bàn làm việc có theo kịp hay không. Chỉ số Đang chờ theo dõi vượt năng lực của nhóm là dấu hiệu sớm nhất cho thấy sẽ có người bị bỏ quên."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m1_step_00
+msgid "It is the row with the red urgency chip and the Zalo glyph."
+msgstr "Đó là dòng có chip ưu tiên màu đỏ và biểu tượng Zalo."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_escalate_b020
@@ -1278,6 +1486,16 @@ msgid "Mark it Junk? — the account is not the patient's, so it does not belong
 msgstr "Đánh dấu Thư rác? — tài khoản không phải của bệnh nhân nên không thuộc về bảng này."
 
 #. module: health_learn
+#: model:learn.mission.option,label:health_learn.mission_m1_step_03_opt_junk
+msgid "Mark it Junk? — the account is not the patient's."
+msgstr "Đánh dấu Thư rác? — tài khoản không phải của bệnh nhân."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_did_01
+msgid "Matched the Official Account to the connection you actually opened."
+msgstr "Đã khớp Official Account với đúng kết nối bạn đã mở."
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l2_step_07
 msgid ""
 "Messenger lost a permission at the provider. Nothing in CareJioX can fix that — someone has to sign in to the platform and grant it again. Until then this channel neither sends nor receives, and the screen says so rather than showing a hopeful green."
@@ -1349,6 +1567,13 @@ msgid ""
 "No — I do not answer clinical questions, and I never will. I explain how CareJioX works; I hold no view on a wound, a dose, a reading or a diagnosis, and a confident-sounding answer from me about any of those would be worth nothing."
 msgstr ""
 "Không — tôi không trả lời câu hỏi lâm sàng, và sẽ không bao giờ. Tôi giải thích cách CareJioX hoạt động; tôi không có ý kiến về vết thương, liều dùng, chỉ số hay chẩn đoán, và một câu trả lời nghe có vẻ chắc chắn từ tôi về những điều đó sẽ chẳng có giá trị gì."
+
+#. module: health_learn
+#: model:learn.mission,consequence_reversible:health_learn.mission_m1
+msgid ""
+"No. There is no draft and no recall. Sending also moves the conversation to Waiting and clears the unread count."
+msgstr ""
+"Không. Không có bản nháp và không thu hồi được. Gửi đi còn chuyển cuộc hội thoại sang Đang chờ và xóa số tin chưa đọc."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_dashboard_mistake_2
@@ -1427,6 +1652,18 @@ msgstr ""
 "Một đến hai lần mỗi ca, và luôn kiểm tra sau khi một chiến dịch chạy — đó là lúc lượng liên hệ nửa vời tăng vọt."
 
 #. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m2_step_02
+msgid ""
+"One decision. Read both names before you pick — the provider does not order them helpfully."
+msgstr ""
+"Một quyết định. Hãy đọc kỹ cả hai tên trước khi chọn — nhà cung cấp không sắp xếp theo thứ tự thuận tiện cho bạn."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m1_step_03
+msgid "One decision. There is a fast answer that feels kind and is wrong."
+msgstr "Một quyết định. Có một lựa chọn nhanh, nghe có vẻ tử tế, nhưng sai."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_checknote
 msgid "One judgement, not a memory test."
 msgstr "Một tình huống cần phán đoán, không phải câu hỏi thuộc lòng."
@@ -1488,6 +1725,11 @@ msgid "Open the Care Coach for this screen  (?)"
 msgstr "Mở Trợ lý Care Coach cho màn hình này  (?)"
 
 #. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m2_step_00
+msgid "Open the Hà Nội Zalo Official Account connection."
+msgstr "Mở kết nối Zalo Official Account Hà Nội."
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_claimfirst_b020_s00
 msgid "Open the conversation from the wall."
 msgstr "Mở cuộc hội thoại từ bảng."
@@ -1496,6 +1738,11 @@ msgstr "Mở cuộc hội thoại từ bảng."
 #: model:learn.string,value:health_learn.str_openlesson
 msgid "Open the lesson"
 msgstr "Mở bài học"
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m1_step_00
+msgid "Open the top conversation on the wall."
+msgstr "Mở cuộc hội thoại ở đầu bảng."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_roles_om
@@ -1536,6 +1783,20 @@ msgstr ""
 "Đề cương — bài học đầy đủ cho màn hình này chưa được dựng. Toàn bộ nội dung bên dưới là thật và dùng được ngay."
 
 #. module: health_learn
+#: model:learn.mission,outline_note:health_learn.mission_m3
+msgid ""
+"Outline. The consequence interception (booking creates a real visit and starts the money), the seeded anomaly (two clients share a surname, a district and a birth year; only the phone differs) and the debrief are written; the step machine is not built yet."
+msgstr ""
+"Đề cương. Phần chặn cảnh báo hệ quả (đặt lịch tạo ra một lịch hẹn thật và bắt đầu phát sinh chi phí), tình huống gài (hai khách hàng trùng họ, trùng quận và trùng năm sinh; chỉ khác số điện thoại) và phần tổng kết đã được viết; máy trạng thái các bước thì chưa dựng."
+
+#. module: health_learn
+#: model:learn.mission,outline_note:health_learn.mission_m4
+msgid ""
+"Outline. The worked numbers (19 google/cpc + 11 facebook/paid + 4 unmatched = 34) and the anomaly (the untagged link is in an organic Facebook post, not the ad account, so no ad spend explains it) are written; the step machine is not built yet."
+msgstr ""
+"Đề cương. Các con số mẫu (19 google/cpc + 11 facebook/paid + 4 chưa khớp = 34) và tình huống gài (liên kết chưa gắn thẻ nằm trong một bài đăng Facebook tự nhiên, không phải tài khoản quảng cáo, nên không có khoản chi quảng cáo nào giải thích được) đã được viết; máy trạng thái các bước thì chưa dựng."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_overall
 msgid "Overall progress"
 msgstr "Tiến độ tổng thể"
@@ -1574,6 +1835,11 @@ msgstr "Vai trò Chủ sở hữu hoặc CRM. Đặt lịch còn cần dịch v�
 #: model:learn.intent.block,body:health_learn.intent_takeover_b050
 msgid "Owner, CRM / Reception, and CRM Managers."
 msgstr "Chủ sở hữu, CRM / Lễ tân và Quản lý CRM."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m1_step_01
+msgid "Ownership is what stops a colleague replying at the same moment."
+msgstr "Quyền phụ trách là thứ ngăn đồng nghiệp trả lời cùng lúc."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_practicebanner
@@ -1617,9 +1883,34 @@ msgid "Press Claim on the ownership banner."
 msgstr "Nhấn Nhận xử lý trên dải quyền phụ trách."
 
 #. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m2_step_03
+msgid "Press Run checks in the readiness panel."
+msgstr "Nhấn Chạy kiểm tra trong khung kiểm tra sẵn sàng."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m1_step_04
+msgid "Press Send reply. The consequence card appears first — that is the point."
+msgstr "Nhấn Gửi trả lời. Thẻ hệ quả sẽ hiện ra trước — đó là chủ ý."
+
+#. module: health_learn
 #: model:learn.tenant.override,value:health_learn.slot_contentowner
 msgid "Product"
 msgstr "bộ phận Sản phẩm"
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m2_step_04
+msgid "Prove it with real traffic before you call it done."
+msgstr "Chứng minh bằng lưu lượng thật trước khi coi là xong."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_did_03
+msgid "Proved it with real inbound traffic instead of trusting a green tick."
+msgstr "Đã chứng minh bằng lưu lượng đến thật thay vì tin vào dấu tích xanh."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_did_02
+msgid "Ran the four required readiness checks and read what each one proves."
+msgstr "Đã chạy bốn bước kiểm tra sẵn sàng bắt buộc và đọc xem mỗi bước chứng minh điều gì."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_reauth
@@ -1632,6 +1923,16 @@ msgid "Re-authorise both accounts to be safe, then see whether the balance corre
 msgstr "Cấp quyền lại cho cả hai tài khoản cho chắc, rồi xem cân bằng có tự điều chỉnh không."
 
 #. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m2_step_01
+msgid "Re-authorise is the secondary button on the connection card."
+msgstr "Cấp quyền lại là nút phụ trên thẻ kết nối."
+
+#. module: health_learn
+#: model:learn.mission,name:health_learn.mission_m2
+msgid "Re-authorise the Hà Nội channel — and prove it"
+msgstr "Cấp quyền lại kênh Hà Nội — và chứng minh nó chạy"
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_lines_reach
 msgid "Reach & setup line"
 msgstr "Tuyến kênh & thiết lập"
@@ -1640,6 +1941,18 @@ msgstr "Tuyến kênh & thiết lập"
 #: model:learn.string,value:health_learn.str_readanalysis
 msgid "Read the analysis"
 msgstr "Đọc bản phân tích"
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_did_00
+msgid "Read the consequence before taking a live channel down, not after."
+msgstr "Đã đọc hệ quả trước khi dừng một kênh đang chạy, không phải sau đó."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m2_step_01
+msgid ""
+"Read the consequence card. This takes a live channel out of service while it walks the path again."
+msgstr ""
+"Hãy đọc thẻ hệ quả. Thao tác này đưa một kênh đang chạy ra khỏi trạng thái phục vụ trong lúc nó đi lại lộ trình."
 
 #. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_unroutedq_b030_s00
@@ -1697,9 +2010,19 @@ msgid "Release"
 msgstr "Trả lại"
 
 #. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m1_step_06
+msgid "Release sits where Claim was, on the ownership banner."
+msgstr "Trả lại nằm đúng chỗ nút Nhận xử lý, trên dải quyền phụ trách."
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_claimfirst_b020_s03
 msgid "Release when you go off shift."
 msgstr "Trả lại khi bạn hết ca."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_did_04
+msgid "Released the claim at end of shift so the item stayed workable."
+msgstr "Đã trả lại quyền phụ trách khi hết ca để công việc vẫn xử lý tiếp được."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_reminder
@@ -1719,6 +2042,17 @@ msgid "Replay step"
 msgstr "Xem lại bước"
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m1_did_02
+msgid "Replied inside two minutes without disclosing a single clinical detail."
+msgstr "Đã phản hồi trong vòng hai phút mà không tiết lộ bất kỳ chi tiết lâm sàng nào."
+
+#. module: health_learn
+#: model:learn.mission.option,label:health_learn.mission_m1_step_03_opt_ok
+msgid "Reply acknowledging her, say the clinical detail must come from the nurse, and escalate."
+msgstr ""
+"Trả lời ghi nhận lo lắng của cô ấy, nói rằng chi tiết lâm sàng phải do điều dưỡng cung cấp, và chuyển cấp."
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_consent_b030_s01
 msgid "Reply acknowledging the concern, without clinical content."
 msgstr "Trả lời ghi nhận lo lắng, không kèm nội dung lâm sàng."
@@ -1729,6 +2063,13 @@ msgid ""
 "Reply straight away with what the last visit note said about the wound — she is family and the score is 110, so speed matters most."
 msgstr ""
 "Trả lời ngay bằng nội dung ghi chú lần thăm khám gần nhất về vết thương — cô ấy là người nhà và điểm là 110, nên tốc độ quan trọng nhất."
+
+#. module: health_learn
+#: model:learn.mission.option,label:health_learn.mission_m1_step_03_opt_bad
+msgid ""
+"Reply with what the last visit note said about the wound — she is family and it is urgent."
+msgstr ""
+"Trả lời bằng nội dung ghi chú lần thăm khám gần nhất về vết thương — cô ấy là người nhà và việc này gấp."
 
 #. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_claimfirst_b020_s02
@@ -1761,6 +2102,11 @@ msgstr "Đặt lại tiến độ"
 #: model:learn.string,value:health_learn.str_resume
 msgid "Resume"
 msgstr "Tiếp tục"
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m2_step_03
+msgid "Run the readiness checks and read what each one proves."
+msgstr "Chạy các bước kiểm tra sẵn sàng và đọc xem mỗi bước chứng minh điều gì."
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_l1_step_01
@@ -1822,9 +2168,19 @@ msgid "Search lessons…"
 msgstr "Tìm bài học…"
 
 #. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m2_step_04
+msgid "Send one test message from a personal account and watch it arrive on the Hà Nội wall."
+msgstr "Gửi một tin nhắn thử từ tài khoản cá nhân và xem nó xuất hiện trên bảng Hà Nội."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_sendreply
 msgid "Send reply"
 msgstr "Gửi trả lời"
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m2_step_04
+msgid "Send test message, in the “Prove it works” panel."
+msgstr "Gửi tin nhắn thử, trong khung “Chứng minh nó hoạt động”."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_reminder_b010
@@ -1842,6 +2198,11 @@ msgstr "Các lượt thực hành ngắn trên dữ liệu mô phỏng. Bạn ra
 #: model:learn.string,value:health_learn.str_showme
 msgid "Show me"
 msgstr "Chỉ cho tôi"
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m2_step_05
+msgid "Show yourself the way back: disable the connection, then bring it straight back."
+msgstr "Hãy tự cho mình thấy lối quay lại: tắt kết nối, rồi bật lại ngay."
 
 #. module: health_learn
 #: model:learn.screen,blurb:health_learn.screen_dashboard
@@ -1909,6 +2270,11 @@ msgid "Start of shift: what came in, what is waiting, how conversion is going."
 msgstr "Đầu ca: có gì mới, việc gì đang chờ, tỷ lệ chuyển đổi ra sao."
 
 #. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m2_step_01
+msgid "Start the re-authorisation."
+msgstr "Bắt đầu cấp quyền lại."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_statusof
 msgid "Status"
 msgstr "Trạng thái"
@@ -1957,6 +2323,13 @@ msgid "TPHCM"
 msgstr "TPHCM"
 
 #. module: health_learn
+#: model:learn.mission,summary:health_learn.mission_m2
+msgid ""
+"Take a live Zalo Official Account through re-authorisation without silently re-routing a whole city's messages."
+msgstr ""
+"Đưa một Zalo Official Account đang chạy qua quy trình cấp quyền lại mà không âm thầm định tuyến sai tin nhắn của cả một thành phố."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_takeover
 msgid "Take over"
 msgstr "Tiếp quản"
@@ -1979,9 +2352,28 @@ msgid "That one is a teaching view inside the practice clinic, not a control on 
 msgstr "Mục đó là phần minh họa trong phòng thực hành, không phải một nút trên màn hình này."
 
 #. module: health_learn
+#: model:learn.mission,consequence_verify:health_learn.mission_m1
+msgid ""
+"That the recipient is permitted to receive what you wrote — check the client's Data Sharing consent for this relation — and that the content contains no clinical judgement you are not qualified to give."
+msgstr ""
+"Rằng người nhận được phép nhận nội dung bạn viết — kiểm tra đồng thuận chia sẻ dữ liệu của khách hàng cho quan hệ này — và nội dung không chứa nhận định lâm sàng ngoài phạm vi chuyên môn của bạn."
+
+#. module: health_learn
+#: model:learn.mission,consequence_verify:health_learn.mission_m2
+msgid ""
+"That you hold the provider login now, that you know which Official Account this connection must end up on, and that you are not doing this during the morning peak."
+msgstr ""
+"Rằng bạn đang có thông tin đăng nhập của nhà cung cấp, rằng bạn biết kết nối này phải trỏ tới Official Account nào, và rằng bạn không làm việc này vào giờ cao điểm buổi sáng."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_correct
 msgid "That's right."
 msgstr "Chính xác."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m1_step_01
+msgid "The Claim button is on the banner above the timeline."
+msgstr "Nút Nhận xử lý nằm trên dải phía trên dòng thời gian."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_coachalways
@@ -2008,6 +2400,18 @@ msgid ""
 "The Zalo account belongs to <b>Linh</b>. The patient is <b>Hoa</b>. Whether you may discuss Hoa's wound with Linh is a recorded permission — <b>{{consentPolicyName}}</b> — not a judgement call. Open Consents and look before you answer a clinical question."
 msgstr ""
 "Tài khoản Zalo là của <b>Linh</b>. Bệnh nhân là bà <b>Hoa</b>. Việc bạn có được trao đổi về vết thương của bà Hoa với Linh hay không là một quyền đã ghi nhận — <b>{{consentPolicyName}}</b> — chứ không phải quyết định cảm tính. Hãy mở mục Đồng thuận và kiểm tra trước khi trả lời câu hỏi lâm sàng."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m1_step_02
+msgid "The Zalo account is the daughter's. Open Consents on the action strip."
+msgstr "Tài khoản Zalo là của người con gái. Mở mục Đồng thuận trên dải thao tác."
+
+#. module: health_learn
+#: model:learn.mission,consequence_scope:health_learn.mission_m1
+msgid ""
+"The Zalo account of Trần Mỹ Linh, from the clinic's official Hà Nội account. It is logged against conversation #4172 and against Nguyễn Thị Hoa's contact record."
+msgstr ""
+"Tài khoản Zalo của Trần Mỹ Linh, gửi từ tài khoản chính thức Hà Nội của phòng khám. Tin nhắn được ghi nhận vào cuộc hội thoại #4172 và hồ sơ liên hệ của bà Nguyễn Thị Hoa."
 
 #. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l2_step_02
@@ -2039,6 +2443,13 @@ msgid ""
 "The channel catalogue: lifecycle state, readiness checks and go-live for every connectable channel."
 msgstr ""
 "Danh mục kênh: trạng thái vòng đời, kiểm tra sẵn sàng và phát hành cho mọi kênh có thể kết nối."
+
+#. module: health_learn
+#: model:learn.mission,consequence_reversible:health_learn.mission_m2
+msgid ""
+"The connection is, yes. The traffic is not — nothing queues while a channel is out. Messages sent to the OA during the gap do not arrive later; they simply never reach you."
+msgstr ""
+"Kết nối thì có. Lưu lượng thì không — không có gì được xếp hàng chờ khi kênh ngừng. Tin nhắn gửi tới OA trong khoảng gián đoạn sẽ không đến sau; chúng đơn giản là không bao giờ đến với bạn."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_consent_b050
@@ -2077,6 +2488,19 @@ msgstr ""
 msgid "The pivot: enquiries by source, status, service and area — the whole funnel in one grid."
 msgstr ""
 "Bảng tổng hợp: yêu cầu theo nguồn, trạng thái, dịch vụ và khu vực — toàn bộ phễu trong một lưới."
+
+#. module: health_learn
+#: model:learn.mission,anomaly_body:health_learn.mission_m2
+msgid ""
+"The provider returns both of the clinic's Official Accounts and lists them by creation date, so TPHCM comes first. Pick it and every readiness check still passes — the connection would be perfectly healthy and pointed at the wrong city. Nothing errors; the Hà Nội desk just has a quiet week."
+msgstr ""
+"Nhà cung cấp trả về cả hai Official Account của phòng khám và sắp theo ngày tạo, nên TPHCM đứng trước. Chọn nó thì mọi bước kiểm tra sẵn sàng vẫn đạt — kết nối hoàn toàn khỏe mạnh và trỏ nhầm thành phố. Không có lỗi nào; bàn Hà Nội chỉ có một tuần yên ắng."
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m2_step_02
+msgid "The provider returns two Official Accounts on this login. Choose which one to connect."
+msgstr ""
+"Nhà cung cấp trả về hai Official Account trên tài khoản đăng nhập này. Hãy chọn tài khoản để kết nối."
 
 #. module: health_learn
 #: model:learn.station,summary:health_learn.station_contacts
@@ -2127,6 +2551,11 @@ msgstr ""
 #: model:learn.station,summary:health_learn.station_activities
 msgid "The team's shared follow-up board — every scheduled call, meeting, email and task."
 msgstr "Bảng theo dõi chung của cả nhóm — mọi cuộc gọi, cuộc họp, email và nhiệm vụ đã lên lịch."
+
+#. module: health_learn
+#: model:learn.mission,anomaly_title:health_learn.mission_m1
+msgid "The tempting answer is the wrong one"
+msgstr "Câu trả lời hấp dẫn lại là câu sai"
 
 #. module: health_learn
 #: model:learn.lesson,goal:health_learn.lesson_l1
@@ -2196,6 +2625,12 @@ msgid ""
 "This is the screen to open first when someone says “we stopped getting enquiries”. Nine times in ten the answer is here, not in the advertising."
 msgstr ""
 "Đây là màn hình nên mở đầu tiên khi có người nói “chúng ta không còn nhận được yêu cầu tư vấn”. Chín trên mười lần, câu trả lời nằm ở đây chứ không phải ở quảng cáo."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_m1_step_06
+msgid "This is the undo you will use most: ownership is always reversible, messages are not."
+msgstr ""
+"Đây là thao tác hoàn tác bạn dùng nhiều nhất: quyền phụ trách luôn có thể trả lại, còn tin nhắn thì không."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_notvisiblebody
@@ -2282,6 +2717,11 @@ msgid ""
 "Twice a day: at the start of the shift, and before handover at {{handoverTime}}. Also whenever the Dashboard's Pending Follow-ups number surprises you."
 msgstr ""
 "Hai lần mỗi ngày: đầu ca và trước khi bàn giao. Ngoài ra, bất cứ khi nào con số Đang chờ theo dõi trên Bảng điều khiển làm bạn ngạc nhiên."
+
+#. module: health_learn
+#: model:learn.mission,anomaly_title:health_learn.mission_m2
+msgid "Two accounts, one right answer, no warning either way"
+msgstr "Hai tài khoản, một đáp án đúng, và không có cảnh báo cho lựa chọn nào"
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_quiet_b010
@@ -2402,9 +2842,19 @@ msgid "Việt Úc Care – Hà Nội"
 msgstr "Việt Úc Care – Hà Nội"
 
 #. module: health_learn
+#: model:learn.mission.option,label:health_learn.mission_m2_step_02_opt_hn
+msgid "Việt Úc Care – Hà Nội  ·  OA id 3771554  ·  verified"
+msgstr "Việt Úc Care – Hà Nội  ·  OA id 3771554  ·  đã xác minh"
+
+#. module: health_learn
 #: model:learn.tenant.override,value:health_learn.slot_oanamesouth
 msgid "Việt Úc Care – TPHCM"
 msgstr "Việt Úc Care – TPHCM"
+
+#. module: health_learn
+#: model:learn.mission.option,label:health_learn.mission_m2_step_02_opt_hcm
+msgid "Việt Úc Care – TPHCM  ·  OA id 4009182  ·  verified"
+msgstr "Việt Úc Care – TPHCM  ·  OA id 4009182  ·  đã xác minh"
 
 #. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_quiet_b020_s00
@@ -2537,6 +2987,11 @@ msgstr ""
 "Xem nhân viên Hà Nội có đúng vai trò không, vì có thể họ chỉ mất quyền nhìn thấy các mục menu."
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_m2_check_01
+msgid "Which Official Account must this connection end up on?"
+msgstr "Kết nối này phải trỏ tới Official Account nào?"
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_safeactions
 msgid "Which actions here can I not undo?"
 msgstr "Thao tác nào ở đây không hoàn tác được?"
@@ -2589,6 +3044,23 @@ msgstr ""
 "Nếu không có nó, bốn hộp thư đều trông yên ắng trong khi cùng một gia đình đang chờ ở cả bốn nơi. Bảng này là chỗ duy nhất có bức tranh đầy đủ."
 
 #. module: health_learn
+#: model:learn.mission,summary:health_learn.mission_m3
+msgid ""
+"Work a contact through the booking wizard when the duplicate check offers three plausible matches and only one is the right person."
+msgstr ""
+"Đưa một liên hệ qua trình đặt lịch khi bước kiểm tra trùng đưa ra ba kết quả hợp lý và chỉ một là đúng người."
+
+#. module: health_learn
+#: model:learn.mission,name:health_learn.mission_m1
+msgid "Work the wall to zero — safely"
+msgstr "Xử lý bảng ưu tiên về 0 — một cách an toàn"
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m1_step_04
+msgid "Write the reply and send it."
+msgstr "Soạn câu trả lời và gửi đi."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_youreon
 msgid "YOU'RE ON:"
 msgstr "BẠN ĐANG Ở:"
@@ -2615,9 +3087,37 @@ msgstr ""
 "Đúng. Bạn vẫn phản hồi người liên hệ — nhanh chóng, vì mức khẩn là thật — mà không tiết lộ điều bạn không được phép. Câu hỏi lâm sàng chuyển cho người có chuyên môn, và gọi thẳng số của khách hàng là hướng đi không cần đồng thuận của bên thứ ba."
 
 #. module: health_learn
+#: model:learn.mission,consequence_title:health_learn.mission_m1
+msgid "You are about to send a message to a real phone"
+msgstr "Bạn sắp gửi một tin nhắn tới một số điện thoại thật"
+
+#. module: health_learn
+#: model:learn.mission,consequence_title:health_learn.mission_m2
+msgid "You are about to take a live channel out of service"
+msgstr "Bạn sắp đưa một kênh đang chạy ra khỏi trạng thái phục vụ"
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_m1_step_06
+msgid "You are going off shift. Release the claim so the next operator can pick it up."
+msgstr "Bạn sắp hết ca. Trả lại quyền phụ trách để nhân viên tiếp theo có thể nhận."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l1_step_01
 msgid "You are looking at one area, not the country"
 msgstr "Bạn đang nhìn một khu vực, không phải cả nước"
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m2_step_02
+msgid ""
+"You are re-authorising the HÀ NỘI connection. The name must match the connection you opened."
+msgstr "Bạn đang cấp quyền lại cho kết nối HÀ NỘI. Tên phải khớp với kết nối bạn vừa mở."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_m1_step_03
+msgid ""
+"You can be quick without disclosing. Ask what the daughter actually needs to hear right now."
+msgstr ""
+"Bạn có thể phản hồi nhanh mà không tiết lộ. Hãy nghĩ xem người con gái thật sự cần nghe điều gì lúc này."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_takeover_b060

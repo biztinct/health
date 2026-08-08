@@ -26,6 +26,12 @@ _RAW_KEYS = frozenset({
     # tree; the flat map of UI labels is zipped by _zip_prose instead, so these
     # cannot repeat the collision that hid three chrome strings (ledger §5.146).
     'capability', 'action_tags', 'show_me', 'practice_key', 'matched',
+    # Phase 3 mission structure.
+    # NOT 'did' / 'check': those are LISTS OF PROSE (the debrief), and marking
+    # them raw would ship the whole debrief in English — the same class of bug
+    # as §5.146, one level deeper.
+    'nav', 'target', 'is_decision', 'is_consequence', 'is_undo',
+    'confidence_key', 'confidence_gain',
 })
 
 
@@ -184,6 +190,8 @@ class LearnStation(models.Model):
         return {
             'stations': [s._station_dict() for s in Station.search([])],
             'chrome': self.env['learn.string'].sudo()._as_map(),
+            'missions': [m._mission_dict()
+                         for m in self.env['learn.mission'].sudo().search([])],
             'glossary': [
                 {'key': g.key, 'term': g.term, 'definition': g.definition}
                 for g in self.env['learn.glossary.term'].sudo().search([])
@@ -208,6 +216,7 @@ class LearnStation(models.Model):
         return {
             'stations': _zip_bilingual(en['stations'], vi['stations']),
             'glossary': _zip_bilingual(en['glossary'], vi['glossary']),
+            'missions': _zip_bilingual(en['missions'], vi['missions']),
             'chrome': _zip_prose(en['chrome'], vi['chrome']),
         }
 
@@ -270,6 +279,7 @@ class LearnStation(models.Model):
             'version': self._bundle_version(),
             'tokens': self.env['learn.tenant.override'].resolved_tokens(),
             'progress': self.env['learn.progress'].my_progress(),
+            'confidence': self.env['learn.confidence'].my_scores(),
             'user': {
                 'name': self.env.user.name,
                 'lang': (self.env.user.lang or 'en_US').startswith('vi') and 'vi' or 'en',

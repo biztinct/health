@@ -544,6 +544,109 @@ def gen_intents(data, tr):
     return doc.render()
 
 
+def _mission_xmlid(key):
+    return 'mission_' + re.sub(r'[^a-z0-9]+', '_', key.lower()).strip('_')
+
+
+# Which practice screen each mission opens on.
+MISSION_SCREEN = {'m1': 'carecommand', 'm2': 'channelcenter',
+                  'm3': 'contacts', 'm4': 'touchpoints'}
+
+
+def gen_missions(data, tr):
+    doc = Xml('Practice missions. These run on the REPLICA, never a live screen: '
+              'a step that says "press Junk" would otherwise be a real spam flag '
+              'on a real number.')
+    steps_by_mission = {'m1': data['m1Steps'], 'm2': data['m2Steps']}
+
+    for i, m in enumerate(data['missions']):
+        key = m['id']
+        xmlid = _mission_xmlid(key)
+        full = bool(m.get('full'))
+        conf = m.get('conf') or {}
+        cons = m.get('consequence') or {}
+        anom = m.get('anomaly') or {}
+        fields_ = [
+            ('key', key),
+            ('sequence', (i + 1) * 10),
+            ('line', m.get('group') or 'daily'),
+            ('icon', m.get('icon') or 'flask'),
+            ('name', en_of(m['title'])),
+            ('summary', en_of(m.get('desc'))),
+            ('duration_min', m.get('mins') or 5),
+            ('kind', 'full' if full else 'outline'),
+            ('outline_note', en_of(m.get('outlineNote'))),
+            ('screen', MISSION_SCREEN.get(key, '')),
+            ('confidence_key', conf.get('key') or ''),
+            ('confidence_gain', conf.get('gain') or 10),
+            ('consequence_title', en_of(cons.get('title'))),
+            ('consequence_scope', en_of(cons.get('scope'))),
+            ('consequence_reversible', en_of(cons.get('reversible'))),
+            ('consequence_verify', en_of(cons.get('verify'))),
+            ('anomaly_title', en_of(anom.get('title'))),
+            ('anomaly_body', en_of(anom.get('body'))),
+        ]
+        doc.rec('learn.mission', xmlid, fields_)
+        tr.add('learn.mission', 'name', xmlid, en_of(m['title']), vi_of(m['title']))
+        tr.add('learn.mission', 'summary', xmlid, en_of(m.get('desc')), vi_of(m.get('desc')))
+        tr.add('learn.mission', 'outline_note', xmlid,
+               en_of(m.get('outlineNote')), vi_of(m.get('outlineNote')))
+        for f, src in (('consequence_title', cons.get('title')),
+                       ('consequence_scope', cons.get('scope')),
+                       ('consequence_reversible', cons.get('reversible')),
+                       ('consequence_verify', cons.get('verify')),
+                       ('anomaly_title', anom.get('title')),
+                       ('anomaly_body', anom.get('body'))):
+            tr.add('learn.mission', f, xmlid, en_of(src), vi_of(src))
+
+        for j, note_kind in (('did', 'did'), ('checklist', 'check')):
+            for n, note in enumerate((m.get('debrief') or {}).get(j) or []):
+                nx = '%s_%s_%02d' % (xmlid, note_kind, n)
+                doc.rec('learn.mission.note', nx, [
+                    ('mission_id', ('ref', xmlid)),
+                    ('sequence', (n + 1) * 10),
+                    ('kind', note_kind),
+                    ('body', en_of(note)),
+                ])
+                tr.add('learn.mission.note', 'body', nx, en_of(note), vi_of(note))
+
+        for k, st in enumerate(steps_by_mission.get(key) or []):
+            sx = '%s_step_%02d' % (xmlid, k)
+            doc.rec('learn.mission.step', sx, [
+                ('mission_id', ('ref', xmlid)),
+                ('sequence', (k + 1) * 10),
+                ('key', st['id']),
+                ('nav', st.get('nav') or ''),
+                ('target', st.get('target') or ''),
+                ('instruction', en_of(st['instruction'])),
+                ('detail', en_of(st.get('detail'))),
+                ('hint', en_of(st.get('hint'))),
+                ('is_decision', bool(st.get('decision'))),
+                ('is_consequence', bool(st.get('consequence'))),
+                ('is_undo', bool(st.get('undo'))),
+            ])
+            for f in ('instruction', 'detail', 'hint'):
+                tr.add('learn.mission.step', f, sx, en_of(st.get(f)), vi_of(st.get(f)))
+
+            recovery = st.get('recovery') or {}
+            for o, opt in enumerate(st.get('options') or []):
+                ox = '%s_opt_%s' % (sx, opt['id'])
+                rec = recovery.get(opt['id'])
+                doc.rec('learn.mission.option', ox, [
+                    ('step_id', ('ref', sx)),
+                    ('sequence', (o + 1) * 10),
+                    ('key', opt['id']),
+                    ('label', en_of(opt['label'])),
+                    ('is_correct', bool(opt.get('correct'))),
+                    ('recovery', en_of(rec)),
+                ])
+                tr.add('learn.mission.option', 'label', ox,
+                       en_of(opt['label']), vi_of(opt['label']))
+                if rec:
+                    tr.add('learn.mission.option', 'recovery', ox, en_of(rec), vi_of(rec))
+    return doc.render()
+
+
 def gen_overrides(data, tr):
     doc = Xml('Tenant slots — the shipped defaults. A key with no row here does '
               'not exist, so this file is also the declaration the override '
@@ -600,6 +703,7 @@ def main():
         'data/learn_tenant_slots.xml': gen_overrides(data, tr),
         'data/learn_intents.xml': gen_intents(data, tr),
         'data/learn_screens.xml': gen_screens(data, tr),
+        'data/learn_missions.xml': gen_missions(data, tr),
         'static/src/engine/fixture.js': gen_fixture(data),
     }
     files['i18n/vi_VN.po'] = tr.render()

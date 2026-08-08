@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED FILE. Do not edit.
+         Source: docs/tutorial_crm/ · Regenerate: python3 docs/tutorial_crm/tools/gen_learn_data.py
+         Hand edits are erased on the next run and fail the CI check. -->
+<!-- Practice missions. These run on the REPLICA, never a live screen: a step that says "press Junk" would otherwise be a real spam flag on a real number. -->
+<odoo>
+
+    <record id="mission_m1" model="learn.mission">
+        <field name="key">m1</field>
+        <field name="sequence">10</field>
+        <field name="line">daily</field>
+        <field name="icon">zap</field>
+        <field name="name">Work the wall to zero — safely</field>
+        <field name="summary">Claim the most urgent conversation, discover who is actually on the other end, and answer fast without disclosing what you may not.</field>
+        <field name="duration_min">6</field>
+        <field name="kind">full</field>
+        <field name="screen">carecommand</field>
+        <field name="confidence_key">triage</field>
+        <field name="confidence_gain">30</field>
+        <field name="consequence_title">You are about to send a message to a real phone</field>
+        <field name="consequence_scope">The Zalo account of Trần Mỹ Linh, from the clinic's official Hà Nội account. It is logged against conversation #4172 and against Nguyễn Thị Hoa's contact record.</field>
+        <field name="consequence_reversible">No. There is no draft and no recall. Sending also moves the conversation to Waiting and clears the unread count.</field>
+        <field name="consequence_verify">That the recipient is permitted to receive what you wrote — check the client's Data Sharing consent for this relation — and that the content contains no clinical judgement you are not qualified to give.</field>
+        <field name="anomaly_title">The tempting answer is the wrong one</field>
+        <field name="anomaly_body">Everything about #4172 says “hurry”: 110, a watch phrase, a missed call, a visit in eight hours. The consent record says the patient withdrew permission for this exact person in June. Speed and permission are two different questions, and only one of them can be undone.</field>
+    </record>
+
+    <record id="mission_m1_did_00" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">10</field>
+        <field name="kind">did</field>
+        <field name="body">Claimed #4172 so no colleague could reply over the top of you.</field>
+    </record>
+
+    <record id="mission_m1_did_01" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">20</field>
+        <field name="kind">did</field>
+        <field name="body">Checked the Data Sharing consent before answering a clinical question — and found it withdrawn.</field>
+    </record>
+
+    <record id="mission_m1_did_02" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">30</field>
+        <field name="kind">did</field>
+        <field name="body">Replied inside two minutes without disclosing a single clinical detail.</field>
+    </record>
+
+    <record id="mission_m1_did_03" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">40</field>
+        <field name="kind">did</field>
+        <field name="body">Escalated the clinical question to the {{roleDutyDoctor}}, where it belongs.</field>
+    </record>
+
+    <record id="mission_m1_did_04" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">50</field>
+        <field name="kind">did</field>
+        <field name="body">Released the claim at end of shift so the item stayed workable.</field>
+    </record>
+
+    <record id="mission_m1_check_00" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">10</field>
+        <field name="kind">check</field>
+        <field name="body">Is the account I am replying to the patient's, or someone else's?</field>
+    </record>
+
+    <record id="mission_m1_check_01" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">20</field>
+        <field name="kind">check</field>
+        <field name="body">Is there an active Data Sharing consent for that person, today?</field>
+    </record>
+
+    <record id="mission_m1_check_02" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">30</field>
+        <field name="kind">check</field>
+        <field name="body">Am I about to state something clinical that a nurse or doctor should state?</field>
+    </record>
+
+    <record id="mission_m1_check_03" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">40</field>
+        <field name="kind">check</field>
+        <field name="body">Have I claimed it, so nobody replies twice?</field>
+    </record>
+
+    <record id="mission_m1_check_04" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">50</field>
+        <field name="kind">check</field>
+        <field name="body">If I go off shift, is it released rather than left owned and silent?</field>
+    </record>
+
+    <record id="mission_m1_step_00" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">10</field>
+        <field name="key">open</field>
+        <field name="nav">carecommand</field>
+        <field name="target">cc-row-4172</field>
+        <field name="instruction">Open the top conversation on the wall.</field>
+        <field name="detail">Highest urgency first. You are looking for #4172, at 110.</field>
+        <field name="hint">It is the row with the red urgency chip and the Zalo glyph.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m1_step_01" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">20</field>
+        <field name="key">claim</field>
+        <field name="target">cc-claim</field>
+        <field name="instruction">Claim it before you do anything else.</field>
+        <field name="detail">Ownership is what stops a colleague replying at the same moment.</field>
+        <field name="hint">The Claim button is on the banner above the timeline.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m1_step_02" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">30</field>
+        <field name="key">consent</field>
+        <field name="target">cc-consent</field>
+        <field name="instruction">Before answering a clinical question, check who you are allowed to answer.</field>
+        <field name="detail">The Zalo account is the daughter's. Open Consents on the action strip.</field>
+        <field name="hint">Consents is the shield icon, next to Reminder.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m1_step_03" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">40</field>
+        <field name="key">decide</field>
+        <field name="instruction">Hoa's Data Sharing consent for Linh was withdrawn on 30 June. Decide how to respond.</field>
+        <field name="detail">One decision. There is a fast answer that feels kind and is wrong.</field>
+        <field name="hint">You can be quick without disclosing. Ask what the daughter actually needs to hear right now.</field>
+        <field name="is_decision" eval="True"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m1_step_03_opt_ok" model="learn.mission.option">
+        <field name="step_id" ref="mission_m1_step_03"/>
+        <field name="sequence">10</field>
+        <field name="key">ok</field>
+        <field name="label">Reply acknowledging her, say the clinical detail must come from the nurse, and escalate.</field>
+        <field name="is_correct" eval="True"/>
+    </record>
+
+    <record id="mission_m1_step_03_opt_bad" model="learn.mission.option">
+        <field name="step_id" ref="mission_m1_step_03"/>
+        <field name="sequence">20</field>
+        <field name="key">bad</field>
+        <field name="label">Reply with what the last visit note said about the wound — she is family and it is urgent.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="recovery">Hold on. Family relationship is not consent, and a withdrawn consent is an explicit “no” from the patient herself. A sent Zalo message cannot be recalled — this one would put Hoa's clinical detail in front of someone she has refused. Urgency justifies replying &lt;i&gt;fast&lt;/i&gt;; it never justifies replying with &lt;i&gt;that&lt;/i&gt;. Let's take the path that is both quick and permitted.</field>
+    </record>
+
+    <record id="mission_m1_step_03_opt_junk" model="learn.mission.option">
+        <field name="step_id" ref="mission_m1_step_03"/>
+        <field name="sequence">30</field>
+        <field name="key">junk</field>
+        <field name="label">Mark it Junk? — the account is not the patient's.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="recovery">Hold on. Junk? would zero the urgency, drop a distressed family off the wall, mark the contact as spam and flag that phone number for every future call. In home care, a son or daughter messaging on a patient's behalf is the normal case — the question it raises is consent, not spam.</field>
+    </record>
+
+    <record id="mission_m1_step_04" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">50</field>
+        <field name="key">compose</field>
+        <field name="target">cc-composer</field>
+        <field name="instruction">Write the reply and send it.</field>
+        <field name="detail">A suggested wording is loaded. Read the consequence card before it goes.</field>
+        <field name="hint">Press Send reply. The consequence card appears first — that is the point.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="True"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m1_step_05" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">60</field>
+        <field name="key">escalate</field>
+        <field name="target">cc-escalate</field>
+        <field name="instruction">Hand the clinical question to a clinician.</field>
+        <field name="detail">Escalate routes to the {{roleHeadNurse}}, the {{roleOpsManager}} or the {{roleDutyDoctor}}.</field>
+        <field name="hint">Escalate is on the action strip. It needs a lead on the conversation — this one has one.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m1_step_06" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m1"/>
+        <field name="sequence">70</field>
+        <field name="key">undo</field>
+        <field name="target">cc-release</field>
+        <field name="instruction">You are going off shift. Release the claim so the next operator can pick it up.</field>
+        <field name="detail">This is the undo you will use most: ownership is always reversible, messages are not.</field>
+        <field name="hint">Release sits where Claim was, on the ownership banner.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="True"/>
+    </record>
+
+    <record id="mission_m2" model="learn.mission">
+        <field name="key">m2</field>
+        <field name="sequence">20</field>
+        <field name="line">reach</field>
+        <field name="icon">plug</field>
+        <field name="name">Re-authorise the Hà Nội channel — and prove it</field>
+        <field name="summary">Take a live Zalo Official Account through re-authorisation without silently re-routing a whole city's messages.</field>
+        <field name="duration_min">6</field>
+        <field name="kind">full</field>
+        <field name="screen">channelcenter</field>
+        <field name="confidence_key">channels</field>
+        <field name="confidence_gain">30</field>
+        <field name="consequence_title">You are about to take a live channel out of service</field>
+        <field name="consequence_scope">Every inbound and outbound message on the Hà Nội Zalo Official Account, for as long as the connection is walking the path back to Connected.</field>
+        <field name="consequence_reversible">The connection is, yes. The traffic is not — nothing queues while a channel is out. Messages sent to the OA during the gap do not arrive later; they simply never reach you.</field>
+        <field name="consequence_verify">That you hold the provider login now, that you know which Official Account this connection must end up on, and that you are not doing this during the morning peak.</field>
+        <field name="anomaly_title">Two accounts, one right answer, no warning either way</field>
+        <field name="anomaly_body">The provider returns both of the clinic's Official Accounts and lists them by creation date, so TPHCM comes first. Pick it and every readiness check still passes — the connection would be perfectly healthy and pointed at the wrong city. Nothing errors; the Hà Nội desk just has a quiet week.</field>
+    </record>
+
+    <record id="mission_m2_did_00" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">10</field>
+        <field name="kind">did</field>
+        <field name="body">Read the consequence before taking a live channel down, not after.</field>
+    </record>
+
+    <record id="mission_m2_did_01" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">20</field>
+        <field name="kind">did</field>
+        <field name="body">Matched the Official Account to the connection you actually opened.</field>
+    </record>
+
+    <record id="mission_m2_did_02" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">30</field>
+        <field name="kind">did</field>
+        <field name="body">Ran the four required readiness checks and read what each one proves.</field>
+    </record>
+
+    <record id="mission_m2_did_03" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">40</field>
+        <field name="kind">did</field>
+        <field name="body">Proved it with real inbound traffic instead of trusting a green tick.</field>
+    </record>
+
+    <record id="mission_m2_did_04" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">50</field>
+        <field name="kind">did</field>
+        <field name="body">Found the disable switch and saw that it is reversible and audited.</field>
+    </record>
+
+    <record id="mission_m2_check_00" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">10</field>
+        <field name="kind">check</field>
+        <field name="body">Do I have the provider login in front of me before I start?</field>
+    </record>
+
+    <record id="mission_m2_check_01" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">20</field>
+        <field name="kind">check</field>
+        <field name="body">Which Official Account must this connection end up on?</field>
+    </record>
+
+    <record id="mission_m2_check_02" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">30</field>
+        <field name="kind">check</field>
+        <field name="body">Is this the quietest hour I can pick?</field>
+    </record>
+
+    <record id="mission_m2_check_03" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">40</field>
+        <field name="kind">check</field>
+        <field name="body">Have I sent one real test message and watched it land on the right wall?</field>
+    </record>
+
+    <record id="mission_m2_check_04" model="learn.mission.note">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">50</field>
+        <field name="kind">check</field>
+        <field name="body">Does the catchment area on the account still say what it should?</field>
+    </record>
+
+    <record id="mission_m2_step_00" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">10</field>
+        <field name="key">open</field>
+        <field name="nav">channelcenter</field>
+        <field name="target">ch-card-zalo-hn</field>
+        <field name="instruction">Open the Hà Nội Zalo Official Account connection.</field>
+        <field name="detail">It is due for re-authorisation before its grant lapses.</field>
+        <field name="hint">First card in the Zalo group, the one showing Connected.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m2_step_01" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">20</field>
+        <field name="key">reauth</field>
+        <field name="target">ch-reauth</field>
+        <field name="instruction">Start the re-authorisation.</field>
+        <field name="detail">Read the consequence card. This takes a live channel out of service while it walks the path again.</field>
+        <field name="hint">Re-authorise is the secondary button on the connection card.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="True"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m2_step_02" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">30</field>
+        <field name="key">choose</field>
+        <field name="instruction">The provider returns two Official Accounts on this login. Choose which one to connect.</field>
+        <field name="detail">One decision. Read both names before you pick — the provider does not order them helpfully.</field>
+        <field name="hint">You are re-authorising the HÀ NỘI connection. The name must match the connection you opened.</field>
+        <field name="is_decision" eval="True"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m2_step_02_opt_hcm" model="learn.mission.option">
+        <field name="step_id" ref="mission_m2_step_02"/>
+        <field name="sequence">10</field>
+        <field name="key">hcm</field>
+        <field name="label">Việt Úc Care – TPHCM  ·  OA id 4009182  ·  verified</field>
+        <field name="is_correct" eval="False"/>
+        <field name="recovery">Hold on — that is the Hồ Chí Minh City account, and it is listed first only because the provider sorts by creation date. Selecting it here would leave the Hà Nội connection pointing at the TPHCM OA: from the next message onward, Hà Nội's traffic would land on the TPHCM wall. Every check would still pass, because the connection would be perfectly healthy — just pointed at the wrong city. This is the mistake that produced the quiet Tuesday in the lesson.</field>
+    </record>
+
+    <record id="mission_m2_step_02_opt_hn" model="learn.mission.option">
+        <field name="step_id" ref="mission_m2_step_02"/>
+        <field name="sequence">20</field>
+        <field name="key">hn</field>
+        <field name="label">Việt Úc Care – Hà Nội  ·  OA id 3771554  ·  verified</field>
+        <field name="is_correct" eval="True"/>
+    </record>
+
+    <record id="mission_m2_step_03" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">40</field>
+        <field name="key">checks</field>
+        <field name="target">ch-checks</field>
+        <field name="instruction">Run the readiness checks and read what each one proves.</field>
+        <field name="detail">Four required checks. The connection cannot reach Connected until all four pass.</field>
+        <field name="hint">Press Run checks in the readiness panel.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m2_step_04" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">50</field>
+        <field name="key">prove</field>
+        <field name="target">ch-prove</field>
+        <field name="instruction">Prove it with real traffic before you call it done.</field>
+        <field name="detail">Send one test message from a personal account and watch it arrive on the Hà Nội wall.</field>
+        <field name="hint">Send test message, in the “Prove it works” panel.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_m2_step_05" model="learn.mission.step">
+        <field name="mission_id" ref="mission_m2"/>
+        <field name="sequence">60</field>
+        <field name="key">undo</field>
+        <field name="target">ch-disable</field>
+        <field name="instruction">Show yourself the way back: disable the connection, then bring it straight back.</field>
+        <field name="detail">Disabling is reversible and audited. Knowing where the off switch is — and what it costs — is part of owning this screen.</field>
+        <field name="hint">Disable is the quiet button at the bottom of the card.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="True"/>
+    </record>
+
+    <record id="mission_m3" model="learn.mission">
+        <field name="key">m3</field>
+        <field name="sequence">30</field>
+        <field name="line">daily</field>
+        <field name="icon">phone</field>
+        <field name="name">Book without creating a duplicate client</field>
+        <field name="summary">Work a contact through the booking wizard when the duplicate check offers three plausible matches and only one is the right person.</field>
+        <field name="duration_min">5</field>
+        <field name="kind">outline</field>
+        <field name="outline_note">Outline. The consequence interception (booking creates a real visit and starts the money), the seeded anomaly (two clients share a surname, a district and a birth year; only the phone differs) and the debrief are written; the step machine is not built yet.</field>
+        <field name="screen">contacts</field>
+        <field name="confidence_key">records</field>
+        <field name="confidence_gain">20</field>
+    </record>
+
+    <record id="mission_m4" model="learn.mission">
+        <field name="key">m4</field>
+        <field name="sequence">40</field>
+        <field name="line">reach</field>
+        <field name="icon">crosshair</field>
+        <field name="name">Find the leak in “Unmatched campaigns”</field>
+        <field name="summary">Four of this month's 34 website enquiries arrived with no UTM tags at all. Trace them back to the untagged link and fix the source.</field>
+        <field name="duration_min">5</field>
+        <field name="kind">outline</field>
+        <field name="outline_note">Outline. The worked numbers (19 google/cpc + 11 facebook/paid + 4 unmatched = 34) and the anomaly (the untagged link is in an organic Facebook post, not the ad account, so no ad spend explains it) are written; the step machine is not built yet.</field>
+        <field name="screen">touchpoints</field>
+        <field name="confidence_key">attribution</field>
+        <field name="confidence_gain">20</field>
+    </record>
+
+</odoo>

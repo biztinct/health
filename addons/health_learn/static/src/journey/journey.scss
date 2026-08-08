@@ -238,7 +238,13 @@
     b { font-size: 12.5px; }
 }
 
-.lrn-toolbar { margin-bottom: var(--vuf-sp-4, 16px); }
+.lrn-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--vuf-sp-3, 12px);
+    flex-wrap: wrap;
+    margin-bottom: var(--vuf-sp-4, 16px);
+}
 
 .lrn-search {
     display: inline-flex;
@@ -831,6 +837,8 @@
     }
     .lrn-conseq {
         margin-top: var(--vuf-sp-3, 12px);
+        /* Three of these stack in a mission interception: scope, reversibility,
+           what to verify. Each is its own block so none can be skimmed past. */
         padding: 10px 12px;
         border-radius: var(--vuf-r-sm, 10px);
         background: var(--vuf-warn-bg, #FDF3E2);

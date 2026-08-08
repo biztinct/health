@@ -42,6 +42,15 @@ export class LearnJourney extends Component {
             answered: null,         // index of the option chosen
             morphSide: "before",
             search: "",
+            // Phase 3 — mission runner.
+            missionKey: null,
+            mStep: 0,
+            mChoice: null,       // key of the option chosen
+            mRecovered: false,   // needed a recovery anywhere in this run
+            mAcked: false,       // consequence card acknowledged on this step
+            mHint: false,
+            mDone: false,
+            mGain: 0,
             lang: "en",
             motion: "auto",
             error: "",
@@ -142,6 +151,22 @@ export class LearnJourney extends Component {
         return l ? l.steps : [];
     }
 
+    get missions() {
+        return this.bundle ? (this.bundle.missions || []) : [];
+    }
+
+    get mission() {
+        return this.missions.find((m) => m.key === this.state.missionKey) || null;
+    }
+
+    get mSteps() {
+        return this.mission ? this.mission.steps : [];
+    }
+
+    get mCurrent() {
+        return this.mSteps[this.state.mStep] || null;
+    }
+
     stateOf(key) {
         return (this.progress[key] || {}).state || "not_started";
     }
@@ -192,6 +217,12 @@ export class LearnJourney extends Component {
         if (this.state.view === "lesson") {
             return markup(this._lessonBody());
         }
+        if (this.state.view === "mission") {
+            return markup(this._missionBody());
+        }
+        if (this.state.view === "missions") {
+            return markup(this._missionListBody());
+        }
         if (this.state.view === "outline") {
             return markup(this._outlineBody());
         }
@@ -241,6 +272,8 @@ export class LearnJourney extends Component {
             </div>
         </header>
         <div class="lrn-toolbar">
+            <button class="lrn-btn pri" data-act="to-missions"
+                >${ic("flask")}${esc(T("missions"))}</button>
             <label class="lrn-search">${ic("search")}
                 <input type="search" data-act="search" value="${esc(this.state.search)}"
                        placeholder="${esc(T("search"))}" aria-label="${esc(T("search"))}"/>
@@ -418,8 +451,193 @@ export class LearnJourney extends Component {
             <button class="lrn-btn pri" data-act="l-finish">${esc(T("continueBtn"))}</button></div>`;
     }
 
+
+    /* ------------------------------------------------------- mission list */
+    _missionListBody() {
+        const cards = this.missions.map((m) => {
+            const done = (this.progress[`mission:${m.key}`] || {}).state === "done";
+            const full = m.kind === "full";
+            return `
+            <button class="lrn-card ${full ? "star" : ""}${" "}${done ? "done" : ""}"
+                    data-mission="${esc(m.key)}">
+                <span class="lrn-cardico">${ic(m.icon)}</span>
+                <span class="lrn-cardmain">
+                    <span class="lrn-cardtitle">${esc(tx(m.name))}
+                        ${done ? ic("check-circle", "ok") : ""}</span>
+                    <span class="lrn-carddesc">${esc(tx(m.summary))}</span>
+                    <span class="lrn-cardmeta">
+                        <span class="lrn-chip ${full ? "b" : ""}">${ic(full ? "flask" : "list-checks")}
+                            ${esc(full ? T("startMission") : T("outlineMission"))}</span>
+                        <span class="lrn-chip">${ic("clock")}${esc(
+                            T("est") + " " + m.duration_min + " " + T("min"))}</span>
+                    </span>
+                </span>
+            </button>`;
+        }).join("");
+        return `
+        <div class="lrn-back"><button class="lrn-btn ghost sm" data-act="to-map">
+            ${ic("chevron-left")}${esc(T("yourJourney"))}</button></div>
+        <header class="lrn-hero"><div>
+            <h1>${esc(T("missions"))}</h1>
+            <p class="lrn-lead">${esc(T("missionsLead"))}</p>
+        </div></header>
+        <div class="lrn-cards">${cards}</div>`;
+    }
+
+    /* ---------------------------------------------------------- mission run
+       Runs on the PRACTICE REPLICA, never a live screen. A step that says
+       "press Junk" would otherwise flag a real number. */
+    _missionBody() {
+        const m = this.mission;
+        if (!m) {
+            return "";
+        }
+        if (m.kind !== "full") {
+            return this._missionOutlineBody(m);
+        }
+        if (this.state.mDone) {
+            return this._debriefBody(m);
+        }
+        const step = this.mCurrent;
+        if (!step) {
+            return "";
+        }
+        const screen = step.nav || m.screen || "carecommand";
+        const shell = shellHTML(screen, { guided: true, visible: this.visible });
+        const pct = Math.round((this.state.mStep + 1) / this.mSteps.length * 100);
+        return `${shell}
+        <div class="lrn-playbar" role="group">
+            <span class="lrn-meter"><i style="width:${pct}%"></i></span>
+            <span class="lrn-stepno">${esc(
+                T("step") + " " + (this.state.mStep + 1) + " " + T("of") + " " + this.mSteps.length)}</span>
+            <button class="lrn-btn sm ghost" data-act="m-hint">${ic("lightbulb")}${esc(T("showHint"))}</button>
+            <button class="lrn-btn sm ghost" data-act="m-exit">${ic("x")}${esc(T("exit"))}</button>
+        </div>`;
+    }
+
+    _missionOutlineBody(m) {
+        return `
+        <div class="lrn-back"><button class="lrn-btn ghost sm" data-act="to-missions">
+            ${ic("chevron-left")}${esc(T("missions"))}</button></div>
+        <header class="lrn-ohead">
+            <span class="lrn-cardico big">${ic(m.icon)}</span>
+            <div><h1>${esc(tx(m.name))}</h1><p class="lrn-lead">${esc(tx(m.summary))}</p></div>
+        </header>
+        <p class="lrn-callout">${ic("info")}${esc(tx(m.outline_note))}</p>`;
+    }
+
+    /** The mission's coach card: instruction, detail, and — on a risky step —
+     *  the consequence interception that must be acknowledged first. */
+    _missionCardHTML() {
+        const m = this.mission;
+        const step = this.mCurrent;
+        if (!step) {
+            return "";
+        }
+        if (step.is_decision) {
+            return this._decisionHTML(step);
+        }
+        if (step.is_consequence && !this.state.mAcked) {
+            return this._consequenceHTML(m);
+        }
+        return `
+        <div class="lrn-kicker">${esc(step.is_undo ? T("undoShown") : T("startMission"))}</div>
+        <h3>${esc(tx(step.instruction))}</h3>
+        ${step.detail ? `<div class="lrn-cbody">${esc(tx(step.detail))}</div>` : ""}
+        ${this.state.mHint && step.hint
+            ? `<div class="lrn-tip">${ic("lightbulb")}<span>${esc(tx(step.hint))}</span></div>` : ""}
+        <div class="lrn-ctools">
+            <button class="lrn-btn sm" data-act="m-back" ${this.state.mStep === 0 ? "disabled" : ""}
+                >${ic("chevron-left")}${esc(T("back"))}</button>
+            <button class="lrn-btn sm pri" data-act="m-next">${esc(T("next"))}${ic("chevron-right")}</button>
+        </div>`;
+    }
+
+    /* The interception. Scope, reversibility, what to verify — the three
+       questions a person actually needs before a risky action, and the reason
+       the mission cannot advance until they have been seen. */
+    _consequenceHTML(m) {
+        const c = m.consequence;
+        return `
+        <div class="lrn-kicker">${esc(T("consequence"))}</div>
+        <h3>${esc(tx(c.title))}</h3>
+        <div class="lrn-conseq">
+            <h4>${ic("target")}${esc(T("scope"))}</h4><p>${esc(tx(c.scope))}</p>
+        </div>
+        <div class="lrn-conseq">
+            <h4>${ic("rotate-ccw")}${esc(T("reversible"))}</h4><p>${esc(tx(c.reversible))}</p>
+        </div>
+        <div class="lrn-conseq">
+            <h4>${ic("shield-check")}${esc(T("verify"))}</h4><p>${esc(tx(c.verify))}</p>
+        </div>
+        <div class="lrn-ctools">
+            <button class="lrn-btn sm ghost" data-act="m-cancel">${esc(T("cancelAct"))}</button>
+            <button class="lrn-btn sm pri" data-act="m-ack">${ic("check")}${esc(T("proceed"))}</button>
+        </div>`;
+    }
+
+    _decisionHTML(step) {
+        const chosen = this.state.mChoice;
+        const picked = chosen ? step.options.find((o) => o.key === chosen) : null;
+        const opts = step.options.map((o) => `
+            <button class="lrn-opt ${chosen === o.key ? (o.correct ? "right" : "wrong") : ""}"
+                    data-mopt="${esc(o.key)}" ${chosen ? "disabled" : ""}>
+                <span>${esc(tx(o.label))}</span>
+            </button>`).join("");
+        return `
+        <div class="lrn-kicker">${esc(T("check"))}</div>
+        <h3>${esc(tx(step.instruction))}</h3>
+        ${step.detail ? `<div class="lrn-cbody">${esc(tx(step.detail))}</div>` : ""}
+        <div class="lrn-opts">${opts}</div>
+        ${picked && !picked.correct
+            ? `<div class="lrn-explain warn"><p>${esc(tx(picked.recovery))}</p></div>` : ""}
+        ${this.state.mHint && step.hint && !chosen
+            ? `<div class="lrn-tip">${ic("lightbulb")}<span>${esc(tx(step.hint))}</span></div>` : ""}
+        <div class="lrn-ctools">
+            ${!chosen ? "" : picked.correct
+                ? `<button class="lrn-btn sm pri" data-act="m-next">${esc(T("continueBtn"))}${ic("chevron-right")}</button>`
+                : `<button class="lrn-btn sm pri" data-act="m-retry">${ic("rotate-ccw")}${esc(T("tryAgain"))}</button>`}
+        </div>`;
+    }
+
+    _debriefBody(m) {
+        const list = (rows) => rows.map((r) => `<li>${esc(tx(r))}</li>`).join("");
+        return `
+        <div class="lrn-quizwrap">
+            <span class="lrn-chip b">${ic("award")}${esc(T("debriefTitle"))}</span>
+            <h2>${esc(tx(m.name))}</h2>
+
+            <div class="lrn-panel"><h3>${ic("check-circle")}${esc(T("whatYouDid"))}</h3>
+                <ul class="lrn-mistakes">${list(m.did)}</ul></div>
+
+            <!-- The seeded anomaly, revealed AFTER the decision so it lands as
+                 judgement rather than as trivia. -->
+            <div class="lrn-panel"><h3>${ic("alert-triangle")}${esc(tx(m.anomaly.title))}</h3>
+                <p>${esc(tx(m.anomaly.body))}</p></div>
+
+            <div class="lrn-panel"><h3>${ic("shield-check")}${esc(T("checklist"))}</h3>
+                <ul class="lrn-mistakes">${list(m.check)}</ul></div>
+
+            <p class="lrn-note">${esc(T("confGain"))}: <b>${this.state.mGain || 0}</b>${
+                esc(this.state.mRecovered ? " — " + T("recoveryUsed") : "")}</p>
+
+            <div class="lrn-cta"><button class="lrn-btn pri" data-act="to-missions"
+                >${ic("chevron-left")}${esc(T("backToMissions"))}</button></div>
+        </div>`;
+    }
+
     // ---------------------------------------------------------- post-render fx
     _afterPaint() {
+        if (this.state.view === "mission") {
+            const m = this.mission;
+            const step = this.mCurrent;
+            if (!m || m.kind !== "full" || this.state.mDone || !step) {
+                Spot.hide();
+                return;
+            }
+            Spot.show(step.target, this._missionCardHTML());
+            return;
+        }
         if (this.state.view !== "lesson" || this.state.quiz) {
             Spot.hide();
             return;
@@ -445,6 +663,16 @@ export class LearnJourney extends Component {
             this.openStation(stationBtn.dataset.station);
             return;
         }
+        const missionBtn = ev.target.closest("[data-mission]");
+        if (missionBtn) {
+            this.openMission(missionBtn.dataset.mission);
+            return;
+        }
+        const mopt = ev.target.closest("[data-mopt]");
+        if (mopt) {
+            this.chooseMission(mopt.dataset.mopt);
+            return;
+        }
         const opt = ev.target.closest("[data-opt]");
         if (opt) {
             this.answer(parseInt(opt.dataset.opt, 10));
@@ -465,6 +693,14 @@ export class LearnJourney extends Component {
             "l-exit": () => this.exitLesson(),
             "l-retry": () => this.retry(),
             "l-finish": () => this.finish(),
+            "to-missions": () => this.toMissions(),
+            "m-next": () => this.mNext(),
+            "m-back": () => this.mBack(),
+            "m-hint": () => { this.state.mHint = !this.state.mHint; },
+            "m-exit": () => this.mExit(),
+            "m-ack": () => { this.state.mAcked = true; },
+            "m-cancel": () => this.mBack(),
+            "m-retry": () => { this.state.mChoice = null; },
             "morph-before": () => { this.state.morphSide = "before"; },
             "morph-after": () => { this.state.morphSide = "after"; },
         }[a];
@@ -604,6 +840,89 @@ export class LearnJourney extends Component {
         // Odoo stores naive UTC. Send the same shape rather than an ISO string
         // with a Z, which the ORM would reject.
         return new Date().toISOString().slice(0, 19).replace("T", " ");
+    }
+
+
+    // ---------------------------------------------------------- missions
+    toMissions() {
+        Spot.hide();
+        this.state.view = "missions";
+        this.state.missionKey = null;
+        this.state.mDone = false;
+    }
+
+    openMission(key) {
+        this.state.missionKey = key;
+        this.state.view = "mission";
+        this.state.mStep = 0;
+        this.state.mChoice = null;
+        this.state.mRecovered = false;
+        this.state.mAcked = false;
+        this.state.mHint = false;
+        this.state.mDone = false;
+        this._log("mission_start", key);
+    }
+
+    mNext() {
+        const step = this.mCurrent;
+        // A risky step cannot be walked past. The interception IS the lesson.
+        if (step && step.is_consequence && !this.state.mAcked) {
+            return;
+        }
+        if (this.state.mStep < this.mSteps.length - 1) {
+            this.state.mStep += 1;
+            this.state.mChoice = null;
+            this.state.mAcked = false;
+            this.state.mHint = false;
+            this._log("mission_step", `${this.state.missionKey}:${this.state.mStep}`);
+        } else {
+            this.finishMission();
+        }
+    }
+
+    mBack() {
+        if (this.state.mStep > 0) {
+            this.state.mStep -= 1;
+            this.state.mChoice = null;
+            this.state.mAcked = false;
+            this.state.mHint = false;
+        }
+    }
+
+    mExit() {
+        Spot.hide();
+        this.state.view = "missions";
+        this._log("mission_abandon", `${this.state.missionKey}:${this.state.mStep}`);
+    }
+
+    chooseMission(optKey) {
+        if (this.state.mChoice) {
+            return;
+        }
+        const step = this.mCurrent;
+        const opt = step.options.find((o) => o.key === optKey);
+        this.state.mChoice = optKey;
+        if (opt && !opt.correct) {
+            // Recovery, not rejection: the learner stays in the mission and
+            // reads why, then chooses again.
+            this.state.mRecovered = true;
+            this._log("mission_recover", `${this.state.missionKey}:${optKey}`);
+        }
+    }
+
+    async finishMission() {
+        Spot.hide();
+        this.state.mDone = true;
+        this._log("mission_complete", this.state.missionKey);
+        await this._saveProgress(`mission:${this.state.missionKey}`, {
+            state: "done", completed_at: this._nowServer(), lang: this.state.lang,
+        });
+        try {
+            this.state.mGain = await this.orm.call("learn.confidence", "award",
+                [this.state.missionKey, this.state.mRecovered]);
+        } catch {
+            this.state.mGain = 0;
+        }
     }
 
     // -------------------------------------------------------------- settings

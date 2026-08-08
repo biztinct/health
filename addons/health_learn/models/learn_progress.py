@@ -22,8 +22,11 @@ class LearnProgress(models.Model):
                               default=lambda self: self.env.user, ondelete='cascade')
     company_id = fields.Many2one('res.company', required=True, index=True,
                                  default=lambda self: self.env.company)
-    station_id = fields.Many2one('learn.station', required=True,
-                                 index=True, ondelete='cascade')
+    # Either a station (a lesson) or a mission. Not both, never neither: the
+    # two are different things a learner completes, and giving missions their
+    # own table would duplicate every rule about scoping and resume.
+    station_id = fields.Many2one('learn.station', index=True, ondelete='cascade')
+    mission_id = fields.Many2one('learn.mission', index=True, ondelete='cascade')
     state = fields.Selection(
         selection=lambda self: self._selection_state(),
         required=True, default='not_started')
@@ -36,6 +39,8 @@ class LearnProgress(models.Model):
     _sql_constraints = [
         ('user_station_uniq', 'unique(user_id, station_id)',
          'One progress row per learner per station.'),
+        ('user_mission_uniq', 'unique(user_id, mission_id)',
+         'One progress row per learner per mission.'),
     ]
 
     @api.model
@@ -48,7 +53,7 @@ class LearnProgress(models.Model):
     def my_progress(self):
         rows = self.search([('user_id', '=', self.env.uid)])
         return {
-            r.station_id.key: {
+            (r.mission_id and 'mission:' + r.mission_id.key or r.station_id.key): {
                 'state': r.state,
                 'step_index': r.step_index,
                 'attempts': r.attempts,
@@ -66,19 +71,30 @@ class LearnProgress(models.Model):
         own progress is the only write path, and the record rule is what proves
         it. ``station_key`` is resolved here so the frontend never sends an id.
         """
-        station = self.env['learn.station'].sudo().search(
-            [('key', '=', station_key)], limit=1)
-        if not station:
-            return False
+        # "mission:<key>" addresses a mission; a bare key is a station. One
+        # namespace, so the frontend's progress map has one shape.
+        target, mission = None, None
+        if (station_key or '').startswith('mission:'):
+            mission = self.env['learn.mission'].sudo().search(
+                [('key', '=', station_key[8:])], limit=1)
+            if not mission:
+                return False
+        else:
+            target = self.env['learn.station'].sudo().search(
+                [('key', '=', station_key)], limit=1)
+            if not target:
+                return False
         allowed = {'state', 'step_index', 'attempts', 'first_try_correct',
                    'completed_at', 'lang'}
         vals = {k: v for k, v in (values or {}).items() if k in allowed}
+        key_field = 'mission_id' if mission else 'station_id'
+        key_value = mission.id if mission else target.id
         row = self.search([('user_id', '=', self.env.uid),
-                           ('station_id', '=', station.id)], limit=1)
+                           (key_field, '=', key_value)], limit=1)
         if row:
             row.write(vals)
         else:
-            row = self.create(dict(vals, user_id=self.env.uid, station_id=station.id))
+            row = self.create(dict(vals, user_id=self.env.uid, **{key_field: key_value}))
         return True
 
 
@@ -118,6 +134,13 @@ class LearnEvent(models.Model):
             ('coach_open', self.env._('Coach opened')),
             ('coach_hit', self.env._('Coach answered')),
             ('coach_miss', self.env._('Coach had no answer')),
+            # Phase 3. mission_recover is the content signal here: a mission
+            # nobody ever recovers from is not teaching a judgement.
+            ('mission_start', self.env._('Mission started')),
+            ('mission_step', self.env._('Mission step')),
+            ('mission_recover', self.env._('Mission recovery shown')),
+            ('mission_complete', self.env._('Mission completed')),
+            ('mission_abandon', self.env._('Mission abandoned')),
         ]
 
     # -- append-only ------------------------------------------------------

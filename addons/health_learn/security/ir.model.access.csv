@@ -32,3 +32,12 @@ access_learn_intent_block_user,learn.intent.block user,model_learn_intent_block,
 access_learn_intent_block_author,learn.intent.block author,model_learn_intent_block,group_learn_author,1,1,1,1
 access_learn_intent_step_user,learn.intent.step user,model_learn_intent_step,base.group_user,1,0,0,0
 access_learn_intent_step_author,learn.intent.step author,model_learn_intent_step,group_learn_author,1,1,1,1
+access_mission_user,learn.mission user,model_learn_mission,base.group_user,1,0,0,0
+access_mission_author,learn.mission author,model_learn_mission,group_learn_author,1,1,1,1
+access_mission_step_user,learn.mission.step user,model_learn_mission_step,base.group_user,1,0,0,0
+access_mission_step_author,learn.mission.step author,model_learn_mission_step,group_learn_author,1,1,1,1
+access_mission_option_user,learn.mission.option user,model_learn_mission_option,base.group_user,1,0,0,0
+access_mission_option_author,learn.mission.option author,model_learn_mission_option,group_learn_author,1,1,1,1
+access_mission_note_user,learn.mission.note user,model_learn_mission_note,base.group_user,1,0,0,0
+access_mission_note_author,learn.mission.note author,model_learn_mission_note,group_learn_author,1,1,1,1
+access_confidence_user,learn.confidence own,model_learn_confidence,base.group_user,1,1,1,0
