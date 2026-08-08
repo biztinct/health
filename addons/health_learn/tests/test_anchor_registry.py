@@ -77,8 +77,19 @@ class TestAnchorRegistry(TransactionCase):
                                   "points at it:\n  " + "\n  ".join(missing))
 
     def test_02_pattern_anchors_are_emitted(self):
+        """A pattern is emitted per record, so there is no literal to find.
+
+        Two sources: a product template emits it with t-attf-data-a, and the
+        practice replica emits it from a template literal. Both are checked —
+        a pattern nobody emits is an anchor the content can never reach.
+        """
         missing = []
+        replica_blob = "".join(_read(f) or "" for f in self.scan['replica'])
         for prefix, spec in self.patterns.items():
+            if spec.get('replica'):
+                if 'data-a="%s' % prefix not in replica_blob:
+                    missing.append('%s -> the replica does not emit it' % prefix)
+                continue
             text = _read(spec['file'])
             if text is None:
                 missing.append('%s -> file not found: %s' % (prefix, spec['file']))

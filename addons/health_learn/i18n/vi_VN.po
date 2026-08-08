@@ -160,6 +160,18 @@ msgid "A HABIT WORTH BREAKING"
 msgstr "MỘT THÓI QUEN NÊN BỎ"
 
 #. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_workload
+msgid "A bar per person: visits assigned today against their capacity for the day."
+msgstr "Mỗi người một thanh: số lượt được phân công hôm nay so với năng lực trong ngày."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_clients
+msgid ""
+"A booking points at a client. If the client is wrong or duplicated, the visit, the clinical note and the invoice all end up in the wrong place together."
+msgstr ""
+"Một lịch hẹn trỏ tới một khách hàng. Nếu khách hàng sai hoặc bị trùng, thì lượt thăm khám, ghi chú lâm sàng và hóa đơn cùng nhau đi nhầm chỗ."
+
+#. module: health_learn
 #: model:learn.station,outline_what:health_learn.station_channelcenter
 msgid ""
 "A catalogue of the eight connectable channels with a lifecycle state each, the readiness checks behind that state, and the go-live console."
@@ -319,6 +331,13 @@ msgstr ""
 "Sau khi kết nối, hãy tự gửi một tin nhắn từ tài khoản cá nhân và xem nó xuất hiện trên bảng. Đó là phép thử duy nhất có giá trị."
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_workload
+#: model:learn.station,outline_when:health_learn.station_ops_workload
+msgid "After you finish assigning, not before. It is a check on decisions already made."
+msgstr ""
+"Sau khi bạn phân công xong, không phải trước. Đây là phép kiểm tra với những quyết định đã đưa ra."
+
+#. module: health_learn
 #: model:learn.step.line,label:health_learn.lesson_l1_step_07_line_02
 msgid "After “Junk?”"
 msgstr "Sau khi “Thư rác?”"
@@ -332,6 +351,13 @@ msgstr "Sau khi:"
 #: model:learn.quiz.option,label:health_learn.lesson_l8_quiz_opt_1
 msgid "Agree — one booking out of six is a poor return and the volume is negligible."
 msgstr "Đồng ý — 1 lịch hẹn trên 6 yêu cầu là hiệu quả kém và lượng thì không đáng kể."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_workload_mistake_1
+msgid ""
+"Aiming for everyone at the same number. Equal counts across unequal distances is not fairness."
+msgstr ""
+"Cố đưa mọi người về cùng một con số. Số lượt bằng nhau trên những quãng đường không bằng nhau không phải là công bằng."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_all
@@ -383,11 +409,46 @@ msgstr ""
 "Bản ghi bất biến về đúng những gì đã đến — một bình luận Facebook không có số điện thoại, một webhook không có danh tính. Bạn chuyển đổi hoặc bỏ qua; bạn không sửa được."
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_family_mistake_0
+msgid ""
+"Answering a clinical question because it was asked kindly. Timing is yours to answer; condition is not."
+msgstr ""
+"Trả lời một câu hỏi lâm sàng chỉ vì nó được hỏi một cách lịch sự. Giờ giấc là phần bạn trả lời được; tình trạng bệnh thì không."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_clinical_b040
 msgid ""
 "Answering a clinical question yourself, even a small one, is the single fastest way this desk causes harm. Speed is met by escalating fast, not by answering."
 msgstr ""
 "Tự trả lời một câu hỏi lâm sàng, dù nhỏ, là cách nhanh nhất khiến bàn làm việc này gây hại. Yêu cầu về tốc độ được đáp ứng bằng chuyển cấp nhanh, không phải bằng việc trả lời."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_schedule_mistake_2
+msgid ""
+"Approving leave from the leave screen without coming here. Approval does not move the visits already booked for that day."
+msgstr ""
+"Duyệt nghỉ phép ở màn hình đơn nghỉ mà không quay lại đây. Việc duyệt không tự dời các lịch hẹn đã đặt cho ngày đó."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_timeoff
+msgid ""
+"Approving leave is the single most common way a fully-booked day becomes an unstaffed one, because approval and the schedule are two different screens."
+msgstr ""
+"Duyệt nghỉ phép là cách phổ biến nhất khiến một ngày đã kín lịch trở thành một ngày không có người, vì việc duyệt và bảng phân công là hai màn hình khác nhau."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_timeoff_mistake_0
+msgid ""
+"Approving without opening the schedule for those dates. Approval does not move a single visit — it just makes the person unavailable for visits that are still booked."
+msgstr ""
+"Duyệt mà không mở bảng phân công cho những ngày đó. Việc duyệt không dời bất kỳ lượt nào — nó chỉ khiến người đó không còn khả dụng cho các lượt vẫn đang được đặt."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_timeoff
+#: model:learn.station,outline_when:health_learn.station_ops_timeoff
+msgid ""
+"As requests arrive — and always with the Staff Schedule open beside it for the dates concerned."
+msgstr "Ngay khi có đơn — và luôn mở song song Lịch nhân sự cho những ngày liên quan."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_askplaceholder
@@ -417,11 +478,25 @@ msgid "Assigned to"
 msgstr "Giao cho"
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_bookings_mistake_1
+msgid ""
+"Assigning without looking at the map. A visit that fits the calendar can still be impossible to reach in time."
+msgstr ""
+"Phân công mà không nhìn bản đồ. Một lượt vừa khít trên lịch vẫn có thể không kịp di chuyển tới nơi."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_carecommand_mistake_2
 msgid ""
 "Assuming the Zalo account belongs to the patient. In home care it is very often a son or a daughter — and what you may tell them is a consent question, not a convenience question."
 msgstr ""
 "Mặc định tài khoản Zalo là của bệnh nhân. Trong chăm sóc tại nhà, rất thường là con trai hoặc con gái — và bạn được nói gì với họ là vấn đề đồng thuận, không phải vấn đề tiện lợi."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_family_mistake_1
+msgid ""
+"Assuming the sender is allowed to hear everything because they are family. Relationship is not consent."
+msgstr ""
+"Mặc định người gửi được nghe mọi thứ vì họ là người nhà. Quan hệ gia đình không phải là đồng thuận."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_touchpoints_mistake_0
@@ -508,8 +583,15 @@ msgstr "Quay lại danh sách nhiệm vụ"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_badgegot
-msgid "Badge earned — both flagship lessons complete."
+msgid "Badge earned — the CRM flagship lessons are complete."
 msgstr "Đã nhận huy hiệu — hoàn thành cả hai bài học chủ đạo."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_schedule_mistake_1
+msgid ""
+"Balancing by count alone. Five short visits in one district is a lighter day than three spread across the city."
+msgstr ""
+"Cân bằng chỉ theo số lượng. Năm lượt ngắn trong cùng một quận là một ngày nhẹ hơn ba lượt rải khắp thành phố."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_attrib_b010
@@ -529,9 +611,24 @@ msgid "Before answering a clinical question, check who you are allowed to answer
 msgstr "Trước khi trả lời câu hỏi lâm sàng, hãy kiểm tra bạn được phép trả lời ai."
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_clients
+#: model:learn.station,outline_when:health_learn.station_ops_clients
+msgid "Before booking someone you are not certain about, and whenever a name looks familiar."
+msgstr ""
+"Trước khi đặt lịch cho người bạn chưa chắc chắn, và bất cứ khi nào một cái tên trông quen quen."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_checklist
 msgid "Before doing this for real, always check"
 msgstr "Trước khi làm thật, luôn kiểm tra"
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_schedule
+#: model:learn.station,outline_when:health_learn.station_ops_schedule
+msgid ""
+"Before the shift, and every time somebody becomes unavailable. It is also where you find out what approving a leave request just cost."
+msgstr ""
+"Trước ca làm việc, và mỗi lần có người không thể làm việc. Đây cũng là nơi bạn thấy việc duyệt một đơn nghỉ vừa gây ra điều gì."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_consequence
@@ -561,11 +658,24 @@ msgid "Book without creating a duplicate client"
 msgstr "Đặt lịch mà không tạo hồ sơ khách hàng trùng"
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_bookings
+#: model:learn.station,name:health_learn.station_ops_bookings
+msgid "Bookings"
+msgstr "Lịch hẹn"
+
+#. module: health_learn
 #: model:learn.column,body:health_learn.col_dashboard_conversion
 msgid ""
 "Bookings divided by REAL enquiries — spam is excluded from the denominator on purpose, so that a month with more junk cannot look better."
 msgstr ""
 "Số lịch hẹn chia cho yêu cầu THẬT — thư rác bị loại khỏi mẫu số có chủ đích, để một tháng nhiều tin rác hơn không thể trông đẹp hơn."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_schedule
+msgid ""
+"Bookings tells you what was promised. This tells you whether it can actually be done by the people who are actually here."
+msgstr ""
+"Màn hình Lịch hẹn cho biết đã hứa những gì. Màn hình này cho biết việc đó có thật sự làm được bởi những người thật sự đang có mặt hay không."
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_l1_step_00
@@ -627,6 +737,13 @@ msgstr "Có hoàn tác được không?"
 #: model:learn.intent,label:health_learn.intent_clinical
 msgid "Can you tell me something clinical about this patient?"
 msgstr "Bạn có thể cho tôi biết thông tin lâm sàng về bệnh nhân này không?"
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_bookings_mistake_0
+msgid ""
+"Cancelling when you meant to reschedule. Cancel ends the visit and the money; reschedule keeps both and moves them."
+msgstr ""
+"Hủy trong khi ý định là dời lịch. Hủy kết thúc lượt thăm khám và cả khoản tiền; dời lịch giữ lại cả hai và chuyển sang giờ khác."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l3_step_05
@@ -736,6 +853,17 @@ msgstr ""
 "Quy trình chuyển cấp của CareJioX. Không có nội dung lâm sàng: câu trả lời này tồn tại để từ chối, không phải để cung cấp thông tin."
 
 #. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_collections
+msgid "Cash each member of staff is holding from today's visits, reconciled inside Operations."
+msgstr ""
+"Tiền mặt mỗi nhân viên đang giữ từ các lượt hôm nay, được đối soát trong bộ phận Vận hành."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_collections
+msgid "Cash the nurses are holding right now, and who reconciles it."
+msgstr "Tiền mặt điều dưỡng đang giữ, và ai là người đối soát."
+
+#. module: health_learn
 #: model:learn.glossary.term,term:health_learn.gloss_catchment
 #: model:learn.string,value:health_learn.str_catchment
 msgid "Catchment area"
@@ -792,6 +920,13 @@ msgid ""
 "Checked the Data Sharing consent before answering a clinical question — and found it withdrawn."
 msgstr ""
 "Đã kiểm tra đồng thuận chia sẻ dữ liệu trước khi trả lời câu hỏi lâm sàng — và phát hiện nó đã bị thu hồi."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_dashboard_mistake_2
+msgid ""
+"Checking the number and not the list. The count tells you there is a problem; the list underneath tells you whose problem it is."
+msgstr ""
+"Chỉ nhìn con số mà không nhìn danh sách. Con số cho biết có vấn đề; danh sách bên dưới cho biết đó là vấn đề của ai."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_channelcenter_mistake_0
@@ -861,6 +996,24 @@ msgid "Client Name"
 msgstr "Tên khách hàng"
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_clients
+#: model:learn.station,name:health_learn.station_ops_clients
+msgid "Clients"
+msgstr "Khách hàng"
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_clients
+msgid "Clients in your catchment area — the record a visit is booked against."
+msgstr "Khách hàng trong khu vực bạn phụ trách — hồ sơ mà lịch hẹn được đặt cho."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_clients
+msgid ""
+"Clients in your catchment area, with the record behind each: their consents, their history and their balance."
+msgstr ""
+"Khách hàng trong khu vực bạn phụ trách, cùng hồ sơ phía sau mỗi người: đồng thuận, lịch sử và công nợ."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l5_step_04
 msgid "Close the activity and update the contact"
 msgstr "Đóng hoạt động và cập nhật liên hệ"
@@ -890,6 +1043,12 @@ msgid ""
 "Closing an activity without updating the contact's status makes the board go green while the Dashboard stays wrong. Do both."
 msgstr ""
 "Đóng một hoạt động mà không cập nhật trạng thái liên hệ sẽ khiến bảng chuyển xanh trong khi Bảng điều khiển vẫn sai. Hãy làm cả hai."
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_collections
+#: model:learn.station,name:health_learn.station_ops_collections
+msgid "Collections"
+msgstr "Thu tiền mặt"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_columnanswer
@@ -1080,7 +1239,7 @@ msgstr ""
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_coverage
 msgid "Coverage"
-msgstr "Phạm vi bao phủ"
+msgstr "Phạm vi"
 
 #. module: health_learn
 #: model:learn.quiz.option,label:health_learn.lesson_l6_quiz_opt_2
@@ -1091,6 +1250,13 @@ msgstr "Tạo thủ công một liên hệ bằng tên Facebook để nó không
 #: model:learn.quiz.option,label:health_learn.lesson_l4_quiz_opt_2
 msgid "Create a new contact to be safe, and merge the records later."
 msgstr "Tạo một liên hệ mới cho chắc, rồi gộp hồ sơ sau."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_clients_mistake_0
+msgid ""
+"Creating a second record because the first was hard to find. Their consents and balance stay on the first one."
+msgstr ""
+"Tạo hồ sơ thứ hai vì hồ sơ đầu khó tìm. Đồng thuận và công nợ của họ vẫn nằm ở hồ sơ đầu tiên."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_custom
@@ -1235,6 +1401,12 @@ msgid "Email"
 msgstr "Email"
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_collections
+#: model:learn.station,outline_when:health_learn.station_ops_collections
+msgid "End of every shift, without exception. A day skipped is a day nobody can reconstruct."
+msgstr "Cuối mỗi ca, không có ngoại lệ. Một ngày bị bỏ qua là một ngày không ai dựng lại được."
+
+#. module: health_learn
 #: model:learn.column,label:health_learn.col_touchpoints_enquiries
 msgid "Enquiries"
 msgstr "Yêu cầu"
@@ -1343,6 +1515,18 @@ msgid "Every number here belongs to a period"
 msgstr "Mọi con số ở đây đều thuộc về một khoảng thời gian"
 
 #. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_bookings
+msgid ""
+"Every visit for the day — time, patient, service, district, who is on it and what state it is in."
+msgstr ""
+"Mọi lượt thăm khám trong ngày — giờ, bệnh nhân, dịch vụ, quận, ai phụ trách và đang ở trạng thái nào."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_bookings
+msgid "Every visit for the day, and the four things you can do to one."
+msgstr "Mọi lượt thăm khám trong ngày, và bốn việc bạn có thể làm với một lượt."
+
+#. module: health_learn
 #: model:learn.mission,anomaly_body:health_learn.mission_m1
 msgid ""
 "Everything about #4172 says “hurry”: 110, a watch phrase, a missed call, a visit in eight hours. The consent record says the patient withdrew permission for this exact person in June. Speed and permission are two different questions, and only one of them can be undone."
@@ -1386,6 +1570,12 @@ msgid "FROM NUMBER TO PERSON"
 msgstr "TỪ CON SỐ TỚI CON NGƯỜI"
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_family
+#: model:learn.station,name:health_learn.station_ops_family
+msgid "Family Inbox"
+msgstr "Hộp thư người nhà"
+
+#. module: health_learn
 #: model:learn.quiz.option,label:health_learn.lesson_l3_quiz_opt_1
 msgid ""
 "Fewer spam messages arrived, which is good news, and conversion fell for an unrelated reason."
@@ -1417,6 +1607,21 @@ msgstr "Hoàn thành"
 #: model:learn.mission.step,hint:health_learn.mission_m2_step_00
 msgid "First card in the Zalo group, the one showing Connected."
 msgstr "Thẻ đầu tiên trong nhóm Zalo, thẻ đang hiển thị Đã kết nối."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_dashboard
+#: model:learn.station,outline_when:health_learn.station_ops_dashboard
+msgid ""
+"First thing in the morning, again after lunch, and before you leave. It is a whole-day view, so checking it hourly tells you nothing new."
+msgstr ""
+"Đầu giờ sáng, một lần nữa sau buổi trưa, và trước khi ra về. Đây là góc nhìn cả ngày, nên kiểm tra mỗi giờ cũng không cho biết thêm gì."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_dashboard
+msgid ""
+"Five of the six are reassurance. Unassigned is the one that turns into a patient ringing to ask where the nurse is, and it is the only number here you can still fix today."
+msgstr ""
+"Năm trong sáu con số chỉ để yên tâm. Chưa phân công là con số biến thành cuộc gọi của bệnh nhân hỏi điều dưỡng đâu, và là con số duy nhất ở đây bạn còn kịp xử lý trong ngày."
 
 #. module: health_learn
 #: model:learn.step,tip:health_learn.lesson_l6_step_02
@@ -1610,6 +1815,11 @@ msgstr ""
 "Trong 4 lượt chưa khớp có bao nhiêu thuộc về nó, và mỗi chiến dịch có bao nhiêu lượt thật sự thành lịch hẹn."
 
 #. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_collections
+msgid "How much cash each member of staff is carrying from today's visits, and the total."
+msgstr "Mỗi nhân viên đang giữ bao nhiêu tiền mặt từ các lượt hôm nay, và tổng cộng."
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_price
 msgid "How much is wound care at home?"
 msgstr "Chăm sóc vết thương tại nhà giá bao nhiêu?"
@@ -1783,6 +1993,13 @@ msgstr ""
 "Đây là màn hình duy nhất cho biết bàn làm việc có theo kịp hay không. Chỉ số Đang chờ theo dõi vượt năng lực của nhóm là dấu hiệu sớm nhất cho thấy sẽ có người bị bỏ quên."
 
 #. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_bookings
+msgid ""
+"It is the only screen where a visit exists as a whole thing rather than as a row on somebody's schedule. Assigning, moving and cancelling all happen here."
+msgstr ""
+"Đây là màn hình duy nhất mà một lượt thăm khám tồn tại như một chỉnh thể, thay vì chỉ là một dòng trong lịch của ai đó. Phân công, dời và hủy đều diễn ra ở đây."
+
+#. module: health_learn
 #: model:learn.mission.step,hint:health_learn.mission_m1_step_00
 msgid "It is the row with the red urgency chip and the Zalo glyph."
 msgstr "Đó là dòng có chip ưu tiên màu đỏ và biểu tượng Zalo."
@@ -1852,8 +2069,25 @@ msgstr "Học bằng cách làm — một cách an toàn"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_hubtitle
-msgid "Learn the CRM desk without a trainer."
-msgstr "Thành thạo khu vực CRM mà không cần người hướng dẫn."
+msgid "Learn this system without a trainer."
+msgstr "Thành thạo hệ thống mà không cần người hướng dẫn."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_timeoff
+msgid "Leave requests — and the visits they quietly collide with."
+msgstr "Các đơn xin nghỉ — và những lịch hẹn mà chúng âm thầm va vào."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_timeoff
+msgid "Leave requests — who, which dates, what kind, and whether they are approved."
+msgstr "Các đơn xin nghỉ — ai, ngày nào, loại gì, và đã duyệt hay chưa."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_bookings_mistake_2
+msgid ""
+"Leaving a booking unassigned because it is not urgent yet. Unassigned at 09:00 is a scheduling task; unassigned at 15:00 is a phone call to a family."
+msgstr ""
+"Để lịch hẹn chưa phân công vì nghĩ chưa gấp. Chưa phân công lúc 09:00 là một việc sắp xếp; chưa phân công lúc 15:00 là một cuộc gọi cho gia đình."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_contacts_mistake_2
@@ -1861,6 +2095,11 @@ msgid ""
 "Leaving a lost booking un-reasoned. “Booking Lost” without a reason is invisible to Lead Analysis, so the same cause repeats all quarter."
 msgstr ""
 "Ghi mất lịch mà không nêu lý do. “Mất cơ hội đặt lịch” không có lý do sẽ vô hình với Phân tích khách tiềm năng, khiến nguyên nhân đó lặp lại suốt quý."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_timeoff_mistake_1
+msgid "Leaving a request sitting. An unanswered request is a person who has already made plans."
+msgstr "Để đơn nằm chờ. Một đơn chưa được trả lời là một người đã lên kế hoạch riêng rồi."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_less
@@ -1990,6 +2229,11 @@ msgstr ""
 "Cùng suy nghĩ lại nhé. Hôm nay hiển thị việc đến hạn hôm nay, và nó không nói gì về việc đến hạn hôm qua mà chưa làm. Bộ lọc đang làm đúng chức năng; rủi ro nằm ở việc hiểu nó thành “không còn việc tồn”."
 
 #. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_workload
+msgid "Load against capacity, per person — the fairness check."
+msgstr "Khối lượng so với năng lực, theo từng người — phép kiểm tra sự công bằng."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_walkin_b010
 msgid ""
 "Log a walk-in from the wall. It needs a contact, a phone number or an email so the person can be followed up — a walk-in with no way to reach them afterwards is not a record, it is a memory."
@@ -2041,6 +2285,11 @@ msgid "Matched the Official Account to the connection you actually opened."
 msgstr "Đã khớp Official Account với đúng kết nối bạn đã mở."
 
 #. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_family
+msgid "Messages from relatives about a patient — and what you may answer."
+msgstr "Tin nhắn từ người nhà về một bệnh nhân — và bạn được trả lời những gì."
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l2_step_07
 msgid ""
 "Messenger lost a permission at the provider. Nothing in CareJioX can fix that — someone has to sign in to the platform and grant it again. Until then this channel neither sends nor receives, and the screen says so rather than showing a hopeful green."
@@ -2073,6 +2322,13 @@ msgstr ""
 #: model:learn.string,value:health_learn.str_more
 msgid "More detail"
 msgstr "Xem chi tiết"
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_family
+msgid ""
+"Most 'where is the nurse' calls arrive here first. Answering the logistics question fast is usually all that is needed — and it is the part you are always allowed to answer."
+msgstr ""
+"Phần lớn các câu hỏi “điều dưỡng đâu rồi” đến đây trước. Trả lời nhanh câu hỏi về lịch trình thường là đủ — và đó là phần bạn luôn được phép trả lời."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_motionon
@@ -2260,6 +2516,27 @@ msgid "One judgement, not a memory test."
 msgstr "Một tình huống cần phán đoán, không phải câu hỏi thuộc lòng."
 
 #. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_schedule
+msgid ""
+"One row per person for one day, their visits along it, their load against capacity, and the leave that touches this week."
+msgstr ""
+"Mỗi dòng là một người trong một ngày, các lượt thăm khám của họ trải theo dòng, khối lượng so với năng lực, và các đơn nghỉ ảnh hưởng tuần này."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_schedule
+msgid ""
+"One row per person for one day: their visits, their load against capacity, and the leave that touches this week."
+msgstr ""
+"Mỗi người một dòng cho một ngày: các lượt của họ, khối lượng so với năng lực, và các đơn nghỉ ảnh hưởng tuần này."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_bookings
+msgid ""
+"One row per visit with its time, patient, service, district, assigned person and state — draft, new, assigned, in progress, completed, cancelled, closed."
+msgstr ""
+"Mỗi dòng là một lượt thăm khám với giờ, bệnh nhân, dịch vụ, quận, người được phân công và trạng thái — nháp, mới, đã phân công, đang thực hiện, hoàn thành, đã hủy, đã đóng."
+
+#. module: health_learn
 #: model:learn.screen,blurb:health_learn.screen_touchpoints
 msgid ""
 "One row per website arrival with its UTM tags and click ids, plus the unmatched-campaign chip."
@@ -2343,10 +2620,69 @@ msgid "Open the top conversation on the wall."
 msgstr "Mở cuộc hội thoại ở đầu bảng."
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_dashboard
+#: model:learn.station,name:health_learn.station_ops_dashboard
+msgid "Operations Dashboard"
+msgstr "Bảng điều hành"
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_roles_om
 #: model:learn.tenant.override,value:health_learn.slot_roleopsmanager
 msgid "Operations Manager"
 msgstr "Quản lý vận hành"
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_ops_routes
+#: model:learn.station,outline_prereq:health_learn.station_ops_workload
+msgid "Operations Manager or Owner."
+msgstr "Vai trò Quản lý vận hành hoặc Chủ sở hữu."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_ops_timeoff
+msgid "Operations Manager or Owner. A nurse can request; only Operations can approve."
+msgstr ""
+"Vai trò Quản lý vận hành hoặc Chủ sở hữu. Điều dưỡng có thể xin nghỉ; chỉ Vận hành mới duyệt được."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_ops_dashboard
+msgid ""
+"Operations Manager or Owner. A nurse does not see this screen — they see their own visits, not the day."
+msgstr ""
+"Vai trò Quản lý vận hành hoặc Chủ sở hữu. Điều dưỡng không thấy màn hình này — họ chỉ thấy lượt của mình, không thấy cả ngày."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_ops_bookings
+msgid ""
+"Operations Manager or Owner. Cancelling additionally destroys revenue, so it is worth knowing before you press it that nothing here asks twice."
+msgstr ""
+"Vai trò Quản lý vận hành hoặc Chủ sở hữu. Việc hủy còn làm mất doanh thu, nên hãy biết trước rằng ở đây không có bước hỏi lại lần hai."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_ops_collections
+msgid "Operations Manager or Owner. Finance sees the result, not this screen."
+msgstr ""
+"Vai trò Quản lý vận hành hoặc Chủ sở hữu. Tài chính nhìn thấy kết quả, không nhìn màn hình này."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_ops_schedule
+msgid ""
+"Operations Manager or Owner. Reassigning someone else's visit is the whole point of the screen, so it is not available to the nurse whose visit it is."
+msgstr ""
+"Vai trò Quản lý vận hành hoặc Chủ sở hữu. Việc phân công lại lượt của người khác chính là mục đích của màn hình này, nên điều dưỡng sở hữu lượt đó không có quyền."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_ops_family
+msgid ""
+"Operations Manager or Owner. What you may say about the patient's condition is a recorded consent, not a judgement call."
+msgstr ""
+"Vai trò Quản lý vận hành hoặc Chủ sở hữu. Việc bạn được nói gì về tình trạng bệnh nhân là một đồng thuận đã ghi nhận, không phải quyết định cảm tính."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_ops_clients
+msgid ""
+"Operations Manager, Owner — and CRM, which is the one OPS screen the reception desk can also open."
+msgstr ""
+"Vai trò Quản lý vận hành, Chủ sở hữu — và CRM, đây là màn hình OPS duy nhất mà bàn lễ tân cũng mở được."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_rolesshort_om
@@ -2470,6 +2806,11 @@ msgstr "Đang chờ theo dõi"
 #: model:learn.step,title:health_learn.lesson_l3_step_01
 msgid "Pending Follow-ups is the early warning"
 msgstr "Đang chờ theo dõi là cảnh báo sớm"
+
+#. module: health_learn
+#: model:learn.string,value:health_learn.str_lines_ops_people
+msgid "People, money and reach"
+msgstr "Con người, tiền bạc và kết nối"
 
 #. module: health_learn
 #: model:learn.column,label:health_learn.col_dashboard_period
@@ -2629,6 +2970,13 @@ msgstr ""
 "Các bước kiểm tra sẵn sàng là lý do một kết nối được phép tự gọi mình là Đã kết nối: thông tin xác thực hợp lệ, webhook đã xác minh, đã có quyền gửi, đã chọn tài khoản. Chúng chứng minh kết nối <b>có khả năng</b>. Chỉ lưu lượng đến thật mới chứng minh nó <b>hoạt động</b>."
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_dashboard_mistake_0
+msgid ""
+"Reading Completed as progress. Two completed at 11:00 is normal; two completed at 16:00 means the afternoon has not started."
+msgstr ""
+"Hiểu Đã hoàn thành là tiến độ. Hai lượt hoàn thành lúc 11:00 là bình thường; hai lượt lúc 16:00 nghĩa là buổi chiều chưa bắt đầu."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_channelcenter_mistake_2
 msgid ""
 "Reading a green tick as proof of delivery. The readiness checks prove the connection is capable; only real traffic proves it works."
@@ -2649,6 +2997,20 @@ msgstr ""
 "Xem một ô nhỏ là xu hướng. Sáu lượt giới thiệu trong một tháng là một con số, không phải một quy luật."
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_schedule_mistake_0
+msgid ""
+"Reading an empty row as a free nurse. An unassigned booking is not on anyone's row — the gap you are looking at may already be spoken for."
+msgstr ""
+"Hiểu một dòng trống là điều dưỡng đang rảnh. Lịch hẹn chưa phân công không nằm trên dòng của ai — khoảng trống bạn đang nhìn có thể đã được tính đến."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_workload_mistake_0
+msgid ""
+"Reading capacity as hours. It is visits per day, and two visits in one building are not two visits across two districts."
+msgstr ""
+"Hiểu năng lực là số giờ. Đó là số lượt mỗi ngày, và hai lượt trong cùng một tòa nhà không giống hai lượt ở hai quận."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_carecommand_mistake_1
 msgid ""
 "Reading the urgency score as a clinical severity. It is a triage number built from status and waiting time. A 110 is not a medical emergency; it is a strong queue position."
@@ -2659,6 +3021,13 @@ msgstr ""
 #: model:learn.step,title:health_learn.lesson_l6_step_00
 msgid "Real people who arrived with too little"
 msgstr "Người thật, đến với quá ít thông tin"
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_collections_mistake_1
+msgid ""
+"Reconciling from memory at the end of a long shift. The visit list is right there and it does not get tired."
+msgstr ""
+"Đối soát theo trí nhớ vào cuối một ca dài. Danh sách lượt thăm khám ở ngay đó và nó không biết mệt."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_unrouted_dismiss
@@ -2771,6 +3140,11 @@ msgstr ""
 "Trả lời mà chưa nhận xử lý. Hai nhân viên cùng trả lời một gia đình cách nhau một phút là khiếu nại phổ biến nhất mà màn hình này sinh ra để ngăn chặn."
 
 #. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_timeoff
+msgid "Requests with who, which dates, what kind, and whether they are approved."
+msgstr "Các đơn với thông tin ai, ngày nào, loại nghỉ gì, và đã được duyệt hay chưa."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_required
 msgid "Required"
 msgstr "Bắt buộc"
@@ -2791,9 +3165,20 @@ msgid "Resume"
 msgstr "Tiếp tục"
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_routes
+#: model:learn.station,name:health_learn.station_ops_routes
+msgid "Route Feasibility"
+msgstr "Khả năng di chuyển"
+
+#. module: health_learn
 #: model:learn.mission.step,instruction:health_learn.mission_m2_step_03
 msgid "Run the readiness checks and read what each one proves."
 msgstr "Chạy các bước kiểm tra sẵn sàng và đọc xem mỗi bước chứng minh điều gì."
+
+#. module: health_learn
+#: model:learn.string,value:health_learn.str_lines_ops_day
+msgid "Running today"
+msgstr "Điều hành trong ngày"
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_l1_step_01
@@ -2921,6 +3306,13 @@ msgid "Send test message, in the “Prove it works” panel."
 msgstr "Gửi tin nhắn thử, trong khung “Chứng minh nó hoạt động”."
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_collections_mistake_0
+msgid ""
+"Sending an unbalanced figure to Finance to sort out. It is settled here first — that is the whole reason this screen sits in Operations."
+msgstr ""
+"Gửi một con số chưa khớp sang Tài chính để họ xử lý. Việc này được giải quyết ở đây trước — đó chính là lý do màn hình này thuộc bộ phận Vận hành."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_reminder_b010
 msgid ""
 "Set a <b>Reminder</b> on the conversation. It schedules a real activity on the lead or contact, which then appears on the shared Activities board — that board is what turns “we'll call you back” into being called back."
@@ -2955,6 +3347,13 @@ msgid ""
 "Six clickable KPI cards plus a contact-status donut, a source-channel bar chart and three live feeds, all filtered by one period selector."
 msgstr ""
 "Sáu thẻ KPI có thể nhấp, cùng biểu đồ vòng theo trạng thái liên hệ, biểu đồ cột theo kênh nguồn và ba bảng dữ liệu trực tiếp, tất cả lọc theo một bộ chọn thời gian."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_dashboard
+msgid ""
+"Six counts for one day in one catchment area — booked, unassigned, in progress, completed, staff on shift, cancelled — with the unassigned bookings listed underneath."
+msgstr ""
+"Sáu con số cho một ngày trong một khu vực — đã đặt, chưa phân công, đang thực hiện, đã hoàn thành, nhân sự trong ca, đã hủy — kèm danh sách các lịch chưa phân công ở dưới."
 
 #. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l1_step_08
@@ -3035,6 +3434,12 @@ msgstr "Đánh dấu thư rác"
 #: model:learn.step,title:health_learn.lesson_l4_step_04
 msgid "Spam is not a way to clear the list"
 msgstr "Thư rác không phải cách dọn danh sách"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_schedule
+#: model:learn.station,name:health_learn.station_ops_schedule
+msgid "Staff Schedule"
+msgstr "Lịch nhân sự"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_startmission
@@ -3256,6 +3661,13 @@ msgstr ""
 "Khu vực trên tài khoản này không phải nhãn dán — nó là quy tắc định tuyến. Hãy theo đường nối từ khu vực của tài khoản tới số lượng trên bảng Hà Nội. Đổi trường này thì các cuộc hội thoại hôm qua không di chuyển, nhưng mọi cuộc hội thoại mới đều đi theo."
 
 #. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_routes
+msgid ""
+"The calendar cannot see the map. A visit at 15:00 in one district and 16:30 in another fits perfectly on a schedule and may be impossible in traffic."
+msgstr ""
+"Lịch không nhìn thấy bản đồ. Một lượt lúc 15:00 ở quận này và 16:30 ở quận khác trông rất vừa trên lịch, nhưng có thể bất khả thi trong giờ tắc đường."
+
+#. module: health_learn
 #: model:learn.quiz.option,label:health_learn.lesson_l2_quiz_opt_0
 msgid ""
 "The catchment area recorded on each Zalo Official Account — including which account is selected on each connection."
@@ -3314,6 +3726,17 @@ msgid "The daughter is asking about her mother's wound — can I answer?"
 msgstr "Người con gái hỏi về vết thương của mẹ — tôi trả lời được không?"
 
 #. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_dashboard
+msgid ""
+"The day in six numbers for one catchment area, with the unassigned bookings listed underneath."
+msgstr "Cả ngày trong sáu con số cho một khu vực, kèm danh sách lịch hẹn chưa phân công ở dưới."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_dashboard
+msgid "The day in six numbers, and the one that matters is Unassigned."
+msgstr "Cả ngày trong sáu con số, và con số quan trọng là Chưa phân công."
+
+#. module: health_learn
 #: model:learn.step,tip:health_learn.lesson_l8_step_02
 msgid "The interesting column is usually Lost, not Booked: it is where a fixable cause hides."
 msgstr ""
@@ -3339,6 +3762,11 @@ msgid ""
 "The page they actually read. Useful when a campaign brings volume but the page it points at does not ask for a phone number."
 msgstr ""
 "Trang họ thật sự đã đọc. Hữu ích khi một chiến dịch mang về nhiều lượt nhưng trang nó trỏ tới lại không hỏi số điện thoại."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_clients
+msgid "The patient record a visit is booked against."
+msgstr "Hồ sơ bệnh nhân mà lịch hẹn được đặt cho."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_leadanalysis_client
@@ -3439,6 +3867,13 @@ msgstr ""
 "Cùng một danh sách chứa một khách đã đặt lịch, một khách tiềm năng, một yêu cầu đang xử lý, một người còn đang cân nhắc, một người cần liên hệ lại và một mục thư rác. Trạng thái mới cho biết việc cần làm tiếp theo — thứ tự dòng thì không."
 
 #. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_workload
+msgid ""
+"The schedule shows you the shape of the day. This shows you whether it is fair, and an unfair day is the one that produces sick leave next week."
+msgstr ""
+"Bảng phân công cho thấy hình dạng của ngày. Màn hình này cho biết ngày đó có công bằng không, và một ngày không công bằng chính là thứ tạo ra đơn nghỉ ốm vào tuần sau."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_catchmentq_b030
 msgid ""
 "The second case is the dangerous one: a connection pointed at the wrong area re-routes a whole city with no error and no warning."
@@ -3475,6 +3910,13 @@ msgid ""
 "The totals row reads <b>63</b> booked, <b>129</b> leads, <b>18</b> lost, <b>14</b> spam, <b>224</b> in all — the same four numbers as the Dashboard. When they disagree, the cause is almost always a different period or a different catchment area, not a broken report."
 msgstr ""
 "Hàng tổng đọc là <b>63</b> đã đặt lịch, <b>129</b> khách tiềm năng, <b>18</b> mất cơ hội, <b>14</b> thư rác, tổng <b>224</b> — đúng bốn con số như Bảng điều khiển. Khi chúng lệch nhau, nguyên nhân gần như luôn là khác khoảng thời gian hoặc khác khu vực phụ trách, chứ không phải báo cáo lỗi."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_routes
+msgid ""
+"The travel time between two consecutive visits, against the gap between them — with a verdict."
+msgstr ""
+"Thời gian di chuyển giữa hai lượt liên tiếp, so với khoảng trống giữa chúng — kèm một kết luận."
 
 #. module: health_learn
 #: model:learn.lesson,goal:health_learn.lesson_l1
@@ -3580,6 +4022,13 @@ msgstr ""
 "Điều này gần như luôn sửa được từ gốc: có người đã đăng một liên kết mà quên gắn thẻ. Đó là lỗ rò lặp lại, không phải nhiễu."
 
 #. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_ops_collections
+msgid ""
+"This is money that exists physically and has to end up matching. It is reconciled inside Operations at end of shift; Finance receives one balanced figure and never chases an individual nurse."
+msgstr ""
+"Đây là tiền tồn tại dưới dạng vật lý và cuối cùng phải khớp. Việc đối soát diễn ra trong bộ phận Vận hành vào cuối ca; Tài chính nhận về một con số đã khớp và không bao giờ truy một điều dưỡng cụ thể."
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l2_step_00
 msgid ""
 "This is the catalogue of every channel a clinic can connect: Zalo, Calls, Email, ZNS, WhatsApp, Messenger, Telegram and Web chat. <b>Walk-in is not here</b> — a person coming through the door has no provider and no credentials, so offering a “Connect” button for it could only ever fail."
@@ -3643,14 +4092,28 @@ msgstr ""
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_hublead
 msgid ""
-"Three cooperating surfaces for the CRM section of CareJioX — Dashboard, Care Command, Channel Center, Unrouted Contacts, Contacts, Web Touchpoints, Lead Analysis and Activities. Open each one, compare, and pick a direction."
+"Three cooperating surfaces over the sections you work in — the CRM desk, and Operations. Screens your role cannot open are still explained here, because knowing what a screen is for is how you know who to ask."
 msgstr ""
-"Ba bề mặt học tập phối hợp cho khu vực CRM của CareJioX — Bảng điều khiển, Care Command, Trung tâm kênh, Danh bạ chưa được định tuyến, Liên hệ, Điểm chạm web, Phân tích khách tiềm năng và Hoạt động. Hãy mở từng bề mặt, so sánh và chọn hướng đi."
+"Ba bề mặt học tập phối hợp cho các khu vực bạn làm việc — bàn CRM và Vận hành. Những màn hình vai trò của bạn không mở được vẫn được giải thích ở đây, vì biết một màn hình dùng để làm gì chính là cách biết nên hỏi ai."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_family
+#: model:learn.station,outline_when:health_learn.station_ops_family
+msgid ""
+"Through the shift, and especially in the hour before a visit when families start to wonder."
+msgstr ""
+"Trong suốt ca làm việc, đặc biệt là một giờ trước lượt thăm khám khi gia đình bắt đầu sốt ruột."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_timeof
 msgid "Time"
 msgstr "Thời gian"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_timeoff
+#: model:learn.station,name:health_learn.station_ops_timeoff
+msgid "Time Off"
+msgstr "Nghỉ phép"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_tip
@@ -3694,11 +4157,37 @@ msgid "Touchpoint"
 msgstr "Điểm chạm"
 
 #. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_routes
+msgid "Travel time between two consecutive visits against the gap between them, with a verdict."
+msgstr "Thời gian di chuyển giữa hai lượt liên tiếp so với khoảng trống giữa chúng, kèm kết luận."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_dashboard_mistake_1
+msgid ""
+"Treating Cancelled as neutral. A cancellation still consumed a slot someone else could have had, and it has a reason worth reading."
+msgstr ""
+"Coi Đã hủy là trung tính. Một lượt hủy vẫn chiếm một khung giờ mà người khác có thể đã dùng, và nó có lý do đáng đọc."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_dashboard_mistake_1
 msgid ""
 "Treating a low Spam Rate as good news. A low rate can also mean nobody is marking spam, which quietly inflates every other number."
 msgstr ""
 "Coi Tỷ lệ thư rác thấp là tin tốt. Tỷ lệ thấp cũng có thể nghĩa là không ai đánh dấu thư rác, khiến mọi con số khác bị thổi phồng một cách âm thầm."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_routes_mistake_1
+msgid ""
+"Treating the absence of a warning as a promise. It knows distance, not weather, lifts, or how long a family keeps you at the door."
+msgstr ""
+"Coi việc không có cảnh báo là một lời bảo đảm. Nó biết khoảng cách, nhưng không biết thời tiết, thang máy, hay việc gia đình giữ bạn lại ở cửa bao lâu."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_ops_routes_mistake_0
+msgid ""
+"Treating the warning as a block. It warns and lets you save, because a manager on the phone often knows something the map does not."
+msgstr ""
+"Coi cảnh báo là lệnh chặn. Nó cảnh báo và vẫn cho phép lưu, vì người quản lý đang gọi điện thường biết điều mà bản đồ không biết."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_touchpoints_mistake_1
@@ -3750,6 +4239,18 @@ msgstr ""
 #: model:learn.intent.block,body:health_learn.intent_quiet_b010
 msgid "Two very different shapes, and they need opposite responses:"
 msgstr "Có hai dạng rất khác nhau, và chúng cần cách xử lý trái ngược:"
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_ops_family
+msgid ""
+"Two-way messages between a family member and the care team, attached to the client rather than to a phone number."
+msgstr ""
+"Tin nhắn hai chiều giữa người nhà và đội chăm sóc, gắn với hồ sơ khách hàng thay vì với một số điện thoại."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_family
+msgid "Two-way messages between a family member and the care team, attached to the client."
+msgstr "Tin nhắn hai chiều giữa người nhà và đội chăm sóc, gắn với hồ sơ khách hàng."
 
 #. module: health_learn
 #: model:learn.column,label:health_learn.col_activities_type
@@ -3865,6 +4366,11 @@ msgid ""
 "Visible to every role. Numbers only reconcile with the Dashboard if you match the period and the catchment filter."
 msgstr ""
 "Mọi vai trò đều nhìn thấy. Số liệu chỉ khớp với Bảng điều khiển khi bạn đặt cùng khoảng thời gian và cùng bộ lọc khu vực."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_ops_workload
+msgid "Visits assigned today against each person's capacity for the day."
+msgstr "Số lượt được phân công hôm nay so với năng lực trong ngày của từng người."
 
 #. module: health_learn
 #: model:learn.tenant.override,value:health_learn.slot_clinicshort
@@ -4093,6 +4599,20 @@ msgstr ""
 "Khi bạn cần toàn bộ hồ sơ chứ không chỉ tin nhắn hiện tại — đặt lịch cho họ, ghi lý do mất lịch, hoặc kiểm tra tuần trước đồng nghiệp đã làm gì."
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_bookings
+#: model:learn.station,outline_when:health_learn.station_ops_bookings
+msgid ""
+"Whenever something changes: a nurse calls in sick, a patient rings to move a time, a booking arrives with nobody on it."
+msgstr ""
+"Bất cứ khi nào có thay đổi: điều dưỡng báo ốm, bệnh nhân gọi xin dời giờ, một lịch hẹn đến mà chưa có ai nhận."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_ops_routes
+#: model:learn.station,outline_when:health_learn.station_ops_routes
+msgid "Whenever you reassign across districts, and before you promise a family a time."
+msgstr "Bất cứ khi nào bạn phân công lại giữa các quận, và trước khi hứa giờ giấc với gia đình."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l1_step_06
 msgid "Where a conversation goes"
 msgstr "Một cuộc hội thoại đi về đâu"
@@ -4124,6 +4644,11 @@ msgid ""
 "Where this enquiry reached in the lifecycle: New, Lead, Appointment Scheduled, Service Used, or the Cancelled / Spam branch. It is what the Dashboard counts."
 msgstr ""
 "Yêu cầu này đã đi tới đâu trong vòng đời: Mới, KHTN, Đã đặt lịch, Đã dùng dịch vụ, hoặc nhánh Đã hủy / Thư rác. Đây là thứ Bảng điều khiển đếm."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_routes
+msgid "Whether a person can actually get from one visit to the next."
+msgstr "Liệu một người có thật sự đi kịp từ lượt này sang lượt kế tiếp hay không."
 
 #. module: health_learn
 #: model:learn.quiz.option,label:health_learn.lesson_l2_quiz_opt_1
@@ -4184,6 +4709,11 @@ msgstr ""
 #: model:learn.step,title:health_learn.lesson_l1_step_09
 msgid "Who is actually on the other end?"
 msgstr "Ai thật sự ở đầu bên kia?"
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_ops_schedule
+msgid "Who is doing what, all day — the screen an Operations Manager lives in."
+msgstr "Ai làm gì, suốt cả ngày — màn hình mà Quản lý vận hành làm việc chủ yếu."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_contacts_salesperson
@@ -4253,6 +4783,12 @@ msgstr ""
 #: model:learn.mission,name:health_learn.mission_m1
 msgid "Work the wall to zero — safely"
 msgstr "Xử lý bảng ưu tiên về 0 — một cách an toàn"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_ops_workload
+#: model:learn.station,name:health_learn.station_ops_workload
+msgid "Workload"
+msgstr "Khối lượng công việc"
 
 #. module: health_learn
 #: model:learn.mission.step,instruction:health_learn.mission_m1_step_04

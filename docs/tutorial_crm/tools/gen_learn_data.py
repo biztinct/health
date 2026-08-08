@@ -54,6 +54,17 @@ SIDEBAR_KEYS = {
     'channelcenter': 'health_care_command_channels.item_channel_center',
     'touchpoints':   'health_web_leads.item_web_touchpoints',
     'leadanalysis':  'health_web_leads.item_lead_analysis',
+    # OPS — verified against cms_sidebar_item on the database, because role
+    # gating and xml-ids cannot be read reliably from the XML alone.
+    'ops_dashboard':   'health_cms_sidebar.item_ops_dashboard',
+    'ops_bookings':    'health_cms_sidebar.item_ops_bookings',
+    'ops_clients':     'health_cms_sidebar.item_ops_clients',
+    'ops_timeoff':     'health_cms_sidebar.item_ops_staff_timeoff',
+    'ops_schedule':    'health_cms_sidebar.item_ops_roster',
+    'ops_collections': 'health_cms_sidebar.item_ops_collections',
+    'ops_workload':    'health_cms_sidebar.item_ops_workload',
+    'ops_family':      'health_cms_coverage.item_ops_family_messages',
+    'ops_routes':      'health_cms_coverage.item_ops_route_feasibility',
 }
 
 # Which morph / chain each visual step pulls its rows from is declared in the
@@ -238,45 +249,49 @@ def gen_stations(data, tr):
     doc = Xml('Stations — the nodes on the Guided Journey map.')
     lesson_of = {l['station']: l['id'] for l in data['lessons'].values()}
     seq = 0
-    for line_key, line in data['stations'].items():
+    trees = [('crm', data['stations'])]
+    if data.get('opsStations'):
+        trees.append(('ops', data['opsStations']))
+    for section, tree in trees:
+      for line_key, line in tree.items():
         for st in line['stations']:
-            seq += 10
-            sid = st['id']
-            xmlid = _station_xmlid(sid)
-            outline = st.get('outline') or {}
-            kind = 'lesson' if sid in lesson_of else 'outline'
-            doc.rec('learn.station', xmlid, [
-                ('key', sid),
-                ('name', en_of(st['title'])),
-                ('line', line_key),
-                ('section', 'crm'),
-                ('sequence', seq),
-                ('summary', en_of(st.get('desc'))),
-                ('icon', st.get('icon') or 'circle'),
-                ('kind', kind),
-                ('sidebar_key', SIDEBAR_KEYS.get(sid, '')),
-                ('duration_min', st.get('mins') or 5),
-                ('required', bool(st.get('required'))),
-                ('star', bool(st.get('star'))),
-                ('after_key', st.get('after') or ''),
-                ('outline_what', en_of(outline.get('what'))),
-                ('outline_why', en_of(outline.get('why'))),
-                ('outline_when', en_of(outline.get('when'))),
-                ('outline_prereq', en_of(outline.get('prereq'))),
-            ])
-            tr.add('learn.station', 'name', xmlid, en_of(st['title']), vi_of(st['title']))
-            tr.add('learn.station', 'summary', xmlid, en_of(st.get('desc')), vi_of(st.get('desc')))
-            for f in ('what', 'why', 'when', 'prereq'):
-                tr.add('learn.station', 'outline_' + f, xmlid,
-                       en_of(outline.get(f)), vi_of(outline.get(f)))
-            for i, m in enumerate(outline.get('mistakes') or []):
-                mid = '%s_mistake_%d' % (xmlid, i)
-                doc.rec('learn.station.mistake', mid, [
-                    ('station_id', ('ref', xmlid)),
-                    ('sequence', (i + 1) * 10),
-                    ('name', en_of(m)),
-                ])
-                tr.add('learn.station.mistake', 'name', mid, en_of(m), vi_of(m))
+              seq += 10
+              sid = st['id']
+              xmlid = _station_xmlid(sid)
+              outline = st.get('outline') or {}
+              kind = 'lesson' if sid in lesson_of else 'outline'
+              doc.rec('learn.station', xmlid, [
+                  ('key', sid),
+                  ('name', en_of(st['title'])),
+                  ('line', line_key),
+                  ('section', section),
+                  ('sequence', seq),
+                  ('summary', en_of(st.get('desc'))),
+                  ('icon', st.get('icon') or 'circle'),
+                  ('kind', kind),
+                  ('sidebar_key', SIDEBAR_KEYS.get(sid, '')),
+                  ('duration_min', st.get('mins') or 5),
+                  ('required', bool(st.get('required'))),
+                  ('star', bool(st.get('star'))),
+                  ('after_key', st.get('after') or ''),
+                  ('outline_what', en_of(outline.get('what'))),
+                  ('outline_why', en_of(outline.get('why'))),
+                  ('outline_when', en_of(outline.get('when'))),
+                  ('outline_prereq', en_of(outline.get('prereq'))),
+              ])
+              tr.add('learn.station', 'name', xmlid, en_of(st['title']), vi_of(st['title']))
+              tr.add('learn.station', 'summary', xmlid, en_of(st.get('desc')), vi_of(st.get('desc')))
+              for f in ('what', 'why', 'when', 'prereq'):
+                  tr.add('learn.station', 'outline_' + f, xmlid,
+                         en_of(outline.get(f)), vi_of(outline.get(f)))
+              for i, m in enumerate(outline.get('mistakes') or []):
+                  mid = '%s_mistake_%d' % (xmlid, i)
+                  doc.rec('learn.station.mistake', mid, [
+                      ('station_id', ('ref', xmlid)),
+                      ('sequence', (i + 1) * 10),
+                      ('name', en_of(m)),
+                  ])
+                  tr.add('learn.station.mistake', 'name', mid, en_of(m), vi_of(m))
     return doc.render()
 
 
@@ -419,13 +434,16 @@ SCREEN_ACTION_TAGS = {}
 def gen_screens(data, tr):
     doc = Xml('Screens the Coach knows, with the questions it offers before '
               'anything is typed.')
-    for i, (key, blurb) in enumerate(data['screenCtx'].items()):
+    all_ctx = dict(data['screenCtx'])
+    all_ctx.update(data.get('opsScreenCtx') or {})
+    for i, (key, blurb) in enumerate(all_ctx.items()):
         xmlid = _screen_xmlid(key)
         station = None
-        for line in data['stations'].values():
-            for s in line['stations']:
-                if s['id'] == key:
-                    station = s
+        for tree in (data['stations'], data.get('opsStations') or {}):
+            for line in tree.values():
+                for s in line['stations']:
+                    if s['id'] == key:
+                        station = s
         name = en_of(station['title']) if station else key
         suggest = data['qaSuggest'].get(key) or []
         doc.rec('learn.screen', xmlid, [
@@ -686,7 +704,7 @@ def gen_fixture(data):
     header = ('/* %s */\n' % BANNER.replace('\n', '\n   ')
               + '/** @odoo-module **/\n\n')
     exports = ('\nexport { B, PRACTICE_META, CASE, PRACTICE, MENU, RETIRED,'
-               ' STATUS_LABELS };\n')
+               ' STATUS_LABELS, OPS };\n')
     # TENANT_DEFAULTS / tenantValue are NOT exported: in the product the tokens
     # arrive resolved in the bundle, per company. Exporting the fixture's copy
     # would give the engine a second, always-wrong source.

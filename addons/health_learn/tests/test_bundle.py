@@ -172,3 +172,20 @@ class TestBundle(TransactionCase):
         self.assertFalse(offenders,
                          "Selection fields declared as a static list — these will NOT "
                          "translate:\n  " + "\n  ".join(offenders))
+
+    def test_09_every_station_line_has_a_label(self):
+        """A line with no chrome string renders its own key as a heading.
+
+        Shipped exactly that on the first OPS build: two headings reading
+        "lines.ops_day" and "lines.ops_people", because the model's selection
+        was extended without the matching UI strings. The map is the first
+        thing a learner sees, so this is not a cosmetic miss.
+        """
+        chrome = self.bundle['chrome']
+        missing = []
+        for line in set(self.env['learn.station'].sudo().search([]).mapped('line')):
+            key = 'lines.%s' % line
+            value = chrome.get(key)
+            if not value or not (value.get('en') if isinstance(value, dict) else value):
+                missing.append(key)
+        self.assertFalse(missing, "Journey lines with no heading string: %s" % missing)

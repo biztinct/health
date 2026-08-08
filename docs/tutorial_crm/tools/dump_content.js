@@ -75,6 +75,9 @@ const out = {
     morphs: grab("MORPHS"),
     chains: grab("CHAINS"),
     columns: grab("COLUMNS"),
+    opsStations: grab("OPS_STATIONS"),
+    ops: grab("OPS"),
+    opsScreenCtx: grab("OPS_SCREEN_CTX"),
 };
 
 process.stdout.write(JSON.stringify(out, null, 1));

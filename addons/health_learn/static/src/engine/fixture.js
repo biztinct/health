@@ -367,6 +367,115 @@ const PRACTICE = {
   ],
 };
 
+
+/* =============================================================================
+   OPS — one day, seen four ways.
+
+   Wednesday 12 August 2026, Hà Nội. The SAME day as the CRM worked case, on
+   purpose: conversation #4172's 16:30 wound-care visit for Nguyễn Thị Hoa is
+   booking B-4471 below, so a learner who did the CRM lessons meets the same
+   patient from the other side of the desk.
+
+   Everything reconciles:
+     14 bookings today = 13 assigned + 1 unassigned
+     13 assigned      = Ngọc 5 + Lan 4 + Hà 3 + Tuấn 1
+     states           = 2 completed + 3 in progress + 8 assigned/new + 1 cancelled
+   Change any figure here and change it everywhere — check_contract.py guards
+   the state vocabulary, and the lessons quote these totals directly.
+   ========================================================================== */
+const OPS = {
+  day: B("Wednesday 12 August 2026", "Thứ Tư, 12 tháng 8 năm 2026"),
+  area: B("Hà Nội", "Hà Nội"),
+
+  totals: { bookings: 14, assigned: 13, unassigned: 1, completed: 2,
+            inProgress: 3, cancelled: 1, staffOnShift: 4 },
+
+  /* Backend states are the product's own: draft · confirmed (New Booking) ·
+     assigned · in_progress · completed · completed_pending_invoice ·
+     cancelled · closed. */
+  staff: [
+    { id: "ngoc", name: B("Ngọc", "Ngọc"), role: B("Nurse", "Điều dưỡng"), load: 5, cap: 6 },
+    { id: "lan",  name: B("Lan", "Lan"),   role: B("Nurse", "Điều dưỡng"), load: 4, cap: 6 },
+    { id: "ha",   name: B("Hà", "Hà"),     role: B("Nurse", "Điều dưỡng"), load: 3, cap: 6 },
+    { id: "tuan", name: B("Tuấn", "Tuấn"), role: B("Nurse", "Điều dưỡng"), load: 1, cap: 6 },
+  ],
+
+  bookings: [
+    { ref: "B-4468", time: "08:00", staff: "ngoc", state: "completed",
+      client: B("Phạm Quốc Anh", "Phạm Quốc Anh"), svc: B("Wound care", "Chăm sóc vết thương"),
+      district: B("Ba Đình", "Ba Đình"), anchor: "ob-row-4468" },
+    { ref: "B-4469", time: "09:00", staff: "lan", state: "completed",
+      client: B("Lê Thị Bích", "Lê Thị Bích"), svc: B("Injection", "Tiêm"),
+      district: B("Đống Đa", "Đống Đa") },
+    { ref: "B-4470", time: "10:30", staff: "ngoc", state: "in_progress",
+      client: B("Đỗ Văn Hưng", "Đỗ Văn Hưng"), svc: B("Physiotherapy", "Vật lý trị liệu"),
+      district: B("Ba Đình", "Ba Đình") },
+    { ref: "B-4471", time: "16:30", staff: "lan", state: "assigned",
+      client: B("Nguyễn Thị Hoa", "Nguyễn Thị Hoa"), svc: B("Wound care at home", "Chăm sóc vết thương tại nhà"),
+      district: B("Cầu Giấy", "Cầu Giấy"), anchor: "ob-row-4471", flag: "crm" },
+    { ref: "B-4472", time: "11:00", staff: "ha", state: "in_progress",
+      client: B("Vũ Thị Mai", "Vũ Thị Mai"), svc: B("Blood draw", "Lấy máu"),
+      district: B("Hai Bà Trưng", "Hai Bà Trưng") },
+    { ref: "B-4473", time: "14:00", staff: "tuan", state: "assigned",
+      client: B("Trần Văn Sơn", "Trần Văn Sơn"), svc: B("Wound care", "Chăm sóc vết thương"),
+      district: B("Long Biên", "Long Biên") },
+    { ref: "B-4474", time: "15:00", staff: false, state: "confirmed",
+      client: B("Hoàng Thị Yến", "Hoàng Thị Yến"), svc: B("Injection", "Tiêm"),
+      district: B("Cầu Giấy", "Cầu Giấy"), anchor: "ob-unassigned" },
+    { ref: "B-4475", time: "13:00", staff: "ngoc", state: "assigned",
+      client: B("Bùi Văn Khoa", "Bùi Văn Khoa"), svc: B("Catheter care", "Chăm sóc ống thông"),
+      district: B("Ba Đình", "Ba Đình") },
+    { ref: "B-4476", time: "17:00", staff: "lan", state: "assigned",
+      client: B("Ngô Thị Lý", "Ngô Thị Lý"), svc: B("Wound care", "Chăm sóc vết thương"),
+      district: B("Đống Đa", "Đống Đa") },
+    { ref: "B-4477", time: "12:00", staff: "ha", state: "in_progress",
+      client: B("Đặng Thị Mai", "Đặng Thị Mai"), svc: B("Injection", "Tiêm"),
+      district: B("Hai Bà Trưng", "Hai Bà Trưng") },
+    { ref: "B-4478", time: "18:00", staff: "lan", state: "assigned",
+      client: B("Lý Văn Phúc", "Lý Văn Phúc"), svc: B("Physiotherapy", "Vật lý trị liệu"),
+      district: B("Đống Đa", "Đống Đa") },
+    { ref: "B-4479", time: "09:30", staff: "ngoc", state: "assigned",
+      client: B("Huỳnh Nhi", "Huỳnh Nhi"), svc: B("Blood draw", "Lấy máu"),
+      district: B("Ba Đình", "Ba Đình") },
+    { ref: "B-4480", time: "16:00", staff: "ha", state: "assigned",
+      client: B("Quách Hải Yến", "Quách Hải Yến"), svc: B("Wound care", "Chăm sóc vết thương"),
+      district: B("Hai Bà Trưng", "Hai Bà Trưng") },
+    { ref: "B-4481", time: "10:00", staff: "ngoc", state: "cancelled",
+      client: B("Trần Thanh Tâm", "Trần Thanh Tâm"), svc: B("Injection", "Tiêm"),
+      district: B("Ba Đình", "Ba Đình") },
+  ],
+
+  timeoff: [
+    { who: "ha",   from: "13/08", to: "13/08", kind: B("Annual leave", "Nghỉ phép"), state: B("Requested", "Chờ duyệt") },
+    { who: "tuan", from: "14/08", to: "16/08", kind: B("Annual leave", "Nghỉ phép"), state: B("Approved", "Đã duyệt") },
+  ],
+
+  /* Cash the nurses are holding right now. Reconciled by OPERATIONS at end of
+     shift; Finance receives a balanced figure and never chases a nurse. */
+  collections: [
+    { who: "ngoc", amount: 620000, visits: 2 },
+    { who: "lan",  amount: 450000, visits: 1 },
+    { who: "ha",   amount: 280000, visits: 1 },
+  ],
+  collectionsTotal: 1350000,
+
+  family: [
+    { client: B("Nguyễn Thị Hoa", "Nguyễn Thị Hoa"), from: B("Trần Mỹ Linh (daughter)", "Trần Mỹ Linh (con gái)"),
+      text: B("Will the nurse still come this afternoon?", "Chiều nay điều dưỡng vẫn đến chứ ạ?"), unread: true },
+    { client: B("Vũ Thị Mai", "Vũ Thị Mai"), from: B("Vũ Anh Tú (son)", "Vũ Anh Tú (con trai)"),
+      text: B("Thank you for this morning.", "Cảm ơn vì buổi sáng nay."), unread: false },
+  ],
+
+  /* The seeded anomaly for the OPS mission: the obvious reassignment breaks
+     travel feasibility. Tuấn finishes in Long Biên at 15:00; B-4471 is in Cầu
+     Giấy at 16:30 and the leg is 50 minutes. It FITS the calendar and does not
+     fit the map — and the checker warns rather than blocks, on purpose. */
+  travel: { fromDistrict: B("Long Biên", "Long Biên"), toDistrict: B("Cầu Giấy", "Cầu Giấy"),
+            minutes: 50, gapMinutes: 90, feasible: true,
+            note: B("Fits, but only just — 40 minutes of slack in Hà Nội afternoon traffic.",
+                    "Vừa đủ, nhưng rất sát — chỉ dư 40 phút trong giờ cao điểm buổi chiều ở Hà Nội.") },
+};
+
 /* =============================================================================
    3. THE REAL SIDEBAR — CRM section, as the database actually holds it.
    -----------------------------------------------------------------------------
@@ -462,4 +571,4 @@ const STATUS_LABELS = {
   },
 };
 
-export { B, PRACTICE_META, CASE, PRACTICE, MENU, RETIRED, STATUS_LABELS };
+export { B, PRACTICE_META, CASE, PRACTICE, MENU, RETIRED, STATUS_LABELS, OPS };

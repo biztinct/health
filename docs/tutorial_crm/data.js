@@ -34,8 +34,8 @@
 const I18N = {
   en: {
     brand: "CareJioX", learn: "Learn", proto: "PROTOTYPE",
-    hubTitle: "Learn the CRM desk without a trainer.",
-    hubLead: "Three cooperating surfaces for the CRM section of CareJioX — Dashboard, Care Command, Channel Center, Unrouted Contacts, Contacts, Web Touchpoints, Lead Analysis and Activities. Open each one, compare, and pick a direction.",
+    hubTitle: "Learn this system without a trainer.",
+    hubLead: "Three cooperating surfaces over the sections you work in — the CRM desk, and Operations. Screens your role cannot open are still explained here, because knowing what a screen is for is how you know who to ask.",
     modeQ: "How do you want to learn today?",
     allConcepts: "All surfaces", readAnalysis: "Read the analysis", reset: "Reset progress",
     reduceMotion: "Reduce motion", motionOn: "Motion reduced",
@@ -49,7 +49,7 @@ const I18N = {
     fullLesson: "Full lesson", outline: "Outline", required: "Required", optional: "Optional",
     est: "est.", min: "min", after: "After:",
     resume: "Resume", resumeAt: "Pick up where you left off",
-    badge: "CRM Desk badge", badgeGot: "Badge earned — both flagship lessons complete.",
+    badge: "CRM Desk badge", badgeGot: "Badge earned — the CRM flagship lessons are complete.",
     step: "Step", of: "of", back: "Back", next: "Next", finish: "Finish",
     exit: "Save & exit", replay: "Replay step", skipQuiz: "Skip to check",
     playing: "Autoplay on", paused: "Autoplay off",
@@ -96,7 +96,8 @@ const I18N = {
     langNote: "Language",
     notVisible: "Not in your sidebar",
     notVisibleBody: "This leaf is role-gated in the database. Your role does not see it.",
-    coverage: "Coverage", lines: { daily: "Daily work line", reach: "Reach & setup line" },
+    coverage: "Coverage", lines: { daily: "Daily work line", reach: "Reach & setup line",
+      ops_day: "Running today", ops_people: "People, money and reach" },
     glossary: "Glossary",
     // shell / domain chrome
     today: "Today", week: "Week", month: "Month", all: "All", custom: "Custom",
@@ -121,8 +122,8 @@ const I18N = {
   },
   vi: {
     brand: "CareJioX", learn: "Học", proto: "BẢN THỬ",
-    hubTitle: "Thành thạo khu vực CRM mà không cần người hướng dẫn.",
-    hubLead: "Ba bề mặt học tập phối hợp cho khu vực CRM của CareJioX — Bảng điều khiển, Care Command, Trung tâm kênh, Danh bạ chưa được định tuyến, Liên hệ, Điểm chạm web, Phân tích khách tiềm năng và Hoạt động. Hãy mở từng bề mặt, so sánh và chọn hướng đi.",
+    hubTitle: "Thành thạo hệ thống mà không cần người hướng dẫn.",
+    hubLead: "Ba bề mặt học tập phối hợp cho các khu vực bạn làm việc — bàn CRM và Vận hành. Những màn hình vai trò của bạn không mở được vẫn được giải thích ở đây, vì biết một màn hình dùng để làm gì chính là cách biết nên hỏi ai.",
     modeQ: "Hôm nay bạn muốn học theo cách nào?",
     allConcepts: "Tất cả bề mặt", readAnalysis: "Đọc bản phân tích", reset: "Đặt lại tiến độ",
     reduceMotion: "Giảm chuyển động", motionOn: "Đã giảm chuyển động",
@@ -183,7 +184,8 @@ const I18N = {
     langNote: "Ngôn ngữ",
     notVisible: "Không có trong thanh bên của bạn",
     notVisibleBody: "Mục này được phân quyền theo vai trò trong cơ sở dữ liệu. Vai trò của bạn không nhìn thấy nó.",
-    coverage: "Phạm vi bao phủ", lines: { daily: "Tuyến công việc hằng ngày", reach: "Tuyến kênh & thiết lập" },
+    coverage: "Phạm vi", lines: { daily: "Tuyến công việc hằng ngày", reach: "Tuyến kênh & thiết lập",
+      ops_day: "Điều hành trong ngày", ops_people: "Con người, tiền bạc và kết nối" },
     glossary: "Thuật ngữ",
     today: "Hôm nay", week: "Tuần", month: "Tháng", all: "Tất cả", custom: "Tùy chỉnh",
     refresh: "Làm mới", viewAll: "Xem tất cả",
@@ -1143,6 +1145,264 @@ const LESSONS = {
       ],
     },
   },
+};
+
+/* =============================================================================
+   OPS CONTENT — the Operations section.
+
+   The learner here is an OPERATIONS MANAGER: someone allocating people and
+   time, not working a queue. Two things follow from that and shape every line
+   below.
+
+   1. Most staff cannot open these screens at all (gated to Operations Manager
+      + Owner). So every outline is written to be useful to someone who will
+      never see the screen — a nurse reading "why can't I move my own visit"
+      should still come away understanding who can and why.
+   2. The recurring question is "what breaks if this changes". Approving leave,
+      cancelling a booking and reassigning a visit all look like one edit and
+      land on three other screens.
+   ========================================================================== */
+const OPS_STATIONS = {
+  ops_day: {
+    label: "Running today", labelVi: "Điều hành trong ngày",
+    icon: "calendar",
+    desc: B("The shift as it happens: what is booked, who is on it, and what has no one.",
+            "Ca làm việc khi đang diễn ra: có gì được đặt, ai đang làm, và việc nào chưa có người."),
+    stations: [
+      {
+        id: "ops_dashboard", icon: "grid", required: true, mins: 4,
+        title: B("Operations Dashboard", "Bảng điều hành"),
+        desc: B("The day in six numbers, and the one that matters is Unassigned.",
+                "Cả ngày trong sáu con số, và con số quan trọng là Chưa phân công."),
+        outline: {
+          what: B("Six counts for one day in one catchment area — booked, unassigned, in progress, completed, staff on shift, cancelled — with the unassigned bookings listed underneath.",
+                  "Sáu con số cho một ngày trong một khu vực — đã đặt, chưa phân công, đang thực hiện, đã hoàn thành, nhân sự trong ca, đã hủy — kèm danh sách các lịch chưa phân công ở dưới."),
+          why: B("Five of the six are reassurance. Unassigned is the one that turns into a patient ringing to ask where the nurse is, and it is the only number here you can still fix today.",
+                 "Năm trong sáu con số chỉ để yên tâm. Chưa phân công là con số biến thành cuộc gọi của bệnh nhân hỏi điều dưỡng đâu, và là con số duy nhất ở đây bạn còn kịp xử lý trong ngày."),
+          when: B("First thing in the morning, again after lunch, and before you leave. It is a whole-day view, so checking it hourly tells you nothing new.",
+                  "Đầu giờ sáng, một lần nữa sau buổi trưa, và trước khi ra về. Đây là góc nhìn cả ngày, nên kiểm tra mỗi giờ cũng không cho biết thêm gì."),
+          prereq: B("Operations Manager or Owner. A nurse does not see this screen — they see their own visits, not the day.",
+                    "Vai trò Quản lý vận hành hoặc Chủ sở hữu. Điều dưỡng không thấy màn hình này — họ chỉ thấy lượt của mình, không thấy cả ngày."),
+          mistakes: [
+            B("Reading Completed as progress. Two completed at 11:00 is normal; two completed at 16:00 means the afternoon has not started.",
+              "Hiểu Đã hoàn thành là tiến độ. Hai lượt hoàn thành lúc 11:00 là bình thường; hai lượt lúc 16:00 nghĩa là buổi chiều chưa bắt đầu."),
+            B("Treating Cancelled as neutral. A cancellation still consumed a slot someone else could have had, and it has a reason worth reading.",
+              "Coi Đã hủy là trung tính. Một lượt hủy vẫn chiếm một khung giờ mà người khác có thể đã dùng, và nó có lý do đáng đọc."),
+            B("Checking the number and not the list. The count tells you there is a problem; the list underneath tells you whose problem it is.",
+              "Chỉ nhìn con số mà không nhìn danh sách. Con số cho biết có vấn đề; danh sách bên dưới cho biết đó là vấn đề của ai."),
+          ],
+        },
+      },
+      {
+        id: "ops_bookings", icon: "calendar", star: true, required: true, mins: 7, lesson: "O1",
+        title: B("Bookings", "Lịch hẹn"),
+        desc: B("Every visit for the day, and the four things you can do to one.",
+                "Mọi lượt thăm khám trong ngày, và bốn việc bạn có thể làm với một lượt."),
+        outline: {
+          what: B("One row per visit with its time, patient, service, district, assigned person and state — draft, new, assigned, in progress, completed, cancelled, closed.",
+                  "Mỗi dòng là một lượt thăm khám với giờ, bệnh nhân, dịch vụ, quận, người được phân công và trạng thái — nháp, mới, đã phân công, đang thực hiện, hoàn thành, đã hủy, đã đóng."),
+          why: B("It is the only screen where a visit exists as a whole thing rather than as a row on somebody's schedule. Assigning, moving and cancelling all happen here.",
+                 "Đây là màn hình duy nhất mà một lượt thăm khám tồn tại như một chỉnh thể, thay vì chỉ là một dòng trong lịch của ai đó. Phân công, dời và hủy đều diễn ra ở đây."),
+          when: B("Whenever something changes: a nurse calls in sick, a patient rings to move a time, a booking arrives with nobody on it.",
+                  "Bất cứ khi nào có thay đổi: điều dưỡng báo ốm, bệnh nhân gọi xin dời giờ, một lịch hẹn đến mà chưa có ai nhận."),
+          prereq: B("Operations Manager or Owner. Cancelling additionally destroys revenue, so it is worth knowing before you press it that nothing here asks twice.",
+                    "Vai trò Quản lý vận hành hoặc Chủ sở hữu. Việc hủy còn làm mất doanh thu, nên hãy biết trước rằng ở đây không có bước hỏi lại lần hai."),
+          mistakes: [
+            B("Cancelling when you meant to reschedule. Cancel ends the visit and the money; reschedule keeps both and moves them.",
+              "Hủy trong khi ý định là dời lịch. Hủy kết thúc lượt thăm khám và cả khoản tiền; dời lịch giữ lại cả hai và chuyển sang giờ khác."),
+            B("Assigning without looking at the map. A visit that fits the calendar can still be impossible to reach in time.",
+              "Phân công mà không nhìn bản đồ. Một lượt vừa khít trên lịch vẫn có thể không kịp di chuyển tới nơi."),
+            B("Leaving a booking unassigned because it is not urgent yet. Unassigned at 09:00 is a scheduling task; unassigned at 15:00 is a phone call to a family.",
+              "Để lịch hẹn chưa phân công vì nghĩ chưa gấp. Chưa phân công lúc 09:00 là một việc sắp xếp; chưa phân công lúc 15:00 là một cuộc gọi cho gia đình."),
+          ],
+        },
+      },
+      {
+        id: "ops_schedule", icon: "users", star: true, required: true, mins: 7, lesson: "O2",
+        title: B("Staff Schedule", "Lịch nhân sự"),
+        desc: B("Who is doing what, all day — the screen an Operations Manager lives in.",
+                "Ai làm gì, suốt cả ngày — màn hình mà Quản lý vận hành làm việc chủ yếu."),
+        outline: {
+          what: B("One row per person for one day, their visits along it, their load against capacity, and the leave that touches this week.",
+                  "Mỗi dòng là một người trong một ngày, các lượt thăm khám của họ trải theo dòng, khối lượng so với năng lực, và các đơn nghỉ ảnh hưởng tuần này."),
+          why: B("Bookings tells you what was promised. This tells you whether it can actually be done by the people who are actually here.",
+                 "Màn hình Lịch hẹn cho biết đã hứa những gì. Màn hình này cho biết việc đó có thật sự làm được bởi những người thật sự đang có mặt hay không."),
+          when: B("Before the shift, and every time somebody becomes unavailable. It is also where you find out what approving a leave request just cost.",
+                  "Trước ca làm việc, và mỗi lần có người không thể làm việc. Đây cũng là nơi bạn thấy việc duyệt một đơn nghỉ vừa gây ra điều gì."),
+          prereq: B("Operations Manager or Owner. Reassigning someone else's visit is the whole point of the screen, so it is not available to the nurse whose visit it is.",
+                    "Vai trò Quản lý vận hành hoặc Chủ sở hữu. Việc phân công lại lượt của người khác chính là mục đích của màn hình này, nên điều dưỡng sở hữu lượt đó không có quyền."),
+          mistakes: [
+            B("Reading an empty row as a free nurse. An unassigned booking is not on anyone's row — the gap you are looking at may already be spoken for.",
+              "Hiểu một dòng trống là điều dưỡng đang rảnh. Lịch hẹn chưa phân công không nằm trên dòng của ai — khoảng trống bạn đang nhìn có thể đã được tính đến."),
+            B("Balancing by count alone. Five short visits in one district is a lighter day than three spread across the city.",
+              "Cân bằng chỉ theo số lượng. Năm lượt ngắn trong cùng một quận là một ngày nhẹ hơn ba lượt rải khắp thành phố."),
+            B("Approving leave from the leave screen without coming here. Approval does not move the visits already booked for that day.",
+              "Duyệt nghỉ phép ở màn hình đơn nghỉ mà không quay lại đây. Việc duyệt không tự dời các lịch hẹn đã đặt cho ngày đó."),
+          ],
+        },
+      },
+      {
+        id: "ops_workload", icon: "bar-chart", required: true, mins: 3,
+        title: B("Workload", "Khối lượng công việc"),
+        desc: B("Load against capacity, per person — the fairness check.",
+                "Khối lượng so với năng lực, theo từng người — phép kiểm tra sự công bằng."),
+        outline: {
+          what: B("A bar per person: visits assigned today against their capacity for the day.",
+                  "Mỗi người một thanh: số lượt được phân công hôm nay so với năng lực trong ngày."),
+          why: B("The schedule shows you the shape of the day. This shows you whether it is fair, and an unfair day is the one that produces sick leave next week.",
+                 "Bảng phân công cho thấy hình dạng của ngày. Màn hình này cho biết ngày đó có công bằng không, và một ngày không công bằng chính là thứ tạo ra đơn nghỉ ốm vào tuần sau."),
+          when: B("After you finish assigning, not before. It is a check on decisions already made.",
+                  "Sau khi bạn phân công xong, không phải trước. Đây là phép kiểm tra với những quyết định đã đưa ra."),
+          prereq: B("Operations Manager or Owner.",
+                    "Vai trò Quản lý vận hành hoặc Chủ sở hữu."),
+          mistakes: [
+            B("Reading capacity as hours. It is visits per day, and two visits in one building are not two visits across two districts.",
+              "Hiểu năng lực là số giờ. Đó là số lượt mỗi ngày, và hai lượt trong cùng một tòa nhà không giống hai lượt ở hai quận."),
+            B("Aiming for everyone at the same number. Equal counts across unequal distances is not fairness.",
+              "Cố đưa mọi người về cùng một con số. Số lượt bằng nhau trên những quãng đường không bằng nhau không phải là công bằng."),
+          ],
+        },
+      },
+    ],
+  },
+  ops_people: {
+    label: "People, money and reach", labelVi: "Con người, tiền bạc và kết nối",
+    icon: "users",
+    desc: B("The things that decide whether tomorrow's day is possible at all.",
+            "Những thứ quyết định ngày mai có thể vận hành được hay không."),
+    stations: [
+      {
+        id: "ops_timeoff", icon: "clock", required: true, mins: 4,
+        title: B("Time Off", "Nghỉ phép"),
+        desc: B("Leave requests — and the visits they quietly collide with.",
+                "Các đơn xin nghỉ — và những lịch hẹn mà chúng âm thầm va vào."),
+        outline: {
+          what: B("Requests with who, which dates, what kind, and whether they are approved.",
+                  "Các đơn với thông tin ai, ngày nào, loại nghỉ gì, và đã được duyệt hay chưa."),
+          why: B("Approving leave is the single most common way a fully-booked day becomes an unstaffed one, because approval and the schedule are two different screens.",
+                 "Duyệt nghỉ phép là cách phổ biến nhất khiến một ngày đã kín lịch trở thành một ngày không có người, vì việc duyệt và bảng phân công là hai màn hình khác nhau."),
+          when: B("As requests arrive — and always with the Staff Schedule open beside it for the dates concerned.",
+                  "Ngay khi có đơn — và luôn mở song song Lịch nhân sự cho những ngày liên quan."),
+          prereq: B("Operations Manager or Owner. A nurse can request; only Operations can approve.",
+                    "Vai trò Quản lý vận hành hoặc Chủ sở hữu. Điều dưỡng có thể xin nghỉ; chỉ Vận hành mới duyệt được."),
+          mistakes: [
+            B("Approving without opening the schedule for those dates. Approval does not move a single visit — it just makes the person unavailable for visits that are still booked.",
+              "Duyệt mà không mở bảng phân công cho những ngày đó. Việc duyệt không dời bất kỳ lượt nào — nó chỉ khiến người đó không còn khả dụng cho các lượt vẫn đang được đặt."),
+            B("Leaving a request sitting. An unanswered request is a person who has already made plans.",
+              "Để đơn nằm chờ. Một đơn chưa được trả lời là một người đã lên kế hoạch riêng rồi."),
+          ],
+        },
+      },
+      {
+        id: "ops_collections", icon: "receipt", required: true, mins: 4,
+        title: B("Collections", "Thu tiền mặt"),
+        desc: B("Cash the nurses are holding right now, and who reconciles it.",
+                "Tiền mặt điều dưỡng đang giữ, và ai là người đối soát."),
+        outline: {
+          what: B("How much cash each member of staff is carrying from today's visits, and the total.",
+                  "Mỗi nhân viên đang giữ bao nhiêu tiền mặt từ các lượt hôm nay, và tổng cộng."),
+          why: B("This is money that exists physically and has to end up matching. It is reconciled inside Operations at end of shift; Finance receives one balanced figure and never chases an individual nurse.",
+                 "Đây là tiền tồn tại dưới dạng vật lý và cuối cùng phải khớp. Việc đối soát diễn ra trong bộ phận Vận hành vào cuối ca; Tài chính nhận về một con số đã khớp và không bao giờ truy một điều dưỡng cụ thể."),
+          when: B("End of every shift, without exception. A day skipped is a day nobody can reconstruct.",
+                  "Cuối mỗi ca, không có ngoại lệ. Một ngày bị bỏ qua là một ngày không ai dựng lại được."),
+          prereq: B("Operations Manager or Owner. Finance sees the result, not this screen.",
+                    "Vai trò Quản lý vận hành hoặc Chủ sở hữu. Tài chính nhìn thấy kết quả, không nhìn màn hình này."),
+          mistakes: [
+            B("Sending an unbalanced figure to Finance to sort out. It is settled here first — that is the whole reason this screen sits in Operations.",
+              "Gửi một con số chưa khớp sang Tài chính để họ xử lý. Việc này được giải quyết ở đây trước — đó chính là lý do màn hình này thuộc bộ phận Vận hành."),
+            B("Reconciling from memory at the end of a long shift. The visit list is right there and it does not get tired.",
+              "Đối soát theo trí nhớ vào cuối một ca dài. Danh sách lượt thăm khám ở ngay đó và nó không biết mệt."),
+          ],
+        },
+      },
+      {
+        id: "ops_clients", icon: "users", mins: 3,
+        title: B("Clients", "Khách hàng"),
+        desc: B("The patient record a visit is booked against.",
+                "Hồ sơ bệnh nhân mà lịch hẹn được đặt cho."),
+        outline: {
+          what: B("Clients in your catchment area, with the record behind each: their consents, their history and their balance.",
+                  "Khách hàng trong khu vực bạn phụ trách, cùng hồ sơ phía sau mỗi người: đồng thuận, lịch sử và công nợ."),
+          why: B("A booking points at a client. If the client is wrong or duplicated, the visit, the clinical note and the invoice all end up in the wrong place together.",
+                 "Một lịch hẹn trỏ tới một khách hàng. Nếu khách hàng sai hoặc bị trùng, thì lượt thăm khám, ghi chú lâm sàng và hóa đơn cùng nhau đi nhầm chỗ."),
+          when: B("Before booking someone you are not certain about, and whenever a name looks familiar.",
+                  "Trước khi đặt lịch cho người bạn chưa chắc chắn, và bất cứ khi nào một cái tên trông quen quen."),
+          prereq: B("Operations Manager, Owner — and CRM, which is the one OPS screen the reception desk can also open.",
+                    "Vai trò Quản lý vận hành, Chủ sở hữu — và CRM, đây là màn hình OPS duy nhất mà bàn lễ tân cũng mở được."),
+          mistakes: [
+            B("Creating a second record because the first was hard to find. Their consents and balance stay on the first one.",
+              "Tạo hồ sơ thứ hai vì hồ sơ đầu khó tìm. Đồng thuận và công nợ của họ vẫn nằm ở hồ sơ đầu tiên."),
+          ],
+        },
+      },
+      {
+        id: "ops_family", icon: "message-circle", mins: 3,
+        title: B("Family Inbox", "Hộp thư người nhà"),
+        desc: B("Messages from relatives about a patient — and what you may answer.",
+                "Tin nhắn từ người nhà về một bệnh nhân — và bạn được trả lời những gì."),
+        outline: {
+          what: B("Two-way messages between a family member and the care team, attached to the client rather than to a phone number.",
+                  "Tin nhắn hai chiều giữa người nhà và đội chăm sóc, gắn với hồ sơ khách hàng thay vì với một số điện thoại."),
+          why: B("Most 'where is the nurse' calls arrive here first. Answering the logistics question fast is usually all that is needed — and it is the part you are always allowed to answer.",
+                 "Phần lớn các câu hỏi “điều dưỡng đâu rồi” đến đây trước. Trả lời nhanh câu hỏi về lịch trình thường là đủ — và đó là phần bạn luôn được phép trả lời."),
+          when: B("Through the shift, and especially in the hour before a visit when families start to wonder.",
+                  "Trong suốt ca làm việc, đặc biệt là một giờ trước lượt thăm khám khi gia đình bắt đầu sốt ruột."),
+          prereq: B("Operations Manager or Owner. What you may say about the patient's condition is a recorded consent, not a judgement call.",
+                    "Vai trò Quản lý vận hành hoặc Chủ sở hữu. Việc bạn được nói gì về tình trạng bệnh nhân là một đồng thuận đã ghi nhận, không phải quyết định cảm tính."),
+          mistakes: [
+            B("Answering a clinical question because it was asked kindly. Timing is yours to answer; condition is not.",
+              "Trả lời một câu hỏi lâm sàng chỉ vì nó được hỏi một cách lịch sự. Giờ giấc là phần bạn trả lời được; tình trạng bệnh thì không."),
+            B("Assuming the sender is allowed to hear everything because they are family. Relationship is not consent.",
+              "Mặc định người gửi được nghe mọi thứ vì họ là người nhà. Quan hệ gia đình không phải là đồng thuận."),
+          ],
+        },
+      },
+      {
+        id: "ops_routes", icon: "map", mins: 3,
+        title: B("Route Feasibility", "Khả năng di chuyển"),
+        desc: B("Whether a person can actually get from one visit to the next.",
+                "Liệu một người có thật sự đi kịp từ lượt này sang lượt kế tiếp hay không."),
+        outline: {
+          what: B("The travel time between two consecutive visits, against the gap between them — with a verdict.",
+                  "Thời gian di chuyển giữa hai lượt liên tiếp, so với khoảng trống giữa chúng — kèm một kết luận."),
+          why: B("The calendar cannot see the map. A visit at 15:00 in one district and 16:30 in another fits perfectly on a schedule and may be impossible in traffic.",
+                 "Lịch không nhìn thấy bản đồ. Một lượt lúc 15:00 ở quận này và 16:30 ở quận khác trông rất vừa trên lịch, nhưng có thể bất khả thi trong giờ tắc đường."),
+          when: B("Whenever you reassign across districts, and before you promise a family a time.",
+                  "Bất cứ khi nào bạn phân công lại giữa các quận, và trước khi hứa giờ giấc với gia đình."),
+          prereq: B("Operations Manager or Owner.",
+                    "Vai trò Quản lý vận hành hoặc Chủ sở hữu."),
+          mistakes: [
+            B("Treating the warning as a block. It warns and lets you save, because a manager on the phone often knows something the map does not.",
+              "Coi cảnh báo là lệnh chặn. Nó cảnh báo và vẫn cho phép lưu, vì người quản lý đang gọi điện thường biết điều mà bản đồ không biết."),
+            B("Treating the absence of a warning as a promise. It knows distance, not weather, lifts, or how long a family keeps you at the door.",
+              "Coi việc không có cảnh báo là một lời bảo đảm. Nó biết khoảng cách, nhưng không biết thời tiết, thang máy, hay việc gia đình giữ bạn lại ở cửa bao lâu."),
+          ],
+        },
+      },
+    ],
+  },
+};
+
+/* OPS screen blurbs — what the Coach says it is grounded on. */
+const OPS_SCREEN_CTX = {
+  ops_dashboard: B("The day in six numbers for one catchment area, with the unassigned bookings listed underneath.",
+                   "Cả ngày trong sáu con số cho một khu vực, kèm danh sách lịch hẹn chưa phân công ở dưới."),
+  ops_bookings: B("Every visit for the day — time, patient, service, district, who is on it and what state it is in.",
+                  "Mọi lượt thăm khám trong ngày — giờ, bệnh nhân, dịch vụ, quận, ai phụ trách và đang ở trạng thái nào."),
+  ops_schedule: B("One row per person for one day: their visits, their load against capacity, and the leave that touches this week.",
+                  "Mỗi người một dòng cho một ngày: các lượt của họ, khối lượng so với năng lực, và các đơn nghỉ ảnh hưởng tuần này."),
+  ops_workload: B("Visits assigned today against each person's capacity for the day.",
+                  "Số lượt được phân công hôm nay so với năng lực trong ngày của từng người."),
+  ops_timeoff: B("Leave requests — who, which dates, what kind, and whether they are approved.",
+                 "Các đơn xin nghỉ — ai, ngày nào, loại gì, và đã duyệt hay chưa."),
+  ops_collections: B("Cash each member of staff is holding from today's visits, reconciled inside Operations.",
+                     "Tiền mặt mỗi nhân viên đang giữ từ các lượt hôm nay, được đối soát trong bộ phận Vận hành."),
+  ops_clients: B("Clients in your catchment area — the record a visit is booked against.",
+                 "Khách hàng trong khu vực bạn phụ trách — hồ sơ mà lịch hẹn được đặt cho."),
+  ops_family: B("Two-way messages between a family member and the care team, attached to the client.",
+                "Tin nhắn hai chiều giữa người nhà và đội chăm sóc, gắn với hồ sơ khách hàng."),
+  ops_routes: B("Travel time between two consecutive visits against the gap between them, with a verdict.",
+                "Thời gian di chuyển giữa hai lượt liên tiếp so với khoảng trống giữa chúng, kèm kết luận."),
 };
 
 /* =============================================================================

@@ -15,7 +15,7 @@
    hand a translator wording they do not own, and the two would diverge at the
    first product rename.
    ========================================================================== */
-import { B, CASE, MENU, PRACTICE, STATUS_LABELS } from "./fixture";
+import { B, CASE, MENU, OPS, PRACTICE, STATUS_LABELS } from "./fixture";
 import { esc, ic, initial, tx, T, N, P } from "./runtime";
 import { pipeHTML } from "./visuals";
 
@@ -372,6 +372,235 @@ export const SCREENS = {
                 `${CASE.kpis.pendingFollowups}${" "}việc theo dõi đang mở này chính là thẻ “Đang chờ theo dõi” trên Bảng điều khiển. Nếu hai nơi lệch nhau, tức là một hoạt động đã được đóng mà chưa cập nhật trạng thái liên hệ.`)))}</p></div>`;
     },
 };
+
+/* ---------------------------------------------------------------------- OPS
+   Nine replica screens for the OPERATIONS section. Same rules as the CRM
+   replicas: drawn from the fixture, never their own literals, and every
+   control the content points at carries an anchor.
+
+   The learner here is an Operations Manager, not a reception operator — these
+   screens are about allocating people and time, so the recurring question they
+   answer is "who is doing what, and what breaks if that changes". */
+
+const OPS_STATE_TONE = {
+    completed: "ok", in_progress: "b", assigned: "", confirmed: "a", cancelled: "danger",
+};
+
+function opsStateLabel(state) {
+    return tx({
+        completed: B("Completed", "Hoàn thành"),
+        in_progress: B("In Progress", "Đang thực hiện"),
+        assigned: B("Assigned", "Đã phân công"),
+        confirmed: B("New Booking", "Lịch hẹn mới"),
+        cancelled: B("Cancelled", "Đã hủy"),
+    }[state] || state);
+}
+
+function opsStaffName(id) {
+    const st = OPS.staff.find((x) => x.id === id);
+    return st ? tx(st.name) : tx(B("Unassigned", "Chưa phân công"));
+}
+
+function opsBookingRows(list) {
+    return list.map((b) => `
+        <div class="lrn-row" ${b.anchor ? `data-a="${esc(b.anchor)}"` : ""}>
+            <span class="lrn-urg lo">${esc(b.time)}</span>
+            <span><span class="lrn-nm">${esc(tx(b.client))}
+                    <span class="lrn-faint">${esc(b.ref)}</span></span><br>
+                <span class="lrn-sub2">${esc(tx(b.svc))}${" "}· ${esc(tx(b.district))}${" "}·
+                    ${esc(opsStaffName(b.staff))}</span></span>
+            <span class="lrn-rr"><span class="lrn-chip ${OPS_STATE_TONE[b.state] || ""}"
+                >${esc(opsStateLabel(b.state))}</span></span>
+        </div>`).join("");
+}
+
+Object.assign(SCREENS, {
+    ops_dashboard() {
+        const t = OPS.totals;
+        const cards = [
+            ["calendar", N(t.bookings), B("Bookings today", "Lịch hẹn hôm nay"), "", "od-bookings"],
+            ["user-plus", N(t.unassigned), B("Unassigned", "Chưa phân công"), "warn", "od-unassigned"],
+            ["zap", N(t.inProgress), B("In progress", "Đang thực hiện"), "", "od-inprogress"],
+            ["check-circle", N(t.completed), B("Completed", "Đã hoàn thành"), "pos", "od-completed"],
+            ["users", N(t.staffOnShift), B("Staff on shift", "Nhân sự trong ca"), "", "od-staff"],
+            ["ban", N(t.cancelled), B("Cancelled", "Đã hủy"), "", "od-cancelled"],
+        ].map(([i, v, lab, tone, a]) => `
+            <div class="lrn-kpi ${tone}" data-a="${a}">
+                <div class="lrn-kt">${ic(i)}<span>${esc(tx(lab))}</span></div>
+                <div class="lrn-kv">${v}</div>
+            </div>`).join("");
+        return `
+            <div class="lrn-tabs" data-a="od-day">
+                <button aria-selected="true">${esc(tx(OPS.day))}</button>
+                <span class="lrn-chip b lrn-push">${ic("map-pin")}${esc(tx(OPS.area))}</span>
+            </div>
+            <div class="lrn-grid g6">${cards}</div>
+            <div class="lrn-panel" data-a="od-unassigned-list">
+                <h3>${ic("alert-triangle")}${esc(tx(B("Needs a person", "Cần người thực hiện")))}</h3>
+                <div class="lrn-rows">${opsBookingRows(OPS.bookings.filter((b) => !b.staff))}</div>
+                <p class="lrn-note">${esc(tx(B(
+                    "One booking today has nobody on it. Everything else on this screen is fine; this is the only number that becomes a phone call from a patient.",
+                    "Hôm nay có một lịch hẹn chưa ai nhận. Mọi con số khác trên màn hình này đều ổn; đây là con số duy nhất sẽ biến thành một cuộc gọi từ bệnh nhân.")))}</p>
+            </div>`;
+    },
+
+    ops_bookings() {
+        return `
+            <div class="lrn-tabs" data-a="ob-filters">
+                <button aria-selected="true">${esc(tx(B("Today", "Hôm nay")))}${" "}· ${OPS.totals.bookings}</button>
+                <button aria-selected="false">${esc(tx(B("Unassigned", "Chưa phân công")))}${" "}· ${OPS.totals.unassigned}</button>
+                <button aria-selected="false">${esc(tx(B("This week", "Tuần này")))}</button>
+                <span class="lrn-chip b lrn-push">${ic("map-pin")}${esc(tx(OPS.area))}</span>
+            </div>
+            <div class="lrn-panel" data-a="ob-list">
+                <h3>${ic("calendar")}${esc(tx(OPS.day))}
+                    <span class="lrn-chip lrn-push">${esc(tx(B(
+                        `${OPS.totals.assigned}${" "}assigned · ${OPS.totals.unassigned}${" "}unassigned`,
+                        `${OPS.totals.assigned}${" "}đã phân công · ${OPS.totals.unassigned}${" "}chưa phân công`)))}</span></h3>
+                <div class="lrn-rows">${opsBookingRows(OPS.bookings)}</div>
+            </div>
+            <div class="lrn-panel" data-a="ob-actions">
+                <h3>${ic("zap")}${esc(tx(B("What you can do to a booking", "Bạn có thể làm gì với một lịch hẹn")))}</h3>
+                <div class="lrn-strip">
+                    <button class="lrn-btn sm pri" data-a="ob-assign">${ic("user-plus")}${esc(tx(B("Assign", "Phân công")))}</button>
+                    <button class="lrn-btn sm" data-a="ob-reschedule">${ic("calendar")}${esc(tx(B("Reschedule", "Đổi lịch")))}</button>
+                    <button class="lrn-btn sm" data-a="ob-start">${ic("play")}${esc(tx(B("Start service", "Bắt đầu dịch vụ")))}</button>
+                    <button class="lrn-btn sm danger" data-a="ob-cancel">${ic("ban")}${esc(tx(B("Cancel booking", "Hủy lịch hẹn")))}</button>
+                </div>
+            </div>`;
+    },
+
+    ops_schedule() {
+        const rows = OPS.staff.map((st) => {
+            const mine = OPS.bookings.filter((b) => b.staff === st.id && b.state !== "cancelled");
+            const chips = mine.map((b) => `<span class="lrn-chip ${OPS_STATE_TONE[b.state] || ""}"
+                >${esc(b.time)}${" "}${esc(tx(b.district))}</span>`).join("");
+            return `
+            <div class="lrn-row" data-a="os-row-${esc(st.id)}">
+                <span class="lrn-avatar">${esc(initial(st.name))}</span>
+                <span><span class="lrn-nm">${esc(tx(st.name))}</span><br>
+                    <span class="lrn-sub2">${esc(tx(st.role))}${" "}· ${st.load}/${st.cap}</span></span>
+                <span class="lrn-rr">${chips}</span>
+            </div>`;
+        }).join("");
+        return `
+            <div class="lrn-tabs" data-a="os-day">
+                <button aria-selected="true">${esc(tx(OPS.day))}</button>
+                <span class="lrn-chip b lrn-push">${ic("users")}${OPS.totals.staffOnShift}</span>
+            </div>
+            <div class="lrn-panel" data-a="os-grid">
+                <h3>${ic("calendar")}${esc(tx(B("Who is doing what", "Ai đang làm gì")))}</h3>
+                <div class="lrn-rows">${rows}</div>
+                <p class="lrn-note">${esc(tx(B(
+                    `${OPS.totals.assigned}${" "}visits across ${OPS.totals.staffOnShift}${" "}people. The one that is not here is the unassigned booking — an empty row is not the same as a free nurse.`,
+                    `${OPS.totals.assigned}${" "}lượt thăm khám chia cho ${OPS.totals.staffOnShift}${" "}người. Lượt không có ở đây là lịch hẹn chưa phân công — một dòng trống không đồng nghĩa với một điều dưỡng đang rảnh.`)))}</p>
+            </div>
+            <div class="lrn-panel" data-a="os-timeoff">
+                <h3>${ic("clock")}${esc(tx(B("Time off that touches this week", "Nghỉ phép ảnh hưởng tuần này")))}</h3>
+                <div class="lrn-rows">${OPS.timeoff.map((t) => `
+                    <div class="lrn-row"><span class="lrn-avatar">${esc(initial(B(opsStaffName(t.who), opsStaffName(t.who))))}</span>
+                        <span><span class="lrn-nm">${esc(opsStaffName(t.who))}</span><br>
+                            <span class="lrn-sub2">${esc(t.from)}${" "}→ ${esc(t.to)}${" "}· ${esc(tx(t.kind))}</span></span>
+                        <span class="lrn-rr"><span class="lrn-chip">${esc(tx(t.state))}</span></span></div>`).join("")}</div>
+            </div>`;
+    },
+
+    ops_workload() {
+        const max = Math.max(...OPS.staff.map((s2) => s2.cap));
+        const bars = OPS.staff.map((st) => `
+            <div class="lrn-hbar" data-a="ow-staff-${esc(st.id)}"><span>${esc(tx(st.name))}</span>
+                <span class="lrn-track"><i style="width:${(st.load / max * 100).toFixed(0)}%"></i></span>
+                <b>${st.load}/${st.cap}</b></div>`).join("");
+        return `
+            <div class="lrn-panel" data-a="ow-bars">
+                <h3>${ic("bar-chart")}${esc(tx(B("Load against capacity", "Khối lượng so với năng lực")))}</h3>
+                <div class="lrn-hbars">${bars}</div>
+                <p class="lrn-note">${esc(tx(B(
+                    "Capacity is visits per day, not hours. Two people on 5 of 6 is a normal day; one person on 5 while another is on 1 is a scheduling decision nobody made on purpose.",
+                    "Năng lực tính theo số lượt mỗi ngày, không phải theo giờ. Hai người ở mức 5/6 là một ngày bình thường; một người 5 trong khi người khác 1 là một quyết định phân công mà không ai chủ ý đưa ra.")))}</p>
+            </div>`;
+    },
+
+    ops_clients() {
+        const rows = PRACTICE.contacts.slice(0, 5).map((c) => `
+            <div class="lrn-row"><span class="lrn-avatar">${esc(initial(c.name))}</span>
+                <span><span class="lrn-nm">${esc(tx(c.name))}</span><br>
+                    <span class="lrn-sub2">${esc(tx(c.meta))}</span></span>
+                <span class="lrn-rr"><button class="lrn-btn sm">${esc(tx(B("Open", "Mở")))}</button></span></div>`).join("");
+        return `<div class="lrn-panel" data-a="oc-list">
+            <h3>${ic("users")}${esc(tx(B("Clients in your area", "Khách hàng trong khu vực của bạn")))}</h3>
+            <div class="lrn-rows">${rows}</div>
+            <p class="lrn-note">${esc(tx(B(
+                "The client record, not the enquiry. This is the person a visit is booked against, and it is the only place their consents and their balance live.",
+                "Hồ sơ khách hàng, không phải yêu cầu tư vấn. Đây là người mà lịch hẹn được đặt cho, và là nơi duy nhất lưu đồng thuận và công nợ của họ.")))}</p>
+        </div>`;
+    },
+
+    ops_timeoff() {
+        return `<div class="lrn-panel" data-a="ot-list">
+            <h3>${ic("clock")}${esc(tx(B("Time off requests", "Đơn xin nghỉ")))}</h3>
+            <div class="lrn-rows">${OPS.timeoff.map((t) => `
+                <div class="lrn-row"><span class="lrn-avatar">${esc(initial(B(opsStaffName(t.who), opsStaffName(t.who))))}</span>
+                    <span><span class="lrn-nm">${esc(opsStaffName(t.who))}</span><br>
+                        <span class="lrn-sub2">${esc(t.from)}${" "}→ ${esc(t.to)}${" "}· ${esc(tx(t.kind))}</span></span>
+                    <span class="lrn-rr"><span class="lrn-chip a">${esc(tx(t.state))}</span>
+                        <button class="lrn-btn sm pri" data-a="ot-approve">${esc(tx(B("Approve", "Duyệt")))}</button></span></div>`).join("")}</div>
+            <p class="lrn-note">${esc(tx(B(
+                "Approving leave does NOT move the visits already booked for that day. The schedule is where you find out what approval just cost.",
+                "Duyệt nghỉ phép KHÔNG tự dời các lịch hẹn đã đặt cho ngày đó. Bảng phân công là nơi bạn thấy việc duyệt đó vừa gây ra điều gì.")))}</p>
+        </div>`;
+    },
+
+    ops_collections() {
+        const rows = OPS.collections.map((c) => `
+            <div class="lrn-row"><span class="lrn-avatar">${esc(initial(B(opsStaffName(c.who), opsStaffName(c.who))))}</span>
+                <span><span class="lrn-nm">${esc(opsStaffName(c.who))}</span><br>
+                    <span class="lrn-sub2">${esc(tx(B(`${c.visits}${" "}visit(s)`, `${c.visits}${" "}lượt`)))}</span></span>
+                <span class="lrn-rr"><b>${M(c.amount)}</b></span></div>`).join("");
+        return `<div class="lrn-panel" data-a="ocl-list">
+            <h3>${ic("receipt")}${esc(tx(B("Cash held by staff right now", "Tiền mặt nhân viên đang giữ")))}
+                <span class="lrn-chip a lrn-push">${M(OPS.collectionsTotal)}</span></h3>
+            <div class="lrn-rows">${rows}</div>
+            <p class="lrn-note">${esc(tx(B(
+                "Operations reconciles this at end of shift, and Finance receives one balanced figure. Finance never chases an individual nurse — if it does not balance, it is settled here first.",
+                "Bộ phận Vận hành đối soát khoản này cuối ca, và Tài chính nhận về một con số đã khớp. Tài chính không bao giờ truy một điều dưỡng cụ thể — nếu không khớp, việc đó được xử lý ở đây trước.")))}</p>
+        </div>`;
+    },
+
+    ops_family() {
+        const rows = OPS.family.map((f) => `
+            <div class="lrn-row"><span class="lrn-avatar">${esc(initial(f.client))}</span>
+                <span><span class="lrn-nm">${esc(tx(f.from))}</span><br>
+                    <span class="lrn-sub2">${esc(tx(B("about", "về"))) }${" "}${esc(tx(f.client))}${" "}· ${esc(tx(f.text))}</span></span>
+                <span class="lrn-rr">${f.unread
+                    ? `<span class="lrn-chip a">${esc(tx(B("Unread", "Chưa đọc")))}</span>` : ""}</span></div>`).join("");
+        return `<div class="lrn-panel" data-a="ofm-list">
+            <h3>${ic("message-circle")}${esc(tx(B("Family messages", "Tin nhắn từ người nhà")))}</h3>
+            <div class="lrn-rows">${rows}</div>
+            <p class="lrn-note">${esc(tx(B(
+                "A family member is not automatically permitted to hear clinical detail. What you may tell them is a recorded consent, exactly as it is on the CRM desk.",
+                "Người nhà không mặc nhiên được phép nghe chi tiết lâm sàng. Việc bạn được nói gì với họ là một đồng thuận đã ghi nhận, giống hệt như ở bàn CRM.")))}</p>
+        </div>`;
+    },
+
+    ops_routes() {
+        const t = OPS.travel;
+        return `<div class="lrn-panel" data-a="orf-check">
+            <h3>${ic("map")}${esc(tx(B("Travel feasibility", "Khả năng di chuyển")))}</h3>
+            <div class="lrn-calc">
+                <div class="lrn-cr"><span>${esc(tx(B("From", "Từ")))}</span><b>${esc(tx(t.fromDistrict))}</b></div>
+                <div class="lrn-cr"><span>${esc(tx(B("To", "Đến")))}</span><b>${esc(tx(t.toDistrict))}</b></div>
+                <div class="lrn-cr"><span>${esc(tx(B("Travel time", "Thời gian di chuyển")))}</span><b>${t.minutes}${esc(tx(B(" min", " phút")))}</b></div>
+                <div class="lrn-cr tot"><span>${esc(tx(B("Gap between visits", "Khoảng trống giữa hai lượt")))}</span><b>${t.gapMinutes}${esc(tx(B(" min", " phút")))}</b></div>
+            </div>
+            <div class="lrn-chk ${t.feasible ? "pass" : "fail"}" data-a="orf-verdict">
+                ${ic(t.feasible ? "check-circle" : "x")}<span>${esc(tx(t.note))}</span></div>
+            <p class="lrn-note">${esc(tx(B(
+                "This WARNS; it does not block. A leg that does not fit is still saveable, because a manager on the phone to the family often knows something the map does not.",
+                "Công cụ này CẢNH BÁO chứ không chặn. Một chặng không vừa vẫn có thể lưu, vì người quản lý đang gọi cho gia đình thường biết điều mà bản đồ không biết.")))}</p>
+        </div>`;
+    },
+});
 
 /* ---------------------------------------------------------------------- shell
    `visible` is the set of station keys the LEARNER's own sidebar shows — it

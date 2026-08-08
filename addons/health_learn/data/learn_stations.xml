@@ -306,4 +306,295 @@
         <field name="name">Reading a small cell as a trend. Six referrals in a month is a number, not a pattern.</field>
     </record>
 
+    <record id="station_ops_dashboard" model="learn.station">
+        <field name="key">ops_dashboard</field>
+        <field name="name">Operations Dashboard</field>
+        <field name="line">ops_day</field>
+        <field name="section">ops</field>
+        <field name="sequence">90</field>
+        <field name="summary">The day in six numbers, and the one that matters is Unassigned.</field>
+        <field name="icon">grid</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_dashboard</field>
+        <field name="duration_min">4</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Six counts for one day in one catchment area — booked, unassigned, in progress, completed, staff on shift, cancelled — with the unassigned bookings listed underneath.</field>
+        <field name="outline_why">Five of the six are reassurance. Unassigned is the one that turns into a patient ringing to ask where the nurse is, and it is the only number here you can still fix today.</field>
+        <field name="outline_when">First thing in the morning, again after lunch, and before you leave. It is a whole-day view, so checking it hourly tells you nothing new.</field>
+        <field name="outline_prereq">Operations Manager or Owner. A nurse does not see this screen — they see their own visits, not the day.</field>
+    </record>
+
+    <record id="station_ops_dashboard_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_dashboard"/>
+        <field name="sequence">10</field>
+        <field name="name">Reading Completed as progress. Two completed at 11:00 is normal; two completed at 16:00 means the afternoon has not started.</field>
+    </record>
+
+    <record id="station_ops_dashboard_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_dashboard"/>
+        <field name="sequence">20</field>
+        <field name="name">Treating Cancelled as neutral. A cancellation still consumed a slot someone else could have had, and it has a reason worth reading.</field>
+    </record>
+
+    <record id="station_ops_dashboard_mistake_2" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_dashboard"/>
+        <field name="sequence">30</field>
+        <field name="name">Checking the number and not the list. The count tells you there is a problem; the list underneath tells you whose problem it is.</field>
+    </record>
+
+    <record id="station_ops_bookings" model="learn.station">
+        <field name="key">ops_bookings</field>
+        <field name="name">Bookings</field>
+        <field name="line">ops_day</field>
+        <field name="section">ops</field>
+        <field name="sequence">100</field>
+        <field name="summary">Every visit for the day, and the four things you can do to one.</field>
+        <field name="icon">calendar</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_bookings</field>
+        <field name="duration_min">7</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="True"/>
+        <field name="outline_what">One row per visit with its time, patient, service, district, assigned person and state — draft, new, assigned, in progress, completed, cancelled, closed.</field>
+        <field name="outline_why">It is the only screen where a visit exists as a whole thing rather than as a row on somebody's schedule. Assigning, moving and cancelling all happen here.</field>
+        <field name="outline_when">Whenever something changes: a nurse calls in sick, a patient rings to move a time, a booking arrives with nobody on it.</field>
+        <field name="outline_prereq">Operations Manager or Owner. Cancelling additionally destroys revenue, so it is worth knowing before you press it that nothing here asks twice.</field>
+    </record>
+
+    <record id="station_ops_bookings_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_bookings"/>
+        <field name="sequence">10</field>
+        <field name="name">Cancelling when you meant to reschedule. Cancel ends the visit and the money; reschedule keeps both and moves them.</field>
+    </record>
+
+    <record id="station_ops_bookings_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_bookings"/>
+        <field name="sequence">20</field>
+        <field name="name">Assigning without looking at the map. A visit that fits the calendar can still be impossible to reach in time.</field>
+    </record>
+
+    <record id="station_ops_bookings_mistake_2" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_bookings"/>
+        <field name="sequence">30</field>
+        <field name="name">Leaving a booking unassigned because it is not urgent yet. Unassigned at 09:00 is a scheduling task; unassigned at 15:00 is a phone call to a family.</field>
+    </record>
+
+    <record id="station_ops_schedule" model="learn.station">
+        <field name="key">ops_schedule</field>
+        <field name="name">Staff Schedule</field>
+        <field name="line">ops_day</field>
+        <field name="section">ops</field>
+        <field name="sequence">110</field>
+        <field name="summary">Who is doing what, all day — the screen an Operations Manager lives in.</field>
+        <field name="icon">users</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_roster</field>
+        <field name="duration_min">7</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="True"/>
+        <field name="outline_what">One row per person for one day, their visits along it, their load against capacity, and the leave that touches this week.</field>
+        <field name="outline_why">Bookings tells you what was promised. This tells you whether it can actually be done by the people who are actually here.</field>
+        <field name="outline_when">Before the shift, and every time somebody becomes unavailable. It is also where you find out what approving a leave request just cost.</field>
+        <field name="outline_prereq">Operations Manager or Owner. Reassigning someone else's visit is the whole point of the screen, so it is not available to the nurse whose visit it is.</field>
+    </record>
+
+    <record id="station_ops_schedule_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_schedule"/>
+        <field name="sequence">10</field>
+        <field name="name">Reading an empty row as a free nurse. An unassigned booking is not on anyone's row — the gap you are looking at may already be spoken for.</field>
+    </record>
+
+    <record id="station_ops_schedule_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_schedule"/>
+        <field name="sequence">20</field>
+        <field name="name">Balancing by count alone. Five short visits in one district is a lighter day than three spread across the city.</field>
+    </record>
+
+    <record id="station_ops_schedule_mistake_2" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_schedule"/>
+        <field name="sequence">30</field>
+        <field name="name">Approving leave from the leave screen without coming here. Approval does not move the visits already booked for that day.</field>
+    </record>
+
+    <record id="station_ops_workload" model="learn.station">
+        <field name="key">ops_workload</field>
+        <field name="name">Workload</field>
+        <field name="line">ops_day</field>
+        <field name="section">ops</field>
+        <field name="sequence">120</field>
+        <field name="summary">Load against capacity, per person — the fairness check.</field>
+        <field name="icon">bar-chart</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_workload</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">A bar per person: visits assigned today against their capacity for the day.</field>
+        <field name="outline_why">The schedule shows you the shape of the day. This shows you whether it is fair, and an unfair day is the one that produces sick leave next week.</field>
+        <field name="outline_when">After you finish assigning, not before. It is a check on decisions already made.</field>
+        <field name="outline_prereq">Operations Manager or Owner.</field>
+    </record>
+
+    <record id="station_ops_workload_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_workload"/>
+        <field name="sequence">10</field>
+        <field name="name">Reading capacity as hours. It is visits per day, and two visits in one building are not two visits across two districts.</field>
+    </record>
+
+    <record id="station_ops_workload_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_workload"/>
+        <field name="sequence">20</field>
+        <field name="name">Aiming for everyone at the same number. Equal counts across unequal distances is not fairness.</field>
+    </record>
+
+    <record id="station_ops_timeoff" model="learn.station">
+        <field name="key">ops_timeoff</field>
+        <field name="name">Time Off</field>
+        <field name="line">ops_people</field>
+        <field name="section">ops</field>
+        <field name="sequence">130</field>
+        <field name="summary">Leave requests — and the visits they quietly collide with.</field>
+        <field name="icon">clock</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_staff_timeoff</field>
+        <field name="duration_min">4</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Requests with who, which dates, what kind, and whether they are approved.</field>
+        <field name="outline_why">Approving leave is the single most common way a fully-booked day becomes an unstaffed one, because approval and the schedule are two different screens.</field>
+        <field name="outline_when">As requests arrive — and always with the Staff Schedule open beside it for the dates concerned.</field>
+        <field name="outline_prereq">Operations Manager or Owner. A nurse can request; only Operations can approve.</field>
+    </record>
+
+    <record id="station_ops_timeoff_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_timeoff"/>
+        <field name="sequence">10</field>
+        <field name="name">Approving without opening the schedule for those dates. Approval does not move a single visit — it just makes the person unavailable for visits that are still booked.</field>
+    </record>
+
+    <record id="station_ops_timeoff_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_timeoff"/>
+        <field name="sequence">20</field>
+        <field name="name">Leaving a request sitting. An unanswered request is a person who has already made plans.</field>
+    </record>
+
+    <record id="station_ops_collections" model="learn.station">
+        <field name="key">ops_collections</field>
+        <field name="name">Collections</field>
+        <field name="line">ops_people</field>
+        <field name="section">ops</field>
+        <field name="sequence">140</field>
+        <field name="summary">Cash the nurses are holding right now, and who reconciles it.</field>
+        <field name="icon">receipt</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_collections</field>
+        <field name="duration_min">4</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">How much cash each member of staff is carrying from today's visits, and the total.</field>
+        <field name="outline_why">This is money that exists physically and has to end up matching. It is reconciled inside Operations at end of shift; Finance receives one balanced figure and never chases an individual nurse.</field>
+        <field name="outline_when">End of every shift, without exception. A day skipped is a day nobody can reconstruct.</field>
+        <field name="outline_prereq">Operations Manager or Owner. Finance sees the result, not this screen.</field>
+    </record>
+
+    <record id="station_ops_collections_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_collections"/>
+        <field name="sequence">10</field>
+        <field name="name">Sending an unbalanced figure to Finance to sort out. It is settled here first — that is the whole reason this screen sits in Operations.</field>
+    </record>
+
+    <record id="station_ops_collections_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_collections"/>
+        <field name="sequence">20</field>
+        <field name="name">Reconciling from memory at the end of a long shift. The visit list is right there and it does not get tired.</field>
+    </record>
+
+    <record id="station_ops_clients" model="learn.station">
+        <field name="key">ops_clients</field>
+        <field name="name">Clients</field>
+        <field name="line">ops_people</field>
+        <field name="section">ops</field>
+        <field name="sequence">150</field>
+        <field name="summary">The patient record a visit is booked against.</field>
+        <field name="icon">users</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_clients</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Clients in your catchment area, with the record behind each: their consents, their history and their balance.</field>
+        <field name="outline_why">A booking points at a client. If the client is wrong or duplicated, the visit, the clinical note and the invoice all end up in the wrong place together.</field>
+        <field name="outline_when">Before booking someone you are not certain about, and whenever a name looks familiar.</field>
+        <field name="outline_prereq">Operations Manager, Owner — and CRM, which is the one OPS screen the reception desk can also open.</field>
+    </record>
+
+    <record id="station_ops_clients_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_clients"/>
+        <field name="sequence">10</field>
+        <field name="name">Creating a second record because the first was hard to find. Their consents and balance stay on the first one.</field>
+    </record>
+
+    <record id="station_ops_family" model="learn.station">
+        <field name="key">ops_family</field>
+        <field name="name">Family Inbox</field>
+        <field name="line">ops_people</field>
+        <field name="section">ops</field>
+        <field name="sequence">160</field>
+        <field name="summary">Messages from relatives about a patient — and what you may answer.</field>
+        <field name="icon">message-circle</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_coverage.item_ops_family_messages</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Two-way messages between a family member and the care team, attached to the client rather than to a phone number.</field>
+        <field name="outline_why">Most 'where is the nurse' calls arrive here first. Answering the logistics question fast is usually all that is needed — and it is the part you are always allowed to answer.</field>
+        <field name="outline_when">Through the shift, and especially in the hour before a visit when families start to wonder.</field>
+        <field name="outline_prereq">Operations Manager or Owner. What you may say about the patient's condition is a recorded consent, not a judgement call.</field>
+    </record>
+
+    <record id="station_ops_family_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_family"/>
+        <field name="sequence">10</field>
+        <field name="name">Answering a clinical question because it was asked kindly. Timing is yours to answer; condition is not.</field>
+    </record>
+
+    <record id="station_ops_family_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_family"/>
+        <field name="sequence">20</field>
+        <field name="name">Assuming the sender is allowed to hear everything because they are family. Relationship is not consent.</field>
+    </record>
+
+    <record id="station_ops_routes" model="learn.station">
+        <field name="key">ops_routes</field>
+        <field name="name">Route Feasibility</field>
+        <field name="line">ops_people</field>
+        <field name="section">ops</field>
+        <field name="sequence">170</field>
+        <field name="summary">Whether a person can actually get from one visit to the next.</field>
+        <field name="icon">map</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_coverage.item_ops_route_feasibility</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">The travel time between two consecutive visits, against the gap between them — with a verdict.</field>
+        <field name="outline_why">The calendar cannot see the map. A visit at 15:00 in one district and 16:30 in another fits perfectly on a schedule and may be impossible in traffic.</field>
+        <field name="outline_when">Whenever you reassign across districts, and before you promise a family a time.</field>
+        <field name="outline_prereq">Operations Manager or Owner.</field>
+    </record>
+
+    <record id="station_ops_routes_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_routes"/>
+        <field name="sequence">10</field>
+        <field name="name">Treating the warning as a block. It warns and lets you save, because a manager on the phone often knows something the map does not.</field>
+    </record>
+
+    <record id="station_ops_routes_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_ops_routes"/>
+        <field name="sequence">20</field>
+        <field name="name">Treating the absence of a warning as a promise. It knows distance, not weather, lifts, or how long a family keeps you at the door.</field>
+    </record>
+
 </odoo>

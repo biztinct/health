@@ -77,4 +77,85 @@
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_reminder'), ref('intent_whatpage'), ref('intent_whatnext')])]"/>
     </record>
 
+    <record id="screen_ops_dashboard" model="learn.screen">
+        <field name="key">ops_dashboard</field>
+        <field name="sequence">90</field>
+        <field name="name">Operations Dashboard</field>
+        <field name="blurb">The day in six numbers for one catchment area, with the unassigned bookings listed underneath.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_dashboard</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="screen_ops_bookings" model="learn.screen">
+        <field name="key">ops_bookings</field>
+        <field name="sequence">100</field>
+        <field name="name">Bookings</field>
+        <field name="blurb">Every visit for the day — time, patient, service, district, who is on it and what state it is in.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_bookings</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="screen_ops_schedule" model="learn.screen">
+        <field name="key">ops_schedule</field>
+        <field name="sequence">110</field>
+        <field name="name">Staff Schedule</field>
+        <field name="blurb">One row per person for one day: their visits, their load against capacity, and the leave that touches this week.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_roster</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="screen_ops_workload" model="learn.screen">
+        <field name="key">ops_workload</field>
+        <field name="sequence">120</field>
+        <field name="name">Workload</field>
+        <field name="blurb">Visits assigned today against each person's capacity for the day.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_workload</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="screen_ops_timeoff" model="learn.screen">
+        <field name="key">ops_timeoff</field>
+        <field name="sequence">130</field>
+        <field name="name">Time Off</field>
+        <field name="blurb">Leave requests — who, which dates, what kind, and whether they are approved.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_staff_timeoff</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="screen_ops_collections" model="learn.screen">
+        <field name="key">ops_collections</field>
+        <field name="sequence">140</field>
+        <field name="name">Collections</field>
+        <field name="blurb">Cash each member of staff is holding from today's visits, reconciled inside Operations.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_collections</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="screen_ops_clients" model="learn.screen">
+        <field name="key">ops_clients</field>
+        <field name="sequence">150</field>
+        <field name="name">Clients</field>
+        <field name="blurb">Clients in your catchment area — the record a visit is booked against.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_ops_clients</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="screen_ops_family" model="learn.screen">
+        <field name="key">ops_family</field>
+        <field name="sequence">160</field>
+        <field name="name">Family Inbox</field>
+        <field name="blurb">Two-way messages between a family member and the care team, attached to the client.</field>
+        <field name="sidebar_key">health_cms_coverage.item_ops_family_messages</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="screen_ops_routes" model="learn.screen">
+        <field name="key">ops_routes</field>
+        <field name="sequence">170</field>
+        <field name="name">Route Feasibility</field>
+        <field name="blurb">Travel time between two consecutive visits against the gap between them, with a verdict.</field>
+        <field name="sidebar_key">health_cms_coverage.item_ops_route_feasibility</field>
+        <field name="suggest_ids" eval="[(6, 0, [])]"/>
+    </record>
+
 </odoo>

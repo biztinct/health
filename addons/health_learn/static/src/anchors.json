@@ -10,6 +10,8 @@
     "            test looks for that prefix rather than a literal key.",
     "  practice  a TEACHING view with no product counterpart — an arithmetic",
     "            breakdown, a lifecycle stepper. It exists only on the practice",
+    "            A pattern with \"replica\": true is emitted by the practice",
+    "            replica instead of a product template.",
     "            replica. Declared so the gap is visible: Phase 2's Coach must",
     "            never claim to point at one of these on a live screen.",
     "",
@@ -105,6 +107,16 @@
       "screen": "channelcenter",
       "file": "health_care_command_channels/static/src/center/channel_center.xml",
       "desc": "One card per channel; the suffix is the channel key."
+    },
+    "os-row-": {
+      "screen": "ops_schedule",
+      "replica": true,
+      "desc": "One row per member of staff on the schedule; the suffix is the staff id."
+    },
+    "ow-staff-": {
+      "screen": "ops_workload",
+      "replica": true,
+      "desc": "One load bar per member of staff; the suffix is the staff id."
     }
   },
   "practice": {
@@ -227,6 +239,122 @@
     "tp-table": {
       "screen": "touchpoints",
       "desc": "Website arrivals by campaign."
+    },
+    "od-day": {
+      "screen": "ops_dashboard",
+      "desc": "The day and catchment every figure here is scoped to."
+    },
+    "od-bookings": {
+      "screen": "ops_dashboard",
+      "desc": "Bookings today."
+    },
+    "od-unassigned": {
+      "screen": "ops_dashboard",
+      "desc": "Bookings with nobody on them — the only figure that becomes a phone call."
+    },
+    "od-inprogress": {
+      "screen": "ops_dashboard",
+      "desc": "Visits under way right now."
+    },
+    "od-completed": {
+      "screen": "ops_dashboard",
+      "desc": "Visits finished today."
+    },
+    "od-staff": {
+      "screen": "ops_dashboard",
+      "desc": "People on shift."
+    },
+    "od-cancelled": {
+      "screen": "ops_dashboard",
+      "desc": "Cancelled today."
+    },
+    "od-unassigned-list": {
+      "screen": "ops_dashboard",
+      "desc": "The unassigned bookings themselves."
+    },
+    "ob-filters": {
+      "screen": "ops_bookings",
+      "desc": "Today / Unassigned / This week."
+    },
+    "ob-list": {
+      "screen": "ops_bookings",
+      "desc": "The day's bookings."
+    },
+    "ob-row-4468": {
+      "screen": "ops_bookings",
+      "desc": "A completed morning visit."
+    },
+    "ob-row-4471": {
+      "screen": "ops_bookings",
+      "desc": "The 16:30 wound-care visit — the same patient as CRM conversation #4172."
+    },
+    "ob-unassigned": {
+      "screen": "ops_bookings",
+      "desc": "The booking with nobody on it."
+    },
+    "ob-actions": {
+      "screen": "ops_bookings",
+      "desc": "Assign / Reschedule / Start / Cancel."
+    },
+    "ob-assign": {
+      "screen": "ops_bookings",
+      "desc": "Assign a person to a booking."
+    },
+    "ob-reschedule": {
+      "screen": "ops_bookings",
+      "desc": "Move a booking in time."
+    },
+    "ob-start": {
+      "screen": "ops_bookings",
+      "desc": "Start service — moves the booking to In Progress."
+    },
+    "ob-cancel": {
+      "screen": "ops_bookings",
+      "desc": "Cancel a booking. Risky: a nurse's day, a patient's expectation, the revenue."
+    },
+    "os-day": {
+      "screen": "ops_schedule",
+      "desc": "The day the schedule is showing."
+    },
+    "os-grid": {
+      "screen": "ops_schedule",
+      "desc": "Who is doing what, one row per person."
+    },
+    "os-timeoff": {
+      "screen": "ops_schedule",
+      "desc": "Approved and requested leave touching this week."
+    },
+    "ow-bars": {
+      "screen": "ops_workload",
+      "desc": "Load against capacity per person."
+    },
+    "oc-list": {
+      "screen": "ops_clients",
+      "desc": "Clients in your catchment."
+    },
+    "ot-list": {
+      "screen": "ops_timeoff",
+      "desc": "Time off requests."
+    },
+    "ot-approve": {
+      "screen": "ops_timeoff",
+      "desc": "Approve leave. Does NOT move the visits already booked."
+    },
+    "ocl-list": {
+      "screen": "ops_collections",
+      "desc": "Cash held by staff, reconciled by Operations."
+    },
+    "ofm-list": {
+      "screen": "ops_family",
+      "desc": "Family messages inbox."
+    },
+    "orf-check": {
+      "screen": "ops_routes",
+      "desc": "The travel-feasibility calculation."
+    },
+    "orf-verdict": {
+      "screen": "ops_routes",
+      "desc": "Feasible or not. Warns; never blocks."
     }
   },
   "scan": {

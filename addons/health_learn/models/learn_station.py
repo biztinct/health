@@ -121,8 +121,13 @@ class LearnStation(models.Model):
     # codebase — measured, and the reason is in the memory ledger.
     @api.model
     def _selection_line(self):
+        # One list across every section. Phase 4 adds ROWS to the map, not a
+        # second map — a learner who moves from the CRM desk to Operations
+        # meets the same journey, further along.
         return [('daily', self.env._('Daily work line')),
-                ('reach', self.env._('Reach & setup line'))]
+                ('reach', self.env._('Reach & setup line')),
+                ('ops_day', self.env._('Running today')),
+                ('ops_people', self.env._('People, money and reach'))]
 
     @api.model
     def _selection_section(self):

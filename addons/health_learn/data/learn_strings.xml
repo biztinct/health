@@ -77,7 +77,7 @@
 
     <record id="str_badgegot" model="learn.string">
         <field name="key">badgeGot</field>
-        <field name="value">Badge earned — both flagship lessons complete.</field>
+        <field name="value">Badge earned — the CRM flagship lessons are complete.</field>
     </record>
 
     <record id="str_bookbtn" model="learn.string">
@@ -317,12 +317,12 @@
 
     <record id="str_hublead" model="learn.string">
         <field name="key">hubLead</field>
-        <field name="value">Three cooperating surfaces for the CRM section of CareJioX — Dashboard, Care Command, Channel Center, Unrouted Contacts, Contacts, Web Touchpoints, Lead Analysis and Activities. Open each one, compare, and pick a direction.</field>
+        <field name="value">Three cooperating surfaces over the sections you work in — the CRM desk, and Operations. Screens your role cannot open are still explained here, because knowing what a screen is for is how you know who to ask.</field>
     </record>
 
     <record id="str_hubtitle" model="learn.string">
         <field name="key">hubTitle</field>
-        <field name="value">Learn the CRM desk without a trainer.</field>
+        <field name="value">Learn this system without a trainer.</field>
     </record>
 
     <record id="str_journey" model="learn.string">
@@ -368,6 +368,16 @@
     <record id="str_lines_daily" model="learn.string">
         <field name="key">lines.daily</field>
         <field name="value">Daily work line</field>
+    </record>
+
+    <record id="str_lines_ops_day" model="learn.string">
+        <field name="key">lines.ops_day</field>
+        <field name="value">Running today</field>
+    </record>
+
+    <record id="str_lines_ops_people" model="learn.string">
+        <field name="key">lines.ops_people</field>
+        <field name="value">People, money and reach</field>
     </record>
 
     <record id="str_lines_reach" model="learn.string">
