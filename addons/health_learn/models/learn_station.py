@@ -26,6 +26,7 @@ _RAW_KEYS = frozenset({
     # tree; the flat map of UI labels is zipped by _zip_prose instead, so these
     # cannot repeat the collision that hid three chrome strings (ledger §5.146).
     'capability', 'action_tags', 'action_xmlids', 'models',
+    'own_tag', 'own_xmlid',
     'show_me', 'practice_key', 'matched',
     # Phase 3 mission structure.
     # NOT 'did' / 'check': those are LISTS OF PROSE (the debrief), and marking
@@ -127,7 +128,10 @@ class LearnStation(models.Model):
         return [('daily', self.env._('Daily work line')),
                 ('reach', self.env._('Reach & setup line')),
                 ('ops_day', self.env._('Running today')),
-                ('ops_people', self.env._('People, money and reach'))]
+                ('ops_people', self.env._('People, money and reach')),
+                ('fin_money', self.env._('Money in')),
+                ('fin_owed', self.env._('Money owed')),
+                ('fin_docs', self.env._('Documents and claims'))]
 
     @api.model
     def _selection_section(self):

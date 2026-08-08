@@ -77,7 +77,10 @@ class LearnMission(models.Model):
         return [('daily', self.env._('Daily work line')),
                 ('reach', self.env._('Reach & setup line')),
                 ('ops_day', self.env._('Running today')),
-                ('ops_people', self.env._('People, money and reach'))]
+                ('ops_people', self.env._('People, money and reach')),
+                ('fin_money', self.env._('Money in')),
+                ('fin_owed', self.env._('Money owed')),
+                ('fin_docs', self.env._('Documents and claims'))]
 
     @api.model
     def _selection_kind(self):

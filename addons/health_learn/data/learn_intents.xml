@@ -2206,4 +2206,788 @@
         <field name="body">The role gate on each Operations sidebar leaf.</field>
     </record>
 
+    <record id="intent_fin_outstanding_vs_overdue" model="learn.intent">
+        <field name="key">fin_outstanding_vs_overdue</field>
+        <field name="label">What is the difference between outstanding and overdue?</field>
+        <field name="screens">fin_dashboard,fin_invoices,fin_ar_dashboard,fin_overdue,fin_ar_management</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">fd-outstanding,fd-overdue</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">outstanding</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">overdue</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">owed</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">late</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">còn phải thu</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">quá hạn</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">còn nợ</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">trễ hạn</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">What is the difference between outstanding and overdue?</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="text">Còn phải thu và quá hạn khác nhau thế nào?</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Outstanding is everything billed and not yet paid. Overdue is the part of it that has passed the client's payment terms. Most outstanding money is not late — it is simply not due yet, so chasing on the outstanding figure means ringing clients who have done nothing wrong.</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">They are two different numbers on the same screen, sitting next to each other. Reading one as the other is the most common mistake in this section.</field>
+    </record>
+
+    <record id="intent_fin_outstanding_vs_overdue_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_outstanding_vs_overdue"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The Finance Dashboard's Outstanding and Overdue cards, and the ageing split on the AR Dashboard.</field>
+    </record>
+
+    <record id="intent_fin_post" model="learn.intent">
+        <field name="key">fin_post</field>
+        <field name="label">What does posting an invoice do?</field>
+        <field name="screens">fin_invoices,fin_vat_log,fin_payments</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">fi-post</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_fin_post_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">post</field>
+    </record>
+
+    <record id="intent_fin_post_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">posting</field>
+    </record>
+
+    <record id="intent_fin_post_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">draft</field>
+    </record>
+
+    <record id="intent_fin_post_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">edit an invoice</field>
+    </record>
+
+    <record id="intent_fin_post_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">undo an invoice</field>
+    </record>
+
+    <record id="intent_fin_post_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">ghi sổ</field>
+    </record>
+
+    <record id="intent_fin_post_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">về nháp</field>
+    </record>
+
+    <record id="intent_fin_post_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">sửa hóa đơn</field>
+    </record>
+
+    <record id="intent_fin_post_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">hoàn tác hóa đơn</field>
+    </record>
+
+    <record id="intent_fin_post_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">What does posting an invoice do?</field>
+    </record>
+
+    <record id="intent_fin_post_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="text">Ghi sổ hóa đơn có tác dụng gì?</field>
+    </record>
+
+    <record id="intent_fin_post_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Posting turns a working document into an accounting one. It takes a number from a legal sequence that must have no gaps, and the invoice now counts towards the month. You do not edit it afterwards — a posted invoice is corrected by a second document, a credit note, which is itself part of the record.</field>
+    </record>
+
+    <record id="intent_fin_post_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_fin_post_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_fin_post_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Check the client, the amount and the service description.</field>
+        <field name="anchor">fi-list</field>
+    </record>
+
+    <record id="intent_fin_post_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_fin_post_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Post.</field>
+        <field name="anchor">fi-post</field>
+    </record>
+
+    <record id="intent_fin_post_b020_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_fin_post_b020"/>
+        <field name="sequence">30</field>
+        <field name="text">If it was wrong, correct it with a credit note rather than editing.</field>
+        <field name="anchor">fi-credit</field>
+    </record>
+
+    <record id="intent_fin_post_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Those three fields are exactly what a credit note — and a red invoice cancellation — exist to fix. Check them before, not after.</field>
+    </record>
+
+    <record id="intent_fin_post_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_post"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The invoice action strip, and the VAT Log which lists what was posted.</field>
+    </record>
+
+    <record id="intent_fin_red_rule" model="learn.intent">
+        <field name="key">fin_red_rule</field>
+        <field name="label">When can a red invoice be cancelled?</field>
+        <field name="screens">fin_red_invoice,fin_invoices,fin_vat_log</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">fri-rule,fri-cancel</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_fin_red_rule_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">red invoice</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">cancel a red invoice</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">reissue</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">tax code</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">viettel</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">filing period</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">hóa đơn đỏ</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">hủy hóa đơn đỏ</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">phát hành lại</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">mã số thuế</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">kỳ kê khai</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p11" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">When can a red invoice be cancelled?</field>
+    </record>
+
+    <record id="intent_fin_red_rule_p12" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="text">Khi nào được hủy hóa đơn đỏ?</field>
+    </record>
+
+    <record id="intent_fin_red_rule_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Only when the buyer details, the amount or the service description are wrong, and only inside the current filing period. After the period closes the route is a credit note instead. Both conditions have to hold: a valid reason in a closed period is still not a cancellation.</field>
+    </record>
+
+    <record id="intent_fin_red_rule_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">Cancelling calls Viettel and voids a document that has already been reported. It is a filing event rather than an edit, and it is restricted to the tax-compliance group for that reason.</field>
+    </record>
+
+    <record id="intent_fin_red_rule_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_red_rule"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The rule panel on the Red Invoice Log.</field>
+    </record>
+
+    <record id="intent_fin_refund_route" model="learn.intent">
+        <field name="key">fin_refund_route</field>
+        <field name="label">Which refund route do I use?</field>
+        <field name="screens">fin_refund,fin_ar_management,fin_packages,fin_account_payment</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">frf-routes</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_fin_refund_route_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">refund</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">credit</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">paid twice</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">double charged</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">prepaid</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">package refund</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">reversal</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">hoàn tiền</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">trả lại tiền</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">thanh toán hai lần</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">trả trước</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p11" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">hoàn gói</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p12" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">đảo giao dịch</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p13" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">Which refund route do I use?</field>
+    </record>
+
+    <record id="intent_fin_refund_route_p14" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="text">Tôi nên dùng lối hoàn tiền nào?</field>
+    </record>
+
+    <record id="intent_fin_refund_route_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Ask what happened, not which screen you are on. Prepaid returns unused credit the client paid for in advance. Package refunds an unfinished course pro-rata against the visits actually delivered. Transaction reverses one specific payment that should never have been taken — a client charged twice is this one, and it is a correction rather than a refund, because nothing is being given back.</field>
+    </record>
+
+    <record id="intent_fin_refund_route_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_fin_refund_route_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_fin_refund_route_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Unused credit the client paid for → prepaid.</field>
+        <field name="anchor">fr-prepaid</field>
+    </record>
+
+    <record id="intent_fin_refund_route_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_fin_refund_route_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">An unfinished course of visits → package, pro-rata against visits delivered.</field>
+        <field name="anchor">fr-package</field>
+    </record>
+
+    <record id="intent_fin_refund_route_b020_s02" model="learn.intent.step">
+        <field name="block_id" ref="intent_fin_refund_route_b020"/>
+        <field name="sequence">30</field>
+        <field name="text">A payment that should never have existed → transaction reversal.</field>
+        <field name="anchor">fr-transaction</field>
+    </record>
+
+    <record id="intent_fin_refund_route_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">All three move money the same direction and for the same client, so a wrong route still balances the cash and not the books. AR Management stays highlighted for all three of its children — the menu will not tell you which screen you are on.</field>
+    </record>
+
+    <record id="intent_fin_refund_route_b040" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_refund_route"/>
+        <field name="sequence">40</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The three routes panel on Refund / Credit.</field>
+    </record>
+
+    <record id="intent_fin_cash_owner" model="learn.intent">
+        <field name="key">fin_cash_owner</field>
+        <field name="label">Who reconciles cash in transit?</field>
+        <field name="screens">fin_cash_transit,fin_dashboard,fin_ar_management</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">fct-owner</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_fin_cash_owner_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">cash in transit</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">cash</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">shortfall</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">nurse cash</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">reconcile</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">tiền đang chuyển</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">tiền mặt</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">thiếu hụt</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">đối soát</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">Who reconciles cash in transit?</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="text">Ai đối soát tiền đang chuyển?</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Operations does, at end of shift. Cash collected on visits sits in transit until it is banked, and the same figure appears on the Operations Collections screen. Finance receives a figure that already balances and does not chase an individual nurse.</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">If the number looks wrong, it goes back to the Operations Manager, not to the person who collected it.</field>
+    </record>
+
+    <record id="intent_fin_cash_owner_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_cash_owner"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The Cash In Transit total, which is the same figure as the Operations Collections screen.</field>
+    </record>
+
+    <record id="intent_fin_unmatched" model="learn.intent">
+        <field name="key">fin_unmatched</field>
+        <field name="label">The client says they paid but it shows unpaid</field>
+        <field name="screens">fin_account_payment,fin_payments,fin_overdue,fin_ar_transactions</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">fap-match</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_fin_unmatched_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">says they paid</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">already paid</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">still unpaid</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">matching</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">unmatched</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">reconcile a payment</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">nói đã thanh toán</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">đã trả rồi</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">vẫn chưa thanh toán</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">khớp thanh toán</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">chưa khớp</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p11" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">The client says they paid but it shows unpaid</field>
+    </record>
+
+    <record id="intent_fin_unmatched_p12" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="text">Khách hàng nói đã thanh toán nhưng vẫn hiển thị chưa thanh toán</field>
+    </record>
+
+    <record id="intent_fin_unmatched_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">Most likely the payment arrived and was never matched to the invoice. An unmatched payment counts as collected on the Dashboard and leaves the invoice unpaid on the client's record, so nothing looks broken from either side — and the client gets chased for money they already sent.</field>
+    </record>
+
+    <record id="intent_fin_unmatched_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">steps</field>
+    </record>
+
+    <record id="intent_fin_unmatched_b020_s00" model="learn.intent.step">
+        <field name="block_id" ref="intent_fin_unmatched_b020"/>
+        <field name="sequence">10</field>
+        <field name="text">Open Account Payment and look for the payment before you ring them.</field>
+        <field name="anchor">fap-match</field>
+    </record>
+
+    <record id="intent_fin_unmatched_b020_s01" model="learn.intent.step">
+        <field name="block_id" ref="intent_fin_unmatched_b020"/>
+        <field name="sequence">20</field>
+        <field name="text">Read the client's trail to see what was invoiced, paid and credited.</field>
+        <field name="anchor">fat-list</field>
+    </record>
+
+    <record id="intent_fin_unmatched_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_unmatched"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Account Payment, and the AR Transactions trail behind the balance.</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive" model="learn.intent">
+        <field name="key">fin_bhyt_notlive</field>
+        <field name="label">How do I submit a BHYT claim?</field>
+        <field name="screens">fin_bhyt</field>
+        <field name="dynamic">none</field>
+        <field name="show_me">fby-preview</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="text">bhyt</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="text">insurance claim</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="text">claim</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="text">bảo hiểm y tế</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="text">hồ sơ bảo hiểm</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="text">How do I submit a BHYT claim?</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="text">Làm sao để nộp hồ sơ BHYT?</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">You do not, yet. Nothing is being submitted through this screen today — BHYT claims are not live. The screen is where claims will be prepared and tracked against a patient's entitlement once it is switched on. There is no workflow to follow at the moment, and there is nothing you are missing.</field>
+    </record>
+
+    <record id="intent_fin_bhyt_notlive_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_bhyt_notlive"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">The BHYT Claims screen itself, which is empty because nothing has been submitted.</field>
+    </record>
+
+    <record id="intent_fin_access" model="learn.intent">
+        <field name="key">fin_access</field>
+        <field name="label">Why can't I see the Finance screens?</field>
+        <field name="screens">fin_dashboard,fin_invoices,fin_ar_management,fin_refund,fin_red_invoice</field>
+        <field name="dynamic">none</field>
+        <field name="offer" eval="True"/>
+    </record>
+
+    <record id="intent_fin_access_p00" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">can't see finance</field>
+    </record>
+
+    <record id="intent_fin_access_p01" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">no access to invoices</field>
+    </record>
+
+    <record id="intent_fin_access_p02" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">who has access</field>
+    </record>
+
+    <record id="intent_fin_access_p03" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">permission</field>
+    </record>
+
+    <record id="intent_fin_access_p04" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">why is the button missing</field>
+    </record>
+
+    <record id="intent_fin_access_p05" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">không thấy tài chính</field>
+    </record>
+
+    <record id="intent_fin_access_p06" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">không có quyền</field>
+    </record>
+
+    <record id="intent_fin_access_p07" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">ai có quyền</field>
+    </record>
+
+    <record id="intent_fin_access_p08" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">phân quyền</field>
+    </record>
+
+    <record id="intent_fin_access_p09" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">sao không có nút</field>
+    </record>
+
+    <record id="intent_fin_access_p10" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">Why can't I see the Finance screens?</field>
+    </record>
+
+    <record id="intent_fin_access_p11" model="learn.intent.phrase">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="text">Vì sao tôi không thấy các màn hình Tài chính?</field>
+    </record>
+
+    <record id="intent_fin_access_b010" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="sequence">10</field>
+        <field name="capability">any</field>
+        <field name="kind">p</field>
+        <field name="body">The FINANCE section is for the Accountant and Owner roles. Invoices is the one exception — an Operations Manager sees that leaf, because they are asked about unpaid visits. Cancelling a red invoice is narrower still: it needs the tax-compliance group, which is separate from being able to read or post an invoice.</field>
+    </record>
+
+    <record id="intent_fin_access_b020" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="sequence">20</field>
+        <field name="capability">any</field>
+        <field name="kind">warn</field>
+        <field name="body">A missing button is usually the design working rather than a fault to report. Access is granted by the Owner against your role, not per screen.</field>
+    </record>
+
+    <record id="intent_fin_access_b030" model="learn.intent.block">
+        <field name="intent_id" ref="intent_fin_access"/>
+        <field name="sequence">30</field>
+        <field name="capability">any</field>
+        <field name="kind">source</field>
+        <field name="body">Your own sidebar, which is drawn from the roles on your user record.</field>
+    </record>
+
 </odoo>

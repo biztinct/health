@@ -329,7 +329,11 @@ class TestCoach(TransactionCase):
         """Server-side mirror of the frontend's two-pass resolution."""
         screens = self.Screen.search([])
         matchers = {s.key: s._matchers() for s in screens}
-        for s in screens:                      # pass 1: exact
+        for s in screens:                      # pass 0: the leaf's OWN action
+            own_tag, own_xmlid = s._primary()
+            if (tag and own_tag and tag == own_tag) or (xmlid and own_xmlid and xmlid == own_xmlid):
+                return s.key
+        for s in screens:                      # pass 1: any exact matcher
             tags, xmlids, _models = matchers[s.key]
             if (tag and tag in tags) or (xmlid and xmlid in xmlids):
                 return s.key

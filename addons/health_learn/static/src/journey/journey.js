@@ -20,6 +20,14 @@ import { useService } from "@web/core/utils/hooks";
 
 import { RT, T, tx, esc, ic, reduced, SP} from "../engine/runtime";
 import { Spot, Trace, setOverlayRoot } from "../engine/spotlight";
+
+/* Where a mission opens when its first step does not say. One entry per
+   Journey line, so a FINANCE mission never opens on a CRM screen. */
+const MISSION_HOME = {
+    daily: "carecommand", reach: "channelcenter",
+    ops_day: "ops_dashboard", ops_people: "ops_workload",
+    fin_money: "fin_dashboard", fin_owed: "fin_ar_dashboard", fin_docs: "fin_red_invoice",
+};
 import { shellHTML } from "../engine/screens";
 import { morphHTML, calcHTML, pipeHTML, runPipeline } from "../engine/visuals";
 
@@ -487,6 +495,32 @@ export class LearnJourney extends Component {
     /* ---------------------------------------------------------- mission run
        Runs on the PRACTICE REPLICA, never a live screen. A step that says
        "press Junk" would otherwise flag a real number. */
+    /** Which replica screen a mission step is standing on.
+     *
+     *  A step with no `nav` — a decision, a consequence card — does not move
+     *  the learner; it asks a question about where they already are. So the
+     *  screen is the last one the mission navigated to, not a default.
+     *
+     *  This used to fall back to "carecommand", which was invisibly correct
+     *  for the CRM missions (they start there) and wrong for every other
+     *  section: the FINANCE refund decision was being asked over the CRM
+     *  triage wall.
+     */
+    _missionScreen(step) {
+        if (step.nav) {
+            return step.nav;
+        }
+        for (let i = this.state.mStep - 1; i >= 0; i--) {
+            const prev = this.mSteps[i];
+            if (prev && prev.nav) {
+                return prev.nav;
+            }
+        }
+        // Nothing has navigated yet — the mission's own line decides where it
+        // opens, so a FINANCE mission never opens on a CRM screen.
+        return this.mission.screen || MISSION_HOME[this.mission.line] || "carecommand";
+    }
+
     _missionBody() {
         const m = this.mission;
         if (!m) {
@@ -502,7 +536,7 @@ export class LearnJourney extends Component {
         if (!step) {
             return "";
         }
-        const screen = step.nav || m.screen || "carecommand";
+        const screen = this._missionScreen(step);
         const shell = shellHTML(screen, { guided: true, visible: this.visible });
         const pct = Math.round((this.state.mStep + 1) / this.mSteps.length * 100);
         return `${shell}

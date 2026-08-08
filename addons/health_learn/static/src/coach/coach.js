@@ -96,10 +96,17 @@ export class CoachHost extends Component {
         // match. One pass with || inside is order-dependent and wrong here —
         // Lead Analysis is a crm.lead pivot, so it matched Contacts' model
         // matcher and the Coach confidently grounded on the wrong screen.
-        const exact = action ? screens.find((s) =>
+        // Pass 0: the leaf whose OWN action this is. A parent leaf lists its
+        // children's actions so the SIDEBAR can highlight the parent — correct
+        // there, wrong here: it grounded Cash In Transit on AR Management.
+        const own = action ? screens.find((s) =>
+            (action.tag && s.own_tag && s.own_tag === action.tag)
+            || (action.xml_id && s.own_xmlid && s.own_xmlid === action.xml_id)
+        ) : null;
+        const exact = own || (action ? screens.find((s) =>
             (action.tag && (s.action_tags || []).includes(action.tag))
             || (action.xml_id && (s.action_xmlids || []).includes(action.xml_id))
-        ) : null;
+        ) : null);
         const byModel = !exact && action?.res_model
             ? screens.find((s) => (s.models || []).includes(action.res_model))
             : null;

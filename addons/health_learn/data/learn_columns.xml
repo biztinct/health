@@ -469,4 +469,116 @@
         <field name="body">The patient record a visit is booked against — the only place their consents, history and balance live together.</field>
     </record>
 
+    <record id="col_fin_dashboard_billed" model="learn.column">
+        <field name="screen">fin_dashboard</field>
+        <field name="key">billed</field>
+        <field name="sequence">10</field>
+        <field name="label">Billed</field>
+        <field name="body">Everything invoiced this month, paid or not. It does not mean money received.</field>
+    </record>
+
+    <record id="col_fin_dashboard_collected" model="learn.column">
+        <field name="screen">fin_dashboard</field>
+        <field name="key">collected</field>
+        <field name="sequence">20</field>
+        <field name="label">Collected</field>
+        <field name="body">Money actually received and matched to an invoice. A payment received but never matched is not counted here.</field>
+    </record>
+
+    <record id="col_fin_dashboard_outstanding" model="learn.column">
+        <field name="screen">fin_dashboard</field>
+        <field name="key">outstanding</field>
+        <field name="sequence">30</field>
+        <field name="label">Outstanding</field>
+        <field name="body">Billed and not yet paid. Most of it is not late — it is simply not due yet.</field>
+    </record>
+
+    <record id="col_fin_dashboard_overdue" model="learn.column">
+        <field name="screen">fin_dashboard</field>
+        <field name="key">overdue</field>
+        <field name="sequence">40</field>
+        <field name="label">Overdue</field>
+        <field name="body">Outstanding AND past its payment terms. This is the subset you chase; the rest of outstanding is normal trading.</field>
+    </record>
+
+    <record id="col_fin_invoices_state" model="learn.column">
+        <field name="screen">fin_invoices</field>
+        <field name="key">state</field>
+        <field name="sequence">10</field>
+        <field name="label">Invoice state</field>
+        <field name="body">Draft means editable and not yet real. Posted means it has a number from the legal sequence and can only be corrected by another document.</field>
+    </record>
+
+    <record id="col_fin_invoices_paystatus" model="learn.column">
+        <field name="screen">fin_invoices</field>
+        <field name="key">paystatus</field>
+        <field name="sequence">20</field>
+        <field name="label">Payment status</field>
+        <field name="body">Whether a matched payment covers it. An invoice can be posted, correct and unpaid — that is not an error state.</field>
+    </record>
+
+    <record id="col_fin_invoices_duedate" model="learn.column">
+        <field name="screen">fin_invoices</field>
+        <field name="key">duedate</field>
+        <field name="sequence">30</field>
+        <field name="label">Due date</field>
+        <field name="body">Derived from the client's payment terms, not from the invoice date. This is the date that decides overdue.</field>
+    </record>
+
+    <record id="col_fin_red_invoice_redinvoice" model="learn.column">
+        <field name="screen">fin_red_invoice</field>
+        <field name="key">redinvoice</field>
+        <field name="sequence">10</field>
+        <field name="label">Red invoice</field>
+        <field name="body">The Vietnamese tax document issued through Viettel. Issued on request, so most invoices legitimately do not have one.</field>
+    </record>
+
+    <record id="col_fin_red_invoice_period" model="learn.column">
+        <field name="screen">fin_red_invoice</field>
+        <field name="key">period</field>
+        <field name="sequence">20</field>
+        <field name="label">Filing period</field>
+        <field name="body">The window in which a red invoice can still be cancelled and reissued. Once it closes, corrections become credit notes.</field>
+    </record>
+
+    <record id="col_fin_refund_prepaid" model="learn.column">
+        <field name="screen">fin_refund</field>
+        <field name="key">prepaid</field>
+        <field name="sequence">10</field>
+        <field name="label">Prepaid credit</field>
+        <field name="body">Unused money the client paid in advance, returned to them. Nothing was wrong; they simply did not use it.</field>
+    </record>
+
+    <record id="col_fin_refund_prorata" model="learn.column">
+        <field name="screen">fin_refund</field>
+        <field name="key">prorata</field>
+        <field name="sequence">20</field>
+        <field name="label">Package pro-rata</field>
+        <field name="body">An unfinished course refunded against the visits actually delivered. Count the visits; the reason for stopping does not change the arithmetic.</field>
+    </record>
+
+    <record id="col_fin_refund_reversal" model="learn.column">
+        <field name="screen">fin_refund</field>
+        <field name="key">reversal</field>
+        <field name="sequence">30</field>
+        <field name="label">Transaction reversal</field>
+        <field name="body">A specific payment that should never have been taken, undone. This is a correction, not a refund — nothing is being given back.</field>
+    </record>
+
+    <record id="col_fin_cash_transit_intransit" model="learn.column">
+        <field name="screen">fin_cash_transit</field>
+        <field name="key">intransit</field>
+        <field name="sequence">10</field>
+        <field name="label">Cash in transit</field>
+        <field name="body">Cash collected on visits that has not reached the bank yet. Operations reconciles it at end of shift; Finance receives a balanced figure.</field>
+    </record>
+
+    <record id="col_fin_ar_dashboard_ageing" model="learn.column">
+        <field name="screen">fin_ar_dashboard</field>
+        <field name="key">ageing</field>
+        <field name="sequence">10</field>
+        <field name="label">Ageing</field>
+        <field name="body">How long an overdue amount has been overdue. Age matters more than size: the biggest one usually has someone on it, the oldest usually does not.</field>
+    </record>
+
 </odoo>

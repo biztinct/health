@@ -5,6 +5,216 @@
 <!-- Lessons, steps and understanding checks. -->
 <odoo>
 
+    <record id="lesson_f1" model="learn.lesson">
+        <field name="key">F1</field>
+        <field name="station_id" ref="station_fin_invoices"/>
+        <field name="sequence">10</field>
+        <field name="name">Invoices</field>
+        <field name="goal">Sixty-three invoices, and the one action on them that cannot be undone.</field>
+        <field name="duration_min">7</field>
+    </record>
+
+    <record id="lesson_f1_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_f1"/>
+        <field name="sequence">10</field>
+        <field name="kicker">ONE MONTH</field>
+        <field name="title">Sixty-three invoices, and only fifteen of them are your job</field>
+        <field name="body">&lt;b&gt;August 2026&lt;/b&gt; in Hà Nội: &lt;b&gt;63 invoices&lt;/b&gt;, &lt;b&gt;25,850,000 ₫&lt;/b&gt; billed. &lt;b&gt;48&lt;/b&gt; are paid and closed. The &lt;b&gt;15&lt;/b&gt; that are not are the only rows on this screen that need anything from you.</field>
+        <field name="tip">The list is grouped by service here so the total is readable. In the product it is one row per invoice.</field>
+        <field name="screen">fin_invoices</field>
+        <field name="anchor">fi-list</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f1_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_f1"/>
+        <field name="sequence">20</field>
+        <field name="kicker">TWO NUMBERS, NOT ONE</field>
+        <field name="title">Outstanding is not overdue</field>
+        <field name="body">&lt;b&gt;6,150,000 ₫&lt;/b&gt; is outstanding — billed and not yet paid. &lt;b&gt;1,850,000 ₫&lt;/b&gt; of that is &lt;b&gt;overdue&lt;/b&gt; — billed, not paid, and past its terms. The first number is how the business works. The second is the only one you chase.</field>
+        <field name="tip">Reading outstanding as if it were overdue is how an accountant ends up ringing clients who are not late.</field>
+        <field name="screen">fin_dashboard</field>
+        <field name="anchor">fd-outstanding</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f1_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_f1"/>
+        <field name="sequence">30</field>
+        <field name="kicker">FOUR BUTTONS</field>
+        <field name="title">Post, Register payment, Credit note, Reset to draft</field>
+        <field name="body">&lt;b&gt;Post&lt;/b&gt; turns a working document into an accounting one. &lt;b&gt;Register payment&lt;/b&gt; records money arriving. &lt;b&gt;Credit note&lt;/b&gt; issues a second document that reverses the first. &lt;b&gt;Reset to draft&lt;/b&gt; undoes the posting — and it is the one worth understanding before you press it.</field>
+        <field name="screen">fin_invoices</field>
+        <field name="anchor">fi-actions</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f1_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_f1"/>
+        <field name="sequence">40</field>
+        <field name="kicker">THE LINE</field>
+        <field name="title">Posting takes a number that belongs to a sequence</field>
+        <field name="body">Before posting, an invoice is editable and means nothing outside this screen. Posting assigns it a number from a legal sequence, and that sequence must have no gaps. The document now exists whether or not it was right.</field>
+        <field name="consequence">Scope: this invoice, the sequence it drew its number from, and the month's reported totals. Reversible: not by deleting it — a posted invoice is corrected by a second document, a credit note, which is itself part of the record. Check first: the client, the amount and the service description, because those are the three things a credit note exists to fix.</field>
+        <field name="screen">fin_invoices</field>
+        <field name="anchor">fi-post</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f1_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_f1"/>
+        <field name="sequence">50</field>
+        <field name="kicker">THE QUIET FAILURE</field>
+        <field name="title">A payment nobody matched is worse than one nobody received</field>
+        <field name="body">An unmatched payment shows as collected on the Dashboard and leaves the invoice sitting unpaid on the client's record. Nothing looks broken from either side — which is how a client gets chased for money they already sent.</field>
+        <field name="tip">If a client insists they paid, this is the screen to open before you argue.</field>
+        <field name="screen">fin_account_payment</field>
+        <field name="anchor">fap-match</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f1_step_05" model="learn.step">
+        <field name="lesson_id" ref="lesson_f1"/>
+        <field name="sequence">60</field>
+        <field name="kicker">SOMEBODY ELSE'S JOB</field>
+        <field name="title">1,350,000 ₫ is in a nurse's pocket, and that is not your problem</field>
+        <field name="body">Cash collected on visits sits in transit until it is banked. &lt;b&gt;Operations&lt;/b&gt; reconciles it at end of shift — the same figure appears on their Collections screen. Finance receives a balanced number and never chases an individual nurse.</field>
+        <field name="tip">This is one number seen from two departments. Knowing whose job it is saves the phone call.</field>
+        <field name="screen">fin_cash_transit</field>
+        <field name="anchor">fct-owner</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f1_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_f1"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">You posted an invoice this morning and have just noticed the service description is wrong. The filing period is still open. What do you do?</field>
+    </record>
+
+    <record id="lesson_f1_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_f1_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">Correct it with a document against the invoice, and check whether a red invoice was issued for it.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. A posted invoice is corrected by a second document, never by editing the first. The red invoice question matters because if one was issued, the correction is also a filing event and not just an accounting one.</field>
+    </record>
+
+    <record id="lesson_f1_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_f1_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Reset it to draft, fix the description, and post it again — the period is open, so nothing is lost.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. An open period makes this technically possible and does not make it correct: the invoice was already issued to a client, and if a red invoice went with it, the tax document and your books now disagree. The correction belongs on the record, not hidden by re-posting.</field>
+    </record>
+
+    <record id="lesson_f1_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_f1_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Leave it — the amount is right and the description is only wording.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. The service description is one of the three things a red invoice may be cancelled and reissued for, which tells you the tax authority does not treat it as wording. It is what the client was billed for.</field>
+    </record>
+
+    <record id="lesson_f2" model="learn.lesson">
+        <field name="key">F2</field>
+        <field name="station_id" ref="station_fin_red_invoice"/>
+        <field name="sequence">10</field>
+        <field name="name">Red Invoice Log</field>
+        <field name="goal">Vietnamese tax invoices — the most consequential screen in the product.</field>
+        <field name="duration_min">7</field>
+    </record>
+
+    <record id="lesson_f2_step_00" model="learn.step">
+        <field name="lesson_id" ref="lesson_f2"/>
+        <field name="sequence">10</field>
+        <field name="kicker">NOT EVERY INVOICE</field>
+        <field name="title">41 of 63, because it is issued on request</field>
+        <field name="body">A red invoice is a Vietnamese tax document, issued through Viettel V-Invoice. It is not created automatically for every sale — &lt;b&gt;41&lt;/b&gt; of this month's &lt;b&gt;63&lt;/b&gt; invoices have one, because those are the clients who asked.</field>
+        <field name="tip">So “this invoice has no red invoice” is usually correct, not a missing step.</field>
+        <field name="screen">fin_red_invoice</field>
+        <field name="anchor">fri-issued</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f2_step_01" model="learn.step">
+        <field name="lesson_id" ref="lesson_f2"/>
+        <field name="sequence">20</field>
+        <field name="kicker">THE RULE</field>
+        <field name="title">Three reasons, one window</field>
+        <field name="body">Cancel and reissue only when the &lt;b&gt;buyer details&lt;/b&gt;, the &lt;b&gt;amount&lt;/b&gt; or the &lt;b&gt;service description&lt;/b&gt; are wrong, and only &lt;b&gt;inside the current filing period&lt;/b&gt;. Once the period closes, the route is a credit note instead.</field>
+        <field name="tip">Anything not on that list of three is not a cancellation reason, however inconvenient the invoice is.</field>
+        <field name="screen">fin_red_invoice</field>
+        <field name="anchor">fri-rule</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f2_step_02" model="learn.step">
+        <field name="lesson_id" ref="lesson_f2"/>
+        <field name="sequence">30</field>
+        <field name="kicker">A FILING, NOT AN EDIT</field>
+        <field name="title">This button talks to the tax authority</field>
+        <field name="body">Cancelling calls Viettel and voids a document that has already been reported. It is not a local change that you can decide to make and then reconsider — the cancellation is itself an event on your filing record.</field>
+        <field name="consequence">Scope: a live Vietnamese tax document, the client who holds a copy of it, and your filing for this period. Reversible: no — the reissued invoice is a new document with a new number, and both the cancellation and the reissue are on the record. Check first: that the reason is buyer details, amount or service description, and that the period is still open. If either is not true, this is the wrong button.</field>
+        <field name="screen">fin_red_invoice</field>
+        <field name="anchor">fri-cancel</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f2_step_03" model="learn.step">
+        <field name="lesson_id" ref="lesson_f2"/>
+        <field name="sequence">40</field>
+        <field name="kicker">WHO MAY PRESS IT</field>
+        <field name="title">Not everyone who can open the invoice</field>
+        <field name="body">Cancelling a red invoice is restricted to the tax-compliance group. Being able to read an invoice, post it or take a payment on it does not carry the right to void its tax document — those are deliberately different permissions.</field>
+        <field name="tip">If the button is not there for you, that is the design working, not a fault to report.</field>
+        <field name="screen">fin_red_invoice</field>
+        <field name="anchor">fri-actions</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f2_step_04" model="learn.step">
+        <field name="lesson_id" ref="lesson_f2"/>
+        <field name="sequence">50</field>
+        <field name="kicker">ONE THIS MONTH</field>
+        <field name="title">A cancellation count that stays low is the healthy state</field>
+        <field name="body">One cancellation in a month of 41 issued documents is normal. A number that climbs is not a red-invoice problem — it means invoices are being posted before somebody checks the buyer details, and the fix is upstream on the Invoices screen.</field>
+        <field name="screen">fin_red_invoice</field>
+        <field name="anchor">fri-cancelled</field>
+        <field name="visual">none</field>
+    </record>
+
+    <record id="lesson_f2_quiz" model="learn.quiz">
+        <field name="lesson_id" ref="lesson_f2"/>
+        <field name="sequence">10</field>
+        <field name="kind">choice</field>
+        <field name="prompt">A client rings in September about an August red invoice: the company tax code on it is wrong. August is closed. What is the route?</field>
+    </record>
+
+    <record id="lesson_f2_quiz_opt_0" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_f2_quiz"/>
+        <field name="sequence">10</field>
+        <field name="label">A credit note, because the filing period has closed — cancellation was only available while August was open.</field>
+        <field name="is_correct" eval="True"/>
+        <field name="feedback">Yes. Wrong buyer details is a valid reason, but the window is what decides the route. Inside the period it is a cancel-and-reissue; once the period is closed the correction has to be a document that sits on top of what was already filed.</field>
+    </record>
+
+    <record id="lesson_f2_quiz_opt_1" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_f2_quiz"/>
+        <field name="sequence">20</field>
+        <field name="label">Cancel and reissue it — a wrong tax code is one of the three permitted reasons.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. The reason is valid and the timing is not, and both have to be true. August has been filed; voiding a document inside a closed period reopens something that was already reported.</field>
+    </record>
+
+    <record id="lesson_f2_quiz_opt_2" model="learn.quiz.option">
+        <field name="quiz_id" ref="lesson_f2_quiz"/>
+        <field name="sequence">30</field>
+        <field name="label">Ask the client to accept it, since the amount and the service are both correct.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="feedback">Let's rethink that. The tax code is who the document belongs to — the client cannot use an invoice issued to the wrong entity, so this is not a small discrepancy they can absorb. There is a correct route; it is just not a cancellation.</field>
+    </record>
+
     <record id="lesson_l1" model="learn.lesson">
         <field name="key">L1</field>
         <field name="station_id" ref="station_carecommand"/>

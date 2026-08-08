@@ -21,6 +21,11 @@ msgid "07:30"
 msgstr "07:30"
 
 #. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f1_step_05
+msgid "1,350,000 ₫ is in a nurse's pocket, and that is not your problem"
+msgstr "1.350.000 ₫ đang trong túi một điều dưỡng, và đó không phải việc của bạn"
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l1_step_03
 msgid "110 is arithmetic, not opinion"
 msgstr "110 là phép cộng, không phải nhận định"
@@ -75,6 +80,32 @@ msgstr ""
 "34 chính là dòng Website bạn sẽ thấy ở Phân tích khách tiềm năng. Nếu chúng khác nhau, một trong hai đang lọc theo khoảng thời gian khác."
 
 #. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f2_step_00
+msgid "41 of 63, because it is issued on request"
+msgstr "41 trên 63, vì hóa đơn đỏ được phát hành theo yêu cầu"
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_fm1_step_05
+msgid ""
+"41 of the month's 63 invoices do. If one of these is among them, correcting it is a filing event and not only an accounting one — and the period has to still be open."
+msgstr ""
+"41 trên 63 hóa đơn của tháng có hóa đơn đỏ. Nếu một trong các khoản này nằm trong số đó, việc sửa là một sự kiện kê khai chứ không chỉ là nghiệp vụ kế toán — và kỳ kê khai phải còn mở."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_fm1_step_00
+msgid ""
+"6,150,000 ₫ outstanding, of which 1,850,000 ₫ is overdue. Money going back out changes the first number and not the second — knowing which is which is the whole job here."
+msgstr ""
+"Còn phải thu 6.150.000 ₫, trong đó 1.850.000 ₫ đã quá hạn. Tiền chuyển trả lại làm thay đổi con số thứ nhất chứ không phải con số thứ hai — phân biệt được hai con số này chính là công việc ở đây."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_ar_dashboard
+msgid ""
+"6,150,000 ₫ owed sounds like one problem. Split by age it is fifteen invoices, four of which have passed their terms and one of which is 47 days old — and only that last group needs a phone call today."
+msgstr ""
+"Còn phải thu 6.150.000 ₫ nghe như một vấn đề. Tách theo tuổi nợ thì đó là mười lăm hóa đơn, bốn hóa đơn đã quá hạn và một hóa đơn đã 47 ngày — và chỉ nhóm cuối mới cần gọi điện hôm nay."
+
+#. module: health_learn
 #: model:learn.step.line,label:health_learn.lesson_l2_step_04_line_03
 msgid "8 conversations move to a desk 1,700 km away that has never met these families"
 msgstr "8 cuộc hội thoại chuyển sang bàn cách 1.700 km, nơi chưa từng gặp các gia đình này"
@@ -85,6 +116,13 @@ msgid ""
 "<b>4</b> to-dos, <b>3</b> calls, <b>1</b> meeting, <b>1</b> email — nine in total. That is exactly the Dashboard's <b>Pending Follow-ups</b> card. If the two ever disagree, an activity was closed without the contact's status being updated."
 msgstr ""
 "<b>4</b> việc cần làm, <b>3</b> cuộc gọi, <b>1</b> cuộc họp, <b>1</b> email — tổng cộng chín. Đó chính là thẻ <b>Đang chờ theo dõi</b> trên Bảng điều khiển. Nếu hai nơi lệch nhau, tức là một hoạt động đã được đóng mà chưa cập nhật trạng thái liên hệ."
+
+#. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f1_step_01
+msgid ""
+"<b>6,150,000 ₫</b> is outstanding — billed and not yet paid. <b>1,850,000 ₫</b> of that is <b>overdue</b> — billed, not paid, and past its terms. The first number is how the business works. The second is the only one you chase."
+msgstr ""
+"<b>6.150.000 ₫</b> là còn phải thu — đã xuất hóa đơn và chưa được thanh toán. Trong đó <b>1.850.000 ₫</b> là <b>quá hạn</b> — đã xuất, chưa thu, và đã qua hạn thanh toán. Con số thứ nhất là cách vận hành bình thường. Con số thứ hai mới là thứ bạn phải theo."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l3_step_03
@@ -99,6 +137,13 @@ msgid ""
 "<b>Assign</b> puts a person on it. <b>Reschedule</b> moves it in time and keeps everything else. <b>Start service</b> moves it to In Progress. <b>Cancel</b> ends it — the visit, the slot and the revenue together."
 msgstr ""
 "<b>Phân công</b> gán người thực hiện. <b>Đổi lịch</b> dời thời gian và giữ nguyên mọi thứ khác. <b>Bắt đầu dịch vụ</b> chuyển sang Đang thực hiện. <b>Hủy</b> kết thúc tất cả — lượt thăm khám, khung giờ và cả doanh thu."
+
+#. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f1_step_00
+msgid ""
+"<b>August 2026</b> in Hà Nội: <b>63 invoices</b>, <b>25,850,000 ₫</b> billed. <b>48</b> are paid and closed. The <b>15</b> that are not are the only rows on this screen that need anything from you."
+msgstr ""
+"<b>Tháng 8 năm 2026</b> tại Hà Nội: <b>63 hóa đơn</b>, đã xuất <b>25.850.000 ₫</b>. <b>48</b> hóa đơn đã thanh toán và đóng lại. <b>15</b> hóa đơn còn lại là những dòng duy nhất trên màn hình này cần bạn xử lý."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_o1_step_01
@@ -157,6 +202,13 @@ msgstr ""
 "<b>Hoàn tác một phần:</b> “Thư rác?” (trạng thái có thể đặt lại, nhưng số điện thoại vẫn bị ghi nhận) và đặt lịch (lịch hẹn có thể hủy, nhưng hồ sơ khách hàng bị khớp nhầm thì đã bị ghi vào rồi)."
 
 #. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f1_step_02
+msgid ""
+"<b>Post</b> turns a working document into an accounting one. <b>Register payment</b> records money arriving. <b>Credit note</b> issues a second document that reverses the first. <b>Reset to draft</b> undoes the posting — and it is the one worth understanding before you press it."
+msgstr ""
+"<b>Ghi sổ</b> biến một chứng từ đang soạn thành chứng từ kế toán. <b>Ghi nhận thanh toán</b> ghi lại khoản tiền đã về. <b>Hóa đơn điều chỉnh</b> phát hành một chứng từ thứ hai để đảo chứng từ thứ nhất. <b>Về nháp</b> hoàn tác việc ghi sổ — và đây là nút đáng hiểu rõ trước khi bấm."
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l1_step_02
 msgid ""
 "<b>Trần Mỹ Linh</b> messaged the Hà Nội Zalo OA at 07:42 about her mother, <b>Nguyễn Thị Hoa</b> (78). Two unread messages, one missed call at 07:55, and Hoa has a wound-care visit booked for <b>16:30 today</b>. Score: <b>110</b>."
@@ -183,6 +235,11 @@ msgid "A CRM Manager, or the Owner."
 msgstr "Quản lý CRM, hoặc Chủ sở hữu."
 
 #. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f2_step_02
+msgid "A FILING, NOT AN EDIT"
+msgstr "MỘT LẦN KÊ KHAI, KHÔNG PHẢI MỘT LẦN SỬA"
+
+#. module: health_learn
 #: model:learn.quiz,prompt:health_learn.lesson_l6_quiz
 msgid ""
 "A Facebook comment arrives: “có nhận chăm sóc tại nhà không ạ?” with no phone number and no linked profile. Convert is greyed out. What is the right move?"
@@ -205,6 +262,11 @@ msgid ""
 "A booking points at a client. If the client is wrong or duplicated, the visit, the clinical note and the invoice all end up in the wrong place together."
 msgstr ""
 "Một lịch hẹn trỏ tới một khách hàng. Nếu khách hàng sai hoặc bị trùng, thì lượt thăm khám, ghi chú lâm sàng và hóa đơn cùng nhau đi nhầm chỗ."
+
+#. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f2_step_04
+msgid "A cancellation count that stays low is the healthy state"
+msgstr "Số lần hủy giữ ở mức thấp mới là trạng thái lành mạnh"
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_cancel_vs_reschedule_b020
@@ -237,6 +299,13 @@ msgid ""
 "A channel shown as connectable is only offered when this deployment actually has an adapter and the tenant has credentials. If nothing is configured yet, the console says nothing is configured — it never draws a Connect button that could only fail."
 msgstr ""
 "Một kênh được hiển thị là có thể kết nối chỉ khi bản triển khai này thật sự có bộ chuyển đổi và đơn vị có thông tin xác thực. Nếu chưa cấu hình gì, bảng điều khiển sẽ nói là chưa cấu hình gì — nó không bao giờ vẽ ra một nút Kết nối chắc chắn sẽ thất bại."
+
+#. module: health_learn
+#: model:learn.quiz,prompt:health_learn.lesson_f2_quiz
+msgid ""
+"A client rings in September about an August red invoice: the company tax code on it is wrong. August is closed. What is the route?"
+msgstr ""
+"Một khách hàng gọi vào tháng 9 về hóa đơn đỏ của tháng 8: mã số thuế công ty trên đó bị sai. Tháng 8 đã đóng. Xử lý thế nào?"
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_clinical_b020
@@ -272,6 +341,12 @@ msgstr ""
 "Một cuộc hội thoại có thể đã đóng trong khi người đó vẫn cần điều gì đó. <b>Liên hệ</b> mới là thứ Bảng điều khiển đếm và là thứ nhân viên tiếp theo kế thừa, và các thẻ này là vòng đời của nó."
 
 #. module: health_learn
+#: model:learn.quiz.option,label:health_learn.lesson_f2_quiz_opt_0
+msgid ""
+"A credit note, because the filing period has closed — cancellation was only available while August was open."
+msgstr "Hóa đơn điều chỉnh, vì kỳ kê khai đã đóng — chỉ được hủy khi tháng 8 còn mở."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_kpis_b040
 msgid ""
 "A falling Spam Rate is not automatically good news: it can also mean nobody is marking spam, which inflates the denominator and quietly depresses conversion."
@@ -291,11 +366,55 @@ msgid "A lost booking without a reason is invisible"
 msgstr "Mất lịch mà không ghi lý do là vô hình"
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_access_b020
+msgid ""
+"A missing button is usually the design working rather than a fault to report. Access is granted by the Owner against your role, not per screen."
+msgstr ""
+"Một nút không xuất hiện thường là do thiết kế đang hoạt động đúng, không phải lỗi cần báo. Quyền truy cập do Chủ sở hữu cấp theo vai trò của bạn, không theo từng màn hình."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_packages
+msgid ""
+"A package is money taken before the service is delivered, so it is a liability until the visits happen. That is why an unfinished one is refunded pro-rata rather than argued about."
+msgstr ""
+"Một gói là khoản tiền thu trước khi cung cấp dịch vụ, nên nó là một khoản phải trả cho tới khi các buổi được thực hiện. Đó là lý do một gói chưa hoàn thành được hoàn theo tỷ lệ chứ không phải đem ra tranh cãi."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_check_01
+msgid "A package refund is pro-rata against visits delivered — count them, do not estimate."
+msgstr ""
+"Hoàn tiền gói dịch vụ tính theo tỷ lệ trên số buổi đã thực hiện — hãy đếm, đừng ước lượng."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_account_payment
+msgid ""
+"A payment against the client instead of the invoice leaves the balance right and the invoice open — so the client is chased for money they have already paid."
+msgstr ""
+"Ghi nhận vào khách hàng thay vì vào hóa đơn sẽ khiến số dư đúng nhưng hóa đơn vẫn mở — và khách hàng bị đòi khoản họ đã trả rồi."
+
+#. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f1_step_04
+msgid "A payment nobody matched is worse than one nobody received"
+msgstr "Một khoản thu chưa khớp còn tệ hơn một khoản chưa nhận"
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_fin_refund_route_b020_s02
+msgid "A payment that should never have existed → transaction reversal."
+msgstr "Một khoản thanh toán lẽ ra không tồn tại → đảo giao dịch."
+
+#. module: health_learn
 #: model:learn.column,body:health_learn.col_carecommand_watch
 msgid ""
 "A phrase on the clinic's watch list appeared in an inbound message. It raises the queue position; it says nothing about what is wrong with the patient."
 msgstr ""
 "Một cụm từ trong danh sách cảnh báo của phòng khám đã xuất hiện trong tin nhắn đến. Nó nâng vị trí trong hàng đợi; nó không nói gì về tình trạng bệnh nhân."
+
+#. module: health_learn
+#: model:learn.mission,summary:health_learn.mission_fm2
+msgid ""
+"A posted invoice with a wrong tax code, a red invoice already issued against it, and a filing period about to close."
+msgstr ""
+"Một hóa đơn đã ghi sổ với mã số thuế sai, đã phát hành hóa đơn đỏ cho nó, và kỳ kê khai sắp đóng."
 
 #. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l5_step_01
@@ -317,6 +436,32 @@ msgstr ""
 "Một hàng đợi không ai tìm thấy là hàng đợi không tồn tại. Đây là những người thật đã liên hệ và nếu không có màn hình này sẽ biến mất giữa các hệ thống."
 
 #. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_vat_log
+msgid "A read-only record of what was posted."
+msgstr "Bản ghi chỉ đọc về những gì đã ghi sổ."
+
+#. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f2_step_00
+msgid ""
+"A red invoice is a Vietnamese tax document, issued through Viettel V-Invoice. It is not created automatically for every sale — <b>41</b> of this month's <b>63</b> invoices have one, because those are the clients who asked."
+msgstr ""
+"Hóa đơn đỏ là chứng từ thuế của Việt Nam, phát hành qua Viettel V-Invoice. Nó không được tạo tự động cho mọi giao dịch — <b>41</b> trên <b>63</b> hóa đơn của tháng này có hóa đơn đỏ, vì đó là những khách hàng đã yêu cầu."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_red_invoice
+msgid ""
+"A red invoice is a tax document, not a record in this system. Issuing it files it; cancelling it is a filing event too, and the buyer may already be holding a copy."
+msgstr ""
+"Hóa đơn đỏ là chứng từ thuế, không phải một bản ghi trong hệ thống này. Phát hành là đã kê khai; hủy cũng là một hành vi kê khai, và người mua có thể đã cầm bản sao trong tay."
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_refund_reversal
+msgid ""
+"A specific payment that should never have been taken, undone. This is a correction, not a refund — nothing is being given back."
+msgstr ""
+"Một khoản thanh toán lẽ ra không được thu, nay được hủy bỏ. Đây là khoản điều chỉnh, không phải hoàn tiền — không có gì được trả lại cả."
+
+#. module: health_learn
 #: model:learn.mission.step,detail:health_learn.mission_m1_step_04
 msgid "A suggested wording is loaded. Read the consequence card before it goes."
 msgstr "Đã có sẵn một mẫu câu. Hãy đọc thẻ hệ quả trước khi gửi."
@@ -325,6 +470,12 @@ msgstr "Đã có sẵn một mẫu câu. Hãy đọc thẻ hệ quả trước k
 #: model:learn.step,title:health_learn.lesson_l7_step_02
 msgid "A touchpoint joins by phone number, not by channel"
 msgstr "Điểm chạm được nối theo số điện thoại, không phải theo kênh"
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_fm1_step_06
+msgid "A trail that explains itself is the reversal. In this section nothing else is."
+msgstr ""
+"Một dấu vết tự giải thích được chính là cách hoàn tác. Trong bộ phận này không còn cách nào khác."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_carecommand_urgency
@@ -346,9 +497,71 @@ msgid "A watch phrase moved this to the top"
 msgstr "Một cụm từ cảnh báo đã đẩy việc này lên đầu"
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_ar_dashboard
+#: model:learn.station,name:health_learn.station_fin_ar_dashboard
+msgid "AR Dashboard"
+msgstr "Bảng công nợ"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_ar_management
+#: model:learn.station,name:health_learn.station_fin_ar_management
+msgid "AR Management"
+msgstr "Quản lý công nợ"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_ar_transactions
+#: model:learn.station,name:health_learn.station_fin_ar_transactions
+msgid "AR Transactions"
+msgstr "Giao dịch công nợ"
+
+#. module: health_learn
 #: model:learn.column,label:health_learn.col_channelcenter_account
 msgid "Account / Resource"
 msgstr "Tài khoản / Tài nguyên"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_account_payment
+#: model:learn.station,name:health_learn.station_fin_account_payment
+msgid "Account Payment"
+msgstr "Thanh toán tài khoản"
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_unmatched_b030
+msgid "Account Payment, and the AR Transactions trail behind the balance."
+msgstr "Màn hình Thanh toán tài khoản, và dấu vết Giao dịch công nợ phía sau số dư."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_fin_account_payment
+#: model:learn.station,outline_prereq:health_learn.station_fin_ar_dashboard
+#: model:learn.station,outline_prereq:health_learn.station_fin_ar_management
+#: model:learn.station,outline_prereq:health_learn.station_fin_ar_transactions
+#: model:learn.station,outline_prereq:health_learn.station_fin_bhyt
+#: model:learn.station,outline_prereq:health_learn.station_fin_overdue
+#: model:learn.station,outline_prereq:health_learn.station_fin_packages
+#: model:learn.station,outline_prereq:health_learn.station_fin_payments
+#: model:learn.station,outline_prereq:health_learn.station_fin_refund
+#: model:learn.station,outline_prereq:health_learn.station_fin_vat_log
+msgid "Accountant or Owner."
+msgstr "Vai trò Kế toán hoặc Chủ sở hữu."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_fin_dashboard
+msgid "Accountant or Owner. An Operations Manager sees Invoices but not this screen."
+msgstr ""
+"Vai trò Kế toán hoặc Chủ sở hữu. Quản lý vận hành thấy màn hình Hóa đơn nhưng không thấy màn hình này."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_fin_cash_transit
+msgid "Accountant or Owner. The collecting happens in Operations, on their own screen."
+msgstr ""
+"Vai trò Kế toán hoặc Chủ sở hữu. Việc thu tiền diễn ra ở bộ phận Vận hành, trên màn hình của họ."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_fin_invoices
+msgid ""
+"Accountant, Owner — and the Operations Manager, who can see invoices because a booking question is often an invoice question."
+msgstr ""
+"Vai trò Kế toán, Chủ sở hữu — và Quản lý vận hành, người được xem hóa đơn vì một câu hỏi về lịch hẹn thường là câu hỏi về hóa đơn."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_actionrequired
@@ -397,6 +610,11 @@ msgid "After:"
 msgstr "Sau khi:"
 
 #. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_ar_dashboard_ageing
+msgid "Ageing"
+msgstr "Độ trễ"
+
+#. module: health_learn
 #: model:learn.quiz.option,label:health_learn.lesson_l8_quiz_opt_1
 msgid "Agree — one booking out of six is a poor return and the volume is negligible."
 msgstr "Đồng ý — 1 lịch hẹn trên 6 yêu cầu là hiệu quả kém và lượng thì không đáng kể."
@@ -432,6 +650,13 @@ msgid "All surfaces"
 msgstr "Tất cả bề mặt"
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_refund_route_b030
+msgid ""
+"All three move money the same direction and for the same client, so a wrong route still balances the cash and not the books. AR Management stays highlighted for all three of its children — the menu will not tell you which screen you are on."
+msgstr ""
+"Cả ba đều làm tiền đi cùng một hướng và cho cùng một khách hàng, nên chọn sai lối vẫn khớp tiền mặt nhưng không khớp sổ sách. Quản lý công nợ vẫn được tô sáng cho cả ba mục con — thanh menu sẽ không cho bạn biết bạn đang ở màn hình nào."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_catchmentq_b010
 msgid ""
 "Almost always the <b>catchment area</b>. Every count and every list on these screens is filtered to your area, and for channel traffic the area comes from the <b>channel account the message arrived on</b> — one Zalo Official Account per area."
@@ -447,6 +672,13 @@ msgstr "Tôi có sắp nói điều gì thuộc lâm sàng mà lẽ ra điều d
 #: model:learn.column,label:health_learn.col_ops_collections_amount
 msgid "Amount held"
 msgstr "Số tiền đang giữ"
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_fm1_step_03
+msgid ""
+"An 8-visit physiotherapy course at 4,400,000 ₫, stopped after 4. A package is money taken before the work is done, so the unused half is a liability the clinic still owes."
+msgstr ""
+"Liệu trình vật lý trị liệu 8 buổi giá 4.400.000 ₫, dừng sau 4 buổi. Gói dịch vụ là tiền thu trước khi công việc được thực hiện, nên nửa chưa dùng là khoản phòng khám vẫn còn nợ."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l5_step_03
@@ -468,6 +700,32 @@ msgstr ""
 "Bản ghi bất biến về đúng những gì đã đến — một bình luận Facebook không có số điện thoại, một webhook không có danh tính. Bạn chuyển đổi hoặc bỏ qua; bạn không sửa được."
 
 #. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_payments
+msgid ""
+"An invoice is a claim; a payment is a fact. This is the screen that turns one into the other, and the difference between them is what the AR screens chase."
+msgstr ""
+"Hóa đơn là một yêu cầu đòi tiền; thanh toán là sự thật. Đây là màn hình biến cái này thành cái kia, và phần chênh lệch giữa chúng chính là thứ các màn hình công nợ theo đuổi."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_fin_refund_route_b020_s01
+msgid "An unfinished course of visits → package, pro-rata against visits delivered."
+msgstr "Liệu trình chưa hoàn tất → gói dịch vụ, theo tỷ lệ số buổi đã thực hiện."
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_refund_prorata
+msgid ""
+"An unfinished course refunded against the visits actually delivered. Count the visits; the reason for stopping does not change the arithmetic."
+msgstr ""
+"Liệu trình chưa hoàn tất được hoàn theo số buổi đã thực hiện. Hãy đếm số buổi; lý do dừng không làm thay đổi phép tính."
+
+#. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f1_step_04
+msgid ""
+"An unmatched payment shows as collected on the Dashboard and leaves the invoice sitting unpaid on the client's record. Nothing looks broken from either side — which is how a client gets chased for money they already sent."
+msgstr ""
+"Một khoản thu chưa khớp sẽ hiển thị là đã thu trên Bảng tài chính, trong khi hóa đơn vẫn nằm đó ở trạng thái chưa thanh toán trên hồ sơ khách hàng. Nhìn từ phía nào cũng không thấy có gì sai — và đó là cách một khách hàng bị đòi khoản tiền họ đã trả."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_ops_family_mistake_0
 msgid ""
 "Answering a clinical question because it was asked kindly. Timing is yours to answer; condition is not."
@@ -480,6 +738,13 @@ msgid ""
 "Answering a clinical question yourself, even a small one, is the single fastest way this desk causes harm. Speed is met by escalating fast, not by answering."
 msgstr ""
 "Tự trả lời một câu hỏi lâm sàng, dù nhỏ, là cách nhanh nhất khiến bàn làm việc này gây hại. Yêu cầu về tốc độ được đáp ứng bằng chuyển cấp nhanh, không phải bằng việc trả lời."
+
+#. module: health_learn
+#: model:learn.step,tip:health_learn.lesson_f2_step_01
+msgid ""
+"Anything not on that list of three is not a cancellation reason, however inconvenient the invoice is."
+msgstr ""
+"Bất cứ điều gì không nằm trong ba lý do đó đều không phải lý do để hủy, dù hóa đơn có gây bất tiện tới đâu."
 
 #. module: health_learn
 #: model:learn.mission.option,label:health_learn.mission_om1_step_02_opt_approve
@@ -541,6 +806,12 @@ msgstr ""
 "Duyệt mà không mở bảng phân công cho những ngày đó. Việc duyệt không dời bất kỳ lượt nào — nó chỉ khiến người đó không còn khả dụng cho các lượt vẫn đang được đặt."
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_account_payment
+#: model:learn.station,outline_when:health_learn.station_fin_account_payment
+msgid "As payments arrive."
+msgstr "Ngay khi có khoản thanh toán về."
+
+#. module: health_learn
 #: model:learn.screen,next_step:health_learn.screen_ops_timeoff
 #: model:learn.station,outline_when:health_learn.station_ops_timeoff
 msgid ""
@@ -563,11 +834,37 @@ msgid "Ask the Coach about this screen"
 msgstr "Hỏi Care Coach về màn hình này"
 
 #. module: health_learn
+#: model:learn.quiz.option,label:health_learn.lesson_f2_quiz_opt_2
+msgid "Ask the client to accept it, since the amount and the service are both correct."
+msgstr "Đề nghị khách hàng chấp nhận, vì số tiền và dịch vụ đều đúng."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_takeover_b030
 msgid ""
 "Ask the owner to press Release, or ask {{accessRequestPath}} to take it over. If the owner is off shift and the item is urgent, escalate it — that reaches a clinician without changing ownership."
 msgstr ""
 "Đề nghị người phụ trách nhấn Trả lại, hoặc nhờ {{accessRequestPath}} tiếp quản. Nếu người phụ trách đã hết ca và việc gấp, hãy chuyển cấp — cách này đến được nhân viên y tế mà không thay đổi quyền phụ trách."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_check_00
+msgid ""
+"Ask what happened before asking which button. Unused credit, unfinished course, or a payment that should not exist."
+msgstr ""
+"Hỏi điều gì đã xảy ra trước khi hỏi bấm nút nào. Số dư chưa dùng, liệu trình dở dang, hay một khoản thanh toán lẽ ra không tồn tại."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_refund_route_b010
+msgid ""
+"Ask what happened, not which screen you are on. Prepaid returns unused credit the client paid for in advance. Package refunds an unfinished course pro-rata against the visits actually delivered. Transaction reverses one specific payment that should never have been taken — a client charged twice is this one, and it is a correction rather than a refund, because nothing is being given back."
+msgstr ""
+"Hãy hỏi điều gì đã xảy ra, không phải bạn đang ở màn hình nào. Trả trước là hoàn lại số dư khách đã trả trước mà chưa dùng. Gói dịch vụ là hoàn theo tỷ lệ cho liệu trình chưa hoàn tất, tính trên số buổi đã thực hiện. Đảo giao dịch là hủy một khoản thanh toán lẽ ra không được thu — khách hàng bị tính tiền hai lần thuộc trường hợp này, và đó là khoản điều chỉnh chứ không phải hoàn tiền, vì không có gì được trả lại cả."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_fm1_step_02
+msgid ""
+"Ask what she is owed. If the answer is “nothing — she was charged for something that did not happen”, it is not a refund."
+msgstr ""
+"Hãy hỏi bà ấy được hoàn cái gì. Nếu câu trả lời là “không gì cả — bà bị tính tiền cho việc không xảy ra”, thì đó không phải hoàn tiền."
 
 #. module: health_learn
 #: model:learn.mission.step,hint:health_learn.mission_om1_step_02
@@ -623,6 +920,13 @@ msgstr ""
 "Phân công mà không nhìn bản đồ. Một lượt vừa khít trên lịch vẫn có thể không kịp di chuyển tới nơi."
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_bhyt_mistake_0
+msgid ""
+"Assuming a visit is covered because the screen exists. Nothing here has been submitted, so nothing here has been accepted."
+msgstr ""
+"Mặc định một lượt thăm khám được bảo hiểm chi trả chỉ vì màn hình này tồn tại. Chưa có gì được gửi đi, nên cũng chưa có gì được chấp nhận."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_carecommand_mistake_2
 msgid ""
 "Assuming the Zalo account belongs to the patient. In home care it is very often a son or a daughter — and what you may tell them is a consent question, not a convenience question."
@@ -657,6 +961,12 @@ msgid ""
 "At go-live, when a grant is expiring, and the moment a channel's traffic drops to zero. Not during a shift by a shift operator."
 msgstr ""
 "Khi phát hành, khi một quyền sắp hết hạn, và ngay khi lưu lượng của một kênh về 0. Không phải việc nhân viên trực ca làm giữa ca."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_vat_log
+#: model:learn.station,outline_when:health_learn.station_fin_vat_log
+msgid "At period end, and whenever a figure needs to be traced back to the documents behind it."
+msgstr "Cuối kỳ, và bất cứ khi nào cần truy một con số ngược về các tài liệu phía sau nó."
 
 #. module: health_learn
 #: model:learn.screen,next_step:health_learn.screen_dashboard
@@ -707,6 +1017,12 @@ msgstr "TRƯỚC KHI RA QUYẾT ĐỊNH"
 #: model:learn.step,kicker:health_learn.lesson_l1_step_09
 msgid "BEFORE YOU REPLY"
 msgstr "TRƯỚC KHI TRẢ LỜI"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_bhyt
+#: model:learn.station,name:health_learn.station_fin_bhyt
+msgid "BHYT Claims"
+msgstr "Hồ sơ BHYT"
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_l1_step_07
@@ -766,6 +1082,13 @@ msgid "Before doing this for real, always check"
 msgstr "Trước khi làm thật, luôn kiểm tra"
 
 #. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f1_step_03
+msgid ""
+"Before posting, an invoice is editable and means nothing outside this screen. Posting assigns it a number from a legal sequence, and that sequence must have no gaps. The document now exists whether or not it was right."
+msgstr ""
+"Trước khi ghi sổ, hóa đơn có thể sửa và không có giá trị gì ngoài màn hình này. Ghi sổ sẽ gán cho nó một số từ dãy số theo quy định, và dãy số đó không được phép có khoảng trống. Từ lúc này chứng từ đã tồn tại, bất kể nó có đúng hay không."
+
+#. module: health_learn
 #: model:learn.screen,next_step:health_learn.screen_ops_schedule
 #: model:learn.station,outline_when:health_learn.station_ops_schedule
 msgid ""
@@ -784,11 +1107,41 @@ msgid "Before you put the 16:30 on Tuấn, check he can get there."
 msgstr "Trước khi giao lượt 16:30 cho Tuấn, hãy kiểm tra anh ấy có tới kịp không."
 
 #. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_fm1_step_04
+msgid "Before you send any of it back, read what it costs."
+msgstr "Trước khi chuyển bất kỳ khoản nào trở lại, hãy đọc xem nó tốn những gì."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_consent_b040
 msgid ""
 "Being fast is still right. Reply inside {{replySlaMinutes}} minutes — just not with the thing you are not permitted to say."
 msgstr ""
 "Nhanh vẫn là đúng. Hãy trả lời trong vòng {{replySlaMinutes}} phút — chỉ là không nói điều bạn không được phép nói."
+
+#. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_dashboard_billed
+msgid "Billed"
+msgstr "Đã xuất hóa đơn"
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_dashboard_outstanding
+msgid "Billed and not yet paid. Most of it is not late — it is simply not due yet."
+msgstr ""
+"Đã xuất hóa đơn và chưa được thanh toán. Phần lớn không hề trễ — đơn giản là chưa đến hạn."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_dashboard
+msgid ""
+"Billed, collected and outstanding for one month in one catchment area, with overdue broken out."
+msgstr ""
+"Đã xuất hóa đơn, đã thu và còn phải thu cho một tháng trong một khu vực, kèm số quá hạn tách riêng."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_dashboard
+msgid ""
+"Billed, collected and outstanding for one month in one catchment area, with the overdue figure broken out."
+msgstr ""
+"Số đã xuất hóa đơn, đã thu và còn nợ cho một tháng trong một khu vực, kèm số quá hạn được tách riêng."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_bookbtn
@@ -832,6 +1185,20 @@ msgid ""
 "Bookings with nobody on them. Five of the six cards here are reassurance; this is the one that becomes a phone call, and the only one you can still fix today."
 msgstr ""
 "Các lịch hẹn chưa có ai nhận. Năm trong sáu thẻ ở đây chỉ để yên tâm; đây là thẻ sẽ biến thành cuộc gọi, và là thẻ duy nhất bạn còn kịp xử lý hôm nay."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_fm1_step_05
+msgid ""
+"Buyer details, amount, service description, inside the period. Four conditions, all of them required."
+msgstr ""
+"Thông tin người mua, số tiền, mô tả dịch vụ, và trong kỳ. Bốn điều kiện, tất cả đều bắt buộc."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_fm1_step_01
+msgid ""
+"Bích bought 5 visits and used 3. Hưng's 8-visit course stopped after 4 on clinical advice. Mai paid twice for one visit. Three sentences, three different situations."
+msgstr ""
+"Bích mua 5 lượt và đã dùng 3. Liệu trình 8 buổi của Hưng dừng sau 4 buổi theo chỉ định chuyên môn. Mai thanh toán hai lần cho một lượt. Ba câu, ba tình huống khác nhau."
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_l1_step_00
@@ -900,6 +1267,18 @@ msgid "Cancel all three and let the families rebook when Lan is back."
 msgstr "Hủy cả ba và để các gia đình đặt lại khi Lan đi làm lại."
 
 #. module: health_learn
+#: model:learn.quiz.option,label:health_learn.lesson_f2_quiz_opt_1
+msgid "Cancel and reissue it — a wrong tax code is one of the three permitted reasons."
+msgstr "Hủy và phát hành lại — sai mã số thuế là một trong ba lý do được phép."
+
+#. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f2_step_01
+msgid ""
+"Cancel and reissue only when the <b>buyer details</b>, the <b>amount</b> or the <b>service description</b> are wrong, and only <b>inside the current filing period</b>. Once the period closes, the route is a credit note instead."
+msgstr ""
+"Chỉ hủy và phát hành lại khi sai <b>thông tin người mua</b>, <b>số tiền</b> hoặc <b>mô tả dịch vụ</b>, và chỉ <b>trong kỳ kê khai hiện tại</b>. Khi kỳ đã đóng, cách xử lý là hóa đơn điều chỉnh."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_o1_step_03
 msgid "Cancel is not a stronger reschedule"
 msgstr "Hủy không phải là một dạng đổi lịch mạnh hơn"
@@ -922,11 +1301,46 @@ msgstr ""
 "Số lượt hủy hôm nay. Không phải con số trung tính — mỗi lượt đã chiếm một khung giờ mà người khác có thể dùng, và có lý do đáng đọc."
 
 #. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f2_step_03
+msgid ""
+"Cancelling a red invoice is restricted to the tax-compliance group. Being able to read an invoice, post it or take a payment on it does not carry the right to void its tax document — those are deliberately different permissions."
+msgstr ""
+"Quyền hủy hóa đơn đỏ chỉ dành cho nhóm tuân thủ thuế. Việc bạn xem được hóa đơn, ghi sổ hay ghi nhận thanh toán cho nó không đồng nghĩa với quyền vô hiệu chứng từ thuế của nó — đó là những quyền được tách riêng có chủ ý."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_red_rule_b020
+msgid ""
+"Cancelling calls Viettel and voids a document that has already been reported. It is a filing event rather than an edit, and it is restricted to the tax-compliance group for that reason."
+msgstr ""
+"Việc hủy sẽ gọi sang Viettel và vô hiệu một chứng từ đã được báo cáo. Đó là một sự kiện kê khai chứ không phải một thao tác sửa, và vì vậy nó chỉ dành cho nhóm tuân thủ thuế."
+
+#. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f2_step_02
+msgid ""
+"Cancelling calls Viettel and voids a document that has already been reported. It is not a local change that you can decide to make and then reconsider — the cancellation is itself an event on your filing record."
+msgstr ""
+"Hủy sẽ gọi sang Viettel và vô hiệu một chứng từ đã được báo cáo. Đây không phải một thay đổi cục bộ mà bạn có thể quyết rồi cân nhắc lại — bản thân việc hủy đã là một sự kiện trên hồ sơ kê khai của bạn."
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_o1_step_03
 msgid ""
 "Cancelling ends the visit. The patient is not rebooked, the slot is not offered to anyone else, and the revenue is gone. If what you actually want is a different time or a different person, those are two other buttons."
 msgstr ""
 "Hủy sẽ kết thúc lượt thăm khám. Bệnh nhân không được đặt lại, khung giờ không được mời cho ai khác, và khoản doanh thu mất đi. Nếu điều bạn thật sự muốn là đổi giờ hoặc đổi người, đó là hai nút khác."
+
+#. module: health_learn
+#: model:learn.station,outline_prereq:health_learn.station_fin_red_invoice
+msgid ""
+"Cancelling requires the Vietnamese Tax Compliance permission — deliberately narrower than Accountant, because it is the one action here that reaches outside the clinic."
+msgstr ""
+"Việc hủy cần quyền Tuân thủ thuế Việt Nam — hẹp hơn quyền Kế toán một cách có chủ đích, vì đây là thao tác duy nhất ở đây vươn ra ngoài phòng khám."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_red_invoice_mistake_0
+msgid ""
+"Cancelling to correct a small mistake after the filing period has closed. Inside the period, cancel and reissue; after it, the route is a credit note."
+msgstr ""
+"Hủy để sửa một lỗi nhỏ sau khi kỳ kê khai đã đóng. Trong kỳ thì hủy và phát hành lại; sau kỳ thì phải dùng hóa đơn điều chỉnh."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_ops_bookings_mistake_0
@@ -1053,10 +1467,45 @@ msgstr ""
 "Quy trình chuyển cấp của CareJioX. Không có nội dung lâm sàng: câu trả lời này tồn tại để từ chối, không phải để cung cấp thông tin."
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_cash_transit
+#: model:learn.station,name:health_learn.station_fin_cash_transit
+msgid "Cash In Transit"
+msgstr "Tiền đang chuyển"
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_cash_transit
+msgid "Cash collected on a visit that has not reached the bank yet."
+msgstr "Tiền mặt thu tại lượt thăm khám nhưng chưa về tới ngân hàng."
+
+#. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f1_step_05
+msgid ""
+"Cash collected on visits sits in transit until it is banked. <b>Operations</b> reconciles it at end of shift — the same figure appears on their Collections screen. Finance receives a balanced number and never chases an individual nurse."
+msgstr ""
+"Tiền mặt thu trên các lượt thăm khám nằm ở trạng thái đang chuyển cho tới khi được nộp. <b>Vận hành</b> đối soát khoản này vào cuối ca — cùng con số đó xuất hiện trên màn hình Thu tiền mặt của họ. Tài chính nhận một con số đã khớp và không bao giờ truy một điều dưỡng cụ thể."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_cash_transit
+msgid "Cash collected on visits that has not reached the account yet."
+msgstr "Tiền mặt thu tại các lượt thăm khám nhưng chưa về tới tài khoản."
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_cash_transit_intransit
+msgid ""
+"Cash collected on visits that has not reached the bank yet. Operations reconciles it at end of shift; Finance receives a balanced figure."
+msgstr ""
+"Tiền mặt đã thu trên các lượt thăm khám nhưng chưa vào tài khoản. Vận hành đối soát vào cuối ca; Tài chính nhận một con số đã khớp."
+
+#. module: health_learn
 #: model:learn.screen,blurb:health_learn.screen_ops_collections
 msgid "Cash each member of staff is holding from today's visits, reconciled inside Operations."
 msgstr ""
 "Tiền mặt mỗi nhân viên đang giữ từ các lượt hôm nay, được đối soát trong bộ phận Vận hành."
+
+#. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_cash_transit_intransit
+msgid "Cash in transit"
+msgstr "Tiền đang chuyển"
 
 #. module: health_learn
 #: model:learn.station,summary:health_learn.station_ops_collections
@@ -1107,6 +1556,20 @@ msgid "Channel down the side, outcome across the top"
 msgstr "Kênh theo cột dọc, kết quả theo hàng ngang"
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_overdue_mistake_0
+msgid ""
+"Chasing before checking Payments. A payment recorded late looks exactly like a payment never made, and the client remembers being chased for it."
+msgstr ""
+"Đi đòi trước khi kiểm tra màn hình Thanh toán. Một khoản ghi nhận muộn trông y hệt một khoản chưa từng trả, và khách hàng sẽ nhớ việc bị đòi oan."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_ar_dashboard_mistake_0
+msgid ""
+"Chasing the largest balance first. The oldest is nearly always the one at risk, not the biggest."
+msgstr ""
+"Đi đòi khoản lớn nhất trước. Khoản lâu nhất gần như luôn là khoản rủi ro nhất, không phải khoản lớn nhất."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_verify
 msgid "Check first"
 msgstr "Kiểm tra trước"
@@ -1120,6 +1583,11 @@ msgstr "Xem Tỷ lệ chuyển đổi trên Bảng điều khiển để biết 
 #: model:learn.intent.step,text:health_learn.intent_catchmentq_b020_s00
 msgid "Check the catchment chip at the top of the wall — that is your current filter."
 msgstr "Kiểm tra chip khu vực ở đầu bảng — đó là bộ lọc hiện tại của bạn."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_fin_post_b020_s00
+msgid "Check the client, the amount and the service description."
+msgstr "Kiểm tra khách hàng, số tiền và mô tả dịch vụ."
 
 #. module: health_learn
 #: model:learn.mission.note,body:health_learn.mission_om1_check_02
@@ -1137,6 +1605,18 @@ msgid "Check what your rescue did to everybody else."
 msgstr "Kiểm tra xem việc chữa cháy của bạn ảnh hưởng thế nào tới những người còn lại."
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_check_02
+msgid ""
+"Check whether a red invoice was issued before correcting anything. If one was, the correction is a filing event."
+msgstr ""
+"Kiểm tra xem đã phát hành hóa đơn đỏ hay chưa trước khi sửa bất cứ điều gì. Nếu có, việc sửa là một sự kiện kê khai."
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_fm1_step_05
+msgid "Check whether any of the three has a red invoice against it."
+msgstr "Kiểm tra xem trong ba trường hợp có khoản nào đã phát hành hóa đơn đỏ hay không."
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_junk_b030_s00
 msgid "Check whether the number matches an existing client first."
 msgstr "Trước tiên hãy kiểm tra số này có khớp khách hàng hiện có không."
@@ -1152,6 +1632,13 @@ msgid ""
 "Checked the Data Sharing consent before answering a clinical question — and found it withdrawn."
 msgstr ""
 "Đã kiểm tra đồng thuận chia sẻ dữ liệu trước khi trả lời câu hỏi lâm sàng — và phát hiện nó đã bị thu hồi."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_did_04
+msgid ""
+"Checked the red invoice log, because a document that was filed has to be corrected as a filing."
+msgstr ""
+"Kiểm tra nhật ký hóa đơn đỏ, vì một chứng từ đã kê khai phải được sửa theo cách của một lần kê khai."
 
 #. module: health_learn
 #: model:learn.mission.note,body:health_learn.mission_om1_did_03
@@ -1263,6 +1750,18 @@ msgstr ""
 "Khách hàng trong khu vực bạn phụ trách, cùng hồ sơ phía sau mỗi người: đồng thuận, lịch sử và công nợ."
 
 #. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_overdue
+msgid ""
+"Clients with invoices past their payment terms, oldest first — four this month, 1,850,000 ₫ between them."
+msgstr ""
+"Các khách hàng có hóa đơn quá hạn thanh toán, khoản lâu nhất lên trước — tháng này có bốn, tổng 1.850.000 ₫."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_overdue
+msgid "Clients with invoices past their payment terms, oldest first."
+msgstr "Các khách hàng có hóa đơn quá hạn thanh toán, khoản lâu nhất lên trước."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l5_step_04
 msgid "Close the activity and update the contact"
 msgstr "Đóng hoạt động và cập nhật liên hệ"
@@ -1299,6 +1798,11 @@ msgstr ""
 "Đóng một hoạt động mà không cập nhật trạng thái liên hệ sẽ khiến bảng chuyển xanh trong khi Bảng điều khiển vẫn sai. Hãy làm cả hai."
 
 #. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_dashboard_collected
+msgid "Collected"
+msgstr "Đã thu"
+
+#. module: health_learn
 #: model:learn.screen,name:health_learn.screen_ops_collections
 #: model:learn.station,name:health_learn.station_ops_collections
 msgid "Collections"
@@ -1330,6 +1834,13 @@ msgstr ""
 #: model:learn.step,title:health_learn.lesson_l8_step_02
 msgid "Compare rates, not volumes"
 msgstr "So sánh tỷ lệ, đừng so sánh số lượng"
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_dashboard_mistake_1
+msgid ""
+"Comparing this month with last without the same catchment area. The area selector changes every figure on the screen."
+msgstr ""
+"So sánh tháng này với tháng trước mà không cùng khu vực. Bộ chọn khu vực làm thay đổi mọi con số trên màn hình."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_leadanalysis_mistake_0
@@ -1485,11 +1996,33 @@ msgid "Converting needs at least one anchor"
 msgstr "Chuyển đổi cần ít nhất một điểm neo"
 
 #. module: health_learn
+#: model:learn.mission,name:health_learn.mission_fm2
+msgid "Correct an invoice that has already been filed"
+msgstr "Sửa một hóa đơn đã được kê khai"
+
+#. module: health_learn
+#: model:learn.quiz.option,label:health_learn.lesson_f1_quiz_opt_0
+msgid ""
+"Correct it with a document against the invoice, and check whether a red invoice was issued for it."
+msgstr ""
+"Sửa bằng một chứng từ đối với hóa đơn đó, và kiểm tra xem đã phát hành hóa đơn đỏ cho nó chưa."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_touchpoints_mistake_2
 msgid ""
 "Counting touchpoints as people. One person browsing four pages is four touchpoints and one enquiry."
 msgstr ""
 "Đếm điểm chạm như đếm người. Một người xem bốn trang là bốn điểm chạm và một yêu cầu tư vấn."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_packages
+msgid "Courses of visits sold up front, and how many of each have gone."
+msgstr "Các liệu trình bán trước theo gói, và mỗi loại đã bán được bao nhiêu."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_packages
+msgid "Courses of visits sold up front."
+msgstr "Các liệu trình được bán trước theo gói."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_coverage
@@ -1529,6 +2062,18 @@ msgid "Daily work line"
 msgstr "Tuyến công việc hằng ngày"
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_cash_transit
+#: model:learn.station,outline_when:health_learn.station_fin_cash_transit
+msgid "Daily, as the balanced figure arrives from Operations."
+msgstr "Hằng ngày, khi con số đã khớp được chuyển sang từ bộ phận Vận hành."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_payments
+#: model:learn.station,outline_when:health_learn.station_fin_payments
+msgid "Daily. A payment recorded late is an invoice that was chased for no reason."
+msgstr "Hằng ngày. Một khoản thanh toán ghi nhận muộn là một hóa đơn bị nhắc nợ oan."
+
+#. module: health_learn
 #: model:learn.lesson,name:health_learn.lesson_l3
 #: model:learn.screen,name:health_learn.screen_dashboard
 #: model:learn.station,name:health_learn.station_dashboard
@@ -1544,6 +2089,13 @@ msgstr "Đồng thuận chia sẻ dữ liệu"
 #: model:learn.column,label:health_learn.col_ops_timeoff_dates
 msgid "Dates"
 msgstr "Ngày nghỉ"
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_invoices_duedate
+msgid ""
+"Derived from the client's payment terms, not from the invoice date. This is the date that decides overdue."
+msgstr ""
+"Được suy ra từ điều khoản thanh toán của khách hàng, không phải từ ngày hóa đơn. Đây là ngày quyết định khoản đó có quá hạn hay không."
 
 #. module: health_learn
 #: model:learn.mission.step,hint:health_learn.mission_m2_step_05
@@ -1643,12 +2195,25 @@ msgstr ""
 "Đừng dùng cấp quyền lại để chẩn đoán. Nó đưa kênh ra khỏi trạng thái phục vụ trong lúc đi lại lộ trình, nên bạn sẽ thêm một sự cố thật vào vấn đề đang điều tra."
 
 #. module: health_learn
+#: model:learn.string,value:health_learn.str_lines_fin_docs
+msgid "Documents and claims"
+msgstr "Chứng từ và bảo hiểm"
+
+#. module: health_learn
 #: model:learn.mission.note,body:health_learn.mission_m2_check_04
 msgid "Does the catchment area on the account still say what it should?"
 msgstr "Khu vực phụ trách trên tài khoản có còn đúng như phải có không?"
 
 #. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_invoices_state
+msgid ""
+"Draft means editable and not yet real. Posted means it has a number from the legal sequence and can only be corrected by another document."
+msgstr ""
+"Nháp nghĩa là còn sửa được và chưa có giá trị. Đã ghi sổ nghĩa là đã có số từ dãy số theo quy định và chỉ có thể sửa bằng một chứng từ khác."
+
+#. module: health_learn
 #: model:learn.column,label:health_learn.col_activities_due
+#: model:learn.column,label:health_learn.col_fin_invoices_duedate
 msgid "Due date"
 msgstr "Ngày đến hạn"
 
@@ -1663,6 +2228,13 @@ msgid ""
 "Each visit on that person's day with its time and district. The gaps between them are travel, not free time."
 msgstr ""
 "Từng lượt trong ngày của người đó kèm giờ và quận. Khoảng trống giữa chúng là thời gian di chuyển, không phải thời gian rảnh."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_invoices_mistake_1
+msgid ""
+"Editing after posting. The fields that matter are locked, and the ones that are not do not change the document that was issued."
+msgstr ""
+"Sửa sau khi ghi sổ. Những trường quan trọng đã bị khóa, và những trường còn sửa được cũng không thay đổi tài liệu đã phát hành."
 
 #. module: health_learn
 #: model:learn.glossary.term,term:health_learn.gloss_channeleffective
@@ -1776,6 +2348,18 @@ msgstr ""
 "Mọi con số trên màn hình này đều lọc theo <b>khu vực phụ trách</b> của bạn — ở đây là Hà Nội. Với lưu lượng từ kênh, khu vực được lấy từ <b>tài khoản kênh mà tin nhắn đi vào</b>: mỗi khu vực một Zalo Official Account. Đó là lý do đồng nghiệp ở TPHCM nhìn bảng này thấy trống."
 
 #. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_invoices
+msgid ""
+"Every customer invoice for the month with its state — draft, posted, paid — the client, the service and the amount."
+msgstr ""
+"Mọi hóa đơn bán hàng trong tháng kèm trạng thái — nháp, đã ghi sổ, đã thanh toán — khách hàng, dịch vụ và số tiền."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_invoices
+msgid "Every customer invoice for the month with its state, client, service and amount."
+msgstr "Mọi hóa đơn bán hàng trong tháng kèm trạng thái, khách hàng, dịch vụ và số tiền."
+
+#. module: health_learn
 #: model:learn.screen,blurb:health_learn.screen_contacts
 msgid ""
 "Every enquiry as a record, by lifecycle status, with Book · Log Activity · Escalate · Spam on each row."
@@ -1809,9 +2393,28 @@ msgstr ""
 "Mọi tin nhắn đến và đi trên Zalo Official Account Hà Nội, trong suốt thời gian kết nối đi lại lộ trình để trở về trạng thái Đã kết nối."
 
 #. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_ar_transactions
+msgid "Every movement on a receivable, in order."
+msgstr "Mọi biến động trên một khoản phải thu, theo thứ tự."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l3_step_00
 msgid "Every number here belongs to a period"
 msgstr "Mọi con số ở đây đều thuộc về một khoảng thời gian"
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_payments
+msgid ""
+"Every payment received this month and which invoice it settled — 48 of the 63 invoices are paid."
+msgstr ""
+"Mọi khoản thanh toán nhận được trong tháng và hóa đơn nào đã được tất toán — 48 trong 63 hóa đơn đã thanh toán."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_red_invoice
+msgid ""
+"Every red invoice issued through Viettel, its state, and whether it has been cancelled — 41 issued this month, 1 cancelled."
+msgstr ""
+"Mọi hóa đơn đỏ đã phát hành qua Viettel, trạng thái của nó, và đã bị hủy hay chưa — tháng này phát hành 41, hủy 1."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_o1_step_00
@@ -1848,6 +2451,12 @@ msgstr ""
 "Tất cả những gì mọi người đã lên lịch cho một liên hệ, nhóm theo loại (Việc cần làm · Email · Cuộc gọi · Cuộc họp · Tài liệu) với bộ lọc loại và bộ lọc ngày."
 
 #. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_dashboard_billed
+msgid "Everything invoiced this month, paid or not. It does not mean money received."
+msgstr ""
+"Tất cả những gì đã xuất hóa đơn trong tháng, dù đã thu hay chưa. Nó không có nghĩa là tiền đã về."
+
+#. module: health_learn
 #: model:learn.column,body:health_learn.col_unrouted_what
 msgid ""
 "Exactly what the channel sent, unedited. These records cannot be changed — that is what lets you tell 'no number was given' apart from 'someone removed it'."
@@ -1860,6 +2469,13 @@ msgid ""
 "Exactly. Both channels being healthy and the volume moving from one wall to another is the signature of a routing change, not an outage. The area on the account is the routing rule, and re-selecting the wrong account during a re-authorisation is the usual cause."
 msgstr ""
 "Chính xác. Cả hai kênh đều khỏe mạnh trong khi lưu lượng dịch chuyển từ bảng này sang bảng khác là dấu hiệu của thay đổi định tuyến, không phải sự cố ngừng dịch vụ. Khu vực trên tài khoản chính là quy tắc định tuyến, và chọn nhầm tài khoản khi cấp quyền lại là nguyên nhân thường gặp."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_vat_log_mistake_0
+msgid ""
+"Expecting to correct something here. Nothing on this screen changes a document — corrections happen on the invoice, and after posting that means a credit note."
+msgstr ""
+"Kỳ vọng sửa được gì đó ở đây. Không thao tác nào trên màn hình này thay đổi tài liệu — việc sửa diễn ra trên hóa đơn, và sau khi đã ghi sổ thì nghĩa là hóa đơn điều chỉnh."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_expiringsoon
@@ -1875,6 +2491,11 @@ msgstr "Giải thích đơn giản hơn"
 #: model:learn.step,kicker:health_learn.lesson_o2_step_02
 msgid "FAIR, NOT EQUAL"
 msgstr "CÔNG BẰNG, KHÔNG PHẢI BẰNG NHAU"
+
+#. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f1_step_02
+msgid "FOUR BUTTONS"
+msgstr "BỐN NÚT"
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_o1_step_02
@@ -1904,6 +2525,11 @@ msgid ""
 msgstr "Ít tin rác đến hơn, đó là tin tốt, còn tỷ lệ chuyển đổi giảm vì lý do khác."
 
 #. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_red_invoice_period
+msgid "Filing period"
+msgstr "Kỳ kê khai"
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l5_step_02
 msgid ""
 "Filtering to <b>Today</b> shows what is due today — not what was due yesterday and never happened. The overdue work is the work most likely to become a complaint, and it is exactly what that filter hides."
@@ -1916,6 +2542,12 @@ msgid "Filtering to Today and forgetting overdue items are not in that filter."
 msgstr "Lọc theo Hôm nay rồi quên rằng các mục quá hạn không nằm trong bộ lọc đó."
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_dashboard
+#: model:learn.station,name:health_learn.station_fin_dashboard
+msgid "Finance Dashboard"
+msgstr "Bảng tài chính"
+
+#. module: health_learn
 #: model:learn.mission.step,instruction:health_learn.mission_om1_step_01
 msgid "Find Lan's row and see what is actually on it."
 msgstr "Tìm dòng của Lan và xem thật sự có gì trên đó."
@@ -1924,6 +2556,11 @@ msgstr "Tìm dòng của Lan và xem thật sự có gì trên đó."
 #: model:learn.mission,name:health_learn.mission_m4
 msgid "Find the leak in “Unmatched campaigns”"
 msgstr "Tìm chỗ rò trong “Chiến dịch chưa khớp”"
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_fm1_step_06
+msgid "Find the reversal you just recorded and read it back as an auditor would."
+msgstr "Tìm khoản đảo giao dịch bạn vừa ghi nhận và đọc lại nó bằng con mắt của kiểm toán viên."
 
 #. module: health_learn
 #: model:learn.quiz.option,label:health_learn.lesson_o2_quiz_opt_0
@@ -1981,6 +2618,11 @@ msgstr ""
 #: model:learn.mission.note,body:health_learn.mission_m2_did_04
 msgid "Found the disable switch and saw that it is reversible and audited."
 msgstr "Đã tìm ra công tắc tắt và thấy rằng nó có thể hoàn tác và được ghi nhật ký."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_did_03
+msgid "Found the one that was a correction rather than a refund, and recorded it as one."
+msgstr "Tìm ra khoản mang tính điều chỉnh chứ không phải hoàn tiền, và ghi nhận đúng như vậy."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l7_step_01
@@ -2052,6 +2694,13 @@ msgstr "PHÁT HÀNH"
 #: model:learn.string,value:health_learn.str_glossary
 msgid "Glossary"
 msgstr "Thuật ngữ"
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_cash_transit_mistake_0
+msgid ""
+"Going to the nurse when it does not balance. That is Operations' job and their screen — going round them is how one person ends up asked twice."
+msgstr ""
+"Tìm tới điều dưỡng khi số không khớp. Đó là việc và màn hình của bộ phận Vận hành — đi vòng qua họ là cách khiến một người bị hỏi hai lần."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_source
@@ -2148,6 +2797,13 @@ msgstr ""
 "Khoan đã. Việc duyệt không tạo ra khoảng trống — nó khiến Lan không còn khả dụng trong khi cả ba lượt vẫn nằm trên dòng của cô ấy, trông hoàn toàn bình thường. Màn hình trở nên <i>kém</i> chính xác hơn chứ không phải chính xác hơn, và ba lượt đó giờ là những vấn đề vô hình. Hãy chuyển việc trước; khi không còn gì phụ thuộc vào cô ấy thì việc duyệt chẳng tốn gì."
 
 #. module: health_learn
+#: model:learn.mission.option,recovery:health_learn.mission_fm1_step_02_opt_prepaid
+msgid ""
+"Hold on. Credit is money the client chose to pay in advance, and she did not choose this — she was charged twice by mistake. Leaving it as a balance also means she has to come back to get value for money she never meant to spend. The payment itself was the error; reverse the payment."
+msgstr ""
+"Khoan đã. Số dư là khoản khách hàng chủ động trả trước, còn ở đây bà không hề chủ động — bà bị thu hai lần do nhầm lẫn. Để lại thành số dư còn đồng nghĩa với việc bà phải quay lại mới nhận được giá trị cho khoản tiền bà không định chi. Chính khoản thanh toán là lỗi; hãy đảo khoản thanh toán đó."
+
+#. module: health_learn
 #: model:learn.mission.option,recovery:health_learn.mission_m1_step_03_opt_bad
 msgid ""
 "Hold on. Family relationship is not consent, and a withdrawn consent is an explicit “no” from the patient herself. A sent Zalo message cannot be recalled — this one would put Hoa's clinical detail in front of someone she has refused. Urgency justifies replying <i>fast</i>; it never justifies replying with <i>that</i>. Let's take the path that is both quick and permitted."
@@ -2162,6 +2818,13 @@ msgstr ""
 "Khoan đã. Thư rác? sẽ đưa điểm ưu tiên về 0, loại một gia đình đang lo lắng khỏi bảng, đánh dấu liên hệ là thư rác và ghi nhận số điện thoại đó cho mọi cuộc gọi sau này. Trong chăm sóc tại nhà, con trai hay con gái nhắn thay bệnh nhân là chuyện bình thường — câu hỏi đặt ra là đồng thuận, không phải tin rác."
 
 #. module: health_learn
+#: model:learn.mission.option,recovery:health_learn.mission_fm1_step_02_opt_package
+msgid ""
+"Hold on. There is no package here — Mai had a single visit, not a course. Pro-rata is the right tool for Hưng, whose 8-visit course stopped after 4, and reaching for it here is exactly the mistake this mission is built around: the route came from the list she appeared in, not from what happened to her."
+msgstr ""
+"Khoan đã. Ở đây không có gói dịch vụ nào — Mai chỉ có một lượt thăm khám, không phải một liệu trình. Cách tính theo tỷ lệ là công cụ đúng cho Hưng, người dừng liệu trình 8 buổi sau 4 buổi, còn dùng nó ở đây chính là sai lầm mà nhiệm vụ này được xây dựng quanh nó: lối xử lý được chọn theo danh sách bà xuất hiện trong đó, chứ không theo điều đã xảy ra với bà."
+
+#. module: health_learn
 #: model:learn.mission.option,recovery:health_learn.mission_om1_step_02_opt_cancel
 msgid ""
 "Hold on. Three cancellations is three patients told not to expect anyone, three slots that earn nothing, and three families who have to start again from an enquiry — and Lan is back tomorrow. Cancel is the last door here, not the first: reassignment keeps the visit, the patient and the money, and it can be undone if you get it wrong."
@@ -2174,6 +2837,11 @@ msgid "How do I make sure this gets followed up?"
 msgstr "Làm sao để chắc chắn việc này được theo dõi?"
 
 #. module: health_learn
+#: model:learn.intent,label:health_learn.intent_fin_bhyt_notlive
+msgid "How do I submit a BHYT claim?"
+msgstr "Làm sao để nộp hồ sơ BHYT?"
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_modeq
 msgid "How do you want to learn today?"
 msgstr "Hôm nay bạn muốn học theo cách nào?"
@@ -2182,6 +2850,13 @@ msgstr "Hôm nay bạn muốn học theo cách nào?"
 #: model:learn.intent,label:health_learn.intent_kpis
 msgid "How is Conversion Rate calculated?"
 msgstr "Tỷ lệ chuyển đổi được tính thế nào?"
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_ar_dashboard_ageing
+msgid ""
+"How long an overdue amount has been overdue. Age matters more than size: the biggest one usually has someone on it, the oldest usually does not."
+msgstr ""
+"Khoản quá hạn đã trễ bao lâu. Độ trễ quan trọng hơn số tiền: khoản lớn nhất thường đã có người theo, khoản lâu nhất thì thường không."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_ops_routes_travel
@@ -2297,9 +2972,19 @@ msgid "If I go off shift, is it released rather than left owned and silent?"
 msgstr "Nếu tôi hết ca, việc này đã được trả lại chưa, thay vì để nguyên tên tôi và im lặng?"
 
 #. module: health_learn
+#: model:learn.step,tip:health_learn.lesson_f1_step_04
+msgid "If a client insists they paid, this is the screen to open before you argue."
+msgstr "Nếu khách hàng khẳng định đã thanh toán, đây là màn hình cần mở trước khi tranh luận."
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_junk_b030_s01
 msgid "If it is a real person you cannot help, use Closed, not Junk?."
 msgstr "Nếu là người thật mà bạn không giúp được, hãy dùng Đã đóng, không dùng Thư rác?."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_fin_post_b020_s02
+msgid "If it was wrong, correct it with a credit note rather than editing."
+msgstr "Nếu sai, hãy sửa bằng hóa đơn điều chỉnh thay vì sửa trực tiếp."
 
 #. module: health_learn
 #: model:learn.step,consequence:health_learn.lesson_l3_step_03
@@ -2307,6 +2992,18 @@ msgid ""
 "If nobody marks spam, the 14 stays in the real pile and conversion is quietly understated all month. A low Spam Rate is not automatically good news — it can simply mean nobody is marking."
 msgstr ""
 "Nếu không ai đánh dấu thư rác, 14 tin đó nằm lại trong nhóm thật và tỷ lệ chuyển đổi bị hạ thấp âm thầm suốt tháng. Tỷ lệ thư rác thấp không mặc nhiên là tin tốt — nó có thể chỉ nghĩa là không ai đánh dấu."
+
+#. module: health_learn
+#: model:learn.step,tip:health_learn.lesson_f2_step_03
+msgid "If the button is not there for you, that is the design working, not a fault to report."
+msgstr "Nếu bạn không thấy nút này, đó là thiết kế đang hoạt động đúng, không phải lỗi cần báo."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_cash_owner_b020
+msgid ""
+"If the number looks wrong, it goes back to the Operations Manager, not to the person who collected it."
+msgstr ""
+"Nếu con số có vẻ sai, việc đó quay lại với Quản lý vận hành, không phải với người đã thu tiền."
 
 #. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_catchmentq_b020_s01
@@ -2357,6 +3054,18 @@ msgid ""
 "Internal note and Reminder are the two safe actions when you are not sure. Use them instead of guessing in a reply."
 msgstr ""
 "Ghi chú nội bộ và Nhắc hẹn là hai thao tác an toàn khi bạn chưa chắc. Hãy dùng chúng thay vì đoán trong câu trả lời."
+
+#. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_invoices_state
+msgid "Invoice state"
+msgstr "Trạng thái hóa đơn"
+
+#. module: health_learn
+#: model:learn.lesson,name:health_learn.lesson_f1
+#: model:learn.screen,name:health_learn.screen_fin_invoices
+#: model:learn.station,name:health_learn.station_fin_invoices
+msgid "Invoices"
+msgstr "Hóa đơn"
 
 #. module: health_learn
 #: model:learn.mission.note,body:health_learn.mission_m1_check_00
@@ -2518,6 +3227,11 @@ msgstr ""
 "Cứ để vậy và để điều dưỡng tự biết khi tới nơi — có thể cô ấy sẽ thăm được người khác gần đó."
 
 #. module: health_learn
+#: model:learn.quiz.option,label:health_learn.lesson_f1_quiz_opt_2
+msgid "Leave it — the amount is right and the description is only wording."
+msgstr "Cứ để vậy — số tiền đúng rồi, mô tả chỉ là câu chữ."
+
+#. module: health_learn
 #: model:learn.station,summary:health_learn.station_ops_timeoff
 msgid "Leave requests — and the visits they quietly collide with."
 msgstr "Các đơn xin nghỉ — và những lịch hẹn mà chúng âm thầm va vào."
@@ -2581,6 +3295,13 @@ msgid ""
 "Let's rethink that. A role change would hide the whole screen from those users, not move the volume onto a different team's wall. And it would not explain TPHCM receiving more. When work moves rather than disappears, look at routing before permissions."
 msgstr ""
 "Cùng suy nghĩ lại nhé. Thay đổi vai trò sẽ ẩn cả màn hình khỏi những người dùng đó, chứ không chuyển khối lượng công việc sang bảng của nhóm khác. Và nó cũng không giải thích được vì sao TPHCM nhận nhiều hơn. Khi công việc dịch chuyển chứ không biến mất, hãy xem định tuyến trước khi xem phân quyền."
+
+#. module: health_learn
+#: model:learn.quiz.option,feedback:health_learn.lesson_f1_quiz_opt_1
+msgid ""
+"Let's rethink that. An open period makes this technically possible and does not make it correct: the invoice was already issued to a client, and if a red invoice went with it, the tax document and your books now disagree. The correction belongs on the record, not hidden by re-posting."
+msgstr ""
+"Cùng suy nghĩ lại nhé. Kỳ đang mở khiến việc này khả thi về mặt kỹ thuật, chứ không khiến nó đúng: hóa đơn đã được gửi cho khách, và nếu có hóa đơn đỏ đi kèm thì chứng từ thuế và sổ sách của bạn giờ đã lệch nhau. Việc sửa phải nằm trên sổ sách, không phải bị che đi bằng cách ghi sổ lại."
 
 #. module: health_learn
 #: model:learn.quiz.option,feedback:health_learn.lesson_l8_quiz_opt_1
@@ -2695,6 +3416,27 @@ msgstr ""
 "Cùng suy nghĩ lại nhé. Tỷ lệ trên Bảng điều khiển là tổng hợp mọi kênh, nên nó không nói được gì riêng về kênh giới thiệu — so một dòng với nó chỉ là so kênh giới thiệu với chính nó cộng thêm tất cả những kênh khác. Bảng này vốn đã là góc nhìn theo từng kênh."
 
 #. module: health_learn
+#: model:learn.quiz.option,feedback:health_learn.lesson_f2_quiz_opt_1
+msgid ""
+"Let's rethink that. The reason is valid and the timing is not, and both have to be true. August has been filed; voiding a document inside a closed period reopens something that was already reported."
+msgstr ""
+"Cùng suy nghĩ lại nhé. Lý do thì hợp lệ nhưng thời điểm thì không, mà cả hai đều phải đúng. Tháng 8 đã được kê khai; vô hiệu một chứng từ trong kỳ đã đóng là mở lại thứ đã được báo cáo."
+
+#. module: health_learn
+#: model:learn.quiz.option,feedback:health_learn.lesson_f1_quiz_opt_2
+msgid ""
+"Let's rethink that. The service description is one of the three things a red invoice may be cancelled and reissued for, which tells you the tax authority does not treat it as wording. It is what the client was billed for."
+msgstr ""
+"Cùng suy nghĩ lại nhé. Mô tả dịch vụ là một trong ba lý do được phép hủy và phát hành lại hóa đơn đỏ, điều đó cho thấy cơ quan thuế không xem nó là câu chữ. Đó là nội dung mà khách hàng bị tính tiền."
+
+#. module: health_learn
+#: model:learn.quiz.option,feedback:health_learn.lesson_f2_quiz_opt_2
+msgid ""
+"Let's rethink that. The tax code is who the document belongs to — the client cannot use an invoice issued to the wrong entity, so this is not a small discrepancy they can absorb. There is a correct route; it is just not a cancellation."
+msgstr ""
+"Cùng suy nghĩ lại nhé. Mã số thuế xác định chứng từ thuộc về ai — khách hàng không thể sử dụng hóa đơn phát hành cho một pháp nhân sai, nên đây không phải sai lệch nhỏ mà họ có thể bỏ qua. Có một cách xử lý đúng; chỉ là nó không phải hủy hóa đơn."
+
+#. module: health_learn
 #: model:learn.quiz.option,feedback:health_learn.lesson_l5_quiz_opt_1
 msgid ""
 "Let's rethink that. Today shows what is due today, and it says nothing about what was due yesterday and never happened. The filter is doing exactly what it says; the risk is reading it as \"nothing outstanding\"."
@@ -2803,6 +3545,37 @@ msgid "Missions"
 msgstr "Nhiệm vụ"
 
 #. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_dashboard_collected
+msgid ""
+"Money actually received and matched to an invoice. A payment received but never matched is not counted here."
+msgstr ""
+"Tiền đã thật sự nhận và đã khớp với hóa đơn. Khoản đã nhận nhưng chưa khớp không được tính vào đây."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_fm1_step_04
+msgid ""
+"Money going back out is the one action in this section that cannot be undone from your side — recovering it means asking the client to return it."
+msgstr ""
+"Tiền chuyển trả lại là thao tác duy nhất trong bộ phận này mà bạn không thể tự hoàn tác — muốn lấy lại phải đề nghị khách hàng trả lại."
+
+#. module: health_learn
+#: model:learn.string,value:health_learn.str_lines_fin_money
+msgid "Money in"
+msgstr "Dòng tiền vào"
+
+#. module: health_learn
+#: model:learn.string,value:health_learn.str_lines_fin_owed
+msgid "Money owed"
+msgstr "Công nợ phải thu"
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_cash_transit
+msgid ""
+"Money that exists physically and is between a nurse's pocket and the account — 1,350,000 ₫ tonight."
+msgstr ""
+"Khoản tiền tồn tại dưới dạng vật lý, đang nằm giữa túi điều dưỡng và tài khoản — tối nay là 1.350.000 ₫."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_month
 msgid "Month"
 msgstr "Tháng"
@@ -2827,6 +3600,13 @@ msgstr ""
 "Phần lớn các câu hỏi “điều dưỡng đâu rồi” đến đây trước. Trả lời nhanh câu hỏi về lịch trình thường là đủ — và đó là phần bạn luôn được phép trả lời."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_unmatched_b010
+msgid ""
+"Most likely the payment arrived and was never matched to the invoice. An unmatched payment counts as collected on the Dashboard and leaves the invoice unpaid on the client's record, so nothing looks broken from either side — and the client gets chased for money they already sent."
+msgstr ""
+"Nhiều khả năng khoản tiền đã về nhưng chưa được khớp với hóa đơn. Một khoản chưa khớp vẫn được tính là đã thu trên Bảng tài chính, trong khi hóa đơn vẫn ở trạng thái chưa thanh toán trên hồ sơ khách hàng, nên nhìn từ phía nào cũng không thấy sai — và khách hàng bị đòi khoản họ đã trả."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_motionon
 msgid "Motion reduced"
 msgstr "Đã giảm chuyển động"
@@ -2844,6 +3624,11 @@ msgid ""
 "Moving three visits onto whoever was nearest is how one person ends the week at 6 of 6 every day. The bars are the check on the decisions you just made."
 msgstr ""
 "Dồn ba lượt cho bất kỳ ai ở gần nhất là cách khiến một người kết thúc cả tuần ở mức 6/6 mỗi ngày. Các thanh này là phép kiểm tra với những quyết định bạn vừa đưa ra."
+
+#. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f2_step_00
+msgid "NOT EVERY INVOICE"
+msgstr "KHÔNG PHẢI HÓA ĐƠN NÀO CŨNG CÓ"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_showhint
@@ -2868,6 +3653,13 @@ msgid ""
 "Neither? Check your own catchment filter at the top of the wall before you conclude anything."
 msgstr ""
 "Không phải cả hai? Hãy kiểm tra bộ lọc khu vực của chính bạn ở đầu bảng trước khi kết luận."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_check_03
+msgid ""
+"Never choose the route from the screen you are standing on. AR Management stays highlighted for all three of its children."
+msgstr ""
+"Đừng bao giờ chọn lối xử lý dựa trên màn hình bạn đang đứng. Quản lý công nợ vẫn được tô sáng cho cả ba mục con của nó."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_ops_bookings_state
@@ -2951,6 +3743,11 @@ msgid "Not connected"
 msgstr "Chưa kết nối"
 
 #. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f2_step_03
+msgid "Not everyone who can open the invoice"
+msgstr "Không phải ai mở được hóa đơn cũng bấm được"
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_consent_b010
 msgid ""
 "Not from the clinical detail. Family relationship is not consent. What you may share with a named other person is a recorded permission — a Data Sharing consent — with a state you must actually look at."
@@ -2966,6 +3763,12 @@ msgstr "Không có trong thanh bên của bạn"
 #: model:learn.string,value:health_learn.str_cancelact
 msgid "Not yet"
 msgstr "Chưa thực hiện"
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_bhyt
+#: model:learn.station,outline_when:health_learn.station_fin_bhyt
+msgid "Not yet. If a claim needs making today it is happening outside this system."
+msgstr "Chưa dùng. Nếu hôm nay cần lập hồ sơ thì việc đó đang diễn ra ngoài hệ thống này."
 
 #. module: health_learn
 #: model:learn.step,tip:health_learn.lesson_l1_step_02
@@ -2999,6 +3802,11 @@ msgid "Nothing — an empty board means the day's follow-ups are done."
 msgstr "Không cần làm gì — bảng trống nghĩa là việc theo dõi trong ngày đã xong."
 
 #. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_fm1_step_03
+msgid "Now do Hưng's, and count the visits rather than estimating."
+msgstr "Giờ xử lý trường hợp của Hưng, và hãy đếm số buổi thay vì ước lượng."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_roles_nurse
 #: model:learn.string,value:health_learn.str_rolesshort_nurse
 msgid "Nurse"
@@ -3025,6 +3833,16 @@ msgid "OA catchment = TPHCM"
 msgstr "Khu vực OA = TPHCM"
 
 #. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f1_step_00
+msgid "ONE MONTH"
+msgstr "MỘT THÁNG"
+
+#. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f2_step_04
+msgid "ONE THIS MONTH"
+msgstr "MỘT LẦN TRONG THÁNG"
+
+#. module: health_learn
 #: model:learn.step.line,label:health_learn.lesson_l1_step_07_line_03
 msgid "Off the wall · contact status “Spam Call” · +84 912 345 678 flagged for every future call"
 msgstr ""
@@ -3049,6 +3867,13 @@ msgstr ""
 "Một đến hai lần mỗi ca, và luôn kiểm tra sau khi một chiến dịch chạy — đó là lúc lượng liên hệ nửa vời tăng vọt."
 
 #. module: health_learn
+#: model:learn.step,body:health_learn.lesson_f2_step_04
+msgid ""
+"One cancellation in a month of 41 issued documents is normal. A number that climbs is not a red-invoice problem — it means invoices are being posted before somebody checks the buyer details, and the fix is upstream on the Invoices screen."
+msgstr ""
+"Một lần hủy trong tháng có 41 chứng từ đã phát hành là bình thường. Con số tăng lên không phải vấn đề của hóa đơn đỏ — nó có nghĩa là hóa đơn đang được ghi sổ trước khi có ai kiểm tra thông tin người mua, và chỗ cần sửa nằm ở phía trước, trên màn hình Hóa đơn."
+
+#. module: health_learn
 #: model:learn.mission.step,detail:health_learn.mission_m2_step_02
 msgid ""
 "One decision. Read both names before you pick — the provider does not order them helpfully."
@@ -3066,6 +3891,13 @@ msgid "One decision. Two of these feel decisive and cost you the day."
 msgstr "Một quyết định. Hai trong số này nghe có vẻ dứt khoát nhưng sẽ khiến bạn mất cả ngày."
 
 #. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_fm1_step_02
+msgid ""
+"One decision. Two of these move exactly the right amount of money and record the wrong thing."
+msgstr ""
+"Một quyết định. Hai lựa chọn trong số này chuyển đúng số tiền nhưng ghi nhận sai bản chất."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_checknote
 msgid "One judgement, not a memory test."
 msgstr "Một tình huống cần phán đoán, không phải câu hỏi thuộc lòng."
@@ -3076,6 +3908,12 @@ msgid ""
 "One of Lan's visits genuinely has nobody who can take it. Open Cancel and read what it costs."
 msgstr ""
 "Một trong các lượt của Lan thật sự không có ai nhận được. Mở Hủy và đọc xem nó tốn những gì."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_fm1_step_01
+msgid "One of these three is not a refund. Read them as events, not as amounts."
+msgstr ""
+"Một trong ba trường hợp này không phải là hoàn tiền. Hãy đọc chúng như những sự việc, không phải như những con số."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_ops_schedule_person
@@ -3142,6 +3980,18 @@ msgid "Only a CRM Manager can take a claimed conversation off someone else. That
 msgstr "Chỉ Quản lý CRM mới tiếp quản được cuộc hội thoại đã có người nhận. Đó là chủ ý thiết kế."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_red_rule_b010
+msgid ""
+"Only when the buyer details, the amount or the service description are wrong, and only inside the current filing period. After the period closes the route is a credit note instead. Both conditions have to hold: a valid reason in a closed period is still not a cancellation."
+msgstr ""
+"Chỉ khi sai thông tin người mua, số tiền hoặc mô tả dịch vụ, và chỉ trong kỳ kê khai hiện tại. Sau khi kỳ đóng thì phải dùng hóa đơn điều chỉnh. Cả hai điều kiện đều phải thỏa: lý do hợp lệ nhưng kỳ đã đóng thì vẫn không được hủy."
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_fin_unmatched_b020_s00
+msgid "Open Account Payment and look for the payment before you ring them."
+msgstr "Mở màn hình Thanh toán tài khoản và tìm khoản thu đó trước khi gọi cho họ."
+
+#. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_consent_b030_s00
 msgid "Open Consents on the action strip and read the state and the date."
 msgstr "Mở Đồng thuận trên dải thao tác và đọc trạng thái cùng ngày tháng."
@@ -3197,6 +4047,11 @@ msgid ""
 "Open the six records first — with numbers this small, two spam entries could be one mis-marked caller, and the conclusion changes completely."
 msgstr ""
 "Hãy mở sáu bản ghi đó trước — với số nhỏ như vậy, hai mục thư rác có thể chỉ là một người gọi bị đánh dấu nhầm, và kết luận sẽ thay đổi hoàn toàn."
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_fm1_step_01
+msgid "Open the three and read what actually happened to each."
+msgstr "Mở cả ba và đọc xem thật sự đã xảy ra chuyện gì với từng trường hợp."
 
 #. module: health_learn
 #: model:learn.mission.step,instruction:health_learn.mission_m1_step_00
@@ -3269,11 +4124,25 @@ msgstr ""
 "Vai trò Quản lý vận hành, Chủ sở hữu — và CRM, đây là màn hình OPS duy nhất mà bàn lễ tân cũng mở được."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_cash_owner_b010
+msgid ""
+"Operations does, at end of shift. Cash collected on visits sits in transit until it is banked, and the same figure appears on the Operations Collections screen. Finance receives a figure that already balances and does not chase an individual nurse."
+msgstr ""
+"Bộ phận Vận hành, vào cuối ca. Tiền mặt thu trên các lượt thăm khám nằm ở trạng thái đang chuyển cho tới khi được nộp, và cùng con số đó xuất hiện trên màn hình Thu tiền mặt của Vận hành. Tài chính nhận một con số đã khớp và không truy một điều dưỡng cụ thể."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_cash_b010
 msgid ""
 "Operations does, at end of shift. Finance receives one already-balanced figure and never chases an individual nurse — if it does not balance, it is settled here first."
 msgstr ""
 "Bộ phận Vận hành, vào cuối ca. Tài chính nhận về một con số đã khớp và không bao giờ truy một điều dưỡng cụ thể — nếu không khớp, việc đó được xử lý ở đây trước."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_cash_transit
+msgid ""
+"Operations reconciles this at end of shift and hands Finance one balanced figure. Finance never chases an individual nurse — if it does not balance, Operations settles it first."
+msgstr ""
+"Bộ phận Vận hành đối soát khoản này cuối ca và chuyển cho Tài chính một con số đã khớp. Tài chính không bao giờ truy một điều dưỡng cụ thể — nếu không khớp, Vận hành xử lý trước."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_rolesshort_om
@@ -3315,6 +4184,13 @@ msgstr ""
 "Đề cương. Phần chặn cảnh báo hệ quả (đặt lịch tạo ra một lịch hẹn thật và bắt đầu phát sinh chi phí), tình huống gài (hai khách hàng trùng họ, trùng quận và trùng năm sinh; chỉ khác số điện thoại) và phần tổng kết đã được viết; máy trạng thái các bước thì chưa dựng."
 
 #. module: health_learn
+#: model:learn.mission,outline_note:health_learn.mission_fm2
+msgid ""
+"Outline. The full version adds the period check, the consequence card for cancelling a live tax document, and the seeded case where the period closes between noticing the error and acting on it. Everything described here is real and usable now."
+msgstr ""
+"Đề cương. Bản đầy đủ sẽ có phần kiểm tra kỳ kê khai, thẻ hệ quả cho việc hủy một chứng từ thuế đang có hiệu lực, và tình huống được cài sẵn khi kỳ đóng lại trong khoảng thời gian giữa lúc phát hiện lỗi và lúc xử lý. Mọi nội dung mô tả ở đây đều có thật và dùng được ngay."
+
+#. module: health_learn
 #: model:learn.mission,outline_note:health_learn.mission_om2
 msgid ""
 "Outline. The full version adds the reconciliation itself, the consequence card for sending an unbalanced figure to Finance, and the seeded case where a nurse collected the right total for the wrong visit. Everything described here is real and usable now."
@@ -3329,9 +4205,70 @@ msgstr ""
 "Đề cương. Các con số mẫu (19 google/cpc + 11 facebook/paid + 4 chưa khớp = 34) và tình huống gài (liên kết chưa gắn thẻ nằm trong một bài đăng Facebook tự nhiên, không phải tài khoản quảng cáo, nên không có khoản chi quảng cáo nào giải thích được) đã được viết; máy trạng thái các bước thì chưa dựng."
 
 #. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_dashboard_outstanding
+msgid "Outstanding"
+msgstr "Còn phải thu"
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_dashboard_overdue
+msgid ""
+"Outstanding AND past its payment terms. This is the subset you chase; the rest of outstanding is normal trading."
+msgstr ""
+"Còn phải thu VÀ đã quá hạn thanh toán. Đây là phần bạn cần theo đòi; phần còn lại của công nợ là hoạt động bình thường."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_outstanding_vs_overdue_b010
+msgid ""
+"Outstanding is everything billed and not yet paid. Overdue is the part of it that has passed the client's payment terms. Most outstanding money is not late — it is simply not due yet, so chasing on the outstanding figure means ringing clients who have done nothing wrong."
+msgstr ""
+"Còn phải thu là toàn bộ khoản đã xuất hóa đơn và chưa được thanh toán. Quá hạn là phần đã qua điều khoản thanh toán của khách hàng. Phần lớn khoản còn phải thu không hề trễ — chỉ là chưa đến hạn, nên đòi theo con số còn phải thu nghĩa là gọi cho những khách hàng không làm gì sai."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_dashboard
+msgid ""
+"Outstanding is not a problem; overdue is. The gap between them is the whole job of this section — 6,150,000 ₫ owed of which 1,850,000 ₫ has passed its terms."
+msgstr ""
+"Còn nợ không phải là vấn đề; quá hạn mới là. Khoảng cách giữa hai con số đó chính là công việc của cả bộ phận này — còn nợ 6.150.000 ₫, trong đó 1.850.000 ₫ đã quá hạn thanh toán."
+
+#. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f1_step_01
+msgid "Outstanding is not overdue"
+msgstr "Còn phải thu không phải là quá hạn"
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_fm1_step_00
+msgid ""
+"Outstanding is not yet due. Overdue has passed its terms. Only the second one is a problem."
+msgstr ""
+"Còn phải thu là chưa đến hạn. Quá hạn là đã qua hạn thanh toán. Chỉ con số thứ hai mới là vấn đề."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_ar_dashboard
+msgid ""
+"Outstanding money grouped by how long it has been outstanding, so a total becomes a set of different problems."
+msgstr ""
+"Số tiền còn phải thu, nhóm theo thời gian đã quá bao lâu, để một con số tổng trở thành nhiều vấn đề khác nhau."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_ar_dashboard
+msgid "Outstanding money grouped by how long it has been outstanding."
+msgstr "Số tiền còn phải thu, nhóm theo thời gian đã quá bao lâu."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_overall
 msgid "Overall progress"
 msgstr "Tiến độ tổng thể"
+
+#. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_dashboard_overdue
+msgid "Overdue"
+msgstr "Quá hạn"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_overdue
+#: model:learn.station,name:health_learn.station_fin_overdue
+msgid "Overdue Clients"
+msgstr "Khách hàng quá hạn"
 
 #. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l5_step_02
@@ -3396,9 +4333,49 @@ msgid "PROTOTYPE"
 msgstr "BẢN THỬ"
 
 #. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_refund_prorata
+msgid "Package pro-rata"
+msgstr "Gói dịch vụ theo tỷ lệ"
+
+#. module: health_learn
+#: model:learn.mission.option,label:health_learn.mission_fm1_step_02_opt_package
+msgid "Package pro-rata — work out what she used and refund the difference."
+msgstr "Gói dịch vụ theo tỷ lệ — tính phần bà đã dùng và hoàn phần chênh lệch."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_packages
+msgid ""
+"Packages available and sold — a wound-care course of 8 and a physiotherapy course of 8 this month."
+msgstr ""
+"Các gói đang có và đã bán — một liệu trình chăm sóc vết thương 8 buổi và một liệu trình vật lý trị liệu 8 buổi trong tháng."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_account_payment_mistake_0
+msgid ""
+"Part-paying without saying which invoice. The system cannot guess, and the oldest is not always what the client intended."
+msgstr ""
+"Thanh toán một phần mà không nói rõ cho hóa đơn nào. Hệ thống không đoán được, và hóa đơn lâu nhất không phải lúc nào cũng là ý của khách hàng."
+
+#. module: health_learn
 #: model:learn.column,label:health_learn.col_ops_bookings_patient
 msgid "Patient"
 msgstr "Bệnh nhân"
+
+#. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_invoices_paystatus
+msgid "Payment status"
+msgstr "Tình trạng thanh toán"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_payments
+#: model:learn.station,name:health_learn.station_fin_payments
+msgid "Payments"
+msgstr "Thanh toán"
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_payments
+msgid "Payments received this month and which invoice each one settled."
+msgstr "Các khoản thanh toán nhận được trong tháng và hóa đơn nào được tất toán."
 
 #. module: health_learn
 #: model:learn.column,label:health_learn.col_dashboard_pending
@@ -3441,14 +4418,87 @@ msgid "Pick up where you left off"
 msgstr "Tiếp tục từ chỗ bạn đã dừng"
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_refund_mistake_0
+msgid ""
+"Picking the route by whichever screen you happen to be standing on. That is the most common way the wrong one gets used."
+msgstr ""
+"Chọn lối đi theo màn hình mà bạn tình cờ đang mở. Đó là cách phổ biến nhất khiến người ta dùng nhầm lối."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l2_step_04
 msgid "Point it at the wrong city"
 msgstr "Trỏ nhầm sang thành phố khác"
 
 #. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f1_step_02
+msgid "Post, Register payment, Credit note, Reset to draft"
+msgstr "Ghi sổ, Ghi nhận thanh toán, Hóa đơn điều chỉnh, Về nháp"
+
+#. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_fin_post_b020_s01
+msgid "Post."
+msgstr "Ghi sổ."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_vat_log
+msgid "Posted customer invoices, listed. A read-only record — there is no form behind it."
+msgstr ""
+"Các hóa đơn bán hàng đã ghi sổ, dạng danh sách. Bản ghi chỉ đọc — không có biểu mẫu phía sau."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_vat_log
+msgid ""
+"Posted customer invoices, listed. It is a record, not a working document — there is no form behind it to open and edit."
+msgstr ""
+"Các hóa đơn bán hàng đã ghi sổ, dạng danh sách. Đây là bản ghi, không phải tài liệu đang làm — không có biểu mẫu nào phía sau để mở ra sửa."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_invoices
+msgid ""
+"Posting an invoice locks it into a legal sequence. A draft is a document you are still writing; a posted invoice is a document that exists, and the only way back is a credit note, which is itself a document."
+msgstr ""
+"Ghi sổ một hóa đơn sẽ khóa nó vào một dãy số pháp lý. Bản nháp là tài liệu bạn còn đang soạn; hóa đơn đã ghi sổ là tài liệu đã tồn tại, và lối duy nhất quay lại là hóa đơn điều chỉnh — bản thân nó cũng là một tài liệu."
+
+#. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f1_step_03
+msgid "Posting takes a number that belongs to a sequence"
+msgstr "Ghi sổ sẽ lấy một số thuộc về dãy số liên tục"
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_invoices_mistake_0
+msgid ""
+"Posting to tidy the list. Draft is a valid resting state; posted is a commitment with a number attached."
+msgstr ""
+"Ghi sổ để cho danh sách gọn gàng. Nháp là trạng thái hợp lệ để chờ; đã ghi sổ là một cam kết có số hiệu đi kèm."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_post_b010
+msgid ""
+"Posting turns a working document into an accounting one. It takes a number from a legal sequence that must have no gaps, and the invoice now counts towards the month. You do not edit it afterwards — a posted invoice is corrected by a second document, a credit note, which is itself part of the record."
+msgstr ""
+"Ghi sổ biến một chứng từ đang soạn thành chứng từ kế toán. Nó lấy một số từ dãy số theo quy định vốn không được phép có khoảng trống, và hóa đơn từ đó được tính vào tháng. Sau đó bạn không sửa nó nữa — một hóa đơn đã ghi sổ được sửa bằng một chứng từ thứ hai, tức hóa đơn điều chỉnh, và bản thân nó cũng là một phần của sổ sách."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_practicehere
 msgid "Practise this safely"
 msgstr "Thực hành an toàn"
+
+#. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_refund_prepaid
+msgid "Prepaid credit"
+msgstr "Số dư trả trước"
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_refund
+msgid ""
+"Prepaid credit returned, an unfinished package refunded pro-rata, and a mistaken payment reversed. Three routes, three different records."
+msgstr ""
+"Hoàn lại tiền trả trước chưa dùng, hoàn theo tỷ lệ cho một gói chưa hoàn thành, và đảo ngược một khoản thanh toán nhầm. Ba lối đi, ba loại bản ghi khác nhau."
+
+#. module: health_learn
+#: model:learn.mission.option,label:health_learn.mission_fm1_step_02_opt_prepaid
+msgid "Prepaid credit — put 450,000 ₫ back on her balance so it comes off her next visit."
+msgstr "Số dư trả trước — trả 450.000 ₫ vào số dư của bà để trừ vào lượt kế tiếp."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_prereq
@@ -3469,6 +4519,13 @@ msgstr "Nhấn Chạy kiểm tra trong khung kiểm tra sẵn sàng."
 #: model:learn.mission.step,hint:health_learn.mission_m1_step_04
 msgid "Press Send reply. The consequence card appears first — that is the point."
 msgstr "Nhấn Gửi trả lời. Thẻ hệ quả sẽ hiện ra trước — đó là chủ ý."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_fm1_step_03
+msgid ""
+"Pro-rata means against visits delivered. The clinical reason for stopping does not change the arithmetic."
+msgstr ""
+"Theo tỷ lệ nghĩa là tính trên số buổi đã thực hiện. Lý do chuyên môn khiến liệu trình dừng lại không làm thay đổi phép tính."
 
 #. module: health_learn
 #: model:learn.tenant.override,value:health_learn.slot_contentowner
@@ -3533,6 +4590,13 @@ msgid "Re-authorise the Hà Nội channel — and prove it"
 msgstr "Cấp quyền lại kênh Hà Nội — và chứng minh nó chạy"
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_check_04
+msgid ""
+"Re-read the month's totals afterwards. A refund on the wrong route balances the cash and not the books."
+msgstr ""
+"Đọc lại tổng của tháng sau khi xong. Một khoản hoàn tiền đi sai lối vẫn khớp tiền mặt nhưng không khớp sổ sách."
+
+#. module: health_learn
 #: model:learn.mission.note,body:health_learn.mission_om1_check_04
 msgid ""
 "Re-read the workload bars when you are done — a rescue that overloads one person is tomorrow's sick day."
@@ -3557,14 +4621,30 @@ msgid "Read it next to Lead Analysis, never alone"
 msgstr "Hãy đọc cùng Phân tích khách tiềm năng, đừng đọc một mình"
 
 #. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_did_00
+msgid "Read outstanding and overdue as two different numbers before touching either."
+msgstr ""
+"Đọc “còn phải thu” và “quá hạn” như hai con số khác nhau trước khi động vào bất kỳ khoản nào."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_readanalysis
 msgid "Read the analysis"
 msgstr "Đọc bản phân tích"
 
 #. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_fin_unmatched_b020_s01
+msgid "Read the client's trail to see what was invoiced, paid and credited."
+msgstr "Đọc dấu vết của khách hàng để xem đã xuất hóa đơn, đã thu và đã điều chỉnh những gì."
+
+#. module: health_learn
 #: model:learn.mission.note,body:health_learn.mission_m2_did_00
 msgid "Read the consequence before taking a live channel down, not after."
 msgstr "Đã đọc hệ quả trước khi dừng một kênh đang chạy, không phải sau đó."
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_did_02
+msgid "Read the consequence card before sending money back out, not after."
+msgstr "Đọc thẻ hệ quả trước khi chuyển tiền trả lại, không phải sau."
 
 #. module: health_learn
 #: model:learn.mission.step,detail:health_learn.mission_m2_step_01
@@ -3582,6 +4662,17 @@ msgstr "Đọc cả ngày trước khi động vào — 14 lịch hẹn, 13 đã
 #: model:learn.mission.step,instruction:health_learn.mission_om1_step_00
 msgid "Read the day before you change it."
 msgstr "Đọc cả ngày trước khi thay đổi nó."
+
+#. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_fm1_step_00
+msgid "Read the month before you move any money."
+msgstr "Đọc cả tháng trước khi chuyển bất kỳ khoản nào."
+
+#. module: health_learn
+#: model:learn.mission.step,hint:health_learn.mission_fm1_step_04
+msgid ""
+"Read the reversibility line twice. The record can be corrected; the money cannot be recalled."
+msgstr "Hãy đọc dòng về khả năng hoàn tác hai lần. Sổ sách có thể sửa; tiền thì không thể gọi về."
 
 #. module: health_learn
 #: model:learn.intent.step,text:health_learn.intent_unroutedq_b030_s00
@@ -3607,6 +4698,12 @@ msgid ""
 "Reading Completed as progress. Two completed at 11:00 is normal; two completed at 16:00 means the afternoon has not started."
 msgstr ""
 "Hiểu Đã hoàn thành là tiến độ. Hai lượt hoàn thành lúc 11:00 là bình thường; hai lượt lúc 16:00 nghĩa là buổi chiều chưa bắt đầu."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_dashboard_mistake_0
+msgid ""
+"Reading Outstanding as debt. Most of it is simply invoices younger than their payment terms."
+msgstr "Hiểu Còn nợ là công nợ xấu. Phần lớn chỉ là hóa đơn chưa tới hạn thanh toán."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_channelcenter_mistake_2
@@ -3643,6 +4740,20 @@ msgstr ""
 "Hiểu năng lực là số giờ. Đó là số lượt mỗi ngày, và hai lượt trong cùng một tòa nhà không giống hai lượt ở hai quận."
 
 #. module: health_learn
+#: model:learn.step,tip:health_learn.lesson_f1_step_01
+msgid ""
+"Reading outstanding as if it were overdue is how an accountant ends up ringing clients who are not late."
+msgstr ""
+"Đọc “còn phải thu” như thể là “quá hạn” là cách một kế toán gọi điện cho những khách hàng chưa hề trễ hạn."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_ar_transactions_mistake_0
+msgid ""
+"Reading the balance without the movements. The balance is the result; the movements are the reason, and only one of those settles an argument."
+msgstr ""
+"Chỉ đọc số dư mà không xem biến động. Số dư là kết quả; biến động là nguyên nhân, và chỉ một trong hai giải quyết được tranh cãi."
+
+#. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_carecommand_mistake_1
 msgid ""
 "Reading the urgency score as a clinical severity. It is a triage number built from status and waiting time. A 110 is not a medical emergency; it is a strong queue position."
@@ -3674,6 +4785,11 @@ msgstr ""
 "Phân công lại, rồi đổi lịch, và chỉ sau đó mới cân nhắc hủy. Hủy là lối cuối cùng, không phải lối đầu tiên."
 
 #. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_ar_dashboard
+msgid "Receivables by age — the shape of what is owed."
+msgstr "Công nợ theo tuổi nợ — hình dạng của khoản đang phải thu."
+
+#. module: health_learn
 #: model:learn.mission,summary:health_learn.mission_om2
 msgid ""
 "Reconcile 1,350,000 ₫ held across three nurses against the visits that produced it, and find the one that does not match."
@@ -3688,11 +4804,40 @@ msgstr ""
 "Đối soát theo trí nhớ vào cuối một ca dài. Danh sách lượt thăm khám ở ngay đó và nó không biết mệt."
 
 #. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_payments_mistake_0
+msgid ""
+"Recording a payment against the client rather than the invoice. The client's balance looks right and the invoice stays open."
+msgstr ""
+"Ghi nhận thanh toán vào khách hàng thay vì vào hóa đơn. Công nợ của khách trông có vẻ đúng nhưng hóa đơn vẫn còn mở."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_account_payment
+msgid "Recording money against the right invoice."
+msgstr "Ghi nhận tiền vào đúng hóa đơn."
+
+#. module: health_learn
 #: model:learn.column,body:health_learn.col_unrouted_dismiss
 msgid ""
 "Records a judgement — 'this was not a patient' — against your name. It is the right action when that is true, and not a way to clear the badge count."
 msgstr ""
 "Ghi nhận một phán đoán — “đây không phải bệnh nhân” — dưới tên bạn. Đó là hành động đúng khi điều đó là sự thật, và không phải cách để xóa con số huy hiệu."
+
+#. module: health_learn
+#: model:learn.lesson,name:health_learn.lesson_f2
+#: model:learn.screen,name:health_learn.screen_fin_red_invoice
+#: model:learn.station,name:health_learn.station_fin_red_invoice
+msgid "Red Invoice Log"
+msgstr "Nhật ký hóa đơn đỏ"
+
+#. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_red_invoice_redinvoice
+msgid "Red invoice"
+msgstr "Hóa đơn đỏ"
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_red_invoice
+msgid "Red invoices issued through Viettel, their state, and whether any has been cancelled."
+msgstr "Các hóa đơn đỏ đã phát hành qua Viettel, trạng thái, và có hóa đơn nào bị hủy hay không."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_reducemotion
@@ -3710,6 +4855,19 @@ msgstr ""
 #: model:learn.string,value:health_learn.str_refresh
 msgid "Refresh"
 msgstr "Làm mới"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_refund
+#: model:learn.station,name:health_learn.station_fin_refund
+msgid "Refund / Credit"
+msgstr "Hoàn tiền / Điều chỉnh"
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_refund_mistake_1
+msgid ""
+"Refunding a whole package when four of eight visits were delivered. Pro-rata is not a courtesy — it is what the client actually consumed."
+msgstr ""
+"Hoàn toàn bộ gói khi đã thực hiện bốn trên tám buổi. Hoàn theo tỷ lệ không phải là sự nhân nhượng — đó đúng bằng phần khách hàng đã dùng."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_release
@@ -3834,6 +4992,12 @@ msgid "Reserve Junk? for advertising, wrong numbers and bots."
 msgstr "Chỉ dành Thư rác? cho quảng cáo, gọi nhầm số và bot."
 
 #. module: health_learn
+#: model:learn.quiz.option,label:health_learn.lesson_f1_quiz_opt_1
+msgid ""
+"Reset it to draft, fix the description, and post it again — the period is open, so nothing is lost."
+msgstr "Đưa về nháp, sửa mô tả, rồi ghi sổ lại — kỳ vẫn đang mở nên không mất gì cả."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_reset
 msgid "Reset progress"
 msgstr "Đặt lại tiến độ"
@@ -3863,6 +5027,11 @@ msgstr "Điều hành trong ngày"
 #: model:learn.step,kicker:health_learn.lesson_l1_step_01
 msgid "SCOPE"
 msgstr "PHẠM VI"
+
+#. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f1_step_05
+msgid "SOMEBODY ELSE'S JOB"
+msgstr "VIỆC CỦA NGƯỜI KHÁC"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_suggested
@@ -3907,6 +5076,13 @@ msgid ""
 "Scheduling on yourself out of habit. An activity assigned to one person is invisible as team work; if you are off sick it simply does not happen."
 msgstr ""
 "Theo thói quen luôn gán cho chính mình. Hoạt động gán cho một người sẽ không được nhìn như việc của nhóm; nếu bạn nghỉ ốm thì việc đó đơn giản là không xảy ra."
+
+#. module: health_learn
+#: model:learn.step,consequence:health_learn.lesson_f2_step_02
+msgid ""
+"Scope: a live Vietnamese tax document, the client who holds a copy of it, and your filing for this period. Reversible: no — the reissued invoice is a new document with a new number, and both the cancellation and the reissue are on the record. Check first: that the reason is buyer details, amount or service description, and that the period is still open. If either is not true, this is the wrong button."
+msgstr ""
+"Phạm vi: một chứng từ thuế đang có hiệu lực tại Việt Nam, khách hàng đang giữ một bản của nó, và hồ sơ kê khai kỳ này của bạn. Hoàn tác: không — hóa đơn phát hành lại là một chứng từ mới với số mới, và cả việc hủy lẫn việc phát hành lại đều nằm trên sổ sách. Kiểm tra trước: lý do có thuộc nhóm thông tin người mua, số tiền hoặc mô tả dịch vụ hay không, và kỳ kê khai còn mở hay không. Nếu một trong hai không đúng thì đây là nút sai."
 
 #. module: health_learn
 #: model:learn.step,consequence:health_learn.lesson_l1_step_09
@@ -3979,6 +5155,13 @@ msgstr ""
 "Phạm vi: chỉ lượt đến này — không tạo liên hệ và không gửi tin nhắn nào. Hoàn tác: bản ghi vẫn còn và có thể xem lại, nhưng trong lúc đó người kia không được liên hệ. Kiểm tra trước: thật sự không có cách nào liên hệ, hay điểm neo chỉ đang nằm ở kênh khác?"
 
 #. module: health_learn
+#: model:learn.step,consequence:health_learn.lesson_f1_step_03
+msgid ""
+"Scope: this invoice, the sequence it drew its number from, and the month's reported totals. Reversible: not by deleting it — a posted invoice is corrected by a second document, a credit note, which is itself part of the record. Check first: the client, the amount and the service description, because those are the three things a credit note exists to fix."
+msgstr ""
+"Phạm vi: hóa đơn này, dãy số mà nó lấy số, và tổng số báo cáo của tháng. Hoàn tác: không phải bằng cách xóa — một hóa đơn đã ghi sổ được sửa bằng một chứng từ thứ hai, tức hóa đơn điều chỉnh, và bản thân chứng từ đó cũng là một phần của sổ sách. Kiểm tra trước: khách hàng, số tiền và mô tả dịch vụ, vì đó chính là ba thứ mà hóa đơn điều chỉnh sinh ra để sửa."
+
+#. module: health_learn
 #: model:learn.step,consequence:health_learn.lesson_o1_step_03
 msgid ""
 "Scope: this visit, the slot it occupied, and the money attached to it. Reversible: no — a new booking is a new booking, and the patient has already been told. Check first: whether the family wants a different time rather than no visit, and whether another person could take it."
@@ -4023,6 +5206,12 @@ msgstr ""
 #: model:learn.column,label:health_learn.col_ops_bookings_service
 msgid "Service"
 msgstr "Dịch vụ"
+
+#. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_packages
+#: model:learn.station,name:health_learn.station_fin_packages
+msgid "Service Packages"
+msgstr "Gói dịch vụ"
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_reminder_b010
@@ -4097,6 +5286,17 @@ msgstr ""
 "Sáu yếu tố cộng điểm: cần trả lời (40), hôm nay có lịch hẹn (30), tin chưa đọc (15), cuộc gọi nhỡ (10), và có dùng cụm từ chúng ta theo dõi (15). 40+30+15+10+15 = 110. Chờ càng lâu thì càng cộng thêm."
 
 #. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f1_step_00
+msgid "Sixty-three invoices, and only fifteen of them are your job"
+msgstr "Sáu mươi ba hóa đơn, và chỉ mười lăm là việc của bạn"
+
+#. module: health_learn
+#: model:learn.lesson,goal:health_learn.lesson_f1
+#: model:learn.station,summary:health_learn.station_fin_invoices
+msgid "Sixty-three invoices, and the one action on them that cannot be undone."
+msgstr "Sáu mươi ba hóa đơn, và thao tác duy nhất không thể hoàn tác."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_skipquiz
 msgid "Skip to check"
 msgstr "Đến phần kiểm tra"
@@ -4109,9 +5309,25 @@ msgstr ""
 "Bỏ qua bước kiểm tra trùng trong trình đặt lịch. Xác nhận nhầm khách hàng được gợi ý sẽ ghi lịch hẹn — và sau đó là hồ sơ lâm sàng — vào hồ sơ của người khác."
 
 #. module: health_learn
+#: model:learn.step,tip:health_learn.lesson_f2_step_00
+msgid "So “this invoice has no red invoice” is usually correct, not a missing step."
+msgstr "Vì vậy “hóa đơn này chưa có hóa đơn đỏ” thường là đúng, không phải một bước bị bỏ sót."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_bhyt
+msgid "Social health insurance claims — not in use yet."
+msgstr "Hồ sơ bảo hiểm y tế xã hội — chưa đưa vào sử dụng."
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_walkin
 msgid "Someone just walked in — how do I log it?"
 msgstr "Có khách đến trực tiếp — ghi nhận thế nào?"
+
+#. module: health_learn
+#: model:learn.mission.note,body:health_learn.mission_fm1_did_01
+msgid "Sorted three refunds by what actually happened, not by which screen they appeared on."
+msgstr ""
+"Phân loại ba khoản hoàn tiền theo điều đã thật sự xảy ra, không theo màn hình mà chúng xuất hiện."
 
 #. module: health_learn
 #: model:learn.column,label:health_learn.col_contacts_channel
@@ -4169,6 +5385,14 @@ msgstr "Bắt đầu nhiệm vụ"
 #: model:learn.station,summary:health_learn.station_dashboard
 msgid "Start of shift: what came in, what is waiting, how conversion is going."
 msgstr "Đầu ca: có gì mới, việc gì đang chờ, tỷ lệ chuyển đổi ra sao."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_dashboard
+#: model:learn.station,outline_when:health_learn.station_fin_dashboard
+msgid ""
+"Start of the day and at month end. It is a month view, so a figure that moves hourly is a figure you are misreading."
+msgstr ""
+"Đầu ngày và cuối tháng. Đây là góc nhìn theo tháng, nên một con số thay đổi theo giờ là con số bạn đang đọc sai."
 
 #. module: health_learn
 #: model:learn.mission.step,instruction:health_learn.mission_m2_step_01
@@ -4252,6 +5476,11 @@ msgid "THE LIFECYCLE"
 msgstr "VÒNG ĐỜI"
 
 #. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f1_step_03
+msgid "THE LINE"
+msgstr "RANH GIỚI"
+
+#. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_o1_step_01
 msgid "THE ONE THAT MATTERS"
 msgstr "LƯỢT QUAN TRỌNG"
@@ -4260,6 +5489,11 @@ msgstr "LƯỢT QUAN TRỌNG"
 #: model:learn.step,kicker:health_learn.lesson_l2_step_06
 msgid "THE ONE TO WATCH"
 msgstr "ĐIỀU CẦN THEO DÕI"
+
+#. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f1_step_04
+msgid "THE QUIET FAILURE"
+msgstr "LỖI ÂM THẦM"
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_o2_step_05
@@ -4276,6 +5510,11 @@ msgstr "ĐỐI CHIẾU"
 #: model:learn.step,kicker:health_learn.lesson_o1_step_03
 msgid "THE RISKY ONE"
 msgstr "THAO TÁC RỦI RO"
+
+#. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f2_step_01
+msgid "THE RULE"
+msgstr "QUY TẮC"
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_o1_step_04
@@ -4303,6 +5542,11 @@ msgstr "TOÀN BỘ PHỄU TRONG MỘT BẢNG"
 #: model:learn.tenant.override,value:health_learn.slot_areasouth
 msgid "TPHCM"
 msgstr "TPHCM"
+
+#. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f1_step_01
+msgid "TWO NUMBERS, NOT ONE"
+msgstr "HAI CON SỐ, KHÔNG PHẢI MỘT"
 
 #. module: health_learn
 #: model:learn.mission,summary:health_learn.mission_m2
@@ -4365,6 +5609,17 @@ msgid "That's right."
 msgstr "Chính xác."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_bhyt_notlive_b020
+msgid "The BHYT Claims screen itself, which is empty because nothing has been submitted."
+msgstr "Chính màn hình Hồ sơ BHYT, đang trống vì chưa có hồ sơ nào được nộp."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_cash_owner_b030
+msgid "The Cash In Transit total, which is the same figure as the Operations Collections screen."
+msgstr ""
+"Tổng trên màn hình Tiền đang chuyển, chính là con số trên màn hình Thu tiền mặt của Vận hành."
+
+#. module: health_learn
 #: model:learn.mission.step,hint:health_learn.mission_m1_step_01
 msgid "The Claim button is on the banner above the timeline."
 msgstr "Nút Nhận xử lý nằm trên dải phía trên dòng thời gian."
@@ -4382,6 +5637,20 @@ msgstr ""
 "Bảng điều khiển cho bạn con số. Màn hình này cho biết tổ hợp nào tạo ra con số đó — kênh nào, khu vực nào, dịch vụ nào."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_access_b010
+msgid ""
+"The FINANCE section is for the Accountant and Owner roles. Invoices is the one exception — an Operations Manager sees that leaf, because they are asked about unpaid visits. Cancelling a red invoice is narrower still: it needs the tax-compliance group, which is separate from being able to read or post an invoice."
+msgstr ""
+"Mục TÀI CHÍNH dành cho vai trò Kế toán và Chủ sở hữu. Hóa đơn là ngoại lệ duy nhất — Quản lý vận hành nhìn thấy nhánh này, vì họ hay được hỏi về các lượt chưa thanh toán. Quyền hủy hóa đơn đỏ còn hẹp hơn: nó cần nhóm tuân thủ thuế, tách biệt với quyền xem hay ghi sổ hóa đơn."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_outstanding_vs_overdue_b030
+msgid ""
+"The Finance Dashboard's Outstanding and Overdue cards, and the ageing split on the AR Dashboard."
+msgstr ""
+"Thẻ Còn phải thu và Quá hạn trên Bảng tài chính, cùng phần tách theo độ trễ trên Bảng công nợ."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_unassigned_b040
 msgid "The Operations Dashboard's unassigned count and the booking list behind it."
 msgstr "Số Chưa phân công trên Bảng điều hành và danh sách lịch hẹn phía sau nó."
@@ -4397,6 +5666,13 @@ msgstr ""
 #: model:learn.mission.step,hint:health_learn.mission_om1_step_00
 msgid "The Unassigned card is the one that becomes a phone call. It reads 1 right now."
 msgstr "Thẻ Chưa phân công là thẻ sẽ biến thành cuộc gọi. Ngay lúc này nó là 1."
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_red_invoice_redinvoice
+msgid ""
+"The Vietnamese tax document issued through Viettel. Issued on request, so most invoices legitimately do not have one."
+msgstr ""
+"Chứng từ thuế của Việt Nam phát hành qua Viettel. Phát hành theo yêu cầu, nên phần lớn hóa đơn không có là điều bình thường."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l1_step_09
@@ -4442,6 +5718,18 @@ msgstr ""
 "Khu vực trên tài khoản này không phải nhãn dán — nó là quy tắc định tuyến. Hãy theo đường nối từ khu vực của tài khoản tới số lượng trên bảng Hà Nội. Đổi trường này thì các cuộc hội thoại hôm qua không di chuyển, nhưng mọi cuộc hội thoại mới đều đi theo."
 
 #. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_ar_transactions
+msgid "The audit trail behind a balance: invoiced, paid, credited and when."
+msgstr "Dấu vết kiểm toán phía sau một số dư: đã xuất, đã thu, đã điều chỉnh và vào lúc nào."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_ar_transactions
+msgid ""
+"The audit trail behind a balance: what was invoiced, what was paid, what was credited and when."
+msgstr ""
+"Dấu vết kiểm toán phía sau một số dư: đã xuất hóa đơn gì, đã thu gì, đã điều chỉnh gì và vào lúc nào."
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_cancel_vs_reschedule_b030
 msgid "The booking actions on the Bookings screen."
 msgstr "Các thao tác trên màn hình Lịch hẹn."
@@ -4485,6 +5773,18 @@ msgstr ""
 "Công cụ kiểm tra sẽ báo cho bạn rồi vẫn để bạn tiếp tục. Đó là chủ ý: người quản lý đang gọi cho gia đình thường biết điều mà bản đồ không biết — rằng họ sẽ chờ, rằng tòa nhà có thang máy, hoặc rằng điều dưỡng này sống ngay phố đó."
 
 #. module: health_learn
+#: model:learn.intent,label:health_learn.intent_fin_unmatched
+msgid "The client says they paid but it shows unpaid"
+msgstr "Khách hàng nói đã thanh toán nhưng vẫn hiển thị chưa thanh toán"
+
+#. module: health_learn
+#: model:learn.mission,consequence_scope:health_learn.mission_fm1
+msgid ""
+"The client's balance, the invoice or package behind it, and the month's reported figures. A refund recorded on the wrong route still moves the right amount of money — which is exactly why nobody notices until the month does not reconcile."
+msgstr ""
+"Số dư của khách hàng, hóa đơn hoặc gói dịch vụ phía sau nó, và các con số báo cáo của tháng. Một khoản hoàn tiền ghi sai lối vẫn chuyển đúng số tiền — và chính vì thế không ai phát hiện ra cho tới khi cả tháng không khớp sổ."
+
+#. module: health_learn
 #: model:learn.mission.step,hint:health_learn.mission_om1_step_01
 msgid "The completed one at 09:00 already happened. You cannot move a visit that has been done."
 msgstr "Lượt 09:00 đã hoàn thành. Bạn không thể dời một lượt đã được thực hiện."
@@ -4515,6 +5815,11 @@ msgstr ""
 msgid "The contact records as a pivot — cross source, status, service and area for one period."
 msgstr ""
 "Các bản ghi liên hệ ở dạng bảng tổng hợp — giao cắt nguồn, trạng thái, dịch vụ và khu vực cho một khoảng thời gian."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_ar_management
+msgid "The dashboard tells you the shape; this is where something happens about it."
+msgstr "Bảng công nợ cho biết hình dạng vấn đề; đây là nơi thật sự làm gì đó với nó."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_leadanalysis_activity_date
@@ -4561,10 +5866,20 @@ msgstr ""
 "Con số mà bộ phận Vận hành đối soát cuối ca rồi chuyển cho Tài chính. Tài chính nhận về khi đã khớp và không bao giờ truy một điều dưỡng cụ thể."
 
 #. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_overdue
+msgid "The four invoices that have passed their terms."
+msgstr "Bốn hóa đơn đã quá hạn thanh toán."
+
+#. module: health_learn
 #: model:learn.step,tip:health_learn.lesson_l8_step_02
 msgid "The interesting column is usually Lost, not Booked: it is where a fixable cause hides."
 msgstr ""
 "Cột đáng chú ý thường là Mất, không phải Đã đặt lịch: đó là nơi ẩn giấu nguyên nhân có thể khắc phục."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_post_b040
+msgid "The invoice action strip, and the VAT Log which lists what was posted."
+msgstr "Dải nút thao tác trên hóa đơn, và Nhật ký hóa đơn VAT liệt kê những gì đã ghi sổ."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_contacts_status
@@ -4572,6 +5887,25 @@ msgid ""
 "The lifecycle state this record is in. Moving it forward should record something that really happened; it is not a way to tidy the list."
 msgstr ""
 "Trạng thái vòng đời của bản ghi này. Chuyển nó tiến lên phải phản ánh điều thật sự đã xảy ra; đây không phải cách dọn gọn danh sách."
+
+#. module: health_learn
+#: model:learn.step,tip:health_learn.lesson_f1_step_00
+msgid ""
+"The list is grouped by service here so the total is readable. In the product it is one row per invoice."
+msgstr ""
+"Ở đây danh sách được nhóm theo dịch vụ để dễ đọc tổng. Trong sản phẩm, mỗi hóa đơn là một dòng."
+
+#. module: health_learn
+#: model:learn.mission,consequence_reversible:health_learn.mission_fm1
+msgid ""
+"The money can be taken back only by asking the client for it. The record can be corrected, but the correction is another document, and the two together are what an auditor reads. Getting the route right the first time costs a minute; getting it wrong costs a reconciliation."
+msgstr ""
+"Tiền chỉ có thể lấy lại bằng cách đề nghị khách hàng trả lại. Sổ sách thì sửa được, nhưng bản sửa là một chứng từ khác, và kiểm toán viên sẽ đọc cả hai. Chọn đúng lối ngay từ đầu tốn một phút; chọn sai tốn cả một kỳ đối soát."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_dashboard
+msgid "The month in money: billed, paid, outstanding, and what is overdue."
+msgstr "Cả tháng bằng tiền: đã xuất, đã thu, còn nợ, và khoản nào quá hạn."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_contacts_phone
@@ -4657,6 +5991,13 @@ msgstr ""
 "Bảng tổng hợp: yêu cầu theo nguồn, trạng thái, dịch vụ và khu vực — toàn bộ phễu trong một lưới."
 
 #. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_ar_management
+msgid ""
+"The place receivables are actually worked, with Account Payment, Cash In Transit and Refund / Credit grouped beneath it."
+msgstr ""
+"Nơi công nợ thật sự được xử lý, với Thanh toán, Tiền đang chuyển và Hoàn tiền / Điều chỉnh nhóm bên dưới."
+
+#. module: health_learn
 #: model:learn.mission,anomaly_body:health_learn.mission_m2
 msgid ""
 "The provider returns both of the clinic's Official Accounts and lists them by creation date, so TPHCM comes first. Pick it and every readiness check still passes — the connection would be perfectly healthy and pointed at the wrong city. Nothing errors; the Hà Nội desk just has a quiet week."
@@ -4687,6 +6028,13 @@ msgid "The role gate on each Operations sidebar leaf."
 msgstr "Phân quyền vai trò trên từng mục Vận hành trong thanh bên."
 
 #. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_refund
+msgid ""
+"The route decides what happens to the client's history. A transaction reversal is a correction — it says the payment should never have been recorded. A package refund says the course stopped early. Choosing the wrong one leaves the client's record telling a story that did not happen."
+msgstr ""
+"Lối đi quyết định điều gì xảy ra với lịch sử của khách hàng. Đảo giao dịch là một thao tác sửa lỗi — nó nói rằng khoản thanh toán lẽ ra không nên được ghi nhận. Hoàn gói nói rằng liệu trình dừng sớm. Chọn nhầm sẽ khiến hồ sơ khách hàng kể một câu chuyện không có thật."
+
+#. module: health_learn
 #: model:learn.step,tip:health_learn.lesson_o1_step_00
 msgid "The row order is time, not priority. The one that needs you is not at the top."
 msgstr ""
@@ -4698,6 +6046,11 @@ msgid ""
 "The row stores no message text. It points at the Zalo thread and the call log, and builds the timeline when you open it."
 msgstr ""
 "Dòng này không lưu nội dung tin nhắn. Nó trỏ tới luồng Zalo và nhật ký cuộc gọi, rồi dựng dòng thời gian khi bạn mở."
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_red_rule_b030
+msgid "The rule panel on the Red Invoice Log."
+msgstr "Khung quy tắc trên Nhật ký hóa đơn đỏ."
 
 #. module: health_learn
 #: model:learn.station,outline_what:health_learn.station_leadanalysis
@@ -4719,6 +6072,13 @@ msgid ""
 "The schedule shows you the shape of the day. This shows you whether it is fair, and an unfair day is the one that produces sick leave next week."
 msgstr ""
 "Bảng phân công cho thấy hình dạng của ngày. Màn hình này cho biết ngày đó có công bằng không, và một ngày không công bằng chính là thứ tạo ra đơn nghỉ ốm vào tuần sau."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_bhyt
+msgid ""
+"The screen where claims against a patient's BHYT entitlement will be prepared and tracked. Nothing is being submitted through it today."
+msgstr ""
+"Màn hình để lập và theo dõi hồ sơ yêu cầu chi trả theo quyền lợi BHYT của bệnh nhân. Hiện chưa có hồ sơ nào được gửi qua đây."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_catchmentq_b030
@@ -4750,6 +6110,11 @@ msgstr "Bảng theo dõi chung của cả nhóm — mọi cuộc gọi, cuộc h
 #: model:learn.mission,anomaly_title:health_learn.mission_m1
 msgid "The tempting answer is the wrong one"
 msgstr "Câu trả lời hấp dẫn lại là câu sai"
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_refund_route_b040
+msgid "The three routes panel on Refund / Credit."
+msgstr "Khung ba lối xử lý trên màn hình Hoàn tiền / Điều chỉnh."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l8_step_01
@@ -4804,11 +6169,30 @@ msgstr ""
 "Khoảng thời gian mà mọi con số trên màn hình này được lọc theo — cả thẻ, biểu đồ và bảng dữ liệu. Đừng đọc con số nào ở đây mà không kiểm tra nó."
 
 #. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_red_invoice_period
+msgid ""
+"The window in which a red invoice can still be cancelled and reissued. Once it closes, corrections become credit notes."
+msgstr ""
+"Khoảng thời gian mà hóa đơn đỏ còn có thể được hủy và phát hành lại. Khi kỳ đã đóng, việc sửa phải chuyển thành hóa đơn điều chỉnh."
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l4_step_03
 msgid ""
 "The wizard offers plausible matches before it creates anything. Confirming the wrong suggested client writes the visit — and later the clinical note — into <b>another person's record</b>."
 msgstr ""
 "Trình đặt lịch đưa ra các kết quả khớp hợp lý trước khi tạo bất cứ thứ gì. Xác nhận nhầm khách hàng được gợi ý sẽ ghi lịch hẹn — và sau đó là hồ sơ lâm sàng — vào <b>hồ sơ của người khác</b>."
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_ar_management
+msgid ""
+"The working screen for receivables, with payment, cash-in-transit and refund tools under it."
+msgstr ""
+"Màn hình làm việc cho công nợ, với các công cụ thanh toán, tiền đang chuyển và hoàn tiền bên dưới."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_ar_management
+msgid "The working screen for receivables, with three tools under it."
+msgstr "Màn hình làm việc cho công nợ, với ba công cụ bên dưới."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_ops_capacity_b010
@@ -4845,6 +6229,13 @@ msgstr ""
 #: model:learn.step,title:health_learn.lesson_l6_step_01
 msgid "These records are evidence, not drafts"
 msgstr "Đây là bằng chứng, không phải bản nháp"
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_outstanding_vs_overdue_b020
+msgid ""
+"They are two different numbers on the same screen, sitting next to each other. Reading one as the other is the most common mistake in this section."
+msgstr ""
+"Đó là hai con số khác nhau trên cùng một màn hình, nằm cạnh nhau. Đọc nhầm con số này thành con số kia là lỗi phổ biến nhất trong bộ phận này."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l6_step_01
@@ -4893,6 +6284,11 @@ msgstr ""
 "Lịch hẹn này, khung giờ nó giữ, khoản doanh thu đi kèm, và một bệnh nhân đã được báo là sẽ có người tới. Nó cũng làm thay đổi điểm ưu tiên bên bàn CRM, vì một lịch hẹn trong vòng 24 giờ được cộng +30 ở đó."
 
 #. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f2_step_02
+msgid "This button talks to the tax authority"
+msgstr "Nút này gửi thông tin tới cơ quan thuế"
+
+#. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_attrib_b020
 msgid ""
 "This is almost always fixable at the source: somebody published a link without tags. It is a repeating leak, not noise."
@@ -4905,6 +6301,13 @@ msgid ""
 "This is money that exists physically and has to end up matching. It is reconciled inside Operations at end of shift; Finance receives one balanced figure and never chases an individual nurse."
 msgstr ""
 "Đây là tiền tồn tại dưới dạng vật lý và cuối cùng phải khớp. Việc đối soát diễn ra trong bộ phận Vận hành vào cuối ca; Tài chính nhận về một con số đã khớp và không bao giờ truy một điều dưỡng cụ thể."
+
+#. module: health_learn
+#: model:learn.step,tip:health_learn.lesson_f1_step_05
+msgid ""
+"This is one number seen from two departments. Knowing whose job it is saves the phone call."
+msgstr ""
+"Đây là một con số được nhìn từ hai bộ phận. Biết đó là việc của ai sẽ giúp bạn khỏi phải gọi điện."
 
 #. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l2_step_00
@@ -4921,6 +6324,13 @@ msgstr ""
 "Đây là thao tác duy nhất trong nhiệm vụ này không thể hoàn tác. Thẻ hệ quả xuất hiện trước khi nó diễn ra — đó chính là mục đích của nó."
 
 #. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_overdue
+msgid ""
+"This is the only receivables screen that is a to-do list. Everything else describes; this one asks you to ring somebody."
+msgstr ""
+"Đây là màn hình công nợ duy nhất mang tính danh sách việc cần làm. Các màn hình khác mô tả; màn hình này yêu cầu bạn gọi cho ai đó."
+
+#. module: health_learn
 #: model:learn.step,tip:health_learn.lesson_o1_step_01
 msgid ""
 "This is the same booking the Operations Dashboard counts in its Unassigned card. One number, one list, one job."
@@ -4933,6 +6343,13 @@ msgid ""
 "This is the screen to open first when someone says “we stopped getting enquiries”. Nine times in ten the answer is here, not in the advertising."
 msgstr ""
 "Đây là màn hình nên mở đầu tiên khi có người nói “chúng ta không còn nhận được yêu cầu tư vấn”. Chín trên mười lần, câu trả lời nằm ở đây chứ không phải ở quảng cáo."
+
+#. module: health_learn
+#: model:learn.mission.step,detail:health_learn.mission_fm1_step_06
+msgid ""
+"This is the undo that FINANCE actually has: not deleting the entry, but a record complete enough that someone else can see what happened and why. Invoiced, paid, reversed, and when."
+msgstr ""
+"Đây mới là thứ đóng vai trò hoàn tác trong Tài chính: không phải xóa bút toán, mà là một bản ghi đầy đủ tới mức người khác nhìn vào hiểu được chuyện gì đã xảy ra và vì sao. Đã xuất hóa đơn, đã thu, đã đảo, và vào lúc nào."
 
 #. module: health_learn
 #: model:learn.mission.step,detail:health_learn.mission_om1_step_06
@@ -4982,6 +6399,13 @@ msgstr ""
 "Chỉ là ví dụ mẫu của bài hướng dẫn này. Giá thật của bạn nằm trong bảng giá, và tôi không đọc bảng đó."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_post_b030
+msgid ""
+"Those three fields are exactly what a credit note — and a red invoice cancellation — exist to fix. Check them before, not after."
+msgstr ""
+"Đúng ba trường đó là những gì mà hóa đơn điều chỉnh — và việc hủy hóa đơn đỏ — sinh ra để sửa. Hãy kiểm tra trước, đừng để sau."
+
+#. module: health_learn
 #: model:learn.step,body:health_learn.lesson_l6_step_00
 msgid ""
 "Three arrivals today: a Facebook comment with no phone number, a half-finished web form, and a Zalo message to an account still in setup. Each is somebody who reached out and would otherwise vanish between systems."
@@ -4989,11 +6413,39 @@ msgstr ""
 "Ba lượt đến hôm nay: một bình luận Facebook không có số điện thoại, một biểu mẫu web điền dở, và một tin nhắn Zalo tới tài khoản còn đang thiết lập. Mỗi mục là một người đã liên hệ và nếu không có màn hình này sẽ biến mất giữa các hệ thống."
 
 #. module: health_learn
+#: model:learn.mission,summary:health_learn.mission_fm1
+msgid ""
+"Three clients are owed money back this month. They look like one job and they are three, and the screen you happen to be on will suggest the wrong one."
+msgstr ""
+"Ba khách hàng cần được hoàn tiền trong tháng này. Trông như một việc nhưng thực ra là ba, và màn hình bạn đang mở sẽ gợi ý cho bạn lối sai."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_hublead
 msgid ""
-"Three cooperating surfaces over the sections you work in — the CRM desk, and Operations. Screens your role cannot open are still explained here, because knowing what a screen is for is how you know who to ask."
+"Three cooperating surfaces over the sections you work in — the CRM desk, Operations and Finance. Screens your role cannot open are still explained here, because knowing what a screen is for is how you know who to ask."
 msgstr ""
-"Ba bề mặt học tập phối hợp cho các khu vực bạn làm việc — bàn CRM và Vận hành. Những màn hình vai trò của bạn không mở được vẫn được giải thích ở đây, vì biết một màn hình dùng để làm gì chính là cách biết nên hỏi ai."
+"Ba bề mặt học tập phối hợp cho các khu vực bạn làm việc — bàn CRM, Vận hành và Tài chính. Những màn hình vai trò của bạn không mở được vẫn được giải thích ở đây, vì biết một màn hình dùng để làm gì chính là cách biết nên hỏi ai."
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_refund
+msgid "Three different situations that all look like giving money back."
+msgstr "Ba tình huống khác nhau nhưng đều trông giống việc trả lại tiền."
+
+#. module: health_learn
+#: model:learn.step,title:health_learn.lesson_f2_step_01
+msgid "Three reasons, one window"
+msgstr "Ba lý do, một khung thời gian"
+
+#. module: health_learn
+#: model:learn.mission,name:health_learn.mission_fm1
+msgid "Three refunds, three different routes"
+msgstr "Ba khoản hoàn tiền, ba lối đi khác nhau"
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_refund
+msgid ""
+"Three routes for money going back: prepaid credit, package pro-rata, transaction reversal."
+msgstr "Ba lối cho khoản tiền trả lại: hoàn tiền trả trước, hoàn gói theo tỷ lệ, đảo giao dịch."
 
 #. module: health_learn
 #: model:learn.mission.step,instruction:health_learn.mission_om1_step_02
@@ -5078,6 +6530,18 @@ msgid "Touchpoint"
 msgstr "Điểm chạm"
 
 #. module: health_learn
+#: model:learn.column,label:health_learn.col_fin_refund_reversal
+msgid "Transaction reversal"
+msgstr "Đảo giao dịch"
+
+#. module: health_learn
+#: model:learn.mission.option,label:health_learn.mission_fm1_step_02_opt_ok
+msgid ""
+"Transaction reversal — the second payment should never have been taken, so it is reversed rather than returned."
+msgstr ""
+"Đảo giao dịch — khoản thanh toán thứ hai lẽ ra không được thu, nên phải đảo lại chứ không phải hoàn trả."
+
+#. module: health_learn
 #: model:learn.column,label:health_learn.col_ops_routes_travel
 msgid "Travel time"
 msgstr "Thời gian di chuyển"
@@ -5100,6 +6564,25 @@ msgid ""
 "Treating a low Spam Rate as good news. A low rate can also mean nobody is marking spam, which quietly inflates every other number."
 msgstr ""
 "Coi Tỷ lệ thư rác thấp là tin tốt. Tỷ lệ thấp cũng có thể nghĩa là không ai đánh dấu thư rác, khiến mọi con số khác bị thổi phồng một cách âm thầm."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_packages_mistake_0
+msgid "Treating a sold package as revenue. It becomes revenue one visit at a time."
+msgstr "Coi một gói đã bán là doanh thu. Nó chỉ trở thành doanh thu theo từng buổi thực hiện."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_red_invoice_mistake_1
+msgid ""
+"Treating it like an internal document. The buyer holds a copy, and the tax authority holds a record — neither of them sees your correction unless it is filed."
+msgstr ""
+"Coi nó như chứng từ nội bộ. Người mua giữ một bản, cơ quan thuế giữ một bản ghi — không bên nào thấy phần sửa của bạn trừ khi nó được kê khai."
+
+#. module: health_learn
+#: model:learn.station.mistake,name:health_learn.station_fin_ar_management_mistake_0
+msgid ""
+"Treating its three children as separate screens. They are three answers to one question — money that has not settled."
+msgstr ""
+"Coi ba mục con là ba màn hình riêng biệt. Chúng là ba câu trả lời cho cùng một câu hỏi — khoản tiền chưa được tất toán."
 
 #. module: health_learn
 #: model:learn.station.mistake,name:health_learn.station_ops_routes_mistake_1
@@ -5174,6 +6657,13 @@ msgid ""
 "Two lines in the note — what was promised, and by when — is what makes an activity handoverable."
 msgstr ""
 "Hai dòng trong ghi chú — đã hứa gì, và hạn khi nào — là thứ khiến một hoạt động có thể bàn giao được."
+
+#. module: health_learn
+#: model:learn.mission,anomaly_body:health_learn.mission_fm1
+msgid ""
+"Two of the three are refunds: Lê Thị Bích has credit she paid for and did not use, and Đỗ Văn Hưng stopped a course after 4 of 8 visits. Vũ Thị Mai's 450,000 ₫ is different — she paid once, and a second payment was keyed onto her record by mistake. Nothing is being returned to her; a payment that never should have existed is being reversed. It is the smallest of the three and the only one that is a correction, and it is the one most likely to be recorded as a refund — because it arrives in the same list, on the same screen, with the same client and the same amount of money going the same direction."
+msgstr ""
+"Hai trong ba trường hợp là hoàn tiền: Lê Thị Bích có số dư đã trả mà chưa dùng, và Đỗ Văn Hưng dừng liệu trình sau 4 trên 8 buổi. Trường hợp 450.000 ₫ của Vũ Thị Mai thì khác — bà đã thanh toán một lần, và một khoản thứ hai bị nhập nhầm vào hồ sơ của bà. Không có gì được trả lại cho bà cả; một khoản thanh toán lẽ ra không tồn tại đang được đảo lại. Đây là khoản nhỏ nhất trong ba khoản và là khoản duy nhất mang tính điều chỉnh, đồng thời cũng là khoản dễ bị ghi thành hoàn tiền nhất — vì nó xuất hiện trong cùng một danh sách, trên cùng một màn hình, với cùng một khách hàng và cùng một số tiền đi theo cùng một hướng."
 
 #. module: health_learn
 #: model:learn.intent.block,body:health_learn.intent_quiet_b010
@@ -5255,6 +6745,18 @@ msgid "Unrouted contact"
 msgstr "Danh bạ chưa được định tuyến"
 
 #. module: health_learn
+#: model:learn.intent.step,text:health_learn.intent_fin_refund_route_b020_s00
+msgid "Unused credit the client paid for → prepaid."
+msgstr "Số dư khách đã trả mà chưa dùng → trả trước."
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_refund_prepaid
+msgid ""
+"Unused money the client paid in advance, returned to them. Nothing was wrong; they simply did not use it."
+msgstr ""
+"Khoản tiền khách hàng trả trước nhưng chưa dùng, được hoàn lại. Không có gì sai; đơn giản là họ chưa dùng tới."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_urgency
 msgid "Urgency"
 msgstr "Điểm ưu tiên"
@@ -5280,9 +6782,21 @@ msgstr ""
 "Dùng Thư rác như cách dọn danh sách. Thư rác còn ghi nhận số điện thoại, nên một người nhà thật sẽ bị đánh giá trước ngay từ lần gọi sau."
 
 #. module: health_learn
+#: model:learn.screen,name:health_learn.screen_fin_vat_log
+#: model:learn.station,name:health_learn.station_fin_vat_log
+msgid "VAT Log"
+msgstr "Nhật ký hóa đơn VAT"
+
+#. module: health_learn
 #: model:learn.column,label:health_learn.col_ops_routes_verdict
 msgid "Verdict"
 msgstr "Kết luận"
+
+#. module: health_learn
+#: model:learn.lesson,goal:health_learn.lesson_f2
+#: model:learn.station,summary:health_learn.station_fin_red_invoice
+msgid "Vietnamese tax invoices — the most consequential screen in the product."
+msgstr "Hóa đơn đỏ — màn hình có hệ quả lớn nhất trong sản phẩm."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_viewall
@@ -5403,6 +6917,16 @@ msgstr ""
 "Lưu lượng CHUYỂN sang nhóm khác — hãy xem khu vực phụ trách trên từng Official Account. Trường đó chính là quy tắc định tuyến."
 
 #. module: health_learn
+#: model:learn.mission.step,instruction:health_learn.mission_fm1_step_02
+msgid "Vũ Thị Mai was charged 450,000 ₫ twice for the same visit. Which route?"
+msgstr "Vũ Thị Mai bị tính 450.000 ₫ hai lần cho cùng một lượt. Chọn lối nào?"
+
+#. module: health_learn
+#: model:learn.mission,anomaly_title:health_learn.mission_fm1
+msgid "Vũ Thị Mai's is not a refund at all"
+msgstr "Trường hợp của Vũ Thị Mai không phải hoàn tiền"
+
+#. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_o2_step_04
 msgid "WARNS, NEVER BLOCKS"
 msgstr "CẢNH BÁO, KHÔNG CHẶN"
@@ -5451,6 +6975,11 @@ msgstr "NGƯỜI DÙNG THỰC SỰ ĐẾN TỪ ĐÂU"
 #: model:learn.step,kicker:health_learn.lesson_l3_step_02
 msgid "WHERE THE NUMBERS COME FROM"
 msgstr "CÁC CON SỐ ĐẾN TỪ ĐÂU"
+
+#. module: health_learn
+#: model:learn.step,kicker:health_learn.lesson_f2_step_03
+msgid "WHO MAY PRESS IT"
+msgstr "AI ĐƯỢC PHÉP BẤM"
 
 #. module: health_learn
 #: model:learn.step,kicker:health_learn.lesson_l6_step_02
@@ -5503,6 +7032,18 @@ msgid "Week"
 msgstr "Tuần"
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_overdue
+#: model:learn.station,outline_when:health_learn.station_fin_overdue
+msgid "Weekly, and always before month end."
+msgstr "Hằng tuần, và luôn kiểm tra trước cuối tháng."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_ar_dashboard
+#: model:learn.station,outline_when:health_learn.station_fin_ar_dashboard
+msgid "Weekly, and before any conversation about cash flow."
+msgstr "Hằng tuần, và trước mọi cuộc trao đổi về dòng tiền."
+
+#. module: health_learn
 #: model:learn.screen,next_step:health_learn.screen_touchpoints
 #: model:learn.station,outline_when:health_learn.station_touchpoints
 msgid ""
@@ -5536,9 +7077,19 @@ msgid "What do I do with an unrouted contact?"
 msgstr "Tôi phải làm gì với một liên hệ chưa được định tuyến?"
 
 #. module: health_learn
+#: model:learn.intent,label:health_learn.intent_fin_post
+msgid "What does posting an invoice do?"
+msgstr "Ghi sổ hóa đơn có tác dụng gì?"
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_whatpage
 msgid "What does this screen do?"
 msgstr "Màn hình này dùng để làm gì?"
+
+#. module: health_learn
+#: model:learn.station,summary:health_learn.station_fin_payments
+msgid "What has actually arrived, against what was invoiced."
+msgstr "Những khoản thật sự đã về, đối chiếu với số đã xuất hóa đơn."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_channelcenter_checks
@@ -5551,6 +7102,11 @@ msgstr ""
 #: model:learn.column,body:health_learn.col_ops_bookings_service
 msgid "What is being done, which decides how long it takes and who is qualified to do it."
 msgstr "Việc sẽ được thực hiện, quyết định thời lượng và ai đủ điều kiện làm."
+
+#. module: health_learn
+#: model:learn.intent,label:health_learn.intent_fin_outstanding_vs_overdue
+msgid "What is the difference between outstanding and overdue?"
+msgstr "Còn phải thu và quá hạn khác nhau thế nào?"
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_whatis
@@ -5585,9 +7141,46 @@ msgstr ""
 "Địa chỉ email đi kèm yêu cầu, nếu có. Thường để trống với các yêu cầu từ Zalo và tổng đài — đó là bình thường, không phải thiếu dữ liệu."
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_red_invoice
+#: model:learn.station,outline_when:health_learn.station_fin_red_invoice
+msgid "When a client asks for one, and when an issued one turns out to be wrong."
+msgstr "Khi khách hàng yêu cầu, và khi một hóa đơn đã phát hành hóa ra bị sai."
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_ar_transactions
+msgid ""
+"When a client disputes a balance, this is the screen that answers it. A balance is an opinion until you can show the movements."
+msgstr ""
+"Khi khách hàng khiếu nại về số dư, đây là màn hình trả lời. Một số dư chỉ là nhận định cho tới khi bạn trình ra được các biến động."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_ar_transactions
+#: model:learn.station,outline_when:health_learn.station_fin_ar_transactions
+msgid "When a figure is questioned, and before writing anything off."
+msgstr "Khi một con số bị chất vấn, và trước khi xóa sổ bất cứ khoản nào."
+
+#. module: health_learn
+#: model:learn.intent,label:health_learn.intent_fin_red_rule
+msgid "When can a red invoice be cancelled?"
+msgstr "Khi nào được hủy hóa đơn đỏ?"
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_packages
+#: model:learn.station,outline_when:health_learn.station_fin_packages
+msgid "When selling one, and whenever a course stops early."
+msgstr "Khi bán gói, và bất cứ khi nào một liệu trình dừng giữa chừng."
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_escalate
 msgid "When should I escalate, and to whom?"
 msgstr "Khi nào nên chuyển cấp, và cho ai?"
+
+#. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_vat_log
+msgid ""
+"When somebody asks what was issued in a period, this is the answer, and its read-only nature is the point: the log and the filing cannot disagree."
+msgstr ""
+"Khi có người hỏi trong một kỳ đã phát hành những gì, đây là câu trả lời, và tính chỉ đọc chính là mục đích: nhật ký và tờ khai không thể mâu thuẫn nhau."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_ops_bookings_time
@@ -5617,6 +7210,22 @@ msgstr ""
 "Khi bạn cần toàn bộ hồ sơ chứ không chỉ tin nhắn hiện tại — đặt lịch cho họ, ghi lý do mất lịch, hoặc kiểm tra tuần trước đồng nghiệp đã làm gì."
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_invoices
+#: model:learn.station,outline_when:health_learn.station_fin_invoices
+msgid ""
+"Whenever a visit completes and needs billing, and whenever a posted invoice turns out to be wrong."
+msgstr ""
+"Bất cứ khi nào một lượt thăm khám hoàn tất và cần xuất hóa đơn, và bất cứ khi nào một hóa đơn đã ghi sổ hóa ra bị sai."
+
+#. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_refund
+#: model:learn.station,outline_when:health_learn.station_fin_refund
+msgid ""
+"Whenever money goes back — and before deciding the amount, because the route decides the amount."
+msgstr ""
+"Bất cứ khi nào tiền được trả lại — và trước khi quyết định số tiền, vì chính lối đi quyết định số tiền."
+
+#. module: health_learn
 #: model:learn.screen,next_step:health_learn.screen_ops_bookings
 #: model:learn.station,outline_when:health_learn.station_ops_bookings
 msgid ""
@@ -5625,15 +7234,37 @@ msgstr ""
 "Bất cứ khi nào có thay đổi: điều dưỡng báo ốm, bệnh nhân gọi xin dời giờ, một lịch hẹn đến mà chưa có ai nhận."
 
 #. module: health_learn
+#: model:learn.screen,next_step:health_learn.screen_fin_ar_management
+#: model:learn.station,outline_when:health_learn.station_fin_ar_management
+msgid "Whenever the AR Dashboard shows something that needs a decision rather than a look."
+msgstr "Bất cứ khi nào Bảng công nợ cho thấy điều gì đó cần quyết định chứ không chỉ để xem."
+
+#. module: health_learn
 #: model:learn.screen,next_step:health_learn.screen_ops_routes
 #: model:learn.station,outline_when:health_learn.station_ops_routes
 msgid "Whenever you reassign across districts, and before you promise a family a time."
 msgstr "Bất cứ khi nào bạn phân công lại giữa các quận, và trước khi hứa giờ giấc với gia đình."
 
 #. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_bhyt
+msgid ""
+"Where BHYT claims will be prepared and tracked. Nothing is being submitted through it today."
+msgstr "Nơi sẽ lập và theo dõi hồ sơ BHYT. Hiện chưa có hồ sơ nào được gửi qua đây."
+
+#. module: health_learn
 #: model:learn.step,title:health_learn.lesson_l1_step_06
 msgid "Where a conversation goes"
 msgstr "Một cuộc hội thoại đi về đâu"
+
+#. module: health_learn
+#: model:learn.screen,blurb:health_learn.screen_fin_account_payment
+msgid "Where a received payment is matched to the invoice it settles."
+msgstr "Nơi khoản thanh toán đã nhận được đối chiếu với hóa đơn mà nó tất toán."
+
+#. module: health_learn
+#: model:learn.station,outline_what:health_learn.station_fin_account_payment
+msgid "Where a received payment is matched to what it settles."
+msgstr "Nơi một khoản đã nhận được đối chiếu với hóa đơn mà nó tất toán."
 
 #. module: health_learn
 #: model:learn.column,body:health_learn.col_touchpoints_source
@@ -5669,6 +7300,13 @@ msgid ""
 "Where this enquiry reached in the lifecycle: New, Lead, Appointment Scheduled, Service Used, or the Cancelled / Spam branch. It is what the Dashboard counts."
 msgstr ""
 "Yêu cầu này đã đi tới đâu trong vòng đời: Mới, KHTN, Đã đặt lịch, Đã dùng dịch vụ, hoặc nhánh Đã hủy / Thư rác. Đây là thứ Bảng điều khiển đếm."
+
+#. module: health_learn
+#: model:learn.column,body:health_learn.col_fin_invoices_paystatus
+msgid ""
+"Whether a matched payment covers it. An invoice can be posted, correct and unpaid — that is not an error state."
+msgstr ""
+"Cho biết đã có khoản thanh toán được khớp để tất toán hay chưa. Một hóa đơn có thể đã ghi sổ, đúng, và chưa thanh toán — đó không phải trạng thái lỗi."
 
 #. module: health_learn
 #: model:learn.station,summary:health_learn.station_ops_routes
@@ -5726,6 +7364,18 @@ msgstr ""
 "Kênh mà tin nhắn gần nhất đi vào. Một cuộc hội thoại có thể trải trên nhiều kênh — dòng này gộp chúng lại."
 
 #. module: health_learn
+#: model:learn.mission,consequence_verify:health_learn.mission_fm1
+msgid ""
+"Which of the three situations you are actually in: unused credit the client paid for, an unfinished course of visits, or one payment that should never have been taken. Those are three different documents, not three names for the same one."
+msgstr ""
+"Bạn đang thật sự ở tình huống nào trong ba tình huống: số dư khách đã trả mà chưa dùng, một liệu trình chưa hoàn tất, hay một khoản thanh toán lẽ ra không được thu. Đó là ba loại chứng từ khác nhau, không phải ba tên gọi của cùng một thứ."
+
+#. module: health_learn
+#: model:learn.intent,label:health_learn.intent_fin_refund_route
+msgid "Which refund route do I use?"
+msgstr "Tôi nên dùng lối hoàn tiền nào?"
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_ops_capacity
 msgid "Who actually has room today?"
 msgstr "Hôm nay ai thật sự còn chỗ trống?"
@@ -5774,6 +7424,11 @@ msgstr ""
 "Ai phụ trách yêu cầu này. Không phải người đã trả lời — người phụ trách và người trả lời gần nhất có thể là hai người khác nhau."
 
 #. module: health_learn
+#: model:learn.intent,label:health_learn.intent_fin_cash_owner
+msgid "Who reconciles cash in transit?"
+msgstr "Ai đối soát tiền đang chuyển?"
+
+#. module: health_learn
 #: model:learn.intent,label:health_learn.intent_ops_cash
 msgid "Who reconciles the cash, and what if it does not balance?"
 msgstr "Ai đối soát tiền mặt, và nếu không khớp thì sao?"
@@ -5806,6 +7461,11 @@ msgstr "Vì sao có bốn yêu cầu nằm trong “Chiến dịch chưa khớp�
 #: model:learn.intent,label:health_learn.intent_catchmentq
 msgid "Why can't I see a conversation a colleague can?"
 msgstr "Vì sao đồng nghiệp thấy cuộc hội thoại mà tôi không thấy?"
+
+#. module: health_learn
+#: model:learn.intent,label:health_learn.intent_fin_access
+msgid "Why can't I see the Finance screens?"
+msgstr "Vì sao tôi không thấy các màn hình Tài chính?"
 
 #. module: health_learn
 #: model:learn.intent,label:health_learn.intent_ops_no_access
@@ -5858,6 +7518,13 @@ msgid "Write the reply and send it."
 msgstr "Soạn câu trả lời và gửi đi."
 
 #. module: health_learn
+#: model:learn.station,outline_why:health_learn.station_fin_bhyt
+msgid ""
+"Written honestly as not-yet-in-use rather than teaching a workflow nobody runs. When it is switched on this outline becomes a lesson; until then, knowing it exists and is not live is the useful fact."
+msgstr ""
+"Được viết trung thực là chưa sử dụng, thay vì dạy một quy trình không ai chạy. Khi nào bật lên, đề cương này sẽ thành bài học; cho tới lúc đó, biết rằng nó tồn tại và chưa hoạt động mới là thông tin hữu ích."
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_youreon
 msgid "YOU'RE ON:"
 msgstr "BẠN ĐANG Ở:"
@@ -5868,6 +7535,13 @@ msgid ""
 "Yes — the Owner role carries every CRM permission, including Take over across all catchment areas."
 msgstr ""
 "Có — vai trò Chủ sở hữu có mọi quyền CRM, bao gồm Tiếp quản trên tất cả các khu vực phụ trách."
+
+#. module: health_learn
+#: model:learn.quiz.option,feedback:health_learn.lesson_f1_quiz_opt_0
+msgid ""
+"Yes. A posted invoice is corrected by a second document, never by editing the first. The red invoice question matters because if one was issued, the correction is also a filing event and not just an accounting one."
+msgstr ""
+"Đúng. Một hóa đơn đã ghi sổ được sửa bằng một chứng từ thứ hai, không bao giờ bằng cách sửa chứng từ gốc. Câu hỏi về hóa đơn đỏ quan trọng vì nếu đã phát hành, việc sửa còn là một sự kiện kê khai chứ không chỉ là nghiệp vụ kế toán."
 
 #. module: health_learn
 #: model:learn.quiz.option,feedback:health_learn.lesson_l5_quiz_opt_0
@@ -5933,6 +7607,13 @@ msgstr ""
 "Đúng. Số điện thoại là định danh mà người gọi vừa xác nhận; cái tên mới là thứ trùng lặp. Nếu vẫn còn mơ hồ thì bỏ ra ba mươi giây kiểm tra là đáng, vì phương án còn lại là một ghi chú lâm sàng nằm sai hồ sơ."
 
 #. module: health_learn
+#: model:learn.quiz.option,feedback:health_learn.lesson_f2_quiz_opt_0
+msgid ""
+"Yes. Wrong buyer details is a valid reason, but the window is what decides the route. Inside the period it is a cancel-and-reissue; once the period is closed the correction has to be a document that sits on top of what was already filed."
+msgstr ""
+"Đúng. Sai thông tin người mua là lý do hợp lệ, nhưng khung thời gian mới quyết định cách xử lý. Trong kỳ thì hủy và phát hành lại; khi kỳ đã đóng, việc sửa phải là một chứng từ đặt lên trên những gì đã kê khai."
+
+#. module: health_learn
 #: model:learn.quiz.option,feedback:health_learn.lesson_l1_quiz_opt_0
 msgid ""
 "Yes. You answer the person — quickly, because the urgency is real — without disclosing anything you are not permitted to. The clinical question goes to a clinician, and the client's own line is the route that needs no third-party consent."
@@ -5948,6 +7629,11 @@ msgstr "Bạn sắp hủy một lượt thăm khám thật"
 #: model:learn.mission,consequence_title:health_learn.mission_m1
 msgid "You are about to send a message to a real phone"
 msgstr "Bạn sắp gửi một tin nhắn tới một số điện thoại thật"
+
+#. module: health_learn
+#: model:learn.mission,consequence_title:health_learn.mission_fm1
+msgid "You are about to send money back out"
+msgstr "Bạn sắp chuyển tiền trả lại"
 
 #. module: health_learn
 #: model:learn.mission,consequence_title:health_learn.mission_m2
@@ -5997,15 +7683,34 @@ msgstr ""
 "Bạn không cần nó cho công việc lâm sàng — các ca chuyển cấp đến với bạn qua hàng đợi riêng. Nếu bạn thật sự cần bảng này, {{accessRequestPath}} có thể xin cấp vai trò CRM cho tài khoản của bạn."
 
 #. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_bhyt_notlive_b010
+msgid ""
+"You do not, yet. Nothing is being submitted through this screen today — BHYT claims are not live. The screen is where claims will be prepared and tracked against a patient's entitlement once it is switched on. There is no workflow to follow at the moment, and there is nothing you are missing."
+msgstr ""
+"Hiện chưa nộp được. Chưa có hồ sơ nào được nộp qua màn hình này — chức năng BHYT chưa hoạt động. Đây sẽ là nơi lập và theo dõi hồ sơ theo mức hưởng của người bệnh khi được bật lên. Lúc này chưa có quy trình nào để thực hiện, và bạn không bỏ sót điều gì cả."
+
+#. module: health_learn
 #: model:learn.station,outline_prereq:health_learn.station_dashboard
 msgid "You need the Owner or CRM role; this leaf is role-gated in the database."
 msgstr ""
 "Bạn cần vai trò Chủ sở hữu hoặc CRM; mục này được phân quyền theo vai trò trong cơ sở dữ liệu."
 
 #. module: health_learn
+#: model:learn.quiz,prompt:health_learn.lesson_f1_quiz
+msgid ""
+"You posted an invoice this morning and have just noticed the service description is wrong. The filing period is still open. What do you do?"
+msgstr ""
+"Sáng nay bạn đã ghi sổ một hóa đơn và vừa phát hiện mô tả dịch vụ bị sai. Kỳ kê khai vẫn đang mở. Bạn làm gì?"
+
+#. module: health_learn
 #: model:learn.string,value:health_learn.str_yourjourney
 msgid "Your learning journey"
 msgstr "Hành trình học của bạn"
+
+#. module: health_learn
+#: model:learn.intent.block,body:health_learn.intent_fin_access_b030
+msgid "Your own sidebar, which is drawn from the roles on your user record."
+msgstr "Chính thanh điều hướng của bạn, được dựng từ các vai trò trên hồ sơ người dùng."
 
 #. module: health_learn
 #: model:learn.string,value:health_learn.str_refusal

@@ -15,8 +15,8 @@
    hand a translator wording they do not own, and the two would diverge at the
    first product rename.
    ========================================================================== */
-import { B, CASE, MENU, OPS, PRACTICE, STATUS_LABELS } from "./fixture";
-import { esc, ic, initial, tx, T, N, P, SP} from "./runtime";
+import { B, CASE, FIN, MENU, OPS, PRACTICE, STATUS_LABELS } from "./fixture";
+import { esc, ic, initial, tx, T, N, M, P, SP} from "./runtime";
 import { pipeHTML } from "./visuals";
 
 /* Which screen the shell is showing. Phase 2's Coach grounds on this. */
@@ -47,6 +47,14 @@ export function screenTitle(id) {
         }
     }
     return "";
+}
+
+/** Which sidebar section owns this screen — the section that is IN SCOPE while
+ *  it is on display, and every other one greyed. Decided here rather than by a
+ *  flag in the fixture, so one menu serves a CRM lesson, an OPS mission and a
+ *  FINANCE mission without three copies of it. */
+function ownerSection(screen) {
+    return MENU.find((sec) => sec.items.some((it) => it.id === screen)) || MENU[0];
 }
 
 /* --------------------------------------------------------------- row renderers
@@ -602,6 +610,333 @@ Object.assign(SCREENS, {
     },
 });
 
+/* ------------------------------------------------------------------ FINANCE
+   Fourteen leaves, ten replicas. The four that are pure lists in the product
+   (VAT Log, AR Transactions, Payments, Account Payment) share one renderer,
+   because drawing four visually identical tables would teach the learner that
+   they differ in ways they do not.
+
+   The learner here is an ACCOUNTANT. What these screens have to make legible
+   is the difference between OUTSTANDING and OVERDUE, and the difference
+   between the three ways money goes back out — those are the two mistakes the
+   fixture is built to produce. */
+
+function money(n) {
+    return M(n);
+}
+
+/** Billed = paid + outstanding, always. Computed rather than quoted so a
+ *  fixture edit cannot leave the replica asserting a sum that no longer adds
+ *  up — the exact failure the CRM contract checks exist to prevent. */
+function finReconciles() {
+    return FIN.invoices.paid + FIN.invoices.outstanding === FIN.invoices.billed;
+}
+
+function finLineRows() {
+    return FIN.lines.map((l) => `
+        <div class="lrn-row">
+            <span><span class="lrn-nm">${esc(tx(l.svc))}</span><br>
+                <span class="lrn-sub2">${l.n}${SP}× ${esc(money(l.price))}</span></span>
+            <span class="lrn-rr"><b>${esc(money(l.n * l.price))}</b></span>
+        </div>`).join("");
+}
+
+const FIN_ROUTE_LABEL = {
+    prepaid: B("Prepaid credit", "Số dư trả trước"),
+    package: B("Package pro-rata", "Gói dịch vụ theo tỷ lệ"),
+    transaction: B("Transaction reversal", "Đảo giao dịch"),
+};
+
+function finRefundRows() {
+    return FIN.refunds.map((r) => `
+        <div class="lrn-row" data-a="${esc(r.anchor)}">
+            <span class="lrn-avatar">${esc(initial(r.client))}</span>
+            <span><span class="lrn-nm">${esc(tx(r.client))}
+                    <span class="lrn-faint">${esc(r.id)}</span></span><br>
+                <span class="lrn-sub2">${esc(tx(r.why))}</span></span>
+            <span class="lrn-rr"><span class="lrn-chip b">${esc(tx(FIN_ROUTE_LABEL[r.route]))}</span>
+                <b>${esc(money(r.amount))}</b></span>
+        </div>`).join("");
+}
+
+/** One renderer for the four list-only leaves. Each is genuinely a filtered
+ *  list over the same invoices, so they are drawn as one. */
+function finList(title, note, anchorKey, rows) {
+    return `
+        <div class="lrn-tabs">
+            <button aria-selected="true">${esc(tx(FIN.month))}</button>
+            <span class="lrn-chip b lrn-push">${ic("map-pin")}${esc(tx(FIN.area))}</span>
+        </div>
+        <div class="lrn-panel" data-a="${esc(anchorKey)}">
+            <h3>${ic("list-checks")}${esc(tx(title))}</h3>
+            <div class="lrn-rows">${rows}</div>
+            <p class="lrn-note">${esc(tx(note))}</p>
+        </div>`;
+}
+
+Object.assign(SCREENS, {
+    fin_dashboard() {
+        const i = FIN.invoices;
+        const cards = [
+            ["receipt", money(i.billed), B("Billed", "Đã xuất hóa đơn"), "", "fd-billed"],
+            ["check-circle", money(i.paid), B("Collected", "Đã thu"), "pos", "fd-paid"],
+            ["clock", money(i.outstanding), B("Outstanding", "Còn phải thu"), "", "fd-outstanding"],
+            ["alert-triangle", money(FIN.overdue.amount), B("Overdue", "Quá hạn"), "warn", "fd-overdue"],
+        ].map(([ico, v, lab, tone, a]) => `
+            <div class="lrn-kpi ${tone}" data-a="${a}">
+                <div class="lrn-kt">${ic(ico)}<span>${esc(tx(lab))}</span></div>
+                <div class="lrn-kv sm">${v}</div>
+            </div>`).join("");
+        return `
+            <div class="lrn-tabs" data-a="fd-period">
+                <button aria-selected="true">${esc(tx(FIN.month))}</button>
+                <button aria-selected="false">${esc(tx(B("Last month", "Tháng trước")))}</button>
+                <button aria-selected="false">${esc(tx(B("This year", "Năm nay")))}</button>
+                <span class="lrn-chip b lrn-push">${ic("map-pin")}${esc(tx(FIN.area))}</span>
+            </div>
+            <div class="lrn-grid g4">${cards}</div>
+            <div class="lrn-panel" data-a="fd-split">
+                <h3>${ic("receipt")}${esc(tx(B("What was billed for", "Đã xuất hóa đơn cho những gì")))}</h3>
+                <div class="lrn-rows">${finLineRows()}</div>
+            </div>
+            <div class="lrn-panel">
+                <p class="lrn-note">${esc(tx(B(
+                    ("Outstanding is " + money(i.outstanding) + " and overdue is " + money(FIN.overdue.amount)
+                     + ". Those are not two versions of the same number: outstanding is money that is not due yet, overdue is money that has passed its terms. Only the second one is a problem, and only " + FIN.overdue.count + " invoices are in it."),
+                    ("Còn phải thu là " + money(i.outstanding) + " và quá hạn là " + money(FIN.overdue.amount)
+                     + ". Đây không phải hai cách nói của cùng một con số: còn phải thu là tiền chưa đến hạn, quá hạn là tiền đã qua hạn thanh toán. Chỉ con số thứ hai mới là vấn đề, và chỉ có " + FIN.overdue.count + " hóa đơn nằm trong đó."))))}</p>
+            </div>
+            ${finReconciles() ? "" : `<div class="lrn-chk fail">${ic("x")}<span>${esc(tx(B(
+                "The practice figures no longer add up. Report this — the tutorial is wrong, not you.",
+                "Các con số thực hành không còn khớp. Hãy báo lại — bài hướng dẫn sai, không phải bạn.")))}</span></div>`}`;
+    },
+
+    fin_invoices() {
+        const i = FIN.invoices;
+        return `
+            <div class="lrn-tabs" data-a="fi-filters">
+                <button aria-selected="true">${esc(tx(B("All", "Tất cả")))}${SP}· ${i.count}</button>
+                <button aria-selected="false">${esc(tx(B("Paid", "Đã thanh toán")))}${SP}· ${i.paidCount}</button>
+                <button aria-selected="false">${esc(tx(B("Unpaid", "Chưa thanh toán")))}${SP}· ${i.outstandingCount}</button>
+                <button aria-selected="false">${esc(tx(B("Overdue", "Quá hạn")))}${SP}· ${FIN.overdue.count}</button>
+                <span class="lrn-chip b lrn-push">${esc(tx(FIN.month))}</span>
+            </div>
+            <div class="lrn-panel" data-a="fi-list">
+                <h3>${ic("receipt")}${esc(tx(B("Customer invoices", "Hóa đơn khách hàng")))}
+                    <span class="lrn-chip lrn-push">${esc(money(i.billed))}</span></h3>
+                <div class="lrn-rows">${finLineRows()}</div>
+                <p class="lrn-note">${esc(tx(B(
+                    ("Grouped by service here so the total is readable. The real list is " + i.count + " rows, one per invoice."),
+                    ("Ở đây nhóm theo dịch vụ để dễ đọc tổng. Danh sách thật có " + i.count + " dòng, mỗi hóa đơn một dòng."))))}</p>
+            </div>
+            <div class="lrn-panel" data-a="fi-actions">
+                <h3>${ic("zap")}${esc(tx(B("What you can do to an invoice", "Bạn có thể làm gì với một hóa đơn")))}</h3>
+                <div class="lrn-strip">
+                    <button class="lrn-btn sm pri" data-a="fi-post">${ic("check-circle")}${esc(tx(B("Post", "Ghi sổ")))}</button>
+                    <button class="lrn-btn sm" data-a="fi-payment">${ic("receipt")}${esc(tx(B("Register payment", "Ghi nhận thanh toán")))}</button>
+                    <button class="lrn-btn sm" data-a="fi-credit">${ic("rotate-ccw")}${esc(tx(B("Credit note", "Hóa đơn điều chỉnh")))}</button>
+                    <button class="lrn-btn sm danger" data-a="fi-reset">${ic("ban")}${esc(tx(B("Reset to draft", "Về nháp")))}</button>
+                </div>
+                <p class="lrn-note">${esc(tx(B(
+                    "Post is the line between a working document and an accounting one. Before it, an invoice is editable and means nothing. After it, the number is taken and the only way back is another document.",
+                    "Ghi sổ là ranh giới giữa một chứng từ đang soạn và một chứng từ kế toán. Trước đó, hóa đơn có thể sửa và chưa có giá trị. Sau đó, số hóa đơn đã được lấy và cách duy nhất để quay lại là một chứng từ khác.")))}</p>
+            </div>`;
+    },
+
+    fin_red_invoice() {
+        const r = FIN.red;
+        return `
+            <div class="lrn-tabs" data-a="fri-period">
+                <button aria-selected="true">${esc(tx(FIN.month))}</button>
+                <span class="lrn-chip b lrn-push">${ic("shield-check")}Viettel V-Invoice</span>
+            </div>
+            <div class="lrn-grid g3">
+                <div class="lrn-kpi" data-a="fri-issued">
+                    <div class="lrn-kt">${ic("file-text")}<span>${esc(tx(B("Issued", "Đã phát hành")))}</span></div>
+                    <div class="lrn-kv">${r.issued}</div></div>
+                <div class="lrn-kpi warn" data-a="fri-cancelled">
+                    <div class="lrn-kt">${ic("ban")}<span>${esc(tx(B("Cancelled", "Đã hủy")))}</span></div>
+                    <div class="lrn-kv">${r.cancelled}</div></div>
+                <div class="lrn-kpi" data-a="fri-pending">
+                    <div class="lrn-kt">${ic("clock")}<span>${esc(tx(B("Pending", "Đang chờ")))}</span></div>
+                    <div class="lrn-kv">${r.pending}</div></div>
+            </div>
+            <div class="lrn-panel" data-a="fri-rule">
+                <h3>${ic("alert-triangle")}${esc(tx(B("When a red invoice may be cancelled", "Khi nào được hủy hóa đơn đỏ")))}</h3>
+                <p class="lrn-note">${esc(tx(r.rule))}</p>
+            </div>
+            <div class="lrn-panel" data-a="fri-actions">
+                <h3>${ic("zap")}${esc(tx(B("The two buttons", "Hai nút")))}</h3>
+                <div class="lrn-strip">
+                    <button class="lrn-btn sm pri" data-a="fri-issue">${ic("file-text")}${esc(tx(B("Issue red invoice", "Phát hành hóa đơn đỏ")))}</button>
+                    <button class="lrn-btn sm danger" data-a="fri-cancel">${ic("ban")}${esc(tx(B("Cancel red invoice", "Hủy hóa đơn đỏ")))}</button>
+                </div>
+                <p class="lrn-note">${esc(tx(B(
+                    ("Only " + r.issued + " of the month's " + FIN.invoices.count + " invoices have a red invoice, because it is issued on request rather than automatically. Cancelling is a filing event with the tax authority, not an edit on this screen — and it is restricted to the tax-compliance group for that reason."),
+                    ("Chỉ " + r.issued + " trên tổng " + FIN.invoices.count + " hóa đơn trong tháng có hóa đơn đỏ, vì hóa đơn đỏ được phát hành theo yêu cầu chứ không tự động. Hủy là một sự kiện kê khai với cơ quan thuế, không phải một thao tác sửa trên màn hình này — và vì vậy nó bị giới hạn cho nhóm tuân thủ thuế."))))}</p>
+            </div>`;
+    },
+
+    fin_refund() {
+        return `
+            <div class="lrn-tabs" data-a="frf-filters">
+                <button aria-selected="true">${esc(tx(FIN.month))}${SP}· ${FIN.refunds.length}</button>
+                <span class="lrn-chip b lrn-push">${ic("map-pin")}${esc(tx(FIN.area))}</span>
+            </div>
+            <div class="lrn-panel" data-a="frf-list">
+                <h3>${ic("rotate-ccw")}${esc(tx(B("Money going back out", "Tiền chuyển trả lại")))}</h3>
+                <div class="lrn-rows">${finRefundRows()}</div>
+            </div>
+            <div class="lrn-panel" data-a="frf-routes">
+                <h3>${ic("alert-triangle")}${esc(tx(B("Three routes, not three buttons for one thing", "Ba lối đi, không phải ba nút cho cùng một việc")))}</h3>
+                <p class="lrn-note">${esc(tx(B(
+                    "Prepaid returns unused credit the client already paid for. Package refunds an unfinished course pro-rata against the visits actually delivered. Transaction reverses one specific payment that should never have been taken — that is a correction, not a refund. Choosing by which screen you happen to be on is how a correction gets recorded as a refund and the month stops reconciling.",
+                    "Trả trước là hoàn lại số dư khách đã trả mà chưa dùng. Gói dịch vụ là hoàn theo tỷ lệ cho liệu trình chưa hoàn tất, tính trên số buổi đã thực hiện. Đảo giao dịch là hủy một khoản thanh toán lẽ ra không được thu — đó là một khoản điều chỉnh, không phải hoàn tiền. Chọn theo màn hình bạn đang mở là cách khiến một khoản điều chỉnh bị ghi thành hoàn tiền và cả tháng không còn khớp sổ.")))}</p>
+            </div>`;
+    },
+
+    fin_ar_dashboard() {
+        const o = FIN.overdue;
+        const buckets = [
+            // The anchor is a literal per row rather than derived from the
+            // tone: an anchor built inside the interpolation is invisible to
+            // the registry lint, which is the check that stops content from
+            // pointing at a control nothing draws.
+            [B("Not due yet", "Chưa đến hạn"), FIN.invoices.outstanding - o.amount, "", "far-current"],
+            [B("Overdue", "Quá hạn"), o.amount, "warn", "far-overdue"],
+        ];
+        const total = FIN.invoices.outstanding || 1;
+        const bars = buckets.map(([lab, amt, tone, a]) => `
+            <div class="lrn-bar-row" data-a="${a}">
+                <span class="lrn-bl">${esc(tx(lab))}</span>
+                <span class="lrn-bt"><span class="lrn-bf ${tone}"
+                    style="width:${Math.round((amt / total) * 100)}%"></span></span>
+                <span class="lrn-bv">${esc(money(amt))}</span>
+            </div>`).join("");
+        return `
+            <div class="lrn-tabs"><button aria-selected="true">${esc(tx(FIN.month))}</button>
+                <span class="lrn-chip b lrn-push">${ic("map-pin")}${esc(tx(FIN.area))}</span></div>
+            <div class="lrn-panel" data-a="far-buckets">
+                <h3>${ic("bar-chart")}${esc(tx(B("Outstanding, split by whether it is late", "Còn phải thu, tách theo đã trễ hay chưa")))}</h3>
+                ${bars}
+                <p class="lrn-note">${esc(tx(B(
+                    ("The oldest overdue invoice is " + o.oldestDays + " days past its terms. Age is what makes an overdue invoice urgent — a figure that has been sitting for six weeks is a conversation somebody stopped having, not a payment that is on its way."),
+                    ("Hóa đơn quá hạn lâu nhất đã trễ " + o.oldestDays + " ngày. Chính độ trễ khiến một hóa đơn quá hạn trở nên cấp bách — một khoản nằm im sáu tuần là một cuộc trao đổi mà ai đó đã ngừng theo, không phải một khoản sắp được trả."))))}</p>
+            </div>`;
+    },
+
+    fin_ar_management() {
+        return `
+            <div class="lrn-tabs"><button aria-selected="true">${esc(tx(B("Receivables", "Công nợ phải thu")))}</button>
+                <span class="lrn-chip b lrn-push">${esc(money(FIN.invoices.outstanding))}</span></div>
+            <div class="lrn-panel" data-a="fam-tools">
+                <h3>${ic("clipboard-check")}${esc(tx(B("The working screen, and what sits under it", "Màn hình làm việc, và những gì nằm dưới nó")))}</h3>
+                <div class="lrn-strip">
+                    <button class="lrn-btn sm" data-nav="fin_account_payment">${ic("check-circle")}${esc(tx(B("Account Payment", "Thanh toán tài khoản")))}</button>
+                    <button class="lrn-btn sm" data-nav="fin_cash_transit">${ic("receipt")}${esc(tx(B("Cash In Transit", "Tiền đang chuyển")))}</button>
+                    <button class="lrn-btn sm" data-nav="fin_refund">${ic("rotate-ccw")}${esc(tx(B("Refund / Credit", "Hoàn tiền / Điều chỉnh")))}</button>
+                </div>
+                <p class="lrn-note">${esc(tx(B(
+                    "These three are children of this leaf in the sidebar, so opening one keeps AR Management highlighted. That is the menu being helpful and it is also how people lose track of which screen they are actually on — and the refund routes are exactly where that matters.",
+                    "Ba mục này là mục con của nhánh này trên thanh điều hướng, nên khi mở một trong số đó thì Quản lý công nợ vẫn được tô sáng. Đó là sự trợ giúp của menu, và cũng là lý do người dùng mất dấu màn hình mình đang thật sự mở — mà các lối hoàn tiền lại chính là chỗ điều đó gây hậu quả.")))}</p>
+            </div>`;
+    },
+
+    fin_cash_transit() {
+        return `
+            <div class="lrn-tabs"><button aria-selected="true">${esc(tx(B("Held by staff", "Nhân viên đang giữ")))}</button>
+                <span class="lrn-chip b lrn-push">${ic("map-pin")}${esc(tx(FIN.area))}</span></div>
+            <div class="lrn-panel" data-a="fct-total">
+                <h3>${ic("receipt")}${esc(tx(B("Cash collected but not yet banked", "Tiền đã thu nhưng chưa nộp")))}
+                    <span class="lrn-chip warn lrn-push">${esc(money(FIN.inTransit))}</span></h3>
+                <p class="lrn-note">${esc(tx(B(
+                    ("This is the same " + money(FIN.inTransit) + " that Operations sees on its Collections screen. It is reconciled at end of shift by Operations, not here — Finance receives a figure that already balances and never chases an individual nurse."),
+                    ("Đây chính là " + money(FIN.inTransit) + " mà bộ phận Vận hành nhìn thấy trên màn hình Thu tiền mặt của họ. Khoản này do Vận hành đối soát cuối ca, không phải ở đây — Tài chính nhận một con số đã khớp và không bao giờ truy một điều dưỡng cụ thể."))))}</p>
+            </div>
+            <div class="lrn-panel" data-a="fct-owner">
+                <h3>${ic("users")}${esc(tx(B("Whose job this is", "Đây là việc của ai")))}</h3>
+                <div class="lrn-chk pass">${ic("check-circle")}<span>${esc(tx(B(
+                    "Operations reconciles it at end of shift.", "Vận hành đối soát vào cuối ca.")))}</span></div>
+                <div class="lrn-chk fail">${ic("x")}<span>${esc(tx(B(
+                    "Finance does not ring a nurse about a shortfall.", "Tài chính không gọi điện cho điều dưỡng về khoản thiếu hụt.")))}</span></div>
+            </div>`;
+    },
+
+    fin_overdue() {
+        const o = FIN.overdue;
+        return `
+            <div class="lrn-tabs"><button aria-selected="true">${esc(tx(B("Oldest first", "Trễ lâu nhất trước")))}</button>
+                <span class="lrn-chip warn lrn-push">${o.count}${SP}· ${esc(money(o.amount))}</span></div>
+            <div class="lrn-panel" data-a="fov-list">
+                <h3>${ic("alert-triangle")}${esc(tx(B("Past their payment terms", "Đã quá hạn thanh toán")))}</h3>
+                <p class="lrn-note">${esc(tx(B(
+                    ("Four clients, " + money(o.amount) + " between them, the oldest " + o.oldestDays + " days late. Sorted by age rather than amount on purpose: the biggest overdue invoice is usually the one somebody is already handling, and the oldest is usually the one nobody is."),
+                    ("Bốn khách hàng, tổng " + money(o.amount) + ", khoản lâu nhất trễ " + o.oldestDays + " ngày. Sắp xếp theo độ trễ chứ không theo số tiền là có chủ ý: hóa đơn quá hạn lớn nhất thường đã có người theo, còn hóa đơn lâu nhất thường là khoản không ai theo."))))}</p>
+            </div>`;
+    },
+
+    fin_packages() {
+        const rows = FIN.packages.map((p) => `
+            <div class="lrn-row">
+                <span><span class="lrn-nm">${esc(tx(p.name))}</span><br>
+                    <span class="lrn-sub2">${p.sold}${SP}${esc(tx(B("sold", "đã bán")))}</span></span>
+                <span class="lrn-rr"><b>${esc(money(p.price))}</b></span>
+            </div>`).join("");
+        return `
+            <div class="lrn-tabs"><button aria-selected="true">${esc(tx(FIN.month))}</button></div>
+            <div class="lrn-panel" data-a="fpk-list">
+                <h3>${ic("list-checks")}${esc(tx(B("Courses sold up front", "Liệu trình bán trả trước")))}</h3>
+                <div class="lrn-rows">${rows}</div>
+                <p class="lrn-note">${esc(tx(B(
+                    "A package is money taken before the work is done, so an unfinished one is a liability rather than revenue. That is why stopping a course half way is a pro-rata refund and not a goodwill gesture.",
+                    "Gói dịch vụ là tiền thu trước khi công việc được thực hiện, nên một gói chưa hoàn tất là một khoản nợ phải trả chứ không phải doanh thu. Vì vậy dừng liệu trình giữa chừng là hoàn tiền theo tỷ lệ, không phải một cử chỉ thiện chí.")))}</p>
+            </div>`;
+    },
+
+    fin_bhyt() {
+        return `
+            <div class="lrn-panel" data-a="fby-preview">
+                <h3>${ic("clipboard-check")}${esc(tx(B("Not in use yet", "Chưa đưa vào sử dụng")))}</h3>
+                <p class="lrn-note">${esc(tx(B(
+                    "Nothing is being submitted through this screen today. It is where BHYT claims will be prepared and tracked against a patient's entitlement once it is switched on. There is no workflow to learn yet, and teaching one that nobody runs would be worse than saying so.",
+                    "Hiện tại chưa có hồ sơ nào được nộp qua màn hình này. Đây là nơi hồ sơ BHYT sẽ được lập và theo dõi theo mức hưởng của người bệnh khi được bật lên. Chưa có quy trình nào để học, và dạy một quy trình không ai chạy còn tệ hơn là nói thẳng ra.")))}</p>
+                <div class="lrn-chk fail">${ic("x")}<span>${esc(tx(B(
+                    ("Claims submitted this month: " + FIN.bhyt.claims),
+                    ("Hồ sơ đã nộp trong tháng: " + FIN.bhyt.claims))))}</span></div>
+            </div>`;
+    },
+
+    fin_payments() {
+        return finList(B("Payments received", "Các khoản đã thu"),
+            B(("Every payment this month and the invoice it settled — " + FIN.invoices.paidCount
+               + " of the month's " + FIN.invoices.count + " invoices are closed by one of these."),
+              ("Mọi khoản thu trong tháng và hóa đơn mà nó tất toán — " + FIN.invoices.paidCount
+               + " trên " + FIN.invoices.count + " hóa đơn của tháng được đóng bởi một trong các khoản này.")),
+            "fpy-list", finLineRows());
+    },
+
+    fin_account_payment() {
+        return finList(B("Matching a payment to an invoice", "Khớp một khoản thu với hóa đơn"),
+            B("A payment that is received but not matched is money in the bank that no invoice knows about. It shows as collected on the Dashboard and still overdue on the client's record — which is how a client gets chased for something they already paid.",
+              "Một khoản đã nhận nhưng chưa khớp là tiền có trong tài khoản mà không hóa đơn nào biết tới. Nó hiển thị là đã thu trên Bảng tài chính nhưng vẫn quá hạn trên hồ sơ khách hàng — và đó là cách một khách hàng bị đòi khoản họ đã trả."),
+            "fap-match", finLineRows());
+    },
+
+    fin_vat_log() {
+        return finList(B("Posted customer invoices", "Hóa đơn khách hàng đã ghi sổ"),
+            B("Read-only. There is no form behind this list and nothing on it can be edited — it is a record of what was posted, not a place to work. If a figure here is wrong, the fix is a document against the invoice, never a change to this row.",
+              "Chỉ đọc. Không có biểu mẫu nào phía sau danh sách này và không mục nào có thể sửa — đây là bản ghi những gì đã ghi sổ, không phải nơi làm việc. Nếu một con số ở đây sai, cách sửa là lập chứng từ đối với hóa đơn đó, không bao giờ là sửa dòng này."),
+            "fvl-list", finLineRows());
+    },
+
+    fin_ar_transactions() {
+        return finList(B("The audit trail behind a balance", "Dấu vết kiểm toán phía sau một số dư"),
+            B("Invoiced, paid, credited, and when. This is the screen that answers 'why does this client owe this amount' — the balance is a result, and this is the working that produced it.",
+              "Đã xuất hóa đơn, đã thu, đã điều chỉnh, và vào lúc nào. Đây là màn hình trả lời câu hỏi “vì sao khách hàng này nợ đúng số tiền đó” — số dư là kết quả, còn đây là phần tính toán tạo ra nó."),
+            "fat-list", finLineRows());
+    },
+});
+
 /* ---------------------------------------------------------------------- shell
    `visible` is the set of station keys the LEARNER's own sidebar shows — it
    comes from the server, which computes it by calling the real sidebar. So the
@@ -611,9 +946,10 @@ export function shellHTML(screen, opts) {
     const visible = o.visible || new Set();
     CURRENT_SCREEN = screen;
 
+    const owner = ownerSection(screen);
     const secs = MENU.map((sec) => {
         const items = sec.items.map((it) => {
-            const inScope = sec.inScope;
+            const inScope = sec === owner;
             const seen = !inScope || visible.has(it.id);
             // During a guided lesson the full menu stays legible: a learner who
             // cannot open a screen is exactly the person who needs to read what
@@ -628,7 +964,7 @@ export function shellHTML(screen, opts) {
     }).join("");
 
     const body = SCREENS[screen] ? SCREENS[screen]() : "";
-    const gated = MENU[0].items.find((i) => i.id === screen);
+    const gated = owner.items.find((i) => i.id === screen);
     const blocked = gated && !visible.has(screen) && !o.guided;
 
     return `

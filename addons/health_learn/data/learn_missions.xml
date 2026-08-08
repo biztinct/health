@@ -654,4 +654,229 @@
         <field name="confidence_gain">20</field>
     </record>
 
+    <record id="mission_fm1" model="learn.mission">
+        <field name="key">fm1</field>
+        <field name="sequence">70</field>
+        <field name="line">fin_owed</field>
+        <field name="icon">rotate-ccw</field>
+        <field name="name">Three refunds, three different routes</field>
+        <field name="summary">Three clients are owed money back this month. They look like one job and they are three, and the screen you happen to be on will suggest the wrong one.</field>
+        <field name="duration_min">6</field>
+        <field name="kind">full</field>
+        <field name="confidence_key">money</field>
+        <field name="confidence_gain">30</field>
+        <field name="consequence_title">You are about to send money back out</field>
+        <field name="consequence_scope">The client's balance, the invoice or package behind it, and the month's reported figures. A refund recorded on the wrong route still moves the right amount of money — which is exactly why nobody notices until the month does not reconcile.</field>
+        <field name="consequence_reversible">The money can be taken back only by asking the client for it. The record can be corrected, but the correction is another document, and the two together are what an auditor reads. Getting the route right the first time costs a minute; getting it wrong costs a reconciliation.</field>
+        <field name="consequence_verify">Which of the three situations you are actually in: unused credit the client paid for, an unfinished course of visits, or one payment that should never have been taken. Those are three different documents, not three names for the same one.</field>
+        <field name="anomaly_title">Vũ Thị Mai's is not a refund at all</field>
+        <field name="anomaly_body">Two of the three are refunds: Lê Thị Bích has credit she paid for and did not use, and Đỗ Văn Hưng stopped a course after 4 of 8 visits. Vũ Thị Mai's 450,000 ₫ is different — she paid once, and a second payment was keyed onto her record by mistake. Nothing is being returned to her; a payment that never should have existed is being reversed. It is the smallest of the three and the only one that is a correction, and it is the one most likely to be recorded as a refund — because it arrives in the same list, on the same screen, with the same client and the same amount of money going the same direction.</field>
+    </record>
+
+    <record id="mission_fm1_did_00" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">10</field>
+        <field name="kind">did</field>
+        <field name="body">Read outstanding and overdue as two different numbers before touching either.</field>
+    </record>
+
+    <record id="mission_fm1_did_01" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">20</field>
+        <field name="kind">did</field>
+        <field name="body">Sorted three refunds by what actually happened, not by which screen they appeared on.</field>
+    </record>
+
+    <record id="mission_fm1_did_02" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">30</field>
+        <field name="kind">did</field>
+        <field name="body">Read the consequence card before sending money back out, not after.</field>
+    </record>
+
+    <record id="mission_fm1_did_03" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">40</field>
+        <field name="kind">did</field>
+        <field name="body">Found the one that was a correction rather than a refund, and recorded it as one.</field>
+    </record>
+
+    <record id="mission_fm1_did_04" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">50</field>
+        <field name="kind">did</field>
+        <field name="body">Checked the red invoice log, because a document that was filed has to be corrected as a filing.</field>
+    </record>
+
+    <record id="mission_fm1_check_00" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">10</field>
+        <field name="kind">check</field>
+        <field name="body">Ask what happened before asking which button. Unused credit, unfinished course, or a payment that should not exist.</field>
+    </record>
+
+    <record id="mission_fm1_check_01" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">20</field>
+        <field name="kind">check</field>
+        <field name="body">A package refund is pro-rata against visits delivered — count them, do not estimate.</field>
+    </record>
+
+    <record id="mission_fm1_check_02" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">30</field>
+        <field name="kind">check</field>
+        <field name="body">Check whether a red invoice was issued before correcting anything. If one was, the correction is a filing event.</field>
+    </record>
+
+    <record id="mission_fm1_check_03" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">40</field>
+        <field name="kind">check</field>
+        <field name="body">Never choose the route from the screen you are standing on. AR Management stays highlighted for all three of its children.</field>
+    </record>
+
+    <record id="mission_fm1_check_04" model="learn.mission.note">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">50</field>
+        <field name="kind">check</field>
+        <field name="body">Re-read the month's totals afterwards. A refund on the wrong route balances the cash and not the books.</field>
+    </record>
+
+    <record id="mission_fm1_step_00" model="learn.mission.step">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">10</field>
+        <field name="key">read</field>
+        <field name="nav">fin_dashboard</field>
+        <field name="target">fd-outstanding</field>
+        <field name="instruction">Read the month before you move any money.</field>
+        <field name="detail">6,150,000 ₫ outstanding, of which 1,850,000 ₫ is overdue. Money going back out changes the first number and not the second — knowing which is which is the whole job here.</field>
+        <field name="hint">Outstanding is not yet due. Overdue has passed its terms. Only the second one is a problem.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_fm1_step_01" model="learn.mission.step">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">20</field>
+        <field name="key">list</field>
+        <field name="nav">fin_refund</field>
+        <field name="target">frf-list</field>
+        <field name="instruction">Open the three and read what actually happened to each.</field>
+        <field name="detail">Bích bought 5 visits and used 3. Hưng's 8-visit course stopped after 4 on clinical advice. Mai paid twice for one visit. Three sentences, three different situations.</field>
+        <field name="hint">One of these three is not a refund. Read them as events, not as amounts.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_fm1_step_02" model="learn.mission.step">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">30</field>
+        <field name="key">decide</field>
+        <field name="instruction">Vũ Thị Mai was charged 450,000 ₫ twice for the same visit. Which route?</field>
+        <field name="detail">One decision. Two of these move exactly the right amount of money and record the wrong thing.</field>
+        <field name="hint">Ask what she is owed. If the answer is “nothing — she was charged for something that did not happen”, it is not a refund.</field>
+        <field name="is_decision" eval="True"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_fm1_step_02_opt_ok" model="learn.mission.option">
+        <field name="step_id" ref="mission_fm1_step_02"/>
+        <field name="sequence">10</field>
+        <field name="key">ok</field>
+        <field name="label">Transaction reversal — the second payment should never have been taken, so it is reversed rather than returned.</field>
+        <field name="is_correct" eval="True"/>
+    </record>
+
+    <record id="mission_fm1_step_02_opt_prepaid" model="learn.mission.option">
+        <field name="step_id" ref="mission_fm1_step_02"/>
+        <field name="sequence">20</field>
+        <field name="key">prepaid</field>
+        <field name="label">Prepaid credit — put 450,000 ₫ back on her balance so it comes off her next visit.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="recovery">Hold on. Credit is money the client chose to pay in advance, and she did not choose this — she was charged twice by mistake. Leaving it as a balance also means she has to come back to get value for money she never meant to spend. The payment itself was the error; reverse the payment.</field>
+    </record>
+
+    <record id="mission_fm1_step_02_opt_package" model="learn.mission.option">
+        <field name="step_id" ref="mission_fm1_step_02"/>
+        <field name="sequence">30</field>
+        <field name="key">package</field>
+        <field name="label">Package pro-rata — work out what she used and refund the difference.</field>
+        <field name="is_correct" eval="False"/>
+        <field name="recovery">Hold on. There is no package here — Mai had a single visit, not a course. Pro-rata is the right tool for Hưng, whose 8-visit course stopped after 4, and reaching for it here is exactly the mistake this mission is built around: the route came from the list she appeared in, not from what happened to her.</field>
+    </record>
+
+    <record id="mission_fm1_step_03" model="learn.mission.step">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">40</field>
+        <field name="key">package</field>
+        <field name="nav">fin_packages</field>
+        <field name="target">fpk-list</field>
+        <field name="instruction">Now do Hưng's, and count the visits rather than estimating.</field>
+        <field name="detail">An 8-visit physiotherapy course at 4,400,000 ₫, stopped after 4. A package is money taken before the work is done, so the unused half is a liability the clinic still owes.</field>
+        <field name="hint">Pro-rata means against visits delivered. The clinical reason for stopping does not change the arithmetic.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_fm1_step_04" model="learn.mission.step">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">50</field>
+        <field name="key">card</field>
+        <field name="nav">fin_refund</field>
+        <field name="target">frf-routes</field>
+        <field name="instruction">Before you send any of it back, read what it costs.</field>
+        <field name="detail">Money going back out is the one action in this section that cannot be undone from your side — recovering it means asking the client to return it.</field>
+        <field name="hint">Read the reversibility line twice. The record can be corrected; the money cannot be recalled.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="True"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_fm1_step_05" model="learn.mission.step">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">60</field>
+        <field name="key">filed</field>
+        <field name="nav">fin_red_invoice</field>
+        <field name="target">fri-rule</field>
+        <field name="instruction">Check whether any of the three has a red invoice against it.</field>
+        <field name="detail">41 of the month's 63 invoices do. If one of these is among them, correcting it is a filing event and not only an accounting one — and the period has to still be open.</field>
+        <field name="hint">Buyer details, amount, service description, inside the period. Four conditions, all of them required.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="False"/>
+    </record>
+
+    <record id="mission_fm1_step_06" model="learn.mission.step">
+        <field name="mission_id" ref="mission_fm1"/>
+        <field name="sequence">70</field>
+        <field name="key">undo</field>
+        <field name="nav">fin_ar_transactions</field>
+        <field name="target">fat-list</field>
+        <field name="instruction">Find the reversal you just recorded and read it back as an auditor would.</field>
+        <field name="detail">This is the undo that FINANCE actually has: not deleting the entry, but a record complete enough that someone else can see what happened and why. Invoiced, paid, reversed, and when.</field>
+        <field name="hint">A trail that explains itself is the reversal. In this section nothing else is.</field>
+        <field name="is_decision" eval="False"/>
+        <field name="is_consequence" eval="False"/>
+        <field name="is_undo" eval="True"/>
+    </record>
+
+    <record id="mission_fm2" model="learn.mission">
+        <field name="key">fm2</field>
+        <field name="sequence">80</field>
+        <field name="line">fin_docs</field>
+        <field name="icon">shield-check</field>
+        <field name="name">Correct an invoice that has already been filed</field>
+        <field name="summary">A posted invoice with a wrong tax code, a red invoice already issued against it, and a filing period about to close.</field>
+        <field name="duration_min">5</field>
+        <field name="kind">outline</field>
+        <field name="outline_note">Outline. The full version adds the period check, the consequence card for cancelling a live tax document, and the seeded case where the period closes between noticing the error and acting on it. Everything described here is real and usable now.</field>
+        <field name="confidence_key">compliance</field>
+        <field name="confidence_gain">20</field>
+    </record>
+
 </odoo>

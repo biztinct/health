@@ -65,6 +65,21 @@ SIDEBAR_KEYS = {
     'ops_workload':    'health_cms_sidebar.item_ops_workload',
     'ops_family':      'health_cms_coverage.item_ops_family_messages',
     'ops_routes':      'health_cms_coverage.item_ops_route_feasibility',
+    # FINANCE — same derivation, same reason.
+    'fin_dashboard':      'health_cms_sidebar.item_fin_dashboard',
+    'fin_invoices':       'health_cms_sidebar.item_fin_invoices',
+    'fin_payments':       'health_cms_sidebar.item_fin_payments',
+    'fin_vat_log':        'health_cms_sidebar.item_fin_vat_log',
+    'fin_ar_dashboard':   'health_cms_sidebar.item_fin_ar_dashboard',
+    'fin_ar_management':  'health_cms_sidebar.item_fin_ar_management',
+    'fin_overdue':        'health_cms_sidebar.item_fin_overdue',
+    'fin_ar_transactions':'health_cms_sidebar.item_fin_ar_transactions',
+    'fin_account_payment':'health_cms_sidebar.item_fin_ar_account_payment',
+    'fin_cash_transit':   'health_cms_sidebar.item_fin_ar_cash_transit',
+    'fin_refund':         'health_cms_sidebar.item_fin_ar_refund',
+    'fin_red_invoice':    'health_cms_coverage.item_fin_red_invoice_log',
+    'fin_packages':       'health_cms_coverage.item_fin_service_packages',
+    'fin_bhyt':           'health_cms_coverage.item_fin_bhyt_claims',
 }
 
 # Which morph / chain each visual step pulls its rows from is declared in the
@@ -249,11 +264,14 @@ def gen_stations(data, tr):
     doc = Xml('Stations — the nodes on the Guided Journey map.')
     lesson_of = {l['station']: l['id'] for l in data['lessons'].values()}
     lesson_of.update({l['station']: l['id']
-                      for l in (data.get('opsLessons') or {}).values()})
+                      for l in (data.get('opsLessons') or {}).values()}
+                     | {l['station']: l['id'] for l in (data.get('finLessons') or {}).values()})
     seq = 0
     trees = [('crm', data['stations'])]
     if data.get('opsStations'):
         trees.append(('ops', data['opsStations']))
+    if data.get('finStations'):
+        trees.append(('finance', data['finStations']))
     for section, tree in trees:
       for line_key, line in tree.items():
         for st in line['stations']:
@@ -330,6 +348,7 @@ def gen_lessons(data, tr):
     doc = Xml('Lessons, steps and understanding checks.')
     all_lessons = dict(data['lessons'])
     all_lessons.update(data.get('opsLessons') or {})
+    all_lessons.update(data.get('finLessons') or {})
     for lkey in sorted(all_lessons):
         lesson = all_lessons[lkey]
         lx = 'lesson_' + lkey.lower()
@@ -337,7 +356,8 @@ def gen_lessons(data, tr):
         # A lesson's own name/goal are not authored separately in the
         # prototype — the station carries them. Reuse rather than invent.
         st = None
-        for tree in (data['stations'], data.get('opsStations') or {}):
+        for tree in (data['stations'], data.get('opsStations') or {},
+                     data.get('finStations') or {}):
             for line in tree.values():
                 for s in line['stations']:
                     if s['id'] == lesson['station']:
@@ -441,10 +461,12 @@ def gen_screens(data, tr):
               'anything is typed.')
     all_ctx = dict(data['screenCtx'])
     all_ctx.update(data.get('opsScreenCtx') or {})
+    all_ctx.update(data.get('finScreenCtx') or {})
     for i, (key, blurb) in enumerate(all_ctx.items()):
         xmlid = _screen_xmlid(key)
         station = None
-        for tree in (data['stations'], data.get('opsStations') or {}):
+        for tree in (data['stations'], data.get('opsStations') or {},
+                     data.get('finStations') or {}):
             for line in tree.values():
                 for s in line['stations']:
                     if s['id'] == key:
@@ -452,6 +474,7 @@ def gen_screens(data, tr):
         name = en_of(station['title']) if station else key
         all_suggest = dict(data['qaSuggest'])
         all_suggest.update(data.get('opsQaSuggest') or {})
+        all_suggest.update(data.get('finQaSuggest') or {})
         suggest = all_suggest.get(key) or []
         doc.rec('learn.screen', xmlid, [
             ('key', key),
@@ -492,7 +515,8 @@ def gen_intents(data, tr):
     doc = Xml('Coach intents. Every answer the Coach can give is a block here; '
               'there is no path from a question to the screen that skips this '
               'file, which is what lets it promise never to invent a fact.')
-    for intent in list(data['qa']) + list(data.get('opsQa') or []):
+    for intent in (list(data['qa']) + list(data.get('opsQa') or [])
+                   + list(data.get('finQa') or [])):
         key = intent['id']
         xmlid = _intent_xmlid(key)
         screens = intent.get('screens')
@@ -577,8 +601,10 @@ def gen_missions(data, tr):
               'a step that says "press Junk" would otherwise be a real spam flag '
               'on a real number.')
     steps_by_mission = {'m1': data['m1Steps'], 'm2': data['m2Steps'],
-                        'om1': data.get('opsM1Steps') or []}
-    missions = list(data['missions']) + list(data.get('opsMissions') or [])
+                        'om1': data.get('opsM1Steps') or [],
+                        'fm1': data.get('finM1Steps') or []}
+    missions = (list(data['missions']) + list(data.get('opsMissions') or [])
+                + list(data.get('finMissions') or []))
 
     for i, m in enumerate(missions):
         key = m['id']
@@ -674,6 +700,7 @@ def gen_columns(data, tr):
               'any help and the one a learner actually asked about has none.')
     all_cols = dict(data.get('columns') or {})
     all_cols.update(data.get('opsColumns') or {})
+    all_cols.update(data.get('finColumns') or {})
     for screen, cols in all_cols.items():
         for i, (key, label, body) in enumerate(cols):
             xmlid = 'col_%s_%s' % (
@@ -716,7 +743,7 @@ def gen_fixture(data):
     header = ('/* %s */\n' % BANNER.replace('\n', '\n   ')
               + '/** @odoo-module **/\n\n')
     exports = ('\nexport { B, PRACTICE_META, CASE, PRACTICE, MENU, RETIRED,'
-               ' STATUS_LABELS, OPS };\n')
+               ' STATUS_LABELS, OPS, FIN };\n')
     # TENANT_DEFAULTS / tenantValue are NOT exported: in the product the tokens
     # arrive resolved in the bundle, per company. Exporting the fixture's copy
     # would give the engine a second, always-wrong source.

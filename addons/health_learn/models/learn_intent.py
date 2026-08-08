@@ -138,6 +138,25 @@ class LearnScreen(models.Model):
                 models_ |= split(item.match_models)
         return sorted(tags), sorted(xmlids), sorted(models_)
 
+    def _primary(self):
+        """The leaf's OWN action — the one that IS this screen.
+
+        A parent leaf legitimately lists its children's actions in
+        match_action_xmlids so the sidebar highlights the parent while a child
+        is open. That is right for the sidebar and wrong for the Coach: opening
+        Cash In Transit grounded it on AR Management, because the parent
+        matched first. The primary pair breaks that tie without changing what
+        the sidebar does.
+        """
+        self.ensure_one()
+        if not self.sidebar_key:
+            return None, None
+        item = self.env.ref(self.sidebar_key, raise_if_not_found=False)
+        if not item:
+            return None, None
+        item = item.sudo()
+        return (item.action_tag or None), (item.action_xmlid or None)
+
 
 class LearnIntent(models.Model):
     _name = 'learn.intent'
@@ -554,6 +573,8 @@ class LearnIntent(models.Model):
                     'action_tags': s._matchers()[0],
                     'action_xmlids': s._matchers()[1],
                     'models': s._matchers()[2],
+                    'own_tag': s._primary()[0] or '',
+                    'own_xmlid': s._primary()[1] or '',
                     'suggest': [{'key': i.key, 'label': i.label} for i in s.suggest_ids],
                 } for s in env.search([])],
                 # What the Coach can answer ANYWHERE. Without this, a screen it

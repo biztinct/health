@@ -597,4 +597,378 @@
         <field name="name">Treating the absence of a warning as a promise. It knows distance, not weather, lifts, or how long a family keeps you at the door.</field>
     </record>
 
+    <record id="station_fin_dashboard" model="learn.station">
+        <field name="key">fin_dashboard</field>
+        <field name="name">Finance Dashboard</field>
+        <field name="line">fin_money</field>
+        <field name="section">finance</field>
+        <field name="sequence">180</field>
+        <field name="summary">The month in money: billed, paid, outstanding, and what is overdue.</field>
+        <field name="icon">grid</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_dashboard</field>
+        <field name="duration_min">4</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Billed, collected and outstanding for one month in one catchment area, with the overdue figure broken out.</field>
+        <field name="outline_why">Outstanding is not a problem; overdue is. The gap between them is the whole job of this section — 6,150,000 ₫ owed of which 1,850,000 ₫ has passed its terms.</field>
+        <field name="outline_when">Start of the day and at month end. It is a month view, so a figure that moves hourly is a figure you are misreading.</field>
+        <field name="outline_prereq">Accountant or Owner. An Operations Manager sees Invoices but not this screen.</field>
+    </record>
+
+    <record id="station_fin_dashboard_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_dashboard"/>
+        <field name="sequence">10</field>
+        <field name="name">Reading Outstanding as debt. Most of it is simply invoices younger than their payment terms.</field>
+    </record>
+
+    <record id="station_fin_dashboard_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_dashboard"/>
+        <field name="sequence">20</field>
+        <field name="name">Comparing this month with last without the same catchment area. The area selector changes every figure on the screen.</field>
+    </record>
+
+    <record id="station_fin_invoices" model="learn.station">
+        <field name="key">fin_invoices</field>
+        <field name="name">Invoices</field>
+        <field name="line">fin_money</field>
+        <field name="section">finance</field>
+        <field name="sequence">190</field>
+        <field name="summary">Sixty-three invoices, and the one action on them that cannot be undone.</field>
+        <field name="icon">receipt</field>
+        <field name="kind">lesson</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_invoices</field>
+        <field name="duration_min">7</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="True"/>
+        <field name="outline_what">Every customer invoice for the month with its state — draft, posted, paid — the client, the service and the amount.</field>
+        <field name="outline_why">Posting an invoice locks it into a legal sequence. A draft is a document you are still writing; a posted invoice is a document that exists, and the only way back is a credit note, which is itself a document.</field>
+        <field name="outline_when">Whenever a visit completes and needs billing, and whenever a posted invoice turns out to be wrong.</field>
+        <field name="outline_prereq">Accountant, Owner — and the Operations Manager, who can see invoices because a booking question is often an invoice question.</field>
+    </record>
+
+    <record id="station_fin_invoices_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_invoices"/>
+        <field name="sequence">10</field>
+        <field name="name">Posting to tidy the list. Draft is a valid resting state; posted is a commitment with a number attached.</field>
+    </record>
+
+    <record id="station_fin_invoices_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_invoices"/>
+        <field name="sequence">20</field>
+        <field name="name">Editing after posting. The fields that matter are locked, and the ones that are not do not change the document that was issued.</field>
+    </record>
+
+    <record id="station_fin_payments" model="learn.station">
+        <field name="key">fin_payments</field>
+        <field name="name">Payments</field>
+        <field name="line">fin_money</field>
+        <field name="section">finance</field>
+        <field name="sequence">200</field>
+        <field name="summary">What has actually arrived, against what was invoiced.</field>
+        <field name="icon">check-circle</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_payments</field>
+        <field name="duration_min">4</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Every payment received this month and which invoice it settled — 48 of the 63 invoices are paid.</field>
+        <field name="outline_why">An invoice is a claim; a payment is a fact. This is the screen that turns one into the other, and the difference between them is what the AR screens chase.</field>
+        <field name="outline_when">Daily. A payment recorded late is an invoice that was chased for no reason.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_payments_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_payments"/>
+        <field name="sequence">10</field>
+        <field name="name">Recording a payment against the client rather than the invoice. The client's balance looks right and the invoice stays open.</field>
+    </record>
+
+    <record id="station_fin_vat_log" model="learn.station">
+        <field name="key">fin_vat_log</field>
+        <field name="name">VAT Log</field>
+        <field name="line">fin_money</field>
+        <field name="section">finance</field>
+        <field name="sequence">210</field>
+        <field name="summary">A read-only record of what was posted.</field>
+        <field name="icon">file-text</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_vat_log</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Posted customer invoices, listed. It is a record, not a working document — there is no form behind it to open and edit.</field>
+        <field name="outline_why">When somebody asks what was issued in a period, this is the answer, and its read-only nature is the point: the log and the filing cannot disagree.</field>
+        <field name="outline_when">At period end, and whenever a figure needs to be traced back to the documents behind it.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_vat_log_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_vat_log"/>
+        <field name="sequence">10</field>
+        <field name="name">Expecting to correct something here. Nothing on this screen changes a document — corrections happen on the invoice, and after posting that means a credit note.</field>
+    </record>
+
+    <record id="station_fin_ar_dashboard" model="learn.station">
+        <field name="key">fin_ar_dashboard</field>
+        <field name="name">AR Dashboard</field>
+        <field name="line">fin_owed</field>
+        <field name="section">finance</field>
+        <field name="sequence">220</field>
+        <field name="summary">Receivables by age — the shape of what is owed.</field>
+        <field name="icon">bar-chart</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_dashboard</field>
+        <field name="duration_min">4</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Outstanding money grouped by how long it has been outstanding, so a total becomes a set of different problems.</field>
+        <field name="outline_why">6,150,000 ₫ owed sounds like one problem. Split by age it is fifteen invoices, four of which have passed their terms and one of which is 47 days old — and only that last group needs a phone call today.</field>
+        <field name="outline_when">Weekly, and before any conversation about cash flow.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_ar_dashboard_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_ar_dashboard"/>
+        <field name="sequence">10</field>
+        <field name="name">Chasing the largest balance first. The oldest is nearly always the one at risk, not the biggest.</field>
+    </record>
+
+    <record id="station_fin_ar_management" model="learn.station">
+        <field name="key">fin_ar_management</field>
+        <field name="name">AR Management</field>
+        <field name="line">fin_owed</field>
+        <field name="section">finance</field>
+        <field name="sequence">230</field>
+        <field name="summary">The working screen for receivables, with three tools under it.</field>
+        <field name="icon">clipboard-check</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_management</field>
+        <field name="duration_min">5</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">The place receivables are actually worked, with Account Payment, Cash In Transit and Refund / Credit grouped beneath it.</field>
+        <field name="outline_why">The dashboard tells you the shape; this is where something happens about it.</field>
+        <field name="outline_when">Whenever the AR Dashboard shows something that needs a decision rather than a look.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_ar_management_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_ar_management"/>
+        <field name="sequence">10</field>
+        <field name="name">Treating its three children as separate screens. They are three answers to one question — money that has not settled.</field>
+    </record>
+
+    <record id="station_fin_overdue" model="learn.station">
+        <field name="key">fin_overdue</field>
+        <field name="name">Overdue Clients</field>
+        <field name="line">fin_owed</field>
+        <field name="section">finance</field>
+        <field name="sequence">240</field>
+        <field name="summary">The four invoices that have passed their terms.</field>
+        <field name="icon">alert-triangle</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_overdue</field>
+        <field name="duration_min">4</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Clients with invoices past their payment terms, oldest first — four this month, 1,850,000 ₫ between them.</field>
+        <field name="outline_why">This is the only receivables screen that is a to-do list. Everything else describes; this one asks you to ring somebody.</field>
+        <field name="outline_when">Weekly, and always before month end.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_overdue_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_overdue"/>
+        <field name="sequence">10</field>
+        <field name="name">Chasing before checking Payments. A payment recorded late looks exactly like a payment never made, and the client remembers being chased for it.</field>
+    </record>
+
+    <record id="station_fin_ar_transactions" model="learn.station">
+        <field name="key">fin_ar_transactions</field>
+        <field name="name">AR Transactions</field>
+        <field name="line">fin_owed</field>
+        <field name="section">finance</field>
+        <field name="sequence">250</field>
+        <field name="summary">Every movement on a receivable, in order.</field>
+        <field name="icon">list-checks</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_transactions</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">The audit trail behind a balance: what was invoiced, what was paid, what was credited and when.</field>
+        <field name="outline_why">When a client disputes a balance, this is the screen that answers it. A balance is an opinion until you can show the movements.</field>
+        <field name="outline_when">When a figure is questioned, and before writing anything off.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_ar_transactions_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_ar_transactions"/>
+        <field name="sequence">10</field>
+        <field name="name">Reading the balance without the movements. The balance is the result; the movements are the reason, and only one of those settles an argument.</field>
+    </record>
+
+    <record id="station_fin_account_payment" model="learn.station">
+        <field name="key">fin_account_payment</field>
+        <field name="name">Account Payment</field>
+        <field name="line">fin_owed</field>
+        <field name="section">finance</field>
+        <field name="sequence">260</field>
+        <field name="summary">Recording money against the right invoice.</field>
+        <field name="icon">check-circle</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_account_payment</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Where a received payment is matched to what it settles.</field>
+        <field name="outline_why">A payment against the client instead of the invoice leaves the balance right and the invoice open — so the client is chased for money they have already paid.</field>
+        <field name="outline_when">As payments arrive.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_account_payment_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_account_payment"/>
+        <field name="sequence">10</field>
+        <field name="name">Part-paying without saying which invoice. The system cannot guess, and the oldest is not always what the client intended.</field>
+    </record>
+
+    <record id="station_fin_cash_transit" model="learn.station">
+        <field name="key">fin_cash_transit</field>
+        <field name="name">Cash In Transit</field>
+        <field name="line">fin_owed</field>
+        <field name="section">finance</field>
+        <field name="sequence">270</field>
+        <field name="summary">Cash collected on a visit that has not reached the bank yet.</field>
+        <field name="icon">receipt</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_cash_transit</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Money that exists physically and is between a nurse's pocket and the account — 1,350,000 ₫ tonight.</field>
+        <field name="outline_why">Operations reconciles this at end of shift and hands Finance one balanced figure. Finance never chases an individual nurse — if it does not balance, Operations settles it first.</field>
+        <field name="outline_when">Daily, as the balanced figure arrives from Operations.</field>
+        <field name="outline_prereq">Accountant or Owner. The collecting happens in Operations, on their own screen.</field>
+    </record>
+
+    <record id="station_fin_cash_transit_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_cash_transit"/>
+        <field name="sequence">10</field>
+        <field name="name">Going to the nurse when it does not balance. That is Operations' job and their screen — going round them is how one person ends up asked twice.</field>
+    </record>
+
+    <record id="station_fin_red_invoice" model="learn.station">
+        <field name="key">fin_red_invoice</field>
+        <field name="name">Red Invoice Log</field>
+        <field name="line">fin_docs</field>
+        <field name="section">finance</field>
+        <field name="sequence">280</field>
+        <field name="summary">Vietnamese tax invoices — the most consequential screen in the product.</field>
+        <field name="icon">shield-check</field>
+        <field name="kind">lesson</field>
+        <field name="sidebar_key">health_cms_coverage.item_fin_red_invoice_log</field>
+        <field name="duration_min">7</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="True"/>
+        <field name="outline_what">Every red invoice issued through Viettel, its state, and whether it has been cancelled — 41 issued this month, 1 cancelled.</field>
+        <field name="outline_why">A red invoice is a tax document, not a record in this system. Issuing it files it; cancelling it is a filing event too, and the buyer may already be holding a copy.</field>
+        <field name="outline_when">When a client asks for one, and when an issued one turns out to be wrong.</field>
+        <field name="outline_prereq">Cancelling requires the Vietnamese Tax Compliance permission — deliberately narrower than Accountant, because it is the one action here that reaches outside the clinic.</field>
+    </record>
+
+    <record id="station_fin_red_invoice_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_red_invoice"/>
+        <field name="sequence">10</field>
+        <field name="name">Cancelling to correct a small mistake after the filing period has closed. Inside the period, cancel and reissue; after it, the route is a credit note.</field>
+    </record>
+
+    <record id="station_fin_red_invoice_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_red_invoice"/>
+        <field name="sequence">20</field>
+        <field name="name">Treating it like an internal document. The buyer holds a copy, and the tax authority holds a record — neither of them sees your correction unless it is filed.</field>
+    </record>
+
+    <record id="station_fin_refund" model="learn.station">
+        <field name="key">fin_refund</field>
+        <field name="name">Refund / Credit</field>
+        <field name="line">fin_docs</field>
+        <field name="section">finance</field>
+        <field name="sequence">290</field>
+        <field name="summary">Three different situations that all look like giving money back.</field>
+        <field name="icon">rotate-ccw</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_refund</field>
+        <field name="duration_min">6</field>
+        <field name="required" eval="True"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Prepaid credit returned, an unfinished package refunded pro-rata, and a mistaken payment reversed. Three routes, three different records.</field>
+        <field name="outline_why">The route decides what happens to the client's history. A transaction reversal is a correction — it says the payment should never have been recorded. A package refund says the course stopped early. Choosing the wrong one leaves the client's record telling a story that did not happen.</field>
+        <field name="outline_when">Whenever money goes back — and before deciding the amount, because the route decides the amount.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_refund_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_refund"/>
+        <field name="sequence">10</field>
+        <field name="name">Picking the route by whichever screen you happen to be standing on. That is the most common way the wrong one gets used.</field>
+    </record>
+
+    <record id="station_fin_refund_mistake_1" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_refund"/>
+        <field name="sequence">20</field>
+        <field name="name">Refunding a whole package when four of eight visits were delivered. Pro-rata is not a courtesy — it is what the client actually consumed.</field>
+    </record>
+
+    <record id="station_fin_packages" model="learn.station">
+        <field name="key">fin_packages</field>
+        <field name="name">Service Packages</field>
+        <field name="line">fin_docs</field>
+        <field name="section">finance</field>
+        <field name="sequence">300</field>
+        <field name="summary">Courses of visits sold up front.</field>
+        <field name="icon">list-checks</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_coverage.item_fin_service_packages</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">Packages available and sold — a wound-care course of 8 and a physiotherapy course of 8 this month.</field>
+        <field name="outline_why">A package is money taken before the service is delivered, so it is a liability until the visits happen. That is why an unfinished one is refunded pro-rata rather than argued about.</field>
+        <field name="outline_when">When selling one, and whenever a course stops early.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_packages_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_packages"/>
+        <field name="sequence">10</field>
+        <field name="name">Treating a sold package as revenue. It becomes revenue one visit at a time.</field>
+    </record>
+
+    <record id="station_fin_bhyt" model="learn.station">
+        <field name="key">fin_bhyt</field>
+        <field name="name">BHYT Claims</field>
+        <field name="line">fin_docs</field>
+        <field name="section">finance</field>
+        <field name="sequence">310</field>
+        <field name="summary">Social health insurance claims — not in use yet.</field>
+        <field name="icon">clipboard-check</field>
+        <field name="kind">outline</field>
+        <field name="sidebar_key">health_cms_coverage.item_fin_bhyt_claims</field>
+        <field name="duration_min">3</field>
+        <field name="required" eval="False"/>
+        <field name="star" eval="False"/>
+        <field name="outline_what">The screen where claims against a patient's BHYT entitlement will be prepared and tracked. Nothing is being submitted through it today.</field>
+        <field name="outline_why">Written honestly as not-yet-in-use rather than teaching a workflow nobody runs. When it is switched on this outline becomes a lesson; until then, knowing it exists and is not live is the useful fact.</field>
+        <field name="outline_when">Not yet. If a claim needs making today it is happening outside this system.</field>
+        <field name="outline_prereq">Accountant or Owner.</field>
+    </record>
+
+    <record id="station_fin_bhyt_mistake_0" model="learn.station.mistake">
+        <field name="station_id" ref="station_fin_bhyt"/>
+        <field name="sequence">10</field>
+        <field name="name">Assuming a visit is covered because the screen exists. Nothing here has been submitted, so nothing here has been accepted.</field>
+    </record>
+
 </odoo>

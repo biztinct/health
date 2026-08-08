@@ -158,4 +158,130 @@
         <field name="suggest_ids" eval="[(6, 0, [ref('intent_ops_capacity'), ref('intent_whatpage'), ref('intent_whatnext')])]"/>
     </record>
 
+    <record id="screen_fin_dashboard" model="learn.screen">
+        <field name="key">fin_dashboard</field>
+        <field name="sequence">180</field>
+        <field name="name">Finance Dashboard</field>
+        <field name="blurb">Billed, collected and outstanding for one month in one catchment area, with overdue broken out.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_dashboard</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_outstanding_vs_overdue'), ref('intent_fin_access')])]"/>
+    </record>
+
+    <record id="screen_fin_invoices" model="learn.screen">
+        <field name="key">fin_invoices</field>
+        <field name="sequence">190</field>
+        <field name="name">Invoices</field>
+        <field name="blurb">Every customer invoice for the month with its state, client, service and amount.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_invoices</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_post'), ref('intent_fin_outstanding_vs_overdue'), ref('intent_fin_red_rule')])]"/>
+    </record>
+
+    <record id="screen_fin_payments" model="learn.screen">
+        <field name="key">fin_payments</field>
+        <field name="sequence">200</field>
+        <field name="name">Payments</field>
+        <field name="blurb">Payments received this month and which invoice each one settled.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_payments</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_unmatched'), ref('intent_fin_post')])]"/>
+    </record>
+
+    <record id="screen_fin_vat_log" model="learn.screen">
+        <field name="key">fin_vat_log</field>
+        <field name="sequence">210</field>
+        <field name="name">VAT Log</field>
+        <field name="blurb">Posted customer invoices, listed. A read-only record — there is no form behind it.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_vat_log</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_post'), ref('intent_fin_red_rule')])]"/>
+    </record>
+
+    <record id="screen_fin_ar_dashboard" model="learn.screen">
+        <field name="key">fin_ar_dashboard</field>
+        <field name="sequence">220</field>
+        <field name="name">AR Dashboard</field>
+        <field name="blurb">Outstanding money grouped by how long it has been outstanding.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_dashboard</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_outstanding_vs_overdue')])]"/>
+    </record>
+
+    <record id="screen_fin_ar_management" model="learn.screen">
+        <field name="key">fin_ar_management</field>
+        <field name="sequence">230</field>
+        <field name="name">AR Management</field>
+        <field name="blurb">The working screen for receivables, with payment, cash-in-transit and refund tools under it.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_management</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_refund_route'), ref('intent_fin_cash_owner'), ref('intent_fin_outstanding_vs_overdue')])]"/>
+    </record>
+
+    <record id="screen_fin_overdue" model="learn.screen">
+        <field name="key">fin_overdue</field>
+        <field name="sequence">240</field>
+        <field name="name">Overdue Clients</field>
+        <field name="blurb">Clients with invoices past their payment terms, oldest first.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_overdue</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_outstanding_vs_overdue'), ref('intent_fin_unmatched')])]"/>
+    </record>
+
+    <record id="screen_fin_ar_transactions" model="learn.screen">
+        <field name="key">fin_ar_transactions</field>
+        <field name="sequence">250</field>
+        <field name="name">AR Transactions</field>
+        <field name="blurb">The audit trail behind a balance: invoiced, paid, credited and when.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_transactions</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_unmatched')])]"/>
+    </record>
+
+    <record id="screen_fin_account_payment" model="learn.screen">
+        <field name="key">fin_account_payment</field>
+        <field name="sequence">260</field>
+        <field name="name">Account Payment</field>
+        <field name="blurb">Where a received payment is matched to the invoice it settles.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_account_payment</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_unmatched'), ref('intent_fin_refund_route')])]"/>
+    </record>
+
+    <record id="screen_fin_cash_transit" model="learn.screen">
+        <field name="key">fin_cash_transit</field>
+        <field name="sequence">270</field>
+        <field name="name">Cash In Transit</field>
+        <field name="blurb">Cash collected on visits that has not reached the account yet.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_cash_transit</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_cash_owner')])]"/>
+    </record>
+
+    <record id="screen_fin_refund" model="learn.screen">
+        <field name="key">fin_refund</field>
+        <field name="sequence">280</field>
+        <field name="name">Refund / Credit</field>
+        <field name="blurb">Three routes for money going back: prepaid credit, package pro-rata, transaction reversal.</field>
+        <field name="sidebar_key">health_cms_sidebar.item_fin_ar_refund</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_refund_route'), ref('intent_fin_access')])]"/>
+    </record>
+
+    <record id="screen_fin_red_invoice" model="learn.screen">
+        <field name="key">fin_red_invoice</field>
+        <field name="sequence">290</field>
+        <field name="name">Red Invoice Log</field>
+        <field name="blurb">Red invoices issued through Viettel, their state, and whether any has been cancelled.</field>
+        <field name="sidebar_key">health_cms_coverage.item_fin_red_invoice_log</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_red_rule'), ref('intent_fin_access')])]"/>
+    </record>
+
+    <record id="screen_fin_packages" model="learn.screen">
+        <field name="key">fin_packages</field>
+        <field name="sequence">300</field>
+        <field name="name">Service Packages</field>
+        <field name="blurb">Courses of visits sold up front, and how many of each have gone.</field>
+        <field name="sidebar_key">health_cms_coverage.item_fin_service_packages</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_refund_route')])]"/>
+    </record>
+
+    <record id="screen_fin_bhyt" model="learn.screen">
+        <field name="key">fin_bhyt</field>
+        <field name="sequence">310</field>
+        <field name="name">BHYT Claims</field>
+        <field name="blurb">Where BHYT claims will be prepared and tracked. Nothing is being submitted through it today.</field>
+        <field name="sidebar_key">health_cms_coverage.item_fin_bhyt_claims</field>
+        <field name="suggest_ids" eval="[(6, 0, [ref('intent_fin_bhyt_notlive')])]"/>
+    </record>
+
 </odoo>

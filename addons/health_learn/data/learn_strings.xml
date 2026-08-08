@@ -317,7 +317,7 @@
 
     <record id="str_hublead" model="learn.string">
         <field name="key">hubLead</field>
-        <field name="value">Three cooperating surfaces over the sections you work in — the CRM desk, and Operations. Screens your role cannot open are still explained here, because knowing what a screen is for is how you know who to ask.</field>
+        <field name="value">Three cooperating surfaces over the sections you work in — the CRM desk, Operations and Finance. Screens your role cannot open are still explained here, because knowing what a screen is for is how you know who to ask.</field>
     </record>
 
     <record id="str_hubtitle" model="learn.string">
@@ -368,6 +368,21 @@
     <record id="str_lines_daily" model="learn.string">
         <field name="key">lines.daily</field>
         <field name="value">Daily work line</field>
+    </record>
+
+    <record id="str_lines_fin_docs" model="learn.string">
+        <field name="key">lines.fin_docs</field>
+        <field name="value">Documents and claims</field>
+    </record>
+
+    <record id="str_lines_fin_money" model="learn.string">
+        <field name="key">lines.fin_money</field>
+        <field name="value">Money in</field>
+    </record>
+
+    <record id="str_lines_fin_owed" model="learn.string">
+        <field name="key">lines.fin_owed</field>
+        <field name="value">Money owed</field>
     </record>
 
     <record id="str_lines_ops_day" model="learn.string">

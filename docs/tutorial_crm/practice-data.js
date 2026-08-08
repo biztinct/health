@@ -471,6 +471,76 @@ const OPS = {
                     "Vừa đủ, nhưng rất sát — chỉ dư 40 phút trong giờ cao điểm buổi chiều ở Hà Nội.") },
 };
 
+
+/* =============================================================================
+   FIN — one month of money, and it ties to the other two sections.
+
+   August 2026, Hà Nội. The 63 invoices are the 63 bookings the CRM month
+   converted, and the 1,350,000 ₫ in transit is the cash the OPS nurses are
+   holding at the end of 12 August. Three sections, one clinic, one set of
+   numbers.
+
+   Everything reconciles:
+     63 invoices  = 28 wound care + 20 injection + 10 physio + 5 blood draw
+     25,850,000 ₫ = 19,700,000 paid + 6,150,000 outstanding
+     overdue (4 invoices, 1,850,000 ₫) is a SUBSET of the outstanding 15
+
+   Deliberately NOT asserted: any VAT rate. Healthcare VAT treatment in Vietnam
+   is a tax question, not a UI question, and the tutorial has no business
+   teaching it from a guess. The VAT Log lesson teaches what the screen IS —
+   a read-only record of what was posted — which is what the code shows.
+   ========================================================================== */
+const FIN = {
+  month: B("August 2026", "Tháng 8 năm 2026"),
+  area: B("Hà Nội", "Hà Nội"),
+
+  invoices: { count: 63, billed: 25850000, paid: 19700000, outstanding: 6150000,
+              paidCount: 48, outstandingCount: 15 },
+  overdue: { count: 4, amount: 1850000, oldestDays: 47 },
+  inTransit: 1350000,
+
+  lines: [
+    { svc: B("Wound care at home", "Chăm sóc vết thương tại nhà"), n: 28, price: 450000 },
+    { svc: B("Injection", "Tiêm"), n: 20, price: 300000 },
+    { svc: B("Physiotherapy", "Vật lý trị liệu"), n: 10, price: 600000 },
+    { svc: B("Blood draw", "Lấy máu"), n: 5, price: 250000 },
+  ],
+
+  /* A red invoice is a Vietnamese tax document. Issued on request, not on
+     every invoice — 41 of the 63 asked for one. */
+  red: { issued: 41, cancelled: 1, pending: 0,
+         rule: B("Cancel and reissue only for wrong buyer details, amount or service description, and only inside the current filing period. After the period closes the route is a credit note.",
+                 "Chỉ hủy và phát hành lại khi sai thông tin người mua, số tiền hoặc mô tả dịch vụ, và chỉ trong kỳ kê khai hiện tại. Sau khi kỳ khai đã đóng thì phải dùng hóa đơn điều chỉnh.") },
+
+  /* Three refunds, three genuinely different situations. This is the whole
+     point of the FINANCE mission. */
+  refunds: [
+    { id: "R-101", route: "prepaid", amount: 900000,
+      client: B("Lê Thị Bích", "Lê Thị Bích"),
+      why: B("Bought 5 visits of credit, used 3, moved away.", "Mua trước 5 lượt, dùng 3, rồi chuyển đi nơi khác."),
+      anchor: "fr-prepaid" },
+    { id: "R-102", route: "package", amount: 1800000,
+      client: B("Đỗ Văn Hưng", "Đỗ Văn Hưng"),
+      why: B("An 8-visit physiotherapy course stopped after 4 on clinical advice.",
+             "Liệu trình vật lý trị liệu 8 buổi dừng sau 4 buổi theo chỉ định chuyên môn."),
+      anchor: "fr-package" },
+    { id: "R-103", route: "transaction", amount: 450000,
+      client: B("Vũ Thị Mai", "Vũ Thị Mai"),
+      why: B("Paid twice for the same visit — one payment was keyed in on the wrong record.",
+             "Thanh toán hai lần cho cùng một lượt — một khoản bị nhập nhầm vào hồ sơ khác."),
+      anchor: "fr-transaction" },
+  ],
+
+  /* Not live. Written honestly as a preview rather than teaching a workflow
+     nobody runs. */
+  bhyt: { live: false, claims: 0 },
+
+  packages: [
+    { name: B("Wound care · 8 visits", "Chăm sóc vết thương · 8 buổi"), sold: 6, price: 3200000 },
+    { name: B("Physiotherapy · 8 visits", "Vật lý trị liệu · 8 buổi"), sold: 4, price: 4400000 },
+  ],
+};
+
 /* =============================================================================
    3. THE REAL SIDEBAR — CRM section, as the database actually holds it.
    -----------------------------------------------------------------------------
@@ -492,7 +562,7 @@ const OPS = {
    ========================================================================== */
 const MENU = [
   {
-    key: "crm", label: B("CRM", "CRM"), inScope: true,
+    key: "crm", label: B("CRM", "CRM"),
     items: [
       { id: "dashboard", icon: "grid", seq: 10, label: B("Dashboard", "Bảng điều khiển"), roles: ["owner", "crm"] },
       { id: "carecommand", icon: "zap", seq: 11, label: B("Care Command", "Care Command"), roles: ["owner", "crm"] },
@@ -504,18 +574,46 @@ const MENU = [
       { id: "activities", icon: "list-checks", seq: 50, label: B("Activities", "Hoạt động"), roles: ["owner", "crm"] },
     ],
   },
-  /* Out of scope, drawn greyed so the learner sees where CRM sits. */
+  /* The other two sections carry their REAL leaves, with ids that are station
+     keys. Two reasons this is not decoration:
+
+     1. The shell titles the screen from this list, so a stub section left the
+        heading blank on every OPS practice screen.
+     2. Whether a section is greyed is now decided by which section owns the
+        screen on display, not by a flag frozen at authoring time — so one
+        MENU serves a CRM lesson, an OPS mission and a FINANCE mission. */
   {
-    key: "ops", label: B("OPERATIONS MANAGER", "QUẢN LÝ VẬN HÀNH"), inScope: false,
+    key: "ops", label: B("OPERATIONS MANAGER", "QUẢN LÝ VẬN HÀNH"),
     items: [
-      { id: "x1", icon: "grid", label: B("Dashboard", "Bảng điều khiển") },
-      { id: "x2", icon: "calendar", label: B("Bookings", "Lịch đặt") },
-      { id: "x3", icon: "users", label: B("Clients", "Khách hàng") },
+      { id: "ops_dashboard", icon: "grid", label: B("Dashboard", "Bảng điều khiển") },
+      { id: "ops_bookings", icon: "calendar", label: B("Bookings", "Lịch hẹn") },
+      { id: "ops_clients", icon: "users", label: B("Clients", "Khách hàng") },
+      { id: "ops_timeoff", icon: "clock", label: B("Time Off", "Nghỉ phép") },
+      { id: "ops_schedule", icon: "users", label: B("Staff Schedule", "Lịch nhân sự") },
+      { id: "ops_collections", icon: "receipt", label: B("Collections", "Thu tiền mặt") },
+      { id: "ops_workload", icon: "bar-chart", label: B("Workload", "Khối lượng công việc") },
+      { id: "ops_family", icon: "message-circle", label: B("Family Inbox", "Hộp thư người nhà") },
+      { id: "ops_routes", icon: "map", label: B("Route Feasibility", "Khả năng di chuyển") },
     ],
   },
   {
-    key: "fin", label: B("FINANCE", "TÀI CHÍNH"), inScope: false,
-    items: [{ id: "x4", icon: "receipt", label: B("Invoices", "Hóa đơn") }],
+    key: "fin", label: B("FINANCE", "TÀI CHÍNH"),
+    items: [
+      { id: "fin_dashboard", icon: "grid", label: B("Dashboard", "Bảng điều khiển") },
+      { id: "fin_invoices", icon: "receipt", label: B("Invoices", "Hóa đơn") },
+      { id: "fin_account_payment", icon: "check-circle", label: B("Account Payment", "Thanh toán tài khoản") },
+      { id: "fin_cash_transit", icon: "receipt", label: B("Cash In Transit", "Tiền đang chuyển") },
+      { id: "fin_refund", icon: "rotate-ccw", label: B("Refund / Credit", "Hoàn tiền / Điều chỉnh") },
+      { id: "fin_ar_dashboard", icon: "bar-chart", label: B("AR Dashboard", "Bảng công nợ") },
+      { id: "fin_ar_management", icon: "clipboard-check", label: B("AR Management", "Quản lý công nợ") },
+      { id: "fin_payments", icon: "check-circle", label: B("Payments", "Thanh toán") },
+      { id: "fin_overdue", icon: "alert-triangle", label: B("Overdue Clients", "Khách hàng quá hạn") },
+      { id: "fin_vat_log", icon: "file-text", label: B("VAT Log", "Nhật ký hóa đơn VAT") },
+      { id: "fin_ar_transactions", icon: "list-checks", label: B("AR Transactions", "Giao dịch công nợ") },
+      { id: "fin_bhyt", icon: "clipboard-check", label: B("BHYT Claims", "Hồ sơ BHYT") },
+      { id: "fin_packages", icon: "list-checks", label: B("Service Packages", "Gói dịch vụ") },
+      { id: "fin_red_invoice", icon: "shield-check", label: B("Red Invoice Log", "Nhật ký hóa đơn đỏ") },
+    ],
   },
 ];
 

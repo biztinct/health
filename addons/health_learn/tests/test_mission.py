@@ -181,3 +181,35 @@ class TestMission(TransactionCase):
         mission_lines = {m.line for m in self.missions}
         orphans = mission_lines - station_lines
         self.assertFalse(orphans, "Missions on lines the map has no heading for: %s" % orphans)
+
+    def test_14_a_mission_never_leaves_its_own_section(self):
+        """Every step of a mission stands on a screen from its own section.
+
+        A step with no `nav` — a decision, a consequence card — does not move
+        the learner, so the runner has to hold the screen it was already on.
+        It used to fall back to a hard-coded CRM screen instead, which was
+        invisibly right for the CRM missions and wrong for the rest: the
+        FINANCE refund decision was asked over the CRM triage wall.
+
+        Asserted against the station keys rather than the runner, so it holds
+        whatever the JS does — a mission that navigates outside its section is
+        a content bug even when the code is right.
+        """
+        prefix = {'crm': '', 'ops': 'ops_', 'finance': 'fin_'}
+        section_of = {s.key: s.section
+                      for s in self.env['learn.station'].sudo().search([])}
+        stray = []
+        for m in self.full:
+            navs = [s.nav for s in m.step_ids if s.nav]
+            if not navs:
+                continue
+            sections = {section_of.get(n) for n in navs} - {None}
+            if len(sections) > 1:
+                stray.append('%s spans %s' % (m.key, sorted(sections)))
+                continue
+            section = sections.pop() if sections else None
+            if section and not all(
+                    n.startswith(prefix[section]) for n in navs):
+                stray.append('%s navigates outside %s: %s' % (m.key, section, navs))
+        self.assertFalse(stray, "Missions that wander into another section:\n  "
+                                + "\n  ".join(stray))
