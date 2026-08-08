@@ -2449,3 +2449,38 @@ a no-op.
     bytes — `fetch(src).then(t => t.slice(i - 90, i + 120))`. Three rounds were
     spent on hypotheses that a single look at the output would have killed.
     (learn Phase 4.)
+
+- **§5.150 — a parent CMS sidebar leaf claims its children's actions, so any
+    "which screen am I on" resolver must try the leaf's OWN action first.**
+    `cms.sidebar.item.match_action_xmlids` on a parent lists the actions of its
+    child leaves, so the sidebar can keep the parent highlighted while a child
+    is open. That is correct for the sidebar and wrong for anything that needs
+    to know which screen is actually on display: opening **Cash In Transit**
+    resolved to **AR Management**, because the parent matched first and both
+    were "exact" matches.
+
+    The fix is a pass 0 above the existing exact/broad passes: the leaf whose
+    `action_tag`/`action_xmlid` IS this action wins over any leaf that merely
+    lists it in `match_*`. Two-pass exact-then-model (§5.147's sibling) is not
+    enough on its own — inside "exact" there is still a hierarchy.
+    Guard: `health_learn/tests/test_coach.py::test_16`. (learn Phase 4C.)
+
+- **§5.151 — a default that is correct for the section you built first is
+    invisible until you build the second one.** Two instances in one phase,
+    both shipped green and both wrong:
+
+    * The mission runner resolved a step with no `nav` (a decision, a
+      consequence card) to a hard-coded `"carecommand"`. Every CRM mission
+      starts there, so it looked right for a year of CRM work; the FINANCE
+      refund decision was then asked over the CRM triage wall. Fix: hold the
+      last screen the mission navigated to, and give each line its own home.
+    * The practice shell titled its screen from a menu that only listed CRM
+      leaves, so all nine OPS replica screens rendered a **blank heading**. No
+      test failed, because a missing title is empty rather than wrong.
+
+    The pattern: `x || SOME_LITERAL_FROM_THE_FIRST_SECTION`. When a module is
+    going to be extended section by section, grep for that shape before
+    starting section two, and assert the invariant across sections rather than
+    within one (`test_mission.py::test_14` checks that no mission navigates
+    outside its own section). Neither of these was caught by tests; both were
+    caught by opening the thing and looking at it. (learn Phase 4C.)
