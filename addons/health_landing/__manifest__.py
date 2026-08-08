@@ -54,7 +54,6 @@ Design inspired by modern SaaS applications with emphasis on usability and visua
         'views/viet_uc_menus.xml',
         'views/patient_list_extension.xml',
         'views/hub_spoke_modal_views.xml',
-        'views/lead_hub_views.xml',
         'views/fso_dashboard_wizard_views.xml',
         'views/fso_dashboard_button.xml',
         'views/fso_new_wizards_views.xml',

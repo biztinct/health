@@ -30,11 +30,15 @@ class ContactActionWizard(models.TransientModel):
         return self.lead_id.action_mark_contact_spam()
 
     def action_other(self):
+        """Open the contact itself. Was the retired Lead Hub-Spoke page."""
+        form = self.env.ref('health_crm.view_crm_contact_form_crm_center',
+                            raise_if_not_found=False)
         return {
-            'type': 'ir.actions.client',
-            'tag': 'health_landing_lead_hub',
-            'params': {
-                'lead_id': self.lead_id.id,
-                'lead_name': self.lead_id.name,
-            },
+            'type': 'ir.actions.act_window',
+            'name': self.lead_id.name or 'Contact',
+            'res_model': 'crm.lead',
+            'res_id': self.lead_id.id,
+            'view_mode': 'form',
+            'views': [(form.id if form else False, 'form')],
+            'target': 'current',
         }

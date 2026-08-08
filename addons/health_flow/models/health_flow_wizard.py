@@ -1037,9 +1037,10 @@ class HealthFlowWizard(models.TransientModel):
         """Open CRM lead hub view."""
         try:
             lead = self.env['crm.lead'].browse(lead_id).exists()
-            if lead and hasattr(lead, 'action_open_lead_hub'):
-                action = lead.action_open_lead_hub()
-                return self._ensure_action_name(action, _('Lead Dashboard'))
+            # The Lead Hub is retired: nothing routes to it any more. This used
+            # to open it and fall back to the form only if it was missing —
+            # now the form IS the destination, which is what the rest of CRM
+            # already opens for a lead.
 
             view = self.env.ref('health_crm.view_healthcare_opportunity_form', raise_if_not_found=False)
             action = {

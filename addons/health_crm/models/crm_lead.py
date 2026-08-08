@@ -2329,19 +2329,24 @@ class HealthLead(models.Model):
         }
 
     def action_open_lead_hub(self):
-        """
-        Open hub-and-spoke dashboard for this lead.
-        Used by Dashboard button in calendar popup.
+        """Open this lead.
+
+        Kept under its old name because a button and a calendar popup still
+        call it. The Lead Hub-Spoke dashboard it used to open is retired —
+        this opens the CRM Center contact form, the same one Contacts and
+        Lead Analysis open.
         """
         self.ensure_one()
+        form = self.env.ref('health_crm.view_crm_contact_form_crm_center',
+                            raise_if_not_found=False)
         return {
-            'type': 'ir.actions.client',
-            'tag': 'health_landing_lead_hub',
-            'name': f'Lead Hub: {self.name}',
-            'params': {
-                'lead_id': self.id,
-                'lead_name': self.name,
-            },
+            'type': 'ir.actions.act_window',
+            'name': self.name or _('Contact'),
+            'res_model': 'crm.lead',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'views': [(form.id if form else False, 'form')],
+            'target': 'current',
         }
 
     def action_open_client_dashboard(self):

@@ -2920,19 +2920,28 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
     
     def action_open_lead_dashboard(self):
-        """Open the Lead Hub-Spoke Dashboard for the linked lead."""
+        """Open the linked lead.
+
+        Was the Lead Hub-Spoke dashboard, which is retired — nothing routes to
+        it any more. Opens the CRM Center contact form instead, the same one
+        Contacts and Lead Analysis open, so a lead looks the same wherever you
+        reach it from.
+        """
         self.ensure_one()
-        
+
         if not self.crm_lead_id:
             raise UserError(_('No lead is linked to this booking.'))
-        
+
+        form = self.env.ref('health_crm.view_crm_contact_form_crm_center',
+                            raise_if_not_found=False)
         return {
-            'type': 'ir.actions.client',
-            'tag': 'health_landing_lead_hub',
-            'params': {
-                'lead_id': self.crm_lead_id.id,
-                'lead_name': self.crm_lead_id.name,
-            },
+            'type': 'ir.actions.act_window',
+            'name': self.crm_lead_id.name or _('Lead'),
+            'res_model': 'crm.lead',
+            'res_id': self.crm_lead_id.id,
+            'view_mode': 'form',
+            'views': [(form.id if form else False, 'form')],
+            'target': 'current',
         }
     
     def action_open_ops_booking_detail(self):

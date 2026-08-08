@@ -86,7 +86,7 @@
                         type="object" 
                         class="btn-primary"
                         icon="fa-dashboard"
-                        title="Open Lead Hub-Spoke Dashboard"/>
+                        title="Open this contact"/>
                 <button name="action_execute_activity" 
                         string="Activity" 
                         type="object" 
