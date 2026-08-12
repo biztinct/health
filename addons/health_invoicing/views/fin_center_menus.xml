@@ -17,13 +17,6 @@
         <field name="context">{'active_center': 'finance_center'}</field>
     </record>
 
-    <record id="action_fin_settings" model="ir.actions.client">
-        <field name="name">Finance Settings</field>
-        <field name="tag">fin_settings</field>
-        <field name="target">current</field>
-        <field name="context">{'active_center': 'finance_center'}</field>
-    </record>
-
     <!-- NOTE: act_window actions are defined in fin_center_views.xml -->
 
     <!-- ===== ROOT MENU: Finance Center ===== -->

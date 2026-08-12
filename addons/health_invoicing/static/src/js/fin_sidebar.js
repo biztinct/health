@@ -7,7 +7,6 @@ import { sidebarRegistry } from "@health_fieldservice/js/sidebar_registry";
 const TAG_TO_PAGE = {
     fin_dashboard: "dashboard",
     fin_ar_management: "ar_management",
-    fin_settings: "settings",
 };
 
 const XMLID_TO_PAGE = {
@@ -31,7 +30,6 @@ const NAV_ACTIONS = {
     overdue: "health_invoicing.action_fin_overdue",
     vat_log: "health_invoicing.action_fin_vat_log",
     ar_transactions: "health_invoicing.action_fin_ar_transactions",
-    settings: "health_invoicing.action_fin_settings",
 };
 
 export class FinanceSidebar extends Component {

@@ -145,7 +145,6 @@
             'health_invoicing/static/src/scss/fin_invoice_list.scss',
             'health_invoicing/static/src/scss/fin_invoice_form.scss',
             'health_invoicing/static/src/scss/fin_ar_management.scss',
-            'health_invoicing/static/src/scss/fin_settings.scss',
             'health_invoicing/static/src/js/fin_sidebar.js',
             'health_invoicing/static/src/xml/fin_sidebar.xml',
             'health_invoicing/static/src/js/fin_dashboard.js',
@@ -160,8 +159,6 @@
             'health_invoicing/static/src/xml/fin_package_list.xml',
             'health_invoicing/static/src/js/fin_ar_management.js',
             'health_invoicing/static/src/xml/fin_ar_management.xml',
-            'health_invoicing/static/src/js/fin_settings.js',
-            'health_invoicing/static/src/xml/fin_settings.xml',
         ],
     },
     'demo': [

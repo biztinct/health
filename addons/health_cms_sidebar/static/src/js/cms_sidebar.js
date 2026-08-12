@@ -351,7 +351,7 @@ const ALL_ACTION_TAGS = new Set([
     "ops_payment_collection", "ops_service_in_progress", "ops_staff_assignment",
     "staff_workload_dashboard",
     // Finance
-    "fin_dashboard", "fin_ar_management", "fin_settings",
+    "fin_dashboard", "fin_ar_management",
     // Admin
     "admin_dashboard", "admin_settings", "field_requirements_dashboard",
 ]);
