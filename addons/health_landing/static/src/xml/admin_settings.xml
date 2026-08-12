@@ -9,7 +9,7 @@
             </div>
 
             <div class="admin-settings-grid">
-                <div class="admin-settings-tile" t-on-click="openGeneralSettings">
+                <div class="admin-settings-tile" t-if="state.isSystemAdmin" t-on-click="openGeneralSettings">
                     <div class="admin-tile-icon" style="background: #E3F2FD; color: #1565C0;">
                         <i class="fa fa-cog"/>
                     </div>
