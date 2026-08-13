@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Read-only by construction: the model refuses write and unlink, so the
+         view offers neither. A create button here would be a lie. -->
+    <record id="view_ai_egress_log_list" model="ir.ui.view">
+        <field name="name">ai.egress.log.list</field>
+        <field name="model">ai.egress.log</field>
+        <field name="arch" type="xml">
+            <list string="AI Egress" create="false" edit="false" delete="false">
+                <field name="create_date"/>
+                <field name="surface"/>
+                <field name="classification"/>
+                <field name="provider_type"/>
+                <field name="local"/>
+                <field name="allowed"/>
+                <field name="reason"/>
+                <field name="findings"/>
+                <field name="prompt_chars"/>
+                <field name="user_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_ai_egress_log" model="ir.actions.act_window">
+        <field name="name">AI Egress</field>
+        <field name="res_model">ai.egress.log</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

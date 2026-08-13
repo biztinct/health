@@ -22,7 +22,7 @@ Power-BI-class analytics inside Odoo Community:
     'author': 'VAFHS Development Team',
     'website': 'https://vafhs.com',
     'license': 'LGPL-3',
-    'depends': ['web', 'base', 'mail', 'base_setup'],
+    'depends': ['ai_egress', 'web', 'base', 'mail', 'base_setup'],
     'data': [
         'security/biz_bi_security.xml',
         'security/ir.model.access.csv',

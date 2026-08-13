@@ -430,8 +430,12 @@ class TestCoach(TransactionCase):
         contact name ever appears in it, something is reading the wrong table."""
         corpus = self.Intent._corpus('carecommand', 'en_US')
         self.assertTrue(corpus.strip(), "empty corpus for a covered screen")
-        leads = self.env['crm.lead'].sudo().search([], limit=25)
-        for name in leads.mapped('contact_name'):
+        # search_read, not search().mapped(): mapped() prefetches every stored
+        # column on crm.lead, which couples this test to the health of a table
+        # it is only borrowing names from. Ask for the one field we need.
+        rows = self.env['crm.lead'].sudo().search_read([], ['contact_name'],
+                                                       limit=25)
+        for name in [r.get('contact_name') for r in rows]:
             if name and len(name) > 6:
                 self.assertNotIn(name, corpus,
                                  "a real contact name reached the composer corpus")
@@ -439,9 +443,66 @@ class TestCoach(TransactionCase):
     def test_23_no_provider_means_no_composed_answer(self):
         """With nothing configured the Coach must fall back to the honest miss
         it gave before — never break, never invent."""
-        self.assertIsNone(self.Intent._compose("anything at all", 'carecommand')
-                          if not self.Intent._provider() else None)
-        res = self.Intent.ask("how do I export the payroll ledger to excel", 'carecommand')
-        if not self.Intent._provider():
+        # _provider() returns a (provider, type, endpoint) triple — always
+        # truthy as a tuple. It is the FIRST element that says whether there is
+        # anything to call, and reading the tuple itself silently turned this
+        # test into an assertion about nothing.
+        provider = self.Intent._provider()[0]
+        if provider is None:
+            self.assertIsNone(self.Intent._compose("anything at all", 'carecommand'))
+            res = self.Intent.ask("how do I export the payroll ledger to excel",
+                                  'carecommand')
             self.assertFalse(res['matched'])
             self.assertTrue(res['suggest'])
+
+    def test_24_the_composer_never_publishes_a_stub_reply(self):
+        """A template provider answering with its own name is not an answer.
+
+        hr_development_ai's factory falls back to a stub provider on ANY error,
+        including the AccessError a normal user hits on the config table. That
+        stub returns the constant "Generated response (Odoo Native AI)", and
+        the composer was publishing it to learners as help text.
+        """
+        Intent = self.env['learn.intent']
+        self.assertIn('OdooNativeAIProvider', Intent._STUB_PROVIDERS)
+        for sentinel in Intent._STUB_REPLIES:
+            self.assertTrue(sentinel.strip(), "an empty sentinel matches everything")
+
+    def test_25_the_composer_declares_its_egress_class(self):
+        """Every prompt leaving this module names what it is built from.
+
+        Asserted against the source rather than by calling out, because the
+        failure this prevents is a NEW call site added without a declaration.
+        """
+        import inspect
+        from odoo.addons.health_learn.models import learn_intent
+        src = inspect.getsource(learn_intent)
+        sends = src.count('generate_text(')
+        guards = src.count("egress.SCHEMA") + src.count("egress.RECORDS") \
+            + src.count("egress.AGGREGATE")
+        self.assertGreaterEqual(
+            guards, sends,
+            "a generate_text call with no egress classification — every prompt "
+            "must declare what it is built from before it can be sent")
+
+    def test_26_the_provider_lookup_survives_a_non_privileged_user(self):
+        """A learner is not allowed to read the AI provider config.
+
+        _provider() must therefore do its own privilege escalation and return a
+        REAL provider — not fall through its own exception handler, which is
+        silent by design and hid an AttributeError here for a whole deploy.
+        The assertion is on the shape: three values, no exception.
+        """
+        Users = self.env['res.users'].with_context(no_reset_password=True)
+        learner = Users.create({
+            'name': 'Coach Provider Probe', 'login': 'coach_provider_probe',
+            'group_ids': [(6, 0, [self.env.ref('base.group_user').id])]})
+        result = self.env(user=learner)['learn.intent']._provider()
+        self.assertEqual(len(result), 3,
+                         "_provider must return (provider, type, endpoint)")
+        provider, ptype, _endpoint = result
+        if provider is not None:
+            self.assertNotIn(type(provider).__name__,
+                             self.env['learn.intent']._STUB_PROVIDERS,
+                             "a learner was handed the template stub")
+            self.assertTrue(ptype, "a provider with no type cannot be gated")

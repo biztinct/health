@@ -19,6 +19,7 @@ Authoring surface: docs/tutorial_crm/ (the prototype; content is generated from
 it, never hand-edited here).
     """,
     'depends': [
+        'ai_egress',
         # The sidebar leaf the Journey hangs off, and the menu inventory the
         # content teaches. Pulls health_crm / access_roles transitively.
         'health_cms_sidebar',

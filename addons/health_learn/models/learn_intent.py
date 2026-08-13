@@ -15,6 +15,7 @@ import re
 import unicodedata
 
 from odoo import api, fields, models, tools
+from odoo.addons.ai_egress import egress
 
 _logger = logging.getLogger(__name__)
 
@@ -415,24 +416,47 @@ class LearnIntent(models.Model):
             out = pattern.sub(replacement, out)
         return out[:400]
 
+    # Providers that do not actually generate text. hr_development_ai's
+    # "Odoo Native" provider is a template stub: for a prompt it has no rule
+    # for, it returns the constant "Generated response (Odoo Native AI)". The
+    # factory falls back to it on ANY error — including the AccessError raised
+    # when a user without the AI groups reaches the config table — so the Coach
+    # was handing that sentence to learners as an answer. Refusing named stubs
+    # is the fix; the sentinel check below is the belt to its braces.
+    _STUB_PROVIDERS = ('OdooNativeAIProvider',)
+    _STUB_REPLIES = ('Generated response',)
+
     @api.model
     def _provider(self):
-        """The configured provider, or None. Never raises."""
+        """The configured provider, or None. Never raises.
+
+        Returns a (provider, provider_type, endpoint) triple: the egress guard
+        needs to know WHERE the model runs, not just that one exists.
+        """
         if 'hr.ai.provider.config' not in self.env:
-            return None
+            return None, '', ''
         try:
             config = self.env['hr.ai.provider.config'].sudo().search(
                 [('company_id', '=', self.env.company.id), ('is_active', '=', True)],
                 limit=1)
             if not config:
-                return None
+                return None, '', ''
             from odoo.addons.hr_development_ai.ai_providers.provider_factory import (
                 AIProviderFactory)
-            return AIProviderFactory.get_provider(env=self.env,
-                                                  company_id=self.env.company.id)
+            # sudo: the factory re-reads the config itself, and a learner is
+            # not allowed to. Without this it raises AccessError inside the
+            # factory, which swallows it and returns the template stub.
+            provider = AIProviderFactory.get_provider(
+                env=self.sudo().env, company_id=self.env.company.id)
+            if provider is None or type(provider).__name__ in self._STUB_PROVIDERS:
+                return None, '', ''
+            endpoint = (config.llama_endpoint if config.provider == 'llama'
+                        else config.mistral_endpoint if config.provider == 'mistral'
+                        else '')
+            return provider, config.provider, endpoint
         except Exception:
             _logger.info("Learn coach: no usable AI provider", exc_info=True)
-            return None
+            return None, '', ''
 
     @api.model
     def _corpus(self, screen_key, lang):
@@ -467,13 +491,15 @@ class LearnIntent(models.Model):
         suspiciously long reply. The honest miss is always an acceptable
         outcome; a fluent invention is not.
         """
-        provider = self._provider()
+        provider, provider_type, endpoint = self._provider()
         if not provider:
             return None
         corpus = self._corpus(screen_key, 'en_US')
         if not corpus.strip():
             return None
-        scrubbed = self._scrub(question)
+        # Redact before scrub: the guard's patterns are the wider set, and the
+        # question is the only part of this prompt a learner controls.
+        scrubbed = self._scrub(egress.redact(question))
         prompt = (
             "You are a help assistant inside a healthcare CRM. Answer the "
             "question USING ONLY the material below. If the material does not "
@@ -482,6 +508,17 @@ class LearnIntent(models.Model):
             "not in the material. Never claim to have performed an action. "
             "Answer in at most four sentences, plainly.\n\n"
             "MATERIAL:\n%s\n\nQUESTION: %s\nANSWER:" % (corpus, scrubbed))
+        # SCHEMA: the corpus is our own authored help text and column
+        # glossary, and the question has been redacted. Nothing here is drawn
+        # from a patient row — and if the guard finds otherwise it refuses,
+        # which is the outcome we want over a quiet send.
+        try:
+            self.env['ai.egress.log'].guard(
+                prompt, egress.SCHEMA, provider_type, endpoint,
+                surface='learn.coach.composer')
+        except egress.EgressRefused:
+            return None
+
         try:
             reply = provider.generate_text(prompt, max_tokens=300, temperature=0.2)
         except Exception:
@@ -489,6 +526,11 @@ class LearnIntent(models.Model):
             return None
         reply = (reply or '').strip()
         if not reply or 'NO_ANSWER' in reply or len(reply) > 1500:
+            return None
+        if any(stub in reply for stub in self._STUB_REPLIES):
+            # A template provider answering with its own name. Publishing that
+            # as help is worse than admitting we have no answer.
+            _logger.warning("Learn coach: stub reply discarded (%s)", provider_type)
             return None
 
         from .learn_station import _zip_bilingual

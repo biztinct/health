@@ -14,6 +14,7 @@ import re
 import requests
 
 from odoo import _, api, fields, models
+from odoo.addons.ai_egress import egress
 from odoo.exceptions import UserError
 
 from .bi_query_engine import ALLOWED_AGGS, ALLOWED_GRAINS
@@ -427,6 +428,24 @@ class BiAi(models.AbstractModel):
             "this language.\n\nDATASET CARD:\n%s\n\nUSER REQUEST:\n%s" % (
                 self._title_language(prompt),
                 json.dumps(card, ensure_ascii=False, default=str), prompt))
+        # SCHEMA: the dataset card is business metadata — field names, types,
+        # roles, relationships, low-cardinality selection labels — and never
+        # rows (see get_dataset_card). The user's own request is free text and
+        # can name a person, so it goes through the same gate: if the guard
+        # sees an identifier heading for a provider we do not run, it refuses
+        # and the feature reports no answer rather than sending it.
+        try:
+            self.env['ai.egress.log'].guard(
+                user_message, egress.SCHEMA, provider.provider,
+                provider.endpoint, surface='biz_bi.%s' % kind)
+        except egress.EgressRefused as refusal:
+            return None, _(
+                "That request was not sent: it looks like it contains personal "
+                "details, and this AI provider runs outside our systems. "
+                "Rephrase it using field names rather than a person, or ask an "
+                "administrator to configure a local model. (%s)"
+            ) % refusal.reason
+
         started = fields.Datetime.now()
         last_error = None
         for attempt in range(2):
