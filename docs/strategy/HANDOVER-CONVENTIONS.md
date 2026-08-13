@@ -2484,3 +2484,48 @@ a no-op.
     within one (`test_mission.py::test_14` checks that no mission navigates
     outside its own section). Neither of these was caught by tests; both were
     caught by opening the thing and looking at it. (learn Phase 4C.)
+
+- **§5.152 — `assertRaises` as a context manager can discard database writes
+    made inside it.** A guard wrote an audit row and then raised; the row was
+    present when queried inside the `except` block and GONE from raw SQL
+    immediately after the `with self.assertRaises(...)` block closed. No error,
+    no rollback in our code, and the identical sequence in `odoo-bin shell`
+    wrote the row every time.
+
+    Cause: `unittest`'s `_AssertRaisesContext.__exit__` calls
+    `traceback.clear_frames()` to break reference cycles, and clearing those
+    frames takes the pending work with it.
+
+    **Rule: when you assert on the SIDE EFFECTS of a call that raises, catch it
+    manually.**
+
+        raised = None
+        try:
+            thing.that_raises()
+        except TheError as caught:
+            raised = caught
+        self.assertIsNotNone(raised)
+        # now assert on rows
+
+    Cost four rounds of wrong diagnosis (deferred create, separate cursor,
+    exception-in-flight) because every hypothesis was plausible and the shell
+    reproduction kept passing. What settled it: querying raw SQL INSIDE the
+    except block and again after. (ai_egress.)
+
+- **§5.153 — a field-label match must cover every naming word in the question,
+    not merely appear in it.** Schema-driven "what is this field for" answers
+    match `ir.model.fields.field_description` against the question. Substring
+    matching alone produced confident wrong answers: "what is the activity date
+    field used for" matched `calendar_display_name`, whose label is just
+    **"Activity"**, and "what does external submission id mean" matched
+    `external_event_id`. Each read as authoritative.
+
+    The rule that fixed it: `label in question AND all(word in label for word
+    in naming_words)`. A label accounting for one of the two things the user
+    named is a miss, and a miss sends them to a person. Also: scope candidate
+    fields to the models the SCREEN claims, or "status" matches something on a
+    model they have never opened.
+
+    General form — **for a lookup that answers in the product's own voice,
+    partial-match fallbacks are a liability, not a courtesy.**
+    (learn field lookup.)
