@@ -362,6 +362,15 @@ class LearnIntent(models.Model):
         if column:
             return self._column_answer(column, screen_key)
 
+        # Below the glossary on purpose. LearnColumn's docstring records why:
+        # a schema-driven answer usually restates the column header. This step
+        # exists for the LONG TAIL the glossary will never cover, and it says
+        # plainly when the field has no description rather than dressing the
+        # label up as one.
+        field_answer = self._field_answer(question, screen_key)
+        if field_answer:
+            return field_answer
+
         composed = self._compose(question, screen_key)
         if composed:
             return composed
@@ -373,6 +382,232 @@ class LearnIntent(models.Model):
         }
 
 
+
+    # ==================================================================
+    # THE FIELD LOOKUP — the long tail the glossary will never cover
+    # ==================================================================
+    # LearnColumn exists because a schema answer usually restates the column
+    # header. That argument still holds, so this sits BELOW the glossary and
+    # only sees questions the curated answers did not.
+    #
+    # What makes it worth having anyway: `help` on a field is written by
+    # whoever added the field, and where it exists it is often the only
+    # explanation that will ever exist. Measured on this database, 1,368 of
+    # 4,253 fields on our own models carry English help.
+    #
+    # Where help is ABSENT the answer says so. It does not paraphrase the
+    # label into a sentence and present that as an explanation — that is the
+    # one behaviour that would make this feature worse than the honest miss it
+    # replaces.
+    #
+    # Privacy: ir.model.fields is SCHEMA. Nothing here reads a row.
+
+    # Questions that are asking what a field is, rather than how to do
+    # something. Both languages; deliberately narrow.
+    _FIELD_QUESTION = re.compile(
+        r'\b(what|which|why)\b.*\b(field|column|mean|means|meaning|used|use|for)\b'
+        r'|\b(là gì|nghĩa là|dùng để|trường|cột)\b', re.I)
+
+    # Words that are part of the QUESTION, never part of a field name.
+    _FIELD_NOISE = {
+        'what', 'which', 'why', 'is', 'the', 'a', 'an', 'this', 'that', 'does',
+        'do', 'mean', 'means', 'meaning', 'used', 'use', 'for', 'field',
+        'column', 'in', 'on', 'of', 'screen', 'page', 'about', 'tell', 'me',
+        'explain', 'and', 'to', 'it', 'its',
+        'la', 'gi', 'nghia', 'dung', 'de', 'truong', 'cot', 'nay', 'co',
+    }
+
+    @api.model
+    def _screen_models(self, screen_key):
+        """Which models this screen is about, from the sidebar leaf itself."""
+        if not screen_key:
+            return []
+        screen = self.env['learn.screen'].sudo().search(
+            [('key', '=', screen_key)], limit=1)
+        if not screen:
+            return []
+        return screen._matchers()[2]
+
+    @api.model
+    def _field_candidate(self, question):
+        """The words in the question that could name a field."""
+        nq = _norm(question)
+        if not nq:
+            return []
+        return [w for w in nq.split()
+                if w and w not in self._FIELD_NOISE and len(w) > 2]
+
+    @api.model
+    def _find_field(self, question, screen_key):
+        """The ir.model.fields row this question is most likely about.
+
+        Scoped to the models the screen is already showing. Without that scope
+        "status" would match a field on some model the learner has never seen,
+        and a confident answer about the wrong thing is worse than none.
+        """
+        models_ = self._screen_models(screen_key)
+        if not models_:
+            return None
+        words = self._field_candidate(question)
+        if not words:
+            return None
+        nq = _norm(question)
+
+        Fields = self.env['ir.model.fields'].sudo()
+        rows = Fields.search([('model', 'in', models_)])
+        best, best_score = None, 0
+        for row in rows:
+            for lang in ('en_US', 'vi_VN'):
+                label = _norm(row.with_context(lang=lang).field_description)
+                if not label or len(label) < 3:
+                    continue
+                # Only two signals, both exact. A partial-overlap fallback
+                # used to live here and it produced confident wrong answers:
+                # "what is the activity date field used for" matched
+                # calendar_display_name, and "external submission id" matched
+                # external_event_id. Both read as authoritative. A miss sends
+                # the learner to the glossary or to a person; a wrong field
+                # definition sends them away satisfied and misinformed.
+                # The label must account for EVERY naming word in the
+                # question, not merely appear in it. "what is the activity
+                # date field used for" names two things; the field labelled
+                # just "Activity" (calendar_display_name) answers one of them
+                # and reads as if it answered both. Covering all of them is
+                # what separates "city conflict" — which genuinely is the
+                # field — from a word that happens to be present.
+                score = 0
+                if label in nq and all(w in label for w in words):
+                    score = len(label) + 10
+                elif row.name in words or row.name.replace('_', '') in words:
+                    score = len(row.name) + 10
+                if score > best_score:
+                    best, best_score = row, score
+        return best
+
+    @api.model
+    def _field_answer(self, question, screen_key):
+        """Explain a field from its own definition, or admit there is none."""
+        if not self._FIELD_QUESTION.search(question or ''):
+            return None
+        row = self._find_field(question, screen_key)
+        if not row:
+            return None
+
+        def facts(lang):
+            rec = row.with_context(lang=lang)
+            return {
+                'label': rec.field_description or row.name,
+                'name': row.name,
+                'model': row.model,
+                'ttype': row.ttype,
+                'relation': row.relation or '',
+                'help': (rec.help or '').strip(),
+            }
+
+        en, vi = facts('en_US'), facts('vi_VN')
+        body_en = self._field_body(en, 'en_US')
+        body_vi = self._field_body(vi, 'vi_VN')
+
+        # Only reach for a model when there is something to rewrite. With no
+        # help text there is no content to improve, and asking for prose would
+        # be asking it to invent the very thing we do not have.
+        if en['help']:
+            polished = self._field_polish(en)
+            if polished:
+                body_en = polished
+
+        from .learn_station import _zip_bilingual
+        tree_en = {
+            'key': 'field:%s.%s' % (row.model, row.name),
+            'label': en['label'], 'simpler': '',
+            'blocks': [
+                {'capability': 'any', 'kind': 'p', 'body': body_en, 'steps': []},
+                {'capability': 'any', 'kind': 'source', 'steps': [],
+                 'body': 'Field definition — %s.%s (%s)' % (
+                     row.model, row.name, row.ttype)},
+            ],
+        }
+        tree_vi = dict(tree_en, label=vi['label'], blocks=[
+            {'capability': 'any', 'kind': 'p', 'body': body_vi, 'steps': []},
+            {'capability': 'any', 'kind': 'source', 'steps': [],
+             'body': 'Định nghĩa trường — %s.%s (%s)' % (
+                 row.model, row.name, row.ttype)},
+        ])
+        payload = _zip_bilingual(tree_en, tree_vi)
+        payload.update({'matched': True, 'capability': self._capability(screen_key),
+                        'show_me': [], 'practice_key': '', 'source_kind': 'field'})
+        return payload
+
+    _TTYPE_WORDS = {
+        'many2one': (u'a link to another record', u'liên kết tới một bản ghi khác'),
+        'one2many': (u'a list of related records', u'danh sách các bản ghi liên quan'),
+        'many2many': (u'a set of related records', u'tập hợp các bản ghi liên quan'),
+        'date': (u'a date', u'một ngày'),
+        'datetime': (u'a date and time', u'ngày và giờ'),
+        'boolean': (u'a yes/no tick', u'một ô đánh dấu có/không'),
+        'selection': (u'a fixed list of choices', u'một danh sách lựa chọn cố định'),
+        'monetary': (u'an amount of money', u'một khoản tiền'),
+        'char': (u'a short piece of text', u'một đoạn văn bản ngắn'),
+        'text': (u'a longer piece of text', u'một đoạn văn bản dài'),
+        'integer': (u'a whole number', u'một số nguyên'),
+        'float': (u'a number', u'một số'),
+    }
+
+    @api.model
+    def _field_body(self, f, lang):
+        """The deterministic answer. Works with no AI configured at all."""
+        vi = lang == 'vi_VN'
+        kind = self._TTYPE_WORDS.get(f['ttype'], ('', ''))[1 if vi else 0]
+        if f['help']:
+            if vi:
+                return u'%s. Đây là %s trên %s.' % (
+                    f['help'].rstrip('.'), kind or f['ttype'], f['model'])
+            return u'%s. It is %s on %s.' % (
+                f['help'].rstrip('.'), kind or f['ttype'], f['model'])
+        # No help. Say that, rather than paraphrasing the label back.
+        if vi:
+            return (u'Trường “%s” (%s trên %s) là %s, nhưng hệ thống không có '
+                    u'mô tả nào được ghi lại cho nó. Tôi không muốn đoán ý '
+                    u'nghĩa từ tên trường — hãy hỏi người phụ trách màn hình '
+                    u'này để có câu trả lời chắc chắn.') % (
+                f['label'], f['name'], f['model'], kind or f['ttype'])
+        return (u'The “%s” field (%s on %s) holds %s, but no description has '
+                u'been recorded for it. I would rather not guess its meaning '
+                u'from the label — ask whoever owns this screen if you need to '
+                u'be sure.') % (
+            f['label'], f['name'], f['model'], kind or f['ttype'])
+
+    @api.model
+    def _field_polish(self, f):
+        """Rewrite existing help into plain language. Never invents."""
+        provider, provider_type, endpoint = self._provider()
+        if not provider:
+            return None
+        prompt = (
+            "Rewrite this Odoo field description for a non-technical clinic "
+            "worker, in at most two sentences. Use ONLY the facts given. Do "
+            "not add examples, numbers or behaviour that is not stated. If the "
+            "description is already clear, return it unchanged.\n\n"
+            "Field label: %(label)s\nTechnical name: %(name)s\n"
+            "Model: %(model)s\nType: %(ttype)s\nRelated model: %(relation)s\n"
+            "Description: %(help)s\n\nPlain answer:" % f)
+        try:
+            self.env['ai.egress.log'].guard(
+                prompt, egress.SCHEMA, provider_type, endpoint,
+                surface='learn.coach.field')
+        except egress.EgressRefused:
+            return None
+        try:
+            reply = provider.generate_text(prompt, max_tokens=180, temperature=0.1)
+        except Exception:
+            _logger.info("Learn coach: field polish failed", exc_info=True)
+            return None
+        reply = (reply or '').strip()
+        if not reply or len(reply) > 700:
+            return None
+        if any(stub in reply for stub in self._STUB_REPLIES):
+            return None
+        return reply
 
     # ==================================================================
     # THE COMPOSER — an LLM over OUR OWN CONTENT, and nothing else

@@ -70,15 +70,25 @@ class AIEgressLog(models.Model):
         base = {'surface': surface, 'classification': classification,
                 'provider_type': provider_type or '',
                 'user_id': self.env.uid, 'company_id': self.env.company.id}
+        # The refusal is recorded OUTSIDE the except block, then re-raised.
+        # Writing while an exception is in flight left the row invisible to the
+        # very next query in the same transaction — the INSERT ran, no error
+        # was raised, and the row was simply not there afterwards.
+        refusal = None
+        decision = None
         try:
             decision = check(prompt, classification, provider_type, endpoint)
-        except EgressRefused as refusal:
+        except EgressRefused as caught:
+            refusal = caught
+
+        if refusal is not None:
             self._record(dict(
                 base, allowed=False, local=False,
                 reason=refusal.reason, findings=refusal.detail[:255],
                 prompt_chars=len(prompt or '')))
             _logger.warning("AI egress REFUSED for %s: %s", surface, refusal)
-            raise
+            raise refusal
+
         self._record(dict(base, allowed=True, local=decision['local'],
                           findings=decision['findings'],
                           prompt_sha256=decision['prompt_sha256'],
@@ -105,7 +115,12 @@ class AIEgressLog(models.Model):
                 # afterwards, which is how four stray rows got into vietuat
                 # before this branch existed. The cursor CHOICE is asserted by
                 # inspection instead (test_17), so nothing is weakened.
-                self.sudo().create(vals)
+                # flush_recordset, not just create: the ORM defers the INSERT
+                # until something needs it, and the refusal path raises
+                # immediately afterwards. The pending row does not survive that
+                # — which is how the log ended up holding every allowed send
+                # and no refusals at all, the exact inversion this guards.
+                self.sudo().create(vals).flush_recordset()
             else:
                 with self.env.registry.cursor() as cr:
                     self.with_env(self.env(cr=cr)).sudo().create(vals)

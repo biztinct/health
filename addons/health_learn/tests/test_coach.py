@@ -10,6 +10,7 @@ import os
 import re
 
 from odoo.modules.module import get_module_path
+from odoo.addons.health_learn.models.learn_intent import _norm as _norm_for_test
 from odoo.tests.common import TransactionCase, tagged
 
 # Questions a nurse or a doctor might genuinely type into a box on a clinical
@@ -506,3 +507,85 @@ class TestCoach(TransactionCase):
                              self.env['learn.intent']._STUB_PROVIDERS,
                              "a learner was handed the template stub")
             self.assertTrue(ptype, "a provider with no type cannot be gated")
+
+    # -- the field lookup -------------------------------------------------
+    def test_27_a_field_with_help_is_explained_from_it(self):
+        """The long tail: a field the glossary will never cover."""
+        Fields = self.env['ir.model.fields'].sudo()
+        row = Fields.search([('model', '=', 'crm.lead'),
+                             ('help', '!=', False)], limit=1)
+        if not row:
+            self.skipTest("no crm.lead field carries help on this database")
+        answer = self.Intent._field_answer(
+            "what is the %s field used for" % row.field_description, 'contacts')
+        if not answer:
+            self.skipTest("screen 'contacts' does not claim crm.lead here")
+        self.assertEqual(answer['source_kind'], 'field')
+        body = answer['blocks'][0]['body']['en']
+        self.assertTrue(body.strip())
+
+    def test_28_a_field_with_no_help_admits_it(self):
+        """The behaviour that decides whether this feature is worth having.
+
+        LearnColumn was written BECAUSE schema answers usually restate the
+        column header. So when there is no description, this must say so —
+        paraphrasing the label into a confident sentence would make it worse
+        than the honest miss it replaces.
+        """
+        facts = {'label': 'Next Activity Deadline', 'name': 'activity_date_deadline',
+                 'model': 'crm.lead', 'ttype': 'date', 'relation': '', 'help': ''}
+        for lang, needle in (('en_US', 'no description has been recorded'),
+                             ('vi_VN', 'không có')):
+            body = self.Intent._field_body(facts, lang)
+            self.assertIn(needle, body,
+                          "a field with no help must admit it, not paraphrase "
+                          "the label [%s]" % lang)
+
+    def test_29_a_field_answer_needs_no_ai(self):
+        """The deterministic path is the product; the model only polishes.
+
+        _field_body must never call a provider — otherwise the feature stops
+        working the moment the key is rotated.
+        """
+        import inspect
+        src = inspect.getsource(self.env['learn.intent'].__class__._field_body)
+        for forbidden in ('_provider', 'generate_text'):
+            self.assertNotIn(forbidden, src,
+                             "the deterministic field answer reaches for a model")
+
+    def test_30_field_questions_are_scoped_to_the_screen(self):
+        """An unscoped lookup answers confidently about the wrong model."""
+        self.assertFalse(self.Intent._find_field("what is the state field for", None),
+                         "a field was matched with no screen to scope it")
+
+    def test_31_a_procedure_question_is_not_treated_as_a_field(self):
+        """'How do I cancel a booking' must not return a field definition."""
+        for question in ("how do I cancel a booking",
+                         "who do I call about a complaint"):
+            self.assertIsNone(self.Intent._field_answer(question, 'contacts'),
+                              "%r was answered as a field definition" % question)
+
+    def test_32_the_field_polish_declares_its_egress_class(self):
+        import inspect
+        src = inspect.getsource(self.env['learn.intent'].__class__._field_polish)
+        self.assertIn('egress.SCHEMA', src,
+                      "field metadata leaves the server without a declaration")
+        self.assertIn('generate_text', src)
+
+    def test_33_a_near_miss_field_is_a_miss_not_a_guess(self):
+        """Confidently wrong is worse than nothing.
+
+        Both of these matched real fields on the first build — "activity date"
+        found calendar_display_name, "external submission id" found
+        external_event_id — and each answer read as authoritative. Matching is
+        now exact-only: the label must appear in the question, or the technical
+        name must be one of its words.
+        """
+        for question, screen in (
+                ("what is the activity date field used for", 'contacts'),
+                ("what does external submission id mean", 'touchpoints')):
+            row = self.Intent._find_field(question, screen)
+            self.assertIsNone(
+                row,
+                "%r matched %s.%s — a label that covers only part of what the "
+                "question named" % (question, row.model, row.name) if row else '')

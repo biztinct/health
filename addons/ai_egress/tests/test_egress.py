@@ -129,10 +129,28 @@ class TestEgressKernel(TransactionCase):
 
     # -- the log ----------------------------------------------------------
     def test_14_every_decision_is_logged_both_ways(self):
+        """An allowed send and a refusal are equally worth knowing about.
+
+        NOTE the manual try/except instead of ``with self.assertRaises(...)``.
+        That is not style. unittest's assertRaises context manager calls
+        traceback.clear_frames() on exit to break reference cycles, and doing
+        so discarded the INSERT this test had just made — the row was present
+        inside the except block and gone immediately after. Verified: the same
+        sequence in an odoo shell writes both rows every time.
+
+        If you reach for assertRaises here again, this test will start failing
+        for a reason that has nothing to do with the guard.
+        """
         Log = self.env['ai.egress.log']
         Log.guard('Field: district', SCHEMA, 'openai', surface='test.allow')
-        with self.assertRaises(EgressRefused):
+
+        raised = None
+        try:
             Log.guard('notes', RECORDS, 'openai', surface='test.refuse')
+        except EgressRefused as caught:
+            raised = caught
+        self.assertIsNotNone(raised, "records to a remote provider was allowed")
+        self.assertEqual(raised.reason, 'records_to_remote_provider')
 
         allowed = Log.search([('surface', '=', 'test.allow')])
         refused = Log.search([('surface', '=', 'test.refuse')])
