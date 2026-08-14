@@ -233,7 +233,14 @@ fields, and a user request in English or Vietnamese.
 You output ONLY a JSON object — no prose, no markdown fences — with the keys
 "name", "chart_type", "slots", "filters".
 
-""" + CHART_SCHEMA_BLOCK
+""" + CHART_SCHEMA_BLOCK + """
+- COUNTING BEATS MONEY BY DEFAULT: if the request asks "how many", "number
+  of", "count of", or names records broken down by something ("leads by
+  source", "bookings by service type", "khách hàng theo nguồn") and does NOT
+  name an amount (revenue, sales, total, value, amount, price, cost, sum,
+  average, doanh thu, tổng, giá trị, trung bình), the measure is
+  {"agg": "count"} on any field of that entity — never a monetary measure.
+"""
 
 REPORT_SYSTEM_PROMPT = """You are a BI report designer inside an Odoo
 analytics platform. You receive a DATASET CARD and a user request describing
@@ -477,9 +484,15 @@ class BiAi(models.AbstractModel):
         return json.loads(text[start:end + 1])
 
     def _log(self, provider, kind, prompt, response, started, accepted):
+        # Who asked. Captured BEFORE anything is sudo'd and passed explicitly
+        # to both logs, so neither of them can end up naming the system: an AI
+        # request is a thing a PERSON did, and "uid 1 asked the model
+        # something" is an audit trail that answers no question anyone has.
+        asked_by = self.env.uid
         duration = int((fields.Datetime.now() - started).total_seconds() * 1000)
         self.env['bi.ai.log'].sudo().create({
             'provider_id': provider.id,
+            'user_id': asked_by,
             'kind': kind,
             'request_json': {'prompt': prompt},
             'response_json': response,
@@ -487,7 +500,8 @@ class BiAi(models.AbstractModel):
             'duration_ms': duration,
         })
         self.env['bi.audit.log'].sudo().log(
-            'ai_request', payload={'kind': kind, 'accepted': accepted})
+            'ai_request', payload={'kind': kind, 'accepted': accepted},
+            user_id=asked_by)
 
 
 class BiAiLog(models.Model):

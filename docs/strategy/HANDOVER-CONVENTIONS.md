@@ -2529,3 +2529,112 @@ a no-op.
     General form — **for a lookup that answers in the product's own voice,
     partial-match fallbacks are a liability, not a courtesy.**
     (learn field lookup.)
+
+- **§5.154 — `sudo()` does NOT change `env.uid` in Odoo 19, so "this audit row
+    will say uid 1" is a claim to MEASURE, not one to infer from the code
+    shape.** The AH-3 report deferred a defect — *"`bi.ai._log`'s audit
+    attribution is uid 1, because `_log` calls
+    `self.env['bi.audit.log'].sudo().log(...)` and `log()` reads `self.env.uid`
+    from the sudo'd recordset"* — and the BG-1 handover carried it forward as
+    item §1.4. It is not true. `BaseModel.sudo()` is documented in the source
+    as *"superuser mode does not change the current user, and simply bypasses
+    access rights checks"* (`odoo/orm/models.py:5946`): it returns
+    `self.with_env(self.env(su=True))`, and `uid` is untouched, so
+    `self.env.uid` under `.sudo()` is still the human. Measured on vietuat
+    before touching anything: `bi_audit_log` held 29 `ai_request` rows at uid 2
+    (a real person) and 7 at uid 1 — and the uid-1 rows are the TEST suite,
+    which runs as SUPERUSER. The uid-1 population in an audit table is
+    therefore evidence about your test runs, not about your sudo. Two lessons,
+    both cheap: (a) settle an attribution question with
+    `SELECT user_id, count(*) … GROUP BY 1` on the target database before
+    writing it into a handover — a table of who-appears-how-often names the
+    real cause in one query; (b) the pre-Odoo-13 mental model where `sudo()`
+    swapped the user still travels by word of mouth, and it produces
+    confident, wrong findings about audit trails, `default=lambda self:
+    self.env.user` fields and record-rule behaviour alike. BG-1 still hardened
+    the path (the uid is captured before any sudo scope and passed explicitly
+    to both `bi.ai.log` and `bi.audit.log.log(user_id=…)`) because an explicit
+    argument survives a future refactor that a re-read of `env.uid` does not —
+    but it fixed no live defect, and the report says so. (BG-1.)
+
+- **§5.155 — a stored field maintained by `write()` and an onchange is NOT
+    maintained by `create()`, and a queue that selects on it then goes
+    silently quiet.** `bi.dashboard.next_send` was computed in
+    `_onchange_schedule` and in a `write()` override, and nowhere else. A
+    dashboard CREATED with `schedule_enabled=True` therefore kept
+    `next_send = False`, and `_process_snapshot_queue` selects on
+    `('next_send', '!=', False)` — so its scheduled email snapshot never went
+    out, for ever, with no error anywhere. The form view HID it: the onchange
+    fires in the client and `create` arrives with the field already filled, so
+    only a programmatic create (an import, the AI report composer, a test)
+    could see it. This is ledger §5.2 with a price tag, and the tell is
+    structural: **any field that a `write()` override maintains is a field
+    `create()` must maintain too** — grep your models for
+    `def write` overrides that compute a stored value and check each one has a
+    `create()` sibling. The test that caught it,
+    `TestSnapshot.test_snapshot_xlsx_builds`, had been red on EVERY database
+    since it was written and was filed for months as live-data fragility
+    (§5.156). (BG-1.)
+
+- **§5.156 — a known-failing set inherits its diagnosis, and the inheritance
+    is where the real bugs hide.** Six `biz_bi` failures were characterised in
+    the AH-3 report as "the §5.50/§5.95 family — live data on vietuat",
+    re-confirmed by name in the RT-1 report, and handed to BG-1 as "FIXTURE
+    fragility, not product bugs (they fail closed)". Reproducing them and
+    reading each traceback: three were indeed the live-data family (a
+    `res.partner` rule hiding the fixture rows, a translated `res_country.name`
+    keyed rule, 77 latitude-bearing partners polluting an unscoped aggregate);
+    one was a plain **arithmetic error in a test constant** — an expected
+    `60.75` that added back a row the pipeline's own filter step removes, red
+    on every database that has ever existed; and one was a **real product
+    defect** (§5.155) that would never have surfaced on any database either.
+    A seventh, `test_relative_filter`, was not in the list at all because it
+    only fails between 22:00 and 24:00 UTC (§5.107) and every previous run
+    happened in the morning. Rules: (a) re-derive a failure from its OWN
+    traceback before accepting an inherited label — "the six" is a set of
+    names, not a diagnosis; (b) `git log` on the test constant is cheaper than
+    a theory; (c) a suite whose failures are known and tolerated will absorb
+    new ones invisibly, which is the argument for spending a phase getting to
+    `0 failed, 0 error(s)` rather than maintaining a list. (BG-1.)
+
+- **§5.157 — relative date windows resolve in the CALLER's timezone against
+    columns stored in UTC, and the flaky test is only the visible edge of
+    it.** §5.107 records the test-side symptom (`fields.Date.today()` vs
+    `context_today()`); this is the engine-side one. `bi.query.engine`'s
+    `relative_bounds` builds `today`/`this_month` from
+    `fields.Date.context_today(self)` — the acting user's tz — and compares
+    them against a naive-UTC `datetime` column with no conversion. Three
+    consequences worth carrying: (a) a Vietnamese user asking for "today" gets
+    the UTC day, i.e. a window shifted seven hours from the one they mean;
+    (b) any test using a relative filter is a time-of-day flake, and on the
+    LAST DAY OF A MONTH a `this_month` filter flips a month early for the
+    Europe/Brussels superuser that runs tests here — pin `tz='UTC'` on the
+    fixture's environment so the window means what `create_date` means
+    (`biz_bi/tests/common.py`); (c) the same UTC-vs-reader mismatch reaches
+    the user through every EXPORT, because a spreadsheet has no timezone
+    concept at all: BG-1 converts datetime cells to `env.user.tz` at the
+    xlsx-writing layer, which is the only honest cell. Left open and stated
+    rather than hidden: the on-screen table still parses the naive ISO string
+    with `new Date(value)`, i.e. as browser-local, so for an instant after
+    17:00 UTC the screen shows one date and the (now correct) export shows the
+    next. The screen is the wrong one. Whenever you fix half of a
+    timezone story, say which half. (BG-1.)
+
+- **§5.158 — a `res.users.tz` set from a shell did not survive the persona's
+    first browser login; the surviving value was the BROWSER's zone.**
+    Measured in BG-1: a QA user was created with `tz = Asia/Ho_Chi_Minh`,
+    confirmed in psql from a separate process, then driven through
+    `/web/login`; after the session the stored `tz` read `Australia/Sydney`,
+    which is the zone of the machine running the browser, and the Excel export
+    correspondingly shifted by +10 rather than +7. The mechanism was not
+    pinned down (no `write` of `tz` is obvious in the Odoo 19 web controllers,
+    and BG-1 did not spend the phase finding it) — which is exactly why this
+    is recorded as an observation with its measurement rather than as an
+    explanation. It is the §5.141 shape one step further: for `lang` the
+    danger is a stale worker cache, for `tz` the stored value itself moves.
+    Remedy that worked: set the timezone *through the session* (the ordinary
+    `res.users.write({'tz': …})` the Preferences dialog makes, from the
+    authenticated page), then ASSERT the value immediately before the
+    measurement you care about. General rule for any evidence pack that
+    depends on a user preference: read the preference back inside the session
+    that will exercise it, never from the shell that set it. (BG-1.)

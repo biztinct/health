@@ -1,0 +1,21 @@
+BG-1 — console log for the whole browser pass
+=============================================
+
+Collected with chrome-devtools `list_console_messages` (includePreservedMessages,
+i.e. across the whole drive, not only the last navigation), on the isolated
+`bg1qa` context, after the full walk described in README.md §1:
+
+  errors:   0
+  warnings: 0
+  logs:     0
+
+  issues:   2
+    [issue] A form field element should have an id or name attribute (count: 1)
+    [issue] A form field element should have an id or name attribute (count: 1)
+
+Both "issues" are DevTools accessibility findings on the CMS shell, not
+messages emitted by any biz_bi / biz_bi_cms code, and both pre-date this phase.
+
+Network: every XHR in the drive returned 200, including the three
+POST /bi/export/xlsx calls and the two POST /web/dataset/call_kw/bi.ai/nlq_chart
+calls (reqids 49, 53, 58 in the DevTools network panel).

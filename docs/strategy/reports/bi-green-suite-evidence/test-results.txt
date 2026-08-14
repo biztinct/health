@@ -1,0 +1,185 @@
+BG-1 — test results on vietuat, verbatim
+========================================
+
+1. REPRODUCTION FIRST (unchanged code, /tmp/bg1/repro1.log, EXIT:1)
+   --test-tags /biz_bi:TestRls,/biz_bi:TestPipeline,/biz_bi:TestSnapshot,/biz_bi:TestQueryEngine
+
+2026-08-13 23:49:56,638 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_pipeline: FAIL: TestPipeline.test_dataset_reads_clean_view
+2026-08-13 23:49:57,122 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_pipeline: FAIL: TestSnapshot.test_snapshot_xlsx_builds
+2026-08-13 23:49:57,830 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_query_engine: FAIL: TestQueryEngine.test_compare_request_runs
+2026-08-13 23:49:58,642 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_query_engine: FAIL: TestQueryEngine.test_relative_filter
+2026-08-13 23:49:59,795 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_rls: ERROR: TestRls.test_column_mask_null
+2026-08-13 23:49:59,882 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_rls: FAIL: TestRls.test_rls_users_never_share_cache
+2026-08-13 23:49:59,961 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_rls: FAIL: TestRls.test_row_rule_filters_rows
+2026-08-13 23:50:00,106 2573547 INFO vietuat odoo.tests.stats: biz_bi: 43 tests 3.59s 2983 queries 
+2026-08-13 23:50:00,106 2573547 ERROR vietuat odoo.tests.result: 6 failed, 1 error(s) of 35 tests when loading database 'vietuat' 
+
+   The six from the AH-3 / RT-1 reports reproduced exactly — plus a SEVENTH,
+   TestQueryEngine.test_relative_filter, which no earlier report lists
+   because it only fails between 22:00 and 24:00 UTC (§5.107; this run was
+   at 23:49). The tracebacks:
+
+2026-08-13 23:49:56,638 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_pipeline: FAIL: TestPipeline.test_dataset_reads_clean_view
+Traceback (most recent call last):
+  File "/odoo/odoo-server/addons/biz_bi/tests/test_pipeline.py", line 137, in test_dataset_reads_clean_view
+    self.assertEqual(float(result['rows'][0][0]), 60.75)  # 10.5+20+30.25
+AssertionError: 30.5 != 60.75
+ 
+
+2026-08-13 23:49:57,122 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_pipeline: FAIL: TestSnapshot.test_snapshot_xlsx_builds
+Traceback (most recent call last):
+  File "/odoo/odoo-server/addons/biz_bi/tests/test_pipeline.py", line 173, in test_snapshot_xlsx_builds
+    self.assertTrue(dashboard.next_send)
+AssertionError: False is not true
+ 
+
+2026-08-13 23:49:57,830 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_query_engine: FAIL: TestQueryEngine.test_compare_request_runs
+Traceback (most recent call last):
+  File "/odoo/odoo-server/addons/biz_bi/tests/test_query_engine.py", line 171, in test_compare_request_runs
+    self.assertEqual(result['rows'][0][0], None)
+AssertionError: 109.2041578 != None
+ 
+
+2026-08-13 23:49:58,642 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_query_engine: FAIL: TestQueryEngine.test_relative_filter
+Traceback (most recent call last):
+  File "/odoo/odoo-server/addons/biz_bi/tests/test_query_engine.py", line 98, in test_relative_filter
+    self.assertTrue(result['rows'])
+AssertionError: [] is not true
+ 
+
+2026-08-13 23:49:59,795 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_rls: ERROR: TestRls.test_column_mask_null
+Traceback (most recent call last):
+  File "/odoo/odoo-server/addons/biz_bi/tests/test_rls.py", line 98, in test_column_mask_null
+    self.assertEqual(result['rows'][0][0], None)
+IndexError: list index out of range
+ 
+
+2026-08-13 23:49:59,882 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_rls: FAIL: TestRls.test_rls_users_never_share_cache
+Traceback (most recent call last):
+  File "/odoo/odoo-server/addons/biz_bi/tests/test_rls.py", line 62, in test_rls_users_never_share_cache
+    self.assertEqual(restricted['rows'][0][0], 30.0)
+AssertionError: None != 30.0
+ 
+
+2026-08-13 23:49:59,961 2573547 ERROR vietuat odoo.addons.biz_bi.tests.test_rls: FAIL: TestRls.test_row_rule_filters_rows
+Traceback (most recent call last):
+  File "/odoo/odoo-server/addons/biz_bi/tests/test_rls.py", line 42, in test_row_rule_filters_rows
+    self.assertEqual(result['rows'][0][0], 30.0)  # VN partners only
+AssertionError: None != 30.0
+ 
+
+
+2. FULL biz_bi SUITE AFTER THE FIXES (/tmp/bg1/final_bi.log, EXIT:0)
+   -u biz_bi,biz_bi_cms --test-tags /biz_bi
+
+2026-08-14 00:02:50,894 2574541 INFO vietuat odoo.tests.stats: biz_bi: 111 tests 17.41s 9541 queries 
+2026-08-14 00:02:50,894 2574541 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 85 tests when loading database 'vietuat' 
+
+3. biz_bi_cms SUITE (/tmp/bg1/final_cms.log, EXIT:0)
+   -u biz_bi_cms --test-tags /biz_bi_cms
+
+2026-08-14 00:03:13,573 2574569 INFO vietuat odoo.tests.stats: biz_bi_cms: 30 tests 7.42s 5581 queries 
+2026-08-14 00:03:13,574 2574569 INFO vietuat odoo.tests.result: 0 failed, 0 error(s) of 22 tests when loading database 'vietuat' 
+
+4. THE TESTS REALLY RAN (§5.83 / §5.90)
+   biz_bi     "Starting Test.*\.test_" lines: 85
+   biz_bi     "ERROR: setUpClass" lines:      0
+   biz_bi     TestExportXlsx (HttpCase) starts: 7
+   biz_bi_cms "Starting Test.*\.test_" lines: 22
+   biz_bi     FAIL:/ERROR:/CRITICAL lines:    0
+   biz_bi_cms FAIL:/ERROR:/CRITICAL lines:    0
+
+   85 executed for biz_bi against RT-1's 79: +3 in test_detail_mode
+   (tz export, tz helpers, the DataTable opt-in) and +3 in the new
+   test_ai_attribution. 22 for biz_bi_cms against RT-2's 21: +1.
+
+5. THE EXECUTED METHOD LIST (biz_bi)
+   TestAiAttribution.test_audit_row_names_the_person_who_asked
+   TestAiAttribution.test_egress_decision_is_recorded_for_the_same_person
+   TestAiAttribution.test_nlq_prompt_prefers_counting_over_money
+   TestAiCoerce.test_junk_grain_and_agg_are_stripped
+   TestAiCoerce.test_junk_grain_on_date_dimension
+   TestAiCoerce.test_valid_grain_and_agg_survive
+   TestDetailMode.test_chart_roundtrip_detail
+   TestDetailMode.test_detail_nulls_masked_dimension
+   TestDetailMode.test_detail_rejects_measures_and_grain
+   TestDetailMode.test_detail_relation_labels
+   TestDetailMode.test_detail_respects_where_chain
+   TestDetailMode.test_detail_returns_record_rows
+   TestDetailMode.test_detail_total_count_and_truncation
+   TestExportXlsx.test_datatable_can_suppress_a_duplicate_overflow_row
+   TestExportXlsx.test_export_datetime_reads_in_the_users_timezone
+   TestExportXlsx.test_export_row_cap_is_server_side_only
+   TestExportXlsx.test_export_tz_helpers
+   TestExportXlsx.test_export_xlsx_get_saved_chart_uses_labels
+   TestExportXlsx.test_export_xlsx_post
+   TestExportXlsx.test_sheet_name_is_sanitised
+   TestExpression.test_accepts_aggregates_in_measure_context
+   TestExpression.test_accepts_arithmetic
+   TestExpression.test_accepts_functions
+   TestExpression.test_rejects_aggregates_in_row_context
+   TestExpression.test_rejects_bad_date_unit
+   TestExpression.test_rejects_empty_and_unclosed
+   TestExpression.test_rejects_python_constructs
+   TestExpression.test_rejects_sql_injection_attempts
+   TestExpression.test_rejects_unknown_field
+   TestExpression.test_rejects_unknown_function
+   TestGoldPublish.test_concurrent_refresh_succeeds
+   TestGoldPublish.test_gold_publish_creates_matview_and_indexes
+   TestGoldPublish.test_gold_queries_hit_matview
+   TestGoldPublish.test_refresh_invalidates_cache
+   TestGoldPublish.test_silver_view_created
+   TestGoldPublish.test_unlink_drops_relations
+   TestInsights.test_anomaly_detected
+   TestInsights.test_balanced_categories_quiet
+   TestInsights.test_concentration_detected
+   TestInsights.test_empty_scope
+   TestInsights.test_flat_series_quiet
+   TestInsights.test_kpi_value
+   TestInsights.test_trend_detected
+   TestLifecyclePredicate.test_silver_sql_excludes_deleted_root_rows
+   TestPipeline.test_compile_and_apply
+   TestPipeline.test_dataset_reads_clean_view
+   TestPipeline.test_dedupe
+   TestPipeline.test_editor_data_and_step_schemas
+   TestPipeline.test_rejects_hostile_input
+   TestPipeline.test_save_steps_reports_invalid_step
+   TestPipeline.test_schema_follows_pipeline
+   TestQueryEngine.test_basic_group_by
+   TestQueryEngine.test_batch_isolates_errors
+   TestQueryEngine.test_cache_roundtrip
+   TestQueryEngine.test_calculated_measure
+   TestQueryEngine.test_chart_to_request
+   TestQueryEngine.test_compare_request_runs
+   TestQueryEngine.test_date_grain
+   TestQueryEngine.test_grain_override_drill
+   TestQueryEngine.test_hostile_label_never_reaches_sql
+   TestQueryEngine.test_in_and_between_filters
+   TestQueryEngine.test_limit_cap
+   TestQueryEngine.test_measure_only_kpi
+   TestQueryEngine.test_rejects_bad_agg
+   TestQueryEngine.test_rejects_bad_grain
+   TestQueryEngine.test_rejects_bad_operator
+   TestQueryEngine.test_rejects_bad_sort_ref
+   TestQueryEngine.test_rejects_foreign_field
+   TestQueryEngine.test_relative_filter
+   TestQueryEngine.test_selection_labels_per_language
+   TestQueryEngine.test_shift_filters_previous
+   TestQueryEngine.test_top_n_with_others
+   TestRelationLabels.test_backfill_is_idempotent_and_finds_stale_columns
+   TestRelationLabels.test_grouping_still_happens_on_the_id
+   TestRelationLabels.test_ids_are_labelled_with_record_names
+   TestRelationLabels.test_labels_are_not_served_from_another_users_cache
+   TestRelationLabels.test_scan_records_the_lookup_model
+   TestRelationLabels.test_unreadable_lookup_records_fall_back_to_ids
+   TestRls.test_column_mask_hide
+   TestRls.test_column_mask_null
+   TestRls.test_rls_users_never_share_cache
+   TestRls.test_row_rule_filters_rows
+   TestRls.test_sensitive_fields_excluded_from_dataset_card
+   TestRls.test_variable_substitution
+   TestSnapshot.test_snapshot_xlsx_builds
+
+6. SERVER HEALTH after the final restart
+   ss -lntp | grep -c :8069 -> 1
+   curl localhost:8069/web/login -> HTTP:200

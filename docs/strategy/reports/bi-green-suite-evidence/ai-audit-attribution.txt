@@ -1,0 +1,93 @@
+BG-1 — the AI audit row names the person who asked
+==================================================
+
+Driven as bg1_qa (uid 8603), a throwaway BI *creator* — has_group
+biz_bi.group_bi_modeler = False, group_bi_admin = False — from the login
+page through the CMS sidebar into the Analytics wizard, and asked the AI
+box in its own words. AH-3 recorded this attribution as a deferred defect
+("bi.ai._log's audit attribution is uid 1"); see the report for why that
+diagnosis was wrong and what was hardened anyway.
+
+$ SELECT id,user_id,event,created_at,payload_json FROM bi_audit_log WHERE event='ai_request' ORDER BY id DESC LIMIT 3;
+  id  | user_id |   event    |     created_at      |           payload_json            
+------+---------+------------+---------------------+-----------------------------------
+ 2285 |    8603 | ai_request | 2026-08-14 00:09:20 | {"kind": "nlq", "accepted": true}
+ 2283 |    8603 | ai_request | 2026-08-14 00:06:22 | {"kind": "nlq", "accepted": true}
+ 1137 |       2 | ai_request | 2026-08-07 06:44:14 | {"kind": "nlq", "accepted": true}
+(3 rows)
+
+
+$ SELECT id,user_id,kind,accepted,created_at,response_json FROM bi_ai_log ORDER BY id DESC LIMIT 2;
+ id | user_id | kind | accepted |     created_at      |                   jsonb_pretty                    
+----+---------+------+----------+---------------------+---------------------------------------------------
+ 47 |    8603 | nlq  | t        | 2026-08-14 00:09:20 | {                                                +
+    |         |      |          |                     |     "name": "Number of Bookings by Service Type",+
+    |         |      |          |                     |     "slots": {                                   +
+    |         |      |          |                     |         "x": [                                   +
+    |         |      |          |                     |             {                                    +
+    |         |      |          |                     |                 "field_id": 576                  +
+    |         |      |          |                     |             }                                    +
+    |         |      |          |                     |         ],                                       +
+    |         |      |          |                     |         "series": [                              +
+    |         |      |          |                     |         ],                                       +
+    |         |      |          |                     |         "values": [                              +
+    |         |      |          |                     |             {                                    +
+    |         |      |          |                     |                 "agg": "count",                  +
+    |         |      |          |                     |                 "field_id": 568                  +
+    |         |      |          |                     |             }                                    +
+    |         |      |          |                     |         ]                                        +
+    |         |      |          |                     |     },                                           +
+    |         |      |          |                     |     "filters": [                                 +
+    |         |      |          |                     |     ],                                           +
+    |         |      |          |                     |     "chart_type": "bar"                          +
+    |         |      |          |                     | }
+ 46 |    8603 | nlq  | t        | 2026-08-14 00:06:22 | {                                                +
+    |         |      |          |                     |     "name": "Leads by Source",                   +
+    |         |      |          |                     |     "slots": {                                   +
+    |         |      |          |                     |         "x": [                                   +
+    |         |      |          |                     |             {                                    +
+    |         |      |          |                     |                 "field_id": 1497                 +
+    |         |      |          |                     |             }                                    +
+    |         |      |          |                     |         ],                                       +
+    |         |      |          |                     |         "series": [                              +
+    |         |      |          |                     |         ],                                       +
+    |         |      |          |                     |         "values": [                              +
+    |         |      |          |                     |             {                                    +
+    |         |      |          |                     |                 "agg": "count",                  +
+    |         |      |          |                     |                 "field_id": 1497                 +
+    |         |      |          |                     |             }                                    +
+    |         |      |          |                     |         ]                                        +
+    |         |      |          |                     |     },                                           +
+    |         |      |          |                     |     "filters": [                                 +
+    |         |      |          |                     |     ],                                           +
+    |         |      |          |                     |     "chart_type": "bar"                          +
+    |         |      |          |                     | }
+(2 rows)
+
+
+$ SELECT id,surface,classification,provider_type,local,allowed,reason,findings,user_id,prompt_chars FROM ai_egress_log ORDER BY id DESC LIMIT 3;
+ id |       surface        | classification | provider_type | local | allowed | reason | findings | user_id | prompt_chars 
+----+----------------------+----------------+---------------+-------+---------+--------+----------+---------+--------------
+ 85 | biz_bi.nlq           | schema         | openai        | f     | t       |        |          |    8603 |        17104
+ 84 | biz_bi.nlq           | schema         | openai        | f     | t       |        |          |    8603 |        15525
+ 79 | learn.coach.composer | schema         | openai        | f     | t       |        |          |    8255 |         9643
+(3 rows)
+
+
+$ SELECT u.id,u.login,p.name FROM res_users u JOIN res_partner p ON p.id=u.partner_id WHERE u.id IN (1,8603);
+  id  |   login    |      name      
+------+------------+----------------
+    1 | __system__ | Viet Uc Care
+ 8603 | bg1_qa     | BG1 QA Creator
+(2 rows)
+
+
+Reading of the above:
+  * bi_audit_log 2283 / 2285 — event ai_request, user_id 8603, NOT 1.
+  * bi_ai_log 46 / 47      — user_id 8603, and the response_json is the
+    proposal itself: the NLQ count hint at work, agg "count" chosen for
+    "leads by source" and for "how many bookings by service type" instead
+    of a monetary measure.
+  * ai_egress_log 84 / 85  — the gate ran, on the allow path (classification
+    schema, provider openai, local=f, allowed=t, no findings), and recorded
+    the same uid. Nothing about the gate was bypassed or weakened.

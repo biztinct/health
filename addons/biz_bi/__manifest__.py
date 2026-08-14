@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'BIZ BI Platform',
-    'version': '19.0.1.4.0',
+    'version': '19.0.1.5.0',
     'category': 'Analytics',
     'summary': 'Self-service BI: semantic datasets, drag-and-drop charts, dashboards',
     'description': """

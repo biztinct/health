@@ -59,6 +59,12 @@ class BiCase(TransactionCase):
         cls.f_name = field(cls.node_root, 'name')
         cls.f_latitude = field(cls.node_root, 'partner_latitude')
         cls.f_country_name = field(cls.node_country, 'name')
+        # `res_country.name` is a TRANSLATED jsonb column, so the engine reads
+        # it through `->> <caller language>` — a row rule keyed on the literal
+        # "Vietnam" matches nothing for a vi_VN reader (and matches a different
+        # string on any other language). `code` is a plain varchar and is the
+        # same on every database: key rules on the CODE, assert on the name.
+        cls.f_country_code = field(cls.node_country, 'code')
         cls.f_create_date = field(cls.node_root, 'create_date')
 
         # scanner may classify latitude as non-measure; force it for tests
@@ -79,7 +85,42 @@ class BiCase(TransactionCase):
         })
 
         cls.dataset.action_publish()
-        cls.engine = env['bi.query.engine']
+        # Relative date windows ('today', 'this_month') resolve through the
+        # CALLER's timezone (`fields.Date.context_today`) while every datetime
+        # column is stored in UTC — and the superuser that runs tests carries
+        # **Europe/Brussels** on this deployment (ledger §5.107). Between
+        # 22:00 and 24:00 UTC "today" is already tomorrow, and on the last day
+        # of a month "this month" is already the next one, so a fixture row
+        # created seconds earlier falls outside its own window. Pin UTC: the
+        # windows then mean exactly what the fixtures' own `create_date` means,
+        # at any hour of any day, on any database.
+        cls.env_utc = env(context=dict(env.context, tz='UTC'))
+        cls.engine = cls.env_utc['bi.query.engine']
+
+    def _allow_all_partners(self):
+        """Let this transaction read every partner.
+
+        vietuat's live `res.partner` record rules pin a plain internal user to
+        their OWN partner ("User: Own Partner Record", ir_rule 340), and the
+        engine injects the root model's `ir.rule` domain into every live query
+        (`_compile_root_ir_rules`). Without this, a non-admin test user sees
+        none of the three fixture rows, so an RLS assertion is either an
+        IndexError or vacuously true — it measures the partner ACL instead of
+        the BI trust boundary it is about. The rule is created INSIDE the test
+        transaction and rolls back with it; no deployment rule is touched.
+        """
+        self.env['ir.rule'].create({
+            'name': 'BI test: read every partner',
+            'model_id': self.env['ir.model']._get_id('res.partner'),
+            'domain_force': "[(1, '=', 1)]",
+            'groups': [(4, self.env.ref('base.group_user').id)],
+            'perm_read': True, 'perm_write': False,
+            'perm_create': False, 'perm_unlink': False,
+        })
+        # `ir.rule._get_rules` reads `ir_rule` with RAW SQL, so an unflushed
+        # row is invisible to it, and `_compute_domain` is ormcache'd (§5.112).
+        self.env.flush_all()
+        self.env.registry.clear_cache()
 
     def _base_request(self, **overrides):
         request = {

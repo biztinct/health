@@ -38,9 +38,17 @@ class BiAuditLog(models.Model):
     created_at = fields.Datetime(default=fields.Datetime.now, required=True)
 
     @api.model
-    def log(self, event, dataset=None, record=None, payload=None):
+    def log(self, event, dataset=None, record=None, payload=None,
+            user_id=None):
+        """`user_id` names the human this event belongs to.
+
+        It defaults to the caller's uid, which is right for every path that
+        logs from the acting user's own environment. Pass it explicitly when
+        the surrounding code may have swapped environments before reaching
+        here — an audit row that cannot name who acted is not an audit row.
+        """
         self.sudo().create({
-            'user_id': self.env.uid,
+            'user_id': user_id or self.env.uid,
             'event': event,
             'dataset_id': dataset.id if dataset else False,
             'res_model': record._name if record is not None else False,

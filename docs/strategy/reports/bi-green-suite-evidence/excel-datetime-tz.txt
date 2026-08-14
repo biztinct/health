@@ -1,0 +1,64 @@
+BG-1 — Excel datetime cells read in the exporting user's timezone
+==================================================================
+
+Both workbooks below are the bytes the wizard's **Excel** button produced
+on care.biztinct.com for the SAME report (Bookings & Service Orders,
+columns Client / Scheduled Date & Time / Total Price / Status, 1 271 rows),
+captured from the same authenticated session by wrapping window.fetch and
+posting the response bytes back as an ir.attachment (83508 / 83509).
+
+The only thing that changed between them is the reader's timezone.
+
+--- 1. bg1-browser-export.xlsx  — reader tz Australia/Sydney (UTC+10) ---
+file: bg1-browser-export.xlsx   rows in sheet: 1272
+row 1    A=Client | B=Scheduled Date & Time | C=Total Price | D=Status
+row 2    A=An Xu | B=2026-07-09 21:44:48  [serial 46212.90611111111] | C=0 | D=Draft
+row 3    A=An Xu | B=2026-04-27 12:30:00  [serial 46139.52083333334] | C=0 | D=Completed
+row 4    A=An Xu | B=2026-04-01 20:00:00  [serial 46113.83333333334] | C=0 | D=Completed
+row 5    A=An Xu | B=2026-07-09 12:00:00  [serial 46212.5] | C=0 | D=In Progress
+row 6    A=An Xu | B=2026-08-05 18:00:00  [serial 46239.75] | C=0 | D=Confirmed
+row 7    A=An Xu | B=2026-07-22 12:00:00  [serial 46225.5] | C=0 | D=Confirmed
+row 8    A=An Xu | B=2026-07-13 12:00:00  [serial 46216.5] | C=0 | D=Confirmed
+row 9    A=An Xu | B=2026-04-20 18:00:00  [serial 46132.75] | C=0 | D=Completed
+row 10   A=An Xu | B=2026-06-08 18:00:00  [serial 46181.75] | C=0 | D=Assigned
+row 11   A=An Xu | B=2026-04-07 11:00:00  [serial 46119.45833333334] | C=0 | D=Completed
+row 12   A=An Xu | B=2026-08-21 16:30:00  [serial 46255.6875] | C=0 | D=Confirmed
+
+--- 2. bg1-browser-export-vn.xlsx — reader tz Asia/Ho_Chi_Minh (UTC+7) ---
+file: bg1-browser-export-vn.xlsx   rows in sheet: 1272
+row 1    A=Client | B=Scheduled Date & Time | C=Total Price | D=Status
+row 2    A=An Xu | B=2026-07-09 18:44:48  [serial 46212.78111111111] | C=0 | D=Draft
+row 3    A=An Xu | B=2026-04-27 09:30:00  [serial 46139.39583333334] | C=0 | D=Completed
+row 4    A=An Xu | B=2026-04-01 15:59:59  [serial 46113.66666666666] | C=0 | D=Completed
+row 5    A=An Xu | B=2026-07-09 09:00:00  [serial 46212.375] | C=0 | D=In Progress
+row 6    A=An Xu | B=2026-08-05 15:00:00  [serial 46239.625] | C=0 | D=Confirmed
+row 7    A=An Xu | B=2026-07-22 09:00:00  [serial 46225.375] | C=0 | D=Confirmed
+row 8    A=An Xu | B=2026-07-13 09:00:00  [serial 46216.375] | C=0 | D=Confirmed
+row 9    A=An Xu | B=2026-04-20 15:00:00  [serial 46132.625] | C=0 | D=Completed
+row 10   A=An Xu | B=2026-06-08 15:00:00  [serial 46181.625] | C=0 | D=Assigned
+row 11   A=An Xu | B=2026-04-07 08:00:00  [serial 46119.33333333334] | C=0 | D=Completed
+row 12   A=An Xu | B=2026-08-21 13:30:00  [serial 46255.5625] | C=0 | D=Confirmed
+
+--- 3. what PostgreSQL actually stores (naive UTC), for five of those rows ---
+  id  | client |     stored_utc      |    vn_wall_clock    |  sydney_wall_clock  |   state
+------+--------+---------------------+---------------------+---------------------+-----------
+ 1473 | An Xu  | 2026-04-07 01:00:00 | 2026-04-07 08:00:00 | 2026-04-07 11:00:00 | completed
+ 1009 | An Xu  | 2026-04-20 08:00:00 | 2026-04-20 15:00:00 | 2026-04-20 18:00:00 | completed
+  814 | An Xu  | 2026-04-27 02:30:00 | 2026-04-27 09:30:00 | 2026-04-27 12:30:00 | completed
+ 2666 | An Xu  | 2026-07-09 11:44:48 | 2026-07-09 18:44:48 | 2026-07-09 21:44:48 | draft
+ 8764 | An Xu  | 2026-08-05 08:00:00 | 2026-08-05 15:00:00 | 2026-08-05 18:00:00 | confirmed
+
+Every one of the five appears in workbook 1 at its Sydney wall clock and in
+workbook 2 at its Vietnamese wall clock. Before this phase both workbooks
+would have carried the stored_utc column verbatim — seven hours early for
+the Vietnamese users this deployment is for, and a whole DAY early for any
+booking after 17:00 UTC.
+
+Note on row 4 of each dump: the cell reads 15:59:59 / 18:59:59 rather than
+16:00:00 / 19:00:00. That is this dumper reconstructing a float from
+xlsxwriter's serial (46113.66666666666); Excel rounds the same serial to the
+cell's yyyy-mm-dd hh:mm:ss format and shows the whole minute.
+
+The cells are real Excel datetimes (number-formatted serials), not strings —
+which is why a string-only reader sees nothing here at all, and why the new
+test reads the numeric <v> of column B rather than sharedStrings.

@@ -94,7 +94,9 @@ class TestQueryEngine(BiCase):
         result = self.engine.run(self._base_request(
             filters=[{'field_id': self.f_create_date.id,
                       'op': 'relative', 'value': 'today'}]))
-        # fixtures were created today
+        # fixtures were created today — "today" resolved through the UTC env
+        # of `BiCase` (§5.107: the test superuser is Europe/Brussels here, so
+        # an unpinned run goes red between 22:00 and 24:00 UTC)
         self.assertTrue(result['rows'])
         with self.assertRaises(UserError):
             self.engine.run(self._base_request(
@@ -157,13 +159,28 @@ class TestQueryEngine(BiCase):
         self.assertFalse(any2)
 
     def test_compare_request_runs(self):
-        chart = self.env['bi.chart'].create({
+        # The chart must be scoped to this fixture's own partners: the dataset
+        # sits on live `res.partner`, and this deployment holds 77 partners
+        # carrying a latitude, spread over every month — so an unscoped
+        # "previous month" SUM is a real number, not the NULL the assertion is
+        # about. The date filter is what the test is exercising; the name
+        # filter is what makes the answer come from the fixture. Built through
+        # the UTC env so the window boundaries agree with `create_date`
+        # (§5.107 — the last day of a month is otherwise a live flake).
+        chart = self.env_utc['bi.chart'].create({
             'name': 'KPI', 'dataset_id': self.dataset.id, 'chart_type': 'kpi',
             'config_json': {'slots': {
                 'values': [{'field_id': self.f_latitude.id, 'agg': 'sum'}]},
                 'filters': [{'field_id': self.f_create_date.id,
-                             'op': 'relative', 'value': 'this_month'}]},
+                             'op': 'relative', 'value': 'this_month'},
+                            {'field_id': self.f_name.id, 'op': 'like_i',
+                             'value': 'BI Test'}]},
         })
+        # sanity: the CURRENT window does hold the three fixture rows, so the
+        # NULL below is the shift working and not an empty filter
+        self.assertEqual(
+            self.engine.run(chart._to_query_request())['rows'][0][0], 60.0)
+
         compare_request = chart._to_compare_request()
         self.assertIsNotNone(compare_request)
         result = self.engine.run(compare_request)

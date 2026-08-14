@@ -333,9 +333,13 @@
                             <t t-elif="hasRows">
                                 <KpiCard t-if="rendererKind === 'kpi'"
                                          envelope="state.envelope" config="chartConfig"/>
+                                <!-- the banner above already states the same
+                                     truncation, above the fold; the table's
+                                     own final row would say it twice -->
                                 <DataTable t-elif="rendererKind === 'table'"
                                            envelope="state.envelope" config="chartConfig"
-                                           maxRows="previewMaxRows"/>
+                                           maxRows="previewMaxRows"
+                                           suppressOverflowRow="!!recordsTruncation"/>
                                 <PivotTable t-elif="rendererKind === 'pivot'"
                                             envelope="state.envelope" config="chartConfig"/>
                                 <ChartRenderer t-else=""

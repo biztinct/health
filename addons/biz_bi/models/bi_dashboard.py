@@ -78,6 +78,22 @@ class BiDashboard(models.Model):
             return when.day == 1
         return True
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        dashboards = super().create(vals_list)
+        # `next_send` was maintained by `write()` and by the form onchange
+        # ONLY, so a dashboard CREATED with schedule_enabled=True never got
+        # one — and `_process_snapshot_queue` selects on
+        # ('next_send', '!=', False), so its snapshot silently never went out.
+        # The form view hid the hole (the onchange fills the field before the
+        # create), which is why only a programmatic create — an import, the AI
+        # report composer, a test — could see it. Ledger §5.2: a hook that
+        # fires on write must be called explicitly from create() too.
+        for dashboard in dashboards:
+            if dashboard.schedule_enabled and not dashboard.next_send:
+                dashboard.next_send = dashboard._compute_next_send()
+        return dashboards
+
     def write(self, vals):
         result = super().write(vals)
         if {'schedule_enabled', 'schedule_interval',

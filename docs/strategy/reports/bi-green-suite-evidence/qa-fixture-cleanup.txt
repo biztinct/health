@@ -1,0 +1,35 @@
+BG-1 — QA fixture cleanup, and the fresh-cursor proof (§5.34 / §5.128 / §5.142)
+==============================================================================
+
+Order matters. bi.audit.log and bi.ai.log are append-only (unlink() raises)
+and their user_id is a required Many2one, which PostgreSQL materialises as
+ON DELETE RESTRICT — so a QA persona that merely opens a dashboard becomes
+undeletable through the ORM (§5.128). The raw, uid-scoped DELETEs therefore
+run FIRST and in their own committed transaction (§5.142: an ORM unlink that
+a later SQL error rolls back still prints as done).
+
+$ psql -v ON_ERROR_STOP=1 <<< BEGIN; DELETE ... WHERE user_id/create_uid = 8603; COMMIT;
+BEGIN
+DELETE 10      -- bi_audit_log   (2 ai_request, 3 export, 5 query)
+DELETE 2       -- bi_ai_log
+DELETE 2       -- ai_egress_log
+DELETE 2       -- ir_attachment  (the two captured workbooks)
+COMMIT
+
+then, in an odoo-bin shell: res.users(8603).unlink(); partner(20267).unlink()
+  -> exists before: bg1_qa partner 20267
+  -> unlinked
+
+--- fresh cursor, a DIFFERENT process from the one that did the deleting ---
+ users | partners | audit_rows | ai_rows | egress_rows | attachments | charts | dashboards 
+-------+----------+------------+---------+-------------+-------------+--------+------------
+     0 |        0 |          0 |       0 |           0 |           0 |      0 |          0
+(1 row)
+
+
+Deliberately NOT deleted: bi_query_cache. That model sets _log_access=False
+and has no create_uid at all (its columns are cache_key / created_at /
+dataset_id / expires_at / hit_count / id / result_json — the very trap of
+§5.142), so there is no uid to scope a delete to; the rows are keyed by an
+RLS fingerprint that includes the now-deleted uid, hold no personal data,
+and expire on their own TTL.

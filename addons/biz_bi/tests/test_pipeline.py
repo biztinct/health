@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
 
@@ -134,7 +135,16 @@ class TestPipeline(TransactionCase):
             'dimensions': [],
             'measures': [{'field_id': amount.id, 'agg': 'sum'}],
         })
-        self.assertEqual(float(result['rows'][0][0]), 60.75)  # 10.5+20+30.25
+        # The dataset reads the CLEANED view, so every step is visible in this
+        # one number: '10,5' cast to 10.5, 'oops' guarded to NULL, and Gamma
+        # (30.25) removed by the pipeline's filter step — 10.5 + 20 = 30.5.
+        # The original literal (60.75) added Gamma back in and was therefore
+        # red on every database, not only on one with live data.
+        self.assertEqual(float(result['rows'][0][0]), 30.5)
+        # and prove it is the clean view, not the raw table: a query over
+        # `bi_test_raw` could not sum `amount_raw` at all (it is text there)
+        self.assertEqual(self.source._table_name(),
+                         self.pipeline._clean_view_name())
 
 
 @tagged('biz_bi', 'post_install', '-at_install')
@@ -170,4 +180,11 @@ class TestSnapshot(TransactionCase):
         content = dashboard._build_snapshot_xlsx()
         self.assertTrue(content.startswith(b'PK'))  # xlsx = zip container
         self.assertGreater(len(content), 500)
+        # a dashboard created with the schedule already on must be QUEUED —
+        # `_process_snapshot_queue` selects on next_send, so an empty one is a
+        # snapshot that never sends (the create() hole this phase closed)
         self.assertTrue(dashboard.next_send)
+        self.assertGreater(dashboard.next_send, fields.Datetime.now())
+        # ...and turning the schedule off must clear it again
+        dashboard.schedule_enabled = False
+        self.assertFalse(dashboard.next_send)

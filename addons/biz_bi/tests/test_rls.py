@@ -27,6 +27,15 @@ class TestRls(BiCase):
             ])],
         })
 
+    def setUp(self):
+        super().setUp()
+        # Every assertion below is about the BI row/column rules. The engine
+        # also injects the ROOT MODEL's ir.rule, and on this deployment that
+        # hides all three fixture partners from a plain internal user — which
+        # turns a real security assertion into an IndexError (see
+        # `_allow_all_partners`). Widened inside the transaction only.
+        self._allow_all_partners()
+
     def test_row_rule_filters_rows(self):
         """A row rule limiting the viewer to VN partners must halve totals."""
         self.env['bi.access.rule'].create({
@@ -34,8 +43,7 @@ class TestRls(BiCase):
             'dataset_id': self.dataset.id,
             'rule_type': 'row',
             'user_ids': [(6, 0, [self.restricted_user.id])],
-            'domain_json': [[self.f_country_name.id, 'eq',
-                             self.country_a.name]],
+            'domain_json': [[self.f_country_code.id, 'eq', 'VN']],
         })
         engine = self.engine.with_user(self.restricted_user)
         result = engine.run(self._base_request(dimensions=[]))
@@ -52,8 +60,7 @@ class TestRls(BiCase):
             'dataset_id': self.dataset.id,
             'rule_type': 'row',
             'user_ids': [(6, 0, [self.restricted_user.id])],
-            'domain_json': [[self.f_country_name.id, 'eq',
-                             self.country_a.name]],
+            'domain_json': [[self.f_country_code.id, 'eq', 'VN']],
         })
         request = self._base_request(dimensions=[])
         unrestricted = self.engine.run(request)
@@ -95,6 +102,12 @@ class TestRls(BiCase):
         })
         result = self.engine.with_user(self.restricted_user).run(
             self._base_request(dimensions=[]))
+        # the three fixture rows are all still THERE — every one of them
+        # empty. An empty result would prove nothing about the mask.
+        self.assertTrue(result['rows'])
+        self.assertTrue(all(value is None for row in result['rows']
+                            for value in row),
+                        "a nulled measure must not leak a single value")
         self.assertEqual(result['rows'][0][0], None)
 
     def test_variable_substitution(self):

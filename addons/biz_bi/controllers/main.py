@@ -3,6 +3,8 @@ import datetime
 import io
 import json
 
+import pytz
+
 from odoo import _, http
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.http import request
@@ -98,7 +100,8 @@ class BiController(http.Controller):
                 "Showing the first %s rows — refine filters for the full "
                 "set.", len(rows))
         capped = bool(notice)
-        payload = self._build_xlsx(columns, rows, title, notice)
+        payload = self._build_xlsx(columns, rows, title, notice,
+                                   tz=self._export_tz())
 
         request.env['bi.audit.log'].sudo().log(
             'export', dataset=dataset if dataset else None, record=chart,
@@ -112,6 +115,32 @@ class BiController(http.Controller):
         ])
 
     @staticmethod
+    def _export_tz(env=None):
+        """The timezone an exported datetime should READ in.
+
+        Every datetime column comes out of the engine as a naive UTC value —
+        which is right for storage and wrong on a spreadsheet: a Vietnamese
+        user opening the file saw every appointment seven hours early, with
+        nothing on the cell to say it was UTC. Excel has no timezone concept
+        at all, so the only honest cell is the user's own wall clock.
+        """
+        env = env if env is not None else request.env
+        try:
+            return pytz.timezone(env.user.tz or 'UTC')
+        except (pytz.UnknownTimeZoneError, AttributeError):
+            return pytz.UTC
+
+    @staticmethod
+    def _to_user_tz(value, tz):
+        """Naive-UTC datetime -> naive datetime in `tz`. Dates are untouched:
+        a pure date has no time to shift, and moving it would change the day.
+        """
+        if not isinstance(value, datetime.datetime) or tz is None:
+            return value
+        aware = pytz.UTC.localize(value) if value.tzinfo is None else value
+        return aware.astimezone(tz).replace(tzinfo=None)
+
+    @staticmethod
     def _sheet_name(title):
         """Excel forbids []:*?/\\ in a sheet name and caps it at 31 chars, and
         xlsxwriter RAISES on a bad one — a chart called "Q1: Revenue" would
@@ -123,7 +152,7 @@ class BiController(http.Controller):
         name = name.strip().strip("'")[:31].strip()
         return name or 'Data'
 
-    def _build_xlsx(self, columns, rows, title, notice=None):
+    def _build_xlsx(self, columns, rows, title, notice=None, tz=None):
         import xlsxwriter
 
         buffer = io.BytesIO()
@@ -164,7 +193,7 @@ class BiController(http.Controller):
                 self._write_cell(sheet, row_index, col_index,
                                  columns[col_index], value,
                                  number_format_for, date_format,
-                                 datetime_format)
+                                 datetime_format, tz)
 
         if columns:
             sheet.freeze_panes(1, 0)
@@ -175,7 +204,8 @@ class BiController(http.Controller):
         return buffer.getvalue()
 
     def _write_cell(self, sheet, row_index, col_index, column, value,
-                    number_format_for, date_format, datetime_format):
+                    number_format_for, date_format, datetime_format,
+                    tz=None):
         if value is None or (value is False
                              and column.get('type') != 'boolean'):
             sheet.write(row_index, col_index, '')
@@ -205,6 +235,8 @@ class BiController(http.Controller):
         if column.get('type') in ('date', 'datetime'):
             parsed = self._parse_date(value)
             if parsed is not None:
+                if column.get('type') == 'datetime':
+                    parsed = self._to_user_tz(parsed, tz)
                 sheet.write_datetime(
                     row_index, col_index, parsed,
                     date_format if column.get('type') == 'date'

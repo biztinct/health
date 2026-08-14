@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import html
 import io
 import json
@@ -23,22 +24,8 @@ class DetailCase(BiCase):
             and f.node_id == cls.node_root)
         cls.f_country_id.visibility = 'visible'
 
-    def _allow_all_partners(self):
-        """vietuat's live `res.partner` record rules pin a plain internal user
-        to their OWN partner (rule "User: Own Partner Record"), which would
-        hide all three fixture rows and make an RLS/masking assertion
-        vacuously true. Widen partner visibility inside the test transaction
-        so what is measured is the BI trust boundary, not the partner ACL.
-        """
-        self.env['ir.rule'].create({
-            'name': 'BI detail test: read every partner',
-            'model_id': self.env['ir.model']._get_id('res.partner'),
-            'domain_force': "[(1, '=', 1)]",
-            'groups': [(4, self.env.ref('base.group_user').id)],
-            'perm_read': True, 'perm_write': False,
-            'perm_create': False, 'perm_unlink': False,
-        })
-        self.env.registry.clear_cache()
+    # `_allow_all_partners` now lives on BiCase (tests/common.py): the RLS
+    # suite needs the identical widening, and one copy is one behaviour.
 
     def _detail_request(self, field_ids=(), **overrides):
         """A records request scoped to this fixture's three partners — the
@@ -280,6 +267,34 @@ class TestExportXlsx(DetailCase, HttpCase):
         return match.group(1)
 
     @staticmethod
+    def _excel_serial(when):
+        """The number xlsxwriter actually writes for a datetime in the 1900
+        date system (day 0 is 1899-12-30 because of Excel's leap-year bug)."""
+        origin = datetime.datetime(1899, 12, 30)
+        return (when - origin).total_seconds() / 86400.0
+
+    @staticmethod
+    def _xlsx_numbers(content, column_letter):
+        """Every NUMERIC cell of one column of sheet 1.
+
+        A date is not a string in xlsx — it is a serial number in `<v>` with a
+        number format on it — so `_xlsx_strings` cannot see a datetime cell at
+        all, which is exactly how an export can be seven hours wrong while
+        every string assertion passes.
+        """
+        with zipfile.ZipFile(io.BytesIO(content)) as archive:
+            raw = archive.read('xl/worksheets/sheet1.xml').decode('utf-8')
+        values = []
+        for ref, attrs, text in re.findall(
+                r'<c r="([A-Z]+\d+)"([^>]*)>(?:<v>([^<]*)</v>)?</c>', raw):
+            if not text or 't="' in attrs:  # t= means string/bool/inline
+                continue
+            if re.sub(r'\d+$', '', ref) != column_letter:
+                continue
+            values.append(float(text))
+        return values
+
+    @staticmethod
     def _xlsx_strings(content):
         """Every string cell of sheet 1 — parsed with zipfile so the test
         carries no openpyxl dependency."""
@@ -372,6 +387,95 @@ class TestExportXlsx(DetailCase, HttpCase):
         self.assertEqual(BiController._sheet_name(''), 'Data')
         self.assertEqual(BiController._sheet_name("'quoted'"), 'quoted')
         self.assertEqual(len(BiController._sheet_name('x' * 60)), 31)
+
+    def test_export_datetime_reads_in_the_users_timezone(self):
+        """A datetime cell is the READER's wall clock, not UTC.
+
+        The engine returns naive UTC. Excel has no timezone concept, so a UTC
+        serial in a Vietnamese user's spreadsheet is simply seven hours wrong
+        — and for anything after 17:00 UTC it is wrong by a whole DAY, which
+        is the case pinned here.
+        """
+        self.bi_user.tz = 'Asia/Ho_Chi_Minh'
+        # a UTC instant that is already tomorrow in Vietnam
+        self.env.flush_all()
+        self.env.cr.execute(
+            "UPDATE res_partner SET create_date = %s WHERE id = %s",
+            ('2026-03-04 18:30:00', self.partners[0].id))
+        self.env.invalidate_all()
+
+        self.authenticate('bi_export_user', 'bi_export_user')
+        response = self._post_export(self._detail_request(
+            [self.f_name.id, self.f_create_date.id]))
+        self.assertEqual(response.status_code, 200)
+
+        utc_serial = self._excel_serial(
+            datetime.datetime(2026, 3, 4, 18, 30))
+        vn_serial = self._excel_serial(
+            datetime.datetime(2026, 3, 5, 1, 30))  # UTC+7, next day
+        cells = self._xlsx_numbers(response.content, 'B')
+        self.assertTrue(cells, "the datetime column wrote no numeric cell")
+        matched = [value for value in cells if abs(value - vn_serial) < 1e-6]
+        self.assertTrue(matched,
+                        "expected the Ho Chi Minh City wall clock in the cell")
+        self.assertFalse(
+            [value for value in cells if abs(value - utc_serial) < 1e-6],
+            "a raw UTC datetime must not reach a spreadsheet cell")
+
+        # ...and the same export for a UTC reader is unshifted
+        self.bi_user.tz = 'UTC'
+        self.env.flush_all()
+        response = self._post_export(self._detail_request(
+            [self.f_name.id, self.f_create_date.id]), title='QA Records UTC')
+        cells = self._xlsx_numbers(response.content, 'B')
+        self.assertTrue(
+            [value for value in cells if abs(value - utc_serial) < 1e-6])
+
+    def test_export_tz_helpers(self):
+        """The conversion itself, without the HTTP round trip."""
+        import pytz
+
+        from odoo.addons.biz_bi.controllers.main import BiController
+        saigon = pytz.timezone('Asia/Ho_Chi_Minh')
+        self.assertEqual(
+            BiController._to_user_tz(
+                datetime.datetime(2026, 3, 4, 18, 30), saigon),
+            datetime.datetime(2026, 3, 5, 1, 30))
+        # a pure date has no time to move — shifting it would change the day
+        self.assertEqual(
+            BiController._to_user_tz(datetime.date(2026, 3, 4), saigon),
+            datetime.date(2026, 3, 4))
+        # no timezone configured is UTC, never a crash
+        self.assertEqual(
+            BiController._to_user_tz(
+                datetime.datetime(2026, 3, 4, 18, 30), None),
+            datetime.datetime(2026, 3, 4, 18, 30))
+        self.bi_user.tz = False
+        self.assertEqual(
+            BiController._export_tz(self.env(user=self.bi_user)), pytz.UTC)
+        self.bi_user.tz = 'Asia/Ho_Chi_Minh'
+        self.assertEqual(
+            str(BiController._export_tz(self.env(user=self.bi_user))),
+            'Asia/Ho_Chi_Minh')
+
+    def test_datatable_can_suppress_a_duplicate_overflow_row(self):
+        """The opt-in exists, defaults OFF, and gates the overflow row only.
+
+        A host that states the truncation itself (the CMS wizard's banner)
+        must be able to stop the table repeating it; every other host keeps
+        the row, because the alternative is a silent cap.
+        """
+        import pathlib
+
+        source = pathlib.Path(__file__).parent.parent.joinpath(
+            'static/src/components/explore/data_table.js').read_text()
+        # the prop is declared optional (so nothing else has to pass it)
+        self.assertIn('suppressOverflowRow: { type: Boolean, optional: true }',
+                      source)
+        # and it is read into the overflow decision, not into the row slice
+        self.assertIn('shown.length < all.length && !quiet', source)
+        self.assertIn('const quiet = !!this.props.suppressOverflowRow;',
+                      source)
 
     def test_export_xlsx_get_saved_chart_uses_labels(self):
         """The pre-existing saved-chart GET route now writes names too."""

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Analytics Hub (CMS)',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'category': 'Analytics',
     'summary': 'Puts the BI platform into the /bizapp sidebar and lands CMS '
                'users on a friendly Analytics hub.',

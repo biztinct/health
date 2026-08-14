@@ -1,0 +1,29 @@
+BG-1 — server-side rows the browser pass created (before cleanup)
+=================================================================
+
+   event    | count |        first        |        last         
+------------+-------+---------------------+---------------------
+ ai_request |     2 | 2026-08-14 00:06:22 | 2026-08-14 00:09:20
+ export     |     3 | 2026-08-14 00:10:57 | 2026-08-14 00:13:10
+ query      |     5 | 2026-08-14 00:06:23 | 2026-08-14 00:13:10
+(3 rows)
+
+The three exports, in full (the Excel button: once plain, then the two the fetch-wrapper captured — Sydney, then Vietnam):
+  id  |     created_at      |                                   payload_json                                    
+------+---------------------+-----------------------------------------------------------------------------------
+ 2289 | 2026-08-14 00:10:57 | {"mode": "detail", "rows": 1271, "capped": false, "format": "xlsx", "columns": 4}
+ 2290 | 2026-08-14 00:11:17 | {"mode": "detail", "rows": 1271, "capped": false, "format": "xlsx", "columns": 4}
+ 2292 | 2026-08-14 00:13:10 | {"mode": "detail", "rows": 1271, "capped": false, "format": "xlsx", "columns": 4}
+(3 rows)
+
+
+No bi.chart / bi.dashboard / bi.dashboard.widget was created: the pass
+stopped at 'Preview & save' and never pressed Save report, so the only
+durable artefacts were the audit rows, the two AI logs, the two egress
+decisions and the two ir.attachment rows used to carry the workbooks off
+the browser.
+ charts | dashboards | attachments 
+--------+------------+-------------
+      0 |          0 |           2
+(1 row)
+

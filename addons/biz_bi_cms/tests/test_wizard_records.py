@@ -282,3 +282,36 @@ class TestWizardRecords(BiCase):
              for entry in dup_chart._to_query_request()['dimensions']],
             [field.id for field in ordered])
 
+
+    # ------------------------------------------------------------------
+    # T4 — one truncation notice, not two
+    # ------------------------------------------------------------------
+    def test_records_preview_states_the_truncation_once(self):
+        """RT-2 shipped the same sentence twice on the same screen.
+
+        The wizard's banner sits ABOVE the table, next to the Excel button —
+        where the decision is made — and RT-1's ``DataTable`` also writes the
+        overflow as its last row, at the bottom of a 100-row scroll area.
+        Both are honest; together they read as a bug. The banner stays and the
+        table is told to keep quiet, but ONLY while the banner is actually
+        rendered: `suppressOverflowRow` is bound to the same getter the banner
+        is, so there is no arrangement in which neither of them speaks.
+        """
+        import pathlib
+
+        import odoo.addons.biz_bi as biz_bi_module
+
+        template = pathlib.Path(__file__).parent.parent.joinpath(
+            'static/src/components/wizard/report_wizard.xml').read_text()
+        self.assertIn('suppressOverflowRow="!!recordsTruncation"', template,
+                      "the wizard must pass the opt-in, bound to the banner")
+        self.assertIn('t-if="recordsTruncation" class="bi-wizard-banner"',
+                      template, "…and the banner must still be the one that "
+                                "states it")
+
+        # the prop it is passing has to exist on the component receiving it,
+        # and it has to be optional — every other host must keep the row
+        data_table = pathlib.Path(biz_bi_module.__file__).parent.joinpath(
+            'static/src/components/explore/data_table.js').read_text()
+        self.assertIn('suppressOverflowRow: { type: Boolean, optional: true }',
+                      data_table)
