@@ -324,4 +324,9 @@ phase):
 Branch `19.0`, pushed to `RHealth19`. Path-scoped to `addons/biz_bi/`,
 `addons/biz_bi_cms/`, `docs/strategy/HANDOVER-CONVENTIONS.md` and
 `docs/strategy/reports/bi-green-suite-*`. The working tree carried unrelated
-changes from another session throughout and none of them are in this commit.
+changes from another session throughout and none of them are in this commit;
+neither are the repo's tracked `.pyc` files, which a local syntax check had
+touched and which were restored to `HEAD` before staging.
+`docs/strategy/handovers/bi-green-suite.md` is untracked in the working tree
+and is outside the sanctioned paths, so — as in AH-3 — the commit does not
+add it.
