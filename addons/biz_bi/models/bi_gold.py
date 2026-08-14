@@ -74,9 +74,12 @@ class BiRefreshJob(models.Model):
                 "CREATE UNIQUE INDEX %s ON %s (_bi_row_key)",
                 SQL.identifier('%s_pk' % matview),
                 SQL.identifier(matview)))
-            # secondary indexes: filterable + date fields + company column
+            # secondary indexes: filterable + date fields + company column —
+            # minus stale columns the silver SELECT skipped (their f_<id>
+            # column does not exist in the matview)
+            stale = dataset._stale_stored_fields()
             indexed_fields = dataset.field_ids.filtered(
-                lambda f: f.origin == 'stored'
+                lambda f: f.origin == 'stored' and f not in stale
                 and (f.is_filterable or f.role == 'date'))
             if dataset.company_field_id:
                 indexed_fields |= dataset.company_field_id
@@ -149,9 +152,28 @@ class BiRefreshJob(models.Model):
             self.env.cr.execute(
                 "SELECT pg_advisory_unlock(hashtext(%s))", (REFRESH_LOCK_KEY,))
 
+    def _matview_exists(self):
+        """The matview can be gone while the job looks fine — a restored
+        database, a cascade drop, a publish that half-failed. `state` and
+        `last_refresh` describe the JOB's past, not the relation's present
+        (§5.166), so existence is checked against the catalog."""
+        self.ensure_one()
+        self.env.cr.execute(
+            "SELECT to_regclass(%s) IS NOT NULL",
+            (self.dataset_id._gold_matview_name(),))
+        return self.env.cr.fetchone()[0]
+
     def _refresh_one(self):
         self.ensure_one()
         matview = self.dataset_id._gold_matview_name()
+        if not self._matview_exists():
+            # REFRESH on a missing relation fails forever (with backoff);
+            # a full publish recreates it and heals the job in one step.
+            _logger.warning(
+                "biz_bi: matview %s missing — republishing instead of "
+                "refreshing", matview)
+            self._publish_gold_for(self.dataset_id)
+            return
         timeout_ms = int(self.env['ir.config_parameter'].sudo().get_param(
             'biz_bi.refresh_timeout_ms', 300000))
         self.write({'state': 'running'})
@@ -204,5 +226,11 @@ class BiRefreshJob(models.Model):
                 minutes=int(job.interval_minutes))
 
     def is_healthy(self):
+        """Healthy = the job is not erroring AND the matview actually exists.
+        Without the existence check a dataset whose matview vanished keeps
+        routing queries to gold, and every one of them fails with
+        UndefinedTable while the job reports idle (Visit Margin, 2026-08-14).
+        The engine falls back to live when this is False."""
         self.ensure_one()
-        return self.state != 'error' and bool(self.last_refresh)
+        return (self.state != 'error' and bool(self.last_refresh)
+                and self._matview_exists())

@@ -388,6 +388,31 @@ class BiDataset(models.Model):
         self.ensure_one()
         return 'bi_gold_%d' % self.id
 
+    def _stale_stored_fields(self):
+        """Stored fields whose physical column no longer exists on their
+        node's table (dropped from the model after the scan). One catalog
+        query for the whole dataset."""
+        self.ensure_one()
+        by_table = {}
+        for field in self.field_ids:
+            if field.origin != 'stored':
+                continue
+            table = field.node_id.source_id._table_name()
+            by_table.setdefault(table, []).append(field)
+        if not by_table:
+            return self.env['bi.field']
+        self.env.cr.execute("""
+            SELECT table_name, column_name FROM information_schema.columns
+            WHERE table_name IN %s
+        """, (tuple(by_table),))
+        present = set(self.env.cr.fetchall())
+        stale = self.env['bi.field']
+        for table, table_fields in by_table.items():
+            for field in table_fields:
+                if (table, field.technical_name) not in present:
+                    stale |= field
+        return stale
+
     def _compile_silver_sql(self):
         """The dataset's semantic SELECT: all stored fields as f_<id> columns
         plus _bi_row_key, with the full join tree. Calculated fields are NOT
@@ -401,8 +426,19 @@ class BiDataset(models.Model):
         select_parts = [SQL(
             "%s.id AS _bi_row_key",
             SQL.identifier(root.alias))]
+        stale = self._stale_stored_fields()
+        if stale:
+            # A column dropped from the source model AFTER the scan (rescans
+            # only append, never prune). Selecting it would fail the WHOLE
+            # publish — Visit Margin lost its gold matview to exactly this —
+            # so stale fields are skipped, loudly. They can never work.
+            _logger.warning(
+                "biz_bi: dataset %s skips stale column(s) with no backing "
+                "table column: %s", self.name,
+                ", ".join("%s (field %d)" % (f.technical_name, f.id)
+                          for f in stale))
         for field in self.field_ids:
-            if field.origin != 'stored':
+            if field.origin != 'stored' or field in stale:
                 continue
             select_parts.append(SQL(
                 "%s.%s AS %s",

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo.tests import tagged
+from odoo.tools import SQL
 
 from .common import BiCase
 
@@ -69,3 +70,52 @@ class TestGoldPublish(BiCase):
         self.dataset.unlink()
         self.assertFalse(self._relation_exists(silver, kinds=('v',)))
         self.assertFalse(self._relation_exists(gold))
+
+    def test_missing_matview_falls_back_to_live_and_self_heals(self):
+        """A gold dataset whose matview vanished (restored DB, cascade drop)
+        must not error every query while its job reports idle — the health
+        check consults the catalog, the engine falls back to live, and the
+        next refresh recreates the matview instead of failing forever."""
+        self.dataset.storage_mode = 'gold'
+        self.dataset.action_publish()
+        matview = self.dataset._gold_matview_name()
+        job = self.dataset.refresh_job_id
+
+        self.env.cr.execute(SQL(
+            "DROP MATERIALIZED VIEW %s CASCADE", SQL.identifier(matview)))
+        self.assertEqual(job.state, 'idle')          # the job has no idea
+        self.assertFalse(job.is_healthy())           # the catalog knows
+
+        result = self.engine.run(self._base_request())
+        self.assertNotIn('error', result)
+        self.assertEqual(result['meta']['source'], 'live',
+                         "queries must fall back to live, not crash on gold")
+
+        job._refresh_one()                           # heals: full republish
+        self.assertTrue(self._relation_exists(matview))
+        self.assertTrue(job.is_healthy())
+        self.assertEqual(job.state, 'idle')
+        healed = self.engine.run(self._base_request())
+        self.assertEqual(healed['meta']['source'], 'gold')
+
+    def test_stale_column_does_not_kill_publish(self):
+        """A column dropped from the source model after the scan must not
+        fail the whole dataset's publish (Visit Margin lost its matview to
+        one stale hidden field) — it is skipped, and everything else works."""
+        stale = self.env['bi.field'].create({
+            'dataset_id': self.dataset.id,
+            'node_id': self.node_root.id,
+            'technical_name': 'column_dropped_long_ago',
+            'name': 'Ghost Column',
+            'origin': 'stored',
+            'data_type': 'text',
+            'role': 'dimension',
+            'visibility': 'hidden',
+        })
+        self.assertIn(stale, self.dataset._stale_stored_fields())
+        self.dataset.storage_mode = 'gold'
+        self.dataset.action_publish()               # must not raise
+        self.assertTrue(self._relation_exists(self.dataset._gold_matview_name()))
+        result = self.engine.run(self._base_request())
+        self.assertNotIn('error', result)
+        self.assertEqual(result['meta']['source'], 'gold')

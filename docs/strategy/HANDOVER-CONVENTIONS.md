@@ -2783,3 +2783,19 @@ a no-op.
     Found while establishing (correctly) that gold needed no refresh for BG-3:
     silver views and gold matviews store RAW columns, so grain is applied only
     at query time. (BG-3, pre-existing defect, reported not fixed.)
+
+- **§5.167 — one stale column kills a whole dataset, twice.** Rescans
+    (`action_scan_fields`) only APPEND `bi.field` rows; when a source model
+    later drops a column, the silver SELECT still names it and the entire
+    publish fails — which, combined with §5.166's blind `is_healthy()`, is
+    exactly how Visit Margin served UndefinedTable to every user while its
+    job read idle (facility_type dropped from health.facility; a second
+    stale column sat on hr.employee). And the SELECT is only the first
+    consumer: the gold INDEX loop names the same columns and fails the
+    publish again after the SELECT is fixed — grep every consumer of
+    "stored fields" when touching this. Fixed 2026-08-14:
+    `_stale_stored_fields()` (one catalog query) is skipped by both the
+    silver compile and the index loop, loudly; `is_healthy()` now checks
+    `to_regclass`; `_refresh_one()` republishes instead of refreshing a
+    missing matview. The engine already fell back to live once health said
+    no — the health check was the single point of blindness.
